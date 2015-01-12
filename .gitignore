@@ -1,5 +1,4 @@
 env
 *.pyc
 .webassets-cache
-static/*.*.css
-static/*.*.js
+staticfiles/

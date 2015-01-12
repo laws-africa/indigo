@@ -38,6 +38,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_assets',
+
     # the indigo document management system
     'indigo_dms',
 )
@@ -105,7 +108,16 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
 
+ASSETS_DEBUG = DEBUG
+ASSETS_URL_EXPIRE = False
+ASSETS_ROOT = 'static'
+
 STATIC_URL = '/static/'
+STATICFILES_FINDERS = (
+   "django.contrib.staticfiles.finders.FileSystemFinder",
+   "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+   "django_assets.finders.AssetsFinder"
+)
 
 
 # Logging

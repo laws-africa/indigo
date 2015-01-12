@@ -12,4 +12,4 @@ register('css', Bundle(
 register('js', Bundle(
     'bower_components/jquery/dist/jquery.min.js',
     'javascript/*.js',
-    output='javascript/app.%(version)s.js'))
+    output='js/app.%(version)s.js'))

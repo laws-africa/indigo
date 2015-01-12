@@ -32,12 +32,11 @@ You will need
 heroku create
 heroku addons:add heroku-postgresql
 heroku addons:add newrelic:stark
-heroku config DJANGO_DEBUG=false \
-              DJANGO_COMPRESS_OFFLINE=true \
-              DISABLE_COLLECTSTATIC=1 \
-              DJANGO_SECRET_KEY=some-secret-key \
-              NEW_RELIC_APP_NAME="Indigo" \
-              NEW_RELIC_LICENSE_KEY=some-license-key
+heroku config:set DJANGO_DEBUG=false \
+                  DISABLE_COLLECTSTATIC=1 \
+                  DJANGO_SECRET_KEY=some-secret-key \
+                  NEW_RELIC_APP_NAME="Indigo" \
+                  NEW_RELIC_LICENSE_KEY=some-license-key
 git push heroku master
 heroku run python manage.py syncdb --all
 heroku run python manage.py migrate --fake

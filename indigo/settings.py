@@ -110,9 +110,13 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 ASSETS_DEBUG = DEBUG
 ASSETS_URL_EXPIRE = False
-ASSETS_ROOT = 'static'
-
+# where the raw assets are
+STATICFILES_DIRS = ['static']
+# where the compiled assets go
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# the URL for assets
 STATIC_URL = '/static/'
+
 STATICFILES_FINDERS = (
    "django.contrib.staticfiles.finders.FileSystemFinder",
    "django.contrib.staticfiles.finders.AppDirectoriesFinder",

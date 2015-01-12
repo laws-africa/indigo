@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+MANAGE_FILE=$(find . -maxdepth 3 -type f -name 'manage.py' | head -1)
+MANAGE_FILE=${MANAGE_FILE:2}
+
+echo "-----> Building assets"
+python $MANAGE_FILE assets build 2>&1 
+
+echo "-----> Collecting static files"
+python $MANAGE_FILE collectstatic --noinput 2>&1
+
+echo

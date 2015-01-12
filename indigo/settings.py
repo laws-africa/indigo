@@ -123,6 +123,10 @@ STATICFILES_FINDERS = (
    "django_assets.finders.AssetsFinder"
 )
 
+# Simplified static file serving.
+# https://warehouse.python.org/project/whitenoise/
+STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
+
 
 # Logging
 LOGGING = {

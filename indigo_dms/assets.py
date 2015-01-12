@@ -6,10 +6,10 @@ register('css', Bundle(
     Bundle(
         'stylesheets/*.scss',
         filters='pyscss',
-        output='styles.%(version)s.css'),
-    output='app.%(version)s.css'))
+        output='stylesheets/styles.%(version)s.css'),
+    output='stylesheets/app.%(version)s.css'))
 
 register('js', Bundle(
     'bower_components/jquery/dist/jquery.min.js',
     'javascript/*.js',
-    output='app.%(version)s.js'))
+    output='javascript/app.%(version)s.js'))

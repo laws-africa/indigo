@@ -2,6 +2,7 @@ Django==1.7.2
 dj-database-url==0.3.0
 django-assets==0.10
 enum34==1.0.4
+gunicorn==19.1.1
 newrelic==2.40.0.34
 pathlib==1.0.1
 psycopg2==2.5.4

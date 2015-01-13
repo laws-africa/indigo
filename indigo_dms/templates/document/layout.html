@@ -1,0 +1,25 @@
+{% extends "layout.html" %}
+
+{% block header %}
+<h4>{{ document.title }}</h4>
+{% endblock %}
+
+{% block content %}
+<div class="sidebar-container sidebar-nav">
+  <nav class="sidebar">
+    <div class="boxed-group-inner">
+
+      <ul class="nav nav-pills nav-stacked">
+        <li class="active"><a href="#props-tab" data-toggle="tab">Properties</a></li>
+        <li><a href="#content-tab" data-toggle="tab">Content</a></li>
+      <ul>
+
+    </div>
+  </nav>
+</div>
+
+<div class="main-container">
+  {% block main-content %}{% endblock %}
+</div>
+
+{% endblock %}

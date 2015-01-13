@@ -1,3 +1,76 @@
-body {
-  background-color: red;
+$border-colour: #999;
+
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+/* primary containers */
+
+#wrapper,
+.workspace,
+.workspace-content,
+.sidebar-container,
+.main-container,
+.high
+{
+  height: inherit;
+}
+
+.workspace {
+  width: 100%;
+  overflow: hidden;
+}
+
+.sidebar-container,
+.main-container {
+  float: left;
+  overflow: hidden;
+}
+
+.sidebar-container {
+  border-right: 1px solid $border-colour;
+
+  .sidebar {
+    height: inherit;
+  }
+}
+
+.main-container {
+  width: calc(100% - 230px - 2px);
+
+  article {
+    margin: 5px;
+  }
+}
+
+/* workspace and boxed groups */
+
+.workspace-header,
+.boxed-group-header {
+  height: 42px;
+  padding: 5px;
+  border-bottom: 1px solid $border-colour;
+
+  h1, h2, h3, h4 {
+    margin: 6px;
+  }
+}
+
+.workspace-header {
+  background-color: #3D9970;
+  color: white;
+}
+
+.boxed-group-inner {
+  height: inherit;
+  overflow: auto;
+  margin: 5px 5px;
+  padding-bottom: 110px;
+}
+
+/* sidebars */
+
+.sidebar-nav {
+  width: 230px;
 }

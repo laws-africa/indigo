@@ -2,6 +2,14 @@
 
 {% block main-content %}
 
-document content
+<div class="tab-content">
+  <div id="details-tab" class="tab-pane active">
+    {% include "document/_details.html" %}
+  </div>
+
+  <div id="content-tab" class="tab-pane">
+    {% include "document/_content.html" %}
+  </div>
+</div>
 
 {% endblock %}

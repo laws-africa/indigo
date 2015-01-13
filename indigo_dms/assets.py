@@ -13,6 +13,9 @@ register('js', Bundle(
     'bower_components/jquery/dist/jquery.min.js',
     'bower_components/underscore/underscore-min.js',
     'bower_components/backbone/backbone.js',
+    'bower_components/backbone.stickit/backbone.stickit.js',
     'bower_components/bootstrap/dist/js/bootstrap.min.js',
+    'javascript/models.js',
+    'javascript/views/document.js',
     'javascript/app.js',
     output='js/app.%(version)s.js'))

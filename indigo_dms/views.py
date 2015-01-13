@@ -10,7 +10,7 @@ def index(request):
 def document(request, doc_id):
     doc = get_object_or_404(Document, pk=doc_id)
     return render(request, 'document/show.html', {
-        'doc': doc,
+        'document': doc,
         })
     
 # REST API

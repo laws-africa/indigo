@@ -1,2 +1,78 @@
-body {
+$border-colour: #999;
+
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+#wrapper,
+.workspace,
+.workspace-content,
+.sidebar-container,
+.main-container
+{
+  height: inherit;
+}
+
+.workspace {
+  width: 100%;
+  overflow: hidden;
+}
+
+.workspace-header {
+  height: 42px;
+  padding: 5px;
+  border-bottom: 1px solid $border-colour;
+  background-color: #3D9970;
+  color: white;
+
+  h1, h2, h3, h4 {
+    margin: 6px;
+  }
+}
+
+.sidebar-container,
+.main-container {
+  float: left;
+  overflow: hidden;
+
+  .boxed-group-header {
+    margin: 0px;
+    padding: 5px 5px;
+    border-bottom: 1px solid $border-colour;
+
+    h3 {
+      margin: 0px;
+    }
+  }
+
+  .boxed-group-inner {
+    height: inherit;
+    overflow: auto;
+    margin: 5px 5px;
+    padding-bottom: 110px;
+  }
+}
+
+.sidebar-container {
+  border-right: 1px solid $border-colour;
+
+  .sidebar {
+    height: inherit;
+  }
+}
+
+.sidebar-nav {
+  width: 230px;
+}
+
+.main-container {
+  width: calc(100% - 230px - 2px);
+
+  .boxed-group-header {
+  }
+}
+
+.main-container article { 
+  font-size: 20pt;
 }

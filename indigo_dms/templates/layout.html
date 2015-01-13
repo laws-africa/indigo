@@ -1,32 +1,15 @@
-{% load assets %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>{% block title %}{% endblock %} - Indigo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="">
+{% block page-content %}
+  <div class="workspace">
+    <header class="workspace-header">
+      {% block header %}
+      <h3>header</h3>
+      {% endblock %}
+    </header>
 
-    {% block head-css %}
-    {% assets "css" %}
-        <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
-    {% endassets %}
-    {% endblock %}
-
-    {% block head-meta %}{% endblock %}
-
-  </head>
-  <body {% block body-attributes %}{% endblock %} class='{% block body-class %}{% endblock %}'>
-    <div id="wrapper">
-      {% block content %}
-      {% endblock content %}
+    <div class="workspace-content">
+      {% block content %}{% endblock content %}
     </div>
-
-    {% block js %}
-    {% assets "js" %}
-        <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
-    {% endblock %}
-
-  </body>
-</html>
+  </div>
+{% endblock page-content %}

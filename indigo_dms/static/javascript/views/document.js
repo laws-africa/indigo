@@ -21,6 +21,13 @@
       '#document_title': 'title',
       '#document_country': 'country',
       '#document_uri': 'uri',
+      '#document_draft': {
+        observe: 'draft',
+        onSet: function(val) {
+          // API requires true or false
+          return val == "1";
+        }
+      }
     },
 
     initialize: function() {

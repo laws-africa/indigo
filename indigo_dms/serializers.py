@@ -8,7 +8,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 # readonly, url is part of the rest framework
                 'id', 'url',
                 'uri', 'draft', 'created_at', 'updated_at',
-                'title',
+                'title', 'country',
                 # TODO: don't send this back in the listing view, it could be huge
                 'content_xml',
                 )

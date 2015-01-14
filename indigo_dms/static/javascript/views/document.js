@@ -19,6 +19,8 @@
     el: $('#props-tab article'),
     bindings: {
       '#document_title': 'title',
+      '#document_country': 'country',
+      '#document_uri': 'uri',
     },
 
     initialize: function() {

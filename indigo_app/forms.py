@@ -1,6 +1,6 @@
 from django.forms import ModelForm
 
-from .models import Document
+from indigo_api.models import Document
 
 class DocumentForm(ModelForm):
     class Meta:

@@ -44,6 +44,9 @@ INSTALLED_APPS = (
 
     # the Indigo API
     'indigo_api',
+
+    # the Indigo browser application
+    'indigo_app',
 )
 
 MIDDLEWARE_CLASSES = (

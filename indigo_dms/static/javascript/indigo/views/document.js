@@ -39,6 +39,7 @@
     el: $('body'),
     events: {
       'click .btn.save': 'save',
+      'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
 
     initialize: function() {
@@ -70,6 +71,20 @@
             Indigo.errorView.show(request.responseText || request.statusText);
           });
       }
+    },
+
+    renderPreview: function() {
+      var data = JSON.stringify({'content_xml': this.document.get('content_xml')});
+
+      $.ajax({
+        url: '/api/render',
+        type: "POST",
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+        .then(function(response) {
+          $('#preview-tab .preview-container').html(response.html);
+        });
     },
   });
 })(window);

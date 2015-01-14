@@ -11,5 +11,6 @@ urlpatterns = patterns('',
 
     url(r'^app/document/(?P<doc_id>\d+)/$', views.document, name='document'),
 
+    url(r'^api/render', views.RenderAPI.as_view(), name='render'),
     url(r'^api/', include(router.urls)),
 )

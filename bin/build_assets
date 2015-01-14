@@ -7,7 +7,4 @@ MANAGE_FILE=${MANAGE_FILE:2}
 echo "-----> Building assets"
 python $MANAGE_FILE assets build 2>&1 
 
-echo "-----> Collecting static files"
-python $MANAGE_FILE collectstatic --noinput 2>&1
-
 echo

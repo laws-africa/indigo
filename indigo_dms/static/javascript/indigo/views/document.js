@@ -74,7 +74,7 @@
     },
 
     renderPreview: function() {
-      var data = JSON.stringify({'content_xml': this.document.get('content_xml')});
+      var data = JSON.stringify({'document_xml': this.document.get('document_xml')});
 
       $.ajax({
         url: '/api/render',

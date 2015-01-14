@@ -10,5 +10,5 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'uri', 'draft', 'created_at', 'updated_at',
                 'title', 'country',
                 # TODO: don't send this back in the listing view, it could be huge
-                'content_xml',
+                'document_xml',
                 )

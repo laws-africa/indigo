@@ -37,22 +37,22 @@ class RenderAPI(APIView):
         Parameters:
 
             format: "html" (default)
-            content_xml: "xml" (optional)
+            document_xml: "xml" (optional)
             document: { ... } (optional)
 
-        To determine what to render, include either a full document description or a `content_xml` value.
+        To determine what to render, include either a full document description or a `document_xml` value.
 
             {
               "document": {
                 "title": "A title",
-                "content_xml": "... xml ..."
+                "document_xml": "... xml ..."
               }
             }
 
             OR
 
             {
-              "content_xml": "... xml ..."
+              "document_xml": "... xml ..."
             }
         """
 
@@ -61,11 +61,11 @@ class RenderAPI(APIView):
             # TODO:
             pass
 
-        elif u'content_xml' in request.data:
-            xml = request.data['content_xml']
+        elif u'document_xml' in request.data:
+            xml = request.data['document_xml']
 
         else:
-            raise ParseError("Provide either a 'document' or 'content_xml' item.")
+            raise ParseError("Provide either a 'document' or 'document_xml' item.")
 
         if not xml:
             html = ""

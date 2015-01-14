@@ -17,7 +17,7 @@ class Document(models.Model):
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
 
-    content_xml = models.TextField(null=True, blank=True)
+    document_xml = models.TextField(null=True, blank=True)
     """ Raw XML content of the entire document """
 
     created_at = models.DateTimeField(auto_now_add=True)

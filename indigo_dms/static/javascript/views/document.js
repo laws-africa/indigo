@@ -1,7 +1,10 @@
 (function(exports) {
   "use strict";
 
-  var DocumentTitleView = Backbone.View.extend({
+  if (!exports.Indigo) exports.Indigo = {};
+  Indigo = exports.Indigo;
+
+  Indigo.DocumentTitleView = Backbone.View.extend({
     el: $('.workspace-header'),
     bindings: {
       'h4': 'title'
@@ -12,7 +15,7 @@
     },
   });
 
-  var DocumentPropertiesView = Backbone.View.extend({
+  Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: $('#props-tab article'),
     bindings: {
       '#document_title': 'title',
@@ -23,25 +26,23 @@
     }
   });
 
-  var DocumentView = Backbone.View.extend({
+  Indigo.DocumentView = Backbone.View.extend({
     el: $('body'),
     events: {
     },
 
     initialize: function() {
-      var library = new Library();
+      var library = new Indigo.Library();
 
       var document_id = $('[data-document-id]').data('document-id');
-      this.document = new Document({id: document_id}, {
+      this.document = new Indigo.Document({id: document_id}, {
         collection: library
       });
 
-      new DocumentTitleView({model: this.document});
-      new DocumentPropertiesView({model: this.document});
+      new Indigo.DocumentTitleView({model: this.document});
+      new Indigo.DocumentPropertiesView({model: this.document});
 
       this.document.fetch();
     },
   });
-
-  exports.DocumentView = DocumentView;
 })(window);

@@ -1,18 +1,18 @@
 (function(exports) {
   "use strict";
 
-  var Document = Backbone.Model.extend({
+  if (!exports.Indigo) exports.Indigo = {};
+  Indigo = exports.Indigo;
+
+  Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,
       title: '(none)',
     }
   });
 
-  var Library = Backbone.Collection.extend({
+  Indigo.Library = Backbone.Collection.extend({
     model: Document,
     url: '/api/documents'
   });
-
-  exports.Document = Document;
-  exports.Library = Library;
 })(window);

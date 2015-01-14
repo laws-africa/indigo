@@ -31,6 +31,7 @@
   Indigo.DocumentView = Backbone.View.extend({
     el: $('body'),
     events: {
+      'click .btn.save': 'save',
     },
 
     initialize: function() {
@@ -45,6 +46,20 @@
       new Indigo.DocumentPropertiesView({model: this.document});
 
       this.document.fetch();
+    },
+
+    save: function() {
+      if (this.document.isValid()) {
+        var btn = this.$el.find('.btn.save');
+
+        btn.prop('disabled', true);
+
+        this.document
+          .save()
+          .always(function() {
+            btn.prop('disabled', false);
+          });
+      }
     },
   });
 })(window);

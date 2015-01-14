@@ -7,7 +7,7 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_dms', '0002_auto_20150114_0639'),
+        ('indigo_api', '0002_auto_20150114_0639'),
     ]
 
     operations = [

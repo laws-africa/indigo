@@ -42,8 +42,8 @@ INSTALLED_APPS = (
     'django_assets',
     'rest_framework',
 
-    # the indigo document management system
-    'indigo_dms',
+    # the Indigo API
+    'indigo_api',
 )
 
 MIDDLEWARE_CLASSES = (

@@ -12,6 +12,11 @@
 
     initialize: function() {
       this.stickit();
+      this.model.on('change:title', this.setWindowTitle);
+    },
+
+    setWindowTitle: function() {
+      document.title = this.get('title');
     },
   });
 

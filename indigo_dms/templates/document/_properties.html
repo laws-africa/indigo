@@ -7,16 +7,20 @@
     <fieldset>
       <div class="form-horizontal">
         <div class="form-group">
-          <label for="document_uri" class="col-sm-2 control-label">URI</label>
-          <div class="col-sm-8">
-            <input type="text" class="form-control" id="document_uri">
+          <label for="document_country" class="col-sm-2 control-label">Country</label>
+          <div class="col-sm-3">
+            <select id="document_country" class="form-control">
+              {% for code, name in form.fields.country.choices %}
+              <option value="{{ code }}">{{ name }}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
 
         <div class="form-group">
-          <label for="document_country" class="col-sm-2 control-label">Country</label>
+          <label for="document_uri" class="col-sm-2 control-label">URI</label>
           <div class="col-sm-8">
-            <input type="text" class="form-control" id="document_country" maxlength="2">
+            <input type="text" class="form-control" id="document_uri">
           </div>
         </div>
 

@@ -1,9 +1,9 @@
 from django.db import models
 
-COUNTRIES = [
+COUNTRIES = sorted([
         ('za', 'South Africa'),
         ('zm', 'Zambia'),
-        ]
+        ])
 
 # Create your models here.
 class Document(models.Model):

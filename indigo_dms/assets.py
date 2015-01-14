@@ -18,5 +18,6 @@ register('js', Bundle(
     'bower_components/bootstrap/dist/js/bootstrap.min.js',
     'javascript/indigo/models.js',
     'javascript/indigo/views/document.js',
+    'javascript/indigo/views/error_box.js',
     'javascript/indigo.js',
     output='js/app.%(version)s.js'))

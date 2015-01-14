@@ -65,6 +65,9 @@
           .save()
           .always(function() {
             btn.prop('disabled', false);
+          })
+          .fail(function(request) {
+            Indigo.errorView.show(request.responseText || request.statusText);
           });
       }
     },

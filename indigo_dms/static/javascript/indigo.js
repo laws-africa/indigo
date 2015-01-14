@@ -12,6 +12,8 @@ $(function() {
     }
   });
 
+  Indigo.errorView = new Indigo.ErrorBoxView();
+
   // TODO: how do we know to load this view?
   Indigo.view = new Indigo.DocumentView();
 });

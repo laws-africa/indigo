@@ -1,7 +1,19 @@
 {% extends "layout.html" %}
 
 {% block header %}
-<h4>{{ document.title }}</h4>
+<span data-document-id="{{ document.id }}"></span>
+
+<div class="row">
+  <div class="col-sm-9">
+    <h4>{{ document.title }}</h4>
+  </div>
+
+  <div class="col-sm-3">
+    <div class="buttons text-right">
+      <button class="btn btn-default save"><i class="fa fa-save"></i> Save</button>
+    </div>
+  </div>
+</div>
 {% endblock %}
 
 {% block content %}

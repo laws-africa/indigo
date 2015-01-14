@@ -6,6 +6,7 @@
     <title>{% block title %}{% endblock %} - Indigo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
+    <meta name="csrf-token" content="{{ csrf_token }}">
 
     {% block head-css %}
     {% assets "css" %}
@@ -17,6 +18,13 @@
 
   </head>
   <body {% block body-attributes %}{% endblock %} class='{% block body-class %}{% endblock %}'>
+    <div id="error-box">
+      <div class="alert alert-danger fade in hidden">
+        <button type="button" class="close">&times;</button>
+        <p></p>
+      </div>
+    </div>
+
     <div id="wrapper">
       {% block page-content %}
       {% endblock page-content %}

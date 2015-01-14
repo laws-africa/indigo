@@ -3,7 +3,7 @@ from rest_framework import routers
 
 from indigo_dms import views
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'documents', views.DocumentViewSet)
 
 urlpatterns = patterns('',

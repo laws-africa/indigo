@@ -60,6 +60,10 @@ html, body {
 .workspace-header {
   background-color: #3D9970;
   color: white;
+
+  .buttons {
+    float: right;
+  }
 }
 
 .boxed-group-inner {
@@ -73,4 +77,20 @@ html, body {
 
 .sidebar-nav {
   width: 230px;
+}
+
+/* misc */
+
+#error-box {
+  position: fixed;
+  top: 10px;
+  left: 0px;
+  right: 0px;
+  z-index: 1000;
+  
+  .alert {
+    width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }

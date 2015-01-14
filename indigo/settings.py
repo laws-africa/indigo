@@ -114,8 +114,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 ASSETS_DEBUG = DEBUG
 ASSETS_URL_EXPIRE = False
-# where the raw assets are
-STATICFILES_DIRS = ['static']
+# by default, it will look for everything in the 'static' dir
+# for each Django app
+
 # where the compiled assets go
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 # the URL for assets

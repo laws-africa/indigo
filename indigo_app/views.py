@@ -12,4 +12,5 @@ def document(request, doc_id):
     return render(request, 'document/show.html', {
         'document': doc,
         'form': form,
+        'view': 'DocumentView',
         })

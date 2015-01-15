@@ -94,3 +94,26 @@ html, body {
     margin-right: auto;
   }
 }
+
+/* make a document sheet look like paper */
+.document-sheet-container {
+  background: #aaa;
+  margin: 0px;
+
+  .document-sheet {
+    border: 1px solid #aaa;
+    box-shadow: 0 0 10px #999;
+    padding: 30px;
+    margin: 20px;
+    background: white;
+  }
+}
+
+
+/* akoma ntoso styles */
+.an-container {
+  text-align: justify;
+  line-height: 1.5em;
+
+  @import 'akoma-ntoso';
+}

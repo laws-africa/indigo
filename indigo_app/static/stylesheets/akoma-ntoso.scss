@@ -1,0 +1,176 @@
+/* akoma ntoso styling */
+
+.an-act, .an-preamble, .an-chapter, .an-part, .an-section, .an-subsection, .an-blockList {
+  display: block;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 2em;
+
+  h2 {
+    font-size: 18px;
+  }
+}
+
+h1 {
+  text-align: center;
+  font-size: 18px;
+  line-height: 20px;
+}
+
+h2, h3 {
+  font-size: 16px;
+  line-height: 20px;
+}
+
+h4 {
+  font-size: 14px;
+}
+
+.an-subheading {
+  text-align: center;
+  font-style: italic;
+  display: block;
+}
+
+.published {
+  font-style: italic;
+}
+
+.an-def {
+  font-weight: bold;
+}
+
+.popover-content .an-term {
+  border-bottom-width: 0px;
+}
+
+.an-preamble {
+  margin-bottom: 4em;
+
+  .an-p {
+    display: block;
+    margin-bottom: 1em;
+  }
+}
+
+.an-chapter, .an-part {
+  margin-bottom: 4em;
+}
+
+.an-section {
+  margin-bottom: 2em;
+}
+
+.an-subsection { 
+  margin-left: 3em;
+  margin-bottom: 1em;
+
+  &> .an-num {
+    display: block;
+    float: left;
+    margin-left: -3em;
+  }
+}
+
+.an-content {
+  > .an-p {
+    display: block;
+    margin-bottom: 1em;
+  }
+}
+
+#definitions, .term-definition {
+  .an-subsection {
+    margin-left: 0px;
+  }
+}
+
+/* lists (mostly used in definitions) */
+.an-list {
+  &> .an-intro {
+    display: block;
+    margin-bottom: 1em;
+  }
+
+  &> .an-point {
+    display: block;
+    margin-left: 3em;
+    margin-bottom: 1em;
+
+    > .an-num {
+      display: block;
+      float: left;
+      margin-left: -3em;
+    }
+  }
+}
+
+/* blocklists */
+.an-blockList {
+  .an-listIntroduction {
+    display: block;
+    margin-bottom: 1em;
+  }
+
+  &> .an-item {
+    display: block;
+    margin-left: 3em;
+    margin-bottom: 1em;
+
+    > .an-num {
+      display: block;
+      float: left;
+      margin-left: -3em;
+    }
+  }
+}
+
+/* schedules */
+
+table {
+  width: 100%;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+
+  // Cells
+  th,
+  td {
+    border-left: 1px solid #ddd;
+    padding: 8px;
+    line-height: 20px;
+    text-align: left;
+    vertical-align: top;
+    border-top: 1px solid #ddd;
+  }
+
+  th {
+    font-weight: bold;
+  }
+
+  // Bottom align for column headings
+  thead th {
+    vertical-align: bottom;
+  }
+
+  // Remove top border from thead by default
+  caption + thead tr:first-child th,
+  caption + thead tr:first-child td,
+  colgroup + thead tr:first-child th,
+  colgroup + thead tr:first-child td,
+  thead:first-child tr:first-child th,
+  thead:first-child tr:first-child td {
+    border-top: 0;
+  }
+
+  // Account for multiple tbody instances
+  tbody + tbody {
+    border-top: 2px solid #ddd;
+  }
+
+  // Nesting
+  .table {
+    background-color: white;
+  }
+}

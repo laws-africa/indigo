@@ -5,7 +5,7 @@ register('css', Bundle(
     'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
     'bower_components/fontawesome/css/font-awesome.css',
     Bundle(
-        'stylesheets/*.scss',
+        'stylesheets/app.scss',
         filters='pyscss',
         output='stylesheets/styles.%(version)s.css'),
     output='stylesheets/app.%(version)s.css'))

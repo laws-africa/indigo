@@ -88,7 +88,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          $('#preview-tab .preview-container').html(response.html);
+          $('#preview-tab .an-container').html(response.html);
         });
     },
   });

@@ -54,14 +54,14 @@
       this.editor.on('change', $.proxy(this.updateDocumentContent, this));
     },
 
-    updateEditor: function() {
-      this.editor.setValue(this.model.get('document_xml'));
+    updateEditor: function(model, value, options) {
+      if (!options.fromEditor) this.editor.setValue(this.model.get('document_xml'));
     },
 
     updateDocumentContent: function() {
       this.model.set(
         {document_xml: this.editor.getValue()},
-        {silent: true});
+        {fromEditor: true});
     },
   });
 
@@ -80,6 +80,10 @@
         collection: library
       });
 
+      this.model.dirty = false;
+      this.model.on('change', this.setModelDirty, this);
+      this.model.on('sync', this.setModelClean, this);
+
       new Indigo.DocumentTitleView({model: this.model});
       new Indigo.DocumentPropertiesView({model: this.model});
       new Indigo.DocumentContentEditorView({model: this.model});
@@ -87,18 +91,39 @@
       this.model.fetch();
     },
 
+    setModelDirty: function() {
+      if (!this.model.dirty) {
+        this.model.dirty = true;
+
+        $('.btn.save')
+          .removeClass('btn-default')
+          .addClass('btn-info')
+          .prop('disabled', false);
+      }
+    },
+
+    setModelClean: function() {
+      if (this.model.dirty) {
+        this.model.dirty = false;
+
+        $('.btn.save')
+          .addClass('btn-default')
+          .removeClass('btn-info')
+          .prop('disabled', true);
+      }
+    },
+
     save: function() {
       if (this.model.isValid()) {
-        var btn = this.$el.find('.btn.save');
+        var btn = this.$el.find('.btn.save'),
+            self = this;
 
         btn.prop('disabled', true);
 
         this.model
           .save()
-          .always(function() {
-            btn.prop('disabled', false);
-          })
           .fail(function(request) {
+            btn.prop('disabled', false);
             Indigo.errorView.show(request.responseText || request.statusText);
           });
       }

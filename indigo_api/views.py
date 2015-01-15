@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.template.loader import render_to_string
+
 from rest_framework import viewsets
 from rest_framework.exceptions import ParseError
 from rest_framework.views import APIView
@@ -57,20 +59,35 @@ class RenderAPI(APIView):
         """
 
         if u'document' in request.data:
-            # get document description
-            # TODO:
-            pass
+            data = request.data['document']
+            # try to load the document data
+            if 'id' in data:
+                document = Document.objects.filter(id=data['id']).first()
+            else:
+                document = Document()
+
+            # update the model from the db
+            ds = DocumentSerializer(instance=document, data=data)
+            if ds.is_valid(raise_exception=True):
+                ds.update(document, ds.validated_data)
 
         elif u'document_xml' in request.data:
-            xml = request.data['document_xml']
+            document = Document()
+            document.document_xml = request.data['document_xml']
+            # TODO: parse the XML to populate the metadata
 
         else:
             raise ParseError("Provide either a 'document' or 'document_xml' item.")
 
-        if not xml:
+        if not document.document_xml:
             html = ""
         else:
             renderer = HTMLRenderer()
-            html = renderer.render_xml(xml)
+            body_html = renderer.render_xml(document.document_xml)
+
+            html = render_to_string('html_preview.html', {
+                'document': document,
+                'body_html': body_html,
+                })
 
         return Response({'html': html})

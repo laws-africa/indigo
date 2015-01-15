@@ -22,3 +22,6 @@ class Document(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

@@ -13,8 +13,8 @@ Clone the repo and ensure you have python, virtualenv and pip installed.
 virtualenv env --no-site-packages
 source env/bin/activate
 pip install -r requirements.txt
-python manage.py syncdb --all
-python manage.py migrate --fake
+python manage.py migrate
+python manage.py createsuperuser
 python manage.py runserver
 ```
 
@@ -37,6 +37,6 @@ heroku config:set DJANGO_DEBUG=false \
                   NEW_RELIC_APP_NAME="Indigo" \
                   NEW_RELIC_LICENSE_KEY=some-license-key
 git push heroku master
-heroku run python manage.py syncdb --all
-heroku run python manage.py migrate --fake
+heroku run python manage.py migrate
+heroku run python manage.py createsuperuser
 ```

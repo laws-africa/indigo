@@ -40,6 +40,33 @@
     }
   });
 
+  Indigo.DocumentContentEditorView = Backbone.View.extend({
+    el: $('#content-tab'),
+
+    initialize: function() {
+      // setup ace editor
+      this.editor = ace.edit(this.$el.find(".ace-editor")[0]);
+      this.editor.setTheme("ace/theme/monokai");
+      this.editor.getSession().setMode("ace/mode/xml");
+      this.editor.setValue();
+
+      this.model.on('change:document_xml', this.updateEditor, this);
+      this.editor.on('change', $.proxy(this.updateDocumentContent, this));
+    },
+
+    updateEditor: function() {
+      console.log('xml changed');
+      this.editor.setValue(this.model.get('document_xml'));
+    },
+
+    updateDocumentContent: function() {
+      console.log('editor changed');
+      this.model.set(
+        {document_xml: this.editor.getValue()},
+        {silent: true});
+    },
+  });
+
   Indigo.DocumentView = Backbone.View.extend({
     el: $('body'),
     events: {
@@ -51,23 +78,24 @@
       var library = new Indigo.Library();
 
       var document_id = $('[data-document-id]').data('document-id');
-      this.document = new Indigo.Document({id: document_id}, {
+      this.model = new Indigo.Document({id: document_id}, {
         collection: library
       });
 
-      new Indigo.DocumentTitleView({model: this.document});
-      new Indigo.DocumentPropertiesView({model: this.document});
+      new Indigo.DocumentTitleView({model: this.model});
+      new Indigo.DocumentPropertiesView({model: this.model});
+      new Indigo.DocumentContentEditorView({model: this.model});
 
-      this.document.fetch();
+      this.model.fetch();
     },
 
     save: function() {
-      if (this.document.isValid()) {
+      if (this.model.isValid()) {
         var btn = this.$el.find('.btn.save');
 
         btn.prop('disabled', true);
 
-        this.document
+        this.model
           .save()
           .always(function() {
             btn.prop('disabled', false);
@@ -79,7 +107,7 @@
     },
 
     renderPreview: function() {
-      var data = JSON.stringify({'document': this.document.toJSON()});
+      var data = JSON.stringify({'document': this.model.toJSON()});
 
       $.ajax({
         url: '/api/render',

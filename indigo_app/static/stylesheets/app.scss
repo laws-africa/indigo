@@ -79,6 +79,12 @@ html, body {
   width: 230px;
 }
 
+/* editors */
+
+.ace-editor {
+  height: inherit;
+}
+
 /* misc */
 
 #error-box {

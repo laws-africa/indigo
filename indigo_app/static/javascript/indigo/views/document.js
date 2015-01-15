@@ -55,12 +55,10 @@
     },
 
     updateEditor: function() {
-      console.log('xml changed');
       this.editor.setValue(this.model.get('document_xml'));
     },
 
     updateDocumentContent: function() {
-      console.log('editor changed');
       this.model.set(
         {document_xml: this.editor.getValue()},
         {silent: true});

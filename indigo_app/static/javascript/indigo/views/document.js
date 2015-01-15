@@ -5,7 +5,7 @@
   Indigo = exports.Indigo;
 
   Indigo.DocumentTitleView = Backbone.View.extend({
-    el: $('.workspace-header'),
+    el: '.workspace-header',
     bindings: {
       'h4': 'title'
     },
@@ -21,7 +21,7 @@
   });
 
   Indigo.DocumentPropertiesView = Backbone.View.extend({
-    el: $('#props-tab article'),
+    el: '#props-tab article',
     bindings: {
       '#document_title': 'title',
       '#document_country': 'country',
@@ -41,7 +41,7 @@
   });
 
   Indigo.DocumentContentEditorView = Backbone.View.extend({
-    el: $('#content-tab'),
+    el: '#content-tab',
 
     initialize: function() {
       // setup ace editor
@@ -72,7 +72,7 @@
   });
 
   Indigo.DocumentView = Backbone.View.extend({
-    el: $('body'),
+    el: 'body',
     events: {
       'click .btn.save': 'save',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',

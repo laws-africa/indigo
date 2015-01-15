@@ -1,11 +1,29 @@
 {% extends "base.html" %}
 
+{% block body-attributes %} data-backbone-view="{{ view }}" {% endblock %}
+
 {% block page-content %}
   <div class="workspace">
     <header class="workspace-header">
-      {% block header %}
-      <h3>header</h3>
-      {% endblock %}
+      <div class="search-box">
+        <a href="/library" class="btn btn-default">
+          <i class="fa fa-book"></i> Library
+        </a>
+      </div>
+
+      <div class="workspace-title">
+        <div class="row">
+          <div class="col-sm-9">
+            {% block header %}{% endblock %}
+          </div>
+
+          <div class="col-sm-3">
+            <div class="buttons text-right">
+              {% block header-buttons %}{% endblock %}
+            </div>
+          </div>
+        </div>
+      </div>
     </header>
 
     <div class="workspace-content">

@@ -12,7 +12,7 @@
   });
 
   Indigo.Library = Backbone.Collection.extend({
-    model: Document,
+    model: Indigo.Document,
     url: '/api/documents'
   });
 })(window);

@@ -14,6 +14,9 @@ $(function() {
 
   Indigo.errorView = new Indigo.ErrorBoxView();
 
-  // TODO: how do we know to load this view?
-  Indigo.view = new Indigo.DocumentView();
+  // what view must we load?
+  var view = $('body').data('backbone-view');
+  if (view && Indigo[view]) {
+    Indigo.view = new Indigo[view]();
+  }
 });

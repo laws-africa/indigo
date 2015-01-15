@@ -40,7 +40,7 @@ html, body {
   width: calc(100% - 230px - 2px);
 
   article {
-    margin: 5px;
+    margin: 10px;
   }
 }
 
@@ -60,6 +60,16 @@ html, body {
 .workspace-header {
   background-color: #3D9970;
   color: white;
+
+  .search-box {
+    float: left;
+    width: 230px;
+  }
+
+  .workspace-title {
+    float: left;
+    width: calc(100% - 232px);
+  }
 
   .buttons {
     float: right;

@@ -61,6 +61,16 @@ html, body {
   background-color: #3D9970;
   color: white;
 
+  .search-box {
+    float: left;
+    width: 230px;
+  }
+
+  .workspace-title {
+    float: left;
+    width: calc(100% - 232px);
+  }
+
   .buttons {
     float: right;
     margin-right: 10px;

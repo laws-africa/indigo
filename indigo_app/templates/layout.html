@@ -5,14 +5,22 @@
 {% block page-content %}
   <div class="workspace">
     <header class="workspace-header">
-      <div class="row">
-        <div class="col-sm-9">
-          {% block header %}{% endblock %}
-        </div>
+      <div class="search-box">
+        <a href="/library" class="btn btn-default">
+          <i class="fa fa-book"></i> Library
+        </a>
+      </div>
 
-        <div class="col-sm-3">
-          <div class="buttons text-right">
-            {% block header-buttons %}{% endblock %}
+      <div class="workspace-title">
+        <div class="row">
+          <div class="col-sm-9">
+            {% block header %}{% endblock %}
+          </div>
+
+          <div class="col-sm-3">
+            <div class="buttons text-right">
+              {% block header-buttons %}{% endblock %}
+            </div>
           </div>
         </div>
       </div>

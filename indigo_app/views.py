@@ -14,3 +14,8 @@ def document(request, doc_id):
         'form': form,
         'view': 'DocumentView',
         })
+
+def library(request):
+    return render(request, 'library.html', {
+        'view': 'LibraryView',
+        })

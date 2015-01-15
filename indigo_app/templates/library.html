@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+
+{% block header %}
+<h4>Library</h4>
+{% endblock %}
+
+
+{% block content %}
+
+<div class="main-container">
+  <article>
+  </article>
+</div>
+
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+
+<script id="search-results-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<h2>{{ count }} Documents</h2>
+
+<table class="table table-condensed table-striped">
+{{#each documents}}
+  <tr>
+    <td>
+      <a href="/documents/{{ id }}">
+        {{#if title}}
+          {{ title }}
+        {{else}}
+          (untitled)
+        {{/if}}
+      </a>
+    </td>
+    <td>{{ uri }}</td>
+  </tr>
+{{/each}}
+
+{% endverbatim %}
+
+</table>
+</script>
+
+{% endblock %}

@@ -6,4 +6,5 @@ urlpatterns = patterns('',
     url(r'^$', views.index, name='index'),
 
     url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
+    url(r'^library/$', views.library, name='library'),
 )

@@ -1,4 +1,3 @@
-from django.shortcuts import render, get_object_or_404
 from django.template.loader import render_to_string
 
 from rest_framework import viewsets
@@ -7,21 +6,9 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from .models import Document
-from .forms import DocumentForm
 from .serializers import DocumentSerializer
 from .an.render.html import HTMLRenderer
 
-def index(request):
-    return render(request, 'index.html')
-
-def document(request, doc_id):
-    doc = get_object_or_404(Document, pk=doc_id)
-    form = DocumentForm(instance=doc)
-    return render(request, 'document/show.html', {
-        'document': doc,
-        'form': form,
-        })
-    
 # REST API
 class DocumentViewSet(viewsets.ModelViewSet):
     """

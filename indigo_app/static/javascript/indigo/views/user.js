@@ -5,10 +5,14 @@
   Indigo = exports.Indigo;
 
   Indigo.UserView = Backbone.View.extend({
-    el: '.js-user-buttons',
+    el: 'body',
     events: {
-      'click .login.not-logged-in': 'showLoginBox',
-      'click .logout': 'logout',
+      'click .js-user-buttons .login.not-logged-in': 'showLoginBox',
+      'click .js-user-buttons .logout': 'logout',
+      'click .js-user-buttons .forgot-password': 'showForgotPassword',
+      'show.bs.modal #login-box': 'loginBoxShown',
+      'submit form.login-form': 'authenticate',
+      'submit form.forgot-password-form': 'forgotPassword',
     },
     bindings: {
       '.username': 'first_name',
@@ -27,12 +31,12 @@
 
       this.stickit();
 
+      // login modal
       this.$loginBox = $('#login-box');
-      this.$loginBox
-        .on('show.bs.modal', function() {
-          self.$loginBox.find('.alert').hide();
-        })
-        .find('form').on('submit', _.bind(this.authenticate, this));
+    },
+
+    loginBoxShown: function() {
+      this.$loginBox.find('.alert').hide();
     },
 
     userChanged: function() {

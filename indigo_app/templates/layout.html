@@ -17,8 +17,8 @@
             {% block header %}{% endblock %}
           </div>
 
-          <div class="col-sm-3">
-            <div class="buttons js-user-buttons">
+          <div class="col-sm-3 js-user-buttons">
+            <div class="buttons">
               {% block header-buttons %}{% endblock %}
 
               <button type="button" class="btn btn-default login not-logged-in"><i class="fa fa-sign-in"></i> Login</button>
@@ -30,8 +30,9 @@
               <ul class="pull-right dropdown-menu dropdown-right">
                 <li><a class="logout" href="#"><i class="fa fa-sign-out"></i> Log out</a></li>
               </ul>
-
             </div>
+
+
           </div>
         </div>
       </div>
@@ -42,39 +43,6 @@
     </div>
   </div>
 
-  <div class="modal modal-fade" id="login-box">
-    <form class="form-horizontal" method="POST" action="/auth/user/">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <h4 class="modal-title">Log in to edit and save documents</h4>
-          </div>
-          <div class="modal-body">
-
-            <div class="alert alert-danger" style="display: none"></div>
-
-            <div class="form-group">
-              <label for="login_username" class="col-sm-2 control-label">Email</label>
-              <div class="col-sm-10">
-                <input type="email" class="form-control" name="username" id="login_username" placeholder="you@example.com" required>
-              </div>
-            </div>
-            <div class="form-group">
-              <label for="login_password" class="col-sm-2 control-label">Password</label>
-              <div class="col-sm-10">
-                <input type="password" class="form-control" name="password" id="login_password" placeholder="password" required>
-              </div>
-            </div>
-
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-            <input type="submit" class="btn btn-primary" value="Log in">
-          </div>
-        <div>
-      <div>
-    </form>
-  </div>
+  {% include "user/_login_modal.html" %}
 
 {% endblock page-content %}

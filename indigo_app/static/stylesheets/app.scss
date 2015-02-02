@@ -137,3 +137,8 @@ html, body {
 
   @import 'akoma-ntoso';
 }
+
+/* standalone pages, such as the password reset form */
+.standalone {
+  margin-top: 100px;
+}

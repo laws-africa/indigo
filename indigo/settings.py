@@ -151,6 +151,11 @@ REST_FRAMEWORK = {
 }
 
 
+# disable email in development
+if DEBUG:
+   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
 # Logging
 LOGGING = {
     'version': 1,

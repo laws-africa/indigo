@@ -8,4 +8,8 @@ urlpatterns = patterns('',
 
     url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
     url(r'^library/$', views.library, name='library'),
+
+    url(r'^auth/', include('rest_auth.urls')),
+    url(r'^auth/password/reset-confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        views.password_reset_confirm, name='password_reset_confirm'),
 )

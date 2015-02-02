@@ -7,9 +7,11 @@
   Indigo.UserView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .js-user-buttons .login.not-logged-in': 'showLoginBox',
+      'click .js-user-buttons .btn.login.not-logged-in': 'showLoginBox',
       'click .js-user-buttons .logout': 'logout',
-      'click .js-user-buttons .forgot-password': 'showForgotPassword',
+
+      // in the modal
+      'click .btn.forgot-password': 'showForgotPassword',
       'show.bs.modal #login-box': 'loginBoxShown',
       'submit form.login-form': 'authenticate',
       'submit form.forgot-password-form': 'forgotPassword',
@@ -48,15 +50,21 @@
       this.$loginBox.modal();
     },
 
+    showForgotPassword: function(e) {
+      e.preventDefault();
+
+      this.$loginBox.find('.login-form').hide();
+      this.$loginBox.find('.forgot-password-form').show();
+    },
+
     authenticate: function(e) {
       e.preventDefault();
       var self = this;
 
-      $.post('/auth/login/', this.$loginBox.find('form').serialize())
+      $.post('/auth/login/', this.$loginBox.find('.login-form').serialize())
         .error(function(xhr) {
           // bad creds
-          self.$loginBox.find('.alert').show();
-          self.$loginBox.find('.alert').text("Your username or password are incorrect.");
+          self.$loginBox.find('.alert').show().text("Your username or password are incorrect.");
         })
         .then(function(xhr) {
           // logged in
@@ -64,6 +72,19 @@
           self.$loginBox.modal('hide');
           // update the csrf token we use
           Indigo.csrfToken = $.cookie('csrftoken');
+        });
+    },
+
+    forgotPassword: function(e) {
+      e.preventDefault();
+      var self = this;
+
+      $.post('/auth/password/reset/', this.$loginBox.find('.forgot-password-form').serialize())
+        .then(function(xhr) {
+          // reset sent
+          self.$loginBox.find('.forgot-password-form').hide();
+          self.$loginBox.find('.login-form').show();
+          self.$loginBox.find('.alert').show().text('An email with password reset instructions has been sent. Please check your inbox.');
         });
     },
 

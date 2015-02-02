@@ -21,6 +21,7 @@ register('js', Bundle(
     'javascript/ace/ace.js',
     'javascript/indigo/models.js',
     'javascript/indigo/views/user.js',
+    'javascript/indigo/views/reset_password.js',
     'javascript/indigo/views/document.js',
     'javascript/indigo/views/library.js',
     'javascript/indigo/views/error_box.js',

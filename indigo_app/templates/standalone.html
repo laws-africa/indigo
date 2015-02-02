@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block body-class %}standalone{% endblock %}
+
+{% block page-content %}
+  <div class="row">
+    <div class="col-sm-offset-3 col-sm-6">
+      <div class="standalone-content">
+        {% block standalone-content %}
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+{% endblock page-content %}

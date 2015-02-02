@@ -90,6 +90,8 @@
       this.model.on('change', this.setModelDirty, this);
       this.model.on('sync', this.setModelClean, this);
 
+      Indigo.userView.model.on('change', this.userChanged, this);
+
       new Indigo.DocumentTitleView({model: this.model});
       new Indigo.DocumentPropertiesView({model: this.model});
       new Indigo.DocumentContentEditorView({model: this.model});
@@ -117,6 +119,10 @@
           .removeClass('btn-info')
           .prop('disabled', true);
       }
+    },
+
+    userChanged: function() {
+      $('.btn.save').toggle(Indigo.userView.model.authenticated());
     },
 
     save: function() {

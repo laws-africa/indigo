@@ -15,4 +15,12 @@
     model: Indigo.Document,
     url: '/api/documents'
   });
+
+  Indigo.User = Backbone.Model.extend({
+    url: '/auth/user',
+
+    authenticated: function() {
+      return !!this.get('username');
+    },
+  });
 })(window);

@@ -20,6 +20,7 @@ register('js', Bundle(
     'bower_components/handlebars/handlebars.min.js',
     'javascript/ace/ace.js',
     'javascript/indigo/models.js',
+    'javascript/indigo/views/user.js',
     'javascript/indigo/views/document.js',
     'javascript/indigo/views/library.js',
     'javascript/indigo/views/error_box.js',

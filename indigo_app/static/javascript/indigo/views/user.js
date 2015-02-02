@@ -64,7 +64,7 @@
       $.post('/auth/login/', this.$loginBox.find('.login-form').serialize())
         .error(function(xhr) {
           // bad creds
-          self.$loginBox.find('.alert').show().text("Your username or password are incorrect.");
+          self.$loginBox.find('.alert-danger').show().text("Your username or password are incorrect.");
         })
         .then(function(xhr) {
           // logged in
@@ -80,11 +80,14 @@
       var self = this;
 
       $.post('/auth/password/reset/', this.$loginBox.find('.forgot-password-form').serialize())
+        .fail(function(xhr, msg) {
+          self.$loginBox.find('.alert-danger').show().text(msg);
+        })
         .then(function(xhr) {
           // reset sent
           self.$loginBox.find('.forgot-password-form').hide();
           self.$loginBox.find('.login-form').show();
-          self.$loginBox.find('.alert').show().text('An email with password reset instructions has been sent. Please check your inbox.');
+          self.$loginBox.find('.alert-success').show().text('An email with password reset instructions has been sent. Please check your inbox.');
         });
     },
 

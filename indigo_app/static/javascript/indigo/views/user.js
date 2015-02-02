@@ -68,8 +68,10 @@
         })
         .then(function(xhr) {
           // logged in
-          self.model.fetch();
-          self.$loginBox.modal('hide');
+          self.model.fetch()
+            .then(function() {
+              self.$loginBox.modal('hide');
+            });
           // update the csrf token we use
           Indigo.csrfToken = $.cookie('csrftoken');
         });

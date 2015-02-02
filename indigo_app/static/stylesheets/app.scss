@@ -72,11 +72,16 @@ html, body {
   .workspace-title {
     float: left;
     width: calc(100% - 232px);
+
+    h4 {
+      max-width: 80%;
+    }
   }
 
   .buttons {
-    float: right;
-    margin-right: 10px;
+    position: fixed;
+    top: 5px;
+    right: 15px;
   }
 }
 

@@ -12,29 +12,21 @@
       </div>
 
       <div class="workspace-title">
-        <div class="row">
-          <div class="col-sm-9">
-            {% block header %}{% endblock %}
-          </div>
+        {% block header %}{% endblock %}
+      </div>
 
-          <div class="col-sm-3 js-user-buttons">
-            <div class="buttons">
-              {% block header-buttons %}{% endblock %}
+      <div class="buttons js-user-buttons">
+        {% block header-buttons %}{% endblock %}
 
-              <button type="button" class="btn btn-default login not-logged-in"><i class="fa fa-sign-in"></i> Login</button>
+        <button type="button" class="btn btn-default login not-logged-in"><i class="fa fa-sign-in"></i> Login</button>
 
-              <button type="button" class="btn btn-default logged-in" data-toggle="dropdown" style="display: none">
-                <i class="fa fa-user"></i> <span class="username"></span>
-                <span class="caret"></span>
-              </button>
-              <ul class="pull-right dropdown-menu dropdown-right">
-                <li><a class="logout" href="#"><i class="fa fa-sign-out"></i> Log out</a></li>
-              </ul>
-            </div>
-
-
-          </div>
-        </div>
+        <button type="button" class="btn btn-default logged-in" data-toggle="dropdown" style="display: none">
+          <i class="fa fa-user"></i> <span class="username"></span>
+          <span class="caret"></span>
+        </button>
+        <ul class="pull-right dropdown-menu dropdown-right">
+          <li><a class="logout" href="#"><i class="fa fa-sign-out"></i> Log out</a></li>
+        </ul>
       </div>
     </header>
 

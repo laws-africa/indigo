@@ -12,6 +12,7 @@ register('css', Bundle(
 
 register('js', Bundle(
     'bower_components/jquery/dist/jquery.min.js',
+    'bower_components/jquery-cookie/jquery.cookie.js',
     'bower_components/underscore/underscore-min.js',
     'bower_components/backbone/backbone.js',
     'bower_components/backbone.stickit/backbone.stickit.js',

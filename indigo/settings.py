@@ -157,7 +157,6 @@ EMAIL_HOST_USER = 'greg@code4sa.org'
 EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_PORT = 587
 EMAIL_SUBJECT_PREFIX = '[Indigo] '
-EMAIL_USE_SSL = True
 
 # disable email in development
 if DEBUG:

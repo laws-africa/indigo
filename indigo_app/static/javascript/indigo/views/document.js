@@ -7,7 +7,7 @@
   Indigo.DocumentTitleView = Backbone.View.extend({
     el: '.workspace-header',
     bindings: {
-      'h4': 'title'
+      '.document-title': 'title'
     },
 
     initialize: function() {

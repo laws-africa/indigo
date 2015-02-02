@@ -136,7 +136,11 @@
           .save()
           .fail(function(request) {
             btn.prop('disabled', false);
-            Indigo.errorView.show(request.responseText || request.statusText);
+            if (request.status == 403) {
+              Indigo.errorView.show("You aren't allowed to save. Try logging out and in again.");
+            } else {
+              Indigo.errorView.show(request.responseText || request.statusText);
+            }
           });
       }
     },

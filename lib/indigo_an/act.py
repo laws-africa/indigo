@@ -16,7 +16,7 @@ class Act(object):
 
         `root`: lxml.objectify.ObjectifiedElement root of the XML document
         `meta`: lxml.objectify.ObjectifiedElement meta element
-        `meta`: lxml.objectify.ObjectifiedElement body element
+        `body`: lxml.objectify.ObjectifiedElement body element
     """
 
     def __init__(self, xml=None):
@@ -42,6 +42,22 @@ class Act(object):
     @title.setter
     def title(self, value):
         self.meta.identification.FRBRWork.FRBRalias.set('value', value)
+
+    @property
+    def frbr_uri(self):
+        return self.meta.identification.FRBRWork.FRBRuri.get('value')
+
+    @frbr_uri.setter
+    def frbr_uri(self, value):
+        if not value.endswith('/'):
+            value = value + "/"
+
+        self.meta.identification.FRBRWork.FRBRuri.set('value', value)
+
+        language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
+        lang_uri = value + language + "@"
+        self.meta.identification.FRBRExpression.FRBRuri.set('value', lang_uri)
+        self.meta.identification.FRBRExpression.FRBRuri.set('value', lang_uri)
 
     def to_xml(self):
         return etree.tostring(self.root, pretty_print=True)

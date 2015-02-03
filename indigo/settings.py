@@ -180,6 +180,10 @@ LOGGING = {
         }
     },
     'loggers': {
+        'indigo_api': {
+            'handlers': ['console'],
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
         'django': {
             'handlers': ['console'],
             'level': 'INFO',

@@ -1,6 +1,8 @@
 Indigo
 ======
 
+[![Build Status](https://travis-ci.org/Code4SA/indigo.svg)](http://travis-ci.org/Code4SA/indigo)
+
 Indigo is AfricanLII's document management system for managing, capturing and publishing
 legislation in the Akoma Ntoso format.
 

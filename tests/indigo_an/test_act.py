@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from indigo_api.an.act import Act
+from indigo_an.act import Act
 
 class ActTestCase(TestCase):
     def test_empty_act(self):

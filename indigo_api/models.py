@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from an.act import Act
+from indigo_an.act import Act
 
 COUNTRIES = sorted([
         ('za', 'South Africa'),

@@ -7,7 +7,7 @@ from rest_framework.response import Response
 
 from .models import Document
 from .serializers import DocumentSerializer
-from .an.render.html import HTMLRenderer
+from indigo_an.render.html import HTMLRenderer
 
 # REST API
 class DocumentViewSet(viewsets.ModelViewSet):

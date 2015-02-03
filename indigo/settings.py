@@ -46,6 +46,7 @@ INSTALLED_APPS = (
     'rest_auth',
 
     'django_extensions',
+    'django_nose',
 
     # the Indigo API
     'indigo_api',

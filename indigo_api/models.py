@@ -1,7 +1,7 @@
 import logging
 
 from django.db import models
-from an.act import Act
+from indigo_an.act import Act
 
 COUNTRIES = sorted([
         ('za', 'South Africa'),
@@ -50,7 +50,8 @@ class Document(models.Model):
     def copy_attributes(self):
         """ Override to update the XML document. """
         self.doc.title = self.title
-        # TODO: set all other attributes
+        self.doc.frbr_uri = self.uri
+
         log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()
 

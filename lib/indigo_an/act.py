@@ -60,6 +60,14 @@ class Act(object):
         self.meta.identification.FRBRExpression.FRBRdate.set('date', value)
 
     @property
+    def manifestation_date(self):
+        return self.meta.identification.FRBRManifestation.FRBRdate.get('date')
+
+    @manifestation_date.setter
+    def manifestation_date(self, value):
+        self.meta.identification.FRBRManifestation.FRBRdate.set('date', value)
+
+    @property
     def frbr_uri(self):
         return self.meta.identification.FRBRWork.FRBRuri.get('value')
 

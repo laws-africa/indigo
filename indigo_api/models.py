@@ -1,6 +1,9 @@
 import logging
+from datetime import date
 
 from django.db import models
+import arrow
+
 from indigo_an.act import Act
 
 COUNTRIES = sorted([
@@ -43,6 +46,16 @@ class Document(models.Model):
         log.debug("Set body_xml to: %s" % xml)
         self.doc.body_xml = xml
 
+    @property
+    def publication_date(self):
+        return arrow.get(self.doc.work_date).date()
+
+    @publication_date.setter
+    def publication_date(self, value):
+        if isinstance(value, date):
+            value = value.strftime('%Y-%m-%d')
+        self.doc.work_date = value
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)
@@ -51,6 +64,10 @@ class Document(models.Model):
         """ Override to update the XML document. """
         self.doc.title = self.title
         self.doc.frbr_uri = self.uri
+        if self.updated_at:
+            self.doc.manifestation_date = self.updated_at.strftime('%Y-%m-%d')
+        else:
+            self.doc.manifestation_date = arrow.now().strftime('%Y-%m-%d')
 
         log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()

@@ -26,6 +26,7 @@
       '#document_title': 'title',
       '#document_country': 'country',
       '#document_uri': 'uri',
+      '#document_publication_date': 'publication_date',
       '#document_draft': {
         observe: 'draft',
         onSet: function(val) {

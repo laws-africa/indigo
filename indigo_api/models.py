@@ -1,3 +1,5 @@
+import logging
+
 from django.db import models
 from an.act import Act
 
@@ -5,6 +7,8 @@ COUNTRIES = sorted([
         ('za', 'South Africa'),
         ('zm', 'Zambia'),
         ])
+
+log = logging.getLogger(__name__)
 
 class Document(models.Model):
     db_table = 'documents'
@@ -36,6 +40,7 @@ class Document(models.Model):
 
     @body_xml.setter
     def body_xml(self, xml):
+        log.debug("Set body_xml to: %s" % xml)
         self.doc.body_xml = xml
 
     def save(self, *args, **kwargs):
@@ -46,6 +51,7 @@ class Document(models.Model):
         """ Override to update the XML document. """
         self.doc.title = self.title
         # TODO: set all other attributes
+        log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()
 
     def __unicode__(self):

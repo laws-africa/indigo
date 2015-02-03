@@ -56,10 +56,8 @@ class Act(object):
         rooted at a `body` element. """
         new_body = objectify.fromstring(xml)
         new_body.tag = 'body'
-        new_body.prefix
-
-
         self.body.getparent().replace(self.body, new_body)
+        self.body = new_body
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

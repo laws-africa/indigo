@@ -50,7 +50,7 @@
       this.editor.getSession().setMode("ace/mode/xml");
       this.editor.setValue();
 
-      this.model.on('change:document_xml', this.updateEditor, this);
+      this.model.on('change:body_xml', this.updateEditor, this);
       this.editor.on('change', _.debounce(
         $.proxy(this.updateDocumentContent, this),
         500));
@@ -59,14 +59,14 @@
     updateEditor: function(model, value, options) {
       // update the editor with new content from the model,
       // unless this new content already comes from the editor
-      if (!options.fromEditor) this.editor.setValue(this.model.get('document_xml'));
+      if (!options.fromEditor) this.editor.setValue(this.model.get('body_xml'));
     },
 
     updateDocumentContent: function() {
       // update the document content from the editor's version
-      console.log('new document content');
+      console.log('new body_xml content');
       this.model.set(
-        {document_xml: this.editor.getValue()},
+        {body_xml: this.editor.getValue()},
         {fromEditor: true}); // prevent infinite loop
     },
   });

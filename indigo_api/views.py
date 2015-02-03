@@ -34,7 +34,7 @@ class RenderAPI(APIView):
             {
               "document": {
                 "title": "A title",
-                "document_xml": "... xml ..."
+                "body_xml": "... xml ..."
               }
             }
 

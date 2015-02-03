@@ -1,11 +1,11 @@
 from django.db import models
+from an.act import Act
 
 COUNTRIES = sorted([
         ('za', 'South Africa'),
         ('zm', 'Zambia'),
         ])
 
-# Create your models here.
 class Document(models.Model):
     db_table = 'documents'
 
@@ -22,6 +22,19 @@ class Document(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def doc(self):
+        """ The wrapped `an.act.Act` that this document works with. """
+        if not hasattr(self, '_doc'):
+            self._doc = Act(self.document_xml)
+        return self._doc
+
+    def clean(self):
+        """ Override validation to update the XML document. """
+        self.doc.title = self.title
+        # TODO: set all other attributes
+        self.document_xml = self.doc.to_xml()
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

@@ -57,7 +57,7 @@ class Act(object):
         language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
         lang_uri = value + language + "@"
         self.meta.identification.FRBRExpression.FRBRuri.set('value', lang_uri)
-        self.meta.identification.FRBRExpression.FRBRuri.set('value', lang_uri)
+        self.meta.identification.FRBRManifestation.FRBRuri.set('value', lang_uri)
 
     def to_xml(self):
         return etree.tostring(self.root, pretty_print=True)

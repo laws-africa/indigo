@@ -44,6 +44,22 @@ class Act(object):
         self.meta.identification.FRBRWork.FRBRalias.set('value', value)
 
     @property
+    def work_date(self):
+        return self.meta.identification.FRBRWork.FRBRdate.get('date')
+
+    @work_date.setter
+    def work_date(self, value):
+        self.meta.identification.FRBRWork.FRBRdate.set('date', value)
+
+    @property
+    def expression_date(self):
+        return self.meta.identification.FRBRExpression.FRBRdate.get('date')
+
+    @expression_date.setter
+    def expression_date(self, value):
+        self.meta.identification.FRBRExpression.FRBRdate.set('date', value)
+
+    @property
     def frbr_uri(self):
         return self.meta.identification.FRBRWork.FRBRuri.get('value')
 

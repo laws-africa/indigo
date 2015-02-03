@@ -17,3 +17,17 @@ class ActTestCase(TestCase):
         assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/za/act/2007/01/eng@')
         assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/za/act/2007/01/eng@')
 
+    def test_work_date(self):
+        a = Act()
+        a.work_date = '2012-01-02'
+        assert_equal(a.work_date, '2012-01-02')
+
+    def test_expression_date(self):
+        a = Act()
+        a.expression_date = '2012-01-02'
+        assert_equal(a.expression_date, '2012-01-02')
+
+    def test_manifestation_date(self):
+        a = Act()
+        a.manifestation_date = '2012-01-02'
+        assert_equal(a.manifestation_date, '2012-01-02')

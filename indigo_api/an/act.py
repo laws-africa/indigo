@@ -3,7 +3,7 @@ import re
 from lxml import objectify 
 from lxml import etree
 
-encoding_re = re.compile('encoding="\w+"')
+encoding_re = re.compile('encoding="[\w-]+"')
 
 class Act(object):
     """
@@ -45,6 +45,21 @@ class Act(object):
 
     def to_xml(self):
         return etree.tostring(self.root, pretty_print=True)
+
+    @property
+    def body_xml(self):
+        return etree.tostring(self.body, pretty_print=True)
+
+    @body_xml.setter
+    def body_xml(self, xml):
+        """ Insert the string `xml` as the body of the document. The XML must be 
+        rooted at a `body` element. """
+        new_body = objectify.fromstring(xml)
+        new_body.tag = 'body'
+        new_body.prefix
+
+
+        self.body.getparent().replace(self.body, new_body)
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

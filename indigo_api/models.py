@@ -30,8 +30,20 @@ class Document(models.Model):
             self._doc = Act(self.document_xml)
         return self._doc
 
-    def clean(self):
-        """ Override validation to update the XML document. """
+    @property
+    def body_xml(self):
+        return self.doc.body_xml
+
+    @body_xml.setter
+    def body_xml(self, xml):
+        self.doc.body_xml = xml
+
+    def save(self, *args, **kwargs):
+        self.copy_attributes()
+        return super(Document, self).save(*args, **kwargs)
+
+    def copy_attributes(self):
+        """ Override to update the XML document. """
         self.doc.title = self.title
         # TODO: set all other attributes
         self.document_xml = self.doc.to_xml()

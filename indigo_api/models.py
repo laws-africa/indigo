@@ -27,6 +27,10 @@ class Document(models.Model):
     document_xml = models.TextField(null=True, blank=True)
     """ Raw XML content of the entire document """
 
+    publication_name = models.CharField(null=True, max_length=1024, help_text='Name of the original publication, such as a national gazette.')
+    publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number.")
+    publication_date = models.DateField(null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

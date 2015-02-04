@@ -5,4 +5,3 @@ from indigo_api.models import Document
 class DocumentForm(ModelForm):
     class Meta:
         model = Document
-        fields = ['country']

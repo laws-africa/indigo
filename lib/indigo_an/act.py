@@ -1,9 +1,19 @@
 import re
+from datetime import date
 
 from lxml import objectify 
 from lxml import etree
+import arrow
 
 encoding_re = re.compile('encoding="[\w-]+"')
+
+DATE_FORMAT = "%Y-%m-%d"
+
+def datestring(value):
+    if isinstance(value, basestring):
+        return value
+    else:
+        return value.strftime(DATE_FORMAT)
 
 class Act(object):
     """
@@ -45,27 +55,27 @@ class Act(object):
 
     @property
     def work_date(self):
-        return self.meta.identification.FRBRWork.FRBRdate.get('date')
+        return arrow.get(self.meta.identification.FRBRWork.FRBRdate.get('date')).date()
 
     @work_date.setter
     def work_date(self, value):
-        self.meta.identification.FRBRWork.FRBRdate.set('date', value)
+        self.meta.identification.FRBRWork.FRBRdate.set('date', datestring(value))
 
     @property
     def expression_date(self):
-        return self.meta.identification.FRBRExpression.FRBRdate.get('date')
+        return arrow.get(self.meta.identification.FRBRExpression.FRBRdate.get('date')).date()
 
     @expression_date.setter
     def expression_date(self, value):
-        self.meta.identification.FRBRExpression.FRBRdate.set('date', value)
+        self.meta.identification.FRBRExpression.FRBRdate.set('date', datestring(value))
 
     @property
     def manifestation_date(self):
-        return self.meta.identification.FRBRManifestation.FRBRdate.get('date')
+        return arrow.get(self.meta.identification.FRBRManifestation.FRBRdate.get('date')).date()
 
     @manifestation_date.setter
     def manifestation_date(self, value):
-        self.meta.identification.FRBRManifestation.FRBRdate.set('date', value)
+        self.meta.identification.FRBRManifestation.FRBRdate.set('date', datestring(value))
 
     @property
     def frbr_uri(self):

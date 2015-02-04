@@ -52,12 +52,10 @@ class Document(models.Model):
 
     @property
     def publication_date(self):
-        return arrow.get(self.doc.work_date).date()
+        return self.doc.work_date
 
     @publication_date.setter
     def publication_date(self, value):
-        if isinstance(value, date):
-            value = value.strftime('%Y-%m-%d')
         self.doc.work_date = value
 
     def save(self, *args, **kwargs):
@@ -68,10 +66,7 @@ class Document(models.Model):
         """ Override to update the XML document. """
         self.doc.title = self.title
         self.doc.frbr_uri = self.uri
-        if self.updated_at:
-            self.doc.manifestation_date = self.updated_at.strftime('%Y-%m-%d')
-        else:
-            self.doc.manifestation_date = arrow.now().strftime('%Y-%m-%d')
+        self.doc.manifestation_date = self.updated_at or arrow.now()
 
         log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()

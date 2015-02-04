@@ -41,6 +41,7 @@ class Document(models.Model):
             self._doc = Act(self.document_xml)
         return self._doc
 
+
     @property
     def body_xml(self):
         return self.doc.body_xml
@@ -50,13 +51,6 @@ class Document(models.Model):
         log.debug("Set body_xml to: %s" % xml)
         self.doc.body_xml = xml
 
-    @property
-    def publication_date(self):
-        return self.doc.work_date
-
-    @publication_date.setter
-    def publication_date(self, value):
-        self.doc.work_date = value
 
     def save(self, *args, **kwargs):
         self.copy_attributes()
@@ -66,7 +60,13 @@ class Document(models.Model):
         """ Override to update the XML document. """
         self.doc.title = self.title
         self.doc.frbr_uri = self.uri
+
+        self.doc.work_date = self.publication_date
         self.doc.manifestation_date = self.updated_at or arrow.now()
+
+        self.doc.publication_date = self.publication_date or ''
+        self.doc.publication_name = self.publication_name or ''
+        self.doc.publication_number = self.publication_number or ''
 
         log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()

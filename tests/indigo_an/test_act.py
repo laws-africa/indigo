@@ -31,3 +31,24 @@ class ActTestCase(TestCase):
         a = Act()
         a.manifestation_date = '2012-01-02'
         assert_equal(datestring(a.manifestation_date), '2012-01-02')
+
+    def test_publication_date(self):
+        a = Act()
+        assert_is_none(a.publication_date)
+
+        a.publication_date = '2012-01-02'
+        assert_equal(datestring(a.publication_date), '2012-01-02')
+
+    def test_publication_number(self):
+        a = Act()
+        assert_is_none(a.publication_number)
+
+        a.publication_number = '1234'
+        assert_equal(a.publication_number, '1234')
+
+    def test_publication_name(self):
+        a = Act()
+        assert_is_none(a.publication_name)
+
+        a.publication_name = 'Publication'
+        assert_equal(a.publication_name, 'Publication')

@@ -1,9 +1,10 @@
 from .models import Document
 from rest_framework import serializers
+from rest_framework.reverse import reverse
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-    body_xml = serializers.CharField()
     publication_date = serializers.DateField()
+    body_xml_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
@@ -15,7 +16,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'title', 'country', 'number', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
 
-                # TODO: don't send this back in the listing view, it could be huge
-                'body_xml',
+                # don't include the full body, it could be huge. link to it.
+                'body_xml_url'
                 )
-        read_only_fields = ('number', 'nature')
+        read_only_fields = ('number', 'nature', 'body_xml_url')
+
+    def get_body_xml_url(self, doc):
+        return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})

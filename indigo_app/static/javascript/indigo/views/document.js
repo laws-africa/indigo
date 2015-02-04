@@ -30,6 +30,7 @@
       '#document_publication_name': 'publication_name',
       '#document_publication_number': 'publication_number',
       '#document_number': 'number',
+      '#document_nature': 'nature',
       '#document_draft': {
         observe: 'draft',
         // API requires this value to be true or false
@@ -59,7 +60,7 @@
 
       // only attach URI building handlers after the first sync
       this.listenToOnce(this.model, 'sync', function() {
-        this.model.on('change:number change:country change:publication_date', _.bind(this.calculateUri, this));
+        this.model.on('change:number change:nature change:country change:publication_date', _.bind(this.calculateUri, this));
       });
     },
 
@@ -68,7 +69,7 @@
       var parts = [
         '',
         this.model.get('country'),
-        'act',
+        this.model.get('nature'),
         this.model.get('publication_date').split('-')[0],
         this.model.get('number'),
         ''];

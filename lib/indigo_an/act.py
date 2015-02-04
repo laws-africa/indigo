@@ -150,6 +150,15 @@ class Act(object):
             except IndexError:
                 pass
 
+    @property
+    def nature(self):
+        """ The nature of the document, such as an act, derived from :data:`frbr_uri`. Read-only. """
+        if self.frbr_uri:
+            try:
+                return self.frbr_uri.split('/')[2]
+            except IndexError:
+                pass
+
     def to_xml(self):
         return etree.tostring(self.root, pretty_print=True)
 

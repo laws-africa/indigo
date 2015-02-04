@@ -7,7 +7,7 @@
     <fieldset>
       <div class="form-horizontal">
         <div class="form-group">
-          <label for="document_title" class="col-sm-2 control-label">Document title</label>
+          <label for="document_title" class="col-sm-2 control-label">Short title</label>
           <div class="col-sm-10">
             <input type="email" class="form-control" id="document_title" placeholder="Title">
           </div>
@@ -23,10 +23,18 @@
             </select>
           </div>
 
+          <label for="document_nature" class="col-sm-2 control-label">Nature</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="document_nature">
+            <p class="help-block">Type of document, usually <i>act</i></p>
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="document_number" class="col-sm-2 control-label">Number</label>
           <div class="col-sm-4">
             <input type="text" class="form-control" id="document_number">
-              <p class="help-block">Number within the year of publication</p>
+            <p class="help-block">Number within the year of publication</p>
           </div>
         </div>
 
@@ -34,7 +42,7 @@
           <label for="document_uri" class="col-sm-2 control-label">FRBR URI</label>
           <div class="col-sm-10">
             <input type="text" class="form-control" id="document_uri">
-              <p class="help-block">{{ form.fields.uri.help_text }}</p>
+            <p class="help-block">{{ form.fields.uri.help_text }}</p>
           </div>
         </div>
 

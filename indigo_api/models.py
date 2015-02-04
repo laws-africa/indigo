@@ -58,6 +58,11 @@ class Document(models.Model):
         return self.doc.number
 
 
+    @property
+    def nature(self):
+        return self.doc.nature
+
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)

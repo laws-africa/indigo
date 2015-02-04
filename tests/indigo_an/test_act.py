@@ -16,6 +16,8 @@ class ActTestCase(TestCase):
         assert_equal(a.frbr_uri, '/za/act/2007/01/')
         assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/za/act/2007/01/eng@')
         assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/za/act/2007/01/eng@')
+        
+        assert_equal(a.number, '01')
 
     def test_work_date(self):
         a = Act()

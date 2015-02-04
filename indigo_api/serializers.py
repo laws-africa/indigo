@@ -12,9 +12,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'id', 'url',
 
                 'uri', 'draft', 'created_at', 'updated_at',
-                'title', 'country',
+                'title', 'country', 'number',
                 'publication_date', 'publication_name', 'publication_number',
 
                 # TODO: don't send this back in the listing view, it could be huge
                 'body_xml',
                 )
+        read_only_fields = ('number')

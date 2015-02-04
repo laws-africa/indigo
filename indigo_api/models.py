@@ -16,7 +16,8 @@ log = logging.getLogger(__name__)
 class Document(models.Model):
     db_table = 'documents'
 
-    uri = models.CharField(max_length=512, null=True, unique=True)
+    uri = models.CharField(max_length=512, null=True, unique=True,
+            help_text="Used globably to identify this document")
     """ The FRBRuri of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True)
@@ -27,8 +28,8 @@ class Document(models.Model):
     document_xml = models.TextField(null=True, blank=True)
     """ Raw XML content of the entire document """
 
-    publication_name = models.CharField(null=True, max_length=1024, help_text='Name of the original publication, such as a national gazette.')
-    publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number.")
+    publication_name = models.CharField(null=True, max_length=1024, help_text='Name of the original publication, such as a national gazette')
+    publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number")
     publication_date = models.DateField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -50,6 +51,11 @@ class Document(models.Model):
     def body_xml(self, xml):
         log.debug("Set body_xml to: %s" % xml)
         self.doc.body_xml = xml
+
+
+    @property
+    def number(self):
+        return self.doc.number
 
 
     def save(self, *args, **kwargs):

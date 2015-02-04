@@ -141,6 +141,15 @@ class Act(object):
         self.meta.identification.FRBRExpression.FRBRuri.set('value', lang_uri)
         self.meta.identification.FRBRManifestation.FRBRuri.set('value', lang_uri)
 
+    @property
+    def number(self):
+        """ The act number, derived from :data:`frbr_uri`. Read-only. """
+        if self.frbr_uri:
+            try:
+                return self.frbr_uri.split('/')[4]
+            except IndexError:
+                pass
+
     def to_xml(self):
         return etree.tostring(self.root, pretty_print=True)
 

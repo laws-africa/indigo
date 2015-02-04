@@ -29,12 +29,11 @@
       '#document_publication_date': 'publication_date',
       '#document_publication_name': 'publication_name',
       '#document_publication_number': 'publication_number',
+      '#document_number': 'number',
       '#document_draft': {
         observe: 'draft',
-        onSet: function(val) {
-          // API requires true or false
-          return val == "1";
-        }
+        // API requires this value to be true or false
+        onSet: function(val) { return val == "1"; }
       }
     },
 
@@ -57,6 +56,23 @@
       this.editor.on('change', _.debounce(
         $.proxy(this.updateDocumentContent, this),
         500));
+
+      // only attach URI building handlers after the first sync
+      this.listenToOnce(this.model, 'sync', function() {
+        this.model.on('change:number change:country change:publication_date', _.bind(this.calculateUri, this));
+      });
+    },
+
+    calculateUri: function() {
+      // rebuild the FRBR uri when one of its component sources changes
+      var parts = [
+        '',
+        this.model.get('country'),
+        'act',
+        this.model.get('publication_date').split('-')[0],
+        this.model.get('number'),
+        ''];
+      this.model.set('uri', parts.join('/'));
     },
 
     updateEditor: function(model, value, options) {

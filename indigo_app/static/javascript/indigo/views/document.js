@@ -7,7 +7,11 @@
   Indigo.DocumentTitleView = Backbone.View.extend({
     el: '.workspace-header',
     bindings: {
-      '.document-title': 'title'
+      '.document-title': {
+        observe: ['title', 'draft'],
+        updateMethod: 'html',
+        onGet: 'render',
+      }
     },
 
     initialize: function() {
@@ -17,6 +21,16 @@
 
     setWindowTitle: function() {
       document.title = this.get('title');
+    },
+
+    render: function(title) {
+      var html = this.model.get('title');
+
+      if (this.model.get('draft')) {
+        html = html + ' <span class="label label-warning">draft</span>';
+      }
+
+      return html;
     },
   });
 

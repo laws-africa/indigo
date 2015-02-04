@@ -53,7 +53,8 @@ html, body {
   border-bottom: 1px solid $border-colour;
 
   h1, h2, h3, h4 {
-    margin: 8px;
+    line-height: 1.5;
+    margin: 4px;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow-x: hidden;

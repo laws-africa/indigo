@@ -4,6 +4,7 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
+  // Handle the rendering of the document title, and the browser window title
   Indigo.DocumentTitleView = Backbone.View.extend({
     el: '.workspace-header',
     bindings: {
@@ -34,6 +35,7 @@
     },
   });
 
+  // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '#props-tab article',
     bindings: {
@@ -54,23 +56,10 @@
 
     initialize: function() {
       this.stickit();
-    }
-  });
 
-  Indigo.DocumentContentEditorView = Backbone.View.extend({
-    el: '#content-tab',
-
-    initialize: function() {
-      // setup ace editor
-      this.editor = ace.edit(this.$el.find(".ace-editor")[0]);
-      this.editor.setTheme("ace/theme/monokai");
-      this.editor.getSession().setMode("ace/mode/xml");
-      this.editor.setValue();
-
-      this.model.on('change:body_xml', this.updateEditor, this);
-      this.editor.on('change', _.debounce(
-        $.proxy(this.updateDocumentContent, this),
-        500));
+      this.dirty = false;
+      this.model.on('change', this.setDirty, this);
+      this.model.on('sync', this.setClean, this);
 
       // only attach URI building handlers after the first sync
       this.listenToOnce(this.model, 'sync', function() {
@@ -90,13 +79,84 @@
       this.model.set('uri', parts.join('/'));
     },
 
-    updateEditor: function(model, value, options) {
+    setDirty: function() {
+      if (!this.dirty) {
+        this.dirty = true;
+        this.trigger('dirty');
+      }
+    },
+
+    setClean: function() {
+      if (this.dirty) {
+        this.dirty = false;
+        this.trigger('clean');
+      }
+    },
+
+    save: function() {
+      // TODO: validation
+
+      // don't do anything if it hasn't changed
+      if (!this.dirty) {
+        return $.Deferred().resolve();
+      }
+
+      return this.model.save();
+    },
+  });
+
+  // Handle the document body editor, tracking changes and saving it back to the server.
+  Indigo.DocumentBodyEditorView = Backbone.View.extend({
+    el: '#content-tab',
+
+    initialize: function() {
+      // setup ace editor
+      this.editor = ace.edit(this.$el.find(".ace-editor")[0]);
+      this.editor.setTheme("ace/theme/monokai");
+      this.editor.getSession().setMode("ace/mode/xml");
+      this.editor.setValue();
+      this.editor.$blockScrolling = Infinity;
+      this.editor.on('change', _.debounce(_.bind(this.updateDocumentBody, this), 500));
+
+      this.dirty = false;
+      this.model.on('change', this.setDirty, this);
+      this.model.on('sync', this.setClean, this);
+
+      this.model.on('change', this.updateEditor, this);
+    },
+
+    setDirty: function() {
+      if (!this.dirty) {
+        this.dirty = true;
+        this.trigger('dirty');
+      }
+    },
+
+    setClean: function() {
+      if (this.dirty) {
+        this.dirty = false;
+        this.trigger('clean');
+      }
+    },
+
+    save: function() {
+      // TODO: validation
+
+      // don't do anything if it hasn't changed
+      if (!this.dirty) {
+        return $.Deferred().resolve();
+      }
+
+      return this.model.save();
+    },
+
+    updateEditor: function(model, options) {
       // update the editor with new content from the model,
       // unless this new content already comes from the editor
       if (!options.fromEditor) this.editor.setValue(this.model.get('body_xml'));
     },
 
-    updateDocumentContent: function() {
+    updateDocumentBody: function() {
       // update the document content from the editor's version
       console.log('new body_xml content');
       this.model.set(
@@ -105,6 +165,25 @@
     },
   });
 
+  // The DocumentView is the primary view on the document detail page.
+  // It is responsible for managing the other views and allowing the user to
+  // save their changes. It has nested sub views that handle separate portions
+  // of the larger view page.
+  //
+  //   DocumentTitleView - handles rendering the title of the document when it changes,
+  //                       including updating the browser page title
+  //
+  //   DocumentPropertiesView - handles editing the document metadata, such as
+  //                            publication dates and URIs
+  //
+  //   DocumentBodyEditorView - handles editing the document's body content
+  //
+  // When saving a document, the DocumentView tells the children to save their changes.
+  // In turn, they trigger 'dirty' and 'clean' events when their models change or
+  // once they've been saved. The DocumentView uses those signals to enable/disable
+  // the save button.
+  //
+  //
   Indigo.DocumentView = Backbone.View.extend({
     el: 'body',
     events: {
@@ -115,41 +194,49 @@
     initialize: function() {
       var library = new Indigo.Library();
 
+      this.$saveBtn = $('.btn.save');
+
       var document_id = $('[data-document-id]').data('document-id');
-      this.model = new Indigo.Document({id: document_id}, {
+      this.document = new Indigo.Document({id: document_id}, {
         collection: library
       });
 
-      this.model.dirty = false;
-      this.model.on('change', this.setModelDirty, this);
-      this.model.on('sync', this.setModelClean, this);
+      this.document.dirty = false;
+      this.document.on('change', this.setDirty, this);
+      this.document.on('sync', this.setModelClean, this);
+
+      this.documentBody = new Indigo.DocumentBody({id: document_id});
+      this.documentBody.on('change', this.setDirty, this);
 
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
 
-      new Indigo.DocumentTitleView({model: this.model});
-      new Indigo.DocumentPropertiesView({model: this.model});
-      new Indigo.DocumentContentEditorView({model: this.model});
+      this.titleView = new Indigo.DocumentTitleView({model: this.document});
+      this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
+      this.propertiesView.on('dirty', this.setDirty, this);
+      this.propertiesView.on('clean', this.setClean, this);
 
-      this.model.fetch();
+      this.bodyEditorView = new Indigo.DocumentBodyEditorView({model: this.documentBody});
+      this.bodyEditorView.on('dirty', this.setDirty, this);
+      this.bodyEditorView.on('clean', this.setClean, this);
+
+      this.document.fetch();
+      this.documentBody.fetch();
     },
 
-    setModelDirty: function() {
-      if (!this.model.dirty) {
-        this.model.dirty = true;
-
-        $('.btn.save')
+    setDirty: function() {
+      if (this.$saveBtn.prop('disabled')) {
+        this.$saveBtn
           .removeClass('btn-default')
           .addClass('btn-info')
           .prop('disabled', false);
       }
     },
 
-    setModelClean: function() {
-      if (this.model.dirty) {
-        this.model.dirty = false;
-
-        $('.btn.save')
+    setClean: function() {
+      // disable the save button if both views are clean
+      if (!this.propertiesView.dirty && !this.bodyEditorView.dirty) {
+        this.$saveBtn
           .addClass('btn-default')
           .removeClass('btn-info')
           .prop('disabled', true);
@@ -157,30 +244,36 @@
     },
 
     userChanged: function() {
-      $('.btn.save').toggle(this.user.authenticated());
+      this.$saveBtn.toggle(this.user.authenticated());
     },
 
     save: function() {
-      if (this.model.isValid()) {
-        var btn = this.$el.find('.btn.save'),
-            self = this;
+      var self = this;
 
-        btn.prop('disabled', true);
+      var failed = function(request) {
+        self.$saveBtn.prop('disabled', false);
+        if (request.status == 403) {
+          Indigo.errorView.show("You aren't allowed to save. Try logging out and in again.");
+        } else {
+          Indigo.errorView.show(request.responseText || request.statusText);
+        }
+      };
 
-        this.model
-          .save()
-          .fail(function(request) {
-            btn.prop('disabled', false);
-            if (request.status == 403) {
-              Indigo.errorView.show("You aren't allowed to save. Try logging out and in again.");
-            } else {
-              Indigo.errorView.show(request.responseText || request.statusText);
-            }
-          });
-      }
+      // TODO: show progress bar
+      this.$saveBtn.prop('disabled', true);
+
+      this.propertiesView
+        .save()
+        .then(function() {
+          self.bodyEditorView
+            .save()
+            .fail(failed);
+        })
+        .fail(failed);
     },
 
     renderPreview: function() {
+      // TODO: handle body_xml
       var data = JSON.stringify({'document': this.model.toJSON()});
 
       $.ajax({

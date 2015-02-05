@@ -19,12 +19,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
 
-    @detail_route(methods=['GET', 'POST'])
+    @detail_route(methods=['GET', 'PUT'])
     def body(self, request, *args, **kwargs):
         if request.method == 'GET':
             return Response({'body_xml': self.get_object().body_xml})
 
-        if request.method == 'POST':
+        if request.method == 'PUT':
             instance = self.get_object()
 
             try:

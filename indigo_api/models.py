@@ -51,6 +51,7 @@ class Document(models.Model):
     def body_xml(self, xml):
         log.debug("Set body_xml to: %s" % xml)
         self.doc.body_xml = xml
+        self.refresh_xml()
 
 
     @property
@@ -79,6 +80,9 @@ class Document(models.Model):
         self.doc.publication_name = self.publication_name or ''
         self.doc.publication_number = self.publication_number or ''
 
+        self.refresh_xml()
+
+    def refresh_xml(self):
         log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()
 

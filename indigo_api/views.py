@@ -1,9 +1,11 @@
 from django.template.loader import render_to_string
 
 from rest_framework import viewsets
-from rest_framework.exceptions import ParseError
+from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import detail_route
+from lxml.etree import LxmlError
 
 from .models import Document
 from .serializers import DocumentSerializer
@@ -16,6 +18,23 @@ class DocumentViewSet(viewsets.ModelViewSet):
     """
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
+
+    @detail_route(methods=['GET', 'PUT'])
+    def body(self, request, *args, **kwargs):
+        if request.method == 'GET':
+            return Response({'body_xml': self.get_object().body_xml})
+
+        if request.method == 'PUT':
+            instance = self.get_object()
+
+            try:
+                instance.body_xml = request.data.get('body_xml')
+                instance.save()
+            except LxmlError as e:
+                raise ValidationError({'body_xml': ["Invalid XML: %s" % e.message]})
+
+            return Response({'body_xml': instance.body_xml})
+
 
 class RenderAPI(APIView):
     def post(self, request, format=None):
@@ -57,6 +76,10 @@ class RenderAPI(APIView):
             ds = DocumentSerializer(instance=document, data=data)
             if ds.is_valid(raise_exception=True):
                 ds.update(document, ds.validated_data)
+
+            # patch in the body xml
+            if 'body_xml' in data:
+                document.body_xml = data['body_xml']
 
         elif u'document_xml' in request.data:
             document = Document()

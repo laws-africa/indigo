@@ -18,6 +18,8 @@ register('js', Bundle(
     'bower_components/backbone.stickit/backbone.stickit.js',
     'bower_components/bootstrap/dist/js/bootstrap.min.js',
     'bower_components/handlebars/handlebars.min.js',
+    'bower_components/moment/min/moment.min.js',
+    'bower_components/moment/locale/en-gb.js',
     'javascript/ace/ace.js',
     'javascript/indigo/models.js',
     'javascript/indigo/views/user.js',

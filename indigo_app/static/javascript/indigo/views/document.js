@@ -250,8 +250,8 @@
     },
 
     setDirty: function() {
-      // if the body has changed, our preview is dirty
-      this.previewDirty = this.previewDirty || this.bodyEditorView.dirty;
+      // our preview is now dirty
+      this.previewDirty = true;
 
       if (this.$saveBtn.prop('disabled')) {
         this.$saveBtn

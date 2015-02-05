@@ -20,16 +20,18 @@ def datestring(value):
 
 class Act(object):
     """
-    An Act wraps a single {http://www.akomantoso.org/ AkomaNtoso 2.0 XML} act document in the form of a
-    XML Element object.
+    An act is a lightweight wrapper around an `Akoma Ntoso 2.0 XML <http://www.akomantoso.org/>`_ act document.
+    It provides methods to help access and manipulate the underlying XML directly, in particular
+    the metadata for the document.
 
-    The Act object provides quick access to certain sections of the document.
+    The Act object provides quick access to certain sections of the document:
 
-    Properties:
+    :ivar root: :class:`lxml.objectify.ObjectifiedElement` root of the XML document
+    :ivar meta: :class:`lxml.objectify.ObjectifiedElement` meta element
+    :ivar body: :class:`lxml.objectify.ObjectifiedElement` body element
 
-        `root`: lxml.objectify.ObjectifiedElement root of the XML document
-        `meta`: lxml.objectify.ObjectifiedElement meta element
-        `body`: lxml.objectify.ObjectifiedElement body element
+    .. seealso::
+        http://www.akomantoso.org/docs/akoma-ntoso-user-documentation/metadata-describes-the-content
     """
 
     def __init__(self, xml=None):
@@ -54,6 +56,7 @@ class Act(object):
 
     @property
     def title(self):
+        """ Short title """
         return self.meta.identification.FRBRWork.FRBRalias.get('value')
 
     @title.setter
@@ -62,6 +65,7 @@ class Act(object):
 
     @property
     def work_date(self):
+        """ Date from the FRBRWork element """
         return arrow.get(self.meta.identification.FRBRWork.FRBRdate.get('date')).date()
 
     @work_date.setter
@@ -71,6 +75,7 @@ class Act(object):
 
     @property
     def expression_date(self):
+        """ Date from the FRBRExpression element """
         return arrow.get(self.meta.identification.FRBRExpression.FRBRdate.get('date')).date()
 
     @expression_date.setter
@@ -80,6 +85,7 @@ class Act(object):
 
     @property
     def manifestation_date(self):
+        """ Date from the FRBRManifestation element """
         return arrow.get(self.meta.identification.FRBRManifestation.FRBRdate.get('date')).date()
 
     @manifestation_date.setter
@@ -89,6 +95,7 @@ class Act(object):
 
     @property
     def publication_name(self):
+        """ Name of the publication in which this act was published """
         pub = self._get('meta.publication')
         return pub.get('name') if pub is not None else None
 
@@ -101,6 +108,7 @@ class Act(object):
 
     @property
     def publication_date(self):
+        """ Date of the publication """
         pub = self._get('meta.publication')
         return pub.get('date') if pub is not None else None
 
@@ -112,6 +120,7 @@ class Act(object):
 
     @property
     def publication_number(self):
+        """ Sequence number of the publication """
         pub = self._get('meta.publication')
         return pub.get('number') if pub is not None else None
 
@@ -121,12 +130,9 @@ class Act(object):
                 .set('number', value)
 
 
-    @manifestation_date.setter
-    def manifestation_date(self, value):
-        self.meta.identification.FRBRManifestation.FRBRdate.set('date', datestring(value))
-
     @property
     def frbr_uri(self):
+        """ The FRBR URI that uniquely identifies this document universally. """
         return self.meta.identification.FRBRWork.FRBRuri.get('value')
 
     @frbr_uri.setter
@@ -164,12 +170,12 @@ class Act(object):
 
     @property
     def body_xml(self):
+        """ The raw XML string of the `body` element of the document. When
+        setting this property, XML must be rooted at a `body` element. """
         return etree.tostring(self.body, pretty_print=True)
 
     @body_xml.setter
     def body_xml(self, xml):
-        """ Insert the string `xml` as the body of the document. The XML must be 
-        rooted at a `body` element. """
         new_body = objectify.fromstring(xml)
         new_body.tag = 'body'
         self.body.getparent().replace(self.body, new_body)

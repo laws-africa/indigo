@@ -1,7 +1,7 @@
 .. _rest_guide:
 
-REST API
-========
+Using the REST API
+==================
 
 This guide is for developers who want to use the Indigo REST API, either to manage and edit documents
 or to fetch and render documents for users to read or download. We assume that
@@ -22,7 +22,7 @@ Both APIs share some concepts which we're going to discuss first. Then we'll exp
 the two sets in detail individually.
 
 Documents
-=========
+---------
 
 A **document** is the primary data type in the platform. It represents a single
 version of a legislation document such as an act. It contains metadata such as
@@ -60,7 +60,7 @@ The **public API** uses the FRBR URI to identify documents so that anyone can
 find a document just by constructing a valid FRBR URI.
 
 Application API
-===============
+---------------
 
 The application API is the REST API used by the web editor to manage documents. With it you can:
 
@@ -78,7 +78,7 @@ and is easy to explore using a browser.
 It follows normal REST semantics using HTTP methods such as ``GET``, ``POST``, ``PUT`` and ``DELETE``.
 
 Content types
--------------
+^^^^^^^^^^^^^
 
 The REST API returns JSON by default. You can explicitly request JSON by including ``Accept: application/json``
 as a request header. You can also include ``.json`` at the end of the request URL.
@@ -109,7 +109,7 @@ or use form encoding, also with an appropriate header:
 All our examples will use the JSON format for requests.
 
 Authentication
---------------
+^^^^^^^^^^^^^^
 
 Write operations (POST, PUT and DELETE) require authentication with a token. To get an authentication token,
 use
@@ -152,4 +152,4 @@ In subsequent requests that require authentication, include the token as a heade
    For more information on token authentication, see the `authentication documentation for the Django Rest Framework <http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication>`_.
 
 Public API
-==========
+----------

@@ -18,7 +18,7 @@ $(function() {
     .ajaxError(function(event, xhr, settings, error) {
       if (xhr.status == 500) {
         Indigo.errorView.show("Whoops, something went wrong. " + xhr.statusText);
-      } else if (request.status == 403) {
+      } else if (xhr.status == 403) {
         Indigo.errorView.show("You aren't allowed to do that. Try logging out and in again.");
       }
     })

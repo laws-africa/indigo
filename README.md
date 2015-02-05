@@ -4,7 +4,13 @@ Indigo
 [![Build Status](https://travis-ci.org/Code4SA/indigo.svg)](http://travis-ci.org/Code4SA/indigo)
 
 Indigo is AfricanLII's document management system for managing, capturing and publishing
-legislation in the Akoma Ntoso format.
+legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
+
+It is a Django python web application with three components:
+
+* a web-based editor
+* a REST API for managing and authoring documents
+* a REST API for vending legislative documents in HTML and XML
 
 Local development
 -----------------
@@ -42,3 +48,8 @@ git push heroku master
 heroku run python manage.py migrate
 heroku run python manage.py createsuperuser
 ```
+
+License
+-------
+
+The project is licensed under a [GNU GPL 3 license](LICENSE).

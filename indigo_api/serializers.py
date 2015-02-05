@@ -19,7 +19,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 # don't include the full body, it could be huge. link to it.
                 'body_xml_url'
                 )
-        read_only_fields = ('number', 'nature', 'body_xml_url')
+        read_only_fields = ('number', 'nature', 'body_xml_url', 'created_at', 'updated_at')
 
     def get_body_xml_url(self, doc):
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})

@@ -77,6 +77,10 @@ class RenderAPI(APIView):
             if ds.is_valid(raise_exception=True):
                 ds.update(document, ds.validated_data)
 
+            # patch in the body xml
+            if 'body_xml' in data:
+                document.body_xml = data['body_xml']
+
         elif u'document_xml' in request.data:
             document = Document()
             document.document_xml = request.data['document_xml']

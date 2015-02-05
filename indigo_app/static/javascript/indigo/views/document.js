@@ -274,7 +274,9 @@
 
     renderPreview: function() {
       // TODO: handle body_xml
-      var data = JSON.stringify({'document': this.model.toJSON()});
+      var data = this.document.toJSON();
+      data.body_xml = this.documentBody.get('body_xml');
+      data = JSON.stringify({'document': data});
 
       $.ajax({
         url: '/api/render',

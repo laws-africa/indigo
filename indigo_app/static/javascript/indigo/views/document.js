@@ -117,7 +117,7 @@
       return this.model
         .save()
         .done(function() {
-          self.attributes.created_at = moment().format();
+          self.model.attributes.updated_at = moment().format();
         });
     },
   });

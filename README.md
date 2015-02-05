@@ -6,11 +6,14 @@ Indigo
 Indigo is AfricanLII's document management system for managing, capturing and publishing
 legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
 
-It is a Django python web application with three components:
+It is a Django python web application using:
 
-* a web-based editor
-* a REST API for managing and authoring documents
-* a REST API for vending legislative documents in HTML and XML
+* [django](http://djangoproject.com/)
+* [django-rest-framework](http://www.django-rest-framework.org/)
+* [backbone.js](http://backbonejs.org/)
+* [stickit.js](http://nytimes.github.io/backbone.stickit/)
+
+Read the [full documentation at indigo.readthedocs.org](http://indigo.readthedocs.org/en/latest/index.html).
 
 Local development
 -----------------

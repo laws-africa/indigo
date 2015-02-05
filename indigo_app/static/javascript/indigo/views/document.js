@@ -266,14 +266,8 @@
 
     save: function() {
       var self = this;
-
       var failed = function(request) {
         self.$saveBtn.prop('disabled', false);
-        if (request.status == 403) {
-          Indigo.errorView.show("You aren't allowed to save. Try logging out and in again.");
-        } else {
-          Indigo.errorView.show(request.responseText || request.statusText);
-        }
       };
 
       // TODO: show progress bar

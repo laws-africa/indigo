@@ -228,6 +228,8 @@
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
 
+      this.previewDirty = true;
+
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
       this.propertiesView.on('dirty', this.setDirty, this);
@@ -242,6 +244,9 @@
     },
 
     setDirty: function() {
+      // if the body has changed, our preview is dirty
+      this.previewDirty = this.previewDirty || this.bodyEditorView.dirty;
+
       if (this.$saveBtn.prop('disabled')) {
         this.$saveBtn
           .removeClass('btn-default')
@@ -283,20 +288,24 @@
     },
 
     renderPreview: function() {
-      // TODO: handle body_xml
-      var data = this.document.toJSON();
-      data.body_xml = this.documentBody.get('body_xml');
-      data = JSON.stringify({'document': data});
+      if (this.previewDirty) {
+        var self = this,
+            data = this.document.toJSON();
 
-      $.ajax({
-        url: '/api/render',
-        type: "POST",
-        data: data,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"})
-        .then(function(response) {
-          $('#preview-tab .an-container').html(response.html);
-        });
+        data.body_xml = this.documentBody.get('body_xml');
+        data = JSON.stringify({'document': data});
+
+        $.ajax({
+          url: '/api/render',
+          type: "POST",
+          data: data,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json"})
+          .then(function(response) {
+            $('#preview-tab .an-container').html(response.html);
+            self.previewDirty = false;
+          });
+      }
     },
   });
 })(window);

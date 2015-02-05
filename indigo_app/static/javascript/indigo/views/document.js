@@ -209,16 +209,12 @@
     },
 
     initialize: function() {
-      var library = new Indigo.Library();
+      var library = new Indigo.Library(),
+          document_id = $('[data-document-id]').data('document-id');
 
       this.$saveBtn = $('.btn.save');
 
-      var document_id = $('[data-document-id]').data('document-id');
-      this.document = new Indigo.Document({id: document_id}, {
-        collection: library
-      });
-
-      this.document.dirty = false;
+      this.document = new Indigo.Document({id: document_id}, {collection: library});
       this.document.on('change', this.setDirty, this);
       this.document.on('sync', this.setModelClean, this);
 
@@ -239,8 +235,18 @@
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
 
+      // prevent the user from navigating away without saving changes
+      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
+
       this.document.fetch();
       this.documentBody.fetch();
+    },
+
+    windowUnloading: function(e) {
+      if (this.propertiesView.dirty || this.bodyEditorView.dirty) {
+        e.preventDefault();
+        return 'You will lose your changes!';
+      }
     },
 
     setDirty: function() {

@@ -2,3 +2,4 @@ env
 *.pyc
 .webassets-cache
 staticfiles/
+docs/_build

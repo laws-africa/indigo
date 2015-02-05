@@ -270,7 +270,6 @@
         self.$saveBtn.prop('disabled', false);
       };
 
-      // TODO: show progress bar
       this.$saveBtn.prop('disabled', true);
 
       this.propertiesView

@@ -33,6 +33,10 @@
     <div class="workspace-content">
       {% block content %}{% endblock content %}
     </div>
+
+    <div id="progress-bar" style="display: none">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" style="width: 100%"></div>
+    </div>
   </div>
 
   {% include "user/_login_modal.html" %}

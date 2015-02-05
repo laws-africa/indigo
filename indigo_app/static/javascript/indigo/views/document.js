@@ -51,7 +51,19 @@
         observe: 'draft',
         // API requires this value to be true or false
         onSet: function(val) { return val == "1"; }
-      }
+      },
+      '#document_updated_at': {
+        observe: 'updated_at',
+        onGet: function(value, options) {
+          return moment(value).calendar();
+        }
+      },
+      '#document_created_at': {
+        observe: 'created_at',
+        onGet: function(value, options) {
+          return moment(value).calendar();
+        }
+      },
     },
 
     initialize: function() {
@@ -95,13 +107,18 @@
 
     save: function() {
       // TODO: validation
+      var self = this;
 
       // don't do anything if it hasn't changed
       if (!this.dirty) {
         return $.Deferred().resolve();
       }
 
-      return this.model.save();
+      return this.model
+        .save()
+        .done(function() {
+          self.attributes.created_at = moment().format();
+        });
     },
   });
 

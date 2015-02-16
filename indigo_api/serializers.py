@@ -1,5 +1,5 @@
 from .models import Document
-from rest_framework import serializers
+from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
@@ -24,3 +24,22 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_body_xml_url(self, doc):
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})
+
+
+class DocumentBrowserSerializer(serializers.HyperlinkedModelSerializer):
+    publication_date = serializers.DateField()
+
+    class Meta:
+        model = Document
+        fields = (
+                'uri', 'draft', 'created_at', 'updated_at',
+                'title', 'country', 'number', 'nature',
+                'publication_date', 'publication_name', 'publication_number',
+                'document_xml',
+                )
+        read_only_fields = ('number', 'nature', 'body_xml_url', 'created_at', 'updated_at')
+
+
+class AkomaNtosoRenderer(renderers.XMLRenderer):
+    def render(self, data, media_type=None, renderer_context=None):
+        return data['document_xml']

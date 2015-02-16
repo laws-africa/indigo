@@ -153,3 +153,72 @@ In subsequent requests that require authentication, include the token as a heade
 
 Public API
 ----------
+
+The public API is a read-only API for exploring a collection of legislative documents. Using it, you can:
+
+* get a list of all acts by country and year
+* get the raw Akoma Ntoso XML of an act
+* get an human-friendly HTML version of an act
+
+The public API relies heavily on FRBR URIs (and URI fragments) for identifying content, be sure to read up on FRBR URIs above.
+
+
+.. note::
+
+   When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/``.
+
+Listing acts
+^^^^^^^^^^^^
+
+To fetch a specific act you need to know its FRBR URI. For instance, if you want to fetch the act with the URI ``/za/act/1998/84/`` you would visit:
+
+    ``http://indigo.code4sa.org/api/za/act/1998/84/``
+
+To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
+For example, all the acts for South Africa (`za`) are available at:
+
+    ``http://indigo.code4sa.org/api/za/``
+
+Similarly, all the acts passed in 1998 are available at:
+
+    ``http://indigo.code4sa.org/api/za/act/1998/``
+
+Content Types
+^^^^^^^^^^^^^
+
+You can choose the type of response by including a ``.format`` at the end of the URL:
+
+* ``.json``: return JSON
+* ``.xml``: return Akoma Ntoso XML
+* ``.html``: return human friendly HTML
+
+By default the API returns JSON.
+
+For example, if you'd like the HTML version of ``/za/act/1998/84/`` visit:
+
+    ``http://indigo.code4sa.org/api/za/act/1998/.html``
+
+This might look a bit weird, but it's actually correct since the FRBRI URI ends in a ``/``. If you like, you can also try it without the ``/``
+
+    ``http://indigo.code4sa.org/api/za/act/1998.html``
+
+If you'd like the raw XML, use on of these:
+
+    ``http://indigo.code4sa.org/api/za/act/1998/.xml``
+
+    ``http://indigo.code4sa.org/api/za/act/1998.xml``
+
+
+Table of Contents
+^^^^^^^^^^^^^^^^^
+
+To get a description of the table of contents of an act, visit ``/api/frbr-uri/toc.json``. The table of contents is only available as JSON.
+
+
+Using HTML Responses
+^^^^^^^^^^^^^^^^^^^^
+
+TODO:
+
+* talk about CSS
+

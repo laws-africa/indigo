@@ -1,15 +1,21 @@
+import re
+
 from django.template.loader import render_to_string
 
 from rest_framework import viewsets
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.views import APIView
+from rest_framework import mixins, viewsets
 from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
 
 from .models import Document
-from .serializers import DocumentSerializer
+from .serializers import DocumentSerializer, DocumentBrowserSerializer, AkomaNtosoRenderer
 from indigo_an.render.html import HTMLRenderer
+
+FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
 # REST API
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -38,6 +44,50 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 raise ValidationError({'body_xml': ["Invalid XML: %s" % e.message]})
 
             return Response({'body_xml': instance.body_xml})
+
+
+class FRBRURIViewSet(viewsets.GenericViewSet):
+    def initial(self, request, **kwargs):
+        super(FRBRURIViewSet, self).initial(request, **kwargs)
+
+        # ensure the URI starts and ends with a slash
+        frbr_uri = '/' + self.kwargs['frbr_uri']
+        if not frbr_uri.endswith('/'):
+            frbr_uri += '/'
+        self.kwargs['frbr_uri'] = self.frbr_uri = frbr_uri
+
+    def get_format_suffix(self, **kwargs):
+        match = FORMAT_RE.search(self.kwargs['frbr_uri'])
+        if match:
+            # strip it from the uri
+            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][0:match.start()]
+            return match.group(1)
+
+
+class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
+    """
+    The public read-only API for viewing a document by FRBR URI.
+    """
+    queryset = Document.objects.filter(draft=False)
+    serializer_class = DocumentBrowserSerializer
+    renderer_classes = (JSONRenderer, AkomaNtosoRenderer, BrowsableAPIRenderer)
+
+    lookup_url_kwarg = 'frbr_uri'
+    lookup_field = 'uri'
+
+
+class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
+    """
+    The public read-only API for browsing documents by their FRBR URI components.
+    """
+    queryset = Document.objects.filter(draft=False)
+    serializer_class = DocumentBrowserSerializer
+
+    # TODO: don't allow XML serialising here
+    # TODO: don't send back document XML in this view
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(uri__istartswith=self.frbr_uri)
 
 
 class RenderAPI(APIView):

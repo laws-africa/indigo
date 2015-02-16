@@ -13,6 +13,15 @@ def document(request, doc_id):
         'view': 'DocumentView',
         })
 
+def new_document(request):
+    doc = Document(title='(untitled)')
+    form = DocumentForm(instance=doc)
+    return render(request, 'document/show.html', {
+        'document': doc,
+        'form': form,
+        'view': 'DocumentView',
+        })
+
 def library(request):
     return render(request, 'library.html', {
         'view': 'LibraryView',

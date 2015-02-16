@@ -210,7 +210,7 @@
 
     initialize: function() {
       var library = new Indigo.Library(),
-          document_id = $('[data-document-id]').data('document-id');
+          document_id = $('[data-document-id]').data('document-id') || null;
 
       this.$saveBtn = $('.btn.save');
 
@@ -238,8 +238,10 @@
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
-      this.document.fetch();
-      this.documentBody.fetch();
+      if (document_id) {
+        this.document.fetch();
+        this.documentBody.fetch();
+      }
     },
 
     windowUnloading: function(e) {

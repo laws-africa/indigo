@@ -2,7 +2,7 @@
 
 
 {% block header %}
-<span data-document-id="{{ document.id }}"></span>
+<span data-document-id="{{ document.id|default:"" }}"></span>
 <h4 class="document-title">{{ document.title }}</h4>
 {% endblock %}
 

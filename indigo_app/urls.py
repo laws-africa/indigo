@@ -6,6 +6,7 @@ from . import views
 urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
 
+    url(r'^documents/new/$', views.new_document, name='new_document'),
     url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
     url(r'^library/$', views.library, name='library'),
 

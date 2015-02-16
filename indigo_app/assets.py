@@ -4,6 +4,7 @@ register('css', Bundle(
     'bower_components/bootstrap/dist/css/bootstrap.min.css',
     'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
     'bower_components/fontawesome/css/font-awesome.css',
+    'bower_components/bootstrap-datepicker/css/datepicker3.css',
     Bundle(
         'stylesheets/app.scss',
         filters='pyscss',
@@ -20,6 +21,7 @@ register('js', Bundle(
     'bower_components/handlebars/handlebars.min.js',
     'bower_components/moment/min/moment.min.js',
     'bower_components/moment/locale/en-gb.js',
+    'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
     'javascript/ace/ace.js',
     'javascript/indigo/models.js',
     'javascript/indigo/views/user.js',

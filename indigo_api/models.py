@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 class Document(models.Model):
     db_table = 'documents'
 
-    uri = models.CharField(max_length=512, null=True, unique=True,
+    uri = models.CharField(max_length=512, null=False, blank=False,
             help_text="Used globably to identify this document")
     """ The FRBRuri of this document that uniquely identifies it globally """
 

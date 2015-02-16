@@ -34,6 +34,10 @@ $(function() {
       $('#progress-bar').hide();
     });
 
+  // datepicker
+  $.fn.datepicker.defaults.format = "yyyy-mm-dd";
+  $.fn.datepicker.defaults.autoclose = true;
+
   Indigo.errorView = new Indigo.ErrorBoxView();
 
   // always load the user view

@@ -214,7 +214,16 @@
 
       this.$saveBtn = $('.btn.save');
 
-      this.document = new Indigo.Document({id: document_id}, {collection: library});
+      var info = document_id ? {id: document_id} : {
+        id: null,
+        title: '(untitled)',
+        publication_date: moment().format('YYYY-MM-DD'),
+        nature: 'act',
+        country: 'za',
+        number: '1',
+      };
+
+      this.document = new Indigo.Document(info, {collection: library});
       this.document.on('change', this.setDirty, this);
       this.document.on('sync', this.setModelClean, this);
 
@@ -239,8 +248,15 @@
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
       if (document_id) {
+        // fetch it
         this.document.fetch();
         this.documentBody.fetch();
+      } else {
+        // pretend we've fetched it, this sets up additional handlers
+        this.document.trigger('sync');
+        this.documentBody.trigger('sync');
+        this.propertiesView.calculateUri();
+        this.setDirty();
       }
     },
 

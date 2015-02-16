@@ -7,8 +7,8 @@
   // The document body could be huge, so the API handles it outside
   // of the document data. We model this with a separate wraps the document's body, available at /documents/1/body
   Indigo.DocumentBody = Backbone.Model.extend({
-    initialize: function() {
-      this.url = '/api/documents/' + this.id + '/body';
+    url: function() {
+      return '/api/documents/' + this.id + '/body';
     },
   });
 

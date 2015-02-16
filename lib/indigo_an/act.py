@@ -176,7 +176,7 @@ class Act(object):
 
     @body_xml.setter
     def body_xml(self, xml):
-        new_body = objectify.fromstring(xml)
+        new_body = objectify.fromstring(xml or EMPTY_BODY)
         new_body.tag = 'body'
         self.body.getparent().replace(self.body, new_body)
         self.body = new_body
@@ -246,4 +246,14 @@ EMPTY_DOCUMENT = """<?xml version="1.0"?>
     </body>
   </act>
 </akomaNtoso>
+"""
+
+EMPTY_BODY = """
+<body>
+  <section id="section-1">
+    <content>
+      <p></p>
+    </content>
+  </section>
+</body>
 """

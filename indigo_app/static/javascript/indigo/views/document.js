@@ -295,6 +295,7 @@
 
     save: function() {
       var self = this;
+      var is_new = self.document.isNew();
       var failed = function(request) {
         self.$saveBtn.prop('disabled', false);
       };
@@ -303,10 +304,20 @@
 
       this.propertiesView
         .save()
-        .then(function() {
+        .then(function(response) {
+          if (is_new) {
+            self.documentBody.set('id', self.document.get('id'));
+          }
+
           self.bodyEditorView
             .save()
-            .fail(failed);
+            .fail(failed)
+            .then(function() {
+              if (is_new) {
+                // redirect
+                document.location = '/documents/' + response.id + '/';
+              }
+            });
         })
         .fail(failed);
     },

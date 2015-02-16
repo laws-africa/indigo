@@ -19,6 +19,12 @@ class ActTestCase(TestCase):
         
         assert_equal(a.number, '01')
 
+    def test_empty_body(self):
+        a = Act()
+        assert_not_equal(a.body_xml, '')
+        a.body_xml = ''
+        assert_not_equal(a.body_xml, '')
+
     def test_work_date(self):
         a = Act()
         a.work_date = '2012-01-02'

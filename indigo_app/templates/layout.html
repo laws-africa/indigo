@@ -6,9 +6,17 @@
   <div class="workspace">
     <header class="workspace-header">
       <div class="search-box">
-        <a href="/library" class="btn btn-default">
-          <i class="fa fa-book"></i> Library
-        </a>
+        <div class="btn-group">
+          <a href="{% url 'library' %}" class="btn btn-default">
+            <i class="fa fa-book"></i> Library
+          </a>
+          <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+          </a>
+          <ul class="dropdown-menu" role="menu">
+            <li><a href="{% url 'new_document' %}">New document</a></li>
+          </ul>
+        </div>
       </div>
 
       <div class="workspace-title">

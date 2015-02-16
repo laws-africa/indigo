@@ -19,7 +19,12 @@ $(function() {
       if (xhr.status == 500) {
         Indigo.errorView.show("Whoops, something went wrong. " + xhr.statusText);
       } else if (xhr.status == 403) {
-        Indigo.errorView.show("You aren't allowed to do that. Try logging out and in again.");
+        // permission denied
+        if (Indigo.userView.model.authenticated()) {
+          Indigo.errorView.show("You aren't allowed to do that. Try logging out and in again.");
+        } else {
+          Indigo.errorView.show("Please log in first.");
+        }
       }
     })
     .ajaxStart(function(event) {

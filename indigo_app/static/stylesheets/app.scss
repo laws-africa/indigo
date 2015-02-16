@@ -88,7 +88,8 @@ html, body {
 
 .boxed-group-inner {
   height: inherit;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
   margin: 5px 5px;
   padding-bottom: 110px;
 }

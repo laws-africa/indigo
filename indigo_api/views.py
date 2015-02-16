@@ -16,8 +16,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Document.objects.all()
+    queryset = Document.objects.filter(deleted__exact=False).all()
     serializer_class = DocumentSerializer
+
+    def perform_destroy(self, instance):
+        instance.deleted = True
+        instance.save()
 
     @detail_route(methods=['GET', 'PUT'])
     def body(self, request, *args, **kwargs):

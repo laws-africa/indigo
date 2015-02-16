@@ -32,6 +32,8 @@ class Document(models.Model):
     publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number")
     publication_date = models.DateField(null=True)
 
+    deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

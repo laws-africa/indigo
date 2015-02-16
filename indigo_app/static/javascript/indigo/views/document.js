@@ -55,7 +55,7 @@
       '#document_updated_at': {
         observe: 'updated_at',
         onGet: function(value, options) {
-          return moment(value).calendar();
+          return value ? moment(value).calendar() : "";
         }
       },
       '#document_created_at': {

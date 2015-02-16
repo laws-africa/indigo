@@ -205,6 +205,7 @@
     el: 'body',
     events: {
       'click .btn.save': 'save',
+      'click .btn.delete': 'delete',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
 
@@ -291,6 +292,7 @@
 
     userChanged: function() {
       this.$saveBtn.toggle(this.user.authenticated());
+      this.$el.find('.btn.delete').prop('disabled', !this.user.authenticated());
     },
 
     save: function() {
@@ -342,5 +344,15 @@
           });
       }
     },
+
+    delete: function() {
+      if (confirm('Are you sure you want to delete this document?')) {
+        this.document
+          .destroy()
+          .then(function() {
+            document.location = '/library';
+          });
+      }
+    }
   });
 })(window);

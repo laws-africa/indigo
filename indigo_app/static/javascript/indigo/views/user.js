@@ -12,6 +12,7 @@
 
       // in the modal
       'click .btn.forgot-password': 'showForgotPassword',
+      'click .btn.show-login-form': 'showLoginForm',
       'show.bs.modal #login-box': 'loginBoxShown',
       'submit form.login-form': 'authenticate',
       'submit form.forgot-password-form': 'forgotPassword',
@@ -25,7 +26,7 @@
 
       this.model = new Indigo.User();
       this.model.on('change', this.userChanged, this);
-      this.model.fetch()
+      this.model.fetch({global: false})
         .error(function(xhr) {
           // user isn't logged in
           self.model.trigger('change');
@@ -48,6 +49,15 @@
 
     showLoginBox: function() {
       this.$loginBox.modal();
+      this.$loginBox.find('.forgot-password-form').hide();
+      this.$loginBox.find('.login-form').show();
+    },
+
+    showLoginForm: function(e) {
+      e.preventDefault();
+
+      this.$loginBox.find('.forgot-password-form').hide();
+      this.$loginBox.find('.login-form').show();
     },
 
     showForgotPassword: function(e) {

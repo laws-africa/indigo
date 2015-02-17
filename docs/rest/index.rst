@@ -167,26 +167,12 @@ The public API relies heavily on FRBR URIs (and URI fragments) for identifying c
 
    When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/``.
 
-Listing acts
-^^^^^^^^^^^^
-
-To fetch a specific act you need to know its FRBR URI. For instance, if you want to fetch the act with the URI ``/za/act/1998/84/`` you would visit:
-
-    ``http://indigo.code4sa.org/api/za/act/1998/84/``
-
-To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
-For example, all the acts for South Africa (`za`) are available at:
-
-    ``http://indigo.code4sa.org/api/za/``
-
-Similarly, all the acts passed in 1998 are available at:
-
-    ``http://indigo.code4sa.org/api/za/act/1998/``
-
 Content Types
 ^^^^^^^^^^^^^
 
-You can choose the type of response by including a ``.format`` at the end of the URL:
+Some responses can be returend in multiple formats. You can choose the content
+type of a response by including an ``Accept`` header or ``.format`` at the end
+of the URL. Not all responses support all formats.
 
 * ``.json``: return JSON
 * ``.xml``: return Akoma Ntoso XML
@@ -194,15 +180,39 @@ You can choose the type of response by including a ``.format`` at the end of the
 
 By default the API returns JSON.
 
-For example, if you'd like the HTML version of ``/za/act/1998/84/`` visit:
+.. seealso::
+
+   For more information on content type negotation see http://www.django-rest-framework.org/api-guide/content-negotiation/
+
+
+Listing acts
+^^^^^^^^^^^^
+
+* ``GET /api/za/``
+* ``GET /api/za/act/``
+* ``GET /api/za/act/2007/``
+  
+  * Content types: JSON
+
+These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
+
+Entire act
+^^^^^^^^^^
+
+* ``GET /api/frbr-uri/``
+
+  * Content types: JSON, XML, HTML
+
+
+This returns the entire contents of an act. For example, the HTML version of ``/za/act/1998/84/`` is available at:
 
     ``http://indigo.code4sa.org/api/za/act/1998/.html``
 
 This might look a bit weird, but it's actually correct since the FRBRI URI ends in a ``/``. If you like, you can also try it without the ``/``
 
-    ``http://indigo.code4sa.org/api/za/act/1998.html``
+    ``http://indigo.code4sa.org/api/za/act/1998/.html``
 
-If you'd like the raw XML, use on of these:
+The raw XML is available at one of:
 
     ``http://indigo.code4sa.org/api/za/act/1998/.xml``
 
@@ -212,7 +222,11 @@ If you'd like the raw XML, use on of these:
 Table of Contents
 ^^^^^^^^^^^^^^^^^
 
-To get a description of the table of contents of an act, visit ``/api/frbr-uri/toc.json``. The table of contents is only available as JSON.
+* ``GET /api/frbr-uri/contents.json``
+
+  * Content types: JSON
+
+Get a descirption of the table of contents of an act.
 
 
 Using HTML Responses

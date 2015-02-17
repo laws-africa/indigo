@@ -148,6 +148,15 @@ class Act(object):
         self.meta.identification.FRBRManifestation.FRBRuri.set('value', lang_uri)
 
     @property
+    def year(self):
+        """ The act year, derived from :data:`frbr_uri`. Read-only. """
+        if self.frbr_uri:
+            try:
+                return self.frbr_uri.split('/')[3]
+            except IndexError:
+                pass
+
+    @property
     def number(self):
         """ The act number, derived from :data:`frbr_uri`. Read-only. """
         if self.frbr_uri:

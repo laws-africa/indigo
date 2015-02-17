@@ -54,16 +54,17 @@ class Document(models.Model):
         self.doc.body_xml = xml
         self.refresh_xml()
 
+    @property
+    def year(self):
+        return self.doc.year
 
     @property
     def number(self):
         return self.doc.number
 
-
     @property
     def nature(self):
         return self.doc.nature
-
 
     def save(self, *args, **kwargs):
         self.copy_attributes()

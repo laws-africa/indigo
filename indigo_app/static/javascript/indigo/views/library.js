@@ -30,6 +30,7 @@
         count: this.collection.length,
         documents: this.collection.toJSON()
       }));
+      formatTimestamps();
     }
   });
 })(window);

@@ -30,7 +30,7 @@ and is easy to explore using a browser.
 It follows normal REST semantics using HTTP methods such as ``GET``, ``POST``, ``PUT`` and ``DELETE``.
 
 Content types
-^^^^^^^^^^^^^
+-------------
 
 The REST API returns JSON by default. You can explicitly request JSON by including ``Accept: application/json``
 as a request header. You can also include ``.json`` at the end of the request URL.
@@ -61,7 +61,7 @@ or use form encoding, also with an appropriate header:
 All our examples will use the JSON format for requests.
 
 Authentication
-^^^^^^^^^^^^^^
+--------------
 
 Write operations (POST, PUT and DELETE) require authentication with a token. To get an authentication token,
 use

@@ -1,4 +1,6 @@
-$border-colour: #999;
+$border-colour: #ccc;
+$header-colour: #4a806e;
+$header-colour2: #f5f5f5;
 
 html, body {
   height: 100%;
@@ -50,6 +52,7 @@ html, body {
 .boxed-group-header {
   height: 45px;
   padding: 5px;
+  background-color: $header-colour2;
   border-bottom: 1px solid $border-colour;
 
   h1, h2, h3, h4 {
@@ -62,7 +65,7 @@ html, body {
 }
 
 .workspace-header {
-  background-color: #3D9970;
+  background-color: $header-colour;
   color: white;
 
   .search-box {

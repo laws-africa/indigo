@@ -9,6 +9,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ A URL for the body of the document. The body isn't included in the
     document description because it could be huge. """
 
+    published_url = serializers.SerializerMethodField()
+    """ Public URL of a published document. """
+
     class Meta:
         model = Document
         fields = (
@@ -18,12 +21,20 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'uri', 'draft', 'created_at', 'updated_at',
                 'title', 'country', 'number', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
-                'body_xml_url'
+
+                'body_xml_url',
+                'published_url',
                 )
         read_only_fields = ('number', 'nature', 'body_xml_url', 'created_at', 'updated_at')
 
     def get_body_xml_url(self, doc):
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})
+
+    def get_published_url(self, doc):
+        if doc.draft:
+            return None
+        else:
+            return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.uri[1:]})
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

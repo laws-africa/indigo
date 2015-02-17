@@ -32,18 +32,18 @@ class DocumentViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['GET', 'PUT'])
     def body(self, request, *args, **kwargs):
         if request.method == 'GET':
-            return Response({'body_xml': self.get_object().body_xml})
+            return Response({'body': self.get_object().body_xml})
 
         if request.method == 'PUT':
             instance = self.get_object()
 
             try:
-                instance.body_xml = request.data.get('body_xml')
+                instance.body_xml = request.data.get('body')
                 instance.save()
             except LxmlError as e:
-                raise ValidationError({'body_xml': ["Invalid XML: %s" % e.message]})
+                raise ValidationError({'body': ["Invalid XML: %s" % e.message]})
 
-            return Response({'body_xml': instance.body_xml})
+            return Response({'body': instance.body_xml})
 
 
 class FRBRURIViewSet(viewsets.GenericViewSet):
@@ -142,7 +142,7 @@ class RenderAPI(APIView):
             {
               "document": {
                 "title": "A title",
-                "body_xml": "... xml ..."
+                "body": "... xml ..."
               }
             }
 
@@ -167,8 +167,8 @@ class RenderAPI(APIView):
                 ds.update(document, ds.validated_data)
 
             # patch in the body xml
-            if 'body_xml' in data:
-                document.body_xml = data['body_xml']
+            if 'body' in data:
+                document.body_xml = data['body']
 
         elif u'document_xml' in request.data:
             document = Document()

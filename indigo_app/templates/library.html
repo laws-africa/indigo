@@ -27,6 +27,7 @@
   <thead>
     <tr>
       <th>Title</th>
+      <th>Draft?</th>
       <th>Year</th>
       <th>Number</th>
       <th>Updated</th>
@@ -43,6 +44,13 @@
               (untitled)
             {{/if}}
           </a>
+        </td>
+        <td>
+          {{#if draft}}
+            <span class="label label-warning">draft</span>
+          {{else}}
+            <span class="label label-info">published</span>
+          {{/if}}
         </td>
         <td>{{ year }}</td>
         <td>{{ number }}</td>

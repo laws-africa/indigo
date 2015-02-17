@@ -29,6 +29,8 @@
 
       if (this.model.get('draft')) {
         html = html + ' <span class="label label-warning">draft</span>';
+      } else {
+        html = html + ' <span class="label label-info">published</span>';
       }
 
       return html;
@@ -77,6 +79,8 @@
       this.listenToOnce(this.model, 'sync', function() {
         this.model.on('change:number change:nature change:country change:publication_date', _.bind(this.calculateUri, this));
       });
+
+      this.model.on('change:draft change:uri', this.showPublishedUrl, this);
     },
 
     calculateUri: function() {
@@ -89,6 +93,13 @@
         this.model.get('number'),
         ''];
       this.model.set('uri', parts.join('/'));
+    },
+
+    showPublishedUrl: function() {
+      var url = window.location.origin + "/api" + this.model.get('uri');
+
+      this.$el.find('.published-url').toggle(!this.model.get('draft'));
+      this.$el.find('#document_published_url').attr('href', url).text(url);
     },
 
     setDirty: function() {
@@ -170,14 +181,14 @@
     updateEditor: function(model, options) {
       // update the editor with new content from the model,
       // unless this new content already comes from the editor
-      if (!options.fromEditor) this.editor.setValue(this.model.get('body_xml'));
+      if (!options.fromEditor) this.editor.setValue(this.model.get('body'));
     },
 
     updateDocumentBody: function() {
       // update the document content from the editor's version
-      console.log('new body_xml content');
+      console.log('new body content');
       this.model.set(
-        {body_xml: this.editor.getValue()},
+        {body: this.editor.getValue()},
         {fromEditor: true}); // prevent infinite loop
     },
   });
@@ -329,7 +340,7 @@
         var self = this,
             data = this.document.toJSON();
 
-        data.body_xml = this.documentBody.get('body_xml');
+        data.body = this.documentBody.get('body');
         data = JSON.stringify({'document': data});
 
         $.ajax({

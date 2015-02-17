@@ -1,15 +1,21 @@
+import re
+
 from django.template.loader import render_to_string
+from django.http import Http404
 
 from rest_framework import viewsets
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.views import APIView
+from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
 
 from .models import Document
-from .serializers import DocumentSerializer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer
 from indigo_an.render.html import HTMLRenderer
+
+FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
 # REST API
 class DocumentViewSet(viewsets.ModelViewSet):
@@ -26,18 +32,97 @@ class DocumentViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['GET', 'PUT'])
     def body(self, request, *args, **kwargs):
         if request.method == 'GET':
-            return Response({'body_xml': self.get_object().body_xml})
+            return Response({'body': self.get_object().body_xml})
 
         if request.method == 'PUT':
             instance = self.get_object()
 
             try:
-                instance.body_xml = request.data.get('body_xml')
+                instance.body_xml = request.data.get('body')
                 instance.save()
             except LxmlError as e:
-                raise ValidationError({'body_xml': ["Invalid XML: %s" % e.message]})
+                raise ValidationError({'body': ["Invalid XML: %s" % e.message]})
 
-            return Response({'body_xml': instance.body_xml})
+            return Response({'body': instance.body_xml})
+
+
+class FRBRURIViewSet(viewsets.GenericViewSet):
+    def initial(self, request, **kwargs):
+        super(FRBRURIViewSet, self).initial(request, **kwargs)
+
+        # ensure the URI starts and ends with a slash
+        frbr_uri = '/' + self.kwargs['frbr_uri']
+        if not frbr_uri.endswith('/'):
+            frbr_uri += '/'
+        self.kwargs['frbr_uri'] = frbr_uri
+
+    def get_format_suffix(self, **kwargs):
+        match = FORMAT_RE.search(self.kwargs['frbr_uri'])
+        if match:
+            # strip it from the uri
+            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][0:match.start()]
+            return match.group(1)
+
+
+class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
+    """
+    The public read-only API for viewing a document by FRBR URI.
+    """
+    queryset = Document.objects.filter(draft=False)
+    serializer_class = DocumentSerializer
+    # these determine what content negotiation takes place
+    renderer_classes = (renderers.JSONRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
+
+    lookup_url_kwarg = 'frbr_uri'
+    lookup_field = 'uri'
+
+    def retrieve(self, request, *args, **kwargs):
+        component = self.get_component()
+        format = self.request.accepted_renderer.format
+
+        # get the document
+        document = self.get_object()
+
+        if (component, format) == ('main', 'xml'):
+            return Response(document.document_xml)
+
+        if (component, format) == ('main', 'html'):
+            html = HTMLRenderer().render_xml(document.document_xml)
+            return Response(html)
+
+        # TODO: table of content
+
+        if (component, format) == ('main', 'json'):
+            serializer = self.get_serializer(document)
+            return Response(serializer.data)
+
+        raise Http404
+
+    def get_component(self):
+        # split the URI into the base, and the component
+        #
+        # /za/act/1998/84/main -> (/za/act/1998/84/, main)
+
+        parts = self.kwargs['frbr_uri'].split('/')
+        self.kwargs['frbr_uri'] = '/'.join(parts[0:5]) + '/'
+
+        component = '/'.join(parts[5:]) or 'main'
+        if component.endswith('/'):
+            component = component[0:-1]
+
+        return component
+
+
+
+class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
+    """
+    The public read-only API for browsing documents by their FRBR URI components.
+    """
+    queryset = Document.objects.filter(draft=False)
+    serializer_class = DocumentSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(uri__istartswith=self.kwargs['frbr_uri'])
 
 
 class RenderAPI(APIView):
@@ -57,7 +142,7 @@ class RenderAPI(APIView):
             {
               "document": {
                 "title": "A title",
-                "body_xml": "... xml ..."
+                "body": "... xml ..."
               }
             }
 
@@ -82,8 +167,8 @@ class RenderAPI(APIView):
                 ds.update(document, ds.validated_data)
 
             # patch in the body xml
-            if 'body_xml' in data:
-                document.body_xml = data['body_xml']
+            if 'body' in data:
+                document.body_xml = data['body']
 
         elif u'document_xml' in request.data:
             document = Document()

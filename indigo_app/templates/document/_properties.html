@@ -1,11 +1,9 @@
-<header class="boxed-group-header">
-  <h4>Properties</h4>
-</header>
-
 <div class="boxed-group-inner">
   <article>
-    <fieldset>
-      <div class="form-horizontal">
+    <div class="form-horizontal">
+      <fieldset>
+        <legend>Basic details</legend>
+
         <div class="form-group">
           <label for="document_title" class="col-sm-2 control-label">Short title</label>
           <div class="col-sm-10">
@@ -22,7 +20,9 @@
               {% endfor %}
             </select>
           </div>
+        </div>
 
+        <div class="form-group">
           <label for="document_nature" class="col-sm-2 control-label">Nature</label>
           <div class="col-sm-4">
             <input type="text" class="form-control" id="document_nature">
@@ -47,17 +47,6 @@
         </div>
 
         <div class="form-group">
-          <div class="col-sm-offset-2 col-sm-10">
-            <div class="checkbox">
-              <label>
-                <input id="document_draft" type="checkbox" value="1"> Draft document
-              </label>
-              <p class="help-block">{{ form.fields.draft.help_text }}</p>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-group">
           <label for="document_updated_at" class="col-sm-2 control-label">Last saved</label>
           <div class="col-sm-4">
             <div id="document_updated_at" class="form-control-static"></div>
@@ -68,43 +57,63 @@
             <div id="document_created_at" class="form-control-static"></div>
           </div>
         </div>
-      </div>
+      </fieldset>
 
-    </fieldset>
+      <fieldset>
+        <legend>Original Publication Details</legend>
 
-    <fieldset>
-      <legend>Original Publication Details</legend>
+        <div class="form-horizontal">
+          <div class="form-group">
+            <label for="document_publication_name" class="col-sm-2 control-label">Publication name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="document_publication_name">
+              <p class="help-block">{{ form.fields.publication_name.help_text }}</p>
+            </div>
+          </div>
 
-      <div class="form-horizontal">
+          <div class="form-group">
+            <label for="document_publication_date" class="col-sm-2 control-label">Publication date</label>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd">
+            </div>
+
+            <label for="document_publication_number" class="col-sm-2 control-label">Publication number</label>
+            <div class="col-sm-5">
+              <input type="text" class="form-control" id="document_publication_number">
+              <p class="help-block">{{ form.fields.publication_number.help_text }}</p>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Draft and Publishing</legend>
+
         <div class="form-group">
-          <label for="document_publication_name" class="col-sm-2 control-label">Publication name</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="document_publication_name">
-            <p class="help-block">{{ form.fields.publication_name.help_text }}</p>
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <label>
+                <input id="document_draft" type="checkbox" value="1"> This is a draft document
+              </label>
+              <p class="help-block">{{ form.fields.draft.help_text }}</p>
+            </div>
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="document_publication_date" class="col-sm-2 control-label">Publication date</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd">
-          </div>
-
-          <label for="document_publication_number" class="col-sm-2 control-label">Publication number</label>
-          <div class="col-sm-5">
-            <input type="text" class="form-control" id="document_publication_number">
-            <p class="help-block">{{ form.fields.publication_number.help_text }}</p>
+        <div class="form-group published-url" style="display: none">
+          <label class="col-sm-2 control-label">Published URL</label>
+          <div class="col-sm-4">
+            <div class="form-control-static"><a href="#" target="_blank" id="document_published_url"></a></div>
           </div>
         </div>
+      </fieldset>
 
-      </div>
+      <fieldset>
+        <legend>Danger Zone</legend>
 
-    </fieldset>
+        <button class="btn btn-danger delete" disabled>Delete this document</button>
+      </fieldset>
 
-    <fieldset>
-      <legend>Danger Zone</legend>
-
-      <button class="btn btn-danger delete" disabled>Delete this document</button>
-    </fieldset>
+    </div>
   </article>
 </div>

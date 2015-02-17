@@ -18,7 +18,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 # readonly, url is part of the rest framework
                 'id', 'url',
 
-                'uri', 'draft', 'created_at', 'updated_at',
+                'frbr_uri', 'draft', 'created_at', 'updated_at',
                 'title', 'country', 'number', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
 
@@ -34,7 +34,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if doc.draft:
             return None
         else:
-            return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.uri[1:]})
+            return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

@@ -10,7 +10,7 @@ class DocumentTestCase(TestCase):
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
-        d = Document.objects.create(title="Title", uri="/za/uri")
+        d = Document.objects.create(title="Title", frbr_uri="/za/uri")
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))
@@ -19,7 +19,7 @@ class DocumentTestCase(TestCase):
         self.assertEqual(d.title, d2.title)
 
     def test_set_body_xml(self):
-        d = Document.objects.create(title="Title", uri="/za/uri")
+        d = Document.objects.create(title="Title", frbr_uri="/za/uri")
         d.body_xml = '<body>hello</body>'
         d.save()
         id = d.id

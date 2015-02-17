@@ -74,7 +74,6 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
     renderer_classes = (renderers.JSONRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
 
     lookup_url_kwarg = 'frbr_uri'
-    lookup_field = 'uri'
 
     def retrieve(self, request, *args, **kwargs):
         component = self.get_component()
@@ -122,7 +121,7 @@ class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
     serializer_class = DocumentSerializer
 
     def filter_queryset(self, queryset):
-        return queryset.filter(uri__istartswith=self.kwargs['frbr_uri'])
+        return queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
 
 
 class RenderAPI(APIView):

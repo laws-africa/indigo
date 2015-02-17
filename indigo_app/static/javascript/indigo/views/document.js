@@ -43,7 +43,7 @@
     bindings: {
       '#document_title': 'title',
       '#document_country': 'country',
-      '#document_uri': 'uri',
+      '#document_frbr_uri': 'frbr_uri',
       '#document_publication_date': 'publication_date',
       '#document_publication_name': 'publication_name',
       '#document_publication_number': 'publication_number',
@@ -80,7 +80,7 @@
         this.model.on('change:number change:nature change:country change:publication_date', _.bind(this.calculateUri, this));
       });
 
-      this.model.on('change:draft change:uri', this.showPublishedUrl, this);
+      this.model.on('change:draft change:frbr_uri', this.showPublishedUrl, this);
     },
 
     calculateUri: function() {
@@ -92,11 +92,11 @@
         this.model.get('publication_date').split('-')[0],
         this.model.get('number'),
         ''];
-      this.model.set('uri', parts.join('/'));
+      this.model.set('frbr_uri', parts.join('/'));
     },
 
     showPublishedUrl: function() {
-      var url = window.location.origin + "/api" + this.model.get('uri');
+      var url = window.location.origin + "/api" + this.model.get('frbr_uri');
 
       this.$el.find('.published-url').toggle(!this.model.get('draft'));
       this.$el.find('#document_published_url').attr('href', url).text(url);

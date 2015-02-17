@@ -16,8 +16,7 @@ log = logging.getLogger(__name__)
 class Document(models.Model):
     db_table = 'documents'
 
-    uri = models.CharField(max_length=512, null=False, blank=False,
-            help_text="Used globably to identify this document")
+    frbr_uri = models.CharField(max_length=512, null=False, blank=False, help_text="Used globably to identify this document")
     """ The FRBRuri of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True)
@@ -73,7 +72,7 @@ class Document(models.Model):
     def copy_attributes(self):
         """ Override to update the XML document. """
         self.doc.title = self.title
-        self.doc.frbr_uri = self.uri
+        self.doc.frbr_uri = self.frbr_uri
 
         self.doc.work_date = self.publication_date
         self.doc.manifestation_date = self.updated_at or arrow.now()

@@ -21,8 +21,6 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<h2>{{ count }} Documents</h2>
-
 <table class="table table-condensed table-hover tablesorter">
   <thead>
     <tr>
@@ -58,6 +56,11 @@
       </tr>
     {{/each}}
   </tbody>
+  <tfoot>
+    <tr>
+      <td class="active" colspan="5">{{ count }} documents</td>
+    </tr>
+  </tfoot>
 </table>
 {% endverbatim %}
 

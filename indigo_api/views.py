@@ -12,7 +12,7 @@ from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
 
 from .models import Document
-from .serializers import DocumentSerializer, DocumentBrowserSerializer, AkomaNtosoRenderer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer
 from indigo_an.render.html import HTMLRenderer
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -69,7 +69,7 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
     The public read-only API for viewing a document by FRBR URI.
     """
     queryset = Document.objects.filter(draft=False)
-    serializer_class = DocumentBrowserSerializer
+    serializer_class = DocumentSerializer
     renderer_classes = (JSONRenderer, AkomaNtosoRenderer, BrowsableAPIRenderer)
 
     lookup_url_kwarg = 'frbr_uri'
@@ -81,13 +81,10 @@ class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
     The public read-only API for browsing documents by their FRBR URI components.
     """
     queryset = Document.objects.filter(draft=False)
-    serializer_class = DocumentBrowserSerializer
-
-    # TODO: don't allow XML serialising here
-    # TODO: don't send back document XML in this view
+    serializer_class = DocumentSerializer
 
     def filter_queryset(self, queryset):
-        return queryset.filter(uri__istartswith=self.frbr_uri)
+        return queryset.filter(uri__istartswith=self.kwargs['frbr_uri'])
 
 
 class RenderAPI(APIView):

@@ -31,12 +31,12 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['GET', 'PUT'])
     def body(self, request, *args, **kwargs):
+        instance = self.get_object()
+
         if request.method == 'GET':
-            return Response({'body': self.get_object().body_xml})
+            return Response({'body': instance.body_xml})
 
         if request.method == 'PUT':
-            instance = self.get_object()
-
             try:
                 instance.body_xml = request.data.get('body')
                 instance.save()
@@ -44,6 +44,23 @@ class DocumentViewSet(viewsets.ModelViewSet):
                 raise ValidationError({'body': ["Invalid XML: %s" % e.message]})
 
             return Response({'body': instance.body_xml})
+
+    @detail_route(methods=['GET', 'PUT'])
+    def content(self, request, *args, **kwargs):
+        instance = self.get_object()
+
+        if request.method == 'GET':
+            return Response({'content': self.get_object().document_xml})
+
+        if request.method == 'PUT':
+            try:
+                # TODO: refresh attributes from the new document xml
+                instance.reset_xml(request.data.get('content'))
+                instance.save()
+            except LxmlError as e:
+                raise ValidationError({'content': ["Invalid XML: %s" % e.message]})
+
+            return Response({'content': instance.document_xml})
 
 
 class FRBRURIViewSet(viewsets.GenericViewSet):

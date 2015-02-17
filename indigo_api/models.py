@@ -39,7 +39,7 @@ class Document(models.Model):
     @property
     def doc(self):
         """ The wrapped `an.act.Act` that this document works with. """
-        if not hasattr(self, '_doc'):
+        if not getattr(self, '_doc', None):
             self._doc = Act(self.document_xml)
         return self._doc
 
@@ -69,23 +69,44 @@ class Document(models.Model):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)
 
-    def copy_attributes(self):
-        """ Override to update the XML document. """
-        self.doc.title = self.title
-        self.doc.frbr_uri = self.frbr_uri
+    def copy_attributes(self, from_model=True):
+        """ Copy attributes from the model into the document, or reverse
+        if `from_model` is False. """
 
-        self.doc.work_date = self.publication_date
-        self.doc.manifestation_date = self.updated_at or arrow.now()
+        if from_model:
+            self.doc.title = self.title
+            self.doc.frbr_uri = self.frbr_uri
 
-        self.doc.publication_date = self.publication_date or ''
-        self.doc.publication_name = self.publication_name or ''
-        self.doc.publication_number = self.publication_number or ''
+            self.doc.work_date = self.publication_date
+            self.doc.manifestation_date = self.updated_at or arrow.now()
+
+            self.doc.publication_date = self.publication_date or ''
+            self.doc.publication_name = self.publication_name or ''
+            self.doc.publication_number = self.publication_number or ''
+
+        else:
+            self.title = self.doc.title
+            self.frbr_uri = self.doc.frbr_uri
+
+            self.publication_date = self.doc.publication_date or self.doc.work_date
+            self.publication_name = self.doc.publication_name
+            self.publication_number = self.doc.publication_number
 
         self.refresh_xml()
 
     def refresh_xml(self):
         log.debug("Refreshing document xml")
         self.document_xml = self.doc.to_xml()
+
+    def reset_xml(self, xml):
+        """ Completely reset the document XML to a new value, and refresh stored attributes
+        from that document. """
+        # this validates it
+        doc = Act(xml)
+
+        # now update ourselves
+        self._doc = doc
+        self.copy_attributes(from_model=False)
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

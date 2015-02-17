@@ -9,6 +9,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ A URL for the body of the document. The body isn't included in the
     document description because it could be huge. """
 
+    content_url = serializers.SerializerMethodField()
+    """ A URL for the entire content of the document. The content isn't included in the
+    document description because it could be huge. """
+
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
 
@@ -23,12 +27,16 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'publication_date', 'publication_name', 'publication_number',
 
                 'body_url',
+                'content_url',
                 'published_url',
                 )
         read_only_fields = ('number', 'nature', 'created_at', 'updated_at')
 
     def get_body_url(self, doc):
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})
+
+    def get_content_url(self, doc):
+        return reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_published_url(self, doc):
         if doc.draft:

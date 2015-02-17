@@ -31,6 +31,7 @@
         documents: this.collection.toJSON()
       }));
       formatTimestamps();
+      this.$el.find('table').tablesorter({sortList: [[0, 0]]});
     }
   });
 })(window);

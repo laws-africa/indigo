@@ -210,7 +210,7 @@ This returns the entire contents of an act. For example, the HTML version of ``/
 
 This might look a bit weird, but it's actually correct since the FRBRI URI ends in a ``/``. If you like, you can also try it without the ``/``
 
-    ``http://indigo.code4sa.org/api/za/act/1998/.html``
+    ``http://indigo.code4sa.org/api/za/act/1998.html``
 
 The raw XML is available at one of:
 

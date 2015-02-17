@@ -3,7 +3,7 @@ from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-    publication_date = serializers.DateField()
+    publication_date = serializers.DateField(required=False)
 
     body_url = serializers.SerializerMethodField()
     """ A URL for the body of the document. The body isn't included in the

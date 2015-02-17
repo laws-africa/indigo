@@ -19,7 +19,7 @@ class Document(models.Model):
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, help_text="Used globably to identify this document")
     """ The FRBRuri of this document that uniquely identifies it globally """
 
-    title = models.CharField(max_length=1024, null=True)
+    title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.CharField(max_length=2, choices=COUNTRIES, default=COUNTRIES[0][0])
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
@@ -29,7 +29,7 @@ class Document(models.Model):
 
     publication_name = models.CharField(null=True, max_length=1024, help_text='Name of the original publication, such as a national gazette')
     publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number")
-    publication_date = models.DateField(null=True)
+    publication_date = models.DateField(null=True, blank=True)
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
 

@@ -171,10 +171,12 @@ html, body {
   }
 
   th.headerSortUp::after {
-    content: ' \2191';
+    font-family: fontawesome;
+    content: ' \f0dd';
   }
 
   th.headerSortDown::after {
-    content: ' \2193';
+    font-family: fontawesome;
+    content: ' \f0de';
   }
 }

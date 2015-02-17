@@ -1,13 +1,13 @@
 import re
 
 from django.template.loader import render_to_string
+from django.http import Http404
 
 from rest_framework import viewsets
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.views import APIView
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer, BrowsableAPIRenderer
 from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
 
@@ -54,7 +54,7 @@ class FRBRURIViewSet(viewsets.GenericViewSet):
         frbr_uri = '/' + self.kwargs['frbr_uri']
         if not frbr_uri.endswith('/'):
             frbr_uri += '/'
-        self.kwargs['frbr_uri'] = self.frbr_uri = frbr_uri
+        self.kwargs['frbr_uri'] = frbr_uri
 
     def get_format_suffix(self, **kwargs):
         match = FORMAT_RE.search(self.kwargs['frbr_uri'])
@@ -70,10 +70,48 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
     """
     queryset = Document.objects.filter(draft=False)
     serializer_class = DocumentSerializer
-    renderer_classes = (JSONRenderer, AkomaNtosoRenderer, BrowsableAPIRenderer)
+    # these determine what content negotiation takes place
+    renderer_classes = (renderers.JSONRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
 
     lookup_url_kwarg = 'frbr_uri'
     lookup_field = 'uri'
+
+    def retrieve(self, request, *args, **kwargs):
+        component = self.get_component()
+        format = self.request.accepted_renderer.format
+
+        # get the document
+        document = self.get_object()
+
+        if (component, format) == ('main', 'xml'):
+            return Response(document.document_xml)
+
+        if (component, format) == ('main', 'html'):
+            html = HTMLRenderer().render_xml(document.document_xml)
+            return Response(html)
+
+        # TODO: table of content
+
+        if (component, format) == ('main', 'json'):
+            serializer = self.get_serializer(document)
+            return Response(serializer.data)
+
+        raise Http404
+
+    def get_component(self):
+        # split the URI into the base, and the component
+        #
+        # /za/act/1998/84/main -> (/za/act/1998/84/, main)
+
+        parts = self.kwargs['frbr_uri'].split('/')
+        self.kwargs['frbr_uri'] = '/'.join(parts[0:5]) + '/'
+
+        component = '/'.join(parts[5:]) or 'main'
+        if component.endswith('/'):
+            component = component[0:-1]
+
+        return component
+
 
 
 class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):

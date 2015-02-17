@@ -28,4 +28,4 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):
     def render(self, data, media_type=None, renderer_context=None):
-        return data['document_xml']
+        return data

@@ -164,3 +164,17 @@ html, body {
 .standalone {
   margin-top: 100px;
 }
+
+.tablesorter {
+  th {
+    cursor: pointer;
+  }
+
+  th.headerSortUp::after {
+    content: ' \2191';
+  }
+
+  th.headerSortDown::after {
+    content: ' \2193';
+  }
+}

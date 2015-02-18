@@ -139,7 +139,10 @@ class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
     serializer_class = DocumentSerializer
 
     def filter_queryset(self, queryset):
-        return queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
+        queryset = queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
+        if queryset.count() == 0:
+            raise Http404
+        return queryset
 
 
 class RenderAPI(APIView):

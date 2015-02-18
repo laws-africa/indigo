@@ -1,5 +1,5 @@
-$border-colour: #ccc;
-$header-colour: #4a806e;
+$border-colour: #ddd;
+$header-colour: #eee;
 $header-colour2: #f5f5f5;
 
 html, body {
@@ -66,7 +66,7 @@ html, body {
 
 .workspace-header {
   background-color: $header-colour;
-  color: white;
+  border-bottom-width: 2px;
 
   .search-box {
     float: left;

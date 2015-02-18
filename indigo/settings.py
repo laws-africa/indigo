@@ -170,10 +170,10 @@ if DEBUG:
 # Logging
 LOGGING = {
     'version': 1,
-    'disable_existing_loggers': False,
+    'disable_existing_loggers': True,
     'formatters': {
         'simple': {
-            'format': '%(levelname)s %(message)s'
+            'format': '%(asctime)s %(levelname)s %(module)s %(process)d %(thread)d %(message)s'
         }
     },
     'handlers': {
@@ -184,12 +184,14 @@ LOGGING = {
         }
     },
     'loggers': {
-        'indigo_api': {
+        '': {
             'handlers': ['console'],
+            'level': 'ERROR'
+        },
+        'indigo_api': {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
         'django': {
-            'handlers': ['console'],
             'level': 'INFO',
         }
     }

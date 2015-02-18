@@ -8,6 +8,9 @@ manage and edit documents. We assume that you have a basic understanding of web
 applications, REST APIs and the `Akoma Ntoso <http://www.akomantoso.org/>`_
 standard for legislation (acts).
 
+See :ref:`rest_general_guide` for general API details such as content types and
+what the fields of a Document are.
+
 If you only want to fetch and render published legislation and don't care
 about editing legislation, see :ref:`rest_public_guide` instead.
 
@@ -21,44 +24,10 @@ The application API is the REST API used by the web editor to manage documents. 
 * list and search for documents
 * manage users and passwords
 
-The API is available at
+The API is available at http://indigo.code4sa.org/api/.
 
-    ``http://indigo.code4sa.org/api/``
-
-and is easy to explore using a browser.
-
-It follows normal REST semantics using HTTP methods such as ``GET``, ``POST``, ``PUT`` and ``DELETE``.
-
-Content types
--------------
-
-The REST API returns JSON by default. You can explicitly request JSON by including ``Accept: application/json``
-as a request header. You can also include ``.json`` at the end of the request URL.
-
-When submitting data to the api, either encode it as JSON and include an appropriate header:
-
-.. code-block:: HTTP
-
-    POST /api HTTP/1.1
-    Accept: application/json
-    Content-Type: application/json; charset=utf-8
-    
-    {
-        "key": "value"
-    }
-
-or use form encoding, also with an appropriate header:
-
-.. code-block:: HTTP
-
-    POST /auth/login/ HTTP/1.1
-    Accept: application/json
-    Content-Type: application/x-www-form-urlencoded; charset=utf-8
-   
-    key=value
-
-
-All our examples will use the JSON format for requests.
+It is easy to explore using a browser and follows normal REST semantics using
+HTTP methods such as ``GET``, ``POST``, ``PUT`` and ``DELETE``.
 
 Authentication
 --------------

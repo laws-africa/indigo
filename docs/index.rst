@@ -18,6 +18,18 @@ The main REST API supports the creation, editing
 and management of a library of legislative documents. The public read-only API
 provides access to published documents in XML, HTML or other formats.
 
+Contents
+--------
+
+.. toctree::
+   :maxdepth: 2
+
+   rest/general
+   rest/public
+   rest/app
+   guide/index
+   develop/index
+
 Documents
 ---------
 
@@ -55,17 +67,6 @@ URI.
 
 The **public API** uses the FRBR URI to identify documents so that anyone can
 find a document just by constructing a valid FRBR URI.
-
-Contents
---------
-
-.. toctree::
-   :maxdepth: 2
-
-   guide/index
-   rest/public
-   rest/app
-   develop/index
 
 
 Indices and tables

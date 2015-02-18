@@ -8,6 +8,9 @@ to fetch and render documents for users to read or download. We assume that
 you have a basic understanding of web applications, REST APIs and the
 `Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legislation (acts).
 
+See :ref:`rest_general_guide` for general API details such as content types and
+what the fields of a Document are.
+
 If you want to manage and edit a collection of legislation see :ref:`rest_app_guide` instead.
 
 Public API
@@ -26,26 +29,8 @@ The public API relies heavily on FRBR URIs (and URI fragments) for identifying c
 
    When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/``.
 
-Content Types
--------------
-
-Some responses can be returend in multiple formats. You can choose the content
-type of a response by including an ``Accept`` header or ``.format`` at the end
-of the URL. Not all responses support all formats.
-
-* ``.json``: return JSON
-* ``.xml``: return Akoma Ntoso XML
-* ``.html``: return human friendly HTML
-
-By default the API returns JSON.
-
-.. seealso::
-
-   For more information on content type negotation see http://www.django-rest-framework.org/api-guide/content-negotiation/
-
-
-Listing acts
-------------
+Listing Acts
+^^^^^^^^^^^^
 
 * ``GET /api/za/``
 * ``GET /api/za/act/``
@@ -55,8 +40,8 @@ Listing acts
 
 These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
 
-Entire act
-----------
+Entire Act
+^^^^^^^^^^
 
 * ``GET /api/frbr-uri/``
 
@@ -79,7 +64,7 @@ The raw XML is available at one of:
 
 
 Table of Contents
------------------
+^^^^^^^^^^^^^^^^^
 
 * ``GET /api/frbr-uri/contents.json``
 
@@ -89,7 +74,7 @@ Get a descirption of the table of contents of an act.
 
 
 Using HTML Responses
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 TODO:
 

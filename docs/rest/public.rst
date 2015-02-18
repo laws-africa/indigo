@@ -30,7 +30,7 @@ The public API relies heavily on FRBR URIs (and URI fragments) for identifying c
    When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/``.
 
 Listing Acts
-^^^^^^^^^^^^
+------------
 
 * ``GET /api/za/``
 * ``GET /api/za/act/``
@@ -41,7 +41,7 @@ Listing Acts
 These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
 
 Entire Act
-^^^^^^^^^^
+----------
 
 * ``GET /api/frbr-uri/``
 
@@ -64,7 +64,7 @@ The raw XML is available at one of:
 
 
 Table of Contents
-^^^^^^^^^^^^^^^^^
+-----------------
 
 * ``GET /api/frbr-uri/contents.json``
 
@@ -74,7 +74,7 @@ Get a descirption of the table of contents of an act.
 
 
 Using HTML Responses
-^^^^^^^^^^^^^^^^^^^^
+--------------------
 
 TODO:
 

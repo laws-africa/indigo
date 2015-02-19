@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}Import{% endblock %}
+{% block content %}
+
+<div class="panel panel-default panel-centered" id="import-document">
+  <div class="panel-heading">
+    <h4 class="panel-title">Import an existing Akoma Ntoso XML document</h4>
+  </div>
+
+  <form>
+    <div class="panel-body">
+      <p class="lead">You can import an existing document that is in the Akomo Ntoso XML 2.0 standard.</p>
+
+      <div class="file-inputs">
+        <div class="dropzone">drag and drop your file here</div>
+
+        <br>
+
+        <p>Or click the button to choose a file <input type="file" id="file" name="file"></p>
+      </div>
+
+      <div class="progress" style="display: none">
+        <div class="progress-bar progress-bar-striped active" style="width: 100%"></div>
+      </div>
+
+      <p class="alert alert-danger" style="display: none"></p>
+    </div>
+
+  </form>
+</div>
+
+{% endblock %}

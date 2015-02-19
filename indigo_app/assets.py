@@ -30,6 +30,7 @@ register('js', Bundle(
     'javascript/indigo/views/document.js',
     'javascript/indigo/views/library.js',
     'javascript/indigo/views/error_box.js',
+    'javascript/indigo/views/import.js',
     'javascript/indigo/timestamps.js',
     'javascript/indigo.js',
     output='js/app.%(version)s.js'))

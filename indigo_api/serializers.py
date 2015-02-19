@@ -1,6 +1,11 @@
-from .models import Document
+from lxml.etree import LxmlError
+
 from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
+from rest_framework.exceptions import ValidationError
+from indigo_an.act import Act
+
+from .models import Document
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_date = serializers.DateField(required=False)
@@ -50,6 +55,14 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             return None
         else:
             return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})
+
+    def validate_content(self, value):
+        try:
+            Act(value)
+        except LxmlError as e:
+            raise ValidationError("Invalid XML: %s" % e.message)
+        return value
+
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

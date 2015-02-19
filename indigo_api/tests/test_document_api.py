@@ -98,3 +98,10 @@ class SimpleTest(APITestCase):
         self.assertEqual(response.status_code, 200)
         assert_in('<p>in the body</p>', response.data['content'])
 
+    def test_create_with_bad_content(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/za/act/1998/2/',
+            'content': 'not valid xml',
+            })
+        assert_equal(response.status_code, 400)
+        assert_equal(len(response.data['content']), 1)

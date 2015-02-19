@@ -22,6 +22,15 @@ def new_document(request):
         'view': 'DocumentView',
         })
 
+def import_document(request):
+    doc = Document(frbr_uri='/')
+    form = DocumentForm(instance=doc)
+    return render(request, 'import.html', {
+        'document': doc,
+        'form': form,
+        'view': 'ImportView',
+        })
+
 def library(request):
     return render(request, 'library.html', {
         'view': 'LibraryView',

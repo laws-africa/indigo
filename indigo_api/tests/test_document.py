@@ -1,5 +1,9 @@
+from nose.tools import *
 from django.test import TestCase
+from datetime import date
+
 from indigo_api.models import Document
+from indigo_api.tests.fixtures import *
 
 class DocumentTestCase(TestCase):
     def setUp(self):
@@ -26,4 +30,11 @@ class DocumentTestCase(TestCase):
 
         d2 = Document.objects.get(id=id)
         self.assertIn('<body>hello</body>', d2.document_xml)
+
+    def test_set_content(self):
+        d = Document()
+        d.content = document_fixture('test')
+
+        assert_equal(d.frbr_uri, '/za/act/1900/1/')
+        assert_equal(d.publication_date, date(2005, 7, 24))
 

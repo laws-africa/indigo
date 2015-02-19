@@ -110,7 +110,7 @@ class Act(object):
     def publication_date(self):
         """ Date of the publication """
         pub = self._get('meta.publication')
-        return pub.get('date') if pub is not None else None
+        return arrow.get(pub.get('date')).date() if pub is not None else None
 
     @publication_date.setter
     def publication_date(self, value):

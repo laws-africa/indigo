@@ -1,5 +1,6 @@
 from unittest import TestCase
 from nose.tools import *
+from datetime import date
 
 from indigo_an.act import Act, datestring
 
@@ -29,16 +30,19 @@ class ActTestCase(TestCase):
         a = Act()
         a.work_date = '2012-01-02'
         assert_equal(datestring(a.work_date), '2012-01-02')
+        assert_is_instance(a.work_date, date)
 
     def test_expression_date(self):
         a = Act()
         a.expression_date = '2012-01-02'
         assert_equal(datestring(a.expression_date), '2012-01-02')
+        assert_is_instance(a.expression_date, date)
 
     def test_manifestation_date(self):
         a = Act()
         a.manifestation_date = '2012-01-02'
         assert_equal(datestring(a.manifestation_date), '2012-01-02')
+        assert_is_instance(a.manifestation_date, date)
 
     def test_publication_date(self):
         a = Act()
@@ -46,6 +50,7 @@ class ActTestCase(TestCase):
 
         a.publication_date = '2012-01-02'
         assert_equal(datestring(a.publication_date), '2012-01-02')
+        assert_is_instance(a.publication_date, date)
 
     def test_publication_number(self):
         a = Act()

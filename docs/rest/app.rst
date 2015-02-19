@@ -71,3 +71,118 @@ In subsequent requests that require authentication, include the token as a heade
 .. seealso::
 
    For more information on token authentication, see the `authentication documentation for the Django Rest Framework <http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication>`_.
+
+List Documents
+--------------
+
+.. code:: http
+
+    GET /api/documents
+
+Lists the documents in the library.
+
+Get a Document
+--------------
+
+.. code:: http
+
+    GET /api/documents/{id}
+
+Fetches a JSON description of a document. This does not include the full content or body of the document since those may be very large.
+
+Update a Document
+-----------------
+
+.. code:: http
+
+    PUT /api/documents/{id}
+    PATCH /api/documents/{id}
+
+* Parameters:
+
+  * all the document fields described in :ref:`rest_general_guide`
+  * ``body``: an (optional) body field with the raw XML of the body of the document. ``string``
+  * ``content``: an (optional) content field with the raw XML of the content of the document. ``string``
+
+Updates a document. Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
+
+If you include the ``content`` parameter, the content of the entire document
+will be overwritten. Most other fields of the document, such as the FRBR URI
+and the title will be re-read from the new XML, overwriting any existing
+fields. The new XML must be valid Akoma Ntoso 2.0 XML.
+
+You can also update the body of the document using ``PUT /api/documents/{id}/body`` and the content using ``PUT /api/documents/{id}/content``.
+
+
+Delete a Document
+-----------------
+
+.. code:: http
+
+    DELETE /api/documents/{id}
+
+Marks the document as deleted. The document can be recovered from the Django Admin area, but will never show up in any API
+otherwise.
+
+Create a Document
+-----------------
+
+.. code:: http
+
+    POST /api/documents
+
+* Parameters:
+
+  * all the document fields described in :ref:`rest_general_guide`
+  * ``body``: an (optional) body field with the raw XML of the body of the document. ``string``
+  * ``content``: an (optional) content field with the raw XML of the content of the document. ``string``
+
+Updates a document. Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
+
+Get Document Content
+--------------------
+
+.. code:: http
+
+    GET /api/documents/{id}/content
+
+Fetches a JSON description of the raw XML content of a document.
+
+Update Document Content
+-----------------------
+
+.. code:: http
+
+   POST /api/documents/{id}/content
+
+* Parameters:
+
+  * ``content``: raw XML of the document content. ``string``
+
+Updates the content of the entire document. Most other fields of the document, such as the FRBR URI and the title will be re-read
+from the new XML, overwriting any existing fields. The new XML must be valid Akoma Ntoso 2.0 XML.
+
+.. warning::
+    This overwrites the entire document. Be careful.
+
+Get Document Body
+-----------------
+
+.. code:: http
+
+    GET /api/documents/{id}/body
+
+Fetches a JSON description of the raw XML body of a document.
+
+Update Document Body
+--------------------
+
+.. code:: http
+
+    POST /api/documents/{id}/body
+
+* Parameters:
+
+  * ``body``: raw XML of the document body. ``string``
+
+Updates the body of the document. The new XML must be valid Akoma Ntoso 2.0 XML ``<body>`` element.

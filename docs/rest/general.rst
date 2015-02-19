@@ -122,6 +122,15 @@ published_url  URL of where the published document is available.                
                This will be null if draft is true
 ============== =================================================================================== ========== =========================
 
+In some cases, a document may also contain ``body`` or ``content`` fields.
+
+============== =================================================================================== ========== =========================
+Field          Description                                                                         Type       Default for new documents
+============== =================================================================================== ========== =========================
+body           Raw XML body of the document.                                                       String     Basic document body
+content        Raw XML content of the entire document.                                             String     Basic document content
+============== =================================================================================== ========== =========================
+
 
 Next Steps
 ----------

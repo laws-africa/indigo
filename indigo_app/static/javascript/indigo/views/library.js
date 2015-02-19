@@ -5,7 +5,7 @@
   Indigo = exports.Indigo;
 
   Indigo.LibraryView = Backbone.View.extend({
-    el: '.main-container article',
+    el: '#library',
     template: '#search-results-template',
 
     initialize: function() {

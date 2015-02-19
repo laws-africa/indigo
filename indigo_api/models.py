@@ -54,6 +54,17 @@ class Document(models.Model):
         self.refresh_xml()
 
     @property
+    def content(self):
+        """ Alias for `document_xml` """
+        return self.document_xml
+
+    @content.setter
+    def content(self, value):
+        """ The correct way to update the raw XML of the document. This will re-parse the XML
+        and other attributes -- such as the document title and FRBR URI based on the XML. """
+        self.reset_xml(value)
+
+    @property
     def year(self):
         return self.doc.year
 
@@ -92,6 +103,7 @@ class Document(models.Model):
             self.publication_name = self.doc.publication_name
             self.publication_number = self.doc.publication_number
 
+        # update the model's XML from the Act XML
         self.refresh_xml()
 
     def refresh_xml(self):
@@ -99,8 +111,10 @@ class Document(models.Model):
         self.document_xml = self.doc.to_xml()
 
     def reset_xml(self, xml):
-        """ Completely reset the document XML to a new value, and refresh stored attributes
-        from that document. """
+        """ Completely reset the document XML to a new value, and refresh database attributes
+        from the new XML document. """
+        log.debug("Setting xml to: %s" % xml)
+
         # this validates it
         doc = Act(xml)
 

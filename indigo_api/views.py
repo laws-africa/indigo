@@ -31,6 +31,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['GET', 'PUT'])
     def body(self, request, *args, **kwargs):
+        """ This exposes a GET and PUT resource at ``/api/documents/1/body`` which allows
+        the body of the document to be fetched and set independently of the metadata. This
+        is useful because the body can be large.
+        """
         instance = self.get_object()
 
         if request.method == 'GET':
@@ -47,6 +51,10 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['GET', 'PUT'])
     def content(self, request, *args, **kwargs):
+        """ This exposes a GET and PUT resource at ``/api/documents/1/content`` which allows
+        the content of the document to be fetched and set independently of the metadata. This
+        is useful because the content can be large.
+        """
         instance = self.get_object()
 
         if request.method == 'GET':
@@ -54,7 +62,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
         if request.method == 'PUT':
             try:
-                # TODO: refresh attributes from the new document xml
                 instance.reset_xml(request.data.get('content'))
                 instance.save()
             except LxmlError as e:
@@ -190,10 +197,9 @@ class RenderAPI(APIView):
             if 'body' in data:
                 document.body = data['body']
 
-        elif u'document_xml' in request.data:
+        elif u'content' in request.data:
             document = Document()
-            document.document_xml = request.data['document_xml']
-            # TODO: parse the XML to populate the metadata
+            document.content = request.data['content']
 
         else:
             raise ParseError("Provide either a 'document' or 'document_xml' item.")

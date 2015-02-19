@@ -12,7 +12,7 @@ from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
 
 from .models import Document
-from .serializers import DocumentSerializer, AkomaNtosoRenderer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
 from indigo_an.render.html import HTMLRenderer
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -161,6 +161,43 @@ class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
         if queryset.count() == 0:
             raise Http404
         return queryset
+
+
+class ConvertView(APIView):
+    """
+    Support for converting between two document types. This allows conversion from
+    plain text, JSON, XML, and PDF to plain text, JSON, XML and HTML.
+    """
+
+    def post(self, request, format=None):
+        serializer = ConvertSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        input_format = serializer.validated_data['inputformat']
+        output_format = serializer.validated_data['outputformat']
+
+        if input_format == 'json':
+            doc_serializer = DocumentSerializer(data=request.data['content'], context={'request': request})
+            doc_serializer.is_valid(raise_exception=True)
+            document = Document(**doc_serializer.validated_data)
+
+        # TODO: handle doc input
+        # TODO: handle pdf input
+        # TODO: handle plain text input
+
+        if output_format == 'json':
+            doc_serializer = DocumentSerializer(instance=document, context={'request': request})
+            return Response(doc_serializer.data)
+
+        if output_format == 'xml':
+            return Response(document.document_xml)
+
+        if output_format == 'html':
+            renderer = HTMLRenderer()
+            body_html = renderer.render_xml(document.document_xml)
+            return Response(body_html)
+
+        # TODO: handle plain text output
 
 
 class RenderAPI(APIView):

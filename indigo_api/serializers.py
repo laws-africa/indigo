@@ -71,6 +71,23 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         return value
 
 
+class ConvertSerializer(serializers.Serializer):
+    """
+    Helper to handle input elements for the /convert API
+    """
+
+    file = serializers.FileField(write_only=True, required=False)
+    content = serializers.CharField(write_only=True, required=False)
+    inputformat = serializers.ChoiceField(write_only=True, required=False, choices=['json'])
+    outputformat = serializers.ChoiceField(write_only=True, required=True, choices=['xml', 'json', 'html'])
+
+    def validate(self, data):
+        if data.get('content') and not data.get('inputformat'):
+            raise ValidationError({'inputformat': "The inputformat field is required when the content field is used"})
+
+        return data
+
+
 class AkomaNtosoRenderer(renderers.XMLRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         return data

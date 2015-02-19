@@ -34,16 +34,16 @@ class DocumentViewSet(viewsets.ModelViewSet):
         instance = self.get_object()
 
         if request.method == 'GET':
-            return Response({'body': instance.body_xml})
+            return Response({'body': instance.body})
 
         if request.method == 'PUT':
             try:
-                instance.body_xml = request.data.get('body')
+                instance.body = request.data.get('body')
                 instance.save()
             except LxmlError as e:
                 raise ValidationError({'body': ["Invalid XML: %s" % e.message]})
 
-            return Response({'body': instance.body_xml})
+            return Response({'body': instance.body})
 
     @detail_route(methods=['GET', 'PUT'])
     def content(self, request, *args, **kwargs):
@@ -188,7 +188,7 @@ class RenderAPI(APIView):
 
             # patch in the body xml
             if 'body' in data:
-                document.body_xml = data['body']
+                document.body = data['body']
 
         elif u'document_xml' in request.data:
             document = Document()

@@ -43,14 +43,13 @@ class Document(models.Model):
             self._doc = Act(self.document_xml)
         return self._doc
 
-
     @property
-    def body_xml(self):
+    def body(self):
         return self.doc.body_xml
 
-    @body_xml.setter
-    def body_xml(self, xml):
-        log.debug("Set body_xml to: %s" % xml)
+    @body.setter
+    def body(self, xml):
+        log.debug("Setting body to: %s" % xml)
         self.doc.body_xml = xml
         self.refresh_xml()
 

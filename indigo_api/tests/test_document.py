@@ -18,9 +18,9 @@ class DocumentTestCase(TestCase):
         d2 = Document.objects.get(id=id)
         self.assertEqual(d.title, d2.title)
 
-    def test_set_body_xml(self):
+    def test_set_body(self):
         d = Document.objects.create(title="Title", frbr_uri="/za/uri")
-        d.body_xml = '<body>hello</body>'
+        d.body = '<body>hello</body>'
         d.save()
         id = d.id
 

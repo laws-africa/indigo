@@ -5,8 +5,11 @@ from rest_framework.reverse import reverse
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_date = serializers.DateField(required=False)
 
+    body = serializers.CharField(required=False)
+    """ A write-only field for setting the body of the document. """
+
     body_url = serializers.SerializerMethodField()
-    """ A URL for the body of the document. The body isn't included in the
+    """ A read-only URL for the body of the document. The body isn't included in the
     document description because it could be huge. """
 
     content_url = serializers.SerializerMethodField()
@@ -26,11 +29,16 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'title', 'country', 'number', 'year', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
 
-                'body_url',
+                'body', 'body_url',
+
                 'content_url',
                 'published_url',
                 )
         read_only_fields = ('number', 'nature', 'created_at', 'updated_at', 'year')
+        field_kwargs = {
+                'content': {'write_only': True},
+                'body': {'write_only': True},
+                }
 
     def get_body_url(self, doc):
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})

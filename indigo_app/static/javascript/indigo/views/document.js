@@ -237,6 +237,7 @@
 
       this.document = new Indigo.Document(info, {collection: library});
       this.document.on('change', this.setDirty, this);
+      this.document.on('change', this.allowDelete, this);
       this.document.on('sync', this.setModelClean, this);
 
       this.documentBody = new Indigo.DocumentBody({id: document_id});
@@ -301,9 +302,13 @@
       }
     },
 
+    allowDelete: function() {
+      this.$el.find('.btn.delete').prop('disabled', this.document.isNew() || !this.user.authenticated());
+    },
+
     userChanged: function() {
       this.$saveBtn.toggle(this.user.authenticated());
-      this.$el.find('.btn.delete').prop('disabled', !this.user.authenticated());
+      this.allowDelete();
     },
 
     save: function() {

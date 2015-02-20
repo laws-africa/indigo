@@ -194,3 +194,19 @@ html, body {
   text-align: center;
   padding: 15px;
 }
+
+.document-list-table {
+  table-layout: fixed;
+
+  th.title { width: 50% }
+  th.draft { width: 7% }
+  th.year { width: 10% }
+  th.number { width: 20% }
+  th.updated { width: 10% }
+
+  td, th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

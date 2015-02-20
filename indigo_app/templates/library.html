@@ -21,14 +21,14 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-hover tablesorter">
+<table class="table table-condensed table-hover tablesorter document-list-table">
   <thead>
     <tr>
-      <th>Title</th>
-      <th>Draft?</th>
-      <th>Year</th>
-      <th>Number</th>
-      <th>Updated</th>
+      <th class="title">Title</th>
+      <th class="draft">Draft?</th>
+      <th class="year">Year</th>
+      <th class="number">Number</th>
+      <th class="updated">Updated</th>
     </tr>
   </thead>
   <tbody>
@@ -47,12 +47,15 @@
           {{#if draft}}
             <span class="label label-warning">draft</span>
           {{else}}
-            <span class="label label-info">published</span>
+            <a href="{{ published_url }}" target="_blank"><span class="label label-info">published</span></a>
           {{/if}}
         </td>
         <td>{{ year }}</td>
         <td>{{ number }}</td>
-        <td><span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span></td>
+        <td>
+          <span class="hidden">{{ updated_at }}</span>
+          <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+        </td>
       </tr>
     {{/each}}
   </tbody>

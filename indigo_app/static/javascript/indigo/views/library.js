@@ -31,7 +31,13 @@
         documents: this.collection.toJSON()
       }));
       formatTimestamps();
-      this.$el.find('table').tablesorter({sortList: [[0, 0]]});
+      this.$el.find('table').tablesorter({
+        sortList: [[0, 0]],
+        headers: {
+          // sort timestamps as text, since they're iso8601
+          4: {sorter: "text"},
+        }
+      });
     }
   });
 })(window);

@@ -69,6 +69,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
             return Response({'content': instance.document_xml})
 
+    @detail_route(methods=['GET'])
+    def toc(self, request, *args, **kwargs):
+        """ This exposes a GET resource at ``/api/documents/1/toc`` which gives
+        a table of contents for the document.
+        """
+        instance = self.get_object()
+        return Response({'toc': self.get_object().table_of_contents()})
+
 
 class FRBRURIViewSet(viewsets.GenericViewSet):
     def initial(self, request, **kwargs):
@@ -114,7 +122,10 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
             html = HTMLRenderer().render_xml(document.document_xml)
             return Response(html)
 
-        # TODO: table of content
+        # table of content
+        if (component, format) == ('toc', 'json'):
+            serializer = self.get_serializer(document)
+            return Response({'toc': document.table_of_contents()})
 
         if (component, format) == ('main', 'json'):
             serializer = self.get_serializer(document)

@@ -24,6 +24,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ A URL for the entire content of the document. The content isn't included in the
     document description because it could be huge. """
 
+    toc_url = serializers.SerializerMethodField()
+    """ A URL for the table of content of the document. The TOC isn't included in the
+    document description because it could be huge and requires parsing the XML. """
+
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
 
@@ -40,7 +44,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'body', 'body_url',
                 'content', 'content_url',
 
-                'published_url',
+                'published_url', 'toc_url',
                 )
         read_only_fields = ('number', 'nature', 'created_at', 'updated_at', 'year')
 
@@ -49,6 +53,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_content_url(self, doc):
         return reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk})
+
+    def get_toc_url(self, doc):
+        return reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_published_url(self, doc):
         if doc.draft:
@@ -62,7 +69,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         except LxmlError as e:
             raise ValidationError("Invalid XML: %s" % e.message)
         return value
-
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

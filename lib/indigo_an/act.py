@@ -202,12 +202,7 @@ class Act(object):
             return node.iterchildren(*child_types)
 
         def generate_toc(node):
-            id = node.get('id')
-            type = node.tag.split('}', 1)[-1]
-            heading = self._get('heading', node)
-            num = self._get('num', node)
-
-            elem = TOCElement(id=id, heading=heading, type=type, num=num)
+            elem = TOCElement(node)
             elem.children = [generate_toc(c) for c in children(node)]
             return elem
 
@@ -245,15 +240,28 @@ class TOCElement(object):
     An element in a table of contents, such as a chapter, part or section.
     ""
 
+    :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
     :ivar type: node type, one of: `chapter, part, section`
     :ivar id: XML id string of the node in the document, may be None
     :ivar heading: heading for this element, excluding the number
     :ivar num: number of this element, as a string
     :ivar children: further TOC elements contained in this one, may be None or empty
     """
-    def __init__(self, type, id, heading, num, children=None):
-        self.type = type
-        self.id = id
+
+    def __init__(self, node, children=None):
+        try:
+            heading = node.heading
+        except AttributeError:
+            heading = None
+
+        try:
+            num = node.num
+        except AttributeError:
+            num = None
+
+        self.element = node
+        self.type = node.tag.split('}', 1)[-1]
+        self.id = node.get('id')
         self.heading = _collect_string_content(heading) if heading else None
         self.num = num.text if num else None
         self.children = children

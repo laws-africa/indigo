@@ -237,14 +237,13 @@ class Act(object):
 
 class TOCElement(object):
     """
-    An element in a table of contents, such as a chapter, part or section.
-    ""
+    An element in the table of contents of a document, such as a chapter, part or section.
 
     :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
-    :ivar type: node type, one of: `chapter, part, section`
+    :ivar type: node type, one of: ``chapter, part, section``
     :ivar id: XML id string of the node in the document, may be None
-    :ivar heading: heading for this element, excluding the number
-    :ivar num: number of this element, as a string
+    :ivar heading: heading for this element, excluding the number, may be None
+    :ivar num: number of this element, as a string, may be None
     :ivar children: further TOC elements contained in this one, may be None or empty
     """
 

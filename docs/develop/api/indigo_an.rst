@@ -11,6 +11,9 @@
         .. autoclass:: Act
             :members:
 
+        .. autoclass:: TOCElement
+            :members:
+
     Rendering
     ---------
 

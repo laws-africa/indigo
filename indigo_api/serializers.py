@@ -65,7 +65,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
         rep = super(DocumentSerializer, self).to_representation(instance)
-        rep['toc'] = [t.as_dict() for t in instance.doc.table_of_contents()]
+        rep['toc'] = instance.table_of_contents()
         return rep
 
 

@@ -122,5 +122,8 @@ class Document(models.Model):
         self._doc = doc
         self.copy_attributes(from_model=False)
 
+    def table_of_contents(self):
+        return [t.as_dict() for t in self.doc.table_of_contents()]
+
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

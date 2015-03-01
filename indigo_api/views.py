@@ -114,7 +114,10 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
             html = HTMLRenderer().render_xml(document.document_xml)
             return Response(html)
 
-        # TODO: table of content
+        # table of content
+        if (component, format) == ('toc', 'json'):
+            serializer = self.get_serializer(document)
+            return Response({'toc': document.table_of_contents()})
 
         if (component, format) == ('main', 'json'):
             serializer = self.get_serializer(document)

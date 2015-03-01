@@ -72,7 +72,7 @@ Table of Contents
 
 .. code:: http
 
-    GET /api/frbr-uri/contents.json
+    GET /api/frbr-uri/toc.json
 
 * Content types: JSON
 

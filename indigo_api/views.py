@@ -69,6 +69,14 @@ class DocumentViewSet(viewsets.ModelViewSet):
 
             return Response({'content': instance.document_xml})
 
+    @detail_route(methods=['GET'])
+    def toc(self, request, *args, **kwargs):
+        """ This exposes a GET resource at ``/api/documents/1/toc`` which gives
+        a table of contents for the document.
+        """
+        instance = self.get_object()
+        return Response({'toc': self.get_object().table_of_contents()})
+
 
 class FRBRURIViewSet(viewsets.GenericViewSet):
     def initial(self, request, **kwargs):

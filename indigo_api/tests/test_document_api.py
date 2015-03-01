@@ -25,8 +25,10 @@ class SimpleTest(APITestCase):
         id = response.data['id']
         assert_not_in('body', response.data)
         assert_not_in('content', response.data)
+        assert_not_in('toc', response.data)
         assert_equal(response.data['body_url'], 'http://testserver/api/documents/%s/body' % id)
         assert_equal(response.data['content_url'], 'http://testserver/api/documents/%s/content' % id)
+        assert_equal(response.data['toc_url'], 'http://testserver/api/documents/%s/toc' % id)
 
         response = self.client.get('/api/documents/%s/body' % response.data['id'])
         assert_equal(response.status_code, 200)
@@ -129,7 +131,7 @@ class SimpleTest(APITestCase):
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
-        response = self.client.get('/api/documents/%s' % id)
+        response = self.client.get('/api/documents/%s/toc' % id)
         assert_equal(response.status_code, 200)
 
         assert_equal(response.data['toc'], [

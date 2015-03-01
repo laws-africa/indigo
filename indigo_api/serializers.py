@@ -63,6 +63,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError("Invalid XML: %s" % e.message)
         return value
 
+    def to_representation(self, instance):
+        rep = super(DocumentSerializer, self).to_representation(instance)
+        rep['toc'] = [t.as_dict() for t in instance.doc.table_of_contents()]
+        return rep
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

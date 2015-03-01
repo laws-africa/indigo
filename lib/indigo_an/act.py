@@ -3,6 +3,7 @@ from datetime import date
 
 from lxml import objectify 
 from lxml import etree
+from lxml.html import _collect_string_content
 import arrow
 
 encoding_re = re.compile('encoding="[\w-]+"')
@@ -190,6 +191,27 @@ class Act(object):
         self.body.getparent().replace(self.body, new_body)
         self.body = new_body
 
+    def table_of_contents(self):
+        """ Get the table of contents of this document as a list of :class:`TOCElement` instances. """
+
+        child_types = [
+            '{%s}%s' % (self.namespace, n)
+            for n in ['part', 'chapter', 'section']]
+
+        def children(node):
+            return node.iterchildren(*child_types)
+
+        def generate_toc(node):
+            id = node.get('id')
+            type = node.tag.split('}', 1)[-1]
+            heading = self._get('heading', node)
+            num = self._get('num', node)
+
+            elem = TOCElement(id=id, heading=heading, type=type, num=num)
+            elem.children = [generate_toc(c) for c in children(node)]
+            return elem
+
+        return [generate_toc(c) for c in children(self.body)]
 
     def _ensure(self, name, after):
         """ Hack help to get an element if it exists, or create it if it doesn't.
@@ -207,15 +229,52 @@ class Act(object):
         return getattr(self._maker, elem)()
 
 
-    def _get(self, name):
+    def _get(self, name, root=None):
         parts = name.split('.')
-        node = getattr(self, parts[0])
-        for p in parts[1:]:
+        node = root or self
+
+        for p in parts:
             try:
                 node = getattr(node, p)
             except AttributeError:
                 return None
         return node
+
+class TOCElement(object):
+    """
+    An element in a table of contents, such as a chapter, part or section.
+    ""
+
+    :ivar type: node type, one of: `chapter, part, section`
+    :ivar id: XML id string of the node in the document, may be None
+    :ivar heading: heading for this element, excluding the number
+    :ivar num: number of this element, as a string
+    :ivar children: further TOC elements contained in this one, may be None or empty
+    """
+    def __init__(self, type, id, heading, num, children=None):
+        self.type = type
+        self.id = id
+        self.heading = _collect_string_content(heading) if heading else None
+        self.num = num.text if num else None
+        self.children = children
+
+    def as_dict(self):
+      info = {
+          'type': self.type,
+      }
+      if self.heading:
+        info['heading'] = self.heading
+
+      if self.num:
+        info['num'] = self.num
+
+      if self.id:
+        info['id'] = self.id
+
+      if self.children:
+        info['children'] = [c.as_dict() for c in self.children]
+
+      return info
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

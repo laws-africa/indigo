@@ -30,11 +30,7 @@ DOCUMENT_FIXTURE = """<?xml version="1.0"?>
       <publication date="2005-07-24" name="Province of Western Cape: Provincial Gazette" number="6277" showAs="Province of Western Cape: Provincial Gazette"/>
     </meta>
     <body>
-      <section id="section-1">
-        <content>
-          <p>%s</p>
-        </content>
-      </section>
+      %s
     </body>
   </act>
 </akomaNtoso>
@@ -53,5 +49,10 @@ BODY_FIXTURE = """
 def body_fixture(text):
     return BODY_FIXTURE % text
 
-def document_fixture(text):
-    return DOCUMENT_FIXTURE % text
+def document_fixture(text=None, xml=None):
+    if text:
+        xml = """
+        <section id="section-1"><content><p>%s</p></content></section>
+        """ % text
+
+    return DOCUMENT_FIXTURE % xml

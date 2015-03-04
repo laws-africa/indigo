@@ -36,7 +36,6 @@ class ConvertAPITest(APITestCase):
     def test_convert_json(self):
         response = self.client.post('/api/convert', {
             'content': {
-                'frbr_uri': '/',
                 'body': body_fixture('hello'),
             },
             'inputformat': 'json',
@@ -44,6 +43,7 @@ class ConvertAPITest(APITestCase):
             })
         assert_equal(response.status_code, 200)
         assert_equal(response.data['frbr_uri'], '/')
+        assert_true(response.data['content'].startswith('<akomaNtoso'))
         assert_is_none(response.data['id'])
 
     def test_convert_json_to_xml(self):

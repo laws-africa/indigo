@@ -8,8 +8,6 @@ from indigo_an.act import Act
 from .models import Document
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-    publication_date = serializers.DateField(required=False)
-
     body = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the body of the document. """
 
@@ -49,16 +47,22 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         read_only_fields = ('number', 'nature', 'created_at', 'updated_at', 'year')
 
     def get_body_url(self, doc):
+        if not doc.pk:
+            return None
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_content_url(self, doc):
+        if not doc.pk:
+            return None
         return reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_toc_url(self, doc):
+        if not doc.pk:
+            return None
         return reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_published_url(self, doc):
-        if doc.draft:
+        if not doc.pk or doc.draft:
             return None
         else:
             return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})

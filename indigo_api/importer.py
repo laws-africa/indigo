@@ -52,6 +52,12 @@ class Importer(object):
         return doc
 
     def slaw(self, args):
+        """ Call slaw with `args`.
+
+        Slaw is a commandline tool from the slaw Ruby Gem which generates Akoma Ntoso
+        from PDF and other documents. See https://rubygems.org/gems/slaw
+        """
+
         cmd = ['slaw'] + args
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)

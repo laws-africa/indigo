@@ -8,10 +8,11 @@ legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
 
 It is a Django python web application using:
 
-* [django](http://djangoproject.com/)
+* [Django](http://djangoproject.com/)
 * [django-rest-framework](http://www.django-rest-framework.org/)
 * [backbone.js](http://backbonejs.org/)
 * [stickit.js](http://nytimes.github.io/backbone.stickit/)
+* [Slaw](https://rubygems.org/gems/slaw) -- a Ruby Gem for generating Akoma Ntoso from PDFs and other documents
 
 Read the [full documentation at indigo.readthedocs.org](http://indigo.readthedocs.org/en/latest/index.html).
 

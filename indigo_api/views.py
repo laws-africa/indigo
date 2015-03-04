@@ -1,4 +1,5 @@
 import re
+import logging
 
 from django.template.loader import render_to_string
 from django.http import Http404
@@ -16,6 +17,8 @@ from .models import Document
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
 from .importer import Importer
 from indigo_an.render.html import HTMLRenderer
+
+log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
@@ -187,8 +190,8 @@ class ConvertView(APIView):
             try:
                 document = Importer().import_from_upload(upload)
             except ValueError as e:
-                # bad type of file
-                raise ValidationError({'file': e.message})
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'file': e.message or "error during import"})
 
         else:
             # handle non-file inputs

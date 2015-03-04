@@ -12,13 +12,11 @@ class Importer(object):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
-        # we got a file
         if upload.content_type == 'application/pdf':
-            with self.tempfile_for_upload(upload) as f:
-                doc = self.import_from_pdf(f.name)
+            doc = self.import_from_file_upload(upload, 'pdf')
 
-            if not doc.title:
-                doc.title = "Imported from %s" % upload.name
+        elif upload.content_type == "text/plain":
+            doc = self.import_from_file_upload(upload, 'text')
 
         elif upload.content_type in ['text/xml', 'application/xml']:
             doc = Document()
@@ -26,30 +24,42 @@ class Importer(object):
 
         else:
             # bad type of file
-            raise ValueError('Only PDF and XML files are supported.')
+            raise ValueError('Unsupported file type: %s' % upload.content_type)
 
         # TODO: handle doc input
-        # TODO: handle plain text input
 
         return doc
 
-    def import_from_pdf(self, pdf):
-        # TODO:
-        # TODO: handle errors
-        cmd = 'slaw convert --output xml --input pdf'.split(' ') + [pdf]
-        self.log.info("Running %s" % cmd)
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
+    def import_from_file_upload(self, upload, ftype):
+        with self.tempfile_for_upload(upload) as f:
+            doc = self.import_from_file(f.name, ftype)
 
-        self.log.info("Subprocess exit code: %s" % p.returncode)
-        if p.returncode > 0:
+        if not doc.title:
+            doc.title = "Imported from %s" % upload.name
+
+        return doc
+
+    def import_from_file(self, fname, ftype):
+        cmd = ('convert --output xml --input %s' % ftype).split(' ')
+        code, stdout, stderr = self.slaw(cmd + [fname])
+        if code > 0:
             raise ValueError("Error converting file: %s" % stderr)
 
         doc = Document()
-        doc.content = stdout
+        doc.content = stdout.decode('utf-8')
 
-        self.log.info("Successfully imported")
+        self.log.info("Successfully imported from %s" % fname)
         return doc
+
+    def slaw(self, args):
+        cmd = ['slaw'] + args
+        self.log.info("Running %s" % cmd)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = p.communicate()
+        self.log.info("Subprocess exit code: %s" % p.returncode)
+
+        return p.returncode, stdout, stderr
+
 
     def tempfile_for_upload(self, upload):
         """ Uploaded files might not be on disk. If not, create temporary file. """

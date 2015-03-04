@@ -33,52 +33,64 @@
       this.importFile(e.originalEvent.dataTransfer.files[0]);
     },
 
-    importFile: function(file) {
-      var reader = new FileReader();
-
-      if (file.type != 'text/xml') {
-        this.$el.find('.alert').show().text('You can only upload XML files.');
-        return;
-      }
-
-      var self = this;
-      reader.onload = function(e) {
-        var data = e.target.result;
-
-        if (!data) {
-          this.$el.find('.alert').show().text('It looks like your file was empty.');
-        } else {
-          self.importData(data);
-        }
-      };
-
-      reader.readAsText(file);
-    },
-
     fileSelected: function(e) {
       this.$el.find('.alert').hide();
       this.importFile(e.originalEvent.target.files[0]);
     },
 
-    importData: function(data) {
+    importFile: function(file) {
+      // Import this file as a new document. The server processes
+      // the file and then sends back a JSON description of the full
+      // document, which we then use to create a new document
+      // and redirect to that document page.
+      //
+      // We use the FormData interface which is supported in all decent
+      // browsers and IE 10+.
+      //
+      // https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects
+
       var self = this;
+      var formData = new FormData();
 
       this.$el.find('.file-inputs').hide();
       this.$el.find('.progress').show();
 
-      $.post('/api/documents', {'frbr_uri': '/', 'content': data})
-        .then(function(data) {
-          window.location = '/documents/' + data.id;
-        })
-        .fail(function(xhr, status, message) {
-          console.log(xhr);
-          self.$el.find('.progress').hide();
-          self.$el.find('.file-inputs').show();
+      formData.append('file', file);
+      formData.append('outputformat', 'json');
 
-          if (xhr.status == 400) {
-            self.$el.find('.alert').show().text("We couldn't import the file: " + xhr.responseJSON.content);
-          }
-        });
+      // convert to JSON
+      $.ajax({
+        url: '/api/convert',
+        type: 'POST',
+        data: formData,
+        processData: false,
+        contentType: false,
+
+      }).then(function(data) {
+        // we've got a JSON description back, create the new document
+        $.post('/api/documents', data)
+          .then(function(data) {
+            window.location = '/documents/' + data.id;
+          }).fail(function(xhr, status, message) {
+            console.log(message);
+            self.$el.find('.progress').hide();
+            self.$el.find('.file-inputs').show();
+
+            if (xhr.status == 400) {
+              self.$el.find('.alert').show().text("We couldn't import the file: " + xhr.responseJSON[0]);
+            }
+          });
+
+      }).fail(function(xhr, status, message) {
+        console.log(message);
+        self.$el.find('.progress').hide();
+        self.$el.find('.file-inputs').show();
+
+        if (xhr.status == 400) {
+          var error = xhr.responseJSON.file || xhr.responseJSON[0];
+          self.$el.find('.alert').show().text("We couldn't import the file: " + error);
+        }
+      });
     },
 
   });

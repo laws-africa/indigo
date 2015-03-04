@@ -10,6 +10,7 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
+import arrow
 
 from .models import Document
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
@@ -170,24 +171,57 @@ class ConvertView(APIView):
     """
 
     def post(self, request, format=None):
-        serializer = ConvertSerializer(data=request.data)
+        serializer, document = self.handle_input()
+        output_format = serializer.validated_data.get('outputformat')
+        return self.handle_output(document, output_format)
+
+    def handle_input(self):
+        document = None
+        serializer = ConvertSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
 
-        input_format = serializer.validated_data['inputformat']
-        output_format = serializer.validated_data['outputformat']
+        upload = self.request.data.get('file')
+        if upload:
+            # we got a file
+            if upload.content_type == 'application/pdf':
+                # TODO
+                pass
 
-        if input_format == 'json':
-            doc_serializer = DocumentSerializer(data=request.data['content'], context={'request': request})
-            doc_serializer.is_valid(raise_exception=True)
-            document = Document(**doc_serializer.validated_data)
+            elif upload.content_type in ['text/xml', 'application/xml']:
+                document = Document()
+                document.content = upload.read().decode('utf-8')
+                document.frbr_uri = '/'
+                document.title = "Imported from %s" % upload.name
+                document.publication_date = arrow.now().date()
 
-        # TODO: handle doc input
-        # TODO: handle pdf input
-        # TODO: handle plain text input
+            else:
+                # bad type of file
+                raise ValidationError({'file': 'Only PDF and XML files are supported.'})
 
+            # TODO: handle doc input
+            # TODO: handle plain text input
+
+        else:
+            # handle non-file inputs
+            input_format = serializer.validated_data.get('inputformat')
+            if input_format == 'json':
+                doc_serializer = DocumentSerializer(
+                        data=self.request.data['content'],
+                        context={'request': self.request})
+                doc_serializer.is_valid(raise_exception=True)
+                document = Document(**doc_serializer.validated_data)
+
+        if not document:
+            raise ValidationError("Nothing to convert! Either 'file' or 'content' must be provided.")
+
+        return serializer, document
+
+    def handle_output(self, document, output_format):
         if output_format == 'json':
-            doc_serializer = DocumentSerializer(instance=document, context={'request': request})
-            return Response(doc_serializer.data)
+            doc_serializer = DocumentSerializer(instance=document, context={'request': self.request})
+            data = doc_serializer.data
+            data['content'] = document.document_xml
+            return Response(data)
 
         if output_format == 'xml':
             return Response(document.document_xml)

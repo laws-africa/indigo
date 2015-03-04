@@ -13,8 +13,11 @@
     initialize: function() {
       var self = this;
 
-      this.$el.find('.dropzone').on('dragover', _.bind(this.dragover, this));
-      this.$el.find('.dropzone').on('drop', _.bind(this.drop, this));
+      this.$el.find('.dropzone')
+        .on('dragenter', function() { $(this).addClass('dragging'); })
+        .on('dragleave', function() { $(this).removeClass('dragging'); })
+        .on('dragover', _.bind(this.dragover, this))
+        .on('drop', _.bind(this.drop, this));
       this.$el.find('[name=file]').on('change', _.bind(this.fileSelected, this));
     },
 
@@ -29,6 +32,7 @@
     drop: function(e) {
       e.stopPropagation();
       e.preventDefault();
+      this.$el.find('.dropzone').removeClass('dragging');
 
       this.importFile(e.originalEvent.dataTransfer.files[0]);
     },
@@ -53,7 +57,7 @@
       var formData = new FormData();
 
       this.$el.find('.file-inputs').hide();
-      this.$el.find('.progress').show();
+      this.$el.find('.progress-box').show();
 
       formData.append('file', file);
       formData.append('outputformat', 'json');
@@ -73,7 +77,7 @@
             window.location = '/documents/' + data.id;
           }).fail(function(xhr, status, message) {
             console.log(message);
-            self.$el.find('.progress').hide();
+            self.$el.find('.progress-box').hide();
             self.$el.find('.file-inputs').show();
 
             if (xhr.status == 400) {
@@ -83,7 +87,7 @@
 
       }).fail(function(xhr, status, message) {
         console.log(message);
-        self.$el.find('.progress').hide();
+        self.$el.find('.progress-box').hide();
         self.$el.find('.file-inputs').show();
 
         if (xhr.status == 400) {

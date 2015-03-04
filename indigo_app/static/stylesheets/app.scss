@@ -193,6 +193,10 @@ html, body {
   font-size: 24px;
   text-align: center;
   padding: 15px;
+
+  &.dragging {
+    background-color: $border-colour;
+  }
 }
 
 .document-list-table {

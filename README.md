@@ -41,9 +41,10 @@ version manager.
 Production deployment
 ---------------------
 
-Production deployment assumes you're running on heroku.
+Production deployment assumes you're running on Heroku. We use [ddollar/heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi)
+because we need both Python and Ruby dependencies.
 
-You will need
+You will need:
 
 * a django secret key
 * a New Relic license key
@@ -52,7 +53,8 @@ You will need
 heroku create
 heroku addons:add heroku-postgresql
 heroku addons:add newrelic:stark
-heroku config:set DJANGO_DEBUG=false \
+heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git \
+                  DJANGO_DEBUG=false \
                   DISABLE_COLLECTSTATIC=1 \
                   DJANGO_SECRET_KEY=some-secret-key \
                   NEW_RELIC_APP_NAME="Indigo" \

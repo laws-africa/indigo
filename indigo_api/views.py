@@ -14,6 +14,7 @@ import arrow
 
 from .models import Document
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
+from .importer import Importer
 from indigo_an.render.html import HTMLRenderer
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -183,23 +184,11 @@ class ConvertView(APIView):
         upload = self.request.data.get('file')
         if upload:
             # we got a file
-            if upload.content_type == 'application/pdf':
-                # TODO
-                pass
-
-            elif upload.content_type in ['text/xml', 'application/xml']:
-                document = Document()
-                document.content = upload.read().decode('utf-8')
-                document.frbr_uri = '/'
-                document.title = "Imported from %s" % upload.name
-                document.publication_date = arrow.now().date()
-
-            else:
+            try:
+                document = Importer().import_from_upload(upload)
+            except ValueError as e:
                 # bad type of file
-                raise ValidationError({'file': 'Only PDF and XML files are supported.'})
-
-            # TODO: handle doc input
-            # TODO: handle plain text input
+                raise ValidationError({'file': e.message})
 
         else:
             # handle non-file inputs

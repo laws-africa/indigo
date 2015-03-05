@@ -43,11 +43,6 @@
     },
 
     importFile: function(file) {
-      // Import this file as a new document. The server processes
-      // the file and then sends back a JSON description of the full
-      // document, which we then use to create a new document
-      // and redirect to that document page.
-      //
       // We use the FormData interface which is supported in all decent
       // browsers and IE 10+.
       //
@@ -60,30 +55,18 @@
       this.$el.find('.progress-box').show();
 
       formData.append('file', file);
-      formData.append('outputformat', 'json');
 
       // convert to JSON
       $.ajax({
-        url: '/api/convert',
+        url: '/api/documents',
         type: 'POST',
         data: formData,
         processData: false,
         contentType: false,
 
       }).then(function(data) {
-        // we've got a JSON description back, create the new document
-        $.post('/api/documents', data)
-          .then(function(data) {
-            window.location = '/documents/' + data.id;
-          }).fail(function(xhr, status, message) {
-            console.log(message);
-            self.$el.find('.progress-box').hide();
-            self.$el.find('.file-inputs').show();
-
-            if (xhr.status == 400) {
-              self.$el.find('.alert').show().text("We couldn't import the file: " + xhr.responseJSON[0]);
-            }
-          });
+        // success, go edit it
+        window.location = '/documents/' + data.id;
 
       }).fail(function(xhr, status, message) {
         console.log(message);

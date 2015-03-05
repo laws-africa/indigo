@@ -1,3 +1,5 @@
+import logging
+
 from lxml.etree import LxmlError
 
 from rest_framework import serializers, renderers
@@ -6,6 +8,9 @@ from rest_framework.exceptions import ValidationError
 from indigo_an.act import Act
 
 from .models import Document
+from .importer import Importer
+
+log = logging.getLogger(__name__)
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     body = serializers.CharField(required=False, write_only=True)
@@ -29,6 +34,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
 
+    file = serializers.FileField(write_only=True, required=False)
+    """ Allow uploading a file to convert and override the content of the document. """
+
     class Meta:
         model = Document
         fields = (
@@ -40,7 +48,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'publication_date', 'publication_name', 'publication_number',
 
                 'body', 'body_url',
-                'content', 'content_url',
+                'content', 'content_url', 'file',
 
                 'published_url', 'toc_url',
                 )
@@ -66,6 +74,23 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             return None
         else:
             return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})
+
+    def validate(self, data):
+        """
+        We allow callers to pass in a file upload in the ``file`` attribute,
+        and overwrite the content XML with that value if we can.
+        """
+        upload = data.pop('file', None)
+        if upload:
+            # we got a file
+            try:
+                document = Importer().import_from_upload(upload)
+            except ValueError as e:
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'file': e.message or "error during import"})
+            data['content'] = document.content
+
+        return data
 
     def validate_content(self, value):
         try:

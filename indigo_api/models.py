@@ -106,13 +106,13 @@ class Document(models.Model):
         self.refresh_xml()
 
     def refresh_xml(self):
-        log.debug("Refreshing document xml")
+        log.debug("Refreshing document xml for %s" % self)
         self.document_xml = self.doc.to_xml()
 
     def reset_xml(self, xml):
         """ Completely reset the document XML to a new value, and refresh database attributes
         from the new XML document. """
-        log.debug("Setting xml to: %s" % xml)
+        log.debug("Setting for %s xml to: %s" % (self, xml))
 
         # this validates it
         doc = Act(xml)

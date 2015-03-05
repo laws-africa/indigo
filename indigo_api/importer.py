@@ -3,6 +3,8 @@ import tempfile
 import shutil
 import logging
 
+from django.conf import settings
+
 from .models import Document
 
 class Importer(object):
@@ -58,7 +60,7 @@ class Importer(object):
         from PDF and other documents. See https://rubygems.org/gems/slaw
         """
 
-        cmd = ['slaw'] + args
+        cmd = ['slaw', '--pdftotext', settings.INDIGO_PDFTOTEXT] + args
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()

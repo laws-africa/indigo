@@ -72,6 +72,8 @@ ROOT_URLCONF = 'indigo.urls'
 
 WSGI_APPLICATION = 'indigo.wsgi.application'
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+
 # where does the pdftotext binary live?
 if DEBUG:
    INDIGO_PDFTOTEXT = 'pdftotext'

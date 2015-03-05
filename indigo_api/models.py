@@ -49,7 +49,6 @@ class Document(models.Model):
 
     @body.setter
     def body(self, xml):
-        log.debug("Setting body to: %s" % xml)
         self.doc.body_xml = xml
         self.refresh_xml()
 

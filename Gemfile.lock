@@ -3,13 +3,15 @@ GEM
   specs:
     builder (3.2.2)
     log4r (1.1.10)
+    mimemagic (0.2.1)
     mini_portile (0.6.2)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     polyglot (0.3.5)
-    slaw (0.4.1)
+    slaw (0.5.0)
       builder (~> 3.2.2)
       log4r (~> 1.1.10)
+      mimemagic (~> 0.2.1)
       nokogiri (~> 1.6.0)
       thor (~> 0.19.1)
       treetop (~> 1.5)
@@ -21,4 +23,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  slaw (~> 0.4)
+  slaw (~> 0.5)

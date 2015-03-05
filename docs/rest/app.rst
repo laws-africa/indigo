@@ -186,3 +186,29 @@ Update Document Body
   * ``body``: raw XML of the document body. ``string``
 
 Updates the body of the document. The new XML must be valid Akoma Ntoso 2.0 XML ``<body>`` element.
+
+Convert a Document
+------------------
+
+.. code:: http
+
+    POST /api/convert
+
+* Parameters:
+
+  * ``outputformat``: the desired output format. One of: ``text``, ``xml``, ``html``, ``json``
+  * ``file``: an HTTP file attachment (optional). If this is provided, remaining input parameters are ignored. ``file``
+  * ``content``: content to convert. ``string``
+  * ``inputformat``: the format of the data in ``content``, required if ``content`` is given. One of: ``text``, ``xml``, ``json``
+
+Converts one type of content into another. This allows you to convert a PDF or Word document
+into Akoma Ntoso XML, HTML or plain text.
+
+The content to be converted `from` must be passed in as either a file upload in the ``file`` parameter or in the raw in the ``content`` parameter.
+If you use ``content``, you must provide an ``inputformat`` parameter that describes the format of the input. If ``file`` is used, the format is
+determined by the mime type of the uploaded file.
+
+The output format depends othe ``outputformat`` parameter.
+
+Not all formats have all the detail necessary to convert to other formats. For instance, plain text doesn't have enough information
+to convert to a complete JSON or Akoma Ntoso XML format. In this cases, placeholder values are used (eg. for the FRBR URI, publication time, etc.).

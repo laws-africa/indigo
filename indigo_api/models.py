@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 class Document(models.Model):
     db_table = 'documents'
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, help_text="Used globably to identify this document")
+    frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globably to identify this document")
     """ The FRBRuri of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
@@ -49,7 +49,6 @@ class Document(models.Model):
 
     @body.setter
     def body(self, xml):
-        log.debug("Setting body to: %s" % xml)
         self.doc.body_xml = xml
         self.refresh_xml()
 
@@ -107,13 +106,13 @@ class Document(models.Model):
         self.refresh_xml()
 
     def refresh_xml(self):
-        log.debug("Refreshing document xml")
+        log.debug("Refreshing document xml for %s" % self)
         self.document_xml = self.doc.to_xml()
 
     def reset_xml(self, xml):
         """ Completely reset the document XML to a new value, and refresh database attributes
         from the new XML document. """
-        log.debug("Setting xml to: %s" % xml)
+        log.debug("Setting for %s xml to: %s" % (self, xml))
 
         # this validates it
         doc = Act(xml)

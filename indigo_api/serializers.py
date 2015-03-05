@@ -1,3 +1,5 @@
+import logging
+
 from lxml.etree import LxmlError
 
 from rest_framework import serializers, renderers
@@ -6,10 +8,11 @@ from rest_framework.exceptions import ValidationError
 from indigo_an.act import Act
 
 from .models import Document
+from .importer import Importer
+
+log = logging.getLogger(__name__)
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-    publication_date = serializers.DateField(required=False)
-
     body = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the body of the document. """
 
@@ -31,6 +34,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
 
+    file = serializers.FileField(write_only=True, required=False)
+    """ Allow uploading a file to convert and override the content of the document. """
+
     class Meta:
         model = Document
         fields = (
@@ -42,26 +48,49 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'publication_date', 'publication_name', 'publication_number',
 
                 'body', 'body_url',
-                'content', 'content_url',
+                'content', 'content_url', 'file',
 
                 'published_url', 'toc_url',
                 )
         read_only_fields = ('number', 'nature', 'created_at', 'updated_at', 'year')
 
     def get_body_url(self, doc):
+        if not doc.pk:
+            return None
         return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_content_url(self, doc):
+        if not doc.pk:
+            return None
         return reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_toc_url(self, doc):
+        if not doc.pk:
+            return None
         return reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_published_url(self, doc):
-        if doc.draft:
+        if not doc.pk or doc.draft:
             return None
         else:
             return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})
+
+    def validate(self, data):
+        """
+        We allow callers to pass in a file upload in the ``file`` attribute,
+        and overwrite the content XML with that value if we can.
+        """
+        upload = data.pop('file', None)
+        if upload:
+            # we got a file
+            try:
+                document = Importer().import_from_upload(upload)
+            except ValueError as e:
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'file': e.message or "error during import"})
+            data['content'] = document.content
+
+        return data
 
     def validate_content(self, value):
         try:
@@ -69,6 +98,23 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         except LxmlError as e:
             raise ValidationError("Invalid XML: %s" % e.message)
         return value
+
+
+class ConvertSerializer(serializers.Serializer):
+    """
+    Helper to handle input elements for the /convert API
+    """
+
+    file = serializers.FileField(write_only=True, required=False)
+    content = serializers.CharField(write_only=True, required=False)
+    inputformat = serializers.ChoiceField(write_only=True, required=False, choices=['json'])
+    outputformat = serializers.ChoiceField(write_only=True, required=True, choices=['xml', 'json', 'html'])
+
+    def validate(self, data):
+        if data.get('content') and not data.get('inputformat'):
+            raise ValidationError({'inputformat': "The inputformat field is required when the content field is used"})
+
+        return data
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

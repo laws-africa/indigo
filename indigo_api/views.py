@@ -1,4 +1,5 @@
 import re
+import logging
 
 from django.template.loader import render_to_string
 from django.http import Http404
@@ -10,10 +11,14 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from lxml.etree import LxmlError
+import arrow
 
 from .models import Document
-from .serializers import DocumentSerializer, AkomaNtosoRenderer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
+from .importer import Importer
 from indigo_an.render.html import HTMLRenderer
+
+log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
@@ -161,6 +166,64 @@ class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
         if queryset.count() == 0:
             raise Http404
         return queryset
+
+
+class ConvertView(APIView):
+    """
+    Support for converting between two document types. This allows conversion from
+    plain text, JSON, XML, and PDF to plain text, JSON, XML and HTML.
+    """
+
+    def post(self, request, format=None):
+        serializer, document = self.handle_input()
+        output_format = serializer.validated_data.get('outputformat')
+        return self.handle_output(document, output_format)
+
+    def handle_input(self):
+        document = None
+        serializer = ConvertSerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        upload = self.request.data.get('file')
+        if upload:
+            # we got a file
+            try:
+                document = Importer().import_from_upload(upload)
+            except ValueError as e:
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'file': e.message or "error during import"})
+
+        else:
+            # handle non-file inputs
+            input_format = serializer.validated_data.get('inputformat')
+            if input_format == 'json':
+                doc_serializer = DocumentSerializer(
+                        data=self.request.data['content'],
+                        context={'request': self.request})
+                doc_serializer.is_valid(raise_exception=True)
+                document = Document(**doc_serializer.validated_data)
+
+        if not document:
+            raise ValidationError("Nothing to convert! Either 'file' or 'content' must be provided.")
+
+        return serializer, document
+
+    def handle_output(self, document, output_format):
+        if output_format == 'json':
+            doc_serializer = DocumentSerializer(instance=document, context={'request': self.request})
+            data = doc_serializer.data
+            data['content'] = document.document_xml
+            return Response(data)
+
+        if output_format == 'xml':
+            return Response(document.document_xml)
+
+        if output_format == 'html':
+            renderer = HTMLRenderer()
+            body_html = renderer.render_xml(document.document_xml)
+            return Response(body_html)
+
+        # TODO: handle plain text output
 
 
 class RenderAPI(APIView):

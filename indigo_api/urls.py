@@ -23,5 +23,7 @@ urlpatterns = patterns('',
         views.PublishedDocumentListView.as_view({'get': 'list'}),
         name='published-document-list'),
 
+    url(r'^convert(\.(?P<format>[a-z0-9]))?$', views.ConvertView.as_view(), name='convert'),
+
     url(r'^', include(router.urls)),
 )

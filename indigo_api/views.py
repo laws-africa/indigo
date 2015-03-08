@@ -111,6 +111,12 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin,
         except ValueError:
             return self.list(request)
 
+    def list(self, request):
+        # force JSON for list view
+        self.request.accepted_renderer = renderers.JSONRenderer()
+        self.request.accepted_media_type = self.request.accepted_renderer.media_type
+        return super(PublishedDocumentDetailView, self).list(request)
+
     def retrieve(self, request, *args, **kwargs):
         component = self.frbr_uri.expression_component or 'main'
         format = self.request.accepted_renderer.format

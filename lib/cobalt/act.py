@@ -6,7 +6,7 @@ from lxml import etree
 from lxml.html import _collect_string_content
 import arrow
 
-from indigo_an.frbr_uri import FrbrUri
+from .uri import FrbrUri
 
 encoding_re = re.compile('encoding="[\w-]+"')
 
@@ -135,6 +135,7 @@ class Act(object):
 
     @property
     def language(self):
+        """ The 3-letter ISO-639-2 language code of this document """
         return self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
 
     @language.setter

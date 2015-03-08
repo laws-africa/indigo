@@ -1,7 +1,7 @@
 from unittest import TestCase
 from nose.tools import *
 
-from indigo_an.frbr_uri import FrbrUri
+from cobalt.uri import FrbrUri
 
 class FrbrUriTestCase(TestCase):
     def test_bad_value(self):

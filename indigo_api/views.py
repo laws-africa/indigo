@@ -17,8 +17,8 @@ import arrow
 from .models import Document
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
 from .importer import Importer
-from indigo_an.render.html import HTMLRenderer
-from indigo_an.frbr_uri import FrbrUri
+from cobalt import FrbrUri
+from cobalt.render import HTMLRenderer
 
 log = logging.getLogger(__name__)
 

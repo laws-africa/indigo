@@ -5,8 +5,7 @@ from lxml.etree import LxmlError
 from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
-from indigo_an.act import Act
-from indigo_an.frbr_uri import FrbrUri
+from cobalt import Act, FrbrUri
 
 from .models import Document
 from .importer import Importer

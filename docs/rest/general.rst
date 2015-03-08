@@ -82,7 +82,7 @@ Both APIs describe a document (an act) as a JSON object, such as:
     {
       "id": 1,
       "url": "http://indigo.code4sa.org/api/documents/1.json",
-      "frbr_uri": "/za/act/2004/10/",
+      "frbr_uri": "/za/act/2004/10/eng",
       "draft": false,
       "created_at": "2015-01-14T15:57:08.497844Z",
       "updated_at": "2015-02-17T12:23:48.394662Z",

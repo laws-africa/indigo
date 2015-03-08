@@ -27,7 +27,7 @@ The public API relies heavily on FRBR URIs (and URI fragments) for identifying c
 
 .. note::
 
-   When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/``.
+   When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/eng``.
 
 Listing Acts
 ------------
@@ -47,24 +47,18 @@ Entire Act
 
 .. code:: http
 
-    GET /api/frbr-uri/
+    GET /api/frbr-uri
 
 * Content types: JSON, XML, HTML
 
 
-This returns the entire contents of an act. For example, the HTML version of ``/za/act/1998/84/`` is available at:
+This returns the entire contents of an act. For example, the English HTML version of ``/za/act/1998/84/eng`` is available at:
 
-    ``http://indigo.code4sa.org/api/za/act/1998/.html``
+    ``http://indigo.code4sa.org/api/za/act/1998/eng.html``
 
-This might look a bit weird, but it's actually correct since the FRBRI URI ends in a ``/``. If you like, you can also try it without the ``/``
+The raw XML is available at:
 
-    ``http://indigo.code4sa.org/api/za/act/1998.html``
-
-The raw XML is available at one of:
-
-    ``http://indigo.code4sa.org/api/za/act/1998/.xml``
-
-    ``http://indigo.code4sa.org/api/za/act/1998.xml``
+    ``http://indigo.code4sa.org/api/za/act/1998/eng.xml``
 
 
 Table of Contents
@@ -77,6 +71,11 @@ Table of Contents
 * Content types: JSON
 
 Get a descirption of the table of contents of an act.
+
+.. note::
+
+    Always include a three-letter language code when fetching ``toc.json``, otherwise
+    the ``toc`` will be incorrectly used as the language code.
 
 
 Using HTML Responses

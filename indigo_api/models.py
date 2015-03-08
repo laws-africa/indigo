@@ -17,7 +17,7 @@ class Document(models.Model):
     db_table = 'documents'
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globably to identify this document")
-    """ The FRBRuri of this document that uniquely identifies it globally """
+    """ The FRBR Work URI of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.CharField(max_length=2, choices=COUNTRIES, default=COUNTRIES[0][0])
@@ -96,7 +96,7 @@ class Document(models.Model):
 
         else:
             self.title = self.doc.title
-            self.frbr_uri = self.doc.frbr_uri
+            self.frbr_uri = self.doc.frbr_uri.work_uri()
 
             self.publication_date = self.doc.publication_date or self.doc.work_date
             self.publication_name = self.doc.publication_name

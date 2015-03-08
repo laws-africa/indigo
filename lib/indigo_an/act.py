@@ -6,6 +6,8 @@ from lxml import etree
 from lxml.html import _collect_string_content
 import arrow
 
+from indigo_an.frbr_uri import FrbrUri
+
 encoding_re = re.compile('encoding="[\w-]+"')
 
 DATE_FORMAT = "%Y-%m-%d"
@@ -133,47 +135,38 @@ class Act(object):
 
     @property
     def frbr_uri(self):
-        """ The FRBR URI that uniquely identifies this document universally. """
-        return self.meta.identification.FRBRWork.FRBRuri.get('value')
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this document universally. """
+        uri = self.meta.identification.FRBRWork.FRBRuri.get('value')
+        if uri:
+            return FrbrUri.parse(uri)
+        else:
+            return FrbrUri.empty()
 
     @frbr_uri.setter
     def frbr_uri(self, value):
-        if not value.endswith('/'):
-            value = value + "/"
+        if not isinstance(value, FrbrUri):
+            value = FrbrUri.parse(value)
 
-        self.meta.identification.FRBRWork.FRBRuri.set('value', value)
+        self.meta.identification.FRBRWork.FRBRuri.set('value', value.work_uri())
 
-        language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
-        lang_uri = value + language + "@"
-        self.meta.identification.FRBRExpression.FRBRuri.set('value', lang_uri)
-        self.meta.identification.FRBRManifestation.FRBRuri.set('value', lang_uri)
+        value.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
+        self.meta.identification.FRBRExpression.FRBRuri.set('value', value.expression_uri())
+        self.meta.identification.FRBRManifestation.FRBRuri.set('value', value.expression_uri())
 
     @property
     def year(self):
         """ The act year, derived from :data:`frbr_uri`. Read-only. """
-        if self.frbr_uri:
-            try:
-                return self.frbr_uri.split('/')[3]
-            except IndexError:
-                pass
+        return self.frbr_uri.date.split("-", 1)[0]
 
     @property
     def number(self):
         """ The act number, derived from :data:`frbr_uri`. Read-only. """
-        if self.frbr_uri:
-            try:
-                return self.frbr_uri.split('/')[4]
-            except IndexError:
-                pass
+        return self.frbr_uri.number
 
     @property
     def nature(self):
         """ The nature of the document, such as an act, derived from :data:`frbr_uri`. Read-only. """
-        if self.frbr_uri:
-            try:
-                return self.frbr_uri.split('/')[2]
-            except IndexError:
-                pass
+        return self.frbr_uri.doctype
 
     def to_xml(self):
         return etree.tostring(self.root, pretty_print=True)

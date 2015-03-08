@@ -90,8 +90,7 @@
         this.model.get('country'),
         this.model.get('nature'),
         this.model.get('publication_date').split('-')[0],
-        this.model.get('number'),
-        ''];
+        this.model.get('number')];
       this.model.set('frbr_uri', parts.join('/'));
     },
 

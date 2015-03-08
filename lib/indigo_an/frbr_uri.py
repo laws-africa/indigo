@@ -55,10 +55,10 @@ class FrbrUri(object):
 
     def expression_uri(self):
         """ String form of the expression URI. """
-        uri = self.work_uri() + "/" + self.language + "@"
+        uri = self.work_uri() + "/" + self.language
 
-        if self.expression_date:
-            uri = uri + self.expression_date
+        if self.expression_date is not None:
+            uri = uri + '@' + self.expression_date
 
         if self.expression_component:
             uri = uri + "/" + self.expression_component

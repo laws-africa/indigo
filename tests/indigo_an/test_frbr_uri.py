@@ -116,6 +116,7 @@ class FrbrUriTestCase(TestCase):
         uri = FrbrUri.parse("/za/act/1980/02/eng")
         assert_equal(uri.language, "eng")
         assert_equal(uri.expression_date, None)
+        assert_equal(uri.expression_uri(), '/za/act/1980/02/eng')
 
         uri = FrbrUri.parse("/za/act/1980/02/eng/main")
         assert_equal(uri.language, "eng")
@@ -124,6 +125,7 @@ class FrbrUriTestCase(TestCase):
         uri = FrbrUri.parse("/za/act/1980/02/eng@")
         assert_equal(uri.language, "eng")
         assert_equal(uri.expression_date, '')
+        assert_equal(uri.expression_uri(), '/za/act/1980/02/eng@')
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@/main")
         assert_equal(uri.language, "eng")

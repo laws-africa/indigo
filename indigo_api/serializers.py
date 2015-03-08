@@ -47,6 +47,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'frbr_uri', 'draft', 'created_at', 'updated_at',
                 'title', 'country', 'number', 'year', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
+                'language',
 
                 'body', 'body_url',
                 'content', 'content_url', 'file',
@@ -74,7 +75,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk or doc.draft:
             return None
         else:
-            return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})
+            uri = doc.doc.frbr_uri
+            uri.expression_date = None
+            uri = uri.expression_uri()[1:]
+
+            return reverse('published-document-detail', request=self.context['request'],
+                    kwargs={'frbr_uri': uri})
 
     def validate(self, data):
         """

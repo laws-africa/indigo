@@ -140,7 +140,8 @@ class Act(object):
     @language.setter
     def language(self, value):
         self.meta.identification.FRBRExpression.FRBRlanguage.set('language', value)
-
+        # update the URI
+        self.frbr_uri = self.frbr_uri
 
     @property
     def frbr_uri(self):
@@ -157,6 +158,9 @@ class Act(object):
             value = FrbrUri.parse(value)
 
         self.meta.identification.FRBRWork.FRBRuri.set('value', value.work_uri())
+
+        if value.expression_date is None:
+            value.expression_date = ''
 
         value.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
         self.meta.identification.FRBRExpression.FRBRuri.set('value', value.expression_uri())

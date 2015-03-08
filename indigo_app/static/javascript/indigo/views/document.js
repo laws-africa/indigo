@@ -49,6 +49,7 @@
       '#document_publication_number': 'publication_number',
       '#document_number': 'number',
       '#document_nature': 'nature',
+      '#document_language': 'language',
       '#document_draft': {
         observe: 'draft',
         // API requires this value to be true or false
@@ -80,7 +81,7 @@
         this.model.on('change:number change:nature change:country change:publication_date', _.bind(this.calculateUri, this));
       });
 
-      this.model.on('change:draft change:frbr_uri', this.showPublishedUrl, this);
+      this.model.on('change:draft change:frbr_uri change:language', this.showPublishedUrl, this);
     },
 
     calculateUri: function() {
@@ -95,7 +96,8 @@
     },
 
     showPublishedUrl: function() {
-      var url = window.location.origin + "/api" + this.model.get('frbr_uri');
+      var url = window.location.origin + "/api" +
+        this.model.get('frbr_uri') + '/' + this.model.get('language');
 
       this.$el.find('.published-url').toggle(!this.model.get('draft'));
       this.$el.find('#document_published_url').attr('href', url).text(url);

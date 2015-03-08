@@ -14,14 +14,9 @@ urlpatterns = patterns('',
     # starting with the two-letter country code
     #
     # eg. /za/act/2007/98
-    url(r'^(?P<frbr_uri>[a-z]{2}/[^/]+/[^/]+/[^/.]+(.*))$',
-        views.PublishedDocumentDetailView.as_view({'get': 'retrieve'}),
+    url(r'^(?P<frbr_uri>[a-z]{2}/.*)$',
+        views.PublishedDocumentDetailView.as_view({'get': 'get'}),
         name='published-document-detail'),
-
-    # browsing documents by FRBR URI fragments, less than four,
-    url(r'^(?P<frbr_uri>[a-z]{2}/.*/?)$',
-        views.PublishedDocumentListView.as_view({'get': 'list'}),
-        name='published-document-list'),
 
     url(r'^convert(\.(?P<format>[a-z0-9]))?$', views.ConvertView.as_view(), name='convert'),
 

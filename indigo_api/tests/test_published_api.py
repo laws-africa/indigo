@@ -6,25 +6,15 @@ class PublishedAPITest(APITestCase):
     fixtures = ['user', 'published']
 
     def test_published_json(self):
-        response = self.client.get('/api/za/act/2014/10/')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['frbr_uri'], '/za/act/2014/10/')
-
         response = self.client.get('/api/za/act/2014/10')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['frbr_uri'], '/za/act/2014/10/')
-
-        response = self.client.get('/api/za/act/2014/10/.json')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['frbr_uri'], '/za/act/2014/10/')
+        assert_equal(response.data['frbr_uri'], '/za/act/2014/10')
 
         response = self.client.get('/api/za/act/2014/10.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['frbr_uri'], '/za/act/2014/10/')
+        assert_equal(response.data['frbr_uri'], '/za/act/2014/10')
 
     def test_published_xml(self):
         response = self.client.get('/api/za/act/2014/10.xml')
@@ -32,19 +22,8 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/xml')
         assert_in('<akomaNtoso', response.content)
 
-        response = self.client.get('/api/za/act/2014/10/.xml')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/xml')
-        assert_in('<akomaNtoso', response.content)
-
     def test_published_html(self):
         response = self.client.get('/api/za/act/2014/10.html')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_in('<div', response.content)
-
-        response = self.client.get('/api/za/act/2014/10/.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content)
@@ -77,7 +56,7 @@ class PublishedAPITest(APITestCase):
         assert_equal(self.client.get('/api/zm/').status_code, 404)
 
     def test_published_toc(self):
-        response = self.client.get('/api/za/act/2014/10/toc.json')
+        response = self.client.get('/api/za/act/2014/10/eng/toc.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [{'id': 'section-1', 'type': 'section'}])

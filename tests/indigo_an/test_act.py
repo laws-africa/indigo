@@ -65,3 +65,8 @@ class ActTestCase(TestCase):
 
         a.publication_name = 'Publication'
         assert_equal(a.publication_name, 'Publication')
+
+    def test_language(self):
+        a = Act()
+        a.language = 'fre'
+        assert_equal(a.language, 'fre')

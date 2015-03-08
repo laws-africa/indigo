@@ -134,6 +134,15 @@ class Act(object):
 
 
     @property
+    def language(self):
+        return self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
+
+    @language.setter
+    def language(self, value):
+        self.meta.identification.FRBRExpression.FRBRlanguage.set('language', value)
+
+
+    @property
     def frbr_uri(self):
         """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this document universally. """
         uri = self.meta.identification.FRBRWork.FRBRuri.get('value')
@@ -152,6 +161,7 @@ class Act(object):
         value.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
         self.meta.identification.FRBRExpression.FRBRuri.set('value', value.expression_uri())
         self.meta.identification.FRBRManifestation.FRBRuri.set('value', value.expression_uri())
+
 
     @property
     def year(self):
@@ -284,21 +294,21 @@ EMPTY_DOCUMENT = """<?xml version="1.0"?>
       <identification source="">
         <FRBRWork>
           <FRBRthis value="/za/act/1900/1/main"/>
-          <FRBRuri value="/za/act/1900/1/"/>
+          <FRBRuri value="/za/act/1900/1"/>
           <FRBRalias value="Untitled"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
           <FRBRcountry value="za"/>
         </FRBRWork>
         <FRBRExpression>
-          <FRBRthis value="/za/act/1900/1/main/eng@"/>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
           <FRBRuri value="/za/act/1900/1/eng@"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
-          <FRBRthis value="/za/act/1900/1/main/eng@"/>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
           <FRBRuri value="/za/act/1900/1/eng@"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>

@@ -75,6 +75,15 @@ class Document(models.Model):
     def nature(self):
         return self.doc.nature
 
+    @property
+    def language(self):
+        return self.doc.language
+
+    @language.setter
+    def language(self, value):
+        self.doc.language = value
+        self.refresh_xml()
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)

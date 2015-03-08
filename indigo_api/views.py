@@ -3,6 +3,7 @@ import logging
 
 from django.template.loader import render_to_string
 from django.http import Http404
+from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 from rest_framework.exceptions import ParseError, ValidationError
@@ -17,6 +18,7 @@ from .models import Document
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
 from .importer import Importer
 from indigo_an.render.html import HTMLRenderer
+from indigo_an.frbr_uri import FrbrUri
 
 log = logging.getLogger(__name__)
 
@@ -83,38 +85,34 @@ class DocumentViewSet(viewsets.ModelViewSet):
         return Response({'toc': self.get_object().table_of_contents()})
 
 
-class FRBRURIViewSet(viewsets.GenericViewSet):
-    def initial(self, request, **kwargs):
-        super(FRBRURIViewSet, self).initial(request, **kwargs)
-
-        # ensure the URI starts and ends with a slash
-        frbr_uri = '/' + self.kwargs['frbr_uri']
-        if not frbr_uri.endswith('/'):
-            frbr_uri += '/'
-        self.kwargs['frbr_uri'] = frbr_uri
-
-    def get_format_suffix(self, **kwargs):
-        match = FORMAT_RE.search(self.kwargs['frbr_uri'])
-        if match:
-            # strip it from the uri
-            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][0:match.start()]
-            return match.group(1)
-
-
-class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
+class PublishedDocumentDetailView(mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  viewsets.GenericViewSet):
     """
-    The public read-only API for viewing a document by FRBR URI.
+    The public read-only API for viewing and listing documents by FRBR URI.
     """
     queryset = Document.objects.filter(draft=False)
     serializer_class = DocumentSerializer
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
 
-    lookup_url_kwarg = 'frbr_uri'
-    lookup_field = 'frbr_uri'
+    def initial(self, request, **kwargs):
+        super(PublishedDocumentDetailView, self).initial(request, **kwargs)
+        # ensure the URI starts with a slash
+        self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
+
+    def get(self, request, **kwargs):
+        # try parse it as an FRBR URI, if that succeeds, we'll lookup the document
+        # that document matches, otherwise we'll assume they're trying to
+        # list documents with a prefix URI match.
+        try:
+            self.frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
+            return self.retrieve(request)
+        except ValueError:
+            return self.list(request)
 
     def retrieve(self, request, *args, **kwargs):
-        component = self.get_component()
+        component = self.frbr_uri.expression_component or 'main'
         format = self.request.accepted_renderer.format
 
         # get the document
@@ -138,34 +136,34 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin, FRBRURIViewSet):
 
         raise Http404
 
-    def get_component(self):
-        # split the URI into the base, and the component
-        #
-        # /za/act/1998/84/main -> (/za/act/1998/84/, main)
+    def get_object(self):
+        """ Filter one document,  used by retrieve() """
+        # TODO: filter on expression (expression date, etc.)
+        # TODO: support multiple docs
+        obj = get_object_or_404(self.get_queryset().filter(frbr_uri=self.frbr_uri.work_uri()))
 
-        parts = self.kwargs['frbr_uri'].split('/')
-        self.kwargs['frbr_uri'] = '/'.join(parts[0:5]) + '/'
+        if obj.language != self.frbr_uri.language:
+            raise Http404("The document %s exists but is not available in the language '%s'"
+                    % (self.frbr_uri.work_uri(), self.frbr_uri.language))
 
-        component = '/'.join(parts[5:]) or 'main'
-        if component.endswith('/'):
-            component = component[0:-1]
-
-        return component
-
-
-
-class PublishedDocumentListView(mixins.ListModelMixin, FRBRURIViewSet):
-    """
-    The public read-only API for browsing documents by their FRBR URI components.
-    """
-    queryset = Document.objects.filter(draft=False)
-    serializer_class = DocumentSerializer
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
 
     def filter_queryset(self, queryset):
+        """ Filter the queryset, used by list() """
         queryset = queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
         if queryset.count() == 0:
             raise Http404
         return queryset
+
+    def get_format_suffix(self, **kwargs):
+        # we could also pull this from the parsed URI
+        match = FORMAT_RE.search(self.kwargs['frbr_uri'])
+        if match:
+            # strip it from the uri
+            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][0:match.start()]
+            return match.group(1)
 
 
 class ConvertView(APIView):

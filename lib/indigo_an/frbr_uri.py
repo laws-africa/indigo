@@ -24,6 +24,8 @@ class FrbrUri(object):
        http://www.akomantoso.org/release-notes/akoma-ntoso-3.0-schema/naming-conventions-1/bungenihelpcenterreferencemanualpage.2008-01-09.1484954524
     """
 
+    default_language = 'eng'
+
     def __init__(self, country, doctype, subtype, actor, date, number,
             language=None, expression_date=None, expression_component=None, 
             format=None):
@@ -34,7 +36,7 @@ class FrbrUri(object):
         self.date = date
         self.number = number
 
-        self.language = language or "eng"
+        self.language = language or self.default_language
         self.expression_date = expression_date
         self.expression_component = expression_component
         self.format = format

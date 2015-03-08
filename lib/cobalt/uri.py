@@ -1,6 +1,6 @@
 import re
 
-WORK_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
+FRBR_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
                               /(?P<doctype>[^/]+)          # document type
                               /((?P<subtype>[^/]+)         # subtype (optional)
                               /((?P<actor>[^/]+)/)?)?      # actor (optional)
@@ -77,7 +77,7 @@ class FrbrUri(object):
 
     @classmethod
     def parse(cls, s):
-        match = WORK_URI_RE.match(s)
+        match = FRBR_URI_RE.match(s)
         if match:
             return cls(**match.groupdict())
         else:

@@ -2,7 +2,7 @@ from unittest import TestCase
 from nose.tools import *
 from datetime import date
 
-from indigo_an.act import Act, datestring
+from cobalt.act import Act, datestring
 
 class ActTestCase(TestCase):
     def test_empty_act(self):

@@ -1,12 +1,12 @@
-``indigo_an``
+``cobalt``
 =============
 
-.. automodule:: indigo_an
+.. automodule:: cobalt
 
     Acts
     ----
 
-    .. automodule:: indigo_an.act
+    .. automodule:: cobalt.act
 
         .. autoclass:: Act
             :members:
@@ -17,7 +17,7 @@
     Rendering
     ---------
 
-    .. automodule:: indigo_an.render.html
+    .. automodule:: cobalt.render
 
         .. autoclass:: HTMLRenderer
             :members:

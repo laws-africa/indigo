@@ -6,5 +6,5 @@ Contents:
 .. toctree::
     :maxdepth: 2
 
-    indigo_an
+    cobalt
 

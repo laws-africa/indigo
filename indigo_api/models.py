@@ -4,7 +4,7 @@ from datetime import date
 from django.db import models
 import arrow
 
-from indigo_an.act import Act
+from cobalt.act import Act
 
 COUNTRIES = sorted([
     ('za', 'South Africa'),

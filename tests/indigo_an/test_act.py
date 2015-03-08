@@ -14,7 +14,7 @@ class ActTestCase(TestCase):
     def test_frbr_uri(self):
         a = Act()
         a.frbr_uri = '/za/act/2007/01'
-        assert_equal(a.frbr_uri, '/za/act/2007/01/')
+        assert_equal(a.frbr_uri.work_uri(), '/za/act/2007/01')
         assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/za/act/2007/01/eng@')
         assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/za/act/2007/01/eng@')
         
@@ -65,3 +65,8 @@ class ActTestCase(TestCase):
 
         a.publication_name = 'Publication'
         assert_equal(a.publication_name, 'Publication')
+
+    def test_language(self):
+        a = Act()
+        a.language = 'fre'
+        assert_equal(a.language, 'fre')

@@ -20,6 +20,15 @@
               {% endfor %}
             </select>
           </div>
+
+          <label for="document_language" class="col-sm-2 control-label">Language</label>
+          <div class="col-sm-4">
+            <select id="document_language" class="form-control">
+              {% for code, name in form.fields.language.choices %}
+              <option value="{{ code }}">{{ name }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
 
         <div class="form-group">

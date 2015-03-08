@@ -11,11 +11,11 @@ class SimpleTest(APITestCase):
 
     def test_simple_create(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2/'
+            'frbr_uri': '/za/act/1998/2'
         })
 
         assert_equal(response.status_code, 201)
-        assert_equal(response.data['frbr_uri'], '/za/act/1998/2/')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
         assert_equal(response.data['title'], '(untitled)')
         assert_equal(response.data['nature'], 'act')
         assert_equal(response.data['year'], '1998')
@@ -37,7 +37,7 @@ class SimpleTest(APITestCase):
 
 
     def test_update_body(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2/'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -58,7 +58,7 @@ class SimpleTest(APITestCase):
 
     def test_create_with_body(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2/',
+            'frbr_uri': '/za/act/1998/2',
             'body': body_fixture('in the body'),
             })
         assert_equal(response.status_code, 201)
@@ -69,7 +69,7 @@ class SimpleTest(APITestCase):
         assert_in('<p>in the body</p>', response.data['body'])
 
     def test_update_content(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2/'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -90,7 +90,7 @@ class SimpleTest(APITestCase):
 
     def test_create_with_content(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2/',
+            'frbr_uri': '/za/act/1998/2',
             'content': document_fixture('in the body'),
             })
         assert_equal(response.status_code, 201)
@@ -102,11 +102,19 @@ class SimpleTest(APITestCase):
 
     def test_create_with_bad_content(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2/',
+            'frbr_uri': '/za/act/1998/2',
             'content': 'not valid xml',
             })
         assert_equal(response.status_code, 400)
         assert_equal(len(response.data['content']), 1)
+
+    def test_create_with_bad_uri(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/',
+            'content': document_fixture('in the body'),
+            })
+        assert_equal(response.status_code, 400)
+        assert_equal(len(response.data['frbr_uri']), 1)
 
     def test_table_of_contents(self):
         xml = """
@@ -125,7 +133,7 @@ class SimpleTest(APITestCase):
         """
 
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2/',
+            'frbr_uri': '/za/act/1998/2',
             'content': document_fixture(xml=xml),
             })
         assert_equal(response.status_code, 201)

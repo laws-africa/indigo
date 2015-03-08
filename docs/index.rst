@@ -39,7 +39,7 @@ a title, year of publication, country as well as content in Akoma Ntoso XML.
 
 The Akoma Ntoso standard uses an FRBR URI to uniquely identify an item of legislation. For example, the URI
 
-    ``/za/act/1998/84/``
+    ``/za/act/1998/84``
 
 identifies the `National Forests Act 84 of 1998 <http://www.saflii.org/za/legis/consol_act/nfa1998194/>`_.
 The components indicate that the document is from South Africa (``za``), is an

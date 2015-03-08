@@ -49,7 +49,7 @@ class ConvertAPITest(APITestCase):
     def test_convert_json_to_xml(self):
         response = self.client.post('/api/convert', {
             'content': {
-                'frbr_uri': '/',
+                'frbr_uri': '/za/act/1980/02',
                 'body': body_fixture('hello'),
             },
             'inputformat': 'json',
@@ -62,7 +62,7 @@ class ConvertAPITest(APITestCase):
     def test_convert_json_to_html(self):
         response = self.client.post('/api/convert', {
             'content': {
-                'frbr_uri': '/',
+                'frbr_uri': '/za/act/1980/20',
                 'body': body_fixture('hello'),
             },
             'inputformat': 'json',

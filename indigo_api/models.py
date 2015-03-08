@@ -7,9 +7,14 @@ import arrow
 from indigo_an.act import Act
 
 COUNTRIES = sorted([
-        ('za', 'South Africa'),
-        ('zm', 'Zambia'),
-        ])
+    ('za', 'South Africa'),
+    ('zm', 'Zambia'),
+    ])
+
+LANGUAGES = sorted([
+    ('eng', 'English'),
+    ('fre', 'French'),
+    ])
 
 log = logging.getLogger(__name__)
 
@@ -17,10 +22,11 @@ class Document(models.Model):
     db_table = 'documents'
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globably to identify this document")
-    """ The FRBRuri of this document that uniquely identifies it globally """
+    """ The FRBR Work URI of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.CharField(max_length=2, choices=COUNTRIES, default=COUNTRIES[0][0])
+    language = models.CharField(max_length=3, choices=LANGUAGES, default=LANGUAGES[0][0])
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
 
@@ -86,6 +92,7 @@ class Document(models.Model):
         if from_model:
             self.doc.title = self.title
             self.doc.frbr_uri = self.frbr_uri
+            self.doc.language = self.language
 
             self.doc.work_date = self.publication_date
             self.doc.manifestation_date = self.updated_at or arrow.now()
@@ -96,7 +103,8 @@ class Document(models.Model):
 
         else:
             self.title = self.doc.title
-            self.frbr_uri = self.doc.frbr_uri
+            self.language = self.doc.language
+            self.frbr_uri = self.doc.frbr_uri.work_uri()
 
             self.publication_date = self.doc.publication_date or self.doc.work_date
             self.publication_name = self.doc.publication_name

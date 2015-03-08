@@ -6,6 +6,7 @@ from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from indigo_an.act import Act
+from indigo_an.frbr_uri import FrbrUri
 
 from .models import Document
 from .importer import Importer
@@ -46,6 +47,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'frbr_uri', 'draft', 'created_at', 'updated_at',
                 'title', 'country', 'number', 'year', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
+                'language',
 
                 'body', 'body_url',
                 'content', 'content_url', 'file',
@@ -73,7 +75,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk or doc.draft:
             return None
         else:
-            return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': doc.frbr_uri[1:]})
+            uri = doc.doc.frbr_uri
+            uri.expression_date = None
+            uri = uri.expression_uri()[1:]
+
+            return reverse('published-document-detail', request=self.context['request'],
+                    kwargs={'frbr_uri': uri})
 
     def validate(self, data):
         """
@@ -98,6 +105,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         except LxmlError as e:
             raise ValidationError("Invalid XML: %s" % e.message)
         return value
+
+    def validate_frbr_uri(self, value):
+        try:
+            return FrbrUri.parse(value).work_uri()
+        except ValueError as e:
+            raise ValidationError("Invalid FRBR URI")
 
 
 class ConvertSerializer(serializers.Serializer):

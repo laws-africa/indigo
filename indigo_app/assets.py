@@ -23,7 +23,6 @@ register('js', Bundle(
     'bower_components/moment/locale/en-gb.js',
     'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
     'bower_components/tablesorter/jquery.tablesorter.min.js',
-    'javascript/ace/ace.js',
     'javascript/indigo/models.js',
     'javascript/indigo/views/user.js',
     'javascript/indigo/views/reset_password.js',

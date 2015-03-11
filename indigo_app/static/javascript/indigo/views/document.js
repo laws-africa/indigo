@@ -165,8 +165,12 @@
     },
 
     parseXml: function() {
-      this.model.xmlDocument = $.parseXML(this.model.get('body'));
-      this.render();
+      try {
+        this.model.xmlDocument = $.parseXML(this.model.get('body'));
+        this.render();
+      } catch(e) {
+        console.log(e);
+      }
     },
 
     render: function() {

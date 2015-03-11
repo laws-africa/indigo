@@ -14,7 +14,7 @@ python $MANAGE_FILE assets build 2>&1
 
 # Copy over some javascript which mustn't be fingerprinted
 echo "-----> copying plain javascript"
-cp -vR indigo_app/static/javascript/ace/ staticfiles/javascript/ace/
+cp -vR indigo_app/static/javascript/ace/ staticfiles/javascript/
 
 # Copy over some XSL which mustn't be fingerprinted
 echo "-----> copying XSL"

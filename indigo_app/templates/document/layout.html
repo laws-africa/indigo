@@ -21,7 +21,22 @@
         <li class="active"><a href="#props-tab" data-toggle="tab">Properties</a></li>
         <li><a href="#content-tab" data-toggle="tab">Content</a></li>
         <li><a href="#preview-tab" data-toggle="tab">Preview</a></li>
-      <ul>
+      </ul>
+
+      <div id="toc" class="toc-holder"></div>
+      <script id="toc-template" type="text/x-handlebars-template">
+      {% verbatim %}
+
+      <ol>
+        {{#each toc}}
+        <li class="toc-{{ type }}" title="{{ title }}">
+          <a href="#" data-index="{{ @index }}">{{ title }}</a>
+        </li>
+        {{/each}}
+      </ol>
+      {% endverbatim %}
+
+      </script>
 
     </div>
   </nav>

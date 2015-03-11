@@ -135,10 +135,13 @@
   });
 
   // Handle the document body editor, tracking changes and saving it back to the server.
+  // The model is an Indigo.DocumentBody instance.
   Indigo.DocumentBodyEditorView = Backbone.View.extend({
     el: '#content-tab',
 
     initialize: function() {
+      var self = this;
+
       // setup ace editor
       this.editor = ace.edit(this.$el.find(".ace-editor")[0]);
       this.editor.setTheme("ace/theme/monokai");
@@ -147,11 +150,28 @@
       this.editor.$blockScrolling = Infinity;
       this.editor.on('change', _.debounce(_.bind(this.updateDocumentBody, this), 500));
 
+      // setup renderer
+      this.xsltProcessor = new XSLTProcessor();
+      $.get('/static/xsl/act.xsl')
+        .then(function(xml) {
+          self.xsltProcessor.importStylesheet(xml);
+        });
+
       this.dirty = false;
+      this.model.on('change', this.updateEditor, this);
       this.model.on('change', this.setDirty, this);
       this.model.on('sync', this.setClean, this);
+      this.model.on('change', this.parseXml, this);
+    },
 
-      this.model.on('change', this.updateEditor, this);
+    parseXml: function() {
+      this.model.xmlDocument = $.parseXML(this.model.get('body'));
+      this.render();
+    },
+
+    render: function() {
+      var html = this.xsltProcessor.transformToFragment(this.model.xmlDocument, document);
+      this.$el.find('.document-sheet').html('').get(0).appendChild(html);
     },
 
     setDirty: function() {

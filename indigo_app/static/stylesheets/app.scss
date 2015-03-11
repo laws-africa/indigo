@@ -105,8 +105,15 @@ html, body {
 
 /* editors */
 
-.ace-editor {
-  height: inherit;
+.document-content-view {
+  .document-sheet-container,
+  .document-xml-editor {
+    height: 50%;
+  }
+
+  .document-sheet-container {
+    margin-bottom: 5px;
+  }
 }
 
 /* misc */
@@ -139,6 +146,11 @@ html, body {
 
 /* make a document sheet look like paper */
 .document-sheet-container {
+  height: inherit;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 110px;
+
   background: #aaa;
   margin: 0px;
 

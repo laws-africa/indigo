@@ -34,16 +34,8 @@ h4 {
   display: block;
 }
 
-.published {
-  font-style: italic;
-}
-
 .an-def {
   font-weight: bold;
-}
-
-.popover-content .an-term {
-  border-bottom-width: 0px;
 }
 
 .an-preamble {
@@ -78,12 +70,6 @@ h4 {
   > .an-p {
     display: block;
     margin-bottom: 1em;
-  }
-}
-
-#definitions, .term-definition {
-  .an-subsection {
-    margin-left: 0px;
   }
 }
 

@@ -107,13 +107,18 @@ html, body {
 /* editors */
 
 .document-content-view {
+  margin: 0px;
+  padding-bottom: 0px;
+
   .document-sheet-container,
   .document-xml-editor {
-    height: 49%;
+    height: inherit;
+    width: 50%;
+    float: left;
   }
 
-  .document-sheet-container {
-    margin-bottom: 5px;
+  .document-xml-editor {
+    padding-left: 5px;
   }
 }
 
@@ -235,6 +240,7 @@ html, body {
 
   margin-top: 5px;
   border-top: 1px solid #ddd;
+  padding-bottom: 200px;
 
   ol {
     list-style: none;

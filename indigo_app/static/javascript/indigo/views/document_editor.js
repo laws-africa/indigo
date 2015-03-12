@@ -5,7 +5,7 @@
   Indigo = exports.Indigo;
 
   // Handle the document editor, tracking changes and saving it back to the server.
-  // The model is an Indigo.DocumentBody instance.
+  // The model is an Indigo.DocumentContent instance.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: '#content-tab',
 

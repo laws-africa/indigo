@@ -84,8 +84,8 @@
       this.document.on('change', this.allowDelete, this);
       this.document.on('sync', this.setModelClean, this);
 
-      this.documentBody = new Indigo.DocumentBody({id: document_id});
-      this.documentBody.on('change', this.documentBodyChanged, this);
+      this.documentContent = new Indigo.DocumentContent({id: document_id});
+      this.documentContent.on('change', this.documentContentChanged, this);
 
       this.documentDom = new Indigo.DocumentDom();
       this.documentDom.on('change', this.setDirty, this);
@@ -105,7 +105,7 @@
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.documentDom,
-        rawModel: this.documentBody,
+        rawModel: this.documentContent,
         tocView: this.tocView,
       });
       this.bodyEditorView.on('dirty', this.setDirty, this);
@@ -117,18 +117,18 @@
       if (document_id) {
         // fetch it
         this.document.fetch();
-        this.documentBody.fetch();
+        this.documentContent.fetch();
       } else {
         // pretend we've fetched it, this sets up additional handlers
         this.document.trigger('sync');
-        this.documentBody.trigger('sync');
+        this.documentContent.trigger('sync');
         this.propertiesView.calculateUri();
         this.setDirty();
       }
     },
 
-    documentBodyChanged: function() {
-      this.documentDom.setXml(this.documentBody.get('content'));
+    documentContentChanged: function() {
+      this.documentDom.setXml(this.documentContent.get('content'));
     },
 
     windowUnloading: function(e) {

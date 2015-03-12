@@ -271,13 +271,20 @@ html, body {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      text-decoration: none;
+      margin-left: -5px;
+      padding: 0px 0px 0px 5px;
 
-      &.active {
+      &.active,
+      &.active:hover {
+        border-radius: 5px;
         background-color: #337ab7;
         color: white;
+      }
+
+      &:hover {
         border-radius: 5px;
-        margin-left: -5px;
-        padding: 0px 0px 0px 5px;
+        background-color: #eee;
       }
     }
   }

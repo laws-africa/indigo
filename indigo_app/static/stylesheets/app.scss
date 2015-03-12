@@ -32,6 +32,7 @@ html, body {
 
 .sidebar-container {
   border-right: 1px solid $border-colour;
+  padding: 5px;
 
   .sidebar {
     height: inherit;
@@ -228,6 +229,10 @@ html, body {
 
 // table of contents browser
 .toc-holder {
+  height: inherit;
+  overflow-x: hidden;
+  overflow-y: scroll;
+
   margin-top: 5px;
   border-top: 1px solid #ddd;
 

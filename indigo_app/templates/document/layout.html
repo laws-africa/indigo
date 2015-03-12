@@ -21,7 +21,22 @@
         <li class="active"><a href="#props-tab" data-toggle="tab">Properties</a></li>
         <li><a href="#content-tab" data-toggle="tab">Content</a></li>
         <li><a href="#preview-tab" data-toggle="tab">Preview</a></li>
-      <ul>
+      </ul>
+
+      <div id="toc" class="toc-holder"></div>
+      <script id="toc-template" type="text/x-handlebars-template">
+      {% verbatim %}
+
+      <ol>
+        {{#each toc}}
+        <li class="toc-{{ type }}" title="{{ title }}">
+          <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
+        </li>
+        {{/each}}
+      </ol>
+      {% endverbatim %}
+
+      </script>
 
     </div>
   </nav>
@@ -31,4 +46,9 @@
   {% block main-content %}{% endblock %}
 </div>
 
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+  <script type="text/javascript" src="/static/javascript/ace/ace.js"></script>
 {% endblock %}

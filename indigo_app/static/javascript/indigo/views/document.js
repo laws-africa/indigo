@@ -37,163 +37,6 @@
     },
   });
 
-  // Handle the document properties form, and saving them back to the server.
-  Indigo.DocumentPropertiesView = Backbone.View.extend({
-    el: '#props-tab article',
-    bindings: {
-      '#document_title': 'title',
-      '#document_country': 'country',
-      '#document_frbr_uri': 'frbr_uri',
-      '#document_publication_date': 'publication_date',
-      '#document_publication_name': 'publication_name',
-      '#document_publication_number': 'publication_number',
-      '#document_number': 'number',
-      '#document_nature': 'nature',
-      '#document_language': 'language',
-      '#document_draft': {
-        observe: 'draft',
-        // API requires this value to be true or false
-        onSet: function(val) { return val == "1"; }
-      },
-      '#document_updated_at': {
-        observe: 'updated_at',
-        onGet: function(value, options) {
-          return value ? moment(value).calendar() : "";
-        }
-      },
-      '#document_created_at': {
-        observe: 'created_at',
-        onGet: function(value, options) {
-          return moment(value).calendar();
-        }
-      },
-    },
-
-    initialize: function() {
-      this.stickit();
-
-      this.dirty = false;
-      this.model.on('change', this.setDirty, this);
-      this.model.on('sync', this.setClean, this);
-
-      // only attach URI building handlers after the first sync
-      this.listenToOnce(this.model, 'sync', function() {
-        this.model.on('change:number change:nature change:country change:publication_date', _.bind(this.calculateUri, this));
-      });
-
-      this.model.on('change:draft change:frbr_uri change:language', this.showPublishedUrl, this);
-    },
-
-    calculateUri: function() {
-      // rebuild the FRBR uri when one of its component sources changes
-      var parts = [
-        '',
-        this.model.get('country'),
-        this.model.get('nature'),
-        this.model.get('publication_date').split('-')[0],
-        this.model.get('number')];
-      this.model.set('frbr_uri', parts.join('/'));
-    },
-
-    showPublishedUrl: function() {
-      var url = window.location.origin + "/api" +
-        this.model.get('frbr_uri') + '/' + this.model.get('language');
-
-      this.$el.find('.published-url').toggle(!this.model.get('draft'));
-      this.$el.find('#document_published_url').attr('href', url).text(url);
-    },
-
-    setDirty: function() {
-      if (!this.dirty) {
-        this.dirty = true;
-        this.trigger('dirty');
-      }
-    },
-
-    setClean: function() {
-      if (this.dirty) {
-        this.dirty = false;
-        this.trigger('clean');
-      }
-    },
-
-    save: function() {
-      // TODO: validation
-      var self = this;
-
-      // don't do anything if it hasn't changed
-      if (!this.dirty) {
-        return $.Deferred().resolve();
-      }
-
-      return this.model
-        .save()
-        .done(function() {
-          self.model.attributes.updated_at = moment().format();
-        });
-    },
-  });
-
-  // Handle the document body editor, tracking changes and saving it back to the server.
-  Indigo.DocumentBodyEditorView = Backbone.View.extend({
-    el: '#content-tab',
-
-    initialize: function() {
-      // setup ace editor
-      this.editor = ace.edit(this.$el.find(".ace-editor")[0]);
-      this.editor.setTheme("ace/theme/monokai");
-      this.editor.getSession().setMode("ace/mode/xml");
-      this.editor.setValue();
-      this.editor.$blockScrolling = Infinity;
-      this.editor.on('change', _.debounce(_.bind(this.updateDocumentBody, this), 500));
-
-      this.dirty = false;
-      this.model.on('change', this.setDirty, this);
-      this.model.on('sync', this.setClean, this);
-
-      this.model.on('change', this.updateEditor, this);
-    },
-
-    setDirty: function() {
-      if (!this.dirty) {
-        this.dirty = true;
-        this.trigger('dirty');
-      }
-    },
-
-    setClean: function() {
-      if (this.dirty) {
-        this.dirty = false;
-        this.trigger('clean');
-      }
-    },
-
-    save: function() {
-      // TODO: validation
-
-      // don't do anything if it hasn't changed
-      if (!this.dirty) {
-        return $.Deferred().resolve();
-      }
-
-      return this.model.save();
-    },
-
-    updateEditor: function(model, options) {
-      // update the editor with new content from the model,
-      // unless this new content already comes from the editor
-      if (!options.fromEditor) this.editor.setValue(this.model.get('body'));
-    },
-
-    updateDocumentBody: function() {
-      // update the document content from the editor's version
-      console.log('new body content');
-      this.model.set(
-        {body: this.editor.getValue()},
-        {fromEditor: true}); // prevent infinite loop
-    },
-  });
-
   // The DocumentView is the primary view on the document detail page.
   // It is responsible for managing the other views and allowing the user to
   // save their changes. It has nested sub views that handle separate portions
@@ -205,7 +48,7 @@
   //   DocumentPropertiesView - handles editing the document metadata, such as
   //                            publication dates and URIs
   //
-  //   DocumentBodyEditorView - handles editing the document's body content
+  //   DocumentEditorView - handles editing the document's body content
   //
   // When saving a document, the DocumentView tells the children to save their changes.
   // In turn, they trigger 'dirty' and 'clean' events when their models change or
@@ -242,7 +85,10 @@
       this.document.on('sync', this.setModelClean, this);
 
       this.documentBody = new Indigo.DocumentBody({id: document_id});
-      this.documentBody.on('change', this.setDirty, this);
+      this.documentBody.on('change', this.documentBodyChanged, this);
+
+      this.documentDom = new Indigo.DocumentDom();
+      this.documentDom.on('change', this.setDirty, this);
 
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
@@ -254,7 +100,14 @@
       this.propertiesView.on('dirty', this.setDirty, this);
       this.propertiesView.on('clean', this.setClean, this);
 
-      this.bodyEditorView = new Indigo.DocumentBodyEditorView({model: this.documentBody});
+      this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
+      this.tocView.on('item-selected', this.showEditor, this);
+
+      this.bodyEditorView = new Indigo.DocumentEditorView({
+        model: this.documentDom,
+        rawModel: this.documentBody,
+        tocView: this.tocView,
+      });
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
 
@@ -274,11 +127,19 @@
       }
     },
 
+    documentBodyChanged: function() {
+      this.documentDom.setXml(this.documentBody.get('body'));
+    },
+
     windowUnloading: function(e) {
       if (this.propertiesView.dirty || this.bodyEditorView.dirty) {
         e.preventDefault();
         return 'You will lose your changes!';
       }
+    },
+
+    showEditor: function() {
+      this.$el.find('a[href="#content-tab"]').click();
     },
 
     setDirty: function() {

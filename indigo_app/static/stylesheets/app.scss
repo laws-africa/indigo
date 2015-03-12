@@ -105,8 +105,15 @@ html, body {
 
 /* editors */
 
-.ace-editor {
-  height: inherit;
+.document-content-view {
+  .document-sheet-container,
+  .document-xml-editor {
+    height: 49%;
+  }
+
+  .document-sheet-container {
+    margin-bottom: 5px;
+  }
 }
 
 /* misc */
@@ -116,7 +123,6 @@ html, body {
   top: 10px;
   left: 0px;
   right: 0px;
-  z-index: 1000;
   
   .alert {
     width: 600px;
@@ -139,6 +145,11 @@ html, body {
 
 /* make a document sheet look like paper */
 .document-sheet-container {
+  height: inherit;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-bottom: 110px;
+
   background: #aaa;
   margin: 0px;
 
@@ -212,5 +223,37 @@ html, body {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+}
+
+// table of contents browser
+.toc-holder {
+  margin-top: 5px;
+  border-top: 1px solid #ddd;
+
+  ol {
+    list-style: none;
+    padding: 0px 0px 0px 5px;
+    
+    a {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+
+      &.active {
+        background-color: #337ab7;
+        color: white;
+        border-radius: 5px;
+        margin-left: -5px;
+        padding: 0px 0px 0px 5px;
+      }
+    }
+  }
+
+  .toc-chapter,
+  .toc-part {
+    font-weight: bold;
+    margin-top: 5px;
   }
 }

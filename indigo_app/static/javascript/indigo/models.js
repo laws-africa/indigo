@@ -12,6 +12,38 @@
     },
   });
 
+  // A model-like abstraction for working with
+  // document XML in a DOM form
+  Indigo.DocumentDom = Backbone.Model.extend({
+    setXml: function(xml, options) {
+      try {
+        this.xmlDocument = $.parseXML(xml);
+      } catch(e) {
+        Indigo.errorView.show("The document has invalid XML.");
+      }
+      this.trigger('change', options);
+    },
+
+    // serialise an XML node, or the entire document if node is not given, to a string
+    toXml: function(node) {
+      return new XMLSerializer().serializeToString(node || this.xmlDocument);
+    },
+
+    updateFragment: function(oldNode, newNode) {
+      if (!oldNode.parentNode) {
+        // entire document has changed
+        console.log('Replacing whole document');
+        this.xmlDocument = newNode;
+      } else {
+        // just a fragment has changed
+        console.log('Replacing node');
+        oldNode.parentNode.replaceChild(newNode, oldNode);
+      }
+
+      this.trigger('change');
+    },
+  });
+
   Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,

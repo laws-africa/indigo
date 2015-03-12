@@ -7,8 +7,3 @@ echo "-----> post_compile hook"
 
 chmod a+x bin/build_assets
 bin/build_assets
-
-# Copy over some javascript which mustn't be fingerprinted
-echo "-----> copying plain javascript"
-
-cp -vR indigo_app/static/javascript/ace staticfiles/javascript/ace

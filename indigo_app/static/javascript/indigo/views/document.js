@@ -105,6 +105,7 @@
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.documentDom,
+        rawModel: this.documentBody,
         tocView: this.tocView,
       });
       this.bodyEditorView.on('dirty', this.setDirty, this);
@@ -180,9 +181,6 @@
       };
 
       this.$saveBtn.prop('disabled', true);
-
-      // TODO: save content first
-      // TODO: serialize from documentDom
 
       this.propertiesView
         .save()

@@ -32,7 +32,9 @@
       // the model is a documentDom model, which holds the parsed XML
       // document and is a bit different from normal Backbone models
       this.model.on('change', this.setDirty, this);
-      this.model.on('sync', this.setClean, this);
+      // this is the raw, unparsed XML model
+      this.rawModel = options.rawModel;
+      this.rawModel.on('sync', this.setClean, this);
 
       this.tocView = options.tocView;
       this.tocView.on('item-selected', this.editFragment, this);
@@ -88,14 +90,14 @@
     },
 
     save: function() {
-      // TODO: serialize the model correctly
-
       // don't do anything if it hasn't changed
       if (!this.dirty) {
         return $.Deferred().resolve();
       }
 
-      return this.model.save();
+      // serialize the DOM into the raw model
+      this.rawModel.set('body', this.model.toXml());
+      return this.rawModel.save();
     },
   });
 })(window);

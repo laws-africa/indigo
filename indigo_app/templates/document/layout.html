@@ -29,7 +29,7 @@
 
       <ol>
         {{#each toc}}
-        <li class="toc-{{ type }}" title="{{ title }}">
+        <li class="toc-item an-{{ type }}" title="{{ title }}">
           <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
         </li>
         {{/each}}

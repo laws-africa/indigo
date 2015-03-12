@@ -4,11 +4,11 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The document body could be huge, so the API handles it outside
-  // of the document data. We model this with a separate wraps the document's body, available at /documents/1/body
-  Indigo.DocumentBody = Backbone.Model.extend({
+  // The document content could be huge, so the API handles it outside
+  // of the document data.
+  Indigo.DocumentContent = Backbone.Model.extend({
     url: function() {
-      return '/api/documents/' + this.id + '/body';
+      return '/api/documents/' + this.id + '/content';
     },
   });
 

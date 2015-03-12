@@ -84,8 +84,8 @@
       this.document.on('change', this.allowDelete, this);
       this.document.on('sync', this.setModelClean, this);
 
-      this.documentBody = new Indigo.DocumentBody({id: document_id});
-      this.documentBody.on('change', this.documentBodyChanged, this);
+      this.documentContent = new Indigo.DocumentContent({id: document_id});
+      this.documentContent.on('change', this.documentContentChanged, this);
 
       this.documentDom = new Indigo.DocumentDom();
       this.documentDom.on('change', this.setDirty, this);
@@ -105,7 +105,7 @@
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.documentDom,
-        rawModel: this.documentBody,
+        rawModel: this.documentContent,
         tocView: this.tocView,
       });
       this.bodyEditorView.on('dirty', this.setDirty, this);
@@ -117,18 +117,18 @@
       if (document_id) {
         // fetch it
         this.document.fetch();
-        this.documentBody.fetch();
+        this.documentContent.fetch();
       } else {
         // pretend we've fetched it, this sets up additional handlers
         this.document.trigger('sync');
-        this.documentBody.trigger('sync');
+        this.documentContent.trigger('sync');
         this.propertiesView.calculateUri();
         this.setDirty();
       }
     },
 
-    documentBodyChanged: function() {
-      this.documentDom.setXml(this.documentBody.get('body'));
+    documentContentChanged: function() {
+      this.documentDom.setXml(this.documentContent.get('content'));
     },
 
     windowUnloading: function(e) {
@@ -182,14 +182,16 @@
 
       this.$saveBtn.prop('disabled', true);
 
-      this.propertiesView
+
+      // We save the content first, and then save
+      // the properties on top of it, so that content
+      // properties that change metadata in the content
+      // take precendence.
+
+      this.bodyEditorView
         .save()
         .then(function(response) {
-          if (is_new) {
-            self.documentBody.set('id', self.document.get('id'));
-          }
-
-          self.bodyEditorView
+          self.propertiesView
             .save()
             .fail(failed)
             .then(function() {
@@ -207,7 +209,7 @@
         var self = this,
             data = this.document.toJSON();
 
-        data.body = this.documentBody.get('body');
+        data.content = this.documentDom.toXml();
         data = JSON.stringify({'document': data});
 
         $.ajax({

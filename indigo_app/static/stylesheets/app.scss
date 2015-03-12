@@ -251,9 +251,17 @@ html, body {
     }
   }
 
-  .toc-chapter,
-  .toc-part {
-    font-weight: bold;
-    margin-top: 5px;
+  .toc-item {
+    &.an-akomaNtoso,
+    &.an-coverpage,
+    &.an-preface,
+    &.an-preamble,
+    &.an-chapter,
+    &.an-part,
+    &.an-conclusions,
+    &.an-doc {
+      font-weight: bold;
+      margin-top: 5px;
+    }
   }
 }

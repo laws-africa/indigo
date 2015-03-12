@@ -8,7 +8,7 @@
   // of the document data. We model this with a separate wraps the document's body, available at /documents/1/body
   Indigo.DocumentBody = Backbone.Model.extend({
     url: function() {
-      return '/api/documents/' + this.id + '/body';
+      return '/api/documents/' + this.id + '/content';
     },
   });
 

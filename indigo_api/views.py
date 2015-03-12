@@ -205,7 +205,7 @@ class ConvertView(APIView):
                         data=self.request.data['content'],
                         context={'request': self.request})
                 doc_serializer.is_valid(raise_exception=True)
-                document = Document(**doc_serializer.validated_data)
+                document = doc_serializer.update_document(Document())
 
         if not document:
             raise ValidationError("Nothing to convert! Either 'file' or 'content' must be provided.")
@@ -239,22 +239,16 @@ class RenderAPI(APIView):
         Parameters:
 
             format: "html" (default)
-            document_xml: "xml" (optional)
-            document: { ... } (optional)
+            document: { ... }
 
-        To determine what to render, include either a full document description or a `document_xml` value.
+        To determine what to render, include a document description. If the description has an
+        id, the missing details are filled in from the existing document in the database.
 
             {
               "document": {
                 "title": "A title",
                 "body": "... xml ..."
               }
-            }
-
-            OR
-
-            {
-              "document_xml": "... xml ..."
             }
         """
 
@@ -266,21 +260,13 @@ class RenderAPI(APIView):
             else:
                 document = Document()
 
-            # update the model from the db
+            # update the model, but don't save it
             ds = DocumentSerializer(instance=document, data=data)
             if ds.is_valid(raise_exception=True):
-                ds.update(document, ds.validated_data)
-
-            # patch in the body xml
-            if 'body' in data:
-                document.body = data['body']
-
-        elif u'content' in request.data:
-            document = Document()
-            document.content = request.data['content']
+                ds.update_document(document)
 
         else:
-            raise ParseError("Provide either a 'document' or 'document_xml' item.")
+            raise ParseError("Required parameter 'document' is missing.")
 
         if not document.document_xml:
             html = ""

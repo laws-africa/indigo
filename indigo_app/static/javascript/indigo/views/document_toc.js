@@ -24,7 +24,7 @@
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
 
-        this.toc = this.buildToc(this.model.xmlDocument);
+        this.toc = this.buildToc();
 
         if (this.selectedIndex > toc.length-1) {
           // this triggers a re-render
@@ -38,9 +38,11 @@
       }
     },
 
-    buildToc: function(root) {
+    buildToc: function() {
       // Get the table of contents of this document
       var toc = [];
+
+      // these are the nodes we're interested in
       var interesting = {
         coverpage: 1,
         preface: 1,
@@ -49,6 +51,23 @@
         chapter: 1,
         section: 1,
         conclusions: 1,
+        doc: 1,
+        akomaNtoso: 1,
+      };
+
+      var titles = {
+        akomaNtoso: function(i) { return "Entire document"; },
+        coverpage: function(i) { return "Coverpage"; },
+        preface: function(i) { return "Preface"; },
+        preamble: function(i) { return "Preamble"; },
+        conclusions: function(i) { return "Conclusions"; },
+        chapter: function(i) { return "Ch. " + i.num + " " + i.heading; },
+        part: function(i) { return "Part " + i.num + " " + i.heading; },
+        doc: function(i) { 
+          var text = $(i.element).attr('name') || "Component";
+          return text.charAt(0).toUpperCase() + text.slice(1);
+        },
+        null: function(i) { return i.num + " " + i.heading; },
       };
 
       function iter_children(node) {
@@ -75,19 +94,11 @@
           'type': node.localName,
           'id': node.id,
         };
-
-        item.title = item.num + " " + item.heading;
-
-        if (item.type == 'chapter') {
-          item.title = "Ch. " + item.title;
-        } else if (item.type == 'part') {
-          item.title = "Part " + item.title;
-        }
-
+        item.title = (titles[item.type] || titles[null])(item);
         return item;
       }
 
-      iter_children(root);
+      iter_children(this.model.xmlDocument);
 
       return toc;
     },

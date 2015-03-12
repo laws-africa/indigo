@@ -128,7 +128,7 @@
     },
 
     documentBodyChanged: function() {
-      this.documentDom.setXml(this.documentBody.get('body'));
+      this.documentDom.setXml(this.documentBody.get('content'));
     },
 
     windowUnloading: function(e) {
@@ -182,14 +182,16 @@
 
       this.$saveBtn.prop('disabled', true);
 
-      this.propertiesView
+
+      // We save the content first, and then save
+      // the properties on top of it, so that content
+      // properties that change metadata in the content
+      // take precendence.
+
+      this.bodyEditorView
         .save()
         .then(function(response) {
-          if (is_new) {
-            self.documentBody.set('id', self.document.get('id'));
-          }
-
-          self.bodyEditorView
+          self.propertiesView
             .save()
             .fail(failed)
             .then(function() {
@@ -207,7 +209,7 @@
         var self = this,
             data = this.document.toJSON();
 
-        data.body = this.documentBody.get('body');
+        data.content = this.documentDom.toXml();
         data = JSON.stringify({'document': data});
 
         $.ajax({

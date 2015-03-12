@@ -6,7 +6,7 @@
 
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
-    el: '#props-tab article',
+    el: '.document-properties-view',
     bindings: {
       '#document_title': 'title',
       '#document_country': 'country',

@@ -13,32 +13,28 @@
 
 
 {% block content %}
-<div class="sidebar-container sidebar-nav">
-  <nav class="sidebar">
+<div class="sidebar">
+  <ul class="nav nav-pills nav-stacked">
+    <li class="active"><a href="#props-tab" data-toggle="tab">Properties</a></li>
+    <li><a href="#content-tab" data-toggle="tab">Content</a></li>
+    <li><a href="#preview-tab" data-toggle="tab">Preview</a></li>
+  </ul>
 
-    <ul class="nav nav-pills nav-stacked">
-      <li class="active"><a href="#props-tab" data-toggle="tab">Properties</a></li>
-      <li><a href="#content-tab" data-toggle="tab">Content</a></li>
-      <li><a href="#preview-tab" data-toggle="tab">Preview</a></li>
-    </ul>
-
-    <div id="toc" class="toc-holder"></div>
-    <script id="toc-template" type="text/x-handlebars-template">
-    {% verbatim %}
-    <ol>
-      {{#each toc}}
-      <li class="toc-item an-{{ type }}" title="{{ title }}">
-        <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
-      </li>
-      {{/each}}
-    </ol>
-    {% endverbatim %}
-    </script>
-
-  </nav>
+  <div id="toc" class="toc"></div>
+  <script id="toc-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <ol>
+    {{#each toc}}
+    <li class="toc-item an-{{ type }}" title="{{ title }}">
+      <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
+    </li>
+    {{/each}}
+  </ol>
+  {% endverbatim %}
+  </script>
 </div>
 
-<div class="main-container">
+<div class="workspace-content">
   {% block main-content %}{% endblock %}
 </div>
 

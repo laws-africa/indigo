@@ -43,13 +43,13 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 # readonly, url is part of the rest framework
                 'id', 'url',
 
+                'content', 'content_url', 'file',
+                'body', 'body_url',
+
                 'frbr_uri', 'draft', 'created_at', 'updated_at',
                 'title', 'country', 'number', 'year', 'nature',
                 'publication_date', 'publication_name', 'publication_number',
                 'language',
-
-                'body', 'body_url',
-                'content', 'content_url', 'file',
 
                 'published_url', 'toc_url',
                 )
@@ -110,6 +110,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             return FrbrUri.parse(value).work_uri()
         except ValueError as e:
             raise ValidationError("Invalid FRBR URI")
+
+    def update_document(self, instance):
+        """ Update document without saving it. """
+        for attr, value in self.validated_data.items():
+            setattr(instance, attr, value)
+        return instance
 
 
 class ConvertSerializer(serializers.Serializer):

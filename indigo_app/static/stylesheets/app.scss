@@ -4,7 +4,7 @@ $header-colour2: #f5f5f5;
 
 $header-height: 45px;
 
-$sidebar-width: 250px;
+$sidebar-width: 260px;
 
 html, body {
   height: 100%;
@@ -126,6 +126,8 @@ html, body {
 }
 
 .document-content-view {
+  padding: 0px;
+
   .document-sheet-container,
   .document-xml-editor {
     height: 100%;
@@ -176,7 +178,7 @@ html, body {
 
   .document-sheet {
     border: 1px solid #aaa;
-    box-shadow: 0 0 10px #999;
+    box-shadow: 0 0 10px #888;
     padding: 30px;
     margin: 20px;
     background: white;

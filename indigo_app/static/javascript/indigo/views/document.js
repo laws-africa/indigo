@@ -85,7 +85,10 @@
       this.document.on('sync', this.setModelClean, this);
 
       this.documentBody = new Indigo.DocumentBody({id: document_id});
-      this.documentBody.on('change', this.setDirty, this);
+      this.documentBody.on('change', this.documentBodyChanged, this);
+
+      this.documentDom = new Indigo.DocumentDom();
+      this.documentDom.on('change', this.setDirty, this);
 
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
@@ -97,11 +100,11 @@
       this.propertiesView.on('dirty', this.setDirty, this);
       this.propertiesView.on('clean', this.setClean, this);
 
-      this.tocView = new Indigo.DocumentTOCView({model: this.documentBody});
-      this.tocView.on('item-clicked', this.showEditor, this);
+      this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
+      this.tocView.on('item-selected', this.showEditor, this);
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
-        model: this.documentBody,
+        model: this.documentDom,
         tocView: this.tocView,
       });
       this.bodyEditorView.on('dirty', this.setDirty, this);
@@ -121,6 +124,10 @@
         this.propertiesView.calculateUri();
         this.setDirty();
       }
+    },
+
+    documentBodyChanged: function() {
+      this.documentDom.setXml(this.documentBody.get('body'));
     },
 
     windowUnloading: function(e) {
@@ -173,6 +180,9 @@
       };
 
       this.$saveBtn.prop('disabled', true);
+
+      // TODO: save content first
+      // TODO: serialize from documentDom
 
       this.propertiesView
         .save()

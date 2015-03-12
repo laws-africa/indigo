@@ -18,7 +18,7 @@
       this.editor.getSession().setMode("ace/mode/xml");
       this.editor.setValue();
       this.editor.$blockScrolling = Infinity;
-      this.editor.on('change', _.debounce(_.bind(this.updateDocumentBody, this), 500));
+      this.onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
 
       // setup renderer
       var xsltProcessor = new XSLTProcessor();
@@ -26,28 +26,16 @@
         .then(function(xml) {
           xsltProcessor.importStylesheet(xml);
           self.xsltProcessor = xsltProcessor;
-          self.render();
         });
 
       this.dirty = false;
-      this.model.on('change', this.updateEditor, this);
-      this.model.on('change', this.parseXml, this);
+      // the model is a documentDom model, which holds the parsed XML
+      // document and is a bit different from normal Backbone models
       this.model.on('change', this.setDirty, this);
       this.model.on('sync', this.setClean, this);
 
       this.tocView = options.tocView;
-      this.tocView.on('item-clicked', this.editFragment, this);
-
-      this.fragment = this.model.xmlDocument;
-    },
-
-    parseXml: function() {
-      try {
-        this.model.xmlDocument = $.parseXML(this.model.get('body'));
-        this.render();
-      } catch(e) {
-        console.log(e);
-      }
+      this.tocView.on('item-selected', this.editFragment, this);
     },
 
     editFragment: function(node) {
@@ -55,6 +43,27 @@
       this.fragment = node;
       this.render();
       this.$el.find('.document-sheet-container').scrollTop(0);
+
+      var xml = this.model.toXml(node);
+
+      this.editor.removeListener('change', this.onEditorChange);
+      this.editor.setValue(xml);
+      this.editor.on('change', this.onEditorChange);
+    },
+
+    editorChanged: function() {
+      if (!this.updating) {
+        // update the fragment content from the editor's version
+        console.log('Parsing changes to XML');
+
+        // TODO: handle errors here
+        var newFragment = $.parseXML(this.editor.getValue()).documentElement;
+        var oldFragment = this.fragment;
+
+        this.fragment = newFragment;
+        this.render();
+        this.model.updateFragment(oldFragment, newFragment);
+      }
     },
 
     render: function() {
@@ -79,7 +88,7 @@
     },
 
     save: function() {
-      // TODO: validation
+      // TODO: serialize the model correctly
 
       // don't do anything if it hasn't changed
       if (!this.dirty) {
@@ -87,20 +96,6 @@
       }
 
       return this.model.save();
-    },
-
-    updateEditor: function(model, options) {
-      // update the editor with new content from the model,
-      // unless this new content already comes from the editor
-      if (!options.fromEditor) this.editor.setValue(this.model.get('body'));
-    },
-
-    updateDocumentBody: function() {
-      // update the document content from the editor's version
-      console.log('new body content');
-      this.model.set(
-        {body: this.editor.getValue()},
-        {fromEditor: true}); // prevent infinite loop
     },
   });
 })(window);

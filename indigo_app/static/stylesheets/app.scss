@@ -235,10 +235,19 @@ html, body {
     list-style: none;
     padding: 0px 0px 0px 15px;
     
-    li {
+    a {
+      display: block;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+
+      &.active {
+        background-color: #337ab7;
+        color: white;
+        border-radius: 5px;
+        margin-left: -5px;
+        padding: 0px 0px 0px 5px;
+      }
     }
   }
 

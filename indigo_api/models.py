@@ -11,10 +11,15 @@ COUNTRIES = sorted([
     ('zm', 'Zambia'),
     ])
 
+# 3-letter ISO-639-2 language codes, see http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
 LANGUAGES = sorted([
     ('eng', 'English'),
     ('fre', 'French'),
+    ('swa', 'Swahili'),
+    ('afr', 'Afrikaans'),
+    ('por', 'Portuguese'),
     ])
+DEFAULT_LANGUAGE = 'eng'
 
 log = logging.getLogger(__name__)
 
@@ -26,7 +31,9 @@ class Document(models.Model):
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.CharField(max_length=2, choices=COUNTRIES, default=COUNTRIES[0][0])
-    language = models.CharField(max_length=3, choices=LANGUAGES, default=LANGUAGES[0][0])
+
+    """ The 3-letter ISO-639-2 language code of this document """
+    language = models.CharField(max_length=3, choices=LANGUAGES, default=DEFAULT_LANGUAGE)
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
 

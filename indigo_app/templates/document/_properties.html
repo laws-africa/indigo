@@ -35,6 +35,11 @@
       </div>
 
       <div class="form-group">
+        <label for="document_number" class="col-sm-2 control-label">Number</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="document_number">
+          <p class="help-block">Number within the year of publication</p>
+        </div>
         <label for="document_nature" class="col-sm-2 control-label">Nature</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" id="document_nature">
@@ -43,17 +48,9 @@
       </div>
 
       <div class="form-group">
-        <label for="document_number" class="col-sm-2 control-label">Number</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_number">
-          <p class="help-block">Number within the year of publication</p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR URI</label>
+        <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR Work URI</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="document_frbr_uri">
+          <input type="text" class="form-control disabled" id="document_frbr_uri" disabled>
           <p class="help-block">{{ form.fields.frbr_uri.help_text }}</p>
         </div>
       </div>
@@ -76,21 +73,21 @@
 
       <div class="form-horizontal">
         <div class="form-group">
-          <label for="document_publication_name" class="col-sm-2 control-label">Publication name</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="document_publication_name">
-            <p class="help-block">{{ form.fields.publication_name.help_text }}</p>
+          <label for="document_publication_date" class="col-sm-2 control-label">Publication date</label>
+          <div class="col-sm-3 col-md-2">
+            <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd">
           </div>
         </div>
 
         <div class="form-group">
-          <label for="document_publication_date" class="col-sm-2 control-label">Publication date</label>
-          <div class="col-sm-3">
-            <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd">
+          <label for="document_publication_name" class="col-sm-2 control-label">Publication name</label>
+          <div class="col-sm-4">
+            <input type="text" class="form-control" id="document_publication_name">
+            <p class="help-block">{{ form.fields.publication_name.help_text }}</p>
           </div>
 
           <label for="document_publication_number" class="col-sm-2 control-label">Publication number</label>
-          <div class="col-sm-5">
+          <div class="col-sm-4">
             <input type="text" class="form-control" id="document_publication_number">
             <p class="help-block">{{ form.fields.publication_number.help_text }}</p>
           </div>

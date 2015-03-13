@@ -21,7 +21,7 @@ log = logging.getLogger(__name__)
 class Document(models.Model):
     db_table = 'documents'
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globably to identify this document")
+    frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globably to identify this work")
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')

@@ -85,3 +85,8 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [{'id': 'section-1', 'type': 'section'}])
+
+        response = self.client.get('/api/za/act/2014/10/toc.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['toc'], [{'id': 'section-1', 'type': 'section'}])

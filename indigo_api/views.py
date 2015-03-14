@@ -107,6 +107,20 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin,
         # list documents with a prefix URI match.
         try:
             self.frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
+
+            # in a URL like
+            #
+            #   /act/1980/1/toc
+            #
+            # don't mistake 'toc' for a language, it's really equivalent to
+            #
+            #   /act/1980/1/eng/toc
+            #
+            # if eng is the default language.
+            if self.frbr_uri.language == 'toc':
+                self.frbr_uri.language = self.frbr_uri.default_language
+                self.frbr_uri.expression_component = 'toc'
+
             return self.retrieve(request)
         except ValueError:
             return self.list(request)

@@ -58,6 +58,8 @@ class FrbrUri(object):
         uri = self.work_uri() + "/" + self.language
 
         if self.expression_date is not None:
+            # TODO: support virtual expression date with ":" instead of "@"
+            # http://www.akomantoso.org/release-notes/akoma-ntoso-3.0-schema/naming-conventions-1/bungenihelpcenterreferencemanualpage.2008-01-09.1856321727
             uri = uri + '@' + self.expression_date
 
         if self.expression_component:

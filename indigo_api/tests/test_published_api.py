@@ -84,9 +84,24 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/act/2014/10/eng/toc.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['toc'], [{'id': 'section-1', 'type': 'section'}])
+        assert_equal(response.data['toc'], [
+            {'id': 'section-1', 'type': 'section', 'num': '1.', 'subcomponent': 'main/section/1',
+                'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1'}])
 
         response = self.client.get('/api/za/act/2014/10/toc.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['toc'], [{'id': 'section-1', 'type': 'section'}])
+        assert_equal(response.data['toc'], [
+            {'id': 'section-1', 'type': 'section', 'num': '1.', 'subcomponent': 'main/section/1',
+                'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1'}])
+
+    def test_published_subcomponents(self):
+        response = self.client.get('/api/za/act/2014/10/eng/main/section/1.xml')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/xml')
+        assert_equal(response.data, '<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1">\n  <num>1.</num>\n  <content>\n    <p>tester</p>\n  </content>\n</section>\n')
+
+        response = self.client.get('/api/za/act/2014/10/eng/main/section/1.html')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_equal(response.data, '<div class="an-section" id="section-1"><h3>1. </h3><span class="an-content"><span class="an-p">tester</span></span></div>')

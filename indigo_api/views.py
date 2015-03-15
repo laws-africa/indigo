@@ -8,9 +8,11 @@ from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.views import APIView
+from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+import lxml.etree as ET 
 from lxml.etree import LxmlError
 import arrow
 
@@ -24,8 +26,33 @@ log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
+class DocumentViewMixin(object):
+    def table_of_contents(self, document):
+        # this updates the TOC entries by adding a 'url' component
+        # based on the document's URI and the path of the TOC subcomponent
+        uri = document.doc.frbr_uri
+        toc = document.table_of_contents()
+
+        def add_url(item):
+            parts = item['subcomponent'].split('/', 1)
+            uri.expression_component = parts[0]
+            uri.expression_subcomponent = parts[1] if len(parts) > 1 else None
+
+            item['url'] = reverse('published-document-detail',
+                    request=self.request,
+                    kwargs={'frbr_uri': uri.expression_uri()[1:]})
+
+            for kid in item.get('children', []):
+                add_url(kid)
+
+        for item in toc:
+            add_url(item)
+
+        return toc
+
+
 # REST API
-class DocumentViewSet(viewsets.ModelViewSet):
+class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
@@ -82,10 +109,11 @@ class DocumentViewSet(viewsets.ModelViewSet):
         a table of contents for the document.
         """
         instance = self.get_object()
-        return Response({'toc': self.get_object().table_of_contents()})
+        return Response({'toc': self.table_of_contents(self.get_object())})
 
 
-class PublishedDocumentDetailView(mixins.RetrieveModelMixin,
+class PublishedDocumentDetailView(DocumentViewMixin,
+                                  mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
     """
@@ -133,26 +161,41 @@ class PublishedDocumentDetailView(mixins.RetrieveModelMixin,
 
     def retrieve(self, request, *args, **kwargs):
         component = self.frbr_uri.expression_component or 'main'
+        subcomponent = self.frbr_uri.expression_subcomponent
         format = self.request.accepted_renderer.format
 
         # get the document
         document = self.get_object()
 
-        if (component, format) == ('main', 'xml'):
-            return Response(document.document_xml)
+        if subcomponent:
+            element = document.doc.get_subcomponent(component + "/" + subcomponent)
 
-        if (component, format) == ('main', 'html'):
-            html = HTMLRenderer().render_xml(document.document_xml)
-            return Response(html)
+        else:
+            # special cases of the entire document
 
-        # table of content
-        if (component, format) == ('toc', 'json'):
-            serializer = self.get_serializer(document)
-            return Response({'toc': document.table_of_contents()})
+            # table of contents
+            if (component, format) == ('toc', 'json'):
+                serializer = self.get_serializer(document)
+                return Response({'toc': self.table_of_contents(document)})
 
-        if (component, format) == ('main', 'json'):
-            serializer = self.get_serializer(document)
-            return Response(serializer.data)
+            # json description
+            if (component, format) == ('main', 'json'):
+                serializer = self.get_serializer(document)
+                return Response(serializer.data)
+
+            # entire thing
+            if (component, format) == ('main', 'xml'):
+                return Response(document.document_xml)
+
+            # the item we're interested in
+            element = document.doc.components().get(component)
+
+        if element:
+            if format == 'html':
+                return Response(HTMLRenderer().render(element))
+
+            if format == 'xml':
+                return Response(ET.tostring(element, pretty_print=True))
 
         raise Http404
 

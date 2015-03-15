@@ -6,10 +6,13 @@ FRBR_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
                               /((?P<actor>[^/]+)/)?)?      # actor (optional)
                               (?P<date>[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?)  # date
                               /(?P<number>[^/]+)           # number
-                              (/                           # optional expression components
+                              (/                           # optional expression details
                                 (?P<language>[a-z]{3})     # language (eg. eng)
-                                (@(?P<expression_date>[^/]*))?           # expression date (eg. @ or @2012-12-22)
-                                (/(?P<expression_component>[a-z0-9/]+))?  # expression component (eg. /main or /main/schedule1/tableA)
+                                (@(?P<expression_date>[^/]*))?            # expression date (eg. @ or @2012-12-22)
+                                (/                                        # optional expression component
+                                  (?P<expression_component>[^/]+?)?       # expression component (eg. main or schedule1)
+                                  (/(?P<expression_subcomponent>[^.]+))?  # expression subcomponent (eg. chapter/1 or section/20)
+                                )?                                        #
                                 (\.(?P<format>[a-z]))?     # format (eg. .xml, .akn, .html, .pdf)
                               )?$""", re.X)
 
@@ -28,7 +31,7 @@ class FrbrUri(object):
 
     def __init__(self, country, doctype, subtype, actor, date, number,
             language=None, expression_date=None, expression_component=None, 
-            format=None):
+            expression_subcomponent=None, format=None):
         self.country = country
         self.doctype = doctype
         self.subtype = subtype
@@ -39,6 +42,7 @@ class FrbrUri(object):
         self.language = language or self.default_language
         self.expression_date = expression_date
         self.expression_component = expression_component
+        self.expression_subcomponent = expression_subcomponent
         self.format = format
 
     def work_uri(self):
@@ -64,6 +68,8 @@ class FrbrUri(object):
 
         if self.expression_component:
             uri = uri + "/" + self.expression_component
+            if self.expression_subcomponent:
+                uri = uri + "/" + self.expression_subcomponent
 
         return uri
 

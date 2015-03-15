@@ -3,11 +3,16 @@
   xmlns:a="http://www.akomantoso.org/2.0"
   exclude-result-prefixes="a">
 
+  <xsl:output method="html" />
+
   <xsl:template match="a:act">
     <xsl:element name="span" namespace="">
       <xsl:attribute name="class">an-act</xsl:attribute>
+      <xsl:apply-templates select="a:coverPage" />
+      <xsl:apply-templates select="a:preface" />
       <xsl:apply-templates select="a:preamble" />
-      <xsl:apply-templates select="a:body/a:part | a:body/a:chapter | a:body/a:section" />
+      <xsl:apply-templates select="a:body" />
+      <xsl:apply-templates select="a:conclusions" />
     </xsl:element>
   </xsl:template>
 

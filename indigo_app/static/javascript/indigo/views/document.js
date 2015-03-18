@@ -61,6 +61,7 @@
     events: {
       'click .btn.save': 'save',
       'click .btn.delete': 'delete',
+      'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
 
@@ -223,6 +224,10 @@
             self.previewDirty = false;
           });
       }
+    },
+
+    tocDeselected: function() {
+      this.tocView.trigger('deselect');
     },
 
     delete: function() {

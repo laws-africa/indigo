@@ -17,6 +17,7 @@
       this.selectedIndex = -1;
       this.model.on('change', this.rebuild, this);
       this.template = Handlebars.compile($(this.template).html());
+      this.on('deselect', function() { this.selectItem(-1); });
     },
 
     rebuild: function() {
@@ -118,11 +119,17 @@
           delete (this.toc[this.selectedIndex].selected);
         }
 
+        if (i > -1) {
+          this.toc[i].selected = true;
+        }
+
         this.selectedIndex = i;
-        this.toc[i].selected = true;
         this.render();
 
-        this.trigger('item-selected', this.toc[i].element);
+        // only do this after rendering
+        if (i > -1) {
+          this.trigger('item-selected', this.toc[i].element);
+        }
       }
     },
 

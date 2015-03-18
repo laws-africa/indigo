@@ -109,10 +109,10 @@
     },
 
     // select the i-th item in the TOC
-    selectItem: function(i) {
+    selectItem: function(i, force) {
       i = Math.min(this.toc.length-1, i);
 
-      if (this.selectedIndex != i) {
+      if (force || this.selectedIndex != i) {
         // unmark the old one
         if (this.selectedIndex > -1 && this.selectedIndex < this.toc.length) {
           delete (this.toc[this.selectedIndex].selected);
@@ -128,7 +128,7 @@
 
     click: function(e) {
       e.preventDefault();
-      this.selectItem($(e.target).data('index'));
+      this.selectItem($(e.target).data('index'), true);
     },
   });
 })(window);

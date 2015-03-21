@@ -68,6 +68,21 @@ class SimpleTest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_in('<p>in the body</p>', response.data['body'])
 
+
+    def test_create_with_locality(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/za-cpt/act/1998/2',
+            'draft': False,
+        })
+
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+
+        response = self.client.get('/api/za-cpt/act/1998/2')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+
     def test_update_content(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)

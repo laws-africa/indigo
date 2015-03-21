@@ -14,7 +14,7 @@ urlpatterns = patterns('',
     # starting with the two-letter country code
     #
     # eg. /za/act/2007/98
-    url(r'^(?P<frbr_uri>[a-z]{2}/.*)$',
+    url(r'^(?P<frbr_uri>[a-z]{2}[-/].*)$',
         views.PublishedDocumentDetailView.as_view({'get': 'get'}),
         name='published-document-detail'),
 

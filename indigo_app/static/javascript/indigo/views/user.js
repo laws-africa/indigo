@@ -18,7 +18,12 @@
       'submit form.forgot-password-form': 'forgotPassword',
     },
     bindings: {
-      '.username': 'first_name',
+      '.username': {
+        observe: ['first_name', 'email', 'username'],
+        onGet: function(values) {
+          return _.find(values, function(v) { return !!v; });
+        }
+      },
     },
 
     initialize: function() {

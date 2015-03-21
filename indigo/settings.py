@@ -89,7 +89,7 @@ else:
 
 import dj_database_url
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
+    'default': dj_database_url.config(default='postgres://bylaws:bylaws@localhost:5432/bylaws')
 }
 
 # Internationalization

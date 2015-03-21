@@ -88,6 +88,14 @@ class Document(models.Model):
     def nature(self):
         return self.doc.nature
 
+    @property
+    def subtype(self):
+        return self.doc.frbr_uri.subtype
+
+    @property
+    def locality(self):
+        return self.doc.frbr_uri.locality
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)

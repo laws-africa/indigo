@@ -1,6 +1,7 @@
 import re
 
 FRBR_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
+                              (-(?P<locality>[^/]+))?      # locality code
                               /(?P<doctype>[^/]+)          # document type
                               /((?P<subtype>[^/]+)         # subtype (optional)
                               /((?P<actor>[^/]+)/)?)?      # actor (optional)
@@ -26,10 +27,11 @@ class FrbrUri(object):
 
     default_language = 'eng'
 
-    def __init__(self, country, doctype, subtype, actor, date, number,
+    def __init__(self, country, locality, doctype, subtype, actor, date, number,
             language=None, expression_date=None, expression_component=None, 
             format=None):
         self.country = country
+        self.locality = locality
         self.doctype = doctype
         self.subtype = subtype
         self.actor = actor
@@ -43,7 +45,11 @@ class FrbrUri(object):
 
     def work_uri(self):
         """ String form of the work URI. """
-        parts = ['', self.country, self.doctype]
+        country = self.country
+        if self.locality:
+            country = country + "-" + self.locality
+
+        parts = ['', country, self.doctype]
 
         if self.subtype:
             parts.append(self.subtype)

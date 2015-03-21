@@ -46,14 +46,16 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'content', 'content_url', 'file',
                 'body', 'body_url',
 
-                'frbr_uri', 'draft', 'created_at', 'updated_at',
-                'title', 'country', 'number', 'year', 'nature',
+                'title', 'draft', 'created_at', 'updated_at',
+                # frbr_uri components
+                'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+
                 'publication_date', 'publication_name', 'publication_number',
                 'language',
 
                 'published_url', 'toc_url',
                 )
-        read_only_fields = ('number', 'nature', 'created_at', 'updated_at', 'year')
+        read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
     def get_body_url(self, doc):
         if not doc.pk:

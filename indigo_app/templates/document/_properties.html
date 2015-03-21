@@ -24,6 +24,13 @@
           </select>
         </div>
 
+        <label for="document_locality" class="col-sm-2 control-label">Locality</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="document_locality" placeholder="Locality code (optional)">
+        </div>
+      </div>
+
+      <div class="form-group">
         <label for="document_language" class="col-sm-2 control-label">Language</label>
         <div class="col-sm-4">
           <select id="document_language" class="form-control">
@@ -32,18 +39,23 @@
             {% endfor %}
           </select>
         </div>
+
+        <label for="document_subtype" class="col-sm-2 control-label">Document subtype</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="document_subtype" placeholder="Subtype (optional)">
+        </div>
       </div>
 
       <div class="form-group">
+        <label for="document_year" class="col-sm-2 control-label">Year</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" id="document_year">
+          <p class="help-block">Year in which the act was introduced</p>
+        </div>
         <label for="document_number" class="col-sm-2 control-label">Number</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" id="document_number">
-          <p class="help-block">Number within the year of publication</p>
-        </div>
-        <label for="document_nature" class="col-sm-2 control-label">Nature</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_nature">
-          <p class="help-block">Type of document, usually <i>act</i></p>
+          <p class="help-block">Number within the year of introduction</p>
         </div>
       </div>
 

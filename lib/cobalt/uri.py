@@ -43,6 +43,21 @@ class FrbrUri(object):
         self.expression_component = expression_component
         self.format = format
 
+    def clone(self):
+        return FrbrUri(
+                self.country,
+                self.locality,
+                self.doctype,
+                self.subtype,
+                self.actor,
+                self.date,
+                self.number,
+                self.language,
+                self.expression_date,
+                self.expression_component,
+                self.format,
+                )
+
     def work_uri(self):
         """ String form of the work URI. """
         country = self.country
@@ -83,6 +98,7 @@ class FrbrUri(object):
 
     @classmethod
     def parse(cls, s):
+        s = s.rstrip('/')
         match = FRBR_URI_RE.match(s)
         if match:
             return cls(**match.groupdict())

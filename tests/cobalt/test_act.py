@@ -1,6 +1,7 @@
 from unittest import TestCase
 from nose.tools import *
 from datetime import date
+from lxml import etree
 
 from cobalt.act import Act, datestring
 
@@ -70,3 +71,138 @@ class ActTestCase(TestCase):
         a = Act()
         a.language = 'fre'
         assert_equal(a.language, 'fre')
+
+    def test_table_of_contents(self):
+        a = Act()
+        a.body_xml = """
+        <body xmlns="http://www.akomantoso.org/2.0">
+          <section id="section-1">
+            <num>1.</num>
+            <heading>Foo</heading>
+            <content>
+              <p>hello</p>
+            </content>
+          </section>
+          <chapter id="chapter-1">
+            <num>1.</num>
+            <heading>The Chapter</heading>
+            <part id="part-A">
+              <num>A</num>
+              <heading>The Part</heading>
+              <section id="section-2">
+                <num>2.</num>
+                <heading>Other</heading>
+                <content>
+                  <p>hi</p>
+                </content>
+              </section>
+            </part>
+          </chapter>
+        </body>
+        """
+        toc = a.table_of_contents()
+        toc = [t.as_dict() for t in toc]
+        self.maxDiff = None
+        self.assertEqual(toc, [
+            {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo', 'subcomponent': 'main/section/1'},
+            {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter', 'subcomponent': 'main/chapter/1', 'children': [
+                {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part', 'subcomponent': 'main/part/A', 'children': [
+                    {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other', 'subcomponent': 'main/section/2'},
+                    ]
+                },
+                ]
+            },
+            ])
+
+    def test_preamble_and_friends_in_table_of_contents(self):
+        a = Act(act_fixture("""
+        <coverpage>
+            <content><p>hi</p></content>
+        </coverpage>
+        <preface>
+            <content><p>hi</p></content>
+        </preface>
+        <preamble>
+            <content><p>hi</p></content>
+        </preamble>
+        <body>
+            <content><p>hi</p></content>
+        </body>
+        <conclusions>
+            <content><p>hi></p></content>
+        </conclusions>
+        """))
+
+        toc = a.table_of_contents()
+        toc = [t.as_dict() for t in toc]
+        self.maxDiff = None
+        self.assertEqual(toc, [
+            {'type': 'coverpage', 'subcomponent': 'main/coverpage'},
+            {'type': 'preface', 'subcomponent': 'main/preface'},
+            {'type': 'preamble', 'subcomponent': 'main/preamble'},
+            {'type': 'conclusions', 'subcomponent': 'main/conclusions'},
+            ])
+
+    def test_get_subcomponent(self):
+        a = Act()
+        a.body_xml = """
+        <body xmlns="http://www.akomantoso.org/2.0">
+          <section id="section-1">
+            <num>1.</num>
+            <heading>Foo</heading>
+            <content>
+              <p>hello</p>
+            </content>
+          </section>
+          <chapter id="chapter-2">
+            <num>2.</num>
+            <heading>The Chapter</heading>
+            <content>
+              <p>hi</p>
+            </content>
+          </chapter>
+        </body>
+        """
+
+        assert_is_not_none(a.components()['main'])
+        elem = a.get_subcomponent('main/chapter/2')
+        assert_equal(elem.get('id'), "chapter-2")
+
+        elem = a.get_subcomponent('main/section/1')
+        assert_equal(elem.get('id'), "section-1")
+
+        assert_is_none(a.get_subcomponent('main/chapter/99'))
+        assert_is_none(a.get_subcomponent('main/section/99'))
+
+def act_fixture(content):
+    return """<?xml version="1.0"?>
+<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="">
+        <FRBRWork>
+          <FRBRthis value="/za/act/1900/1/main"/>
+          <FRBRuri value="/za/act/1900/1"/>
+          <FRBRalias value="Untitled"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+    </meta>
+    %s
+  </act>
+</akomaNtoso>""" % content

@@ -157,18 +157,23 @@ class SimpleTest(APITestCase):
         response = self.client.get('/api/documents/%s/toc' % id)
         assert_equal(response.status_code, 200)
 
-        assert_equal(response.data['toc'], [
+        self.maxDiff = None
+        self.assertEqual(response.data['toc'], [
             {
                 'type': 'chapter',
                 'num': '2',
                 'heading': 'Administrative provisions',
                 'id': 'chapter-2',
+                'subcomponent': 'main/chapter/2',
+                'url': 'http://testserver/api/za/act/1900/1/eng/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
                         'num': '3.',
                         'heading': 'Consent required for interment',
                         'id': 'section-3',
+                        'subcomponent': 'main/section/3',
+                        'url': 'http://testserver/api/za/act/1900/1/eng/main/section/3',
                     },
                 ],
             },

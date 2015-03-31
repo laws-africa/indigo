@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 from datetime import date
 
 from lxml import objectify 
@@ -50,8 +51,9 @@ class Act(object):
             xml = xml.encode('utf-8')
 
         self.root = objectify.fromstring(xml)
-        self.meta = self.root.act.meta
-        self.body = self.root.act.body
+        self.act = self.root.act
+        self.meta = self.act.meta
+        self.body = self.act.body
 
         self.namespace = self.root.nsmap[None]
         self._maker = objectify.ElementMaker(annotate=False, namespace=self.namespace, nsmap=self.root.nsmap)
@@ -199,22 +201,51 @@ class Act(object):
         self.body.getparent().replace(self.body, new_body)
         self.body = new_body
 
+    def components(self):
+        """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
+        objects.
+        """
+        components = OrderedDict()
+        components['main'] = self.act
+        # TODO: support schedules etc.
+        return components
+
     def table_of_contents(self):
         """ Get the table of contents of this document as a list of :class:`TOCElement` instances. """
 
-        child_types = [
-            '{%s}%s' % (self.namespace, n)
-            for n in ['part', 'chapter', 'section']]
+        interesting = set('{%s}%s' % (self.namespace, s) for s in
+                ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions'])
 
-        def children(node):
-            return node.iterchildren(*child_types)
+        def generate_toc(component, elements):
+            items = []
+            for e in elements:
+                if e.tag in interesting:
+                    item = TOCElement(e, component)
+                    item.children = generate_toc(component, e.iterchildren())
+                    items.append(item)
+                else:
+                    items += generate_toc(component, e.iterchildren())
+            return items
 
-        def generate_toc(node):
-            elem = TOCElement(node)
-            elem.children = [generate_toc(c) for c in children(node)]
-            return elem
+        toc = []
+        for component, element in self.components().iteritems():
+            toc += generate_toc(component, [element])
 
-        return [generate_toc(c) for c in children(self.body)]
+        return toc
+
+    def get_subcomponent(self, subcomponent):
+        """ Get the named subcomponent in this document, such as `chapter/2` or 'section/13A'.
+        :class:`lxml.objectify.ObjectifiedElement` or `None`.
+        """
+        def search_toc(items):
+            for item in items:
+                if item.subcomponent == subcomponent:
+                    return item.element
+
+                if item.children:
+                    return search_toc(item.children)
+
+        return search_toc(self.table_of_contents())
 
     def _ensure(self, name, after):
         """ Hack help to get an element if it exists, or create it if it doesn't.
@@ -247,15 +278,16 @@ class TOCElement(object):
     """
     An element in the table of contents of a document, such as a chapter, part or section.
 
-    :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
-    :ivar type: node type, one of: ``chapter, part, section``
-    :ivar id: XML id string of the node in the document, may be None
-    :ivar heading: heading for this element, excluding the number, may be None
-    :ivar num: number of this element, as a string, may be None
     :ivar children: further TOC elements contained in this one, may be None or empty
+    :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
+    :ivar heading: heading for this element, excluding the number, may be None
+    :ivar id: XML id string of the node in the document, may be None
+    :ivar num: number of this element, as a string, may be None
+    :ivar subcomponent: name of this subcomponent, used by :meth:`Act.get_subcomponent`, may be None
+    :ivar type: node type, one of: ``chapter, part, section``
     """
 
-    def __init__(self, node, children=None):
+    def __init__(self, node, component, children=None):
         try:
             heading = node.heading
         except AttributeError:
@@ -273,9 +305,15 @@ class TOCElement(object):
         self.num = num.text if num else None
         self.children = children
 
+        # eg. 'preamble' or 'chapter/2'
+        self.subcomponent = component + "/" + self.type
+        if self.num:
+            self.subcomponent += '/' + self.num.strip('.()')
+
     def as_dict(self):
       info = {
           'type': self.type,
+          'subcomponent': self.subcomponent,
       }
       if self.heading:
         info['heading'] = self.heading
@@ -288,6 +326,7 @@ class TOCElement(object):
 
       if self.children:
         info['children'] = [c.as_dict() for c in self.children]
+
 
       return info
 

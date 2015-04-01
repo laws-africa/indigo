@@ -104,10 +104,14 @@ class ActTestCase(TestCase):
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
         self.assertEqual(toc, [
-            {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo', 'subcomponent': 'main/section/1'},
-            {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter', 'subcomponent': 'main/chapter/1', 'children': [
-                {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part', 'subcomponent': 'main/part/A', 'children': [
-                    {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other', 'subcomponent': 'main/section/2'},
+            {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo',
+              'component': 'main', 'subcomponent': 'section/1'},
+            {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
+              'component': 'main', 'subcomponent': 'chapter/1', 'children': [
+                {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
+                  'component': 'main', 'subcomponent': 'part/A', 'children': [
+                    {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
+                      'component': 'main', 'subcomponent': 'section/2'},
                     ]
                 },
                 ]
@@ -137,10 +141,10 @@ class ActTestCase(TestCase):
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
         self.assertEqual(toc, [
-            {'type': 'coverpage', 'subcomponent': 'main/coverpage'},
-            {'type': 'preface', 'subcomponent': 'main/preface'},
-            {'type': 'preamble', 'subcomponent': 'main/preamble'},
-            {'type': 'conclusions', 'subcomponent': 'main/conclusions'},
+            {'type': 'coverpage', 'component': 'main', 'subcomponent': 'coverpage'},
+            {'type': 'preface', 'component': 'main', 'subcomponent': 'preface'},
+            {'type': 'preamble', 'component': 'main', 'subcomponent': 'preamble'},
+            {'type': 'conclusions', 'component': 'main', 'subcomponent': 'conclusions'},
             ])
 
     def test_get_subcomponent(self):
@@ -165,14 +169,14 @@ class ActTestCase(TestCase):
         """
 
         assert_is_not_none(a.components()['main'])
-        elem = a.get_subcomponent('main/chapter/2')
+        elem = a.get_subcomponent('main', 'chapter/2')
         assert_equal(elem.get('id'), "chapter-2")
 
-        elem = a.get_subcomponent('main/section/1')
+        elem = a.get_subcomponent('main', 'section/1')
         assert_equal(elem.get('id'), "section-1")
 
-        assert_is_none(a.get_subcomponent('main/chapter/99'))
-        assert_is_none(a.get_subcomponent('main/section/99'))
+        assert_is_none(a.get_subcomponent('main', 'chapter/99'))
+        assert_is_none(a.get_subcomponent('main', 'section/99'))
 
 def act_fixture(content):
     return """<?xml version="1.0"?>

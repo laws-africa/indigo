@@ -233,17 +233,19 @@ class Act(object):
 
         return toc
 
-    def get_subcomponent(self, subcomponent):
+    def get_subcomponent(self, component, subcomponent):
         """ Get the named subcomponent in this document, such as `chapter/2` or 'section/13A'.
         :class:`lxml.objectify.ObjectifiedElement` or `None`.
         """
         def search_toc(items):
             for item in items:
-                if item.subcomponent == subcomponent:
+                if item.component == component and item.subcomponent == subcomponent:
                     return item.element
 
                 if item.children:
-                    return search_toc(item.children)
+                    found = search_toc(item.children)
+                    if found:
+                        return found
 
         return search_toc(self.table_of_contents())
 
@@ -305,14 +307,17 @@ class TOCElement(object):
         self.num = num.text if num else None
         self.children = children
 
+        # eg. 'main'
+        self.component = component
         # eg. 'preamble' or 'chapter/2'
-        self.subcomponent = component + "/" + self.type
+        self.subcomponent = self.type
         if self.num:
             self.subcomponent += '/' + self.num.strip('.()')
 
     def as_dict(self):
       info = {
           'type': self.type,
+          'component': self.component,
           'subcomponent': self.subcomponent,
       }
       if self.heading:

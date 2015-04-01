@@ -34,9 +34,8 @@ class DocumentViewMixin(object):
         toc = document.table_of_contents()
 
         def add_url(item):
-            parts = item['subcomponent'].split('/', 1)
-            uri.expression_component = parts[0]
-            uri.expression_subcomponent = parts[1] if len(parts) > 1 else None
+            uri.expression_component = item['component']
+            uri.expression_subcomponent = item.get('subcomponent')
 
             item['url'] = reverse('published-document-detail',
                     request=self.request,
@@ -168,7 +167,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         document = self.get_object()
 
         if subcomponent:
-            element = document.doc.get_subcomponent(component + "/" + subcomponent)
+            element = document.doc.get_subcomponent(component, subcomponent)
 
         else:
             # special cases of the entire document

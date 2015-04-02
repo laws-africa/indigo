@@ -16,6 +16,7 @@
 <div class="sidebar">
   <ul class="nav nav-pills nav-stacked">
     <li class="active"><a href="#props-tab" data-toggle="tab">Properties</a></li>
+    <li><a href="#lime-tab" data-toggle="tab">Lime</a></li>
     <li><a href="#preview-tab" data-toggle="tab">Preview</a></li>
     <!-- this tab is always hidden -->
     <li class="hidden"><a href="#content-tab" data-toggle="tab">Content</a></li>
@@ -44,4 +45,31 @@
 {% block js %}
   {{ block.super }}
   <script type="text/javascript" src="/static/javascript/ace/ace.js"></script>
+
+  <script>
+    var WaweDebug = true;
+  </script>
+
+  <link rel="stylesheet" type="text/css" href="/static/lime/lib/codemirror/codemirror.css"/>
+  <!-- <x-compile> -->
+      <!-- <x-bootstrap> -->
+          <link rel="stylesheet" href="/static/lime/bootstrap.css">
+          <script src="/static/lime/ext/ext-all-dev.js"></script>
+          <script src="/static/lime/bootstrap.js"></script>
+      <!-- </x-bootstrap> -->
+      <script src="/static/lime/app.js"></script>
+  <!-- </x-compile> -->
+  <link rel="stylesheet" type="text/css" href="/static/lime/resources/stylesheets/extjs4.editor.css" />
+  <link rel="stylesheet" type="text/css" href="/static/lime/resources/stylesheets/extjs4.viewport.css" />
+  <!-- Load EXTJS4 extension for tinyMCE -->
+  <script type="text/javascript" src="/static/lime/lib/tinymce4/tinymce.min.js"></script>
+  <!-- Load EXTJS4 extension for Codemirror -->
+  <script type="text/javascript" src="/static/lime/lib/codemirror/codemirror.min.js"></script>
+  <script type="text/javascript" src="/static/lime/lib/vkbeautify/vkbeautify.js"></script>
+  <script type="text/javascript" src="/static/lime/lib/plupload/js/plupload.js"></script>
+  <script type="text/javascript" src="/static/lime/lib/plupload/js/plupload.html4.js"></script>
+  <script type="text/javascript" src="/static/lime/lib/plupload/js/plupload.html5.js"></script>
+  <script type="text/javascript" src="/static/lime/lib/plupload/js/plupload.flash.js"></script>
+  <script type="text/javascript" src="/static/lime/lib/plupload/js/plupload.silverlight.js"></script>    
+
 {% endblock %}

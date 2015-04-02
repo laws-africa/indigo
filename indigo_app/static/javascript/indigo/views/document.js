@@ -112,6 +112,11 @@
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
 
+      this.limeEditorView = new Indigo.LimeEditorView({
+        model: this.documentDom,
+        rawModel: this.documentContent,
+      });
+
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 

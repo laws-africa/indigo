@@ -15,28 +15,20 @@
 
     initialize: function(options) {
       var self = this;
-
-      // setup transforms
-      $.get('/static/lime/languagesPlugins/akoma3.0/AknToXhtml.xsl')
-        .then(function(xml) {
-          self.aknToHtml = new XSLTProcessor()
-          self.aknToHtml.importStylesheet(xml);
-        });
     },
 
     load: function() {
-      if (this.aknToHtml) {
-        // TODO: get the raw XML?
-        var fragment = this.aknToHtml.transformToFragment(this.model.xmlDocument, document);
-        var html = fragment.firstChild.outerHTML;
-
-        var config = {
-          docText: html,
-          docMarkingLanguage: "akoma3.0",
-          docLang: "eng",
-        };
-        LIME.app.fireEvent("loadDocument", config);
-      }
+      // TODO: get the raw XML from the raw model?
+      LIME.XsltTransforms.transform(
+        this.model.xmlDocument, '/static/lime/languagesPlugins/akoma3.0/AknToXhtml.xsl', {},
+        function(html) {
+          var config = {
+            docText: html.firstChild.outerHTML,
+            docMarkingLanguage: "akoma3.0",
+            docLang: "eng",
+          };
+          LIME.app.fireEvent("loadDocument", config);
+        });
     },
 
     save: function() {

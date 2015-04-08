@@ -105,7 +105,8 @@
       this.tocView.on('item-selected', this.showEditor, this);
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
-        model: this.documentDom,
+        model: this.document,
+        xmlModel: this.documentDom,
         rawModel: this.documentContent,
         tocView: this.tocView,
       });

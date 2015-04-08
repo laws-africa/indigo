@@ -8,6 +8,10 @@
   // The model is an Indigo.DocumentContent instance.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: '#content-tab',
+    events: {
+      'change [value=plaintext]': 'togglePlaintext',
+      'change [value=lime]': 'toggleLime',
+    },
 
     initialize: function(options) {
       var self = this;
@@ -29,9 +33,12 @@
         });
 
       this.dirty = false;
+
       // the model is a documentDom model, which holds the parsed XML
       // document and is a bit different from normal Backbone models
-      this.model.on('change', this.setDirty, this);
+      this.xmlModel = options.xmlModel;
+      this.xmlModel.on('change', this.setDirty, this);
+
       // this is the raw, unparsed XML model
       this.rawModel = options.rawModel;
       this.rawModel.on('sync', this.setClean, this);
@@ -46,7 +53,7 @@
       this.render();
       this.$el.find('.document-sheet-container').scrollTop(0);
 
-      var xml = this.model.toXml(node);
+      var xml = this.xmlModel.toXml(node);
 
       this.editor.removeListener('change', this.onEditorChange);
       this.editor.setValue(xml);
@@ -64,8 +71,51 @@
 
         this.fragment = newFragment;
         this.render();
-        this.model.updateFragment(oldFragment, newFragment);
+        this.xmlModel.updateFragment(oldFragment, newFragment);
       }
+    },
+
+    togglePlaintext: function(e) {
+      this.$el.find('.plaintext-editor').addClass('in');
+      this.$el.find('.lime-editor').removeClass('in');
+    },
+
+    toggleLime: function(e) {
+      this.$el.find('.plaintext-editor').removeClass('in');
+      this.$el.find('.lime-editor').addClass('in');
+      LIME.app.resize();
+
+      var config = {
+        docMarkingLanguage: "akoma3.0",
+        docType: "act",
+        docLocale: this.model.get('country'),
+        docLang: "eng",
+      };
+
+      LIME.XsltTransforms.transform(
+        this.fragment, '/static/lime/languagesPlugins/akoma3.0/AknToXhtml.xsl', {},
+        function(html) {
+          config.docText = html.firstChild.outerHTML;
+          LIME.app.fireEvent("loadDocument", config);
+        });
+    },
+
+    updateFromLime: function() {
+      var self = this;
+      console.log('Fetching XML from LIME');
+
+      LIME.app.fireEvent("translateRequest", function(xml) {
+        if (self.fragment.parentElement) {
+          // We're editing just a fragment.
+          // LIME adds AkomaNtoso wrappers around the whole thing which we
+          // need to strip.
+          xml = xml.querySelector('meta').nextElementSibling;
+        }
+        
+        self.xmlModel.updateFragment(self.fragment, xml);
+      }, {
+        serialize: false,
+      });
     },
 
     render: function() {
@@ -96,7 +146,7 @@
       }
 
       // serialize the DOM into the raw model
-      this.rawModel.set('body', this.model.toXml());
+      this.rawModel.set('body', this.xmlModel.toXml());
       return this.rawModel.save();
     },
   });

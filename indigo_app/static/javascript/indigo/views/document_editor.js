@@ -44,18 +44,14 @@
     },
 
     editorChanged: function() {
-      if (!this.updating) {
-        // update the fragment content from the editor's version
-        console.log('Parsing changes to XML');
+      // update the fragment content from the editor's version
+      console.log('Parsing changes to XML');
 
-        // TODO: handle errors here
-        var newFragment = $.parseXML(this.editor.getValue()).documentElement;
-        var oldFragment = this.view.fragment;
+      // TODO: handle errors here
+      var newFragment = $.parseXML(this.editor.getValue()).documentElement;
 
-        this.view.fragment = newFragment;
-        this.render();
-        this.view.xmlModel.updateFragment(oldFragment, newFragment);
-      }
+      this.view.updateFragment(newFragment);
+      this.render();
     },
 
     render: function() {
@@ -75,9 +71,17 @@
   _.extend(Indigo.LimeEditorController.prototype, Backbone.Events, {
     initialize: function(options) {
       this.view = options.view;
+      
+      // see if there are changes to save
+      this.autosaveDelay = 500;
+      this.autosave();
     },
 
     editFragment: function(node) {
+      // if we're editing the entire document,
+      // strip the metadata when we next edit the 
+      this.stripMeta = !!node.parentElement;
+
       LIME.app.resize();
 
       var config = {
@@ -99,21 +103,34 @@
     },
 
     updateFromLime: function() {
-      var view = this.view;
-      console.log('Fetching XML from LIME');
+      var self = this;
+
+      console.log('Updating XML from LIME');
 
       LIME.app.fireEvent("translateRequest", function(xml) {
-        if (view.fragment.parentElement) {
+        // reset the changed flag
+        LIME.app.getController('Editor').changed = false;
+
+        if (self.stripMeta) {
           // We're editing just a fragment.
           // LIME adds AkomaNtoso wrappers around the whole thing which we
           // need to strip.
+          // XXX: this needs to be checked
           xml = xml.querySelector('meta').nextElementSibling;
         }
         
-        view.xmlModel.updateFragment(view.fragment, xml);
+        self.view.updateFragment(xml);
       }, {
         serialize: false,
       });
+    },
+
+    autosave: function() {
+      _.delay(_.bind(this.autosave, this), this.autosaveDelay);
+
+      if (this.view.activeEditor == this && LIME.app.getController('Editor').changed) {
+        this.updateFromLime();
+      }
     },
   });
 
@@ -150,8 +167,17 @@
     },
 
     editFragment: function(node) {
-      this.fragment = node;
-      this.activeEditor.editFragment(node);
+      if (!this.updating) {
+        console.log("Editing new fragment");
+        this.fragment = node;
+        this.activeEditor.editFragment(node);
+      }
+    },
+
+    updateFragment: function(newNode) {
+      this.updating = true;
+      this.fragment = this.xmlModel.updateFragment(this.fragment, newNode);
+      this.updating = false;
     },
 
     editWithAce: function(e) {

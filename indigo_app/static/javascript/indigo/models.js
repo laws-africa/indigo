@@ -41,6 +41,8 @@
       }
 
       this.trigger('change');
+
+      return newNode;
     },
   });
 

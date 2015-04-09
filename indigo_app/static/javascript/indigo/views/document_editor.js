@@ -61,6 +61,9 @@
       }
     },
 
+    resize: function() {
+    },
+
   });
 
   // The LimeEditorController manages the interaction between
@@ -83,7 +86,7 @@
       this.stripMeta = !node.querySelector('meta');
       this.fragmentType = node.tagName;
 
-      LIME.app.resize();
+      this.resize();
 
       var config = {
         docMarkingLanguage: "akoma3.0",
@@ -137,6 +140,10 @@
         this.updateFromLime();
       }
     },
+
+    resize: function() {
+      LIME.app.resize();
+    },
   });
 
 
@@ -147,6 +154,7 @@
     events: {
       'change [value=plaintext]': 'editWithAce',
       'change [value=lime]': 'editWithLime',
+      'change [name=fullscreen]': 'toggleFullscreen',
     },
 
     initialize: function(options) {
@@ -182,6 +190,11 @@
         this.fragment = node;
         this.activeEditor.editFragment(node);
       }
+    },
+
+    toggleFullscreen: function(e) {
+      this.$el.toggleClass('fullscreen');
+      this.activeEditor.resize();
     },
 
     updateFragment: function(newNode) {

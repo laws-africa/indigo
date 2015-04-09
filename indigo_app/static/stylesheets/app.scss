@@ -168,6 +168,14 @@ body.x-body {
   }
 }
 
+.fullscreen {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
 /* misc */
 
 #error-box {

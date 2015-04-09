@@ -80,7 +80,8 @@
     editFragment: function(node) {
       // if we're editing the entire document,
       // strip the metadata when we next edit the 
-      this.stripMeta = !!node.parentElement;
+      this.stripMeta = !node.querySelector('meta');
+      this.fragmentType = node.tagName;
 
       LIME.app.resize();
 
@@ -113,12 +114,16 @@
 
         if (self.stripMeta) {
           // We're editing just a fragment.
-          // LIME adds AkomaNtoso wrappers around the whole thing which we
-          // need to strip.
-          // XXX: this needs to be checked
-          xml = xml.querySelector('meta').nextElementSibling;
+          // LIME inserts a meta element which we need to strip.
+          var meta = xml.querySelector('meta');
+          if (meta) {
+            meta.remove();
+          }
         }
-        
+
+        // LIME wraps the document in some extra stuff, just find the
+        // item we started with
+        xml = xml.querySelector(self.fragmentType);
         self.view.updateFragment(xml);
       }, {
         serialize: false,

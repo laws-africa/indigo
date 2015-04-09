@@ -128,7 +128,7 @@
 
         // only do this after rendering
         if (i > -1) {
-          this.trigger('item-selected', this.toc[i].element);
+          this.trigger('item-selected', this.toc[i]);
         }
       }
     },

@@ -162,13 +162,18 @@
       this.rawModel.on('sync', this.setClean, this);
 
       this.tocView = options.tocView;
-      this.tocView.on('item-selected', this.editFragment, this);
+      this.tocView.on('item-selected', this.editTocItem, this);
 
       // setup the editor controllers
       this.aceEditor = new Indigo.AceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
 
       this.editWithAce();
+    },
+
+    editTocItem: function(item) {
+      this.$el.find('.boxed-group-header h4').text(item.title);
+      this.editFragment(item.element);
     },
 
     editFragment: function(node) {

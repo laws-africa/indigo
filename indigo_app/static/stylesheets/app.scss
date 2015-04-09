@@ -11,6 +11,14 @@ html, body {
   min-height: 100%;
 }
 
+// the LIME editor overrides some styles by attaching .x-body to the body element,
+// so we overwrite those here
+body.x-body {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
 .high {
   height: 100%;
 }

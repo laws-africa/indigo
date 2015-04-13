@@ -23,6 +23,6 @@ cp -vR indigo_app/static/xsl/ staticfiles/xsl/
 # Copy over useful LIME stuff
 echo "-----> copying LIME"
 mkdir -p staticfiles/lime/dist/
-cp -vR indigo_app/static/lime/dist/ staticfiles/lime/dist/
+cp -vR indigo_app/static/lime/dist/ staticfiles/lime/
 
 echo

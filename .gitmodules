@@ -1,4 +1,0 @@
-[submodule "indigo_app/static/lime"]
-	path = indigo_app/static/lime
-	url = https://github.com/Code4SA/lime.git
-	branch = indigo-hacks

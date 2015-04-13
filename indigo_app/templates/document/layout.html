@@ -48,7 +48,7 @@
   <!-- LIME stuff -->
 
   <link rel="stylesheet" type="text/css" href="/static/lime/lib/codemirror/codemirror.css"/>
-  {% if DEBUG %}
+  {% if DEBUG and INDIGO_LIME_DEBUG %}
     {# development dependencies for LIME so that we don't have to recompile it the whole time #}
     <link rel="stylesheet" href="/static/lime/bootstrap.css">
     <script>LIME_base_url = '/static/lime/';</script>

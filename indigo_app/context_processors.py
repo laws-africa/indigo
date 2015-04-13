@@ -6,4 +6,5 @@ def general(request):
     """
     return {
         'DEBUG': settings.DEBUG,
+        'INDIGO_LIME_DEBUG': settings.INDIGO_LIME_DEBUG,
     }

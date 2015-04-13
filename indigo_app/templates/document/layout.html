@@ -48,14 +48,22 @@
   <!-- LIME stuff -->
 
   <link rel="stylesheet" type="text/css" href="/static/lime/lib/codemirror/codemirror.css"/>
-  <!-- <x-compile> -->
+  {% if DEBUG %}
+    {# development dependencies for LIME so that we don't have to recompile it the whole time #}
+    <!-- <x-compile> -->
       <!-- <x-bootstrap> -->
-          <link rel="stylesheet" href="/static/lime/bootstrap.css">
-          <script src="/static/lime/ext/ext-all-dev.js"></script>
-          <script src="/static/lime/bootstrap.js"></script>
+        <link rel="stylesheet" href="/static/lime/bootstrap.css">
+        <script src="/static/lime/ext/ext-all-dev.js"></script>
+        <script src="/static/lime/bootstrap.js"></script>
       <!-- </x-bootstrap> -->
       <script src="/static/lime/app.js"></script>
-  <!-- </x-compile> -->
+    <!-- </x-compile> -->
+  {% else %}
+    {# production dependencies for LIME #}
+    <link rel="stylesheet" href="/static/lime/build/production/LIME/resources/LIME-all.css">
+    <script type="text/javascript" src="/static/lime/build/production/LIME/app.js"></script>
+  {% endif %}
+
   <link rel="stylesheet" type="text/css" href="/static/lime/resources/stylesheets/extjs4.editor.css" />
   <link rel="stylesheet" type="text/css" href="/static/lime/resources/stylesheets/extjs4.viewport.css" />
   <!-- Load EXTJS4 extension for tinyMCE -->

@@ -122,6 +122,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.csrf',
     'django.core.context_processors.tz',
+    'indigo_app.context_processors.general',
 )
 
 #TEMPLATE_DIRS = (

@@ -97,7 +97,7 @@
 
       LIME.XsltTransforms.transform(
         node,
-        '/static/lime/languagesPlugins/akoma3.0/AknToXhtml.xsl',
+        LIME_base_url + 'languagesPlugins/akoma3.0/AknToXhtml.xsl',
         {},
         function(html) {
           config.docText = html.firstChild.outerHTML;

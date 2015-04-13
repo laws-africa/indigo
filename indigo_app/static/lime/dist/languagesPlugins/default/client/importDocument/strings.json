@@ -1,0 +1,32 @@
+{
+	"en": {
+		"importDocument": "Import document",
+		"importDocumentTooltip" : "Import one of your files as a document",
+		"selectDocument": "Select document",
+		"selectDocumentExplanation": "Select a document using the form above or drag and drop your file here"
+	},
+	"it": {
+		"importDocument": "Importa documento",
+		"importDocumentTooltip" : "Importa un file come documento",
+		"selectDocument": "Seleziona il documento",
+		"selectDocumentExplanation": "Seleziona un documento usando il form qui sopra o trascinalo qui"
+	},
+	"es": {
+		"importDocument": "Importar documento",
+		"importDocumentTooltip" : "Puede importar un documento directamente desde sus archivos",
+		"selectDocument": "Seleccione el documento",
+		"selectDocumentExplanation": "Seleccione un documento utilizando el formulario de arriba o arrastrar y soltar el archivo aquí"
+	},
+	"ro": {
+		"importDocument": "Importează un document",
+		"importDocumentTooltip" : "Importează un fișier ca document",
+		"selectDocument": "Selectează un document",
+		"selectDocumentExplanation": "Selectează un document folosind formularul de mai sus sau Drag and Drop fisierul aici"
+	},
+	"ru": {
+		"importDocument": "Импорт документа",
+		"importDocumentTooltip" : "Импорт один из ваших файлов в качестве документа",
+		"selectDocument": "Выберите документ",
+		"selectDocumentExplanation": "Выберите документ, используя форму выше, или перетащить файл здесь."
+	}
+}

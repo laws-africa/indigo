@@ -1,0 +1,269 @@
+/**
+	* Copyright (c) 2012, CIRSFID and University Of Bologna (Department of computer science)
+	* All rights reserved.
+	*
+	* Redistribution and use in source and binary forms, with or without
+	* modification, are permitted provided that the following conditions are met:
+	*     * Redistributions of source code must retain the above copyright
+	*       notice, this list of conditions and the following disclaimer.
+	*     * Redistributions in binary form must reproduce the above copyright
+	*       notice, this list of conditions and the following disclaimer in the
+	*       documentation and/or other materials provided with the distribution.
+	*     * Neither the name of the CIRSFID and University Of Bologna (Department of computer science) 
+	* 		nor the names of its contributors may be used to endorse or promote products
+	*       derived from this software without specific prior written permission.
+	*
+	* THIS SOFTWARE IS PROVIDED BY CIRSFID and University Of Bologna (Department of computer science) 
+	* ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+	* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	* DISCLAIMED. IN NO EVENT SHALL CIRSFID and University Of Bologna (Department of computer science) 
+	* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+/*Set the styles of the main viewport and the panel belonging to it*/
+/*.x-panel{
+	margin:2px 2px 2px 2px;
+}
+*/
+/*
+.x-panel-body{
+	padding:2px 2px 2px 2px;
+}
+*/
+/* TODO Rimuovere il padding dai bottoni del menu */
+/*
+.x-toolbar{
+	margin:2px 2px 2px 2px;
+}
+*/
+
+/***************************************************/
+/*************AKOMA NTOSO SETTINGS******************/
+/**************************************************/
+/* set the styles of the open file modal windows */
+/*div.modal-window{
+	padding:5px; 
+	width: 600px;
+	min-width: 350px;
+	height: 350px;
+}
+
+div.modal-window-toolbar{
+	width: 200px; 
+	margin: 5px 5px 5px 5px;
+}
+
+div.modal-window-toolbar-collapsed{
+	margin: 5px 5px 5px 5px;
+}
+
+div.modal-window-main-panel{
+	margin: 5px 5px 5px 0px;
+}
+
+div.modal-window-south-toolbar{
+	border:none;
+	padding-bottom:5px;
+}
+
+div.previewMetadataContainer{
+	padding:10px;
+}
+
+div.previewMetadata{
+	text-align:justify;
+	margin-top:5px;
+} 
+
+div.previewMetadataContainer h3{
+	text-align:center;
+	margin-top:10px;
+} 
+
+div.publicationInfo{
+	width:100%;
+	text-align:center;
+	margin-bottom:30px;
+}
+
+div.publicationInfo div{
+	width:100%;
+	text-align:center;
+	margin-top:5px;
+}
+
+div#markingMenu-body{
+	padding-left:5px;	
+	padding-right:5px;	
+}
+
+div#markingMenu-body div.elements_tree, div#west-toolbar-body div.elements_tree {
+	overflow-x:hidden !important; 
+} */
+
+/* This is for the normal buttons */
+div#markingMenu-body table tr td.akn-button div.x-grid-cell-inner{
+	background-color:#C4D8F1;
+	margin-top:10px;
+	width:100%;
+	-moz-border-radius: 5px;
+ 	-webkit-border-radius: 5px;
+ 	border-radius: 5px;
+ 	height:21px;
+ 	padding-bottom:2px;
+}
+div#markingMenu-body table tr td.akn-button div.x-grid-cell-inner a{
+	color:#000000;
+	text-decoration: none;
+}
+
+div#markingMenu-body table tr td.akn-button div.x-grid-cell-inner input{
+	float:right;
+	display:block;
+	margin-right:20px;
+}
+
+
+div#markingMenu-body table tr.x-grid-row-selected td.akn-button{
+   background-color:transparent !important;
+}
+
+div#markingMenu-body table tr.x-grid-tree-node-leaf td div.x-grid-cell-inner{
+	background-color:#3355AA;
+	color:white;
+	margin-left:5%;
+	width:94%;
+}
+
+div#markingMenu-body table tr.x-grid-tree-node-leaf td div.x-grid-cell-inner a{
+	color:#FFFFFF;
+}
+
+
+/* This is for the forms */
+div#markingMenu-body table tr td div.widgets_hook{
+	border: 1px solid #3355AA;
+	-moz-border-radius: 5px;
+ 	-webkit-border-radius: 5px;
+ 	border-radius: 5px;
+ 	background-color:transparent !important;
+	margin-left:5%;
+	margin-top:5px;
+	width:90%;
+}
+
+div#markingMenu-body table tr td div.widgets_hook label{
+	font-size:8pt;
+	font-family:Arial, Helvetica, sans-serif; 
+	padding-left:3px;
+	padding-top:5px;
+}
+
+div#markingMenu-body table tr td div.widgets_hook:hover{
+	background-color:transparent !important;
+}
+
+div#markingMenu-body table tr td.x-panel-default-framed{
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td:hover {
+	background-color:transparent !important;
+}
+
+
+
+/* The elemnts buttons */
+
+/* Remove the cursor on the whole button (leave it only on the links) */
+div#markingMenu-body table tr div.x-grid-cell-inner{
+	cursor:default;
+}
+
+div#markingMenu-body table tr td.preamble div.x-grid-cell-inner{
+	background-color:#99DDAA;
+}
+
+div#markingMenu-body table tr td.block_list div.x-grid-cell-inner{
+	background-color:#009955;
+}
+
+div#markingMenu-body table tr td.body div.x-grid-cell-inner{
+	background-color:#FFFFCC;
+}
+
+div#markingMenu-body table tr td.title div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.article div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.clause div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.subclause div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.list div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.intro div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.point div.x-grid-cell-inner{
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.body_Conclusion div.x-grid-cell-inner {
+	background-color:#CC9944;
+	color:#000000;
+	margin-left:10px;
+}
+
+div#markingMenu-body table tr td.body_Conclusion div.x-grid-cell-inner a{
+	color:#000000;
+}
+
+div#markingMenu-body table tr td.conclusion div.x-grid-cell-inner{
+	background-color:#CCCC99;
+}
+
+div#markingMenu-body table tr td.signature div.x-grid-cell-inner{
+	background-color:#999955;
+}
+
+div#markingMenu-body table tr td.annex div.x-grid-cell-inner{
+	background-color:#CCBBCC;
+	margin-left:0px;
+	width:100%;
+}
+
+div#markingMenu-body table tr td.something div.x-grid-cell-inner{
+	background-color:#998899;
+}

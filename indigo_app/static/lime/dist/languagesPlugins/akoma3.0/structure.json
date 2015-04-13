@@ -1,0 +1,231 @@
+{
+    "schemaRegex": "xmlns=\"(http://docs.oasis-open.org/legaldocml/ns/akn/3.0/CSD\\d+)\"",
+	"docTypes": [
+		{
+			"name": "bill",
+			"locales": [
+				{
+					"name": "ke"
+				}, {
+					"name": "uy"
+				}, {
+					"name": "ch"
+				}, {
+					"name": "it"
+				}, {
+					"name": "cl"
+				}, {
+					"name": "eu"
+				}, {
+					"name": "uk"
+				}, {
+					"name": "us"
+				}
+			]
+		}, {
+			"name": "doc",
+			"locales": [
+				{
+					"name": "ke"
+				}, {
+					"name": "uy"
+				}, {
+					"name": "ch"
+				}, {
+					"name": "it"
+				}, {
+					"name": "cl"
+				}, {
+					"name": "eu"
+				}, {
+					"name": "uk"
+				}, {
+					"name": "us"
+				}
+			]
+		}, {
+			"name": "act",
+			"locales": [
+				{
+					"name": "ke"
+				}, {
+					"name": "uy"
+				}, {
+					"name": "ch"
+				}, {
+					"name": "it"
+				}, {
+					"name": "cl"
+				}, {
+					"name": "eu"
+				}, {
+					"name": "uk"
+				}, {
+					"name": "us"
+				}
+			]
+		}, {
+			"name": "amendment",
+			"locales": [
+				{
+					"name": "ke"
+				}, {
+					"name": "uy"
+				}, {
+					"name": "ch"
+				}, {
+					"name": "it"
+				}, {
+					"name": "cl"
+				}, {
+					"name": "eu"
+				}, {
+					"name": "uk"
+				}, {
+					"name": "us"
+				}
+			]
+		}, {
+			"name": "statment",
+			"locales": [
+				{
+					"name": "ke"
+				}, {
+					"name": "uy"
+				}, {
+					"name": "ch"
+				}, {
+					"name": "it"
+				}, {
+					"name": "cl"
+				}, {
+					"name": "eu"
+				}, {
+					"name": "uk"
+				}, {
+					"name": "us"
+				}
+			]
+		}, {
+			"name": "documentCollection",
+			"locales": [
+				{
+					"name": "ke"
+				}, {
+					"name": "uy"
+				}, {
+					"name": "ch"
+				}, {
+					"name": "it"
+				}, {
+					"name": "cl"
+				}, {
+					"name": "eu"
+				}, {
+					"name": "uk"
+				}, {
+					"name": "us"
+				}
+			]
+		}
+	],
+
+	"customViews": ["MarkingMenu"],
+	"plugins": ["aknPreview",
+				"consolidation",
+				"documentCollection",
+				"modsMarker", 
+				"notesManager",
+				"metadataManager",
+                "widgetManager"],
+	"transformationFiles": {
+		"languageToLIME": "AknToXhtml.xsl",
+		"LIMEtoLanguage": "HtmlToAkn.xsl"
+	},
+	"metaTemplate": {
+		"identification": {
+			"@source": "",
+			"FRBRWork": {
+				"FRBRthis": {
+					"@value": ""
+				},
+				"FRBRuri": {
+					"@value": ""
+				},
+				"FRBRalias": {
+					"@value": "",
+					"@name": ""
+				},
+				"FRBRdate": {
+					"@date": "",
+					"@name": ""
+				},
+				"FRBRauthor": {
+					"@akn_href": "",
+					"@as": ""
+				},
+				"FRBRcountry": {
+					"@value": ""
+				},
+				"FRBRnumber": {
+					"@value": ""
+				}
+			},
+			"FRBRExpression": {
+				"FRBRthis": {
+					"@value": ""
+				},
+				"FRBRuri": {
+					"@value": ""
+				},
+				"FRBRdate": {
+					"@date": "",
+					"@name": ""
+				},
+				"FRBRauthor": {
+					"@akn_href": "",
+					"@as": ""
+				},
+				"FRBRlanguage": {
+					"@language": ""
+				}
+			},
+			"FRBRManifestation": {
+				"FRBRthis": {
+					"@value": ""
+				},
+				"FRBRuri": {
+					"@value": ""
+				},
+				"FRBRdate": {
+					"@date": "",
+					"@name": ""
+				},
+				"FRBRauthor": {
+					"@akn_href": "",
+					"@as": ""
+				},
+				"FRBRformat": {
+					"@value": ""
+				}
+			}
+		},
+		"publication": {
+			"@name": "",
+			"@date": "",
+			"@number": "",
+			"@showAs": ""
+		},
+		"references": {
+			"@source": "",
+			"!possibleChildren": {
+				"names": ["original", "TLCPerson", "TLCOrganization", "TLCConcept", "TLCObject", "TLCEvent", "TLCLocation", "TLCProcess", "TLCRole", "TLCTerm", "TLCReference"],
+				"attributes": {
+					"@eId": "",
+					"@akn_href": "",
+					"@akn_showAs": ""
+				}
+			}
+		}
+	}
+}

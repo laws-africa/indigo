@@ -1,0 +1,40 @@
+{
+	"en": {
+		"validateXml": "Validate XML",
+		"validateXmlTooltip": "Use XML validator to validate the XML",
+		"validateResult": "Validation result",
+		"validationProcessError": "Cannot process validation error",
+		"validationSuccess": "The document is valid",
+		"validationFatalErrors": "Fatal errors",
+		"validationErrors": "Errors",
+		"validationWarnings": "Warnings",
+		"validateResultErrors": "Found {nr} errors",
+		"previous": "&laquo; Previous",
+		"next": "Next &raquo;",
+		"element": "Element {name}",
+		"moreInfo": "More Info",
+		"technicalInfo": "Technical Info",
+		"moreInfoTpl" : "{message} - {lineString} at ({line}:{column}) - {code}",
+		"tipsToResolveError": "Tips to fix this error (try one of the followings)",
+		"unexpectedElement": "is not expected in {parentName}",
+		"unexpectedQuoted": "needs to be inside of a modification element",
+		"addActiveModification": "Add a modification around the element",
+		"unmarkQuoted": "Unmark the '{name}' if it is not quoting a part of an document but is a simple quote",
+		"elementOnly": "can not directly contain plain text",
+		"elementNotMarked": "is not fully or partially marked",
+		"markInsideElement": "mark missing elements inside this element",
+		"runAutomaticMarkup": "try to run the 'Automatic Markup'",
+		"removeText": "delete the plain text from this element"
+	},
+	"it": {
+		"validateXml": "Validazione XML",
+		"validateXmlTooltip": "Usa il validatore XML per validare il documento",
+		"validateResult": "Risultato della validazione",
+		"validationProcessError": "E' stato impossibile eseguire la validazione a causa dell'errore",
+		"validationSuccess": "Documento valido",
+		"validationFatalErrors": "Errori fatali",
+		"validationErrors": "Errori",
+		"validationWarnings": "Avvertimenti",
+		"validateResultErrors": "Trovati {nr} errori"
+	}
+}

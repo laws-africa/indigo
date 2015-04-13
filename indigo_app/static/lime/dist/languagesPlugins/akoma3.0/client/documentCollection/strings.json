@@ -1,0 +1,26 @@
+{
+	"en": {
+		"tools": "Tools",
+		"documentCollectionTabTitle": "Document Collection",
+		"structureTreeTitle": "Structure",
+		"structureTreeModify": "Modify document collection",
+		"newCollectionText": "New document collection",
+		"dragDocText": "Drag and drop to select a document",
+		"addDocuments": "Add documents",
+		"collectionComponents": "Document collection components",
+		"removeComponent": "Remove component",
+		"dragCollectionDocuments": "Drag a version or a file here"
+	},
+	"it": {
+		"tools": "Strumenti",
+		"documentCollectionTabTitle": "Collezione di documenti",
+		"structureTreeTitle": "Struttura",
+		"structureTreeModify": "Modifica la collezione",
+		"newCollectionText": "Nuova collezione di documenti",
+		"dragDocText": "Trascina il documento per selezionarlo",
+		"addDocuments": "Aggiungi documenti",
+		"collectionComponents": "Componenti",
+		"removeComponent": "Rimuovi componente",
+		"dragCollectionDocuments": "Trascina una versione o un file qui"
+	}
+}

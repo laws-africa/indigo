@@ -1,0 +1,271 @@
+{
+	"docType" : {
+		"wrapperStyle": {
+			"this": "font-weight: bold;",
+			"pdf": ""
+		}
+	},
+	"annex": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border:1px solid #74BAAC;",
+			"this": "border:1px solid #74BAAC;"
+		}
+	},
+
+	"body": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border:1px solid #74BAAC;",
+			"this": "border:1px solid #74BAAC;color:#2385A0;"
+		},
+		"allowedPatterns": ["hcontainer"],
+		"exceptionalAllowedElements": ["componentRef"]
+	},
+
+	"blockList": {
+		"exceptionalAllowedElements": ["listIntroduction", "item", "listWrapUp"]
+	},
+
+	"mod": {
+		"wrapperElement": "<div>&content;</div>",
+		"allowedPatterns": ["inline"],
+		"exceptionalAllowedElements": ["quotedText","quotedStructure"],
+		"remove": {
+			"wrapperStyle": ["after", "before", "this"]
+		},
+		"wrapperStyle" : {
+			"before":"border: 1px solid #C0E0DA; background-color:#C0E0DA;color:#000000;font-size:8pt;position:relative;left:85%;margin:0px;padding:2px 4px 2px 4px;border-radius: 3px;width:90px;display: block;text-align:center; margin-bottom:5px;cursor:pointer;",
+			"this": "border-radius: 3px; border:1px solid #C0E0DA; padding:3px; margin:3px 0px 3px 0px;"
+		}
+	},
+
+	"conclusions": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;color: #8C489F;"
+		}
+	},
+
+	"preamble": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC; color:#FF6600;",
+			"pdf": "text-align:center; font-size: .9em; font-weight: bold;"
+		}
+	},
+
+	"coverPage": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;"
+		}
+	},
+
+	"mainBody": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC; color:#2385A0;"
+		},
+		"allowedPatterns": ["hcontainer"],
+		"exceptionalAllowedElements": ["componentRef"]
+	},
+	"amendmentBody": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;color:#2385A0;"
+		}
+	},
+	"debateBody": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;color:#29A2C6;"
+		}
+	},
+	"fragmentBody": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;color:#29A2C6;"
+		}
+	},
+	"attachments": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;"
+		}
+	},
+	"components": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;"
+		}
+	},
+	"collectionBody": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;color:#2385A0;"
+		}
+	},
+
+	"preface": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border:1px solid #74BAAC;",
+			"this": "border:1px solid #74BAAC; color: #66A15E;",
+			"pdf": "text-align:center; font-weight:bold; margin: 70px 0px 40px; font-size: 1.1em;"
+		}
+	},
+	"item": {
+		"remove": {
+			"wrapperRules": ["addWrapperElement"]
+		},
+		"wrapperElement": "<div><p>&content;</p></div>",
+		"exceptionalAllowedElements": ["p"]
+	},
+	"p": {
+		"wrapperElement": "<div>&content;</div>",
+		"remove": {
+			"wrapperStyle": ["after", "before", "this"]
+		},
+		"wrapperStyle" : {
+			"before":"border: 1px solid #C0E0DA; background-color:#C0E0DA;color:#000000;font-size:8pt;position:relative;left:85%;margin:0px;padding:2px 4px 2px 4px;border-radius: 3px;width:90px;display: block;text-align:center; margin-bottom:5px;",
+			"this": "border-radius: 3px; border:1px solid #C0E0DA; padding:3px; margin:3px 0px 3px 0px; display: block",
+			"pdf": "display: inline"
+		}
+	},
+	"recitals": {
+		"remove": {
+			"wrapperRules": ["addWrapperElement"]
+		}
+	},
+	"eop": {
+		"wrapperElement": "<span></span>"
+	},
+	"heading": {
+		"wrapperRules": {
+			"headingElement":{
+				"conditions": {
+					"parentClassContains": "hcontainer"
+				},
+				"values" : {
+					"priority" : 1
+				}
+			}
+		}
+	},
+	"num": {
+		"wrapperRules": {
+			"headingElement":{
+				"conditions": {
+					"parentClassContains": "hcontainer"
+				},
+				"values" : {
+					"priority" : 0
+				}
+			}
+		},
+		"wrapperStyle": {
+			"pdf": "text-decoration: underline;"
+		}
+	},
+	"ref": {
+		"wrapperStyle": {
+			"this": "background-color: #DBEADC;text-decoration:underline;"
+		}
+	},
+	"quotedStructure": {
+		"wrapperStyle": {
+			"this": "border-radius: 3px; border:1px solid #C0E0DA; border-left: 10px solid #25A0C5;  padding:3px; margin:3px 0px 3px 0px;"
+		}
+
+	},
+	"subheading": {
+		"wrapperRules": {
+			"headingElement":{
+				"conditions": {
+					"parentClassContains": "hcontainer"
+				},
+				"values" : {
+					"priority" : 2
+				}
+			}
+		}
+	},
+
+	"subdivision":{
+		"wrapperClass":"patternName patternName",
+		"wrapperRules": {
+			"applyAttributes": {
+				"values":{
+					"name": "subdivision"
+				}
+
+			}
+		}
+	},
+
+	"signature": {
+		"wrapperStyle": "padding: 3px;"
+	},
+	"role": {
+		"wrapperStyle": "border-color: #5CB1FF;"
+	},
+	"person": {
+		"wrapperStyle": "border-color: #5CB1FF;"
+	},
+	"noteRef": {
+		"wrapperStyle": {
+			"before":"display: none;",
+			"this": "display: none;"
+		}
+	},
+	"authorialNote": {
+		"wrapperRules": {
+			"changePosition": {
+				"where": "afterParent"
+			}
+		}
+	},
+	"tocItem": {
+		"wrapperStyle": {
+			"this": "display: block;"
+		}
+	},
+	"hierarchicalStructure": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"genericElement": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"externalFragment": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"commonsInline": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"contentInline": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"commonElement": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"commonReference": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"commonJudgement": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	},
+	"commonReport": {
+		"buttonStyle": "border-radius: 3px; background-color: #74BAAC;"
+	}
+}

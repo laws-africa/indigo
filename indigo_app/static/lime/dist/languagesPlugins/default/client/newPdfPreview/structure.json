@@ -1,0 +1,4 @@
+{
+	"views": ["NewPdfPreviewMainTab"],
+	"controllers": ["NewPdfPreviewController"]
+}

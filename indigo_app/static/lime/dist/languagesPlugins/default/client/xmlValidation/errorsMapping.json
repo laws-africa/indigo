@@ -1,0 +1,44 @@
+{
+	"1843": {
+		"genericError": "elementOnly",
+		"specificErrors": [
+            {
+                "elements": [
+                    "bill",
+                    "act",
+                    "doc"
+                ],
+                "error": "elementNotMarked",
+                "tips": [
+                    "markInsideElement",
+                    "runAutomaticMarkup"
+                ]
+            },{
+                "elements": [
+                    "body"
+                ],
+                "error": "elementNotMarked",
+                "tips": [
+                    "markInsideElement",
+                    "removeText"
+                ]
+            }
+        ]
+	},
+    "1871": {
+        "genericError": "unexpectedElement",
+        "specificErrors": [
+            {
+                "elements": [
+                    "quotedText",
+                    "quotedStructure"
+                ],
+                "error": "unexpectedQuoted",
+                "tips": [
+                    "addActiveModification",
+                    "unmarkQuoted"
+                ]
+            }
+        ]
+    }
+}

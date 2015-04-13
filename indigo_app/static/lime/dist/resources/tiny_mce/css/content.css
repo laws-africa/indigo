@@ -1,0 +1,105 @@
+/**
+ * 	PATTERN STYLING
+*/
+
+/*
+.container, .hcontainer{
+	margin-top:5px;	
+}
+*/
+
+body {
+	font-size: .8em;
+}
+
+.breaking {
+	border: 0;
+	margin : 2px;
+	background-color: rgba(0,0,0,0);
+	display: block;
+}
+
+hr[data-mce-selected] {
+	outline: 0px solid black;
+}
+
+.breaking:hover {
+}
+
+*[focused = 'true'] {
+	-webkit-box-shadow: 0px 0px 10px 2px rgba(105,105,105,1);
+	-moz-box-shadow: 0px 0px 10px 2px rgba(105,105,105,1);
+	box-shadow: 0px 0px 10px 2px rgba(105,105,105,1);
+}
+
+#tinymce.noboxes *::before, #tinymce.noboxes *::after {
+	/* Since IE does not support initial... -.- */
+	border: 0;
+	padding: 0;
+	background: none;
+	margin: 0;
+	content: none;
+	position: static;
+	display: inline;
+
+	border: initial;
+	line-height: initial; 
+	padding: initial;
+	background: initial;
+	margin: initial;
+	content: initial;
+	position: initial;
+	display: initial;
+}
+
+#tinymce.noboxes * {
+	border: 0;
+	background: none;
+
+	border: initial;
+	background: initial;
+}
+
+#tinymce.nocolors * {
+	color: black;
+}
+
+#tinymce.pdfstyle .breaking {
+	display: none;
+}
+
+#tinymce.secondEditor *:before, #tinymce.readOnly *:before, #tinymce.secondEditor *:after, #tinymce.readOnly *:after {
+	background-color: #CCCCCC;
+	border-color: #CCCCCC;
+}
+
+#tinymce.secondEditor *, #tinymce.readOnly * {
+	border-color: #CCCCCC;
+}
+
+#tinymce.readOnly *:before, #tinymce.readOnly *:after {
+	background-color: #A4E2E2;
+}
+
+span.visibleBookmark {
+	overflow: initial !important;
+	background-color: rgba(205, 101, 103, 1.0) !important;
+    display: inline-block  !important;
+    line-height: 20px  !important;
+    width: 5px  !important;
+    margin: 0 5px !important;
+}
+
+span[data-mce-type="bookmark"]:not(.visibleBookmark) {
+	display: none;
+}
+
+span.visibleSelection {
+	background-color: #B0B0B0;
+}
+
+#tinymce *[highlighted=true] {
+	background-color: #fafcc0;
+}
+
+

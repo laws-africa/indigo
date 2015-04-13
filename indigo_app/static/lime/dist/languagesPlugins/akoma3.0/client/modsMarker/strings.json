@@ -1,0 +1,52 @@
+{
+	"en": {
+		"insertion": "Insertion",
+		"substitution": "Substitution",
+		"repeal": "Repeal",
+		"activeModifications": "Active modifications",
+		"passiveModifications": "Passive modifications",
+		"split": "Split",
+		"join": "Join",
+		"renumbering": "Renumbering",
+		"destinationText": "Destination Text",
+		"action": "Action",
+		"renumbered": "renumbered",
+		"joined": "joined",
+		"splitted": "splitted",
+        "inserted": "inserted",
+        "deleted": "deleted",
+        "replaced": "replaced"
+	},
+	"it": {
+		"insertion": "Inserimento",
+		"substitution": "Sostituzione",
+		"repeal": "Abrogazione",
+		"activeModifications": "Modifiche attive",
+		"passiveModifications": "Modifiche passive",
+		"split": "Divisione",
+		"join": "Unione",
+		"renumbering": "Rinumerazione",
+		"renumbered": "renumerato",
+		"joined": "unito",
+		"splitted": "diviso",
+        "inserted": "inserito",
+        "deleted": "rimosso",
+        "replaced": "sostituito"
+	},
+	"es": {
+		"insertion": "Insertion",
+		"substitution": "Sustitución",
+		"repeal": "Revocación",
+		"activeModifications": "Cambios Activos",
+		"passiveModifications": "Cambios Pasivos",
+		"split": "División",
+		"join": "Unirse",
+		"renumbering": "Renumeración",
+		"renumbered": "renumerado",
+		"joined": "unido",
+		"splitted": "diviso",
+        "inserted": "adicional",
+        "deleted": "eliminado",
+        "replaced": "reemplazado"
+	}
+}

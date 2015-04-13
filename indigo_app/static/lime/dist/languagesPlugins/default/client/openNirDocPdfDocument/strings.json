@@ -1,0 +1,10 @@
+{
+    "en": {
+        "confirmAknTranslationTitle": "Translate to AkomaNtoso",
+        "confirmAknTranslationQuestion": "We can't open NIR files directly. Would you like to convert it to Akomantoso?"
+    },
+    "it": {
+        "confirmAknTranslationTitle": "Conversione ad AkomaNtoso",
+        "confirmAknTranslationQuestion": "LIME non permette di aprire i file NIR direttamente. Convertirlo in Akomantoso?"
+    }
+}

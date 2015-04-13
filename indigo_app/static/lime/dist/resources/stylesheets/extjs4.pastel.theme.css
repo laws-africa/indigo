@@ -1,0 +1,296 @@
+/**
+	* Copyright (c) 2012, CIRSFID and University Of Bologna (Department of computer science)
+	* All rights reserved.
+	*
+	* Redistribution and use in source and binary forms, with or without
+	* modification, are permitted provided that the following conditions are met:
+	*     * Redistributions of source code must retain the above copyright
+	*       notice, this list of conditions and the following disclaimer.
+	*     * Redistributions in binary form must reproduce the above copyright
+	*       notice, this list of conditions and the following disclaimer in the
+	*       documentation and/or other materials provided with the distribution.
+	*     * Neither the name of the CIRSFID and University Of Bologna (Department of computer science) 
+	* 		nor the names of its contributors may be used to endorse or promote products
+	*       derived from this software without specific prior written permission.
+	*
+	* THIS SOFTWARE IS PROVIDED BY CIRSFID and University Of Bologna (Department of computer science) 
+	* ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+	* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	* DISCLAIMED. IN NO EVENT SHALL CIRSFID and University Of Bologna (Department of computer science) 
+	* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+.x-toolbar, .x-panel, .x-window-header, .x-window-body, .x-panel-header, .x-panel-body, .x-tab-bar, .mceLayout, .mceToolbar, .mceIframeContainer, .x-tab-bar-body, .x-box-inner, .x-btn-over, .x-menu-item-active a, .x-menu-item-plain b, .x-menu-plain, .x-btn-group{
+	border-color: #354B54 !important;
+}
+
+.x-grid-header-ct{
+	border:1px solid #354B54 !important;
+}
+
+/* TOP BAR */
+
+.x-toolbar{
+	background:none !important;
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#5EAD9D,#74BAAC 50%,#5EAD9D 50%) !important;
+	background-color: #8Dc7BB !important;
+	border-color: #498377 !important;
+}
+
+.x-toolbar .x-box-inner{
+	background-image: none !important;
+	/*background-image: -webkit-linear-gradient(top,#5EAD9D,#74BAAC 50%,#5EAD9D 50%) !important;*/
+	background-image: -webkit-linear-gradient(top, #74BAAC, #5EAD9D 100%) !important;
+	background-image: -moz-linear-gradient(top,#4390D0,#5198D3 50%,#4390D0 50%) !important;
+	background-image: -o-linear-gradient(top,#4390D0,#5198D3 50%,#4390D0 50%) !important;
+	background-image: -ms-linear-gradient(top,#4390D0,#5198D3 50%,#4390D0 50%) !important;
+	background-image: linear-gradient(top,#4390D0,#5198D3 50%,#4390D0 50%) !important;
+	background-color: #5198D3 !important;
+}
+
+.x-btn-over, .x-btn-default-default-toolbar-small-menu-active{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-color: #C9DECB !important;
+}
+
+.x-btn-inner{
+	color:#ffffff !important;
+}
+
+.x-menu-plain, .x-menu-body{
+	background-color:#ffffff !important;	
+}
+
+.x-menu-item-active a{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-color: #C9DECB !important;
+}
+
+.x-menu-item-plain b, .x-btn-group-header-body{
+	background-color:#C9DECB;
+}
+
+
+/* PANELS */
+.x-panel-header, .x-window-header{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#5EAD9D,#74BAAC 50%,#5EAD9D 50%) !important;
+	background-image: -moz-linear-gradient(top,#B2C99F,#B7CDA6 50%,#B2C99F 50%) !important;
+	background-image: -o-linear-gradient(top,#B2C99F,#B7CDA6 50%,#B2C99F 50%) !important;
+	background-image: -ms-linear-gradient(top,#B2C99F,#B7CDA6 50%,#B2C99F 50%) !important;
+	background-image: linear-gradient(top,#B2C99F,#B7CDA6 50%,#B2C99F 50%) !important;
+	background-color: #B7CDA6 !important;
+	border-color:#6A92B3;
+}
+
+.x-panel-header .x-panel-header-text, .x-tab-inner, .x-window-header-text-container, .x-window-header-text, .x-btn-group-header-text{
+	color:#354B54 !important;
+}
+
+
+
+
+.x-window{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-color: #C9DECB !important;
+}
+
+.x-window-body, .x-panel-default-framed, .x-panel-body-default-framed, .x-window-body-closable .x-toolbar, .x-panel-default-framed .x-toolbar, .x-toolbar-footer .x-box-inner, .x-toolbar-docked-bottom, .x-window-body .x-toolbar, .x-window-body .x-toolbar .x-box-inner{
+	background-image: none !important;
+	background-color:#ffffff !important;
+}
+
+.x-panel-default-framed{
+}
+
+.x-panel-body-default-framed {
+}
+
+.x-window-body-closable .x-toolbar{
+	border: 1px solid #59955C !important;
+}
+
+.x-panel-default-framed .x-toolbar{
+	border: 1px solid #09900 !important;
+}
+
+.x-toolbar-footer .x-box-inner{
+}
+
+.x-toolbar-docked-bottom{
+	border: 1px solid #59955C !important;
+}
+
+.x-tab-bar{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#85B7E0,#8EBCE2 50%,#85B7E0 50%) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-color:#93EEAA !important; 
+}
+
+.x-tab-bar-strip{
+	background-color:#C9DECB !important; 
+	border-color:#59955C !important; 
+}
+
+
+td.mceToolbar{
+/*	background-color:#59955C !important; */
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#85B7E0,#8EBCE2 50%,#85B7E0 50%) !important;
+	background-image: -moz-linear-gradient(top,#C9DECB,#ffffff) !important;
+	background-image: -o-linear-gradient(top,#C9DECB,#ffffff) !important;
+	background-image: -ms-linear-gradient(top,#C9DECB,#ffffff) !important;
+	background-image: linear-gradient(top,#C9DECB,#ffffff) !important;
+	background-color:#93EEAA !important; 
+
+}
+
+table.mceToolbar{
+	background-image: none !important;
+	background-color: transparent !important;
+}
+
+.mceSeparator{
+	background-image: none !important;
+	background-color: transparent !important;
+}
+
+.extjsSkin .mceButton{
+	background: none !important;
+	border:1px solid #59955C !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-image: linear-gradient(top,#ffffff,#C9DECB) !important;
+	background-color:#C9DECB !important; 
+
+}
+
+.editorTab{
+	border-color: #59955C !important;
+}
+
+#path{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-color: #93EEAA !important;
+}
+
+#path-body{
+	background-image: none !important;
+	background-color: transparent !important;
+	color:#D5DAD6 !important;
+	font-weight:bold;
+}
+
+#path-body a{
+	color:#D5DAD6 !important;
+	font-weight:bold;
+}
+
+.x-tab{
+	border-color: #59955C !important;
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(bottom,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -moz-linear-gradient(bottom,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -o-linear-gradient(bottom,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -ms-linear-gradient(bottom,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: linear-gradient(bottom,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-color: #C9DECB !important;
+}
+
+.x-tab-active{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	background-image: linear-gradient(top,#ffffff,#ffffff 25%,#C9DECB 45%) !important;
+	border-bottom: none !important;
+	background-color: #C9DECB !important;
+}
+
+
+.x-btn-group-default-framed{
+	background-image: none !important;
+	background-image: -webkit-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-color: #C9DECB !important;	
+}
+
+.x-btn-group-header-body{
+	background-color:#C9DECB !important;
+	border-bottom: 1px solid #59955C !important;
+}
+.x-btn-group-body{
+	border-top: 1px solid #59955C !important;
+	background-color:#ffffff !important;
+}
+
+#loading{
+	background-image: none !important;
+	/*background-image: -webkit-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -moz-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -o-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: -ms-linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important;
+	background-image: linear-gradient(top,#ffffff,#C9DECB 45%,#C9DECB 46%,#C9DECB 50%,#C9DECB 51%,#ffffff) !important; */
+	background-color: #C9DECB !important;
+}
+
+.x-grid-row-over *, .x-grid-row-focused *{
+	background-color:#C9DECB !important;
+}
+
+.x-progress-default .x-progress-bar {
+    background-image: none !important;
+    background-color: #59955C !important;
+    background-image: -webkit-linear-gradient(center top ,#DDFED1,#A5FF8A 45%,#A5FF8A 46%,#A5FF8A 50%,#A5FF8A 51%,#DDFED1) !important;
+	background-image: -moz-linear-gradient(center top ,#DDFED1,#A5FF8A 50%,#A5FF8A 51%,#DDFED1) !important;
+	background-image: -o-linear-gradient(center top ,#DDFED1,#A5FF8A 45%,#A5FF8A 46%,#A5FF8A 50%,#A5FF8A 51%,#DDFED1) !important;
+	background-image: -ms-linear-gradient(center top ,#DDFED1,#A5FF8A 45%,#A5FF8A 46%,#A5FF8A 50%,#A5FF8A 51%,#DDFED1) !important;
+	background-image: linear-gradient(center top ,#DDFED1,#A5FF8A 50%,#A5FF8A 51%,#DDFED1) !important;
+    border-right-color: #A5FF8A !important;
+    border-top-color: #A5FF8A !important;
+    border-color: #A5FF8A !important;
+}
+
+.x-progress-default {
+    border-color: #A5FF8A !important;
+}
+.x-progress-default .x-progress-text {
+    color: #D5DAD6 !important;
+}

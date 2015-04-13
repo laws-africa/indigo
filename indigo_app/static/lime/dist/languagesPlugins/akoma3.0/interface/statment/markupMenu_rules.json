@@ -1,0 +1,28 @@
+{
+	"rootElements": ["coverPage", "preface", "preamble", "mainBody", "conclusions", "attachments", "components"],
+	"commonElements": ["commonElement", "hierarchicalStructure",  "genericElement", "externalFragment", "commonsInline", "contentInline", "commonReference", "remark",  "foreign"],
+	
+	"elements": {
+		"hierarchicalStructure": {
+			"children": ["sublist", "indent", "division", "part", "proviso", "book", "rule", "tome", "blockList", "transitional", "subdivision", "fillIn", "alinea"]
+		},
+		"genericElement": {
+			"children": ["hcontainer", "inline", "p", "placeholder", "blockContainer", "block", "tblock", "container", "marker"]
+		},
+		"externalFragment": {
+			"children": ["extractText", "rmod", "mmod", "mod", "quotedText", "extractStructure", "quotedStructure"]
+		},
+		"commonsInline": {
+			"children": ["def", "decoration", "docPurpose"]
+		},
+		"contentInline": {
+			"children": ["del", "omissis",  "outcome", "ins", "eop", "noteRef", "authorialNote"]
+		},
+		"commonElement": {
+			"children": ["process",  "location", "concept", "quantity", "organization", "object", "date", "term", "time", "event", "person", "role", "entity"]
+		},
+		"commonReference": {
+			"children": ["ref", "rref", "mref"]
+		}
+	}
+}

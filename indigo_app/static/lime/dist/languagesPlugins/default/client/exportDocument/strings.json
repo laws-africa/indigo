@@ -1,0 +1,57 @@
+{
+	"en": {
+		"exportDocument": "Export as ...",
+		"exportXml": "XML",
+		"exportXmlTooltip": "Export the document in XML format",
+		"exportHtml": "HTML",
+		"exportHtmlTooltip": "Export the document in HTML format",
+		"exportPdf": "PDF",
+		"exportPdfTooltip": "Export the document in PDF format",
+		"exportEbook": "Ebook",
+		"exportEbookTooltip" : "Export the document in EPUB ebook format"
+	},
+	"it": {
+		"exportDocument": "Esporta come ...",
+		"exportXml": "XML",
+		"exportXmlTooltip": "Esporta il documento nel formato XML",
+		"exportHtml": "HTML",
+		"exportHtmlTooltip": "Esporta il documento nel formato HTML",
+		"exportPdf": "PDF",
+		"exportPdfTooltip": "Esporta il documento nel formato PDF",
+		"exportEbook": "Ebook",
+		"exportEbookTooltip" : "Esporta il documento nel formato EPUB"
+	},
+	"es": {
+		"exportDocument": "Exportar como ...",
+		"exportXml": "XML",
+		"exportXmlTooltip": "Exportar el documento en formato XML",
+		"exportHtml": "HTML",
+		"exportHtmlTooltip": "Exportar el documento en formato HTML",
+		"exportPdf": "PDF",
+		"exportPdfTooltip": "Exportar el documento en formato PDF",
+		"exportEbook": "Ebook",
+		"exportEbookTooltip" : "Exportar el documento en formato EPUB"
+	},
+	"ro": {
+		"exportDocument": "Exportă în ...",
+		"exportXml": "XML",
+		"exportXmlTooltip": "Exportă documentul în format XML",
+		"exportHtml": "HTML",
+		"exportHtmlTooltip": "Exportă documentul în format HTML",
+		"exportPdf": "PDF",
+		"exportPdfTooltip": "Exportă documentul în format PDF",
+		"exportEbook": "Ebook",
+		"exportEbookTooltip" : "Exportă documentul în format EPUB"
+	},
+	"ru": {
+		"exportDocument": "Экспорт в ...",
+		"exportXml": "XML",
+		"exportXmlTooltip": "Экспорт документа в формате XML",
+		"exportHtml": "HTML",
+		"exportHtmlTooltip": "Экспорт документа в формате HTML",
+		"exportPdf": "PDF",
+		"exportPdfTooltip": "Экспорт документа в формате PDF",
+		"exportEbook": "Ebook",
+		"exportEbookTooltip" : "Экспорт документа в формате EPUB"
+	}
+}

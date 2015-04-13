@@ -1,0 +1,4 @@
+{
+	"views": ["NewDocumentCollection", "NewDocumentCollectionDropGrid", "MarkingMenu"],
+	"controllers": ["DocumentCollectionController"]
+}

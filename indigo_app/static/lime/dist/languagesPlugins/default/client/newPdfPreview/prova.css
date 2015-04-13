@@ -1,0 +1,12 @@
+.num {
+	font-weight: bold;
+	color: #FF0000;
+	font-size: 1.5em;
+}
+
+.pageNumber {
+	text-align: center;
+    font-style: normal; 
+    font-size: 11pt;
+    font-family: "LucidaSans";
+}

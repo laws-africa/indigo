@@ -50,17 +50,15 @@
   <link rel="stylesheet" type="text/css" href="/static/lime/lib/codemirror/codemirror.css"/>
   {% if DEBUG %}
     {# development dependencies for LIME so that we don't have to recompile it the whole time #}
-    <!-- <x-compile> -->
-      <!-- <x-bootstrap> -->
-        <link rel="stylesheet" href="/static/lime/bootstrap.css">
-        <script src="/static/lime/ext/ext-all-dev.js"></script>
-        <script src="/static/lime/bootstrap.js"></script>
-      <!-- </x-bootstrap> -->
-      <script src="/static/lime/app.js"></script>
-    <!-- </x-compile> -->
+    <link rel="stylesheet" href="/static/lime/bootstrap.css">
+    <script>LIME_base_url = '/static/lime/';</script>
+    <script src="/static/lime/ext/ext-all-dev.js"></script>
+    <script src="/static/lime/bootstrap.js"></script>
+    <script src="/static/lime/app.js"></script>
   {% else %}
     {# production dependencies for LIME #}
     <link rel="stylesheet" href="/static/lime/build/production/LIME/resources/LIME-all.css">
+    <script>LIME_base_url = '/static/lime/build/production/LIME/';</script>
     <script type="text/javascript" src="/static/lime/build/production/LIME/app.js"></script>
   {% endif %}
 

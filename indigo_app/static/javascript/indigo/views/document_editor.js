@@ -37,6 +37,8 @@
       this.view.$el.find('.document-sheet-container').scrollTop(0);
 
       var xml = this.view.xmlModel.toXml(node);
+      // pretty-print the xml
+      xml = vkbeautify.xml(xml, 2);
 
       this.editor.removeListener('change', this.onEditorChange);
       this.editor.setValue(xml);

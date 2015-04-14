@@ -43,7 +43,10 @@ Production deployment
 ---------------------
 
 Production deployment assumes you're running on Heroku. We use [ddollar/heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi)
-because we need both Python and Ruby dependencies.
+because we need both Python and Ruby dependencies and a working JVM.
+
+* Python is needed for the core application
+* Ruby and Java are needed for the Slaw library to parse PDFs into XML
 
 You will need:
 

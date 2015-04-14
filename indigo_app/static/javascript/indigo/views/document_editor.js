@@ -242,7 +242,7 @@
       }
 
       // serialize the DOM into the raw model
-      this.rawModel.set('body', this.xmlModel.toXml());
+      this.rawModel.set('content', this.xmlModel.toXml());
       return this.rawModel.save();
     },
   });

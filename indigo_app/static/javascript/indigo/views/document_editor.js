@@ -89,7 +89,7 @@
       this.resize();
 
       var config = {
-        docMarkingLanguage: "akoma3.0",
+        docMarkingLanguage: "akoma2.0",
         docType: "act",
         docLocale: this.view.model.get('country'),
         docLang: "eng",
@@ -97,7 +97,7 @@
 
       LIME.XsltTransforms.transform(
         node,
-        LIME_base_url + 'languagesPlugins/akoma3.0/AknToXhtml.xsl',
+        LIME_base_url + 'languagesPlugins/akoma2.0/AknToXhtml.xsl',
         {},
         function(html) {
           config.docText = html.firstChild.outerHTML;

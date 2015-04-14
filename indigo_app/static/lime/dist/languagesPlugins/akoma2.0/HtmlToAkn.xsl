@@ -3,7 +3,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:html="http://www.w3.org/1999/xhtml"
-    xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0/CSD13"
+    xmlns="http://www.akomantoso.org/2.0"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     exclude-result-prefixes="xs"
     version="1.0">
@@ -19,15 +19,7 @@
     	<xsl:variable name="attName"><xsl:value-of select="substring-after(name(.),'_')"/></xsl:variable>
         <xsl:choose>
             <xsl:when test="substring-before(name(.),'_') = 'akn'">
-                <xsl:choose>
-                    <!-- In akomaNtoso 3.0 'id' attribute was replaced with 'eId' -->
-                    <xsl:when test="$attName = 'id'">
-                        <xsl:attribute name="eId"><xsl:value-of select="." /></xsl:attribute>
-                    </xsl:when>
-                    <xsl:otherwise>
-                        <xsl:attribute name="{$attName}"><xsl:value-of select="." /></xsl:attribute>
-                    </xsl:otherwise>
-                </xsl:choose>
+               <xsl:attribute name="{$attName}"><xsl:value-of select="." /></xsl:attribute>
             </xsl:when>
             <xsl:when test="name(.) = 'alternativeto' or
                         name(.) = 'name' or

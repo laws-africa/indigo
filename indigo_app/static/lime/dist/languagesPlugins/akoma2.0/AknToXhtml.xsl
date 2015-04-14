@@ -3,7 +3,7 @@
     xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
     xmlns:xml="http://www.w3.org/XML/1998/namespace"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:akn="http://docs.oasis-open.org/legaldocml/ns/akn/3.0/CSD13"
+    xmlns:akn="http://www.akomantoso.org/2.0"
     exclude-result-prefixes="xs"
     version="1.0">
     <xsl:output method="xml" indent="yes" encoding="UTF-8" />

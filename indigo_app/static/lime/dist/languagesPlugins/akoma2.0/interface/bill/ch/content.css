@@ -1,0 +1,13 @@
+.docTitle {
+	font-size: 12pt;
+	font-weight: bold;
+}
+
+.docProponent {
+	font-style: italic;
+}
+
+.article > .num {
+	font-weight: bold;
+	margin-right: 40px;
+}

@@ -1,0 +1,120 @@
+{
+	"elements": {
+		"preface": {
+			"children": {
+				"docType": {
+					"cardinality": 1
+				},
+				"docNumber": {
+					"cardinality": 0
+				},
+				"docDate": {
+					"cardinality": 1
+				},
+				"proponent": {
+					"cardinality": 0
+				},
+				"docTitle": {
+					"cardinality": 1
+				},
+				"location": {
+					"cardinality": 0
+				},
+				"ref": {
+					"cardinality": 0
+				},
+				"a": {
+					"cardinality": 0
+				},
+				"date": {
+					"cardinality": 0
+				}
+			}
+		},
+		"preamble": {
+			"children": {
+				"formula": {
+					"cardinality": 0
+				},
+				"recitals": {
+					"cardinality": 0
+				},
+				"citations": {
+					"cardinality": 0
+				},
+				"subdivision": {
+					"cardinality": 0
+				},
+				"blockList": {
+					"cardinality": 0
+				},
+				"ref": {
+					"cardinality": 0
+				},
+				"a": {
+					"cardinality": 0
+				},
+				"date": {
+					"cardinality": 0
+				}
+			}
+		},
+
+		"conclusions": {
+			"children": {
+				"signature": {
+					"cardinality": 0
+				},
+				"subdivision": {
+					"cardinality": 0
+				},
+				"location": {
+					"cardinality": 0
+				},
+				"date": {
+					"cardinality": 0
+				},
+				"person": {
+					"cardinality": 0
+				},
+				"role": {
+					"cardinality": 0
+				}
+			}
+		},
+		"body": {
+			"children": {
+				"title": {
+					"cardinality": 0
+				},
+				"article": {
+					"cardinality": 0
+				},
+				"clause": {
+					"cardinality": 0
+				},
+				"subclause": {
+					"cardinality": 0
+				},
+				"list": {
+					"cardinality": 0
+				},
+				"point": {
+					"cardinality": 0
+				},
+				"bodyConclusion": {
+					"cardinality": 0
+				}
+			}
+		},
+		"docDate": {
+			"cardinality": 1
+		},
+		"docTitle": {
+			"cardinality": 3
+		},
+		"docType": {
+			"cardinality": 1
+		}
+	}
+}

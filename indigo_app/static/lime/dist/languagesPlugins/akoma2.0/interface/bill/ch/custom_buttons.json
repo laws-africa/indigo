@@ -1,0 +1,12 @@
+{
+	"romanI": {
+		"wrapperClass": "patternName patternName",
+		"wrapperRules": {
+			"applyAttributes": {
+				"values": {
+					"name": "romanI"
+				}
+			}
+		}
+	}
+}

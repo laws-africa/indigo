@@ -1,0 +1,536 @@
+{
+	"address": {
+		"pattern": "hcontainer"
+	},
+	"administrationOfOath": {
+		"pattern": "container"
+	},
+	"affectedDocument": {
+		"pattern": "inline"
+	},
+	"alinea": {
+		"pattern": "hcontainer"
+	},
+	"amendmentBody": {
+		"pattern": "container"
+	},
+	"amendmentContent": {
+		"pattern": "container"
+	},
+	"amendmentHeading": {
+		"pattern": "container"
+	},
+	"amendmentJustification": {
+		"pattern": "container"
+	},
+	"amendmentReference": {
+		"pattern": "container"
+	},
+	"answer": {
+		"pattern": "container"
+	},
+	"argument": {
+		"pattern": "inline"
+	},
+	"arguments": {
+		"pattern": "container"
+	},
+	"article": {
+		"pattern": "hcontainer"
+	},
+	"attachments": {
+		"pattern": "container"
+	},
+	"attachment": {
+		"pattern": "container"
+	},
+	"authorialNote": {
+		"pattern": "popup"
+	},
+	"background": {
+		"pattern": "container"
+	},
+	"block": {
+		"pattern": "block"
+	},
+	"blockContainer": {
+		"pattern": "container"
+	},
+	"blockList": {
+		"pattern": "container"
+	},
+	"body": {
+		"pattern": "container"
+	},
+	"book": {
+		"pattern": "hcontainer"
+	},
+	"change": {
+		"pattern": "inline"
+	},
+	"chapter": {
+		"pattern": "hcontainer"
+	},
+	"citation": {
+		"pattern": "container"
+	},
+	"citations": {
+		"pattern": "hcontainer"
+	},
+	"clause": {
+		"pattern": "hcontainer"
+	},
+	"collectionBody": {
+		"pattern": "container"
+	},
+	"component": {
+		"pattern": "container"
+	},
+	"componentRef": {
+		"pattern": "patternless"
+	},
+	"components": {
+		"pattern": "container"
+	},
+	"concept": {
+		"pattern": "inline"
+	},
+	"conclusions": {
+		"pattern": "container"
+	},
+	"container": {
+		"pattern": "container"
+	},
+	"courtType": {
+		"pattern": "inline"
+	},
+	"coverPage": {
+		"pattern": "container"
+	},
+	"date": {
+		"pattern": "inline"
+	},
+	"debateBody": {
+		"pattern": "container"
+	},
+	"debateSection": {
+		"pattern": "hcontainer"
+	},
+	"decision": {
+		"pattern": "container"
+	},
+	"declarationOfVote": {
+		"pattern": "hcontainer"
+	},
+	"decoration": {
+		"pattern": "inline"
+	},
+	"def": {
+		"pattern": "inline"
+	},
+	"del": {
+		"pattern": "inline"
+	},
+	"division": {
+		"pattern": "hcontainer"
+	},
+	"docAuthority": {
+		"pattern": "inline"
+	},
+	"docCommittee": {
+		"pattern": "inline"
+	},
+	"docDate": {
+		"pattern": "inline"
+	},
+	"docIntroducer": {
+		"pattern": "inline"
+	},
+	"docJurisdiction": {
+		"pattern": "inline"
+	},
+	"docketNumber": {
+		"pattern": "inline"
+	},
+	"docNumber": {
+		"pattern": "inline"
+	},
+	"docProponent": {
+		"pattern": "inline"
+	},
+	"docPurpose": {
+		"pattern": "inline"
+	},
+	"docStage": {
+		"pattern": "inline"
+	},
+	"docStatus": {
+		"pattern": "inline"
+	},
+	"docTitle": {
+		"pattern": "inline"
+	},
+	"docType": {
+		"pattern": "inline"
+	},
+	"documentRef": {
+		"pattern": "inline"
+	},
+	"entity": {
+		"pattern": "inline"
+	},
+	"eol": {
+		"pattern": "marker"
+	},
+	"eop": {
+		"pattern": "marker"
+	},
+	"event": {
+		"pattern": "inline"
+	},
+	"extractStructure": {
+		"pattern": "container"
+	},
+	"extractText": {
+		"pattern": "inline"
+	},
+	"fillIn": {
+		"pattern": "inline"
+	},
+	"foreign": {
+		"pattern": "container"
+	},
+	"formula": {
+		"pattern": "container"
+	},
+	"fragmentBody": {
+		"pattern": "container"
+	},
+	"from": {
+		"pattern": "inline"
+	},
+	"hcontainer": {
+		"pattern": "hcontainer"
+	},
+	"header": {
+		"pattern": "container"
+	},
+	"heading": {
+		"pattern": "inline"
+	},
+	"indent": {
+		"pattern": "hcontainer"
+	},
+	"inline": {
+		"pattern": "inline"
+	},
+	"ins": {
+		"pattern": "inline"
+	},
+	"interstitial": {
+		"pattern": "block"
+	},
+	"intro": {
+		"pattern": "container"
+	},
+	"introduction": {
+		"pattern": "container"
+	},
+	"item": {
+		"pattern": "hcontainer"
+	},
+	"judge": {
+		"pattern": "inline"
+	},
+	"legislature": {
+		"pattern": "inline"
+	},
+	"list": {
+		"pattern": "hcontainer"
+	},
+	"listConclusion": {
+		"pattern": "inline"
+	},
+	"listIntroduction": {
+		"pattern": "inline"
+	},
+	"location": {
+		"pattern": "inline"
+	},
+	"longTitle": {
+		"pattern": "block"
+	},
+	"mainBody": {
+		"pattern": "container"
+	},
+	"marker": {
+		"pattern": "marker"
+	},
+	"ministerialStatements": {
+		"pattern": "hcontainer"
+	},
+	"mmod": {
+		"pattern": "inline"
+	},
+	"mod": {
+		"pattern": "inline"
+	},
+	"motivation": {
+		"pattern": "container"
+	},
+	"mref": {
+		"pattern": "inline"
+	},
+	"narrative": {
+		"pattern": "inline"
+	},
+	"nationalInterest": {
+		"pattern": "hcontainer"
+	},
+	"neutralCitation": {
+		"pattern": "inline"
+	},
+	"noteRef": {
+		"pattern": "marker"
+	},
+	"noticesOfMotion": {
+		"pattern": "hcontainer"
+	},
+	"num": {
+		"pattern": "inline"
+	},
+	"object": {
+		"pattern": "inline"
+	},
+	"omissis": {
+		"pattern": "inline"
+	},
+	"opinion": {
+		"pattern": "inline"
+	},
+	"oralStatements": {
+		"pattern": "hcontainer"
+	},
+	"organization": {
+		"pattern": "inline"
+	},
+	"other": {
+		"pattern": "block"
+	},
+	"outcome": {
+		"pattern": "inline"
+	},
+	"p": {
+		"pattern": "block"
+	},
+	"papers": {
+		"pattern": "hcontainer"
+	},
+	"paragraph": {
+		"pattern": "hcontainer"
+	},
+	"part": {
+		"pattern": "hcontainer"
+	},
+	"party": {
+		"pattern": "inline"
+	},
+	"person": {
+		"pattern": "inline"
+	},
+	"personalStatements": {
+		"pattern": "hcontainer"
+	},
+	"petitions": {
+		"pattern": "hcontainer"
+	},
+	"placeholder": {
+		"pattern": "inline"
+	},
+	"point": {
+		"pattern": "hcontainer"
+	},
+	"pointOfOrder": {
+		"pattern": "hcontainer"
+	},
+	"preamble": {
+		"pattern": "container"
+	},
+	"preface": {
+		"pattern": "container"
+	},
+	"proceduralMotions": {
+		"pattern": "hcontainer"
+	},
+	"process": {
+		"pattern": "inline"
+	},
+	"proviso": {
+		"pattern": "hcontainer"
+	},
+	"quantity": {
+		"pattern": "inline"
+	},
+	"question": {
+		"pattern": "container"
+	},
+	"questions": {
+		"pattern": "hcontainer"
+	},
+	"quotedStructure": {
+		"pattern": "popup"
+	},
+	"quotedText": {
+		"pattern": "inline"
+	},
+	"recital": {
+		"pattern": "container"
+	},
+	"recitals": {
+		"pattern": "hcontainer"
+	},
+	"ref": {
+		"pattern": "inline"
+	},
+	"relatedDocument": {
+		"pattern": "inline"
+	},
+	"remark": {
+		"pattern": "inline"
+	},
+	"resolutions": {
+		"pattern": "hcontainer"
+	},
+	"rmod": {
+		"pattern": "inline"
+	},
+	"role": {
+		"pattern": "inline"
+	},
+	"rollCall": {
+		"pattern": "hcontainer"
+	},
+	"rref": {
+		"pattern": "inline"
+	},
+	"rule": {
+		"pattern": "hcontainer"
+	},
+	"scene": {
+		"pattern": "inline"
+	},
+	"section": {
+		"pattern": "hcontainer"
+	},
+	"session": {
+		"pattern": "inline"
+	},
+	"shortTitle": {
+		"pattern": "inline"
+	},
+	"signature": {
+		"pattern": "inline"
+	},
+	"speech": {
+		"pattern": "container"
+	},
+	"speechGroup": {
+		"pattern": "container"
+	},
+	"subchapter": {
+		"pattern": "hcontainer"
+	},
+	"subclause": {
+		"pattern": "hcontainer"
+	},
+	"subdivision": {
+		"pattern": "hcontainer"
+	},
+	"subFlow": {
+		"pattern": "patternless"
+	},
+	"subheading": {
+		"pattern": "inline"
+	},
+	"sublist": {
+		"pattern": "hcontainer"
+	},
+	"subparagraph": {
+		"pattern": "hcontainer"
+	},
+	"subpart": {
+		"pattern": "hcontainer"
+	},
+	"subrule": {
+		"pattern": "hcontainer"
+	},
+	"subsection": {
+		"pattern": "hcontainer"
+	},
+	"subtitle": {
+		"pattern": "hcontainer"
+	},
+	"table": {
+		"pattern": "block"
+	},
+	"tblock": {
+		"pattern": "container"
+	},
+	"term": {
+		"pattern": "inline"
+	},
+	"time": {
+		"pattern": "inline"
+	},
+	"title": {
+		"pattern": "hcontainer"
+	},
+	"toc": {
+		"pattern": "container"
+	},
+	"tocItem": {
+		"pattern": "inline"
+	},
+	"tome": {
+		"pattern": "hcontainer"
+	},
+	"transitional": {
+		"pattern": "hcontainer"
+	},
+	"vote": {
+		"pattern": "inline"
+	},
+	"wrap": {
+		"pattern": "container"
+	},
+	"wrapUp": {
+		"pattern": "block"
+	},
+	"writtenStatements": {
+		"pattern": "hcontainer"
+	},
+	"content": {
+		"pattern": "container"
+	},
+	"remedies": {
+		"pattern": "container"
+	},
+	"hierarchicalStructure": {
+	},
+	"genericElement": {
+	},
+	"externalFragment": {
+	},
+	"commonsInline": {
+	},
+	"contentInline": {
+	},
+	"commonElement": {
+	},
+	"commonReference": {
+	},
+	"commonJudgement": {
+	},
+	"commonReport": {
+	}
+}

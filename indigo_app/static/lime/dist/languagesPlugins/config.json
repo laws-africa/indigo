@@ -1,3 +1,6 @@
 {
-	"languages": [{"name":"akoma3.0"}]
+	"languages": [
+		{"name":"akoma2.0"},
+		{"name":"akoma3.0"}
+	]
 }

@@ -46,14 +46,21 @@
     },
 
     editorChanged: function() {
+      this.saveChanges();
+    },
+
+    // Save the content of the XML editor into the DOM, returns a Deferred
+    saveChanges: function() {
       // update the fragment content from the editor's version
       console.log('Parsing changes to XML');
 
       // TODO: handle errors here
       var newFragment = $.parseXML(this.editor.getValue()).documentElement;
 
-      this.view.updateFragment(newFragment);
+      this.view.updateFragment(this.view.fragment, newFragment);
       this.render();
+
+      return $.Deferred().resolve();
     },
 
     render: function() {
@@ -63,9 +70,7 @@
       }
     },
 
-    resize: function() {
-    },
-
+    resize: function() {},
   });
 
   // The LimeEditorController manages the interaction between
@@ -76,10 +81,6 @@
   _.extend(Indigo.LimeEditorController.prototype, Backbone.Events, {
     initialize: function(options) {
       this.view = options.view;
-      
-      // see if there are changes to save
-      this.autosaveDelay = 500;
-      this.autosave();
       this.initialized = false;
     },
 
@@ -88,15 +89,17 @@
       // strip the metadata when we next edit the 
       this.stripMeta = !node.querySelector('meta');
       this.fragmentType = node.tagName;
+      this.editing = true;
 
       this.resize();
 
-      // We only want to run the autosave code once the document
+      // We only want to interact with the editor once the document
       // is fully loaded, which we get as a callback from the
       // application. We only setup this event handler once.
       this.loading = true;
       if (!this.initialized) {
         LIME.app.on('documentLoaded', this.documentLoaded, this);
+        this.initialized = true;
       }
 
       var config = {
@@ -122,9 +125,12 @@
       this.loading = false;
     },
 
+    // Save the content of the LIME editor into the DOM, returns a Deferred
     updateFromLime: function() {
       var self = this;
       var start = new Date().getTime();
+      var oldFragment = this.view.fragment;
+      var deferred = $.Deferred();
 
       console.log('Updating XML from LIME');
 
@@ -147,17 +153,22 @@
         // LIME wraps the document in some extra stuff, just find the
         // item we started with
         xml = xml.querySelector(self.fragmentType);
-        self.view.updateFragment(xml);
+        self.view.updateFragment(oldFragment, xml);
+
+        deferred.resolve();
       }, {
         serialize: false,
       });
+
+      return deferred;
     },
 
-    autosave: function() {
-      _.delay(_.bind(this.autosave, this), this.autosaveDelay);
-
-      if (this.view.activeEditor == this && !this.loading && LIME.app.getController('Editor').changed) {
-        this.updateFromLime();
+    // Save the content of the LIME editor into the DOM, returns a Deferred
+    saveChanges: function() {
+      if (!this.loading) {
+        return this.updateFromLime();
+      } else {
+        return $.Deferred().resolve();
       }
     },
 
@@ -179,6 +190,7 @@
 
     initialize: function(options) {
       this.dirty = false;
+      this.editing = false;
 
       // the model is a documentDom model, which holds the parsed XML
       // document and is a bit different from normal Backbone models
@@ -200,15 +212,32 @@
     },
 
     editTocItem: function(item) {
-      this.$el.find('.boxed-group-header h4').text(item.title);
-      this.editFragment(item.element);
+      var self = this;
+      this.stopEditing()
+        .then(function() {
+          if (item) {
+            self.$el.find('.boxed-group-header h4').text(item.title);
+            self.editFragment(item.element);
+          }
+        });
     },
 
-    editFragment: function(node) {
-      if (!this.updating) {
+    stopEditing: function() {
+      if (this.activeEditor && this.editing) {
+        this.editing = false;
+        return this.activeEditor.saveChanges();
+      } else {
+        this.editing = false;
+        return $.Deferred().resolve();
+      }
+    },
+
+    editFragment: function(fragment) {
+      if (!this.updating && fragment) {
         console.log("Editing new fragment");
-        this.fragment = node;
-        this.activeEditor.editFragment(node);
+        this.editing = true;
+        this.fragment = fragment;
+        this.activeEditor.editFragment(fragment);
       }
     },
 
@@ -217,31 +246,37 @@
       this.activeEditor.resize();
     },
 
-    updateFragment: function(newNode) {
+    updateFragment: function(oldNode, newNode) {
       this.updating = true;
       try {
-        this.fragment = this.xmlModel.updateFragment(this.fragment, newNode);
+        this.fragment = this.xmlModel.updateFragment(oldNode, newNode);
       } finally {
         this.updating = false;
       }
     },
 
     editWithAce: function(e) {
-      this.$el.find('.plaintext-editor').addClass('in');
-      this.$el.find('.lime-editor').removeClass('in');
-      this.activeEditor = this.aceEditor;
-      if (this.fragment) {
-        this.activeEditor.editFragment(this.fragment);
-      }
+      var self = this;
+
+      this.stopEditing()
+        .then(function() {
+          self.$el.find('.plaintext-editor').addClass('in');
+          self.$el.find('.lime-editor').removeClass('in');
+          self.activeEditor = self.aceEditor;
+          self.editFragment(self.fragment);
+        });
     },
 
     editWithLime: function(e) {
-      this.$el.find('.plaintext-editor').removeClass('in');
-      this.$el.find('.lime-editor').addClass('in');
-      this.activeEditor = this.limeEditor;
-      if (this.fragment) {
-        this.activeEditor.editFragment(this.fragment);
-      }
+      var self = this;
+
+      this.stopEditing()
+        .then(function() {
+          self.$el.find('.plaintext-editor').removeClass('in');
+          self.$el.find('.lime-editor').addClass('in');
+          self.activeEditor = self.limeEditor;
+          self.editFragment(self.fragment);
+        });
     },
 
     setDirty: function() {
@@ -258,12 +293,26 @@
       }
     },
 
+    // Save the content of the editor, returns a Deferred
     save: function() {
       // don't do anything if it hasn't changed
       if (!this.dirty) {
         return $.Deferred().resolve();
       }
 
+      if (this.activeEditor) {
+        // save changes from the editor, then
+        // save the model
+        return this.activeEditor
+          .saveChanges()
+          .pipe(_.bind(this.saveModel, this));
+      } else {
+        return this.saveModel();
+      }
+    },
+
+    // Save the content of the raw XML model, returns a Deferred
+    saveModel: function() {
       // serialize the DOM into the raw model
       this.rawModel.set('content', this.xmlModel.toXml());
       return this.rawModel.save();

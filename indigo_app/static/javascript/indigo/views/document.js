@@ -140,8 +140,10 @@
       }
     },
 
-    showEditor: function() {
-      this.$el.find('a[href="#content-tab"]').click();
+    showEditor: function(item) {
+      if (item) {
+        this.$el.find('a[href="#content-tab"]').click();
+      }
     },
 
     setDirty: function() {
@@ -227,7 +229,7 @@
       }
     },
 
-    tocDeselected: function() {
+    tocDeselected: function(e) {
       this.tocView.trigger('deselect');
     },
 

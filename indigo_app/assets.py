@@ -41,8 +41,6 @@ register('lime-js', Bundle(
     'lime/dist/app.js',
     # Load EXTJS4 extension for tinyMCE
     'lime/dist/lib/tinymce4/tinymce.min.js',
-    # Load EXTJS4 extension for Codemirror
-    'lime/dist/lib/codemirror/codemirror.min.js',
     # vkbeautify for pretty xml
     'lime/dist/lib/vkbeautify/vkbeautify.js',
     output='js/lime.%(version)s.js'))

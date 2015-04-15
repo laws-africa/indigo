@@ -80,6 +80,7 @@
       // see if there are changes to save
       this.autosaveDelay = 500;
       this.autosave();
+      this.initialized = false;
     },
 
     editFragment: function(node) {
@@ -89,6 +90,14 @@
       this.fragmentType = node.tagName;
 
       this.resize();
+
+      // We only want to run the autosave code once the document
+      // is fully loaded, which we get as a callback from the
+      // application. We only setup this event handler once.
+      this.loading = true;
+      if (!this.initialized) {
+        LIME.app.on('documentLoaded', this.documentLoaded, this);
+      }
 
       var config = {
         docMarkingLanguage: "akoma2.0",
@@ -108,12 +117,21 @@
       );
     },
 
+    documentLoaded: function() {
+      // document has loaded
+      this.loading = false;
+    },
+
     updateFromLime: function() {
       var self = this;
+      var start = new Date().getTime();
 
       console.log('Updating XML from LIME');
 
       LIME.app.fireEvent("translateRequest", function(xml) {
+        var stop = new Date().getTime();
+        console.log('Got XML from LIME in ' + (stop-start) + ' msecs');
+
         // reset the changed flag
         LIME.app.getController('Editor').changed = false;
 
@@ -138,7 +156,7 @@
     autosave: function() {
       _.delay(_.bind(this.autosave, this), this.autosaveDelay);
 
-      if (this.view.activeEditor == this && LIME.app.getController('Editor').changed) {
+      if (this.view.activeEditor == this && !this.loading && LIME.app.getController('Editor').changed) {
         this.updateFromLime();
       }
     },
@@ -201,8 +219,11 @@
 
     updateFragment: function(newNode) {
       this.updating = true;
-      this.fragment = this.xmlModel.updateFragment(this.fragment, newNode);
-      this.updating = false;
+      try {
+        this.fragment = this.xmlModel.updateFragment(this.fragment, newNode);
+      } finally {
+        this.updating = false;
+      }
     },
 
     editWithAce: function(e) {

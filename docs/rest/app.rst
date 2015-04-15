@@ -101,7 +101,6 @@ Update a Document
 * Parameters:
 
   * all the document fields described in :ref:`rest_general_guide`
-  * ``body``: an (optional) body field with the raw XML of the body of the document. ``string``
   * ``content``: an (optional) content field with the raw XML of the content of the document. ``string``
 
 Updates a document. Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
@@ -111,7 +110,7 @@ will be overwritten. Most other fields of the document, such as the FRBR URI
 and the title will be re-read from the new XML, overwriting any existing
 fields. The new XML must be valid Akoma Ntoso 2.0 XML.
 
-You can also update the body of the document using ``PUT /api/documents/{id}/body`` and the content using ``PUT /api/documents/{id}/content``.
+You can also update the content of the document using ``PUT /api/documents/{id}/content``.
 
 
 Delete a Document
@@ -134,7 +133,6 @@ Create a Document
 * Parameters:
 
   * all the document fields described in :ref:`rest_general_guide`
-  * ``body``: an (optional) body field with the raw XML of the body of the document. ``string``
   * ``content``: an (optional) content field with the raw XML of the content of the document. ``string``
 
 Updates a document. Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
@@ -164,22 +162,6 @@ from the new XML, overwriting any existing fields. The new XML must be valid Ako
 
 .. warning::
     This overwrites the entire document. Be careful.
-
-Get Document Body
------------------
-
-.. code:: http
-
-    GET /api/documents/{id}/body
-
-Fetches a JSON description of the raw XML body of a document.
-
-Update Document Body
---------------------
-
-.. code:: http
-
-    POST /api/documents/{id}/body
 
 * Parameters:
 

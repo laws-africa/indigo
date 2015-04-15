@@ -14,7 +14,7 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'frbr_uri': '/',
-                'body': body_fixture('hello'),
+                'content': document_fixture(text='hello'),
             },
             'inputformat': 'json',
             })
@@ -25,7 +25,7 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'frbr_uri': '/',
-                'body': body_fixture('hello'),
+                'content': document_fixture(text='hello'),
             },
             'outputformat': 'json',
             })
@@ -36,13 +36,13 @@ class ConvertAPITest(APITestCase):
     def test_convert_json(self):
         response = self.client.post('/api/convert', {
             'content': {
-                'body': body_fixture('hello'),
+                'content': document_fixture(text='hello'),
             },
             'inputformat': 'json',
             'outputformat': 'json',
             })
         assert_equal(response.status_code, 200)
-        assert_equal(response.data['frbr_uri'], '/')
+        assert_equal(response.data['frbr_uri'], '/za/act/1900/1')
         assert_true(response.data['content'].startswith('<akomaNtoso'))
         assert_is_none(response.data['id'])
 
@@ -50,7 +50,7 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'frbr_uri': '/za/act/1980/02',
-                'body': body_fixture('hello'),
+                'content': document_fixture(text='hello'),
             },
             'inputformat': 'json',
             'outputformat': 'xml',
@@ -63,7 +63,7 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'frbr_uri': '/za/act/1980/20',
-                'body': body_fixture('hello'),
+                'content': document_fixture(text='hello'),
             },
             'inputformat': 'json',
             'outputformat': 'html',

@@ -11,6 +11,18 @@ html, body {
   min-height: 100%;
 }
 
+// the LIME editor overrides some styles by attaching .x-body to the body element,
+// so we overwrite those here
+body.x-body {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
+.form-group {
+  margin-bottom: 10px;
+}
+
 .high {
   height: 100%;
 }
@@ -128,6 +140,17 @@ html, body {
 .document-content-view {
   padding: 0px;
 
+  .plaintext-editor,
+  .lime-editor {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    width: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+  }
+
   .document-sheet-container,
   .document-xml-editor {
     height: 100%;
@@ -138,6 +161,19 @@ html, body {
   .document-xml-editor {
     padding-left: 5px;
   }
+
+  #lime {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.fullscreen {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
 }
 
 /* misc */
@@ -182,6 +218,9 @@ html, body {
     padding: 30px;
     margin: 20px;
     background: white;
+    // work around a Chrome rendering bug with sections that
+    // are very short
+    min-height: 100%;
   }
 }
 
@@ -261,6 +300,8 @@ html, body {
 
   margin-top: 5px;
   border-top: 1px solid #ddd;
+
+  font-size: 13px;
 
   ol {
     list-style: none;

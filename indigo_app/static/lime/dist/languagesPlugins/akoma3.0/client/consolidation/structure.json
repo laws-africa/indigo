@@ -1,0 +1,11 @@
+{
+	"views": [
+        "ConsolidationMainTab",
+        "ReportWindow",
+        "ModificationPanel"
+    ],
+	"controllers": [
+        "ConsolidationController",
+        "ModificationController"
+    ]
+}

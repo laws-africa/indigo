@@ -30,7 +30,7 @@
     },
 
     updateFragment: function(oldNode, newNode) {
-      if (!oldNode.parentNode) {
+      if (!oldNode || !oldNode.parentNode) {
         // entire document has changed
         console.log('Replacing whole document');
         this.xmlDocument = newNode;
@@ -41,6 +41,8 @@
       }
 
       this.trigger('change');
+
+      return newNode;
     },
   });
 

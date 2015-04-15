@@ -1,0 +1,236 @@
+/**
+	* Copyright (c) 2012, CIRSFID and University Of Bologna (Department of computer science)
+	* All rights reserved.
+	*
+	* Redistribution and use in source and binary forms, with or without
+	* modification, are permitted provided that the following conditions are met:
+	*     * Redistributions of source code must retain the above copyright
+	*       notice, this list of conditions and the following disclaimer.
+	*     * Redistributions in binary form must reproduce the above copyright
+	*       notice, this list of conditions and the following disclaimer in the
+	*       documentation and/or other materials provided with the distribution.
+	*     * Neither the name of the CIRSFID and University Of Bologna (Department of computer science) 
+	* 		nor the names of its contributors may be used to endorse or promote products
+	*       derived from this software without specific prior written permission.
+	*
+	* THIS SOFTWARE IS PROVIDED BY CIRSFID and University Of Bologna (Department of computer science) 
+	* ``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, 
+	* INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+	* WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+	* DISCLAIMED. IN NO EVENT SHALL CIRSFID and University Of Bologna (Department of computer science) 
+	* BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+	* (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+	* LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+	* ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+	* (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+	* SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+*/
+
+.wawe-explorer-tree-icon {
+    height: 20px;
+    width: 20px;
+}
+
+.menu-title {
+    background: none repeat scroll 0 0 #D6E3F2;
+    border-color: #DAE6F4 #99BBE8 #99BBE8 #DAE6F4;
+    border-style: solid;
+    border-width: 1px;
+    color: #15428B;
+    display: block;
+    font: bold 10px tahoma,arial,verdana,sans-serif;
+    margin: -2px -2px 0;
+    padding: 3px;
+}
+
+.x-tree-icon {
+    height: 20px;
+    width: 20px;
+}
+
+.x-tree-noicon .x-tree-icon {
+	display: none;
+}
+
+.openfile-expander {
+	background: url("../images/arrows.png") no-repeat scroll 2px 1px rgba(0, 0, 0, 0);
+	display: inline-block;
+	height: 16px;
+    width: 16px;
+    border: 0 none;
+    float:right;
+    vertical-align: middle;
+}
+
+.ux-notification-window .x-window-body {
+	text-align: center;
+	width: 300px;
+}
+
+.ux-notification-light .x-window-header {
+	background-color: transparent;
+}
+
+body .ux-notification-light {
+	background-color: #f2dede;
+    border-color: #ebccd1;
+	border-size: 3px;
+}
+
+.ux-notification-light .x-window-body {
+	text-align: center;
+	padding: 15px 5px 20px 5px;
+	background-color: transparent;
+	border: 0px solid white;
+	color: #a94442;
+}
+
+.ux-notification-light .moreInfoLink {
+	text-align: right;
+}
+
+.ux-notification-light .x-window-header-text {
+	color: #a94442;
+}
+
+
+.ux-notification-success .x-window-header {
+	background-color: transparent;
+}
+
+body .ux-notification-success {
+	background-color: #DFF0D8;
+    border-color: #d6e9c6;
+	border-size: 3px;
+}
+
+.ux-notification-success .x-window-body {
+	text-align: center;
+	padding: 15px 5px 20px 5px;
+	background-color: transparent;
+	border: 0px solid white;
+	color: #3c763d;
+}
+
+.ux-notification-success .moreInfoLink {
+	text-align: right;
+}
+
+.ux-notification-success .x-window-header-text {
+	color: #3c763d;
+}
+
+.ux-notification-icon-information {
+	background-image: url('../images/icons/information.png');
+}
+
+.ux-notification-icon-error {
+	background-image: url('../images/icons/error.png');
+}
+
+.x-success-icon {
+	background-image: url('../images/icons/accept.png');
+}
+
+.form-success-state {
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    cursor: default;
+    font-size: 11px;
+    height: 16px;
+    line-height: 18px;
+    padding-left: 20px;
+}
+
+.draggableGrid .x-grid-cell {
+	/*border-bottom-width: 1px;
+	border-bottom-color: #A2FAB2; 
+    border-bottom-style: dashed;
+	border-top-width: 1px;
+    border-top-color: #A2FAB2; 
+    border-top-style: dashed;*/
+}
+
+.draggableGrid .x-grid-row-selected .x-grid-cell {
+    /*background-color: #91D99E !important;*/ 
+}
+
+.x-grid-empty {
+    font-size: 16px;
+    text-align: center;
+}
+/* Temporary trick to hide codemirror errors */
+.cm-s-default span.cm-error {
+    color: #117700;
+}
+
+.forbidden-row .x-grid-cell {
+    color: #B5BCB5; 
+}
+
+.forbidden-cell .x-grid-cell {
+	color: #FF0000;
+}
+
+.explorer-icon {
+	height: 12px; 
+	width: 12px; 
+	-moz-border-radius: 6px; 
+	border-radius: 6px;
+	display: inline-block; 
+	vertical-align:middle; 
+	margin-right: 5px; 
+	margin-bottom: 1px; 
+	border: 1px solid #6D6D6D;
+}
+
+.x-tree-custom .x-tree-node-text  {
+	padding: 2px 10px 2px 10px;
+	background-color:#DBEADC;
+	border-radius:3px;
+	display: inline-block;
+	width: 200px;
+	cursor: pointer;
+}
+
+.x-tree-custom .x-grid-row-selected .x-grid-td {
+	background-color: rgba(0, 0, 0, 0);
+}
+
+.x-tree-custom .x-grid-row-focused .x-grid-td, .x-tree-custom .x-grid-row-before-focused .x-grid-td {
+	border-bottom: 0px;
+}
+
+.x-tree-custom .x-tree-elbow-img {
+}
+
+.x-panel-error {
+    background-color: #f2dede;
+    border-color: #ebccd1;
+    border-radius: 4px;
+    border-style: solid;
+    border-width: 1px;
+    padding: 4px;
+    color: #a94442;
+}
+
+.goToElement {
+	cursor: pointer;
+}
+
+.x-panel-error {
+	text-align: left;
+}
+
+.x-panel-error .errorsInfo span {
+	display: block;
+}
+
+.x-panel-error h4 {
+	margin: 5px 0px 5px 0px;
+}
+
+.x-panel-error .errorsInfo ul {
+	padding-left: 20px;
+	margin: 0px;
+}

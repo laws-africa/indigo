@@ -1,0 +1,116 @@
+{
+	"annex": {
+		"label": "Назначать пристройка"
+	},
+	"article": {
+		"label": "Назначать article"
+	},
+
+	"blockList": {
+		"label": "Назначать список"
+	},
+
+	"body": {
+		"label": "Назначать тело"
+	},
+
+	"bodyConclusion": {
+		"label": "Назначать заключение"
+	},
+
+	"clause": {
+		"label": "**Set clause"
+	},
+
+	"conclusions": {
+		"label": "Назначать заключение"
+	},
+
+	"docDate": {
+		"label": "Назначать дату"
+	},
+
+	"docNumber": {
+		"label": "Назначать номер"
+	},
+
+	"docTitle": {
+		"label": "Назначать title"
+	},
+
+	"location": {
+		"label": "**Set location"
+	},
+
+	"docType": {
+		"label": "**Set document type"
+	},
+
+	"heading": {
+		"label": "**Set heading"
+	},
+
+	"intro": {
+		"label": "**Set introduction"
+	},
+
+	"item": {
+		"label": "**Set item"
+	},
+
+	"list": {
+		"label": "Назначать список"
+	},
+
+	"num": {
+		"label": "Назначать номер"
+	},
+
+	"point": {
+		"label": "**Set point"
+	},
+
+	"preamble": {
+		"label": "Назначать преамбула"
+	},
+
+	"preface": {
+		"label": "Назначать предисловие"
+	},
+
+	"proponent": {
+		"label": "Назначать сторонник"
+	},
+
+	"signature": {
+		"label": "Назначать подпись"
+	},
+	"role": {
+		"label": "**Set role"
+	},
+	"person": {
+		"label": "**Set person"
+	},
+	"subclause": {
+		"label": "**Set subclause"
+	},
+
+	"subheading": {
+		"label": "**Set subheading"
+	},
+
+	"title": {
+		"label": "Назначать title"
+	},
+
+	"span": {
+		"label": "**Set generic span"
+	},
+	"subdivision": {
+		"label": "**Set subdivision"
+	},
+
+	"container": {
+		"label": "**Set generic container"
+	}
+}

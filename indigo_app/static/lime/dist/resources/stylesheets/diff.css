@@ -1,0 +1,44 @@
+html, body {
+	padding:0;
+	margin: 0;
+	font-family:sans-serif;
+}
+
+.diffDeleted {
+    background-color: rgba(255, 0, 0, 0.15);
+}
+.diffInserted {
+    background-color: rgba(0, 255, 0, 0.15);
+}
+
+td {
+	width: 50%;
+	padding: 0.7em; 
+}
+
+td:first-child {
+	border-right: 2px solid #B5B8C8;
+}
+
+.num {
+	font-weight:bold;
+}
+
+.preface{
+	font-size:large;
+	font-weight:bold;
+}
+
+.docType {
+	font-size:medium;
+	font-style:italic;
+	font-weight:bold;
+}
+
+.item p {
+	display:inline;	
+}
+
+.person {
+	display: block;
+}

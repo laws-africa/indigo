@@ -1,0 +1,690 @@
+{
+	"address": {
+		"label": "Set address",
+		"shortLabel": "address"
+	},
+	"administrationOfOath": {
+		"label": "Set administration of oath",
+		"shortLabel": "administrationOfOath"
+	},
+	"affectedDocument": {
+		"label": "Set affected document",
+		"shortLabel": "affectedDocument"
+	},
+	"alinea": {
+		"label": "Set alinea",
+		"shortLabel": "alinea"
+	},
+	"amendmentBody": {
+		"label": "Set amendment body",
+		"shortLabel": "amendment body"
+	},
+	"amendmentContent": {
+		"label": "Set amendment content",
+		"shortLabel": "amendment content"
+	},
+	"amendmentHeading": {
+		"label": "Set amendment heading",
+		"shortLabel": "amendment heading"
+	},
+	"amendmentJustification": {
+		"label": "Set amendment justification",
+		"shortLabel": "amendment justification"
+	},
+	"amendmentReference": {
+		"label": "Set amendment reference",
+		"shortLabel": "amendment reference"
+	},
+	"answer": {
+		"label": "Set answer",
+		"shortLabel": "answer"
+	},
+	"argument": {
+		"label": "Set argument",
+		"shortLabel": "argument"
+	},
+	"arguments": {
+		"label": "Set arguments",
+		"shortLabel": "arguments"
+	},
+	"article": {
+		"label": "Set article",
+		"shortLabel": "article"
+	},
+	"attachments": {
+		"label": "Set attachments",
+		"shortLabel": "attachments"
+	},
+	"authorialNote": {
+		"label": "Set authorial note",
+		"shortLabel": "note"
+	},
+	"background": {
+		"label": "Set background",
+		"shortLabel": "background"
+	},
+	"block": {
+		"label": "Set a generic block",
+		"shortLabel": "block"
+	},
+	"blockContainer": {
+		"label": "Set block container",
+		"shortLabel": "block container"
+	},
+	"blockList": {
+		"label": "Set a block list",
+		"shortLabel": "blocklist"
+	},
+	"body": {
+		"label": "Set body",
+		"shortLabel": "body"
+	},
+	"book": {
+		"label": "Set book",
+		"shortLabel": "book"
+	},
+	"change": {
+		"label": "Set change",
+		"shortLabel": "change"
+	},
+	"chapter": {
+		"label": "Set chapter",
+		"shortLabel": "chapter"
+	},
+	"citation": {
+		"label": "Set citation",
+		"shortLabel": "citation"
+	},
+	"citations": {
+		"label": "Set citations",
+		"shortLabel": "citations"
+	},
+	"clause": {
+		"label": "Set clause",
+		"shortLabel": "clause"
+	},
+	"collectionBody": {
+		"label": "Set collection body",
+		"shortLabel": "collection body"
+	},
+	"component": {
+		"label": "Set a component",
+		"shortLabel": "component"
+	},
+	"componentRef": {
+		"label": "Set component ref",
+		"shortLabel": "component ref"
+	},
+	"components": {
+		"label": "Set components",
+		"shortLabel": "components"
+	},
+	"concept": {
+		"label": "Set concept",
+		"shortLabel": "concept"
+	},
+	"conclusions": {
+		"label": "Set conclusions",
+		"shortLabel": "conclusions"
+	},
+	"container": {
+		"label": "Set a generic container",
+		"shortLabel": "container"
+	},
+	"courtType": {
+		"label": "Set court type",
+		"shortLabel": "court type"
+	},
+	"coverPage": {
+		"label": "Set cover page",
+		"shortLabel": "cover page"
+	},
+	"date": {
+		"label": "Set date",
+		"shortLabel": "date"
+	},
+	"debateBody": {
+		"label": "Set debate body",
+		"shortLabel": "debate body"
+	},
+	"debateSection": {
+		"label": "Set debate section",
+		"shortLabel": "debate section"
+	},
+	"decision": {
+		"label": "Set decision",
+		"shortLabel": "decision"
+	},
+	"declarationOfVote": {
+		"label": "Set declaration of vote",
+		"shortLabel": "declaration of vote"
+	},
+	"decoration": {
+		"label": "Set decoration",
+		"shortLabel": "decoration"
+	},
+	"def": {
+		"label": "Set definition",
+		"shortLabel": "definition"
+	},
+	"del": {
+		"label": "Set deletion",
+		"shortLabel": "deletion"
+	},
+	"division": {
+		"label": "Set division",
+		"shortLabel": "division"
+	},
+	"docCommittee": {
+		"label": "Set document committee",
+		"shortLabel": "document committee"
+	},
+	"docDate": {
+		"label": "Set document date",
+		"shortLabel": "document date"
+	},
+	"docIntroducer": {
+		"label": "Set document introducer",
+		"shortLabel": "document introducer"
+	},
+	"docJurisdiction": {
+		"label": "Set document jurisdiction",
+		"shortLabel": "document jurisdiction"
+	},
+	"docketNumber": {
+		"label": "Set a docket number",
+		"shortLabel": "docket number"
+	},
+	"docNumber": {
+		"label": "Set document Number",
+		"shortLabel": "document number"
+	},
+	"docProponent": {
+		"label": "Set document proponent",
+		"shortLabel": "document proponent"
+	},
+	"docPurpose": {
+		"label": "Set document purpose",
+		"shortLabel": "document purpose"
+	},
+	"docStage": {
+		"label": "Set document stage",
+		"shortLabel": "document stage"
+	},
+	"docStatus": {
+		"label": "Set document status",
+		"shortLabel": "document status"
+	},
+	"docTitle": {
+		"label": "Set document Title",
+		"shortLabel": "document title"
+	},
+	"docType": {
+		"label": "Set document type",
+		"shortLabel": "document type"
+	},
+	"documentRef": {
+		"label": "Set document reference",
+		"shortLabel": "document reference"
+	},
+	"entity": {
+		"label": "Set entity",
+		"shortLabel": "entity"
+	},
+	"eol": {
+		"label": "Set end of line",
+		"shortLabel": "end of line"
+	},
+	"eop": {
+		"label": "Set end of page",
+		"shortLabel": "end of page"
+	},
+	"event": {
+		"label": "Set event",
+		"shortLabel": "event"
+	},
+	"extractStructure": {
+		"label": "Set extract structure",
+		"shortLabel": "extract structure"
+	},
+	"extractText": {
+		"label": "Set extract text",
+		"shortLabel": "extract text"
+	},
+	"fillIn": {
+		"label": "Set fill in",
+		"shortLabel": "fill in"
+	},
+	"foreign": {
+		"label": "Set foreign",
+		"shortLabel": "foreign"
+	},
+	"formula": {
+		"label": "Enacting formula",
+		"shortLabel": "Enacting formula"
+	},
+	"fragmentBody": {
+		"label": "Set fragment body",
+		"shortLabel": "fragment body"
+	},
+	"from": {
+		"label": "Set form",
+		"shortLabel": "form"
+	},
+	"hcontainer": {
+		"label": "Set generic hcontainer",
+		"shortLabel": "hcontainer"
+	},
+	"header": {
+		"label": "Set header",
+		"shortLabel": "header"
+	},
+	"heading": {
+		"label": "Set heading",
+		"shortLabel": "heading"
+	},
+	"indent": {
+		"label": "Set indent",
+		"shortLabel": "indent"
+	},
+	"inline": {
+		"label": "Set generic inline",
+		"shortLabel": "inline"
+	},
+	"ins": {
+		"label": "Set insertion",
+		"shortLabel": "insertion"
+	},
+	"interstitial": {
+		"label": "Set interstitial",
+		"shortLabel": "interstitial"
+	},
+	"intro": {
+		"label": "Set introduction",
+		"shortLabel": "introduction"
+	},
+	"introduction": {
+		"label": "Set introduction",
+		"shortLabel": "introduction"
+	},
+	"item": {
+		"label": "Set item",
+		"shortLabel": "item"
+	},
+	"judge": {
+		"label": "Set judge",
+		"shortLabel": "judge"
+	},
+	"legislature": {
+		"label": "Set legislature",
+		"shortLabel": "legislature"
+	},
+	"list": {
+		"label": "Set list",
+		"shortLabel": "list"
+	},
+	"listConclusion": {
+		"label": "Set list conclusion",
+		"shortLabel": "list conclusion"
+	},
+	"listIntroduction": {
+		"label": "Set list introduction",
+		"shortLabel": "list introduction"
+	},
+	"location": {
+		"label": "Set location",
+		"shortLabel": "location"
+	},
+	"longTitle": {
+		"label": "Set long title",
+		"shortLabel": "long title"
+	},
+	"mainBody": {
+		"label": "Set main body",
+		"shortLabel": "main body"
+	},
+	"marker": {
+		"label": "Set generic marker",
+		"shortLabel": "marker"
+	},
+	"ministerialStatements": {
+		"label": "Set ministerial statements",
+		"shortLabel": "ministerial statements"
+	},
+	"mmod": {
+		"label": "Set multiple modification",
+		"shortLabel": "mmod"
+	},
+	"mod": {
+		"label": "Set modification",
+		"shortLabel": "mod"
+	},
+	"motivation": {
+		"label": "Set motivation",
+		"shortLabel": "motivation"
+	},
+	"mref": {
+		"label": "Set multiple reference",
+		"shortLabel": "multiple reference"
+	},
+	"narrative": {
+		"label": "Set narrative",
+		"shortLabel": "narrative"
+	},
+	"nationalInterest": {
+		"label": "Set national interest",
+		"shortLabel": "national interest"
+	},
+	"neutralCitation": {
+		"label": "Set neutral citation",
+		"shortLabel": "neutral citation"
+	},
+	"noteRef": {
+		"label": "Set a note reference",
+		"shortLabel": "note reference"
+	},
+	"noticesOfMotion": {
+		"label": "Set notices of motion",
+		"shortLabel": "notices of motion"
+	},
+	"num": {
+		"label": "Set number",
+		"shortLabel": "number"
+	},
+	"object": {
+		"label": "Set object",
+		"shortLabel": "object"
+	},
+	"omissis": {
+		"label": "Set omissis",
+		"shortLabel": "omissis"
+	},
+	"opinion": {
+		"label": "Set opinion",
+		"shortLabel": "opinion"
+	},
+	"oralStatements": {
+		"label": "Set oral statements",
+		"shortLabel": "oral statements"
+	},
+	"organization": {
+		"label": "Set organization",
+		"shortLabel": "organization"
+	},
+	"other": {
+		"label": "Set other",
+		"shortLabel": "other"
+	},
+	"outcome": {
+		"label": "Set outcome",
+		"shortLabel": "outcome"
+	},
+	"papers": {
+		"label": "Set papers",
+		"shortLabel": "papers"
+	},
+	"paragraph": {
+		"label": "Set a paragraph",
+		"shortLabel": "paragraph"
+	},
+	"part": {
+		"label": "Set part",
+		"shortLabel": "part"
+	},
+	"party": {
+		"label": "Set party",
+		"shortLabel": "party"
+	},
+	"person": {
+		"label": "Set person",
+		"shortLabel": "person"
+	},
+	"personalStatements": {
+		"label": "Set personal statements",
+		"shortLabel": "personal statements"
+	},
+	"petitions": {
+		"label": "Set petitions",
+		"shortLabel": "petitions"
+	},
+	"placeholder": {
+		"label": "Set placeholder",
+		"shortLabel": "placeholder"
+	},
+	"point": {
+		"label": "Set point",
+		"shortLabel": "point"
+	},
+	"pointOfOrder": {
+		"label": "Set point of order",
+		"shortLabel": "point of order"
+	},
+	"preamble": {
+		"label": "Set preamble",
+		"shortLabel": "preamble"
+	},
+	"preface": {
+		"label": "Set preface",
+		"shortLabel": "preface"
+	},
+	"proceduralMotions": {
+		"label": "Set procedural motions",
+		"shortLabel": "procedural motions"
+	},
+	"process": {
+		"label": "Set process",
+		"shortLabel": "process"
+	},
+	"proviso": {
+		"label": "Set proviso",
+		"shortLabel": "proviso"
+	},
+	"quantity": {
+		"label": "Set quantity",
+		"shortLabel": "quantity"
+	},
+	"question": {
+		"label": "Set question",
+		"shortLabel": "question"
+	},
+	"questions": {
+		"label": "Set questions",
+		"shortLabel": "questions"
+	},
+	"quotedStructure": {
+		"label": "Set quoted structure",
+		"shortLabel": "quoted structure"
+	},
+	"quotedText": {
+		"label": "Set quoted text",
+		"shortLabel": "quotedText"
+	},
+	"recital": {
+		"label": "Set recital",
+		"shortLabel": "recital"
+	},
+	"recitals": {
+		"label": "Set recitals",
+		"shortLabel": "recitals"
+	},
+	"ref": {
+		"label": "Set reference",
+		"shortLabel": "ref"
+	},
+	"relatedDocument": {
+		"label": "Set related document",
+		"shortLabel": "related document"
+	},
+	"remark": {
+		"label": "Set remark",
+		"shortLabel": "remark"
+	},
+	"resolutions": {
+		"label": "Set resolutions",
+		"shortLabel": "resolutions"
+	},
+	"rmod": {
+		"label": "Set range of modifications",
+		"shortLabel": "range of modifications"
+	},
+	"role": {
+		"label": "Set role",
+		"shortLabel": "role"
+	},
+	"rollCall": {
+		"label": "Set roll call",
+		"shortLabel": "roll call"
+	},
+	"rref": {
+		"label": "Set range of references",
+		"shortLabel": "rref"
+	},
+	"rule": {
+		"label": "Set rule",
+		"shortLabel": "rule"
+	},
+	"scene": {
+		"label": "Set scene",
+		"shortLabel": "scene"
+	},
+	"section": {
+		"label": "Set section",
+		"shortLabel": "section"
+	},
+	"session": {
+		"label": "Set session",
+		"shortLabel": "session"
+	},
+	"shortTitle": {
+		"label": "Set short title",
+		"shortLabel": "short title"
+	},
+	"signature": {
+		"label": "Set signature",
+		"shortLabel": "signature"
+	},
+	"speech": {
+		"label": "Set speech",
+		"shortLabel": "speech"
+	},
+	"speechGroup": {
+		"label": "Set speech group",
+		"shortLabel": "speech group"
+	},
+	"subchapter": {
+		"label": "Set subchapter",
+		"shortLabel": "subchapter"
+	},
+	"subclause": {
+		"label": "Set subclause",
+		"shortLabel": "subclause"
+	},
+	"subdivision": {
+		"label": "Set a subdivision",
+		"shortLabel": "subdivision"
+	},
+	"subFlow": {
+		"label": "Set sub flow",
+		"shortLabel": "sub flow"
+	},
+	"subheading": {
+		"label": "Set subheading",
+		"shortLabel": "subheading"
+	},
+	"sublist": {
+		"label": "Set sublist",
+		"shortLabel": "sublist"
+	},
+	"subparagraph": {
+		"label": "Set subparagraph",
+		"shortLabel": "subparagraph"
+	},
+	"subpart": {
+		"label": "Set subpart",
+		"shortLabel": "subpart"
+	},
+	"subrule": {
+		"label": "Set subrule",
+		"shortLabel": "subrule"
+	},
+	"subsection": {
+		"label": "Set subsection",
+		"shortLabel": "subsection"
+	},
+	"subtitle": {
+		"label": "Set subtitle",
+		"shortLabel": "subtitle"
+	},
+	"tblock": {
+		"label": "Set tblock",
+		"shortLabel": "tblock"
+	},
+	"term": {
+		"label": "Set term",
+		"shortLabel": "term"
+	},
+	"time": {
+		"label": "Set time",
+		"shortLabel": "time"
+	},
+	"title": {
+		"label": "Set title",
+		"shortLabel": "title"
+	},
+	"toc": {
+		"label": "Set toc",
+		"shortLabel": "toc"
+	},
+	"tocItem": {
+		"label": "Set toc item",
+		"shortLabel": "toc item"
+	},
+	"tome": {
+		"label": "Set tome",
+		"shortLabel": "tome"
+	},
+	"transitional": {
+		"label": "Set transitional",
+		"shortLabel": "transitional"
+	},
+	"vote": {
+		"label": "Set vote",
+		"shortLabel": "vote"
+	},
+	"wrap": {
+		"label": "Set wrap",
+		"shortLabel": "wrap"
+	},
+	"writtenStatements": {
+		"label": "Set written statements",
+		"shortLabel": "written statements"
+	},
+	"hierarchicalStructure": {
+		"label": "Hierarchical Structure"
+	},
+	"genericElement": {
+		"label": "Generic element"
+	},
+	"externalFragment": {
+		"label": "Fragment of external text"
+	},
+	"commonsInline": {
+		"label": "Inline"
+	},
+	"contentInline": {
+		"label": "Content inline"
+	},
+	"commonElement": {
+		"label": "Common element"
+	},
+	"commonReference": {
+		"label": "Reference"
+	},
+	"commonJudgement": {
+		"label": "Judgement"
+	},
+	
+	"commonReport": {
+		"label": "debateReport/report"
+	}
+}

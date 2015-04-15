@@ -1,0 +1,42 @@
+{
+    "en": {
+        "tabTitle": "Consolidation Viewer",
+        "firstDocumentLabel":"Modified document",
+        "secondDocumentLabel":"Modifying document",
+        "currentDocument": "Current document in the editor",
+        "changeDocument": "Change document",
+        "selectDocument" : "Select document",
+        "resetDocument": "Reset",
+        "forbiddenElement": "This document was already selected",
+        "consolidate": "Consolidate",
+
+        "dialogTitle": "Consolidation",
+        "dialogQuestion": "Would you like to consolidate this modification?",
+        "successMessage": "Consolidation completed",
+
+        "modifiedDocument": "Modified document",
+        "modifyingDocument": "Modifying document",
+
+        "reportWindowTitle": "Printable Report",
+        "printReport": "Print report",
+        "Pagination_beforePageText": "Modification"
+    },
+    "it": {
+        "tabTitle": "Consolidazione documenti",
+        "firstDocumentLabel":"Documento modificato",
+        "secondDocumentLabel":"Documento modificativo",
+        "currentDocument": "Il documento aperto nell'editor",
+        "changeDocument": "Cambia documento",
+        "selectDocument" : "Seleziona documento",
+        "resetDocument": "Reset",
+        "forbiddenElement": "Questo documento è stato già selezionato",
+        "consolidate": "Consolida",
+
+        "dialogTitle": "Consolida modifica",
+        "dialogQuestion": "Vuoi consolidare questa modifica?",
+        "successMessage": "Consolidazione completata",
+
+        "modifiedDocument": "Documento da modificare",
+        "modifyingDocument": "Documento modificante"
+    }
+}

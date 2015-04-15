@@ -1,0 +1,116 @@
+{
+	"annex": {
+		"label": "Setează anexă"
+	},
+	"article": {
+		"label": "Setează articol"
+	},
+
+	"blockList": {
+		"label": "Setează lista"
+	},
+
+	"body": {
+		"label": "Setează un corp"
+	},
+
+	"bodyConclusion": {
+		"label": "Setează concluzii"
+	},
+
+	"clause": {
+		"label": "**Set clause"
+	},
+
+	"conclusions": {
+		"label": "Setează concluzii"
+	},
+
+	"docDate": {
+		"label": "Setează data"
+	},
+
+	"docNumber": {
+		"label": "Setează număr"
+	},
+
+	"docTitle": {
+		"label": "Setează titlu documentului"
+	},
+
+	"location": {
+		"label": "**Set location"
+	},
+
+	"docType": {
+		"label": "Setează tipul documentului"
+	},
+
+	"heading": {
+		"label": "**Set heading"
+	},
+
+	"intro": {
+		"label": "**Set introduction"
+	},
+
+	"item": {
+		"label": "Setează element"
+	},
+
+	"list": {
+		"label": "Setează lista"
+	},
+
+	"num": {
+		"label": "Setează număr"
+	},
+
+	"point": {
+		"label": "**Set point"
+	},
+
+	"preamble": {
+		"label": "Setează preambul"
+	},
+
+	"preface": {
+		"label": "Setează prefaţă"
+	},
+
+	"proponent": {
+		"label": "Setează susținător"
+	},
+
+	"signature": {
+		"label": "Setează semnătură"
+	},
+	"role": {
+		"label": "Setează rol"
+	},
+	"person": {
+		"label": "Setează persoană"
+	},
+	"subclause": {
+		"label": "**Set subclause"
+	},
+
+	"subheading": {
+		"label": "**Set subheading"
+	},
+
+	"title": {
+		"label": "Setează titlu"
+	},
+
+	"span": {
+		"label": "**Set generic span"
+	},
+	"subdivision": {
+		"label": "**Set subdivision"
+	},
+
+	"container": {
+		"label": "**Set generic container"
+	}
+}

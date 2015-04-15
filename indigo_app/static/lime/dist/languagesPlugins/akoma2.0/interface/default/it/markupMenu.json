@@ -1,0 +1,697 @@
+{
+    "address": {
+        "label": "Imposta indirizzo",
+        "shortLabel": "indirizzo"
+    },
+    "administrationOfOath": {
+        "label": "Asserzione",
+        "shortLabel": "asserzione"
+    },
+    "affectedDocument": {
+        "label": "Documento Modificato",
+        "shortLabel": "modificato"
+    },
+    "alinea": {
+        "label": "Paragrafo non numerato",
+        "shortLabel": "non-numerato"
+    },
+    "amendmentBody": {
+        "label": "corpo di emendamento",
+        "shortLabel": "corpo-emendamento"
+    },
+    "amendmentContent": {
+        "label": "Contenuto di emendamento",
+        "shortLabel": "cont.emend."
+    },
+    "amendmentHeading": {
+        "label": "intestazione",
+        "shortLabel": "intenstazione"
+    },
+    "amendmentJustification": {
+        "label": "Giustificazione",
+        "shortLabel": "giustificazione"
+    },
+    "amendmentReference": {
+        "label": "Riferimento norm.",
+        "shortLabel": "riferimento"
+    },
+    "answer": {
+        "label": "Risposta",
+        "shortLabel": "risposta"
+    },
+    "argument": {
+        "label": "Argomento",
+        "shortLabel": "argomento"
+    },
+    "arguments": {
+        "label": "Argomenti",
+        "shortLabel": "argomenti"
+    },
+    "article": {
+        "label": "articolo",
+        "shortLabel": "articolo"
+    },
+    "attachments": {
+        "label": "Allegato",
+        "shortLabel": "allegato"
+    },
+    "authorialNote": {
+        "label": "Nota dell'autore",
+        "shortLabel": "nota-autore"
+    },
+    "background": {
+        "label": "Fatto",
+        "shortLabel": "fatto"
+    },
+    "block": {
+        "label": "Blocco",
+        "shortLabel": "blocco"
+    },
+    "blockContainer": {
+        "label": "contenitore di blocchi",
+        "shortLabel": "contenitore-blocchi"
+    },
+    "blockList": {
+        "label": "Lista",
+        "shortLabel": "lista"
+    },
+    "body": {
+        "label": "Corpo",
+        "shortLabel": "corpo"
+    },
+    "book": {
+        "label": "libro",
+        "shortLabel": "libro"
+    },
+    "change": {
+        "label": "xxx",
+        "shortLabel": "xxx"
+    },
+    "chapter": {
+        "label": "Capitolo",
+        "shortLabel": "capitolo"
+    },
+    "citation": {
+        "label": "Citazione",
+        "shortLabel": "citazione"
+    },
+    "citations": {
+        "label": "Citazioni",
+        "shortLabel": "citazioni"
+    },
+    "clause": {
+        "label": "clausola",
+        "shortLabel": "clausola"
+    },
+    "collectionBody": {
+        "label": "corpo",
+        "shortLabel": "corpo"
+    },
+    "component": {
+        "label": "Componente",
+        "shortLabel": "componente"
+    },
+    "componentRef": {
+        "label": "Link a componente",
+        "shortLabel": "link-componente"
+    },
+    "components": {
+        "label": "Componenti",
+        "shortLabel": "componenti"
+    },
+    "concept": {
+        "label": "Concetto",
+        "shortLabel": "concetto"
+    },
+    "conclusions": {
+        "label": "Conclusioni",
+        "shortLabel": "conclusioni"
+    },
+    "container": {
+        "label": "Contenitore",
+        "shortLabel": "contenitore"
+    },
+    "courtType": {
+        "label": "tipo corte",
+        "shortLabel": "tipo-corte"
+    },
+    "coverPage": {
+        "label": "Copertina",
+        "shortLabel": "copertina"
+    },
+    "date": {
+        "label": "data",
+        "shortLabel": "data"
+    },
+    "debateBody": {
+        "label": "Corpo",
+        "shortLabel": "corpo"
+    },
+    "debateSection": {
+        "label": "Sezione del report",
+        "shortLabel": "sezione-report"
+    },
+    "decision": {
+        "label": "Decisione",
+        "shortLabel": "decisione"
+    },
+    "declarationOfVote": {
+        "label": "Dichiarazione di voto",
+        "shortLabel": "dichiarazione-voto"
+    },
+    "decoration": {
+        "label": "Decorazione",
+        "shortLabel": "decorazione"
+    },
+    "def": {
+        "label": "Definizione",
+        "shortLabel": "definizione"
+    },
+    "del": {
+        "label": "Cancella",
+        "shortLabel": "cancella"
+    },
+    "division": {
+        "label": "Divisione",
+        "shortLabel": "divisione"
+    },
+    "docCommittee": {
+        "label": "Commissione",
+        "shortLabel": "commissione"
+    },
+    "docDate": {
+        "label": "Data doc.",
+        "shortLabel": "data-doc"
+    },
+    "docIntroducer": {
+        "label": "Introduttore",
+        "shortLabel": "introduttore"
+    },
+    "docJurisdiction": {
+        "label": "Giurisdizione",
+        "shortLabel": "commissione"
+    },
+    "docketNumber": {
+        "label": "Numero Pratica",
+        "shortLabel": "numero-pratica"
+    },
+    "docNumber": {
+        "label": "Numero Doc.",
+        "shortLabel": "numero-doc"
+    },
+    "docProponent": {
+        "label": "Proponente",
+        "shortLabel": "proponente"
+    },
+    "docPurpose": {
+        "label": "Finalità",
+        "shortLabel": "finalita"
+    },
+    "docStage": {
+        "label": "Fase",
+        "shortLabel": "fase"
+    },
+    "docStatus": {
+        "label": "Stato Doc.",
+        "shortLabel": "stato-doc"
+    },
+    "docTitle": {
+        "label": "Titolo Doc.",
+        "shortLabel": "titolo-doc"
+    },
+    "docType": {
+        "label": "Tipo Doc.",
+        "shortLabel": "tipo-doc"
+    },
+    "documentRef": {
+        "label": "Link a Doc.",
+        "shortLabel": "link-doc"
+    },
+    "entity": {
+        "label": "Entita'",
+        "shortLabel": "entita"
+    },
+    "eol": {
+        "label": "Fine linea",
+        "shortLabel": "fine-linea"
+    },
+    "eop": {
+        "label": "Fine pagina",
+        "shortLabel": "fine-pagina"
+    },
+    "event": {
+        "label": "Evento",
+        "shortLabel": "evento"
+    },
+    "extractStructure": {
+        "label": "Estratto di struttura",
+        "shortLabel": "estratto-struttura"
+    },
+    "extractText": {
+        "label": "Estratto di testo",
+        "shortLabel": "estratto-testo"
+    },
+    "fillIn": {
+        "label": "Campo di Form",
+        "shortLabel": "campo-form"
+    },
+    "foreign": {
+        "label": "Inclusione esterna",
+        "shortLabel": "inclusione-esterna"
+    },
+    "formula": {
+        "label": "Formula",
+        "shortLabel": "formula"
+    },
+    "fragmentBody": {
+        "label": "Frammento di corpo",
+        "shortLabel": "frammento-corpo"
+    },
+    "from": {
+        "label": "Da",
+        "shortLabel": "da"
+    },
+    "hcontainer": {
+        "label": "Contenitore gerarchico generico",
+        "shortLabel": "gerarchico-generico"
+    },
+    "header": {
+        "label": "Intestazione sentenza",
+        "shortLabel": "intestazione-sentenza"
+    },
+    "heading": {
+        "label": "Rubrica",
+        "shortLabel": "rubrica"
+    },
+    "indent": {
+        "label": "Indentato",
+        "shortLabel": "indentato"
+    },
+    "inline": {
+        "label": "Inline",
+        "shortLabel": "inline"
+    },
+    "ins": {
+        "label": "Inserimento",
+        "shortLabel": "inserimento"
+    },
+    "interstitial": {
+        "label": "Interstizio",
+        "shortLabel": "interstizio"
+    },
+    "intro": {
+        "label": "Introduzione di lista",
+        "shortLabel": "intro-lista"
+    },
+    "introduction": {
+        "label": "Introduzione di lista",
+        "shortLabel": "intro-lista"
+    },
+    "item": {
+        "label": "Punto",
+        "shortLabel": "punto"
+    },
+    "judge": {
+        "label": "Giudice",
+        "shortLabel": "giudice"
+    },
+    "legislature": {
+        "label": "Legislatura",
+        "shortLabel": "legislatura"
+    },
+    "list": {
+        "label": "Lista gerarchica",
+        "shortLabel": "list-gerarchica"
+    },
+    "listConclusion": {
+        "label": "Conclusione lista",
+        "shortLabel": "conclusione-lista"
+    },
+    "listIntroduction": {
+        "label": "Introduzione lista",
+        "shortLabel": "intro-liste"
+    },
+    "location": {
+        "label": "Luogo",
+        "shortLabel": "luogo"
+    },
+    "longTitle": {
+        "label": "Titolo introduttivo",
+        "shortLabel": "titolo-lungo"
+    },
+    "mainBody": {
+        "label": "Corpo di doc",
+        "shortLabel": "corpo-doc"
+    },
+    "marker": {
+        "label": "marker",
+        "shortLabel": "marker"
+    },
+    "ministerialStatements": {
+        "label": "Dichiarazione ministeriale",
+        "shortLabel": "dic-ministerale"
+    },
+    "mmod": {
+        "label": "Modifiche multiple",
+        "shortLabel": "mmod"
+    },
+    "mod": {
+        "label": "Modifica",
+        "shortLabel": "modifica"
+    },
+    "motivation": {
+        "label": "Motivazione",
+        "shortLabel": "motivazione"
+    },
+    "mref": {
+        "label": "Riferimenti multipli",
+        "shortLabel": "rif-multipli"
+    },
+    "narrative": {
+        "label": "Narrazione",
+        "shortLabel": "narrazione"
+    },
+    "nationalInterest": {
+        "label": "Dichiarazione di interesse nazionale",
+        "shortLabel": "dich-nazionale"
+    },
+    "neutralCitation": {
+        "label": "Codice sentenza",
+        "shortLabel": "cod-sentenza"
+    },
+    "noteRef": {
+        "label": "Riferimento in nota",
+        "shortLabel": "rif-nota"
+    },
+    "noticesOfMotion": {
+        "label": "Mozione",
+        "shortLabel": "mozione"
+    },
+    "num": {
+        "label": "Numero",
+        "shortLabel": "numero"
+    },
+    "object": {
+        "label": "Oggetto",
+        "shortLabel": "oggetto"
+    },
+    "omissis": {
+        "label": "Omissis",
+        "shortLabel": "omissis"
+    },
+    "opinion": {
+        "label": "Opinione",
+        "shortLabel": "opinione"
+    },
+    "oralStatements": {
+        "label": "Dichiarazione orale",
+        "shortLabel": "dich-orale"
+    },
+    "organization": {
+        "label": "Organizzazione",
+        "shortLabel": "organizzazione"
+    },
+    "other": {
+        "label": "Altro",
+        "shortLabel": "altro"
+    },
+    "outcome": {
+        "label": "Risultato",
+        "shortLabel": "risultato"
+    },
+    "papers": {
+        "label": "Articoli",
+        "shortLabel": "articoli"
+    },
+    "paragraph": {
+        "label": "Comma",
+        "shortLabel": "comma"
+    },
+    "part": {
+        "label": "Parte",
+        "shortLabel": "parte"
+    },
+    "party": {
+        "label": "Parte",
+        "shortLabel": "parte"
+    },
+    "person": {
+        "label": "Persona",
+        "shortLabel": "persona"
+    },
+    "personalStatements": {
+        "label": "Dichiarazione personale",
+        "shortLabel": "dich-personale"
+    },
+    "petitions": {
+        "label": "Petizione",
+        "shortLabel": "petizione"
+    },
+    "placeholder": {
+        "label": "Termine temporale",
+        "shortLabel": "termine"
+    },
+    "point": {
+        "label": "Punto",
+        "shortLabel": "punto"
+    },
+    "pointOfOrder": {
+        "label": "Punto all'ordine del giorno",
+        "shortLabel": "punto-ordine"
+    },
+    "preamble": {
+        "label": "Preambolo",
+        "shortLabel": "preambolo"
+    },
+    "preface": {
+        "label": "Intestazione",
+        "shortLabel": "intestazione"
+    },
+    "proceduralMotions": {
+        "label": "Richiesta di mozione",
+        "shortLabel": "rich-mozione"
+    },
+    "process": {
+        "label": "Processo",
+        "shortLabel": "processo"
+    },
+    "proviso": {
+        "label": "Disposizione",
+        "shortLabel": "disposizione"
+    },
+    "quantity": {
+        "label": "Quantita'",
+        "shortLabel": "quantita"
+    },
+    "question": {
+        "label": "Quesito",
+        "shortLabel": "quesito"
+    },
+    "questions": {
+        "label": "Quesiti",
+        "shortLabel": "quesiti"
+    },
+    "quotedStructure": {
+        "label": "Novella strutturata",
+        "shortLabel": "novella-strutturata"
+    },
+    "quotedText": {
+        "label": "Novella testuale",
+        "shortLabel": "novella-testo"
+    },
+    "recital": {
+        "label": "Giustificazione",
+        "shortLabel": "giustificazione"
+    },
+    "recitals": {
+        "label": "Giustificazioni",
+        "shortLabel": "giustificazioni"
+    },
+    "ref": {
+        "label": "Riferimento",
+        "shortLabel": "riferimento"
+    },
+    "relatedDocument": {
+        "label": "Documento Collegato",
+        "shortLabel": "doc-collegato"
+    },
+    "remark": {
+        "label": "remark",
+        "shortLabel": "remark"
+    },
+    "resolutions": {
+        "label": "Risoluzione",
+        "shortLabel": "risluzione"
+    },
+    "rmod": {
+        "label": "Intervallo di modifiche",
+        "shortLabel": "intervallo-mod"
+    },
+    "role": {
+        "label": "Ruolo",
+        "shortLabel": "ruolo"
+    },
+    "rollCall": {
+        "label": "Atto di Votazione",
+        "shortLabel": "atto-votazione"
+    },
+    "rref": {
+        "label": "Intervallo di riferimenti",
+        "shortLabel": "intervallo-rif"
+    },
+    "rule": {
+        "label": "Regola",
+        "shortLabel": "regola"
+    },
+    "scene": {
+        "label": "Scene",
+        "shortLabel": "scene"
+    },
+    "section": {
+        "label": "Sezione",
+        "shortLabel": "sezione"
+    },
+    "session": {
+        "label": "Sessione",
+        "shortLabel": "sessione"
+    },
+    "shortTitle": {
+        "label": "Titolo breve",
+        "shortLabel": "titolo-breve"
+    },
+    "signature": {
+        "label": "Firma",
+        "shortLabel": "firma"
+    },
+    "speech": {
+        "label": "Discorso",
+        "shortLabel": "discorso"
+    },
+    "speechGroup": {
+        "label": "Gruppo di discorsi",
+        "shortLabel": "gruppo-discorsi"
+    },
+    "subchapter": {
+        "label": "Sotto-capitolo",
+        "shortLabel": "sotto-capitolo"
+    },
+    "subclause": {
+        "label": "Sotto-clausola",
+        "shortLabel": "sotto-clausola"
+    },
+    "subdivision": {
+        "label": "Sotto-divisione",
+        "shortLabel": "sotto-divisione"
+    },
+    "subFlow": {
+        "label": "subFlow",
+        "shortLabel": "subFlow"
+    },
+    "subheading": {
+        "label": "Sotto-rubrica",
+        "shortLabel": "sotto-rubrica"
+    },
+    "sublist": {
+        "label": "Sotto-lista",
+        "shortLabel": "sotto-lista"
+    },
+    "subparagraph": {
+        "label": "Sotto-paragrafo",
+        "shortLabel": "sotto-paragrafo"
+    },
+    "subpart": {
+        "label": "Sotto-parte",
+        "shortLabel": "sotto-parte"
+    },
+    "subrule": {
+        "label": "Sotto-regola",
+        "shortLabel": "sotto-regola"
+    },
+    "subsection": {
+        "label": "Sotto-sezione",
+        "shortLabel": "sotto-sezione"
+    },
+    "subtitle": {
+        "label": "Sotto-titolo",
+        "shortLabel": "sotto-titolo"
+    },
+    "tblock": {
+        "label": "tblock",
+        "shortLabel": "tblock"
+    },
+    "term": {
+        "label": "Termine",
+        "shortLabel": "termine"
+    },
+    "time": {
+        "label": "Tempo",
+        "shortLabel": "tempo"
+    },
+    "title": {
+        "label": "Titolo",
+        "shortLabel": "titolo"
+    },
+    "toc": {
+        "label": "Indice",
+        "shortLabel": "indice"
+    },
+    "tocItem": {
+        "label": "Elemento dell'indice",
+        "shortLabel": "elemento-indice"
+    },
+    "tome": {
+        "label": "Tomo",
+        "shortLabel": "tomo"
+    },
+    "transitional": {
+        "label": "Transitorio",
+        "shortLabel": "transitorio"
+    },
+    "vote": {
+        "label": "Voto",
+        "shortLabel": "voto"
+    },
+    "wrap": {
+        "label": "Coda",
+        "shortLabel": "coda"
+    },
+    "writtenStatements": {
+        "label": "Dichiarazione scritta",
+        "shortLabel": "dich-scritta"
+    },
+    "content": {
+        "label": "content",
+        "shortLabel": "content"
+    },
+    "remedies": {
+        "label": "Rimedi",
+        "shortLabel": "rimedi"
+    },
+    "hierarchicalStructure": {
+    	"label": "Strutture gerarchiche"
+    },
+    "genericElement": {
+    	"label": "Elementi generici"
+    },
+    "externalFragment": {
+    	"label": "Frammenti di testo esterno"
+    },
+    "commonsInline": {
+    	"label": "Elementi inline"
+    },
+    "contentInline": {
+    	"label": "Inline di contenuto"
+    },
+    "commonElement": {
+    	"label": "Elementi comuni"
+    },
+    "commonReference": {
+    	"label": "Riferimenti"
+    },
+    "commonJudgement": {
+    	"label": "Judgement"
+    },
+    "commonReport": {
+    	"label": "debateReport/report"
+    }
+}

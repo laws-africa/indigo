@@ -84,6 +84,11 @@ else:
             os.path.dirname(__file__),
             '..', 'bin', 'pdftotext'))
 
+# LIME editor
+# We use the compiled version of the LIME editor in production and, by default, development.
+# Set this to True to use the development version in development.
+INDIGO_LIME_DEBUG = True
+
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
@@ -122,6 +127,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.media',
     'django.core.context_processors.csrf',
     'django.core.context_processors.tz',
+    'indigo_app.context_processors.general',
 )
 
 #TEMPLATE_DIRS = (

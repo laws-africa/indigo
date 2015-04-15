@@ -1,0 +1,42 @@
+{
+	"hcontainer": {
+		"wrapperElement": "<div>&content;</div>",
+		"buttonStyle" : "background-color: #CC9944; font-size:1.1em",
+		"wrapperStyle" : "border: 2px solid #CC9944; padding: 5px;",
+		"wrapperClass" : "patternName elementName",
+		"wrapperId": "seqId",
+		"allowedPatterns": ["hcontainer", "container", "inline"]
+	},
+	"container": {
+		"wrapperElement": "<div>&content;</div>",
+		"buttonStyle" : "background-color: #BBDDFF; font-size:1.1em",
+		"wrapperStyle" : "border: 2px solid #BBDDFF; padding: 5px;",
+		"wrapperClass" : "patternName elementName",
+		"wrapperId": "seqId",
+		"allowedPatterns": ["container", "block"]
+	},
+	"block": {
+		"wrapperElement": "<div>&content;</div>",
+		"buttonStyle" : "background-color: #999955; font-size:1.1em",
+		"wrapperStyle" : "background-color: #999955; border: 2px solid #009955;color: #FFFFFF;padding: 5px;",
+		"wrapperClass" : "patternName elementName",
+		"wrapperId": "seqId",
+		"allowedPatterns": ["inline", "marker"]
+	},
+	"inline": {
+		"wrapperElement": "<span>&content;</span>",
+		"buttonStyle" : "background-color: #3355AA; color: #FFFFFF; font-size:1.1em",
+		"wrapperStyle" : "border: 1px solid #3355AA;line-height: 20px; padding:1.5px;",
+		"wrapperClass" : "patternName elementName",
+		"wrapperId": "seqId",
+		"allowedPatterns": ["inline", "marker"]
+	},
+	"marker": {
+		"wrapperElement": "<span>&content;</span>",
+		"buttonStyle" : "background-color: #009955; font-size:1.1em",
+		"wrapperStyle" : "",
+		"wrapperClass" : "patternName elementName",
+		"wrapperId": "seqId",
+		"allowedPatterns": []
+	}
+}

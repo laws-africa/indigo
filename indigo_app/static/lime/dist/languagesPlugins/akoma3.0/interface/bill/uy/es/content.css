@@ -1,0 +1,1 @@
+div.document .inline.autoridad[class="inline autoridad"]:before { content: "AUTORIDAD" attr(data-labelinfo); } div.document .inline.autoridad[class="inline autoridad"]:after { content: "AUTORIDAD"; } 

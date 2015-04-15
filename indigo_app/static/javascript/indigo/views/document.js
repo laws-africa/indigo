@@ -105,7 +105,8 @@
       this.tocView.on('item-selected', this.showEditor, this);
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
-        model: this.documentDom,
+        model: this.document,
+        xmlModel: this.documentDom,
         rawModel: this.documentContent,
         tocView: this.tocView,
       });
@@ -139,8 +140,10 @@
       }
     },
 
-    showEditor: function() {
-      this.$el.find('a[href="#content-tab"]').click();
+    showEditor: function(item) {
+      if (item) {
+        this.$el.find('a[href="#content-tab"]').click();
+      }
     },
 
     setDirty: function() {
@@ -226,7 +229,7 @@
       }
     },
 
-    tocDeselected: function() {
+    tocDeselected: function(e) {
       this.tocView.trigger('deselect');
     },
 

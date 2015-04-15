@@ -1,0 +1,6 @@
+<xsd:schema targetNamespace="http://www.w3.org/XML/1998/namespace" xmlns:xml="http://www.w3.org/XML/1998/namespace" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+	<xsd:attribute name="lang" type="xsd:string"/>
+	<xsd:attribute name="space" type="xsd:string"/>
+
+</xsd:schema>

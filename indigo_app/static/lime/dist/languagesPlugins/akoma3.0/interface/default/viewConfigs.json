@@ -1,0 +1,14 @@
+{
+    "allowedViews": [
+        "aknPreviewMainTab",
+        "pdfPreviewMainTab",
+        "at4amMainTab",
+        "amendingDiffMainTab",
+        "consolidatingDiffMainTab",
+        "aknDiffMainTab",
+        "jnDiffMainTab",
+        "newPdfPreviewMainTab",
+        "nirPreviewMainTab",
+        "consolidationMainTab"
+    ]
+}

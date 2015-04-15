@@ -1,0 +1,7 @@
+{
+	"elements": {
+		"preface": {
+			"children": ["p", "toc", "docType", "docNumber", "docDate", "docTitle", "docAuthority", "docProponent", "docStage", "docStatus", "docCommittee", "docIntroducer", "docJurisdiction", "docketNumber","shortTitle", "longTitle", "citations", "legislature", "autoridad"]
+		}
+	}
+}

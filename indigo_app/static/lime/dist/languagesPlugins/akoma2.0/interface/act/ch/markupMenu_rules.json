@@ -1,0 +1,13 @@
+{
+	"elements": {
+		"preface": {
+			"children": ["toc", "docType", "docNumber", "docDate", "docTitle", "docAuthority",  "docStatus", "docJurisdiction", "docketNumber","shortTitle", "citations", "legislature"]
+		},
+		"body": {
+			"children": ["title", "chapter", "section", "article", "clause", "subclause", "list", "point", "paragraph", "romanI", "mod"]
+		},
+		"conclusions": {
+			"children": ["p", "date", "location", "blockContainer", "signature"]
+		}
+	}
+}

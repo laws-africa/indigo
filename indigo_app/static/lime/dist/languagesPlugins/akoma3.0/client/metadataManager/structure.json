@@ -1,0 +1,4 @@
+{
+	"views": ["MetaGrid", "MetadataManagerTabPanel"],
+	"controllers": ["MetadataManagerController"]
+}

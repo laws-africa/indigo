@@ -1,0 +1,10 @@
+{
+
+	"amendmentBody": {
+		"buttonStyle": "background-color: #74BAAC;",
+		"wrapperStyle": {
+			"before": "background-color: #74BAAC; border-color: #74BAAC;",
+			"this": "border:1px solid #74BAAC;"
+		}
+	}
+}

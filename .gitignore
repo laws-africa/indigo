@@ -1,5 +1,6 @@
 env
 *.pyc
 .webassets-cache
+indigo_app/static/lime/develop
 staticfiles/
 docs/_build

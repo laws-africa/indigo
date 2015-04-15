@@ -27,9 +27,9 @@
 
         this.toc = this.buildToc();
 
-        if (this.selectedIndex > toc.length-1) {
+        if (this.selectedIndex > this.toc.length-1) {
           // this triggers a re-render
-          this.selectItem(toc.length-1);
+          this.selectItem(this.toc.length-1);
         } else {
           if (this.selectedIndex > -1) {
             this.toc[this.selectedIndex].selected = true;
@@ -127,9 +127,7 @@
         this.render();
 
         // only do this after rendering
-        if (i > -1) {
-          this.trigger('item-selected', this.toc[i].element);
-        }
+        this.trigger('item-selected', i > -1 ? this.toc[i] : null);
       }
     },
 

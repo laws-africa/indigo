@@ -13,13 +13,6 @@ from .importer import Importer
 log = logging.getLogger(__name__)
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
-    body = serializers.CharField(required=False, write_only=True)
-    """ A write-only field for setting the body of the document. """
-
-    body_url = serializers.SerializerMethodField()
-    """ A read-only URL for the body of the document. The body isn't included in the
-    document description because it could be huge. """
-
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
@@ -44,7 +37,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'id', 'url',
 
                 'content', 'content_url', 'file',
-                'body', 'body_url',
 
                 'title', 'draft', 'created_at', 'updated_at',
                 # frbr_uri components
@@ -56,11 +48,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 'published_url', 'toc_url',
                 )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
-
-    def get_body_url(self, doc):
-        if not doc.pk:
-            return None
-        return reverse('document-body', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_content_url(self, doc):
         if not doc.pk:

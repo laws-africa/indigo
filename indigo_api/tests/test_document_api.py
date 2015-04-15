@@ -23,50 +23,15 @@ class SimpleTest(APITestCase):
 
         # these should not be included directly, they should have URLs
         id = response.data['id']
-        assert_not_in('body', response.data)
         assert_not_in('content', response.data)
         assert_not_in('toc', response.data)
-        assert_equal(response.data['body_url'], 'http://testserver/api/documents/%s/body' % id)
         assert_equal(response.data['content_url'], 'http://testserver/api/documents/%s/content' % id)
         assert_equal(response.data['toc_url'], 'http://testserver/api/documents/%s/toc' % id)
 
-        response = self.client.get('/api/documents/%s/body' % response.data['id'])
+        response = self.client.get('/api/documents/%s/content' % response.data['id'])
         assert_equal(response.status_code, 200)
 
-        assert_equal(response.data['body'], '<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">\n  <section id="section-1">\n    <content>\n      <p/>\n    </content>\n  </section>\n</body>\n')
-
-
-    def test_update_body(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {'body': body_fixture('in the body')})
-        assert_equal(response.status_code, 200)
-
-        response = self.client.get('/api/documents/%s/body' % id)
-        assert_equal(response.status_code, 200)
-        assert_in('<p>in the body</p>', response.data['body'])
-
-        # also try updating the body at /body
-        response = self.client.put('/api/documents/%s/body' % id, {'body': body_fixture('also in the body')})
-        assert_equal(response.status_code, 200)
-
-        response = self.client.get('/api/documents/%s/body' % id)
-        assert_equal(response.status_code, 200)
-        assert_in('<p>also in the body</p>', response.data['body'])
-
-    def test_create_with_body(self):
-        response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2',
-            'body': body_fixture('in the body'),
-            })
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.get('/api/documents/%s/body' % id)
-        assert_equal(response.status_code, 200)
-        assert_in('<p>in the body</p>', response.data['body'])
+        assert_in('<p/>', response.data['content'])
 
 
     def test_create_with_locality(self):

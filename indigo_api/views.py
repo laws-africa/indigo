@@ -63,26 +63,6 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         instance.save()
 
     @detail_route(methods=['GET', 'PUT'])
-    def body(self, request, *args, **kwargs):
-        """ This exposes a GET and PUT resource at ``/api/documents/1/body`` which allows
-        the body of the document to be fetched and set independently of the metadata. This
-        is useful because the body can be large.
-        """
-        instance = self.get_object()
-
-        if request.method == 'GET':
-            return Response({'body': instance.body})
-
-        if request.method == 'PUT':
-            try:
-                instance.body = request.data.get('body')
-                instance.save()
-            except LxmlError as e:
-                raise ValidationError({'body': ["Invalid XML: %s" % e.message]})
-
-            return Response({'body': instance.body})
-
-    @detail_route(methods=['GET', 'PUT'])
     def content(self, request, *args, **kwargs):
         """ This exposes a GET and PUT resource at ``/api/documents/1/content`` which allows
         the content of the document to be fetched and set independently of the metadata. This
@@ -100,7 +80,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
             except LxmlError as e:
                 raise ValidationError({'content': ["Invalid XML: %s" % e.message]})
 
-            return Response({'content': instance.document_xml})
+            return Response()
 
     @detail_route(methods=['GET'])
     def toc(self, request, *args, **kwargs):
@@ -303,7 +283,7 @@ class RenderAPI(APIView):
             {
               "document": {
                 "title": "A title",
-                "body": "... xml ..."
+                "content": "... xml ..."
               }
             }
         """

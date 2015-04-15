@@ -57,15 +57,6 @@ class Document(models.Model):
         return self._doc
 
     @property
-    def body(self):
-        return self.doc.body_xml
-
-    @body.setter
-    def body(self, xml):
-        self.doc.body_xml = xml
-        self.refresh_xml()
-
-    @property
     def content(self):
         """ Alias for `document_xml` """
         return self.document_xml

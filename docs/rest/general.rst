@@ -94,7 +94,6 @@ Both APIs describe a document (an act) as a JSON object, such as:
       "publication_date": "2004-05-21",
       "publication_name": "Government Gazette",
       "publication_number": "179",
-      "body_url": "http://indigo.code4sa.org/api/documents/1/body",
       "content_url": "http://indigo.code4sa.org/api/documents/1/content",
       "published_url": "http://indigo.code4sa.org/api/za/act/2004/10/"
     }
@@ -116,18 +115,16 @@ number         Number of this act in its year of publication, or some other uniq
                identifying it within the year
 year           Year of publication                                                                 String 
 nature         The nature of this document, normally "act".                                        String     ``"act"``
-body_url       URL of the body of the document. Read-only.                                         URL        Auto-generated
 content_url    URL of the full content of the document. Read-only.                                 URL        Auto-generated
 published_url  URL of where the published document is available.                                   URL        Auto-generated
                This will be null if draft is true
 ============== =================================================================================== ========== =========================
 
-In some cases, a document may also contain ``body`` or ``content`` fields.
+In some cases, a document may also contain ``content`` fields.
 
 ============== =================================================================================== ========== =========================
 Field          Description                                                                         Type       Default for new documents
 ============== =================================================================================== ========== =========================
-body           Raw XML body of the document.                                                       String     Basic document body
 content        Raw XML content of the entire document.                                             String     Basic document content
 ============== =================================================================================== ========== =========================
 

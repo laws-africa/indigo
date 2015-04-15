@@ -22,15 +22,6 @@ class DocumentTestCase(TestCase):
         d2 = Document.objects.get(id=id)
         self.assertEqual(d.title, d2.title)
 
-    def test_set_body(self):
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01")
-        d.body = '<body>hello</body>'
-        d.save()
-        id = d.id
-
-        d2 = Document.objects.get(id=id)
-        self.assertIn('<body>hello</body>', d2.document_xml)
-
     def test_set_content(self):
         d = Document()
         d.content = document_fixture('test')

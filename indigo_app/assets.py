@@ -36,3 +36,14 @@ register('js', Bundle(
     'javascript/indigo/timestamps.js',
     'javascript/indigo.js',
     output='js/app.%(version)s.js'))
+
+register('lime-js', Bundle(
+    'lime/dist/app.js',
+    output='js/lime.%(version)s.js'))
+
+register('lime-css', Bundle(
+    'lime/dist/resources/LIME-all.css',
+    'lime/dist/resources/stylesheets/extjs4.editor.css',
+    'lime/dist/resources/stylesheets/extjs4.viewport.css',
+    output='stylesheets/lime.%(version)s.css'))
+

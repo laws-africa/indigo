@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% load assets %}
+
 
 {% block header %}
 <span data-document-id="{{ document.id|default:"" }}"></span>
@@ -41,18 +43,34 @@
 
 {% endblock %}
 
+{% block head-css %}
+  {{ block.super }}
+
+  {% if DEBUG and INDIGO_LIME_DEBUG %}
+    {# CSS for development LIME #}
+
+    <link rel="stylesheet" href="/static/lime/develop/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/lime/develop/resources/stylesheets/extjs4.editor.css" />
+    <link rel="stylesheet" type="text/css" href="/static/lime/develop/resources/stylesheets/extjs4.viewport.css" />
+
+  {% else %}
+    {# CSS for production LIME #}
+
+    {% assets "lime-css" %}
+      <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
+    {% endassets %}
+  {% endif %}
+
+{% endblock %}
+
 {% block js %}
   {{ block.super }}
   <script type="text/javascript" src="/static/javascript/ace/ace.js"></script>
 
   <!-- LIME stuff -->
 
-  <link rel="stylesheet" type="text/css" href="/static/lime/lib/codemirror/codemirror.css"/>
   {% if DEBUG and INDIGO_LIME_DEBUG %}
     {# development dependencies for LIME so that we don't have to recompile it the whole time #}
-    <link rel="stylesheet" href="/static/lime/develop/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="/static/lime/develop/resources/stylesheets/extjs4.editor.css" />
-    <link rel="stylesheet" type="text/css" href="/static/lime/develop/resources/stylesheets/extjs4.viewport.css" />
 
     <script>LIME_base_url = '/static/lime/develop/';</script>
     <script src="/static/lime/develop/ext/ext-all-dev.js"></script>
@@ -61,22 +79,17 @@
 
     <!-- Load EXTJS4 extension for tinyMCE -->
     <script type="text/javascript" src="/static/lime/develop/lib/tinymce4/tinymce.min.js"></script>
-    <!-- Load EXTJS4 extension for Codemirror -->
-    <script type="text/javascript" src="/static/lime/develop/lib/codemirror/codemirror.min.js"></script>
     <script type="text/javascript" src="/static/lime/develop/lib/vkbeautify/vkbeautify.js"></script>
+
   {% else %}
     {# production dependencies for LIME #}
-    <link rel="stylesheet" href="/static/lime/dist/resources/LIME-all.css">
-    <link rel="stylesheet" type="text/css" href="/static/lime/dist/resources/stylesheets/extjs4.editor.css" />
-    <link rel="stylesheet" type="text/css" href="/static/lime/dist/resources/stylesheets/extjs4.viewport.css" />
-
     <script>LIME_base_url = '/static/lime/dist/';</script>
-    <script type="text/javascript" src="/static/lime/dist/app.js"></script>
+    {% assets "lime-js" %}
+      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
+    {% endassets %}
 
-    <!-- Load EXTJS4 extension for tinyMCE -->
+    {# these need to be loaded separately due to the way they load their dependent scripts #}
     <script type="text/javascript" src="/static/lime/dist/lib/tinymce4/tinymce.min.js"></script>
-    <!-- Load EXTJS4 extension for Codemirror -->
-    <script type="text/javascript" src="/static/lime/dist/lib/codemirror/codemirror.min.js"></script>
     <script type="text/javascript" src="/static/lime/dist/lib/vkbeautify/vkbeautify.js"></script>
   {% endif %}
 

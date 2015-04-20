@@ -181,14 +181,8 @@ body.x-body {
 #error-box {
   position: fixed;
   top: 10px;
-  left: 0px;
-  right: 0px;
-  
-  .alert {
-    width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-  }
+  width: 600px;
+  z-index: 9999;
 }
 
 #progress-bar {

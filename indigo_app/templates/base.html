@@ -18,11 +18,9 @@
 
   </head>
   <body {% block body-attributes %}{% endblock %} class='{% block body-class %}{% endblock %}'>
-    <div id="error-box">
-      <div class="alert alert-danger fade in hidden">
-        <button type="button" class="close">&times;</button>
-        <p></p>
-      </div>
+    <div id="error-box" class="alert alert-danger hidden">
+      <button type="button" class="close">&times;</button>
+      <p></p>
     </div>
 
     {% block page-content %}

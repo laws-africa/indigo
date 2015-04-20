@@ -11,13 +11,18 @@
     },
 
     show: function(message) {
+      var left = $(window).width()/2 - this.$el.width()/2;
+
       this.message = message;
       this.render();
-      this.$el.find('.alert').removeClass('hidden');
+      this.$el
+        .css('left', left)
+        .removeClass('hidden');
     },
 
     close: function() {
-      this.$el.find('.alert').addClass('hidden');
+      this.$el
+        .addClass('hidden');
     },
 
     render: function() {

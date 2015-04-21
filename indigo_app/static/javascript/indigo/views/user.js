@@ -13,11 +13,12 @@
       // in the login modal
       'click .btn.forgot-password': 'showForgotPassword',
       'click .btn.show-login-form': 'showLoginForm',
-      'show.bs.modal #login-box': 'loginBoxShown',
+      'show.bs.modal #login-box': 'modalShown',
       'submit form.login-form': 'authenticate',
       'submit form.forgot-password-form': 'forgotPassword',
 
       // user profile modal
+      'show.bs.modal #user-profile-box': 'modalShown',
       'submit form.user-profile-form': 'saveUser',
     },
     bindings: {
@@ -73,8 +74,8 @@
         });
     },
 
-    loginBoxShown: function() {
-      this.$loginBox.find('.alert').hide();
+    modalShown: function(e) {
+      $(e.currentTarget).find('.alert').hide();
     },
 
     userChanged: function() {

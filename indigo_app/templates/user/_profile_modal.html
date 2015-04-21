@@ -1,0 +1,42 @@
+<div class="modal fade" id="user-profile-box">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Your profile</h4>
+      </div>
+
+      <form class="form-horizontal user-profile-form" method="POST" action="/auth/user/">
+        <div class="modal-body">
+
+          <div class="alert alert-danger" style="display: none"></div>
+
+          <div class="form-group">
+            <label for="profile_first_name" class="col-sm-2 control-label">Name</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="first_name" id="profile_first_name" placeholder="First name">
+            </div>
+
+            <label for="profile_last_name" class="col-sm-2 control-label">Surname</label>
+            <div class="col-sm-4">
+              <input type="text" class="form-control" name="last_name" id="profile_last_name" placeholder="Last name">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="profile_email" class="col-sm-2 control-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" class="form-control" name="email" id="profile_email" placeholder="you@example.com" required>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-default" data-dismiss="modal">Close</button>
+          <input type="submit" class="btn btn-primary" value="Save changes">
+        </div>
+      </form>
+
+    </div>
+  </div>
+</div>

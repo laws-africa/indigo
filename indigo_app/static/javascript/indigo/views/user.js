@@ -10,12 +10,15 @@
       'click .js-user-buttons .btn.login.not-logged-in': 'showLoginBox',
       'click .js-user-buttons .logout': 'logout',
 
-      // in the modal
+      // in the login modal
       'click .btn.forgot-password': 'showForgotPassword',
       'click .btn.show-login-form': 'showLoginForm',
       'show.bs.modal #login-box': 'loginBoxShown',
       'submit form.login-form': 'authenticate',
       'submit form.forgot-password-form': 'forgotPassword',
+
+      // user profile modal
+      'submit form.user-profile-form': 'saveUser',
     },
     bindings: {
       '.username': {
@@ -23,6 +26,12 @@
         onGet: function(values) {
           return _.find(values, function(v) { return !!v; });
         }
+      },
+      '#profile_first_name': 'first_name',
+      '#profile_last_name': 'last_name',
+      '#profile_email': {
+        observe: 'email',
+        onSet: 'updateEmail',
       },
     },
 
@@ -41,6 +50,27 @@
 
       // login modal
       this.$loginBox = $('#login-box');
+      // profile modal
+      this.$profileBox = $('#user-profile-box');
+    },
+    
+    updateEmail: function(val, options) {
+      // also set the user's username when email is set
+      this.model.set('username', val);
+      return val;
+    },
+
+    saveUser: function(e) {
+      var self = this;
+      e.preventDefault();
+
+      this.model.save()
+        .error(function(xhr) {
+          self.$profileBox.find('.alert-danger').show().text("Your details could not be updated.");
+        })
+        .then(function() {
+          self.$profileBox.modal('hide');
+        });
     },
 
     loginBoxShown: function() {

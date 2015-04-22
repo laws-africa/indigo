@@ -88,14 +88,45 @@ class FrbrUriTestCase(TestCase):
 
         assert_equal("/za/act/1980/nn", uri.work_uri())
 
-    def test_parse_expression(self):
-        uri = FrbrUri.parse("/za/act/1980/02/eng@")
+    def test_with_work_component(self):
+        uri = FrbrUri.parse("/za/act/1980/2/schedule1")
+        assert_equal(uri.country, "za")
+        assert_equal(uri.doctype, "act")
+        assert_equal(uri.subtype, None)
+        assert_equal(uri.actor, None)
+        assert_equal(uri.date, "1980")
+        assert_equal(uri.number, "2")
         assert_equal(uri.language, "eng")
-        assert_equal(uri.expression_date, '')
+        assert_equal(uri.work_component, "schedule1")
+        assert_equal(uri.expression_date, None)
+        assert_equal(uri.expression_component, None)
 
-        uri = FrbrUri.parse("/za/act/1980/02/eng@2014-01-01")
-        assert_equal(uri.language, "eng")
+        assert_equal("/za/act/1980/2", uri.uri())
+        assert_equal("/za/act/1980/2/schedule1", uri.work_uri())
+        assert_equal("/za/act/1980/2/eng/schedule1", uri.expression_uri())
+
+    def test_with_work_and_expression_component(self):
+        uri = FrbrUri.parse("/za/act/1980/2")
+        uri.work_component = "main"
+        uri.expression_component = "schedule1"
+        uri.expression_subcomponent = "chapter/2"
+
+        assert_equal("/za/act/1980/2", uri.uri())
+        assert_equal("/za/act/1980/2/main", uri.work_uri())
+        assert_equal("/za/act/1980/2/eng/schedule1/chapter/2", uri.expression_uri())
+
+    def test_parse_expression(self):
+        uri = FrbrUri.parse("/za/act/1980/02/afr@")
+        assert_equal(uri.language, "afr")
+        assert_equal(uri.expression_date, '')
+        assert_equal("/za/act/1980/02", uri.work_uri())
+        assert_equal("/za/act/1980/02/afr@", uri.expression_uri())
+
+        uri = FrbrUri.parse("/za/act/1980/02/afr@2014-01-01")
+        assert_equal(uri.language, "afr")
         assert_equal(uri.expression_date, "2014-01-01")
+        assert_equal("/za/act/1980/02", uri.work_uri())
+        assert_equal("/za/act/1980/02/afr@2014-01-01", uri.expression_uri())
 
     def test_parse_expression_component(self):
         uri = FrbrUri.parse("/za/act/1980/02/eng/main")
@@ -103,17 +134,17 @@ class FrbrUriTestCase(TestCase):
         assert_equal(uri.expression_date, None)
         assert_equal(uri.expression_component, "main")
 
-        uri = FrbrUri.parse("/za/act/1980/02/eng/main/schedule1")
+        uri = FrbrUri.parse("/za/act/1980/02/eng/main/chapter/2")
         assert_equal(uri.language, "eng")
         assert_equal(uri.expression_date, None)
         assert_equal(uri.expression_component, "main")
-        assert_equal(uri.expression_subcomponent, "schedule1")
+        assert_equal(uri.expression_subcomponent, "chapter/2")
 
-        uri = FrbrUri.parse("/za/act/1980/02/eng@/main/schedule1")
+        uri = FrbrUri.parse("/za/act/1980/02/eng@/main/chapter/2")
         assert_equal(uri.language, "eng")
         assert_equal(uri.expression_date, '')
         assert_equal(uri.expression_component, "main")
-        assert_equal(uri.expression_subcomponent, "schedule1")
+        assert_equal(uri.expression_subcomponent, "chapter/2")
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@2014-01-01/main/schedule1")
         assert_equal(uri.language, "eng")

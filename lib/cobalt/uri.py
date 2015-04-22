@@ -7,15 +7,19 @@ FRBR_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
                               /((?P<actor>[^/]+)/)?)?      # actor (optional)
                               (?P<date>[0-9]{4}(-[0-9]{2}(-[0-9]{2})?)?)  # date
                               /(?P<number>[^/]+)           # number
-                              (/                           # optional expression details
-                                (?P<language>[a-z]{3})     # language (eg. eng)
-                                (@(?P<expression_date>[^/]*))?            # expression date (eg. @ or @2012-12-22)
-                                (/                                        # optional expression component
-                                  (?P<expression_component>[^/]+?)?       # expression component (eg. main or schedule1)
-                                  (/(?P<expression_subcomponent>[^.]+))?  # expression subcomponent (eg. chapter/1 or section/20)
-                                )?                                        #
-                                (\.(?P<format>[a-z]))?     # format (eg. .xml, .akn, .html, .pdf)
-                              )?$""", re.X)
+                              (/
+                               (                           # either a work component or expression details
+                                (                                # optional expression details
+                                  (?P<language>[a-z]{3})                    # language (eg. eng)
+                                  (@(?P<expression_date>[^/]*))?            # expression date (eg. @ or @2012-12-22)
+                                  (/                                        # optional expression component
+                                    (?P<expression_component>[^/]+?)?       # expression component (eg. main or schedule1)
+                                    (/(?P<expression_subcomponent>[^.]+))?  # expression subcomponent (eg. chapter/1 or section/20)
+                                  )?                                        #
+                                  (\.(?P<format>[a-z]))?                    # format (eg. .xml, .akn, .html, .pdf)
+                                )|                                          #
+                                (?P<work_component>[^/]{4,})   # work component
+                              ))?$""", re.X)
 
 
 class FrbrUri(object):
@@ -32,7 +36,7 @@ class FrbrUri(object):
     default_language = 'eng'
 
     def __init__(self, country, locality, doctype, subtype, actor, date, number,
-                 language=None, expression_date=None, expression_component=None,
+                 work_component=None, language=None, expression_date=None, expression_component=None,
                  expression_subcomponent=None, format=None):
         self.country = country
         self.locality = locality
@@ -41,6 +45,7 @@ class FrbrUri(object):
         self.actor = actor
         self.date = date
         self.number = number
+        self.work_component = work_component
 
         self.language = language or self.default_language
         self.expression_date = expression_date
@@ -63,7 +68,11 @@ class FrbrUri(object):
             self.format,
         )
 
-    def work_uri(self):
+    def uri(self):
+        """ String form of the work URI, excluding the work component, if any. """
+        return self.work_uri(work_component=False)
+
+    def work_uri(self, work_component=True):
         """ String form of the work URI. """
         country = self.country
         if self.locality:
@@ -77,25 +86,34 @@ class FrbrUri(object):
                 parts.append(self.actor)
 
         parts += [self.date, self.number]
+
+        if work_component and self.work_component:
+            parts += [self.work_component]
+
         return '/'.join(parts)
 
-    def expression_uri(self):
+    def expression_uri(self, work_component=True):
         """ String form of the expression URI. """
-        uri = self.work_uri() + "/" + self.language
+        uri = self.work_uri(work_component=False) + "/" + self.language
 
         if self.expression_date is not None:
             # TODO: support virtual expression date with ":" instead of "@"
             # http://www.akomantoso.org/release-notes/akoma-ntoso-3.0-schema/naming-conventions-1/bungenihelpcenterreferencemanualpage.2008-01-09.1856321727
             uri = uri + '@' + self.expression_date
 
+        # expression component is preferred over a work component
         if self.expression_component:
             uri = uri + "/" + self.expression_component
             if self.expression_subcomponent:
                 uri = uri + "/" + self.expression_subcomponent
 
+        # if we have a work component, use it
+        elif work_component and self.work_component:
+            uri = uri + "/" + self.work_component
+
         return uri
 
-    def manifestation_uri(self):
+    def manifestation_uri(self, work_component=True):
         """ String form of the manifestation URI. """
         uri = self.expression_uri()
         if self.format:

@@ -9,6 +9,8 @@ import arrow
 from .uri import FrbrUri
 
 encoding_re = re.compile('encoding="[\w-]+"')
+# eg. schedule1
+component_id = re.compile('([^0-9]+)([0-9]+)')
 
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -212,7 +214,12 @@ class Act(object):
         """
         components = OrderedDict()
         components['main'] = self.act
-        # TODO: support schedules etc.
+
+        # components/schedules
+        for doc in self.root.iterfind('./{*}components/{*}component/{*}doc'):
+            name = doc.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1]
+            components[name] = doc
+
         return components
 
     def table_of_contents(self):
@@ -234,7 +241,13 @@ class Act(object):
 
         toc = []
         for component, element in self.components().iteritems():
-            toc += generate_toc(component, [element])
+            if component != "main":
+                # non-main components are items in their own right
+                item = TOCElement(element, component)
+                item.children = generate_toc(component, [element])
+                toc += [item]
+            else:
+                toc += generate_toc(component, [element])
 
         return toc
 
@@ -295,20 +308,33 @@ class TOCElement(object):
     """
 
     def __init__(self, node, component, children=None):
-        try:
-            heading = node.heading
-        except AttributeError:
-            heading = None
+        self.element = node
+        self.type = node.tag.split('}', 1)[-1]
+        self.id = node.get('id')
+
+        if self.type == 'doc':
+            # component, get the title from the alias
+            heading = node.find('./{*}meta/{*}FRBRalias')
+            if heading:
+                self.heading = heading.get('value')
+            else:
+                # eg. schedule1 -> Schedule 1
+                m = component_id.match(component)
+                if m:
+                    self.heading = ' '.join(m.groups()).capitalize()
+                else:
+                    self.heading = component.capitalize()
+        else:
+            try:
+                self.heading = _collect_string_content(node.heading)
+            except AttributeError:
+                self.heading = None
 
         try:
             num = node.num
         except AttributeError:
             num = None
 
-        self.element = node
-        self.type = node.tag.split('}', 1)[-1]
-        self.id = node.get('id')
-        self.heading = _collect_string_content(heading) if heading else None
         self.num = num.text if num else None
         self.children = children
 

@@ -15,11 +15,19 @@ class ActTestCase(TestCase):
     def test_frbr_uri(self):
         a = Act()
         a.frbr_uri = '/za/act/2007/01'
+
         assert_equal(a.frbr_uri.work_uri(), '/za/act/2007/01')
+        assert_equal(a.number, '01')
+
+        assert_equal(a.meta.identification.FRBRWork.FRBRthis.get('value'), '/za/act/2007/01/main')
+        assert_equal(a.meta.identification.FRBRWork.FRBRuri.get('value'), '/za/act/2007/01')
+
+        assert_equal(a.meta.identification.FRBRExpression.FRBRthis.get('value'), '/za/act/2007/01/eng@/main')
         assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/za/act/2007/01/eng@')
+
+        assert_equal(a.meta.identification.FRBRManifestation.FRBRthis.get('value'), '/za/act/2007/01/eng@/main')
         assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/za/act/2007/01/eng@')
         
-        assert_equal(a.number, '01')
 
     def test_empty_body(self):
         a = Act()

@@ -149,18 +149,31 @@ class Act(object):
             return FrbrUri.empty()
 
     @frbr_uri.setter
-    def frbr_uri(self, value):
-        if not isinstance(value, FrbrUri):
-            value = FrbrUri.parse(value)
+    def frbr_uri(self, uri):
+        if not isinstance(uri, FrbrUri):
+            uri = FrbrUri.parse(uri)
 
-        self.meta.identification.FRBRWork.FRBRuri.set('value', value.work_uri())
+        uri.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
 
-        if value.expression_date is None:
-            value.expression_date = ''
+        if uri.expression_date is None:
+            uri.expression_date = ''
 
-        value.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
-        self.meta.identification.FRBRExpression.FRBRuri.set('value', value.expression_uri())
-        self.meta.identification.FRBRManifestation.FRBRuri.set('value', value.expression_uri())
+        if uri.work_component is None:
+            uri.work_component = 'main'
+
+        # set URIs of the main document and components
+        for component, element in self.components().iteritems():
+            uri.work_component = component
+            ident = element.find('.//{*}meta/{*}identification')
+
+            ident.FRBRWork.FRBRuri.set('value', uri.uri())
+            ident.FRBRWork.FRBRthis.set('value', uri.work_uri())
+
+            ident.FRBRExpression.FRBRuri.set('value', uri.expression_uri(False))
+            ident.FRBRExpression.FRBRthis.set('value', uri.expression_uri())
+
+            ident.FRBRManifestation.FRBRuri.set('value', uri.expression_uri(False))
+            ident.FRBRManifestation.FRBRthis.set('value', uri.expression_uri())
 
     @property
     def year(self):

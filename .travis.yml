@@ -4,4 +4,6 @@ python:
 env:
   - DATABASE_URL=postgres://postgres:@localhost:5432/indigo_test
 install: pip install -r requirements.txt
-script: python manage.py test
+before_script:
+  - "npm install -g jshint"
+script: python manage.py test && jshint indigo_app/static/javascript/indigo/

@@ -1,5 +1,4 @@
 import logging
-from datetime import date
 
 from django.db import models
 import arrow

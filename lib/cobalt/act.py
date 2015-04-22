@@ -1,8 +1,7 @@
 import re
 from collections import OrderedDict
-from datetime import date
 
-from lxml import objectify 
+from lxml import objectify
 from lxml import etree
 from lxml.html import _collect_string_content
 import arrow
@@ -12,6 +11,7 @@ from .uri import FrbrUri
 encoding_re = re.compile('encoding="[\w-]+"')
 
 DATE_FORMAT = "%Y-%m-%d"
+
 
 def datestring(value):
     if value is None:
@@ -58,7 +58,6 @@ class Act(object):
         self.namespace = self.root.nsmap[None]
         self._maker = objectify.ElementMaker(annotate=False, namespace=self.namespace, nsmap=self.root.nsmap)
 
-
     @property
     def title(self):
         """ Short title """
@@ -77,7 +76,6 @@ class Act(object):
     def work_date(self, value):
         self.meta.identification.FRBRWork.FRBRdate.set('date', datestring(value))
 
-
     @property
     def expression_date(self):
         """ Date from the FRBRExpression element """
@@ -87,7 +85,6 @@ class Act(object):
     def expression_date(self, value):
         self.meta.identification.FRBRExpression.FRBRdate.set('date', datestring(value))
 
-
     @property
     def manifestation_date(self):
         """ Date from the FRBRManifestation element """
@@ -96,7 +93,6 @@ class Act(object):
     @manifestation_date.setter
     def manifestation_date(self, value):
         self.meta.identification.FRBRManifestation.FRBRdate.set('date', datestring(value))
-
 
     @property
     def publication_name(self):
@@ -110,7 +106,6 @@ class Act(object):
         pub.set('name', value)
         pub.set('showAs', value)
 
-
     @property
     def publication_date(self):
         """ Date of the publication """
@@ -120,8 +115,7 @@ class Act(object):
     @publication_date.setter
     def publication_date(self, value):
         self._ensure('meta.publication', after=self.meta.identification)\
-                .set('date', datestring(value))
-
+            .set('date', datestring(value))
 
     @property
     def publication_number(self):
@@ -132,8 +126,7 @@ class Act(object):
     @publication_number.setter
     def publication_number(self, value):
         self._ensure('meta.publication', after=self.meta.identification)\
-                .set('number', value)
-
+            .set('number', value)
 
     @property
     def language(self):
@@ -168,7 +161,6 @@ class Act(object):
         value.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
         self.meta.identification.FRBRExpression.FRBRuri.set('value', value.expression_uri())
         self.meta.identification.FRBRManifestation.FRBRuri.set('value', value.expression_uri())
-
 
     @property
     def year(self):
@@ -213,8 +205,8 @@ class Act(object):
     def table_of_contents(self):
         """ Get the table of contents of this document as a list of :class:`TOCElement` instances. """
 
-        interesting = set('{%s}%s' % (self.namespace, s) for s in
-                ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions'])
+        interesting = set('{%s}%s' % (self.namespace, s) for s in [
+            'coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions'])
 
         def generate_toc(component, elements):
             items = []
@@ -264,7 +256,6 @@ class Act(object):
     def _make(self, elem):
         return getattr(self._maker, elem)()
 
-
     def _get(self, name, root=None):
         parts = name.split('.')
         node = root or self
@@ -275,6 +266,7 @@ class Act(object):
             except AttributeError:
                 return None
         return node
+
 
 class TOCElement(object):
     """
@@ -315,25 +307,25 @@ class TOCElement(object):
             self.subcomponent += '/' + self.num.strip('.()')
 
     def as_dict(self):
-      info = {
-          'type': self.type,
-          'component': self.component,
-          'subcomponent': self.subcomponent,
-      }
-      if self.heading:
-        info['heading'] = self.heading
+        info = {
+            'type': self.type,
+            'component': self.component,
+            'subcomponent': self.subcomponent,
+        }
 
-      if self.num:
-        info['num'] = self.num
+        if self.heading:
+            info['heading'] = self.heading
 
-      if self.id:
-        info['id'] = self.id
+        if self.num:
+            info['num'] = self.num
 
-      if self.children:
-        info['children'] = [c.as_dict() for c in self.children]
+        if self.id:
+            info['id'] = self.id
 
+        if self.children:
+            info['children'] = [c.as_dict() for c in self.children]
 
-      return info
+        return info
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

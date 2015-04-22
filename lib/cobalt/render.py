@@ -1,5 +1,6 @@
 import os
-import lxml.etree as ET 
+import lxml.etree as ET
+
 
 class HTMLRenderer(object):
     """
@@ -19,7 +20,7 @@ class HTMLRenderer(object):
     def render(self, node):
         """ Render an XML Tree or Element object into an HTML string """
         return ET.tostring(self.xslt(node))
-    
+
     def render_xml(self, xml):
         """ Render an XML string into an HTML string """
         return self.render(ET.fromstring(xml.encode('utf-8')))

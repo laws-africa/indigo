@@ -5,16 +5,14 @@ from django.template.loader import render_to_string
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 
-from rest_framework import viewsets
 from rest_framework.exceptions import ParseError, ValidationError
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-import lxml.etree as ET 
+import lxml.etree as ET
 from lxml.etree import LxmlError
-import arrow
 
 from .models import Document
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
@@ -25,6 +23,7 @@ from cobalt.render import HTMLRenderer
 log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
 
 class DocumentViewMixin(object):
     def table_of_contents(self, document):
@@ -37,9 +36,10 @@ class DocumentViewMixin(object):
             uri.expression_component = item['component']
             uri.expression_subcomponent = item.get('subcomponent')
 
-            item['url'] = reverse('published-document-detail',
-                    request=self.request,
-                    kwargs={'frbr_uri': uri.expression_uri()[1:]})
+            item['url'] = reverse(
+                'published-document-detail',
+                request=self.request,
+                kwargs={'frbr_uri': uri.expression_uri()[1:]})
 
             for kid in item.get('children', []):
                 add_url(kid)
@@ -87,7 +87,6 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         """ This exposes a GET resource at ``/api/documents/1/toc`` which gives
         a table of contents for the document.
         """
-        instance = self.get_object()
         return Response({'toc': self.table_of_contents(self.get_object())})
 
 
@@ -186,7 +185,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         if obj.language != self.frbr_uri.language:
             raise Http404("The document %s exists but is not available in the language '%s'"
-                    % (self.frbr_uri.work_uri(), self.frbr_uri.language))
+                          % (self.frbr_uri.work_uri(), self.frbr_uri.language))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)
@@ -238,8 +237,8 @@ class ConvertView(APIView):
             input_format = serializer.validated_data.get('inputformat')
             if input_format == 'json':
                 doc_serializer = DocumentSerializer(
-                        data=self.request.data['content'],
-                        context={'request': self.request})
+                    data=self.request.data['content'],
+                    context={'request': self.request})
                 doc_serializer.is_valid(raise_exception=True)
                 document = doc_serializer.update_document(Document())
 
@@ -313,6 +312,6 @@ class RenderAPI(APIView):
             html = render_to_string('html_preview.html', {
                 'document': document,
                 'body_html': body_html,
-                })
+            })
 
         return Response({'html': html})

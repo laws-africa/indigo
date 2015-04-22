@@ -17,6 +17,7 @@ FRBR_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
                                 (\.(?P<format>[a-z]))?     # format (eg. .xml, .akn, .html, .pdf)
                               )?$""", re.X)
 
+
 class FrbrUri(object):
     """
     An FRBR URI parser which understands Akoma Ntoso 3.0 FRBR URIs (IRIs) for works
@@ -31,8 +32,8 @@ class FrbrUri(object):
     default_language = 'eng'
 
     def __init__(self, country, locality, doctype, subtype, actor, date, number,
-            language=None, expression_date=None, expression_component=None, 
-            expression_subcomponent=None, format=None):
+                 language=None, expression_date=None, expression_component=None,
+                 expression_subcomponent=None, format=None):
         self.country = country
         self.locality = locality
         self.doctype = doctype
@@ -49,18 +50,18 @@ class FrbrUri(object):
 
     def clone(self):
         return FrbrUri(
-                self.country,
-                self.locality,
-                self.doctype,
-                self.subtype,
-                self.actor,
-                self.date,
-                self.number,
-                self.language,
-                self.expression_date,
-                self.expression_component,
-                self.format,
-                )
+            self.country,
+            self.locality,
+            self.doctype,
+            self.subtype,
+            self.actor,
+            self.date,
+            self.number,
+            self.language,
+            self.expression_date,
+            self.expression_component,
+            self.format,
+        )
 
     def work_uri(self):
         """ String form of the work URI. """
@@ -74,7 +75,7 @@ class FrbrUri(object):
             parts.append(self.subtype)
             if self.actor:
                 parts.append(self.actor)
-        
+
         parts += [self.date, self.number]
         return '/'.join(parts)
 

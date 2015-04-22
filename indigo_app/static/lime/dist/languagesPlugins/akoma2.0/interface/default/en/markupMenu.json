@@ -677,6 +677,9 @@
 	"commonElement": {
 		"label": "Common element"
 	},
+	"advanced": {
+		"label": "Advanced elements"
+	},
 	"commonReference": {
 		"label": "Reference"
 	},

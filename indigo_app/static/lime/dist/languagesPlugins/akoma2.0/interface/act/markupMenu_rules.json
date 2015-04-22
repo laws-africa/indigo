@@ -1,10 +1,10 @@
 {
-	"rootElements": ["coverPage", "preface", "preamble", "body", "conclusions", "attachments"],
-	"commonElements": ["commonElement", "hierarchicalStructure",  "genericElement", "externalFragment", "commonsInline", "contentInline", "commonReference", "remark",  "foreign"],
+	"rootElements": ["coverPage", "preface", "preamble", "body", "conclusions"],
+	"commonElements": ["hierarchicalStructure", "contentInline", "remark", "commonElement", "advanced"],
 	
 	"elements": {
 		"hierarchicalStructure": {
-			"children": ["sublist", "indent", "division", "part", "proviso", "book", "rule", "tome", "blockList", "transitional", "subdivision", "fillIn", "alinea"]
+			"children": ["list", "sublist", "blockList", "transitional"]
 		},
 		"genericElement": {
 			"children": ["hcontainer", "inline", "p", "placeholder", "blockContainer", "block", "tblock", "container", "marker"]
@@ -16,13 +16,33 @@
 			"children": ["def", "decoration", "docPurpose"]
 		},
 		"contentInline": {
-			"children": ["del", "omissis",  "outcome", "ins", "eop", "noteRef", "authorialNote"]
+			"children": ["del", "omissis", "outcome", "ins", "eop", "noteRef", "authorialNote"]
 		},
 		"commonElement": {
-			"children": ["process",  "location", "concept", "quantity", "organization", "object", "date", "term", "time", "event", "person", "role", "entity"]
+			"children": ["date", "term", "time", "person"]
 		},
 		"commonReference": {
 			"children": ["ref", "rref", "mref"]
+		},
+		"preamble": {
+			"children": ["p", "formula", "longTitle"]
+		},
+		"preface": {
+			"children": ["p", "longTitle"]
+		},
+		"body": {
+			"children": ["title", "chapter", "part", "section"]
+		},
+		"part": {
+			"children": ["num", "heading", "subheading", "subpart", "p"]
+		},
+		"item": {
+			"children": ["num", "heading", "subheading", "p"]
+		},
+		"advanced": {
+			"children": ["indent", "division", "proviso", "book", "rule", "tome", "subdivision", "fillIn", "alinea",
+				           "process",  "location", "concept", "quantity", "organization", "object", "event", "role", "entity",
+									 "commonsInline"]
 		}
 	}
 }

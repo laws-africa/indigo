@@ -70,5 +70,5 @@ class ConvertAPITest(APITestCase):
             })
         assert_equal(response.status_code, 200)
         assert_true(response.data['html'].startswith('<div'))
-        assert_in('hello', response.data['html'])
+        assert_in('Act 20 of 1980', response.data['html'])
 

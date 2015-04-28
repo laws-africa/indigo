@@ -178,6 +178,11 @@ body.x-body {
 
 /* misc */
 
+/* make legends a bit smaller, to match the h4 font size */
+legend {
+  font-size: 18px;
+}
+
 #error-box {
   position: fixed;
   top: 10px;

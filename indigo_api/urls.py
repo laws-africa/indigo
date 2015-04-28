@@ -7,8 +7,6 @@ router = routers.DefaultRouter(trailing_slash=False)
 router.register(r'documents', views.DocumentViewSet)
 
 urlpatterns = patterns('',
-    url(r'^render', views.RenderAPI.as_view(), name='render'),
-
     # viewing a specific document identified by FRBR URI fragment,
     # this requires at least 4 components in the FRBR URI,
     # starting with the two-letter country code

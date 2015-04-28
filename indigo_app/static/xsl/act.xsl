@@ -19,12 +19,12 @@
   <!-- for parts and chapters, include an easily stylable heading -->
   <xsl:template match="a:part">
     <div class="an-part" id="{@id}">
-      <h1>
+      <h2>
         <xsl:text>Part </xsl:text>
         <xsl:value-of select="./a:num" />
         <xsl:text> - </xsl:text>
         <xsl:value-of select="./a:heading" />
-      </h1>
+      </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
     </div>
@@ -32,12 +32,12 @@
 
   <xsl:template match="a:chapter">
     <div class="an-chapter" id="{@id}">
-      <h1>
+      <h2>
         <xsl:text>Chapter </xsl:text>
         <xsl:value-of select="./a:num" />
         <br/>
         <xsl:value-of select="./a:heading" />
-      </h1>
+      </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
     </div>
@@ -76,9 +76,9 @@
   <xsl:template match="a:doc">
     <div class="an-doc" id="{@id}">
       <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-        <h1>
+        <h2>
           <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-        </h1>
+        </h2>
       </xsl:if>
 
       <xsl:apply-templates select="a:coverPage" />

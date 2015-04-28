@@ -105,6 +105,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         """ Update document without saving it. """
         for attr, value in self.validated_data.items():
             setattr(instance, attr, value)
+        instance.copy_attributes()
         return instance
 
 

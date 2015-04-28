@@ -1,11 +1,11 @@
 import re
 import logging
 
-from django.template.loader import render_to_string
 from django.http import Http404
 from django.shortcuts import get_object_or_404
+from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 
-from rest_framework.exceptions import ParseError, ValidationError
+from rest_framework.exceptions import ValidationError
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
@@ -23,6 +23,56 @@ from cobalt.render import HTMLRenderer
 log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+def document_to_html(document):
+    """ Render an entire document to HTML. """
+    # use this to render the bulk of the document with the Cobalt XSLT renderer
+    renderer = HTMLRenderer(act=document.doc)
+    body_html = renderer.render_xml(document.document_xml)
+
+    # find
+    template_name = find_document_template(document)
+
+    # and then render some boilerplate around it
+    return render_to_string(template_name, {
+        'document': document,
+        'content_html': body_html,
+        'renderer': renderer,
+    })
+
+
+def find_document_template(document):
+    """ Return the filename of a template to use to render this document.
+
+    This takes into account the country, type, subtype and language of the document,
+    providing a number of opportunities to adjust the rendering logic.
+    """
+    uri = document.doc.frbr_uri
+    doctype = uri.doctype
+
+    options = []
+    if uri.subtype:
+        options.append('_'.join([doctype, uri.subtype, document.language, uri.country]))
+        options.append('_'.join([doctype, uri.subtype, document.language]))
+        options.append('_'.join([doctype, uri.subtype, uri.country]))
+        options.append('_'.join([doctype, uri.subtype]))
+
+    options.append('_'.join([doctype, document.language, uri.country]))
+    options.append('_'.join([doctype, document.language]))
+    options.append('_'.join([doctype, uri.country]))
+    options.append(doctype)
+
+    options = [f + '.html' for f in options]
+
+    for option in options:
+        try:
+            if find_template(option):
+                return option
+        except TemplateDoesNotExist:
+            pass
+
+    raise ValueError("Couldn't find a template to use for %s. Tried: %s" % (uri, ', '.join(options)))
 
 
 class DocumentViewMixin(object):
@@ -170,7 +220,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         if element:
             if format == 'html':
-                return Response(HTMLRenderer(act=document.doc).render(element))
+                if component == 'main' and not subcomponent:
+                    return Response(document_to_html(document))
+                else:
+                    return Response(HTMLRenderer(act=document.doc).render(element))
 
             if format == 'xml':
                 return Response(ET.tostring(element, pretty_print=True))
@@ -255,63 +308,9 @@ class ConvertView(APIView):
             return Response(data)
 
         if output_format == 'xml':
-            return Response(document.document_xml)
+            return Response({'xml': document.document_xml})
 
         if output_format == 'html':
-            renderer = HTMLRenderer(act=document.doc)
-            body_html = renderer.render_xml(document.document_xml)
-            return Response(body_html)
+            return Response({'html': document_to_html(document)})
 
         # TODO: handle plain text output
-
-
-class RenderAPI(APIView):
-    def post(self, request, format=None):
-        """
-        Render a document into HTML. The request MUST include a JSON description of
-        what to render.
-
-        Parameters:
-
-            format: "html" (default)
-            document: { ... }
-
-        To determine what to render, include a document description. If the description has an
-        id, the missing details are filled in from the existing document in the database.
-
-            {
-              "document": {
-                "title": "A title",
-                "content": "... xml ..."
-              }
-            }
-        """
-
-        if u'document' in request.data:
-            data = request.data['document']
-            # try to load the document data
-            if 'id' in data:
-                document = Document.objects.filter(id=data['id']).first()
-            else:
-                document = Document()
-
-            # update the model, but don't save it
-            ds = DocumentSerializer(instance=document, data=data)
-            if ds.is_valid(raise_exception=True):
-                ds.update_document(document)
-
-        else:
-            raise ParseError("Required parameter 'document' is missing.")
-
-        if not document.document_xml:
-            html = ""
-        else:
-            renderer = HTMLRenderer(act=document.doc)
-            body_html = renderer.render_xml(document.document_xml)
-
-            html = render_to_string('html_preview.html', {
-                'document': document,
-                'body_html': body_html,
-            })
-
-        return Response({'html': html})

@@ -56,8 +56,8 @@ class ConvertAPITest(APITestCase):
             'outputformat': 'xml',
             })
         assert_equal(response.status_code, 200)
-        assert_true(response.data.startswith('<akomaNtoso'))
-        assert_in('hello', response.data)
+        assert_true(response.data['xml'].startswith('<akomaNtoso'))
+        assert_in('hello', response.data['xml'])
 
     def test_convert_json_to_html(self):
         response = self.client.post('/api/convert', {
@@ -69,6 +69,6 @@ class ConvertAPITest(APITestCase):
             'outputformat': 'html',
             })
         assert_equal(response.status_code, 200)
-        assert_true(response.data.startswith('<span'))
-        assert_in('hello', response.data)
+        assert_true(response.data['html'].startswith('<div'))
+        assert_in('Act 20 of 1980', response.data['html'])
 

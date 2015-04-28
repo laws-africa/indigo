@@ -215,8 +215,8 @@
 
         data.content = this.documentDom.toXml();
         data = JSON.stringify({
-          'inputformat': 'json',
-          'outputformat': 'html',
+          'inputformat': 'application/json',
+          'outputformat': 'text/html',
           'content': data});
 
         $.ajax({
@@ -226,7 +226,7 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json"})
           .then(function(response) {
-            $('#preview-tab .an-container').html(response.html);
+            $('#preview-tab .an-container').html(response.output);
             self.previewDirty = false;
           });
       }

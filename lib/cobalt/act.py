@@ -24,7 +24,28 @@ def datestring(value):
         return value.strftime(DATE_FORMAT)
 
 
-class Act(object):
+class Base(object):
+    def __init__(self, xml=None):
+        encoding = encoding_re.search(xml, 0, 200)
+        if encoding:
+            # lxml doesn't like unicode strings with an encoding element, so
+            # change to bytes
+            xml = xml.encode('utf-8')
+
+        self.root = objectify.fromstring(xml)
+        self.namespace = self.root.nsmap[None]
+
+        self._maker = objectify.ElementMaker(annotate=False, namespace=self.namespace, nsmap=self.root.nsmap)
+
+    def to_xml(self):
+        return etree.tostring(self.root, pretty_print=True)
+
+
+class Fragment(Base):
+    pass
+
+
+class Act(Base):
     """
     An act is a lightweight wrapper around an `Akoma Ntoso 2.0 XML <http://www.akomantoso.org/>`_ act document.
     It provides methods to help access and manipulate the underlying XML directly, in particular
@@ -45,20 +66,11 @@ class Act(object):
         if not xml:
             # use an empty document
             xml = EMPTY_DOCUMENT
+        super(Act, self).__init__(xml)
 
-        encoding = encoding_re.search(xml, 0, 200)
-        if encoding:
-            # lxml doesn't like unicode strings with an encoding element, so
-            # change to bytes
-            xml = xml.encode('utf-8')
-
-        self.root = objectify.fromstring(xml)
         self.act = self.root.act
         self.meta = self.act.meta
         self.body = self.act.body
-
-        self.namespace = self.root.nsmap[None]
-        self._maker = objectify.ElementMaker(annotate=False, namespace=self.namespace, nsmap=self.root.nsmap)
 
     @property
     def title(self):
@@ -192,9 +204,6 @@ class Act(object):
     def nature(self):
         """ The nature of the document, such as an act, derived from :data:`frbr_uri`. Read-only. """
         return self.frbr_uri.doctype
-
-    def to_xml(self):
-        return etree.tostring(self.root, pretty_print=True)
 
     @property
     def body_xml(self):

@@ -11,8 +11,12 @@
         .. autoclass:: Act
             :members:
 
+            .. automethod:: __init__
+
         .. autoclass:: TOCElement
             :members:
+
+            .. automethod:: __init__
 
     Rendering
     ---------
@@ -21,3 +25,5 @@
 
         .. autoclass:: HTMLRenderer
             :members:
+
+            .. automethod:: __init__

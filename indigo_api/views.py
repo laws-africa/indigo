@@ -170,7 +170,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         if element:
             if format == 'html':
-                return Response(HTMLRenderer().render(element))
+                return Response(HTMLRenderer(act=document.doc).render(element))
 
             if format == 'xml':
                 return Response(ET.tostring(element, pretty_print=True))
@@ -258,7 +258,7 @@ class ConvertView(APIView):
             return Response(document.document_xml)
 
         if output_format == 'html':
-            renderer = HTMLRenderer()
+            renderer = HTMLRenderer(act=document.doc)
             body_html = renderer.render_xml(document.document_xml)
             return Response(body_html)
 
@@ -306,7 +306,7 @@ class RenderAPI(APIView):
         if not document.document_xml:
             html = ""
         else:
-            renderer = HTMLRenderer()
+            renderer = HTMLRenderer(act=document.doc)
             body_html = renderer.render_xml(document.document_xml)
 
             html = render_to_string('html_preview.html', {

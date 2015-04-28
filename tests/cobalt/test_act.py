@@ -15,11 +15,19 @@ class ActTestCase(TestCase):
     def test_frbr_uri(self):
         a = Act()
         a.frbr_uri = '/za/act/2007/01'
+
         assert_equal(a.frbr_uri.work_uri(), '/za/act/2007/01')
+        assert_equal(a.number, '01')
+
+        assert_equal(a.meta.identification.FRBRWork.FRBRthis.get('value'), '/za/act/2007/01/main')
+        assert_equal(a.meta.identification.FRBRWork.FRBRuri.get('value'), '/za/act/2007/01')
+
+        assert_equal(a.meta.identification.FRBRExpression.FRBRthis.get('value'), '/za/act/2007/01/eng@/main')
         assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/za/act/2007/01/eng@')
+
+        assert_equal(a.meta.identification.FRBRManifestation.FRBRthis.get('value'), '/za/act/2007/01/eng@/main')
         assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/za/act/2007/01/eng@')
         
-        assert_equal(a.number, '01')
 
     def test_empty_body(self):
         a = Act()
@@ -116,6 +124,125 @@ class ActTestCase(TestCase):
                 },
                 ]
             },
+            ])
+
+    def test_component_table_of_contents(self):
+        a = Act("""
+<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="singleVersion">
+    <meta>
+      <identification source="#openbylaws">
+        <FRBRWork>
+          <FRBRthis value="/za/by-law/cape-town/2002/community-fire-safety/main"/>
+          <FRBRuri value="/za/by-law/cape-town/2002/community-fire-safety"/>
+          <FRBRalias value="Community Fire Safety By-law"/>
+          <FRBRdate date="2002-02-28" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/by-law/cape-town/2002/community-fire-safety/main/eng@"/>
+          <FRBRuri value="/za/by-law/cape-town/2002/community-fire-safety/eng@"/>
+          <FRBRdate date="2002-02-28" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/by-law/cape-town/2002/community-fire-safety/main/eng@"/>
+          <FRBRuri value="/za/by-law/cape-town/2002/community-fire-safety/eng@"/>
+          <FRBRdate date="2014-01-14" name="Generation"/>
+          <FRBRauthor href="#openbylaws" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+    </meta>
+    <body></body>
+  </act>
+  <components>
+    <component id="component-1">
+      <doc name="schedule1">
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/za/act/1980/01/schedule1"/>
+              <FRBRuri value="/za/act/1980/01"/>
+              <FRBRalias value="A Title"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council" as="#author"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/za/act/1980/01/eng@/schedule1"/>
+              <FRBRuri value="/za/act/1980/01/eng@"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council" as="#author"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/za/act/1980/01/eng@/schedule1"/>
+              <FRBRuri value="/za/act/1980/01/eng@"/>
+              <FRBRdate date="2015-04-22" name="Generation"/>
+              <FRBRauthor href="#slaw" as="#author"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
+        <mainBody>
+          <section id="schedule-1.section-0">
+            <content>
+              <p>1. Foo</p>
+              <p>2. Bar</p>
+            </content>
+          </section>
+        </mainBody>
+      </doc>
+    </component>
+    <component id="component-2">
+      <doc name="schedule2">
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/za/act/1980/01/schedule2"/>
+              <FRBRuri value="/za/act/1980/01"/>
+              <FRBRalias value="Another Title"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council" as="#author"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/za/act/1980/01/eng@/schedule2"/>
+              <FRBRuri value="/za/act/1980/01/eng@"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council" as="#author"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/za/act/1980/01/eng@/schedule2"/>
+              <FRBRuri value="/za/act/1980/01/eng@"/>
+              <FRBRdate date="2015-04-22" name="Generation"/>
+              <FRBRauthor href="#slaw" as="#author"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
+        <mainBody>
+          <section id="schedule-2.section-0">
+            <content>
+              <p>Baz</p>
+              <p>Boom</p>
+            </content>
+          </section>
+        </mainBody>
+      </doc>
+    </component>
+  </components>
+</akomaNtoso>
+        """)
+        toc = a.table_of_contents()
+        toc = [t.as_dict() for t in toc]
+        self.maxDiff = None
+        self.assertEqual(toc, [
+            {'component': 'schedule1', 'type': 'doc', 'subcomponent': 'doc', 'heading': 'Schedule 1', 'children': [
+              {'component': 'schedule1', 'type': 'section', 'id': 'schedule-1.section-0', 'subcomponent': 'section'}]},
+            {'component': 'schedule2', 'type': 'doc', 'subcomponent': 'doc', 'heading': 'Schedule 2', 'children': [
+              {'component': 'schedule2', 'type': 'section', 'id': 'schedule-2.section-0', 'subcomponent': 'section'}]},
             ])
 
     def test_preamble_and_friends_in_table_of_contents(self):

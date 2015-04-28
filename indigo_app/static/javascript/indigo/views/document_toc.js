@@ -65,8 +65,25 @@
         chapter: function(i) { return "Ch. " + i.num + " " + i.heading; },
         part: function(i) { return "Part " + i.num + " " + i.heading; },
         doc: function(i) { 
-          var text = $(i.element).attr('name') || "Component";
-          return text.charAt(0).toUpperCase() + text.slice(1);
+          var alias = i.element.querySelector('FRBRalias');
+          if (alias) {
+            return alias.getAttribute('value');
+          }
+
+          var component = i.element.querySelector('FRBRWork FRBRthis');
+          if (component) {
+            var parts = component.getAttribute('value').split('/');
+            component = parts[parts.length-1];
+          } else {
+            component = i.element.getAttribute('name') || "Component";
+          }
+
+          var match = component.match(/([^0-9]+)([0-9]+)/);
+          if (match) {
+            component = match[1] + ' ' + match[2];
+          }
+
+          return component.charAt(0).toUpperCase() + component.slice(1);
         },
         null: function(i) { return i.num + " " + i.heading; },
       };

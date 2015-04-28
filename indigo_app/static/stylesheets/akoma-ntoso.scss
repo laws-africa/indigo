@@ -13,9 +13,14 @@
   }
 }
 
-h1 {
+h1, .an-heading {
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 10px;
+
   text-align: center;
   font-size: 18px;
+  font-weight: 500;
   line-height: 20px;
 }
 

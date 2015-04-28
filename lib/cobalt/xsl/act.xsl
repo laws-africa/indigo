@@ -43,20 +43,6 @@
     </div>
   </xsl:template>
 
-  <!-- the schedules "chapter" isn't actually a chapter -->
-  <xsl:template match="a:chapter[starts-with(@id, 'schedule')]">
-    <div class="an-chapter" id="{@id}">
-      <h1>
-        <xsl:text>Schedule </xsl:text>
-        <xsl:value-of select="./a:num" />
-        <br/>
-        <xsl:value-of select="./a:heading" />
-      </h1>
-      
-      <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    </div>
-  </xsl:template>
-
   <xsl:template match="a:section">
     <div class="an-{local-name()}" id="{@id}">
       <h3>
@@ -84,6 +70,23 @@
 
       <xsl:apply-templates />
     </span>
+  </xsl:template>
+
+  <!-- components/schedules -->
+  <xsl:template match="a:doc">
+    <div class="an-doc" id="{@id}">
+      <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
+        <h1>
+          <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
+        </h1>
+      </xsl:if>
+
+      <xsl:apply-templates select="a:coverPage" />
+      <xsl:apply-templates select="a:preface" />
+      <xsl:apply-templates select="a:preamble" />
+      <xsl:apply-templates select="a:mainBody" />
+      <xsl:apply-templates select="a:conclusions" />
+    </div>
   </xsl:template>
 
   <!-- for all nodes, generate a SPAN element with a class matching

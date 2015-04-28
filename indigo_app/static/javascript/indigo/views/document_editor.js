@@ -295,17 +295,30 @@
 
     // Save the content of the editor, returns a Deferred
     save: function() {
+      var self = this;
+
       // don't do anything if it hasn't changed
       if (!this.dirty) {
         return $.Deferred().resolve();
       }
 
       if (this.activeEditor) {
-        // save changes from the editor, then
-        // save the model
-        return this.activeEditor
+        // save changes from the editor, then save the model, which resolves
+        // this deferred
+        var wait = $.Deferred();
+
+        this.activeEditor
+          // ask the editor to returns its contents
           .saveChanges()
-          .pipe(_.bind(this.saveModel, this));
+          .fail(function() { wait.fail(); })
+          .then(function() {
+            // save the model
+            self.saveModel()
+              .then(function() { wait.resolve(); })
+              .fail(function() { wait.fail(); });
+          });
+
+        return wait;
       } else {
         return this.saveModel();
       }

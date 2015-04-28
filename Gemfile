@@ -1,3 +1,3 @@
 source 'https://rubygems.org'
 
-gem 'slaw', '~> 0.5.1'
+gem 'slaw', '~> 0.6.0'

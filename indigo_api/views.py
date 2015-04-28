@@ -80,7 +80,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
             except LxmlError as e:
                 raise ValidationError({'content': ["Invalid XML: %s" % e.message]})
 
-            return Response()
+            return Response({'content': instance.document_xml})
 
     @detail_route(methods=['GET'])
     def toc(self, request, *args, **kwargs):

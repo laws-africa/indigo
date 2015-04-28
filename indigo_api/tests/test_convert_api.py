@@ -69,6 +69,6 @@ class ConvertAPITest(APITestCase):
             'outputformat': 'html',
             })
         assert_equal(response.status_code, 200)
-        assert_true(response.data['html'].startswith('<span'))
+        assert_true(response.data['html'].startswith('<div'))
         assert_in('hello', response.data['html'])
 

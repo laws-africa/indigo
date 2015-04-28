@@ -170,6 +170,7 @@ class Act(object):
 
             ident.FRBRWork.FRBRuri.set('value', uri.uri())
             ident.FRBRWork.FRBRthis.set('value', uri.work_uri())
+            ident.FRBRWork.FRBRcountry.set('value', uri.country)
 
             ident.FRBRExpression.FRBRuri.set('value', uri.expression_uri(False))
             ident.FRBRExpression.FRBRthis.set('value', uri.expression_uri())

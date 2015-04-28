@@ -14,19 +14,20 @@ class ActTestCase(TestCase):
 
     def test_frbr_uri(self):
         a = Act()
-        a.frbr_uri = '/za/act/2007/01'
+        a.frbr_uri = '/zm/act/2007/01'
 
-        assert_equal(a.frbr_uri.work_uri(), '/za/act/2007/01')
+        assert_equal(a.frbr_uri.work_uri(), '/zm/act/2007/01')
         assert_equal(a.number, '01')
 
-        assert_equal(a.meta.identification.FRBRWork.FRBRthis.get('value'), '/za/act/2007/01/main')
-        assert_equal(a.meta.identification.FRBRWork.FRBRuri.get('value'), '/za/act/2007/01')
+        assert_equal(a.meta.identification.FRBRWork.FRBRthis.get('value'), '/zm/act/2007/01/main')
+        assert_equal(a.meta.identification.FRBRWork.FRBRuri.get('value'), '/zm/act/2007/01')
+        assert_equal(a.meta.identification.FRBRWork.FRBRcountry.get('value'), 'zm')
 
-        assert_equal(a.meta.identification.FRBRExpression.FRBRthis.get('value'), '/za/act/2007/01/eng@/main')
-        assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/za/act/2007/01/eng@')
+        assert_equal(a.meta.identification.FRBRExpression.FRBRthis.get('value'), '/zm/act/2007/01/eng@/main')
+        assert_equal(a.meta.identification.FRBRExpression.FRBRuri.get('value'), '/zm/act/2007/01/eng@')
 
-        assert_equal(a.meta.identification.FRBRManifestation.FRBRthis.get('value'), '/za/act/2007/01/eng@/main')
-        assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/za/act/2007/01/eng@')
+        assert_equal(a.meta.identification.FRBRManifestation.FRBRthis.get('value'), '/zm/act/2007/01/eng@/main')
+        assert_equal(a.meta.identification.FRBRManifestation.FRBRuri.get('value'), '/zm/act/2007/01/eng@')
         
 
     def test_empty_body(self):

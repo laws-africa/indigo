@@ -22,6 +22,8 @@
       this.editor.$blockScrolling = Infinity;
       this.onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
 
+      this.view.$el.find('.document-sheet-container').on('click', '.an-container', _.bind(this.sheetClick, this));
+
       // setup renderer
       var xsltProcessor = new XSLTProcessor();
       $.get('/static/xsl/act.xsl')
@@ -29,6 +31,59 @@
           xsltProcessor.importStylesheet(xml);
           self.xsltProcessor = xsltProcessor;
         });
+
+      var textTransform = new XSLTProcessor();
+      $.get('/static/xsl/act_text.xsl')
+        .then(function(xml) {
+          textTransform.importStylesheet(xml);
+          self.textTransform = textTransform;
+        });
+    },
+
+    sheetClick: function(e) {
+      var $clicked = $(e.originalEvent.target);
+      // TODO: find closest editable item
+      var $parent = $clicked.closest('.an-section[id]');
+      var self = this;
+
+      // node in the actual document
+      var node = this.view.xmlModel.xmlDocument.getElementById($parent.attr('id'));
+      var text = this.textTransform.transformToFragment(node, document).firstChild.textContent;
+
+      var $editor = $('<textarea></textarea>');
+
+      function reparse() {
+        var data = JSON.stringify({
+          'inputformat': 'text/plain',
+          'outputformat': 'application/xml',
+          'fragment': $parent.attr('class').replace('an-', ''),
+          'content': $editor.val()
+        });
+
+        $.ajax({
+          url: '/api/convert',
+          type: "POST",
+          data: data,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json"})
+          .then(function(response) {
+            var newFragment = $.parseXML(response.output).documentElement;
+            self.view.updateFragment(self.view.fragment, newFragment.firstElementChild);
+            self.render();
+          });
+
+        $editor.remove();
+      }
+
+      $editor
+        .offset($parent.offset())
+        .height($parent.height())
+        .width($parent.width())
+        .val(text)
+        .css({position: 'absolute'})
+        .focus()
+        .on('blur', reparse)
+        .appendTo('body');
     },
 
     editFragment: function(node) {

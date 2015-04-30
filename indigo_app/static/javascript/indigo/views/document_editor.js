@@ -6,6 +6,8 @@
 
   // The AceEditorController manages the interaction between
   // the ace-based editor, the model, and the document editor view.
+  //
+  // It also handles the in-place text-based editor.
   Indigo.AceEditorController = function(options) {
     this.initialize.apply(this, arguments);
   };
@@ -22,15 +24,21 @@
       this.editor.$blockScrolling = Infinity;
       this.onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
 
-      this.view.$el.find('.document-sheet-container').on('click', '.an-container', _.bind(this.sheetClick, this));
-
       // setup renderer
-      var xsltProcessor = new XSLTProcessor();
+      var htmlTransform = new XSLTProcessor();
       $.get('/static/xsl/act.xsl')
         .then(function(xml) {
-          xsltProcessor.importStylesheet(xml);
-          self.xsltProcessor = xsltProcessor;
+          htmlTransform.importStylesheet(xml);
+          self.htmlTransform = htmlTransform;
         });
+
+      // setup inline sheet editor
+      this.$inlineEditor = this.view.$el.find('#inline-editor');
+      this.$inlineEditor.find('.btn.save').on('click', _.bind(this.saveInlineEditor, this));
+      this.$inlineEditor.find('.btn.cancel').on('click', _.bind(this.closeInlineEditor, this));
+
+      this.$inlineButtons = this.view.$el.find('.document-sheet-buttons');
+      this.$inlineButtons.find('.edit').on('click', _.bind(this.editInline, this));
 
       var textTransform = new XSLTProcessor();
       $.get('/static/xsl/act_text.xsl')
@@ -40,58 +48,88 @@
         });
     },
 
-    sheetClick: function(e) {
-      var $clicked = $(e.originalEvent.target);
-      // TODO: find closest editable item
-      var $parent = $clicked.closest('.an-section[id]');
+    editInline: function(e) {
+      e.preventDefault();
+
       var self = this;
+      var $editable = this.view.$el.find('.an-container').children().first();
 
-      // node in the actual document
-      var node = this.view.xmlModel.xmlDocument.getElementById($parent.attr('id'));
-      var text = this.textTransform.transformToFragment(node, document).firstChild.textContent;
+      // text from node in the actual XML document
+      var text = this.textTransform.transformToFragment(this.view.fragment, document).firstChild.textContent;
 
-      var $editor = $('<textarea></textarea>');
+      // show the inline editor
+      $editable.css({position: 'relative'});
+      this.$inlineEditor
+        .data('fragment', this.view.fragment.tagName)
+        .height($editable.height())
+        .width($editable.width())
+        .appendTo($editable)
+        .show()
+        .find('textarea')
+          .val(text)
+          .focus();
 
-      function reparse() {
-        var data = JSON.stringify({
-          'inputformat': 'text/plain',
-          'outputformat': 'application/xml',
-          'fragment': $parent.attr('class').replace('an-', ''),
-          'content': $editor.val()
+      this.$inlineButtons.hide();
+    },
+
+    saveInlineEditor: function(e) {
+      var self = this;
+      var $editable = this.view.$el.find('.an-container').children().first();
+      var $btn = this.$inlineEditor.find('.btn.save');
+
+      var data = JSON.stringify({
+        'inputformat': 'text/plain',
+        'outputformat': 'application/xml',
+        'fragment': this.$inlineEditor.data('fragment'),
+        'content': this.$inlineEditor.find('textarea').val(),
+      });
+
+      $btn
+        .attr('disabled', true)
+        .find('.fa')
+          .removeClass('fa-check')
+          .addClass('fa-spinner fa-pulse');
+
+      $.ajax({
+        url: '/api/convert',
+        type: "POST",
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+        .then(function(response) {
+          var newFragment = $.parseXML(response.output).documentElement.firstElementChild;
+          self.view.updateFragment(self.view.fragment, newFragment);
+          self.closeInlineEditor();
+          self.render();
+          self.setEditorValue(self.view.xmlModel.toXml(newFragment));
+        })
+        .always(function(response) {
+          $btn
+            .attr('disabled', false)
+            .find('.fa')
+              .removeClass('fa-spinner fa-pulse')
+              .addClass('fa-check');
         });
+    },
 
-        $.ajax({
-          url: '/api/convert',
-          type: "POST",
-          data: data,
-          contentType: "application/json; charset=utf-8",
-          dataType: "json"})
-          .then(function(response) {
-            var newFragment = $.parseXML(response.output).documentElement;
-            self.view.updateFragment(self.view.fragment, newFragment.firstElementChild);
-            self.render();
-          });
+    closeInlineEditor: function(e) {
+      this.$inlineEditor.hide();
+      this.view.$el.find('.document-sheet-container').after(this.$inlineEditor);
 
-        $editor.remove();
-      }
-
-      $editor
-        .offset($parent.offset())
-        .height($parent.height())
-        .width($parent.width())
-        .val(text)
-        .css({position: 'absolute'})
-        .focus()
-        .on('blur', reparse)
-        .appendTo('body');
+      this.$inlineButtons.show();
     },
 
     editFragment: function(node) {
       // edit node, a node in the XML document
+      this.closeInlineEditor();
       this.render();
       this.view.$el.find('.document-sheet-container').scrollTop(0);
 
       var xml = this.view.xmlModel.toXml(node);
+      this.setEditorValue(xml);
+    },
+
+    setEditorValue: function(xml) {
       // pretty-print the xml
       xml = vkbeautify.xml(xml, 2);
 
@@ -106,6 +144,8 @@
 
     // Save the content of the XML editor into the DOM, returns a Deferred
     saveChanges: function() {
+      this.closeInlineEditor();
+
       // update the fragment content from the editor's version
       console.log('Parsing changes to XML');
 
@@ -119,9 +159,9 @@
     },
 
     render: function() {
-      if (this.xsltProcessor && this.view.fragment) {
-        var html = this.xsltProcessor.transformToFragment(this.view.fragment, document);
-        this.view.$el.find('.document-sheet').html('').get(0).appendChild(html);
+      if (this.htmlTransform && this.view.fragment) {
+        var html = this.htmlTransform.transformToFragment(this.view.fragment, document);
+        this.view.$el.find('.an-container').html('').get(0).appendChild(html);
       }
     },
 

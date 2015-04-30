@@ -129,7 +129,7 @@
     },
 
     documentContentChanged: function() {
-      this.documentDom.setXml(this.documentContent.get('content'));
+      this.documentDom.setXml(prettyPrintXml(this.documentContent.get('content')));
     },
 
     windowUnloading: function(e) {

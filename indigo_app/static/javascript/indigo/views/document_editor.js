@@ -134,7 +134,7 @@
 
     setEditorValue: function(xml) {
       // pretty-print the xml
-      xml = vkbeautify.xml(xml, 2);
+      xml = prettyPrintXml(xml);
 
       this.editor.removeListener('change', this.onEditorChange);
       this.editor.setValue(xml);

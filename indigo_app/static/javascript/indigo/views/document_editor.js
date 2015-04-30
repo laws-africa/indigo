@@ -67,8 +67,11 @@
         .show()
         .find('textarea')
           .val(text)
-          .focus();
+          .focus()
+          .caret(0)
+          .scrollTop(0);
 
+      this.view.$el.find('.document-sheet-container').scrollTop(0);
       this.$inlineButtons.hide();
     },
 

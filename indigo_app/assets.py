@@ -23,6 +23,8 @@ register('js', Bundle(
     'bower_components/moment/locale/en-gb.js',
     'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
     'bower_components/tablesorter/jquery.tablesorter.min.js',
+    'javascript/caret.js',
+    'javascript/prettyprint.js',
     'javascript/indigo/models.js',
     'javascript/indigo/views/user.js',
     'javascript/indigo/views/reset_password.js',
@@ -46,4 +48,3 @@ register('lime-css', Bundle(
     'lime/dist/resources/stylesheets/extjs4.editor.css',
     'lime/dist/resources/stylesheets/extjs4.viewport.css',
     output='stylesheets/lime.%(version)s.css'))
-

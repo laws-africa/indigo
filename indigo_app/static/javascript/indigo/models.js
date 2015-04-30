@@ -37,6 +37,7 @@
       } else {
         // just a fragment has changed
         console.log('Replacing node');
+        newNode = oldNode.ownerDocument.importNode(newNode, true);
         oldNode.parentNode.replaceChild(newNode, oldNode);
       }
 

@@ -116,8 +116,10 @@ class ConvertSerializer(serializers.Serializer):
 
     file = serializers.FileField(write_only=True, required=False)
     content = serializers.CharField(write_only=True, required=False)
-    inputformat = serializers.ChoiceField(write_only=True, required=False, choices=['json'])
-    outputformat = serializers.ChoiceField(write_only=True, required=True, choices=['xml', 'json', 'html'])
+    inputformat = serializers.ChoiceField(write_only=True, required=False, choices=['application/json', 'text/plain'])
+    outputformat = serializers.ChoiceField(write_only=True, required=True, choices=['application/xml', 'application/json', 'text/html'])
+    fragment = serializers.CharField(write_only=True, required=False)
+    id_prefix = serializers.CharField(write_only=True, required=False)
 
     def validate(self, data):
         if data.get('content') and not data.get('inputformat'):

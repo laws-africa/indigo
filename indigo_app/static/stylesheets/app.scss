@@ -43,27 +43,28 @@ body.x-body {
   padding: 5px;
   background-color: $header-colour;
   border-bottom: 2px solid $border-colour;
+}
 
-  .workspace-title {
-    position: absolute;
-    left: $sidebar-width;
-    right: 0px;
+.workspace-title {
+  position: absolute;
+  left: $sidebar-width;
+  right: 0px;
 
-    h4 {
-      max-width: 80%;
-    }
-  }
-
-  .buttons {
-    position: absolute;
-    top: 5px;
-    right: 15px;
-  }
-
-  .library-box {
-    position: absolute;
+  h4 {
+    max-width: 80%;
   }
 }
+
+.library-box {
+  position: absolute;
+}
+
+.workspace-buttons {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+}
+
 
 /* a page either has a workspace-content on its own,
    or a sidebar and a workspace-content */
@@ -207,6 +208,7 @@ legend {
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
+  position: relative;
 
   background: #aaa;
   margin: 0px;
@@ -220,6 +222,11 @@ legend {
     // work around a Chrome rendering bug with sections that
     // are very short
     min-height: 100%;
+  }
+
+  .document-sheet-buttons {
+    position: absolute;
+    right: 55px;
   }
 }
 
@@ -341,5 +348,24 @@ legend {
       font-weight: bold;
       margin-top: 5px;
     }
+  }
+}
+
+.inline-editor {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+
+  background-color: white;
+
+  .buttons {
+    position: absolute;
+    top: -35px;
+    right: 0px;
+  }
+
+  textarea {
+    width: 100%;
+    height: 100%;
   }
 }

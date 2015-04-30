@@ -272,28 +272,36 @@ class ConvertView(APIView):
         return self.handle_output(document, output_format)
 
     def handle_input(self):
+        self.fragment = self.request.data.get('fragment')
         document = None
         serializer = ConvertSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
+
+        input_format = serializer.validated_data.get('inputformat')
 
         upload = self.request.data.get('file')
         if upload:
             # we got a file
             try:
-                document = Importer().import_from_upload(upload)
+                document = self.get_importer().import_from_upload(upload)
+                return serializer, document
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
 
-        else:
-            # handle non-file inputs
-            input_format = serializer.validated_data.get('inputformat')
-            if input_format == 'json':
-                doc_serializer = DocumentSerializer(
-                    data=self.request.data['content'],
-                    context={'request': self.request})
-                doc_serializer.is_valid(raise_exception=True)
-                document = doc_serializer.update_document(Document())
+        elif input_format == 'application/json':
+            doc_serializer = DocumentSerializer(
+                data=self.request.data['content'],
+                context={'request': self.request})
+            doc_serializer.is_valid(raise_exception=True)
+            document = doc_serializer.update_document(Document())
+
+        elif input_format == 'text/plain':
+            try:
+                document = self.get_importer().import_from_text(self.request.data['content'])
+            except ValueError as e:
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'content': e.message or "error during import"})
 
         if not document:
             raise ValidationError("Nothing to convert! Either 'file' or 'content' must be provided.")
@@ -301,16 +309,32 @@ class ConvertView(APIView):
         return serializer, document
 
     def handle_output(self, document, output_format):
-        if output_format == 'json':
+        if output_format == 'application/json':
+            if self.fragment:
+                raise ValidationError("Cannot output application/json from a fragment")
+
             doc_serializer = DocumentSerializer(instance=document, context={'request': self.request})
             data = doc_serializer.data
             data['content'] = document.document_xml
             return Response(data)
 
-        if output_format == 'xml':
-            return Response({'xml': document.document_xml})
+        if output_format == 'application/xml':
+            if self.fragment:
+                return Response({'output': document.to_xml()})
+            else:
+                return Response({'output': document.document_xml})
 
-        if output_format == 'html':
-            return Response({'html': document_to_html(document)})
+        if output_format == 'text/html':
+            if self.fragment:
+                return Response(HTMLRenderer().render(document.to_xml()))
+            else:
+                return Response({'output': document_to_html(document)})
 
         # TODO: handle plain text output
+
+    def get_importer(self):
+        importer = Importer()
+        importer.fragment = self.request.data.get('fragment')
+        importer.fragment_id_prefix = self.request.data.get('id_prefix')
+
+        return importer

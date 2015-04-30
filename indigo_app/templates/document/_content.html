@@ -24,10 +24,29 @@
 <div class="boxed-group-inner document-content-view">
   <div class="plaintext-editor collapse in">
     <div class="document-sheet-container">
-      <div class="document-sheet an-container"></div>
+      <div class="document-sheet">
+
+        <div class="document-sheet-buttons">
+          <button class="btn btn-default btn-xs edit">
+            <i class="fa fa-pencil"></i> edit
+          </button>
+        </div>
+
+        <div class="an-container"></div>
+      </div>
     </div>
+
     <div class="document-xml-editor ace-editor"></div>
+
+    <div id="inline-editor" class="inline-editor" style="display: none">
+      <div class="buttons">
+        <button class="btn btn-default btn-sm cancel"><i class="fa fa-close"></i></button>
+        <button class="btn btn-success btn-sm save"><i class="fa fa-check"></i></button>
+      </div>
+      <textarea></textarea>
+    </div>
   </div>
+
   <div class="lime-editor collapse">
     <div id="lime"></div>
   </div>

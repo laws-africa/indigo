@@ -38,7 +38,9 @@ class HTMLRenderer(object):
 
     def render_xml(self, xml):
         """ Render an XML string into an HTML string """
-        return self.render(ET.fromstring(xml.encode('utf-8')))
+        if not isinstance(xml, str):
+            xml = xml.encode('utf-8')
+        return self.render(ET.fromstring(xml))
 
     def find_xslt(self, act=None, uri=None, country=None, language=None, subtype=None, xslt_dir=None):
         xslt_dir = xslt_dir or os.path.join(os.path.dirname(__file__), 'xsl')

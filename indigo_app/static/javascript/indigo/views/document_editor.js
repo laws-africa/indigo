@@ -128,6 +128,7 @@
       this.render();
       this.view.$el.find('.document-sheet-container').scrollTop(0);
 
+      this.dirty = false;
       var xml = this.view.xmlModel.toXml(node);
       this.setEditorValue(xml);
     },
@@ -142,6 +143,7 @@
     },
 
     editorChanged: function() {
+      this.dirty = true;
       this.saveChanges();
     },
 
@@ -149,14 +151,17 @@
     saveChanges: function() {
       this.closeInlineEditor();
 
-      // update the fragment content from the editor's version
-      console.log('Parsing changes to XML');
+      if (this.dirty) {
+        // update the fragment content from the editor's version
+        console.log('Parsing changes to XML');
 
-      // TODO: handle errors here
-      var newFragment = $.parseXML(this.editor.getValue()).documentElement;
+        // TODO: handle errors here
+        var newFragment = $.parseXML(this.editor.getValue()).documentElement;
 
-      this.view.updateFragment(this.view.fragment, newFragment);
-      this.render();
+        this.view.updateFragment(this.view.fragment, newFragment);
+        this.render();
+        this.dirty = false;
+      }
 
       return $.Deferred().resolve();
     },

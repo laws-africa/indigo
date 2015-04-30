@@ -45,7 +45,7 @@ class Importer(object):
         """ Create a new Document by importing it from plain text.
         """
         with tempfile.NamedTemporaryFile() as f:
-            f.write(input)
+            f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
             doc = self.import_from_file(f.name)

@@ -38,7 +38,7 @@ class Base(object):
         self._maker = objectify.ElementMaker(annotate=False, namespace=self.namespace, nsmap=self.root.nsmap)
 
     def to_xml(self):
-        return etree.tostring(self.root, pretty_print=True)
+        return etree.tostring(self.root, encoding='utf-8', pretty_print=True)
 
 
 class Fragment(Base):

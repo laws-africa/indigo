@@ -55,7 +55,13 @@
       var $editable = this.view.$el.find('.an-container').children().first();
 
       // text from node in the actual XML document
-      var text = this.textTransform.transformToFragment(this.view.fragment, document).firstChild.textContent;
+      var text = this.textTransform
+        .transformToFragment(this.view.fragment, document)
+        .firstChild.textContent
+        // cleanup inline whitespace
+        .replace(/([^ ]) +/g, '$1 ')
+        // remove multiple consecutive blank lines
+        .replace(/^( *\n){2,}/gm, "\n");
 
       // show the inline editor
       $editable.css({position: 'relative'});

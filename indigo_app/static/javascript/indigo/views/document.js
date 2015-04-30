@@ -163,7 +163,10 @@
         this.$saveBtn
           .addClass('btn-default')
           .removeClass('btn-info')
-          .prop('disabled', true);
+          .prop('disabled', true)
+          .find('.fa')
+            .removeClass('fa-pulse fa-spinner')
+            .addClass('fa-save');
       }
     },
 
@@ -180,11 +183,18 @@
       var self = this;
       var is_new = self.document.isNew();
       var failed = function(request) {
-        self.$saveBtn.prop('disabled', false);
+        self.$saveBtn
+          .prop('disabled', false)
+          .find('.fa')
+            .removeClass('fa-pulse fa-spinner')
+            .addClass('fa-save');
       };
 
-      this.$saveBtn.prop('disabled', true);
-
+      this.$saveBtn
+        .prop('disabled', true)
+        .find('.fa')
+          .removeClass('fa-save')
+          .addClass('fa-pulse fa-spinner');
 
       // We save the content first, and then save
       // the properties on top of it, so that content

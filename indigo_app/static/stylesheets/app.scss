@@ -43,27 +43,28 @@ body.x-body {
   padding: 5px;
   background-color: $header-colour;
   border-bottom: 2px solid $border-colour;
+}
 
-  .workspace-title {
-    position: absolute;
-    left: $sidebar-width;
-    right: 0px;
+.workspace-title {
+  position: absolute;
+  left: $sidebar-width;
+  right: 0px;
 
-    h4 {
-      max-width: 80%;
-    }
-  }
-
-  .buttons {
-    position: absolute;
-    top: 5px;
-    right: 15px;
-  }
-
-  .library-box {
-    position: absolute;
+  h4 {
+    max-width: 80%;
   }
 }
+
+.library-box {
+  position: absolute;
+}
+
+.workspace-buttons {
+  position: absolute;
+  top: 5px;
+  right: 15px;
+}
+
 
 /* a page either has a workspace-content on its own,
    or a sidebar and a workspace-content */

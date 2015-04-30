@@ -59,8 +59,8 @@
   Indigo.DocumentView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .btn.save': 'save',
-      'click .btn.delete': 'delete',
+      'click .workspace-buttons .btn.save': 'save',
+      'click .workspace-buttons .btn.delete': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
@@ -69,7 +69,7 @@
       var library = new Indigo.Library(),
           document_id = $('[data-document-id]').data('document-id') || null;
 
-      this.$saveBtn = $('.btn.save');
+      this.$saveBtn = $('.workspace-buttons .btn.save');
 
       var info = document_id ? {id: document_id} : {
         id: null,

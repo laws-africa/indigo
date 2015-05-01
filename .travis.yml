@@ -1,10 +1,13 @@
 language: python
 python:
   - "2.7"
+ruby:
+  - "2.1.6"
 env:
   - DATABASE_URL=postgres://postgres:@localhost:5432/indigo_test
-install: pip install -r requirements.txt
+install: 
+  - "pip install -r requirements.txt"
+  - "bundle install"
 before_script:
   - "npm install -g jshint"
-  - "bundle install"
 script: python manage.py test && jshint indigo_app/static/javascript/indigo/

@@ -6,4 +6,5 @@ env:
 install: pip install -r requirements.txt
 before_script:
   - "npm install -g jshint"
+  - "bundle install"
 script: python manage.py test && jshint indigo_app/static/javascript/indigo/

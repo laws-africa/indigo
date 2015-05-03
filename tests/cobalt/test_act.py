@@ -240,9 +240,9 @@ class ActTestCase(TestCase):
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
         self.assertEqual(toc, [
-            {'component': 'schedule1', 'type': 'doc', 'subcomponent': 'doc', 'heading': 'Schedule 1', 'children': [
+            {'component': 'schedule1', 'type': 'doc', 'subcomponent': None, 'heading': 'Schedule 1', 'children': [
               {'component': 'schedule1', 'type': 'section', 'id': 'schedule-1.section-0', 'subcomponent': 'section'}]},
-            {'component': 'schedule2', 'type': 'doc', 'subcomponent': 'doc', 'heading': 'Schedule 2', 'children': [
+            {'component': 'schedule2', 'type': 'doc', 'subcomponent': None, 'heading': 'Schedule 2', 'children': [
               {'component': 'schedule2', 'type': 'section', 'id': 'schedule-2.section-0', 'subcomponent': 'section'}]},
             ])
 

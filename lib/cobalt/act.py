@@ -350,10 +350,14 @@ class TOCElement(object):
 
         # eg. 'main'
         self.component = component
-        # eg. 'preamble' or 'chapter/2'
-        self.subcomponent = self.type
-        if self.num:
-            self.subcomponent += '/' + self.num.strip('.()')
+
+        if self.type == "doc":
+            self.subcomponent = None
+        else:
+            # eg. 'preamble' or 'chapter/2'
+            self.subcomponent = self.type
+            if self.num:
+                self.subcomponent += '/' + self.num.strip('.()')
 
     def as_dict(self):
         info = {

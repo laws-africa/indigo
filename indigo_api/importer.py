@@ -66,7 +66,7 @@ class Importer(object):
         code, stdout, stderr = self.slaw(cmd)
 
         if code > 0:
-            raise ValueError("Error converting file: %s" % stderr)
+            raise ValueError(stderr)
 
         if not stdout:
             raise ValueError("We couldn't get any useful text out of the file")

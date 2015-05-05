@@ -117,6 +117,13 @@
           self.render();
           self.setEditorValue(self.view.xmlModel.toXml(newFragment));
         })
+        .fail(function(xhr, status, error) {
+          if (xhr.status == 400) {
+            Indigo.errorView.show(xhr.responseJSON.content || error || status);
+          } else {
+            Indigo.errorView.show(error || status);
+          }
+        })
         .always(function(response) {
           $btn
             .attr('disabled', false)

@@ -85,11 +85,12 @@
       var self = this;
       var $editable = this.view.$el.find('.an-container').children().first();
       var $btn = this.$inlineEditor.find('.btn.save');
+      var fragment = this.$inlineEditor.data('fragment');
 
       var data = JSON.stringify({
         'inputformat': 'text/plain',
         'outputformat': 'application/xml',
-        'fragment': this.$inlineEditor.data('fragment'),
+        'fragment': fragment,
         'content': this.$inlineEditor.find('textarea').val(),
       });
 
@@ -106,7 +107,11 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          var newFragment = $.parseXML(response.output).documentElement.firstElementChild;
+          // find either the fragment we asked for, or the first element below the akomaNtoso
+          // parent element
+          var newFragment = $.parseXML(response.output);
+          newFragment = newFragment.querySelector(fragment) || newFragment.documentElement.firstElementChild;
+
           self.view.updateFragment(self.view.fragment, newFragment);
           self.closeInlineEditor();
           self.render();

@@ -49,7 +49,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'commencement_date', 'assent_date',
-            'language',
+            'language', 'stub',
 
             'published_url', 'toc_url',
         )

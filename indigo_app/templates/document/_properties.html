@@ -131,6 +131,17 @@
         <div class="col-sm-offset-2 col-sm-10">
           <div class="checkbox">
             <label>
+              <input id="document_stub" type="checkbox" value="1"> This is a stub document
+            </label>
+            <p class="help-block">{{ form.fields.stub.help_text }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-10">
+          <div class="checkbox">
+            <label>
               <input id="document_draft" type="checkbox" value="1"> This is a draft document
             </label>
             <p class="help-block">{{ form.fields.draft.help_text }}</p>

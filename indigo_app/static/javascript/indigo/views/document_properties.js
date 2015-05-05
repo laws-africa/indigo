@@ -9,6 +9,10 @@
     return (!val || val.trim() === "") ? null : val;
   }
 
+  function bool(val) {
+    return val == "1";
+  }
+
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
@@ -39,8 +43,11 @@
       '#document_language': 'language',
       '#document_draft': {
         observe: 'draft',
-        // API requires this value to be true or false
-        onSet: function(val) { return val == "1"; }
+        onSet: bool,
+      },
+      '#document_stub': {
+        observe: 'stub',
+        onSet: bool,
       },
       '#document_updated_at': {
         observe: 'updated_at',

@@ -2,6 +2,7 @@ import logging
 
 from django.db import models
 import arrow
+from taggit.managers import TaggableManager
 
 from cobalt.act import Act
 
@@ -48,6 +49,9 @@ class Document(models.Model):
     """ Is this a stub without full content? """
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
+
+    # freeform tags via django-taggit
+    tags = TaggableManager()
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

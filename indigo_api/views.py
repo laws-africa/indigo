@@ -313,6 +313,9 @@ class ConvertView(APIView):
             if self.fragment:
                 raise ValidationError("Cannot output application/json from a fragment")
 
+            # disable tags, they can't be used without committing this object to the db
+            document.tags = None
+
             doc_serializer = DocumentSerializer(instance=document, context={'request': self.request})
             data = doc_serializer.data
             data['content'] = document.document_xml

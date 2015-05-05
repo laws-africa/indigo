@@ -40,6 +40,8 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'content': document_fixture(text='hello'),
+                # these should be ignored
+                'tags': ['foo', 'bar'],
             },
             'inputformat': 'application/json',
             'outputformat': 'application/json',
@@ -47,6 +49,7 @@ class ConvertAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['frbr_uri'], '/za/act/1900/1')
         assert_true(response.data['content'].startswith('<akomaNtoso'))
+        assert_is_none(response.data['tags'])
         assert_is_none(response.data['id'])
 
     def test_convert_json_to_xml(self):

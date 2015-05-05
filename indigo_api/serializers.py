@@ -5,6 +5,7 @@ from lxml.etree import LxmlError
 from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
+from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
 from cobalt import Act, FrbrUri
 
 from .models import Document
@@ -13,7 +14,15 @@ from .importer import Importer
 log = logging.getLogger(__name__)
 
 
-class DocumentSerializer(serializers.HyperlinkedModelSerializer):
+class TagSerializer(TaggitSerializer):
+    def _save_tags(self, tag_object, tags):
+        for key in tags.keys():
+            tag_values = tags.get(key)
+            getattr(tag_object, key).set(*[tag for tag in tag_values])
+        return tag_object
+
+
+class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
@@ -35,6 +44,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_number = serializers.CharField(required=False, allow_blank=True)
     publication_date = serializers.DateField(required=False)
 
+    tags = TagListSerializerField(child=serializers.CharField(), required=False)
+
     class Meta:
         model = Document
         fields = (
@@ -49,7 +60,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'commencement_date', 'assent_date',
-            'language', 'stub',
+            'language', 'stub', 'tags',
 
             'published_url', 'toc_url',
         )

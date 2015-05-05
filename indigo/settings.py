@@ -52,6 +52,8 @@ INSTALLED_APPS = (
     'django_nose',
 
     # the Indigo API
+    'taggit',
+    'taggit_serializer',
     'indigo_api',
 
     # the Indigo browser application

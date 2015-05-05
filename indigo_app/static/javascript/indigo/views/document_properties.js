@@ -5,7 +5,7 @@
   Indigo = exports.Indigo;
 
   // django doesn't link blank date fields, send null instead
-  function emptyDate(val) {
+  function emptyIsNull(val) {
     return (!val || val.trim() === "") ? null : val;
   }
 
@@ -24,21 +24,38 @@
       '#document_year': 'year',
       '#document_number': 'number',
       '#document_frbr_uri': 'frbr_uri',
-
       '#document_title': 'title',
+      '#document_tags': {
+        observe: 'tags',
+        initialize: function($el, model, options) {
+          $el.select2();
+        },
+        getVal: function($el, event, options) {
+          return $el.val() || [];
+        },
+        update: function($el, val, model, options) {
+          val = val || [];
+          if ($el.data('select2')) {
+            // update the valid choices to ensure those we want are there
+            $el.select2({data: val});
+            // add them
+            $el.val(val).trigger('change');
+          }
+        },
+      },
       '#document_publication_date': {
         observe: 'publication_date',
-        onSet: emptyDate,
+        onSet: emptyIsNull,
       },
       '#document_publication_name': 'publication_name',
       '#document_publication_number': 'publication_number',
       '#document_commencement_date': {
         observe: 'commencement_date',
-        onSet: emptyDate,
+        onSet: emptyIsNull,
       },
       '#document_assent_date': {
         observe: 'assent_date',
-        onSet: emptyDate,
+        onSet: emptyIsNull,
       },
       '#document_language': 'language',
       '#document_draft': {

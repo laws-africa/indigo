@@ -8,10 +8,17 @@
 
 {% block content %}
 
+<div class="sidebar sidebar-right">
+  <div class="boxed-group-inner">
+    <div id="filters">
+    </div>
+  </div>
+</div>
+
 <div class="workspace-content">
   <div class="boxed-group-inner">
-    <article id="library">
-    </article>
+    <div id="library">
+    </div>
   </div>
 </div>
 
@@ -77,6 +84,42 @@
 </table>
 {% endverbatim %}
 
+</script>
+
+<script id="filters-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <input type="text" class="form-control" name="q" placeholder="Search...">
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Countries</h3>
+  </div>
+
+  <div class="list-group">
+    <a href="#" class="list-group-item active">All countries</a>
+    {{#each summary.countries}}
+    <a href="#" class="list-group-item country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    {{/each}}
+  </div>
+</div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Tags</h3>
+  </div>
+
+  <div class="panel-body">
+    {{#each summary.tags}}
+    <a href="#" class="label label-default filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
+    {{/each}}
+  </div>
+</div>
+{% endverbatim %}
 </script>
 
 {% endblock %}

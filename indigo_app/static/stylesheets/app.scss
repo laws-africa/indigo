@@ -101,6 +101,15 @@ fieldset {
   left: $sidebar-width;
 }
 
+.sidebar-right + .workspace-content {
+  left: 0px;
+  right: $sidebar-width;
+}
+
+.sidebar-right {
+  right: 0px;
+}
+
 /* boxed groups have a header and a full-height inner */
 
 .boxed-group-header {
@@ -372,4 +381,9 @@ legend {
     width: 100%;
     height: 100%;
   }
+}
+
+/* library */
+.filter-tag {
+  font-size: inherit;
 }

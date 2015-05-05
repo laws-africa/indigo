@@ -32,6 +32,10 @@
         observe: 'commencement_date',
         onSet: emptyDate,
       },
+      '#document_assent_date': {
+        observe: 'assent_date',
+        onSet: emptyDate,
+      },
       '#document_language': 'language',
       '#document_draft': {
         observe: 'draft',

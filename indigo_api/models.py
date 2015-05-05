@@ -41,6 +41,8 @@ class Document(models.Model):
 
     # Date of commencement. AKN doesn't have a good spot for this, so it only goes in the DB.
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
+    # Date of assent. AKN doesn't have a good spot for this, so it only goes in the DB.
+    assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
 

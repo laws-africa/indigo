@@ -4,11 +4,8 @@
     "model": "indigo_api.document",
     "fields": {
       "document_xml": "<akomaNtoso xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.akomantoso.org/2.0\" xsi:schemaLocation=\"http://www.akomantoso.org/2.0 akomantoso20.xsd\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/za/act/2014/10/main\"/>\n          <FRBRuri value=\"/za/act/2014/10\"/>\n          <FRBRalias value=\"This is a title\"/>\n          <FRBRdate date=\"2014-02-12\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/za/act/2014/10/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2014/12/eng@\"/>\n          <FRBRdate date=\"2007-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/za/act/2014/10/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2014/12/eng@\"/>\n          <FRBRdate date=\"2015-02-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2014-02-12\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n    </meta>\n    <body>\n      <section id=\"section-1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
-      "publication_date": "2014-02-12",
       "draft": false,
-      "publication_name": "National Gazette",
       "title": "Water Act",
-      "publication_number": "10",
       "country": "za",
       "created_at": "2015-01-15T09:20:02.710Z",
       "updated_at": "2015-02-17T10:57:47.779Z",

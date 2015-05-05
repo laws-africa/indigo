@@ -31,6 +31,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     file = serializers.FileField(write_only=True, required=False)
     """ Allow uploading a file to convert and override the content of the document. """
 
+    publication_name = serializers.CharField(required=False, allow_blank=True)
+    publication_number = serializers.CharField(required=False, allow_blank=True)
+    publication_date = serializers.DateField(required=False)
+
     class Meta:
         model = Document
         fields = (

@@ -39,11 +39,6 @@ class Document(models.Model):
     document_xml = models.TextField(null=True, blank=True)
     """ Raw XML content of the entire document """
 
-    # TODO: there's no good reason to include this in the DB
-    publication_name = models.CharField(null=True, max_length=1024, help_text='Name of the original publication, such as a national gazette')
-    publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number")
-    publication_date = models.DateField(null=True, blank=True)
-
     # Date of commencement. AKN doesn't have a good spot for this, so it only goes in the DB.
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
 
@@ -90,6 +85,22 @@ class Document(models.Model):
     def locality(self):
         return self.doc.frbr_uri.locality
 
+    @property
+    def publication_name(self):
+        return self.doc.publication_name
+
+    @publication_name.setter
+    def publication_name(self, value):
+        self.doc.publication_name = value
+
+    @property
+    def publication_number(self):
+        return self.doc.publication_number
+
+    @publication_number.setter
+    def publication_number(self, value):
+        self.doc.publication_number = value
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)
@@ -103,21 +114,13 @@ class Document(models.Model):
             self.doc.frbr_uri = self.frbr_uri
             self.doc.language = self.language
 
-            self.doc.work_date = self.publication_date
+            self.doc.work_date = self.doc.publication_date
             self.doc.manifestation_date = self.updated_at or arrow.now()
-
-            self.doc.publication_date = self.publication_date or ''
-            self.doc.publication_name = self.publication_name or ''
-            self.doc.publication_number = self.publication_number or ''
 
         else:
             self.title = self.doc.title
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
-
-            self.publication_date = self.doc.publication_date or self.doc.work_date
-            self.publication_name = self.doc.publication_name
-            self.publication_number = self.doc.publication_number
 
         # update the model's XML from the Act XML
         self.refresh_xml()

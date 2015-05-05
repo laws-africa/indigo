@@ -27,5 +27,5 @@ class DocumentTestCase(TestCase):
         d.content = document_fixture('test')
 
         assert_equal(d.frbr_uri, '/za/act/1900/1')
-        assert_equal(d.publication_date, date(2005, 7, 24))
-
+        assert_equal(d.country, 'za')
+        assert_equal(d.doc.publication_date, date(2005, 7, 24))

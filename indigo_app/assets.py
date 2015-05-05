@@ -5,6 +5,7 @@ register('css', Bundle(
     'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
     'bower_components/fontawesome/css/font-awesome.css',
     'bower_components/bootstrap-datepicker/css/datepicker3.css',
+    'stylesheets/select2-4.0.0.min.css',
     Bundle(
         'stylesheets/app.scss',
         filters='pyscss',
@@ -23,6 +24,7 @@ register('js', Bundle(
     'bower_components/moment/locale/en-gb.js',
     'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
     'bower_components/tablesorter/jquery.tablesorter.min.js',
+    'javascript/select2-4.0.0.min.js',
     'javascript/caret.js',
     'javascript/prettyprint.js',
     'javascript/indigo/models.js',

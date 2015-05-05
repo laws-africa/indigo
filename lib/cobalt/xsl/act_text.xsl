@@ -55,8 +55,6 @@
 
 </xsl:text>
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    <xsl:text>
-</xsl:text>
   </xsl:template>
   
   <xsl:template match="a:subsection">
@@ -65,6 +63,11 @@
       <xsl:text> </xsl:text>
     </xsl:if>
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
+  </xsl:template>
+
+  <!-- these are block elements and have a newline at the end -->
+  <xsl:template match="a:heading|a:p">
+    <xsl:apply-templates />
     <xsl:text>
 
 </xsl:text>
@@ -84,9 +87,6 @@
     <xsl:value-of select="./a:num" />
     <xsl:text> </xsl:text>
     <xsl:apply-templates select="./*[not(self::a:num)]" />
-    <xsl:text>
-
-</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:list">
@@ -116,8 +116,7 @@
     <xsl:apply-templates select="a:conclusions" />
   </xsl:template>
 
-  <!-- for all nodes, generate a SPAN element with a class matching
-       the AN name of the node and copy over the ID if it exists -->
+  <!-- for most nodes, just dump their text content -->
   <xsl:template match="*">
     <xsl:text/><xsl:apply-templates /><xsl:text/>
   </xsl:template>

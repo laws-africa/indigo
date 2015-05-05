@@ -44,6 +44,14 @@
               (untitled)
             {{/if}}
           </a>
+
+          {{#if stub}}
+            <span class="label label-info">stub</span>
+          {{/if}}
+
+          {{#each tags}}
+            <span class="label label-default">{{this}}</span>
+          {{/each}}
         </td>
         <td>
           {{#if draft}}

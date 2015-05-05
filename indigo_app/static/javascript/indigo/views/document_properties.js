@@ -4,6 +4,11 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
+  // django doesn't link blank date fields, send null instead
+  function emptyDate(val) {
+    return (!val || val.trim() === "") ? null : val;
+  }
+
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
@@ -17,9 +22,16 @@
       '#document_frbr_uri': 'frbr_uri',
 
       '#document_title': 'title',
-      '#document_publication_date': 'publication_date',
+      '#document_publication_date': {
+        observe: 'publication_date',
+        onSet: emptyDate,
+      },
       '#document_publication_name': 'publication_name',
       '#document_publication_number': 'publication_number',
+      '#document_commencement_date': {
+        observe: 'commencement_date',
+        onSet: emptyDate,
+      },
       '#document_language': 'language',
       '#document_draft': {
         observe: 'draft',

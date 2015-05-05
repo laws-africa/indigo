@@ -39,9 +39,13 @@ class Document(models.Model):
     document_xml = models.TextField(null=True, blank=True)
     """ Raw XML content of the entire document """
 
+    # TODO: there's no good reason to include this in the DB
     publication_name = models.CharField(null=True, max_length=1024, help_text='Name of the original publication, such as a national gazette')
     publication_number = models.CharField(null=True, max_length=1024, help_text="Publication's sequence number, such as a gazette number")
     publication_date = models.DateField(null=True, blank=True)
+
+    # Date of commencement. AKN doesn't have a good spot for this, so it only goes in the DB.
+    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
 

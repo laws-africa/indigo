@@ -10,6 +10,8 @@
     events: {
       'click .filter-tag': 'filterByTag',
       'click .filter-country': 'filterByCountry',
+      'keyup .filter-search': 'filterBySearch',
+      'click .filter-search-clear': 'resetSearch',
     },
 
     initialize: function() {
@@ -19,9 +21,12 @@
       this.model.on('change, reset', this.summarizeAndRender, this);
 
       this.filters = {
+        search: null,
         country: null,
         tags: [],
       };
+
+      this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
 
       this.loadDocuments();
     },
@@ -103,6 +108,18 @@
       this.trigger('change');
     },
 
+    filterBySearch: function(e) {
+      var needle = this.$el.find('.filter-search').val().trim();
+      if (needle != this.filters.search) {
+        this.filters.search = needle;
+        this.trigger('change');
+      }
+    },
+
+    resetSearch: function(e) {
+      this.$el.find('.filter-search').val('').trigger('keyup');
+    },
+
     render: function() {
       this.$el.html(this.template({summary: this.summary}));
     },
@@ -113,17 +130,32 @@
       var collection = new Indigo.Library();
       var docs = this.model.models;
 
-      docs = _.filter(docs, function(doc) {
-        return !filters.country || doc.get('country') == filters.country;
-      });
+      // country
+      if (filters.country) {
+        docs = _.filter(docs, function(doc) {
+          return doc.get('country') == filters.country;
+        });
+      }
 
-      docs = _.filter(docs, function(doc) {
-        return (
-          filters.tags.length === 0 ||
-          _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; }));
-      });
+      // tags
+      if (filters.tags.length > 0) {
+        docs = _.filter(docs, function(doc) {
+          return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
+        });
+      }
 
-      // TODO: handle search
+      // search
+      if (filters.search) {
+        var needle = filters.search.toLowerCase();
+        var self = this;
+
+        docs = _.filter(docs, function(doc) {
+          return _.any(self.searchableFields, function(field) {
+            var val = doc.get(field);
+            return val && val.toLowerCase().indexOf(needle) > -1;
+          });
+        });
+      }
 
       collection.reset(docs);
       return collection;

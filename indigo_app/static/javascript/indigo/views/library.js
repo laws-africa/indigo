@@ -7,10 +7,33 @@
   Indigo.LibraryFilterView = Backbone.View.extend({
     el: '#filters',
     template: '#filters-template',
+    events: {
+      'click .filter-tag': 'filterByTag',
+      'click .filter-country': 'filterByCountry',
+    },
 
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
+
+      this.model = new Indigo.Library();
       this.model.on('change, reset', this.summarizeAndRender, this);
+
+      this.filters = {
+        country: null,
+        tags: [],
+      };
+
+      this.loadDocuments();
+    },
+
+    loadDocuments: function() {
+      var model = this.model;
+      var self = this;
+
+      $.getJSON('/api/documents', function(docs) {
+        model.reset(docs);
+        self.trigger('change');
+      });
     },
 
     summarizeAndRender: function() {
@@ -49,9 +72,62 @@
         function(info) { return -info.count; });
     },
 
+    filterByTag: function(e) {
+      e.preventDefault();
+
+      var $link = $(e.currentTarget);
+      var tag = $link.data('tag');
+      var ix = this.filters.tags.indexOf(tag);
+
+      if (ix > -1) {
+        $link.removeClass('label-info').addClass('label-default');
+        this.filters.tags.splice(ix, 1);
+      } else {
+        $link.removeClass('label-default').addClass('label-info');
+        this.filters.tags.push(tag);
+      }
+
+      this.trigger('change');
+    },
+
+    filterByCountry: function(e) {
+      e.preventDefault();
+
+      var $link = $(e.currentTarget);
+      var country = $link.data('country') || null;
+
+      $link.parent().children('.active').removeClass('active');
+      $link.addClass('active');
+      this.filters.country = country;
+
+      this.trigger('change');
+    },
+
     render: function() {
       this.$el.html(this.template({summary: this.summary}));
-    }
+    },
+
+    // filter the documents according to our filters
+    filtered: function() {
+      var filters = this.filters;
+      var collection = new Indigo.Library();
+      var docs = this.model.models;
+
+      docs = _.filter(docs, function(doc) {
+        return !filters.country || doc.get('country') == filters.country;
+      });
+
+      docs = _.filter(docs, function(doc) {
+        return (
+          filters.tags.length === 0 ||
+          _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; }));
+      });
+
+      // TODO: handle search
+
+      collection.reset(docs);
+      return collection;
+    },
   });
 
   Indigo.LibraryView = Backbone.View.extend({
@@ -61,28 +137,22 @@
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
 
-      this.model = new Indigo.Library();
-      this.model.on('change, reset', this.render, this);
-
-      this.filterView = new Indigo.LibraryFilterView({model: this.model});
-
-      // TODO: handle search
-      this.listDocuments();
-    },
-
-    listDocuments: function() {
-      var model = this.model;
-      $.getJSON('/api/documents', function(docs) {
-        model.reset(docs);
-      });
+      // the filter view does all the hard work of actually fetching and
+      // filtering the documents
+      this.filterView = new Indigo.LibraryFilterView();
+      this.filterView.on('change', this.render, this);
     },
 
     render: function() {
+      var docs = this.filterView.filtered();
+
       this.$el.html(this.template({
-        count: this.model.length,
-        documents: this.model.toJSON()
+        count: docs.length,
+        documents: docs.toJSON()
       }));
+
       formatTimestamps();
+
       this.$el.find('table').tablesorter({
         sortList: [[0, 0]],
         headers: {

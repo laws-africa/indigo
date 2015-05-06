@@ -101,9 +101,9 @@
   </div>
 
   <div class="list-group">
-    <a href="#" class="list-group-item active">All countries</a>
+    <a href="#" class="list-group-item filter-country active" data-country="">All countries</a>
     {{#each summary.countries}}
-    <a href="#" class="list-group-item country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    <a href="#" class="list-group-item filter-country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
     {{/each}}
   </div>
 </div>

@@ -11,6 +11,10 @@ html, body {
   min-height: 100%;
 }
 
+.label-default {
+  background-color: #aaa;
+}
+
 // the LIME editor overrides some styles by attaching .x-body to the body element,
 // so we overwrite those here
 body.x-body {
@@ -386,4 +390,5 @@ legend {
 /* library */
 .filter-tag {
   font-size: inherit;
+  font-weight: normal;
 }

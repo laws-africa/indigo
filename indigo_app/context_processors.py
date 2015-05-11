@@ -1,5 +1,6 @@
 from django.conf import settings
 
+
 def general(request):
     """
     Add some useful context to templates.
@@ -7,4 +8,5 @@ def general(request):
     return {
         'DEBUG': settings.DEBUG,
         'INDIGO_LIME_DEBUG': settings.INDIGO_LIME_DEBUG,
+        'SUPPORT_EMAIL': settings.SUPPORT_EMAIL,
     }

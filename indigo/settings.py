@@ -173,6 +173,7 @@ REST_FRAMEWORK = {
     ]
 }
 
+SUPPORT_EMAIL = 'mariyab@africanlii.org'
 
 DEFAULT_FROM_EMAIL = 'greg@code4sa.org'
 EMAIL_HOST = 'smtp.mandrillapp.com'

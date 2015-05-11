@@ -60,7 +60,7 @@
     el: 'body',
     events: {
       'click .workspace-buttons .btn.save': 'save',
-      'click .workspace-buttons .btn.delete': 'delete',
+      'click .btn.delete-document': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
@@ -171,7 +171,7 @@
     },
 
     allowDelete: function() {
-      this.$el.find('.btn.delete').prop('disabled', this.document.isNew() || !this.user.authenticated());
+      this.$el.find('.btn.delete-document').prop('disabled', this.document.isNew() || !this.user.authenticated());
     },
 
     userChanged: function() {

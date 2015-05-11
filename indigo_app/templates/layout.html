@@ -35,7 +35,7 @@
       <div class="workspace-buttons js-user-buttons">
         {% block header-buttons %}{% endblock %}
 
-        <button type="button" class="btn btn-default login not-logged-in" {% if user.is_authenticated %}style="display: none"{% endif %}><i class="fa fa-sign-in"></i> Login</button>
+        <button type="button" class="btn btn-default login not-logged-in" {% if user.is_authenticated %}style="display: none"{% endif %}><i class="fa fa-sign-in"></i> Log in</button>
 
         <button type="button" class="btn btn-default logged-in" data-toggle="dropdown" {% if not user.is_authenticated %}style="display: none"{% endif %}>
           <i class="fa fa-user"></i>

@@ -68,9 +68,25 @@
       </div>
 
       <div class="form-group">
+        <label for="document_tags" class="col-sm-2 control-label">Tags</label>
+        <div class="col-sm-4">
+          <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
+        </div>
+
         <label for="document_updated_at" class="col-sm-2 control-label">Last saved</label>
         <div class="col-sm-4">
           <div id="document_updated_at" class="form-control-static"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-4">
+          <div class="checkbox">
+            <label>
+              <input id="document_stub" type="checkbox" value="1"> This is a stub document
+            </label>
+            <p class="help-block">{{ form.fields.stub.help_text }}</p>
+          </div>
         </div>
 
         <label for="document_created_at" class="col-sm-2 control-label">First created</label>
@@ -126,24 +142,6 @@
 
     <fieldset>
       <legend>Draft and Publishing</legend>
-
-      <div class="form-group">
-        <label for="document_tags" class="col-sm-2 control-label">Tags</label>
-        <div class="col-sm-4">
-          <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
-          <div class="checkbox">
-            <label>
-              <input id="document_stub" type="checkbox" value="1"> This is a stub document
-            </label>
-            <p class="help-block">{{ form.fields.stub.help_text }}</p>
-          </div>
-        </div>
-      </div>
 
       <div class="form-group">
         <div class="col-sm-offset-2 col-sm-10">

@@ -20,6 +20,10 @@
       // user profile modal
       'show.bs.modal #user-profile-box': 'modalShown',
       'submit form.user-profile-form': 'saveUser',
+
+      // change password modal
+      'show.bs.modal #change-password-box': 'modalShown',
+      'submit form.change-password-form': 'changePassword',
     },
     bindings: {
       '.username': {
@@ -53,6 +57,8 @@
       this.$loginBox = $('#login-box');
       // profile modal
       this.$profileBox = $('#user-profile-box');
+      // password modal
+      this.$passwordBox = $('#change-password-box');
     },
     
     updateEmail: function(val, options) {
@@ -74,8 +80,52 @@
         });
     },
 
+    changePassword: function(e) {
+      var self = this;
+      e.preventDefault();
+
+      $.post('/auth/password/change/', this.$passwordBox.find('form').serialize())
+        .error(function(xhr, status, error) {
+          if (xhr.status == 400) {
+            var errors = [];
+
+            if (xhr.responseJSON.new_password1) {
+              errors.push("First password: " + xhr.responseJSON.new_password1);
+            }
+            if (xhr.responseJSON.new_password2) {
+              errors.push("Second password: " + xhr.responseJSON.new_password2);
+            }
+
+            // bad password details
+            self.$passwordBox.find('.alert-danger').show().html(errors.join("<br>"));
+          } else {
+            self.$passwordBox.find('.alert-danger').show().text(error);
+          }
+        })
+        .then(function(xhr) {
+          // log in again automatically
+          var creds = {
+            'username': self.model.get('username'),
+            'password': self.$passwordBox.find('[name=new_password2]').val(),
+          };
+
+          $.post('/auth/login/', creds)
+            .error(function(xhr) {
+              // hmm, refresh page
+              window.location.reload();
+            })
+            .then(function(xhr) {
+              self.$passwordBox.modal('hide');
+              self.$passwordBox.find('form').get(0).reset();
+              // update the csrf token we use
+              Indigo.csrfToken = $.cookie('csrftoken');
+            });
+        });
+    },
+
     modalShown: function(e) {
       $(e.currentTarget).find('.alert').hide();
+      $(e.currentTarget).find('.change-password-form').each(function() { this.reset(); });
     },
 
     userChanged: function() {

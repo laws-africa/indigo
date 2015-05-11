@@ -14,7 +14,7 @@ Searching
 .........
 
 Search for a document by typing in the search box. This will limit the documents to only those that match your search. Searches ignore case and
-match against title, year and number. Clear the search by clicking the ``x`` button.
+match against title, year and number. Clear the search by clicking the **x** button.
 
 
 Filtering by Country
@@ -28,7 +28,7 @@ Filtering by Tag
 
 Tags are a powerful way to group and manage documents however you need to. You can add as many tags as you like to a document.
 
-Change a document's tags by clicking on the document name and changing them in the ``Basic details`` section of the properties
+Change a document's tags by clicking on the document name and changing them in the **Basic details** section of the Properties
 page.
 
 You can filter the documents to show only those with one or more tags. To do so, click the tag in the list of tags on the right.
@@ -40,9 +40,51 @@ If you choose to filter by multiple tags, only documents with all of the chosen 
 Importing a new document
 ------------------------
 
+You can create a new document by importing an existing document such as a PDF or a Word file. Indigo supports
+a wide range of document types through the use of `Apache Tika <https://tika.apache.org/>`_. However, simple
+documents such as Word (.doc) and RTF produce the best results.
+
 .. note::
 
-    Useful tips before importing a document:
+    Follow these tips for getting the best results when importing documents:
 
+    - Prefer RTF or Word (.doc) documents, use PDFs only as a last resort
     - Remove the Table of Contents
-    - Prefer RTF or Word (.doc) documents, use PDFs as a last resort
+    - Convert images to text
+
+To import a document:
+
+1. Click the arrow next to the **Library** button and choose **Import a document**.
+2. Drag and drop the file to import into the box, or click the button to choose a file to upload.
+3. Wait for the document to be imported. This make take up to 10 minutes, especially for large documents.
+
+Once the document has been imported Indigo will take you to the details for that document.
+
+You will also need to proof the document to ensure Indigo imported it correctly. See the
+section on `Editing`_ for more details.
+
+Indigo will do its best to extract text information from the imported document.
+You will still need to fill in all the metadata such as the document title,
+year of publication, etc.
+
+Metadata
+--------
+
+
+Editing
+-------
+
+
+Deleting a document
+-------------------
+
+You can delete a document by going to the document Properties page and scrolling down to the **Danger Zone** section
+and clicking the **Delete this document** button.
+
+.. note::
+
+    If you delete a document by accident an administrator can undelete it for you.
+
+    Administrators: visit ``/admin/indigo_api/document/`` and click on the document to recover, scroll down
+    to find the **Deleted** checkbox, uncheck it and click **Save**.
+

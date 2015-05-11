@@ -69,14 +69,17 @@
         window.location = '/documents/' + data.id;
 
       }).fail(function(xhr, status, message) {
+        var error = message || status;
+
         console.log(message);
         self.$el.find('.progress-box').hide();
         self.$el.find('.file-inputs').show();
 
-        if (xhr.status == 400) {
-          var error = xhr.responseJSON.file || xhr.responseJSON[0];
-          self.$el.find('.alert').show().text("We couldn't import the file: " + error);
+        if (xhr.responseJSON) {
+          error = xhr.responseJSON.file || xhr.responseJSON[0] || message;
         }
+
+        self.$el.find('.alert').show().text("We couldn't import the file: " + error);
       });
     },
 

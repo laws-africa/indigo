@@ -24,10 +24,10 @@ Contents
 .. toctree::
    :maxdepth: 2
 
+   guide/index
    rest/general
    rest/public
    rest/app
-   guide/index
    develop/index
 
 Documents

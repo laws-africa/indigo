@@ -34,7 +34,7 @@ page.
 You can filter the documents to show only those with one or more tags. To do so, click the tag in the list of tags on the right.
 The number next to the tag is the number of documents that have that tag. Tags you are filtering by are highlighted in blue.
 
-If you choose to filter by multiple tags, only documents with all of those tags will be shown.
+If you choose to filter by multiple tags, only documents with all of the chosen tags will be shown.
 
 
 Importing a new document

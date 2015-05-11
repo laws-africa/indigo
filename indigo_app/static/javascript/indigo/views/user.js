@@ -42,8 +42,12 @@
 
     initialize: function() {
       var self = this;
+      var $body = $('body');
 
-      this.model = new Indigo.User();
+      this.model = new Indigo.User({
+        username: $body.data('userUsername'),
+        first_name: $body.data('userFirstName'),
+      });
       this.model.on('change', this.userChanged, this);
       this.model.fetch({global: false})
         .error(function(xhr) {

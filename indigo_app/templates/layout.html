@@ -1,6 +1,14 @@
 {% extends "base.html" %}
 
-{% block body-attributes %} data-backbone-view="{{ view }}" {% endblock %}
+{% block body-attributes %}
+  data-backbone-view="{{ view }}"
+
+  {% if user.is_authenticated %}
+    {# setting this allows the view to show it without flashing a blank username when loading #}
+    data-user-username="{{ user.username }}"
+    data-user-first-name="{{ user.first_name}}"
+  {% endif %}
+{% endblock %}
 
 {% block page-content %}
   <div class="workspace">
@@ -27,10 +35,13 @@
       <div class="workspace-buttons js-user-buttons">
         {% block header-buttons %}{% endblock %}
 
-        <button type="button" class="btn btn-default login not-logged-in"><i class="fa fa-sign-in"></i> Login</button>
+        <button type="button" class="btn btn-default login not-logged-in" {% if user.is_authenticated %}style="display: none"{% endif %}><i class="fa fa-sign-in"></i> Login</button>
 
-        <button type="button" class="btn btn-default logged-in" data-toggle="dropdown" style="display: none">
-          <i class="fa fa-user"></i> <span class="username"></span>
+        <button type="button" class="btn btn-default logged-in" data-toggle="dropdown" {% if not user.is_authenticated %}style="display: none"{% endif %}>
+          <i class="fa fa-user"></i>
+            <span class="username">
+              {% if user.is_authenticated %}{{ user.first_name|default:user.email }}{% endif %}
+            </span>
           <span class="caret"></span>
         </button>
         <ul class="pull-right dropdown-menu dropdown-right">

@@ -23,18 +23,14 @@ HTTP methods such as ``GET``, ``POST``, ``PUT`` and ``DELETE``.
 Content types
 -------------
 
-Some REST responses can in multiple formats. You can choose the content type of
-a response by including an ``Accept:`` header in the request or by placing
-``.format`` at the end of the URL. In most cases the default response
-type is JSON.
+Some REST calls can return content in multiple formats. You can specify the
+content type of a response by placing ``.format`` at the end of the URL
+or including an ``Accept:`` header in the request. In most cases the default
+response type is JSON.
 
 * ``.json`` or ``Accept: application/json``: return JSON
 * ``.xml`` or ``Accept: application/xml``: return Akoma Ntoso XML
 * ``.html`` or ``Accept: text/html``: return human friendly HTML
-
-To explicitly request a JSON response include ``Accept: application/json``
-in the request, or put ``.json`` at the end of the URL. To request XML,
-using ``Accept: application/xml`` or put ``.xml`` at the end of the URL.
 
 .. note::
 
@@ -42,7 +38,7 @@ using ``Accept: application/xml`` or put ``.xml`` at the end of the URL.
    about what is supported.
 
 When submitting data to the API in a PUT or POST request, encode it either
-as JSON or as form encoding, including the appropriate ``Content-Type`` header.
+as JSON or using form encoding and include the appropriate ``Content-Type`` header.
 
 An example POST request with JSON encoded values:
 
@@ -120,7 +116,7 @@ published_url  URL of where the published document is available.                
                This will be null if draft is true
 ============== =================================================================================== ========== =========================
 
-In some cases, a document may also contain ``content`` fields.
+In some cases, a document may also contain a ``content`` field.
 
 ============== =================================================================================== ========== =========================
 Field          Description                                                                         Type       Default for new documents
@@ -132,7 +128,7 @@ content        Raw XML content of the entire document.                          
 Next Steps
 ----------
 
-Now you're reading to read the guides for the two APIs:
+Now you're ready to read the guides for the two APIs:
 
 * :ref:`rest_app_guide`
 * :ref:`rest_public_guide`

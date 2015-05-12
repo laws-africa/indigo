@@ -16,6 +16,7 @@
       var self = this;
 
       this.view = options.view;
+      this.name = 'ace';
 
       this.editor = ace.edit(this.view.$el.find(".ace-editor")[0]);
       this.editor.setTheme("ace/theme/monokai");
@@ -203,6 +204,7 @@
     initialize: function(options) {
       this.view = options.view;
       this.initialized = false;
+      this.name = 'lime';
     },
 
     editFragment: function(node) {
@@ -306,7 +308,8 @@
     events: {
       'change [value=plaintext]': 'editWithAce',
       'change [value=lime]': 'editWithLime',
-      'change [name=fullscreen]': 'toggleFullscreen',
+      'click .btn.show-fullscreen': 'toggleFullscreen',
+      'click .btn.show-code': 'toggleShowCode',
     },
 
     initialize: function(options) {
@@ -367,6 +370,12 @@
       this.activeEditor.resize();
     },
 
+    toggleShowCode: function(e) {
+      if (this.activeEditor.name == 'ace') {
+        this.$el.find('.document-content-view').toggleClass('show-code');
+      }
+    },
+
     updateFragment: function(oldNode, newNode) {
       this.updating = true;
       try {
@@ -383,6 +392,7 @@
         .then(function() {
           self.$el.find('.plaintext-editor').addClass('in');
           self.$el.find('.lime-editor').removeClass('in');
+          self.$el.find('.btn.show-code').prop('disabled', false);
           self.activeEditor = self.aceEditor;
           self.editFragment(self.fragment);
         });
@@ -395,6 +405,7 @@
         .then(function() {
           self.$el.find('.plaintext-editor').removeClass('in');
           self.$el.find('.lime-editor').addClass('in');
+          self.$el.find('.btn.show-code').prop('disabled', true);
           self.activeEditor = self.limeEditor;
           self.editFragment(self.fragment);
         });

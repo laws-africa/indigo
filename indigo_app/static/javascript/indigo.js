@@ -39,6 +39,9 @@ $(function() {
   $.fn.datepicker.defaults.format = "yyyy-mm-dd";
   $.fn.datepicker.defaults.autoclose = true;
 
+  // tooltips
+  $('[title]').tooltip({container: 'body'});
+
   Indigo.errorView = new Indigo.ErrorBoxView();
 
   // always load the user view

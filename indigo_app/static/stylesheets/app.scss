@@ -123,6 +123,15 @@ fieldset {
   border-bottom: 1px solid $border-colour;
 }
 
+/* headers with help buttons */
+a.help {
+  color: #aaa;
+
+  &:hover {
+    color: #337ab7;
+  }
+}
+
 .boxed-group-inner {
   position: absolute;
   top: 0px;

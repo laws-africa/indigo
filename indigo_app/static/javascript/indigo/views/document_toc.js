@@ -123,7 +123,7 @@
 
     render: function() {
       this.$el.html(this.template({toc: this.toc}));
-      this.$el.find('[title]').tooltip({container: 'body'});
+      this.$el.find('[title]').tooltip();
     },
 
     // select the i-th item in the TOC

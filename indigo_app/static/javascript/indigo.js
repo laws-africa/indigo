@@ -40,7 +40,10 @@ $(function() {
   $.fn.datepicker.defaults.autoclose = true;
 
   // tooltips
-  $('[title]').tooltip({container: 'body'});
+  $('[title]').tooltip({
+    container: 'body',
+    placement: 'auto top'
+  });
 
   Indigo.errorView = new Indigo.ErrorBoxView();
 

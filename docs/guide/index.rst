@@ -12,4 +12,5 @@ Contents:
 
     account
     principles
-    documents
+    managing
+    editing

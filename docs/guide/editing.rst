@@ -23,7 +23,12 @@ If used, this should be a widely accepted code for the region. For example, in S
 
 **Language** is the language of the document.
 
-**Document subtype** (optional) is the subtype of the document if it is more than just an Act. This can generally be left blank. In South Africa, this must be ``by-law`` for by-laws.
+**Document subtype** (optional) is the subtype of the document. This must be left blank for general Acts. Otherwise, use the following abbreviations:
+
+- For by-laws use **by-law**
+- For Statutory Instruments use **si**
+- For Government Notices use **gn**
+- For proclamations use **p**
 
 **Year** is the year of the document, generally the year it was first introduced in Parliament.
 

@@ -23,12 +23,21 @@ Notice that presentation is separate from structure and comes *last* in the logi
 
     It's more important to capture the **content** and **structure** of a document than exactly match the presentation of the original.
 
+The Indigo platform focuses on capturing the metadata, structure and content of documents. It provides some support for basic
+presentation of a document--primarily HTML--and allows others to build on the captured structure to provide new presentation layers.
+This means the hard work done to capture a document in Indigo will keep paying off over time as the support for the underlying
+data format grows.
+
 Akoma Ntoso
 -----------
 
-Under the hood, Indigo uses the `Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legal documents. This is an XML standard that allows us to capture the content and -- most importantly -- the structure of the document. Akoma Ntoso supports a wide range of documents (acts, bills, debates, gazettes, etc.) but we only use the **act** document type. Documents such as by-laws, statutory instruments and government notices also fall under this type.
+Under the hood, Indigo uses the `Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legal documents. This is an XML standard that allows us to capture the content and--most importantly--the structure of the document. Akoma Ntoso supports a wide range of documents (acts, bills, debates, gazettes, etc.) but we only use the **act** document type. Documents such as by-laws, statutory instruments and government notices also fall under this type.
 
-Akoma Ntoso is designed to support the many varying structures of legislative documents used throughout the world. As a result, the format is rich and expressive but quite complicated.
+.. seealso::
+
+    See http://www.akomantoso.org/ for more background on Akoma Ntoso.
+
+Akoma Ntoso is designed to support the many varying structures of legislative documents used throughout the world. As a result, the format is rich and expressive but quite complicated. Indigo works with only a subset of what is allowed by Akoma Ntoso and does its best to hide this complexity from the user.
 
 What Indigo Does for You
 ------------------------
@@ -39,3 +48,5 @@ Indigo automates some parts of managing legislation. It can do this because it u
 2. Indigo generates a full Table of Contents with Parts, Chapters, Sections and Schedules. You must not add a Table of Contents to you document; it's important that you don't so that Indigo doesn't get confused.
 3. Indigo manages typefaces and font sizes for you. This is a presentation issue and is therefore dependent on what device or media the document is being targeted at. Indigo uses the structural information you provide to decide how the document should look on different devices.
 4. Indigo handles indentation for you, based on the document structure. It knows when a subsection is a child of a section and will sort out the indentation appropriately, you don't need to worry. In fact, Indigo completely ignores tabs and spaces when it imports documents.
+
+Next, we'll take you through how to use the Indigo platform to manage and capture legislation.

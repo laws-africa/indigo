@@ -60,8 +60,8 @@ Draft and Publishing
 
 **Draft** controls whether the document is available publically. While you are editing the document, this should be **checked**. Outside users cannot see draft documents. Once a document is ready to be used by outside users, uncheck this box to indicate it is published.
 
-Editing Content
----------------
+Document Content
+----------------
 
 If you're capturing a new document we recommend first capturing it using a standard word processor like Microsoft Word. Once you have the bulk of the document, import it into Indigo.
 
@@ -76,23 +76,18 @@ When Indigo first imports a document it extracts the textual content from the do
 
     Indigo ignores presentation details such as font size, bold and italicised text, and indentation because those elements are used inconsistently by different authors. Indigo will apply new presentation rules based on the structure of the document.
 
-Once you have imported a document you will need to proof it to ensure that the various components have been correctly captured. The grammar doesn't always get everything right.
-
-In particular, look for these errors after importing:
+Once you have imported a document you will need to proof it to ensure that the various components have been correctly captured. The grammar doesn't always get everything right. In particular, look for these errors after importing:
 
 - Check that parts and chapters have been identified correctly.
 - Check that numbered sections have been identified correctly.
 - Check that numbered lists aren't broken in the wrong places.
 - Check that schedules have been matched correctly.
 
-
+Editing Content
+---------------
 
 TODO:
 
 - HOWTO: edit a section, such as fixing a typo or applying a consolidation
 - HOWTO: add a new chapter, part or section
 - HOWTO: add a 
-
-
-Consolidation
--------------

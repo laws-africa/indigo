@@ -25,10 +25,10 @@ If used, this should be a widely accepted code for the region. For example, in S
 
 **Document subtype** (optional) is the subtype of the document. This must be left blank for general Acts. Otherwise, use the following abbreviations:
 
-- For by-laws use **by-law**
+- For By-laws use **by-law**
 - For Statutory Instruments use **si**
 - For Government Notices use **gn**
-- For proclamations use **p**
+- For Proclamations use **p**
 
 **Year** is the year of the document, generally the year it was first introduced in Parliament.
 

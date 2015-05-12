@@ -113,7 +113,7 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
 
     def validate_frbr_uri(self, value):
         try:
-            return FrbrUri.parse(value).work_uri()
+            return FrbrUri.parse(value.lower()).work_uri()
         except ValueError:
             raise ValidationError("Invalid FRBR URI")
 

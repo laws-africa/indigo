@@ -68,6 +68,12 @@ class SimpleTest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_in('<p>also in the body</p>', response.data['content'])
 
+    def test_frbr_uri_lowercased(self):
+        # ACT should be changed to act
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/ACT/1998/2'})
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+
     def test_create_with_content(self):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',

@@ -40,16 +40,22 @@ If you choose to filter by multiple tags, only documents with all of the chosen 
 Importing a new document
 ------------------------
 
-You can create a new document by importing an existing document such as a PDF or a Word file. Indigo supports
-a wide range of document types through the use of `Apache Tika <https://tika.apache.org/>`_. However, simple
-documents such as Word (.doc) and RTF produce the best results.
+You can create a new document by importing an existing file, such as a PDF or a Word document. Indigo uses
+`Apache Tika <https://tika.apache.org/>`_ to import from a wide range of document types, including:
+
+- MS Word (.doc and .docx)
+- Rich Text Format (.rtf)
+- PDF
+- Plain text (.txt)
+
+Simple documents such as Word (.doc) and RTF produce the best results.
 
 .. note::
 
     Follow these tips for getting the best results when importing documents:
 
-    - Prefer RTF or Word (.doc) documents, use PDFs only as a last resort
-    - Remove the Table of Contents
+    - Prefer RTF or Word (.doc and .docx) documents; use PDFs only as a last resort
+    - Remove the Table of Contents at the start of the document
     - Convert images to text
 
 To import a document:

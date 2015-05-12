@@ -1,17 +1,9 @@
 Indigo Principles
 =================
 
-The Indigo platform works a bit different to other consolidation platforms you might be familiar with. Here we describe
-these differences and why they exist.  Understanding these differences will
-help make explain why the Indigo platform doesn't look like a text editor such
-as Microsoft Word.
-
-.. note::
-
-    Throughout this guide we refer to **documents**. These are generally legislative Acts but may also be related
-    legislative documents such as regulations or by-laws.
-
-
+The Indigo platform works a bit differently to other consolidation platforms
+you might be familiar with. Understanding these differences will help make explain why the Indigo
+platform doesn't look like a text editor such as Microsoft Word.
 
 Structure, Content and Presentation 
 -----------------------------------
@@ -20,13 +12,30 @@ A key goal of the Indigo platform is to allow content to be published for a wide
 
 To achieve this, the platform must capture the **metadata**, **content** and **structure** of the document separately from its **presentation**.
 
-- The **metadata** describes the document as a piece of work and includes information such as its title, publication date, language and country. This data allows users to classify, browse and search for documents and is also used when presenting the document.
-- The **content** is the actual words of the document, including headings, tables and paragraph numbers, and forms the core of the document.
-- The **structure** is the heirarchy of the document, including chapter, part and section information. Capturing the structure makes it possible to provide intuitive user experiences, such as an interface for browsing through a document by section or linking between different sections of a document or between documents.
-- The **presentation** is how the document is physically presented to the user and includes typography, layout, colour and formatting.
+- **Metadata** describes the document as a piece of work and includes information such as its title, publication date, language and country. This data allows users to classify, browse and search for documents and is also used when presenting the document.
+- **Structure** is the heirarchy of the document, including chapter, part and section information. Capturing the structure makes it possible to provide intuitive user experiences, such as an interface for browsing through a document by section or linking between different sections of a document or between documents.
+- **Content** is the actual words of the document, including headings, tables and paragraph numbers, and forms the core of the document.
+- **Presentation** is how the document is physically presented to the user and includes typography, layout, colour and formatting.
 
 Notice that presentation is separate from structure and comes *last* in the logical pipeline of managing a document. The same metadata, content and structure can be presented in many different ways.
 
 .. note::
 
-    It's more important to capture the **content** and **structure** of a document than match the presentation of the original exactly.
+    It's more important to capture the **content** and **structure** of a document than exactly match the presentation of the original.
+
+Akoma Ntoso
+-----------
+
+Under the hood, Indigo uses the `Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legal documents. This is an XML standard that allows us to capture the content and -- most importantly -- the structure of the document. Akoma Ntoso supports a wide range of documents (acts, bills, debates, gazettes, etc.) but we only use the **act** document type. Documents such as by-laws, statutory instruments and government notices also fall under this type.
+
+Akoma Ntoso is designed to support the many varying structures of legislative documents used throughout the world. As a result, the format is rich and expressive but quite complicated.
+
+What Indigo Does for You
+------------------------
+
+Indigo automates some parts of managing legislation. It can do this because it understands the structure of the document.
+
+1. Indigo generates the cover page for a document based on the metadata you supply. You must not include a cover page in the content of the document.
+2. Indigo generates a full Table of Contents with Parts, Chapters, Sections and Schedules. You must not add a Table of Contents to you document; it's important that you don't so that Indigo doesn't get confused.
+3. Indigo manages typefaces and font sizes for you. This is a presentation issue and is therefore dependent on what device or media the document is being targeted at. Indigo uses the structural information you provide to decide how the document should look on different devices.
+4. Indigo handles indentation for you, based on the document structure. It knows when a subsection is a child of a section and will sort out the indentation appropriately, you don't need to worry. In fact, Indigo completely ignores tabs and spaces when it imports documents.

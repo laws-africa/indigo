@@ -10,6 +10,8 @@ django-taggit==0.14.0
 django-taggit-serializer==0.1.1
 djangorestframework==3.0.3
 enum34==1.0.4
+gevent==1.0.1
+greenlet==0.4.5
 gunicorn==19.1.1
 ipython==2.4.0
 lxml==3.4.1

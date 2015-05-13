@@ -116,6 +116,65 @@
     <xsl:apply-templates select="a:conclusions" />
   </xsl:template>
 
+  <!-- tables -->
+  <xsl:template match="a:table">
+    <xsl:text>{| </xsl:text>
+
+    <!-- attributes -->
+    <xsl:for-each select="@*[local-name()!='id']">
+      <xsl:value-of select="local-name(.)" />
+      <xsl:text>="</xsl:text>
+      <xsl:value-of select="." />
+      <xsl:text>" </xsl:text>
+    </xsl:for-each>
+
+    <xsl:apply-templates />
+    <xsl:text>
+|}
+
+</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:tr">
+    <xsl:apply-templates />
+    <xsl:text>
+|-</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:th|a:td">
+    <xsl:choose>
+      <xsl:when test="local-name(.) = 'th'">
+        <xsl:text>
+! </xsl:text>
+      </xsl:when>
+      <xsl:when test="local-name(.) = 'td'">
+        <xsl:text>
+| </xsl:text>
+      </xsl:when>
+    </xsl:choose>
+
+    <!-- attributes -->
+    <xsl:if test="@*">
+      <xsl:for-each select="@*">
+        <xsl:value-of select="local-name(.)" />
+        <xsl:text>="</xsl:text>
+        <xsl:value-of select="." />
+        <xsl:text>" </xsl:text>
+      </xsl:for-each>
+      <xsl:text>| </xsl:text>
+    </xsl:if>
+
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <!-- don't end p tags with newlines in tables -->
+  <xsl:template match="a:table//a:p">
+    <xsl:apply-templates />
+  </xsl:template>
+
+  <!-- END tables -->
+
+
   <!-- for most nodes, just dump their text content -->
   <xsl:template match="*">
     <xsl:text/><xsl:apply-templates /><xsl:text/>

@@ -105,11 +105,14 @@ The easiest way to make an edit is to use the Table of Contents on the left part
     .. image:: edit-inline.png
 
 6. Indigo will process your change and replace the editor with the new content.
-7. Click the blue **Save** button to save your changes to the server.
 
-If you've made an edit Indigo cannot understand, clicking the **green tick** will show an error. Correct your edit and try again.
+   - If you've made an edit Indigo cannot understand, clicking the **green tick** will show an error. Correct your edit and try again.
+   - To abandon your changes, click the **X** icon near the green tick.
 
-To abandon your changes, click the **X** icon near the green tick.
+8. Click the blue **Save** button to save your changes to the server.
+
+    .. image:: edit-save.png
+
 
 .. note::
 
@@ -136,13 +139,6 @@ You *cannot* add the new section by editing section "9. Meetings" and adding "10
 You must edit the element which *contains* an existing section near the one you wish to add. In this case, you would edit "Part 2 Institutional Matters" and add the new section at the end of section 9.
 
 Similarly, if you needed to add "Part 3 Powers and duties" after Part 2, you would need to edit the entire document and add the new part after Part 2.
-
-Editing Content
----------------
-
-TODO:
-
-- HOWTO: edit a section, such as fixing a typo or applying a consolidation
 
 Editing Tables
 --------------

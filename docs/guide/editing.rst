@@ -3,6 +3,8 @@
 Editing Documents
 =================
 
+There are two major aspects of a document that you can edit: the **metadata** and the **content**. In this section we cover editing of both of these.
+
 Metadata
 --------
 
@@ -60,8 +62,8 @@ Draft and Publishing
 
 **Draft** controls whether the document is available publically. While you are editing the document, this should be **checked**. Outside users cannot see draft documents. Once a document is ready to be used by outside users, uncheck this box to indicate it is published.
 
-Document Content
-----------------
+Editing after Importing
+-----------------------
 
 If you're capturing a new document we recommend first capturing it using a standard word processor like Microsoft Word. Once you have the bulk of the document, import it into Indigo.
 
@@ -83,11 +85,66 @@ Once you have imported a document you will need to proof it to ensure that the v
 - Check that numbered lists aren't broken in the wrong places.
 - Check that schedules have been matched correctly.
 
+Basic Editing
+-------------
+
+The easiest way to make an edit is to use the Table of Contents on the left part of the document page to find the section in which to make the change.
+
+1. Click on the heading of the part, chapter or section you wish to edit. Choose the smallest element that contains what you wish to change.
+
+    .. image:: edit-choose-section.png
+
+2. Click the **Edit** button in the top right corner of the document.
+
+    .. image:: edit-button.png
+
+3. Indigo will show the in-place editor. Notice that the content of the editor is the textual content of the section you're editing, without any formatting and with very simple layout.
+4. Make the changes you require.
+5. Click the **green tick** at the top-right corner where you clicked the **Edit** button.
+
+    .. image:: edit-inline.png
+
+6. Indigo will process your change and replace the editor with the new content.
+7. Click the blue **Save** button to save your changes to the server.
+
+If you've made an edit Indigo cannot understand, clicking the **green tick** will show an error. Correct your edit and try again.
+
+To abandon your changes, click the **X** icon near the green tick.
+
+.. note::
+
+    Bear these tips in mind when editing:
+
+    - Indigo can take a long time to process large sections. Choose the smallest containing element when editing.
+    - Use the existing content as a guide for how to format new content.
+
+Adding new Chapters, Parts and Sections
+---------------------------------------
+
+You cannot add a new section, part or chapter when editing an existing section, part or chapter. To add a new one, you must edit the element which *contains* an existing section, part or chapter.
+
+For example, suppose you had the following layout and you need to add a new section "10. Staffing".
+
+- Part 2 Institutional Matters
+
+  - 7. First meeting
+  - 8. Election of chairperson
+  - 9. Meetings
+
+You *cannot* add the new section by editing section "9. Meetings" and adding "10. Staffing at the end", Indigo will give you an error.
+
+You must edit the element which *contains* an existing section near the one you wish to add. In this case, you would edit "Part 2 Institutional Matters" and add the new section at the end of section 9.
+
+Similarly, if you needed to add "Part 3 Powers and duties" after Part 2, you would need to edit the entire document and add the new part after Part 2.
+
 Editing Content
 ---------------
 
 TODO:
 
 - HOWTO: edit a section, such as fixing a typo or applying a consolidation
-- HOWTO: add a new chapter, part or section
-- HOWTO: add a 
+
+Editing Tables
+--------------
+
+TODO

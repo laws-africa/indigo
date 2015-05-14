@@ -12,6 +12,7 @@
       'click .filter-country': 'filterByCountry',
       'keyup .filter-search': 'filterBySearch',
       'click .filter-search-clear': 'resetSearch',
+      'change .filter-status': 'filterByStatus',
     },
 
     initialize: function() {
@@ -24,6 +25,7 @@
         search: null,
         country: null,
         tags: [],
+        status: 'all',
       };
 
       this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
@@ -120,6 +122,29 @@
       this.$el.find('.filter-search').val('').trigger('keyup');
     },
 
+    filterByStatus: function(e) {
+      var $link = $(e.currentTarget);
+      var status = $link.data('status');
+
+      this.filters.status = status;
+
+      // Change buttons to correct colour.
+      var parent = $link.parent();
+      parent.siblings().removeClass().addClass('btn btn-default');
+
+      if (status=='draft') {
+        parent.removeClass().addClass('btn btn-warning');
+      }
+      else if (status=='published') {
+        parent.removeClass().addClass('btn btn-info')
+      }
+      else {
+        parent.removeClass().addClass('btn btn-default');
+      }
+
+      this.trigger('change');
+    },
+
     render: function() {
       this.$el.html(this.template({summary: this.summary}));
     },
@@ -154,6 +179,21 @@
             var val = doc.get(field);
             return val && val.toLowerCase().indexOf(needle) > -1;
           });
+        });
+      }
+
+      // status
+      if (filters.status) {
+        docs = _.filter(docs, function(doc) {
+          if (filters.status === "draft") {
+            return doc.get('draft') == true;
+          }
+          else if (filters.status === "published"){
+            return doc.get('draft') == false;
+          }
+          else {
+            return doc;
+          }
         });
       }
 

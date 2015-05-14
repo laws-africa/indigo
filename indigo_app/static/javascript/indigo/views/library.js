@@ -124,7 +124,7 @@
         parent.removeClass().addClass('btn btn-warning');
       }
       else if (status=='published') {
-        parent.removeClass().addClass('btn btn-info')
+        parent.removeClass().addClass('btn btn-info');
       }
       else {
         parent.removeClass().addClass('btn btn-default');
@@ -173,10 +173,10 @@
       if (filters.status !== 'all') {
         docs = _.filter(docs, function(doc) {
           if (filters.status === "draft") {
-            return doc.get('draft') == true;
+            return doc.get('draft') === true;
           }
           else if (filters.status === "published"){
-            return doc.get('draft') == false;
+            return doc.get('draft') === false;
           }
         });
       }

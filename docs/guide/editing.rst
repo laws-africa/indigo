@@ -178,7 +178,7 @@ When using the Simple Editor, follow these guidelines:
 
 - Start a section numbered ``N`` with::
 
-      N. Section Title
+      N. Title
 
 - Numbered subsections must have a number in parentheses at the start of the line::
 

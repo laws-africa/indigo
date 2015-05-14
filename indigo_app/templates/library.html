@@ -127,6 +127,26 @@
     {{/each}}
   </div>
 </div>
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">Status</h3>
+  </div>
+
+  <div class="panel-body">
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default active">
+        <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
+      </label>
+      <label class="btn btn-default">
+        <input type="radio" name="options" autocomplete="off" class="filter-status" value="published">Published
+      </label>
+      <label class="btn btn-default">
+        <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft">Draft
+      </label>
+    </div>
+  </div>
+</div>
 {% endverbatim %}
 </script>
 

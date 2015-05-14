@@ -54,15 +54,8 @@
 
       var self = this;
       var $editable = this.view.$el.find('.an-container').children().first();
-
       // text from node in the actual XML document
-      var text = this.textTransform
-        .transformToFragment(this.view.fragment, document)
-        .firstChild.textContent
-        // cleanup inline whitespace
-        .replace(/([^ ]) +/g, '$1 ')
-        // remove multiple consecutive blank lines
-        .replace(/^( *\n){2,}/gm, "\n");
+      var text = this.xmlToText(this.view.fragment);
 
       // show the inline editor
       $editable.css({position: 'relative'});
@@ -78,6 +71,16 @@
 
       this.view.$el.find('.document-sheet-container').scrollTop(0);
       this.$inlineButtons.hide();
+    },
+
+    xmlToText: function(element) {
+      return this.textTransform
+        .transformToFragment(element, document)
+        .firstChild.textContent
+        // cleanup inline whitespace
+        .replace(/([^ ]) +/g, '$1 ')
+        // remove multiple consecutive blank lines
+        .replace(/^( *\n){2,}/gm, "\n");
     },
 
     saveInlineEditor: function(e) {

@@ -25,14 +25,14 @@ Here is an example piece of legislation that illustrates the difference between 
 
 .. image:: content-vs-structure.png
 
-.. note::
-
-    It's more important to capture the **content** and **structure** of a document than exactly match the presentation of the original.
-
 The Indigo platform focuses on capturing the metadata, structure and content of documents. It provides some support for basic
 presentation of a document--primarily HTML--and allows others to build on the captured structure to provide new presentation layers.
 This means the hard work done to capture a document in Indigo will keep paying off over time as the support for the underlying
 data format grows.
+
+.. note::
+
+    It's more important to capture the **content** and **structure** of a document than exactly match the presentation of the original.
 
 Akoma Ntoso
 -----------
@@ -50,7 +50,6 @@ It can be useful to understand what Akoma Ntoso looks like. Here is the XML that
 .. image:: raw-akn.png
 
 As you can see, the Akoma Ntoso XML for a section is complicated! If you understand the format you can edit the XML directly, otherwise we recommend you use the editor.
-
 
 What Indigo Does for You
 ------------------------

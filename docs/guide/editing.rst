@@ -85,6 +85,7 @@ Once you have imported a document you will need to proof it to ensure that the v
 - Check that numbered lists aren't broken in the wrong places.
 - Check that schedules have been matched correctly.
 
+
 Basic Editing
 -------------
 
@@ -121,6 +122,139 @@ The easiest way to make an edit is to use the Table of Contents on the left part
     - Indigo can take a long time to process large sections. Choose the smallest containing element when editing.
     - Use the existing content as a guide for how to format new content.
 
+
+The Simple Editor
+-----------------
+
+The editing mode shown above is Indigo's Simple Editor. It hides the XML completely and is suitable for most simple types of legislation. It requires following a few simple conventions and can generate the appropriate XML for you. It is simpler than working with the Akoma Ntoso XML directly.
+
+Here is an example of the simple formatting required by the Simple Editor::
+
+    Chapter 8
+    Environmental management co-operation agreements
+
+    35. Conclusion of agreements
+
+    (1) The Minister and every MEC and municipality, may enter into environmental management co-operation agreements with any person or community for the purpose of promoting compliance with the principles laid down in this Act.
+
+    (Section 35(1) inserted by section 7 of Act 46 of 2003)
+
+    (2) Environmental management co-operation agreements must- 
+
+    (a) only be entered into with the agreement of-
+
+    (i) every organ of state which has jurisdiction over any activity to which such environmental management co-operation agreement relates;
+
+    (ii) the Minister and the MEC concerned;
+
+    (b) only be entered into after compliance with such procedures for public participation as may be prescribed by the Minister; and
+
+    (c) comply with such regulations as may be prescribed under section 45.
+
+Indigo understands how to convert the above into the XML that represents a chapter, section 35, subsections etc.
+
+You can think of this as focusing on the **content** of the document and using
+very simple **presentation** rules guided by a rough understanding of the
+**structure**. Compare this with an editor like Word which focuses heavily on the **presentation**
+of the content.
+
+Notice that under subsection 1(a) above there is a sublist with items (i) and (ii). We don't bother
+trying to indicate that it is a sublist, Indigo will work that out based on the numbering.
+
+Simple Editor Guidelines
+------------------------
+
+When using the Simple Editor, follow these guidelines:
+
+- Start a chapter numbered ``N`` with::
+      
+      Chapter N
+      Title
+
+- Start a part numbered ``N`` with::
+
+      Part N
+      Title
+
+- Start a section numbered ``N`` with::
+
+      N. Section Title
+
+- Numbered subsections must have a number in parentheses at the start of the line::
+
+      (1) The content of section 1.
+
+      (2) The content of section 2.
+
+- Subsections or statements without numbers can be written as-is::
+
+      A statement without a number.
+
+- Numbered sublists must have a number in parentheses at the start of the line::
+
+      (a) sublist item a
+
+      (b) sublist item b
+
+- Start a numbered Schedule with::
+
+      Schedule N
+      Title
+
+  Both the number ``N`` and ``Title`` are optional. If a schedule doesn't have these, just use the
+  word ``Schedule``.
+
+
+Editing Tables
+--------------
+
+Often a piece of legislation will include tables, for example in Schedules. These can be tricky to edit
+using the Simple Editor. Indigo uses the same text format for tables that `Wikipedia <http://wikipedia.org/>`_ uses.
+
+.. seealso::
+
+    Be sure to read `Wikipedia's tutorial for writing tables <http://en.wikipedia.org/wiki/Help:Table/Manual_tables>`_.
+
+    **Don't use** ``class="wikitable"`` even though they recommend it.
+
+This code::
+
+    {|
+    |-
+    ! header 1
+    ! header 2
+    ! header 3
+    |-
+    | row 1, cell 1
+    | row 1, cell 2
+    | row 1, cell 3
+    |-
+    | row 2, cell 1
+    | row 2, cell 2
+    | row 2, cell 3
+    |}
+
+produces a table that looks like this:
+
+============= ============= =============
+Header 1      Header 2      Header 3
+============= ============= =============
+row 1, cell 1 row 1, cell 2 row 1, cell 3
+row 1, cell 1 row 1, cell 2 row 1, cell 3
+============= ============= =============
+
+Notice how we don't explicitly make the header row bold. We simply indicate in the **structure** that those cells
+are headers by using ``!`` at the start of the cell's line instead of the normal ``|``. Indigo will format the cell appropriately.
+
+
+Viewing the XML
+---------------
+
+It can be useful to see what the Akoma Ntoso for a piece of the document looks like. Click the **Show Code** button to do this:
+
+.. image:: show-code.png
+
+
 Adding new Chapters, Parts and Sections
 ---------------------------------------
 
@@ -139,15 +273,3 @@ You *cannot* add the new section by editing section "9. Meetings" and adding "10
 You must edit the element which *contains* an existing section near the one you wish to add. In this case, you would edit "Part 2 Institutional Matters" and add the new section at the end of section 9.
 
 Similarly, if you needed to add "Part 3 Powers and duties" after Part 2, you would need to edit the entire document and add the new part after Part 2.
-
-Editing Tables
---------------
-
-TODO
-
-Viewing the XML
----------------
-
-It can be useful to see what the Akoma Ntoso for a piece of the document looks like. Click the **Show Code** button to do this:
-
-.. image:: show-code.png

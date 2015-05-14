@@ -68,8 +68,6 @@
       $editable.css({position: 'relative'});
       this.$inlineEditor
         .data('fragment', this.view.fragment.tagName)
-        .height($editable.height())
-        .width($editable.width())
         .appendTo($editable)
         .show()
         .find('textarea')

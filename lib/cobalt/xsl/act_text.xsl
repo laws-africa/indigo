@@ -127,6 +127,8 @@
       <xsl:value-of select="." />
       <xsl:text>" </xsl:text>
     </xsl:for-each>
+    <xsl:text>
+|-</xsl:text>
 
     <xsl:apply-templates />
     <xsl:text>

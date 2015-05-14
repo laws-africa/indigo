@@ -110,18 +110,6 @@
       this.trigger('change');
     },
 
-    filterBySearch: function(e) {
-      var needle = this.$el.find('.filter-search').val().trim();
-      if (needle != this.filters.search) {
-        this.filters.search = needle;
-        this.trigger('change');
-      }
-    },
-
-    resetSearch: function(e) {
-      this.$el.find('.filter-search').val('').trigger('keyup');
-    },
-
     filterByStatus: function(e) {
       var $link = $(e.currentTarget);
       var status = $link.data('status');
@@ -143,6 +131,18 @@
       }
 
       this.trigger('change');
+    },
+
+    filterBySearch: function(e) {
+      var needle = this.$el.find('.filter-search').val().trim();
+      if (needle != this.filters.search) {
+        this.filters.search = needle;
+        this.trigger('change');
+      }
+    },
+
+    resetSearch: function(e) {
+      this.$el.find('.filter-search').val('').trigger('keyup');
     },
 
     render: function() {
@@ -169,6 +169,18 @@
         });
       }
 
+      // status
+      if (filters.status !== 'all') {
+        docs = _.filter(docs, function(doc) {
+          if (filters.status === "draft") {
+            return doc.get('draft') == true;
+          }
+          else if (filters.status === "published"){
+            return doc.get('draft') == false;
+          }
+        });
+      }
+
       // search
       if (filters.search) {
         var needle = filters.search.toLowerCase();
@@ -179,21 +191,6 @@
             var val = doc.get(field);
             return val && val.toLowerCase().indexOf(needle) > -1;
           });
-        });
-      }
-
-      // status
-      if (filters.status) {
-        docs = _.filter(docs, function(doc) {
-          if (filters.status === "draft") {
-            return doc.get('draft') == true;
-          }
-          else if (filters.status === "published"){
-            return doc.get('draft') == false;
-          }
-          else {
-            return doc;
-          }
         });
       }
 

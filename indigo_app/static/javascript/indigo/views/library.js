@@ -111,13 +111,13 @@
     },
 
     filterByStatus: function(e) {
-      var $link = $(e.currentTarget);
-      var status = $link.data('status');
+      var $input = $(e.currentTarget);
+      var status = $input.val();
 
       this.filters.status = status;
 
       // Change buttons to correct colour.
-      var parent = $link.parent();
+      var parent = $input.parent();
       parent.siblings().removeClass().addClass('btn btn-default');
 
       if (status=='draft') {

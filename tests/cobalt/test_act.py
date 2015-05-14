@@ -118,7 +118,7 @@ class ActTestCase(TestCase):
             {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
               'component': 'main', 'subcomponent': 'chapter/1', 'children': [
                 {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
-                  'component': 'main', 'subcomponent': 'part/A', 'children': [
+                  'component': 'main', 'subcomponent': 'chapter/1/part/A', 'children': [
                     {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
                       'component': 'main', 'subcomponent': 'section/2'},
                     ]

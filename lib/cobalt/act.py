@@ -14,6 +14,13 @@ component_id = re.compile('([^0-9]+)([0-9]+)')
 
 DATE_FORMAT = "%Y-%m-%d"
 
+# elements we include in the table of contents
+TOC_COMPONENTS = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions']
+
+# These TOC elements aren't numbered uniquely throughout the document
+# and will need their parent components for context
+TOC_NON_UNIQUE_COMPONENTS = ['chapter', 'part']
+
 
 def datestring(value):
     if value is None:
@@ -235,15 +242,14 @@ class Act(Base):
     def table_of_contents(self):
         """ Get the table of contents of this document as a list of :class:`TOCElement` instances. """
 
-        interesting = set('{%s}%s' % (self.namespace, s) for s in [
-            'coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions'])
+        interesting = set('{%s}%s' % (self.namespace, s) for s in TOC_COMPONENTS)
 
-        def generate_toc(component, elements):
+        def generate_toc(component, elements, parent=None):
             items = []
             for e in elements:
                 if e.tag in interesting:
-                    item = TOCElement(e, component)
-                    item.children = generate_toc(component, e.iterchildren())
+                    item = TOCElement(e, component, parent=parent)
+                    item.children = generate_toc(component, e.iterchildren(), parent=item)
                     items.append(item)
                 else:
                     items += generate_toc(component, e.iterchildren())
@@ -313,11 +319,12 @@ class TOCElement(object):
     :ivar heading: heading for this element, excluding the number, may be None
     :ivar id: XML id string of the node in the document, may be None
     :ivar num: number of this element, as a string, may be None
+    :ivar component: number of the component that this item is a part of, as a string
     :ivar subcomponent: name of this subcomponent, used by :meth:`Act.get_subcomponent`, may be None
     :ivar type: node type, one of: ``chapter, part, section``
     """
 
-    def __init__(self, node, component, children=None):
+    def __init__(self, node, component, parent=None, children=None):
         self.element = node
         self.type = node.tag.split('}', 1)[-1]
         self.id = node.get('id')
@@ -354,8 +361,16 @@ class TOCElement(object):
         if self.type == "doc":
             self.subcomponent = None
         else:
+            # if we have a chapter/part as a child of a chapter/part, we need to include
+            # the parent as context because they aren't unique, eg: part/1/chapter/2
+            if self.type in TOC_NON_UNIQUE_COMPONENTS and parent and parent.type in TOC_NON_UNIQUE_COMPONENTS:
+                self.subcomponent = parent.subcomponent + "/"
+            else:
+                self.subcomponent = ""
+
             # eg. 'preamble' or 'chapter/2'
-            self.subcomponent = self.type
+            self.subcomponent += self.type
+
             if self.num:
                 self.subcomponent += '/' + self.num.strip('.()')
 

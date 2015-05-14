@@ -144,3 +144,10 @@ Editing Tables
 --------------
 
 TODO
+
+Viewing the XML
+---------------
+
+It can be useful to see what the Akoma Ntoso for a piece of the document looks like. Click the **Show Code** button to do this:
+
+.. image:: show-code.png

@@ -17,15 +17,17 @@ To achieve this, the platform must capture the **metadata**, **content** and **s
 - **Content** is the actual words of the document, including headings, tables and paragraph numbers, and forms the core of the document.
 - **Presentation** is how the document is physically presented to the user and includes typography, layout, colour and formatting.
 
-Notice that presentation is separate from structure and comes *last* in the logical pipeline of managing a document. The same metadata, content and structure can be presented in many different ways.
+.. note::
+
+    Notice that presentation is separate from structure and comes *last* in the logical pipeline of managing a document. The same metadata, content and structure can be presented in many different ways.
+
+Here is an example piece of legislation that illustrates the difference between content, structure and presentation.
+
+.. image:: content-vs-structure.png
 
 .. note::
 
     It's more important to capture the **content** and **structure** of a document than exactly match the presentation of the original.
-
-Here is an example illustrating the separation of content, structure and presentation.
-
-.. image:: content-vs-structure.png
 
 The Indigo platform focuses on capturing the metadata, structure and content of documents. It provides some support for basic
 presentation of a document--primarily HTML--and allows others to build on the captured structure to provide new presentation layers.
@@ -43,11 +45,9 @@ Under the hood, Indigo uses the `Akoma Ntoso <http://www.akomantoso.org/>`_ stan
 
 Akoma Ntoso is designed to support the many varying structures of legislative documents used throughout the world. As a result, the format is rich and expressive but quite complicated. Indigo works with only a subset of what is allowed by Akoma Ntoso and does its best to hide this complexity from the user.
 
+It can be useful to understand what Akoma Ntoso looks like. Here is the XML that corresponds with the content and structure from above:
 
-
-It can be useful to understand what Akoma Ntoso looks like. In the Indigo Editor can view the Akoma Ntoso for a piece of legislation by clicking the **Show Code** button:
-
-.. image:: show-code.png
+.. image:: raw-akn.png
 
 As you can see, the Akoma Ntoso XML for a section is complicated! If you understand the format you can edit the XML directly, otherwise we recommend you use the editor.
 

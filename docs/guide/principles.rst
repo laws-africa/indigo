@@ -34,6 +34,42 @@ data format grows.
 
     It's more important to capture the **content** and **structure** of a document than exactly match the presentation of the original.
 
+A good example of this separation of content, structure and presentation is the guide you're reading right now. You can read this guide in at least four different forms, each with its own style of presentation:
+
+* `As a website <http://indigo.readthedocs.org/en/latest/guide/>`_
+* `As a PDF <http://readthedocs.org/projects/indigo/downloads/pdf/latest/>`_
+* `As a single downloadable webpage <http://readthedocs.org/projects/indigo/downloads/htmlzip/latest/>`_
+* `As an Epub e-book <http://readthedocs.org/projects/indigo/downloads/epub/latest/>`_
+
+This is all possible because the guide is written using `reStructured Text <http://docutils.sourceforge.net/rst.html>`_, a simple text format for writing documentation that focuses on content and structure and ignores presentation. Here's what the reStructured Text source for this section looks like:::
+
+    Structure, Content and Presentation 
+    -----------------------------------
+
+    A key goal of the Indigo platform is to allow content to be published for a wide variety of media and devices, including print, desktop web browsers, mobile phones and others that we don't yet know of. It's important that a document can be formatted appropriately for each medium. For example, a printed document will include the Table of Contents at the start of the document, while a web browser and a mobile phone will display the Table of Contents differently to help users navigate the document effectively.
+
+    To achieve this, the platform must capture the **metadata**, **content** and **structure** of the document separately from its **presentation**.
+
+    - **Metadata** describes the document as a piece of work and includes information such as its title, publication date, language and country. This data allows users to classify, browse and search for documents and is also used when presenting the document.
+    - **Structure** is the heirarchy of the document, including chapter, part and section information. Capturing the structure makes it possible to provide intuitive user experiences, such as an interface for browsing through a document by section or linking between different sections of a document or between documents.
+    - **Content** is the actual words of the document, including headings, tables and paragraph numbers, and forms the core of the document.
+    - **Presentation** is how the document is physically presented to the user and includes typography, layout, colour and formatting.
+
+    .. note::
+
+        Notice that presentation is separate from structure and comes *last* in the logical pipeline of managing a document. The same metadata, content and structure can be presented in many different ways.
+
+    Here is an example piece of legislation that illustrates the difference between content, structure and presentation.
+
+    .. image:: content-vs-structure.png
+
+A **compiler** converts this plain text into the different formats listed above, presenting it in the best way for each format. As the author, all I need to do is ensure the content and the structure are well expressed in the reStructured Text format, and the compiler does all the hard work to make it look good. I don't need to worry about styling the document at all.
+
+.. seealso:: 
+
+    You can see the full reStructuredText source for this guide at https://github.com/Code4SA/indigo/tree/master/docs.
+
+
 Akoma Ntoso
 -----------
 

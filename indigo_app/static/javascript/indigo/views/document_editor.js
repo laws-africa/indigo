@@ -102,12 +102,11 @@
           .removeClass('fa-check')
           .addClass('fa-spinner fa-pulse');
 
-      $.ajax({
-        url: '/api/convert',
-        type: "POST",
-        data: data,
-        contentType: "application/json; charset=utf-8",
-        dataType: "json"})
+      // The actual response to update the view is done
+      // in a deferred so that we can cancel it if the
+      // user clicks 'cancel'
+      var deferred = this.pendingInlineSave = $.Deferred();
+      deferred
         .then(function(response) {
           // find either the fragment we asked for, or the first element below the akomaNtoso
           // parent element
@@ -120,22 +119,43 @@
           self.setEditorValue(self.view.xmlModel.toXml(newFragment));
         })
         .fail(function(xhr, status, error) {
-          if (xhr.status == 400) {
-            Indigo.errorView.show(xhr.responseJSON.content || error || status);
-          } else {
-            Indigo.errorView.show(error || status);
+          // this will be null if we've been cancelled without an ajax response
+          if (xhr) {
+            if (xhr.status == 400) {
+              Indigo.errorView.show(xhr.responseJSON.content || error || status);
+            } else {
+              Indigo.errorView.show(error || status);
+            }
           }
         })
-        .always(function(response) {
+        .always(function() {
+          // TODO: this doesn't feel like it's in the right place;
           $btn
             .attr('disabled', false)
             .find('.fa')
               .removeClass('fa-spinner fa-pulse')
               .addClass('fa-check');
         });
+
+      $.ajax({
+        url: '/api/convert',
+        type: "POST",
+        data: data,
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+        .done(function(response) {
+          deferred.resolve(response);
+        })
+        .fail(function(xhr, status, error) {
+          deferred.reject(xhr, status, error);
+        });
     },
 
     closeInlineEditor: function(e) {
+      if (this.pendingInlineSave) {
+        this.pendingInlineSave.reject();
+        this.pendingInlineSave = null;
+      }
       this.$inlineEditor.hide();
       this.view.$el.find('.document-sheet-container').after(this.$inlineEditor);
 

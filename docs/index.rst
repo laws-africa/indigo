@@ -25,6 +25,7 @@ Contents
    :maxdepth: 2
 
    guide/index
+   guide/law-intro
    rest/general
    rest/public
    rest/app

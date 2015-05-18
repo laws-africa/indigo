@@ -23,6 +23,7 @@ DEFAULT_LANGUAGE = 'eng'
 
 log = logging.getLogger(__name__)
 
+
 class Document(models.Model):
     db_table = 'documents'
 

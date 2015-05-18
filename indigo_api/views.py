@@ -105,7 +105,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Document.objects.filter(deleted__exact=False).all()
+    queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags').all()
     serializer_class = DocumentSerializer
 
     def perform_destroy(self, instance):

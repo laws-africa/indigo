@@ -50,6 +50,7 @@
 
     summarize: function() {
       var countries = {
+        'na': 'Namibia',
         'za': 'South Africa',
         'zm': 'Zambia',
       };

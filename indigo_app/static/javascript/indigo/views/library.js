@@ -146,7 +146,10 @@
     },
 
     render: function() {
-      this.$el.html(this.template({summary: this.summary}));
+      this.$el.html(this.template({
+        summary: this.summary,
+        count: this.model.length
+      }));
     },
 
     // filter the documents according to our filters

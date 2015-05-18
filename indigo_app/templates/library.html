@@ -115,15 +115,9 @@
       </label>
     </div>
   </div>
-</div>
-
-<div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Countries</h3>
-  </div>
 
   <div class="list-group">
-    <a href="#" class="list-group-item filter-country active" data-country="">All countries</a>
+    <a href="#" class="list-group-item filter-country active" data-country="">All countries <span class="badge">{{ count }}</span></a>
     {{#each summary.countries}}
     <a href="#" class="list-group-item filter-country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
     {{/each}}

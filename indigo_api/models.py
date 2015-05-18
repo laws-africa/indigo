@@ -7,6 +7,7 @@ from taggit.managers import TaggableManager
 from cobalt.act import Act
 
 COUNTRIES = sorted([
+    ('na', 'Namibia'),
     ('za', 'South Africa'),
     ('zm', 'Zambia'),
     ])

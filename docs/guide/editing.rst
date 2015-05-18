@@ -44,8 +44,8 @@ If used, this should be a widely accepted code for the region. For example, in S
 or the source has not been fully checked.
 
 
-Important Dates
-...............
+Promulgation
+............
 
 **Publication date** (optional) is the date on which this document was officially published, in the format ``YYYY-MM-DD``.
 

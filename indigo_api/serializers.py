@@ -18,7 +18,7 @@ class TagSerializer(TaggitSerializer):
     def _save_tags(self, tag_object, tags):
         for key in tags.keys():
             tag_values = tags.get(key)
-            getattr(tag_object, key).set(*[tag for tag in tag_values])
+            getattr(tag_object, key).set(*tag_values)
         return tag_object
 
 

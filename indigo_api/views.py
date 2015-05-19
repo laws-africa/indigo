@@ -11,6 +11,7 @@ from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 import lxml.etree as ET
 from lxml.etree import LxmlError
 
@@ -100,13 +101,14 @@ class DocumentViewMixin(object):
         return toc
 
 
-# REST API
+# Read/write REST API
 class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
     queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags').all()
     serializer_class = DocumentSerializer
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
 
     def perform_destroy(self, instance):
         instance.deleted = True

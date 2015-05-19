@@ -127,6 +127,25 @@ class SimpleTest(APITestCase):
         assert_equal(response.status_code, 400)
         assert_equal(len(response.data['frbr_uri']), 1)
 
+    def test_delete(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.delete('/api/documents/%s' % id)
+        assert_equal(response.status_code, 204)
+
+    def test_cannot_delete(self):
+        # this user cannot delete
+        self.client.login(username='non-deleter@example.com', password='password')
+
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.delete('/api/documents/%s' % id)
+        assert_equal(response.status_code, 403)
+
     def test_table_of_contents(self):
         xml = """
           <chapter id="chapter-2">

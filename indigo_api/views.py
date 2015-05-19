@@ -5,7 +5,7 @@ from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
@@ -111,6 +111,8 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
 
     def perform_destroy(self, instance):
+        if not instance.draft:
+            raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
         instance.deleted = True
         instance.save()
 

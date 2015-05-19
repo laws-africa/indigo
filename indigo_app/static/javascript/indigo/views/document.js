@@ -171,7 +171,8 @@
     },
 
     allowDelete: function() {
-      this.$el.find('.btn.delete-document').prop('disabled', this.document.isNew() || !this.user.authenticated());
+      this.$el.find('.btn.delete-document').prop('disabled',
+        this.document.isNew() || !this.user.authenticated() || !this.document.get('draft'));
     },
 
     userChanged: function() {

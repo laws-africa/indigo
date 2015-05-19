@@ -176,6 +176,12 @@
 
   <!-- END tables -->
 
+  <xsl:template match="a:remark">
+    <xsl:text>[</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>]</xsl:text>
+  </xsl:template>
+
 
   <!-- for most nodes, just dump their text content -->
   <xsl:template match="*">

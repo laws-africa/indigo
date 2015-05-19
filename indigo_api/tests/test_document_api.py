@@ -33,6 +33,16 @@ class SimpleTest(APITestCase):
 
         assert_in('<p/>', response.data['content'])
 
+    def test_create_with_tags(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/za/act/1998/2',
+            'tags': ['foo', 'bar']
+        }, format='json')
+
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
+
 
     def test_create_with_locality(self):
         response = self.client.post('/api/documents', {
@@ -47,6 +57,21 @@ class SimpleTest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+
+    def test_update(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']}, format='json')
+        assert_equal(response.status_code, 200)
+        # TODO: this should work
+        #assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
+
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
+
 
     def test_update_content(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})

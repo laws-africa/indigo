@@ -1,0 +1,14 @@
+<div class="coverpage">
+  <h1>{{ document.title }}</h1>
+  <h2>Chapter {{ document.number }} of {{ document.year }}</h2>
+
+  {% if document.assent_date %}
+  <h3 class="assent-date">Assented to on {{ document.assent_date|date:"d E Y" }}</h3>
+  {% endif %}
+
+  {% if document.commencement_date %}
+  <h3 class="commencement-date">Commences on {{ document.commencement_date|date:"d E Y" }} unless otherwise noted</h3>
+  {% endif %}
+</div>
+
+{{ content_html | safe }}

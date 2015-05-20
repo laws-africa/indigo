@@ -49,19 +49,13 @@
     },
 
     summarize: function() {
-      var countries = {
-        'na': 'Namibia',
-        'za': 'South Africa',
-        'zm': 'Zambia',
-      };
-
       this.summary = {};
 
       // count countries, sort alphabetically
       this.summary.countries = _.sortBy(
         _.map(
           _.countBy(this.model.models, function(d) { return d.get('country'); }),
-          function(count, code) { return {code: code, name: countries[code], count: count}; }
+          function(count, code) { return {code: code, name: Indigo.countries[code], count: count}; }
         ),
         function(info) { return info.name; });
 

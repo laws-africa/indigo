@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
 from indigo_api.models import Document
-from indigo_app.models import Language, Subtype
+from indigo_app.models import Language, Subtype, Country
 from .forms import DocumentForm
 
 
@@ -13,6 +13,7 @@ def document(request, doc_id):
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.all(),
+        'countries': Country.objects.all(),
         'view': 'DocumentView',
     })
 

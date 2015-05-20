@@ -21,8 +21,8 @@
         <label for="document_country" class="col-sm-2 control-label">Country</label>
         <div class="col-sm-4">
           <select id="document_country" class="form-control">
-            {% for code, name in form.fields.country.choices %}
-            <option value="{{ code }}">{{ name }}</option>
+            {% for opt in countries %}
+            <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
             {% endfor %}
           </select>
         </div>

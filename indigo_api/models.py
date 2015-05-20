@@ -6,13 +6,8 @@ from taggit.managers import TaggableManager
 
 from cobalt.act import Act
 
-COUNTRIES = sorted([
-    ('na', 'Namibia'),
-    ('za', 'South Africa'),
-    ('zm', 'Zambia'),
-    ])
-
 DEFAULT_LANGUAGE = 'eng'
+DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)
 
@@ -24,7 +19,7 @@ class Document(models.Model):
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.CharField(max_length=2, choices=COUNTRIES, default=COUNTRIES[0][0])
+    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
     """ The 3-letter ISO-639-2 language code of this document """
     language = models.CharField(max_length=3, default=DEFAULT_LANGUAGE)

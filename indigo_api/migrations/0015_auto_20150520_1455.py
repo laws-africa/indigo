@@ -2,18 +2,6 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-from indigo_api.models import Subtype
-
-
-def forwards(apps, schema_editor):
-    Subtype(name='By-law', abbreviation='by-law').save()
-    Subtype(name='Statutory Instrument', abbreviation='si').save()
-    Subtype(name='Government Notice', abbreviation='gn').save()
-    Subtype(name='Proclamation', abbreviation='p').save()
-
-
-def backwards(apps, schema_editor):
-    pass
 
 
 class Migration(migrations.Migration):
@@ -46,5 +34,4 @@ class Migration(migrations.Migration):
             field=models.CharField(default=b'/', help_text=b'Used globally to identify this work', max_length=512),
             preserve_default=True,
         ),
-        migrations.RunPython(forwards, backwards),
     ]

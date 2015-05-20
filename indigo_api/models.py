@@ -12,14 +12,6 @@ COUNTRIES = sorted([
     ('zm', 'Zambia'),
     ])
 
-# 3-letter ISO-639-2 language codes, see http://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
-LANGUAGES = sorted([
-    ('eng', 'English'),
-    ('fre', 'French'),
-    ('swa', 'Swahili'),
-    ('afr', 'Afrikaans'),
-    ('por', 'Portuguese'),
-    ])
 DEFAULT_LANGUAGE = 'eng'
 
 log = logging.getLogger(__name__)
@@ -35,7 +27,7 @@ class Document(models.Model):
     country = models.CharField(max_length=2, choices=COUNTRIES, default=COUNTRIES[0][0])
 
     """ The 3-letter ISO-639-2 language code of this document """
-    language = models.CharField(max_length=3, choices=LANGUAGES, default=DEFAULT_LANGUAGE)
+    language = models.CharField(max_length=3, default=DEFAULT_LANGUAGE)
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
 
@@ -157,15 +149,3 @@ class Document(models.Model):
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
-
-
-class Subtype(models.Model):
-    name = models.CharField(max_length=1024, help_text="Name of the document subtype")
-    abbreviation = models.CharField(max_length=20, help_text="Short abbreviation to use in FRBR URI. No punctuation.", unique=True)
-
-    def clean(self):
-        if self.abbreviation:
-            self.abbreviation = self.abbreviation.lower()
-
-    def __unicode__(self):
-        return '%s (%s)' % (self.name, self.abbreviation)

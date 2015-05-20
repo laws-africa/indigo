@@ -54,6 +54,8 @@ INSTALLED_APPS = (
     # the Indigo API
     'taggit',
     'taggit_serializer',
+    'countries_plus',
+    'languages_plus',
     'indigo_api',
 
     # the Indigo browser application

@@ -32,7 +32,7 @@ $(function() {
       } else if (xhr.status == 403) {
         // permission denied
         if (Indigo.userView.model.authenticated()) {
-          Indigo.errorView.show("You aren't allowed to do that. Try logging out and in again.");
+          Indigo.errorView.show("You aren't allowed to do that.");
         } else {
           Indigo.errorView.show("Please log in first.");
         }

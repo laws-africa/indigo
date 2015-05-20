@@ -45,7 +45,12 @@
 
         <label for="document_subtype" class="col-sm-2 control-label">Document subtype</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_subtype" placeholder="Subtype (optional)">
+          <select id="document_subtype" class="form-control">
+            <option value="">(none)</option>
+            {% for subtype in subtypes %}
+            <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+            {% endfor %}
+          </select>
         </div>
       </div>
 

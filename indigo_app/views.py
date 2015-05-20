@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 
-from indigo_api.models import Document
+from indigo_api.models import Document, Subtype
 from .forms import DocumentForm
 
 
@@ -10,6 +10,7 @@ def document(request, doc_id):
     return render(request, 'document/show.html', {
         'document': doc,
         'form': form,
+        'subtypes': Subtype.objects.order_by('name').all(),
         'view': 'DocumentView',
     })
 

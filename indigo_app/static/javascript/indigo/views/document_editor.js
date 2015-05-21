@@ -35,8 +35,8 @@
 
       // setup inline sheet editor
       this.$inlineEditor = this.view.$el.find('#inline-editor');
-      this.$inlineEditor.find('.btn.save').on('click', _.bind(this.saveInlineEditor, this));
-      this.$inlineEditor.find('.btn.cancel').on('click', _.bind(this.closeInlineEditor, this));
+      this.view.$el.find('.inline-editor-buttons .btn.save').on('click', _.bind(this.saveInlineEditor, this));
+      this.view.$el.find('.inline-editor-buttons .btn.cancel').on('click', _.bind(this.closeInlineEditor, this));
 
       this.$inlineButtons = this.view.$el.find('.document-sheet-buttons');
       this.$inlineButtons.find('.edit').on('click', _.bind(this.editInline, this));
@@ -52,16 +52,24 @@
     editInline: function(e) {
       e.preventDefault();
 
+      // ensure source code is hidden
+      this.view.$el.find('.btn.show-source.active').click();
+
       var self = this;
       var $editable = this.view.$el.find('.an-container').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.view.fragment);
 
       // show the inline editor
-      $editable.css({position: 'relative'});
+      this.view.$el
+        .find('.document-content-view, .document-content-header')
+        .addClass('show-inline-editor')
+        .find('.toggle-editor-buttons .btn')
+        .prop('disabled', true)
+        .addClass('disabled');
+
       this.$inlineEditor
         .data('fragment', this.view.fragment.tagName)
-        .appendTo($editable)
         .show()
         .find('textarea')
           .val(text)
@@ -86,7 +94,7 @@
     saveInlineEditor: function(e) {
       var self = this;
       var $editable = this.view.$el.find('.an-container').children().first();
-      var $btn = this.$inlineEditor.find('.btn.save');
+      var $btn = this.view.$el.find('.inline-editor-buttons .btn.save');
       var fragment = this.$inlineEditor.data('fragment');
 
       var data = JSON.stringify({
@@ -156,8 +164,12 @@
         this.pendingInlineSave.reject();
         this.pendingInlineSave = null;
       }
-      this.$inlineEditor.hide();
-      this.view.$el.find('.document-sheet-container').after(this.$inlineEditor);
+      this.view.$el
+        .find('.document-content-view, .document-content-header')
+        .removeClass('show-inline-editor')
+        .find('.toggle-editor-buttons .btn')
+        .prop('disabled', false)
+        .removeClass('disabled');
 
       this.$inlineButtons.show();
     },
@@ -411,7 +423,7 @@
 
       this.stopEditing()
         .then(function() {
-          self.$el.find('.plaintext-editor').addClass('in');
+          self.$el.find('.sheet-editor').addClass('in');
           self.$el.find('.lime-editor').removeClass('in');
           self.$el.find('.btn.show-source').prop('disabled', false);
           self.activeEditor = self.sourceEditor;
@@ -424,7 +436,7 @@
 
       this.stopEditing()
         .then(function() {
-          self.$el.find('.plaintext-editor').removeClass('in');
+          self.$el.find('.sheet-editor').removeClass('in');
           self.$el.find('.lime-editor').addClass('in');
           self.$el.find('.btn.show-source').prop('disabled', true);
           self.activeEditor = self.limeEditor;

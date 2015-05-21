@@ -164,39 +164,54 @@ a.help {
   padding: 10px;
 }
 
+.document-content-header {
+  /* shown only when the inline editor is active */
+  .inline-editor-buttons {
+    display: none;
+  }
+
+  &.show-inline-editor {
+    .inline-editor-buttons {
+      display: block;
+    }
+  }
+}
+
+.sheet-editor,
+.lime-editor {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.ace-editor,
+#lime {
+  width: 100%;
+  height: 100%;
+}
+
+.document-sheet-container {
+  height: 100%;
+  width: 100%;
+}
+
+.document-xml-editor {
+  /* this is changed when the user chooses to show it */
+  display: none;
+  position: absolute;
+  padding-left: 5px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 50%;
+}
+
 .document-content-view {
   padding: 0px;
-
-  .plaintext-editor,
-  .lime-editor {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    width: 100%;
-    overflow-x: hidden;
-    overflow-y: hidden;
-  }
-
-  .document-xml-editor {
-    /* this is changed when the user chooses to show it */
-    display: none;
-    padding-left: 5px;
-    height: 100%;
-    width: 50%;
-    float: left;
-  }
-
-  .document-sheet-container {
-    height: 100%;
-    width: 100%;
-    float: left;
-  }
-
-  #lime {
-    width: 100%;
-    height: 100%;
-  }
 
   // show or hide source code component
   &.show-source {
@@ -204,9 +219,37 @@ a.help {
       display: block;
     }
 
-    .document-sheet-container {
+    .document-sheet-container,
+    .inline-editor {
       width: 50%;
     }
+  }
+
+  // show or hide plaintext editor component
+  &.show-inline-editor {
+    .document-sheet-container {
+      display: none;
+    }
+
+    .inline-editor {
+      display: block;
+    }
+  }
+}
+
+.inline-editor {
+  // changed when the user chooses to view it
+  display: none;
+
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+
+  textarea {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -389,27 +432,6 @@ legend {
       font-weight: bold;
       margin-top: 5px;
     }
-  }
-}
-
-.inline-editor {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-
-  background-color: white;
-
-  .buttons {
-    position: absolute;
-    top: -35px;
-    right: 0px;
-  }
-
-  textarea {
-    width: 100%;
-    height: 100%;
   }
 }
 

@@ -330,7 +330,7 @@
       'change [value=plaintext]': 'editSource',
       'change [value=lime]': 'editWithLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
-      'click .btn.show-code': 'toggleShowCode',
+      'click .btn.show-source': 'toggleShowCode',
     },
 
     initialize: function(options) {
@@ -393,7 +393,7 @@
 
     toggleShowCode: function(e) {
       if (this.activeEditor.name == 'source') {
-        this.$el.find('.document-content-view').toggleClass('show-code');
+        this.$el.find('.document-content-view').toggleClass('show-source');
       }
     },
 
@@ -413,7 +413,7 @@
         .then(function() {
           self.$el.find('.plaintext-editor').addClass('in');
           self.$el.find('.lime-editor').removeClass('in');
-          self.$el.find('.btn.show-code').prop('disabled', false);
+          self.$el.find('.btn.show-source').prop('disabled', false);
           self.activeEditor = self.sourceEditor;
           self.editFragment(self.fragment);
         });
@@ -426,7 +426,7 @@
         .then(function() {
           self.$el.find('.plaintext-editor').removeClass('in');
           self.$el.find('.lime-editor').addClass('in');
-          self.$el.find('.btn.show-code').prop('disabled', true);
+          self.$el.find('.btn.show-source').prop('disabled', true);
           self.activeEditor = self.limeEditor;
           self.editFragment(self.fragment);
         });

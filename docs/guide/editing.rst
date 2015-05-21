@@ -165,6 +165,14 @@ Simple Editor Guidelines
 
 When using the Simple Editor, follow these guidelines:
 
+- Start the preface with::
+
+      PREFACE
+
+- Start the preamble with::
+
+      PREAMBLE
+
 - Start a chapter numbered ``N`` with::
       
       Chapter N

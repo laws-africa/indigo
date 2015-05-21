@@ -1,15 +1,25 @@
 from django import template
 
+from indigo_api.models import Subtype
+
 register = template.Library()
 
 
 @register.filter
 def friendly_document_type(document):
-    if document.number.startswith('cap'):
+    uri = document.doc.frbr_uri
+
+    if uri.number.startswith('cap'):
         return 'Chapter'
-    else:
-        # TODO: return based on document subtype
-        return 'Act'
+
+    if uri.subtype:
+        # use the subtype full name, if we have it
+        subtype = Subtype.objects.filter(abbreviation=uri.subtype).first()
+        if subtype:
+            return subtype.name
+        return uri.subtype.upper()
+
+    return 'Act'
 
 
 @register.filter

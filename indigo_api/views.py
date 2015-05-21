@@ -57,6 +57,7 @@ def find_document_template(document):
         options.append('_'.join([doctype, uri.subtype, document.language, uri.country]))
         options.append('_'.join([doctype, uri.subtype, document.language]))
         options.append('_'.join([doctype, uri.subtype, uri.country]))
+        options.append('_'.join([doctype, uri.country]))
         options.append('_'.join([doctype, uri.subtype]))
 
     options.append('_'.join([doctype, document.language, uri.country]))

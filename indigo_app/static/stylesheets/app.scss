@@ -168,6 +168,7 @@ a.help {
   /* shown only when the text editor is active */
   .text-editor-buttons {
     display: none;
+    padding-right: 5px;
   }
 
   &.show-text-editor {
@@ -306,11 +307,6 @@ legend {
     // work around a Chrome rendering bug with sections that
     // are very short
     min-height: 100%;
-  }
-
-  .document-sheet-buttons {
-    position: absolute;
-    right: 55px;
   }
 }
 

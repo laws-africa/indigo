@@ -37,9 +37,7 @@
       this.$textEditor = this.view.$el.find('#text-editor');
       this.view.$el.find('.text-editor-buttons .btn.save').on('click', _.bind(this.saveTextEditor, this));
       this.view.$el.find('.text-editor-buttons .btn.cancel').on('click', _.bind(this.closeTextEditor, this));
-
-      this.$inlineButtons = this.view.$el.find('.document-sheet-buttons');
-      this.$inlineButtons.find('.edit').on('click', _.bind(this.editText, this));
+      this.view.$el.find('.btn.edit-text').on('click', _.bind(this.editText, this));
 
       var textTransform = new XSLTProcessor();
       $.get('/static/xsl/act_text.xsl')
@@ -51,6 +49,9 @@
 
     editText: function(e) {
       e.preventDefault();
+
+      // disable the edit button
+      this.view.$el.find('.btn.edit-text').prop('disabled', true);
 
       // ensure source code is hidden
       this.view.$el.find('.btn.show-source.active').click();
@@ -65,8 +66,7 @@
         .find('.document-content-view, .document-content-header')
         .addClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
-        .prop('disabled', true)
-        .addClass('disabled');
+        .prop('disabled', true);
 
       this.$textEditor
         .data('fragment', this.view.fragment.tagName)
@@ -78,7 +78,6 @@
           .scrollTop(0);
 
       this.view.$el.find('.document-sheet-container').scrollTop(0);
-      this.$inlineButtons.hide();
     },
 
     xmlToText: function(element) {
@@ -169,9 +168,7 @@
         .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', false)
-        .removeClass('disabled');
-
-      this.$inlineButtons.show();
+        .removeClass('active');
     },
 
     editFragment: function(node) {
@@ -339,8 +336,7 @@
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
-      'change [value=plaintext]': 'editSource',
-      'change [value=lime]': 'editWithLime',
+      'click .btn.edit-lime': 'toggleLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
     },
@@ -365,7 +361,7 @@
       this.sourceEditor = new Indigo.SourceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
 
-      this.editSource();
+      this.showSheet();
     },
 
     editTocItem: function(item) {
@@ -418,27 +414,38 @@
       }
     },
 
-    editSource: function(e) {
+    showSheet: function() {
       var self = this;
 
       this.stopEditing()
         .then(function() {
           self.$el.find('.sheet-editor').addClass('in');
           self.$el.find('.lime-editor').removeClass('in');
-          self.$el.find('.btn.show-source').prop('disabled', false);
+          self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
+          self.$el.find('.btn.edit-text').toggleClass('btn-warning btn-default');
+          self.$el.find('.btn.edit-lime').toggleClass('btn-warning btn-default active');
           self.activeEditor = self.sourceEditor;
           self.editFragment(self.fragment);
         });
     },
 
-    editWithLime: function(e) {
+    toggleLime: function(e) {
+      if (this.activeEditor === this.limeEditor) {
+        // stop editing in lime
+        e.preventDefault();
+        this.showSheet(e);
+        return;
+      }
+
       var self = this;
 
       this.stopEditing()
         .then(function() {
           self.$el.find('.sheet-editor').removeClass('in');
           self.$el.find('.lime-editor').addClass('in');
-          self.$el.find('.btn.show-source').prop('disabled', true);
+          self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', true);
+          self.$el.find('.btn.edit-text').toggleClass('btn-warning btn-default');
+          self.$el.find('.btn.edit-lime').toggleClass('btn-warning btn-default active');
           self.activeEditor = self.limeEditor;
           self.editFragment(self.fragment);
         });

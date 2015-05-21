@@ -4,19 +4,19 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The AceEditorController manages the interaction between
-  // the ace-based editor, the model, and the document editor view.
+  // The SourceEditorController manages the interaction between
+  // the ace-based source (xml) editor, the model, and the document editor view.
   //
   // It also handles the in-place text-based editor.
-  Indigo.AceEditorController = function(options) {
+  Indigo.SourceEditorController = function(options) {
     this.initialize.apply(this, arguments);
   };
-  _.extend(Indigo.AceEditorController.prototype, Backbone.Events, {
+  _.extend(Indigo.SourceEditorController.prototype, Backbone.Events, {
     initialize: function(options) {
       var self = this;
 
       this.view = options.view;
-      this.name = 'ace';
+      this.name = 'source';
 
       this.editor = ace.edit(this.view.$el.find(".ace-editor")[0]);
       this.editor.setTheme("ace/theme/monokai");
@@ -327,7 +327,7 @@
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
-      'change [value=plaintext]': 'editWithAce',
+      'change [value=plaintext]': 'editSource',
       'change [value=lime]': 'editWithLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-code': 'toggleShowCode',
@@ -350,10 +350,10 @@
       this.tocView.on('item-selected', this.editTocItem, this);
 
       // setup the editor controllers
-      this.aceEditor = new Indigo.AceEditorController({view: this});
+      this.sourceEditor = new Indigo.SourceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
 
-      this.editWithAce();
+      this.editSource();
     },
 
     editTocItem: function(item) {
@@ -392,7 +392,7 @@
     },
 
     toggleShowCode: function(e) {
-      if (this.activeEditor.name == 'ace') {
+      if (this.activeEditor.name == 'source') {
         this.$el.find('.document-content-view').toggleClass('show-code');
       }
     },
@@ -406,7 +406,7 @@
       }
     },
 
-    editWithAce: function(e) {
+    editSource: function(e) {
       var self = this;
 
       this.stopEditing()
@@ -414,7 +414,7 @@
           self.$el.find('.plaintext-editor').addClass('in');
           self.$el.find('.lime-editor').removeClass('in');
           self.$el.find('.btn.show-code').prop('disabled', false);
-          self.activeEditor = self.aceEditor;
+          self.activeEditor = self.sourceEditor;
           self.editFragment(self.fragment);
         });
     },

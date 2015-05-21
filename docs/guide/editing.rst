@@ -61,6 +61,8 @@ Draft and Publishing
 
 **Draft** controls whether the document is available publically. While you are editing the document, this should be **checked**. Outside users cannot see draft documents. Once a document is ready to be used by outside users, uncheck this box to indicate it is published.
 
+.. note:: You cannot delete a published document. Mark it as a draft, first.
+
 Editing after Importing
 -----------------------
 

@@ -79,6 +79,10 @@ Deleting a document
 You can delete a document by going to the document Properties page and scrolling down to the **Danger Zone** section
 and clicking the **Delete this document** button.
 
+.. note:: You cannot delete a published document. Mark it as a draft first.
+
+.. note:: Only users with the **Can delete document** permission can delete a document. An Administrator can change this for you in the Admin area.
+
 .. note::
 
     If you delete a document by accident an administrator can undelete it for you.

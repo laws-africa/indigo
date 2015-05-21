@@ -14,6 +14,14 @@
     <xsl:apply-templates select="a:conclusions" />
   </xsl:template>
 
+  <xsl:template match="a:preface">
+    <xsl:text>PREFACE</xsl:text>
+    <xsl:text>
+
+</xsl:text>
+    <xsl:apply-templates />
+  </xsl:template>
+
   <xsl:template match="a:preamble">
     <xsl:text>PREAMBLE</xsl:text>
     <xsl:text>

@@ -165,13 +165,13 @@ a.help {
 }
 
 .document-content-header {
-  /* shown only when the inline editor is active */
-  .inline-editor-buttons {
+  /* shown only when the text editor is active */
+  .text-editor-buttons {
     display: none;
   }
 
-  &.show-inline-editor {
-    .inline-editor-buttons {
+  &.show-text-editor {
+    .text-editor-buttons {
       display: block;
     }
   }
@@ -220,24 +220,24 @@ a.help {
     }
 
     .document-sheet-container,
-    .inline-editor {
+    .text-editor {
       width: 50%;
     }
   }
 
   // show or hide plaintext editor component
-  &.show-inline-editor {
+  &.show-text-editor {
     .document-sheet-container {
       display: none;
     }
 
-    .inline-editor {
+    .text-editor {
       display: block;
     }
   }
 }
 
-.inline-editor {
+.text-editor {
   // changed when the user chooses to view it
   display: none;
 

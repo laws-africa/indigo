@@ -33,13 +33,13 @@
           self.htmlTransform = htmlTransform;
         });
 
-      // setup inline sheet editor
-      this.$inlineEditor = this.view.$el.find('#inline-editor');
-      this.view.$el.find('.inline-editor-buttons .btn.save').on('click', _.bind(this.saveInlineEditor, this));
-      this.view.$el.find('.inline-editor-buttons .btn.cancel').on('click', _.bind(this.closeInlineEditor, this));
+      // setup sheet text editor
+      this.$textEditor = this.view.$el.find('#text-editor');
+      this.view.$el.find('.text-editor-buttons .btn.save').on('click', _.bind(this.saveTextEditor, this));
+      this.view.$el.find('.text-editor-buttons .btn.cancel').on('click', _.bind(this.closeTextEditor, this));
 
       this.$inlineButtons = this.view.$el.find('.document-sheet-buttons');
-      this.$inlineButtons.find('.edit').on('click', _.bind(this.editInline, this));
+      this.$inlineButtons.find('.edit').on('click', _.bind(this.editText, this));
 
       var textTransform = new XSLTProcessor();
       $.get('/static/xsl/act_text.xsl')
@@ -49,7 +49,7 @@
         });
     },
 
-    editInline: function(e) {
+    editText: function(e) {
       e.preventDefault();
 
       // ensure source code is hidden
@@ -60,15 +60,15 @@
       // text from node in the actual XML document
       var text = this.xmlToText(this.view.fragment);
 
-      // show the inline editor
+      // show the text editor
       this.view.$el
         .find('.document-content-view, .document-content-header')
-        .addClass('show-inline-editor')
+        .addClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', true)
         .addClass('disabled');
 
-      this.$inlineEditor
+      this.$textEditor
         .data('fragment', this.view.fragment.tagName)
         .show()
         .find('textarea')
@@ -91,17 +91,17 @@
         .replace(/^( *\n){2,}/gm, "\n");
     },
 
-    saveInlineEditor: function(e) {
+    saveTextEditor: function(e) {
       var self = this;
       var $editable = this.view.$el.find('.an-container').children().first();
-      var $btn = this.view.$el.find('.inline-editor-buttons .btn.save');
-      var fragment = this.$inlineEditor.data('fragment');
+      var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
+      var fragment = this.$textEditor.data('fragment');
 
       var data = JSON.stringify({
         'inputformat': 'text/plain',
         'outputformat': 'application/xml',
         'fragment': fragment,
-        'content': this.$inlineEditor.find('textarea').val(),
+        'content': this.$textEditor.find('textarea').val(),
       });
 
       $btn
@@ -113,7 +113,7 @@
       // The actual response to update the view is done
       // in a deferred so that we can cancel it if the
       // user clicks 'cancel'
-      var deferred = this.pendingInlineSave = $.Deferred();
+      var deferred = this.pendingTextSave = $.Deferred();
       deferred
         .then(function(response) {
           // find either the fragment we asked for, or the first element below the akomaNtoso
@@ -122,7 +122,7 @@
           newFragment = newFragment.querySelector(fragment) || newFragment.documentElement.firstElementChild;
 
           self.view.updateFragment(self.view.fragment, newFragment);
-          self.closeInlineEditor();
+          self.closeTextEditor();
           self.render();
           self.setEditorValue(self.view.xmlModel.toXml(newFragment));
         })
@@ -159,14 +159,14 @@
         });
     },
 
-    closeInlineEditor: function(e) {
-      if (this.pendingInlineSave) {
-        this.pendingInlineSave.reject();
-        this.pendingInlineSave = null;
+    closeTextEditor: function(e) {
+      if (this.pendingTextSave) {
+        this.pendingTextSave.reject();
+        this.pendingTextSave = null;
       }
       this.view.$el
         .find('.document-content-view, .document-content-header')
-        .removeClass('show-inline-editor')
+        .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', false)
         .removeClass('disabled');
@@ -176,7 +176,7 @@
 
     editFragment: function(node) {
       // edit node, a node in the XML document
-      this.closeInlineEditor();
+      this.closeTextEditor();
       this.render();
       this.view.$el.find('.document-sheet-container').scrollTop(0);
 
@@ -201,7 +201,7 @@
 
     // Save the content of the XML editor into the DOM, returns a Deferred
     saveChanges: function() {
-      this.closeInlineEditor();
+      this.closeTextEditor();
 
       if (this.dirty) {
         // update the fragment content from the editor's version

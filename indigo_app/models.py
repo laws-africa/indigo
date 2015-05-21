@@ -15,18 +15,6 @@ class Language(models.Model):
         return unicode(self.language)
 
 
-class Subtype(models.Model):
-    name = models.CharField(max_length=1024, help_text="Name of the document subtype")
-    abbreviation = models.CharField(max_length=20, help_text="Short abbreviation to use in FRBR URI. No punctuation.", unique=True)
-
-    def clean(self):
-        if self.abbreviation:
-            self.abbreviation = self.abbreviation.lower()
-
-    def __unicode__(self):
-        return '%s (%s)' % (self.name, self.abbreviation)
-
-
 class Country(models.Model):
     """ The countries available in the UI. They aren't enforced by the API.
     """

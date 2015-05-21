@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
-from indigo_api.models import Document
-from indigo_app.models import Language, Subtype, Country
+from indigo_api.models import Document, Subtype
+from indigo_app.models import Language, Country
 from .forms import DocumentForm
 import json
 

@@ -98,7 +98,7 @@ The easiest way to make an edit is to use the Table of Contents on the left part
 
     .. image:: edit-button.png
 
-3. Indigo will show the in-place editor. Notice that the content of the editor is the textual content of the section you're editing, without any formatting and with very simple layout.
+3. Indigo will show the simple editor. Notice that the content of the editor is the textual content of the section you're editing, without any formatting and with very simple layout.
 4. Make the changes you require.
 5. Click the **green tick** at the top-right corner where you clicked the **Edit** button.
 

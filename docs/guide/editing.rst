@@ -25,16 +25,11 @@ If used, this should be a widely accepted code for the region. For example, in S
 
 **Language** is the language of the document.
 
-**Document subtype** (optional) is the subtype of the document. This must be left blank for general Acts. Otherwise, use the following abbreviations:
-
-- For By-laws use **by-law**
-- For Statutory Instruments use **si**
-- For Government Notices use **gn**
-- For Proclamations use **p**
+**Document subtype** (optional) is the subtype of the document. Choose **(none)** for general Acts.
 
 **Year** is the year of the document, generally the year it was first introduced in Parliament.
 
-**Number** is the number of the document within the year. Most Acts are assigned a sequential number within the year of introduction. If you don't have a number available (eg. for by-laws) use a reasonable short form of the document's name or, as a last resort, use ``nn`` for *not numbered*.
+**Number** is the number of the document within the year. Most Acts are assigned a sequential number within the year of introduction. If you don't have a number available (eg. for by-laws) use a reasonable short form of the document's name or, as a last resort, use ``nn`` for *not numbered*. Use ``cap123`` for Chapter 123 in a Cap-based numbering system.
 
 **FRBR Work URI** is the URI used to identify this document and is calculated from the other metadata. It uniquely identifies this work. You cannot edit this value.
 
@@ -42,6 +37,10 @@ If used, this should be a widely accepted code for the region. For example, in S
 
 **Stub document** indicates that the document doesn't have all its content yet. This is useful when other documents reference this one but no source is available
 or the source has not been fully checked.
+
+.. note::
+
+    Administrators can add new countries, languages and document subtypes through the Admin interface.
 
 
 Promulgation

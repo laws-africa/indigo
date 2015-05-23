@@ -57,7 +57,7 @@
       this.view.$el.find('.btn.show-source.active').click();
 
       var self = this;
-      var $editable = this.view.$el.find('.an-container').children().first();
+      var $editable = this.view.$el.find('.akoma-ntoso').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.view.fragment);
 
@@ -92,7 +92,7 @@
 
     saveTextEditor: function(e) {
       var self = this;
-      var $editable = this.view.$el.find('.an-container').children().first();
+      var $editable = this.view.$el.find('.akoma-ntoso').children().first();
       var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
       var fragment = this.$textEditor.data('fragment');
 
@@ -218,7 +218,7 @@
     render: function() {
       if (this.htmlTransform && this.view.fragment) {
         var html = this.htmlTransform.transformToFragment(this.view.fragment, document);
-        this.view.$el.find('.an-container').html('').get(0).appendChild(html);
+        this.view.$el.find('.akoma-ntoso').html('').get(0).appendChild(html);
       }
     },
 

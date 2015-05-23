@@ -312,7 +312,7 @@ legend {
 
 
 /* akoma ntoso styles */
-.an-container {
+.akoma-ntoso {
   text-align: justify;
   line-height: 1.5em;
 
@@ -417,14 +417,14 @@ legend {
   }
 
   .toc-item {
-    &.an-akomaNtoso,
-    &.an-coverpage,
-    &.an-preface,
-    &.an-preamble,
-    &.an-chapter,
-    &.an-part,
-    &.an-conclusions,
-    &.an-doc {
+    &.akn-akomaNtoso,
+    &.akn-coverpage,
+    &.akn-preface,
+    &.akn-preamble,
+    &.akn-chapter,
+    &.akn-part,
+    &.akn-conclusions,
+    &.akn-doc {
       font-weight: bold;
       margin-top: 5px;
     }

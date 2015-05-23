@@ -236,7 +236,7 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json"})
           .then(function(response) {
-            $('#preview-tab .an-container').html(response.output);
+            $('#preview-tab .akoma-ntoso').html(response.output);
             self.previewDirty = false;
           });
       }

@@ -1,6 +1,6 @@
 /* akoma ntoso styling */
 
-.an-akomaNtoso, .an-act, .an-coverpage, .an-preface, .an-preamble, .an-conclusions, .an-chapter, .an-part, .an-section, .an-subsection, .an-blockList {
+.akn-akomaNtoso, .akn-act, .akn-coverpage, .akn-preface, .akn-preamble, .akn-conclusions, .akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList {
   display: block;
 }
 
@@ -14,7 +14,7 @@ h1 {
   line-height: 28px;
 }
 
-h2, .an-heading {
+h2, .akn-heading {
   display: block;
   margin-top: 20px;
   margin-bottom: 10px;
@@ -34,65 +34,65 @@ h4 {
   font-size: 14px;
 }
 
-.an-subheading {
+.akn-subheading {
   text-align: center;
   font-style: italic;
   display: block;
 }
 
-.an-def {
+.akn-def {
   font-weight: bold;
 }
 
-.an-preface,
-.an-preamble {
+.akn-preface,
+.akn-preamble {
   margin-bottom: 2em;
 
-  .an-p {
+  .akn-p {
     display: block;
     margin-bottom: 1em;
   }
 }
 
-.an-chapter, .an-part {
+.akn-chapter, .akn-part {
   margin-bottom: 4em;
 }
 
-.an-section {
+.akn-section {
   margin-bottom: 2em;
 }
 
-.an-subsection { 
+.akn-subsection { 
   margin-left: 3em;
   margin-bottom: 1em;
 
-  &> .an-num {
+  &> .akn-num {
     display: block;
     float: left;
     margin-left: -3em;
   }
 }
 
-.an-content {
-  > .an-p {
+.akn-content {
+  > .akn-p {
     display: block;
     margin-bottom: 1em;
   }
 }
 
 /* lists (mostly used in definitions) */
-.an-list {
-  &> .an-intro {
+.akn-list {
+  &> .akn-intro {
     display: block;
     margin-bottom: 1em;
   }
 
-  &> .an-point {
+  &> .akn-point {
     display: block;
     margin-left: 3em;
     margin-bottom: 1em;
 
-    > .an-num {
+    > .akn-num {
       display: block;
       float: left;
       margin-left: -3em;
@@ -101,18 +101,18 @@ h4 {
 }
 
 /* blocklists */
-.an-blockList {
-  .an-listIntroduction {
+.akn-blockList {
+  .akn-listIntroduction {
     display: block;
     margin-bottom: 1em;
   }
 
-  &> .an-item {
+  &> .akn-item {
     display: block;
     margin-left: 3em;
     margin-bottom: 1em;
 
-    > .an-num {
+    > .akn-num {
       display: block;
       float: left;
       margin-left: -3em;
@@ -169,6 +169,6 @@ table {
 }
 
 /* inline remarks */
-.an-remark {
+.akn-remark {
   font-style: italic;
 }

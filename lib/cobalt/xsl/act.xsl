@@ -7,7 +7,7 @@
 
   <xsl:template match="a:act">
     <xsl:element name="span" namespace="">
-      <xsl:attribute name="class">an-act</xsl:attribute>
+      <xsl:attribute name="class">akn-act</xsl:attribute>
       <xsl:apply-templates select="a:coverPage" />
       <xsl:apply-templates select="a:preface" />
       <xsl:apply-templates select="a:preamble" />
@@ -18,7 +18,7 @@
 
   <!-- for parts and chapters, include an easily stylable heading -->
   <xsl:template match="a:part">
-    <div class="an-part" id="{@id}">
+    <div class="akn-part" id="{@id}">
       <h2>
         <xsl:text>Part </xsl:text>
         <xsl:value-of select="./a:num" />
@@ -31,7 +31,7 @@
   </xsl:template>
 
   <xsl:template match="a:chapter">
-    <div class="an-chapter" id="{@id}">
+    <div class="akn-chapter" id="{@id}">
       <h2>
         <xsl:text>Chapter </xsl:text>
         <xsl:value-of select="./a:num" />
@@ -44,7 +44,7 @@
   </xsl:template>
 
   <xsl:template match="a:section">
-    <div class="an-{local-name()}" id="{@id}">
+    <div class="akn-{local-name()}" id="{@id}">
       <h3>
         <xsl:value-of select="./a:num" />
         <xsl:text> </xsl:text>
@@ -56,14 +56,14 @@
   </xsl:template>
   
   <xsl:template match="a:subsection">
-    <span class="an-{local-name()}" id="{@id}">
+    <span class="akn-{local-name()}" id="{@id}">
       <xsl:apply-templates select="./*[not(self::a:heading)]" />
     </span>
   </xsl:template>
 
   <!-- for term nodes, ensure we keep the refersTo element -->
   <xsl:template match="a:term">
-    <span class="an-{local-name()}">
+    <span class="akn-{local-name()}">
       <xsl:attribute name="data-refers-to">
         <xsl:value-of select="@refersTo" />
       </xsl:attribute>
@@ -74,7 +74,7 @@
 
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <div class="an-doc" id="{@id}">
+    <div class="akn-doc" id="{@id}">
       <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
         <h2>
           <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
@@ -92,7 +92,7 @@
   <!-- for all nodes, generate a SPAN element with a class matching
        the AN name of the node and copy over the ID if it exists -->
   <xsl:template match="*">
-    <span class="an-{local-name()}">
+    <span class="akn-{local-name()}">
       <xsl:if test="@id">
         <xsl:attribute name="id">
           <xsl:value-of select="@id" />

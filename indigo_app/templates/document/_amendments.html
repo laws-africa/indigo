@@ -1,0 +1,21 @@
+<div class="amendments-container">
+
+  <div class="amendment-list"></div>
+
+  <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+</div>
+
+<script id="amendments-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<table class="table table-condensed table-hover">
+{{#each amendments}}
+  <tr>
+    <td>{{ date }}</td>
+    <td>{{ amending_title }}</td>
+  </tr>
+{{/each}}
+</table>
+
+{% endverbatim %}
+</script>

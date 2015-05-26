@@ -70,4 +70,12 @@
       return !this.authenticated();
     },
   });
+
+  Indigo.Amendment = Backbone.Model.extend({});
+
+  Indigo.AmendmentList = Backbone.Collection.extend({
+    model: Indigo.Amendment,
+    comparator: 'date',
+  });
+
 })(window);

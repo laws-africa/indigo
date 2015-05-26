@@ -48,6 +48,8 @@
   //   DocumentPropertiesView - handles editing the document metadata, such as
   //                            publication dates and URIs
   //
+  //   DocumentAmendmentsView - handles editing document amendment metadata
+  //
   //   DocumentEditorView - handles editing the document's body content
   //
   // When saving a document, the DocumentView tells the children to save their changes.
@@ -99,6 +101,8 @@
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
       this.propertiesView.on('dirty', this.setDirty, this);
       this.propertiesView.on('clean', this.setClean, this);
+
+      this.amendmentsView = new Indigo.DocumentAmendmentsView({model: this.document});
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
       this.tocView.on('item-selected', this.showEditor, this);

@@ -35,7 +35,6 @@ class ConvertAPITest(APITestCase):
         assert_equal(response.status_code, 400)
         assert_in('inputformat', response.data)
 
-
     def test_convert_json(self):
         response = self.client.post('/api/convert', {
             'content': {
@@ -51,6 +50,29 @@ class ConvertAPITest(APITestCase):
         assert_true(response.data['content'].startswith('<akomaNtoso'))
         assert_is_none(response.data['tags'])
         assert_is_none(response.data['id'])
+
+    def test_convert_with_null_publication(self):
+        response = self.client.post('/api/convert', {
+            'content': {
+                'content': document_fixture(text='hello'),
+                'publication_date': None,
+            },
+            'inputformat': 'application/json',
+            'outputformat': 'application/json',
+        }, format='json')
+        assert_equal(response.status_code, 200)
+
+    def test_convert_with_empty_publication(self):
+        response = self.client.post('/api/convert', {
+            'content': {
+                'content': document_fixture(text='hello'),
+                'publication_name': '',
+                'publication_number': '',
+            },
+            'inputformat': 'application/json',
+            'outputformat': 'application/json',
+        }, format='json')
+        assert_equal(response.status_code, 200)
 
     def test_convert_json_to_xml(self):
         response = self.client.post('/api/convert', {

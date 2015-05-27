@@ -40,8 +40,8 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
     file = serializers.FileField(write_only=True, required=False)
     """ Allow uploading a file to convert and override the content of the document. """
 
-    publication_name = serializers.CharField(required=False, allow_blank=True)
-    publication_number = serializers.CharField(required=False, allow_blank=True)
+    publication_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+    publication_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     publication_date = serializers.DateField(required=False, allow_null=True)
 
     tags = TagListSerializerField(child=serializers.CharField(), required=False)

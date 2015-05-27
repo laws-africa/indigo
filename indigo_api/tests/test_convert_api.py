@@ -55,6 +55,8 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'content': document_fixture(text='hello'),
+                'publication_name': None,
+                'publication_number': None,
                 'publication_date': None,
             },
             'inputformat': 'application/json',

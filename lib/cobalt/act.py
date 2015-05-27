@@ -123,6 +123,7 @@ class Act(Base):
 
     @publication_name.setter
     def publication_name(self, value):
+        value = value or ""
         pub = self._ensure('meta.publication', after=self.meta.identification)
         pub.set('name', value)
         pub.set('showAs', value)
@@ -147,7 +148,7 @@ class Act(Base):
     @publication_number.setter
     def publication_number(self, value):
         self._ensure('meta.publication', after=self.meta.identification)\
-            .set('number', value)
+            .set('number', value or "")
 
     @property
     def language(self):

@@ -93,7 +93,7 @@ class Importer(object):
     def tempfile_for_upload(self, upload):
         """ Uploaded files might not be on disk. If not, create temporary file. """
         if hasattr(upload, 'temporary_file_path'):
-            return upload
+            return upload.file
 
         f = tempfile.NamedTemporaryFile()
 

@@ -6,7 +6,7 @@ from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
-from cobalt import Act, FrbrUri
+from cobalt import Act, FrbrUri, AmendmentEvent
 
 from .models import Document
 from .importer import Importer
@@ -136,10 +136,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
         document = super(DocumentSerializer, self).create(validated_data)
 
+        if amendments is not None:
+            document.amendments = [AmendmentEvent(**a) for a in amendments]
         if tags is not None:
             document.tags.set(*tags)
 
-        # TODO: save amendments
+        document.save()
         return document
 
     def update(self, document, validated_data):
@@ -148,17 +150,24 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
         document = super(DocumentSerializer, self).update(document, validated_data)
 
+        if amendments is not None:
+            document.amendments = [AmendmentEvent(**a) for a in amendments]
         if tags is not None:
             document.tags.set(*tags)
 
-        # TODO: save amendments
+        document.save()
         return document
 
     def update_document(self, instance):
         """ Update document without saving it. """
-        # TODO: save amendments
+        amendments = self.validated_data.pop('amendments', None)
+
         for attr, value in self.validated_data.items():
             setattr(instance, attr, value)
+
+        if amendments is not None:
+            instance.amendments = [AmendmentEvent(**a) for a in amendments]
+
         instance.copy_attributes()
         return instance
 

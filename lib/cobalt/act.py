@@ -231,7 +231,7 @@ class Act(Base):
     @property
     def amendments(self):
         # TODO
-        return None
+        return []
 
     @amendments.setter
     def amendments(self, value):

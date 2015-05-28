@@ -107,6 +107,14 @@ class Document(models.Model):
     def publication_date(self, value):
         self.doc.publication_date = value
 
+    @property
+    def amendments(self):
+        return self.doc.amendments
+
+    @amendments.setter
+    def amendments(self, value):
+        self.doc.amendments = value
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)

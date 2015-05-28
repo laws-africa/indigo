@@ -22,6 +22,18 @@ class TagSerializer(TaggitSerializer):
         return tag_object
 
 
+class AmendmentSerializer(serializers.Serializer):
+    """ Serializer matching :class:`cobalt.act.AmendmentEvent`
+    """
+
+    date = serializers.DateField()
+    """ Date that the amendment took place """
+    amending_title = serializers.CharField()
+    """ Title of amending document """
+    amending_uri = serializers.CharField()
+    """ FRBR URI of amending document """
+
+
 class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
@@ -45,6 +57,7 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
     publication_date = serializers.DateField(required=False, allow_null=True)
 
     tags = TagListSerializerField(child=serializers.CharField(), required=False)
+    amendments = AmendmentSerializer(many=True, required=False)
 
     class Meta:
         model = Document
@@ -60,7 +73,7 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'commencement_date', 'assent_date',
-            'language', 'stub', 'tags',
+            'language', 'stub', 'tags', 'amendments',
 
             'published_url', 'toc_url',
         )
@@ -117,8 +130,21 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
         except ValueError:
             raise ValidationError("Invalid FRBR URI")
 
+    def create(self, validated_data):
+        amendments = validated_data.pop('amendments', None)
+        document = super(DocumentSerializer, self).create(validated_data)
+        # TODO: save amendments
+        return document
+
+    def update(self, instance, validated_data):
+        amendments = validated_data.pop('amendments', None)
+        instance = super(DocumentSerializer, self).update(instance, validated_data)
+        # TODO: save amendments
+        return instance
+
     def update_document(self, instance):
         """ Update document without saving it. """
+        # TODO: save amendments
         for attr, value in self.validated_data.items():
             setattr(instance, attr, value)
         instance.copy_attributes()

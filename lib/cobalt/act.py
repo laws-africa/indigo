@@ -228,6 +228,16 @@ class Act(Base):
         self.body.getparent().replace(self.body, new_body)
         self.body = new_body
 
+    @property
+    def amendments(self):
+        # TODO
+        return None
+
+    @amendments.setter
+    def amendments(self, value):
+        # TODO
+        pass
+
     def components(self):
         """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
         objects.
@@ -397,6 +407,19 @@ class TOCElement(object):
             info['children'] = [c.as_dict() for c in self.children]
 
         return info
+
+
+class AmendmentEvent(object):
+    """ An event that amended a document.
+
+    :ivar date: :class:`datetime.date` date of the event
+    :ivar amending_title: String title of the amending document
+    :ivar amending_uri: String form of the FRBR URI of the amending document
+    """
+    def __init__(self, date, amending_title, amending_uri):
+        self.date = date
+        self.amending_title = amending_title
+        self.amending_uri = amending_uri
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

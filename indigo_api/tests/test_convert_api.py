@@ -99,7 +99,7 @@ class ConvertAPITest(APITestCase):
             'outputformat': 'text/html',
             })
         assert_equal(response.status_code, 200)
-        assert_true(response.data['output'].startswith('<div'))
+        assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
 
     def test_convert_json_to_html_with_unicode(self):
@@ -112,7 +112,7 @@ class ConvertAPITest(APITestCase):
             'outputformat': 'text/html',
             })
         assert_equal(response.status_code, 200)
-        assert_true(response.data['output'].startswith('<div'))
+        assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
 
     def test_convert_text_fragment(self):

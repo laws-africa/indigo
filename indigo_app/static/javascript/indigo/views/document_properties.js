@@ -110,6 +110,10 @@
       }
       parts.push(this.model.get('year'));
       parts.push(this.model.get('number'));
+
+      // clean the parts
+      parts = _.map(parts, function(p) { return p.replace(/[ \/]/g, ''); });
+
       this.model.set('frbr_uri', parts.join('/').toLowerCase());
     },
 

@@ -57,13 +57,23 @@
     },
   });
 
-  // Handle the document amendments display
+  /**
+   * Handle the document amendments display.
+   *
+   * Note that the amendments attribute of the document might
+   * be changed outside of this view, in particular it could become
+   * a new AmendmentList collection. That means we can't attach
+   * event handlers, so the views above (and ours) must trigger
+   * events on the owning document itself, not just the AmendmentList
+   * collection.
+   */
   Indigo.DocumentAmendmentsView = Backbone.View.extend({
     el: '.amendments-container',
     template: '#amendments-template',
     events: {
       'click .add-amendment': 'addAmendment',
       'click .edit-amendment': 'editAmendment',
+      'click .delete-amendment': 'deleteAmendment',
     },
 
     initialize: function() {
@@ -100,6 +110,18 @@
       var amendment = this.model.get('amendments').at(index);
 
       this.box.show(amendment);
+    },
+
+    deleteAmendment: function(e) {
+      e.preventDefault();
+
+      var index = $(e.target).closest('tr').data('index');
+      var amendment = this.model.get('amendments').at(index);
+
+      if (confirm("Really delete this amendment?")) {
+        this.model.get('amendments').remove(amendment);
+        this.model.trigger('change change:amendments');
+      }
     },
 
   });

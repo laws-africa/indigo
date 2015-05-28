@@ -8,15 +8,27 @@
 <script id="amendments-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-hover">
-{{#each amendments}}
-  <tr data-index="{{ @index }}">
-    <td><a href="#" class="edit-amendment"><i class="fa fa-pencil"></i></a> {{ date }}</td>
-    <td>{{ amending_title }}</td>
-    <td>{{ amending_uri }}</td>
-  </tr>
-{{/each}}
-</table>
+{{#if amendments}}
+  <table class="table table-condensed table-hover amendments-list">
+    <tr>
+      <th></th>
+      <th>Date</th>
+      <th>Title</th>
+      <th>FRBR URI</th>
+    </tr>
+    {{#each amendments}}
+      <tr data-index="{{ @index }}">
+        <td class="buttons">
+          <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
+          <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
+        </td>
+        <td class="date">{{ date }}</td>
+        <td>{{ amending_title }}</td>
+        <td>{{ amending_uri }}</td>
+      </tr>
+    {{/each}}
+  </table>
+{{/if}}
 
 {% endverbatim %}
 </script>

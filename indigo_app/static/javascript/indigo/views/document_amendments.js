@@ -15,6 +15,7 @@
     bindings: {
       '#amendment_date': 'date',
       '#amendment_title': 'amending_title',
+      '#amendment_uri': 'amending_uri',
     },
 
     initialize: function(options) {
@@ -60,6 +61,7 @@
     template: '#amendments-template',
     events: {
       'click .add-amendment': 'addAmendment',
+      'click .edit-amendment': 'editAmendment',
     },
 
     initialize: function() {
@@ -96,6 +98,15 @@
     addAmendment: function(e) {
       e.preventDefault();
       this.box.show(null);
+    },
+
+    editAmendment: function(e) {
+      e.preventDefault();
+
+      var index = $(e.target).closest('tr').data('index');
+      var amendment = this.model.get('amendments').at(index);
+
+      this.box.show(amendment);
     },
 
   });

@@ -10,9 +10,10 @@
 
 <table class="table table-condensed table-hover">
 {{#each amendments}}
-  <tr>
-    <td>{{ date }}</td>
+  <tr data-index="{{ @index }}">
+    <td><a href="#" class="edit-amendment"><i class="fa fa-pencil"></i></a> {{ date }}</td>
     <td>{{ amending_title }}</td>
+    <td>{{ amending_uri }}</td>
   </tr>
 {{/each}}
 </table>

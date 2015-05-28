@@ -48,7 +48,7 @@ class SimpleTest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za-cpt/act/1998/2',
             'draft': False,
-        })
+        }, format='json')
 
         assert_equal(response.status_code, 201)
         assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')

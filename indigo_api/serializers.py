@@ -34,7 +34,7 @@ class AmendmentSerializer(serializers.Serializer):
     """ FRBR URI of amending document """
 
 
-class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
+class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
@@ -132,15 +132,27 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         amendments = validated_data.pop('amendments', None)
+        tags = validated_data.pop('tags', None)
+
         document = super(DocumentSerializer, self).create(validated_data)
+
+        if tags is not None:
+            document.tags.set(*tags)
+
         # TODO: save amendments
         return document
 
-    def update(self, instance, validated_data):
+    def update(self, document, validated_data):
         amendments = validated_data.pop('amendments', None)
-        instance = super(DocumentSerializer, self).update(instance, validated_data)
+        tags = validated_data.pop('tags', None)
+
+        document = super(DocumentSerializer, self).update(document, validated_data)
+
+        if tags is not None:
+            document.tags.set(*tags)
+
         # TODO: save amendments
-        return instance
+        return document
 
     def update_document(self, instance):
         """ Update document without saving it. """

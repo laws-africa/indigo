@@ -52,6 +52,25 @@
       draft: true,
       title: '(none)',
     },
+
+    parse: function(json) {
+      // turn amendments into an AmendmentList
+      var amendments = json.amendments;
+      if (amendments) {
+        amendments = _.map(amendments, function(a) { return new Indigo.Amendment(a); });
+      } else {
+        amendments = [];
+      }
+      json.amendments = new Indigo.AmendmentList(amendments);
+
+      return json;
+    },
+
+    toJSON: function() {
+      var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      json.amendments = this.get('amendments').toJSON();
+      return json;
+    },
   });
 
   Indigo.Library = Backbone.Collection.extend({

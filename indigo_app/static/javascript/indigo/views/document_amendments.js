@@ -45,6 +45,8 @@
         this.originalModel.attributes = _.clone(this.model.attributes);
         this.originalModel.trigger('change');
       }
+
+      this.document.trigger('change change:amendments');
       this.$el.modal('hide');
     },
     
@@ -67,16 +69,7 @@
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
 
-      var amendments = this.model.get('amendments');
-      if (amendments) {
-        amendments = _.map(amendments, function(a) { return new Indigo.Amendment(a); });
-      } else {
-        amendments = [];
-      }
-      this.model.set('amendments', new Indigo.AmendmentList(amendments), {silent: true});
-
       this.model.on('change:amendments', this.render, this);
-      this.model.get('amendments').on('change add remove', this.render, this);
 
       this.box = new Indigo.AmendmentView({model: null, document: this.model});
 

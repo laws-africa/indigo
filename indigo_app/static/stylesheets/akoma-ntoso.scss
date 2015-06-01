@@ -7,6 +7,17 @@
 .coverpage {
   text-align: center;
   margin-bottom: 2em;
+
+  .amendment-list {
+    margin-top: 2em;
+    padding: 0px;
+  }
+
+  .amendment {
+    list-style: none;
+    margin-bottom: 1em;
+    font-style: italic;
+  }
 }
 
 h1 {

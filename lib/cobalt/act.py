@@ -243,6 +243,7 @@ class Act(Base):
                 event.amending_title = source[0].get('showAs')
                 event.amending_uri = source[0].get('href')
 
+        amendments.sort(key=lambda a: a.date)
         return amendments
 
 

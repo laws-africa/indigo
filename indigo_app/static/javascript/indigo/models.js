@@ -68,7 +68,12 @@
 
     toJSON: function() {
       var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
-      json.amendments = this.get('amendments').toJSON();
+      var amendments = this.get('amendments');
+
+      if (amendments && amendments.toJSON) {
+        json.amendments = amendments.toJSON();
+      }
+
       return json;
     },
   });

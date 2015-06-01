@@ -13,8 +13,8 @@ def document(request, doc_id):
         'document': doc,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
-        'languages': Language.objects.all(),
-        'countries': Country.objects.all(),
+        'languages': Language.objects.select_related('language').all(),
+        'countries': Country.objects.select_related('country').all(),
         'view': 'DocumentView',
     })
 
@@ -40,7 +40,7 @@ def import_document(request):
 
 
 def library(request):
-    countries = {c.country.iso.lower(): c.country.name for c in Country.objects.all()}
+    countries = {c.country.iso.lower(): c.country.name for c in Country.objects.select_related('country').all()}
     countries_json = json.dumps(countries)
 
     return render(request, 'library.html', {

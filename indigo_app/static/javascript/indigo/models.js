@@ -53,6 +53,8 @@
       title: '(none)',
     },
 
+    urlRoot: '/api/documents',
+
     parse: function(json) {
       // turn amendments into an AmendmentList
       var amendments = json.amendments;

@@ -58,6 +58,23 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
 
+    def test_create_title_overrides_content_xml(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/za-cpt/act/1998/2',
+            'content': document_fixture('in the body'),
+            'title': 'Document title',
+            'draft': True,
+            'tags': ['a'],
+        })
+        id = response.data['id']
+
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['title'], 'Document title')
+
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['title'], 'Document title')
+
     def test_update(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)
@@ -194,7 +211,7 @@ class DocumentAPITest(APITestCase):
                 'id': 'chapter-2',
                 'component': 'main',
                 'subcomponent': 'chapter/2',
-                'url': 'http://testserver/api/za/act/1900/1/eng/main/chapter/2',
+                'url': 'http://testserver/api/za/act/1998/2/eng/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
@@ -203,7 +220,7 @@ class DocumentAPITest(APITestCase):
                         'id': 'section-3',
                         'component': 'main',
                         'subcomponent': 'section/3',
-                        'url': 'http://testserver/api/za/act/1900/1/eng/main/section/3',
+                        'url': 'http://testserver/api/za/act/1998/2/eng/main/section/3',
                     },
                 ],
             },

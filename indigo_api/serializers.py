@@ -131,22 +131,18 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError("Invalid FRBR URI")
 
     def create(self, validated_data):
-        amendments = validated_data.pop('amendments', None)
-        tags = validated_data.pop('tags', None)
-
-        document = super(DocumentSerializer, self).create(validated_data)
-
-        if amendments is not None:
-            document.amendments = [AmendmentEvent(**a) for a in amendments]
-        if tags is not None:
-            document.tags.set(*tags)
-
-        document.save()
-        return document
+        document = Document()
+        return self.update(document, validated_data)
 
     def update(self, document, validated_data):
+        content = validated_data.pop('content', None)
         amendments = validated_data.pop('amendments', None)
         tags = validated_data.pop('tags', None)
+
+        # Document content must always come first so it can be overridden
+        # by the other properties.
+        if content is not None:
+            document.content = content
 
         document = super(DocumentSerializer, self).update(document, validated_data)
 

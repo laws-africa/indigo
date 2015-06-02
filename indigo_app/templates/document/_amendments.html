@@ -1,5 +1,11 @@
-<div class="amendments-container">
+<header class="boxed-group-header">
+  <h4>
+    Amendments
+    <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/editing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
+  </h4>
+</header>
 
+<div class="boxed-group-inner document-amendments-view">
   <div class="row">
     <div class="col-sm-8">
       <p>These are amendments which have been applied to <strong>this version</strong> of the document.</p>
@@ -15,32 +21,34 @@
   <div class="amendment-list"></div>
 
   <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+
+  <script id="amendments-template" type="text/x-handlebars-template">
+  {% verbatim %}
+
+  {{#if amendments}}
+    <table class="table table-condensed table-striped amendments-list">
+      <tr>
+        <th></th>
+        <th>Date</th>
+        <th>Title</th>
+        <th>FRBR URI</th>
+      </tr>
+      {{#each amendments}}
+        <tr data-index="{{ @index }}">
+          <td class="buttons">
+            <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
+            <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
+          </td>
+          <td class="date">{{ date }}</td>
+          <td>{{ amending_title }}</td>
+          <td>{{ amending_uri }}</td>
+        </tr>
+      {{/each}}
+    </table>
+  {{/if}}
+
+  {% endverbatim %}
+  </script>
 </div>
 
-<script id="amendments-template" type="text/x-handlebars-template">
-{% verbatim %}
-
-{{#if amendments}}
-  <table class="table table-condensed table-striped amendments-list">
-    <tr>
-      <th></th>
-      <th>Date</th>
-      <th>Title</th>
-      <th>FRBR URI</th>
-    </tr>
-    {{#each amendments}}
-      <tr data-index="{{ @index }}">
-        <td class="buttons">
-          <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
-          <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
-        </td>
-        <td class="date">{{ date }}</td>
-        <td>{{ amending_title }}</td>
-        <td>{{ amending_uri }}</td>
-      </tr>
-    {{/each}}
-  </table>
-{{/if}}
-
-{% endverbatim %}
-</script>
+{% include "document/_amendment_modal.html" %}

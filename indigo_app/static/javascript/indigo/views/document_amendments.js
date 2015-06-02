@@ -89,7 +89,7 @@
    * collection.
    */
   Indigo.DocumentAmendmentsView = Backbone.View.extend({
-    el: '.amendments-container',
+    el: '.document-amendments-view',
     template: '#amendments-template',
     events: {
       'click .add-amendment': 'addAmendment',
@@ -109,14 +109,19 @@
 
     render: function() {
       var target = this.$el.find('.amendment-list');
+      var count = 0;
 
       if (this.model.get('amendments')) {
+        count = this.model.get('amendments').length;
         target.html(this.template({
           amendments: this.model.get('amendments').toJSON(),
         }));
       } else {
         target.html('');
       }
+
+      // update amendment count in nav tabs
+      $('.sidebar .nav a[href="#amendments-tab"] span').text(count == 0 ? '' : count);
     },
 
     addAmendment: function(e) {

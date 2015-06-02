@@ -221,7 +221,7 @@
       formatTimestamps();
 
       this.$el.find('table').tablesorter({
-        sortList: [[0, 0]],
+        sortList: [[2, 0], [3, 0]],
         headers: {
           // sort timestamps as text, since they're iso8601
           4: {sorter: "text"},

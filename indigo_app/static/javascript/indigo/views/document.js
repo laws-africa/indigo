@@ -74,16 +74,11 @@
 
       this.$saveBtn = $('.workspace-buttons .btn.save');
 
-      var info = document_id ? {id: document_id} : {
-        id: null,
-        title: '(untitled)',
-        publication_date: moment().format('YYYY-MM-DD'),
-        nature: 'act',
-        country: 'za',
-        number: '1',
-      };
+      // The document page eager loads the document details into this
+      // variable.
+      var info = Indigo.documentPreload;
 
-      this.document = new Indigo.Document(info, {collection: library});
+      this.document = new Indigo.Document(info, {collection: library, parse: true});
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
 
@@ -120,13 +115,13 @@
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
+      // pretend we've fetched it, this sets up additional handlers
+      this.document.trigger('sync');
+
       if (document_id) {
-        // fetch it
-        this.document.fetch();
+        // fetch content
         this.documentContent.fetch();
       } else {
-        // pretend we've fetched it, this sets up additional handlers
-        this.document.trigger('sync');
         this.documentContent.trigger('sync');
         this.propertiesView.calculateUri();
         this.setDirty();

@@ -21,3 +21,14 @@
 </div>
 
 {% endblock %}
+
+{% block js %}
+{{ block.super }}
+
+{# include the document as JSON #}
+<script type="text/javascript">
+if (!window.Indigo) window.Indigo = {};
+window.Indigo.documentPreload = {{ document_json|safe }};
+</script>
+
+{% endblock %}

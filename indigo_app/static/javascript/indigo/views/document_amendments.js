@@ -100,7 +100,7 @@
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
 
-      this.model.on('change:amendments', this.render, this);
+      this.model.on('change:amendments sync', this.render, this);
 
       this.box = new Indigo.AmendmentView({model: null, document: this.model});
 

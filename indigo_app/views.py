@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 
 from indigo_api.models import Document, Subtype
+from indigo_api.serializers import DocumentSerializer
 from indigo_app.models import Language, Country
 from .forms import DocumentForm
 import json
@@ -8,9 +9,12 @@ import json
 
 def document(request, doc_id):
     doc = get_object_or_404(Document, pk=doc_id)
+    doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
     form = DocumentForm(instance=doc)
+
     return render(request, 'document/show.html', {
         'document': doc,
+        'document_json': doc_json,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
@@ -21,9 +25,13 @@ def document(request, doc_id):
 
 def new_document(request):
     doc = Document(title='(untitled)')
+    doc.tags = None
+    doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
     form = DocumentForm(instance=doc)
+
     return render(request, 'document/show.html', {
         'document': doc,
+        'document_json': doc_json,
         'form': form,
         'view': 'DocumentView',
     })

@@ -56,16 +56,18 @@
     urlRoot: '/api/documents',
 
     parse: function(json) {
+      json.amendments = this.reifyAmendments(json.amendments);
+      return json;
+    },
+
+    reifyAmendments: function(amendments) {
       // turn amendments into an AmendmentList
-      var amendments = json.amendments;
       if (amendments) {
         amendments = _.map(amendments, function(a) { return new Indigo.Amendment(a); });
       } else {
         amendments = [];
       }
-      json.amendments = new Indigo.AmendmentList(amendments);
-
-      return json;
+      return new Indigo.AmendmentList(amendments);
     },
 
     toJSON: function() {

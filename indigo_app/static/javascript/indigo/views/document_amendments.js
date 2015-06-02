@@ -121,7 +121,7 @@
       }
 
       // update amendment count in nav tabs
-      $('.sidebar .nav a[href="#amendments-tab"] span').text(count == 0 ? '' : count);
+      $('.sidebar .nav a[href="#amendments-tab"] span').text(count === 0 ? '' : count);
     },
 
     addAmendment: function(e) {

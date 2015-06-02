@@ -99,6 +99,14 @@ class Document(models.Model):
     def publication_number(self, value):
         self.doc.publication_number = value
 
+    @property
+    def publication_date(self):
+        return self.doc.publication_date
+
+    @publication_date.setter
+    def publication_date(self, value):
+        self.doc.publication_date = value
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)

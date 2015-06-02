@@ -1,0 +1,8 @@
+<ol class="amendment-list">
+  {% for amendment in document.amendments %}
+  <li class="amendment">
+    [Amended by <span class="amending-title">{{ amendment.amending_title }}</span> on 
+    <span class="date">{{ amendment.date|date:"d E Y" }}</span>]
+  </li>
+  {% endfor %}
+</ol>

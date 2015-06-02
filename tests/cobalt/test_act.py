@@ -1,9 +1,8 @@
 from unittest import TestCase
-from nose.tools import *
+from nose.tools import *  # noqa
 from datetime import date
-from lxml import etree
 
-from cobalt.act import Act, datestring
+from cobalt.act import Act, datestring, AmendmentEvent
 
 class ActTestCase(TestCase):
     def test_empty_act(self):
@@ -305,6 +304,107 @@ class ActTestCase(TestCase):
 
         assert_is_none(a.get_subcomponent('main', 'chapter/99'))
         assert_is_none(a.get_subcomponent('main', 'section/99'))
+
+    def test_set_amendments(self):
+        a = Act()
+        a.body_xml = """
+        <body xmlns="http://www.akomantoso.org/2.0"/>
+        """
+
+        a.amendments = [AmendmentEvent(date='2012-02-01', amending_uri='/za/act/1980/10', amending_title="Foo")]
+
+        assert_equal(a.to_xml(), """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="singleVersion">
+    <meta>
+      <identification source="">
+        <FRBRWork>
+          <FRBRthis value="/za/act/1900/1/main"/>
+          <FRBRuri value="/za/act/1900/1"/>
+          <FRBRalias value="Untitled"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <lifecycle>
+        <eventRef id="amendment-2012-02-01" date="2012-02-01" type="amendment" source="#amendment-0-source"/>
+      </lifecycle>
+      <references>
+        <passiveRef id="amendment-0-source" href="/za/act/1980/10" showAs="Foo"/>
+      </references>
+    </meta>
+    <body/>
+  </act>
+</akomaNtoso>
+""")
+
+        a.amendments = [
+            AmendmentEvent(date='2012-02-01', amending_uri='/za/act/1980/22', amending_title="Corrected"),
+            AmendmentEvent(date='2013-03-03', amending_uri='/za/act/1990/5', amending_title="Bar"),
+        ]
+        assert_equals(a.to_xml(), """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="singleVersion">
+    <meta>
+      <identification source="">
+        <FRBRWork>
+          <FRBRthis value="/za/act/1900/1/main"/>
+          <FRBRuri value="/za/act/1900/1"/>
+          <FRBRalias value="Untitled"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <lifecycle>
+        <eventRef id="amendment-2012-02-01" date="2012-02-01" type="amendment" source="#amendment-0-source"/>
+        <eventRef id="amendment-2013-03-03" date="2013-03-03" type="amendment" source="#amendment-1-source"/>
+      </lifecycle>
+      <references>
+        <passiveRef id="amendment-0-source" href="/za/act/1980/22" showAs="Corrected"/>
+        <passiveRef id="amendment-1-source" href="/za/act/1990/5" showAs="Bar"/>
+      </references>
+    </meta>
+    <body/>
+  </act>
+</akomaNtoso>
+""")
+
+        amendment = a.amendments[0]
+        assert_equal(datestring(amendment.date), '2012-02-01')
+        assert_equal(amendment.amending_uri, '/za/act/1980/22')
+        assert_equal(amendment.amending_title, 'Corrected')
+
+        amendment = a.amendments[1]
+        assert_equal(datestring(amendment.date), '2013-03-03')
+        assert_equal(amendment.amending_uri, '/za/act/1990/5')
+        assert_equal(amendment.amending_title, 'Bar')
+
 
 def act_fixture(content):
     return """<?xml version="1.0"?>

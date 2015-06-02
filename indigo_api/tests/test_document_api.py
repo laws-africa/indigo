@@ -1,9 +1,10 @@
-from nose.tools import *
+from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 
-from indigo_api.tests.fixtures import *
+from indigo_api.tests.fixtures import *  # noqa
 
-class SimpleTest(APITestCase):
+
+class DocumentAPITest(APITestCase):
     fixtures = ['user']
 
     def setUp(self):
@@ -37,12 +38,11 @@ class SimpleTest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',
             'tags': ['foo', 'bar']
-        }, format='json')
+        })
 
         assert_equal(response.status_code, 201)
         assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
         assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
-
 
     def test_create_with_locality(self):
         response = self.client.post('/api/documents', {
@@ -58,12 +58,29 @@ class SimpleTest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
 
+    def test_create_title_overrides_content_xml(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/za-cpt/act/1998/2',
+            'content': document_fixture('in the body'),
+            'title': 'Document title',
+            'draft': True,
+            'tags': ['a'],
+        })
+        id = response.data['id']
+
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['title'], 'Document title')
+
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['title'], 'Document title')
+
     def test_update(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
-        response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']}, format='json')
+        response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']})
         assert_equal(response.status_code, 200)
         # TODO: this should work
         #assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
@@ -194,7 +211,7 @@ class SimpleTest(APITestCase):
                 'id': 'chapter-2',
                 'component': 'main',
                 'subcomponent': 'chapter/2',
-                'url': 'http://testserver/api/za/act/1900/1/eng/main/chapter/2',
+                'url': 'http://testserver/api/za/act/1998/2/eng/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
@@ -203,8 +220,46 @@ class SimpleTest(APITestCase):
                         'id': 'section-3',
                         'component': 'main',
                         'subcomponent': 'section/3',
-                        'url': 'http://testserver/api/za/act/1900/1/eng/main/section/3',
+                        'url': 'http://testserver/api/za/act/1998/2/eng/main/section/3',
                     },
                 ],
             },
             ])
+
+    def test_create_with_amendments(self):
+        response = self.client.post('/api/documents', {
+            'frbr_uri': '/za/act/1998/2',
+            'amendments': [{
+                'date': '2010-01-01',
+                'amending_title': 'Act 2 of 2010',
+                'amending_uri': '/za/act/2010/2',
+            }]
+        })
+
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(response.data['amendments'], [{
+            'date': '2010-01-01',
+            'amending_title': 'Act 2 of 2010',
+            'amending_uri': '/za/act/2010/2',
+        }])
+
+    def test_update_with_amendments(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {
+            'amendments': [{
+                'date': '2010-01-01',
+                'amending_title': 'Act 2 of 2010',
+                'amending_uri': '/za/act/2010/2',
+            }]
+        })
+
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['amendments'], [{
+            'date': '2010-01-01',
+            'amending_title': 'Act 2 of 2010',
+            'amending_uri': '/za/act/2010/2',
+        }])

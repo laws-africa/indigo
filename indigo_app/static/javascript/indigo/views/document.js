@@ -48,6 +48,8 @@
   //   DocumentPropertiesView - handles editing the document metadata, such as
   //                            publication dates and URIs
   //
+  //   DocumentAmendmentsView - handles editing document amendment metadata
+  //
   //   DocumentEditorView - handles editing the document's body content
   //
   // When saving a document, the DocumentView tells the children to save their changes.
@@ -63,6 +65,7 @@
       'click .btn.delete-document': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
+      'click .btn.clone': 'createClone',
     },
 
     initialize: function() {
@@ -99,6 +102,8 @@
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
       this.propertiesView.on('dirty', this.setDirty, this);
       this.propertiesView.on('clean', this.setClean, this);
+
+      this.amendmentsView = new Indigo.DocumentAmendmentsView({model: this.document});
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
       this.tocView.on('item-selected', this.showEditor, this);
@@ -252,6 +257,39 @@
           .destroy()
           .then(function() {
             document.location = '/library';
+          });
+      }
+    },
+
+    // Create a clone of the document and redirect them there
+    createClone: function(e) {
+      if (confirm('Create a copy of this document? Unsaved changes will be lost!')) {
+        // clone and reset some attributes
+        var clone = this.document.clone();
+        clone.set({
+          content: this.documentContent.get('content'),
+          draft: true,
+          title: 'Copy of ' + clone.get('title'),
+          id: null,
+        });
+
+        var $btn = $(e.target);
+        $btn
+          .toggleClass('disabled')
+          .find('.fa')
+          .toggleClass('fa-copy fa-pulse fa-spinner');
+
+        clone
+          .save(null, {parse: false})
+          .done(function(response) {
+            // redirect
+            document.location = '/documents/' + response.id + '/';
+          })
+          .fail(function() {
+            $btn
+              .toggleClass('disabled')
+              .find('.fa')
+              .toggleClass('fa-copy fa-pulse fa-spinner');
           });
       }
     }

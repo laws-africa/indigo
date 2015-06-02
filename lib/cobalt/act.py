@@ -228,6 +228,71 @@ class Act(Base):
         self.body.getparent().replace(self.body, new_body)
         self.body = new_body
 
+    @property
+    def amendments(self):
+        amendments = []
+
+        for e in self.meta.iterfind('.//{*}lifecycle/{*}eventRef[@type="amendment"]'):
+            date = arrow.get(e.get('date')).date()
+            event = AmendmentEvent(date=date)
+            amendments.append(event)
+
+            id = e.get('source')[1:]
+            source = self.meta.findall('.//{*}references/{*}passiveRef[@id="%s"]' % id)
+            if source:
+                event.amending_title = source[0].get('showAs')
+                event.amending_uri = source[0].get('href')
+
+        amendments.sort(key=lambda a: a.date)
+        return amendments
+
+
+    @amendments.setter
+    def amendments(self, value):
+        # delete existing entries
+        for e in self.meta.iterfind('.//{*}lifecycle/{*}eventRef[@type="amendment"]'):
+            # delete the passive ref elements
+            id = e.get('source')[1:]
+            for node in self.meta.iterfind('.//{*}references/{*}passiveRef[@id="%s"]' % id):
+                node.getparent().remove(node)
+
+            # delete the event
+            e.getparent().remove(e)
+
+        if not value:
+            # no amendments
+            self.act.set('contains', 'originalVersion')
+        else:
+            self.act.set('contains', 'singleVersion')
+
+            try:
+                after = self.meta.publication
+            except AttributeError:
+                after = self.meta.identification
+
+            lifecycle = self._ensure('meta.lifecycle', after=after)
+            references = self._ensure('meta.references', after=lifecycle)
+
+            for i, event in enumerate(value):
+                date = datestring(event.date)
+                ref = 'amendment-%s-source' % i
+
+                # create the lifecycle element
+                node = self._make('eventRef')
+                node.set('id', 'amendment-' + date)
+                node.set('date', date)
+                node.set('type', 'amendment')
+                node.set('source', '#' + ref)
+                lifecycle.append(node)
+
+                # create the passive ref
+                node = self._make('passiveRef')
+                node.set('id', ref)
+                node.set('href', event.amending_uri)
+                node.set('showAs', event.amending_title)
+                references.append(node)
+
+
     def components(self):
         """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
         objects.
@@ -397,6 +462,19 @@ class TOCElement(object):
             info['children'] = [c.as_dict() for c in self.children]
 
         return info
+
+
+class AmendmentEvent(object):
+    """ An event that amended a document.
+
+    :ivar date: :class:`datetime.date` date of the event
+    :ivar amending_title: String title of the amending document
+    :ivar amending_uri: String form of the FRBR URI of the amending document
+    """
+    def __init__(self, date=None, amending_title=None, amending_uri=None):
+        self.date = date
+        self.amending_title = amending_title
+        self.amending_uri = amending_uri
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

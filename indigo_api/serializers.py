@@ -6,7 +6,7 @@ from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
-from cobalt import Act, FrbrUri
+from cobalt import Act, FrbrUri, AmendmentEvent
 
 from .models import Document
 from .importer import Importer
@@ -22,7 +22,19 @@ class TagSerializer(TaggitSerializer):
         return tag_object
 
 
-class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
+class AmendmentSerializer(serializers.Serializer):
+    """ Serializer matching :class:`cobalt.act.AmendmentEvent`
+    """
+
+    date = serializers.DateField()
+    """ Date that the amendment took place """
+    amending_title = serializers.CharField()
+    """ Title of amending document """
+    amending_uri = serializers.CharField()
+    """ FRBR URI of amending document """
+
+
+class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
@@ -45,6 +57,7 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
     publication_date = serializers.DateField(required=False, allow_null=True)
 
     tags = TagListSerializerField(child=serializers.CharField(), required=False)
+    amendments = AmendmentSerializer(many=True, required=False)
 
     class Meta:
         model = Document
@@ -60,7 +73,7 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'commencement_date', 'assent_date',
-            'language', 'stub', 'tags',
+            'language', 'stub', 'tags', 'amendments',
 
             'published_url', 'toc_url',
         )
@@ -117,10 +130,40 @@ class DocumentSerializer(TagSerializer, serializers.HyperlinkedModelSerializer):
         except ValueError:
             raise ValidationError("Invalid FRBR URI")
 
+    def create(self, validated_data):
+        document = Document()
+        return self.update(document, validated_data)
+
+    def update(self, document, validated_data):
+        content = validated_data.pop('content', None)
+        amendments = validated_data.pop('amendments', None)
+        tags = validated_data.pop('tags', None)
+
+        # Document content must always come first so it can be overridden
+        # by the other properties.
+        if content is not None:
+            document.content = content
+
+        document = super(DocumentSerializer, self).update(document, validated_data)
+
+        if amendments is not None:
+            document.amendments = [AmendmentEvent(**a) for a in amendments]
+        if tags is not None:
+            document.tags.set(*tags)
+
+        document.save()
+        return document
+
     def update_document(self, instance):
         """ Update document without saving it. """
+        amendments = self.validated_data.pop('amendments', None)
+
         for attr, value in self.validated_data.items():
             setattr(instance, attr, value)
+
+        if amendments is not None:
+            instance.amendments = [AmendmentEvent(**a) for a in amendments]
+
         instance.copy_attributes()
         return instance
 

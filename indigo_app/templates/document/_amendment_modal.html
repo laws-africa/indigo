@@ -1,0 +1,50 @@
+<div class="modal fade" id="amendment-box">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">What caused this amendment?</h4>
+      </div>
+
+      <div class="modal-body">
+        <div role="tabpanel">
+
+          <ul class="nav nav-pills">
+            <li class="active"><a href="#tab-amendment-list" data-toggle="tab">Document from the library</a></li>
+            <li><a href="#tab-custom-amendment" data-toggle="tab">Not in the library</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="tab-amendment-list">
+              {% include 'document/_chooser.html' %}
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="tab-custom-amendment">
+              <div class="form-group">
+                <label for="amendment_date" class="control-label">Date of amendment</label>
+                <input type="text" class="form-control" data-provide="datepicker" id="amendment_date" placeholder="yyyy-mm-dd">
+              </div>
+
+              <div class="form-group">
+                <label for="amendment_title" class="control-label">Title of amending document</label>
+                <input type="text" class="form-control" id="amendment_title">
+              </div>
+
+              <div class="form-group">
+                <label for="amendment_uri" class="control-label">URI of amending document</label>
+                <input type="text" class="form-control" id="amendment_uri">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary save" value="Save">
+      </div>
+
+    </div>
+  </div>
+</div>

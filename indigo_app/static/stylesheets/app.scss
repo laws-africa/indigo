@@ -377,7 +377,7 @@ legend {
 /* table of contents browser */
 .toc {
   position: absolute;
-  top: 90px;
+  top: 130px;
   left: 0px;
   right: 0px;
   bottom: 0px;
@@ -438,4 +438,28 @@ legend {
   font-size: inherit;
   font-weight: normal;
   margin-bottom: 5px;
+}
+
+/* amendments list */
+.amendments-list {
+  .buttons {
+    width: 1%;
+    white-space: nowrap;
+  }
+
+  .date {
+    width: 10%;
+    white-space: nowrap;
+  }
+}
+
+#amendment-box {
+  .nav {
+    margin-bottom: 5px;
+  }
+
+  .document-chooser-list {
+    max-height: 295px;
+    overflow-y: scroll;
+  }
 }

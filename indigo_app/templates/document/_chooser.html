@@ -1,0 +1,51 @@
+<div class="document-chooser panel panel-default">
+  <div class="panel-heading">
+    <div class="input-group">
+      <input type="text" class="form-control document-chooser-search" placeholder="Search..." autocomplete="off">
+      <div class="input-group-btn">
+        <button class="document-chooser-search-clear btn btn-default"><strong>&times;</strong></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="document-chooser-list"></div>
+</div>
+
+<script id="document-chooser-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<table class="table table-condensed table-hover document-list-table">
+  <thead>
+    <tr>
+      <th class="title">Title</th>
+      <th class="year">Year</th>
+      <th class="number">Number</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each documents}}
+      <tr data-index="{{ @index }}" class="{{#if chosen }}info{{/if}}">
+        <td>
+          {{#if title}}
+            {{ title }}
+          {{else}}
+            (untitled)
+          {{/if}}
+
+          {{#if stub}}
+            <span class="label label-info">stub</span>
+          {{/if}}
+
+          {{#each tags}}
+            <span class="label label-default">{{this}}</span>
+          {{/each}}
+        </td>
+        <td>{{ year }}</td>
+        <td>{{ number }}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+{% endverbatim %}
+
+</script>

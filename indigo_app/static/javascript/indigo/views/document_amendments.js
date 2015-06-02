@@ -20,18 +20,27 @@
 
     initialize: function(options) {
       this.document = options.document;
+      this.chooser = new Indigo.DocumentChooserView({el: this.$el.find('.document-chooser')});
+      this.chooser.on('chosen', this.chosen, this);
     },
 
     show: function(model) {
+      var amending_doc = null;
+
       this.isNew = !model;
       this.originalModel = model;
 
       if (model) {
         // clone the amendment and edit the clone
         this.model = model.clone();
+        // find the document the model corresponds to
+        amending_doc = this.chooser.model.findWhere({frbr_uri: this.model.get('amending_uri')});
       } else {
         this.model = new Indigo.Amendment();
       }
+
+      this.chooser.setFilters({country: this.document.get('country')});
+      this.chooser.choose(amending_doc);
 
       this.stickit();
 
@@ -55,6 +64,18 @@
       this.model = null;
       this.originalModel = null;
     },
+
+    chosen: function() {
+      // user chose a new item in the document chooser
+      var chosen = this.chooser.chosen;
+      if (chosen) {
+        this.model.set({
+          date: chosen.get('publication_date'),
+          amending_title: chosen.get('title'),
+          amending_uri: chosen.get('frbr_uri'),
+        });
+      }
+    }
   });
 
   /**

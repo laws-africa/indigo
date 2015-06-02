@@ -452,3 +452,14 @@ legend {
     white-space: nowrap;
   }
 }
+
+#amendment-box {
+  .nav {
+    margin-bottom: 5px;
+  }
+
+  .document-chooser-list {
+    max-height: 295px;
+    overflow-y: scroll;
+  }
+}

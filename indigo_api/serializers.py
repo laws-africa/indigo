@@ -72,7 +72,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number',
-            'commencement_date', 'assent_date',
+            'expression_date', 'commencement_date', 'assent_date',
             'language', 'stub', 'tags', 'amendments',
 
             'published_url', 'toc_url',

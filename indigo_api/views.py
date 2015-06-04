@@ -79,6 +79,8 @@ def find_document_template(document):
 
 
 class DocumentViewMixin(object):
+    queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags').all()
+
     def table_of_contents(self, document):
         # this updates the TOC entries by adding a 'url' component
         # based on the document's URI and the path of the TOC subcomponent
@@ -108,7 +110,6 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags').all()
     serializer_class = DocumentSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
 
@@ -153,7 +154,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     """
     The public read-only API for viewing and listing documents by FRBR URI.
     """
-    queryset = Document.objects.filter(draft=False)
+    queryset = DocumentViewMixin.queryset.filter(draft=False)
+
     serializer_class = DocumentSerializer
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)

@@ -165,6 +165,16 @@ class Document(models.Model):
     def table_of_contents(self):
         return [t.as_dict() for t in self.doc.table_of_contents()]
 
+    def amended_versions(self):
+        """ Return a list of all the amended versions of this work.
+        This is all documents that share the same URI but have different
+        expression dates.
+        """
+        return Document.objects\
+                .filter(deleted__exact=False)\
+                .filter(frbr_uri=self.frbr_uri)\
+                .order_by('expression_date').all()
+
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
 

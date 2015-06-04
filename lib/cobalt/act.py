@@ -246,7 +246,6 @@ class Act(Base):
         amendments.sort(key=lambda a: a.date)
         return amendments
 
-
     @amendments.setter
     def amendments(self, value):
         # delete existing entries

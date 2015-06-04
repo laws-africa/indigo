@@ -7,6 +7,7 @@ from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
 from cobalt import Act, FrbrUri, AmendmentEvent
+from cobalt.act import datestring
 
 from .models import Document
 from .importer import Importer
@@ -59,6 +60,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     tags = TagListSerializerField(child=serializers.CharField(), required=False)
     amendments = AmendmentSerializer(many=True, required=False)
 
+    amended_versions = serializers.SerializerMethodField()
+    """ List of amended versions of this document """
+
     class Meta:
         model = Document
         fields = (
@@ -73,7 +77,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'tags', 'amendments',
+            'language', 'stub', 'tags', 'amendments', 'amended_versions',
 
             'published_url', 'toc_url',
         )
@@ -89,16 +93,36 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             return None
         return reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk})
 
-    def get_published_url(self, doc):
+    def get_published_url(self, doc, with_date=False):
         if not doc.pk or doc.draft:
             return None
         else:
             uri = doc.doc.frbr_uri
-            uri.expression_date = None
+            if with_date and doc.expression_date:
+                uri.expression_date = '@' + datestring(doc.expression_date)
+            else:
+                uri.expression_date = None
+
             uri = uri.expression_uri()[1:]
 
-            return reverse('published-document-detail', request=self.context['request'],
+            uri = reverse('published-document-detail', request=self.context['request'],
                            kwargs={'frbr_uri': uri})
+            return uri.replace('%40', '@')
+
+    def get_amended_versions(self, doc):
+        def describe(doc):
+            info = {
+                'id': d.id,
+                'expression_date': datestring(d.expression_date),
+            }
+            if not d.draft:
+                info['published_url'] = self.get_published_url(d, with_date=True)
+            return info
+
+        if doc.amendments:
+            return [describe(d) for d in doc.amended_versions()]
+        else:
+            return None
 
     def validate(self, data):
         """

@@ -49,12 +49,12 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 1)
+        assert_equal(len(response.data), 3)
 
         response = self.client.get('/api/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 1)
+        assert_equal(len(response.data), 3)
 
         response = self.client.get('/api/za/act/2014')
         assert_equal(response.status_code, 200)
@@ -107,3 +107,47 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
         assert_equal(response.data, '<div class="akn-section" id="section-1"><h3>1. </h3><span class="akn-content"><span class="akn-p">tester</span></span></div>')
+
+    def test_at_expression_date(self):
+        response = self.client.get('/api/za/act/2011/5/eng@2011-01-01.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['frbr_uri'], '/za/act/2011/5')
+        assert_equal(response.data['expression_date'], '2011-01-01')
+
+        # doesn't exist
+        response = self.client.get('/api/za/act/2011/5/eng@2099-01-01.json')
+        assert_equal(response.status_code, 404)
+
+    def test_before_expression_date(self):
+        # at or before 2015-01-01
+        response = self.client.get('/api/za/act/2011/5/eng:2015-01-01.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['frbr_uri'], '/za/act/2011/5')
+        assert_equal(response.data['expression_date'], '2012-02-02')
+
+        # at or before 2012-01-01
+        response = self.client.get('/api/za/act/2011/5/eng:2012-01-01.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['frbr_uri'], '/za/act/2011/5')
+        assert_equal(response.data['expression_date'], '2011-01-01')
+
+        # doesn't exist
+        response = self.client.get('/api/za/act/2011/5/eng:2009-01-01.json')
+        assert_equal(response.status_code, 404)
+
+    def test_latest_expression(self):
+        response = self.client.get('/api/za/act/2011/5/eng.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['frbr_uri'], '/za/act/2011/5')
+        assert_equal(response.data['expression_date'], '2012-02-02')
+
+    def test_earliest_expression(self):
+        response = self.client.get('/api/za/act/2011/5/eng@.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['frbr_uri'], '/za/act/2011/5')
+        assert_equal(response.data['expression_date'], '2011-01-01')

@@ -1,6 +1,7 @@
 import re
 import logging
 
+import arrow
 from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
@@ -236,10 +237,40 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         raise Http404
 
     def get_object(self):
-        """ Filter one document,  used by retrieve() """
-        # TODO: filter on expression (expression date, etc.)
-        # TODO: support multiple docs
-        obj = get_object_or_404(self.get_queryset().filter(frbr_uri=self.frbr_uri.work_uri()))
+        """ Find and return one document, used by retrieve() """
+        query = self.get_queryset().filter(frbr_uri=self.frbr_uri.work_uri())\
+
+        # filter on expression date
+        expr_date = self.frbr_uri.expression_date
+        if expr_date:
+            try:
+                if expr_date == '@':
+                    # earliest document
+                    query = query.order_by('expression_date')
+
+                elif expr_date[0] == '@':
+                    # document at this date
+                    query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
+
+                elif expr_date[0] == ':':
+                    # latest document at or before this date
+                    query = query\
+                            .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
+                            .order_by('-expression_date')
+
+                else:
+                    raise Http404("The expression date %s is not valid" % expr_date)
+
+            except arrow.parser.ParserError:
+                raise Http404("The expression date %s is not valid" % expr_date)
+
+        else:
+            # always get the latest expression
+            query = query.order_by('-expression_date')
+
+        obj = query.first()
+        if obj is None:
+            raise Http404("Document doesn't exist")
 
         if obj.language != self.frbr_uri.language:
             raise Http404("The document %s exists but is not available in the language '%s'"

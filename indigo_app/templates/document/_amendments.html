@@ -6,21 +6,21 @@
 </header>
 
 <div class="boxed-group-inner document-amendments-view">
-  <div class="row">
-    <div class="col-sm-8">
-      <p>These are amendments which have been applied to <strong>this version</strong> of the document.</p>
-    </div>
-    <div class="col-sm-4">
-      <p>
-        <button class="btn btn-default clone"><i class="fa fa-copy"></i> Clone this document</button>
-      </p>
-      <p class="help-block">Create a copy when applying new amendments that produce a new document.</p>
-    </div>
-  </div>
+  <p>These are amendments which have been applied to <strong>this version</strong> of the document.</p>
 
   <div class="amendment-list"></div>
 
-  <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+  <div class="row">
+    <div class="col-sm-6">
+      <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+    </div>
+    <div class="col-sm-6">
+      <p>
+        <button class="btn btn-default clone"><i class="fa fa-copy"></i> Clone this document</button>
+      </p>
+      <p class="help-block">Clone a document before applying new amendments that will result in a new version.</p>
+    </div>
+  </div>
 
   <script id="amendments-template" type="text/x-handlebars-template">
   {% verbatim %}

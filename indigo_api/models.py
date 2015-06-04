@@ -29,6 +29,11 @@ class Document(models.Model):
     document_xml = models.TextField(null=True, blank=True)
     """ Raw XML content of the entire document """
 
+    # Date from the FRBRExpression element. This is either the publication date or the date of the last
+    # amendment. This is used to identify this particular version of this work, so is stored in the DB.
+    # It can be null only so that users aren't forced to add a value.
+    expression_date = models.DateField(null=True, blank=True, help_text="Date of publication or latest amendment")
+
     # Date of commencement. AKN doesn't have a good spot for this, so it only goes in the DB.
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     # Date of assent. AKN doesn't have a good spot for this, so it only goes in the DB.
@@ -129,12 +134,14 @@ class Document(models.Model):
             self.doc.language = self.language
 
             self.doc.work_date = self.doc.publication_date
+            self.doc.expression_date = self.expression_date or self.doc.publication_date or arrow.now()
             self.doc.manifestation_date = self.updated_at or arrow.now()
 
         else:
             self.title = self.doc.title
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
+            self.expression_date = self.doc.expression_date
 
         # update the model's XML from the Act XML
         self.refresh_xml()
@@ -157,6 +164,16 @@ class Document(models.Model):
 
     def table_of_contents(self):
         return [t.as_dict() for t in self.doc.table_of_contents()]
+
+    def amended_versions(self):
+        """ Return a list of all the amended versions of this work.
+        This is all documents that share the same URI but have different
+        expression dates.
+        """
+        return Document.objects\
+                .filter(deleted__exact=False)\
+                .filter(frbr_uri=self.frbr_uri)\
+                .order_by('expression_date').all()
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

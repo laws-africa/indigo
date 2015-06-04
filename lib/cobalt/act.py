@@ -105,6 +105,8 @@ class Act(Base):
     @expression_date.setter
     def expression_date(self, value):
         self.meta.identification.FRBRExpression.FRBRdate.set('date', datestring(value))
+        # update the URI
+        self.frbr_uri = self.frbr_uri
 
     @property
     def manifestation_date(self):
@@ -178,9 +180,7 @@ class Act(Base):
             uri = FrbrUri.parse(uri)
 
         uri.language = self.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
-
-        if uri.expression_date is None:
-            uri.expression_date = ''
+        uri.expression_date = '@' + datestring(self.expression_date)
 
         if uri.work_component is None:
             uri.work_component = 'main'
@@ -245,7 +245,6 @@ class Act(Base):
 
         amendments.sort(key=lambda a: a.date)
         return amendments
-
 
     @amendments.setter
     def amendments(self, value):

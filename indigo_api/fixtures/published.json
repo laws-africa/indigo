@@ -12,5 +12,43 @@
       "deleted": false,
       "frbr_uri": "/za/act/2014/10"
     }
+  },
+  {
+    "pk": 2,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2011-01-01",
+      "document_xml": "<akomaNtoso xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.akomantoso.org/2.0\" xsi:schemaLocation=\"http://www.akomantoso.org/2.0 akomantoso20.xsd\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/za/act/2010/1/main\"/>\n          <FRBRuri value=\"/za/act/2010/1\"/>\n          <FRBRalias value=\"Act with amendments\"/>\n          <FRBRdate date=\"2010-06-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/za/act/2010/1/eng@1980-01-01/main\"/>\n          <FRBRuri value=\"/za/act/2010/1/eng@1980-01-01\"/>\n          <FRBRdate date=\"1980-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/za/act/2010/1/eng@1980-01-01/main\"/>\n          <FRBRuri value=\"/za/act/2010/1/eng@1980-01-01\"/>\n          <FRBRdate date=\"2015-06-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2010-06-01\"/>\n      <lifecycle>\n        <eventRef id=\"amendment-2011-01-01\" date=\"2011-01-01\" type=\"amendment\" source=\"#amendment-0-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization id=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization id=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole id=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef id=\"amendment-0-source\" href=\"/za/act/2011/1\" showAs=\"First Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section id=\"section-1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection id=\"section-1.subsection-0\">\n          <content>\n            <p>Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "assent_date": "2010-04-01",
+      "draft": false,
+      "frbr_uri": "/za/act/2010/1",
+      "language": "eng",
+      "title": "Act with amendments",
+      "deleted": false,
+      "country": "za",
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "stub": true,
+      "commencement_date": "2010-06-01"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "indigo_api.document",
+    "fields": {
+      "expression_date": "2012-02-02",
+      "document_xml": "<akomaNtoso xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.akomantoso.org/2.0\" xsi:schemaLocation=\"http://www.akomantoso.org/2.0 akomantoso20.xsd\">\n  <act contains=\"singleVersion\">\n    <meta>\n      <identification source=\"#slaw\">\n        <FRBRWork>\n          <FRBRthis value=\"/za/act/2010/1/main\"/>\n          <FRBRuri value=\"/za/act/2010/1\"/>\n          <FRBRalias value=\"Act with amendments\"/>\n          <FRBRdate date=\"2010-06-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/za/act/2010/1/eng@1980-01-01/main\"/>\n          <FRBRuri value=\"/za/act/2010/1/eng@1980-01-01\"/>\n          <FRBRdate date=\"1980-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/za/act/2010/1/eng@1980-01-01/main\"/>\n          <FRBRuri value=\"/za/act/2010/1/eng@1980-01-01\"/>\n          <FRBRdate date=\"2015-06-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#slaw\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication name=\"publication\" showAs=\"publication\" number=\"10\" date=\"2010-06-01\"/>\n      <lifecycle>\n        <eventRef id=\"amendment-2011-01-01\" date=\"2011-01-01\" type=\"amendment\" source=\"#amendment-0-source\"/>\n        <eventRef id=\"amendment-2012-02-02\" date=\"2012-02-02\" type=\"amendment\" source=\"#amendment-1-source\"/>\n      </lifecycle>\n      <references source=\"#this\">\n        <TLCOrganization id=\"slaw\" href=\"https://github.com/longhotsummer/slaw\" showAs=\"Slaw\"/>\n        <TLCOrganization id=\"council\" href=\"/ontology/organization/za/council\" showAs=\"Council\"/>\n        <TLCRole id=\"author\" href=\"/ontology/role/author\" showAs=\"Author\"/>\n        <passiveRef id=\"amendment-0-source\" href=\"/za/act/2011/1\" showAs=\"First Amendment\"/>\n        <passiveRef id=\"amendment-1-source\" href=\"/za/act/2012/2\" showAs=\"Second Amendment\"/>\n      </references>\n    </meta>\n    <body>\n      <section id=\"section-1\">\n        <num>1.</num>\n        <heading>Foo</heading>\n        <subsection id=\"section-1.subsection-0\">\n          <content>\n            <p>Bar</p>\n          </content>\n        </subsection>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "assent_date": "2010-04-01",
+      "draft": false,
+      "frbr_uri": "/za/act/2010/1",
+      "language": "eng",
+      "title": "Act with amendments",
+      "deleted": false,
+      "country": "za",
+      "created_at": "2015-06-04T13:53:43.229Z",
+      "updated_at": "2015-06-04T14:01:09.847Z",
+      "stub": true,
+      "commencement_date": "2010-06-01"
+    }
   }
 ]

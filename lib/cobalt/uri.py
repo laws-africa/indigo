@@ -11,7 +11,7 @@ FRBR_URI_RE = re.compile(r"""^/(?P<country>[a-z]{2})       # country
                                (                           # either a work component or expression details
                                 (                                # optional expression details
                                   (?P<language>[a-z]{3})                    # language (eg. eng)
-                                  (@(?P<expression_date>[^/]*))?            # expression date (eg. @ or @2012-12-22)
+                                  (?P<expression_date>[@:][^/]*)?           # expression date (eg. @ or @2012-12-22 or :2012-12-22)
                                   (/                                        # optional expression component
                                     (?P<expression_component>[^/]+?)?       # expression component (eg. main or schedule1)
                                     (/(?P<expression_subcomponent>[^.]+))?  # expression subcomponent (eg. chapter/1 or section/20)
@@ -97,9 +97,7 @@ class FrbrUri(object):
         uri = self.work_uri(work_component=False) + "/" + self.language
 
         if self.expression_date is not None:
-            # TODO: support virtual expression date with ":" instead of "@"
-            # http://www.akomantoso.org/release-notes/akoma-ntoso-3.0-schema/naming-conventions-1/bungenihelpcenterreferencemanualpage.2008-01-09.1856321727
-            uri = uri + '@' + self.expression_date
+            uri = uri + self.expression_date
 
         # expression component is preferred over a work component
         if self.expression_component:

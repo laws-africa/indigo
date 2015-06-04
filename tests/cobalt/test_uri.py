@@ -118,13 +118,13 @@ class FrbrUriTestCase(TestCase):
     def test_parse_expression(self):
         uri = FrbrUri.parse("/za/act/1980/02/afr@")
         assert_equal(uri.language, "afr")
-        assert_equal(uri.expression_date, '')
+        assert_equal(uri.expression_date, '@')
         assert_equal("/za/act/1980/02", uri.work_uri())
         assert_equal("/za/act/1980/02/afr@", uri.expression_uri())
 
         uri = FrbrUri.parse("/za/act/1980/02/afr@2014-01-01")
         assert_equal(uri.language, "afr")
-        assert_equal(uri.expression_date, "2014-01-01")
+        assert_equal(uri.expression_date, "@2014-01-01")
         assert_equal("/za/act/1980/02", uri.work_uri())
         assert_equal("/za/act/1980/02/afr@2014-01-01", uri.expression_uri())
 
@@ -142,19 +142,19 @@ class FrbrUriTestCase(TestCase):
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@/main/chapter/2")
         assert_equal(uri.language, "eng")
-        assert_equal(uri.expression_date, '')
+        assert_equal(uri.expression_date, '@')
         assert_equal(uri.expression_component, "main")
         assert_equal(uri.expression_subcomponent, "chapter/2")
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@2014-01-01/main/schedule1")
         assert_equal(uri.language, "eng")
-        assert_equal(uri.expression_date, "2014-01-01")
+        assert_equal(uri.expression_date, "@2014-01-01")
         assert_equal(uri.expression_component, "main")
         assert_equal(uri.expression_subcomponent, "schedule1")
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@2014-01-01/main/schedule1")
         assert_equal(uri.language, "eng")
-        assert_equal(uri.expression_date, "2014-01-01")
+        assert_equal(uri.expression_date, "@2014-01-01")
         assert_equal(uri.expression_component, "main")
         assert_equal(uri.expression_subcomponent, "schedule1")
 
@@ -188,16 +188,24 @@ class FrbrUriTestCase(TestCase):
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@")
         assert_equal(uri.language, "eng")
-        assert_equal(uri.expression_date, '')
+        assert_equal(uri.expression_date, '@')
         assert_equal(uri.expression_uri(), '/za/act/1980/02/eng@')
 
         uri = FrbrUri.parse("/za/act/1980/02/eng@/main")
         assert_equal(uri.language, "eng")
-        assert_equal(uri.expression_date, '')
+        assert_equal(uri.expression_date, '@')
+
+        uri = FrbrUri.parse("/za/act/1980/02/eng:/main")
+        assert_equal(uri.language, "eng")
+        assert_equal(uri.expression_date, ':')
+
+        uri = FrbrUri.parse("/za/act/1980/02/eng:2012-01-01/main")
+        assert_equal(uri.language, "eng")
+        assert_equal(uri.expression_date, ':2012-01-01')
 
     def test_expression_uri(self):
         uri = FrbrUri.parse("/za/act/1980/02/eng")
-        uri.expression_date = '2014-01-01'
+        uri.expression_date = '@2014-01-01'
         uri.expression_component = 'main'
         uri.format = 'html'
 
@@ -208,7 +216,7 @@ class FrbrUriTestCase(TestCase):
 
     def test_manifestation_uri(self):
         uri = FrbrUri.parse("/za/act/1980/02/eng")
-        uri.expression_date = '2014-01-01'
+        uri.expression_date = '@2014-01-01'
         uri.expression_component = 'main'
         uri.format = 'html'
 

@@ -55,6 +55,7 @@
         this.originalModel.trigger('change');
       }
 
+      this.document.get('amendments').sort();
       this.document.trigger('change change:amendments');
       this.$el.modal('hide');
     },

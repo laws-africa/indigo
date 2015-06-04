@@ -29,3 +29,18 @@ class DocumentTestCase(TestCase):
         assert_equal(d.frbr_uri, '/za/act/1900/1')
         assert_equal(d.country, 'za')
         assert_equal(d.doc.publication_date, date(2005, 7, 24))
+
+    def test_expression_date(self):
+        d = Document()
+        d.content = document_fixture('test')
+        d.expression_date = date(2014, 1, 1)
+        assert_equal(d.expression_date, date(2014, 1, 1))
+
+    def test_empty_expression_date(self):
+        d = Document()
+        d.content = document_fixture('test')
+        d.expression_date = ''
+        assert_equal(d.expression_date, '')
+
+        d.expression_date = None
+        assert_equal(d.expression_date, None)

@@ -17,7 +17,7 @@
 
     initialize: function() {
       this.stickit();
-      this.model.on('change:title', this.setWindowTitle);
+      this.model.on('change:title sync', this.setWindowTitle);
     },
 
     setWindowTitle: function() {

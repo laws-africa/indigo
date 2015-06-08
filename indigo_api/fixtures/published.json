@@ -3,14 +3,15 @@
     "pk": 1,
     "model": "indigo_api.document",
     "fields": {
-      "document_xml": "<akomaNtoso xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.akomantoso.org/2.0\" xsi:schemaLocation=\"http://www.akomantoso.org/2.0 akomantoso20.xsd\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/za/act/2014/10/main\"/>\n          <FRBRuri value=\"/za/act/2014/10\"/>\n          <FRBRalias value=\"This is a title\"/>\n          <FRBRdate date=\"2014-02-12\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/za/act/2014/10/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2014/12/eng@\"/>\n          <FRBRdate date=\"2007-01-01\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/za/act/2014/10/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2014/12/eng@\"/>\n          <FRBRdate date=\"2015-02-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2014-02-12\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n    </meta>\n    <body>\n      <section id=\"section-1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "document_xml": "<akomaNtoso xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.akomantoso.org/2.0\" xsi:schemaLocation=\"http://www.akomantoso.org/2.0 akomantoso20.xsd\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/za/act/2014/10/main\"/>\n          <FRBRuri value=\"/za/act/2014/10\"/>\n          <FRBRalias value=\"This is a title\"/>\n          <FRBRdate date=\"2014-02-12\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/za/act/2014/10/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2014/12/eng@\"/>\n          <FRBRdate date=\"2014-02-12\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/za/act/2014/10/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2014/12/eng@\"/>\n          <FRBRdate date=\"2015-02-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2014-02-12\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n    </meta>\n    <body>\n      <section id=\"section-1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
       "draft": false,
       "title": "Water Act",
       "country": "za",
       "created_at": "2015-01-15T09:20:02.710Z",
       "updated_at": "2015-02-17T10:57:47.779Z",
       "deleted": false,
-      "frbr_uri": "/za/act/2014/10"
+      "frbr_uri": "/za/act/2014/10",
+      "expression_date": "2014-02-12"
     }
   },
   {
@@ -49,6 +50,20 @@
       "updated_at": "2015-06-04T14:01:09.847Z",
       "stub": true,
       "commencement_date": "2010-06-01"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "indigo_api.document",
+    "fields": {
+      "document_xml": "<akomaNtoso xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.akomantoso.org/2.0\" xsi:schemaLocation=\"http://www.akomantoso.org/2.0 akomantoso20.xsd\">\n  <act contains=\"originalVersion\">\n    <meta>\n      <identification source=\"\">\n        <FRBRWork>\n          <FRBRthis value=\"/za/act/2001/8/main\"/>\n          <FRBRuri value=\"/za/act/2001/8\"/>\n          <FRBRalias value=\"Repealed Act\"/>\n          <FRBRdate date=\"2001-05-02\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRcountry value=\"za\"/>\n        </FRBRWork>\n        <FRBRExpression>\n          <FRBRthis value=\"/za/act/2001/8/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2001/8/eng@\"/>\n          <FRBRdate date=\"2001-05-02\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n          <FRBRlanguage language=\"eng\"/>\n        </FRBRExpression>\n        <FRBRManifestation>\n          <FRBRthis value=\"/za/act/2001/8/eng@/main\"/>\n          <FRBRuri value=\"/za/act/2001/8/eng@\"/>\n          <FRBRdate date=\"2015-02-04\" name=\"Generation\"/>\n          <FRBRauthor href=\"#council\" as=\"#author\"/>\n        </FRBRManifestation>\n      </identification>\n      <publication date=\"2001-05-02\" name=\"Name of publication\" showAs=\"Name of publication\" number=\"22\"/>\n      <lifecycle>\n        <eventRef id=\"repeal-2014-02-12\" date=\"2014-02-12\" type=\"repeal\" source=\"#repeal-source\"/>\n        </lifecycle>\n      <references source=\"#this\">\n        <passiveRef id=\"repeal-source\" href=\"/za/act/2014/10\" showAs=\"Repeal\"/>\n        </references>\n    </meta>\n    <body>\n      <section id=\"section-1\"><num>1.</num>\n        <content>\n          <p>tester</p>\n        </content>\n      </section>\n    </body>\n  </act>\n</akomaNtoso>\n",
+      "draft": false,
+      "title": "Repealed Act",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/2001/8"
     }
   }
 ]

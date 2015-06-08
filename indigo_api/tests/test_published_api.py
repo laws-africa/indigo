@@ -49,12 +49,12 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 3)
+        assert_equal(len(response.data), 4)
 
         response = self.client.get('/api/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 3)
+        assert_equal(len(response.data), 4)
 
         response = self.client.get('/api/za/act/2014')
         assert_equal(response.status_code, 200)
@@ -161,3 +161,14 @@ class PublishedAPITest(APITestCase):
             'expression_date': '2012-02-02',
             'published_url': 'http://testserver/api/za/act/2010/1/eng@2012-02-02',
         }])
+
+    def test_published_repealed(self):
+        response = self.client.get('/api/za/act/2001/8/eng.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['repeal'], {
+            'date': '2014-02-12',
+            'repealing_uri': '/za/act/2014/10',
+            'repealing_title': 'Repeal',
+            'repealing_id': 1,
+        })

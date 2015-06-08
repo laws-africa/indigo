@@ -42,6 +42,24 @@ class AmendmentSerializer(serializers.Serializer):
             return instance.amending_document.id
 
 
+class RepealSerializer(serializers.Serializer):
+    """ Serializer matching :class:`cobalt.act.RepealEvent`
+    """
+
+    date = serializers.DateField()
+    """ Date that the repeal took place """
+    repealing_title = serializers.CharField()
+    """ Title of repealing document """
+    repealing_uri = serializers.CharField()
+    """ FRBR URI of repealing document """
+    repealing_id = serializers.SerializerMethodField()
+    """ ID of the repealing document, if available """
+
+    def get_repealing_id(self, instance):
+        if hasattr(instance, 'repealing_document') and instance.repealing_document is not None:
+            return instance.repealing_document.id
+
+
 class DocumentListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         super(DocumentListSerializer, self).__init__(*args, **kwargs)
@@ -57,6 +75,7 @@ class DocumentListSerializer(serializers.ListSerializer):
         # hundreds of times.
         Document.decorate_amendments(iterable)
         Document.decorate_amended_versions(iterable)
+        Document.decorate_repeal(iterable)
 
         return super(DocumentListSerializer, self).to_representation(data)
 
@@ -89,6 +108,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
 
+    repeal = RepealSerializer(required=False)
+
     class Meta:
         list_serializer_class = DocumentListSerializer
         model = Document
@@ -105,6 +126,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
             'language', 'stub', 'tags', 'amendments', 'amended_versions',
+            'repeal',
 
             'published_url', 'toc_url',
         )
@@ -219,6 +241,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not self.context.get('many', False):
             Document.decorate_amendments([instance])
             Document.decorate_amended_versions([instance])
+            Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)
             
 

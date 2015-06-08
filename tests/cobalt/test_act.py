@@ -2,7 +2,7 @@ from unittest import TestCase
 from nose.tools import *  # noqa
 from datetime import date
 
-from cobalt.act import Act, datestring, AmendmentEvent
+from cobalt.act import Act, datestring, AmendmentEvent, RepealEvent
 
 class ActTestCase(TestCase):
     def test_empty_act(self):
@@ -405,6 +405,60 @@ class ActTestCase(TestCase):
         assert_equal(datestring(amendment.date), '2013-03-03')
         assert_equal(amendment.amending_uri, '/za/act/1990/5')
         assert_equal(amendment.amending_title, 'Bar')
+
+    def test_set_repeal(self):
+        a = Act()
+        a.body_xml = """
+        <body xmlns="http://www.akomantoso.org/2.0"/>
+        """
+
+        a.repeal = RepealEvent(date='2012-02-01', repealing_uri='/za/act/1980/10', repealing_title='Foo')
+
+        assert_equal(a.to_xml(), """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="">
+        <FRBRWork>
+          <FRBRthis value="/za/act/1900/1/main"/>
+          <FRBRuri value="/za/act/1900/1"/>
+          <FRBRalias value="Untitled"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <lifecycle>
+        <eventRef id="repeal-2012-02-01" date="2012-02-01" type="repeal" source="#repeal-source"/>
+      </lifecycle>
+      <references>
+        <passiveRef id="repeal-source" href="/za/act/1980/10" showAs="Foo"/>
+      </references>
+    </meta>
+    <body/>
+  </act>
+</akomaNtoso>
+""")
+
+        assert_equal(a.repeal.repealing_uri, '/za/act/1980/10')
+        assert_equal(a.repeal.repealing_title, 'Foo')
+        assert_equal(datestring(a.repeal.date), '2012-02-01')
+
+        # check that clearing it works
+        a.repeal = None
+        assert_is_none(a.repeal)
 
 
 def act_fixture(content):

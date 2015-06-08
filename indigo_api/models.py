@@ -183,7 +183,7 @@ class Document(models.Model):
         If there are no document besides this one, an empty list is returned.
         """
         if not hasattr(self, '_amended_versions'):
-            Documents.decorate_amended_versions([self])
+            Document.decorate_amended_versions([self])
 
         return self._amended_versions
 
@@ -198,11 +198,11 @@ class Document(models.Model):
         # uris that amended docs in the set
         uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
         amending_docs = Document.objects\
-                .filter(deleted__exact=False)\
-                .filter(frbr_uri__in=list(uris))\
-                .defer('document_xml')\
-                .order_by('expression_date')\
-                .all()
+            .filter(deleted__exact=False)\
+            .filter(frbr_uri__in=list(uris))\
+            .defer('document_xml')\
+            .order_by('expression_date')\
+            .all()
 
         for doc in documents:
             for a in doc.amendments:
@@ -219,10 +219,11 @@ class Document(models.Model):
         """
         uris = [d.frbr_uri for d in documents]
         docs = Document.objects\
-                .filter(deleted__exact=False)\
-                .filter(frbr_uri__in=uris)\
-                .defer('document_xml')\
-                .order_by('frbr_uri', 'expression_date').all() 
+            .filter(deleted__exact=False)\
+            .filter(frbr_uri__in=uris)\
+            .defer('document_xml')\
+            .order_by('frbr_uri', 'expression_date')\
+            .all()
 
         # group by URI
         groups = {}

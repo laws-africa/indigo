@@ -291,7 +291,6 @@ class Act(Base):
                 node.set('showAs', event.amending_title)
                 references.append(node)
 
-
     def components(self):
         """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
         objects.

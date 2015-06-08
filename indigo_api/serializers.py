@@ -2,6 +2,7 @@ import logging
 
 from lxml.etree import LxmlError
 
+from django.db.models import Manager
 from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
@@ -33,6 +34,31 @@ class AmendmentSerializer(serializers.Serializer):
     """ Title of amending document """
     amending_uri = serializers.CharField()
     """ FRBR URI of amending document """
+    amending_id = serializers.SerializerMethodField()
+    """ ID of the amending document, if available """
+
+    def get_amending_id(self, instance):
+        if hasattr(instance, 'amending_document') and instance.amending_document is not None:
+            return instance.amending_document.id
+
+
+class DocumentListSerializer(serializers.ListSerializer):
+    def __init__(self, *args, **kwargs):
+        super(DocumentListSerializer, self).__init__(*args, **kwargs)
+        # mark on the child that we're doing many, so it doesn't
+        # try to decorate the children for us
+        self.context['many'] = True
+
+    def to_representation(self, data):
+        iterable = data.all() if isinstance(data, Manager) else data
+
+        # Do some bulk post-processing, this is much more efficient
+        # than doing each document one at a time and going to the DB
+        # hundreds of times.
+        Document.decorate_amendments(iterable)
+        Document.decorate_amended_versions(iterable)
+
+        return super(DocumentListSerializer, self).to_representation(data)
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
@@ -64,6 +90,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ List of amended versions of this document """
 
     class Meta:
+        list_serializer_class = DocumentListSerializer
         model = Document
         fields = (
             # readonly, url is part of the rest framework
@@ -119,10 +146,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 info['published_url'] = self.get_published_url(d, with_date=True)
             return info
 
-        if doc.amendments:
-            return [describe(d) for d in doc.amended_versions()]
-        else:
-            return None
+        return [describe(d) for d in doc.amended_versions()]
 
     def validate(self, data):
         """
@@ -191,6 +215,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         instance.copy_attributes()
         return instance
 
+    def to_representation(self, instance):
+        if not self.context.get('many', False):
+            Document.decorate_amendments([instance])
+            Document.decorate_amended_versions([instance])
+        return super(DocumentSerializer, self).to_representation(instance)
+            
 
 class ConvertSerializer(serializers.Serializer):
     """

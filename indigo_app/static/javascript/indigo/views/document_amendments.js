@@ -74,6 +74,7 @@
           date: chosen.get('publication_date'),
           amending_title: chosen.get('title'),
           amending_uri: chosen.get('frbr_uri'),
+          amending_id: chosen.get('id'),
         });
       }
     }
@@ -111,11 +112,28 @@
     render: function() {
       var target = this.$el.find('.amendment-list');
       var count = 0;
+      var document_id = this.model.get('id');
 
       if (this.model.get('amendments')) {
-        count = this.model.get('amendments').length;
+        var amendments = this.model.get('amendments').toJSON();
+        count = amendments.length;
+
+        // link in the amended versions
+        _.each(this.model.get('amended_versions') || [], function(version) {
+          _.each(amendments, function(a) {
+            if (a.date == version.expression_date) {
+              if (version.id == document_id) {
+                // it's this version
+                a.this_document = true;
+              } else {
+                a.amended_id = version.id;
+              }
+            }
+          });
+        });
+
         target.html(this.template({
-          amendments: this.model.get('amendments').toJSON(),
+          amendments: amendments,
         }));
       } else {
         target.html('');

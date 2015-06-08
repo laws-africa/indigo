@@ -7,7 +7,7 @@ from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
-from cobalt import Act, FrbrUri, AmendmentEvent
+from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 
 from .models import Document
@@ -208,6 +208,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         content = validated_data.pop('content', None)
         amendments = validated_data.pop('amendments', None)
         tags = validated_data.pop('tags', None)
+        repeal = validated_data.pop('repeal', None)
 
         # Document content must always come first so it can be overridden
         # by the other properties.
@@ -215,6 +216,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             document.content = content
 
         document = super(DocumentSerializer, self).update(document, validated_data)
+
+        document.repeal = RepealEvent(**repeal) if repeal else None
 
         if amendments is not None:
             document.amendments = [AmendmentEvent(**a) for a in amendments]

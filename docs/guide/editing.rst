@@ -63,6 +63,23 @@ Draft and Publishing
 
 .. note:: You cannot delete a published document. Mark it as a draft, first.
 
+Amendments
+----------
+
+The Amendments section records amendments that have been applied to reach **this version of the document**. If you are not editing the latest
+version of the document this must only include those amendments that have been applied to reach this point.
+
+To record an amendment, you need the following information about the **amending document** (the document that caused the amendments to happen):
+
+- the title
+- date of publication (date at which the amendments took place)
+- the FRBR URI of the document
+
+If the amending document is already in the library, you can choose it from the list and have all these details filled in automatically.
+
+To create a newly amended version of a document, edit the version just before the new amendments need to be applied and click **Clone Document**
+to create a copy, and then edit that copy.
+
 Editing after Importing
 -----------------------
 

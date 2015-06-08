@@ -40,7 +40,13 @@
             <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
           </td>
           <td class="date">{{ date }}</td>
-          <td>{{ amending_title }}</td>
+          <td>
+          {{#if amending_id}}
+            <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
+          {{else}}
+            {{ amending_title }}
+          {{/if}}
+          </td>
           <td>{{ amending_uri }}</td>
         </tr>
       {{/each}}

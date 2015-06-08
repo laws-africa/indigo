@@ -74,6 +74,7 @@
           date: chosen.get('publication_date'),
           amending_title: chosen.get('title'),
           amending_uri: chosen.get('frbr_uri'),
+          amending_id: chosen.get('id'),
         });
       }
     }

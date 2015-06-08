@@ -114,10 +114,15 @@ class Document(models.Model):
 
     @property
     def amendments(self):
-        return self.doc.amendments
+        # we cache these values so that we can decorate them
+        # with extra info when serializing
+        if not hasattr(self, '_amendments') or self._amendments is None:
+            self._amendments = self.doc.amendments
+        return self._amendments
 
     @amendments.setter
     def amendments(self, value):
+        self._amendments = None
         self.doc.amendments = value
 
     def save(self, *args, **kwargs):
@@ -142,6 +147,8 @@ class Document(models.Model):
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
+            # ensure these are refreshed
+            self._amendments = None
 
         # update the model's XML from the Act XML
         self.refresh_xml()
@@ -169,14 +176,43 @@ class Document(models.Model):
         """ Return a list of all the amended versions of this work.
         This is all documents that share the same URI but have different
         expression dates.
+
+        If there are no document besides this one, an empty list is returned.
         """
-        return Document.objects\
+        docs = Document.objects\
                 .filter(deleted__exact=False)\
                 .filter(frbr_uri=self.frbr_uri)\
                 .order_by('expression_date').all()
 
+        # there are no amended versions if this is the only one
+        if len(docs) == 0 or len(docs) == 1 and docs[0].id == self.id:
+            return []
+        else:
+            return docs
+
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
+
+    @classmethod
+    def decorate_amendments(cls, documents):
+        """ Decorate the items in each document's ``amendments``
+        list with the document id of the amending document.
+        """
+        # uris that amended docs in the set
+        uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
+        amending_docs = Document.objects\
+                .only('id', 'frbr_uri', 'expression_date')\
+                .filter(frbr_uri__in=list(uris))\
+                .order_by('expression_date')\
+                .all()
+
+        for doc in documents:
+            for a in doc.amendments:
+                for amending in amending_docs:
+                    # match on the URI and the expression date
+                    if amending.frbr_uri == a.amending_uri and amending.expression_date == a.date:
+                        a.amending_document = amending
+                        break
 
 
 class Subtype(models.Model):

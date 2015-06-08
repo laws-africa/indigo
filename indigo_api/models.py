@@ -1,4 +1,5 @@
 import logging
+from itertools import groupby
 
 from django.db import models
 import arrow
@@ -123,6 +124,7 @@ class Document(models.Model):
     @amendments.setter
     def amendments(self, value):
         self._amendments = None
+        self._amended_versions = None
         self.doc.amendments = value
 
     def save(self, *args, **kwargs):
@@ -149,6 +151,7 @@ class Document(models.Model):
             self.expression_date = self.doc.expression_date
             # ensure these are refreshed
             self._amendments = None
+            self._amended_versions = None
 
         # update the model's XML from the Act XML
         self.refresh_xml()
@@ -179,16 +182,10 @@ class Document(models.Model):
 
         If there are no document besides this one, an empty list is returned.
         """
-        docs = Document.objects\
-                .filter(deleted__exact=False)\
-                .filter(frbr_uri=self.frbr_uri)\
-                .order_by('expression_date').all()
+        if not hasattr(self, '_amended_versions'):
+            Documents.decorate_amended_versions([self])
 
-        # there are no amended versions if this is the only one
-        if len(docs) == 0 or len(docs) == 1 and docs[0].id == self.id:
-            return []
-        else:
-            return docs
+        return self._amended_versions
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
@@ -201,8 +198,9 @@ class Document(models.Model):
         # uris that amended docs in the set
         uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
         amending_docs = Document.objects\
-                .only('id', 'frbr_uri', 'expression_date')\
+                .filter(deleted__exact=False)\
                 .filter(frbr_uri__in=list(uris))\
+                .defer('document_xml')\
                 .order_by('expression_date')\
                 .all()
 
@@ -213,6 +211,32 @@ class Document(models.Model):
                     if amending.frbr_uri == a.amending_uri and amending.expression_date == a.date:
                         a.amending_document = amending
                         break
+
+    @classmethod
+    def decorate_amended_versions(cls, documents):
+        """ Decorate each documents with ``_amended_versions``, a (possibly empty)
+        list of all the documents which form the same group of amended versions.
+        """
+        uris = [d.frbr_uri for d in documents]
+        docs = Document.objects\
+                .filter(deleted__exact=False)\
+                .filter(frbr_uri__in=uris)\
+                .defer('document_xml')\
+                .order_by('frbr_uri', 'expression_date').all() 
+
+        # group by URI
+        groups = {}
+        for uri, group in groupby(docs, lambda d: d.frbr_uri):
+            groups[uri] = list(group)
+
+        for doc in documents:
+            amended_versions = groups.get(doc.frbr_uri, [])
+
+            # there are no amended versions if this is the only one
+            if len(amended_versions) == 0 or (len(amended_versions) == 1 and amended_versions[0].id == doc.id):
+                doc._amended_versions = []
+            else:
+                doc._amended_versions = amended_versions
 
 
 class Subtype(models.Model):

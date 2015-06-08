@@ -56,7 +56,7 @@ class DocumentListSerializer(serializers.ListSerializer):
         # than doing each document one at a time and going to the DB
         # hundreds of times.
         Document.decorate_amendments(iterable)
-        #self.child.add_amendment_versions(iterable)
+        Document.decorate_amended_versions(iterable)
 
         return super(DocumentListSerializer, self).to_representation(data)
 
@@ -218,6 +218,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):
         if not self.context.get('many', False):
             Document.decorate_amendments([instance])
+            Document.decorate_amended_versions([instance])
         return super(DocumentSerializer, self).to_representation(instance)
             
 

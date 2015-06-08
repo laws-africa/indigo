@@ -29,9 +29,8 @@
     <table class="table table-condensed table-striped amendments-list">
       <tr>
         <th></th>
-        <th>Date</th>
-        <th>Title</th>
-        <th>FRBR URI</th>
+        <th>Amended on</th>
+        <th>Amended by</th>
       </tr>
       {{#each amendments}}
         <tr data-index="{{ @index }}">
@@ -57,7 +56,6 @@
               {{ amending_title }}
             {{/if}}
           </td>
-          <td>{{ amending_uri }}</td>
         </tr>
       {{/each}}
     </table>

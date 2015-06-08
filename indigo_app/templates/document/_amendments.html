@@ -39,13 +39,23 @@
             <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
             <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
           </td>
-          <td class="date">{{ date }}</td>
+          <td class="date">
+            {{#if amended_id}}
+              <a href="/documents/{{ amended_id }}">{{ date }}</a>
+            {{else}}
+              {{ date }}
+            {{/if}}
+
+            {{#if this_document}}
+            (this document)
+            {{/if}}
+          </td>
           <td>
-          {{#if amending_id}}
-            <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
-          {{else}}
-            {{ amending_title }}
-          {{/if}}
+            {{#if amending_id}}
+              <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
+            {{else}}
+              {{ amending_title }}
+            {{/if}}
           </td>
           <td>{{ amending_uri }}</td>
         </tr>

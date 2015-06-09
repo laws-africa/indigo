@@ -55,6 +55,14 @@ class RepealSerializer(serializers.Serializer):
     repealing_id = serializers.SerializerMethodField()
     """ ID of the repealing document, if available """
 
+    def validate_empty_values(self, data):
+        # we need to override this because for some reason the default
+        # value given by DRF if this field isn't provided is {}, not None,
+        # and we need to indicate that that is allowed.
+        if not data:
+            return True, data
+        return super(RepealSerializer, self).validate_empty_values(data)
+
     def get_repealing_id(self, instance):
         if hasattr(instance, 'repealing_document') and instance.repealing_document is not None:
             return instance.repealing_document.id
@@ -107,7 +115,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
-
     repeal = RepealSerializer(required=False, allow_null=True)
 
     class Meta:
@@ -155,7 +162,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             uri = uri.expression_uri()[1:]
 
             uri = reverse('published-document-detail', request=self.context['request'],
-                           kwargs={'frbr_uri': uri})
+                          kwargs={'frbr_uri': uri})
             return uri.replace('%40', '@')
 
     def get_amended_versions(self, doc):
@@ -249,7 +256,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             Document.decorate_amended_versions([instance])
             Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)
-            
+
 
 class ConvertSerializer(serializers.Serializer):
     """

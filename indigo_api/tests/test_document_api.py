@@ -1,3 +1,5 @@
+import tempfile
+
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 
@@ -341,3 +343,17 @@ class DocumentAPITest(APITestCase):
 
         assert_equal(response.status_code, 200)
         assert_equal(response.data['repeal'], None)
+
+    def test_create_from_file(self):
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("""
+        Chapter 2
+        The Beginning
+        1. First Verse
+        (1) In the beginning
+        (2) There was nothing
+        """)
+        tmp_file.seek(0)
+
+        response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
+        assert_equal(response.status_code, 201)

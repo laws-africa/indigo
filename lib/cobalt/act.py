@@ -263,13 +263,7 @@ class Act(Base):
             self.act.set('contains', 'originalVersion')
         else:
             self.act.set('contains', 'singleVersion')
-
-            try:
-                after = self.meta.publication
-            except AttributeError:
-                after = self.meta.identification
-
-            lifecycle = self._ensure('meta.lifecycle', after=after)
+            lifecycle = self._ensure_lifecycle()
             references = self._ensure('meta.references', after=lifecycle)
 
             for i, event in enumerate(value):
@@ -290,6 +284,54 @@ class Act(Base):
                 node.set('href', event.amending_uri)
                 node.set('showAs', event.amending_title)
                 references.append(node)
+
+    @property
+    def repeal(self):
+        e = self.meta.find('.//{*}lifecycle/{*}eventRef[@type="repeal"]')
+        if e is not None:
+            date = arrow.get(e.get('date')).date()
+            event = RepealEvent(date=date)
+
+            id = e.get('source')[1:]
+            source = self.meta.findall('.//{*}references/{*}passiveRef[@id="%s"]' % id)
+            if source:
+                event.repealing_title = source[0].get('showAs')
+                event.repealing_uri = source[0].get('href')
+            return event
+
+    @repeal.setter
+    def repeal(self, value):
+        # delete existing entries
+        for e in self.meta.iterfind('.//{*}lifecycle/{*}eventRef[@type="repeal"]'):
+            # delete the passive ref elements
+            id = e.get('source')[1:]
+            for node in self.meta.iterfind('.//{*}references/{*}passiveRef[@id="%s"]' % id):
+                node.getparent().remove(node)
+
+            # delete the event
+            e.getparent().remove(e)
+
+        if value:
+            lifecycle = self._ensure_lifecycle()
+            references = self._ensure('meta.references', after=lifecycle)
+
+            date = datestring(value.date)
+            ref = 'repeal-source'
+
+            # create the lifecycle element
+            node = self._make('eventRef')
+            node.set('id', 'repeal-' + date)
+            node.set('date', date)
+            node.set('type', 'repeal')
+            node.set('source', '#' + ref)
+            lifecycle.append(node)
+
+            # create the passive ref
+            node = self._make('passiveRef')
+            node.set('id', ref)
+            node.set('href', value.repealing_uri)
+            node.set('showAs', value.repealing_title)
+            references.append(node)
 
     def components(self):
         """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
@@ -360,6 +402,13 @@ class Act(Base):
             after.addnext(node)
 
         return node
+
+    def _ensure_lifecycle(self):
+        try:
+            after = self.meta.publication
+        except AttributeError:
+            after = self.meta.identification
+        return self._ensure('meta.lifecycle', after=after)
 
     def _make(self, elem):
         return getattr(self._maker, elem)()
@@ -473,6 +522,19 @@ class AmendmentEvent(object):
         self.date = date
         self.amending_title = amending_title
         self.amending_uri = amending_uri
+
+
+class RepealEvent(object):
+    """ An event that repealed a document.
+
+    :ivar date: :class:`datetime.date` date of the event
+    :ivar repealing_title: String title of the repealing document
+    :ivar repealing_uri: String form of the FRBR URI of the repealing document
+    """
+    def __init__(self, date=None, repealing_title=None, repealing_uri=None):
+        self.date = date
+        self.repealing_title = repealing_title
+        self.repealing_uri = repealing_uri
 
 
 EMPTY_DOCUMENT = """<?xml version="1.0"?>

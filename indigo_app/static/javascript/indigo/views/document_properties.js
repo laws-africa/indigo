@@ -92,7 +92,8 @@
         this.model.on('change:number change:nature change:country change:year change:locality change:subtype', _.bind(this.calculateUri, this));
       });
 
-      this.model.on('change:draft change:frbr_uri change:language', this.showPublishedUrl, this);
+      this.model.on('change:draft change:frbr_uri change:language sync', this.showPublishedUrl, this);
+      this.model.on('change:repeal sync', this.showRepeal, this);
       this.model.on('change:amendments change:publication_date', this.setExpressionDate, this);
     },
 

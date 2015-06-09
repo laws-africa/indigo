@@ -7,7 +7,7 @@ from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
-from cobalt import Act, FrbrUri, AmendmentEvent
+from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 
 from .models import Document
@@ -42,6 +42,24 @@ class AmendmentSerializer(serializers.Serializer):
             return instance.amending_document.id
 
 
+class RepealSerializer(serializers.Serializer):
+    """ Serializer matching :class:`cobalt.act.RepealEvent`
+    """
+
+    date = serializers.DateField()
+    """ Date that the repeal took place """
+    repealing_title = serializers.CharField()
+    """ Title of repealing document """
+    repealing_uri = serializers.CharField()
+    """ FRBR URI of repealing document """
+    repealing_id = serializers.SerializerMethodField()
+    """ ID of the repealing document, if available """
+
+    def get_repealing_id(self, instance):
+        if hasattr(instance, 'repealing_document') and instance.repealing_document is not None:
+            return instance.repealing_document.id
+
+
 class DocumentListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         super(DocumentListSerializer, self).__init__(*args, **kwargs)
@@ -57,6 +75,7 @@ class DocumentListSerializer(serializers.ListSerializer):
         # hundreds of times.
         Document.decorate_amendments(iterable)
         Document.decorate_amended_versions(iterable)
+        Document.decorate_repeal(iterable)
 
         return super(DocumentListSerializer, self).to_representation(data)
 
@@ -89,6 +108,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
 
+    repeal = RepealSerializer(required=False, allow_null=True)
+
     class Meta:
         list_serializer_class = DocumentListSerializer
         model = Document
@@ -105,6 +126,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
             'language', 'stub', 'tags', 'amendments', 'amended_versions',
+            'repeal',
 
             'published_url', 'toc_url',
         )
@@ -186,6 +208,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         content = validated_data.pop('content', None)
         amendments = validated_data.pop('amendments', None)
         tags = validated_data.pop('tags', None)
+        repeal = validated_data.pop('repeal', None)
 
         # Document content must always come first so it can be overridden
         # by the other properties.
@@ -193,6 +216,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             document.content = content
 
         document = super(DocumentSerializer, self).update(document, validated_data)
+
+        document.repeal = RepealEvent(**repeal) if repeal else None
 
         if amendments is not None:
             document.amendments = [AmendmentEvent(**a) for a in amendments]
@@ -219,6 +244,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not self.context.get('many', False):
             Document.decorate_amendments([instance])
             Document.decorate_amended_versions([instance])
+            Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)
             
 

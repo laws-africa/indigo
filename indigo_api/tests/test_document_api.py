@@ -299,3 +299,45 @@ class DocumentAPITest(APITestCase):
             'amending_uri': '/za/act/2010/2',
             'amending_id': None,
         }])
+
+    def test_update_with_repeal(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {
+            'repeal': {
+                'date': '2010-01-01',
+                'repealing_title': 'Act 2 of 2010',
+                'repealing_uri': '/za/act/2010/2',
+            }
+        })
+
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['repeal'], {
+            'date': '2010-01-01',
+            'repealing_title': 'Act 2 of 2010',
+            'repealing_uri': '/za/act/2010/2',
+            'repealing_id': None,
+        })
+
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['repeal'], {
+            'date': '2010-01-01',
+            'repealing_title': 'Act 2 of 2010',
+            'repealing_uri': '/za/act/2010/2',
+            'repealing_id': None,
+        })
+
+    def test_update_null_repeal(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {
+            'repeal': None,
+        })
+
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['repeal'], None)

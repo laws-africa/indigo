@@ -1,0 +1,50 @@
+<div class="modal fade" id="repeal-box">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">What repealed this document?</h4>
+      </div>
+
+      <div class="modal-body">
+        <div role="tabpanel">
+
+          <ul class="nav nav-pills">
+            <li class="active"><a href="#tab-repeal-list" data-toggle="tab">Document from the library</a></li>
+            <li><a href="#tab-custom-repeal" data-toggle="tab">Not in the library</a></li>
+          </ul>
+
+          <!-- Tab panes -->
+          <div class="tab-content">
+            <div role="tabpanel" class="tab-pane active" id="tab-repeal-list">
+              {% include 'document/_chooser.html' %}
+            </div>
+
+            <div role="tabpanel" class="tab-pane" id="tab-custom-repeal">
+              <div class="form-group">
+                <label for="repeal_date" class="control-label">Date of repeal</label>
+                <input type="text" class="form-control" data-provide="datepicker" id="repeal_date" placeholder="yyyy-mm-dd">
+              </div>
+
+              <div class="form-group">
+                <label for="repeal_title" class="control-label">Title of repealing document</label>
+                <input type="text" class="form-control" id="repeal_title">
+              </div>
+
+              <div class="form-group">
+                <label for="repeal_uri" class="control-label">URI of repealing document</label>
+                <input type="text" class="form-control" id="repeal_uri">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary save" value="Save">
+      </div>
+
+    </div>
+  </div>
+</div>

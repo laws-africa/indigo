@@ -20,7 +20,7 @@ class ConvertAPITest(APITestCase):
                 'content': document_fixture(text='hello'),
             },
             'inputformat': 'application/json',
-            })
+        })
         assert_equal(response.status_code, 400)
         assert_in('outputformat', response.data)
 
@@ -31,7 +31,7 @@ class ConvertAPITest(APITestCase):
                 'content': document_fixture(text='hello'),
             },
             'outputformat': 'application/json',
-            })
+        })
         assert_equal(response.status_code, 400)
         assert_in('inputformat', response.data)
 
@@ -44,7 +44,7 @@ class ConvertAPITest(APITestCase):
             },
             'inputformat': 'application/json',
             'outputformat': 'application/json',
-            })
+        })
         assert_equal(response.status_code, 200)
         assert_equal(response.data['frbr_uri'], '/za/act/1900/1')
         assert_true(response.data['content'].startswith('<akomaNtoso'))
@@ -84,7 +84,7 @@ class ConvertAPITest(APITestCase):
             },
             'inputformat': 'application/json',
             'outputformat': 'application/xml',
-            })
+        })
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('<akomaNtoso'))
         assert_in('hello', response.data['output'])
@@ -97,7 +97,7 @@ class ConvertAPITest(APITestCase):
             },
             'inputformat': 'application/json',
             'outputformat': 'text/html',
-            })
+        })
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
@@ -125,7 +125,7 @@ class ConvertAPITest(APITestCase):
             },
             'inputformat': 'application/json',
             'outputformat': 'text/html',
-            })
+        })
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
@@ -144,7 +144,7 @@ class ConvertAPITest(APITestCase):
             'outputformat': 'application/xml',
             'fragment': 'chapter',
             'id_prefix': 'prefix',
-            })
+        })
         assert_equal(response.status_code, 200)
         self.maxDiff = None
         self.assertEqual(u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">

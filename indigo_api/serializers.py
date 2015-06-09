@@ -108,7 +108,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
 
-    repeal = RepealSerializer(required=False)
+    repeal = RepealSerializer(required=False, allow_null=True)
 
     class Meta:
         list_serializer_class = DocumentListSerializer

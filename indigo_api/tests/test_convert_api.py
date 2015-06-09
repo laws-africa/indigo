@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 
+import tempfile
+from datetime import date
+import os.path
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 
@@ -175,3 +178,88 @@ class ConvertAPITest(APITestCase):
   </chapter>
 </akomaNtoso>
 """, response.data['output'].decode('utf-8'))
+
+    def test_convert_file(self):
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("""
+        Chapter 2
+        The Beginning
+        1. First Verse
+        κόσμε
+        (1) In the beginning
+        (2) There was nothing
+        """)
+        tmp_file.seek(0)
+        fname = os.path.basename(tmp_file.name)
+
+        response = self.client.post('/api/convert', {
+            'inputformat': 'text/plain',
+            'outputformat': 'application/xml',
+            'file': tmp_file,
+        }, format='multipart')
+        assert_equal(response.status_code, 200)
+
+        today = date.today().strftime('%Y-%m-%d')
+        self.maxDiff = None
+        self.assertEqual(response.data['output'].decode('utf-8'), u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/za/act/1980/01/main"/>
+          <FRBRuri value="/za/act/1980/01"/>
+          <FRBRalias value="Imported from """ + fname + u""""/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/za/act/1980/01/eng@1980-01-01/main"/>
+          <FRBRuri value="/za/act/1980/01/eng@1980-01-01"/>
+          <FRBRdate date="1980-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/za/act/1980/01/eng@1980-01-01/main"/>
+          <FRBRuri value="/za/act/1980/01/eng@1980-01-01"/>
+          <FRBRdate date=\"""" + today + u"""\" name="Generation"/>
+          <FRBRauthor href="#slaw" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+      <references source="#this">
+        <TLCOrganization id="slaw" href="https://github.com/longhotsummer/slaw" showAs="Slaw"/>
+        <TLCOrganization id="council" href="/ontology/organization/za/council" showAs="Council"/>
+        <TLCRole id="author" href="/ontology/role/author" showAs="Author"/>
+      </references>
+    </meta>
+    <body>
+      <chapter id="chapter-2">
+        <num>2</num>
+        <heading>The Beginning</heading>
+        <section id="section-1">
+          <num>1.</num>
+          <heading>First Verse</heading>
+          <subsection id="section-1.subsection-0">
+            <content>
+              <p>κόσμε</p>
+            </content>
+          </subsection>
+          <subsection id="section-1.1">
+            <num>(1)</num>
+            <content>
+              <p>In the beginning</p>
+            </content>
+          </subsection>
+          <subsection id="section-1.2">
+            <num>(2)</num>
+            <content>
+              <p>There was nothing</p>
+            </content>
+          </subsection>
+        </section>
+      </chapter>
+    </body>
+  </act>
+</akomaNtoso>
+""")

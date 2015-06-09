@@ -230,9 +230,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     def update_document(self, instance):
         """ Update document without saving it. """
         amendments = self.validated_data.pop('amendments', None)
+        repeal = self.validated_data.pop('repeal', None)
 
         for attr, value in self.validated_data.items():
             setattr(instance, attr, value)
+
+        instance.repeal = RepealEvent(**repeal) if repeal else None
 
         if amendments is not None:
             instance.amendments = [AmendmentEvent(**a) for a in amendments]

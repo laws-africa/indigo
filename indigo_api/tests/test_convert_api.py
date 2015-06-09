@@ -7,7 +7,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class ConvertAPITest(APITestCase):
-    fixtures = ['user']
+    fixtures = ['user', 'published']
 
     def setUp(self):
         self.client.default_format = 'json'
@@ -101,6 +101,21 @@ class ConvertAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
+
+    def test_convert_json_to_html_round_trip(self):
+        response = self.client.get('/api/za/act/2001/8/eng.json')
+
+        data = response.data
+        data['content'] = document_fixture(text='hello')
+
+        response = self.client.post('/api/convert', {
+            'content': data,
+            'inputformat': 'application/json',
+            'outputformat': 'text/html',
+        })
+        assert_equal(response.status_code, 200)
+        assert_true(response.data['output'].startswith('\n\n<div'))
+        assert_in('Repealed Act', response.data['output'])
 
     def test_convert_json_to_html_with_unicode(self):
         response = self.client.post('/api/convert', {

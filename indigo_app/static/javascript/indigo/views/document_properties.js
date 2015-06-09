@@ -27,20 +27,19 @@
       '#document_title': 'title',
       '#document_tags': {
         observe: 'tags',
-        initialize: function($el, model, options) {
-          $el.select2();
-        },
         getVal: function($el, event, options) {
           return $el.val() || [];
         },
         update: function($el, val, model, options) {
           val = val || [];
-          if ($el.data('select2')) {
-            // update the valid choices to ensure those we want are there
-            $el.select2({data: val});
-            // add them
-            $el.val(val).trigger('change');
-          }
+          if (!$el.data('select2')) {
+            $el.select2();
+          };
+
+          // update the valid choices to ensure those we want are there
+          $el.select2({data: val});
+          // add them
+          $el.val(val).trigger('change');
         },
       },
       '#document_publication_date': {

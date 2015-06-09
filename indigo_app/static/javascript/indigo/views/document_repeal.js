@@ -57,7 +57,7 @@
       var chosen = this.chooser.chosen;
       if (chosen) {
         this.model.set({
-          date: chosen.get('publication_date'),
+          date: chosen.get('expression_date'),
           repealing_title: chosen.get('title'),
           repealing_uri: chosen.get('frbr_uri'),
           repealing_id: chosen.get('id'),

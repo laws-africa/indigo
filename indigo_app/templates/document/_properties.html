@@ -188,15 +188,15 @@
 {% verbatim %}
 
 {{#if repeal }}
-  <a href="#" class="change-repeal"><i class="fa fa-pencil fa-fw"></i></a>
-  <a href="#" class="delete-repeal"><i class="fa fa-close fa-fw"></i></a>
-
   Repealed on {{ repeal.date }} by
   {{#if repeal.repealing_id}}
     <a href="/documents/{{ repeal.repealing_id }}">{{ repeal.repealing_title }}</a>.
   {{else}}
     {{ repeal.repealing_title }}.
   {{/if}}
+
+  <a href="#" class="change-repeal"><i class="fa fa-pencil fa-fw"></i></a>
+  <a href="#" class="delete-repeal"><i class="fa fa-close fa-fw"></i></a>
 {{else}}
   <i>Not repealed.</i>
   <a href="#" class="change-repeal">Mark as repealed</a>

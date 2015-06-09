@@ -34,7 +34,7 @@
           val = val || [];
           if (!$el.data('select2')) {
             $el.select2();
-          };
+          }
 
           // update the valid choices to ensure those we want are there
           $el.select2({data: val});

@@ -59,6 +59,7 @@ class RepealSerializer(serializers.Serializer):
         # we need to override this because for some reason the default
         # value given by DRF if this field isn't provided is {}, not None,
         # and we need to indicate that that is allowed.
+        # see https://github.com/tomchristie/django-rest-framework/pull/2796
         if not data:
             return True, data
         return super(RepealSerializer, self).validate_empty_values(data)

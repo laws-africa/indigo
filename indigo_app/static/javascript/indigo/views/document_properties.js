@@ -152,12 +152,12 @@
       }
     },
 
-    save: function() {
+    save: function(force) {
       // TODO: validation
       var self = this;
 
       // don't do anything if it hasn't changed
-      if (!this.dirty) {
+      if (!this.dirty && !force) {
         return $.Deferred().resolve();
       }
 

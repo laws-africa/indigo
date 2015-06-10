@@ -204,12 +204,13 @@
       // the properties on top of it, so that content
       // properties that change metadata in the content
       // take precendence.
+      var forcePropertiesSave = this.bodyEditorView.dirty;
 
       this.bodyEditorView
         .save()
         .then(function(response) {
           self.propertiesView
-            .save()
+            .save(forcePropertiesSave)
             .fail(failed)
             .then(function() {
               if (is_new) {

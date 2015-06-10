@@ -1,12 +1,18 @@
+{% load documents %}
+
 <div class="coverpage">
   <h1>{{ document.title }}</h1>
 
   {% if document.assent_date %}
-  <h3 class="assent-date">Signed by the President on {{ document.assent_date|date:"d E Y" }}</h3>
+  <h3 class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</h3>
   {% endif %}
 
   {% if document.commencement_date %}
-  <h3 class="commencement-date">Commences on {{ document.commencement_date|date:"d E Y" }} unless otherwise noted</h3>
+  <h3 class="commencement-date">Commences on {{ document.commencement_date|date:"j E Y" }} unless otherwise noted</h3>
+  {% endif %}
+
+  {% if document.amendments %}
+  {% include '_amendments.html' %}
   {% endif %}
 </div>
 

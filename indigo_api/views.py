@@ -2,7 +2,7 @@ import re
 import logging
 
 import arrow
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
@@ -26,6 +26,18 @@ from cobalt.render import HTMLRenderer
 log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+def view_attachment(attachment):
+    response = HttpResponse(attachment.file.read(), content_type=attachment.mime_type)
+    response['Content-Length'] = str(attachment.size)
+    return response
+
+
+def download_attachment(attachment):
+    response = view_attachment(attachment)
+    response['Content-Disposition'] = 'attachment; filename=%s' % attachment.filename
+    return response
 
 
 def document_to_html(document):
@@ -151,6 +163,16 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
 class AttachmentViewSet(viewsets.ModelViewSet):
     queryset = Attachment.objects.all()
     serializer_class = AttachmentSerializer
+
+    @detail_route(methods=['GET'])
+    def download(self, request, *args, **kwargs):
+        attachment = self.get_object()
+        return download_attachment(attachment)
+
+    @detail_route(methods=['GET'])
+    def view(self, request, *args, **kwargs):
+        attachment = self.get_object()
+        return view_attachment(attachment)
 
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()

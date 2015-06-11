@@ -73,12 +73,14 @@ class AttachmentSerializer(serializers.ModelSerializer):
     file = serializers.FileField(write_only=True)
     filename = serializers.CharField(max_length=255, required=False)
     url = serializers.SerializerMethodField()
+    download_url = serializers.SerializerMethodField()
+    view_url = serializers.SerializerMethodField()
 
     class Meta:
         model = Attachment
         fields = (
             'id',
-            'url',
+            'url', 'download_url', 'view_url',
             'file',
             'filename',
             'mime_type',
@@ -95,6 +97,22 @@ class AttachmentSerializer(serializers.ModelSerializer):
             'pk': instance.pk,
         })
 
+    def get_download_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('document-attachments-download', request=self.context['request'], kwargs={
+            'document_id': instance.document.pk,
+            'pk': instance.pk,
+        })
+
+    def get_view_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('document-attachments-view', request=self.context['request'], kwargs={
+            'document_id': instance.document.pk,
+            'pk': instance.pk,
+        })
+
     def create(self, validated_data):
         file = validated_data.get('file')
 
@@ -107,10 +125,10 @@ class AttachmentSerializer(serializers.ModelSerializer):
 
         return super(AttachmentSerializer, self).create(args)
 
-    def update(self, validated_data):
+    def update(self, instance, validated_data):
         if 'file' in validated_data:
             raise ValidationError("Value of 'file' cannot be updated. Delete and re-create this attachment.")
-        return super(AttachmentSerializer, self).update(validated_data)
+        return super(AttachmentSerializer, self).update(instance, validated_data)
 
 
 class DocumentListSerializer(serializers.ListSerializer):

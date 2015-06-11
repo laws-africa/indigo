@@ -50,6 +50,8 @@
   //
   //   DocumentAmendmentsView - handles editing document amendment metadata
   //
+  //   DocumentAttachmentsView - handles managing document attachments
+  //
   //   DocumentRepealView - handles setting a document as repealed
   //
   //   DocumentEditorView - handles editing the document's body content
@@ -102,6 +104,7 @@
 
       this.amendmentsView = new Indigo.DocumentAmendmentsView({model: this.document});
       this.repealView = new Indigo.DocumentRepealView({model: this.document});
+      this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
       this.tocView.on('item-selected', this.showEditor, this);

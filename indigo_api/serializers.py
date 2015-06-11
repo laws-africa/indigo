@@ -84,10 +84,11 @@ class AttachmentSerializer(serializers.ModelSerializer):
             'file',
             'filename',
             'mime_type',
+            'size',
             'created_at',
             'updated_at',
         )
-        read_only_fields = ('created_at', 'updated_at', 'mime_type', 'bytes')
+        read_only_fields = ('created_at', 'updated_at', 'mime_type', 'size')
 
     def get_url(self, instance):
         if not instance.pk:

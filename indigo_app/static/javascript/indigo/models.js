@@ -106,4 +106,11 @@
     comparator: 'date',
   });
 
+  Indigo.Attachment = Backbone.Model.extend({});
+
+  Indigo.AttachmentList = Backbone.Collection.extend({
+    model: Indigo.Attachment,
+    comparator: 'filename',
+  });
+
 })(window);

@@ -1,5 +1,5 @@
 import logging
-
+import os.path
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
@@ -10,7 +10,7 @@ from taggit_serializer.serializers import TagListSerializerField, TaggitSerializ
 from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 
-from .models import Document
+from .models import Document, Attachment
 from .importer import Importer
 
 log = logging.getLogger(__name__)
@@ -69,6 +69,50 @@ class RepealSerializer(serializers.Serializer):
             return instance.repealing_document.id
 
 
+class AttachmentSerializer(serializers.ModelSerializer):
+    file = serializers.FileField(write_only=True)
+    filename = serializers.CharField(max_length=255, required=False)
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Attachment
+        fields = (
+            'id',
+            'url',
+            'file',
+            'filename',
+            'mime_type',
+            'created_at',
+            'updated_at',
+        )
+        read_only_fields = ('created_at', 'updated_at', 'mime_type', 'bytes')
+
+    def get_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('document-attachments-detail', request=self.context['request'], kwargs={
+            'document_id': instance.document.pk,
+            'pk': instance.pk,
+        })
+
+    def create(self, validated_data):
+        file = validated_data.get('file')
+
+        args = {}
+        args.update(validated_data)
+        args['size'] = file.size
+        args['mime_type'] = file.content_type
+        args['filename'] = args.get('filename', os.path.basename(file.name))
+        args['document'] = args.get('document', self.context['document'])
+
+        return super(AttachmentSerializer, self).create(args)
+
+    def update(self, validated_data):
+        if 'file' in validated_data:
+            raise ValidationError("Value of 'file' cannot be updated. Delete and re-create this attachment.")
+        return super(AttachmentSerializer, self).update(validated_data)
+
+
 class DocumentListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         super(DocumentListSerializer, self).__init__(*args, **kwargs)
@@ -104,6 +148,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
 
+    attachments_url = serializers.SerializerMethodField()
+    """ URL of document attachments. """
+
     file = serializers.FileField(write_only=True, required=False)
     """ Allow uploading a file to convert and override the content of the document. """
 
@@ -136,7 +183,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'stub', 'tags', 'amendments', 'amended_versions',
             'repeal',
 
-            'published_url', 'toc_url',
+            'published_url', 'toc_url', 'attachments_url',
         )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
@@ -149,6 +196,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk:
             return None
         return reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk})
+
+    def get_attachments_url(self, doc):
+        if not doc.pk:
+            return None
+        return reverse('document-attachments-list', request=self.context['request'], kwargs={'document_id': doc.pk})
 
     def get_published_url(self, doc, with_date=False):
         if not doc.pk or doc.draft:
@@ -192,6 +244,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
             data['content'] = document.content
+            # add the document as an attachment
+            data['source_file'] = upload
 
         return data
 
@@ -217,6 +271,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         amendments = validated_data.pop('amendments', None)
         tags = validated_data.pop('tags', None)
         repeal = validated_data.pop('repeal', None)
+        source_file = validated_data.pop('source_file', None)
 
         # Document content must always come first so it can be overridden
         # by the other properties.
@@ -226,11 +281,14 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         document = super(DocumentSerializer, self).update(document, validated_data)
 
         document.repeal = RepealEvent(**repeal) if repeal else None
-
         if amendments is not None:
             document.amendments = [AmendmentEvent(**a) for a in amendments]
         if tags is not None:
             document.tags.set(*tags)
+
+        if source_file:
+            # add the source file as an attachment
+            AttachmentSerializer(context={'document': document}).create({'file': source_file})
 
         document.save()
         return document

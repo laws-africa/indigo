@@ -1,4 +1,5 @@
 import tempfile
+import os.path
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
@@ -357,3 +358,12 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
         assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # check the attachment
+        response = self.client.get('/api/documents/%s/attachments' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data[0]['mime_type'], 'text/plain')
+        assert_equal(response.data[0]['filename'], os.path.basename(tmp_file.name))
+        assert_equal(response.data[0]['url'],
+                     'http://testserver/api/documents/%s/attachments/%s' % (id, response.data[0]['id']))

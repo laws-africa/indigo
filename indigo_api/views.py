@@ -3,21 +3,22 @@ import logging
 
 import arrow
 from django.http import Http404
-from django.shortcuts import get_object_or_404
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+
 import lxml.etree as ET
 from lxml.etree import LxmlError
 
-from .models import Document
-from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer
+from .models import Document, Attachment
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer
 from .importer import Importer
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
@@ -145,6 +146,28 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         a table of contents for the document.
         """
         return Response({'toc': self.table_of_contents(self.get_object())})
+
+
+class AttachmentViewSet(viewsets.ModelViewSet):
+    queryset = Attachment.objects.all()
+    serializer_class = AttachmentSerializer
+
+    def initial(self, request, **kwargs):
+        self.document = self.lookup_document()
+        super(AttachmentViewSet, self).initial(request, **kwargs)
+
+    def lookup_document(self):
+        qs = Document.objects.defer('document_xml')
+        doc_id = self.kwargs['document_id']
+        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
+
+    def get_queryset(self):
+        return Attachment.objects.filter(document=self.document).all()
+
+    def get_serializer_context(self):
+        context = super(AttachmentViewSet, self).get_serializer_context()
+        context['document'] = self.document
+        return context
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,

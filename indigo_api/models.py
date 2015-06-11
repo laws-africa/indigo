@@ -276,6 +276,18 @@ class Document(models.Model):
                 doc._amended_versions = amended_versions
 
 
+class Attachment(models.Model):
+    document = models.ForeignKey(Document, related_name='attachments')
+    file = models.FileField()
+    size = models.IntegerField()
+    filename = models.CharField(max_length=255, help_text="Unique attachment filename", db_index=True)
+    mime_type = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # TODO: enforce unique filename for document
+
+
 class Subtype(models.Model):
     name = models.CharField(max_length=1024, help_text="Name of the document subtype")
     abbreviation = models.CharField(max_length=20, help_text="Short abbreviation to use in FRBR URI. No punctuation.", unique=True)

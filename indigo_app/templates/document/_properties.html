@@ -233,14 +233,23 @@
         <a href="#" class="delete-attachment"><i class="fa fa-fw fa-remove"></i></a>
       </td>
       <td>
+        {{#if view_url }}
         <a href="{{ view_url }}" target="_blank">{{ filename }}</a>
         <i class="fa fa-external-link fa-fw text-muted"></i>
+        {{else}}
+        {{ filename }} <i>(new)</i>
+        {{/if}}
       </td>
       <td>{{ prettySize }}</td>
       <td>{{ mime_type }}</td>
     </tr>
-  </li>
   {{/each}}
+  <tr>
+    <td class="buttons"></td>
+    <td colspan="3">
+      <input type="file" id="new-attachment-file" multiple="false">
+    </td>
+  </tr>
 </ul>
 
 {% endverbatim %}

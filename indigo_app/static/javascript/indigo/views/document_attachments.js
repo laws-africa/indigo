@@ -52,6 +52,7 @@
     events: {
       'click .edit-attachment': 'editAttachment',
       'click .delete-attachment': 'deleteAttachment',
+      'change [type=file]': 'fileSelected',
     },
 
     initialize: function(options) {
@@ -107,6 +108,24 @@
         attachment.url = attachment.url();
         this.model.remove(attachment);
       }
+    },
+
+    fileSelected: function(e) {
+      this.attachFile(e.originalEvent.target.files[0]);
+    },
+
+    attachFile: function(file) {
+      // We use the FormData interface which is supported in all decent
+      // browsers and IE 10+.
+      //
+      // https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects
+
+      this.model.add({
+        filename: file.name,
+        size: file.size,
+        mime_type: file.type,
+        file: file,
+      });
     },
     
     save: function(force) {

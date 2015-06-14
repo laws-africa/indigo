@@ -106,7 +106,28 @@
     comparator: 'date',
   });
 
-  Indigo.Attachment = Backbone.Model.extend({});
+  Indigo.Attachment = Backbone.Model.extend({
+    sync: function(method, model, options) {
+      if (method === 'create' && model.get('file')) {
+        // override params passed in for create to allow us to inject the file
+        //
+        // We use the FormData interface which is supported in all decent
+        // browsers and IE 10+.
+        //
+        // https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects
+        var formData = new FormData();
+
+        _.each(model.attributes, function(val, key) {
+          formData.append(key, val);
+        });
+
+        options.data = formData;
+        options.contentType = false;
+      }
+
+      return Backbone.sync.apply(this, [method, model, options]);
+    },
+  });
 
   Indigo.AttachmentList = Backbone.Collection.extend({
     model: Indigo.Attachment,

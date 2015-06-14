@@ -111,6 +111,18 @@
   Indigo.AttachmentList = Backbone.Collection.extend({
     model: Indigo.Attachment,
     comparator: 'filename',
+    save: function(options) {
+      var self = this;
+
+      // save each object individually
+      return $
+        .when(this.map(function(obj) {
+          return obj.save();
+        }))
+        .then(function() {
+          self.trigger('sync');
+        });
+    },
   });
 
 })(window);

@@ -19,6 +19,7 @@
     },
 
     initialize: function(options) {
+      this.document = options.document;
     },
 
     show: function(model) {
@@ -55,14 +56,18 @@
 
     initialize: function(options) {
       this.template = Handlebars.compile($(this.template).html());
+      this.document = options.document;
+      this.dirty = false;
+      this.deleted = [];
+
       this.model = new Indigo.AttachmentList();
       this.model.url = options.document.url() + '/attachments';
-      this.model.on('change sync', this.render, this);
+      this.model.on('change add remove sync', this.render, this);
+      this.model.on('change add remove', this.setDirty, this);
+      this.model.on('sync', this.setClean, this);
       this.model.fetch();
 
-      // TODO: let parent know this is dirty
-
-      this.box = new Indigo.AttachmentEditorView({document: this.model});
+      this.box = new Indigo.AttachmentEditorView({document: this.document});
 
       this.stickit();
     },
@@ -88,11 +93,52 @@
     },
 
     deleteAttachment: function(e) {
-      // TODO
+      e.preventDefault();
+
+      var index = $(e.target).closest('tr').data('index');
+      var attachment = this.model.at(index);
+
+      if (confirm("Really delete this attachment?")) {
+        // this will be deleted on the server during save()
+        this.deleted.push(attachment);
+
+        // save the URL, which is derived from the collection, before we remove
+        // it from the collection
+        attachment.url = attachment.url();
+        this.model.remove(attachment);
+      }
     },
     
-    save: function() {
-      // TODO:
+    save: function(force) {
+      // TODO: validation
+      var self = this;
+
+      // don't do anything if it hasn't changed
+      if (!this.dirty && !force) {
+        return $.Deferred().resolve();
+      }
+
+      return $
+        .when(this.deleted.map(function(attachment) {
+          return attachment.destroy();
+        }))
+        .then(function() {
+          return self.model.save();
+        });
+    },
+
+    setDirty: function() {
+      if (!this.dirty) {
+        this.dirty = true;
+        this.trigger('dirty');
+      }
+    },
+
+    setClean: function() {
+      if (this.dirty) {
+        this.dirty = false;
+        this.trigger('clean');
+      }
     },
 
     prettySize: function(bytes) {

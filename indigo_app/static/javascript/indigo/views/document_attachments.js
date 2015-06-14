@@ -61,12 +61,11 @@
       this.dirty = false;
       this.deleted = [];
 
-      this.model = new Indigo.AttachmentList();
-      this.model.url = options.document.url() + '/attachments';
-      this.model.on('change add remove sync', this.render, this);
+      this.model = new Indigo.AttachmentList(null, {document: this.document});
+      this.model.on('change add remove reset saved', this.render, this);
       this.model.on('change add remove', this.setDirty, this);
-      this.model.on('sync', this.setClean, this);
-      this.model.fetch();
+      this.model.on('saved', this.setClean, this);
+      this.model.fetch({reset: true});
 
       this.box = new Indigo.AttachmentEditorView({document: this.document});
 
@@ -142,10 +141,11 @@
       }
 
       return $
-        .when(this.deleted.map(function(attachment) {
+        .when.apply($, this.deleted.map(function(attachment) {
           return attachment.destroy();
         }))
         .then(function() {
+          self.deleted = [];
           return self.model.save();
         });
     },

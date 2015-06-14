@@ -111,7 +111,13 @@
     },
 
     fileSelected: function(e) {
-      this.attachFile(e.originalEvent.target.files[0]);
+      var self = this;
+
+      _.each(e.originalEvent.target.files, function(f) {
+        self.attachFile(f);
+      });
+
+      e.originalEvent.target.reset();
     },
 
     attachFile: function(file) {

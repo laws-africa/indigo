@@ -70,7 +70,7 @@ class RepealSerializer(serializers.Serializer):
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
-    file = serializers.FileField(write_only=True)
+    file = serializers.FileField(required=False, write_only=True)
     filename = serializers.CharField(max_length=255, required=False)
     url = serializers.SerializerMethodField()
     download_url = serializers.SerializerMethodField()
@@ -115,7 +115,9 @@ class AttachmentSerializer(serializers.ModelSerializer):
         })
 
     def create(self, validated_data):
-        file = validated_data.get('file')
+        file = validated_data.get('file', None)
+        if not file:
+            raise ValidationError({'file': "No file was submitted."})
 
         args = {}
         args.update(validated_data)

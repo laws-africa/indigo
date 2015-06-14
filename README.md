@@ -52,6 +52,7 @@ You will need:
 
 * a django secret key
 * a New Relic license key
+* AWS credentials for S3 uploads
 
 ```bash
 heroku create
@@ -62,7 +63,9 @@ heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-mult
                   DISABLE_COLLECTSTATIC=1 \
                   DJANGO_SECRET_KEY=some-secret-key \
                   NEW_RELIC_APP_NAME="Indigo" \
-                  NEW_RELIC_LICENSE_KEY=some-license-key
+                  NEW_RELIC_LICENSE_KEY=some-license-key \
+                  AWS_ACCESS_KEY_ID=aws-access-key \
+                  AWS_SECRET_ACCESS_KEY=aws-secret-key
 git push heroku master
 heroku run python manage.py migrate
 heroku run python manage.py createsuperuser

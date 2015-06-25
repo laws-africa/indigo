@@ -98,8 +98,10 @@ INDIGO_LIME_DEBUG = True
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
 import dj_database_url
+db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
+db_config['ATOMIC_REQUESTS'] = False
 DATABASES = {
-    'default': dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
+    'default': db_config,
 }
 
 # Internationalization

@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'taggit_serializer',
     'countries_plus',
     'languages_plus',
+    'storages',
     'indigo_api',
 
     # the Indigo browser application
@@ -134,9 +135,17 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'indigo_app.context_processors.general',
 )
 
-#TEMPLATE_DIRS = (
-#    os.path.join(BASE_DIR, 'templates'),
-#)
+# attachments
+if not DEBUG:
+    DEFAULT_FILE_STORAGE = 'indigo.botopatch.S3Storage'
+    AWS_S3_FILE_OVERWRITE = False
+    AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = "indigo-media"
+    AWS_S3_HOST = "s3-eu-west-1.amazonaws.com"
+    AWS_HEADERS = {
+        'Cache-Control': 'max-age=86400',
+    }
 
 
 # Static files (CSS, JavaScript, Images)
@@ -187,7 +196,7 @@ EMAIL_SUBJECT_PREFIX = '[Indigo] '
 
 # disable email in development
 if DEBUG:
-   EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 
 # Logging
@@ -216,6 +225,6 @@ LOGGING = {
         },
         'django': {
             'level': 'DEBUG' if DEBUG else 'INFO',
-        }
+        },
     }
 }

@@ -1,4 +1,5 @@
 import tempfile
+import os.path
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
@@ -357,3 +358,45 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
         assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # check the attachment
+        response = self.client.get('/api/documents/%s/attachments' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data[0]['mime_type'], 'text/plain')
+        assert_equal(response.data[0]['filename'], os.path.basename(tmp_file.name))
+        assert_equal(response.data[0]['url'],
+                     'http://testserver/api/documents/%s/attachments/%s' % (id, response.data[0]['id']))
+
+    def test_update_attachment(self):
+        # create a doc with an attachment
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("""
+        Chapter 2
+        The Beginning
+        1. First Verse
+        (1) In the beginning
+        (2) There was nothing
+        """)
+        tmp_file.seek(0)
+
+        response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # check the attachment
+        response = self.client.get('/api/documents/%s/attachments' % id)
+        assert_equal(response.status_code, 200)
+        data = response.data[0]
+        assert_equal(data['mime_type'], 'text/plain')
+
+        # test put
+        data['filename'] = 'new.txt'
+        response = self.client.patch(data['url'], data)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['filename'], 'new.txt')
+
+        # test patch
+        response = self.client.put(data['url'], {'filename': 'new-from-patch.txt'})
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['filename'], 'new-from-patch.txt')

@@ -50,6 +50,8 @@
   //
   //   DocumentAmendmentsView - handles editing document amendment metadata
   //
+  //   DocumentAttachmentsView - handles managing document attachments
+  //
   //   DocumentRepealView - handles setting a document as repealed
   //
   //   DocumentEditorView - handles editing the document's body content
@@ -102,6 +104,10 @@
 
       this.amendmentsView = new Indigo.DocumentAmendmentsView({model: this.document});
       this.repealView = new Indigo.DocumentRepealView({model: this.document});
+
+      this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
+      this.attachmentsView.on('dirty', this.setDirty, this);
+      this.attachmentsView.on('clean', this.setClean, this);
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
       this.tocView.on('item-selected', this.showEditor, this);
@@ -161,8 +167,8 @@
     },
 
     setClean: function() {
-      // disable the save button if both views are clean
-      if (!this.propertiesView.dirty && !this.bodyEditorView.dirty) {
+      // disable the save button if all views are clean
+      if (!this.propertiesView.dirty && !this.bodyEditorView.dirty && !this.attachmentsView.dirty) {
         this.$saveBtn
           .addClass('btn-default')
           .removeClass('btn-info')
@@ -186,13 +192,6 @@
     save: function() {
       var self = this;
       var is_new = self.document.isNew();
-      var failed = function(request) {
-        self.$saveBtn
-          .prop('disabled', false)
-          .find('.fa')
-            .removeClass('fa-pulse fa-spinner')
-            .addClass('fa-save');
-      };
 
       this.$saveBtn
         .prop('disabled', true)
@@ -208,18 +207,25 @@
 
       this.bodyEditorView
         .save()
-        .then(function(response) {
-          self.propertiesView
-            .save(forcePropertiesSave)
-            .fail(failed)
-            .then(function() {
-              if (is_new) {
-                // redirect
-                document.location = '/documents/' + response.id + '/';
-              }
-            });
+        .then(function() {
+          return self.propertiesView.save(forcePropertiesSave);
         })
-        .fail(failed);
+        .then(function() {
+          return self.attachmentsView.save();
+        })
+        .then(function() {
+          if (is_new) {
+            // redirect
+            document.location = '/documents/' + response.id + '/';
+          }
+        })
+        .fail(function() {
+          self.$saveBtn
+            .prop('disabled', false)
+            .find('.fa')
+              .removeClass('fa-pulse fa-spinner')
+              .addClass('fa-save');
+        });
     },
 
     renderPreview: function() {

@@ -1,7 +1,10 @@
+import os
 import logging
 from itertools import groupby
 
 from django.db import models
+from django.db.models import signals
+from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
 
@@ -274,6 +277,29 @@ class Document(models.Model):
                 doc._amended_versions = []
             else:
                 doc._amended_versions = amended_versions
+
+
+def attachment_filename(instance, filename):
+    """ Make S3 attachment filenames relative to the document,
+    this may be modified to ensure it's unique by the storage system. """
+    return 'attachments/%s/%s' % (instance.document.id, os.path.basename(filename))
+
+
+class Attachment(models.Model):
+    document = models.ForeignKey(Document, related_name='attachments')
+    file = models.FileField(upload_to=attachment_filename)
+    size = models.IntegerField()
+    filename = models.CharField(max_length=255, help_text="Unique attachment filename", db_index=True)
+    mime_type = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # TODO: enforce unique filename for document
+
+
+@receiver(signals.pre_delete, sender=Attachment)
+def delete_attachment(sender, instance, **kwargs):
+    instance.file.delete()
 
 
 class Subtype(models.Model):

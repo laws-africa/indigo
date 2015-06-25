@@ -1,0 +1,39 @@
+<div class="modal fade" id="attachment-box">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Edit attachment</h4>
+      </div>
+
+      <div class="modal-body form-horizontal">
+        <div class="form-group">
+          <label for="attachment_filename" class="control-label col-sm-2">Filename</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="attachment_filename">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label col-sm-2">Size</label>
+          <div class="col-sm-10">
+            <p class="form-control-static" id="attachment_size"></p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="control-label col-sm-2">Type</label>
+          <div class="col-sm-10">
+            <p class="form-control-static" id="attachment_mime_type"></p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary save" value="Save">
+      </div>
+
+    </div>
+  </div>
+</div>

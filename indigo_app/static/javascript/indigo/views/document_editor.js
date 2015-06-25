@@ -475,22 +475,13 @@
       }
 
       if (this.activeEditor) {
-        // save changes from the editor, then save the model, which resolves
-        // this deferred
-        var wait = $.Deferred();
-
-        this.activeEditor
+        return this.activeEditor
           // ask the editor to returns its contents
           .saveChanges()
-          .fail(function() { wait.fail(); })
           .then(function() {
             // save the model
-            self.saveModel()
-              .then(function() { wait.resolve(); })
-              .fail(function() { wait.fail(); });
+            return self.saveModel();
           });
-
-        return wait;
       } else {
         return this.saveModel();
       }

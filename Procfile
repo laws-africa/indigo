@@ -1,1 +1,1 @@
-web: newrelic-admin run-program gunicorn indigo.wsgi:application -t 600 --log-file -
+web: newrelic-admin run-program gunicorn --worker-class gevent indigo.wsgi:application -t 600 --log-file -

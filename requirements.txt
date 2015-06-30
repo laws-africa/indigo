@@ -3,7 +3,7 @@ Werkzeug==0.9.6
 arrow==0.5.0
 boto==2.38.0
 dj-database-url==0.3.0
-django-assets==0.10
+-e git+https://github.com/Code4SA/django-assets.git@django-manifest#egg=django_assets
 django-countries-plus==0.3.3
 django-extensions==1.4.9
 django-languages-plus==0.1.5

@@ -16,7 +16,7 @@ mkdir -p staticfiles/lime/dist/
 cp -vR indigo_app/static/lime/dist/ staticfiles/lime/
 
 echo "-----> Building assets"
-python $MANAGE_FILE assets build 2>&1 
+python $MANAGE_FILE assets build --manifest django 2>&1
 
 # Copy over some javascript which mustn't be fingerprinted
 echo "-----> copying plain javascript"

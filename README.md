@@ -30,14 +30,19 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-To support importing from PDF and other file formats, you'll need some ruby dependencies.
+To support importing from PDF and other file formats, you'll need some ruby
+dependencies.  We strongly recommend installing and using [RVM](http://rvm.io/)
+or a similar Ruby version manager.
 
 ```bash
 bundle install
 ```
 
-We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby
-version manager.
+To run the tests use:
+
+```bash
+python manage.py test
+```
 
 Production deployment
 ---------------------

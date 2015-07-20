@@ -56,6 +56,10 @@
         observe: 'assent_date',
         onSet: emptyIsNull,
       },
+      '#document_expression_date': {
+        observe: 'expression_date',
+        onSet: emptyIsNull,
+      },
       '#document_language': 'language',
       '#document_draft': {
         observe: 'draft',
@@ -91,7 +95,7 @@
         this.model.on('change:number change:nature change:country change:year change:locality change:subtype', _.bind(this.calculateUri, this));
       });
 
-      this.model.on('change:draft change:frbr_uri change:language sync', this.showPublishedUrl, this);
+      this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
       this.model.on('change:amendments change:publication_date', this.setExpressionDate, this);
     },
@@ -121,18 +125,26 @@
     setExpressionDate: function() {
       // the expression date is the publication date, or the latest amendment
       // date if there are amendments
-      var amendments = this.model.get('amendments');
+      if (!this.model.get('expression_date')) {
+        var amendments = this.model.get('amendments');
 
-      if (amendments.length > 0) {
-        this.model.set('expression_date', amendments.at(amendments.length-1).get('date'));
-      } else {
-        this.model.set('expression_date', this.model.get('publication_date'));
+        if (amendments.length > 0) {
+          this.model.set('expression_date', amendments.at(amendments.length-1).get('date'));
+        } else {
+          this.model.set('expression_date', this.model.get('publication_date'));
+        }
+
+        this.$el.find('[data-provide=datepicker]').datepicker('update');
       }
     },
 
     showPublishedUrl: function() {
       var url = window.location.origin + "/api" +
         this.model.get('frbr_uri') + '/' + this.model.get('language');
+
+      if (this.model.get('expression_date')) {
+        url = url + '@' + this.model.get('expression_date');
+      }
 
       this.$el.find('.published-url').toggle(!this.model.get('draft'));
       this.$el.find('#document_published_url').attr('href', url).text(url);

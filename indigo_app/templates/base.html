@@ -1,4 +1,4 @@
-{% load assets %}
+{% load pipeline %}
 
 <!DOCTYPE html>
 <html>
@@ -9,9 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     {% block head-css %}
-    {% assets "css" %}
-        <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
-    {% endassets %}
+    {% stylesheet "css" %}
     {% endblock %}
 
     {% block head-meta %}{% endblock %}
@@ -27,9 +25,7 @@
     {% endblock page-content %}
 
     {% block js %}
-    {% assets "js" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
+    {% javascript "js" %}
     {% endblock %}
 
   </body>

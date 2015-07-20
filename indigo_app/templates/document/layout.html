@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 
-{% load assets %}
+{% load pipeline %}
 
 
 {% block header %}
@@ -56,10 +56,7 @@
 
   {% else %}
     {# CSS for production LIME #}
-
-    {% assets "lime-css" %}
-      <link rel="stylesheet" type="text/css" href="{{ ASSET_URL }}">
-    {% endassets %}
+    {% stylesheet "lime" %}
   {% endif %}
 
 {% endblock %}
@@ -85,9 +82,7 @@
   {% else %}
     {# production dependencies for LIME #}
     <script>LIME_base_url = '/static/lime/dist/';</script>
-    {% assets "lime-js" %}
-      <script type="text/javascript" src="{{ ASSET_URL }}"></script>
-    {% endassets %}
+    {% javascript "lime" %}
 
     {# these need to be loaded separately due to the way they load their dependent scripts #}
     <script type="text/javascript" src="/static/lime/dist/lib/tinymce4/tinymce.min.js"></script>

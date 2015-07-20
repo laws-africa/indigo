@@ -238,6 +238,9 @@ PIPELINE_JS = {
 
 PIPELINE_CSS_COMPRESSOR = None
 PIPELINE_JS_COMPRESSOR = None
+# don't wrap javascript, this breaks LIME
+# see https://github.com/cyberdelia/django-pipeline/blob/ea74ea43ec6caeb4ec46cdeb7d7d70598e64ad1d/pipeline/compressors/__init__.py#L62
+PIPELINE_DISABLE_WRAPPER = True
 PIPELINE_COMPILERS = (
     'indigo.pipeline.PyScssCompiler',
 )

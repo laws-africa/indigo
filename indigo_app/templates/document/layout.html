@@ -70,7 +70,7 @@
   {% if DEBUG and INDIGO_LIME_DEBUG %}
     {# development dependencies for LIME so that we don't have to recompile it the whole time #}
 
-    <script>LIME_base_url = '/static/lime/develop/';</script>
+    <script>var LIME_base_url = '/static/lime/develop/';</script>
     <script src="/static/lime/develop/ext/ext-all-dev.js"></script>
     <script src="/static/lime/develop/bootstrap.js"></script>
     <script src="/static/lime/develop/app.js"></script>
@@ -81,7 +81,7 @@
 
   {% else %}
     {# production dependencies for LIME #}
-    <script>LIME_base_url = '/static/lime/dist/';</script>
+    <script>var LIME_base_url = '/static/lime/dist/';</script>
     {% javascript "lime" %}
 
     {# these need to be loaded separately due to the way they load their dependent scripts #}

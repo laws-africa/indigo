@@ -4,10 +4,7 @@
   <h1>{{ document.title }}</h1>
   <h2>
     {% with type=document|friendly_document_type %}
-      {{ document|friendly_document_type }} {{ document|friendly_document_number }}
-      {% if type != "Chapter" %}
-        of {{ document.year }}
-      {% endif %}
+      {{ document|friendly_document_type }} {{ document|friendly_document_number }} {% if type != "Chapter" %}of {{ document.year }}{% endif %}
     {% endwith %}
   </h2>
 

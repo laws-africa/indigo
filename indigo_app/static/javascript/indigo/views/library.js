@@ -113,16 +113,16 @@
 
       // Change buttons to correct colour.
       var parent = $input.parent();
-      parent.siblings().removeClass().addClass('btn btn-default');
+      parent.siblings().removeClass().addClass('btn btn-sm btn-default');
 
       if (status=='draft') {
-        parent.removeClass().addClass('btn btn-warning');
+        parent.removeClass().addClass('btn btn-sm btn-warning');
       }
       else if (status=='published') {
-        parent.removeClass().addClass('btn btn-info');
+        parent.removeClass().addClass('btn btn-sm btn-info');
       }
       else {
-        parent.removeClass().addClass('btn btn-default');
+        parent.removeClass().addClass('btn btn-sm btn-default');
       }
 
       this.trigger('change');
@@ -217,6 +217,12 @@
         count: docs.length,
         documents: docs.toJSON()
       }));
+
+
+      this.$el.find('[title]').tooltip({
+        container: 'body',
+        placement: 'auto top'
+      });
 
       formatTimestamps();
 

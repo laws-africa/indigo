@@ -37,7 +37,6 @@
   <thead>
     <tr>
       <th class="title">Title</th>
-      <th class="draft">Draft?</th>
       <th class="year">Year</th>
       <th class="number">Number</th>
       <th class="updated">Updated</th>
@@ -47,6 +46,11 @@
     {{#each documents}}
       <tr>
         <td>
+          {{#if draft}}
+            <i class="fa fa-fw fa-circle draft" title="draft"></i>
+          {{else}}
+            <i class="fa fa-fw fa-circle published" title="published"></i>
+          {{/if}}
           <a href="/documents/{{ id }}">
             {{#if title}}
               {{ title }}
@@ -55,6 +59,10 @@
             {{/if}}
           </a>
 
+          {{#if amendments}}
+            <i class="fa fa-fw fa-edit" title="amended"></i>
+          {{/if}}
+
           {{#if stub}}
             <span class="label label-info">stub</span>
           {{/if}}
@@ -62,13 +70,6 @@
           {{#each tags}}
             <span class="label label-default">{{this}}</span>
           {{/each}}
-        </td>
-        <td>
-          {{#if draft}}
-            <span class="label label-warning">draft</span>
-          {{else}}
-            <a href="{{ published_url }}" target="_blank"><span class="label label-info">published</span></a>
-          {{/if}}
         </td>
         <td>{{ year }}</td>
         <td>{{ number }}</td>
@@ -104,14 +105,14 @@
 
   <div class="panel-body">
     <div class="btn-group" data-toggle="buttons">
-      <label class="btn btn-default active">
+      <label class="btn btn-default btn-sm active">
         <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
       </label>
-      <label class="btn btn-default">
-        <input type="radio" name="options" autocomplete="off" class="filter-status" value="published">Published
+      <label class="btn btn-default btn-sm ">
+        <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
       </label>
-      <label class="btn btn-default">
-        <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft">Draft
+      <label class="btn btn-default btn-sm">
+        <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
       </label>
     </div>
   </div>

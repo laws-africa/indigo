@@ -361,8 +361,7 @@ legend {
 .document-list-table {
   table-layout: fixed;
 
-  th.title { width: 53% }
-  th.draft { width: 7% }
+  th.title { width: 63% }
   th.year { width: 7% }
   th.number { width: 20% }
   th.updated { width: 10% }
@@ -470,4 +469,12 @@ legend {
     max-height: 295px;
     overflow-y: scroll;
   }
+}
+
+.fa.draft {
+  color: #f0ad4e;
+}
+
+.fa.published {
+  color: #5bc0de;
 }

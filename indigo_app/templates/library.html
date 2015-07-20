@@ -59,6 +59,10 @@
             {{/if}}
           </a>
 
+          {{#if amended_versions}}
+            <span class="text-muted">@ {{ expression_date }}</span>
+          {{/if}}
+
           {{#if amendments}}
             <i class="fa fa-fw fa-edit" title="amended"></i>
           {{/if}}

@@ -2,7 +2,14 @@
 
 <div class="coverpage">
   <h1>{{ document.title }}</h1>
-  <h2>{{ document|friendly_document_type }} {{ document|friendly_document_number }} of {{ document.year }}</h2>
+  <h2>
+    {% with type=document|friendly_document_type %}
+      {{ document|friendly_document_type }} {{ document|friendly_document_number }}
+      {% if type != "Chapter" %}
+        of {{ document.year }}
+      {% endif %}
+    {% endwith %}
+  </h2>
 
   {% if document.assent_date %}
   <h3 class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</h3>

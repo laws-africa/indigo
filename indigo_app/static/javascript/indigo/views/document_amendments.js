@@ -110,7 +110,7 @@
     },
 
     render: function() {
-      var target = this.$el.find('.amendment-list');
+      var target = this.$el.find('.amendments-list');
       var count = 0;
       var document_id = this.model.get('id');
 

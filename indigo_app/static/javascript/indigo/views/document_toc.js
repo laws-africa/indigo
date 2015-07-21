@@ -52,7 +52,7 @@
         chapter: 1,
         section: 1,
         conclusions: 1,
-        doc: 1,
+        component: 1,
         akomaNtoso: 1,
       };
 
@@ -64,7 +64,7 @@
         conclusions: function(i) { return "Conclusions"; },
         chapter: function(i) { return "Ch. " + i.num + " " + i.heading; },
         part: function(i) { return "Part " + i.num + " " + i.heading; },
-        doc: function(i) { 
+        component: function(i) { 
           var alias = i.element.querySelector('FRBRalias');
           if (alias) {
             return alias.getAttribute('value');

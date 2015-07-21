@@ -17,6 +17,12 @@
 
       this.view = options.view;
       this.name = 'source';
+      this.many_fragments = {
+        chapter: 1,
+        part: 1,
+        section: 1,
+        schedule: 1,
+      };
 
       this.editor = ace.edit(this.view.$el.find(".ace-editor")[0]);
       this.editor.setTheme("ace/theme/monokai");
@@ -96,12 +102,14 @@
       var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
       var fragment = this.$textEditor.data('fragment');
 
-      var data = JSON.stringify({
-        'inputformat': 'text/plain',
-        'outputformat': 'application/xml',
-        'fragment': fragment,
-        'content': this.$textEditor.find('textarea').val(),
-      });
+      if (fragment == 'component') {
+        fragment = 'schedule';
+      }
+      // In some cases we allow the user to many fragments, such as
+      // parts and sections.
+      if (this.many_fragments[fragment]) {
+        fragment = fragment + 's';
+      }
 
       $btn
         .attr('disabled', true)
@@ -115,15 +123,20 @@
       var deferred = this.pendingTextSave = $.Deferred();
       deferred
         .then(function(response) {
-          // find either the fragment we asked for, or the first element below the akomaNtoso
-          // parent element
           var newFragment = $.parseXML(response.output);
-          newFragment = newFragment.querySelector(fragment) || newFragment.documentElement.firstElementChild;
+
+          // TODO: ensure works for schedule
+          // TODO: ensure works for many schedules
+          if (fragment === 'akomaNtoso') {
+            newFragment = [newFragment.documentElement];
+          } else {
+            newFragment = newFragment.documentElement.children;
+          }
 
           self.view.updateFragment(self.view.fragment, newFragment);
           self.closeTextEditor();
           self.render();
-          self.setEditorValue(self.view.xmlModel.toXml(newFragment));
+          self.setEditorValue(self.view.xmlModel.toXml(newFragment[0]));
         })
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
@@ -144,10 +157,19 @@
               .addClass('fa-check');
         });
 
+      var data = {
+        'inputformat': 'text/plain',
+        'outputformat': 'application/xml',
+        'content': this.$textEditor.find('textarea').val(),
+      };
+      if (fragment != 'akomaNtoso') {
+        data.fragment = fragment;
+      }
+
       $.ajax({
         url: '/api/convert',
         type: "POST",
-        data: data,
+        data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .done(function(response) {
@@ -207,7 +229,7 @@
         // TODO: handle errors here
         var newFragment = $.parseXML(this.editor.getValue()).documentElement;
 
-        this.view.updateFragment(this.view.fragment, newFragment);
+        this.view.updateFragment(this.view.fragment, [newFragment]);
         this.render();
         this.dirty = false;
       }
@@ -306,7 +328,7 @@
         // LIME wraps the document in some extra stuff, just find the
         // item we started with
         xml = xml.querySelector(self.fragmentType);
-        self.view.updateFragment(oldFragment, xml);
+        self.view.updateFragment(oldFragment, [xml]);
 
         deferred.resolve();
       }, {
@@ -405,10 +427,10 @@
       }
     },
 
-    updateFragment: function(oldNode, newNode) {
+    updateFragment: function(oldNode, newNodes) {
       this.updating = true;
       try {
-        this.fragment = this.xmlModel.updateFragment(oldNode, newNode);
+        this.fragment = this.xmlModel.replaceNode(oldNode, newNodes);
       } finally {
         this.updating = false;
       }

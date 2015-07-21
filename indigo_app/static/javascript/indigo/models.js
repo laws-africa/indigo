@@ -29,21 +29,47 @@
       return new XMLSerializer().serializeToString(node || this.xmlDocument);
     },
 
-    updateFragment: function(oldNode, newNode) {
-      if (!oldNode || !oldNode.parentNode) {
+    /**
+     * Replaces an existing node (or the whole tree) with a new node or nodes.
+     * Triggers a change event.
+     *
+     * @param {Element} oldNode the node to replace, or null to replace the whole tree
+     * @param {Element[]} newNodes the nodes to replace the old one with.
+     */
+    replaceNode: function(oldNode, newNodes) {
+      var first = newNodes[0];
+
+      if (!oldNode || !oldNode.parentElement) {
         // entire document has changed
+        if (newNodes.length != 1) {
+          throw "Expected exactly one newNode, got " + newNodes.length;
+        }
         console.log('Replacing whole document');
-        this.xmlDocument = newNode;
+        this.xmlDocument = first;
+
       } else {
         // just a fragment has changed
-        console.log('Replacing node');
-        newNode = oldNode.ownerDocument.importNode(newNode, true);
-        oldNode.parentNode.replaceChild(newNode, oldNode);
+        console.log('Replacing node with ' + newNodes.length + ' new node(s)');
+
+        first = oldNode.ownerDocument.importNode(first, true);
+        oldNode.parentElement.replaceChild(first, oldNode);
+
+        // now append the other nodes, starting at the end
+        // because it makes the insert easier
+        for (var i = newNodes.length-1; i > 0; i--) {
+          var node = first.ownerDocument.importNode(newNodes[i], true);
+
+          if (first.nextElementSibling) {
+            first.parentElement.insertBefore(node, first.nextElementSibling);
+          } else {
+            first.parentElement.appendChild(node);
+          }
+        }
       }
 
       this.trigger('change');
 
-      return newNode;
+      return first;
     },
   });
 

@@ -25,15 +25,22 @@
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
 
+        var oldLength = this.toc.length;
         this.toc = this.buildToc();
 
         if (this.selectedIndex > this.toc.length-1) {
-          // this triggers a re-render
+          // we've selected past the end of the TOC
           this.selectItem(this.toc.length-1);
+
+        } else if (this.selectedIndex > -1 && this.toc.length != oldLength) {
+          // arrangament of the TOC has changed, re-select the item we want
+          this.selectItem(this.selectedIndex, true);
+
         } else {
           if (this.selectedIndex > -1) {
             this.toc[this.selectedIndex].selected = true;
           }
+
           this.render();
         }
       }
@@ -52,7 +59,8 @@
         chapter: 1,
         section: 1,
         conclusions: 1,
-        doc: 1,
+        components: 1,
+        component: 1,
         akomaNtoso: 1,
       };
 
@@ -64,7 +72,8 @@
         conclusions: function(i) { return "Conclusions"; },
         chapter: function(i) { return "Ch. " + i.num + " " + i.heading; },
         part: function(i) { return "Part " + i.num + " " + i.heading; },
-        doc: function(i) { 
+        components: function(i) { return 'Schedules'; },
+        component: function(i) { 
           var alias = i.element.querySelector('FRBRalias');
           if (alias) {
             return alias.getAttribute('value');

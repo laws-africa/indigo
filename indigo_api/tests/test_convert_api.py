@@ -210,27 +210,26 @@ class ConvertAPITest(APITestCase):
           <FRBRuri value="/za/act/1980/01"/>
           <FRBRalias value="Imported from """ + fname + u""""/>
           <FRBRdate date="" name="Generation"/>
-          <FRBRauthor href="#council" as="#author"/>
+          <FRBRauthor href="#council"/>
           <FRBRcountry value="za"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/za/act/1980/01/eng@1980-01-01/main"/>
           <FRBRuri value="/za/act/1980/01/eng@1980-01-01"/>
           <FRBRdate date="1980-01-01" name="Generation"/>
-          <FRBRauthor href="#council" as="#author"/>
+          <FRBRauthor href="#council"/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
           <FRBRthis value="/za/act/1980/01/eng@1980-01-01/main"/>
           <FRBRuri value="/za/act/1980/01/eng@1980-01-01"/>
           <FRBRdate date=\"""" + today + u"""\" name="Generation"/>
-          <FRBRauthor href="#slaw" as="#author"/>
+          <FRBRauthor href="#slaw"/>
         </FRBRManifestation>
       </identification>
       <references source="#this">
         <TLCOrganization id="slaw" href="https://github.com/longhotsummer/slaw" showAs="Slaw"/>
         <TLCOrganization id="council" href="/ontology/organization/za/council" showAs="Council"/>
-        <TLCRole id="author" href="/ontology/role/author" showAs="Author"/>
       </references>
     </meta>
     <body>

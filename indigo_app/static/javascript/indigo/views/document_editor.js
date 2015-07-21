@@ -17,11 +17,12 @@
 
       this.view = options.view;
       this.name = 'source';
-      this.many_fragments = {
-        chapter: 1,
-        part: 1,
-        section: 1,
-        schedule: 1,
+      this.grammar_fragments = {
+        chapter: 'chapters',
+        part: 'parts',
+        section: 'sections',
+        component: 'schedules',
+        components: 'schedules_container',
       };
 
       this.editor = ace.edit(this.view.$el.find(".ace-editor")[0]);
@@ -101,15 +102,7 @@
       var $editable = this.view.$el.find('.akoma-ntoso').children().first();
       var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
       var fragment = this.$textEditor.data('fragment');
-
-      if (fragment == 'component') {
-        fragment = 'schedule';
-      }
-      // In some cases we allow the user to many fragments, such as
-      // parts and sections.
-      if (this.many_fragments[fragment]) {
-        fragment = fragment + 's';
-      }
+      fragment = this.grammar_fragments[fragment] || fragment;
 
       $btn
         .attr('disabled', true)
@@ -125,9 +118,8 @@
         .then(function(response) {
           var newFragment = $.parseXML(response.output);
 
-          // TODO: ensure works for schedule
-          // TODO: ensure works for many schedules
           if (fragment === 'akomaNtoso') {
+            // entire document
             newFragment = [newFragment.documentElement];
           } else {
             newFragment = newFragment.documentElement.children;

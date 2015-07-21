@@ -101,8 +101,17 @@
       var self = this;
       var $editable = this.view.$el.find('.akoma-ntoso').children().first();
       var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
+      var content = this.$textEditor.find('textarea').val();
       var fragment = this.$textEditor.data('fragment');
       fragment = this.grammar_fragments[fragment] || fragment;
+
+      // should we delete the item?
+      if (!content.trim() && fragment != 'akomaNtoso') {
+        if (confirm('Go ahead and delete this section from the document?')) {
+          this.view.removeFragment();
+        }
+        return;
+      }
 
       $btn
         .attr('disabled', true)
@@ -417,6 +426,10 @@
       if (this.activeEditor.name == 'source') {
         this.$el.find('.document-content-view').toggleClass('show-source');
       }
+    },
+
+    removeFragment: function() {
+      this.xmlModel.replaceNode(this.fragment, null);
     },
 
     updateFragment: function(oldNode, newNodes) {

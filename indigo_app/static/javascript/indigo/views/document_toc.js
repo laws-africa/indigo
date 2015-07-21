@@ -25,15 +25,22 @@
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
 
+        var oldLength = this.toc.length;
         this.toc = this.buildToc();
 
         if (this.selectedIndex > this.toc.length-1) {
-          // this triggers a re-render
+          // we've selected past the end of the TOC
           this.selectItem(this.toc.length-1);
+
+        } else if (this.selectedIndex > -1 && this.toc.length != oldLength) {
+          // arrangament of the TOC has changed, re-select the item we want
+          this.selectItem(this.selectedIndex, true);
+
         } else {
           if (this.selectedIndex > -1) {
             this.toc[this.selectedIndex].selected = true;
           }
+
           this.render();
         }
       }

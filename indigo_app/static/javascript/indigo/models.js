@@ -30,16 +30,22 @@
     },
 
     /**
-     * Replaces an existing node (or the whole tree) with a new node or nodes.
+     * Replaces (or deletes) an existing node (or the whole tree) with a new node or nodes.
      * Triggers a change event.
      *
      * @param {Element} oldNode the node to replace, or null to replace the whole tree
-     * @param {Element[]} newNodes the nodes to replace the old one with.
+     * @param {Element[]} newNodes the nodes to replace the old one with, or null to delete the node
      */
     replaceNode: function(oldNode, newNodes) {
-      var first = newNodes[0];
+      var del = !newNodes;
+      var first = del ? null : newNodes[0];
 
       if (!oldNode || !oldNode.parentElement) {
+        if (del) {
+          // TODO: we don't currently support deleting whole document
+          throw "Cannot currently delete the entire document.";
+        }
+
         // entire document has changed
         if (newNodes.length != 1) {
           throw "Expected exactly one newNode, got " + newNodes.length;
@@ -48,21 +54,28 @@
         this.xmlDocument = first;
 
       } else {
-        // just a fragment has changed
-        console.log('Replacing node with ' + newNodes.length + ' new node(s)');
+        if (del) {
+          // delete this node
+          console.log('Deleting node');
+          oldNode.remove();
 
-        first = oldNode.ownerDocument.importNode(first, true);
-        oldNode.parentElement.replaceChild(first, oldNode);
+        } else {
+          // just a fragment has changed
+          console.log('Replacing node with ' + newNodes.length + ' new node(s)');
 
-        // now append the other nodes, starting at the end
-        // because it makes the insert easier
-        for (var i = newNodes.length-1; i > 0; i--) {
-          var node = first.ownerDocument.importNode(newNodes[i], true);
+          first = oldNode.ownerDocument.importNode(first, true);
+          oldNode.parentElement.replaceChild(first, oldNode);
 
-          if (first.nextElementSibling) {
-            first.parentElement.insertBefore(node, first.nextElementSibling);
-          } else {
-            first.parentElement.appendChild(node);
+          // now append the other nodes, starting at the end
+          // because it makes the insert easier
+          for (var i = newNodes.length-1; i > 0; i--) {
+            var node = first.ownerDocument.importNode(newNodes[i], true);
+
+            if (first.nextElementSibling) {
+              first.parentElement.insertBefore(node, first.nextElementSibling);
+            } else {
+              first.parentElement.appendChild(node);
+            }
           }
         }
       }

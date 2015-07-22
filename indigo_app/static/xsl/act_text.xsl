@@ -44,8 +44,7 @@
   <xsl:template match="a:chapter">
     <xsl:text>Chapter </xsl:text>
     <xsl:value-of select="./a:num" />
-    <xsl:text>
-</xsl:text>
+    <xsl:text> - </xsl:text>
     <xsl:value-of select="./a:heading" />
     <xsl:text>
 

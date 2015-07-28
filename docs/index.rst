@@ -29,7 +29,6 @@ Contents
    rest/general
    rest/public
    rest/app
-   develop/index
 
 Documents
 ---------

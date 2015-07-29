@@ -24,6 +24,11 @@ class Importer(object):
     """ The prefix for all ids generated for this fragment """
     fragment_id_prefix = None
 
+    """ By default, where do section numbers usually lie in relation to their
+    title? One of: ``before-title``, ``after-title`` or ``guess``.
+    """
+    section_number_position = 'before-title'
+
     def import_from_upload(self, upload):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
@@ -61,6 +66,8 @@ class Importer(object):
             cmd.extend(['--fragment', self.fragment])
             if self.fragment_id_prefix:
                 cmd.extend(['--id-prefix', self.fragment_id_prefix])
+        if self.section_number_position:
+            cmd.extend(['--section-number-position', self.section_number_position])
         cmd.append(fname)
 
         code, stdout, stderr = self.slaw(cmd)
@@ -87,6 +94,9 @@ class Importer(object):
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
         self.log.info("Subprocess exit code: %s, stdout=%d bytes, stderr=%d bytes" % (p.returncode, len(stdout), len(stderr)))
+
+        if stderr:
+            self.log.info("Stderr: %s" % stderr.decode('utf-8'))
 
         return p.returncode, stdout, stderr
 

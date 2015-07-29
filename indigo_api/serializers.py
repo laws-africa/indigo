@@ -260,7 +260,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if upload:
             # we got a file
             try:
-                document = Importer().import_from_upload(upload)
+                importer = Importer()
+                importer.section_number_position = 'guess'
+                document = importer.import_from_upload(upload)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})

@@ -82,7 +82,7 @@
 
   <xsl:template match="a:blockList">
     <xsl:if test="a:listIntroduction != ''">
-      <xsl:value-of select="a:listIntroduction" />
+      <xsl:apply-templates select="a:listIntroduction" />
       <xsl:text>
 
 </xsl:text>

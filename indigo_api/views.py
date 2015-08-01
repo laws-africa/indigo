@@ -12,7 +12,7 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
 
 import lxml.etree as ET
 from lxml.etree import LxmlError
@@ -348,6 +348,10 @@ class ConvertView(APIView):
     Support for converting between two document types. This allows conversion from
     plain text, JSON, XML, and PDF to plain text, JSON, XML and HTML.
     """
+
+    # Allow anyone to use this API, it uses POST but doesn't change
+    # any documents in the database and so is safe.
+    permission_classes = (AllowAny,)
 
     def post(self, request, format=None):
         serializer, document = self.handle_input()

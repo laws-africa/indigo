@@ -9,10 +9,11 @@ legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
 It is a Django python web application using:
 
 * [Django](http://djangoproject.com/)
+* [Cobalt](http://cobalt.readthedocs.org/en/latest/) -- a lightweight Python library for working with Akoma Ntoso
+* [Slaw](https://rubygems.org/gems/slaw) -- a Ruby Gem for generating Akoma Ntoso from PDFs and other documents
 * [django-rest-framework](http://www.django-rest-framework.org/)
 * [backbone.js](http://backbonejs.org/)
 * [stickit.js](http://nytimes.github.io/backbone.stickit/)
-* [Slaw](https://rubygems.org/gems/slaw) -- a Ruby Gem for generating Akoma Ntoso from PDFs and other documents
 
 Read the [full documentation at indigo.readthedocs.org](http://indigo.readthedocs.org/en/latest/index.html).
 

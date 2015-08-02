@@ -129,22 +129,20 @@
     {{/each}}
   </div>
   {{/if}}
+</div>
 
-  {{#if summary.localities}}
+{{#if summary.localities}}
+<div class="panel panel-default">
   <div class="list-group">
     <a href="#" class="list-group-item filter-locality active" data-locality="">All localities <span class="badge">{{ count }}</span></a>
     {{#each summary.localities}}
     <a href="#" class="list-group-item filter-locality" data-locality="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
     {{/each}}
   </div>
-  {{/if}}
 </div>
+{{/if}}
 
 <div class="panel panel-default">
-  <div class="panel-heading">
-    <h3 class="panel-title">Tags</h3>
-  </div>
-
   <div class="panel-body">
     {{#each summary.tags}}
     <a href="#" class="label label-default filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>

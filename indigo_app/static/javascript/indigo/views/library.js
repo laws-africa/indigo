@@ -10,6 +10,7 @@
     events: {
       'click .filter-tag': 'filterByTag',
       'click .filter-country': 'filterByCountry',
+      'click .filter-locality': 'filterByLocality',
       'keyup .filter-search': 'filterBySearch',
       'click .filter-search-clear': 'resetSearch',
       'change .filter-status': 'filterByStatus',
@@ -24,6 +25,7 @@
       this.filters = {
         search: null,
         country: null,
+        locality: null,
         tags: [],
         status: 'all',
       };
@@ -58,6 +60,17 @@
           function(count, code) { return {code: code, name: Indigo.countries[code], count: count}; }
         ),
         function(info) { return info.name; });
+      this.summary.show_countries = this.summary.countries.length > 1;
+
+      // count localities, sort alphabetically
+      this.summary.localities = _.sortBy(
+        _.map(
+          _.countBy(
+            _.filter(this.model.models, function(d) { return d.get('locality'); }),
+                    function(d) { return d.get('locality'); }),
+          function(count, code) { return {code: code, name: code || "(none)", count: count}; }
+        ),
+        function(info) { return info.code; });
 
       // count tags, sort in descending order
       this.summary.tags = _.sortBy(
@@ -101,6 +114,19 @@
       $link.parent().children('.active').removeClass('active');
       $link.addClass('active');
       this.filters.country = country;
+
+      this.trigger('change');
+    },
+
+    filterByLocality: function(e) {
+      e.preventDefault();
+
+      var $link = $(e.currentTarget);
+      var locality = $link.data('locality') || null;
+
+      $link.parent().children('.active').removeClass('active');
+      $link.addClass('active');
+      this.filters.locality = locality;
 
       this.trigger('change');
     },
@@ -157,6 +183,13 @@
       if (filters.country) {
         docs = _.filter(docs, function(doc) {
           return doc.get('country') == filters.country;
+        });
+      }
+
+      // locality
+      if (filters.locality) {
+        docs = _.filter(docs, function(doc) {
+          return doc.get('locality') == filters.locality;
         });
       }
 

@@ -121,12 +121,23 @@
     </div>
   </div>
 
+  {{#if summary.show_countries}}
   <div class="list-group">
     <a href="#" class="list-group-item filter-country active" data-country="">All countries <span class="badge">{{ count }}</span></a>
     {{#each summary.countries}}
     <a href="#" class="list-group-item filter-country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
     {{/each}}
   </div>
+  {{/if}}
+
+  {{#if summary.localities}}
+  <div class="list-group">
+    <a href="#" class="list-group-item filter-locality active" data-locality="">All localities <span class="badge">{{ count }}</span></a>
+    {{#each summary.localities}}
+    <a href="#" class="list-group-item filter-locality" data-locality="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    {{/each}}
+  </div>
+  {{/if}}
 </div>
 
 <div class="panel panel-default">

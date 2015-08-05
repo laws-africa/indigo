@@ -92,7 +92,8 @@
    */
   Indigo.DocumentAmendmentsView = Backbone.View.extend({
     el: '.document-amendments-view',
-    template: '#amendments-template',
+    amendmentsTemplate: '#amendments-template',
+    amendedVersionsTemplate: '#amended-versions-template',
     events: {
       'click .add-amendment': 'addAmendment',
       'click .edit-amendment': 'editAmendment',
@@ -100,7 +101,8 @@
     },
 
     initialize: function() {
-      this.template = Handlebars.compile($(this.template).html());
+      this.amendmentsTemplate = Handlebars.compile($(this.amendmentsTemplate).html());
+      this.amendedVersionsTemplate = Handlebars.compile($(this.amendedVersionsTemplate).html());
 
       this.model.on('change:amendments sync', this.render, this);
 
@@ -110,12 +112,11 @@
     },
 
     render: function() {
-      var target = this.$el.find('.amendments-list');
       var count = 0;
       var document_id = this.model.get('id');
+      var amendments = this.model.get('amendments').toJSON();
 
-      if (this.model.get('amendments')) {
-        var amendments = this.model.get('amendments').toJSON();
+      if (amendments.length > 0) {
         count = amendments.length;
 
         // link in the amended versions
@@ -131,16 +132,19 @@
             }
           });
         });
-
-        target.html(this.template({
-          amendments: amendments,
-        }));
-      } else {
-        target.html('');
       }
+      this.$el.find('.amendments-list').html(this.amendmentsTemplate({
+        amendments: amendments,
+      }));
 
       // update amendment count in nav tabs
       $('.sidebar .nav a[href="#amendments-tab"] span').text(count === 0 ? '' : count);
+
+      // amended versions
+      var amended_versions = this.model.get('amended_versions');
+      this.$el.find('.amended-versions-list').html(this.amendedVersionsTemplate({
+        amended_versions: amended_versions,
+      }));
     },
 
     addAmendment: function(e) {

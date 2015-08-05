@@ -141,7 +141,14 @@
       $('.sidebar .nav a[href="#amendments-tab"] span').text(count === 0 ? '' : count);
 
       // amended versions
-      var amended_versions = this.model.get('amended_versions');
+      var amended_versions = _.map(this.model.get('amended_versions'), function(v) {
+        v = _.clone(v);
+        if (v.id == document_id) {
+          v.this_document = true;
+        }
+        return v;
+      });
+
       this.$el.find('.amended-versions-list').html(this.amendedVersionsTemplate({
         amended_versions: amended_versions,
       }));

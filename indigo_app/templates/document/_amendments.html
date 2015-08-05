@@ -69,11 +69,15 @@
   {% verbatim %}
 
   {{#if amended_versions}}
-  <h4>Other amended versions of this act</h4>
+  <h4>Other amended versions of this document</h4>
 
   <ul>
   {{#each amended_versions}}
-    <li><a href="/documents/{{ id }}">Version as at {{ expression_date }}</li>
+    {{#if this_document}}
+      <li>Version as at {{ expression_date }} (this document)</li>
+    {{else}}
+      <li><a href="/documents/{{ id }}">Version as at {{ expression_date }}</li>
+    {{/if}}
   {{/each}}
   </ul>
 

@@ -3,7 +3,9 @@ Indigo Platform
 
 Indigo is `AfricanLII's <http://africanlii.org/>`_ document management system for managing, capturing and publishing
 legislation in the `Akoma Ntoso <http://www.akomantoso.org/>`_ format, built by
-`Code for South Africa <http://code4sa.org>`_.
+`Code for South Africa <http://code4sa.org>`_ with a grant from `Indigo Trust <http://indigotrust.org.uk/>`_.
+
+You can try it out at `indigo.code4sa.org <http://indigo.code4sa.org>`_.
 
 Visit our `GitHub repository <https://github.com/Code4SA/indigo>`_ to find out how you
 can contribute to the project.

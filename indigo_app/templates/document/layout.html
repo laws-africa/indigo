@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% load pipeline %}
+{% load static %}
 
 
 {% block header %}
@@ -81,13 +82,15 @@
 
   {% else %}
     {# production dependencies for LIME #}
-    <script>var LIME_base_url = '/static/lime/dist/';</script>
-    {% javascript "lime" %}
-
-    {# these need to be loaded separately due to the way they load their dependent scripts #}
+    <script>
+var LIME_base_url = '/static/lime/dist/';
+var LIME_bootstrap_scripts = [
+  '{% static 'lime-bootstrap.js' %}',
+  // these need to be loaded separately due to the way they load their dependent scripts
+  '/static/lime/dist/lib/vkbeautify/vkbeautify.js',
+];
+    </script>
     <script type="text/javascript" src="/static/lime/dist/lib/tinymce4/tinymce.min.js"></script>
-    <script type="text/javascript" src="/static/lime/dist/lib/vkbeautify/vkbeautify.js"></script>
   {% endif %}
-
 
 {% endblock %}

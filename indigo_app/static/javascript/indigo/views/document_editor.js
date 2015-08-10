@@ -261,6 +261,31 @@
     },
 
     editFragment: function(node) {
+      var self = this;
+
+      if (typeof(LIME) == 'undefined') {
+        // we load LIME asynchronously when it's first needed,
+        // and we need a callback to know when that's done
+        $(document).on('ext:loaded', function() {
+          Ext.onReady(function() {
+            self.editFragmentWithLime(node);
+          });
+        });
+
+        // load the LIME script, this will eventually trigger the 'lime-loaded' event
+        _.each(LIME_bootstrap_scripts, function(fname) {
+          var script = document.createElement('script');
+          script.src = fname;
+          document.body.appendChild(script);
+        });
+
+      } else {
+        // LIME already loaded, go ahead and edit
+        this.editFragmentWithLime(node);
+      }
+    },
+
+    editFragmentWithLime: function(node) {
       // if we're editing the entire document,
       // strip the metadata when we next edit the 
       this.stripMeta = !node.querySelector('meta');
@@ -269,15 +294,6 @@
 
       this.resize();
 
-      // We only want to interact with the editor once the document
-      // is fully loaded, which we get as a callback from the
-      // application. We only setup this event handler once.
-      this.loading = true;
-      if (!this.initialized) {
-        LIME.app.on('documentLoaded', this.documentLoaded, this);
-        this.initialized = true;
-      }
-
       var config = {
         docMarkingLanguage: "akoma2.0",
         docType: "act",
@@ -285,6 +301,15 @@
         docLang: "eng",
       };
 
+      if (!this.initialized) {
+        // We only want to interact with the editor once the document
+        // is fully loaded, which we get as a callback from the
+        // application. We only setup this event handler once.
+        LIME.app.on('documentLoaded', this.documentLoaded, this);
+        this.initialized = true;
+      }
+
+      this.loading = true;
       LIME.XsltTransforms.transform(
         node,
         LIME_base_url + 'languagesPlugins/akoma2.0/AknToXhtml.xsl',

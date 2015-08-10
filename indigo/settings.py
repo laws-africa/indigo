@@ -86,7 +86,7 @@ else:
 # LIME editor
 # We use the compiled version of the LIME editor in production and, by default, development.
 # Set this to True to use the development version in development.
-INDIGO_LIME_DEBUG = True
+INDIGO_LIME_DEBUG = False
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -228,8 +228,11 @@ PIPELINE_JS = {
         'output_filename': 'app.js',
     },
     'lime': {
-        'source_filenames': ('lime/dist/app.js',),
-        'output_filename': 'lime.js',
+        'source_filenames': (
+            'lime/dist/app.js',
+            'javascript/lime-post.js'
+        ),
+        'output_filename': 'lime-bootstrap.js',
     }
 }
 

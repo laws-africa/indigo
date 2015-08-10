@@ -87,12 +87,28 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']})
         assert_equal(response.status_code, 200)
-        # TODO: this should work
-        #assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
+        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
 
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.status_code, 200)
         assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
+
+    def test_update_tags(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {'tags': ['foo', 'bar']})
+        assert_equal(response.status_code, 200)
+        assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
+
+        response = self.client.patch('/api/documents/%s' % id, {'tags': ['boom', 'bar']})
+        assert_equal(response.status_code, 200)
+        assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
+
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
 
     def test_update_publication_date(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
@@ -150,7 +166,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',
             'content': document_fixture('in the body'),
-            })
+        })
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -162,7 +178,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',
             'content': 'not valid xml',
-            })
+        })
         assert_equal(response.status_code, 400)
         assert_equal(len(response.data['content']), 1)
 
@@ -170,7 +186,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/',
             'content': document_fixture('in the body'),
-            })
+        })
         assert_equal(response.status_code, 400)
         assert_equal(len(response.data['frbr_uri']), 1)
 
@@ -212,7 +228,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',
             'content': document_fixture(xml=xml),
-            })
+        })
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -241,7 +257,7 @@ class DocumentAPITest(APITestCase):
                     },
                 ],
             },
-            ])
+        ])
 
     def test_create_with_amendments(self):
         # this document made the amendments

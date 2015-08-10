@@ -6,7 +6,7 @@ from django.db.models import Manager
 from rest_framework import serializers, renderers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
-from taggit_serializer.serializers import TagListSerializerField, TaggitSerializer
+from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 
@@ -14,14 +14,6 @@ from .models import Document, Attachment
 from .importer import Importer
 
 log = logging.getLogger(__name__)
-
-
-class TagSerializer(TaggitSerializer):
-    def _save_tags(self, tag_object, tags):
-        for key in tags.keys():
-            tag_values = tags.get(key)
-            getattr(tag_object, key).set(*tag_values)
-        return tag_object
 
 
 class AmendmentSerializer(serializers.Serializer):
@@ -314,6 +306,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             AttachmentSerializer(context={'document': document}).create({'file': source_file})
 
         document.save()
+        # reload it to ensure tags are refreshed
+        document = Document.objects.get(pk=document.id)
+
         return document
 
     def update_document(self, instance):

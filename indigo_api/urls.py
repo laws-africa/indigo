@@ -1,5 +1,7 @@
 from django.conf.urls import patterns, url, include
 from rest_framework.routers import DefaultRouter
+from django.views.decorators.cache import cache_page
+
 
 from . import views
 
@@ -12,9 +14,11 @@ urlpatterns = patterns('',
     # this requires at least 4 components in the FRBR URI,
     # starting with the two-letter country code
     #
+    # cached for 24 hours
+    #
     # eg. /za/act/2007/98
     url(r'^(?P<frbr_uri>[a-z]{2}[-/].*)$',
-        views.PublishedDocumentDetailView.as_view({'get': 'get'}),
+        cache_page(3600*24)(views.PublishedDocumentDetailView.as_view({'get': 'get'})),
         name='published-document-detail'),
 
     url(r'^convert(\.(?P<format>[a-z0-9]))?$', views.ConvertView.as_view(), name='convert'),

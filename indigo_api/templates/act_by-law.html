@@ -1,5 +1,6 @@
 {% load documents %}
 
+{% if coverpage %}
 <div class="coverpage">
   <h1>{{ document.title }}</h1>
 
@@ -15,5 +16,6 @@
   {% include '_amendments.html' %}
   {% endif %}
 </div>
+{% endif %}
 
 {{ content_html | safe }}

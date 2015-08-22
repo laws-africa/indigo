@@ -49,6 +49,7 @@ Entire Act
 
     GET /api/frbr-uri
 
+* Parameter ``coverpage``: should the response contain a generated coverpage? Use 1 for true, anything else for false. Default: 1. (HTML-only)
 * Content types: JSON, XML, HTML
 
 

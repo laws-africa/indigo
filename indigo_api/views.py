@@ -40,8 +40,11 @@ def download_attachment(attachment):
     return response
 
 
-def document_to_html(document):
-    """ Render an entire document to HTML. """
+def document_to_html(document, coverpage=True):
+    """ Render an entire document to HTML.
+
+    :param Boolean coverpage: Should a cover page be generated?
+    """
     # use this to render the bulk of the document with the Cobalt XSLT renderer
     renderer = HTMLRenderer(act=document.doc)
     body_html = renderer.render_xml(document.document_xml)
@@ -54,6 +57,7 @@ def document_to_html(document):
         'document': document,
         'content_html': body_html,
         'renderer': renderer,
+        'coverpage': coverpage,
     })
 
 
@@ -274,7 +278,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         if element:
             if format == 'html':
                 if component == 'main' and not subcomponent:
-                    return Response(document_to_html(document))
+                    coverpage = self.request.GET.get('coverpage', 1) == '1'
+                    return Response(document_to_html(document, coverpage=coverpage))
                 else:
                     return Response(HTMLRenderer(act=document.doc).render(element))
 

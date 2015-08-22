@@ -112,22 +112,6 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Caches
-if DEBUG:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
-        },
-    }
-else:
-    CACHES = {
-        'default': {
-            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-            'LOCATION': '/var/tmp/django_cache',
-        },
-    }
-
-
 # Templates
 TEMPLATE_DEBUG = DEBUG
 TEMPLATE_LOADERS = (

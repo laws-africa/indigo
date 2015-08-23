@@ -18,7 +18,7 @@ import lxml.etree as ET
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
 from .importer import Importer
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
@@ -433,3 +433,34 @@ class ConvertView(APIView):
         importer.fragment_id_prefix = self.request.data.get('id_prefix')
 
         return importer
+
+
+class LinkTermsView(APIView):
+    """
+    Support for running term discovery and linking on a document.
+    """
+
+    # Allow anyone to use this API, it uses POST but doesn't change
+    # any documents in the database and so is safe.
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = LinkTermsSerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        doc_serializer = DocumentSerializer(
+            data=self.request.data['document'],
+            context={'request': self.request})
+        log.debug(serializer.validated_data['document'])
+        doc_serializer.is_valid(raise_exception=True)
+
+        document = doc_serializer.update_document(Document())
+        self.link_terms(document)
+
+        # TODO: return a whole new document representation, or just the XML?
+
+        return Response({'document': {'content': document.document_xml}})
+
+    def link_terms(self, doc):
+        # TODO
+        pass

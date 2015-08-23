@@ -33,7 +33,28 @@
     },
 
     linkDefinitions: function(e) {
-      // TODO
+      var self = this,
+          $btn = this.$el.find('.link-definitions'),
+          data = {
+            document: {
+              content: this.model.toXml()
+            }
+          };
+
+      $btn.prop('disabled', true);
+
+      $.ajax({
+        url: '/api/analysis/link-terms',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+        .then(function(response) {
+          self.model.setXml(response.document.content);
+        })
+        .always(function() {
+          $btn.prop('disabled', false);
+        });
     },
   });
 })(window);

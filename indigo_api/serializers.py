@@ -354,6 +354,13 @@ class ConvertSerializer(serializers.Serializer):
         return data
 
 
+class LinkTermsSerializer(serializers.Serializer):
+    """
+    Helper to handle input elements for the /analysis/link-terms API
+    """
+    document = serializers.CharField()
+
+
 class AkomaNtosoRenderer(renderers.XMLRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         return data

@@ -1,0 +1,38 @@
+<header class="boxed-group-header">
+  <h4>
+    Analysis
+  </h4>
+</header>
+
+<div class="boxed-group-inner document-analysis-view">
+  <fieldset class="document-terms-view">
+    <legend>Defined terms</legend>
+
+    <p>
+      <button class="btn btn-default link-definitions"><i class="fa fa-refresh"></i> Find and link defined terms</button>
+    </p>
+
+    <p>These are terms that are explicitly defined in this document.</p>
+
+    <div class="document-terms-list"></div>
+  </fieldset>
+</div>
+
+<script id="terms-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+{{#if terms}}
+  <ol class="list-inline">
+    {{#each terms}}
+    <li class="col-sm-4">{{this}}</li>
+    {{/each}}
+  </ol>
+
+{{else}}
+<p>
+  <em>The document does not define any terms.</em>
+</p>
+{{/if}}
+
+{% endverbatim %}
+</script>

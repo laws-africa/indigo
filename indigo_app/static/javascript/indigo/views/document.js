@@ -109,6 +109,8 @@
       this.attachmentsView.on('dirty', this.setDirty, this);
       this.attachmentsView.on('clean', this.setClean, this);
 
+      this.analysisView = new Indigo.DocumentAnalysisView({model: this.documentDom});
+
       this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
       this.tocView.on('item-selected', this.showEditor, this);
 

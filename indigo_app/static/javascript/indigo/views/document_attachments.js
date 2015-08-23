@@ -44,7 +44,7 @@
   });
 
   /**
-   * Handle the document repeal view.
+   * Handle the document attachments view.
    */
   Indigo.DocumentAttachmentsView = Backbone.View.extend({
     el: '.document-attachments-view',
@@ -75,6 +75,7 @@
     render: function() {
       var self = this;
       var models = this.model.toJSON();
+      var count = models.length;
 
       _.each(models, function(m) {
         m.prettySize = self.prettySize(m.size);
@@ -83,6 +84,9 @@
       this.$el.find('.document-attachments-list').html(this.template({
         attachments: models,
       }));
+
+      // update attachment count in nav tabs
+      $('.sidebar .nav .attachment-count').text(count === 0 ? '' : count);
     },
 
     editAttachment: function(e) {

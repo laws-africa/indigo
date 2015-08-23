@@ -138,7 +138,7 @@
       }));
 
       // update amendment count in nav tabs
-      $('.sidebar .nav a[href="#amendments-tab"] span').text(count === 0 ? '' : count);
+      $('.sidebar .nav .amendment-count').text(count === 0 ? '' : count);
 
       // amended versions
       var amended_versions = _.map(this.model.get('amended_versions'), function(v) {

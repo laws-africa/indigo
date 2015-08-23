@@ -99,6 +99,10 @@ fieldset {
   .nav {
     padding: 5px;
   }
+
+  .nav > li > a {
+    padding: 2px 5px;
+  }
 }
 
 .sidebar + .workspace-content {

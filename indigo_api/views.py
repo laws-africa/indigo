@@ -307,8 +307,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 elif expr_date[0] == ':':
                     # latest document at or before this date
                     query = query\
-                            .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
-                            .order_by('-expression_date')
+                        .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
+                        .order_by('-expression_date')
 
                 else:
                     raise Http404("The expression date %s is not valid" % expr_date)

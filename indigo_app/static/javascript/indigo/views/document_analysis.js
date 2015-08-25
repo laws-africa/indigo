@@ -11,7 +11,7 @@
     el: '.document-analysis-view',
     termsTemplate: '#terms-template',
     events: {
-      'click .link-definitions': 'linkDefinitions',
+      'click .link-terms': 'linkTerms',
     },
 
     initialize: function(options) {
@@ -27,12 +27,14 @@
 
     /** Find defined terms in this document */
     findTerms: function() {
-      return _.map(this.model.xmlDocument.querySelectorAll('meta TLCTerm'), function(elem) {
-        return elem.getAttribute('showAs');
+      var terms = {};
+
+      return _.map(this.model.xmlDocument.querySelectorAll('def'), function(elem) {
+        return elem.textContent;
       }).sort();
     },
 
-    linkDefinitions: function(e) {
+    linkTerms: function(e) {
       var self = this,
           $btn = this.$el.find('.link-definitions'),
           data = {

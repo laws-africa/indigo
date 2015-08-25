@@ -9,14 +9,45 @@ from .models import Document
 from cobalt.act import Fragment
 
 
-class Importer(object):
+class Slaw(object):
+    log = logging.getLogger(__name__)
+
+    def link_terms(self, document):
+        """
+        Find and link defined terms in a document.
+        """
+        with tempfile.NamedTemporaryFile() as f:
+            f.write(document.content)
+            f.flush()
+            cmd = ['link-definitions', f.name]
+            code, stdout, stderr = self.slaw(cmd)
+            if code > 0:
+                raise ValueError(stderr)
+            document.content = stdout
+
+        return stdout
+
+    def slaw(self, args):
+        """ Call slaw with ``args`` """
+        cmd = ['slaw'] + args
+        self.log.info("Running %s" % cmd)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        stdout, stderr = p.communicate()
+        self.log.info("Subprocess exit code: %s, stdout=%d bytes, stderr=%d bytes" % (p.returncode, len(stdout), len(stderr)))
+
+        if stderr:
+            self.log.info("Stderr: %s" % stderr.decode('utf-8'))
+
+        return p.returncode, stdout, stderr
+
+
+class Importer(Slaw):
     """
     Import from PDF and other document types using Slaw.
 
     Slaw is a commandline tool from the slaw Ruby Gem which generates Akoma Ntoso
     from PDF and other documents. See https://rubygems.org/gems/slaw
     """
-    log = logging.getLogger(__name__)
 
     """ The name of the AKN element that we're importing, or None for a full act. """
     fragment = None
@@ -68,6 +99,7 @@ class Importer(object):
                 cmd.extend(['--id-prefix', self.fragment_id_prefix])
         if self.section_number_position:
             cmd.extend(['--section-number-position', self.section_number_position])
+        cmd.extend(['--pdftotext', settings.INDIGO_PDFTOTEXT])
         cmd.append(fname)
 
         code, stdout, stderr = self.slaw(cmd)
@@ -86,19 +118,6 @@ class Importer(object):
 
         self.log.info("Successfully imported from %s" % fname)
         return doc
-
-    def slaw(self, args):
-        """ Call slaw with ``args`` """
-        cmd = ['slaw'] + args + ['--pdftotext', settings.INDIGO_PDFTOTEXT]
-        self.log.info("Running %s" % cmd)
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = p.communicate()
-        self.log.info("Subprocess exit code: %s, stdout=%d bytes, stderr=%d bytes" % (p.returncode, len(stdout), len(stderr)))
-
-        if stderr:
-            self.log.info("Stderr: %s" % stderr.decode('utf-8'))
-
-        return p.returncode, stdout, stderr
 
     def tempfile_for_upload(self, upload):
         """ Uploaded files might not be on disk. If not, create temporary file. """

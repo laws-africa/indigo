@@ -11,7 +11,7 @@ from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 
 from .models import Document, Attachment
-from .importer import Importer
+from .slaw import Importer
 
 log = logging.getLogger(__name__)
 

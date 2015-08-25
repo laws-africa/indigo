@@ -43,7 +43,9 @@
             }
           };
 
-      $btn.prop('disabled', true);
+      $btn
+        .prop('disabled', true)
+        .find('.fa').addClass('fa-spin');
 
       $.ajax({
         url: '/api/analysis/link-terms',
@@ -55,7 +57,9 @@
           self.model.setXml(response.document.content);
         })
         .always(function() {
-          $btn.prop('disabled', false);
+          $btn
+            .prop('disabled', false)
+            .find('.fa').removeClass('fa-spin');
         });
     },
   });

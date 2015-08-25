@@ -11,7 +11,7 @@ from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 
 from .models import Document, Attachment
-from .importer import Importer
+from .slaw import Importer
 
 log = logging.getLogger(__name__)
 
@@ -352,6 +352,13 @@ class ConvertSerializer(serializers.Serializer):
             raise ValidationError({'inputformat': "The inputformat field is required when the content field is used"})
 
         return data
+
+
+class LinkTermsSerializer(serializers.Serializer):
+    """
+    Helper to handle input elements for the /analysis/link-terms API
+    """
+    document = serializers.CharField()
 
 
 class AkomaNtosoRenderer(renderers.XMLRenderer):

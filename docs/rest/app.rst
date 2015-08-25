@@ -195,3 +195,16 @@ property.
 
 Not all formats have all the detail necessary to convert to other formats. For instance, plain text doesn't have enough information
 to convert to a complete JSON or Akoma Ntoso XML format. In this cases, placeholder values are used (eg. for the FRBR URI, publication time, etc.).
+
+Find and Link Defined Terms
+---------------------------
+
+.. code:: http
+
+    POST /api/analysis/link-terms
+
+* Parameters:
+
+  * ``document``: a document description, only the ``content`` element is required
+
+Finds defined terms in a document, and finds references to those terms.

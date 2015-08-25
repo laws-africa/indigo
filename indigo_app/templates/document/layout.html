@@ -5,45 +5,22 @@
 
 
 {% block header %}
-<span data-document-id="{{ document.id|default:"" }}"></span>
-<h4 class="document-title">{{ document.title }}</h4>
+  <span data-document-id="{{ document.id|default:"" }}"></span>
+  <h4 class="document-title">{{ document.title }}</h4>
 {% endblock %}
 
 
 {% block header-buttons %}
-<button class="btn btn-default save" disabled style="display: none"><i class="fa fa-save"></i> Save</button>
+  <button class="btn btn-default save" disabled style="display: none"><i class="fa fa-save"></i> Save</button>
 {% endblock %}
 
 
 {% block content %}
-<div class="sidebar">
-  <ul class="nav nav-pills nav-stacked">
-    <li class="active"><a href="#props-tab" data-toggle="tab"><i class="fa fa-fw fa-cog"></i> Metadata</a></li>
-    <li><a href="#attachments-tab" data-toggle="tab"><i class="fa fa-fw fa-paperclip"></i> Attachments <span class="badge badge-default attachment-count"></span></a></li>
-    <li><a href="#amendments-tab" data-toggle="tab"><i class="fa fa-fw fa-edit"></i> Amendments <span class="badge badge-default amendment-count"></span></a></li>
-    <li><a href="#preview-tab" data-toggle="tab"><i class="fa fa-fw fa-search-plus"></i> Preview</a></li>
-    <!-- this tab is always hidden -->
-    <li class="hidden"><a href="#content-tab" data-toggle="tab">Content</a></li>
-  </ul>
+  {% include "document/_sidebar.html" %}
 
-  <div id="toc" class="toc"></div>
-  <script id="toc-template" type="text/x-handlebars-template">
-  {% verbatim %}
-  <ol>
-    {{#each toc}}
-    <li class="toc-item akn-{{ type }}" title="{{ title }}">
-      <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
-    </li>
-    {{/each}}
-  </ol>
-  {% endverbatim %}
-  </script>
-</div>
-
-<div class="workspace-content">
-  {% block main-content %}{% endblock %}
-</div>
-
+  <div class="workspace-content">
+    {% block main-content %}{% endblock %}
+  </div>
 {% endblock %}
 
 {% block head-css %}

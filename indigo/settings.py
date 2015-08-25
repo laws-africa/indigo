@@ -214,6 +214,7 @@ PIPELINE_JS = {
             'javascript/indigo/views/document_amendments.js',
             'javascript/indigo/views/document_repeal.js',
             'javascript/indigo/views/document_attachments.js',
+            'javascript/indigo/views/document_analysis.js',
             'javascript/indigo/views/document_properties.js',
             'javascript/indigo/views/document_chooser.js',
             'javascript/indigo/views/document_toc.js',

@@ -18,8 +18,8 @@ import lxml.etree as ET
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer
-from .importer import Importer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .slaw import Importer, Slaw
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
 
@@ -307,8 +307,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 elif expr_date[0] == ':':
                     # latest document at or before this date
                     query = query\
-                            .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
-                            .order_by('-expression_date')
+                        .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
+                        .order_by('-expression_date')
 
                 else:
                     raise Http404("The expression date %s is not valid" % expr_date)
@@ -433,3 +433,32 @@ class ConvertView(APIView):
         importer.fragment_id_prefix = self.request.data.get('id_prefix')
 
         return importer
+
+
+class LinkTermsView(APIView):
+    """
+    Support for running term discovery and linking on a document.
+    """
+
+    # Allow anyone to use this API, it uses POST but doesn't change
+    # any documents in the database and so is safe.
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = LinkTermsSerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        doc_serializer = DocumentSerializer(
+            data=self.request.data['document'],
+            context={'request': self.request})
+        doc_serializer.is_valid(raise_exception=True)
+        if not doc_serializer.validated_data.get('content'):
+            raise ValidationError({'document': ["Content cannot be empty."]})
+
+        document = doc_serializer.update_document(Document())
+        self.link_terms(document)
+
+        return Response({'document': {'content': document.document_xml}})
+
+    def link_terms(self, doc):
+        Slaw().link_terms(doc)

@@ -36,7 +36,7 @@
 
     linkTerms: function(e) {
       var self = this,
-          $btn = this.$el.find('.link-definitions'),
+          $btn = this.$el.find('.link-terms'),
           data = {
             document: {
               content: this.model.toXml()

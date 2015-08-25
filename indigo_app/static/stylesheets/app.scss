@@ -98,6 +98,7 @@ fieldset {
 
   .nav {
     padding: 5px;
+    box-shadow: 0px 4px 5px -3px rgba(0, 0, 0, 0.3);
   }
 
   .nav > li > a {
@@ -380,7 +381,7 @@ legend {
 /* table of contents browser */
 .toc {
   position: absolute;
-  top: 130px;
+  top: 132px;
   left: 0px;
   right: 0px;
   bottom: 0px;

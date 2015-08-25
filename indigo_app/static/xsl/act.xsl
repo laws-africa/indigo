@@ -8,6 +8,7 @@
   <xsl:template match="a:act">
     <xsl:element name="span" namespace="">
       <xsl:attribute name="class">akn-act</xsl:attribute>
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates select="a:coverPage" />
       <xsl:apply-templates select="a:preface" />
       <xsl:apply-templates select="a:preamble" />
@@ -16,9 +17,27 @@
     </xsl:element>
   </xsl:template>
 
+  <!-- copy over attributes using a data- prefix, except for 'id' which is copied as-is -->
+  <xsl:template match="@*" >
+    <xsl:choose>
+      <xsl:when test="local-name(.) = 'id'">
+        <xsl:attribute name="{local-name(.)}">
+          <xsl:value-of select="." />
+        </xsl:attribute>
+      </xsl:when>
+      <xsl:otherwise>
+        <xsl:variable name="attName" select="concat('data-', local-name(.))"/>
+        <xsl:attribute name="{$attName}">
+          <xsl:value-of select="." />
+        </xsl:attribute>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- for parts and chapters, include an easily stylable heading -->
   <xsl:template match="a:part">
-    <div class="akn-part" id="{@id}">
+    <div class="akn-part">
+      <xsl:apply-templates select="@*" />
       <h2>
         <xsl:text>Part </xsl:text>
         <xsl:value-of select="./a:num" />
@@ -31,7 +50,8 @@
   </xsl:template>
 
   <xsl:template match="a:chapter">
-    <div class="akn-chapter" id="{@id}">
+    <div class="akn-chapter">
+      <xsl:apply-templates select="@*" />
       <h2>
         <xsl:text>Chapter </xsl:text>
         <xsl:value-of select="./a:num" />
@@ -44,7 +64,8 @@
   </xsl:template>
 
   <xsl:template match="a:section">
-    <div class="akn-{local-name()}" id="{@id}">
+    <div class="akn-{local-name()}">
+      <xsl:apply-templates select="@*" />
       <h3>
         <xsl:value-of select="./a:num" />
         <xsl:text> </xsl:text>
@@ -56,25 +77,16 @@
   </xsl:template>
   
   <xsl:template match="a:subsection">
-    <span class="akn-{local-name()}" id="{@id}">
-      <xsl:apply-templates select="./*[not(self::a:heading)]" />
-    </span>
-  </xsl:template>
-
-  <!-- for term nodes, ensure we keep the refersTo element -->
-  <xsl:template match="a:term">
     <span class="akn-{local-name()}">
-      <xsl:attribute name="data-refers-to">
-        <xsl:value-of select="@refersTo" />
-      </xsl:attribute>
-
-      <xsl:apply-templates />
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates select="./*[not(self::a:heading)]" />
     </span>
   </xsl:template>
 
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <div class="akn-doc" id="{@id}">
+    <div class="akn-doc">
+      <xsl:apply-templates select="@*" />
       <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
         <h2>
           <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
@@ -90,14 +102,10 @@
   </xsl:template>
 
   <!-- for all nodes, generate a SPAN element with a class matching
-       the AN name of the node and copy over the ID if it exists -->
+       the AN name of the node and copy over the attributes -->
   <xsl:template match="*">
     <span class="akn-{local-name()}">
-      <xsl:if test="@id">
-        <xsl:attribute name="id">
-          <xsl:value-of select="@id" />
-        </xsl:attribute>
-      </xsl:if>
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </span>
   </xsl:template>

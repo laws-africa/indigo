@@ -148,6 +148,10 @@ a.help {
   padding: 5px;
 }
 
+.boxed-group-inner-minimal {
+  padding: 0px;
+}
+
 .boxed-group-header + .boxed-group-inner {
   top: $header-height;
 }
@@ -217,8 +221,6 @@ a.help {
 }
 
 .document-content-view {
-  padding: 0px;
-
   // show or hide source code component
   &.show-source {
     .document-xml-editor {

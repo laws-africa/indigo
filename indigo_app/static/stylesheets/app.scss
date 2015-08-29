@@ -1,10 +1,12 @@
 $border-colour: #ddd;
-$header-colour: #eee;
+$workspace-header-colour: #ddd;
+$workspace-header-border-colour: #ccc;
 $header-colour2: #f5f5f5;
 
 $header-height: 45px;
 
 $sidebar-width: 260px;
+$sidebar-colour: #eee;
 
 html, body {
   height: 100%;
@@ -49,8 +51,8 @@ fieldset {
   height: $header-height;
   width: 100%;
   padding: 5px;
-  background-color: $header-colour;
-  border-bottom: 2px solid $border-colour;
+  background-color: $workspace-header-colour;
+  border-bottom: 2px solid $workspace-header-border-colour;
 }
 
 .workspace-title {
@@ -115,12 +117,12 @@ fieldset {
   top: $header-height;
   bottom: 0px;
   width: $sidebar-width;
+  background-color: $sidebar-colour;
 
   border-right: 1px solid $border-colour;
 
   .nav {
     padding: 5px;
-    box-shadow: 0px 4px 5px -3px rgba(0, 0, 0, 0.3);
   }
 
   .nav > li > a {
@@ -411,6 +413,7 @@ legend {
   bottom: 0px;
   overflow-x: hidden;
   overflow-y: scroll;
+  background-color: white;
 
   margin-top: 5px;
   border-top: 1px solid #ddd;
@@ -474,6 +477,10 @@ legend {
 }
 
 .library-sidebar {
+  .panel-body {
+    background-color: $sidebar-colour;
+  }
+
   .boxed-group-inner {
     padding: 0px;
   }

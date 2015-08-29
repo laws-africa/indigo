@@ -108,6 +108,10 @@ fieldset {
   left: 0px;
   right: 0px;
   overflow: hidden;
+
+  .boxed-group-inner {
+    padding: 10px;
+  }
 }
 
 /* sidebar */
@@ -176,7 +180,7 @@ a.help {
   padding: 5px;
 }
 
-.boxed-group-inner-minimal {
+.boxed-group-inner.boxed-group-inner-minimal {
   padding: 0px;
 }
 
@@ -196,10 +200,6 @@ a.help {
 }
 
 /* editors */
-
-.document-properties-view {
-  padding: 10px;
-}
 
 .document-content-header {
   /* shown only when the text editor is active */

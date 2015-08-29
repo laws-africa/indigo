@@ -110,8 +110,8 @@
       var $link = $(e.currentTarget);
       var country = $link.data('country') || null;
 
-      $link.parent().children('.active').removeClass('active');
-      $link.addClass('active');
+      $link.closest('ul').find('li').removeClass('active');
+      $link.closest('li').addClass('active');
       this.filters.country = country;
 
       this.trigger('change');
@@ -123,8 +123,8 @@
       var $link = $(e.currentTarget);
       var locality = $link.data('locality') || null;
 
-      $link.parent().children('.active').removeClass('active');
-      $link.addClass('active');
+      $link.closest('ul').find('li').removeClass('active');
+      $link.closest('li').addClass('active');
       this.filters.locality = locality;
 
       this.trigger('change');

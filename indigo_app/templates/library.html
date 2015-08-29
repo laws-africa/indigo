@@ -97,49 +97,55 @@
 <script id="filters-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<div class="panel panel-default">
-  <div class="panel-body">
-    <div class="btn-group" data-toggle="buttons">
-      <label class="btn btn-default btn-sm active">
-        <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
-      </label>
-      <label class="btn btn-default btn-sm ">
-        <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
-      </label>
-      <label class="btn btn-default btn-sm">
-        <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
-      </label>
-    </div>
+<section>
+  <div class="btn-group" data-toggle="buttons">
+    <label class="btn btn-default btn-sm active">
+      <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
+    </label>
+    <label class="btn btn-default btn-sm ">
+      <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
+    </label>
+    <label class="btn btn-default btn-sm">
+      <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
+    </label>
   </div>
+</section>
 
-  {{#if summary.show_countries}}
-  <div class="list-group">
-    <a href="#" class="list-group-item filter-country active" data-country="">All countries <span class="badge">{{ count }}</span></a>
+{{#if summary.show_countries}}
+<section>
+  <ul class="nav nav-pills nav-stacked">
+    <li class="active">
+      <a href="#" class="filter-country" data-country="">All countries <span class="badge">{{ count }}</span></a>
+    </li>
     {{#each summary.countries}}
-    <a href="#" class="list-group-item filter-country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    <li>
+      <a href="#" class="filter-country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    </li>
     {{/each}}
-  </div>
-  {{/if}}
-</div>
-
-{{#if summary.localities}}
-<div class="panel panel-default">
-  <div class="list-group">
-    <a href="#" class="list-group-item filter-locality active" data-locality="">All localities <span class="badge">{{ count }}</span></a>
-    {{#each summary.localities}}
-    <a href="#" class="list-group-item filter-locality" data-locality="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
-    {{/each}}
-  </div>
-</div>
+  </ul>
+</section>
 {{/if}}
 
-<div class="panel panel-default tags-panel">
-  <div class="panel-body">
-    {{#each summary.tags}}
-    <a href="#" class="label label-default filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
+{{#if summary.localities}}
+<section>
+  <ul class="nav nav-pills nav-stacked">
+    <li class="active">
+      <a href="#" class="filter-locality" data-locality="">All localities <span class="badge">{{ count }}</span></a>
+    </li>
+    {{#each summary.localities}}
+    <li>
+      <a href="#" class="filter-locality" data-locality="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    </li>
     {{/each}}
-  </div>
-</div>
+  </ul>
+</section>
+{{/if}}
+
+<section class="tag-filters">
+  {{#each summary.tags}}
+  <a href="#" class="label label-default filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
+  {{/each}}
+</section>
 {% endverbatim %}
 </script>
 

@@ -128,6 +128,10 @@ fieldset {
   .nav > li > a {
     padding: 2px 5px;
   }
+
+  section {
+    margin-bottom: 10px;
+  }
 }
 
 .sidebar + .workspace-content {
@@ -477,35 +481,17 @@ legend {
 }
 
 .library-sidebar {
-  .panel-body {
-    background-color: $sidebar-colour;
+  .btn-group {
+    padding-left: 7px;
+    padding-top: 5px;
   }
 
-  .boxed-group-inner {
-    padding: 0px;
+  .nav-pills a .badge {
+    float: right;
   }
 
-  .panel {
-    border-width: 1px 0px 1px 0px;
-    border-radius: 0px;
-    box-shadow: none;
-    -webkit-box-shadow: none;
-  }
-
-  .list-group-item {
-    border-radius: 0px !important;
-  }
-
-  .panel:first-child {
-    border-top-width: 0px;
-  }
-}
-
-.tags-panel {
-  border: 0px;
-
-  .panel-body {
-    padding: 0px 15px;
+  .tag-filters {
+    padding-left: 7px;
   }
 }
 

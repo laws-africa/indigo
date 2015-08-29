@@ -5,14 +5,13 @@
   Indigo = exports.Indigo;
 
   Indigo.LibraryFilterView = Backbone.View.extend({
-    el: '#filters',
+    el: '.workspace',
     template: '#filters-template',
     events: {
       'click .filter-tag': 'filterByTag',
       'click .filter-country': 'filterByCountry',
       'click .filter-locality': 'filterByLocality',
       'keyup .filter-search': 'filterBySearch',
-      'click .filter-search-clear': 'resetSearch',
       'change .filter-status': 'filterByStatus',
     },
 
@@ -162,12 +161,8 @@
       }
     },
 
-    resetSearch: function(e) {
-      this.$el.find('.filter-search').val('').trigger('keyup');
-    },
-
     render: function() {
-      this.$el.html(this.template({
+      $('#filters').html(this.template({
         summary: this.summary,
         count: this.model.length
       }));

@@ -55,6 +55,7 @@ fieldset {
 
 .workspace-title {
   position: absolute;
+  top: 5px;
   left: $sidebar-width;
   right: 0px;
 
@@ -63,8 +64,29 @@ fieldset {
   }
 }
 
+.brand {
+  display: inline;
+  float: left;
+  padding-right: 20px;
+}
+
 .library-box {
-  position: absolute;
+  position: relative;
+
+  .btn-link {
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+
+  .btn-link:hover,
+  .btn-link:active,
+  .btn-link:focus {
+    text-decoration: none;
+  }
+
+  .dropdown {
+    display: inline-block;
+  }
 }
 
 .workspace-buttons {
@@ -445,6 +467,39 @@ legend {
   font-size: inherit;
   font-weight: normal;
   margin-bottom: 5px;
+}
+
+.header-search-box {
+  width: 250px;
+}
+
+.library-sidebar {
+  .boxed-group-inner {
+    padding: 0px;
+  }
+
+  .panel {
+    border-width: 1px 0px 1px 0px;
+    border-radius: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  .list-group-item {
+    border-radius: 0px !important;
+  }
+
+  .panel:first-child {
+    border-top-width: 0px;
+  }
+}
+
+.tags-panel {
+  border: 0px;
+
+  .panel-body {
+    padding: 0px 15px;
+  }
 }
 
 /* amendments list */

@@ -469,6 +469,39 @@ legend {
   margin-bottom: 5px;
 }
 
+.header-search-box {
+  width: 250px;
+}
+
+.library-sidebar {
+  .boxed-group-inner {
+    padding: 0px;
+  }
+
+  .panel {
+    border-width: 1px 0px 1px 0px;
+    border-radius: 0px;
+    box-shadow: none;
+    -webkit-box-shadow: none;
+  }
+
+  .list-group-item {
+    border-radius: 0px !important;
+  }
+
+  .panel:first-child {
+    border-top-width: 0px;
+  }
+}
+
+.tags-panel {
+  border: 0px;
+
+  .panel-body {
+    padding: 0px 15px;
+  }
+}
+
 /* amendments list */
 .amendments-list {
   margin-top: 20px;

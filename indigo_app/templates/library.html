@@ -3,15 +3,15 @@
 {% block title %}Library{% endblock %}
 
 {% block header %}
-<h4>
-  Library
-  <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-</h4>
+  <div class="input-group header-search-box">
+    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+    <input type="text" class="form-control filter-search" placeholder="Search documents">
+  </div>
 {% endblock %}
 
 {% block content %}
 
-<div class="sidebar">
+<div class="sidebar library-sidebar">
   <div class="boxed-group-inner">
     <div id="filters">
     </div>
@@ -98,15 +98,6 @@
 {% verbatim %}
 
 <div class="panel panel-default">
-  <div class="panel-heading">
-    <div class="input-group">
-      <input type="text" class="form-control filter-search" placeholder="Search documents">
-      <div class="input-group-btn">
-        <button class="filter-search-clear btn btn-default"><strong>&times;</strong></button>
-      </div>
-    </div>
-  </div>
-
   <div class="panel-body">
     <div class="btn-group" data-toggle="buttons">
       <label class="btn btn-default btn-sm active">
@@ -142,7 +133,7 @@
 </div>
 {{/if}}
 
-<div class="panel panel-default">
+<div class="panel panel-default tags-panel">
   <div class="panel-body">
     {{#each summary.tags}}
     <a href="#" class="label label-default filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>

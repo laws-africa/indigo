@@ -64,13 +64,13 @@ The raw XML is available at:
 Acts at a Point in Time
 -----------------------
 
-An act may be amended multiple times over its lifetime. You can retrieve the version of an act as it appeared after a dated amendment, if available, by specifyng the date in the URI in the format ``@YYYY-MM-dd``. For example, ``/za/act/1998/84/eng@2012-01-01`` is the version of Act 84 of 1998 after the amendment on date 2012-01-01 has been applied. If there was no amendment of that document on that exact date, a 404 will be returned.
+A URI such as ``/za/act/1998/84/eng`` actually refers to the latest (current) version of the act.
 
-If you don't know on which exact dates amendments were made, you can get the version of the act as it would have looked on a particular date (if available) by placing ``:YYYY-MM-DD`` at the end of the URI, for example: ``/za/act/1998/84/eng:2012-06-01``. Indigo will find the most recent amended version at or before that date.
+An act may be amended multiple times over its lifetime. You can retrieve the version of an act as it appeared after a dated amendment, if available, by specifyng the date in the URI in the format ``@YYYY-MM-dd``. For example, ``/za/act/1998/84/eng@2012-01-01`` is the version of Act 84 of 1998 after the amendment on date 2012-01-01 has been applied. If there was no amendment of that document on that exact date, a 404 will be returned.
 
 You can fetch the very first version of the act by using a ``@`` without a date: ``/za/act/1998/84/eng@``.
 
-A URI such as ``/za/act/1998/84/eng`` actually refers to the latest (current) version of the act.
+If you don't know on which exact dates amendments were made, you can get the version of the act as it would have looked on a particular date (if available) by placing ``:YYYY-MM-DD`` at the end of the URI, for example: ``/za/act/1998/84/eng:2012-06-01``. Indigo will find the most recent amended version at or before that date.
 
 Components and formats are placed after the date portion, such as ``/za/act/1998/84/eng@2012-01-01.json``.
 
@@ -85,11 +85,12 @@ Table of Contents
 
 Get a descirption of the table of contents of an act.
 
-.. note::
+Fetching Parts, Chapters and Sections
+-------------------------------------
 
-    Always include a three-letter language code when fetching ``toc.json``, otherwise
-    the ``toc`` will be incorrectly used as the language code.
+TODO:
 
+* talk about using the TOC to get parts, chapters and sections individually
 
 Using HTML Responses
 --------------------

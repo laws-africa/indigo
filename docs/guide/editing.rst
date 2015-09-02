@@ -284,21 +284,11 @@ It can be useful to see what the Akoma Ntoso for a piece of the document looks l
 Adding new Chapters, Parts and Sections
 ---------------------------------------
 
-You cannot add a new section, part or chapter when editing an existing section, part or chapter. To add a new one, you must edit the element which *contains* an existing section, part or chapter.
+You can easily add a new chapter, part or section to a document. To do so:
 
-For example, suppose you had the following layout and you need to add a new section "10. Staffing".
-
-- Part 2 Institutional Matters
-
-  - 7. First meeting
-  - 8. Election of chairperson
-  - 9. Meetings
-
-You *cannot* add the new section by editing section "9. Meetings" and adding "10. Staffing at the end", Indigo will give you an error.
-
-You must edit the element which *contains* an existing section near the one you wish to add. In this case, you would edit "Part 2 Institutional Matters" and add the new section at the end of section 9.
-
-Similarly, if you needed to add "Part 3 Powers and duties" after Part 2, you would need to edit the entire document and add the new part after Part 2.
+1. edit the chapter, part or section just before where the new one needs to go
+2. at the bottom, add the new chapter, part or section heading and content
+3. click the green Update button
 
 Advanced Editing
 ----------------

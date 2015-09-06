@@ -313,13 +313,10 @@ legend {
 
 #progress-bar {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 150px;
-  height: 20px;
-  padding: 5px;
-  background-color: lightgrey;
-  border-radius: 5px;
+  top: 42px;
+  right: 0px;
+  left: 0px;
+  height: 6px;
   z-index: 100;
 }
 

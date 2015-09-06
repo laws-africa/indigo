@@ -60,6 +60,9 @@ class Importer(Slaw):
     """
     section_number_position = 'before-title'
 
+    """ Should we tell Slaw to reformat before parsing? Only do this with initial imports. """
+    reformat = False
+
     def import_from_upload(self, upload):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
@@ -69,6 +72,7 @@ class Importer(Slaw):
             doc.content = upload.read().decode('utf-8')
         else:
             with self.tempfile_for_upload(upload) as f:
+                self.reformat = True
                 doc = self.import_from_file(f.name)
 
             if not self.fragment:
@@ -93,12 +97,18 @@ class Importer(Slaw):
 
     def import_from_file(self, fname):
         cmd = ['parse', '--no-definitions']
+
         if self.fragment:
             cmd.extend(['--fragment', self.fragment])
             if self.fragment_id_prefix:
                 cmd.extend(['--id-prefix', self.fragment_id_prefix])
+
+        if self.reformat:
+            cmd.extend(['--reformat'])
+
         if self.section_number_position:
             cmd.extend(['--section-number-position', self.section_number_position])
+
         cmd.extend(['--pdftotext', settings.INDIGO_PDFTOTEXT])
         cmd.append(fname)
 

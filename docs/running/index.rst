@@ -101,6 +101,25 @@ Configuration
 
 Config options are mostly passed to Indigo as environment variables. These are the options you can set:
 
+* ``AWS_ACCESS_KEY_ID``
+
+  **Required for production.**
+  The AWS access key ID for the account with write-access to the S3 bucket used for storing attachments.
+
+* ``AWS_SECRET_ACCESS_KEY``
+
+  **Required for production.**
+  The AWS secret access key for the account with write-access to the S3 bucket used for storing attachments.
+
+* ``AWS_S3_BUCKET``
+
+  **Required for production.**
+  The name of the S3 bucket for storing attachments.
+
+* ``AWS_S3_HOST``
+
+  The regional S3 endpoint to use. Optional. Default: ``s3-eu-west-1.amazonaws.com``
+
 * ``DATABASE_URL``
   
   **Required.**
@@ -116,16 +135,6 @@ Config options are mostly passed to Indigo as environment variables. These are t
   **Required if DJANGO_DEBUG is not true.**
   The Django ``SECRET_KEY`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-SECRET_KEY>`_. In production you should use a random (and secret) string.
 
-* ``AWS_ACCESS_KEY_ID``
-
-  **Required.**
-  The AWS access key ID for the account with write-access to the S3 bucket used for storing attachments.
-
-* ``AWS_SECRET_ACCESS_KEY``
-
-  **Required.**
-  The AWS secret access key for the account with write-access to the S3 bucket used for storing attachments.
-
 * ``NEW_RELIC_APP_NAME``
 
   The New Relic App Name, if you're using New Relic.
@@ -133,3 +142,4 @@ Config options are mostly passed to Indigo as environment variables. These are t
 * ``NEW_RELIC_LICENSE_KEY``
 
   The New Relic license key, if you're using New Relic.
+

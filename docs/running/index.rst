@@ -31,6 +31,7 @@ Indigo requires:
 Optional but useful:
 
 * A `New Relic <http://newrelic.com>`_ monitoring account
+* An SMTP server to send email through, or a service like `Mandrill <https://mandrillapp.com/>`_
 
 Using Heroku/Dokku means that we're using well-document and widely understood
 mechanisms for specifying dependencies and configuration across multiple

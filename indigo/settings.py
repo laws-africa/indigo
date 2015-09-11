@@ -267,11 +267,11 @@ REST_FRAMEWORK = {
 
 SUPPORT_EMAIL = 'mariyab@africanlii.org'
 
-DEFAULT_FROM_EMAIL = 'greg@code4sa.org'
-EMAIL_HOST = 'smtp.mandrillapp.com'
-EMAIL_HOST_USER = 'greg@code4sa.org'
+DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL')
+EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
+EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
-EMAIL_PORT = 587
+EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
 EMAIL_SUBJECT_PREFIX = '[Indigo] '
 
 # disable email in development

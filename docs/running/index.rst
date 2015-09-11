@@ -65,6 +65,7 @@ We describe using Heroku below.
         DJANGO_SECRET_KEY=some random characters \
         AWS_ACCESS_KEY_ID=aws access key \
         AWS_SECRET_ACCESS_KEY=aws secret access key \
+        AWS_S3_BUCKET=your-bucket-name
 
 6. If you're using New Relic, you'll need to set those config options::
 
@@ -79,14 +80,10 @@ We describe using Heroku below.
 8. Setup the Indigo database::
 
     $ heroku run python manage.py migrate
-    OR
-    $ ssh dokku@DOKKU_HOST run indigo python manage.py migrate
 
 9. Create the admin user::
 
     $ heroku run python manage.py createsuperuser
-    OR
-    $ ssh dokku@DOKKU_HOST run indigo python manage.py createsuperuser
 
 10. Visit your new Indigo app in your browser!
 
@@ -129,6 +126,26 @@ Config options are mostly passed to Indigo as environment variables. These are t
   
   The Django ``DEBUG`` setting.  Everything other than ``true`` means False.
   This should always be ``false`` in production. Default: ``true``
+
+* ``DJANGO_EMAIL_HOST``
+
+  The Django ``EMAIL_HOST`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-EMAIL_HOST>`_.
+  The SMTP host through which to send user emails such as password resets.
+
+* ``DJANGO_EMAIL_HOST_PASSWORD``
+
+  The Django ``EMAIL_HOST_PASSWORD`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-EMAIL_HOST_PASSWORD>`_.
+  The SMTP password.
+
+* ``DJANGO_EMAIL_HOST_PORT``
+
+  The Django ``EMAIL_HOST_PORT`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-EMAIL_HOST_PORT>`_.
+  The SMTP port (default: 25).
+
+* ``DJANGO_EMAIL_HOST_USER``
+
+  The Django ``EMAIL_HOST_USER`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-EMAIL_HOST_USER>`_.
+  The SMTP username.
 
 * ``DJANGO_SECRET_KEY``
 

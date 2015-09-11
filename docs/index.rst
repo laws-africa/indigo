@@ -31,6 +31,7 @@ Contents
    rest/general
    rest/public
    rest/app
+   running/index
 
 Documents
 ---------

@@ -22,6 +22,7 @@ class Country(models.Model):
 
     class Meta:
         ordering = ['country__name']
+        verbose_name_plural = 'Countries'
 
     def __unicode__(self):
         return unicode(self.country.name)

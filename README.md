@@ -48,34 +48,7 @@ python manage.py test
 Production deployment
 ---------------------
 
-Production deployment assumes you're running on Heroku. We use [ddollar/heroku-buildpack-multi](https://github.com/ddollar/heroku-buildpack-multi)
-because we need both Python and Ruby dependencies and a working JVM.
-
-* Python is needed for the core application
-* Ruby and Java are needed for the Slaw library to parse PDFs into XML
-
-You will need:
-
-* a django secret key
-* a New Relic license key
-* AWS credentials for S3 uploads
-
-```bash
-heroku create
-heroku addons:add heroku-postgresql
-heroku addons:add newrelic:stark
-heroku config:set BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git \
-                  DJANGO_DEBUG=false \
-                  DISABLE_COLLECTSTATIC=1 \
-                  DJANGO_SECRET_KEY=some-secret-key \
-                  NEW_RELIC_APP_NAME="Indigo" \
-                  NEW_RELIC_LICENSE_KEY=some-license-key \
-                  AWS_ACCESS_KEY_ID=aws-access-key \
-                  AWS_SECRET_ACCESS_KEY=aws-secret-key
-git push heroku master
-heroku run python manage.py migrate
-heroku run python manage.py createsuperuser
-```
+Read the [documentation for details on deploying Indigo](http://indigo.readthedocs.org/en/latest/running/index.html).
 
 License
 -------

@@ -394,7 +394,8 @@ class AtomRenderer(XMLRenderer):
         frbr_uri = renderer_context['kwargs']['frbr_uri']
         f = feedgenerator.Atom1Feed(
             title="Indigo Document Feed - %s" % frbr_uri,
-            link=renderer_context['request'].build_absolute_uri(),
+            link=renderer_context['request'].build_absolute_uri(frbr_uri),
+            feed_url=renderer_context['request'].build_absolute_uri(),
             description="Indigo documents under the %s FRBR URI" % frbr_uri)
 
         for doc in data:

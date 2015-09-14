@@ -3,6 +3,7 @@ import os.path
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
+from django.utils import feedgenerator
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
@@ -10,6 +11,7 @@ from rest_framework_xml.renderers import XMLRenderer
 from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
+from cobalt.render import HTMLRenderer
 
 from .models import Document, Attachment
 from .slaw import Importer
@@ -362,6 +364,67 @@ class LinkTermsSerializer(serializers.Serializer):
     document = serializers.CharField()
 
 
+class NoopSerializer(object):
+    """
+    Serializer that doesn't do any serializing.
+    """
+    def __init__(self, instance, **kwargs):
+        self.context = kwargs.pop('context', {})
+        self.kwargs = kwargs
+        self.data = instance
+
+
 class AkomaNtosoRenderer(XMLRenderer):
+    # override the serializer class, we want a Document object
+    serializer_class = NoopSerializer
+
     def render(self, data, media_type=None, renderer_context=None):
         return data
+
+
+class AtomRenderer(XMLRenderer):
+    media_type = 'application/atom+xml'
+    format = 'atom'
+    # override the serializer class, we want a Document object
+    serializer_class = NoopSerializer
+
+    def render(self, data, media_type=None, renderer_context=None):
+        self.serializer = DocumentSerializer(context=renderer_context)
+
+        frbr_uri = renderer_context['kwargs']['frbr_uri']
+        f = feedgenerator.Atom1Feed(
+            title="Indigo Document Feed - %s" % frbr_uri,
+            link=renderer_context['request'].build_absolute_uri(),
+            description="Indigo documents under the %s FRBR URI" % frbr_uri)
+
+        for doc in data:
+            url = self.serializer.get_published_url(doc)
+            f.add_item(
+                unique_id=url,
+                pubdate=doc.created_at,
+                updateddate=doc.updated_at,
+                title=doc.title,
+                description=self.item_description(doc),
+                link=url,
+                # TODO: this should be an atom xml
+                feed_url=url,
+                document=doc,
+            )
+
+        return f.writeString('utf-8')
+
+    def add_item_elements(self, handler, item):
+        super(AtomRenderer, self).add_item_elements(handler, item)
+        # TODO: full document body?
+        # TODO: add alternates for each different format?
+
+    def item_description(self, doc):
+        desc = "<h1>" + doc.title + "</h1>"
+
+        try:
+            preamble = doc.doc.act.preamble
+            desc += "\n" + HTMLRenderer(act=doc.doc).render(preamble)
+        except AttributeError:
+            pass
+
+        return desc

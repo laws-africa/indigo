@@ -215,7 +215,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     * ``/za/act/1994/feed.atom``: all the acts from 1994 as an atom feed
 
     """
-    queryset = DocumentViewMixin.queryset.filter(draft=False)
+    queryset = DocumentViewMixin.queryset.filter(draft=False).order_by('id')
 
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
@@ -355,6 +355,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         if self.kwargs['frbr_uri'].endswith('feed'):
             # Atom feed, the .atom format suffix is already stripped off
             self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
+            self.queryset = self.queryset.order_by('-updated_at')
+
         else:
             # force JSON for list view
             self.request.accepted_renderer = renderers.JSONRenderer()

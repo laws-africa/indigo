@@ -3,9 +3,10 @@ import os.path
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
-from rest_framework import serializers, renderers
+from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
+from rest_framework_xml.renderers import XMLRenderer
 from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
@@ -361,6 +362,6 @@ class LinkTermsSerializer(serializers.Serializer):
     document = serializers.CharField()
 
 
-class AkomaNtosoRenderer(renderers.XMLRenderer):
+class AkomaNtosoRenderer(XMLRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         return data

@@ -382,49 +382,77 @@ class AkomaNtosoRenderer(XMLRenderer):
         return data
 
 
+class AtomFeed(feedgenerator.Atom1Feed):
+    def __init__(self, serializer=None, *args, **kwargs):
+        self.serializer = serializer
+        super(AtomFeed, self).__init__(*args, **kwargs)
+
+    def add_item_elements(self, handler, item):
+        super(AtomFeed, self).add_item_elements(handler, item)
+
+        handler.addQuickElement("link", "", {
+            "rel": "alternate",
+            "href": item['link'] + '.html',
+            "type": "text/html",
+            "title": "HTML",
+        })
+
+        handler.addQuickElement("link", "", {
+            "rel": "alternate",
+            "href": item['link'] + '.xml',
+            "type": "application/xml",
+            "title": "Akoma Ntoso",
+        })
+
+        # TODO: full document body?
+        # TODO: atom feed for this document?
+
+
 class AtomRenderer(XMLRenderer):
     media_type = 'application/atom+xml'
     format = 'atom'
     # override the serializer class, we want a Document object
     serializer_class = NoopSerializer
 
-    def render(self, data, media_type=None, renderer_context=None):
+    def render(self, docs, media_type=None, renderer_context=None):
         self.serializer = DocumentSerializer(context=renderer_context)
-
         frbr_uri = renderer_context['kwargs']['frbr_uri']
-        f = feedgenerator.Atom1Feed(
+
+        url = reverse('published-document-detail', request=renderer_context['request'],
+                      kwargs={'frbr_uri': frbr_uri[1:]})
+
+        # TODO: pagination info
+
+        feed = AtomFeed(
             title="Indigo Document Feed - %s" % frbr_uri,
-            link=renderer_context['request'].build_absolute_uri(frbr_uri),
             feed_url=renderer_context['request'].build_absolute_uri(),
-            description="Indigo documents under the %s FRBR URI" % frbr_uri)
+            link=url,
+            description="Indigo documents under the %s FRBR URI" % frbr_uri,
+            serializer=self.serializer)
 
-        for doc in data:
-            url = self.serializer.get_published_url(doc)
-            f.add_item(
-                unique_id=url,
-                pubdate=doc.created_at,
-                updateddate=doc.updated_at,
-                title=doc.title,
-                description=self.item_description(doc),
-                link=url,
-                # TODO: this should be an atom xml
-                feed_url=url,
-                document=doc,
-            )
+        for doc in docs:
+            self.add_item(feed, doc)
 
-        return f.writeString('utf-8')
+        return feed.writeString('utf-8')
 
-    def add_item_elements(self, handler, item):
-        super(AtomRenderer, self).add_item_elements(handler, item)
-        # TODO: full document body?
-        # TODO: add alternates for each different format?
+    def add_item(self, feed, doc):
+        url = self.serializer.get_published_url(doc)
+        feed.add_item(
+            unique_id=url,
+            pubdate=doc.created_at,
+            updateddate=doc.updated_at,
+            title=doc.title,
+            description=self.item_description(doc),
+            link=url,
+            document=doc,
+        )
 
     def item_description(self, doc):
         desc = "<h1>" + doc.title + "</h1>"
 
         try:
-            preamble = doc.doc.act.preamble
-            desc += "\n" + HTMLRenderer(act=doc.doc).render(preamble)
+            preface = doc.doc.act.preface
+            desc += "\n" + HTMLRenderer(act=doc.doc).render(preface)
         except AttributeError:
             pass
 

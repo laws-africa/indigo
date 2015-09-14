@@ -70,9 +70,8 @@ class PublishedAPITest(APITestCase):
     def test_published_atom(self):
         response = self.client.get('/api/za/feed.atom')
         assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/xml')
+        assert_equal(response.accepted_media_type, 'application/atom+xml')
         # TODO: more?
-        assert_equal(len(response.data), 1)
 
     def test_published_missing(self):
         assert_equal(self.client.get('/api/za/act/2999/22').status_code, 404)

@@ -352,10 +352,13 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def list(self, request):
         """ Return details on many documents.
         """
-        if self.kwargs['frbr_uri'].endswith('feed'):
-            # Atom feed, the .atom format suffix is already stripped off
-            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
+        if self.request.accepted_renderer.format == 'atom':
+            # feeds show most recently changed first
             self.queryset = self.queryset.order_by('-updated_at')
+
+        if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
+            self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
+            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
 
         else:
             # force JSON for list view

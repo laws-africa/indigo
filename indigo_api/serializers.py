@@ -366,7 +366,8 @@ class LinkTermsSerializer(serializers.Serializer):
 
 class NoopSerializer(object):
     """
-    Serializer that doesn't do any serializing.
+    Serializer that doesn't do any serializing, it just makes
+    the data given to it to serialise available as +data+.
     """
     def __init__(self, instance, **kwargs):
         self.context = kwargs.pop('context', {})
@@ -383,11 +384,35 @@ class AkomaNtosoRenderer(XMLRenderer):
 
 
 class AtomFeed(feedgenerator.Atom1Feed):
-    def __init__(self, serializer=None, *args, **kwargs):
+    full_feed_title = "Indigo Full Document Feed"
+    summary_feed_title = "Indigo Summary Feed"
+
+    def __init__(self, serializer=None, summary=True, *args, **kwargs):
         self.serializer = serializer
+        self.summary = summary
         super(AtomFeed, self).__init__(*args, **kwargs)
 
+    def add_root_elements(self, handler):
+        super(AtomFeed, self).add_root_elements(handler)
+
+        if self.summary:
+            handler.addQuickElement("link", "", {
+                "rel": "alternate",
+                "title": self.full_feed_title,
+                "type": "application/atom+xml",
+                "href": self.feed['feed_url'].replace('feed.atom', 'full.atom'),
+            })
+        else:
+            handler.addQuickElement("link", "", {
+                "rel": "alternate",
+                "title": self.summary_feed_title,
+                "type": "application/atom+xml",
+                "href": self.feed['feed_url'].replace('full.atom', 'feed.atom'),
+            })
+
     def add_item_elements(self, handler, item):
+        from indigo_api.views import document_to_html
+
         super(AtomFeed, self).add_item_elements(handler, item)
 
         handler.addQuickElement("link", "", {
@@ -404,7 +429,11 @@ class AtomFeed(feedgenerator.Atom1Feed):
             "title": "Akoma Ntoso",
         })
 
-        # TODO: full document body?
+        if not self.summary:
+            # full document body
+            content = document_to_html(item['document'])
+            handler.addQuickElement("content", content, {"type": "html"})
+
         # TODO: atom feed for this document?
 
 
@@ -418,17 +447,22 @@ class AtomRenderer(XMLRenderer):
         self.serializer = DocumentSerializer(context=renderer_context)
         frbr_uri = renderer_context['kwargs']['frbr_uri']
 
+        feed_type = renderer_context['kwargs']['feed']
+        summary = feed_type != 'full'
+        title = AtomFeed.summary_feed_title if summary else AtomFeed.full_feed_title
+
         url = reverse('published-document-detail', request=renderer_context['request'],
                       kwargs={'frbr_uri': frbr_uri[1:]})
 
         # TODO: pagination info
 
         feed = AtomFeed(
-            title="Indigo Document Feed - %s" % frbr_uri,
+            title="%s - %s" % (title, frbr_uri),
             feed_url=renderer_context['request'].build_absolute_uri(),
             link=url,
             description="Indigo documents under the %s FRBR URI" % frbr_uri,
-            serializer=self.serializer)
+            serializer=self.serializer,
+            summary=summary)
 
         for doc in docs:
             self.add_item(feed, doc)

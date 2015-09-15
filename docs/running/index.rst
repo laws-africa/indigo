@@ -128,6 +128,11 @@ Config options are mostly passed to Indigo as environment variables. These are t
   The Django ``DEBUG`` setting.  Everything other than ``true`` means False.
   This should always be ``false`` in production. Default: ``true``
 
+* ``DJANGO_DEFAULT_FROM_EMAIL``
+
+  The Django ``DEFAULT_FROM_EMAIL`` setting: who do emails come from? Uses ``SUPPORT_EMAIL``
+  by default.
+
 * ``DJANGO_EMAIL_HOST``
 
   The Django ``EMAIL_HOST`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-EMAIL_HOST>`_.
@@ -161,3 +166,7 @@ Config options are mostly passed to Indigo as environment variables. These are t
 
   The New Relic license key, if you're using New Relic.
 
+* ``SUPPORT_EMAIL``
+
+  **Required**
+  Email address users can email for help.

@@ -268,8 +268,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         # get the document
         document = self.get_object()
 
-        # TODO: handle feed.atom
-
         if subcomponent:
             element = document.doc.get_subcomponent(component, subcomponent)
 

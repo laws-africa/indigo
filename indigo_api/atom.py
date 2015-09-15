@@ -105,7 +105,10 @@ class AtomFeed(feedgenerator.Atom1Feed):
             handler.addQuickElement("im:publication-number", doc.publication_number)
 
     def item_description(self, doc):
-        desc = "<h1>" + doc.title + "</h1>"
+        desc = doc.title
+        if doc.expression_date:
+            desc += " as at " + doc.expression_date.isoformat()
+        desc = "<h1>" + desc + "</h1>"
 
         try:
             preface = doc.doc.act.preface
@@ -149,7 +152,7 @@ class AtomRenderer(XMLRenderer):
         return feed.writeString('utf-8')
 
     def add_item(self, feed, doc):
-        url = self.serializer.get_published_url(doc)
+        url = self.serializer.get_published_url(doc, with_date=True)
         feed.add_item(
             unique_id=url,
             pubdate=doc.created_at,

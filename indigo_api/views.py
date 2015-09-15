@@ -304,6 +304,30 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         raise Http404
 
+    def list(self, request):
+        """ Return details on many documents.
+        """
+        if self.request.accepted_renderer.format == 'atom':
+            # feeds show most recently changed first
+            self.queryset = self.queryset.order_by('-updated_at')
+
+            # what type of feed?
+            if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
+                self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
+                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
+
+        elif self.format_kwarg and self.format_kwarg != "json":
+            # they explicitly asked for something other than JSON,
+            # but listing views don't support that, so 404
+            raise Http404
+
+        else:
+            # either explicitly or implicitly json
+            self.request.accepted_renderer = renderers.JSONRenderer()
+            self.request.accepted_media_type = self.request.accepted_renderer.media_type
+
+        return super(PublishedDocumentDetailView, self).list(request)
+
     def get_object(self):
         """ Find and return one document, used by retrieve()
         """
@@ -349,28 +373,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         self.check_object_permissions(self.request, obj)
         return obj
 
-    def list(self, request):
-        """ Return details on many documents.
-        """
-        if self.request.accepted_renderer.format == 'atom':
-            # feeds show most recently changed first
-            self.queryset = self.queryset.order_by('-updated_at')
-            if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
-                self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
-                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
-
-        elif self.format_kwarg and self.format_kwarg != "json":
-            # they explicitly asked for something other than JSON,
-            # but listing views don't support that, so 404
-            raise Http404
-
-        else:
-            # implicitly json
-            self.request.accepted_renderer = renderers.JSONRenderer()
-            self.request.accepted_media_type = self.request.accepted_renderer.media_type
-
-        return super(PublishedDocumentDetailView, self).list(request)
-
     def filter_queryset(self, queryset):
         """ Filter the queryset, used by list()
         """
@@ -380,7 +382,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return queryset
 
     def get_format_suffix(self, **kwargs):
-        # we could also pull this from the parsed URI
+        """ Used during content negotiation.
+        """
         match = FORMAT_RE.search(self.kwargs['frbr_uri'])
         if match:
             # strip it from the uri

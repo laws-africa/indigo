@@ -49,17 +49,23 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 4)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 4)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/za/act/2014')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data), 1)
+        assert_equal(len(response.data['results']), 1)
+
+    def test_published_listing_pagination(self):
+        response = self.client.get('/api/za/')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(set(response.data.keys()), set(['next', 'previous', 'count', 'results']))
 
     def test_published_missing(self):
         assert_equal(self.client.get('/api/za/act/2999/22').status_code, 404)

@@ -355,13 +355,17 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         if self.request.accepted_renderer.format == 'atom':
             # feeds show most recently changed first
             self.queryset = self.queryset.order_by('-updated_at')
+            if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
+                self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
+                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
 
-        if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
-            self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
-            self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
+        elif self.format_kwarg and self.format_kwarg != "json":
+            # they explicitly asked for something other than JSON,
+            # but listing views don't support that, so 404
+            raise Http404
 
         else:
-            # force JSON for list view
+            # implicitly json
             self.request.accepted_renderer = renderers.JSONRenderer()
             self.request.accepted_media_type = self.request.accepted_renderer.media_type
 
@@ -382,6 +386,15 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # strip it from the uri
             self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][0:match.start()]
             return match.group(1)
+
+    def handle_exception(self, exc):
+        # Formats like atom and XML don't render exceptions well, so just
+        # fall back to HTML
+        if self.request.accepted_renderer.format in ['xml', 'atom']:
+            self.request.accepted_renderer = renderers.StaticHTMLRenderer()
+            self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
+
+        return super(PublishedDocumentDetailView, self).handle_exception(exc)
 
 
 class ConvertView(APIView):

@@ -183,6 +183,29 @@ expression_date Date of the expression (or publication) of the document.        
 =============== =================================================================================== ==========
 
 
+.. _pagination:
+
+Pagination
+----------
+
+APIs that list items, such as document and attachment lists, will be paginated and return a limited number
+of items per page. The response includes information on the number of total items and the URLs
+for the next and previous pages.
+
+Here's an example with 250 total items and two pages:
+
+.. code-block:: json
+
+    {
+      "count": 250,
+      "next": "http://indigo.code4sa.org/api/documents.json?page=2",
+      "previous": null,
+      "results": [ "..." ]
+    }
+
+In this case, fetching the ``next`` URL will return the second (and final) page.
+
+
 Next Steps
 ----------
 

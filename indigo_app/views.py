@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 
 from indigo_api.models import Document, Subtype
 from indigo_api.serializers import DocumentSerializer
+from indigo_api.views import DocumentViewSet
 from indigo_app.models import Language, Country
 from .forms import DocumentForm
 import json
@@ -51,8 +52,14 @@ def library(request):
     countries = {c.country.iso.lower(): c.country.name for c in Country.objects.select_related('country').all()}
     countries_json = json.dumps(countries)
 
+    documents_json = json.dumps([
+        DocumentSerializer(instance=d, context={'request': request}).data
+        for d in DocumentViewSet.queryset
+    ])
+
     return render(request, 'library.html', {
         'countries_json': countries_json,
+        'documents_json': documents_json,
         'view': 'LibraryView',
     })
 

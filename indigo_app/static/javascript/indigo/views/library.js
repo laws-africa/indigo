@@ -30,18 +30,11 @@
       };
 
       this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
-
-      this.loadDocuments();
     },
 
     loadDocuments: function() {
-      var model = this.model;
-      var self = this;
-
-      $.getJSON('/api/documents', function(docs) {
-        model.reset(docs);
-        self.trigger('change');
-      });
+      this.model.reset(Indigo.libraryPreload);
+      this.trigger('change');
     },
 
     summarizeAndRender: function() {
@@ -236,6 +229,7 @@
       // filtering the documents
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
+      this.filterView.loadDocuments();
     },
 
     render: function() {

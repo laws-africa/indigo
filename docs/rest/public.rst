@@ -21,6 +21,7 @@ The public API is a read-only API for exploring a collection of legislative docu
 * get a list of all acts by country and year
 * get the raw Akoma Ntoso XML of an act
 * get an human-friendly HTML version of an act
+* get an Atom feed of newly published acts
 
 The public API relies heavily on FRBR URIs (and URI fragments) for identifying content, be sure to read up on FRBR URIs above.
 
@@ -41,6 +42,25 @@ Listing Acts
 * Content types: JSON
 
 These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
+
+Atom Feeds
+----------
+
+.. code:: http
+
+    GET /api/za/feed.atom
+    GET /api/za/full.atom
+    GET /api/za/act/feed.atom
+    GET /api/za/act/full.atom
+    GET /api/za/act/2007/feed.atom
+    GET /api/za/act/2007/full.atom
+
+* Content types: Atom
+
+There are two Atom feeds for documents: a summary feed (``feed.atom``) and a full content feed (``full.atom``). The summary feed has the act title, metadata and the act preface (if any) of each document. The full content feed has the full HTML content of each document.
+
+The Atom feeds are paginated and contain the most recently updated documents first. The summary feeds contains more items per page than the full feeds because the latter are much larger. Follow the ``next`` links in the feeds to fetch additional pages.
+
 
 Entire Act
 ----------

@@ -20,6 +20,7 @@ from lxml.etree import LxmlError
 
 from .models import Document, Attachment
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
@@ -202,19 +203,36 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
     """
-    The public read-only API for viewing and listing documents by FRBR URI.
+    The public read-only API for viewing and listing published documents by FRBR URI.
+
+    This handles both listing many documents based on a URI prefix, and
+    returning details for a single document. The default content type
+    is JSON.
+
+    For example:
+
+    * ``/za/``: list all published documents for South Africa.
+    * ``/za/act/1994/2/``: one document, Act 2 of 1992
+    * ``/za/act/1994/feed.atom``: all the acts from 1994 as an atom feed
+
     """
-    queryset = DocumentViewMixin.queryset.filter(draft=False)
+    queryset = DocumentViewMixin.queryset.filter(draft=False).order_by('id')
 
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
     # these determine what content negotiation takes place
-    renderer_classes = (renderers.JSONRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
+    renderer_classes = (renderers.JSONRenderer, AtomRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
+
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
+
+        # some of our renderers want to bypass the serializer, so that we get access to the
+        # raw data objects
+        if getattr(self.request.accepted_renderer, 'serializer_class', None):
+            self.serializer_class = self.request.accepted_renderer.serializer_class
 
     def get(self, request, **kwargs):
         # try parse it as an FRBR URI, if that succeeds, we'll lookup the document
@@ -240,13 +258,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         except ValueError:
             return self.list(request)
 
-    def list(self, request):
-        # force JSON for list view
-        self.request.accepted_renderer = renderers.JSONRenderer()
-        self.request.accepted_media_type = self.request.accepted_renderer.media_type
-        return super(PublishedDocumentDetailView, self).list(request)
-
     def retrieve(self, request, *args, **kwargs):
+        """ Return details on a single document, possible only part of that document.
+        """
         component = self.frbr_uri.expression_component or 'main'
         subcomponent = self.frbr_uri.expression_subcomponent
         format = self.request.accepted_renderer.format
@@ -262,7 +276,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
             # table of contents
             if (component, format) == ('toc', 'json'):
-                serializer = self.get_serializer(document)
                 return Response({'toc': self.table_of_contents(document)})
 
             # json description
@@ -290,9 +303,66 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         raise Http404
 
+    def list(self, request):
+        """ Return details on many documents.
+        """
+        if self.request.accepted_renderer.format == 'atom':
+            # feeds show most recently changed first
+            self.queryset = self.queryset.order_by('-updated_at')
+
+            # what type of feed?
+            if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
+                self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
+                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
+
+            if self.kwargs['feed'] == 'full':
+                # full feed is big, limit it
+                self.paginator.page_size = AtomFeed.full_feed_page_size
+
+        elif self.format_kwarg and self.format_kwarg != "json":
+            # they explicitly asked for something other than JSON,
+            # but listing views don't support that, so 404
+            raise Http404
+
+        else:
+            # either explicitly or implicitly json
+            self.request.accepted_renderer = renderers.JSONRenderer()
+            self.request.accepted_media_type = self.request.accepted_renderer.media_type
+
+        response = super(PublishedDocumentDetailView, self).list(request)
+
+        # add alternate links for json
+        if self.request.accepted_renderer.format == 'json':
+            self.add_alternate_links(response, request)
+
+        return response
+
+    def add_alternate_links(self, response, request):
+        url = reverse('published-document-detail', request=request,
+                      kwargs={'frbr_uri': self.kwargs['frbr_uri'][1:]})
+
+        if url.endswith('/'):
+            url = url[:-1]
+
+        response.data['links'] = [
+            {
+                "rel": "alternate",
+                "title": AtomFeed.summary_feed_title,
+                "href": url + "/feed.atom",
+                "mediaType": AtomRenderer.media_type,
+            },
+            {
+                "rel": "alternate",
+                "title": AtomFeed.full_feed_title,
+                "href": url + "/full.atom",
+                "mediaType": AtomRenderer.media_type,
+            },
+        ]
+
     def get_object(self):
-        """ Find and return one document, used by retrieve() """
-        query = self.get_queryset().filter(frbr_uri=self.frbr_uri.work_uri())\
+        """ Find and return one document, used by retrieve()
+        """
+        query = self.get_queryset().filter(frbr_uri=self.frbr_uri.work_uri())
 
         # filter on expression date
         expr_date = self.frbr_uri.expression_date
@@ -335,19 +405,30 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return obj
 
     def filter_queryset(self, queryset):
-        """ Filter the queryset, used by list() """
+        """ Filter the queryset, used by list()
+        """
         queryset = queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
         if queryset.count() == 0:
             raise Http404
         return queryset
 
     def get_format_suffix(self, **kwargs):
-        # we could also pull this from the parsed URI
+        """ Used during content negotiation.
+        """
         match = FORMAT_RE.search(self.kwargs['frbr_uri'])
         if match:
             # strip it from the uri
             self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][0:match.start()]
             return match.group(1)
+
+    def handle_exception(self, exc):
+        # Formats like atom and XML don't render exceptions well, so just
+        # fall back to HTML
+        if self.request.accepted_renderer.format in ['xml', 'atom']:
+            self.request.accepted_renderer = renderers.StaticHTMLRenderer()
+            self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
+
+        return super(PublishedDocumentDetailView, self).handle_exception(exc)
 
 
 class ConvertView(APIView):

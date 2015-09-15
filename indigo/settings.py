@@ -263,7 +263,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'PAGE_SIZE': 500,
+    'PAGE_SIZE': 250,
 }
 
 SUPPORT_EMAIL = 'mariyab@africanlii.org'

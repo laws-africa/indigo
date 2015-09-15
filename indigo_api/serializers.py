@@ -362,6 +362,20 @@ class LinkTermsSerializer(serializers.Serializer):
     document = serializers.CharField()
 
 
+class NoopSerializer(object):
+    """
+    Serializer that doesn't do any serializing, it just makes
+    the data given to it to serialise available as +data+.
+    """
+    def __init__(self, instance, **kwargs):
+        self.context = kwargs.pop('context', {})
+        self.kwargs = kwargs
+        self.data = instance
+
+
 class AkomaNtosoRenderer(XMLRenderer):
+    # override the serializer class, we want a Document object
+    serializer_class = NoopSerializer
+
     def render(self, data, media_type=None, renderer_context=None):
         return data

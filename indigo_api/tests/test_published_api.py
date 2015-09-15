@@ -1,6 +1,6 @@
-from nose.tools import *
-from rest_framework import status
+from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
+
 
 class PublishedAPITest(APITestCase):
     fixtures = ['user', 'published']
@@ -65,7 +65,27 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(set(response.data.keys()), set(['next', 'previous', 'count', 'results']))
+        assert_equal(set(response.data.keys()), set(['next', 'previous', 'count', 'results', 'links']))
+
+    def test_published_listing_html_404(self):
+        # explicitly asking for html is bad
+        response = self.client.get('/api/za/act.html')
+        assert_equal(response.status_code, 404)
+        assert_equal(response.accepted_media_type, 'text/html')
+
+    def test_published_atom(self):
+        response = self.client.get('/api/za/feed.atom')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/atom+xml')
+
+        response = self.client.get('/api/za/full.atom')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/atom+xml')
+
+    def test_published_atom_404(self):
+        response = self.client.get('/api/uk/feed.atom')
+        assert_equal(response.status_code, 404)
+        assert_equal(response.accepted_media_type, 'text/html')
 
     def test_published_missing(self):
         assert_equal(self.client.get('/api/za/act/2999/22').status_code, 404)

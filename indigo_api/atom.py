@@ -7,6 +7,9 @@ from .serializers import NoopSerializer, DocumentSerializer
 
 
 class AtomFeed(feedgenerator.Atom1Feed):
+    # how many items in the full feed summary? This should be pretty small, these documents
+    # will be big
+    full_feed_page_size = 10
     full_feed_title = "Indigo Full Document Feed"
     summary_feed_title = "Indigo Summary Feed"
     metadata_ns = "http://indigo.code4sa.org/ns/metadata"

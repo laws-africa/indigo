@@ -317,6 +317,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
                 self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
 
+            if self.kwargs['feed'] == 'full':
+                # full feed is big, limit it
+                self.paginator.page_size = AtomFeed.full_feed_page_size
+
         elif self.format_kwarg and self.format_kwarg != "json":
             # they explicitly asked for something other than JSON,
             # but listing views don't support that, so 404

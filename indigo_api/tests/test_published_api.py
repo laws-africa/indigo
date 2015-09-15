@@ -65,7 +65,7 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(set(response.data.keys()), set(['next', 'previous', 'count', 'results']))
+        assert_equal(set(response.data.keys()), set(['next', 'previous', 'count', 'results', 'links']))
 
     def test_published_listing_html_404(self):
         # explicitly asking for html is bad

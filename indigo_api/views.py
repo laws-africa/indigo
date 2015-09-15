@@ -19,7 +19,7 @@ import lxml.etree as ET
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AtomRenderer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .serializers import DocumentSerializer, AtomRenderer, AtomFeed, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
 from .slaw import Importer, Slaw
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
@@ -326,7 +326,35 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_renderer = renderers.JSONRenderer()
             self.request.accepted_media_type = self.request.accepted_renderer.media_type
 
-        return super(PublishedDocumentDetailView, self).list(request)
+        response = super(PublishedDocumentDetailView, self).list(request)
+
+        # add alternate links for json
+        if self.request.accepted_renderer.format == 'json':
+            self.add_alternate_links(response, request)
+
+        return response
+
+    def add_alternate_links(self, response, request):
+        url = reverse('published-document-detail', request=request,
+                      kwargs={'frbr_uri': self.kwargs['frbr_uri'][1:]})
+
+        if url.endswith('/'):
+            url = url[:-1]
+
+        response.data['links'] = [
+            {
+                "rel": "alternate",
+                "title": AtomFeed.summary_feed_title,
+                "href": url + "/feed.atom",
+                "mediaType": AtomRenderer.media_type,
+            },
+            {
+                "rel": "alternate",
+                "title": AtomFeed.full_feed_title,
+                "href": url + "/full.atom",
+                "mediaType": AtomRenderer.media_type,
+            },
+        ]
 
     def get_object(self):
         """ Find and return one document, used by retrieve()

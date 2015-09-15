@@ -19,7 +19,8 @@ import lxml.etree as ET
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AtomRenderer, AtomFeed, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer

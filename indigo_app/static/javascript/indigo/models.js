@@ -123,7 +123,11 @@
 
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,
-    url: '/api/documents'
+    url: '/api/documents',
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
+    }
   });
 
   Indigo.User = Backbone.Model.extend({
@@ -178,6 +182,11 @@
 
     url: function() {
       return this.document.url() + '/attachments';
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
     },
 
     save: function(options) {

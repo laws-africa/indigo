@@ -79,7 +79,7 @@ List Documents
 
     GET /api/documents
 
-Lists the documents in the library.
+Lists the documents in the library. The results will be :ref:`paginated <pagination>`.
 
 Get a Document
 --------------

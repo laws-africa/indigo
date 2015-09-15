@@ -9,6 +9,7 @@ from .serializers import NoopSerializer, DocumentSerializer
 class AtomFeed(feedgenerator.Atom1Feed):
     full_feed_title = "Indigo Full Document Feed"
     summary_feed_title = "Indigo Summary Feed"
+    metadata_ns = "http://indigo.code4sa.org/ns/metadata"
 
     def __init__(self, serializer=None, summary=True, next_url=None, previous_url=None, *args, **kwargs):
         self.serializer = serializer
@@ -19,6 +20,11 @@ class AtomFeed(feedgenerator.Atom1Feed):
         self.previous_url = previous_url
 
         super(AtomFeed, self).__init__(*args, **kwargs)
+
+    def root_attributes(self):
+        attrs = super(AtomFeed, self).root_attributes()
+        attrs['xmlns:im'] = self.metadata_ns
+        return attrs
 
     def add_root_elements(self, handler):
         super(AtomFeed, self).add_root_elements(handler)
@@ -46,9 +52,10 @@ class AtomFeed(feedgenerator.Atom1Feed):
             handler.addQuickElement("link", "", {"rel": "previous", "href": self.previous_url})
 
     def add_item_elements(self, handler, item):
-        from indigo_api.views import document_to_html
-
         super(AtomFeed, self).add_item_elements(handler, item)
+
+        from indigo_api.views import document_to_html
+        doc = item['document']
 
         handler.addQuickElement("link", "", {
             "rel": "alternate",
@@ -66,10 +73,44 @@ class AtomFeed(feedgenerator.Atom1Feed):
 
         if not self.summary:
             # full document body
-            content = document_to_html(item['document'])
+            content = document_to_html(doc)
             handler.addQuickElement("content", content, {"type": "html"})
 
-        # TODO: atom feed for this document?
+        # metadata
+        handler.addQuickElement("im:frbr-uri", doc.frbr_uri)
+        handler.addQuickElement("im:country", doc.country)
+        if doc.locality:
+            handler.addQuickElement("im:locality", doc.locality)
+        handler.addQuickElement("im:nature", doc.nature)
+        if doc.subtype:
+            handler.addQuickElement("im:subtype", doc.subtype)
+        handler.addQuickElement("im:year", doc.year)
+        handler.addQuickElement("im:number", doc.number)
+
+        if doc.expression_date:
+            handler.addQuickElement("im:expression-date", doc.expression_date.isoformat())
+        if doc.assent_date:
+            handler.addQuickElement("im:assent-date", doc.assent_date.isoformat())
+        if doc.commencement_date:
+            handler.addQuickElement("im:commencement-date", doc.commencement_date.isoformat())
+
+        if doc.publication_date:
+            handler.addQuickElement("im:publication-date", doc.publication_date.isoformat())
+        if doc.publication_name:
+            handler.addQuickElement("im:publication-name", doc.publication_name)
+        if doc.publication_number:
+            handler.addQuickElement("im:publication-number", doc.publication_number)
+
+    def item_description(self, doc):
+        desc = "<h1>" + doc.title + "</h1>"
+
+        try:
+            preface = doc.doc.act.preface
+            desc += "\n" + HTMLRenderer(act=doc.doc).render(preface)
+        except AttributeError:
+            pass
+
+        return desc
 
 
 class AtomRenderer(XMLRenderer):
@@ -111,19 +152,8 @@ class AtomRenderer(XMLRenderer):
             pubdate=doc.created_at,
             updateddate=doc.updated_at,
             title=doc.title,
-            description=self.item_description(doc),
+            description=feed.item_description(doc),
             link=url,
             document=doc,
             author_name='',
         )
-
-    def item_description(self, doc):
-        desc = "<h1>" + doc.title + "</h1>"
-
-        try:
-            preface = doc.doc.act.preface
-            desc += "\n" + HTMLRenderer(act=doc.doc).render(preface)
-        except AttributeError:
-            pass
-
-        return desc

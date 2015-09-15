@@ -491,6 +491,7 @@ class AtomRenderer(XMLRenderer):
             description=self.item_description(doc),
             link=url,
             document=doc,
+            author_name='',
         )
 
     def item_description(self, doc):

@@ -74,7 +74,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
             "title": "Akoma Ntoso",
         })
 
-        if not self.summary:
+        if not doc.stub and not self.summary:
             # full document body
             content = document_to_html(doc)
             handler.addQuickElement("content", content, {"type": "html"})
@@ -110,11 +110,12 @@ class AtomFeed(feedgenerator.Atom1Feed):
             desc += " as at " + doc.expression_date.isoformat()
         desc = "<h1>" + desc + "</h1>"
 
-        try:
-            preface = doc.doc.act.preface
-            desc += "\n" + HTMLRenderer(act=doc.doc).render(preface)
-        except AttributeError:
-            pass
+        if not doc.stub:
+            try:
+                preface = doc.doc.act.preface
+                desc += "\n" + HTMLRenderer(act=doc.doc).render(preface)
+            except AttributeError:
+                pass
 
         return desc
 

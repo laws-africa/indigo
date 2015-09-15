@@ -132,7 +132,7 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/act/2014/10/eng/main/section/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_equal(response.data, '<div class="akn-section" id="section-1"><h3>1. </h3><span class="akn-content"><span class="akn-p">tester</span></span></div>')
+        assert_equal(response.data, '<section class="akn-section" id="section-1"><h3>1. </h3><span class="akn-content"><span class="akn-p">tester</span></span></section>')
 
     def test_at_expression_date(self):
         response = self.client.get('/api/za/act/2010/1/eng@2011-01-01.json')

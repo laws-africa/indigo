@@ -6,7 +6,7 @@
   <xsl:output method="html" />
 
   <xsl:template match="a:act">
-    <xsl:element name="span" namespace="">
+    <xsl:element name="article" namespace="">
       <xsl:attribute name="class">akn-act</xsl:attribute>
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates select="a:coverPage" />
@@ -36,7 +36,7 @@
 
   <!-- for parts and chapters, include an easily stylable heading -->
   <xsl:template match="a:part">
-    <div class="akn-part">
+    <section class="akn-part">
       <xsl:apply-templates select="@*" />
       <h2>
         <xsl:text>Part </xsl:text>
@@ -46,11 +46,11 @@
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    </div>
+    </section>
   </xsl:template>
 
   <xsl:template match="a:chapter">
-    <div class="akn-chapter">
+    <section class="akn-chapter">
       <xsl:apply-templates select="@*" />
       <h2>
         <xsl:text>Chapter </xsl:text>
@@ -60,11 +60,11 @@
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    </div>
+    </section>
   </xsl:template>
 
   <xsl:template match="a:section">
-    <div class="akn-{local-name()}">
+    <section class="akn-section">
       <xsl:apply-templates select="@*" />
       <h3>
         <xsl:value-of select="./a:num" />
@@ -73,19 +73,19 @@
       </h3>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    </div>
+    </section>
   </xsl:template>
   
   <xsl:template match="a:subsection">
-    <span class="akn-{local-name()}">
+    <section class="akn-subsection">
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates select="./*[not(self::a:heading)]" />
-    </span>
+    </section>
   </xsl:template>
 
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <div class="akn-doc">
+    <article class="akn-doc">
       <xsl:apply-templates select="@*" />
       <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
         <h2>
@@ -98,7 +98,16 @@
       <xsl:apply-templates select="a:preamble" />
       <xsl:apply-templates select="a:mainBody" />
       <xsl:apply-templates select="a:conclusions" />
-    </div>
+    </article>
+  </xsl:template>
+
+  <!-- for block elements, generate a span element with a class matching
+       the AN name of the node and copy over the attributes -->
+  <xsl:template match="a:coverPage | a:preface | a:preamble | a:conclusions">
+    <section class="akn-{local-name()}">
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates />
+    </section>
   </xsl:template>
 
   <!-- for all nodes, generate a SPAN element with a class matching

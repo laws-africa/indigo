@@ -75,13 +75,10 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # where does the pdftotext binary live?
 if DEBUG:
-   INDIGO_PDFTOTEXT = 'pdftotext'
+    INDIGO_PDFTOTEXT = 'pdftotext'
 else:
-   # on heroku, use the bundled version at bin/pdftotext
-   INDIGO_PDFTOTEXT = os.path.abspath(
-         os.path.join(
-            os.path.dirname(__file__),
-            '..', 'bin', 'pdftotext'))
+    # on heroku, use the bundled version at bin/pdftotext
+    INDIGO_PDFTOTEXT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bin', 'pdftotext'))
 
 # LIME editor
 # We use the compiled version of the LIME editor in production and, by default, development.

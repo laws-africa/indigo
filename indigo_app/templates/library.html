@@ -149,10 +149,14 @@
 {% endverbatim %}
 </script>
 
-{# inject country code-to-name mappings into JS #}
 <script type="text/javascript">
 if (!window.Indigo) window.Indigo = {};
+
+// inject country code-to-name mappings into JS
 window.Indigo.countries = {{ countries_json|safe }};
+
+// include the documents as JSON
+window.Indigo.libraryPreload = {{ documents_json|safe }};
 </script>
 
 {% endblock %}

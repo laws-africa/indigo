@@ -74,6 +74,13 @@ class AtomFeed(feedgenerator.Atom1Feed):
             "title": "Akoma Ntoso",
         })
 
+        handler.addQuickElement("link", "", {
+            "rel": "alternate",
+            "href": item['link'] + '.json',
+            "type": "application/json",
+            "title": "JSON",
+        })
+
         if not doc.stub and not self.summary:
             # full document body
             content = document_to_html(doc)

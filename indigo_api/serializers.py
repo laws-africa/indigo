@@ -165,6 +165,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     attachments_url = serializers.SerializerMethodField()
     """ URL of document attachments. """
 
+    links = serializers.SerializerMethodField()
+    """ List of alternate links. """
+
     file = serializers.FileField(write_only=True, required=False)
     """ Allow uploading a file to convert and override the content of the document. """
 
@@ -197,7 +200,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'stub', 'tags', 'amendments', 'amended_versions',
             'repeal',
 
-            'published_url', 'toc_url', 'attachments_url',
+            'published_url', 'toc_url', 'attachments_url', 'links',
         )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
@@ -243,6 +246,30 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             return info
 
         return [describe(d) for d in doc.amended_versions()]
+
+    def get_links(self, doc):
+        if not doc.draft:
+            url = self.get_published_url(doc)
+            return [
+                {
+                    "rel": "alternate",
+                    "title": "HTML",
+                    "href": url + ".html",
+                    "mediaType": "text/html"
+                },
+                {
+                    "rel": "alternate",
+                    "title": "Akoma Ntoso",
+                    "href": url + ".xml",
+                    "mediaType": "application/xml"
+                },
+                {
+                    "rel": "alternate",
+                    "title": "Table of Contents",
+                    "href": url + "/toc.json",
+                    "mediaType": "application/json"
+                },
+            ]
 
     def validate(self, data):
         """

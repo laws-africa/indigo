@@ -198,3 +198,17 @@ class PublishedAPITest(APITestCase):
             'repealing_title': 'Repeal',
             'repealing_id': 1,
         })
+
+    def test_published_alternate_links(self):
+        response = self.client.get('/api/za/act/2001/8/eng.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+
+        links = response.data['links']
+        links.sort(key=lambda k: k['title'])
+
+        assert_equal(links, [
+            {'href': 'http://testserver/api/za/act/2001/8/eng.xml', 'mediaType': 'application/xml', 'rel': 'alternate', 'title': 'Akoma Ntoso'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng.html', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'HTML'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'alternate', 'title': 'Table of Contents'}
+        ])

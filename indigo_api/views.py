@@ -213,7 +213,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     * ``/za/``: list all published documents for South Africa.
     * ``/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/za/act/1994/feed.atom``: all the acts from 1994 as an atom feed
+    * ``/za/act/1994/summary.atom``: all the acts from 1994 as an atom feed
 
     """
     queryset = DocumentViewMixin.queryset.filter(draft=False).order_by('id')
@@ -311,9 +311,14 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.queryset = self.queryset.order_by('-updated_at')
 
             # what type of feed?
-            if self.kwargs['frbr_uri'][-4:] in ('feed', 'full'):
-                self.kwargs['feed'] = self.kwargs['frbr_uri'][-4:]
+            if self.kwargs['frbr_uri'].endswith('summary'):
+                self.kwargs['feed'] = 'summary'
+                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-7]
+            elif self.kwargs['frbr_uri'].endswith('full'):
+                self.kwargs['feed'] = 'full'
                 self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
+            else:
+                raise Http404
 
             if self.kwargs['feed'] == 'full':
                 # full feed is big, limit it
@@ -348,7 +353,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             {
                 "rel": "alternate",
                 "title": AtomFeed.summary_feed_title,
-                "href": url + "/feed.atom",
+                "href": url + "/summary.atom",
                 "mediaType": AtomRenderer.media_type,
             },
             {

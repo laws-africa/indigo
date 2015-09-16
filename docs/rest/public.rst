@@ -48,16 +48,16 @@ Atom Feeds
 
 .. code:: http
 
-    GET /api/za/feed.atom
+    GET /api/za/summary.atom
     GET /api/za/full.atom
-    GET /api/za/act/feed.atom
+    GET /api/za/act/summary.atom
     GET /api/za/act/full.atom
-    GET /api/za/act/2007/feed.atom
+    GET /api/za/act/2007/summary.atom
     GET /api/za/act/2007/full.atom
 
 * Content types: Atom
 
-There are two Atom feeds for documents: a summary feed (``feed.atom``) and a full content feed (``full.atom``). The summary feed has the act title, metadata and the act preface (if any) of each document. The full content feed has the full HTML content of each document.
+There are two Atom feeds for documents: a summary feed (``summary.atom``) and a full content feed (``full.atom``). The summary feed has the act title, metadata and the act preface (if any) of each document. The full content feed has the full HTML content of each document.
 
 The Atom feeds are paginated and contain the most recently updated documents first. The summary feeds contains more items per page than the full feeds because the latter are much larger. Follow the ``next`` links in the feeds to fetch additional pages.
 

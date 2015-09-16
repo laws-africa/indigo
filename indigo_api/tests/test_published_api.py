@@ -74,7 +74,7 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'text/html')
 
     def test_published_atom(self):
-        response = self.client.get('/api/za/feed.atom')
+        response = self.client.get('/api/za/summary.atom')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/atom+xml')
 
@@ -83,7 +83,7 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/atom+xml')
 
     def test_published_atom_404(self):
-        response = self.client.get('/api/uk/feed.atom')
+        response = self.client.get('/api/uk/summary.atom')
         assert_equal(response.status_code, 404)
         assert_equal(response.accepted_media_type, 'text/html')
 

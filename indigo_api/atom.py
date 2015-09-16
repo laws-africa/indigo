@@ -45,7 +45,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
                 "rel": "alternate",
                 "title": self.summary_feed_title,
                 "type": "application/atom+xml",
-                "href": self.feed['link'] + 'feed.atom',
+                "href": self.feed['link'] + 'summary.atom',
             })
 
         # pagination

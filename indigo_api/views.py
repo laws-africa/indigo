@@ -98,7 +98,7 @@ def find_document_template(document):
 
 
 class DocumentViewMixin(object):
-    queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags').all()
+    queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags')
 
     def table_of_contents(self, document):
         # this updates the TOC entries by adding a 'url' component
@@ -167,7 +167,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
 
 
 class AttachmentViewSet(viewsets.ModelViewSet):
-    queryset = Attachment.objects.all()
+    queryset = Attachment.objects
     serializer_class = AttachmentSerializer
 
     @detail_route(methods=['GET'])
@@ -189,8 +189,8 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         doc_id = self.kwargs['document_id']
         return get_object_or_404(qs, deleted__exact=False, id=doc_id)
 
-    def get_queryset(self):
-        return Attachment.objects.filter(document=self.document).all()
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.document).all()
 
     def get_serializer_context(self):
         context = super(AttachmentViewSet, self).get_serializer_context()

@@ -54,7 +54,7 @@ def library(request):
 
     documents_json = json.dumps([
         DocumentSerializer(instance=d, context={'request': request}).data
-        for d in DocumentViewSet.queryset
+        for d in DocumentViewSet.queryset.all()
     ])
 
     return render(request, 'library.html', {

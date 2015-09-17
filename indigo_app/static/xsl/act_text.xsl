@@ -106,21 +106,25 @@
     <xsl:apply-templates select="./*[not(self::a:intro)]" />
   </xsl:template>
 
-
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-      <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-      <xsl:text>
+    <xsl:text>Schedule - </xsl:text>
+    <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
 
+    <xsl:if test="a:mainBody/a:article/a:heading">
+      <xsl:text>
 </xsl:text>
+      <xsl:value-of select="a:mainBody/a:article/a:heading" />
     </xsl:if>
 
-    <xsl:apply-templates select="a:coverPage" />
-    <xsl:apply-templates select="a:preface" />
-    <xsl:apply-templates select="a:preamble" />
+    <xsl:text>
+
+</xsl:text>
     <xsl:apply-templates select="a:mainBody" />
-    <xsl:apply-templates select="a:conclusions" />
+  </xsl:template>
+
+  <xsl:template match="a:mainBody/a:article/a:heading">
+    <!-- no-op, this is handled by the schedules template above -->
   </xsl:template>
 
   <!-- tables -->

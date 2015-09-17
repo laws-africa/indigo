@@ -9,4 +9,5 @@ def general(request):
         'DEBUG': settings.DEBUG,
         'INDIGO_LIME_DEBUG': settings.INDIGO_LIME_DEBUG,
         'SUPPORT_EMAIL': settings.SUPPORT_EMAIL,
+        'GOOGLE_ANALYTICS_ID': settings.GOOGLE_ANALYTICS_ID,
     }

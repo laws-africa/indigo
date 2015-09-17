@@ -272,6 +272,8 @@ EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
 EMAIL_SUBJECT_PREFIX = '[Indigo] '
 
+GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
+
 # disable email in development
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

@@ -158,6 +158,10 @@ Config options are mostly passed to Indigo as environment variables. These are t
   **Required if DJANGO_DEBUG is not true.**
   The Django ``SECRET_KEY`` `setting <https://docs.djangoproject.com/en/1.8/ref/settings/#std:setting-SECRET_KEY>`_. In production you should use a random (and secret) string.
 
+* ``GOOGLE_ANALYTICS_ID``
+
+  Google Analytics ID for website tracking. Only used when ``DEBUG`` is False.
+
 * ``NEW_RELIC_APP_NAME``
 
   The New Relic App Name, if you're using New Relic.

@@ -194,13 +194,11 @@ When using the Simple Editor, follow these guidelines:
 
 - Start a chapter numbered ``N`` with::
       
-      Chapter N
-      Title
+      Chapter N - Title
 
 - Start a part numbered ``N`` with::
 
-      Part N
-      Title
+      Part N - Title
 
 - Start a section numbered ``N`` with::
 
@@ -225,10 +223,16 @@ When using the Simple Editor, follow these guidelines:
 - Start a numbered Schedule with::
 
       Schedule N
-      Title
+      Heading
 
-  Both the number ``N`` and ``Title`` are optional. If a schedule doesn't have these, just use the
-  word ``Schedule``.
+	The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
+
+- Start an unnumbered Schedule with::
+
+      Schedule - Title
+      Heading
+
+	The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
 
 
 Editing Tables

@@ -18,4 +18,5 @@ Contents:
     account
     principles
     managing
+    metadata
     editing

@@ -70,11 +70,3 @@ URI.
 
 The **public API** uses the FRBR URI to identify documents so that anyone can
 find a document just by constructing a valid FRBR URI.
-
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

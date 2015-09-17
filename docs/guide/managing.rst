@@ -64,10 +64,16 @@ To import a document:
 2. Drag and drop the file to import into the box, or click the button to choose a file to upload.
 3. Wait for the document to be imported. This make take up to 10 minutes, especially for large documents.
 
-Once the document has been imported Indigo will take you to the details for that document.
+Once you have imported a document you will need to proof it to ensure that the various components have been correctly captured. Indigo doesn't always get everything right. Look for these errors after importing:
 
-You will also need to proof the document to ensure Indigo imported it correctly. See the
-section on :ref:`editing` for more details.
+- Check that parts and chapters have been identified correctly.
+- Check that numbered sections have been identified correctly.
+- Check that numbered lists aren't broken in the wrong places.
+- Check that schedules have been matched correctly.
+
+.. seealso::
+
+    See the section on :ref:`editing` for more details.
 
 Indigo will do its best to extract text information from the imported document.
 You will still need to fill in all the metadata such as the document title,

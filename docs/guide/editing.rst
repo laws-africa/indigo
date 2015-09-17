@@ -138,14 +138,14 @@ Follow these guidelines to tell Indigo about the structure of your document:
       Schedule N
       Heading
 
-	The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
+The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
 
 - Start an unnumbered Schedule with::
 
       Schedule - Title
       Heading
 
-	The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
+The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
 
 
 Tables

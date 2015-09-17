@@ -148,14 +148,13 @@ The editing mode shown above is Indigo's Simple Editor. It hides the XML complet
 
 Here is an example of the simple formatting required by the Simple Editor::
 
-    Chapter 8
-    Environmental management co-operation agreements
+    Chapter 8 - Environmental management co-operation agreements
 
     35. Conclusion of agreements
 
     (1) The Minister and every MEC and municipality, may enter into environmental management co-operation agreements with any person or community for the purpose of promoting compliance with the principles laid down in this Act.
 
-    (Section 35(1) inserted by section 7 of Act 46 of 2003)
+    [[Section 35(1) inserted by section 7 of Act 46 of 2003]]
 
     (2) Environmental management co-operation agreements must- 
 

@@ -24,10 +24,16 @@ from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
+import newrelic.agent
 
 log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+def ping(request):
+    newrelic.agent.ignore_transaction()
+    return HttpResponse("pong", content_type="text/plain")
 
 
 def view_attachment(attachment):

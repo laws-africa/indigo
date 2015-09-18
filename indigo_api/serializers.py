@@ -3,6 +3,7 @@ import os.path
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
@@ -403,3 +404,19 @@ class NoopSerializer(object):
 class AkomaNtosoRenderer(XMLRenderer):
     def render(self, data, media_type=None, renderer_context=None):
         return data
+
+
+class UserDetailsSerializer(serializers.ModelSerializer):
+    """
+    Override the default DjangoRestAuth user serializer to include
+    extra details.
+    """
+    permissions = serializers.SerializerMethodField()
+
+    class Meta:
+        model = get_user_model()
+        fields = ('username', 'email', 'first_name', 'last_name', 'permissions')
+        read_only_fields = ('email', )
+
+    def get_permissions(self, user):
+        return [p for p in user.get_all_permissions() if p.startswith('indigo_api.')]

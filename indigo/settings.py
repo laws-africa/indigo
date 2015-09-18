@@ -263,6 +263,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 250,
 }
 
+# Django Rest Auth
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'indigo_api.serializers.UserDetailsSerializer',
+}
+
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')
 
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', SUPPORT_EMAIL)

@@ -16,6 +16,7 @@ def document(request, doc_id):
     return render(request, 'document/show.html', {
         'document': doc,
         'document_json': doc_json,
+        'document_content_json': json.dumps(doc.document_xml),
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
@@ -33,6 +34,7 @@ def new_document(request):
     return render(request, 'document/show.html', {
         'document': doc,
         'document_json': doc_json,
+        'document_content_json': json.dumps(doc.doc.to_xml()),
         'form': form,
         'view': 'DocumentView',
     })

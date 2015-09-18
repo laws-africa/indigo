@@ -129,11 +129,14 @@
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');
 
+      // preload content
+      this.documentContent.set('content', Indigo.documentContentPreload);
+
       if (document_id) {
-        // fetch content
-        this.documentContent.fetch();
-      } else {
+        // pretend this document is unchanged
         this.documentContent.trigger('sync');
+      } else {
+        // new document, pretend it's dirty
         this.propertiesView.calculateUri();
         this.setDirty();
       }

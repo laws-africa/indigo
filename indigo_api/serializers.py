@@ -401,8 +401,5 @@ class NoopSerializer(object):
 
 
 class AkomaNtosoRenderer(XMLRenderer):
-    # override the serializer class, we want a Document object
-    serializer_class = NoopSerializer
-
     def render(self, data, media_type=None, renderer_context=None):
         return data

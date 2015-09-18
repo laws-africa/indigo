@@ -218,7 +218,7 @@
         .then(function() {
           if (is_new) {
             // redirect
-            document.location = '/documents/' + response.id + '/';
+            document.location = '/documents/' + self.document.get('id') + '/';
           }
         })
         .fail(function() {

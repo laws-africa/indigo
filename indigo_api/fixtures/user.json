@@ -41,5 +41,27 @@
             "email": "email@example.com",
             "date_joined": "2012-01-13 00:14:00+00:00"
         }
+    },
+    {
+        "pk": 3,
+        "model": "auth.user",
+        "fields": {
+            "username": "non-publisher@example.com",
+            "first_name": "user that cannot publish",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-13 00:14:00+00:00",
+            "groups": [],
+            "user_permissions": [
+                ["add_document", "indigo_api", "document"],
+                ["change_document", "indigo_api", "document"],
+                ["delete_document", "indigo_api", "document"]
+            ],
+            "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
+            "email": "email@example.com",
+            "date_joined": "2012-01-13 00:14:00+00:00"
+        }
     }
 ]

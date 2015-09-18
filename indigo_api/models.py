@@ -17,6 +17,11 @@ log = logging.getLogger(__name__)
 
 
 class Document(models.Model):
+    class Meta:
+        permissions = (
+            ('publish_document', 'Can publish and edit non-draft documents'),
+        )
+
     db_table = 'documents'
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")

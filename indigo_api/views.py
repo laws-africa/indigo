@@ -22,6 +22,7 @@ from .models import Document, Attachment
 from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
+from .authz import DocumentPermissions
 from cobalt import FrbrUri
 from cobalt.render import HTMLRenderer
 import newrelic.agent
@@ -136,13 +137,21 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     API endpoint that allows Documents to be viewed or edited.
     """
     serializer_class = DocumentSerializer
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
 
     def perform_destroy(self, instance):
         if not instance.draft:
             raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
         instance.deleted = True
         instance.save()
+
+    def perform_update(self, serializer):
+        # check permissions just before saving, to prevent users
+        # without publish permissions from setting draft = False
+        if not DocumentPermissions().update_allowed(self.request, serializer):
+            self.permission_denied(self.request)
+
+        super(DocumentViewSet, self).perform_update(serializer)
 
     @detail_route(methods=['GET', 'PUT'])
     def content(self, request, *args, **kwargs):

@@ -209,6 +209,37 @@ class DocumentAPITest(APITestCase):
         response = self.client.delete('/api/documents/%s' % id)
         assert_equal(response.status_code, 403)
 
+    def test_cannot_publish(self):
+        # this user cannot publish
+        self.client.login(username='non-publisher@example.com', password='password')
+
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.put('/api/documents/%s' % id, {'draft': False})
+        assert_equal(response.status_code, 403)
+
+    def test_cannot_unpublish(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # this user cannot unpublish
+        self.client.login(username='non-publisher@example.com', password='password')
+        response = self.client.put('/api/documents/%s' % id, {'draft': True})
+        assert_equal(response.status_code, 403)
+
+    def test_cannot_update_published(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # this user cannot edit published
+        self.client.login(username='non-publisher@example.com', password='password')
+        response = self.client.put('/api/documents/%s' % id, {'title': 'A new title'})
+        assert_equal(response.status_code, 403)
+
     def test_table_of_contents(self):
         xml = """
           <chapter id="chapter-2">

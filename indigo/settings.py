@@ -275,7 +275,7 @@ EMAIL_SUBJECT_PREFIX = '[Indigo] '
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # server-side google analytics
 GOOGLE_ANALYTICS_INCLUDE_PATH = ['/api/']
-if not DEBUG:
+if GOOGLE_ANALYTICS_ID and not DEBUG:
     MIDDLEWARE_CLASSES += ('indigo.middleware.GoogleAnalyticsMiddleware',)
 
 # disable email in development

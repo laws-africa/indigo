@@ -265,7 +265,7 @@ REST_FRAMEWORK = {
 
 # Django Rest Auth
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'indigo_api.serializers.UserDetailsSerializer',
+    'USER_DETAILS_SERIALIZER': 'indigo_app.serializers.UserDetailsSerializer',
 }
 
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')

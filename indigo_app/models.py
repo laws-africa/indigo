@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+
 from languages_plus.models import Language as MasterLanguage
 from countries_plus.models import Country as MasterCountry
 
@@ -35,3 +36,16 @@ class Editor(models.Model):
     """
     user = models.OneToOneField(User)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
+
+    @property
+    def country_code(self):
+        if self.country:
+            return self.country.country_id
+        return None
+
+    @country_code.setter
+    def country_code(self, value):
+        if value is None:
+            self.country = value
+        else:
+            self.country = Country.objects.get(country_id=value.upper())

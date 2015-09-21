@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from languages_plus.models import Language as MasterLanguage
 from countries_plus.models import Country as MasterCountry
 
@@ -26,3 +27,11 @@ class Country(models.Model):
 
     def __unicode__(self):
         return unicode(self.country.name)
+
+
+class Editor(models.Model):
+    """ A complement to Django's User model that adds extra
+    properties that we need, like a default country.
+    """
+    user = models.OneToOneField(User)
+    country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)

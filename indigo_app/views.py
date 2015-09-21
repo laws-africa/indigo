@@ -36,6 +36,7 @@ def new_document(request):
         'document_json': doc_json,
         'document_content_json': json.dumps(doc.doc.to_xml()),
         'form': form,
+        'countries': Country.objects.select_related('country').all(),
         'view': 'DocumentView',
     })
 
@@ -46,6 +47,7 @@ def import_document(request):
     return render(request, 'import.html', {
         'document': doc,
         'form': form,
+        'countries': Country.objects.select_related('country').all(),
         'view': 'ImportView',
     })
 
@@ -62,6 +64,7 @@ def library(request):
     return render(request, 'library.html', {
         'countries_json': countries_json,
         'documents_json': documents_json,
+        'countries': Country.objects.select_related('country').all(),
         'view': 'LibraryView',
     })
 

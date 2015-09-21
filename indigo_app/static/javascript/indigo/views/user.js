@@ -38,6 +38,7 @@
         observe: 'email',
         onSet: 'updateEmail',
       },
+      '#profile_country_code': 'country_code',
     },
 
     initialize: function() {

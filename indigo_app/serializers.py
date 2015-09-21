@@ -36,5 +36,6 @@ class UserDetailsSerializer(serializers.ModelSerializer):
             data = self.validated_data.pop('editor')
             if 'country_code' in data:
                 self.instance.editor.country_code = data['country_code']
+                self.instance.editor.save()
 
         super(UserDetailsSerializer, self).save()

@@ -16,6 +16,8 @@
     },
 
     initialize: function() {
+      var self = this;
+
       this.template = Handlebars.compile($(this.template).html());
 
       this.model = new Indigo.Library();
@@ -30,6 +32,15 @@
       };
 
       this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
+
+      this.user = Indigo.userView.model;
+      this.user.on('change:country_code sync', function() {
+        var country = this.get('country_code');
+        if (country) {
+          country = country.toLowerCase();
+          self.$el.find('.filter-country[data-country=' + country + ']').click();
+        }
+      });
     },
 
     loadDocuments: function() {

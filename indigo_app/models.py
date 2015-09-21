@@ -6,6 +6,8 @@ from django.dispatch import receiver
 from languages_plus.models import Language as MasterLanguage
 from countries_plus.models import Country as MasterCountry
 
+from indigo_api.models import Document
+
 
 class Language(models.Model):
     """ The languages available in the UI. They aren't enforced by the API.
@@ -60,3 +62,14 @@ def create_editor(sender, **kwargs):
     if not hasattr(user, 'editor'):
         editor = Editor(user=user)
         editor.save()
+
+
+@receiver(post_save, sender=Document)
+def update_user_country(sender, **kwargs):
+    # default country for user
+    document = kwargs["instance"]
+    user = document.updated_by_user
+
+    if not user.editor.country and document.country:
+        user.editor.country_code = document.country
+        user.editor.save()

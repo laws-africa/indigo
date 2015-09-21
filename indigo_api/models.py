@@ -4,6 +4,7 @@ from itertools import groupby
 
 from django.db import models
 from django.db.models import signals
+from django.contrib.auth.models import User
 from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
@@ -58,6 +59,9 @@ class Document(models.Model):
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     @property
     def doc(self):

@@ -307,6 +307,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         document = Document()
+        document.created_by_user = self.context['request'].user
         return self.update(document, validated_data)
 
     def update(self, document, validated_data):
@@ -332,6 +333,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if source_file:
             # add the source file as an attachment
             AttachmentSerializer(context={'document': document}).create({'file': source_file})
+
+        user = self.context['request'].user
+        if user:
+            document.updated_by_user = user
+            if not document.created_by_user:
+                document.created_by_user = user
 
         document.save()
         # reload it to ensure tags are refreshed

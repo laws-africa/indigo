@@ -217,6 +217,7 @@ PIPELINE_JS = {
             'javascript/indigo/views/document_chooser.js',
             'javascript/indigo/views/document_toc.js',
             'javascript/indigo/views/document_editor.js',
+            'javascript/indigo/views/document_revisions.js',
             'javascript/indigo/views/document.js',
             'javascript/indigo/views/library.js',
             'javascript/indigo/views/error_box.js',

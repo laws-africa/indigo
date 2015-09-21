@@ -14,12 +14,13 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
+import reversion
 
 import lxml.etree as ET
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -181,7 +182,24 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         return Response({'toc': self.table_of_contents(self.get_object())})
 
 
-class AttachmentViewSet(viewsets.ModelViewSet):
+class DocumentResourceView(object):
+    """ Helper mixin for views that hang off of a document URL. """
+    def initial(self, request, **kwargs):
+        self.document = self.lookup_document()
+        super(DocumentResourceView, self).initial(request, **kwargs)
+
+    def lookup_document(self):
+        qs = Document.objects.defer('document_xml')
+        doc_id = self.kwargs['document_id']
+        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
+
+    def get_serializer_context(self):
+        context = super(DocumentResourceView, self).get_serializer_context()
+        context['document'] = self.document
+        return context
+
+
+class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
 
@@ -209,6 +227,38 @@ class AttachmentViewSet(viewsets.ModelViewSet):
 
     def get_serializer_context(self):
         context = super(AttachmentViewSet, self).get_serializer_context()
+        context['document'] = self.document
+        return context
+
+
+class RevisionViewSet(viewsets.ModelViewSet):
+    serializer_class = RevisionSerializer
+
+    @detail_route(methods=['POST'])
+    def restore(self, request, *args, **kwargs):
+        # TODO: check perms on object
+        version = self.get_object()
+
+        with reversion.create_revision():
+            reversion.set_user(request.user)
+            version.revert()
+
+        return Response(status=200)
+
+    def initial(self, request, **kwargs):
+        self.document = self.lookup_document()
+        super(RevisionViewSet, self).initial(request, **kwargs)
+
+    def lookup_document(self):
+        qs = Document.objects.defer('document_xml')
+        doc_id = self.kwargs['document_id']
+        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
+
+    def get_queryset(self):
+        return reversion.get_for_object(self.document)
+
+    def get_serializer_context(self):
+        context = super(RevisionViewSet, self).get_serializer_context()
         context['document'] = self.document
         return context
 

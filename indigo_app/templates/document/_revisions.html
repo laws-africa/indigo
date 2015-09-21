@@ -1,0 +1,20 @@
+<header class="boxed-group-header">
+  <h4>Recent changes</h4>
+</header>
+
+<div class="boxed-group-inner document-revisions-view">
+  <div class="revisions-list">
+  </div>
+</div>
+
+<script id="revisions-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<ol>
+{{#each revisions}}
+  <li>{{ date }} -- <a href="#" class="restore-revision" data-id="{{ id }}">restore this revision</a></li>
+{{/each}}
+</ol>
+
+{% endverbatim %}
+</script>

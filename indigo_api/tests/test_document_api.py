@@ -444,13 +444,13 @@ class DocumentAPITest(APITestCase):
         data = response.data['results'][0]
         assert_equal(data['mime_type'], 'text/plain')
 
-        # test put
+        # test patch
         data['filename'] = 'new.txt'
         response = self.client.patch(data['url'], data)
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'new.txt')
 
-        # test patch
+        # test put
         response = self.client.put(data['url'], {'filename': 'new-from-patch.txt'})
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'new-from-patch.txt')

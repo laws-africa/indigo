@@ -148,6 +148,15 @@ class UserSerializer(serializers.ModelSerializer):
         return name
 
 
+class RevisionSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(source='revision.date_created')
+
+    class Meta:
+        model = reversion.models.Version
+        fields = ('id', 'date')
+        read_only_fields = fields
+
+
 class DocumentListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         super(DocumentListSerializer, self).__init__(*args, **kwargs)

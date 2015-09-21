@@ -7,7 +7,7 @@ from indigo_api.models import Document
 
 
 def forwards(apps, schema_editor):
-    for doc in Document.objects.all():
+    for doc in Document.objects.only('document_xml', 'expression_date').all():
         doc.expression_date = doc.publication_date or arrow.now().date()
         doc.save()
 

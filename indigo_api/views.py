@@ -213,25 +213,11 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
         attachment = self.get_object()
         return view_attachment(attachment)
 
-    def initial(self, request, **kwargs):
-        self.document = self.lookup_document()
-        super(AttachmentViewSet, self).initial(request, **kwargs)
-
-    def lookup_document(self):
-        qs = Document.objects.defer('document_xml')
-        doc_id = self.kwargs['document_id']
-        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
-
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
 
-    def get_serializer_context(self):
-        context = super(AttachmentViewSet, self).get_serializer_context()
-        context['document'] = self.document
-        return context
 
-
-class RevisionViewSet(viewsets.ModelViewSet):
+class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     serializer_class = RevisionSerializer
 
     @detail_route(methods=['POST'])
@@ -245,22 +231,8 @@ class RevisionViewSet(viewsets.ModelViewSet):
 
         return Response(status=200)
 
-    def initial(self, request, **kwargs):
-        self.document = self.lookup_document()
-        super(RevisionViewSet, self).initial(request, **kwargs)
-
-    def lookup_document(self):
-        qs = Document.objects.defer('document_xml')
-        doc_id = self.kwargs['document_id']
-        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
-
     def get_queryset(self):
         return reversion.get_for_object(self.document)
-
-    def get_serializer_context(self):
-        context = super(RevisionViewSet, self).get_serializer_context()
-        context['document'] = self.document
-        return context
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,

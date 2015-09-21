@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'countries_plus',
     'languages_plus',
     'storages',
+    'reversion',
     'indigo_api',
 
     # the Indigo browser application

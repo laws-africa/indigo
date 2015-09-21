@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
+import reversion
 
 from cobalt.act import Act
 
@@ -286,6 +287,10 @@ class Document(models.Model):
                 doc._amended_versions = []
             else:
                 doc._amended_versions = amended_versions
+
+
+# version tracking
+reversion.register(Document)
 
 
 def attachment_filename(instance, filename):

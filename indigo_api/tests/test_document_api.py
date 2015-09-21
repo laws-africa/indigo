@@ -47,6 +47,7 @@ class DocumentAPITest(APITestCase):
 
         assert_equal(response.status_code, 201)
         assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(response.data['draft'], True)
         assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
 
     def test_create_with_locality(self):
@@ -406,6 +407,10 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
+
+        # check the doc
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.data['draft'], True)
 
         # check the attachment
         response = self.client.get('/api/documents/%s/attachments' % id)

@@ -171,6 +171,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     file = serializers.FileField(write_only=True, required=False)
     """ Allow uploading a file to convert and override the content of the document. """
 
+    draft = serializers.BooleanField(default=True)
+
     publication_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     publication_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     publication_date = serializers.DateField(required=False, allow_null=True)
@@ -307,32 +309,16 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         document = Document()
-        document.created_by_user = self.context['request'].user
+        # force drafts for new documents
+        validated_data['draft'] = True
         return self.update(document, validated_data)
 
     def update(self, document, validated_data):
-        content = validated_data.pop('content', None)
-        amendments = validated_data.pop('amendments', None)
-        tags = validated_data.pop('tags', None)
-        repeal = validated_data.pop('repeal', None)
+        """ Update and save document. """
         source_file = validated_data.pop('source_file', None)
+        tags = self.validated_data.pop('tags', None)
 
-        # Document content must always come first so it can be overridden
-        # by the other properties.
-        if content is not None:
-            document.content = content
-
-        document = super(DocumentSerializer, self).update(document, validated_data)
-
-        document.repeal = RepealEvent(**repeal) if repeal else None
-        if amendments is not None:
-            document.amendments = [AmendmentEvent(**a) for a in amendments]
-        if tags is not None:
-            document.tags.set(*tags)
-
-        if source_file:
-            # add the source file as an attachment
-            AttachmentSerializer(context={'document': document}).create({'file': source_file})
+        self.update_document(document, validated_data)
 
         user = self.context['request'].user
         if user:
@@ -341,26 +327,43 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 document.created_by_user = user
 
         document.save()
+
+        # these require that the document is saved
+        if tags is not None:
+            document.tags.set(*tags)
+
+        if source_file:
+            # add the source file as an attachment
+            AttachmentSerializer(context={'document': document}).create({'file': source_file})
+
         # reload it to ensure tags are refreshed
         document = Document.objects.get(pk=document.id)
-
         return document
 
-    def update_document(self, instance):
+    def update_document(self, document, validated_data=None):
         """ Update document without saving it. """
+        if validated_data is None:
+            validated_data = self.validated_data
+
+        # Document content must always come first so it can be overridden
+        # by the other properties.
+        content = self.validated_data.pop('content', None)
+        if content is not None:
+            document.content = content
+
         amendments = self.validated_data.pop('amendments', None)
-        repeal = self.validated_data.pop('repeal', None)
-
-        for attr, value in self.validated_data.items():
-            setattr(instance, attr, value)
-
-        instance.repeal = RepealEvent(**repeal) if repeal else None
-
         if amendments is not None:
-            instance.amendments = [AmendmentEvent(**a) for a in amendments]
+            document.amendments = [AmendmentEvent(**a) for a in amendments]
 
-        instance.copy_attributes()
-        return instance
+        repeal = self.validated_data.pop('repeal', None)
+        document.repeal = RepealEvent(**repeal) if repeal else None
+
+        # save rest of changes
+        for attr, value in self.validated_data.items():
+            setattr(document, attr, value)
+
+        document.copy_attributes()
+        return document
 
     def to_representation(self, instance):
         if not self.context.get('many', False):

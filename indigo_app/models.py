@@ -70,6 +70,9 @@ def update_user_country(sender, **kwargs):
     document = kwargs["instance"]
     user = document.updated_by_user
 
-    if not user.editor.country and document.country:
-        user.editor.country_code = document.country
-        user.editor.save()
+    if user and user.editor and not user.editor.country and document.country:
+        try:
+            user.editor.country_code = document.country
+            user.editor.save()
+        except Country.DoesNotExist:
+            pass

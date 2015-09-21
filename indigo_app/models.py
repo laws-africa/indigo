@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 from languages_plus.models import Language as MasterLanguage
 from countries_plus.models import Country as MasterCountry
@@ -49,3 +51,12 @@ class Editor(models.Model):
             self.country = value
         else:
             self.country = Country.objects.get(country_id=value.upper())
+
+
+@receiver(post_save, sender=User)
+def create_editor(sender, **kwargs):
+    # create editor for user objects
+    user = kwargs["instance"]
+    if not hasattr(user, 'editor'):
+        editor = Editor(user=user)
+        editor.save()

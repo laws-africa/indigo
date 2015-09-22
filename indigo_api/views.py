@@ -223,8 +223,17 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
     @detail_route(methods=['POST'])
     def restore(self, request, *args, **kwargs):
-        # TODO: check perms on object
+        # check permissions on the OLD object
+        if not DocumentPermissions().has_object_permission(request, self, self.document):
+            self.permission_denied(self.request)
+
         revision = self.get_object()
+
+        # check permissions on the NEW object
+        version = revision.version_set.all()[0]
+        document = version.object_version.object
+        if not DocumentPermissions().has_object_permission(request, self, document):
+            self.permission_denied(self.request)
 
         with reversion.create_revision():
             reversion.set_user(request.user)

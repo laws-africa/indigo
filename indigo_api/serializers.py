@@ -149,11 +149,11 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class RevisionSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(source='revision.date_created')
+    date = serializers.DateTimeField(source='date_created')
 
     class Meta:
-        model = reversion.models.Version
-        fields = ('id', 'date')
+        model = reversion.models.Revision
+        fields = ('id', 'date', 'comment')
         read_only_fields = fields
 
 

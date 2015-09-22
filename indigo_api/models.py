@@ -5,6 +5,7 @@ from itertools import groupby
 from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import User
+from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
@@ -211,6 +212,16 @@ class Document(models.Model):
             Document.decorate_amended_versions([self])
 
         return self._amended_versions
+
+    def revisions(self):
+        """ Return a queryset of `reversion.models.Revision` objects for
+        revisions for this document, most recent first.
+        """
+        content_type = ContentType.objects.get_for_model(self)
+        return reversion.models.Revision.objects\
+            .filter(version__content_type=content_type)\
+            .filter(version__object_id_int=self.id)\
+            .order_by('-id')
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

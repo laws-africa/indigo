@@ -223,16 +223,17 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     @detail_route(methods=['POST'])
     def restore(self, request, *args, **kwargs):
         # TODO: check perms on object
-        version = self.get_object()
+        revision = self.get_object()
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            version.revert()
+            reversion.set_comment("Restored revision %s" % revision.id)
+            revision.revert()
 
         return Response(status=200)
 
     def get_queryset(self):
-        return reversion.get_for_object(self.document)
+        return self.document.revisions()
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,

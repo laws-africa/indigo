@@ -21,6 +21,11 @@
 
       this.model = new Indigo.RevisionList(null, {document: this.document});
       this.model.on('change sync', this.render, this);
+
+      this.document.on('sync', this.refresh, this);
+    },
+
+    refresh: function() {
       this.model.fetch({reset: true});
     },
 

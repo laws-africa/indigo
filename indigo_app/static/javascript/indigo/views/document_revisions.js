@@ -12,6 +12,7 @@
     template: '#revisions-template',
     events: {
       'click .restore-revision': 'restore',
+      'click .revision': 'showRevision',
     },
 
     initialize: function(options) {
@@ -37,7 +38,7 @@
         });
       });
 
-      this.$el.find('.revisions-list').html(this.template({
+      this.$el.find('.revisions-container').html(this.template({
         revisions: revisions,
       }));
     },
@@ -49,6 +50,14 @@
         var revision = this.model.get($(e.target).data('id'));
         this.restoreToRevision(revision);
       }
+    },
+
+    showRevision: function(e) {
+      e.preventDefault();
+      var $revision = $(e.currentTarget);
+
+      $revision.siblings().removeClass('active');
+      $revision.addClass('active');
     },
 
     restoreToRevision: function(revision) {

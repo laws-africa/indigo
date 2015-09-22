@@ -2,17 +2,28 @@
   <h4>Recent changes</h4>
 </header>
 
-<div class="boxed-group-inner document-revisions-view">
-  <div class="revisions-list">
+<div class="boxed-group-inner boxed-group-inner-minimal document-revisions-view">
+  <div class="revisions-container">
+  </div>
+
+  <div class="document-sheet-container">
+    <div class="revision-preview-container document-sheet">
+      <div class="akoma-ntoso"></div>
+    </div>
   </div>
 </div>
 
 <script id="revisions-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<ol>
+<ol class="revision-list list-unstyled">
 {{#each revisions}}
-  <li>{{ date_str }} {{ comment }} -- <a href="#" class="restore-revision" data-id="{{ id }}">restore this revision</a></li>
+  <li class="revision" data-id="{{ id }}">
+    <i class="chevron text-muted fa fa-chevron-right"></i>
+    <div><span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span></div>
+    <div class="revision-comment">{{ comment }}</div>
+    <a href="#" class="restore-revision" data-id="{{ id }}">Restore this revision</a>
+  </li>
 {{/each}}
 </ol>
 

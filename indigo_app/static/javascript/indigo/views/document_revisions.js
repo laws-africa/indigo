@@ -25,6 +25,18 @@
 
     render: function() {
       var revisions = this.model.toJSON();
+      var week_ago = moment().subtract(7, 'days');
+
+      _.each(revisions, function(r) {
+        // format date nicely
+        r.date_str = moment(r.date).calendar(null, {
+          sameDay: '[Today at] LTS',
+          lastDay: '[Yesterday at] LTS',
+          lastWeek: '[Last] dddd [at] LTS',
+          sameElse: 'LL [at] LTS',
+        });
+      });
+
       this.$el.find('.revisions-list').html(this.template({
         revisions: revisions,
       }));

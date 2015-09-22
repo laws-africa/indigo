@@ -3,6 +3,7 @@ import os.path
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
+from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
@@ -127,6 +128,25 @@ class AttachmentSerializer(serializers.ModelSerializer):
         return super(AttachmentSerializer, self).update(instance, validated_data)
 
 
+class UserSerializer(serializers.ModelSerializer):
+    display_name = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('id', 'display_name')
+        read_only_fields = fields
+
+    def get_display_name(self, user):
+        if user.first_name:
+            name = user.first_name
+            if user.last_name:
+                name += ' %s.' % user.last_name[0]
+        else:
+            name = user.username
+
+        return name
+
+
 class DocumentListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
         super(DocumentListSerializer, self).__init__(*args, **kwargs)
@@ -184,16 +204,18 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ List of amended versions of this document """
     repeal = RepealSerializer(required=False, allow_null=True)
 
+    updated_by_user = UserSerializer(read_only=True)
+    created_by_user = UserSerializer(read_only=True)
+
     class Meta:
         list_serializer_class = DocumentListSerializer
         model = Document
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
+            'content', 'content_url', 'file', 'title', 'draft',
+            'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
-            'content', 'content_url', 'file',
-
-            'title', 'draft', 'created_at', 'updated_at',
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
 

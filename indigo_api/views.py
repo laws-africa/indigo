@@ -4,6 +4,7 @@ import logging
 import arrow
 from django.http import Http404, HttpResponse
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
+from django.views.decorators.cache import cache_control
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -233,10 +234,13 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return Response(status=200)
 
     @detail_route(methods=['GET'])
+    @cache_control(public=True, max_age=24 * 3600)
     def content(self, request, *args, **kwargs):
         # TODO: this should negotiate a content type!
-        # TODO: this can be cached, eg. for 24 hours, because
-        #       the underlying data won't change (although the formatting might)
+
+        # this can be cached because the underlying data won't change (although
+        # the formatting might)
+
         revision = self.get_object()
 
         version = revision.version_set.all()[0]

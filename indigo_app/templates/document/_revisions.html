@@ -16,8 +16,13 @@
 {{#each revisions}}
   <li class="revision" data-id="{{ id }}">
     <i class="chevron text-muted fa fa-chevron-right"></i>
-    <div><span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span></div>
-    <div class="revision-comment">{{ comment }}</div>
+    <div>
+      <span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span>
+    </div>
+    <div class="revision-summary">
+      <div class="revision-user">{{ user.display_name }}</div>
+      <div class="revision-comment">{{ comment }}</div>
+    </div>
     <a href="#" class="restore-revision" data-id="{{ id }}">Restore this revision</a>
   </li>
 {{/each}}

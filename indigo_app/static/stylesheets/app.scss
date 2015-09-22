@@ -560,7 +560,6 @@ legend {
     &:hover {
       background-color: $sidebar-colour;
     }
-
   }
 
   .chevron {
@@ -579,6 +578,10 @@ legend {
 
   .revision-comment {
     font-style: italic;
+  }
+
+  .revision-summary {
+    margin-left: 10px;
   }
 }
 

@@ -232,6 +232,17 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
         return Response(status=200)
 
+    @detail_route(methods=['GET'])
+    def content(self, request, *args, **kwargs):
+        # TODO: this should negotiate a content type!
+        # TODO: this can be cached, eg. for 24 hours, because
+        #       the underlying data won't change (although the formatting might)
+        revision = self.get_object()
+
+        version = revision.version_set.all()[0]
+        document = version.object_version.object
+        return Response(document_to_html(document))
+
     def get_queryset(self):
         return self.document.revisions()
 

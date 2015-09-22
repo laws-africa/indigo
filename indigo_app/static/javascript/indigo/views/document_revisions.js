@@ -55,9 +55,16 @@
     showRevision: function(e) {
       e.preventDefault();
       var $revision = $(e.currentTarget);
+      var revision = this.model.get($revision.data('id'));
+      var self = this;
 
       $revision.siblings().removeClass('active');
       $revision.addClass('active');
+
+      $.get(revision.url() + '/content')
+        .then(function(response) {
+          self.$el.find('.revision-preview .akoma-ntoso').html(response);
+        });
     },
 
     restoreToRevision: function(revision) {

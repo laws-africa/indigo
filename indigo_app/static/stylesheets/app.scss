@@ -551,7 +551,7 @@ legend {
     &.active {
       background-color: $sidebar-colour;
 
-      .restore-revision,
+      .revision-controls,
       .chevron {
         display: block;
       }
@@ -572,7 +572,7 @@ legend {
     font-weight: bold;
   }
 
-  .restore-revision {
+  .revision-controls {
     display: none;
   }
 

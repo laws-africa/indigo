@@ -66,6 +66,7 @@
 
       }).then(function(data) {
         // success, go edit it
+        Indigo.progressView.peg();
         window.location = '/documents/' + data.id;
 
       }).fail(function(xhr, status, message) {

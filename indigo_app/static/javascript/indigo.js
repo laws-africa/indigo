@@ -39,10 +39,10 @@ $(function() {
       }
     })
     .ajaxStart(function(event) {
-      $('#progress-bar').show();
+      Indigo.progressView.push();
     })
     .ajaxStop(function(event) {
-      $('#progress-bar').hide();
+      Indigo.progressView.pop();
     });
 
   // datepicker
@@ -55,6 +55,7 @@ $(function() {
     placement: 'auto top'
   });
 
+  Indigo.progressView = new Indigo.ProgressView();
   Indigo.errorView = new Indigo.ErrorBoxView();
 
   // always load the user view

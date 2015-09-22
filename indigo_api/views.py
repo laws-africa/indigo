@@ -18,6 +18,7 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, All
 import reversion
 
 import lxml.etree as ET
+import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
@@ -244,17 +245,30 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
     @detail_route(methods=['GET'])
     @cache_control(public=True, max_age=24 * 3600)
-    def content(self, request, *args, **kwargs):
-        # TODO: this should negotiate a content type!
-
+    def diff(self, request, *args, **kwargs):
         # this can be cached because the underlying data won't change (although
         # the formatting might)
-
         revision = self.get_object()
-
         version = revision.version_set.all()[0]
-        document = version.object_version.object
-        return Response(document_to_html(document))
+
+        # most recent version just before this one
+        old_version = reversion.models.Version.objects\
+            .filter(content_type=version.content_type)\
+            .filter(object_id_int=version.object_id_int)\
+            .filter(id__lt=version.id)\
+            .order_by('-id')\
+            .first()
+
+        if old_version:
+            old_html = document_to_html(old_version.object_version.object)
+        else:
+            old_html = ""
+        new_html = document_to_html(version.object_version.object)
+        diff = lxml.html.diff.htmldiff(old_html, new_html)
+
+        # TODO: include other diff'd attributes
+
+        return Response({'content': diff})
 
     def get_queryset(self):
         return self.document.revisions()

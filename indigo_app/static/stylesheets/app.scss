@@ -542,6 +542,19 @@ legend {
   left: $sidebar-width;
 }
 
+.revision-preview {
+  ins {
+    background-color: #a6f3a6;
+    text-decoration: none;
+  }
+
+  del {
+    color: #a33;
+    background-color: #f8cbcb;
+    text-decoration: line-through;
+  }
+}
+
 .revision-list {
   .revision {
     padding: 5px 10px;

@@ -66,9 +66,9 @@
       $revision.siblings().removeClass('active');
       $revision.addClass('active');
 
-      $.get(revision.url() + '/content')
+      $.get(revision.url() + '/diff')
         .then(function(response) {
-          self.$el.find('.revision-preview .akoma-ntoso').html(response);
+          self.$el.find('.revision-preview .akoma-ntoso').html(response.content);
         });
     },
 

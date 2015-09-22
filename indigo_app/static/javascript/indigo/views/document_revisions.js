@@ -70,6 +70,7 @@
     restoreToRevision: function(revision) {
       $.post(revision.url() + '/restore')
         .then(function() {
+          Indigo.progressView.peg();
           window.location.reload();
         });
     },

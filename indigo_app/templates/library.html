@@ -113,10 +113,10 @@
     <label class="btn btn-default btn-sm {{#if filter_status.all}}active{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
     </label>
-    <label class="btn btn-default btn-sm {{#if filter_status.published}}active{{/if}}">
+    <label class="btn btn-sm {{#if filter_status.published}}btn-info active{{else}}btn-default{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
     </label>
-    <label class="btn btn-default btn-sm {{#if filter_status.draft}}active{{/if}}">
+    <label class="btn btn-sm {{#if filter_status.draft}}btn-warning active{{else}}btn-default{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
     </label>
   </div>

@@ -121,7 +121,7 @@
 
       // ** tags
       // count tags, sort in descending order
-      var tags = {}
+      var tags = {};
       _.each(filters.tags, function(t) { tags[t] = 1; });
 
       this.summary.tags = _.sortBy(

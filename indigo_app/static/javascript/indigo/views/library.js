@@ -9,7 +9,7 @@
     template: '#filters-template',
     events: {
       'click .filter-tag': 'filterByTag',
-      'click .filter-country': 'filterByCountry',
+      'change .filter-country': 'filterByCountry',
       'click .filter-locality': 'filterByLocality',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
@@ -39,7 +39,7 @@
         var country = this.get('country_code');
         if (country) {
           country = country.toLowerCase();
-          self.$el.find('.filter-country[data-country=' + country + ']').click();
+          self.$el.find('.filter-country').val(country).change();
         }
       });
     },
@@ -186,7 +186,7 @@
     filterByCountry: function(e) {
       e.preventDefault();
 
-      this.filters.country = $(e.currentTarget).data('country') || null;
+      this.filters.country = $(e.currentTarget).val() || null;
       this.filters.locality = null;
       this.filters.tags = [];
 

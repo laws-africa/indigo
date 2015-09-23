@@ -99,13 +99,13 @@
 
 <section>
   <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-default btn-sm active">
+    <label class="btn btn-default btn-sm {{#if filter_status.all}}active{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
     </label>
-    <label class="btn btn-default btn-sm ">
+    <label class="btn btn-default btn-sm {{#if filter_status.published}}active{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
     </label>
-    <label class="btn btn-default btn-sm">
+    <label class="btn btn-default btn-sm {{#if filter_status.draft}}active{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
     </label>
   </div>
@@ -114,12 +114,12 @@
 {{#if summary.show_countries}}
 <section>
   <ul class="nav nav-pills nav-stacked">
-    <li class="active">
+    <li class="{{#unless filters.country}}active{{/unless}}">
       <a href="#" class="filter-country" data-country="">All countries <span class="badge">{{ count }}</span></a>
     </li>
     {{#each summary.countries}}
-    <li>
-      <a href="#" class="filter-country" data-country="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    <li class="{{#if active}}active{{/if}}">
+      <a href="#" class="filter-country" data-country="{{code}}">{{name}} <span class="badge">{{count}}</span></a>
     </li>
     {{/each}}
   </ul>
@@ -129,12 +129,12 @@
 {{#if summary.localities}}
 <section>
   <ul class="nav nav-pills nav-stacked">
-    <li class="active">
+    <li class="{{#unless filters.locality}}active{{/unless}}">
       <a href="#" class="filter-locality" data-locality="">All localities <span class="badge">{{ count }}</span></a>
     </li>
     {{#each summary.localities}}
-    <li>
-      <a href="#" class="filter-locality" data-locality="{{this.code}}">{{this.name}} <span class="badge">{{this.count}}</span></a>
+    <li class="{{#if active}}active{{/if}}">
+      <a href="#" class="filter-locality" data-locality="{{code}}">{{name}} <span class="badge">{{count}}</span></a>
     </li>
     {{/each}}
   </ul>
@@ -143,7 +143,7 @@
 
 <section class="tag-filters">
   {{#each summary.tags}}
-  <a href="#" class="label label-default filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
+  <a href="#" class="label {{#if active}}label-info{{else}}label-default{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
   {{/each}}
 </section>
 {% endverbatim %}

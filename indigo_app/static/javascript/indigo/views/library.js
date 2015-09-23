@@ -19,10 +19,7 @@
       var self = this;
 
       this.template = Handlebars.compile($(this.template).html());
-
-      this.model = new Indigo.Library();
-      this.model.on('change, reset', this.summarizeAndRender, this);
-
+      this.filtered = new Indigo.Library();
       this.filters = {
         search: null,
         country: null,
@@ -30,8 +27,12 @@
         tags: [],
         status: 'all',
       };
-
       this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
+
+      this.on('change', this.summarizeAndRender, this);
+
+      this.model = new Indigo.Library();
+      this.model.on('change reset', function() { this.trigger('change'); }, this);
 
       this.user = Indigo.userView.model;
       this.user.on('change:country_code sync', function() {
@@ -45,49 +46,123 @@
 
     loadDocuments: function() {
       this.model.reset(Indigo.libraryPreload);
-      this.trigger('change');
     },
 
     summarizeAndRender: function() {
-      this.summarize();
+      this.filterAndSummarize();
       this.render();
     },
 
-    summarize: function() {
+    filterAndSummarize: function() {
+      var filters = this.filters;
+      var docs = this.model.models;
+
       this.summary = {};
 
+      // ** country
       // count countries, sort alphabetically
       this.summary.countries = _.sortBy(
         _.map(
-          _.countBy(this.model.models, function(d) { return d.get('country'); }),
-          function(count, code) { return {code: code, name: Indigo.countries[code], count: count}; }
+          _.countBy(docs, function(d) { return d.get('country'); }),
+          function(count, code) {
+            return {
+              code: code,
+              name: Indigo.countries[code],
+              count: count,
+              active: filters.country === code,
+            };
+          }
         ),
         function(info) { return info.name; });
       this.summary.show_countries = this.summary.countries.length > 1;
+      // filter by country
+      if (filters.country) {
+        docs = _.filter(docs, function(doc) {
+          return doc.get('country') == filters.country;
+        });
+      }
 
+      // ** status
+      // filter by status
+      if (filters.status !== 'all') {
+        docs = _.filter(docs, function(doc) {
+          if (filters.status === "draft") {
+            return doc.get('draft') === true;
+          }
+          else if (filters.status === "published"){
+            return doc.get('draft') === false;
+          }
+        });
+      }
+
+      // ** locality
       // count localities, sort alphabetically
       this.summary.localities = _.sortBy(
         _.map(
           _.countBy(
-            _.filter(this.model.models, function(d) { return d.get('locality'); }),
+            _.filter(docs, function(d) { return d.get('locality'); }),
                     function(d) { return d.get('locality'); }),
-          function(count, code) { return {code: code, name: code || "(none)", count: count}; }
+          function(count, code) {
+            return {
+              code: code,
+              name: code || "(none)",
+              count: count,
+              active: filters.locality === code,
+            };
+          }
         ),
         function(info) { return info.code; });
+      // filter by locality
+      if (filters.locality) {
+        docs = _.filter(docs, function(doc) {
+          return doc.get('locality') == filters.locality;
+        });
+      }
 
+      // ** tags
       // count tags, sort in descending order
+      var tags = {}
+      _.each(filters.tags, function(t) { tags[t] = 1; });
+
       this.summary.tags = _.sortBy(
         _.map(
           // count occurrences of each tag
           _.countBy(
             // build up a list of tags
-            _.reduce(this.model.models, function(list, d) { return list.concat(d.get('tags') || []); }, [])
+            _.reduce(docs, function(list, d) { return list.concat(d.get('tags') || []); }, [])
           ),
           // turn counts into useful objects
-          function(count, tag) { return {tag: tag, count: count}; }
+          function(count, tag) {
+            return {
+              tag: tag,
+              count: count,
+              active: tags[tag],
+            };
+          }
         ),
         // sort most tagged to least
         function(info) { return -info.count; });
+      // filter by tags
+      if (filters.tags.length > 0) {
+        docs = _.filter(docs, function(doc) {
+          return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
+        });
+      }
+
+      // search
+      if (filters.search) {
+        var needle = filters.search.toLowerCase();
+        var self = this;
+
+        docs = _.filter(docs, function(doc) {
+          return _.any(self.searchableFields, function(field) {
+            var val = doc.get(field);
+            return val && val.toLowerCase().indexOf(needle) > -1;
+          });
+        });
+      }
+
+      this.filtered.reset(docs);
     },
 
     filterByTag: function(e) {
@@ -111,12 +186,9 @@
     filterByCountry: function(e) {
       e.preventDefault();
 
-      var $link = $(e.currentTarget);
-      var country = $link.data('country') || null;
-
-      $link.closest('ul').find('li').removeClass('active');
-      $link.closest('li').addClass('active');
-      this.filters.country = country;
+      this.filters.country = $(e.currentTarget).data('country') || null;
+      this.filters.locality = null;
+      this.filters.tags = [];
 
       this.trigger('change');
     },
@@ -124,36 +196,14 @@
     filterByLocality: function(e) {
       e.preventDefault();
 
-      var $link = $(e.currentTarget);
-      var locality = $link.data('locality') || null;
-
-      $link.closest('ul').find('li').removeClass('active');
-      $link.closest('li').addClass('active');
-      this.filters.locality = locality;
+      this.filters.locality = $(e.currentTarget).data('locality') || null;
+      this.filters.tags = [];
 
       this.trigger('change');
     },
 
     filterByStatus: function(e) {
-      var $input = $(e.currentTarget);
-      var status = $input.val();
-
-      this.filters.status = status;
-
-      // Change buttons to correct colour.
-      var parent = $input.parent();
-      parent.siblings().removeClass().addClass('btn btn-sm btn-default');
-
-      if (status=='draft') {
-        parent.removeClass().addClass('btn btn-sm btn-warning');
-      }
-      else if (status=='published') {
-        parent.removeClass().addClass('btn btn-sm btn-info');
-      }
-      else {
-        parent.removeClass().addClass('btn btn-sm btn-default');
-      }
-
+      this.filters.status = $(e.currentTarget).val();
       this.trigger('change');
     },
 
@@ -166,66 +216,15 @@
     },
 
     render: function() {
+      var filter_status = {};
+      filter_status[this.filters.status] = 1;
+
       $('#filters').html(this.template({
         summary: this.summary,
-        count: this.model.length
+        count: this.model.length,
+        filters: this.filters,
+        filter_status: filter_status,
       }));
-    },
-
-    // filter the documents according to our filters
-    filtered: function() {
-      var filters = this.filters;
-      var collection = new Indigo.Library();
-      var docs = this.model.models;
-
-      // country
-      if (filters.country) {
-        docs = _.filter(docs, function(doc) {
-          return doc.get('country') == filters.country;
-        });
-      }
-
-      // locality
-      if (filters.locality) {
-        docs = _.filter(docs, function(doc) {
-          return doc.get('locality') == filters.locality;
-        });
-      }
-
-      // tags
-      if (filters.tags.length > 0) {
-        docs = _.filter(docs, function(doc) {
-          return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
-        });
-      }
-
-      // status
-      if (filters.status !== 'all') {
-        docs = _.filter(docs, function(doc) {
-          if (filters.status === "draft") {
-            return doc.get('draft') === true;
-          }
-          else if (filters.status === "published"){
-            return doc.get('draft') === false;
-          }
-        });
-      }
-
-      // search
-      if (filters.search) {
-        var needle = filters.search.toLowerCase();
-        var self = this;
-
-        docs = _.filter(docs, function(doc) {
-          return _.any(self.searchableFields, function(field) {
-            var val = doc.get(field);
-            return val && val.toLowerCase().indexOf(needle) > -1;
-          });
-        });
-      }
-
-      collection.reset(docs);
-      return collection;
     },
   });
 
@@ -244,7 +243,7 @@
     },
 
     render: function() {
-      var docs = this.filterView.filtered();
+      var docs = this.filterView.filtered;
 
       this.$el.html(this.template({
         count: docs.length,

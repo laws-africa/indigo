@@ -52,8 +52,14 @@
       e.preventDefault();
 
       if (confirm("Are you sure you want to restore back to this point?")) {
-        var revision = this.model.get($(e.target).data('id'));
-        this.restoreToRevision(revision);
+        var $revision = $(e.target).closest('.revision');
+        if ($revision.data('index') == '0') {
+          // last saved revision, just reload page
+          Indigo.progressView.peg();
+          window.location.reload();
+        } else {
+          this.restoreToRevision(this.model.get($revision.data('id')));
+        }
       }
     },
 
@@ -76,6 +82,7 @@
       $.post(revision.url() + '/restore')
         .then(function() {
           Indigo.progressView.peg();
+          // # TODO: just refresh the models!
           window.location.reload();
         });
     },

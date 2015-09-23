@@ -14,7 +14,7 @@
 
 <ol class="revision-list list-unstyled">
 {{#each revisions}}
-  <li class="revision" data-id="{{ id }}">
+  <li class="revision" data-id="{{ id }}" data-index="{{ @index }}">
     <i class="chevron text-muted fa fa-chevron-right"></i>
     <div>
       <span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span>
@@ -23,7 +23,7 @@
       <div class="revision-user">{{ user.display_name }}</div>
       <div class="revision-comment">{{ comment }}</div>
       <div class="revision-controls">
-        <a href="#" class="restore-revision" data-id="{{ id }}">Restore this revision</a>
+        <a href="#" class="restore-revision">Restore this revision</a>
       </div>
     </div>
   </li>

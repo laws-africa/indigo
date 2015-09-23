@@ -1,0 +1,34 @@
+<div class="boxed-group-inner boxed-group-inner-minimal document-revisions-view">
+  <div class="revisions-container">
+  </div>
+
+  <div class="document-sheet-container">
+    <div class="revision-preview document-sheet">
+      <div class="akoma-ntoso"></div>
+    </div>
+  </div>
+</div>
+
+<script id="revisions-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<ol class="revision-list list-unstyled">
+{{#each revisions}}
+  <li class="revision" data-id="{{ id }}" data-index="{{ @index }}">
+    <i class="chevron text-muted fa fa-chevron-right"></i>
+    <div>
+      <span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span>
+    </div>
+    <div class="revision-summary">
+      <div class="revision-user">{{ user.display_name }}</div>
+      <div class="revision-comment">{{ comment }}</div>
+      <div class="revision-controls">
+        <a href="#" class="restore-revision">Restore this revision</a>
+      </div>
+    </div>
+  </li>
+{{/each}}
+</ol>
+
+{% endverbatim %}
+</script>

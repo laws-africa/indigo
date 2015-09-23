@@ -4,6 +4,7 @@ import logging
 import arrow
 from django.http import Http404, HttpResponse
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
+from django.views.decorators.cache import cache_control
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -14,12 +15,14 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
+import reversion
 
 import lxml.etree as ET
+import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -181,7 +184,24 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         return Response({'toc': self.table_of_contents(self.get_object())})
 
 
-class AttachmentViewSet(viewsets.ModelViewSet):
+class DocumentResourceView(object):
+    """ Helper mixin for views that hang off of a document URL. """
+    def initial(self, request, **kwargs):
+        self.document = self.lookup_document()
+        super(DocumentResourceView, self).initial(request, **kwargs)
+
+    def lookup_document(self):
+        qs = Document.objects.defer('document_xml')
+        doc_id = self.kwargs['document_id']
+        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
+
+    def get_serializer_context(self):
+        context = super(DocumentResourceView, self).get_serializer_context()
+        context['document'] = self.document
+        return context
+
+
+class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
 
@@ -195,22 +215,63 @@ class AttachmentViewSet(viewsets.ModelViewSet):
         attachment = self.get_object()
         return view_attachment(attachment)
 
-    def initial(self, request, **kwargs):
-        self.document = self.lookup_document()
-        super(AttachmentViewSet, self).initial(request, **kwargs)
-
-    def lookup_document(self):
-        qs = Document.objects.defer('document_xml')
-        doc_id = self.kwargs['document_id']
-        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
-
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
 
-    def get_serializer_context(self):
-        context = super(AttachmentViewSet, self).get_serializer_context()
-        context['document'] = self.document
-        return context
+
+class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
+    serializer_class = RevisionSerializer
+
+    @detail_route(methods=['POST'])
+    def restore(self, request, *args, **kwargs):
+        # check permissions on the OLD object
+        if not DocumentPermissions().has_object_permission(request, self, self.document):
+            self.permission_denied(self.request)
+
+        revision = self.get_object()
+
+        # check permissions on the NEW object
+        version = revision.version_set.all()[0]
+        document = version.object_version.object
+        if not DocumentPermissions().has_object_permission(request, self, document):
+            self.permission_denied(self.request)
+
+        with reversion.create_revision():
+            reversion.set_user(request.user)
+            reversion.set_comment("Restored revision %s" % revision.id)
+            revision.revert()
+
+        return Response(status=200)
+
+    @detail_route(methods=['GET'])
+    @cache_control(public=True, max_age=24 * 3600)
+    def diff(self, request, *args, **kwargs):
+        # this can be cached because the underlying data won't change (although
+        # the formatting might)
+        revision = self.get_object()
+        version = revision.version_set.all()[0]
+
+        # most recent version just before this one
+        old_version = reversion.models.Version.objects\
+            .filter(content_type=version.content_type)\
+            .filter(object_id_int=version.object_id_int)\
+            .filter(id__lt=version.id)\
+            .order_by('-id')\
+            .first()
+
+        if old_version:
+            old_html = document_to_html(old_version.object_version.object)
+        else:
+            old_html = ""
+        new_html = document_to_html(version.object_version.object)
+        diff = lxml.html.diff.htmldiff(old_html, new_html)
+
+        # TODO: include other diff'd attributes
+
+        return Response({'content': diff})
+
+    def get_queryset(self):
+        return self.document.revisions()
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,

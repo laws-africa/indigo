@@ -235,11 +235,6 @@ a.help {
   height: 100%;
 }
 
-.document-sheet-container {
-  height: 100%;
-  width: 100%;
-}
-
 .document-xml-editor {
   /* this is changed when the user chooses to show it */
   display: none;
@@ -325,10 +320,14 @@ legend {
 
 /* make a document sheet look like paper */
 .document-sheet-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
   height: 100%;
   overflow-x: hidden;
   overflow-y: auto;
-  position: relative;
 
   background: #aaa;
   margin: 0px;
@@ -411,7 +410,7 @@ legend {
 /* table of contents browser */
 .toc {
   position: absolute;
-  top: 132px;
+  top: 158px;
   left: 0px;
   right: 0px;
   bottom: 0px;
@@ -526,6 +525,76 @@ legend {
   .document-chooser-list {
     max-height: 295px;
     overflow-y: scroll;
+  }
+}
+
+/* revision list */
+.revisions-container {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: $sidebar-width;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.revisions-container + .document-sheet-container {
+  left: $sidebar-width;
+}
+
+.revision-preview {
+  ins {
+    background-color: #a6f3a6;
+    text-decoration: none;
+  }
+
+  del {
+    color: #a33;
+    background-color: #f8cbcb;
+    text-decoration: line-through;
+  }
+}
+
+.revision-list {
+  .revision {
+    padding: 5px 10px;
+    border-bottom: 1px solid $border-colour;
+    cursor: pointer;
+
+    &.active {
+      background-color: $sidebar-colour;
+
+      .revision-controls,
+      .chevron {
+        display: block;
+      }
+    }
+
+    &:hover {
+      background-color: $sidebar-colour;
+    }
+  }
+
+  .chevron {
+    float: right;
+    margin-top: 3px;
+    display: none;
+  }
+
+  .revision-date {
+    font-weight: bold;
+  }
+
+  .revision-controls {
+    display: none;
+  }
+
+  .revision-comment {
+    font-style: italic;
+  }
+
+  .revision-summary {
+    margin-left: 10px;
   }
 }
 

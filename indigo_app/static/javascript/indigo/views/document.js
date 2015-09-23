@@ -56,6 +56,8 @@
   //
   //   DocumentEditorView - handles editing the document's body content
   //
+  //   DocumentRevisionsView - handles walking through revisions to a document
+  //
   // When saving a document, the DocumentView tells the children to save their changes.
   // In turn, they trigger 'dirty' and 'clean' events when their models change or
   // once they've been saved. The DocumentView uses those signals to enable/disable
@@ -110,6 +112,8 @@
       this.attachmentsView.on('clean', this.setClean, this);
 
       this.analysisView = new Indigo.DocumentAnalysisView({model: this.documentDom});
+
+      this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document});
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
       this.tocView.on('item-selected', this.showEditor, this);

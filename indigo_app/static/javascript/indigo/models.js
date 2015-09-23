@@ -203,4 +203,29 @@
     },
   });
 
+  Indigo.Revision = Backbone.Model.extend({});
+
+  Indigo.RevisionList = Backbone.Collection.extend({
+    model: Indigo.Revision,
+    comparator: 'date',
+  });
+
+  Indigo.RevisionList = Backbone.Collection.extend({
+    model: Indigo.Revision,
+    comparator: 'filename',
+
+    initialize: function(models, options) {
+      this.document = options.document;
+    },
+
+    url: function() {
+      return this.document.url() + '/revisions';
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
+    },
+  });
+
 })(window);

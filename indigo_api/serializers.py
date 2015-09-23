@@ -11,6 +11,7 @@ from rest_framework_xml.renderers import XMLRenderer
 from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
+import reversion
 
 from .models import Document, Attachment
 from .slaw import Importer
@@ -145,6 +146,16 @@ class UserSerializer(serializers.ModelSerializer):
             name = user.username
 
         return name
+
+
+class RevisionSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(source='date_created')
+    user = UserSerializer()
+
+    class Meta:
+        model = reversion.models.Revision
+        fields = ('id', 'date', 'comment', 'user')
+        read_only_fields = fields
 
 
 class DocumentListSerializer(serializers.ListSerializer):
@@ -348,7 +359,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             if not document.created_by_user:
                 document.created_by_user = user
 
-        document.save()
+        # save as a revision
+        with reversion.create_revision():
+            reversion.set_user(user)
+            document.save()
 
         # these require that the document is saved
         if tags is not None:

@@ -6,9 +6,9 @@ from . import views
 urlpatterns = patterns('',
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
 
-    url(r'^documents/new/$', views.new_document, name='new_document'),
-    url(r'^documents/import/$', views.import_document, name='import_document'),
     url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
+    url(r'^documents/new/$', views.document, name='new_document'),
+    url(r'^documents/import/$', views.import_document, name='import_document'),
     url(r'^library/$', views.library, name='library'),
 
     url(r'^auth/', include('rest_auth.urls')),

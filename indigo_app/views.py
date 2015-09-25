@@ -8,8 +8,14 @@ from .forms import DocumentForm
 import json
 
 
-def document(request, doc_id):
-    doc = get_object_or_404(Document, pk=doc_id)
+def document(request, doc_id=None):
+    if doc_id:
+        doc = get_object_or_404(Document, pk=doc_id)
+    else:
+        # it's new!
+        doc = Document(title='(untitled)')
+        doc.tags = None
+
     doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
     form = DocumentForm(instance=doc)
 
@@ -20,22 +26,6 @@ def document(request, doc_id):
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
-        'countries': Country.objects.select_related('country').all(),
-        'view': 'DocumentView',
-    })
-
-
-def new_document(request):
-    doc = Document(title='(untitled)')
-    doc.tags = None
-    doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
-    form = DocumentForm(instance=doc)
-
-    return render(request, 'document/show.html', {
-        'document': doc,
-        'document_json': doc_json,
-        'document_content_json': json.dumps(doc.doc.to_xml()),
-        'form': form,
         'countries': Country.objects.select_related('country').all(),
         'view': 'DocumentView',
     })

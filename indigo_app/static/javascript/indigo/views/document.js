@@ -201,6 +201,7 @@
     save: function() {
       var self = this;
       var is_new = self.document.isNew();
+      var deferred = null;
 
       this.$saveBtn
         .prop('disabled', true)
@@ -208,25 +209,30 @@
           .removeClass('fa-save')
           .addClass('fa-pulse fa-spinner');
 
-      // We save the content first, and then save
-      // the properties on top of it, so that content
-      // properties that change metadata in the content
-      // take precendence.
-      var forcePropertiesSave = this.bodyEditorView.dirty;
+      if (is_new) {
+        // save properties first, to get an ID, then
+        // stash the ID and save the rest
+        deferred = this
+          .propertiesView.save(true)
+          .then(function() {
+            self.documentContent.set('id', self.document.get('id'));
+            return self.bodyEditorView.save();
+          });
+      } else {
+        // We save the content first, and then save
+        // the properties on top of it, so that content
+        // properties that change metadata in the content
+        // take precendence.
+        deferred = this
+          .bodyEditorView.save()
+          .then(function() {
+            return self.propertiesView.save(self.bodyEditorView.dirty);
+          });
+      }
 
-      this.bodyEditorView
-        .save()
-        .then(function() {
-          return self.propertiesView.save(forcePropertiesSave);
-        })
+      deferred
         .then(function() {
           return self.attachmentsView.save();
-        })
-        .then(function() {
-          if (is_new) {
-            // redirect
-            document.location = '/documents/' + self.document.get('id') + '/';
-          }
         })
         .fail(function() {
           self.$saveBtn
@@ -235,6 +241,14 @@
               .removeClass('fa-pulse fa-spinner')
               .addClass('fa-save');
         });
+
+      if (is_new) {
+        // redirect
+        deferred.then(function() {
+          Indigo.progressView.peg();
+          document.location = '/documents/' + self.document.get('id') + '/';
+        });
+      }
     },
 
     renderPreview: function() {

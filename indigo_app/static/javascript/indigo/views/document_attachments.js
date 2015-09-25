@@ -65,11 +65,17 @@
       this.model.on('change add remove reset saved', this.render, this);
       this.model.on('change add remove', this.setDirty, this);
       this.model.on('saved', this.setClean, this);
-      this.model.fetch({reset: true});
 
       this.box = new Indigo.AttachmentEditorView({document: this.document});
 
       this.stickit();
+
+      if (this.document.get('id')) {
+        this.model.fetch({reset: true});
+      } else {
+        // new document
+        this.model.reset([]);
+      }
     },
 
     render: function() {

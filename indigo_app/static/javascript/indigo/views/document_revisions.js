@@ -26,7 +26,11 @@
     },
 
     refresh: function() {
-      this.model.fetch({reset: true});
+      if (this.document.get('id')) {
+        this.model.fetch({reset: true});
+      } else {
+        this.model.reset([]);
+      }
     },
 
     render: function() {

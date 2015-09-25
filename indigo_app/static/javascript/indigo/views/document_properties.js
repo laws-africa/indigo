@@ -182,18 +182,13 @@
 
     save: function(force) {
       // TODO: validation
-      var self = this;
 
       // don't do anything if it hasn't changed
       if (!this.dirty && !force) {
         return $.Deferred().resolve();
       }
 
-      return this.model
-        .save()
-        .done(function() {
-          self.model.attributes.updated_at = moment().format();
-        });
+      return this.model.save();
     },
   });
 })(window);

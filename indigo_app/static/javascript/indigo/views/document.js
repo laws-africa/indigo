@@ -222,10 +222,11 @@
         // the properties on top of it, so that content
         // properties that change metadata in the content
         // take precendence.
+        var force = this.bodyEditorView.dirty;
         deferred = this
           .bodyEditorView.save()
           .then(function() {
-            return self.propertiesView.save(self.bodyEditorView.dirty);
+            return self.propertiesView.save(force);
           });
       }
 

@@ -88,7 +88,7 @@
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
 
-      this.documentContent = new Indigo.DocumentContent({id: document_id});
+      this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.documentContentChanged, this);
 
       this.documentDom = new Indigo.DocumentDom();
@@ -201,7 +201,16 @@
     save: function() {
       var self = this;
       var is_new = self.document.isNew();
+      var force = this.bodyEditorView.dirty || is_new;
       var deferred = null;
+
+      var fail = function() {
+        self.$saveBtn
+          .prop('disabled', false)
+          .find('.fa')
+            .removeClass('fa-pulse fa-spinner')
+            .addClass('fa-save');
+      };
 
       this.$saveBtn
         .prop('disabled', true)
@@ -212,43 +221,28 @@
       if (is_new) {
         // save properties first, to get an ID, then
         // stash the ID and save the rest
-        deferred = this
-          .propertiesView.save(true)
-          .then(function() {
-            self.documentContent.set('id', self.document.get('id'));
-            return self.bodyEditorView.save();
-          });
+        deferred = this.propertiesView.save(true);
       } else {
-        // We save the content first, and then save
-        // the properties on top of it, so that content
-        // properties that change metadata in the content
-        // take precendence.
-        deferred = this
-          .bodyEditorView.save()
-          .then(function() {
-            return self.propertiesView.save(self.bodyEditorView.dirty);
-          });
+        deferred = $.Deferred().resolve();
       }
 
-      deferred
-        .then(function() {
-          return self.attachmentsView.save();
-        })
-        .fail(function() {
-          self.$saveBtn
-            .prop('disabled', false)
-            .find('.fa')
-              .removeClass('fa-pulse fa-spinner')
-              .addClass('fa-save');
-        });
-
-      if (is_new) {
-        // redirect
-        deferred.then(function() {
-          Indigo.progressView.peg();
-          document.location = '/documents/' + self.document.get('id') + '/';
-        });
-      }
+      // We save the content first, and then save
+      // the properties on top of it, so that content
+      // properties that change metadata in the content
+      // take precendence.
+      deferred.then(function() {
+        self.bodyEditorView.save().then(function() {
+          self.propertiesView.save(force).then(function() {
+            self.attachmentsView.save().then(function() {
+              if (is_new) {
+                // redirect
+                Indigo.progressView.peg();
+                document.location = '/documents/' + self.document.get('id') + '/';
+              }
+            }).fail(fail);
+          }).fail(fail);
+        }).fail(fail);
+      }).fail(fail);
     },
 
     renderPreview: function() {

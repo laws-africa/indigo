@@ -159,6 +159,14 @@
   });
 
   Indigo.Attachment = Backbone.Model.extend({
+    initialize: function() {
+      this.on('sync', this.clearFile, this);
+    },
+
+    clearFile: function() {
+      this.unset('file', {silent: true});
+    },
+
     sync: function(method, model, options) {
       if (method === 'create' && model.get('file')) {
         // override params passed in for create to allow us to inject the file

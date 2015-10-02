@@ -88,7 +88,7 @@
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
 
-      this.documentContent = new Indigo.DocumentContent({id: document_id});
+      this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.documentContentChanged, this);
 
       this.documentDom = new Indigo.DocumentDom();
@@ -215,7 +215,6 @@
         deferred = this
           .propertiesView.save(true)
           .then(function() {
-            self.documentContent.set('id', self.document.get('id'));
             return self.bodyEditorView.save();
           });
       } else {

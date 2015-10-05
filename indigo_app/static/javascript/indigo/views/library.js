@@ -285,9 +285,9 @@
         placement: 'auto top'
       });
 
-      formatTimestamps();
-
       this.$el.find('th[data-sort=' + this.sortField + ']').addClass(this.sortDesc ? 'sort-up' : 'sort-down');
+
+      Indigo.relativeTimestamps();
     }
   });
 })(window);

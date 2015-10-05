@@ -239,6 +239,7 @@
       this.template = Handlebars.compile($(this.template).html());
 
       this.sortField = 'updated_at';
+      this.sortDesc = true;
 
       // the filter view does all the hard work of actually fetching and
       // filtering the documents

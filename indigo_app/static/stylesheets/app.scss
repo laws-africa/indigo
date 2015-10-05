@@ -358,17 +358,17 @@ legend {
   margin-top: 100px;
 }
 
-.tablesorter {
+.sorted-table {
   th {
     cursor: pointer;
   }
 
-  th.headerSortUp::after {
+  th.sort-up::after {
     font-family: fontawesome;
     content: ' \f0dd';
   }
 
-  th.headerSortDown::after {
+  th.sort-down::after {
     font-family: fontawesome;
     content: ' \f0de';
   }
@@ -398,7 +398,7 @@ legend {
   th.title { width: 63% }
   th.year { width: 7% }
   th.number { width: 20% }
-  th.updated { width: 10% }
+  th.updated_at { width: 10% }
 
   td, th {
     white-space: nowrap;

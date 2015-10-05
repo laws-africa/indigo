@@ -231,9 +231,14 @@
   Indigo.LibraryView = Backbone.View.extend({
     el: '#library',
     template: '#search-results-template',
+    events: {
+      'click .document-list-table th': 'changeSort',
+    },
 
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
+
+      this.sortField = 'updated_at';
 
       // the filter view does all the hard work of actually fetching and
       // filtering the documents
@@ -242,14 +247,37 @@
       this.filterView.loadDocuments();
     },
 
+    changeSort: function(e) {
+      var field = $(e.target).data('sort');
+
+      if (field == this.sortField) {
+        // reverse
+        this.sortDesc = !this.sortDesc;
+      } else {
+        this.sortField = field;
+        this.sortDesc = false;
+      }
+
+      this.render();
+    },
+
     render: function() {
       var docs = this.filterView.filtered;
 
+      docs.comparator = this.sortField;
+      docs.sort();
+
+      docs = docs.toJSON();
+      if (this.sortDesc) {
+        docs.reverse();
+      }
+
       this.$el.html(this.template({
         count: docs.length,
-        documents: docs.toJSON()
+        documents: docs,
+        sortField: this.sortField,
+        sortDesc: this.sortDesc,
       }));
-
 
       this.$el.find('[title]').tooltip({
         container: 'body',
@@ -258,13 +286,7 @@
 
       formatTimestamps();
 
-      this.$el.find('table').tablesorter({
-        sortList: [[2, 0], [3, 0]],
-        headers: {
-          // sort timestamps as text, since they're iso8601
-          3: {sorter: "text"},
-        }
-      });
+      this.$el.find('th[data-sort=' + this.sortField + ']').addClass(this.sortDesc ? 'sort-up' : 'sort-down');
     }
   });
 })(window);

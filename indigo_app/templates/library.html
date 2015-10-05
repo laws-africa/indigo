@@ -33,13 +33,13 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-hover tablesorter document-list-table">
+<table class="table table-condensed table-hover document-list-table sorted-table">
   <thead>
     <tr>
-      <th class="title">Title</th>
-      <th class="year">Year</th>
-      <th class="number">Number</th>
-      <th class="updated">Updated</th>
+      <th class="title" data-sort="title">Title</th>
+      <th class="year" data-sort="year">Year</th>
+      <th class="number" data-sort="number">Number</th>
+      <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
   <tbody>

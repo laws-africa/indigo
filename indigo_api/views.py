@@ -109,7 +109,9 @@ def find_document_template(document):
 
 
 class DocumentViewMixin(object):
-    queryset = Document.objects.filter(deleted__exact=False).prefetch_related('tags')
+    queryset = Document.objects\
+        .filter(deleted__exact=False)\
+        .prefetch_related('tags', 'created_by_user', 'updated_by_user')
 
     def table_of_contents(self, document):
         # this updates the TOC entries by adding a 'url' component

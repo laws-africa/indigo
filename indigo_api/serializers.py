@@ -160,6 +160,9 @@ class RevisionSerializer(serializers.ModelSerializer):
 
 class DocumentListSerializer(serializers.ListSerializer):
     def __init__(self, *args, **kwargs):
+        if 'child' not in kwargs:
+            kwargs['child'] = DocumentSerializer()
+
         super(DocumentListSerializer, self).__init__(*args, **kwargs)
         # mark on the child that we're doing many, so it doesn't
         # try to decorate the children for us

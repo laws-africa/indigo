@@ -144,7 +144,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
-        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('in γνωρίζω body')})
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'in γνωρίζω body')})
         assert_equal(response.status_code, 200)
 
         response = self.client.get('/api/documents/%s/content' % id)
@@ -152,7 +152,7 @@ class DocumentAPITest(APITestCase):
         assert_in(u'<p>in γνωρίζω body</p>', response.data['content'])
 
         # also try updating the content at /content
-        response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture('also γνωρίζω the body')})
+        response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture(u'also γνωρίζω the body')})
         assert_equal(response.status_code, 200)
 
         response = self.client.get('/api/documents/%s/content' % id)

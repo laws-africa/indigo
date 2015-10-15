@@ -124,7 +124,7 @@ class ConvertAPITest(APITestCase):
         response = self.client.post('/api/convert', {
             'content': {
                 'frbr_uri': '/za/act/1980/20',
-                'content': document_fixture(text='hello κόσμε'),
+                'content': document_fixture(text=u'hello κόσμε'),
             },
             'inputformat': 'application/json',
             'outputformat': 'text/html',

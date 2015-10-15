@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*
 
-DOCUMENT_FIXTURE = """<?xml version="1.0"?>
+DOCUMENT_FIXTURE = u"""<?xml version="1.0"?>
 <akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
   <act contains="originalVersion">
     <meta>
@@ -36,7 +36,7 @@ DOCUMENT_FIXTURE = """<?xml version="1.0"?>
 </akomaNtoso>
 """
 
-BODY_FIXTURE = """
+BODY_FIXTURE = u"""
 <body>
   <section id="section-1">
     <content>
@@ -46,12 +46,14 @@ BODY_FIXTURE = """
 </body>
 """
 
+
 def body_fixture(text):
     return BODY_FIXTURE % text
 
+
 def document_fixture(text=None, xml=None):
     if text:
-        xml = """
+        xml = u"""
         <section id="section-1"><content><p>%s</p></content></section>
         """ % text
 

@@ -27,7 +27,7 @@ class DocumentTestCase(TestCase):
 
     def test_set_content(self):
         d = Document()
-        d.content = document_fixture('\xe2\x98\x80') # γνωρίζω')
+        d.content = document_fixture(u'γνωρίζω')
 
         assert_equal(d.frbr_uri, '/za/act/1900/1')
         assert_equal(d.country, 'za')

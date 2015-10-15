@@ -19,7 +19,7 @@ class AnalysisTestCase(APITestCase):
     def test_link_terms(self):
         response = self.client.post('/api/analysis/link-terms', {
             'document': {
-                'content': document_fixture(xml="""
+                'content': document_fixture(xml=u"""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions and interpretation</heading>

@@ -1,3 +1,5 @@
+# -*- coding: utf8 -*-
+
 import tempfile
 import os.path
 
@@ -142,20 +144,20 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
-        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('in the body')})
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('in γνωρίζω body')})
         assert_equal(response.status_code, 200)
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
-        assert_in('<p>in the body</p>', response.data['content'])
+        assert_in(u'<p>in γνωρίζω body</p>', response.data['content'])
 
         # also try updating the content at /content
-        response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture('also in the body')})
+        response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture('also γνωρίζω the body')})
         assert_equal(response.status_code, 200)
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
-        assert_in('<p>also in the body</p>', response.data['content'])
+        assert_in(u'<p>also γνωρίζω the body</p>', response.data['content'])
 
     def test_frbr_uri_lowercased(self):
         # ACT should be changed to act

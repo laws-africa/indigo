@@ -27,7 +27,7 @@ DOCUMENT_FIXTURE = """<?xml version="1.0"?>
           <FRBRauthor href="#council" as="#author"/>
         </FRBRManifestation>
       </identification>
-      <publication date="2005-07-24" name="Province of Western Cape: Provincial Gazette" number="6277" showAs="Province of Western Cape: Provincial Gazette"/>
+      <publication date="2005-07-24" name="Province of Western Cape: σπαθιοῦ Gazette" number="6277" showAs="Province of Western Cape: Provincial Gazette"/>
     </meta>
     <body>
       %s

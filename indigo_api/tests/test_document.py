@@ -1,9 +1,12 @@
-from nose.tools import *
+# -*- coding: utf8 -*-
+
+from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
 
 from indigo_api.models import Document
-from indigo_api.tests.fixtures import *
+from indigo_api.tests.fixtures import *  # noqa
+
 
 class DocumentTestCase(TestCase):
     def setUp(self):
@@ -24,7 +27,7 @@ class DocumentTestCase(TestCase):
 
     def test_set_content(self):
         d = Document()
-        d.content = document_fixture('test')
+        d.content = document_fixture('\xe2\x98\x80') # γνωρίζω')
 
         assert_equal(d.frbr_uri, '/za/act/1900/1')
         assert_equal(d.country, 'za')

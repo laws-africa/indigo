@@ -189,8 +189,6 @@ class Document(models.Model):
     def reset_xml(self, xml):
         """ Completely reset the document XML to a new value, and refresh database attributes
         from the new XML document. """
-        log.debug("Setting for %s xml to: %s" % (self, xml))
-
         # this validates it
         doc = Act(xml)
 

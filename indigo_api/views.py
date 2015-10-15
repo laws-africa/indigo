@@ -576,7 +576,7 @@ class ConvertView(APIView):
 
             doc_serializer = DocumentSerializer(instance=document, context={'request': self.request})
             data = doc_serializer.data
-            data['content'] = document.document_xml
+            data['content'] = document.document_xml.decode('utf-8')
             return Response(data)
 
         if output_format == 'application/xml':

@@ -103,7 +103,7 @@ class PDFRenderer(HTMLRenderer):
         html = super(PDFRenderer, self).render(document, element=element, **kwargs)
 
         # embed the HTML into the PDF container
-        html = render_to_string('pdf/fragment.html' if element else 'pdf/document.html', {
+        html = render_to_string('pdf/document.html', {
             'document': document,
             'element': element,
             'content_html': html,
@@ -140,4 +140,12 @@ class PDFResponseRenderer(BaseRenderer):
     serializer_class = NoopSerializer
 
     def render(self, data, media_type=None, renderer_context=None):
-        return data
+        if isinstance(data, list):
+            # render many
+            return PDFRenderer().render_many(data)
+
+        view = renderer_context['view']
+        if view.component == 'main' and not view.subcomponent:
+            return data.to_pdf()
+
+        return data.element_to_pdf(view.element)

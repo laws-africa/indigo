@@ -21,7 +21,7 @@ from lxml.etree import LxmlError
 
 from .models import Document, Attachment
 from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
-from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, PDFRenderer
+from .renderers import AkomaNtosoRenderer, PDFResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -327,10 +327,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                     return Response(document.element_to_html(element))
 
             if format == 'pdf':
-                if component == 'main' and not subcomponent:
-                    return Response(document.to_pdf())
-                else:
-                    return Response(document.element_to_pdf(element))
+                self.component = component
+                self.subcomponent = subcomponent
+                self.element = element
+                return Response(document)
 
         raise Http404
 
@@ -358,8 +358,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         elif self.request.accepted_renderer.format == 'pdf':
             # TODO: ordering?
             documents = list(self.filter_queryset(self.get_queryset()).all())
-            pdf = PDFRenderer().render_many(documents)
-            return Response(pdf)
+            # bypass pagination and serialization
+            return Response(documents)
 
         elif self.format_kwarg and self.format_kwarg != "json":
             # they explicitly asked for something other than JSON,

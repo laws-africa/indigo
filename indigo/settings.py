@@ -180,6 +180,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'app.css',
     },
+    'pdf': {
+        'source_filenames': (
+            'stylesheets/pdf.scss',
+        ),
+        'output_filename': 'pdf.css',
+    },
     'lime': {
         'source_filenames': (
             'lime/dist/resources/LIME-all.css',

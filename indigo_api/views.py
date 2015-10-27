@@ -319,6 +319,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         try:
             self.frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
 
+            # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
+            if self.frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
+                raise ValueError()
+
             # in a URL like
             #
             #   /act/1980/1/toc

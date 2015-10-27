@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 import pdfkit
 
@@ -75,10 +76,19 @@ class HTMLRenderer(object):
 
 
 class PDFRenderer(HTMLRenderer):
+    def __init__(self, config=None, **kwargs):
+        super(PDFRenderer, self).__init__(**kwargs)
+
+        if config:
+            self.config = config
+        else:
+            path = getattr(settings, 'WKHTMLTOPDF_BIN_PATH', None)
+            self.config = pdfkit.configuration(wkhtmltopdf=path)
+
     def render(self, document, coverpage=True, template_name=None):
         html = super(PDFRenderer, self).render(document, coverpage=coverpage, template_name=template_name)
-        return pdfkit.from_string(html, False)
+        return pdfkit.from_string(html, False, configuration=self.config)
 
     def render_element(self, document, element):
         html = super(PDFRenderer, self).render_element(document, element)
-        return pdfkit.from_string(html, False)
+        return pdfkit.from_string(html, False, configuration=self.config)

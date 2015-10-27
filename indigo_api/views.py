@@ -1,7 +1,6 @@
 import re
 import logging
 
-import arrow
 from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
 

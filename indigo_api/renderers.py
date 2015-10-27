@@ -5,6 +5,7 @@ from django.template.loader import find_template, render_to_string, TemplateDoes
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 import pdfkit
+from wkhtmltopdf.utils import make_absolute_paths
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
@@ -155,6 +156,9 @@ class PDFRenderer(HTMLRenderer):
             'page-size': 'A4',
         }
 
+        # this makes all paths, such as stylesheets and javascript, use
+        # absolute file paths so that wkhtmltopdf finds them
+        html = make_absolute_paths(html)
         return pdfkit.from_string(html, False, options=options, configuration=self.config)
 
 

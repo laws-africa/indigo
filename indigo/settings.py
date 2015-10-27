@@ -182,6 +182,7 @@ PIPELINE_CSS = {
     },
     'pdf': {
         'source_filenames': (
+            'bower_components/bootstrap/dist/css/bootstrap.min.css',
             'stylesheets/pdf.scss',
         ),
         'output_filename': 'pdf.css',

@@ -21,7 +21,7 @@ from lxml.etree import LxmlError
 
 from .models import Document, Attachment
 from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
-from .render import AkomaNtosoRenderer, PDFResponseRenderer
+from .renderers import AkomaNtosoRenderer, PDFResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions

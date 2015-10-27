@@ -21,7 +21,7 @@ import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
+from .serializers import DocumentSerializer, AkomaNtosoRenderer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer, PDFResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -244,7 +244,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
     # these determine what content negotiation takes place
-    renderer_classes = (renderers.JSONRenderer, AtomRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
+    renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
@@ -318,6 +318,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             element = document.doc.components().get(component)
 
         if element:
+            if format == 'xml':
+                return Response(ET.tostring(element, pretty_print=True))
+
             if format == 'html':
                 if component == 'main' and not subcomponent:
                     coverpage = self.request.GET.get('coverpage', 1) == '1'
@@ -325,8 +328,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 else:
                     return Response(document.element_to_html(element))
 
-            if format == 'xml':
-                return Response(ET.tostring(element, pretty_print=True))
+            if format == 'pdf':
+                if component == 'main' and not subcomponent:
+                    return Response(document.to_pdf())
+                else:
+                    return Response(document.element_to_pdf(element))
 
         raise Http404
 

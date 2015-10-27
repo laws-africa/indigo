@@ -1,4 +1,5 @@
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
+import pdfkit
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 
@@ -71,3 +72,13 @@ class HTMLRenderer(object):
 
     def _xml_renderer(self, document):
         return CobaltHTMLRenderer(act=document.doc, **self.cobalt_kwargs)
+
+
+class PDFRenderer(HTMLRenderer):
+    def render(self, document, coverpage=True, template_name=None):
+        html = super(PDFRenderer, self).render(document, coverpage=coverpage, template_name=template_name)
+        return pdfkit.from_string(html, False)
+
+    def render_element(self, document, element):
+        html = super(PDFRenderer, self).render_element(document, element)
+        return pdfkit.from_string(html, False)

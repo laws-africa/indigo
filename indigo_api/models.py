@@ -12,7 +12,7 @@ from taggit.managers import TaggableManager
 import reversion
 
 from cobalt.act import Act
-from .render import HTMLRenderer
+from .render import HTMLRenderer, PDFRenderer
 
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
@@ -228,6 +228,13 @@ class Document(models.Model):
     def element_to_html(self, element):
         """ Render a child element of this document into HTML. """
         return HTMLRenderer().render_element(self, element)
+
+    def to_pdf(self, **kwargs):
+        return PDFRenderer().render(self, **kwargs)
+
+    def element_to_pdf(self, element):
+        """ Render a child element of this document into PDF. """
+        return PDFRenderer().render_element(self, element)
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

@@ -282,14 +282,14 @@ class Document(models.Model):
 
     def element_to_html(self, element):
         """ Render a child element of this document into HTML. """
-        return HTMLRenderer().render_element(self, element)
+        return HTMLRenderer().render(self, element=element)
 
     def to_pdf(self, **kwargs):
         return PDFRenderer().render(self, **kwargs)
 
     def element_to_pdf(self, element):
         """ Render a child element of this document into PDF. """
-        return PDFRenderer().render_element(self, element)
+        return PDFRenderer().render(self, element=element)
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

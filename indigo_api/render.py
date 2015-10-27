@@ -11,15 +11,20 @@ class HTMLRenderer(object):
     def __init__(self, cobalt_kwargs=None):
         self.cobalt_kwargs = cobalt_kwargs or {}
 
-    def render(self, document, coverpage=True, template_name=None):
+    def render(self, document, element=None, coverpage=True, template_name=None):
         """ Render this document to HTML.
 
+        :param document: document to render if +element+ is None
+        :param element: element to render (optional)
         :param Boolean coverpage: Should a cover page be generated?
         :param str template_name: name of the django template to use (or None to find a suitable one)
         """
         # use this to render the bulk of the document with the Cobalt XSLT renderer
         renderer = self._xml_renderer(document)
-        body_html = renderer.render_xml(document.document_xml)
+        if element:
+            return renderer.render(element)
+
+        content_html = renderer.render_xml(document.document_xml)
 
         # find the template to use
         if not template_name:
@@ -28,15 +33,11 @@ class HTMLRenderer(object):
         # and then render some boilerplate around it
         return render_to_string(template_name, {
             'document': document,
-            'content_html': body_html,
+            'element': element,
+            'content_html': content_html,
             'renderer': renderer,
             'coverpage': coverpage,
         })
-
-    def render_element(self, document, element):
-        """ Render just an element of a document to HTML.
-        """
-        return self._xml_renderer(document).render(element)
 
     def _find_template(self, document):
         """ Return the filename of a template to use to render this document.
@@ -85,10 +86,22 @@ class PDFRenderer(HTMLRenderer):
             path = getattr(settings, 'WKHTMLTOPDF_BIN_PATH', None)
             self.config = pdfkit.configuration(wkhtmltopdf=path)
 
-    def render(self, document, coverpage=True, template_name=None):
-        html = super(PDFRenderer, self).render(document, coverpage=coverpage, template_name=template_name)
-        return pdfkit.from_string(html, False, configuration=self.config)
+    def render(self, document, element=None, **kwargs):
+        html = super(PDFRenderer, self).render(document, element=element, **kwargs)
 
-    def render_element(self, document, element):
-        html = super(PDFRenderer, self).render_element(document, element)
-        return pdfkit.from_string(html, False, configuration=self.config)
+        # embed the HTML into the PDF container
+        html = render_to_string('pdf/fragment.html' if element else 'pdf/document.html', {
+            'document': document,
+            'element': element,
+            'content_html': html,
+        })
+        # TODO: table of contents
+
+        return self._to_pdf(html)
+
+    def _to_pdf(self, html):
+        options = {
+            'page-size': 'A4',
+        }
+
+        return pdfkit.from_string(html, False, options=options, configuration=self.config)

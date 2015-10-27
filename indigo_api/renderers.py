@@ -1,11 +1,10 @@
 import lxml.etree as ET
+import tempfile
 
-from django.conf import settings
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
-import pdfkit
-from wkhtmltopdf.utils import make_absolute_paths
+from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
@@ -116,16 +115,6 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
 class PDFRenderer(HTMLRenderer):
     """ Helper to render documents as PDFs.
     """
-
-    def __init__(self, config=None, **kwargs):
-        super(PDFRenderer, self).__init__(**kwargs)
-
-        if config:
-            self.config = config
-        else:
-            path = getattr(settings, 'WKHTMLTOPDF_BIN_PATH', None)
-            self.config = pdfkit.configuration(wkhtmltopdf=path)
-
     def render(self, document, element=None, **kwargs):
         html = super(PDFRenderer, self).render(document, element=element, **kwargs)
 
@@ -159,7 +148,11 @@ class PDFRenderer(HTMLRenderer):
         # this makes all paths, such as stylesheets and javascript, use
         # absolute file paths so that wkhtmltopdf finds them
         html = make_absolute_paths(html)
-        return pdfkit.from_string(html, False, options=options, configuration=self.config)
+
+        with tempfile.NamedTemporaryFile(suffix='.html') as f:
+            f.write(html)
+            f.flush()
+            return wkhtmltopdf(['file://' + f.name], **options)
 
 
 class PDFResponseRenderer(BaseRenderer):

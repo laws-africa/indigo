@@ -21,7 +21,7 @@ from lxml.etree import LxmlError
 
 from .models import Document, Attachment
 from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
-from .renderers import AkomaNtosoRenderer, PDFResponseRenderer
+from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, PDFRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -354,6 +354,12 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             if self.kwargs['feed'] == 'full':
                 # full feed is big, limit it
                 self.paginator.page_size = AtomFeed.full_feed_page_size
+
+        elif self.request.accepted_renderer.format == 'pdf':
+            # TODO: ordering?
+            documents = list(self.filter_queryset(self.get_queryset()).all())
+            pdf = PDFRenderer().render_many(documents)
+            return Response(pdf)
 
         elif self.format_kwarg and self.format_kwarg != "json":
             # they explicitly asked for something other than JSON,

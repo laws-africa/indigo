@@ -112,6 +112,18 @@ class PDFRenderer(HTMLRenderer):
 
         return self._to_pdf(html)
 
+    def render_many(self, documents, **kwargs):
+        html = []
+
+        for doc in documents:
+            html.append(super(PDFRenderer, self).render(doc, **kwargs))
+
+        # embed the HTML into the PDF container
+        html = render_to_string('pdf/many.html', {
+            'documents': zip(documents, html),
+        })
+        return self._to_pdf(html)
+
     def _to_pdf(self, html):
         options = {
             'page-size': 'A4',

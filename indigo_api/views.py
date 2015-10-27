@@ -3,7 +3,6 @@ import logging
 
 import arrow
 from django.http import Http404, HttpResponse
-from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 from django.views.decorators.cache import cache_control
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
@@ -51,61 +50,6 @@ def download_attachment(attachment):
     response = view_attachment(attachment)
     response['Content-Disposition'] = 'attachment; filename=%s' % attachment.filename
     return response
-
-
-def document_to_html(document, coverpage=True):
-    """ Render an entire document to HTML.
-
-    :param Boolean coverpage: Should a cover page be generated?
-    """
-    # use this to render the bulk of the document with the Cobalt XSLT renderer
-    renderer = HTMLRenderer(act=document.doc)
-    body_html = renderer.render_xml(document.document_xml)
-
-    # find
-    template_name = find_document_template(document)
-
-    # and then render some boilerplate around it
-    return render_to_string(template_name, {
-        'document': document,
-        'content_html': body_html,
-        'renderer': renderer,
-        'coverpage': coverpage,
-    })
-
-
-def find_document_template(document):
-    """ Return the filename of a template to use to render this document.
-
-    This takes into account the country, type, subtype and language of the document,
-    providing a number of opportunities to adjust the rendering logic.
-    """
-    uri = document.doc.frbr_uri
-    doctype = uri.doctype
-
-    options = []
-    if uri.subtype:
-        options.append('_'.join([doctype, uri.subtype, document.language, uri.country]))
-        options.append('_'.join([doctype, uri.subtype, document.language]))
-        options.append('_'.join([doctype, uri.subtype, uri.country]))
-        options.append('_'.join([doctype, uri.country]))
-        options.append('_'.join([doctype, uri.subtype]))
-
-    options.append('_'.join([doctype, document.language, uri.country]))
-    options.append('_'.join([doctype, document.language]))
-    options.append('_'.join([doctype, uri.country]))
-    options.append(doctype)
-
-    options = [f + '.html' for f in options]
-
-    for option in options:
-        try:
-            if find_template(option):
-                return option
-        except TemplateDoesNotExist:
-            pass
-
-    raise ValueError("Couldn't find a template to use for %s. Tried: %s" % (uri, ', '.join(options)))
 
 
 class DocumentViewMixin(object):
@@ -263,10 +207,10 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
             .first()
 
         if old_version:
-            old_html = document_to_html(old_version.object_version.object)
+            old_html = old_version.object_version.object.to_html()
         else:
             old_html = ""
-        new_html = document_to_html(version.object_version.object)
+        new_html = version.object_version.object.to_html()
         diff = lxml.html.diff.htmldiff(old_html, new_html)
 
         # TODO: include other diff'd attributes
@@ -377,9 +321,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             if format == 'html':
                 if component == 'main' and not subcomponent:
                     coverpage = self.request.GET.get('coverpage', 1) == '1'
-                    return Response(document_to_html(document, coverpage=coverpage))
+                    return Response(document.to_html(coverpage=coverpage))
                 else:
-                    return Response(HTMLRenderer(act=document.doc).render(element))
+                    return Response(document.element_to_html(element))
 
             if format == 'xml':
                 return Response(ET.tostring(element, pretty_print=True))
@@ -592,9 +536,10 @@ class ConvertView(APIView):
 
         if output_format == 'text/html':
             if self.fragment:
+                # TODO: use document.to_html
                 return Response(HTMLRenderer().render(document.to_xml()))
             else:
-                return Response({'output': document_to_html(document)})
+                return Response({'output': document.to_html()})
 
         # TODO: handle plain text output
 

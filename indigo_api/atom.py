@@ -57,7 +57,6 @@ class AtomFeed(feedgenerator.Atom1Feed):
     def add_item_elements(self, handler, item):
         super(AtomFeed, self).add_item_elements(handler, item)
 
-        from indigo_api.views import document_to_html
         doc = item['document']
 
         handler.addQuickElement("link", "", {
@@ -83,7 +82,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
 
         if not doc.stub and not self.summary:
             # full document body
-            content = document_to_html(doc)
+            content = doc.to_html()
             handler.addQuickElement("content", content, {"type": "html"})
 
         # metadata

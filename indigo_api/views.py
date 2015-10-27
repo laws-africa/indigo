@@ -317,7 +317,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         if element:
             if format == 'xml':
-                return Response(ET.tostring(element, pretty_print=True))
+                return Response(element)
 
             if format == 'html':
                 if component == 'main' and not subcomponent:
@@ -435,7 +435,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def handle_exception(self, exc):
         # Formats like atom and XML don't render exceptions well, so just
         # fall back to HTML
-        if self.request.accepted_renderer.format in ['xml', 'atom']:
+        if hasattr(self.request, 'accepted_renderer') and self.request.accepted_renderer.format in ['xml', 'atom']:
             self.request.accepted_renderer = renderers.StaticHTMLRenderer()
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 

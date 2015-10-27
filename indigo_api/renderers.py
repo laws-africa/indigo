@@ -1,3 +1,5 @@
+import lxml.etree as ET
+
 from django.conf import settings
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 from rest_framework.renderers import BaseRenderer
@@ -11,8 +13,12 @@ from .serializers import NoopSerializer
 class AkomaNtosoRenderer(XMLRenderer):
     """ Django Rest Framework Akoma Ntoso Renderer.
     """
+    serializer_class = NoopSerializer
+
     def render(self, data, media_type=None, renderer_context=None):
-        return data
+        if isinstance(data, basestring):
+            return data
+        return ET.tostring(data, pretty_print=True)
 
 
 class HTMLRenderer(object):

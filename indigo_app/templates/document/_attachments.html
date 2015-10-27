@@ -29,8 +29,8 @@
         <a href="#" class="delete-attachment"><i class="fa fa-fw fa-remove"></i></a>
       </td>
       <td>
-        {{#if download_url }}
-        <a href="{{ download_url }}" target="_blank">{{ filename }}</a>
+        {{#if view_url }}
+        <a href="{{ view_url }}" target="_blank">{{ filename }}</a>
         <i class="fa fa-external-link fa-fw text-muted"></i>
         {{else}}
         {{ filename }} <i>(new)</i>

@@ -42,6 +42,7 @@ def ping(request):
 
 def view_attachment(attachment):
     response = HttpResponse(attachment.file.read(), content_type=attachment.mime_type)
+    response['Content-Disposition'] = 'inline; filename=%s' % attachment.filename
     response['Content-Length'] = str(attachment.size)
     return response
 

@@ -53,9 +53,7 @@ def download_attachment(attachment):
 
 
 class DocumentViewMixin(object):
-    queryset = Document.objects\
-        .filter(deleted__exact=False)\
-        .prefetch_related('tags', 'created_by_user', 'updated_by_user')
+    queryset = Document.objects.undeleted().prefetch_related('tags', 'created_by_user', 'updated_by_user')
 
     def table_of_contents(self, document):
         # this updates the TOC entries by adding a 'url' component
@@ -239,7 +237,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     * ``/za/act/1994/summary.atom``: all the acts from 1994 as an atom feed
 
     """
-    queryset = DocumentViewMixin.queryset.filter(draft=False).order_by('id')
+    queryset = DocumentViewMixin.queryset.published().order_by('id')
 
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
@@ -400,43 +398,12 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def get_object(self):
         """ Find and return one document, used by retrieve()
         """
-        query = self.get_queryset().filter(frbr_uri=self.frbr_uri.work_uri())
-
-        # filter on expression date
-        expr_date = self.frbr_uri.expression_date
-        if expr_date:
-            try:
-                if expr_date == '@':
-                    # earliest document
-                    query = query.order_by('expression_date')
-
-                elif expr_date[0] == '@':
-                    # document at this date
-                    query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
-
-                elif expr_date[0] == ':':
-                    # latest document at or before this date
-                    query = query\
-                        .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
-                        .order_by('-expression_date')
-
-                else:
-                    raise Http404("The expression date %s is not valid" % expr_date)
-
-            except arrow.parser.ParserError:
-                raise Http404("The expression date %s is not valid" % expr_date)
-
-        else:
-            # always get the latest expression
-            query = query.order_by('-expression_date')
-
-        obj = query.first()
-        if obj is None:
-            raise Http404("Document doesn't exist")
-
-        if obj.language != self.frbr_uri.language:
-            raise Http404("The document %s exists but is not available in the language '%s'"
-                          % (self.frbr_uri.work_uri(), self.frbr_uri.language))
+        try:
+            obj = self.get_queryset().get_for_frbr_uri(self.frbr_uri)
+            if not obj:
+                raise ValueError()
+        except ValueError as e:
+            raise Http404(e.message)
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)

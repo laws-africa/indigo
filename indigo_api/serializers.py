@@ -308,6 +308,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                     "href": url + "/toc.json",
                     "mediaType": "application/json"
                 },
+                {
+                    "rel": "alternate",
+                    "title": "PDF",
+                    "href": url + ".pdf",
+                    "mediaType": "application/pdf"
+                },
             ]
 
     def validate(self, data):

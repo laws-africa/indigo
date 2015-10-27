@@ -7,8 +7,6 @@ from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
-from rest_framework_xml.renderers import XMLRenderer
-from rest_framework.renderers import BaseRenderer
 from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
@@ -454,17 +452,3 @@ class NoopSerializer(object):
         self.context = kwargs.pop('context', {})
         self.kwargs = kwargs
         self.data = instance
-
-
-class AkomaNtosoRenderer(XMLRenderer):
-    def render(self, data, media_type=None, renderer_context=None):
-        return data
-
-
-class PDFResponseRenderer(BaseRenderer):
-    media_type = 'application/pdf'
-    format = 'pdf'
-    serializer_class = NoopSerializer
-
-    def render(self, data, media_type=None, renderer_context=None):
-        return data

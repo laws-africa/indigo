@@ -1,12 +1,22 @@
 from django.conf import settings
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
+from rest_framework.renderers import BaseRenderer
+from rest_framework_xml.renderers import XMLRenderer
 import pdfkit
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
+from .serializers import NoopSerializer
+
+
+class AkomaNtosoRenderer(XMLRenderer):
+    """ Django Rest Framework Akoma Ntoso Renderer.
+    """
+    def render(self, data, media_type=None, renderer_context=None):
+        return data
 
 
 class HTMLRenderer(object):
-    """ Renders an indigo_api.models.Document as HTML.
+    """ Render documents as as HTML.
     """
     def __init__(self, cobalt_kwargs=None):
         self.cobalt_kwargs = cobalt_kwargs or {}
@@ -77,6 +87,9 @@ class HTMLRenderer(object):
 
 
 class PDFRenderer(HTMLRenderer):
+    """ Helper to render documents as PDFs.
+    """
+
     def __init__(self, config=None, **kwargs):
         super(PDFRenderer, self).__init__(**kwargs)
 
@@ -105,3 +118,14 @@ class PDFRenderer(HTMLRenderer):
         }
 
         return pdfkit.from_string(html, False, options=options, configuration=self.config)
+
+
+class PDFResponseRenderer(BaseRenderer):
+    """ Django Rest Framework PDF Renderer.
+    """
+    media_type = 'application/pdf'
+    format = 'pdf'
+    serializer_class = NoopSerializer
+
+    def render(self, data, media_type=None, renderer_context=None):
+        return data

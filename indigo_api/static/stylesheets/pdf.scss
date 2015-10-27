@@ -1,3 +1,11 @@
 .akoma-ntoso {
   @import 'akoma-ntoso';
+
+  h1, h2, h3, h4, h5 {
+    page-break-after: avoid;
+  }
+
+  .akn-doc {
+    page-break-before: always;
+  }
 }

@@ -1,5 +1,19 @@
-<head>
-</head>
-<body>
-{% block content %}{% endblock %}
-</body>
+{% load pipeline %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    {% block head-css %}
+    {% endblock %}
+
+    {% block head-meta %}{% endblock %}
+  </head>
+  <body {% block body-attributes %}{% endblock %} class='{% block body-class %}{% endblock %}'>
+    {% block content %}
+    {% endblock content %}
+
+    {% block js %}
+    {% endblock %}
+  </body>
+</html>

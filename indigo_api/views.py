@@ -15,13 +15,12 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
 import reversion
 
-import lxml.etree as ET
 import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
 from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
-from .renderers import AkomaNtosoRenderer, PDFResponseRenderer
+from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -242,7 +241,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
     # these determine what content negotiation takes place
-    renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, AkomaNtosoRenderer, renderers.StaticHTMLRenderer)
+    renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
@@ -286,51 +285,33 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def retrieve(self, request, *args, **kwargs):
         """ Return details on a single document, possible only part of that document.
         """
-        component = self.frbr_uri.expression_component or 'main'
-        subcomponent = self.frbr_uri.expression_subcomponent
+        # these are made available to the renderer
+        self.component = self.frbr_uri.expression_component or 'main'
+        self.subcomponent = self.frbr_uri.expression_subcomponent
         format = self.request.accepted_renderer.format
 
         # get the document
         document = self.get_object()
 
-        if subcomponent:
-            element = document.doc.get_subcomponent(component, subcomponent)
-
+        if self.subcomponent:
+            self.element = document.doc.get_subcomponent(self.component, self.subcomponent)
         else:
             # special cases of the entire document
 
             # table of contents
-            if (component, format) == ('toc', 'json'):
+            if (self.component, format) == ('toc', 'json'):
                 return Response({'toc': self.table_of_contents(document)})
 
             # json description
-            if (component, format) == ('main', 'json'):
+            if (self.component, format) == ('main', 'json'):
                 serializer = self.get_serializer(document)
                 return Response(serializer.data)
 
-            # entire thing
-            if (component, format) == ('main', 'xml'):
-                return Response(document.document_xml)
-
             # the item we're interested in
-            element = document.doc.components().get(component)
+            self.element = document.doc.components().get(self.component)
 
-        if element:
-            if format == 'xml':
-                return Response(element)
-
-            if format == 'html':
-                if component == 'main' and not subcomponent:
-                    coverpage = self.request.GET.get('coverpage', 1) == '1'
-                    return Response(document.to_html(coverpage=coverpage))
-                else:
-                    return Response(document.element_to_html(element))
-
-            if format == 'pdf':
-                self.component = component
-                self.subcomponent = subcomponent
-                self.element = element
-                return Response(document)
+        if self.element and format in ['xml', 'html', 'pdf']:
+            return Response(document)
 
         raise Http404
 

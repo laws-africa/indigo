@@ -2,12 +2,13 @@ import lxml.etree as ET
 
 from django.conf import settings
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
-from rest_framework.renderers import BaseRenderer
+from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 import pdfkit
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
+from .models import Document
 
 
 class AkomaNtosoRenderer(XMLRenderer):
@@ -16,9 +17,14 @@ class AkomaNtosoRenderer(XMLRenderer):
     serializer_class = NoopSerializer
 
     def render(self, data, media_type=None, renderer_context=None):
-        if isinstance(data, basestring):
-            return data
-        return ET.tostring(data, pretty_print=True)
+        if not isinstance(data, Document):
+            return super(AkomaNtosoRenderer, self).render(data, media_type, renderer_context)
+
+        view = renderer_context['view']
+        if view.component == 'main' and not view.subcomponent:
+            return data.document_xml
+
+        return ET.tostring(view.element, pretty_print=True)
 
 
 class HTMLRenderer(object):
@@ -92,6 +98,20 @@ class HTMLRenderer(object):
         return CobaltHTMLRenderer(act=document.doc, **self.cobalt_kwargs)
 
 
+class HTMLResponseRenderer(StaticHTMLRenderer):
+    def render(self, document, media_type=None, renderer_context=None):
+        if not isinstance(document, Document):
+            return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
+
+        view = renderer_context['view']
+
+        if view.component == 'main' and not view.subcomponent:
+            coverpage = renderer_context['request'].GET.get('coverpage', 1) == '1'
+            return document.to_html(coverpage=coverpage)
+
+        return document.element_to_html(view.element)
+
+
 class PDFRenderer(HTMLRenderer):
     """ Helper to render documents as PDFs.
     """
@@ -149,6 +169,9 @@ class PDFResponseRenderer(BaseRenderer):
         if isinstance(data, list):
             # render many
             return PDFRenderer().render_many(data)
+
+        if not isinstance(data, Document):
+            return ''
 
         view = renderer_context['view']
         if view.component == 'main' and not view.subcomponent:

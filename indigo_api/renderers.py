@@ -3,6 +3,7 @@ import tempfile
 import re
 
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
+from django.core.cache import get_cache
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
@@ -125,6 +126,7 @@ class PDFRenderer(HTMLRenderer):
             'element': element,
             'content_html': html,
         })
+
         return self._to_pdf(html, toc=not element)
 
     def render_many(self, documents, **kwargs):
@@ -194,22 +196,58 @@ class PDFResponseRenderer(BaseRenderer):
     format = 'pdf'
     serializer_class = NoopSerializer
 
+    def __init__(self, *args, **kwargs):
+        super(PDFResponseRenderer, self).__init__(*args, **kwargs)
+        self.cache = get_cache('default')
+
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):
             return ''
 
         view = renderer_context['view']
+
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
 
+        # check the cache
+        key = self.cache_key(data, view)
+        if key:
+            pdf = self.cache.get(key)
+            if pdf:
+                return pdf
+
         if isinstance(data, list):
             # render many
-            return PDFRenderer().render_many(data)
+            pdf = PDFRenderer().render_many(data)
+        elif not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
+            # whole document
+            pdf = data.to_pdf()
+        else:
+            # just one element
+            pdf = data.element_to_pdf(view.element)
 
-        if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
-            return data.to_pdf()
+        # cache it
+        if key:
+            self.cache.set(key, pdf)
 
-        return data.element_to_pdf(view.element)
+        return pdf
+
+    def cache_key(self, data, view):
+        if isinstance(data, Document):
+            # it's unsaved, don't bother
+            if data.id is None:
+                return None
+
+            parts = [data.id, data.updated_at.isoformat()]
+            if hasattr(view, 'component'):
+                parts.append(view.component)
+                parts.append(view.subcomponent)
+        else:
+            # list of docs
+            data = sorted(data, key=lambda d: d.id)
+            parts = [(p.id, p.updated_at.isoformat()) for p in data]
+
+        return parts
 
     def get_filename(self, data, view):
         if isinstance(data, Document):

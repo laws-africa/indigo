@@ -141,8 +141,25 @@ class PDFRenderer(HTMLRenderer):
         return self._to_pdf(html)
 
     def _to_pdf(self, html):
+        # see https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/ for margin details
+        # Target margins are: 36.3mm (top, bottom); 26.6mm (left, right)
+        # We want to pull the footer (7.5mm high) into the margin, so we decrease
+        # the margin slightly
+
+        footer_spacing = 5
+        margin_top = 36.3 - footer_spacing
+        margin_bottom = 36.3 - footer_spacing
+        margin_left = 26.6
+
         options = {
             'page-size': 'A4',
+            'margin-top': '%.2fmm' % margin_top,
+            'margin-bottom': '%2.fmm' % margin_bottom,
+            'margin-left': '%.2fmm' % margin_left,
+            'margin-right': '%.2fmm' % margin_left,
+            'footer-right': '[page]/[toPage]',
+            'footer-spacing': '%.2f' % footer_spacing,
+            'footer-font-name': 'Georgia, Times New Roman',
         }
 
         # this makes all paths, such as stylesheets and javascript, use

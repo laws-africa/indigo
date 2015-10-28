@@ -127,7 +127,7 @@ class PDFRenderer(HTMLRenderer):
             'content_html': html,
         })
 
-        return self._to_pdf(html, toc=not element)
+        return self.to_pdf(html, document=document, toc=not element)
 
     def render_many(self, documents, **kwargs):
         html = []
@@ -139,16 +139,24 @@ class PDFRenderer(HTMLRenderer):
         html = render_to_string('pdf/many.html', {
             'documents': zip(documents, html),
         })
-        return self._to_pdf(html)
+        return self.to_pdf(html, documents=documents)
 
-    def _to_pdf(self, html, toc=True):
-        options = self._pdf_options()
+    def to_pdf(self, html, document=None, documents=None, toc=True, colophon=True):
+        args = []
+        options = self.pdf_options()
 
         # this makes all paths, such as stylesheets and javascript, use
         # absolute file paths so that wkhtmltopdf finds them
         html = make_absolute_paths(html)
 
-        args = []
+        # keep this around so that the file doesn't get cleaned up
+        # before its used
+        colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
+        if colophon:
+            colophon_f.write(self.colophon(document=document, documents=documents))
+            colophon_f.flush()
+            args.extend(['cover', 'file://' + colophon_f.name])
+
         toc_xsl = options.pop('xsl-style-sheet')
         if toc:
             args.extend(['toc', '--xsl-style-sheet', toc_xsl])
@@ -159,10 +167,17 @@ class PDFRenderer(HTMLRenderer):
             args.append('file://' + f.name)
             return self._wkhtmltopdf(args, **options)
 
+    def colophon(self, document=None, documents=None):
+        html = render_to_string('pdf/colophon.html', {
+            'document': document,
+            'documents': documents,
+        })
+        return make_absolute_paths(html)
+
     def _wkhtmltopdf(self, *args, **kwargs):
         return wkhtmltopdf(*args, **kwargs)
 
-    def _pdf_options(self):
+    def pdf_options(self):
         # see https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/ for margin details
         # Target margins are: 36.3mm (top, bottom); 26.6mm (left, right)
         # We want to pull the footer (7.5mm high) into the margin, so we decrease

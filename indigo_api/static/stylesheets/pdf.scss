@@ -3,11 +3,20 @@ body {
   font-size: 12pt;
 }
 
+.document {
+  page-break-before: always;
+}
+
 .akoma-ntoso {
   @import 'akoma-ntoso';
 
-  h1, h2, h3, h4, h5 {
+  h1, h2, h3, h4, h5, .akn-heading {
     page-break-after: avoid;
+    font-weight: bold;
+  }
+
+  .akn-chapter {
+    page-break-inside: avoid;
   }
 
   .akn-doc {

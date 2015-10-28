@@ -141,6 +141,21 @@ class PDFRenderer(HTMLRenderer):
         return self._to_pdf(html)
 
     def _to_pdf(self, html):
+        options = self._pdf_options()
+
+        # this makes all paths, such as stylesheets and javascript, use
+        # absolute file paths so that wkhtmltopdf finds them
+        html = make_absolute_paths(html)
+
+        with tempfile.NamedTemporaryFile(suffix='.html') as f:
+            f.write(html)
+            f.flush()
+            return wkhtmltopdf([
+                'toc', '--xsl-style-sheet', options.pop('xsl-style-sheet'),
+                'file://' + f.name
+            ], **options)
+
+    def _pdf_options(self):
         # see https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/ for margin details
         # Target margins are: 36.3mm (top, bottom); 26.6mm (left, right)
         # We want to pull the footer (7.5mm high) into the margin, so we decrease
@@ -160,16 +175,11 @@ class PDFRenderer(HTMLRenderer):
             'footer-right': '[page]/[toPage]',
             'footer-spacing': '%.2f' % footer_spacing,
             'footer-font-name': 'Georgia, Times New Roman',
+            'footer-font-size': '10',
+            'xsl-style-sheet': find_template('pdf/toc.xsl')[0].origin.name,
         }
 
-        # this makes all paths, such as stylesheets and javascript, use
-        # absolute file paths so that wkhtmltopdf finds them
-        html = make_absolute_paths(html)
-
-        with tempfile.NamedTemporaryFile(suffix='.html') as f:
-            f.write(html)
-            f.flush()
-            return wkhtmltopdf(['file://' + f.name], **options)
+        return options
 
 
 class PDFResponseRenderer(BaseRenderer):

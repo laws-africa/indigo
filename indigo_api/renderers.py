@@ -125,9 +125,7 @@ class PDFRenderer(HTMLRenderer):
             'element': element,
             'content_html': html,
         })
-        # TODO: table of contents
-
-        return self._to_pdf(html)
+        return self._to_pdf(html, toc=not element)
 
     def render_many(self, documents, **kwargs):
         html = []
@@ -141,20 +139,23 @@ class PDFRenderer(HTMLRenderer):
         })
         return self._to_pdf(html)
 
-    def _to_pdf(self, html):
+    def _to_pdf(self, html, toc=True):
         options = self._pdf_options()
 
         # this makes all paths, such as stylesheets and javascript, use
         # absolute file paths so that wkhtmltopdf finds them
         html = make_absolute_paths(html)
 
+        args = []
+        toc_xsl = options.pop('xsl-style-sheet')
+        if toc:
+            args.extend(['toc', '--xsl-style-sheet', toc_xsl])
+
         with tempfile.NamedTemporaryFile(suffix='.html') as f:
             f.write(html)
             f.flush()
-            return wkhtmltopdf([
-                'toc', '--xsl-style-sheet', options.pop('xsl-style-sheet'),
-                'file://' + f.name
-            ], **options)
+            args.append('file://' + f.name)
+            return wkhtmltopdf(args, **options)
 
     def _pdf_options(self):
         # see https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/ for margin details

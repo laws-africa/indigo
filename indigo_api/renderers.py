@@ -155,7 +155,10 @@ class PDFRenderer(HTMLRenderer):
             f.write(html)
             f.flush()
             args.append('file://' + f.name)
-            return wkhtmltopdf(args, **options)
+            return self._wkhtmltopdf(args, **options)
+
+    def _wkhtmltopdf(self, *args, **kwargs):
+        return wkhtmltopdf(*args, **kwargs)
 
     def _pdf_options(self):
         # see https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/ for margin details

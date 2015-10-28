@@ -2,13 +2,18 @@
 
 import tempfile
 import os.path
+from mock import patch
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
+from django.test.utils import override_settings
 
 from indigo_api.tests.fixtures import *  # noqa
+from indigo_api.renderers import PDFRenderer
 
 
+# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
+@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=True)
 class DocumentAPITest(APITestCase):
     fixtures = ['user']
 
@@ -456,3 +461,18 @@ class DocumentAPITest(APITestCase):
         response = self.client.put(data['url'], {'filename': 'new-from-patch.txt'})
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'new-from-patch.txt')
+
+    @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
+    def test_document_pdf(self, mock):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.pdf' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/pdf')
+        assert_in('pdf-content', response.content)
+
+    def test_document_pdf_404(self):
+        response = self.client.get('/api/documents/999.pdf')
+        assert_equal(response.status_code, 404)

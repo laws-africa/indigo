@@ -1,7 +1,13 @@
+from mock import patch
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
+from django.test.utils import override_settings
+
+from indigo_api.renderers import PDFRenderer
 
 
+# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
+@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=True)
 class PublishedAPITest(APITestCase):
     fixtures = ['user', 'published']
 
@@ -32,6 +38,18 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/xml')
         assert_in('<akomaNtoso', response.content)
 
+    @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
+    def test_published_pdf(self, mock):
+        response = self.client.get('/api/za/act/2014/10.pdf')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/pdf')
+        assert_in('pdf-content', response.content)
+
+        response = self.client.get('/api/za/act/2014/10/eng.pdf')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/pdf')
+        assert_in('pdf-content', response.content)
+
     def test_published_html(self):
         response = self.client.get('/api/za/act/2014/10.html')
         assert_equal(response.status_code, 200)
@@ -61,6 +79,13 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(len(response.data['results']), 1)
 
+    @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
+    def test_published_listing_pdf(self, mock):
+        response = self.client.get('/api/za/act.pdf')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/pdf')
+        assert_in('pdf-content', response.content)
+
     def test_published_listing_pagination(self):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
@@ -72,6 +97,11 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/act.html')
         assert_equal(response.status_code, 404)
         assert_equal(response.accepted_media_type, 'text/html')
+
+    def test_published_listing_pdf_404(self):
+        # explicitly asking for html is bad
+        response = self.client.get('/api/za/act/bad.pdf')
+        assert_equal(response.status_code, 404)
 
     def test_published_atom(self):
         response = self.client.get('/api/za/summary.atom')

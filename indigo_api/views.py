@@ -54,6 +54,14 @@ def download_attachment(attachment):
 class DocumentViewMixin(object):
     queryset = Document.objects.undeleted().prefetch_related('tags', 'created_by_user', 'updated_by_user')
 
+    def initial(self, request, **kwargs):
+        super(DocumentViewMixin, self).initial(request, **kwargs)
+
+        # some of our renderers want to bypass the serializer, so that we get access to the
+        # raw data objects
+        if getattr(self.request.accepted_renderer, 'serializer_class', None):
+            self.serializer_class = self.request.accepted_renderer.serializer_class
+
     def table_of_contents(self, document):
         # this updates the TOC entries by adding a 'url' component
         # based on the document's URI and the path of the TOC subcomponent
@@ -85,6 +93,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     serializer_class = DocumentSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
+    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, renderers.BrowsableAPIRenderer)
 
     def perform_destroy(self, instance):
         if not instance.draft:
@@ -245,14 +254,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
-
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
-
-        # some of our renderers want to bypass the serializer, so that we get access to the
-        # raw data objects
-        if getattr(self.request.accepted_renderer, 'serializer_class', None):
-            self.serializer_class = self.request.accepted_renderer.serializer_class
 
     def get(self, request, **kwargs):
         # try parse it as an FRBR URI, if that succeeds, we'll lookup the document

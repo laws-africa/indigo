@@ -203,14 +203,16 @@ class PDFResponseRenderer(BaseRenderer):
             # render many
             return PDFRenderer().render_many(data)
 
-        if view.component == 'main' and not view.subcomponent:
+        if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             return data.to_pdf()
 
         return data.element_to_pdf(view.element)
 
     def get_filename(self, data, view):
         if isinstance(data, Document):
-            parts = [data.year, data.number, view.component if view.component != 'main' else None, view.subcomponent]
+            parts = [data.year, data.number]
+            if hasattr(view, 'component'):
+                parts.extend([view.component if view.component != 'main' else None, view.subcomponent])
         else:
             parts = view.kwargs['frbr_uri'].split('/')
 

@@ -158,6 +158,10 @@ fieldset {
   padding: 5px;
   background-color: $header-colour2;
   border-bottom: 1px solid $border-colour;
+
+  .buttons {
+    float: right;
+  }
 }
 
 /* headers with help buttons */

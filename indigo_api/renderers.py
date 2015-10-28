@@ -1,5 +1,6 @@
 import lxml.etree as ET
 import tempfile
+import re
 
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
@@ -190,15 +191,28 @@ class PDFResponseRenderer(BaseRenderer):
     serializer_class = NoopSerializer
 
     def render(self, data, media_type=None, renderer_context=None):
+        if not isinstance(data, (Document, list)):
+            return ''
+
+        view = renderer_context['view']
+        filename = self.get_filename(data, view)
+        renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+
         if isinstance(data, list):
             # render many
             return PDFRenderer().render_many(data)
 
-        if not isinstance(data, Document):
-            return ''
-
-        view = renderer_context['view']
         if view.component == 'main' and not view.subcomponent:
             return data.to_pdf()
 
         return data.element_to_pdf(view.element)
+
+    def get_filename(self, data, view):
+        if isinstance(data, Document):
+            parts = [data.year, data.number, view.component if view.component != 'main' else None, view.subcomponent]
+        else:
+            parts = view.kwargs['frbr_uri'].split('/')
+
+        parts = [re.sub('[/ .]', '-', p) for p in parts if p]
+
+        return '-'.join(parts) + '.pdf'

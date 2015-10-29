@@ -1,11 +1,11 @@
-{% load pipeline %}
+{% load pipeline_inline %}
 
 <!DOCTYPE html>
 <html>
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head-css %}
-    {% stylesheet "pdf" %}
+    {% inline_stylesheet "pdf" %}
     {% endblock %}
 
     {% block head-meta %}{% endblock %}

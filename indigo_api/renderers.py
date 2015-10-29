@@ -132,13 +132,13 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
 
         view = renderer_context['view']
         renderer = HTMLRenderer()
-        renderer.standalone = renderer_context['request'].GET.get('standalone', 0) == '1'
+        renderer.standalone = renderer_context['request'].GET.get('standalone') == '1'
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
-            renderer.coverpage = renderer_context['request'].GET.get('coverpage', 1) == '1'
+            renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
             return renderer.render(document)
 
-        renderer.coverpage = renderer_context['request'].GET.get('coverpage', 0) == '1'
+        renderer.coverpage = renderer_context['request'].GET.get('coverpage') == '1'
         return renderer.render(document, view.element)
 
 

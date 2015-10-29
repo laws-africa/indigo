@@ -157,7 +157,7 @@ class PDFRenderer(HTMLRenderer):
         # keep this around so that the file doesn't get cleaned up
         # before its used
         colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
-        if self.colophon:
+        if False and self.colophon:
             colophon_f.write(self.render_colophon(document=document, documents=documents))
             colophon_f.flush()
             args.extend(['cover', 'file://' + colophon_f.name])

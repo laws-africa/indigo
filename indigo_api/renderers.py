@@ -208,6 +208,8 @@ class PDFRenderer(HTMLRenderer):
         # We want to pull the footer (7.5mm high) into the margin, so we decrease
         # the margin slightly
 
+        footer_font = 'Georgia, "Times New Roman", serif'
+        footer_font_size = '10'
         footer_spacing = 5
         margin_top = 36.3 - footer_spacing
         margin_bottom = 36.3 - footer_spacing
@@ -219,10 +221,15 @@ class PDFRenderer(HTMLRenderer):
             'margin-bottom': '%2.fmm' % margin_bottom,
             'margin-left': '%.2fmm' % margin_left,
             'margin-right': '%.2fmm' % margin_left,
-            'footer-right': '[page]/[toPage]',
+            'header-left': '[section]',
+            'header-spacing': '%.2f' % footer_spacing,
+            'header-font-name': footer_font,
+            'header-font-size': footer_font_size,
+            'header-line': True,
+            'footer-center': '[page] of [toPage]',
             'footer-spacing': '%.2f' % footer_spacing,
-            'footer-font-name': 'Georgia, Times New Roman',
-            'footer-font-size': '10',
+            'footer-font-name': footer_font,
+            'footer-font-size': footer_font_size,
             'xsl-style-sheet': os.path.abspath('indigo_api/templates/export/pdf_toc.xsl'),
         }
 

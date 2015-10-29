@@ -13,7 +13,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <style>
           body {
-            font-family: Georgia, "Times New Roman";
+            font-family: Georgia, "Times New Roman", serif;
             font-size: 12pt;
             line-height: 1.4;
           }

@@ -40,3 +40,33 @@ body.pdf {
 body.standalone {
   margin: 2em;
 }
+
+.toc,
+.colophon {
+  h2 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+}
+
+.toc {
+  ul {
+    margin-bottom: 1em;
+    padding-left: 0em;
+  }
+
+  ul ul {
+    padding-left: 1em;
+  }
+
+  li {
+    list-style: none;
+    margin-left: 0px;
+  }
+
+  margin-bottom: 5em;
+}

@@ -7,7 +7,7 @@ from indigo_api.renderers import PDFRenderer
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
-@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=True)
+@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class PublishedAPITest(APITestCase):
     fixtures = ['user', 'published']
 

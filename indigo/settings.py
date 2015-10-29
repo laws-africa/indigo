@@ -195,12 +195,12 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'app.css',
     },
-    'pdf': {
+    'export': {
         'source_filenames': (
             'bower_components/bootstrap/dist/css/bootstrap.min.css',
-            'stylesheets/pdf.scss',
+            'stylesheets/export.scss',
         ),
-        'output_filename': 'pdf.css',
+        'output_filename': 'export.css',
     },
     'lime': {
         'source_filenames': (

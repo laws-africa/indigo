@@ -33,10 +33,11 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, template_name=None, cobalt_kwargs=None):
-        self.coverpage = coverpage
+    def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None):
         self.template_name = template_name
+        self.standalone = standalone
         self.cobalt_kwargs = cobalt_kwargs or {}
+        self.coverpage = coverpage
 
     def render(self, document, element=None):
         """ Render this document to HTML.
@@ -46,24 +47,40 @@ class HTMLRenderer(object):
         """
         # use this to render the bulk of the document with the Cobalt XSLT renderer
         renderer = self._xml_renderer(document)
-        if element:
-            return renderer.render(element)
 
-        content_html = renderer.render_xml(document.document_xml)
+        if element:
+            # just a fragment of the document
+            content_html = renderer.render(element)
+            if not self.standalone:
+                # we're done
+                return content_html
+        else:
+            # the entire document
+            content_html = renderer.render_xml(document.document_xml)
 
         # find the template to use
         template_name = self.template_name or self._find_template(document)
 
-        # and then render some boilerplate around it
-        return render_to_string(template_name, {
+        context = {
             'document': document,
             'element': element,
             'content_html': content_html,
             'renderer': renderer,
             'coverpage': self.coverpage,
-        })
+        }
 
-    def _find_template(self, document):
+        # Now render some boilerplate around it.
+        if self.standalone:
+            context['template_name'] = template_name
+            context['colophon'] = self._find_colophon_template(document)
+            return render_to_string('export/standalone.html', context)
+        else:
+            return render_to_string(template_name, context)
+
+    def _find_colophon_template(self, document):
+        return self._find_template(document, 'export/colophon_')
+
+    def _find_template(self, document, prefix=''):
         """ Return the filename of a template to use to render this document.
 
         This takes into account the country, type, subtype and language of the document,
@@ -85,7 +102,7 @@ class HTMLRenderer(object):
         options.append('_'.join([doctype, uri.country]))
         options.append(doctype)
 
-        options = [f + '.html' for f in options]
+        options = [prefix + f + '.html' for f in options]
 
         for option in options:
             try:
@@ -106,12 +123,14 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
 
         view = renderer_context['view']
-        renderer = HTMLRenderer(coverpage=False)
+        renderer = HTMLRenderer()
+        renderer.standalone = renderer_context['request'].GET.get('standalone', 0) == '1'
 
         if view.component == 'main' and not view.subcomponent:
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', 1) == '1'
             return renderer.render(document)
 
+        renderer.coverpage = renderer_context['request'].GET.get('coverpage', 0) == '1'
         return renderer.render(document, view.element)
 
 
@@ -127,12 +146,9 @@ class PDFRenderer(HTMLRenderer):
         html = super(PDFRenderer, self).render(document, element=element)
 
         # embed the HTML into the PDF container
-        html = render_to_string('pdf/document.html', {
-            'document': document,
-            'element': element,
-            'content_html': html,
+        html = render_to_string('export/pdf.html', {
+            'documents': [(document, html)],
         })
-
         return self.to_pdf(html, document=document)
 
     def render_many(self, documents, **kwargs):
@@ -142,7 +158,7 @@ class PDFRenderer(HTMLRenderer):
             html.append(super(PDFRenderer, self).render(doc, **kwargs))
 
         # embed the HTML into the PDF container
-        html = render_to_string('pdf/many.html', {
+        html = render_to_string('export/pdf.html', {
             'documents': zip(documents, html),
         })
         return self.to_pdf(html, documents=documents)
@@ -157,11 +173,14 @@ class PDFRenderer(HTMLRenderer):
 
         # keep this around so that the file doesn't get cleaned up
         # before its used
-        colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
-        if False and self.colophon:
-            colophon_f.write(self.render_colophon(document=document, documents=documents))
-            colophon_f.flush()
-            args.extend(['cover', 'file://' + colophon_f.name])
+        colophon_f = None
+        if self.colophon:
+            colophon = self.render_colophon(document=document, documents=documents)
+            if colophon:
+                colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
+                colophon_f.write(colophon)
+                colophon_f.flush()
+                args.extend(['cover', 'file://' + colophon_f.name])
 
         toc_xsl = options.pop('xsl-style-sheet')
         if self.toc:
@@ -174,11 +193,9 @@ class PDFRenderer(HTMLRenderer):
             return self._wkhtmltopdf(args, **options)
 
     def render_colophon(self, document=None, documents=None):
-        html = render_to_string('pdf/colophon.html', {
-            'document': document,
-            'documents': documents,
-        })
-        return make_absolute_paths(html)
+        template = self._find_colophon_template(document or documents[0])
+        if template:
+            return make_absolute_paths(render_to_string(template))
 
     def _wkhtmltopdf(self, *args, **kwargs):
         return wkhtmltopdf(*args, **kwargs)
@@ -204,7 +221,7 @@ class PDFRenderer(HTMLRenderer):
             'footer-spacing': '%.2f' % footer_spacing,
             'footer-font-name': 'Georgia, Times New Roman',
             'footer-font-size': '10',
-            'xsl-style-sheet': os.path.abspath('indigo_api/templates/pdf/toc.xsl'),
+            'xsl-style-sheet': os.path.abspath('indigo_api/templates/export/pdf_toc.xsl'),
         }
 
         return options

@@ -54,6 +54,9 @@ class HTMLRenderer(object):
             if not self.standalone:
                 # we're done
                 return content_html
+        elif document.stub:
+            # Stub
+            content_html = ''
         else:
             # the entire document
             content_html = renderer.render_xml(document.document_xml)

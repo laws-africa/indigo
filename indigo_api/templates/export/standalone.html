@@ -14,7 +14,9 @@
       <h2>Table of Contents</h2>
       <h3>{{ document.title }}</h3>
 
+      {% if not document.stub %}
       {% include 'export/toc.html' with items=document.table_of_contents %}
+      {% endif %}
     </div>
   {% endif %}
 

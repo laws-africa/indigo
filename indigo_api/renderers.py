@@ -32,16 +32,16 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, cobalt_kwargs=None):
+    def __init__(self, coverpage=True, template_name=None, cobalt_kwargs=None):
+        self.coverpage = coverpage
+        self.template_name = template_name
         self.cobalt_kwargs = cobalt_kwargs or {}
 
-    def render(self, document, element=None, coverpage=True, template_name=None):
+    def render(self, document, element=None):
         """ Render this document to HTML.
 
         :param document: document to render if +element+ is None
         :param element: element to render (optional)
-        :param Boolean coverpage: Should a cover page be generated?
-        :param str template_name: name of the django template to use (or None to find a suitable one)
         """
         # use this to render the bulk of the document with the Cobalt XSLT renderer
         renderer = self._xml_renderer(document)
@@ -51,8 +51,7 @@ class HTMLRenderer(object):
         content_html = renderer.render_xml(document.document_xml)
 
         # find the template to use
-        if not template_name:
-            template_name = self._find_template(document)
+        template_name = self.template_name or self._find_template(document)
 
         # and then render some boilerplate around it
         return render_to_string(template_name, {
@@ -60,7 +59,7 @@ class HTMLRenderer(object):
             'element': element,
             'content_html': content_html,
             'renderer': renderer,
-            'coverpage': coverpage,
+            'coverpage': self.coverpage,
         })
 
     def _find_template(self, document):
@@ -106,19 +105,25 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
 
         view = renderer_context['view']
+        renderer = HTMLRenderer(coverpage=False)
 
         if view.component == 'main' and not view.subcomponent:
-            coverpage = renderer_context['request'].GET.get('coverpage', 1) == '1'
-            return document.to_html(coverpage=coverpage)
+            renderer.coverpage = renderer_context['request'].GET.get('coverpage', 1) == '1'
+            return renderer.render(document)
 
-        return document.element_to_html(view.element)
+        return renderer.render(document, view.element)
 
 
 class PDFRenderer(HTMLRenderer):
     """ Helper to render documents as PDFs.
     """
-    def render(self, document, element=None, **kwargs):
-        html = super(PDFRenderer, self).render(document, element=element, **kwargs)
+    def __init__(self, toc=True, colophon=True, *args, **kwargs):
+        super(PDFRenderer, self).__init__(*args, **kwargs)
+        self.toc = toc
+        self.colophon = colophon
+
+    def render(self, document, element=None):
+        html = super(PDFRenderer, self).render(document, element=element)
 
         # embed the HTML into the PDF container
         html = render_to_string('pdf/document.html', {
@@ -127,7 +132,7 @@ class PDFRenderer(HTMLRenderer):
             'content_html': html,
         })
 
-        return self.to_pdf(html, document=document, toc=not element)
+        return self.to_pdf(html, document=document)
 
     def render_many(self, documents, **kwargs):
         html = []
@@ -141,7 +146,7 @@ class PDFRenderer(HTMLRenderer):
         })
         return self.to_pdf(html, documents=documents)
 
-    def to_pdf(self, html, document=None, documents=None, toc=True, colophon=True):
+    def to_pdf(self, html, document=None, documents=None):
         args = []
         options = self.pdf_options()
 
@@ -152,13 +157,13 @@ class PDFRenderer(HTMLRenderer):
         # keep this around so that the file doesn't get cleaned up
         # before its used
         colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
-        if colophon:
-            colophon_f.write(self.colophon(document=document, documents=documents))
+        if self.colophon:
+            colophon_f.write(self.render_colophon(document=document, documents=documents))
             colophon_f.flush()
             args.extend(['cover', 'file://' + colophon_f.name])
 
         toc_xsl = options.pop('xsl-style-sheet')
-        if toc:
+        if self.toc:
             args.extend(['toc', '--xsl-style-sheet', toc_xsl])
 
         with tempfile.NamedTemporaryFile(suffix='.html') as f:
@@ -167,7 +172,7 @@ class PDFRenderer(HTMLRenderer):
             args.append('file://' + f.name)
             return self._wkhtmltopdf(args, **options)
 
-    def colophon(self, document=None, documents=None):
+    def render_colophon(self, document=None, documents=None):
         html = render_to_string('pdf/colophon.html', {
             'document': document,
             'documents': documents,
@@ -223,6 +228,7 @@ class PDFResponseRenderer(BaseRenderer):
 
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        renderer = PDFRenderer()
 
         # check the cache
         key = self.cache_key(data, view)
@@ -233,13 +239,14 @@ class PDFResponseRenderer(BaseRenderer):
 
         if isinstance(data, list):
             # render many
-            pdf = PDFRenderer().render_many(data)
+            pdf = renderer.render_many(data)
         elif not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             # whole document
-            pdf = data.to_pdf()
+            pdf = renderer.render(data)
         else:
             # just one element
-            pdf = data.element_to_pdf(view.element)
+            renderer.toc = False
+            pdf = renderer.render(data, view.element)
 
         # cache it
         if key:

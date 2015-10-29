@@ -1,6 +1,7 @@
 import lxml.etree as ET
 import tempfile
 import re
+import os.path
 
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import get_cache
@@ -203,7 +204,7 @@ class PDFRenderer(HTMLRenderer):
             'footer-spacing': '%.2f' % footer_spacing,
             'footer-font-name': 'Georgia, Times New Roman',
             'footer-font-size': '10',
-            'xsl-style-sheet': find_template('pdf/toc.xsl')[0].origin.name,
+            'xsl-style-sheet': os.path.abspath('indigo_api/templates/pdf/toc.xsl'),
         }
 
         return options

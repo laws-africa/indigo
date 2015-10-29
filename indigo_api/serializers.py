@@ -296,6 +296,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 },
                 {
                     "rel": "alternate",
+                    "title": "Standalone HTML",
+                    "href": url + ".html?standalone=1",
+                    "mediaType": "text/html"
+                },
+                {
+                    "rel": "alternate",
                     "title": "Akoma Ntoso",
                     "href": url + ".xml",
                     "mediaType": "application/xml"

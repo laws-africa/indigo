@@ -1,7 +1,16 @@
 <header class="boxed-group-header">
   {% if document.id %}
     <div class="buttons">
-      <a href="{% url 'document-detail' pk=document.id format='pdf' %}" class="btn btn-default btn-download" target="_blank"><i class="fa fa-file-pdf-o"></i> Download PDF</a>
+      <div class="dropdown">
+        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
+          <i class="fa fa-download"></i> Download
+          <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-right">
+          <li><a href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a></li>
+          <li><a href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a></li>
+        </ul>
+      </div>
     </div>
   {% endif %}
   <h4>Preview</h4>

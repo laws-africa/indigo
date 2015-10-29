@@ -476,3 +476,30 @@ class DocumentAPITest(APITestCase):
     def test_document_pdf_404(self):
         response = self.client.get('/api/documents/999.pdf')
         assert_equal(response.status_code, 404)
+
+    def test_document_standalone_html(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.html?standalone=1' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_not_in('<akomaNtoso', response.content)
+        assert_in('<body  class="standalone"', response.content)
+        assert_in('class="colophon"', response.content)
+        assert_in('class="toc"', response.content)
+
+    def test_document_html(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.html' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_not_in('<akomaNtoso', response.content)
+        assert_not_in('<body  class="standalone"', response.content)
+        assert_not_in('class="colophon"', response.content)
+        assert_not_in('class="toc"', response.content)
+        assert_in('<div ', response.content)

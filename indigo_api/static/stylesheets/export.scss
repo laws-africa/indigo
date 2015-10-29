@@ -1,0 +1,72 @@
+.akoma-ntoso {
+  @import 'akoma-ntoso';
+}
+
+body.pdf {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 12pt;
+
+  .document,
+  .akn-doc {
+    page-break-before: always;
+  }
+
+  .akn-chapter {
+    page-break-inside: avoid;
+  }
+
+  .akoma-ntoso {
+    h1, h2, h3, h4, h5, .akn-heading {
+      page-break-after: avoid;
+      font-weight: bold;
+    }
+  }
+}
+
+@media print {
+  .document,
+  .akn-doc {
+    page-break-before: always;
+  }
+
+  .akoma-ntoso {
+    h1, h2, h3, h4, h5, .akn-heading {
+      page-break-after: avoid;
+      font-weight: bold;
+    }
+  }
+}
+
+body.standalone {
+  margin: 2em;
+}
+
+.toc,
+.colophon {
+  h2 {
+    font-size: 24px;
+    text-align: center;
+  }
+
+  h3 {
+    font-size: 18px;
+  }
+}
+
+.toc {
+  ul {
+    margin-bottom: 1em;
+    padding-left: 0em;
+  }
+
+  ul ul {
+    padding-left: 1em;
+  }
+
+  li {
+    list-style: none;
+    margin-left: 0px;
+  }
+
+  margin-bottom: 5em;
+}

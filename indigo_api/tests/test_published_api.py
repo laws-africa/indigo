@@ -61,7 +61,17 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content)
+        assert_not_in('<body', response.content)
         assert_in('<div', response.content)
+
+    def test_published_html_standalone(self):
+        response = self.client.get('/api/za/act/2014/10.html?standalone=1')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_not_in('<akomaNtoso', response.content)
+        assert_in('<body  class="standalone"', response.content)
+        assert_in('class="colophon"', response.content)
+        assert_in('class="toc"', response.content)
 
     def test_published_listing(self):
         response = self.client.get('/api/za/')
@@ -245,5 +255,6 @@ class PublishedAPITest(APITestCase):
             {'href': 'http://testserver/api/za/act/2001/8/eng.xml', 'mediaType': 'application/xml', 'rel': 'alternate', 'title': 'Akoma Ntoso'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'HTML'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.pdf', 'mediaType': 'application/pdf', 'rel': 'alternate', 'title': 'PDF'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng.html?standalone=1', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'Standalone HTML'},
             {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'alternate', 'title': 'Table of Contents'},
         ])

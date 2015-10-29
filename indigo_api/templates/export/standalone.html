@@ -1,0 +1,24 @@
+{% extends "export/base.html" %}
+
+{% block body-class %}standalone{% endblock %}
+
+{% block content %}
+  {% if colophon %}
+    <div class="colophon">
+      {% include colophon %}
+    </div>
+  {% endif %}
+
+  {% if not element %}
+    <div class="toc">
+      <h2>Table of Contents</h2>
+      <h3>{{ document.title }}</h3>
+
+      {% include 'export/toc.html' with items=document.table_of_contents %}
+    </div>
+  {% endif %}
+
+  <div class="akoma-ntoso">
+    {% include template_name %}
+  </div>
+{% endblock %}

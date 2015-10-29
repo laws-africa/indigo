@@ -1,0 +1,25 @@
+<ul>
+  {% for item in items %}
+    {% if item.id %}
+    <li class="toc-{{ item.type }}">
+      <a href="#{{ item.id }}">
+        {% if item.type == 'part' or item.type == 'chapter' %}
+          {{ item.type|capfirst }} {{ item.num }} - 
+        {% elif item.num %}
+          {{ item.num }}
+        {% endif %}
+
+        {% if item.heading %}
+          {{ item.heading }}
+        {% else %}
+          {{ item.type|capfirst }}
+        {% endif %}
+      </a>
+
+      {% if item.children %}
+        {% include 'export/toc.html' with items=item.children %}
+      {% endif %}
+    </li>
+    {% endif %}
+  {% endfor %}
+</ul>

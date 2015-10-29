@@ -78,7 +78,10 @@ class HTMLRenderer(object):
             return render_to_string(template_name, context)
 
     def _find_colophon_template(self, document):
-        return self._find_template(document, 'export/colophon_')
+        try:
+            return self._find_template(document, 'export/colophon_')
+        except ValueError:
+            return None
 
     def _find_template(self, document, prefix=''):
         """ Return the filename of a template to use to render this document.

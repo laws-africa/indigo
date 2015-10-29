@@ -118,6 +118,8 @@ class HTMLRenderer(object):
 
 
 class HTMLResponseRenderer(StaticHTMLRenderer):
+    serializer_class = NoopSerializer
+
     def render(self, document, media_type=None, renderer_context=None):
         if not isinstance(document, Document):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
@@ -126,7 +128,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         renderer = HTMLRenderer()
         renderer.standalone = renderer_context['request'].GET.get('standalone', 0) == '1'
 
-        if view.component == 'main' and not view.subcomponent:
+        if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', 1) == '1'
             return renderer.render(document)
 

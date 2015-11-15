@@ -243,6 +243,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     * ``/za/``: list all published documents for South Africa.
     * ``/za/act/1994/2/``: one document, Act 2 of 1992
     * ``/za/act/1994/summary.atom``: all the acts from 1994 as an atom feed
+    * ``/za/act/1994.pdf``: all the acts from 1994 as a PDF
 
     """
     queryset = DocumentViewMixin.queryset.published().order_by('id')
@@ -382,6 +383,12 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 "title": AtomFeed.full_feed_title,
                 "href": url + "/full.atom",
                 "mediaType": AtomRenderer.media_type,
+            },
+            {
+                "rel": "alternate",
+                "title": "PDF",
+                "href": url + ".pdf",
+                "mediaType": "application/pdf"
             },
         ]
 

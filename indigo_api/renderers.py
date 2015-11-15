@@ -75,12 +75,12 @@ class HTMLRenderer(object):
         # Now render some boilerplate around it.
         if self.standalone:
             context['template_name'] = template_name
-            context['colophon'] = self._find_colophon_template(document)
+            context['colophon'] = self.find_colophon_template(document)
             return render_to_string('export/standalone.html', context)
         else:
             return render_to_string(template_name, context)
 
-    def _find_colophon_template(self, document):
+    def find_colophon_template(self, document):
         try:
             return self.find_template(document, 'export/colophon_')
         except ValueError:
@@ -218,7 +218,7 @@ class PDFRenderer(HTMLRenderer):
         the rendered HTML. This renders the colophon using a wrapper
         template to ensure it's a full HTML document.
         """
-        template = self._find_colophon_template(document or documents[0])
+        template = self.find_colophon_template(document or documents[0])
         if template:
             # find the wrapper template
             html = render_to_string('export/pdf_colophon.html', {

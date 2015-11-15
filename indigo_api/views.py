@@ -355,6 +355,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # either explicitly or implicitly json
             self.request.accepted_renderer = renderers.JSONRenderer()
             self.request.accepted_media_type = self.request.accepted_renderer.media_type
+            self.serializer_class = PublishedDocumentDetailView.serializer_class
 
         response = super(PublishedDocumentDetailView, self).list(request)
 

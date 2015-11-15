@@ -197,7 +197,8 @@ PIPELINE_CSS = {
     },
     'export': {
         'source_filenames': (
-            'bower_components/bootstrap/dist/css/bootstrap.min.css',
+            # these are both in indigo_api/static/
+            'stylesheets/bootstrap.min.css',
             'stylesheets/export.scss',
         ),
         'output_filename': 'export.css',

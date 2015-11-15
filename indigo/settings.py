@@ -268,8 +268,8 @@ PIPELINE_COMPILERS = (
 )
 
 PYSCSS_LOAD_PATHS = [
+    os.path.join(BASE_DIR, 'indigo_api', 'static'),
     os.path.join(BASE_DIR, 'indigo_app', 'static'),
-    os.path.join(BASE_DIR, 'indigo_app', 'static', 'bower_components'),
 ]
 
 

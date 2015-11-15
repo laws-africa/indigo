@@ -62,7 +62,7 @@ class HTMLRenderer(object):
             content_html = renderer.render_xml(document.document_xml)
 
         # find the template to use
-        template_name = self.template_name or self._find_template(document)
+        template_name = self.template_name or self.find_template(document)
 
         context = {
             'document': document,
@@ -82,15 +82,28 @@ class HTMLRenderer(object):
 
     def _find_colophon_template(self, document):
         try:
-            return self._find_template(document, 'export/colophon_')
+            return self.find_template(document, 'export/colophon_')
         except ValueError:
             return None
 
-    def _find_template(self, document, prefix=''):
+    def find_template(self, document, prefix=''):
         """ Return the filename of a template to use to render this document.
 
         This takes into account the country, type, subtype and language of the document,
         providing a number of opportunities to adjust the rendering logic.
+
+        The normal Django templating system is used to find a template. The first template
+        found is used. The following templates are looked for, in order:
+
+        * doctype_subtype_language_country.html
+        * doctype_subtype_country.html
+        * doctype_subtype_language.html
+        * doctype_country.html
+        * doctype_subtype.html
+        * doctype_language_country.html
+        * doctype_country.html
+        * doctype_language.html
+        * doctype.html
         """
         uri = document.doc.frbr_uri
         doctype = uri.doctype
@@ -98,14 +111,14 @@ class HTMLRenderer(object):
         options = []
         if uri.subtype:
             options.append('_'.join([doctype, uri.subtype, document.language, uri.country]))
-            options.append('_'.join([doctype, uri.subtype, document.language]))
             options.append('_'.join([doctype, uri.subtype, uri.country]))
+            options.append('_'.join([doctype, uri.subtype, document.language]))
             options.append('_'.join([doctype, uri.country]))
             options.append('_'.join([doctype, uri.subtype]))
 
         options.append('_'.join([doctype, document.language, uri.country]))
-        options.append('_'.join([doctype, document.language]))
         options.append('_'.join([doctype, uri.country]))
+        options.append('_'.join([doctype, document.language]))
         options.append(doctype)
 
         options = [prefix + f + '.html' for f in options]

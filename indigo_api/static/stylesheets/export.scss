@@ -1,5 +1,5 @@
-.akoma-ntoso {
-  @import 'akoma-ntoso';
+body.standalone {
+  margin: 2em;
 }
 
 body.pdf {
@@ -37,12 +37,7 @@ body.pdf {
   }
 }
 
-body.standalone {
-  margin: 2em;
-}
-
-.toc,
-.colophon {
+.toc {
   h2 {
     font-size: 24px;
     text-align: center;
@@ -51,9 +46,7 @@ body.standalone {
   h3 {
     font-size: 18px;
   }
-}
 
-.toc {
   ul {
     margin-bottom: 1em;
     padding-left: 0em;
@@ -69,4 +62,8 @@ body.standalone {
   }
 
   margin-bottom: 5em;
+}
+
+.akoma-ntoso {
+  @import 'akoma-ntoso';
 }

@@ -214,9 +214,17 @@ class PDFRenderer(HTMLRenderer):
             return self._wkhtmltopdf(args, **options)
 
     def render_colophon(self, document=None, documents=None):
+        """ Find the colophon template this document and render it, returning
+        the rendered HTML. This renders the colophon using a wrapper
+        template to ensure it's a full HTML document.
+        """
         template = self._find_colophon_template(document or documents[0])
         if template:
-            return make_absolute_paths(render_to_string(template))
+            # find the wrapper template
+            html = render_to_string('export/pdf_colophon.html', {
+                'colophon': template,
+            })
+            return make_absolute_paths(html)
 
     def _wkhtmltopdf(self, *args, **kwargs):
         return wkhtmltopdf(*args, **kwargs)

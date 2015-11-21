@@ -17,6 +17,22 @@ html, body {
   background-color: #aaa;
 }
 
+/* permissions-based styles */
+body.authenticated {
+  .logged-in { display: block; }
+  .not-logged-in { display: none; }
+}
+
+body.unauthenticated {
+  .logged-in { display: none; }
+  .not-logged-in { display: block; }
+}
+
+.requires-staff { display: none; }
+body.is-staff {
+  .requires-staff { display: block; }
+}
+
 // the LIME editor overrides some styles by attaching .x-body to the body element,
 // so we overwrite those here
 body.x-body {

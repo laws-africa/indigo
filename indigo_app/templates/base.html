@@ -15,7 +15,9 @@
     {% block head-meta %}{% endblock %}
 
   </head>
-  <body {% block body-attributes %}{% endblock %} class="{% block body-class %}{% endblock %}">
+  <body {% block body-attributes %}{% endblock %} class="{% block body-class %}
+    {% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}
+    {% endblock %}">
     <div id="error-box" class="alert alert-danger hidden">
       <button type="button" class="close">&times;</button>
       <p></p>

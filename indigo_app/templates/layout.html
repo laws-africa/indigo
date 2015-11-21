@@ -37,11 +37,11 @@
         {% block header-buttons %}{% endblock %}
 
         <div class="btn-group">
-          <button type="button" class="btn btn-default login not-logged-in" {% if user.is_authenticated %}style="display: none"{% endif %}><i class="fa fa-sign-in"></i> Log in</button>
+          <button type="button" class="btn btn-default login not-logged-in"><i class="fa fa-sign-in"></i> Log in</button>
         </div>
 
         <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle logged-in" data-toggle="dropdown" {% if not user.is_authenticated %}style="display: none"{% endif %}>
+          <button type="button" class="btn btn-default dropdown-toggle logged-in" data-toggle="dropdown">
             <i class="fa fa-user"></i>
               <span class="username">
                 {% if user.is_authenticated %}{{ user.first_name|default:user.email }}{% endif %}
@@ -50,6 +50,7 @@
           </button>
           <ul class="pull-right dropdown-menu dropdown-right">
             <li><a class="profile" data-toggle="modal" href="#user-profile-box"><i class="fa fa-user fa-fw"></i> Profile</a></li>
+            <li class="requires-staff"><a class="profile" href="/admin/" target="_blank"><i class="fa fa-gear fa-fw"></i> Site Settings</a></li>
             <li role="presentation" class="divider"></li>
             <li><a class="logout" href="#"><i class="fa fa-sign-out fa-fw"></i> Log out</a></li>
           </ul>

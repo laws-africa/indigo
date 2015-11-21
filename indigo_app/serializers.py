@@ -14,8 +14,8 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('username', 'email', 'first_name', 'last_name', 'permissions', 'country_code')
-        read_only_fields = ('email', )
+        fields = ('username', 'email', 'first_name', 'last_name', 'permissions', 'country_code', 'is_staff')
+        read_only_fields = ('email', 'is_staff')
 
     def get_permissions(self, user):
         return [p for p in user.get_all_permissions() if p.startswith('indigo_api.')]

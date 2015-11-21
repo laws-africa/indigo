@@ -7,7 +7,7 @@
   Indigo.UserView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .js-user-buttons .btn.login.not-logged-in': 'showLoginBox',
+      'click .js-user-buttons .btn.login': 'showLoginBox',
       'click .js-user-buttons .logout': 'logout',
 
       // in the login modal
@@ -134,8 +134,9 @@
     },
 
     userChanged: function() {
-      this.$el.find('.not-logged-in').toggle(!this.model.authenticated());
-      this.$el.find('.logged-in').toggle(this.model.authenticated());
+      this.$el.toggleClass('authenticated', this.model.authenticated());
+      this.$el.toggleClass('unauthenticated', !this.model.authenticated());
+      this.$el.toggleClass('is-staff', this.model.get('is_staff'));
     },
 
     showLoginBox: function() {

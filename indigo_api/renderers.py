@@ -33,11 +33,12 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None):
+    def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None, no_stub_content=False):
         self.template_name = template_name
         self.standalone = standalone
         self.cobalt_kwargs = cobalt_kwargs or {}
         self.coverpage = coverpage
+        self.no_stub_content = no_stub_content
 
     def render(self, document, element=None):
         """ Render this document to HTML.
@@ -54,7 +55,7 @@ class HTMLRenderer(object):
             if not self.standalone:
                 # we're done
                 return content_html
-        elif document.stub:
+        elif self.no_stub_content and document.stub:
             # Stub
             content_html = ''
         else:
@@ -145,6 +146,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
 
         view = renderer_context['view']
         renderer = HTMLRenderer()
+        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.standalone = renderer_context['request'].GET.get('standalone') == '1'
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
@@ -283,6 +285,7 @@ class PDFResponseRenderer(BaseRenderer):
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = PDFRenderer()
+        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
 
         # check the cache
         key = self.cache_key(data, view)

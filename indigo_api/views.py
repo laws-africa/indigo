@@ -293,6 +293,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         self.component = self.frbr_uri.expression_component or 'main'
         self.subcomponent = self.frbr_uri.expression_subcomponent
         format = self.request.accepted_renderer.format
+        # Tell the renderer that published documents shouldn't include stub content
+        self.no_stub_content = True
 
         # get the document
         document = self.get_object()

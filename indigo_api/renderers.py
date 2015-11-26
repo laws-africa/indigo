@@ -11,7 +11,7 @@ from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
-from .models import Document
+from .models import Document, Colophon
 
 
 class AkomaNtosoRenderer(XMLRenderer):
@@ -76,16 +76,21 @@ class HTMLRenderer(object):
         # Now render some boilerplate around it.
         if self.standalone:
             context['template_name'] = template_name
-            context['colophon'] = self.find_colophon_template(document)
+            context['colophon'] = self.find_colophon(document)
             return render_to_string('export/standalone.html', context)
         else:
             return render_to_string(template_name, context)
 
-    def find_colophon_template(self, document):
-        try:
-            return self.find_template(document, 'export/colophon_')
-        except ValueError:
-            return None
+    def find_colophon(self, document):
+        colophon = None
+
+        if document.country:
+            colophon = Colophon.objects.filter(country__iso=document.country.upper()).first()
+
+        if not colophon:
+            colophon = Colophon.objects.filter(country=None).first()
+
+        return colophon
 
     def find_template(self, document, prefix=''):
         """ Return the filename of a template to use to render this document.
@@ -220,11 +225,11 @@ class PDFRenderer(HTMLRenderer):
         the rendered HTML. This renders the colophon using a wrapper
         template to ensure it's a full HTML document.
         """
-        template = self.find_colophon_template(document or documents[0])
-        if template:
+        colophon = self.find_colophon(document or documents[0])
+        if colophon:
             # find the wrapper template
             html = render_to_string('export/pdf_colophon.html', {
-                'colophon': template,
+                'colophon': colophon,
             })
             return make_absolute_paths(html)
 

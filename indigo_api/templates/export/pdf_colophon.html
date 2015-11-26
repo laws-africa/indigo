@@ -4,6 +4,6 @@
 
 {% block content %}
   <div class="colophon">
-    {% include colophon %}
+    {{ colophon.body | safe }}
   </div>
 {% endblock %}

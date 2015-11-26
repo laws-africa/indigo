@@ -15,7 +15,7 @@ from indigo_api.renderers import PDFRenderer
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['user']
+    fixtures = ['user', 'colophon']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')

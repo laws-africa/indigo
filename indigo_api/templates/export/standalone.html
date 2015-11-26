@@ -5,7 +5,7 @@
 {% block content %}
   {% if colophon %}
     <div class="colophon">
-      {% include colophon %}
+      {{ colophon.body | safe }}
     </div>
   {% endif %}
 

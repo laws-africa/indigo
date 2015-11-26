@@ -10,6 +10,9 @@ from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
 import reversion
+from tinymce import models as tinymce_models
+
+from countries_plus.models import Country as MasterCountry
 
 from cobalt.act import Act
 
@@ -411,3 +414,21 @@ class Subtype(models.Model):
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.abbreviation)
+
+
+class Colophon(models.Model):
+    """ A colophon is the chunk of text included at the
+    start of the PDF and standalone HTML files. It includes
+    copyright and attribution information and details on
+    contacting the publisher.
+
+    To determine which colophon to use for a document,
+    Indigo choose the one which most closely matches
+    the country of the document.
+    """
+    name = models.CharField(max_length=1024, help_text='Name of this colophon')
+    country = models.ForeignKey(MasterCountry, on_delete=models.SET_NULL, null=True, blank=True, help_text='Which country does this colophon apply to?')
+    body = tinymce_models.HTMLField()
+
+    def __unicode__(self):
+        return unicode(self.name)

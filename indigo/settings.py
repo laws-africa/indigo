@@ -300,7 +300,7 @@ TINYMCE_JS_URL = '/static/bower_components/tinymce-dist/tinymce.min.js'
 TINYMCE_JS_ROOT = BASE_DIR + '/indigo_api/static/bower_components/tinymce-dist/'
 TINYMCE_DEFAULT_CONFIG = {
     'theme': 'modern',
-    'plugins': "table,spellchecker,paste,searchreplace",
+    'plugins': "table,spellchecker,paste,searchreplace,link,code",
 }
 TINYMCE_COMPRESSOR = False
 

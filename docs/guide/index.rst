@@ -20,3 +20,4 @@ Contents:
     managing
     metadata
     editing
+    admin

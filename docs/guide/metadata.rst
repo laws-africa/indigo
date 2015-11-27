@@ -74,3 +74,12 @@ If the amending document is already in the library, you can choose it from the l
 
 To create a newly amended version of a document, edit the version just before the new amendments need to be applied and click **Clone Document**
 to create a copy, and then edit that copy.
+
+Attachments
+-----------
+
+The Attachments section lets you attach files to your document. This is generally used to link a source PDF, Word or other file with your document, but you can upload any file you like. When creating a new document by importing a file, the file is automatically added as an attachment.
+
+To upload a new file, click on **Attachments** and then click the **Choose Files** button.
+
+You can change the name of an attachment by clicking the pencil (edit) icon.

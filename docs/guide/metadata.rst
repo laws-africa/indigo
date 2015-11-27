@@ -83,3 +83,12 @@ The Attachments section lets you attach files to your document. This is generall
 To upload a new file, click on **Attachments** and then click the **Choose Files** button.
 
 You can change the name of an attachment by clicking the pencil (edit) icon.
+
+Defined Terms Analysis
+----------------------
+
+Indigo can find defined terms in a document and associate occurrences of a term with its definition. It does this by looking for a section called ``Definitions`` or ``Interpretation`` and looking for sentences that look like definitions. It then looks through the document to find uses of any defined terms it has found.
+
+To find and link terms, click **Analysis** and then **Find and link defined terms**.
+
+.. note:: Defined terms are lost when a section is edited. It's best to find and link defined terms just before publishing a final document.

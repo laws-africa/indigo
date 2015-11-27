@@ -35,7 +35,7 @@ or the source has not been fully checked.
 
 .. note::
 
-    Administrators can add new countries, languages and document subtypes through the Admin interface.
+    Administrators can add new countries, languages and document subtypes through the Admin interface. Click on your name in the top-right corner and choose **Site Settings**.
 
 
 Promulgation

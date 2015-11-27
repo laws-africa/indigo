@@ -199,6 +199,17 @@ You can easily add a new chapter, part or section to a document. To do so:
 2. at the bottom, add the new chapter, part or section heading and content
 3. click the green Update button
 
+Downloading PDF and Standalone HTML
+-----------------------------------
+
+You can download PDF and standalone (self-contained) HTML versions of a document. These are useful for distribution and archiving. Go to **Preview** and click the **Download** button.
+
+Downloaded and PDF documents can have a *colophon*, which is a page right at the start of the document which contains copyright, ownership and other information. A colophon is automatically chosen for a document based on document's country.
+
+.. note::
+
+    Administrators can add new colophons through the Admin interface. Click on your name in the top-right corner and choose **Site Settings**.
+
 
 Viewing the XML
 ---------------

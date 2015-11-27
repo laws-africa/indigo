@@ -274,7 +274,7 @@ a.help {
     }
 
     .document-sheet-container,
-    .text-editor {
+    .document-text-editor {
       width: 50%;
     }
   }
@@ -285,13 +285,13 @@ a.help {
       display: none;
     }
 
-    .text-editor {
+    .document-text-editor {
       display: block;
     }
   }
 }
 
-.text-editor {
+.document-text-editor {
   // changed when the user chooses to view it
   display: none;
 

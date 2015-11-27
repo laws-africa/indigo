@@ -91,4 +91,6 @@ Indigo can find defined terms in a document and associate occurrences of a term 
 
 To find and link terms, click **Analysis** and then **Find and link defined terms**.
 
-.. note:: Defined terms are lost when a section is edited. It's best to find and link defined terms just before publishing a final document.
+When viewing a document, Indigo marks the definition of a defined term **in bold**.
+
+.. important:: Defined terms are lost when a section is edited. It's best to find and link defined terms just before publishing a final document, or after doing a batch of updates.

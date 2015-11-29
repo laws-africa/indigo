@@ -247,7 +247,7 @@ class PDFRenderer(HTMLRenderer):
         footer_spacing = 5
         margin_top = 36.3 - footer_spacing
         margin_bottom = 36.3 - footer_spacing
-        margin_left = 26.6
+        margin_left = 25.6
 
         options = {
             'page-size': 'A4',

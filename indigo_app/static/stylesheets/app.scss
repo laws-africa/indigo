@@ -366,12 +366,8 @@ legend {
 
 
 /* akoma ntoso styles */
-.akoma-ntoso {
-  text-align: justify;
-  line-height: 1.5em;
+@import 'akoma-ntoso';
 
-  @import 'akoma-ntoso';
-}
 
 /* standalone pages, such as the password reset form */
 .standalone {

@@ -282,6 +282,7 @@ class EPUBRenderer(HTMLRenderer):
         self.renderer = self._xml_renderer(document)
 
         self.book = epub.EpubBook()
+        self.book.spine = ['nav']
 
         self.book.set_identifier(document.doc.frbr_uri.expression_uri())
         self.book.set_title(document.title)
@@ -292,34 +293,45 @@ class EPUBRenderer(HTMLRenderer):
 
         # generate the individual items for each navigable element
         for item in document.doc.table_of_contents():
-            self.add_item(item)
+            self.book.toc.append(self.add_item(item))
 
         self.book.add_item(epub.EpubNcx())
         self.book.add_item(epub.EpubNav())
 
+        # XXX use temp file
         epub.write_epub('/tmp/test.epub', self.book, {})
-
         with open('/tmp/test.epub') as f:
             return f.read()
 
     def add_item(self, item):
         id = self.item_id(item)
         fname = re.sub(r'[^a-zA-Z0-9-_]', '_', id) + '.xhtml'
+        title = self.item_title(item)
 
-        # TODO: add to toc
+        entry = epub.EpubHtml(
+            title=title,
+            uid=id,
+            file_name=fname)
+        entry.content = self.renderer.render(item.element)
+        self.book.add_item(entry)
+        self.book.spine.append(entry)
+
+        def child_tocs(child):
+            if child.id:
+                us = epub.Link(fname + '#' + child.id, self.item_title(child), child.id)
+            else:
+                us = epub.Section(self.item_heading(child))
+
+            if child.children:
+                children = [child_tocs(c) for c in child.children]
+                return [us, children]
+            else:
+                return us
 
         if item.children:
-            for child in item.children:
-                self.add_item(child)
+            return (entry, [child_tocs(c) for c in item.children])
         else:
-            # if we don't, render content
-            entry = epub.EpubHtml(
-                title=self.item_title(item),
-                uid=id,
-                file_name=fname)
-            entry.content = self.renderer.render(item.element)
-            self.book.add_item(entry)
-            self.book.spine.append(entry)
+            return entry
 
     def item_id(self, item):
         parts = [item.component]
@@ -334,13 +346,28 @@ class EPUBRenderer(HTMLRenderer):
         return '-'.join([p for p in parts if p])
 
     def item_title(self, item):
-        if item.heading:
-            return item.heading
+        if item.type in ['chapter', 'part']:
+            title = item.type.capitalize()
+            if item.num:
+                title += ' ' + item.num
+            if item.heading:
+                title += ' - ' + item.heading
+            return title
+
+        elif item.type == 'section':
+            if item.heading:
+                title = item.heading
+                if item.num:
+                    title = item.num + ' ' + title
+            else:
+                title = 'Section'
+                if item.num:
+                    title = title + ' ' + item.num
+            return title
 
         title = item.type.capitalize()
         if item.num:
             title += u' ' + item.num
-
         return title
 
 

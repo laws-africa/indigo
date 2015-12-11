@@ -291,6 +291,8 @@ class EPUBRenderer(HTMLRenderer):
         # XXX
         #book.add_author()
 
+        self.add_coverpage(document)
+
         # generate the individual items for each navigable element
         for item in document.doc.table_of_contents():
             self.book.toc.append(self.add_item(item))
@@ -303,6 +305,24 @@ class EPUBRenderer(HTMLRenderer):
         with open('/tmp/test.epub') as f:
             return f.read()
 
+    def add_coverpage(self, document):
+        # find the template to use
+        template_name = self.template_name or self.find_template(document)
+        context = {
+            'document': document,
+            'element': None,
+            'content_html': '',
+            'renderer': self.renderer,
+            'coverpage': True,
+        }
+        coverpage = render_to_string(template_name, context)
+
+        entry = epub.EpubHtml(uid='coverpage', file_name='coverpage.xhtml')
+        entry.content = coverpage
+
+        self.book.add_item(entry)
+        self.book.spine.append(entry)
+
     def add_item(self, item):
         id = self.item_id(item)
         fname = re.sub(r'[^a-zA-Z0-9-_]', '_', id) + '.xhtml'
@@ -313,8 +333,11 @@ class EPUBRenderer(HTMLRenderer):
             uid=id,
             file_name=fname)
         entry.content = self.renderer.render(item.element)
+
         self.book.add_item(entry)
         self.book.spine.append(entry)
+
+        # TOC entries
 
         def child_tocs(child):
             if child.id:

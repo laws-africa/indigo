@@ -20,7 +20,7 @@ from lxml.etree import LxmlError
 
 from .models import Document, Attachment
 from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
-from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, HTMLResponseRenderer
+from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
@@ -93,7 +93,8 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     serializer_class = DocumentSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
-    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, HTMLResponseRenderer, renderers.BrowsableAPIRenderer)
+    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
+                        HTMLResponseRenderer, renderers.BrowsableAPIRenderer)
 
     def perform_destroy(self, instance):
         if not instance.draft:

@@ -19,6 +19,7 @@ django-tinymce==2.0.6
 django-wkhtmltopdf==2.0.3
 djangorestframework==3.2.3
 djangorestframework-xml==1.2.0
+EbookLib==0.15
 enum34==1.0.4
 futures==3.0.3
 gevent==1.0.1

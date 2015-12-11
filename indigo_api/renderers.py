@@ -8,6 +8,7 @@ from django.core.cache import get_cache
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
+from ebooklib import epub
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
@@ -270,6 +271,79 @@ class PDFRenderer(HTMLRenderer):
         return options
 
 
+class EPUBRenderer(HTMLRenderer):
+    """ Helper to render documents as ePubs.
+    """
+    def __init__(self, *args, **kwargs):
+        super(EPUBRenderer, self).__init__(*args, **kwargs)
+
+    def render(self, document, element=None):
+        # TODO:
+        self.renderer = self._xml_renderer(document)
+
+        self.book = epub.EpubBook()
+
+        self.book.set_identifier(document.doc.frbr_uri.expression_uri())
+        self.book.set_title(document.title)
+        # XXX
+        self.book.set_language('en')
+        # XXX
+        #book.add_author()
+
+        # generate the individual items for each navigable element
+        for item in document.doc.table_of_contents():
+            self.add_item(item)
+
+        self.book.add_item(epub.EpubNcx())
+        self.book.add_item(epub.EpubNav())
+
+        epub.write_epub('/tmp/test.epub', self.book, {})
+
+        with open('/tmp/test.epub') as f:
+            return f.read()
+
+    def add_item(self, item):
+        id = self.item_id(item)
+        fname = re.sub(r'[^a-zA-Z0-9-_]', '_', id) + '.xhtml'
+
+        # TODO: add to toc
+
+        if item.children:
+            for child in item.children:
+                self.add_item(child)
+        else:
+            # if we don't, render content
+            entry = epub.EpubHtml(
+                title=self.item_title(item),
+                uid=id,
+                file_name=fname)
+            entry.content = self.renderer.render(item.element)
+            self.book.add_item(entry)
+            self.book.spine.append(entry)
+
+    def item_id(self, item):
+        parts = [item.component]
+
+        id = item.id or item.subcomponent
+        if not id:
+            parts.append(item.type)
+            parts.append(item.num)
+        else:
+            parts.append(id)
+
+        return '-'.join([p for p in parts if p])
+
+    def item_title(self, item):
+        if item.heading:
+            return item.heading
+
+        title = item.type.capitalize()
+        if item.num:
+            title += u' ' + item.num
+
+        return title
+
+
 class PDFResponseRenderer(BaseRenderer):
     """ Django Rest Framework PDF Renderer.
     """
@@ -331,7 +405,7 @@ class PDFResponseRenderer(BaseRenderer):
             data = sorted(data, key=lambda d: d.id)
             parts = [(p.id, p.updated_at.isoformat()) for p in data]
 
-        return parts
+        return [self.format] + parts
 
     def get_filename(self, data, view):
         if isinstance(data, Document):
@@ -343,4 +417,46 @@ class PDFResponseRenderer(BaseRenderer):
 
         parts = [re.sub('[/ .]', '-', p) for p in parts if p]
 
-        return '-'.join(parts) + '.pdf'
+        return '-'.join(parts) + '.' + self.format
+
+
+class EPUBResponseRenderer(PDFResponseRenderer):
+    """ Django Rest Framework ePub Renderer.
+    """
+    media_type = 'application/epub+zip'
+    format = 'epub'
+
+    def render(self, data, media_type=None, renderer_context=None):
+        if not isinstance(data, (Document, list)):
+            return ''
+
+        view = renderer_context['view']
+
+        filename = self.get_filename(data, view)
+        renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        renderer = EPUBRenderer()
+        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
+
+        # check the cache
+        key = self.cache_key(data, view)
+        if key:
+            epub = self.cache.get(key)
+            if epub:
+                return epub
+
+        if isinstance(data, list):
+            # render many
+            epub = renderer.render_many(data)
+        elif not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
+            # whole document
+            epub = renderer.render(data)
+        else:
+            # just one element
+            renderer.toc = False
+            epub = renderer.render(data, view.element)
+
+        # cache it
+        if key:
+            self.cache.set(key, epub)
+
+        return epub

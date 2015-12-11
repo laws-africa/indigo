@@ -298,12 +298,21 @@ class EPUBRenderer(HTMLRenderer):
             self.book.toc.append(self.add_item(item))
 
         self.book.add_item(epub.EpubNcx())
-        self.book.add_item(epub.EpubNav())
+        nav = epub.EpubNav()
+        nav.links = [{'href': 'style/nav.css'}]
+        self.book.add_item(nav)
+
+        self.add_css()
 
         # XXX use temp file
         epub.write_epub('/tmp/test.epub', self.book, {})
         with open('/tmp/test.epub') as f:
             return f.read()
+
+    def add_css(self):
+        # TODO: put this into a file
+        nav_css = 'li { list-style: none; }'
+        self.book.add_item(epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=nav_css))
 
     def add_coverpage(self, document):
         # find the template to use

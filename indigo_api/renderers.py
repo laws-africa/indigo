@@ -278,11 +278,7 @@ class EPUBRenderer(HTMLRenderer):
         super(EPUBRenderer, self).__init__(*args, **kwargs)
 
     def render(self, document, element=None):
-        # TODO:
-        self.renderer = self._xml_renderer(document)
-
-        self.book = epub.EpubBook()
-        self.book.spine = ['nav']
+        self.create_book()
 
         self.book.set_identifier(document.doc.frbr_uri.expression_uri())
         self.book.set_title(document.title)
@@ -291,30 +287,60 @@ class EPUBRenderer(HTMLRenderer):
         # XXX
         #book.add_author()
 
-        self.add_coverpage(document)
+        self.add_colophon(document)
+        self.book.spine.append('nav')
 
-        # generate the individual items for each navigable element
-        for item in document.doc.table_of_contents():
-            self.book.toc.append(self.add_item(item))
+        self.add_document(document)
+        return self.to_epub()
 
+    def render_many(self, documents):
+        self.create_book()
+
+        self.book.set_identifier(':'.join(d.doc.frbr_uri.expression_uri() for d in documents))
+        # TODO
+        # self.book.set_title()
+        # XXX
+        self.book.set_language('en')
+        #book.add_author()
+
+        self.add_colophon(documents[0])
+        self.book.spine.append('nav')
+
+        for d in documents:
+            self.add_document(d)
+
+        return self.to_epub()
+
+    def create_book(self):
+        self.book = epub.EpubBook()
         self.book.add_item(epub.EpubNcx())
+        self.add_css()
+
         nav = epub.EpubNav()
         nav.links = [{'href': 'style/nav.css'}]
         self.book.add_item(nav)
-
-        self.add_css()
-
-        # XXX use temp file
-        epub.write_epub('/tmp/test.epub', self.book, {})
-        with open('/tmp/test.epub') as f:
-            return f.read()
 
     def add_css(self):
         # TODO: put this into a file
         nav_css = 'li { list-style: none; }'
         self.book.add_item(epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=nav_css))
 
-    def add_coverpage(self, document):
+    def add_colophon(self, document):
+        # TODO:
+        pass
+
+    def add_document(self, document):
+        # relative directory for files for this document
+        file_dir = 'doc-%s' % document.id
+        self.renderer = self._xml_renderer(document)
+
+        self.add_coverpage(document, file_dir)
+
+        # generate the individual items for each navigable element
+        for item in document.doc.table_of_contents():
+            self.book.toc.append(self.add_item(item, file_dir))
+
+    def add_coverpage(self, document, file_dir):
         # find the template to use
         template_name = self.template_name or self.find_template(document)
         context = {
@@ -326,15 +352,17 @@ class EPUBRenderer(HTMLRenderer):
         }
         coverpage = render_to_string(template_name, context)
 
-        entry = epub.EpubHtml(uid='coverpage', file_name='coverpage.xhtml')
+        fname = os.path.join(file_dir, 'coverpage.xhtml')
+        entry = epub.EpubHtml(title=document.title, uid='coverpage', file_name=fname)
         entry.content = coverpage
 
         self.book.add_item(entry)
+        self.book.toc.append(entry)
         self.book.spine.append(entry)
 
-    def add_item(self, item):
+    def add_item(self, item, file_dir):
         id = self.item_id(item)
-        fname = re.sub(r'[^a-zA-Z0-9-_]', '_', id) + '.xhtml'
+        fname = os.path.join(file_dir, re.sub(r'[^a-zA-Z0-9-_]', '_', id) + '.xhtml')
         title = self.item_title(item)
 
         entry = epub.EpubHtml(
@@ -347,7 +375,6 @@ class EPUBRenderer(HTMLRenderer):
         self.book.spine.append(entry)
 
         # TOC entries
-
         def child_tocs(child):
             if child.id:
                 us = epub.Link(fname + '#' + child.id, self.item_title(child), child.id)
@@ -364,6 +391,12 @@ class EPUBRenderer(HTMLRenderer):
             return (entry, [child_tocs(c) for c in item.children])
         else:
             return entry
+
+    def to_epub(self):
+        # XXX use temp file
+        epub.write_epub('/tmp/test.epub', self.book, {})
+        with open('/tmp/test.epub') as f:
+            return f.read()
 
     def item_id(self, item):
         parts = [item.component]

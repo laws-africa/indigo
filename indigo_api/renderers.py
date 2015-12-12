@@ -326,8 +326,12 @@ class EPUBRenderer(HTMLRenderer):
         self.book.add_item(epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=nav_css))
 
     def add_colophon(self, document):
-        # TODO:
-        pass
+        colophon = self.find_colophon(document)
+        if colophon:
+            entry = epub.EpubHtml(uid='colophon', file_name='colophon.xhtml')
+            entry.content = colophon.body
+            self.book.add_item(entry)
+            self.book.spine.append(entry)
 
     def add_document(self, document):
         # relative directory for files for this document
@@ -353,7 +357,7 @@ class EPUBRenderer(HTMLRenderer):
         coverpage = render_to_string(template_name, context)
 
         fname = os.path.join(file_dir, 'coverpage.xhtml')
-        entry = epub.EpubHtml(title=document.title, uid='coverpage', file_name=fname)
+        entry = epub.EpubHtml(title=document.title, uid='%s-coverpage' % file_dir, file_name=fname)
         entry.content = coverpage
 
         self.book.add_item(entry)
@@ -367,7 +371,7 @@ class EPUBRenderer(HTMLRenderer):
 
         entry = epub.EpubHtml(
             title=title,
-            uid=id,
+            uid='-'.join([file_dir, id]),
             file_name=fname)
         entry.content = self.renderer.render(item.element)
 

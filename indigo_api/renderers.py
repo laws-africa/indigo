@@ -237,8 +237,18 @@ class PDFRenderer(HTMLRenderer):
         return wkhtmltopdf(*args, **kwargs)
 
     def pdf_options(self):
-        # see https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/ for margin details
-        # Target margins are: 36.3mm (top, bottom); 26.6mm (left, right)
+        # See https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/
+        # for background on the two circle canon for calculating margins for an A4 page.
+        #
+        # To calculate margins for a page of width W and height H, plug the following
+        # equation into Wolfram Alpha, and read off the smaller of the two pairs of
+        # values for s (the side margin) and t (the top/bottom margin) in mm.
+        #
+        # y=Mx; (x-W/2)^2+(y-(H-W/2))^2=(W/2)^2; s=W-x; t=H-y; M = H/W; H=297; W=210
+        #
+        # or use this link: http://wolfr.am/8BoqtzV5
+        #
+        # Target margins are: 36.3mm (top, bottom); 25.6mm (left, right)
         # We want to pull the footer (7.5mm high) into the margin, so we decrease
         # the margin slightly
 
@@ -247,7 +257,7 @@ class PDFRenderer(HTMLRenderer):
         footer_spacing = 5
         margin_top = 36.3 - footer_spacing
         margin_bottom = 36.3 - footer_spacing
-        margin_left = 26.6
+        margin_left = 25.6
 
         options = {
             'page-size': 'A4',

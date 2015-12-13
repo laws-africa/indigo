@@ -1,197 +1,226 @@
 /* akoma ntoso styling */
 
-.akn-akomaNtoso, .akn-act, .akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, .akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList {
-  display: block;
-}
+.akoma-ntoso {
+  $line-height: 1.35;       /* see http://practicaltypography.com/line-spacing.html */
+  $para-spacing: 0.8em;     /* see http://practicaltypography.com/space-between-paragraphs.html */
+  $para-indent: 3em;
+  $section-spacing: 1.6em;  /* generally 2 * $para-spacing */
 
-.coverpage {
-  text-align: center;
-  margin-bottom: 2em;
+  /* typography */
+  font-family: Palatino, Palatino Linotype, Palatino LT STD, Book Antiqua, Georgia, serif; /* http://www.cssfontstack.com/Palatino */
+  font-size: 14px;
+  line-height: $line-height;
+  text-align: justify;
 
-  .amendment-list {
-    margin-top: 2em;
-    padding: 0px;
+  /* headings */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  .akn-heading {
+    margin-top: 0px;
+    margin-bottom: $para-spacing;
+    line-height: 1.2;
+
+    font-weight: bold;
   }
 
-  .amendment {
-    list-style: none;
-    margin-bottom: 1em;
+  h1 {
+    font-size: 24px;
+  }
+
+  h2,
+  .akn-heading {
+    text-align: center;
+    font-size: 18px;
+  }
+
+  h3 {
+    font-size: 16px;
+  }
+
+  h4 {
+    font-size: 14px;
+  }
+
+  .akn-subheading {
+    text-align: center;
     font-style: italic;
   }
 
-  .assent-date,
-  .commencement-date {
-    margin-bottom: 1em;
-    font-weight: bold;
-  }
-}
-
-h1 {
-  margin-top: 0px;
-  margin-bottom: 1em;
-  font-size: 24px;
-  line-height: 28px;
-}
-
-h2, .akn-heading {
-  display: block;
-  margin-top: 0px;
-  margin-bottom: 1em;
-
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 20px;
-}
-
-h3 {
-  margin-top: 0px;
-  margin-bottom: 1em;
-  font-size: 16px;
-  line-height: 20px;
-}
-
-h4 {
-  margin-top: 0px;
-  margin-bottom: 1em;
-  font-size: 14px;
-}
-
-.akn-subheading {
-  text-align: center;
-  font-style: italic;
-  display: block;
-}
-
-.akn-def {
-  font-weight: bold;
-}
-
-.akn-preface,
-.akn-preamble {
-  margin-bottom: 2em;
-
-  .akn-p {
+  /* block containers */
+  .akn-akomaNtoso,
+  .akn-act,
+  .akn-coverPage,
+  .akn-preface,
+  .akn-preamble,
+  .akn-conclusions,
+  .akn-chapter,
+  .akn-part,
+  .akn-section,
+  .akn-subsection,
+  .akn-blockList,
+  .akn-heading,
+  .akn-subheading {
     display: block;
-    margin-bottom: 1em;
-  }
-}
-
-.akn-chapter, .akn-part {
-  margin-bottom: 4em;
-}
-
-.akn-section {
-  margin-bottom: 2em;
-}
-
-.akn-subsection { 
-  margin-left: 3em;
-  margin-bottom: 1em;
-
-  &> .akn-num {
-    display: block;
-    float: left;
-    margin-left: -3em;
-  }
-}
-
-.akn-content {
-  > .akn-p {
-    display: block;
-    margin-bottom: 1em;
-  }
-}
-
-/* lists (mostly used in definitions) */
-.akn-list {
-  &> .akn-intro {
-    display: block;
-    margin-bottom: 1em;
   }
 
-  &> .akn-point {
-    display: block;
-    margin-left: 3em;
-    margin-bottom: 1em;
+  .akn-preface,
+  .akn-preamble {
+    margin-bottom: $section-spacing;
 
-    > .akn-num {
+    .akn-p {
       display: block;
-      float: left;
-      margin-left: -3em;
+      margin-bottom: $para-spacing;
     }
   }
-}
 
-/* blocklists */
-.akn-blockList {
-  .akn-listIntroduction {
-    display: block;
-    margin-bottom: 1em;
+  .akn-chapter,
+  .akn-part {
+    margin-bottom: $section-spacing;
   }
 
-  &> .akn-item {
-    display: block;
-    margin-left: 3em;
-    margin-bottom: 1em;
+  .akn-section {
+    margin-bottom: $section-spacing;
+  }
 
-    > .akn-num {
+  .akn-subsection { 
+    margin-left: $para-indent;
+    margin-bottom: $para-spacing;
+
+    &> .akn-num {
       display: block;
       float: left;
-      margin-left: -3em;
+      margin-left: -$para-indent;
     }
   }
-}
 
-/* schedules */
-
-table {
-  width: 100%;
-  margin-bottom: 2em;
-  border: 1px solid #ddd;
-
-  // Cells
-  th,
-  td {
-    border-left: 1px solid #ddd;
-    padding: 8px;
-    line-height: 20px;
-    text-align: left;
-    vertical-align: top;
-    border-top: 1px solid #ddd;
+  .akn-content {
+    > .akn-p {
+      display: block;
+      margin-bottom: $para-spacing;
+    }
   }
 
-  th {
+  /* lists (mostly used in definitions) */
+  .akn-list {
+    &> .akn-intro {
+      display: block;
+      margin-bottom: $para-spacing;
+    }
+
+    &> .akn-point {
+      display: block;
+      margin-left: $para-indent;
+      margin-bottom: $para-spacing;
+
+      > .akn-num {
+        display: block;
+        float: left;
+        margin-left: -$para-indent;
+      }
+    }
+  }
+
+  /* blocklists */
+  .akn-blockList {
+    .akn-listIntroduction {
+      display: block;
+      margin-bottom: $para-spacing;
+    }
+
+    &> .akn-item {
+      display: block;
+      margin-left: $para-indent;
+      margin-bottom: $para-spacing;
+
+      > .akn-num {
+        display: block;
+        float: left;
+        margin-left: -$para-indent;
+      }
+    }
+  }
+
+  /* schedules */
+
+  table {
+    width: 100%;
+    margin-bottom: $section-spacing;
+    border: 1px solid #ddd;
+
+    // Cells
+    th,
+    td {
+      border-left: 1px solid #ddd;
+      padding: 8px;
+      line-height: 20px;
+      text-align: left;
+      vertical-align: top;
+      border-top: 1px solid #ddd;
+    }
+
+    th {
+      font-weight: bold;
+    }
+
+    // Bottom align for column headings
+    thead th {
+      vertical-align: bottom;
+    }
+
+    // Remove top border from thead by default
+    caption + thead tr:first-child th,
+    caption + thead tr:first-child td,
+    colgroup + thead tr:first-child th,
+    colgroup + thead tr:first-child td,
+    thead:first-child tr:first-child th,
+    thead:first-child tr:first-child td {
+      border-top: 0;
+    }
+
+    // Account for multiple tbody instances
+    tbody + tbody {
+      border-top: 2px solid #ddd;
+    }
+
+    // Nesting
+    .table {
+      background-color: white;
+    }
+  }
+
+  /* inline elements */
+  .akn-def {
     font-weight: bold;
   }
 
-  // Bottom align for column headings
-  thead th {
-    vertical-align: bottom;
+  .akn-remark {
+    font-style: italic;
   }
 
-  // Remove top border from thead by default
-  caption + thead tr:first-child th,
-  caption + thead tr:first-child td,
-  colgroup + thead tr:first-child th,
-  colgroup + thead tr:first-child td,
-  thead:first-child tr:first-child th,
-  thead:first-child tr:first-child td {
-    border-top: 0;
-  }
+  /* generated custom elements */
+  .coverpage {
+    text-align: center;
+    margin-bottom: $section-spacing;
 
-  // Account for multiple tbody instances
-  tbody + tbody {
-    border-top: 2px solid #ddd;
-  }
+    .amendment-list {
+      margin-top: $section-spacing;
+      padding: 0px;
+    }
 
-  // Nesting
-  .table {
-    background-color: white;
-  }
-}
+    .amendment {
+      list-style: none;
+      margin-bottom: $para-spacing;
+      font-style: italic;
+    }
 
-/* inline remarks */
-.akn-remark {
-  font-style: italic;
+    .assent-date,
+    .commencement-date {
+      margin-bottom: $para-spacing;
+      font-weight: bold;
+    }
+  }
 }

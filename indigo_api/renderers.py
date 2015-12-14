@@ -365,13 +365,17 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         file_dir = 'doc-%s' % document.id
         self.renderer = self._xml_renderer(document)
 
-        self.add_coverpage(document, file_dir)
+        titlepage = self.add_titlepage(document, file_dir)
 
         # generate the individual items for each navigable element
+        children = []
         for item in document.doc.table_of_contents():
-            self.book.toc.append(self.add_item(item, file_dir))
+            children.append(self.add_item(item, file_dir))
 
-    def add_coverpage(self, document, file_dir):
+        # add everything as a child of this document
+        self.book.toc.append((titlepage, children))
+
+    def add_titlepage(self, document, file_dir):
         # find the template to use
         template_name = self.template_name or self.find_template(document)
         context = {
@@ -381,15 +385,16 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
             'renderer': self.renderer,
             'coverpage': True,
         }
-        coverpage = render_to_string(template_name, context)
+        titlepage = render_to_string(template_name, context)
 
-        fname = os.path.join(file_dir, 'coverpage.xhtml')
-        entry = epub.EpubHtml(title=document.title, uid='%s-coverpage' % file_dir, file_name=fname)
-        entry.content = self.clean_html(coverpage, wrap='akoma-ntoso')
+        fname = os.path.join(file_dir, 'titlepage.xhtml')
+        entry = epub.EpubHtml(title=document.title, uid='%s-titlepage' % file_dir, file_name=fname)
+        entry.content = self.clean_html(titlepage, wrap='akoma-ntoso')
 
         self.book.add_item(entry)
-        self.book.toc.append(entry)
         self.book.spine.append(entry)
+
+        return entry
 
     def add_item(self, item, file_dir):
         id = self.item_id(item)

@@ -313,6 +313,7 @@ TINYMCE_DEFAULT_CONFIG = {
 }
 TINYMCE_COMPRESSOR = False
 
+
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')
 
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', SUPPORT_EMAIL)
@@ -321,6 +322,10 @@ EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
 EMAIL_SUBJECT_PREFIX = '[Indigo] '
+
+
+INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
+
 
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # server-side google analytics

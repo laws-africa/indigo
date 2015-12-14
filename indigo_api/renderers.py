@@ -297,7 +297,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         # XXX
         self.book.set_language('en')
         # XXX
-        #book.add_author()
+        # book.add_author()
 
         self.add_colophon(document)
         self.book.spine.append('nav')
@@ -313,7 +313,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         self.book.set_title('%d documents' % len(documents))
         # XXX
         self.book.set_language('en')
-        #book.add_author()
+        # book.add_author()
 
         self.add_colophon(documents[0])
         self.book.spine.append('nav')
@@ -466,6 +466,9 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
                 if item.num:
                     title = title + ' ' + item.num
             return title
+
+        elif item.heading:
+            return item.heading
 
         title = item.type.capitalize()
         if item.num:

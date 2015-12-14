@@ -23,12 +23,12 @@
             margin-top: 0px;
             margin-bottom: 2em;
           }
-          ul {
+          ol {
             font-size: 14pt;
             padding-left: 0px;
             margin-bottom: 1em;
           }
-          ul ul {
+          ol ol {
             font-size: 12pt;
             padding-left: 1em;
           }
@@ -42,7 +42,7 @@
       </head>
       <body>
         <h1>Table of Contents</h1>
-        <ul><xsl:apply-templates select="outline:item/outline:item"/></ul>
+        <ol><xsl:apply-templates select="outline:item/outline:item"/></ol>
       </body>
     </html>
   </xsl:template>
@@ -63,10 +63,10 @@
         </div>
       </xsl:if>
       <xsl:if test="*">
-        <ul>
+        <ol>
           <xsl:comment>added to prevent self-closing tags in QtXmlPatterns</xsl:comment>
           <xsl:apply-templates select="outline:item"/>
-        </ul>
+        </ol>
       </xsl:if>
     </li>
   </xsl:template>

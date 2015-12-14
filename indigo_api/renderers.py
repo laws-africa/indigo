@@ -14,10 +14,11 @@ from ebooklib import epub
 from pipeline.templatetags.pipeline import PipelineMixin
 from pipeline.collector import default_collector
 from pipeline.packager import Packager
+from languages_plus.models import Language
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
-from .models import Document, Colophon
+from .models import Document, Colophon, DEFAULT_LANGUAGE
 
 
 class AkomaNtosoRenderer(XMLRenderer):
@@ -294,8 +295,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
 
         self.book.set_identifier(document.doc.frbr_uri.expression_uri())
         self.book.set_title(document.title)
-        # XXX
-        self.book.set_language('en')
+        self.book.set_language(self.language_for(document.language) or 'en')
         # XXX
         # book.add_author()
 
@@ -309,10 +309,14 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         self.create_book()
 
         self.book.set_identifier(':'.join(d.doc.frbr_uri.expression_uri() for d in documents))
-        # TODO
         self.book.set_title('%d documents' % len(documents))
-        # XXX
-        self.book.set_language('en')
+
+        # language
+        langs = list(set(self.language_for(d.language) or 'en' for d in documents))
+        self.book.set_language(langs[0])
+        for lang in langs[1:]:
+            self.book.add_metadata('DC', 'language', lang)
+
         # book.add_author()
 
         self.add_colophon(documents[0])
@@ -451,6 +455,11 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         if wrap:
             html = '<div class="' + wrap + '">' + html + '</div>'
         return html
+
+    def language_for(self, lang=None):
+        lang = Language.objects.filter(iso_639_2T=lang or DEFAULT_LANGUAGE).first()
+        if lang:
+            return lang.iso
 
 
 class PDFResponseRenderer(BaseRenderer):

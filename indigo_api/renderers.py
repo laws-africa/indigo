@@ -422,9 +422,8 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
     def to_epub(self):
         self.add_css()
 
-        # XXX use temp file
-        epub.write_epub('/tmp/test.epub', self.book, {})
-        with open('/tmp/test.epub') as f:
+        with tempfile.NamedTemporaryFile(suffix='.epub') as f:
+            epub.write_epub(f.name, self.book, {})
             return f.read()
 
     def item_id(self, item):

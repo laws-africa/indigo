@@ -282,6 +282,10 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
     The PipelineMixin lets us look up the raw content of the compiled
     CSS to inject into the epub.
     """
+    # HTML tags that EPUB doesn't like
+    BAD_DIV_TAG_RE = re.compile(r'(</?)(section)(\s+|>)', re.IGNORECASE)
+    PATH_SUB_RE = re.compile(r'[^a-zA-Z0-9-_]')
+
     def __init__(self, *args, **kwargs):
         super(EPUBRenderer, self).__init__(*args, **kwargs)
 
@@ -352,7 +356,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         colophon = self.find_colophon(document)
         if colophon:
             entry = epub.EpubHtml(uid='colophon', file_name='colophon.xhtml')
-            entry.content = '<div class="colophon">' + colophon.body + '</div>'
+            entry.content = self.clean_html(colophon.body, wrap='colophon')
             self.book.add_item(entry)
             self.book.spine.append(entry)
 
@@ -381,7 +385,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
 
         fname = os.path.join(file_dir, 'coverpage.xhtml')
         entry = epub.EpubHtml(title=document.title, uid='%s-coverpage' % file_dir, file_name=fname)
-        entry.content = '<div class="akoma-ntoso">' + coverpage + '</div>'
+        entry.content = self.clean_html(coverpage, wrap='akoma-ntoso')
 
         self.book.add_item(entry)
         self.book.toc.append(entry)
@@ -389,14 +393,14 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
 
     def add_item(self, item, file_dir):
         id = self.item_id(item)
-        fname = os.path.join(file_dir, re.sub(r'[^a-zA-Z0-9-_]', '_', id) + '.xhtml')
+        fname = os.path.join(file_dir, self.PATH_SUB_RE.sub('_', id) + '.xhtml')
         title = self.item_title(item)
 
         entry = epub.EpubHtml(
             title=title,
             uid='-'.join([file_dir, id]),
             file_name=fname)
-        entry.content = '<div class="akoma-ntoso">' + self.renderer.render(item.element) + '</div>'
+        entry.content = self.clean_html(self.renderer.render(item.element), wrap='akoma-ntoso')
 
         self.book.add_item(entry)
         self.book.spine.append(entry)
@@ -462,6 +466,12 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         if item.num:
             title += u' ' + item.num
         return title
+
+    def clean_html(self, html, wrap=None):
+        html = self.BAD_DIV_TAG_RE.sub('\\1div\\3', html)
+        if wrap:
+            html = '<div class="' + wrap + '">' + html + '</div>'
+        return html
 
 
 class PDFResponseRenderer(BaseRenderer):

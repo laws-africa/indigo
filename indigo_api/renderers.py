@@ -329,7 +329,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         default_collector.collect(self.request)
 
         # add the files that produce export.css
-        pkg = self.package_for('export', 'css')
+        pkg = self.package_for('epub', 'css')
         packager = Packager()
         paths = packager.compile(pkg.paths)
 
@@ -352,7 +352,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         colophon = self.find_colophon(document)
         if colophon:
             entry = epub.EpubHtml(uid='colophon', file_name='colophon.xhtml')
-            entry.content = colophon.body
+            entry.content = '<div class="colophon">' + colophon.body + '</div>'
             self.book.add_item(entry)
             self.book.spine.append(entry)
 
@@ -381,7 +381,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
 
         fname = os.path.join(file_dir, 'coverpage.xhtml')
         entry = epub.EpubHtml(title=document.title, uid='%s-coverpage' % file_dir, file_name=fname)
-        entry.content = coverpage
+        entry.content = '<div class="akoma-ntoso">' + coverpage + '</div>'
 
         self.book.add_item(entry)
         self.book.toc.append(entry)
@@ -396,7 +396,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
             title=title,
             uid='-'.join([file_dir, id]),
             file_name=fname)
-        entry.content = self.renderer.render(item.element)
+        entry.content = '<div class="akoma-ntoso">' + self.renderer.render(item.element) + '</div>'
 
         self.book.add_item(entry)
         self.book.spine.append(entry)

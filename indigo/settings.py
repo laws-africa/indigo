@@ -204,6 +204,15 @@ PIPELINE_CSS = {
         ),
         'output_filename': 'export.css',
     },
+    'epub': {
+        'source_filenames': (
+            # these are in indigo_api/static/
+            'stylesheets/bootstrap.min.css',
+            'stylesheets/export.scss',
+            'stylesheets/epub.scss',
+        ),
+        'output_filename': 'epub.css',
+    },
     'lime': {
         'source_filenames': (
             'lime/dist/resources/LIME-all.css',

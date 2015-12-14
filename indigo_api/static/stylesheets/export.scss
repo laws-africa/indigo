@@ -38,7 +38,9 @@ body.pdf {
   }
 }
 
-.toc {
+// TOC and nav for ebpub
+.toc,
+nav#id {
   h2 {
     font-size: 24px;
     text-align: center;

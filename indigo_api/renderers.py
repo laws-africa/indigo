@@ -310,7 +310,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
 
         self.book.set_identifier(':'.join(d.doc.frbr_uri.expression_uri() for d in documents))
         # TODO
-        # self.book.set_title()
+        self.book.set_title('%d documents' % len(documents))
         # XXX
         self.book.set_language('en')
         #book.add_author()

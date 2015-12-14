@@ -2,13 +2,18 @@ import lxml.etree as ET
 import tempfile
 import re
 import os.path
+import codecs
 
 from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import get_cache
+from django.contrib.staticfiles.storage import staticfiles_storage
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
 from ebooklib import epub
+from pipeline.templatetags.pipeline import PipelineMixin
+from pipeline.collector import default_collector
+from pipeline.packager import Packager
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
@@ -271,8 +276,11 @@ class PDFRenderer(HTMLRenderer):
         return options
 
 
-class EPUBRenderer(HTMLRenderer):
+class EPUBRenderer(PipelineMixin, HTMLRenderer):
     """ Helper to render documents as ePubs.
+
+    The PipelineMixin lets us look up the raw content of the compiled
+    CSS to inject into the epub.
     """
     def __init__(self, *args, **kwargs):
         super(EPUBRenderer, self).__init__(*args, **kwargs)
@@ -314,16 +322,31 @@ class EPUBRenderer(HTMLRenderer):
     def create_book(self):
         self.book = epub.EpubBook()
         self.book.add_item(epub.EpubNcx())
-        self.add_css()
-
-        nav = epub.EpubNav()
-        nav.links = [{'href': 'style/nav.css'}]
-        self.book.add_item(nav)
+        self.book.add_item(epub.EpubNav())
 
     def add_css(self):
-        # TODO: put this into a file
-        nav_css = 'li { list-style: none; }'
-        self.book.add_item(epub.EpubItem(uid="style_nav", file_name="style/nav.css", media_type="text/css", content=nav_css))
+        # compile assets
+        default_collector.collect(self.request)
+
+        # add the files that produce export.css
+        pkg = self.package_for('export', 'css')
+        packager = Packager()
+        paths = packager.compile(pkg.paths)
+
+        self.stylesheets = []
+        for path in paths:
+            with codecs.open(staticfiles_storage.path(path), 'r', 'utf-8') as f:
+                css = f.read()
+            self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
+            self.stylesheets.append(path)
+
+        # now ensure all html items link to the stylesheets
+        for item in self.book.items:
+            if isinstance(item, (epub.EpubHtml, epub.EpubNav)):
+                for stylesheet in self.stylesheets:
+                    # relativise path
+                    href = '/'.join(['..'] * item.file_name.count('/') + [stylesheet])
+                    item.add_link(href=href, rel='stylesheet', type='text/css')
 
     def add_colophon(self, document):
         colophon = self.find_colophon(document)
@@ -397,6 +420,8 @@ class EPUBRenderer(HTMLRenderer):
             return entry
 
     def to_epub(self):
+        self.add_css()
+
         # XXX use temp file
         epub.write_epub('/tmp/test.epub', self.book, {})
         with open('/tmp/test.epub') as f:

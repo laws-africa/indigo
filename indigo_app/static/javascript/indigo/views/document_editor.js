@@ -25,12 +25,13 @@
         components: 'schedules_container',
       };
 
-      this.editor = ace.edit(this.view.$el.find(".ace-editor")[0]);
-      this.editor.setTheme("ace/theme/monokai");
-      this.editor.getSession().setMode("ace/mode/xml");
-      this.editor.setValue();
-      this.editor.$blockScrolling = Infinity;
-      this.onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
+      // setup xml editor
+      this.xmlEditor = ace.edit(this.view.$el.find(".document-xml-editor .ace-editor")[0]);
+      this.xmlEditor.setTheme("ace/theme/monokai");
+      this.xmlEditor.getSession().setMode("ace/mode/xml");
+      this.xmlEditor.setValue();
+      this.xmlEditor.$blockScrolling = Infinity;
+      this.onEditorChange = _.debounce(_.bind(this.xmlEditorChanged, this), 500);
 
       // setup renderer
       var htmlTransform = new XSLTProcessor();
@@ -40,8 +41,16 @@
           self.htmlTransform = htmlTransform;
         });
 
-      // setup sheet text editor
-      this.$textEditor = this.view.$el.find('#text-editor');
+      // setup text editor
+      this.$textEditor = this.view.$el.find('.document-text-editor');
+      this.textEditor = ace.edit(this.view.$el.find(".document-text-editor .ace-editor")[0]);
+      this.textEditor.setTheme("ace/theme/chrome");
+      this.textEditor.getSession().setMode("ace/mode/text");
+      this.textEditor.setValue();
+      this.textEditor.getSession().setUseWrapMode(true);
+      this.textEditor.setShowPrintMargin(false);
+      this.textEditor.$blockScrolling = Infinity;
+
       this.view.$el.find('.text-editor-buttons .btn.save').on('click', _.bind(this.saveTextEditor, this));
       this.view.$el.find('.text-editor-buttons .btn.cancel').on('click', _.bind(this.closeTextEditor, this));
       this.view.$el.find('.btn.edit-text').on('click', _.bind(this.editText, this));
@@ -77,12 +86,11 @@
 
       this.$textEditor
         .data('fragment', this.view.fragment.tagName)
-        .show()
-        .find('textarea')
-          .val(text)
-          .focus()
-          .caret(0)
-          .scrollTop(0);
+        .show();
+
+      this.textEditor.setValue(text);
+      this.textEditor.gotoLine(1, 0);
+      this.textEditor.focus();
 
       this.view.$el.find('.document-sheet-container').scrollTop(0);
     },
@@ -101,7 +109,7 @@
       var self = this;
       var $editable = this.view.$el.find('.akoma-ntoso').children().first();
       var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
-      var content = this.$textEditor.find('textarea').val();
+      var content = this.textEditor.getValue();
       var fragment = this.$textEditor.data('fragment');
       fragment = this.grammar_fragments[fragment] || fragment;
 
@@ -161,7 +169,7 @@
       var data = {
         'inputformat': 'text/plain',
         'outputformat': 'application/xml',
-        'content': this.$textEditor.find('textarea').val(),
+        'content': content,
       };
       if (fragment != 'akomaNtoso') {
         data.fragment = fragment;
@@ -209,12 +217,12 @@
       // pretty-print the xml
       xml = prettyPrintXml(xml);
 
-      this.editor.removeListener('change', this.onEditorChange);
-      this.editor.setValue(xml);
-      this.editor.on('change', this.onEditorChange);
+      this.xmlEditor.removeListener('change', this.onEditorChange);
+      this.xmlEditor.setValue(xml);
+      this.xmlEditor.on('change', this.onEditorChange);
     },
 
-    editorChanged: function() {
+    xmlEditorChanged: function() {
       this.dirty = true;
       this.saveChanges();
     },
@@ -228,7 +236,7 @@
         console.log('Parsing changes to XML');
 
         // TODO: handle errors here
-        var newFragment = $.parseXML(this.editor.getValue()).documentElement;
+        var newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
 
         this.view.updateFragment(this.view.fragment, [newFragment]);
         this.render();

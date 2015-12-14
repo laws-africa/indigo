@@ -274,7 +274,7 @@ a.help {
     }
 
     .document-sheet-container,
-    .text-editor {
+    .document-text-editor {
       width: 50%;
     }
   }
@@ -285,13 +285,13 @@ a.help {
       display: none;
     }
 
-    .text-editor {
+    .document-text-editor {
       display: block;
     }
   }
 }
 
-.text-editor {
+.document-text-editor {
   // changed when the user chooses to view it
   display: none;
 
@@ -366,12 +366,8 @@ legend {
 
 
 /* akoma ntoso styles */
-.akoma-ntoso {
-  text-align: justify;
-  line-height: 1.5em;
+@import 'akoma-ntoso';
 
-  @import 'akoma-ntoso';
-}
 
 /* standalone pages, such as the password reset form */
 .standalone {

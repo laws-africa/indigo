@@ -318,6 +318,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                     "href": url + ".pdf",
                     "mediaType": "application/pdf"
                 },
+                {
+                    "rel": "alternate",
+                    "title": "ePUB",
+                    "href": url + ".epub",
+                    "mediaType": "application/epub+zip"
+                },
             ]
 
     def validate(self, data):

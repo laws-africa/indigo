@@ -50,6 +50,17 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/pdf')
         assert_in('pdf-content', response.content)
 
+    def test_published_epub(self):
+        response = self.client.get('/api/za/act/2014/10.epub')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/epub+zip')
+        assert_true(response.content.startswith('PK'))
+
+        response = self.client.get('/api/za/act/2014/10/eng.epub')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/epub+zip')
+        assert_true(response.content.startswith('PK'))
+
     def test_published_html(self):
         response = self.client.get('/api/za/act/2014/10.html')
         assert_equal(response.status_code, 200)
@@ -109,8 +120,11 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'text/html')
 
     def test_published_listing_pdf_404(self):
-        # explicitly asking for html is bad
         response = self.client.get('/api/za/act/bad.pdf')
+        assert_equal(response.status_code, 404)
+
+    def test_published_listing_epub_404(self):
+        response = self.client.get('/api/za/act/bad.epub')
         assert_equal(response.status_code, 404)
 
     def test_published_atom(self):
@@ -257,4 +271,5 @@ class PublishedAPITest(APITestCase):
             {'href': 'http://testserver/api/za/act/2001/8/eng.pdf', 'mediaType': 'application/pdf', 'rel': 'alternate', 'title': 'PDF'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html?standalone=1', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'Standalone HTML'},
             {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'alternate', 'title': 'Table of Contents'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng.epub', 'mediaType': 'application/epub+zip', 'rel': 'alternate', 'title': 'ePUB'},
         ])

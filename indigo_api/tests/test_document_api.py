@@ -473,8 +473,22 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/pdf')
         assert_in('pdf-content', response.content)
 
+    def test_document_epub(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.epub' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/epub+zip')
+        assert_true(response.content.startswith('PK'))
+
     def test_document_pdf_404(self):
         response = self.client.get('/api/documents/999.pdf')
+        assert_equal(response.status_code, 404)
+
+    def test_document_epub_404(self):
+        response = self.client.get('/api/documents/999.epub')
         assert_equal(response.status_code, 404)
 
     def test_document_standalone_html(self):

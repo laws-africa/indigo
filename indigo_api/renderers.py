@@ -399,10 +399,9 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
     def add_item(self, item, file_dir):
         id = self.item_id(item)
         fname = os.path.join(file_dir, self.PATH_SUB_RE.sub('_', id) + '.xhtml')
-        title = self.item_title(item)
 
         entry = epub.EpubHtml(
-            title=title,
+            title=item.title,
             uid='-'.join([file_dir, id]),
             file_name=fname)
         entry.content = self.clean_html(self.renderer.render(item.element), wrap='akoma-ntoso')
@@ -413,7 +412,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         # TOC entries
         def child_tocs(child):
             if child.id:
-                us = epub.Link(fname + '#' + child.id, self.item_title(child), child.id)
+                us = epub.Link(fname + '#' + child.id, child.title, child.id)
             else:
                 us = epub.Section(self.item_heading(child))
 
@@ -446,34 +445,6 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
             parts.append(id)
 
         return '-'.join([p for p in parts if p])
-
-    def item_title(self, item):
-        if item.type in ['chapter', 'part']:
-            title = item.type.capitalize()
-            if item.num:
-                title += ' ' + item.num
-            if item.heading:
-                title += ' - ' + item.heading
-            return title
-
-        elif item.type == 'section':
-            if item.heading:
-                title = item.heading
-                if item.num:
-                    title = item.num + ' ' + title
-            else:
-                title = 'Section'
-                if item.num:
-                    title = title + ' ' + item.num
-            return title
-
-        elif item.heading:
-            return item.heading
-
-        title = item.type.capitalize()
-        if item.num:
-            title += u' ' + item.num
-        return title
 
     def clean_html(self, html, wrap=None):
         html = self.BAD_DIV_TAG_RE.sub('\\1div\\3', html)

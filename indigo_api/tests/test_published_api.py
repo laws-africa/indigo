@@ -171,7 +171,8 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.data['toc'], [
             {'id': 'section-1', 'type': 'section', 'num': '1.',
                 'component': 'main', 'subcomponent': 'section/1',
-                'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1'}])
+                'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1',
+                'title': 'Section 1.'}])
 
         response = self.client.get('/api/za/act/2014/10/toc.json')
         assert_equal(response.status_code, 200)
@@ -179,7 +180,8 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.data['toc'], [
             {'id': 'section-1', 'type': 'section', 'num': '1.',
                 'component': 'main', 'subcomponent': 'section/1',
-                'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1'}])
+                'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1',
+                'title': 'Section 1.'}])
 
     def test_published_subcomponents(self):
         response = self.client.get('/api/za/act/2014/10/eng/main/section/1.xml')

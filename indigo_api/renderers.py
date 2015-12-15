@@ -340,6 +340,7 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         self.book = epub.EpubBook()
         self.book.add_item(epub.EpubNcx())
         self.book.add_item(epub.EpubNav())
+        self.book.add_metadata('DC', 'publisher', settings.INDIGO_ORGANISATION)
 
     def add_css(self):
         # compile assets

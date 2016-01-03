@@ -127,6 +127,9 @@ class AttachmentSerializer(serializers.ModelSerializer):
             raise ValidationError("Value of 'file' cannot be updated. Delete and re-create this attachment.")
         return super(AttachmentSerializer, self).update(instance, validated_data)
 
+    def validate_filename(self, fname):
+        return fname.replace('/', '')
+
 
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.SerializerMethodField()

@@ -464,6 +464,11 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'new-from-patch.txt')
 
+        # test put with slashes in filename
+        response = self.client.put(data['url'], {'filename': '/with/slashes.txt'})
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['filename'], 'withslashes.txt')
+
     @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
     def test_document_pdf(self, mock):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})

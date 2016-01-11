@@ -46,7 +46,8 @@ def import_document(request):
 
 
 def library(request):
-    countries = {c.country.iso.lower(): c.country.name for c in Country.objects.select_related('country').all()}
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'country').all()
+    countries = {c.code: c.as_json() for c in countries}
     countries_json = json.dumps(countries)
 
     serializer = DocumentListSerializer(context={'request': request})

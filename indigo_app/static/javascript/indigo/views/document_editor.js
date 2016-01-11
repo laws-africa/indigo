@@ -5,9 +5,8 @@
   Indigo = exports.Indigo;
 
   // The SourceEditorController manages the interaction between
-  // the ace-based source (xml) editor, the model, and the document editor view.
-  //
-  // It also handles the in-place text-based editor.
+  // the model, the document editor view, and the source (xml) and
+  // text editor components.
   Indigo.SourceEditorController = function(options) {
     this.initialize.apply(this, arguments);
   };
@@ -25,14 +24,6 @@
         components: 'schedules_container',
       };
 
-      // setup xml editor
-      this.xmlEditor = ace.edit(this.view.$el.find(".document-xml-editor .ace-editor")[0]);
-      this.xmlEditor.setTheme("ace/theme/monokai");
-      this.xmlEditor.getSession().setMode("ace/mode/xml");
-      this.xmlEditor.setValue();
-      this.xmlEditor.$blockScrolling = Infinity;
-      this.onEditorChange = _.debounce(_.bind(this.xmlEditorChanged, this), 500);
-
       // setup renderer
       var htmlTransform = new XSLTProcessor();
       $.get('/static/xsl/act.xsl')
@@ -40,6 +31,14 @@
           htmlTransform.importStylesheet(xml);
           self.htmlTransform = htmlTransform;
         });
+
+      // setup xml editor
+      this.xmlEditor = ace.edit(this.view.$el.find(".document-xml-editor .ace-editor")[0]);
+      this.xmlEditor.setTheme("ace/theme/monokai");
+      this.xmlEditor.getSession().setMode("ace/mode/xml");
+      this.xmlEditor.setValue();
+      this.xmlEditor.$blockScrolling = Infinity;
+      this.onEditorChange = _.debounce(_.bind(this.xmlEditorChanged, this), 500);
 
       // setup text editor
       this.$textEditor = this.view.$el.find('.document-text-editor');
@@ -145,7 +144,7 @@
           self.view.updateFragment(self.view.fragment, newFragment);
           self.closeTextEditor();
           self.render();
-          self.setEditorValue(self.view.xmlModel.toXml(newFragment[0]));
+          self.setXmlEditorValue(self.view.xmlModel.toXml(newFragment[0]));
         })
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
@@ -198,8 +197,7 @@
         .find('.document-content-view, .document-content-header')
         .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
-        .prop('disabled', false)
-        .removeClass('active');
+        .prop('disabled', false);
     },
 
     editFragment: function(node) {
@@ -208,12 +206,11 @@
       this.render();
       this.view.$el.find('.document-sheet-container').scrollTop(0);
 
-      this.dirty = false;
       var xml = this.view.xmlModel.toXml(node);
-      this.setEditorValue(xml);
+      this.setXmlEditorValue(xml);
     },
 
-    setEditorValue: function(xml) {
+    setXmlEditorValue: function(xml) {
       // pretty-print the xml
       xml = prettyPrintXml(xml);
 
@@ -223,26 +220,19 @@
     },
 
     xmlEditorChanged: function() {
-      this.dirty = true;
-      this.saveChanges();
+      // save the contents of the XML editor
+      console.log('Parsing changes to XML');
+
+      // TODO: handle errors here
+      var newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
+
+      this.view.updateFragment(this.view.fragment, [newFragment]);
+      this.render();
     },
 
     // Save the content of the XML editor into the DOM, returns a Deferred
     saveChanges: function() {
       this.closeTextEditor();
-
-      if (this.dirty) {
-        // update the fragment content from the editor's version
-        console.log('Parsing changes to XML');
-
-        // TODO: handle errors here
-        var newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
-
-        this.view.updateFragment(this.view.fragment, [newFragment]);
-        this.render();
-        this.dirty = false;
-      }
-
       return $.Deferred().resolve();
     },
 
@@ -417,7 +407,7 @@
       this.sourceEditor = new Indigo.SourceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
 
-      this.showSheet();
+      this.showDocumentSheet();
     },
 
     editTocItem: function(item) {
@@ -474,7 +464,7 @@
       }
     },
 
-    showSheet: function() {
+    showDocumentSheet: function() {
       var self = this;
 
       this.stopEditing()
@@ -482,8 +472,8 @@
           self.$el.find('.sheet-editor').addClass('in');
           self.$el.find('.lime-editor').removeClass('in');
           self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
-          self.$el.find('.btn.edit-text').toggleClass('btn-warning btn-default');
-          self.$el.find('.btn.edit-lime').toggleClass('btn-warning btn-default active');
+          self.$el.find('.btn.edit-text').addClass('btn-warning').removeClass('btn-default');
+          self.$el.find('.btn.edit-lime').addClass('btn-default').removeClass('btn-warning active');
           self.activeEditor = self.sourceEditor;
           self.editFragment(self.fragment);
         });
@@ -493,7 +483,7 @@
       if (this.activeEditor === this.limeEditor) {
         // stop editing in lime
         e.preventDefault();
-        this.showSheet(e);
+        this.showDocumentSheet(e);
         return;
       }
 
@@ -504,8 +494,8 @@
           self.$el.find('.sheet-editor').removeClass('in');
           self.$el.find('.lime-editor').addClass('in');
           self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', true);
-          self.$el.find('.btn.edit-text').toggleClass('btn-warning btn-default');
-          self.$el.find('.btn.edit-lime').toggleClass('btn-warning btn-default active');
+          self.$el.find('.btn.edit-text').addClass('btn-default').removeClass('btn-warning active');
+          self.$el.find('.btn.edit-lime').addClass('btn-default active').removeClass('btn-default');
           self.activeEditor = self.limeEditor;
           self.editFragment(self.fragment);
         });

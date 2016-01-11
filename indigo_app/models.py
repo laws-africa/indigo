@@ -30,8 +30,38 @@ class Country(models.Model):
         ordering = ['country__name']
         verbose_name_plural = 'Countries'
 
+    @property
+    def code(self):
+        return self.country.iso.lower()
+
+    @property
+    def name(self):
+        return self.country.name
+
+    def as_json(self):
+        return {
+            'name': self.name,
+            'localities': {loc.code: loc.name for loc in self.locality_set.all()},
+        }
+
     def __unicode__(self):
         return unicode(self.country.name)
+
+
+class Locality(models.Model):
+    """ The localities available in the UI. They aren't enforced by the API.
+    """
+    country = models.ForeignKey(Country, null=False)
+    name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
+    code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'Localities'
+        unique_together = (('country', 'code'),)
+
+    def __unicode__(self):
+        return unicode(self.name)
 
 
 class Editor(models.Model):

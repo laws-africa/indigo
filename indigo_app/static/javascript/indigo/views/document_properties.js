@@ -17,8 +17,26 @@
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
     bindings: {
-      '#document_country': 'country',
-      '#document_locality': 'locality',
+      '#document_country': {
+        observe: 'country',
+        onSet: function(val) {
+          // trigger a redraw of the localities, using this country
+          this.country = val;
+          this.model.set('locality', null);
+          this.model.trigger('change:locality', this.model);
+          return val;
+        },
+      },
+      '#document_locality': {
+        observe: 'locality',
+        selectOptions: {
+          collection: function() {
+            var country = Indigo.countries[this.country || this.model.get('country')];
+            return country ? country.localities : [];
+          },
+          defaultOption: {label: "(none)", value: null},
+        }
+      },
       '#document_nature': 'nature',
       '#document_subtype': 'subtype',
       '#document_year': 'year',

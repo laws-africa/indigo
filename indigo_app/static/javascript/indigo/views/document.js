@@ -83,7 +83,7 @@
 
       // The document page eager loads the document details into this
       // variable.
-      var info = Indigo.documentPreload;
+      var info = Indigo.Preloads.document;
 
       this.document = new Indigo.Document(info, {collection: library, parse: true});
       this.document.on('change', this.setDirty, this);
@@ -135,7 +135,7 @@
       this.document.trigger('sync');
 
       // preload content
-      this.documentContent.set('content', Indigo.documentContentPreload);
+      this.documentContent.set('content', Indigo.Preloads.documentContent);
 
       if (document_id) {
         // pretend this document is unchanged

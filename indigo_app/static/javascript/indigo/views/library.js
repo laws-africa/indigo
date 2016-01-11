@@ -45,7 +45,7 @@
     },
 
     loadDocuments: function() {
-      this.model.reset(Indigo.libraryPreload);
+      this.model.reset(Indigo.Preloads.library);
     },
 
     summarizeAndRender: function() {
@@ -67,7 +67,7 @@
           function(count, code) {
             return {
               code: code,
-              name: Indigo.countries[code],
+              name: Indigo.countries[code].name,
               count: count,
               active: filters.country === code,
             };
@@ -101,11 +101,16 @@
         _.map(
           _.countBy(
             _.filter(docs, function(d) { return d.get('locality'); }),
-                    function(d) { return d.get('locality'); }),
+                    function(d) { return d.get('country') + '/' + d.get('locality'); }),
           function(count, code) {
+            var parts = code.split('/'),
+                country = Indigo.countries[parts[0]],
+                loc_code = parts[1],
+                loc = country ? country.localities[loc_code] : null;
+
             return {
               code: code,
-              name: code || "(none)",
+              name: loc || loc_code,
               count: count,
               active: filters.locality === code,
             };
@@ -114,8 +119,12 @@
         function(info) { return info.code; });
       // filter by locality
       if (filters.locality) {
+        var parts = filters.locality.split('/'),
+            country = parts[0],
+            loc = parts[1];
+
         docs = _.filter(docs, function(doc) {
-          return doc.get('locality') == filters.locality;
+          return doc.get('country') == country && doc.get('locality') == loc;
         });
       }
 

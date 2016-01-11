@@ -40,8 +40,13 @@
 {# include the document as JSON #}
 <script type="text/javascript">
 if (!window.Indigo) window.Indigo = {};
-window.Indigo.documentPreload = {{ document_json|safe }};
-window.Indigo.documentContentPreload = {{ document_content_json|safe }};
+if (!window.Indigo.Preloads) window.Indigo.Preloads = {};
+
+// inject country code-to-name mappings into JS
+window.Indigo.countries = {{ countries_json|safe }};
+
+window.Indigo.Preloads.document = {{ document_json|safe }};
+window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
 </script>
 
 {% endblock %}

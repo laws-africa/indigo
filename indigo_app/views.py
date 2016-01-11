@@ -22,6 +22,10 @@ def document(request, doc_id=None):
     doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
     form = DocumentForm(instance=doc)
 
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'country').all()
+    countries = {c.code: c.as_json() for c in countries}
+    countries_json = json.dumps(countries)
+
     return render(request, 'document/show.html', {
         'document': doc,
         'document_json': doc_json,
@@ -30,6 +34,7 @@ def document(request, doc_id=None):
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
         'countries': Country.objects.select_related('country').all(),
+        'countries_json': countries_json,
         'view': 'DocumentView',
     })
 
@@ -46,7 +51,8 @@ def import_document(request):
 
 
 def library(request):
-    countries = {c.country.iso.lower(): c.country.name for c in Country.objects.select_related('country').all()}
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'country').all()
+    countries = {c.code: c.as_json() for c in countries}
     countries_json = json.dumps(countries)
 
     serializer = DocumentListSerializer(context={'request': request})

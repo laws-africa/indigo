@@ -45,7 +45,7 @@
     },
 
     loadDocuments: function() {
-      this.model.reset(Indigo.libraryPreload);
+      this.model.reset(Indigo.Preloads.library);
     },
 
     summarizeAndRender: function() {

@@ -7,18 +7,18 @@
   Indigo.ImportView = Backbone.View.extend({
     el: '#import-document',
     events: {
-      'click .btn.import': 'import',
+      'click .btn.choose-file': 'chooseFile',
+      'click .btn.import': 'submitForm',
     },
 
     initialize: function() {
       var self = this;
 
       this.$el.find('.dropzone')
-        .on('dragenter', function() { $(this).addClass('dragging'); })
-        .on('dragleave', function() { $(this).removeClass('dragging'); })
         .on('dragover', _.bind(this.dragover, this))
         .on('drop', _.bind(this.drop, this));
       this.$el.find('[name=file]').on('change', _.bind(this.fileSelected, this));
+      this.$form = this.$el.find('form.import-form');
     },
 
     dragover: function(e) {
@@ -34,15 +34,27 @@
       e.preventDefault();
       this.$el.find('.dropzone').removeClass('dragging');
 
-      this.importFile(e.originalEvent.dataTransfer.files[0]);
+      this.setFile(e.originalEvent.dataTransfer.files[0]);
+    },
+
+    chooseFile: function(e) {
+      this.$el.find('[name=file]').click();
     },
 
     fileSelected: function(e) {
       this.$el.find('.alert').hide();
-      this.importFile(e.originalEvent.target.files[0]);
+      this.setFile(e.originalEvent.target.files[0]);
     },
 
-    importFile: function(file) {
+    setFile: function(file) {
+      this.file = file;
+      this.$el.find('.file-detail').text(this.file.name);
+      this.$el.find('button.import').prop('disabled', false);
+    },
+
+    submitForm: function(e) {
+      e.preventDefault();
+
       // We use the FormData interface which is supported in all decent
       // browsers and IE 10+.
       //
@@ -51,10 +63,13 @@
       var self = this;
       var formData = new FormData();
 
+      formData.append('file', this.file);
+      formData.append('file_options.section_number_position',
+                      this.$el.find('[name="file_options.section_number_position"]:checked').val());
+
       this.$el.find('.file-inputs').hide();
       this.$el.find('.progress-box').show();
-
-      formData.append('file', file);
+      this.$el.find('button.import').prop('disabled', true);
 
       // convert to JSON
       $.ajax({
@@ -75,6 +90,7 @@
         console.log(message);
         self.$el.find('.progress-box').hide();
         self.$el.find('.file-inputs').show();
+        self.$el.find('button.import').prop('disabled', false);
 
         if (xhr.responseJSON) {
           error = xhr.responseJSON.file || xhr.responseJSON[0] || message;

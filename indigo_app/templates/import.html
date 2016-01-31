@@ -4,45 +4,91 @@
 {% block content %}
 
 <div class="workspace-content">
-  <div class="boxed-group-inner">
-    <div class="panel panel-default panel-centered" id="import-document">
-      <div class="panel-heading">
-        <h4 class="panel-title">
-          Import a document
-          <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-        </h4>
-      </div>
+  <div class="boxed-group-inner" id="import-document">
+    <form class="import-form" method="POST">
+      <div class="row">
+        <div class="col-sm-offset-3 col-sm-6">
 
-      <form>
-        <div class="panel-body">
-          <p>You can import legislation from these formats:</p>
-          <ul>
-            <li>Akoma Ntoso 2.0 XML</li>
-            <li>PDF, Word and RTF</li>
-            <li>Plain text</li>
-          </ul>
+          <div class="panel panel-default">
+            <div class="panel-heading">
+              <h4 class="panel-title">
+                Import a document
+                <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
+              </h4>
+            </div>
 
-          <div class="file-inputs">
-            <div class="dropzone">drag and drop your file here</div>
+            <div class="panel-body">
+              <section class="file-inputs">
+                <p>You can import legislation from most document formats including PDF, Word, RTF and plain text.</p>
 
-            <br>
+                <p class="alert alert-danger" style="display: none"></p>
 
-            <p>Or click the button to choose a file <input type="file" id="file" name="file"></p>
-          </div>
+                <div class="file-input-field"><input type="file" id="file" name="file"></div>
 
-          <div class="progress-box" style="display: none">
-            <p>Importing, this may take a few minutes...</p>
-            <div class="progress">
-              <div class="progress-bar progress-bar-striped active" style="width: 100%"></div>
+                <div class="dropzone">
+                  <h3>Drag and drop your file here</h3>
+                  <h4>or</h4>
+                  <p>
+                    <button class="btn btn-primary choose-file" type="button">Choose a file</button>
+                  </p>
+                  <div class="file-detail"></div>
+                </div>
+
+                <h4>What do section titles look like?</h4>
+                <div class="radio">
+                  <label>
+                    <input type="radio" name="file_options.section_number_position" value="guess" checked>
+                    Guess automatically (recommended)
+                  </label>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="file_options.section_number_position" value="before-title">
+                        Section number comes before title:
+                        <div class="example">
+                          <h5>12a. Section heading</h5>
+                          <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum...</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="radio">
+                      <label>
+                        <input type="radio" name="file_options.section_number_position" value="after-title">
+                        Section number comes after title:
+                        <div class="example">
+                          <h5>Section heading</h5>
+                          <p><strong>12a.</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </section>
+
+              <section class="progress-box" style="display: none">
+                <div>
+                  <p>Importing, this may take a few minutes...</p>
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" style="width: 100%"></div>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div class="panel-footer text-right">
+              <button type="button" class="btn btn-success import" disabled="disabled">Import document</button>
             </div>
           </div>
-
-          <p class="alert alert-danger" style="display: none"></p>
         </div>
-
-      </form>
+      </div>
     </div>
-  </div>
+  </form>
 </div>
 
 {% endblock %}

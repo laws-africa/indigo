@@ -5,6 +5,7 @@ boto==2.38.0
 cobalt==0.1.7
 defusedxml==0.4.1
 dj-database-url==0.3.0
+django-ckeditor==5.0.3
 django-countries-plus==0.3.3
 django-extensions==1.4.9
 django-languages-plus==0.1.5
@@ -15,7 +16,6 @@ django-reversion==1.9.3
 django-storages==1.1.8
 django-taggit==0.16.3
 django-taggit-serializer==0.1.1
-django-tinymce==2.0.6
 django-wkhtmltopdf==2.0.3
 djangorestframework==3.2.3
 djangorestframework-xml==1.2.0

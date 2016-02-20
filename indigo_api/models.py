@@ -10,7 +10,6 @@ from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
 import reversion
-from tinymce import models as tinymce_models
 
 from countries_plus.models import Country as MasterCountry
 
@@ -428,7 +427,7 @@ class Colophon(models.Model):
     """
     name = models.CharField(max_length=1024, help_text='Name of this colophon')
     country = models.ForeignKey(MasterCountry, on_delete=models.SET_NULL, null=True, blank=True, help_text='Which country does this colophon apply to?')
-    body = tinymce_models.HTMLField()
+    body = models.TextField()
 
     def __unicode__(self):
         return unicode(self.name)

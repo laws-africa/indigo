@@ -52,7 +52,7 @@ INSTALLED_APPS = (
     'languages_plus',
     'storages',
     'reversion',
-    'tinymce',
+    'ckeditor',
     'indigo_api',
 
     # the Indigo browser application
@@ -302,16 +302,6 @@ REST_FRAMEWORK = {
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'indigo_app.serializers.UserDetailsSerializer',
 }
-
-
-# TinyMCE for editing Colophons in the admin area
-TINYMCE_JS_URL = '/static/bower_components/tinymce-dist/tinymce.min.js'
-TINYMCE_JS_ROOT = BASE_DIR + '/indigo_api/static/bower_components/tinymce-dist/'
-TINYMCE_DEFAULT_CONFIG = {
-    'theme': 'modern',
-    'plugins': "table,spellchecker,paste,searchreplace,link,code",
-}
-TINYMCE_COMPRESSOR = False
 
 
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')

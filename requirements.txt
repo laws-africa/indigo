@@ -6,6 +6,7 @@ cobalt==0.1.7
 defusedxml==0.4.1
 dj-database-url==0.3.0
 django-ckeditor==5.0.3
+django-cors-headers==1.1.0
 django-countries-plus==0.3.3
 django-extensions==1.4.9
 django-languages-plus==0.1.5

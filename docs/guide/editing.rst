@@ -97,25 +97,25 @@ Chapters, Parts, Sections, etc.
 
 Follow these guidelines to tell Indigo about the structure of your document:
 
-- Start the preface with::
+- Start the preface like this::
 
       PREFACE
 
-- Start the preamble with::
+- Start the preamble like this::
 
       PREAMBLE
 
-- Start a chapter numbered ``N`` with::
+- Start a chapter like this::
       
-      Chapter N - Title
+      Chapter 2 - Interpretation
 
-- Start a part numbered ``N`` with::
+- Start a part like this::
 
-      Part N - Title
+      Part 1 - Applications
 
-- Start a section numbered ``N`` with::
+- Start a section like this::
 
-      N. Title
+      1. Definitions
 
 - Numbered subsections must have a number in parentheses at the start of the line::
 
@@ -133,19 +133,12 @@ Follow these guidelines to tell Indigo about the structure of your document:
 
       (b) sublist item b
 
-- Start a numbered Schedule with::
+- Start a Schedule like this::
 
-      Schedule N
+      Schedule 1 - Title
       Heading
 
-The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
-
-- Start an unnumbered Schedule with::
-
-      Schedule - Title
-      Heading
-
-The ``Heading`` is optional. If a schedule doesn't have a heading, you can leave it out.
+The number, ``Title`` and ``Heading`` are optional, you can leave them out if necessary.
 
 
 Tables

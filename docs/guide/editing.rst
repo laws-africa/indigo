@@ -151,6 +151,8 @@ using the Simple Editor. Indigo uses the same text format for tables that `Wikip
 
     Be sure to read `Wikipedia's tutorial for writing tables <http://en.wikipedia.org/wiki/Help:Table/Manual_tables>`_.
 
+    Use this `table generator website <http://www.tablesgenerator.com/mediawiki_tables>`_ to easily start building a new table for a document.
+
     **Don't use** ``class="wikitable"`` even though they recommend it.
 
 This code::

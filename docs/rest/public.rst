@@ -118,7 +118,7 @@ Each item in the table of contents has this structure:
       "title": "Chapter 1 - Interpretation",
       "component": "main",
       "subcomponent": "chapter/1",
-      "url": "http://indigo.openbylaws.org.za/api/za-cpt/act/by-law/2011/animal/eng/main/chapter/1",
+      "url": "http://indigo.code4sa.org/api/za/act/1998/10/eng/main/chapter/1",
       "children": [ ... ],
    }
 

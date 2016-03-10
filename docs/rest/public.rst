@@ -108,7 +108,7 @@ up the act, based on the structure captured by the Indigo editor.
 
 Each item in the table of contents has this structure:
 
-.. code:: json
+.. code-block:: json
 
    {
       "id": "chapter-1",

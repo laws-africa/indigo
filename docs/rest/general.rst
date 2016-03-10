@@ -31,6 +31,8 @@ response type is JSON.
 * ``.json`` or ``Accept: application/json``: return JSON
 * ``.xml`` or ``Accept: application/xml``: return Akoma Ntoso XML
 * ``.html`` or ``Accept: text/html``: return human friendly HTML
+* ``.epub`` or ``Accept: application/epub+zip``: return an ePUB (ebook) document
+* ``.pdf`` or ``Accept: application/pdf``: return a PDF document
 
 .. note::
 

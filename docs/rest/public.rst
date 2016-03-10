@@ -39,7 +39,7 @@ Listing Acts
     GET /api/za/act/
     GET /api/za/act/2007/
   
-* Content types: JSON
+* Content types: JSON, PDF, EPUB
 
 These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
 
@@ -70,7 +70,7 @@ Entire Act
     GET /api/frbr-uri
 
 * Parameter ``coverpage``: should the response contain a generated coverpage? Use 1 for true, anything else for false. Default: 1. (HTML-only)
-* Content types: JSON, XML, HTML
+* Content types: JSON, XML, HTML, PDF, ePUB
 
 
 This returns the entire contents of an act. For example, the English HTML version of ``/za/act/1998/84/eng`` is available at:

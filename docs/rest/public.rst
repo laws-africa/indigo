@@ -103,14 +103,56 @@ Table of Contents
 
 * Content types: JSON
 
-Get a descirption of the table of contents of an act.
+Get a description of the table of contents (TOC) of an act. This includes the chapters, parts, sections and schedules that make
+up the act, based on the structure captured by the Indigo editor.
+
+Each item in the table of contents has this structure:
+
+.. code:: json
+
+   {
+      "id": "chapter-1",
+      "type": "chapter"
+      "num": "1",
+      "heading": "Interpretation",
+      "title": "Chapter 1 - Interpretation",
+      "component": "main",
+      "subcomponent": "chapter/1",
+      "url": "http://indigo.openbylaws.org.za/api/za-cpt/act/by-law/2011/animal/eng/main/chapter/1",
+      "children": [ ... ],
+   }
+
+Each of these fields is described in the table below.
+
+================= =================================================================================== ==========
+Field             Description                                                                         Type
+================= =================================================================================== ==========
+id                The unique XML element id of this item. (optional)                                  String
+type              The Akoma Ntoso element name of this item.                                          String
+num               The number of this item, such as a chapter, part or section number. (optional)      String
+heading           The heading of this item (optional)                                                 String
+title             A derived, friendly title of this item, taking ``num`` and ``heading`` into         String
+                  account and providing good defaults if either of those is missing.
+component         The component of the Akoma Ntoso document that this item is a part of, such as      String
+                  ``main`` for the main document, or ``schedule1`` for the first schedule.
+subcomponent      The subcomponent of the component that this item is a part of, such as a chapter.   String
+                  (optional)
+url               The API URL for this item, which can be used to fetch XML, HTML and other details   String
+                  of just this part of the document.
+children          A possibly-empty array of TOC items that are children of this item.                 Array
+================= =================================================================================== ==========
 
 Fetching Parts, Chapters and Sections
 -------------------------------------
 
-TODO:
+You can use the ``url`` field from an item in the table of contents to fetch the details of just that item
+in various forms.
 
-* talk about using the TOC to get parts, chapters and sections individually
+.. code:: http
+
+    GET /api/frbr-uri/toc-item-uri.format
+
+* Content types: XML, HTML, PDF, ePUB
 
 Using HTML Responses
 --------------------

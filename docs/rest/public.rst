@@ -110,17 +110,17 @@ Each item in the table of contents has this structure:
 
 .. code-block:: json
 
-   {
-      "id": "chapter-1",
-      "type": "chapter"
-      "num": "1",
-      "heading": "Interpretation",
-      "title": "Chapter 1 - Interpretation",
-      "component": "main",
-      "subcomponent": "chapter/1",
-      "url": "http://indigo.code4sa.org/api/za/act/1998/10/eng/main/chapter/1",
-      "children": [ ... ],
-   }
+    {
+       "id": "chapter-1",
+       "type": "chapter"
+       "num": "1",
+       "heading": "Interpretation",
+       "title": "Chapter 1 - Interpretation",
+       "component": "main",
+       "subcomponent": "chapter/1",
+       "url": "http://indigo.code4sa.org/api/za/act/1998/10/eng/main/chapter/1",
+       "children": [ ... ],
+    }
 
 Each of these fields is described in the table below.
 

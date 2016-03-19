@@ -1,0 +1,20 @@
+{
+  "name": "indigo-web",
+  "version": "0.1.0",
+  "authors": [
+    "Greg Kempe <greg@kempe.net>"
+  ],
+  "description": "Stylesheets and Javascript supporting HTML created by the Indigo platform.",
+  "keywords": [
+    "akoma ntoso"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Code4SA/indigo-web",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ]
+}

@@ -1,0 +1,175 @@
+/*
+ * Core AKN styles
+ */
+
+.akoma-ntoso {
+
+  /* typography */
+  font-family: $akn-font-family;
+  font-size: $akn-font-size;
+  line-height: $akn-line-height;
+
+  /* headings */
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  .akn-heading {
+    margin-top: 0px;
+    margin-bottom: $akn-para-spacing;
+
+    font-weight: bold;
+  }
+
+  h1 {
+    font-size: ceil($akn-font-size * 1.7); // ~ 24px
+    line-height: 1.2;
+  }
+
+  h2,
+  .akn-heading {
+    text-align: center;
+    font-size: ceil($akn-font-size * 1.25); // ~ 18px
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-size: ceil($akn-font-size * 1.14); // ~ 16px
+    line-height: $akn-line-height;
+  }
+
+  h4 {
+    font-size: $akn-font-size;
+    line-height: $akn-line-height;
+  }
+
+  .akn-subheading {
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* block containers */
+  .akn-akomaNtoso,
+  .akn-act,
+  .akn-coverPage,
+  .akn-preface,
+  .akn-preamble,
+  .akn-conclusions,
+  .akn-chapter,
+  .akn-part,
+  .akn-section,
+  .akn-subsection,
+  .akn-blockList,
+  .akn-heading,
+  .akn-subheading {
+    display: block;
+  }
+
+  .akn-preface,
+  .akn-preamble {
+    margin-bottom: $akn-section-spacing;
+
+    &> .akn-p {
+      display: block;
+      margin-bottom: $akn-para-spacing;
+    }
+  }
+
+  .akn-chapter,
+  .akn-part,
+  .akn-section {
+    margin-bottom: $akn-section-spacing;
+  }
+
+  .akn-subsection { 
+    margin-left: $akn-para-indent;
+    margin-bottom: $akn-para-spacing;
+
+    &> .akn-num {
+      display: block;
+      float: left;
+      margin-left: -$akn-para-indent;
+    }
+  }
+
+  .akn-content {
+    > .akn-p {
+      display: block;
+      margin-bottom: $akn-para-spacing;
+    }
+  }
+
+  /* lists (mostly used in definitions) */
+  .akn-list {
+    &> .akn-intro {
+      display: block;
+      margin-bottom: $akn-para-spacing;
+    }
+
+    &> .akn-point {
+      display: block;
+      margin-left: $akn-para-indent;
+      margin-bottom: $akn-para-spacing;
+
+      > .akn-num {
+        display: block;
+        float: left;
+        margin-left: -$akn-para-indent;
+      }
+    }
+  }
+
+  /* blocklists */
+  .akn-blockList {
+    .akn-listIntroduction {
+      display: block;
+      margin-bottom: $akn-para-spacing;
+    }
+
+    &> .akn-item {
+      display: block;
+      margin-left: $akn-para-indent;
+      margin-bottom: $akn-para-spacing;
+
+      > .akn-num {
+        display: block;
+        float: left;
+        margin-left: -$akn-para-indent;
+      }
+    }
+  }
+
+  /* inline elements */
+  .akn-def {
+    font-weight: bold;
+  }
+
+  .akn-remark {
+    font-style: italic;
+  }
+
+  /* generated custom elements */
+  .coverpage {
+    text-align: center;
+    margin-bottom: $akn-section-spacing;
+
+    .amendment-list {
+      margin-top: $akn-section-spacing;
+      padding: 0px;
+    }
+
+    .amendment {
+      list-style: none;
+      margin-bottom: $akn-para-spacing;
+      font-style: italic;
+    }
+
+    .assent-date,
+    .commencement-date {
+      margin-bottom: $akn-para-spacing;
+      font-weight: bold;
+    }
+  }
+}

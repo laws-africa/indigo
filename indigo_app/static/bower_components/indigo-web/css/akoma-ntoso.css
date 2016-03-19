@@ -17,7 +17,7 @@
 .akoma-ntoso {
   /* typography */
   font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.35;
   /* headings */
   /* block containers */
@@ -35,18 +35,18 @@
     margin-bottom: 0.8em;
     font-weight: bold; }
   .akoma-ntoso h1 {
-    font-size: 24px;
+    font-size: 26px;
     line-height: 1.2; }
   .akoma-ntoso h2,
   .akoma-ntoso .akn-heading {
     text-align: center;
-    font-size: 18px;
+    font-size: 19px;
     line-height: 1.2; }
   .akoma-ntoso h3 {
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.35; }
   .akoma-ntoso h4 {
-    font-size: 14px;
+    font-size: 15px;
     line-height: 1.35; }
   .akoma-ntoso .akn-subheading {
     text-align: center;

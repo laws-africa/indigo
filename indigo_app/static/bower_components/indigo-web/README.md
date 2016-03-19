@@ -1,6 +1,7 @@
 # Indigo Web
 
-Stylesheets and Javascript for use with HTML documents published using the [Indigo platform](https://indigo.readthedocs.org).
+Stylesheets for use with HTML documents published using the [Indigo platform](https://indigo.readthedocs.org).
+They make Akoma Ntoso documents look beautiful.
 
 ## Usage
 
@@ -22,6 +23,10 @@ You can override variables when using SCSS by copying them from ``_variables.scs
 their values.
 
 # Version history
+
+## 0.1.1 (19 March 2015)
+
+* Bump base font size to 15px to improve legibility with serif fonts.
 
 ## 0.1.0 (19 March 2015)
 

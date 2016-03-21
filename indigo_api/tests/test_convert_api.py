@@ -159,11 +159,11 @@ class ConvertAPITest(APITestCase):
     <section id="section-1">
       <num>1.</num>
       <heading>First Verse</heading>
-      <subsection id="section-1.subsection-0">
+      <paragraph id="section-1.paragraph-0">
         <content>
           <p>κόσμε</p>
         </content>
-      </subsection>
+      </paragraph>
       <subsection id="section-1.1">
         <num>(1)</num>
         <content>
@@ -241,11 +241,11 @@ class ConvertAPITest(APITestCase):
         <section id="section-1">
           <num>1.</num>
           <heading>First Verse</heading>
-          <subsection id="section-1.subsection-0">
+          <paragraph id="section-1.paragraph-0">
             <content>
               <p>κόσμε</p>
             </content>
-          </subsection>
+          </paragraph>
           <subsection id="section-1.1">
             <num>(1)</num>
             <content>

@@ -1,7 +1,9 @@
 import os
 import logging
 from itertools import groupby
+import re
 
+from django.conf import settings
 from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import User
@@ -126,7 +128,7 @@ class Document(models.Model):
     def doc(self):
         """ The wrapped `an.act.Act` that this document works with. """
         if not getattr(self, '_doc', None):
-            self._doc = Act(self.document_xml)
+            self._doc = self._make_act(self.document_xml)
         return self._doc
 
     @property
@@ -247,7 +249,7 @@ class Document(models.Model):
         """ Completely reset the document XML to a new value, and refresh database attributes
         from the new XML document. """
         # this validates it
-        doc = Act(xml)
+        doc = self._make_act(xml)
 
         # now update ourselves
         self._doc = doc
@@ -295,6 +297,12 @@ class Document(models.Model):
         """ Render a child element of this document into PDF. """
         from .renderers import PDFRenderer
         return PDFRenderer().render(self, element=element)
+
+    def _make_act(self, xml):
+        id = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)
+        doc = Act(xml)
+        doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
+        return doc
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

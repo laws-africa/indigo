@@ -347,8 +347,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 self.paginator.page_size = AtomFeed.full_feed_page_size
 
         elif self.request.accepted_renderer.format in ['pdf', 'epub']:
-            # TODO: ordering?
-            documents = list(self.filter_queryset(self.get_queryset()).all())
+            # NB: don't try to sort in the db, that's already sorting to
+            # return the latest expression of each doc. Sort here instead.
+            documents = sorted(self.filter_queryset(self.get_queryset()).all(), key=lambda d: d.title)
             # bypass pagination and serialization
             return Response(documents)
 

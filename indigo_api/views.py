@@ -248,7 +248,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     * ``/za/act/1994.epub``: all the acts from 1994 as an ePUB
 
     """
-    queryset = DocumentViewMixin.queryset.published().order_by('id')
+
+    # only published documents
+    queryset = DocumentViewMixin.queryset.published()
 
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
@@ -420,7 +422,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def filter_queryset(self, queryset):
         """ Filter the queryset, used by list()
         """
-        queryset = queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
+        queryset = queryset\
+            .latest_expression()\
+            .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
         if queryset.count() == 0:
             raise Http404
         return queryset

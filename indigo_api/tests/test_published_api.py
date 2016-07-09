@@ -88,12 +88,12 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 4)
+        assert_equal(len(response.data['results']), 3)
 
         response = self.client.get('/api/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 4)
+        assert_equal(len(response.data['results']), 3)
 
         response = self.client.get('/api/za/act/2014')
         assert_equal(response.status_code, 200)
@@ -226,6 +226,17 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['expression_date'], '2012-02-02')
+
+    def test_latest_expression_in_listing(self):
+        # a listing should only include the most recent expression of a document
+        # with different expression dates
+        response = self.client.get('/api/za/')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+
+        docs = [d for d in response.data['results'] if d['frbr_uri'] == '/za/act/2010/1']
+        assert_equal(len(docs), 1)
+        assert_equal(docs[0]['expression_date'], '2012-02-02')
 
     def test_earliest_expression(self):
         response = self.client.get('/api/za/act/2010/1/eng@.json')

@@ -30,6 +30,11 @@ class DocumentQuerySet(models.QuerySet):
     def published(self):
         return self.filter(draft=False)
 
+    def latest_expression(self):
+        """ Select only the most recent expression for documents with the same frbr_uri.
+        """
+        return self.distinct('frbr_uri').order_by('frbr_uri', '-expression_date')
+
     def get_for_frbr_uri(self, frbr_uri):
         """ Find a single document matching the FRBR URI.
 

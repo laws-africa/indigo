@@ -248,7 +248,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     * ``/za/act/1994.epub``: all the acts from 1994 as an ePUB
 
     """
-    queryset = DocumentViewMixin.queryset.published().order_by('id')
+
+    # only published documents
+    queryset = DocumentViewMixin.queryset.published()
 
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
@@ -345,8 +347,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 self.paginator.page_size = AtomFeed.full_feed_page_size
 
         elif self.request.accepted_renderer.format in ['pdf', 'epub']:
-            # TODO: ordering?
-            documents = list(self.filter_queryset(self.get_queryset()).all())
+            # NB: don't try to sort in the db, that's already sorting to
+            # return the latest expression of each doc. Sort here instead.
+            documents = sorted(self.filter_queryset(self.get_queryset()).all(), key=lambda d: d.title)
             # bypass pagination and serialization
             return Response(documents)
 
@@ -420,7 +423,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def filter_queryset(self, queryset):
         """ Filter the queryset, used by list()
         """
-        queryset = queryset.filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
+        queryset = queryset\
+            .latest_expression()\
+            .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
         if queryset.count() == 0:
             raise Http404
         return queryset

@@ -90,10 +90,7 @@
       this.document.on('change', this.allowDelete, this);
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
-      this.documentContent.on('change', this.documentContentChanged, this);
-
-      this.documentDom = new Indigo.DocumentDom();
-      this.documentDom.on('change', this.setDirty, this);
+      this.documentContent.on('change', this.setDirty, this);
 
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
@@ -112,17 +109,16 @@
       this.attachmentsView.on('dirty', this.setDirty, this);
       this.attachmentsView.on('clean', this.setClean, this);
 
-      this.analysisView = new Indigo.DocumentAnalysisView({model: this.documentDom});
+      this.analysisView = new Indigo.DocumentAnalysisView({model: this.documentContent});
 
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document});
 
-      this.tocView = new Indigo.DocumentTOCView({model: this.documentDom});
+      this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
       this.tocView.on('item-selected', this.showEditor, this);
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.document,
-        xmlModel: this.documentDom,
-        rawModel: this.documentContent,
+        documentContent: this.documentContent,
         tocView: this.tocView,
       });
       this.bodyEditorView.on('dirty', this.setDirty, this);
@@ -145,10 +141,6 @@
         this.propertiesView.calculateUri();
         this.setDirty();
       }
-    },
-
-    documentContentChanged: function() {
-      this.documentDom.setXml(prettyPrintXml(this.documentContent.get('content')));
     },
 
     windowUnloading: function(e) {
@@ -253,7 +245,7 @@
         var self = this,
             data = this.document.toJSON();
 
-        data.content = this.documentDom.toXml();
+        data.content = this.documentContent.toXml();
         data = JSON.stringify({
           'inputformat': 'application/json',
           'outputformat': 'text/html',

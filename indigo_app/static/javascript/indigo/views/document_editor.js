@@ -144,7 +144,7 @@
           self.view.updateFragment(self.view.fragment, newFragment);
           self.closeTextEditor();
           self.render();
-          self.setXmlEditorValue(self.view.xmlModel.toXml(newFragment[0]));
+          self.setXmlEditorValue(Indigo.toXml(newFragment[0]));
         })
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
@@ -206,8 +206,7 @@
       this.render();
       this.view.$el.find('.document-sheet-container').scrollTop(0);
 
-      var xml = this.view.xmlModel.toXml(node);
-      this.setXmlEditorValue(xml);
+      this.setXmlEditorValue(Indigo.toXml(node));
     },
 
     setXmlEditorValue: function(xml) {
@@ -391,14 +390,10 @@
       this.dirty = false;
       this.editing = false;
 
-      // the model is a documentDom model, which holds the parsed XML
-      // document and is a bit different from normal Backbone models
-      this.xmlModel = options.xmlModel;
-      this.xmlModel.on('change', this.setDirty, this);
-
-      // this is the raw, unparsed XML model
-      this.rawModel = options.rawModel;
-      this.rawModel.on('sync', this.setClean, this);
+      this.documentContent = options.documentContent;
+      // XXX: check
+      this.documentContent.on('change', this.setDirty, this);
+      this.documentContent.on('sync', this.setClean, this);
 
       this.tocView = options.tocView;
       this.tocView.on('item-selected', this.editTocItem, this);
@@ -452,13 +447,13 @@
     },
 
     removeFragment: function() {
-      this.xmlModel.replaceNode(this.fragment, null);
+      this.documentContent.replaceNode(this.fragment, null);
     },
 
     updateFragment: function(oldNode, newNodes) {
       this.updating = true;
       try {
-        this.fragment = this.xmlModel.replaceNode(oldNode, newNodes);
+        this.fragment = this.documentContent.replaceNode(oldNode, newNodes);
       } finally {
         this.updating = false;
       }
@@ -537,11 +532,9 @@
       }
     },
 
-    // Save the content of the raw XML model, returns a Deferred
+    // Save the content of the document, returns a Deferred
     saveModel: function() {
-      // serialize the DOM into the raw model
-      this.rawModel.set('content', this.xmlModel.toXml());
-      return this.rawModel.save();
+      return this.documentContent.save();
     },
   });
 })(window);

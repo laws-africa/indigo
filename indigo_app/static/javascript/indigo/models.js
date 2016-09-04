@@ -4,11 +4,17 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The document content could be huge, so the API handles it outside
-  // of the document data.
+  /* A model for the content of a document. The API handles it separately
+   * to the document metadata since the content can be very big.
+   *
+   * The model also manages an XML DOM form of the document content and keeps
+   * the two in sync.
+   */
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
       this.document = options.document;
+      this.xmlDocument = null;
+      this.on('change:content', this.contentChanged, this);
     },
 
     isNew: function() {
@@ -18,24 +24,24 @@
 
     url: function() {
       return this.document.url() + '/content';
-    }
-  });
+    },
 
-  // A model-like abstraction for working with
-  // document XML in a DOM form
-  Indigo.DocumentDom = Backbone.Model.extend({
-    setXml: function(xml, options) {
+    contentChanged: function(model, newValue, options) {
+      // don't bother updating the DOM if the source of this event
+      // is a change to the DOM
+      if (options.fromXmlDocument) return;
+
       try {
-        this.xmlDocument = $.parseXML(xml);
+        this.xmlDocument = $.parseXML(newValue);
+        this.trigger('change:dom', options);
       } catch(e) {
         Indigo.errorView.show("The document has invalid XML.");
       }
-      this.trigger('change', options);
     },
 
     // serialise an XML node, or the entire document if node is not given, to a string
     toXml: function(node) {
-      return new XMLSerializer().serializeToString(node || this.xmlDocument);
+      return Indigo.toXml(node || this.xmlDocument);
     },
 
     /**
@@ -89,7 +95,9 @@
         }
       }
 
-      this.trigger('change');
+      // save the updated XML
+      this.set('content', prettyPrintXml(Indigo.toXml(this.xmlDocument)), {fromXmlDocument: true});
+      this.trigger('change:dom');
 
       return first;
     },

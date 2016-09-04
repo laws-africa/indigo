@@ -58,6 +58,11 @@ $(function() {
   Indigo.progressView = new Indigo.ProgressView();
   Indigo.errorView = new Indigo.ErrorBoxView();
 
+  // helpers
+  Indigo.toXml = function(node) {
+      return new XMLSerializer().serializeToString(node);
+  };
+
   // always load the user view
   Indigo.userView = new Indigo.UserView();
 

@@ -60,7 +60,13 @@ $(function() {
 
   // helpers
   Indigo.toXml = function(node) {
-      return new XMLSerializer().serializeToString(node);
+    return new XMLSerializer().serializeToString(node);
+  };
+  Indigo.ga = function() {
+    // google analytics are only in production
+    if (window.ga) {
+      ga.apply(null, arguments);
+    }
   };
 
   // always load the user view

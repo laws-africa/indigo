@@ -316,6 +316,8 @@
           LIME.app.fireEvent("loadDocument", config);
         }
       );
+
+      Indigo.ga('send', 'event', 'edit-with-lime', this.fragmentType);
     },
 
     documentLoaded: function() {

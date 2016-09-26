@@ -386,6 +386,7 @@
       'click .btn.edit-lime': 'toggleLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
+      'click table': 'editTable',
     },
 
     initialize: function(options) {
@@ -403,6 +404,7 @@
       // setup the editor controllers
       this.sourceEditor = new Indigo.SourceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
+      this.tableEditor = new Indigo.TableEditorView({view: this});
 
       this.showDocumentSheet();
     },
@@ -416,6 +418,10 @@
             self.editFragment(item.element);
           }
         });
+    },
+
+    editTable: function(e) {
+      this.tableEditor.setTable(e.currentTarget);
     },
 
     stopEditing: function() {

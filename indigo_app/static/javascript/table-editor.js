@@ -15,7 +15,7 @@ function TableEditor(table) {
 
     // make cells editable
     self.$table.find('td, th').attr('contenteditable', 'true');
-    self.$table.addClass('table-edit-active');
+    self.$table.addClass('table-editor-active');
 
     // event handlers
     self.$table.on('focus', 'td, th', self.cellFocused);

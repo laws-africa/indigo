@@ -634,3 +634,16 @@ legend {
 .fa.published {
   color: #5bc0de;
 }
+
+/* table editor */
+table.table-editor-active {
+  th.selected,
+  td.selected {
+    background-color: #b2d8fc;
+  }
+
+  th.selected:focus,
+  td.selected:focus {
+    background-color: transparent;
+  }
+}

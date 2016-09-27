@@ -42,7 +42,6 @@
     },
 
     cellChanged: function() {
-      // TODO: toggle toolbar buttons
       $('.table-toggle-heading').toggleClass('active', this.editor.activeCell && this.editor.activeCell.tagName == 'TH');
     },
 

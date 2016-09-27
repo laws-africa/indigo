@@ -218,8 +218,9 @@ function TableEditor(table) {
     cell.focus();
   };
 
-  self.setSelection = function(coords1, coords2) {
-    coords2 = coords2 || coords1;
+  self.setSelection = function(x1, y1, x2, y2) {
+    x2 = x2 === null ? x1 : x2;
+    y2 = y2 === null ? y2 : y2;
 
     /* selection is always:
      *
@@ -232,10 +233,10 @@ function TableEditor(table) {
 
     // x1, y1, x2, y2
     self.selection = [
-      Math.min(coords1[0], coords2[0]),
-      Math.min(coords1[1], coords2[1]),
-      Math.max(coords1[0], coords2[0]),
-      Math.max(coords1[1], coords2[1]),
+      Math.min(x1, x2),
+      Math.min(y1, y2),
+      Math.max(x1, x2),
+      Math.max(y1, y2),
     ];
 
     self.highlightSelection();
@@ -297,8 +298,13 @@ function TableEditor(table) {
   };
 
   self.splitSelection = function() {
+    var x = self.selection[0],
+        y = self.selection[1],
+        selection = self.selection;
+
     self.splitCells.apply(self, self.selection);
-    self.highlightSelection();
+    self.cells[x][y].focus();
+    self.setSelection.apply(self, selection);
   };
 
   self.mergeCells = function(x1, y1, x2, y2) {
@@ -404,8 +410,7 @@ function TableEditor(table) {
       if (self.activeCell != e.target) {
         self.activeCell = e.target;
         self.activeCoords = self.activeCell.coords;
-        self.setSelection(self.activeCoords);
-        self.highlightSelection();
+        self.setSelection.apply(self, self.activeCoords);
 
         self.onCellChanged();
       }
@@ -414,7 +419,7 @@ function TableEditor(table) {
 
   self.overCell = function(e) {
     if (self.dragging) {
-      self.setSelection(self.activeCoords, e.target.coords);
+      self.setSelection(self.activeCoords[0], self.activeCoords[1], e.target.coords[0], e.target.coords[1]);
     }
   };
 

@@ -8,13 +8,23 @@
   Indigo.TableEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
-      // TODO handle table btn bar clicks
       // TODO handle save
       // TODO: hande cancel
       'click .ig.table-wrapper .edit': 'editTable',
+      'click .table-insert-row-above': 'insertRowAbove',
+      'click .table-insert-row-below': 'insertRowBelow',
+      'click .table-insert-column-left': 'insertColumnLeft',
+      'click .table-insert-column-right': 'insertColumnRight',
+      'click .table-delete-row': 'deleteRow',
+      'click .table-delete-column': 'deleteColumn',
+      'click .table-merge-cells': 'mergeCells',
+      'click .table-split-cells': 'splitCells',
+      'click .table-toggle-heading': 'toggleHeading',
     },
 
     initialize: function(options) {
+      // TODO: handle "save"
+      // TODO: handle "cancel" editing
       this.view = options.view;
       this.editor = new TableEditor();
       this.editor.onCellChanged = _.bind(this.cellChanged, this);
@@ -33,33 +43,53 @@
 
     cellChanged: function() {
       // TODO: toggle toolbar buttons
+      $('.table-toggle-heading').toggleClass('active', this.editor.activeCell && this.editor.activeCell.tagName == 'TH');
     },
 
-    addRowBelow: function() {
-      if (!self.editor.activeCell) return;
-      self.editor.insertRow(self.editor.activeCoords[1] + 1);
+    insertRowAbove: function() {
+      if (!this.editor.activeCell) return;
+      this.editor.insertRow(this.editor.activeCoords[1]);
     },
 
-    addColumnRight: function(e) {
-      e.preventDefault();
-      if (!self.editor.activeCell) return;
-      self.editor.insertColumn(self.editor.activeCoords[0] + 1);
+    insertRowBelow: function() {
+      if (!this.editor.activeCell) return;
+      this.editor.insertRow(this.editor.activeCoords[1] + 1);
+    },
+
+    insertColumnLeft: function(e) {
+      if (!this.editor.activeCell) return;
+      this.editor.insertColumn(this.editor.activeCoords[0]);
+    },
+
+    insertColumnRight: function(e) {
+      if (!this.editor.activeCell) return;
+      this.editor.insertColumn(this.editor.activeCoords[0] + 1);
     },
 
     deleteRow: function(e) {
-      e.preventDefault();
-      if (!self.editor.activeCell) return;
+      if (!this.editor.activeCell) return;
 
-      self.editor.removeRow(self.editor.activeCoords[1]);
+      this.editor.removeRow(this.editor.activeCoords[1]);
       // TODO update the active cell
     },
 
     deleteColumn: function(e) {
-      e.preventDefault();
-      if (!self.editor.activeCell) return;
+      if (!this.editor.activeCell) return;
 
-      self.editor.removeColumn(self.editor.activeCoords[0]);
+      this.editor.removeColumn(this.editor.activeCoords[0]);
       // update the active cell
+    },
+
+    mergeCells: function(e) {
+      this.editor.mergeSelection();
+    },
+
+    splitCells: function(e) {
+      this.editor.splitSelection();
+    },
+
+    toggleHeading: function(e) {
+      this.editor.toggleHeading();
     },
   });
 })(window);

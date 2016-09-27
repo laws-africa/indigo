@@ -8,6 +8,35 @@
         <button class="btn btn-success save"><i class="fa fa-check"></i> Update</button>
       </div>
 
+      <div class="btn-group table-editor-buttons">
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Insert <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" class="table-insert-row-above">Insert row above</a></li>
+            <li><a href="#" class="table-insert-row-below">Insert row below</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#" class="table-insert-column-left">Insert column left</a></li>
+            <li><a href="#" class="table-insert-column-right">Insert column right</a></li>
+          </ul>
+        </div>
+
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Delete <span class="caret"></span>
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="#" class="table-delete-row">Delete row</a></li>
+            <li><a href="#" class="table-delete-column">Delete column</a></li>
+          </ul>
+        </div>
+
+        <button type="button" class="btn btn-default table-merge-cells">Merge cells</button>
+        <button type="button" class="btn btn-default table-split-cells">Split cells</button>
+        <button type="button" class="btn btn-default table-toggle-heading">Heading</button>
+      </div>
+
       <span class="toggle-editor-buttons">
         <button type="button" class="btn btn-default edit-text" data-toggle="buttons" title="Edit text"><i class="fa fa-pencil"></i> Edit</button>
         <button type="button" class="btn btn-default show-source" data-toggle="buttons" title="Show XML"><i class="fa fa-code"></i></button>

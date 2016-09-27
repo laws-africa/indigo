@@ -1,6 +1,8 @@
 function TableEditor(table) {
   var self = this;
 
+  self.onCellChanged = function() {};
+
   self.setTable = function(table) {
     if (self.$table) {
       // detach events
@@ -103,7 +105,7 @@ function TableEditor(table) {
 
   // insert a new column, with +index+ as the index of the new column
   self.insertColumn = function(index) {
-    var rows = self.$table.rows,
+    var rows = self.table.rows,
         height = rows.length;
 
     if (index === 0) {
@@ -201,8 +203,7 @@ function TableEditor(table) {
     self.mapTable();
   };
 
-  self.toggleHeading = function(e) {
-    e.preventDefault();
+  self.toggleHeading = function() {
     if (!self.activeCell) return;
 
     var newTag = self.activeCell.tagName == 'TH' ? 'td' : 'th';
@@ -211,10 +212,9 @@ function TableEditor(table) {
 
     var cell = $.parseHTML(html)[0];
     self.activeCell.parentElement.replaceChild(cell, self.activeCell);
-
     self.mapTable();
-
     self.activeCell = cell;
+
     cell.focus();
   };
 
@@ -288,8 +288,7 @@ function TableEditor(table) {
     return null;
   };
 
-  self.mergeSelection = function(e) {
-    e.preventDefault();
+  self.mergeSelection = function() {
     var x = self.selection[0],
         y = self.selection[1];
 
@@ -297,8 +296,7 @@ function TableEditor(table) {
     self.cells[x][y].focus();
   };
 
-  self.splitSelection = function(e) {
-    e.preventDefault();
+  self.splitSelection = function() {
     self.splitCells.apply(self, self.selection);
     self.highlightSelection();
   };
@@ -403,10 +401,14 @@ function TableEditor(table) {
 
   self.cellFocused = function(e) {
     if (e.target.tagName == 'TH' || e.target.tagName === 'TD') {
-      self.activeCell = e.target;
-      self.activeCoords = self.activeCell.coords;
-      self.setSelection(self.activeCoords);
-      self.highlightSelection();
+      if (self.activeCell != e.target) {
+        self.activeCell = e.target;
+        self.activeCoords = self.activeCell.coords;
+        self.setSelection(self.activeCoords);
+        self.highlightSelection();
+
+        self.onCellChanged();
+      }
     }
   };
 

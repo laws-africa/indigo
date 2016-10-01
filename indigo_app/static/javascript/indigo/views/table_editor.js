@@ -8,9 +8,6 @@
   Indigo.TableEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
-      // TODO handle save
-      // TODO: hande cancel
-      'click .ig.table-wrapper .edit': 'editTable',
       'click .table-insert-row-above': 'insertRowAbove',
       'click .table-insert-row-below': 'insertRowBelow',
       'click .table-insert-column-left': 'insertColumnLeft',
@@ -20,25 +17,56 @@
       'click .table-merge-cells': 'mergeCells',
       'click .table-split-cells': 'splitCells',
       'click .table-toggle-heading': 'toggleHeading',
+      'click .table-editor-wrapper .save-edit-table': 'saveEdits',
+      'click .table-editor-wrapper .cancel-edit-table': 'cancelEdits',
     },
 
     initialize: function(options) {
-      // TODO: handle "save"
-      // TODO: handle "cancel" editing
       this.view = options.view;
       this.editor = new TableEditor();
       this.editor.onCellChanged = _.bind(this.cellChanged, this);
+      this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
     },
 
-    editTable: function(e) {
-      this.setTable(this.nextElementSibling);
+    saveEdits: function(e) {
+      // TODO: transform to XML
+      // TODO: replace old node
+      // TODO: ensure P tags in td, th
+      this.setTable(null);
+    },
+
+    cancelEdits: function(e) {
+      if (!confirm("You'll lose you changes, are you sure?")) return;
+
+      var table = this.editor.table;
+      this.setTable(null);
+
+      // undo changes
+      this.editor.table.parentElement.replaceChild(this.initialTable, table);
     },
 
     setTable: function(table) {
       // TODO: start editing a table
       // TODO: cancel editing other table?
-      if (this.editor.table != table)
+      if (this.editor.table == table)
+        return;
+
+      if (table) {
+        $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
+
+        // save backup
+        this.initialTable = table.cloneNode(true);
         this.editor.setTable(table);
+
+        this.$('.table-editor-buttons').show();
+        this.editor.cells[0][0].focus();
+      } else {
+        this.$('.table-editor-buttons').hide();
+        this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
+
+        this.editor.setTable(null);
+        this.initialTable = null;
+      }
     },
 
     cellChanged: function() {

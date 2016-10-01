@@ -238,7 +238,22 @@
     render: function() {
       if (this.htmlTransform && this.view.fragment) {
         var html = this.htmlTransform.transformToFragment(this.view.fragment, document);
+
+        this.makeTablesEditable(html);
         this.view.$el.find('.akoma-ntoso').html('').get(0).appendChild(html);
+      }
+    },
+
+    makeTablesEditable: function(html) {
+      var tables = html.querySelectorAll('table[id]');
+
+      for (var i = 0; i < tables.length; i++) {
+        var table = tables[i],
+            w = this.view.tableEditor.tableWrapper.cloneNode(true);
+
+        $(w).find('button').data('table-id', table.id);
+        table.insertAdjacentElement('beforebegin', w);
+        w.appendChild(table);
       }
     },
 
@@ -386,7 +401,7 @@
       'click .btn.edit-lime': 'toggleLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
-      'click table': 'editTable',
+      'click .btn.edit-table': 'editTable',
     },
 
     initialize: function(options) {
@@ -421,7 +436,9 @@
     },
 
     editTable: function(e) {
-      this.tableEditor.setTable(e.currentTarget);
+      var $btn = $(e.currentTarget),
+          table = document.getElementById($btn.data('table-id'));
+      this.tableEditor.setTable(table);
     },
 
     stopEditing: function() {

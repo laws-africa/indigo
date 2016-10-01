@@ -4,11 +4,26 @@
     <div class="btn-toolbar">
       <div class="btn-group text-editor-buttons">
         <a class="btn btn-link help" href="http://indigo.readthedocs.org/en/latest/guide/editing.html" target="_blank" title="Help on editing"><i class="fa fa-question-circle"></i></a>
-        <button class="btn btn-default cancel"><i class="fa fa-close"></i></button>
+        <button class="btn btn-default cancel" title="Cancel"><i class="fa fa-close"></i></button>
         <button class="btn btn-success save"><i class="fa fa-check"></i> Update</button>
       </div>
 
-      <div class="btn-group table-editor-buttons">
+      <div class="btn-group table-editor-buttons" style="display: none">
+        <!-- these buttons are removed from the DOM and positioned inline alongside tables in the content view,
+             it's just useful to write the HTML here and not in Javascript. -->
+        <div class="ig table-editor-wrapper">
+          <div class="btn-toolbar">
+            <div class="btn-group when-inactive">
+              <button class="btn btn-default btn-xs edit-table"><i class="fa fa-pencil"></i> Edit table</button>
+            </div>
+
+            <div class="btn-group when-active">
+              <button class="btn btn-default btn-xs cancel-edit-table" title="Cancel"><i class="fa fa-close"></i></button>
+              <button class="btn btn-default btn-xs save-edit-table"><i class="fa fa-check"></i> Update</button>
+            </div>
+          </div>
+        </div>
+
         <div class="btn-group" role="group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             Insert <span class="caret"></span>

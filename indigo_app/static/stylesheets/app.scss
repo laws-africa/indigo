@@ -8,6 +8,11 @@ $header-height: 45px;
 $sidebar-width: 260px;
 $sidebar-colour: #eee;
 
+$font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+$font-size: 14px;
+$font-colour: #333;
+$selection-colour: #b2d8fc;
+
 html, body {
   height: 100%;
   min-height: 100%;
@@ -36,9 +41,9 @@ body.is-staff {
 // the LIME editor overrides some styles by attaching .x-body to the body element,
 // so we overwrite those here
 body.x-body {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size: 14px;
-  color: #333;
+  font-family: $font-family;
+  font-size: $font-family;
+  color: $font-colour;
 }
 
 .form-group {
@@ -368,6 +373,13 @@ legend {
 /* akoma ntoso styles */
 @import 'bower_components/indigo-web/scss/akoma-ntoso';
 
+/* overrides for indigo inserts into akoma-ntoso trees */
+.akoma-ntoso .ig {
+  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size: 14px;
+  color: #333;
+}
+
 
 /* standalone pages, such as the password reset form */
 .standalone {
@@ -636,14 +648,35 @@ legend {
 }
 
 /* table editor */
-table.table-editor-active {
-  th.selected,
-  td.selected {
-    background-color: #b2d8fc;
+.table-editor-wrapper {
+  .btn-toolbar {
+    margin-bottom: 5px;
   }
 
-  th.selected:focus,
-  td.selected:focus {
-    background-color: transparent;
+  .when-active {
+    display: none;
+  }
+
+  &.table-editor-active {
+    .when-active {
+      display: block;
+    }
+    .when-inactive {
+      display: none;
+    }
+
+    table {
+      box-shadow: 0px 0px 5px 2px $selection-colour;
+
+      th.selected,
+      td.selected {
+        background-color: $selection-colour;
+      }
+
+      th.selected:focus,
+      td.selected:focus {
+        background-color: transparent;
+      }
+    }
   }
 }

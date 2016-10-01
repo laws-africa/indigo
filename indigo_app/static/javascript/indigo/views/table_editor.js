@@ -29,10 +29,71 @@
     },
 
     saveEdits: function(e) {
-      // TODO: transform to XML
-      // TODO: replace old node
-      // TODO: ensure P tags in td, th
+      var table = this.tableToAkn(this.editor.table);
+      // update DOM
       this.setTable(null);
+    },
+
+    tableToAkn: function(table) {
+      var serializer = new XMLSerializer(),
+          xml = serializer.serializeToString(table);
+      table = $.parseXML(xml).documentElement;
+
+      _.each(table.querySelectorAll("td, th"), function(n) {
+        n.removeAttribute("contenteditable");
+      });
+
+      // transform akn-foo to <foo>
+      // note that we do this bottom-up because we have to re-parse
+      // XML as we're going
+      var nodes = table.querySelectorAll('[class*="akn-"]');
+      for (var i = nodes.length-1; i >= 0; i--) {
+        var node = nodes[i],
+            jump = node.tagName.length,
+            aknClass = _.find(node.className.split(" "), function(c) {
+              return c.startsWith("akn-");
+            }),
+            newTag = aknClass.substring(4);
+
+        xml = serializer.serializeToString(node);
+        xml = '<' + newTag + xml.substring(jump + 1, xml.length - jump - 1) + newTag + ">";
+        xml = $.parseXML(xml).documentElement;
+
+        xml.removeAttribute("xmlns");
+        $(xml).removeClass(aknClass);
+        if (xml.className === "")
+          xml.removeAttribute("class");
+
+        node.parentElement.replaceChild(xml, node);
+      }
+
+      // ensure direct children of td, th tags are wrapped in p tags
+      _.each(table.querySelectorAll("td, th"), function(cell) {
+        if (!cell.hasChildNodes) return;
+
+        var lastP = null, next;
+        for (var node = cell.childNodes[0]; node !== null; node = next) {
+          next = node.nextSibling;
+
+          if (node.nodeType == node.TEXT_NODE && node.textContent.trim() === "") {
+            node.remove();
+            continue;
+          }
+
+          if (node.tagName == 'p') {
+            lastP = node;
+          } else {
+            if (lastP === null) {
+              lastP = node.ownerDocument.createElement('p');
+              node.parentElement.insertBefore(lastP, node);
+            }
+
+            lastP.appendChild(node);
+          }
+        }
+      });
+
+      return table;
     },
 
     cancelEdits: function(e) {

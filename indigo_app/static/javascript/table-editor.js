@@ -5,21 +5,22 @@ function TableEditor(table) {
 
   self.setTable = function(table) {
     if (self.$table) {
-      // detach events
-      self.$table.off('focus', 'td, th', self.cellFocused);
-      self.$table.off('mouseover', 'td, th', self.overCell);
-      self.$table.off('mousedown', 'td, th', self.mouseDown);
-      self.$table.off('mouseup', 'td, th', self.mouseUp);
+      self.detach();
     }
 
-    self.table = table;
     if (!table) {
+      self.table = null;
       self.$table = null;
       return;
     }
 
+    self.table = table;
     self.$table = $(table);
+    self.attach();
+    self.mapTable();
+  };
 
+  self.attach = function() {
     // make cells editable
     self.$table.find('td, th').attr('contenteditable', 'true');
 
@@ -28,8 +29,17 @@ function TableEditor(table) {
     self.$table.on('mouseover', 'td, th', self.overCell);
     self.$table.on('mousedown', 'td, th', self.mouseDown);
     self.$table.on('mouseup', 'td, th', self.mouseUp);
+  };
 
-    self.mapTable();
+  self.detach = function() {
+    // detach events
+    self.$table.off('focus', 'td, th', self.cellFocused);
+    self.$table.off('mouseover', 'td, th', self.overCell);
+    self.$table.off('mousedown', 'td, th', self.mouseDown);
+    self.$table.off('mouseup', 'td, th', self.mouseUp);
+
+    // make cells un-editable
+    self.$table.find('td, th').removeAttr('contenteditable');
   };
 
   self.mapTable = function() {

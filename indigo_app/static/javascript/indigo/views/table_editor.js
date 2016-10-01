@@ -38,23 +38,27 @@
     cancelEdits: function(e) {
       if (!confirm("You'll lose you changes, are you sure?")) return;
 
-      var table = this.editor.table;
+      var table = this.editor.table,
+          initialTable = this.initialTable;
+
       this.setTable(null);
 
       // undo changes
-      this.editor.table.parentElement.replaceChild(this.initialTable, table);
+      table.parentElement.replaceChild(initialTable, table);
     },
 
     setTable: function(table) {
-      // TODO: start editing a table
-      // TODO: cancel editing other table?
       if (this.editor.table == table)
         return;
 
       if (table) {
+        // cancel existing edit
+        if (this.editor.table) {
+          self.cancelEdits();
+        }
+
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
-        // save backup
         this.initialTable = table.cloneNode(true);
         this.editor.setTable(table);
 

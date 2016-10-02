@@ -35,47 +35,43 @@
     },
 
     tableToAkn: function(table) {
-      var serializer = new XMLSerializer(),
-          xml = serializer.serializeToString(table);
+      var xml = new XMLSerializer().serializeToString(table);
       table = $.parseXML(xml).documentElement;
+      table.removeAttribute("xmlns");
 
-      _.each(table.querySelectorAll("td, th"), function(n) {
+      _.each(table.querySelectorAll("[contenteditable]"), function(n) {
         n.removeAttribute("contenteditable");
       });
 
-      // transform akn-foo to <foo>
-      // note that we do this bottom-up because we have to re-parse
-      // XML as we're going
+      // transform akn-foo to <foo>, going bottom-up
       var nodes = table.querySelectorAll('[class*="akn-"]');
       for (var i = nodes.length-1; i >= 0; i--) {
         var node = nodes[i],
-            jump = node.tagName.length,
             aknClass = _.find(node.className.split(" "), function(c) {
               return c.startsWith("akn-");
             }),
             newTag = aknClass.substring(4);
 
-        xml = serializer.serializeToString(node);
-        xml = '<' + newTag + xml.substring(jump + 1, xml.length - jump - 1) + newTag + ">";
-        xml = $.parseXML(xml).documentElement;
+        var newNode = this.renameNode(node, newTag);
 
-        xml.removeAttribute("xmlns");
-        $(xml).removeClass(aknClass);
-        if (xml.className === "")
-          xml.removeAttribute("class");
+        $(newNode).removeClass(aknClass);
+        if (newNode.className === "")
+          newNode.removeAttribute("class");
 
-        node.parentElement.replaceChild(xml, node);
+        node.parentElement.replaceChild(newNode, node);
       }
 
       // ensure direct children of td, th tags are wrapped in p tags
       _.each(table.querySelectorAll("td, th"), function(cell) {
         if (!cell.hasChildNodes) return;
 
-        var lastP = null, next;
+        var lastP = null, next,
+            first = true;
         for (var node = cell.childNodes[0]; node !== null; node = next) {
           next = node.nextSibling;
 
-          if (node.nodeType == node.TEXT_NODE && node.textContent.trim() === "") {
+          // trim leading and trailing whitespace
+          if ((first || next === null) && node.nodeType == node.TEXT_NODE && node.textContent.trim() === "") {
             node.remove();
             continue;
           }
@@ -90,6 +86,8 @@
 
             lastP.appendChild(node);
           }
+
+          first = false;
         }
       });
 
@@ -182,6 +180,22 @@
 
     toggleHeading: function(e) {
       this.editor.toggleHeading();
+    },
+
+    renameNode: function(node, newname) {
+      var newnode = node.ownerDocument.createElement(newname),
+          attrs = node.attributes,
+          kids = node.childNodes;
+
+      for (var i = 0; i < attrs.length; i++) {
+        newnode.setAttribute(attrs[i].name, attrs[i].value);
+      }
+
+      while (node.childNodes.length > 0) {
+        newnode.appendChild(node.childNodes[0]);
+      }
+
+      return newnode;
     },
   });
 })(window);

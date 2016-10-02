@@ -217,14 +217,26 @@ function TableEditor(table) {
     self.mapTable();
   };
 
+  self.renameNode = function(node, newname) {
+    var newnode = node.ownerDocument.createElement(newname),
+        attrs = node.attributes,
+        kids = node.childNodes;
+
+    for (var i = 0; i < attrs.length; i++) {
+      newnode.setAttribute(attrs[i].name, attrs[i].value);
+    }
+
+    while (node.childNodes.length > 0) {
+      newnode.appendChild(node.childNodes[0]);
+    }
+
+    return newnode;
+  };
+
   self.toggleHeading = function() {
     if (!self.activeCell) return;
 
-    var newTag = self.activeCell.tagName == 'TH' ? 'td' : 'th';
-    var html = self.activeCell.outerHTML;
-    html = '<' + newTag + html.substring(3, html.length - 3) + newTag + ">";
-
-    var cell = $.parseHTML(html)[0];
+    var cell = self.renameNode(self.activeCell, self.activeCell.tagName == 'TH' ? 'td' : 'th');
     self.activeCell.parentElement.replaceChild(cell, self.activeCell);
     self.mapTable();
     self.activeCell = cell;

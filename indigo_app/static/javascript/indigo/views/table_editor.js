@@ -40,7 +40,8 @@
     },
 
     tableToAkn: function(table) {
-      var xml = new XMLSerializer().serializeToString(table);
+      var self = this,
+          xml = new XMLSerializer().serializeToString(table);
       table = $.parseXML(xml).documentElement;
       // for some reason, we must remove the xmlns attribute and then re-set it
       table.removeAttribute("xmlns");
@@ -48,6 +49,18 @@
 
       _.each(table.querySelectorAll("[contenteditable]"), function(n) {
         n.removeAttribute("contenteditable");
+      });
+
+      _.each(table.querySelectorAll("[selected]"), function(n) {
+        $(n).removeClass("selected");
+        if (n.className === "") n.removeAttribute("class");
+      });
+
+      // TODO: remove tbody and tfoot
+
+      // transform br to eol
+      _.each(table.querySelectorAll("br"), function(br) {
+        br.parentElement.replaceChild(self.editor.renameNode(br, "eol"), br);
       });
 
       // transform akn-foo to <foo>, going bottom-up

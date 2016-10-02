@@ -245,8 +245,8 @@ function TableEditor(table) {
   };
 
   self.setSelection = function(x1, y1, x2, y2) {
-    x2 = x2 === null ? x1 : x2;
-    y2 = y2 === null ? y2 : y2;
+    x2 = x2 === undefined ? x1 : x2;
+    y2 = y2 === undefined ? y1 : y2;
 
     /* selection is always:
      *
@@ -444,8 +444,8 @@ function TableEditor(table) {
   };
 
   self.overCell = function(e) {
-    if (self.dragging) {
-      self.setSelection(self.activeCoords[0], self.activeCoords[1], e.target.coords[0], e.target.coords[1]);
+    if (self.dragging && e.currentTarget.coords) {
+      self.setSelection(self.activeCoords[0], self.activeCoords[1], e.currentTarget.coords[0], e.currentTarget.coords[1]);
     }
   };
 

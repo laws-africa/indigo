@@ -29,15 +29,22 @@
     },
 
     saveEdits: function(e) {
-      var table = this.tableToAkn(this.editor.table);
-      // update DOM
+      var table = this.tableToAkn(this.editor.table),
+          oldTable = this.view.documentContent.xmlDocument.getElementById(this.editor.table.id);
+
       this.setTable(null);
+
+      // update DOM
+      this.view.documentContent.replaceNode(oldTable, [table]);
+      this.view.sourceEditor.render();
     },
 
     tableToAkn: function(table) {
       var xml = new XMLSerializer().serializeToString(table);
       table = $.parseXML(xml).documentElement;
+      // for some reason, we must remove the xmlns attribute and then re-set it
       table.removeAttribute("xmlns");
+      table.setAttribute("xmlns", this.view.documentContent.xmlDocument.documentElement.namespaceURI);
 
       _.each(table.querySelectorAll("[contenteditable]"), function(n) {
         n.removeAttribute("contenteditable");
@@ -52,7 +59,7 @@
             }),
             newTag = aknClass.substring(4);
 
-        var newNode = this.renameNode(node, newTag);
+        var newNode = this.editor.renameNode(node, newTag);
 
         $(newNode).removeClass(aknClass);
         if (newNode.className === "")
@@ -180,22 +187,6 @@
 
     toggleHeading: function(e) {
       this.editor.toggleHeading();
-    },
-
-    renameNode: function(node, newname) {
-      var newnode = node.ownerDocument.createElement(newname),
-          attrs = node.attributes,
-          kids = node.childNodes;
-
-      for (var i = 0; i < attrs.length; i++) {
-        newnode.setAttribute(attrs[i].name, attrs[i].value);
-      }
-
-      while (node.childNodes.length > 0) {
-        newnode.appendChild(node.childNodes[0]);
-      }
-
-      return newnode;
     },
   });
 })(window);

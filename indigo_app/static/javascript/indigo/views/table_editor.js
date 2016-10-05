@@ -51,8 +51,11 @@
         n.removeAttribute("contenteditable");
       });
 
-      _.each(table.querySelectorAll("[selected]"), function(n) {
+      _.each(table.querySelectorAll(".selected"), function(n) {
         $(n).removeClass("selected");
+      });
+
+      _.each(table.querySelectorAll("[class]"), function(n) {
         if (n.className === "") n.removeAttribute("class");
       });
 
@@ -87,7 +90,7 @@
 
         var lastP = null, next,
             first = true;
-        for (var node = cell.childNodes[0]; node !== null; node = next) {
+        for (var node = cell.childNodes[0]; node; node = next) {
           next = node.nextSibling;
 
           // trim leading and trailing whitespace
@@ -163,7 +166,7 @@
 
     insertRowBelow: function() {
       if (!this.editor.activeCell) return;
-      this.editor.insertRow(this.editor.activeCoords[1] + 1);
+      this.editor.insertRow(this.editor.activeCoords[1] + this.editor.activeCell.rowSpan);
     },
 
     insertColumnLeft: function(e) {

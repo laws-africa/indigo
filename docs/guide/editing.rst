@@ -133,12 +133,15 @@ Follow these guidelines to tell Indigo about the structure of your document:
 
       (b) sublist item b
 
-- Start a Schedule like this::
+- Start a Schedule like the example below. The number ``1``, the ``Title`` and ``Heading`` parts are optional, you can leave them out if necessary::
 
       Schedule 1 - Title
       Heading
-
-The number, ``Title`` and ``Heading`` are optional, you can leave them out if necessary.
+      
+      or
+      
+      Schedule - First Schedule
+      Subtitle
 
 
 Tables

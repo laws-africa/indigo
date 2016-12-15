@@ -54,7 +54,7 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
         .then(function(response) {
-          self.model.setXml(response.document.content);
+          self.model.set('content', response.document.content);
         })
         .always(function() {
           $btn

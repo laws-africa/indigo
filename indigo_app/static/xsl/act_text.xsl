@@ -73,8 +73,31 @@
   </xsl:template>
 
   <!-- these are block elements and have a newline at the end -->
-  <xsl:template match="a:heading|a:p">
+  <xsl:template match="a:heading">
     <xsl:apply-templates />
+    <xsl:text>
+
+</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:p">
+    <xsl:variable name="prefix" select="translate(substring(., 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
+    <xsl:variable name="numprefix" select="translate(substring(., 1, 3), '1234567890', 'NNNNNNNNNN')" />
+
+    <!-- p tags must escape initial content that looks like a block element marker -->
+    <xsl:if test="starts-with($prefix, 'BODY') or
+                  starts-with($prefix, 'CHAPTER') or
+                  starts-with($prefix, 'PART') or
+                  starts-with($prefix, 'PREAMBLE') or
+                  starts-with($prefix, 'PREFACE') or
+                  starts-with($prefix, 'SCHEDULE') or
+                  starts-with($prefix, '{|') or
+                  starts-with($numprefix, '(') or
+                  starts-with($numprefix, 'N.')">
+      <xsl:text>\</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="."/>
+    <!-- p tags must end with a newline -->
     <xsl:text>
 
 </xsl:text>

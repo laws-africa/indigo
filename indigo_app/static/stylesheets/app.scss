@@ -181,7 +181,8 @@ fieldset {
 }
 
 /* headers with help buttons */
-a.help {
+a.help,
+button.btn-link.help {
   color: #aaa;
 
   &:hover {
@@ -633,4 +634,28 @@ legend {
 
 .fa.published {
   color: #5bc0de;
+}
+
+.cheatsheet {
+  section {
+    clear: both;
+
+    border-bottom: 1px solid #eee;
+    margin-bottom: 10px;
+
+    &:last-child {
+      border-bottom: 0px;
+    }
+
+    pre {
+      width: 40%;
+      float: left;
+    }
+
+    p {
+      width: 60%;
+      float: left;
+      padding-left: 20px;
+    }
+  }
 }

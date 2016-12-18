@@ -44,7 +44,7 @@
       this.$textEditor = this.view.$el.find('.document-text-editor');
       this.textEditor = ace.edit(this.view.$el.find(".document-text-editor .ace-editor")[0]);
       this.textEditor.setTheme("ace/theme/chrome");
-      this.textEditor.getSession().setMode("ace/mode/text");
+      this.textEditor.getSession().setMode("ace/mode/indigo");
       this.textEditor.setValue();
       this.textEditor.getSession().setUseWrapMode(true);
       this.textEditor.setShowPrintMargin(false);

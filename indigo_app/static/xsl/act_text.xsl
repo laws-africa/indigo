@@ -6,6 +6,28 @@
   <xsl:output method="text" indent="no" omit-xml-declaration="yes" />
   <xsl:strip-space elements="*"/>
 
+  <!-- adds a backslash to the start of the value param, if necessary -->
+  <xsl:template name="escape">
+    <xsl:param name="value"/>
+
+    <xsl:variable name="prefix" select="translate(substring($value, 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
+    <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', 'NNNNNNNNNN')" />
+
+    <!-- p tags must escape initial content that looks like a block element marker -->
+    <xsl:if test="$prefix = 'BODY' or
+                  $prefix = 'PREAMBLE' or
+                  $prefix = 'PREFACE' or
+                  starts-with($prefix, 'CHAPTER ') or
+                  starts-with($prefix, 'PART ') or
+                  starts-with($prefix, 'SCHEDULE ') or
+                  starts-with($prefix, '{|') or
+                  starts-with($numprefix, '(') or
+                  starts-with($numprefix, 'N.')">
+      <xsl:text>\</xsl:text>
+    </xsl:if>
+    <xsl:value-of select="$value"/>
+  </xsl:template>
+
   <xsl:template match="a:act">
     <xsl:apply-templates select="a:coverPage" />
     <xsl:apply-templates select="a:preface" />
@@ -81,26 +103,19 @@
   </xsl:template>
 
   <xsl:template match="a:p">
-    <xsl:variable name="prefix" select="translate(substring(., 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
-    <xsl:variable name="numprefix" select="translate(substring(., 1, 3), '1234567890', 'NNNNNNNNNN')" />
-
-    <!-- p tags must escape initial content that looks like a block element marker -->
-    <xsl:if test="starts-with($prefix, 'BODY') or
-                  starts-with($prefix, 'CHAPTER') or
-                  starts-with($prefix, 'PART') or
-                  starts-with($prefix, 'PREAMBLE') or
-                  starts-with($prefix, 'PREFACE') or
-                  starts-with($prefix, 'SCHEDULE') or
-                  starts-with($prefix, '{|') or
-                  starts-with($numprefix, '(') or
-                  starts-with($numprefix, 'N.')">
-      <xsl:text>\</xsl:text>
-    </xsl:if>
-    <xsl:value-of select="."/>
+    <xsl:call-template name="escape">
+      <xsl:with-param name="value" select="." />
+    </xsl:call-template>
     <!-- p tags must end with a newline -->
     <xsl:text>
 
 </xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:listIntroduction|a:intro">
+    <xsl:call-template name="escape">
+      <xsl:with-param name="value" select="." />
+    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="a:blockList">

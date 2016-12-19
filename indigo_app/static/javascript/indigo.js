@@ -45,6 +45,16 @@ $(function() {
       Indigo.progressView.pop();
     });
 
+  // error tracking with GA
+  window.addEventListener('error', function(e) {
+    if (typeof ga === 'function') {
+      ga('send', 'exception', {
+        'exDescription': e.message + ' @ ' + e.filename + ': ' + e.lineno,
+        'exFatal': true,
+      });
+    }
+  });
+
   // datepicker
   $.fn.datepicker.defaults.format = "yyyy-mm-dd";
   $.fn.datepicker.defaults.autoclose = true;

@@ -26,6 +26,13 @@
       this.editor = new TableEditor();
       this.editor.onCellChanged = _.bind(this.cellChanged, this);
       this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
+
+      this.ckeditor = null;
+      // setup CKEditor
+      CKEDITOR.disableAutoInline = true;
+      // make TH and TD editable
+      CKEDITOR.dtd.$editable.th = 1;
+      CKEDITOR.dtd.$editable.td = 1;
     },
 
     saveEdits: function(e) {
@@ -123,6 +130,12 @@
       var table = this.editor.table,
           initialTable = this.initialTable;
 
+      // nuke the active ckeditor instance, if any
+      if (this.ckeditor) {
+        this.ckeditor.destroy(true);
+        this.ckeditor = null;
+      }
+
       this.setTable(null);
 
       // undo changes
@@ -136,7 +149,7 @@
       if (table) {
         // cancel existing edit
         if (this.editor.table) {
-          self.cancelEdits();
+          this.cancelEdits();
         }
 
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
@@ -156,6 +169,13 @@
     },
 
     cellChanged: function() {
+      if (this.ckeditor) {
+        // detach the editor, saving changes into the DOM
+        this.ckeditor.destroy();
+      }
+
+      this.ckeditor = CKEDITOR.inline(this.editor.activeCell);
+
       $('.table-toggle-heading').toggleClass('active', this.editor.activeCell && this.editor.activeCell.tagName == 'TH');
     },
 

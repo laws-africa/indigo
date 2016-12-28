@@ -19,8 +19,7 @@
       'click .table-insert-column-right': 'insertColumnRight',
       'click .table-delete-row': 'deleteRow',
       'click .table-delete-column': 'deleteColumn',
-      'click .table-merge-cells': 'mergeCells',
-      'click .table-split-cells': 'splitCells',
+      'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
       'click .table-editor-wrapper .save-edit-table': 'saveEdits',
       'click .table-editor-wrapper .cancel-edit-table': 'cancelEdits',
@@ -29,7 +28,7 @@
     initialize: function(options) {
       this.view = options.view;
       this.editor = new TableEditor();
-      this.editor.onCellChanged = _.bind(this.cellChanged, this);
+      this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
       this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
 
       this.ckeditor = null;
@@ -188,8 +187,13 @@
       }
     },
 
-    cellChanged: function() {
-      $('.table-toggle-heading').toggleClass('active', this.editor.activeCell && this.editor.activeCell.tagName == 'TH');
+    selectionChanged: function() {
+      $('.table-merge-cells').toggleClass('active', _.any(this.editor.getSelectedCells(), function(c) {
+        return c.colSpan > 1 || c.rowSpan > 1;
+      }));
+      $('.table-toggle-heading').toggleClass('active', _.any(this.editor.getSelectedCells(), function(c) {
+        return c.tagName == 'TH';
+      }));
     },
 
     insertRowAbove: function() {
@@ -226,16 +230,25 @@
       // update the active cell
     },
 
-    mergeCells: function(e) {
-      this.editor.mergeSelection();
-    },
+    toggleMergeCells: function(e) {
+      var merged = _.any(this.editor.getSelectedCells(), function(c) { return c.colSpan > 1 || c.rowSpan > 1; });
 
-    splitCells: function(e) {
-      this.editor.splitSelection();
+      if (merged) {
+        this.editor.splitSelection();
+      } else {
+        this.editor.mergeSelection();
+        this.selectionChanged();
+      }
     },
 
     toggleHeading: function(e) {
-      this.editor.toggleHeading();
+      var self = this,
+          selection = this.editor.getSelectedCells();
+
+      var heading = _.any(selection, function(c) { return c.tagName == 'TH'; });
+      _.each(selection, function(c) {
+        self.editor.toggleHeading(c, !heading);
+      });
     },
   });
 })(window);

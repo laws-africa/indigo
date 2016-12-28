@@ -2,6 +2,7 @@ function TableEditor(table) {
   var self = this;
 
   self.onCellChanged = function() {};
+  self.onSelectionChanged = function() {};
 
   self.setTable = function(table) {
     if (self.$table) {
@@ -233,13 +234,14 @@ function TableEditor(table) {
     return newnode;
   };
 
-  self.toggleHeading = function() {
-    if (!self.activeCell) return;
+  self.toggleHeading = function(cell, makeHeading) {
+    if (cell.tagName == 'TH' && makeHeading) return;
+    if (cell.tagName == 'TD' && !makeHeading) return;
 
-    var cell = self.renameNode(self.activeCell, self.activeCell.tagName == 'TH' ? 'td' : 'th');
-    self.activeCell.parentElement.replaceChild(cell, self.activeCell);
+    var newCell = self.renameNode(cell, makeHeading ? 'th' : 'td');
+    cell.parentElement.replaceChild(newCell, cell);
     self.mapTable();
-    self.activeCell = cell;
+    if (self.activeCell == cell) self.activeCell = newCell;
 
     cell.focus();
   };
@@ -266,6 +268,7 @@ function TableEditor(table) {
     ];
 
     self.highlightSelection();
+    self.onSelectionChanged();
   };
 
   self.highlightSelection = function() {
@@ -283,6 +286,10 @@ function TableEditor(table) {
     }
 
     return cells;
+  };
+
+  self.getSelectedCells = function() {
+    return self.getCellRange.apply(self, self.selection);
   };
 
   // Find the cell that spans coordinates (x, y)

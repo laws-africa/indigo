@@ -26,6 +26,8 @@
     },
 
     initialize: function(options) {
+      var self = this;
+
       this.view = options.view;
       this.editor = new TableEditor();
       this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
@@ -37,14 +39,28 @@
       // make TH and TD editable
       CKEDITOR.dtd.$editable.th = 1;
       CKEDITOR.dtd.$editable.td = 1;
+
+      // setup transforms
+      var htmlTransform = new XSLTProcessor();
+      $.get('/static/xsl/html_to_akn.xsl')
+        .then(function(xml) {
+          htmlTransform.importStylesheet(xml);
+          self.htmlTransform = htmlTransform;
+        });
     },
 
     saveEdits: function(e) {
-      var table = this.tableToAkn(this.editor.table),
+      var table = this.editor.table,
           oldTable = this.view.documentContent.xmlDocument.getElementById(this.editor.table.id);
 
+      // stop editing
       this.editor.table.parentElement.contentEditable = "false";
+      this.ckeditor.destroy();
+      this.ckeditor = null;
       this.setTable(null);
+
+      // get new xml
+      table = this.tableToAkn(table);
 
       // update DOM
       this.view.documentContent.replaceNode(oldTable, [table]);
@@ -52,81 +68,13 @@
     },
 
     tableToAkn: function(table) {
-      var self = this,
-          xml = new XMLSerializer().serializeToString(table);
-      table = $.parseXML(xml).documentElement;
-      // for some reason, we must remove the xmlns attribute and then re-set it
-      table.removeAttribute("xmlns");
-      table.setAttribute("xmlns", this.view.documentContent.xmlDocument.documentElement.namespaceURI);
+      if (!this.htmlTransform) return null;
 
-      _.each(table.querySelectorAll("[contenteditable]"), function(n) {
-        n.removeAttribute("contenteditable");
-      });
+      // html -> string -> xml so that the XML is well formed
+      var xml = $.parseXML(new XMLSerializer().serializeToString(table));
 
-      _.each(table.querySelectorAll(".selected"), function(n) {
-        $(n).removeClass("selected");
-      });
-
-      _.each(table.querySelectorAll("[class]"), function(n) {
-        if (n.className === "") n.removeAttribute("class");
-      });
-
-      // TODO: remove tbody and tfoot
-
-      // transform br to eol
-      _.each(table.querySelectorAll("br"), function(br) {
-        br.parentElement.replaceChild(self.editor.renameNode(br, "eol"), br);
-      });
-
-      // transform akn-foo to <foo>, going bottom-up
-      var nodes = table.querySelectorAll('[class*="akn-"]');
-      for (var i = nodes.length-1; i >= 0; i--) {
-        var node = nodes[i],
-            aknClass = _.find(node.className.split(" "), function(c) {
-              return c.startsWith("akn-");
-            }),
-            newTag = aknClass.substring(4);
-
-        var newNode = this.editor.renameNode(node, newTag);
-
-        $(newNode).removeClass(aknClass);
-        if (newNode.className === "")
-          newNode.removeAttribute("class");
-
-        node.parentElement.replaceChild(newNode, node);
-      }
-
-      // ensure direct children of td, th tags are wrapped in p tags
-      _.each(table.querySelectorAll("td, th"), function(cell) {
-        if (!cell.hasChildNodes) return;
-
-        var lastP = null, next,
-            first = true;
-        for (var node = cell.childNodes[0]; node; node = next) {
-          next = node.nextSibling;
-
-          // trim leading and trailing whitespace
-          if ((first || next === null) && node.nodeType == node.TEXT_NODE && node.textContent.trim() === "") {
-            node.remove();
-            continue;
-          }
-
-          if (node.tagName == 'p') {
-            lastP = node;
-          } else {
-            if (lastP === null) {
-              lastP = node.ownerDocument.createElement('p');
-              node.parentElement.insertBefore(lastP, node);
-            }
-
-            lastP.appendChild(node);
-          }
-
-          first = false;
-        }
-      });
-
-      return table;
+      // xhtml -> akn
+      return this.htmlTransform.transformToFragment(xml.firstChild, this.view.documentContent.xmlDocument);
     },
 
     cancelEdits: function(e) {

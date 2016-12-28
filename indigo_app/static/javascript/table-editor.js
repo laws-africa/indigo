@@ -436,6 +436,10 @@ function TableEditor(table) {
       if (self.activeCell != e.target) {
         self.activeCell = e.target;
         self.activeCoords = self.activeCell.coords;
+
+        self.$table.find('.active').removeClass("active");
+        $(self.activeCell).addClass("active");
+
         self.setSelection.apply(self, self.activeCoords);
 
         self.onCellChanged();

@@ -39,6 +39,7 @@
       var table = this.tableToAkn(this.editor.table),
           oldTable = this.view.documentContent.xmlDocument.getElementById(this.editor.table.id);
 
+      this.editor.table.parentElement.contentEditable = "false";
       this.setTable(null);
 
       // update DOM
@@ -130,19 +131,22 @@
       var table = this.editor.table,
           initialTable = this.initialTable;
 
+      this.setTable(null);
+      table.parentElement.contentEditable = "false";
+
       // nuke the active ckeditor instance, if any
       if (this.ckeditor) {
         this.ckeditor.destroy(true);
         this.ckeditor = null;
       }
 
-      this.setTable(null);
-
       // undo changes
       table.parentElement.replaceChild(initialTable, table);
     },
 
     setTable: function(table) {
+      var self = this;
+
       if (this.editor.table == table)
         return;
 
@@ -152,13 +156,24 @@
           this.cancelEdits();
         }
 
-        $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
-
         this.initialTable = table.cloneNode(true);
-        this.editor.setTable(table);
+        var container = table.parentElement;
 
+        $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
+        container.contentEditable = "true";
         this.$('.table-editor-buttons').show();
-        this.editor.cells[0][0].focus();
+
+        // attach the CKEditor to the wrapper div
+        this.ckeditor = CKEDITOR.inline(container);
+        this.ckeditor.on('contentDom', function(e) {
+          var table = self.ckeditor.element.$.firstElementChild;
+
+          // TODO: ckeditor strips id from the table elem
+          table.id = self.initialTable.id;
+
+          self.editor.setTable(table);
+          self.editor.cells[0][0].focus();
+        });
       } else {
         this.$('.table-editor-buttons').hide();
         this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
@@ -169,13 +184,6 @@
     },
 
     cellChanged: function() {
-      if (this.ckeditor) {
-        // detach the editor, saving changes into the DOM
-        this.ckeditor.destroy();
-      }
-
-      this.ckeditor = CKEDITOR.inline(this.editor.activeCell);
-
       $('.table-toggle-heading').toggleClass('active', this.editor.activeCell && this.editor.activeCell.tagName == 'TH');
     },
 

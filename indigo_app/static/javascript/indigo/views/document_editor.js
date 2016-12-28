@@ -249,11 +249,14 @@
 
       for (var i = 0; i < tables.length; i++) {
         var table = tables[i],
-            w = this.view.tableEditor.tableWrapper.cloneNode(true);
+            w = this.view.tableEditor.tableWrapper.cloneNode(true),
+            $w = $(w);
 
-        $(w).find('button').data('table-id', table.id);
+        $w.find('button').data('table-id', table.id);
         table.insertAdjacentElement('beforebegin', w);
-        w.appendChild(table);
+        // we bind the CKEditor instance to this div, since CKEditor can't be
+        // directly attached to the table element
+        $w.find('.table-container').append(table);
       }
     },
 

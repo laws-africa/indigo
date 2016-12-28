@@ -25,7 +25,7 @@ function TableEditor(table) {
     self.$table.find('td, th').attr('contenteditable', 'true');
 
     // event handlers
-    self.$table.on('focus', 'td, th', self.cellFocused);
+    self.$table.on('mousedown', 'td, th', self.cellFocused);
     self.$table.on('mouseover', 'td, th', self.overCell);
     self.$table.on('mousedown', 'td, th', self.mouseDown);
     self.$table.on('mouseup', 'td, th', self.mouseUp);
@@ -33,7 +33,7 @@ function TableEditor(table) {
 
   self.detach = function() {
     // detach events
-    self.$table.off('focus', 'td, th', self.cellFocused);
+    self.$table.off('mousedown', 'td, th', self.cellFocused);
     self.$table.off('mouseover', 'td, th', self.overCell);
     self.$table.off('mousedown', 'td, th', self.mouseDown);
     self.$table.off('mouseup', 'td, th', self.mouseUp);

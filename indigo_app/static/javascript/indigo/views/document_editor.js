@@ -423,6 +423,8 @@
       this.sourceEditor = new Indigo.SourceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
       this.tableEditor = new Indigo.TableEditorView({view: this});
+      this.tableEditor.on('start', this.tableEditStart, this);
+      this.tableEditor.on('finish', this.tableEditFinish, this);
 
       this.showDocumentSheet();
     },
@@ -442,6 +444,16 @@
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
       this.tableEditor.setTable(table);
+    },
+
+    tableEditStart: function() {
+      this.$('.edit-text').hide();
+      this.$('.edit-lime').prop('disabled', true);
+    },
+
+    tableEditFinish: function() {
+      this.$('.edit-text').show();
+      this.$('.edit-lime').prop('disabled', false);
     },
 
     stopEditing: function() {

@@ -21,8 +21,8 @@
       'click .table-delete-column': 'deleteColumn',
       'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
-      'click .table-editor-wrapper .save-edit-table': 'saveEdits',
-      'click .table-editor-wrapper .cancel-edit-table': 'cancelEdits',
+      'click .save-edit-table': 'saveEdits',
+      'click .cancel-edit-table': 'cancelEdits',
     },
 
     initialize: function(options) {
@@ -148,6 +148,7 @@
       table.parentElement.replaceChild(initialTable, table);
     },
 
+    // start editing an HTML table
     setTable: function(table) {
       var self = this;
 
@@ -172,18 +173,22 @@
         this.ckeditor.on('contentDom', function(e) {
           var table = self.ckeditor.element.$.firstElementChild;
 
-          // TODO: ckeditor strips id from the table elem
+          // ckeditor strips id from the table elem
           table.id = self.initialTable.id;
 
           self.editor.setTable(table);
           self.editor.cells[0][0].click();
         });
+
+        this.trigger('start');
       } else {
         this.$('.table-editor-buttons').hide();
         this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
 
         this.editor.setTable(null);
         this.initialTable = null;
+
+        this.trigger('finish');
       }
     },
 

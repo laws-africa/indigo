@@ -193,12 +193,15 @@
     },
 
     selectionChanged: function() {
-      $('.table-merge-cells').toggleClass('active', _.any(this.editor.getSelectedCells(), function(c) {
-        return c.colSpan > 1 || c.rowSpan > 1;
-      }));
-      $('.table-toggle-heading').toggleClass('active', _.any(this.editor.getSelectedCells(), function(c) {
-        return c.tagName == 'TH';
-      }));
+      var selected = this.editor.getSelectedCells(),
+          merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
+          headings = _.any(selected, function(c) { return c.tagName == 'TH'; });
+
+      $('.table-merge-cells')
+        .prop('disabled', !merged && selected.length < 2)
+        .toggleClass('active', merged);
+
+      $('.table-toggle-heading').toggleClass('active', headings);
     },
 
     insertRowAbove: function() {

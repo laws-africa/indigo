@@ -651,6 +651,10 @@ legend {
 .table-editor-wrapper {
   .btn-toolbar {
     margin-bottom: 5px;
+
+    .btn-group {
+      float: right;
+    }
   }
 
   .when-active {

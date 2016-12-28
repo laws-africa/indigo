@@ -4,7 +4,12 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The TableEditorView handles inline editing of tables.
+  /* The TableEditorView handles inline editing of tables.
+   * It works in conjunction with CKEditor and the standalone TableEditor
+   * support script. CKEditor provides the actual editing support and
+   * enforces decent HTML. The TableEditor script treats the table like
+   * an Excel spreadsheet and allows adding rows, merging cells, etc.
+   */
   Indigo.TableEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
@@ -172,7 +177,7 @@
           table.id = self.initialTable.id;
 
           self.editor.setTable(table);
-          self.editor.cells[0][0].focus();
+          self.editor.cells[0][0].click();
         });
       } else {
         this.$('.table-editor-buttons').hide();

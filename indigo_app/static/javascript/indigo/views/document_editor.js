@@ -444,6 +444,8 @@
       var $btn = $(e.currentTarget),
           table = document.getElementById($btn.data('table-id'));
       this.tableEditor.setTable(table);
+      // disable other table edit buttons
+      this.$('.edit-table').prop('disabled', true);
     },
 
     tableEditStart: function() {
@@ -454,6 +456,8 @@
     tableEditFinish: function() {
       this.$('.edit-text').show();
       this.$('.edit-lime').prop('disabled', false);
+      // enable all table edit buttons
+      this.$('.edit-table').prop('disabled', false);
     },
 
     stopEditing: function() {

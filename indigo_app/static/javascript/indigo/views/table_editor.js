@@ -21,17 +21,19 @@
       'click .table-delete-column': 'deleteColumn',
       'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
-      'click .save-edit-table': 'saveEdits',
-      'click .cancel-edit-table': 'cancelEdits',
+      'click .save-edit-table': 'saveChanges',
+      'click .cancel-edit-table': 'discardChanges',
     },
 
     initialize: function(options) {
       var self = this;
 
       this.view = options.view;
+      this.documentContent = options.documentContent;
       this.editor = new TableEditor();
       this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
       this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
+      this.editing = false;
 
       this.ckeditor = null;
       // setup CKEditor
@@ -49,22 +51,24 @@
         });
     },
 
-    saveEdits: function(e) {
+    saveChanges: function(e) {
+      if (!this.editing) return;
+
       var table = this.editor.table,
-          oldTable = this.view.documentContent.xmlDocument.getElementById(this.editor.table.id);
+          oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.id);
 
       // stop editing
       this.editor.table.parentElement.contentEditable = "false";
       this.ckeditor.destroy();
       this.ckeditor = null;
-      this.setTable(null);
+      this.editTable(null);
 
       // get new xml
       table = this.tableToAkn(table);
 
       // update DOM
-      this.view.documentContent.replaceNode(oldTable, [table]);
-      this.view.sourceEditor.render();
+      this.documentContent.replaceNode(oldTable, [table]);
+      this.view.render();
     },
 
     tableToAkn: function(table) {
@@ -74,16 +78,17 @@
       var xml = $.parseXML(new XMLSerializer().serializeToString(table));
 
       // xhtml -> akn
-      return this.htmlTransform.transformToFragment(xml.firstChild, this.view.documentContent.xmlDocument);
+      return this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
     },
 
-    cancelEdits: function(e) {
+    discardChanges: function(e) {
+      if (!this.editing) return;
       if (!confirm("You'll lose you changes, are you sure?")) return;
 
       var table = this.editor.table,
           initialTable = this.initialTable;
 
-      this.setTable(null);
+      this.editTable(null);
       table.parentElement.contentEditable = "false";
 
       // nuke the active ckeditor instance, if any
@@ -97,7 +102,7 @@
     },
 
     // start editing an HTML table
-    setTable: function(table) {
+    editTable: function(table) {
       var self = this;
 
       if (this.editor.table == table)
@@ -106,7 +111,7 @@
       if (table) {
         // cancel existing edit
         if (this.editor.table) {
-          this.cancelEdits();
+          this.discardChanges();
         }
 
         this.initialTable = table.cloneNode(true);
@@ -128,6 +133,7 @@
           self.editor.cells[0][0].click();
         });
 
+        this.editing = true;
         this.trigger('start');
       } else {
         this.$('.table-editor-buttons').hide();
@@ -136,6 +142,7 @@
         this.editor.setTable(null);
         this.initialTable = null;
 
+        this.editing = false;
         this.trigger('finish');
       }
     },

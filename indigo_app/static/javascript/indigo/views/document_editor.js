@@ -50,9 +50,15 @@
       this.textEditor.setShowPrintMargin(false);
       this.textEditor.$blockScrolling = Infinity;
 
+      // setup table editor
+      this.tableEditor = new Indigo.TableEditorView({view: this, documentContent: this.view.documentContent});
+      this.tableEditor.on('start', this.tableEditStart, this);
+      this.tableEditor.on('finish', this.tableEditFinish, this);
+
       this.view.$el.find('.text-editor-buttons .btn.save').on('click', _.bind(this.saveTextEditor, this));
       this.view.$el.find('.text-editor-buttons .btn.cancel').on('click', _.bind(this.closeTextEditor, this));
       this.view.$el.find('.btn.edit-text').on('click', _.bind(this.editText, this));
+      this.view.$el.on('click', '.btn.edit-table', _.bind(this.editTable, this));
 
       var textTransform = new XSLTProcessor();
       $.get('/static/xsl/act_text.xsl')
@@ -202,6 +208,7 @@
 
     editFragment: function(node) {
       // edit node, a node in the XML document
+      this.tableEditor.discardChanges();
       this.closeTextEditor();
       this.render();
       this.view.$el.find('.document-sheet-container').scrollTop(0);
@@ -231,6 +238,14 @@
 
     // Save the content of the XML editor into the DOM, returns a Deferred
     saveChanges: function() {
+      this.tableEditor.saveChanges();
+      this.closeTextEditor();
+      return $.Deferred().resolve();
+    },
+
+    // Discard the content of the editor, returns a Deferred
+    discardChanges: function() {
+      this.tableEditor.discardChanges();
       this.closeTextEditor();
       return $.Deferred().resolve();
     },
@@ -249,7 +264,7 @@
 
       for (var i = 0; i < tables.length; i++) {
         var table = tables[i],
-            w = this.view.tableEditor.tableWrapper.cloneNode(true),
+            w = this.tableEditor.tableWrapper.cloneNode(true),
             $w = $(w);
 
         $w.find('button').data('table-id', table.id);
@@ -258,6 +273,26 @@
         // directly attached to the table element
         $w.find('.table-container').append(table);
       }
+    },
+
+    editTable: function(e) {
+      var $btn = $(e.currentTarget),
+          table = document.getElementById($btn.data('table-id'));
+      this.tableEditor.editTable(table);
+      // disable other table edit buttons
+      this.view.$('.edit-table').prop('disabled', true);
+    },
+
+    tableEditStart: function() {
+      this.view.$('.edit-text').hide();
+      this.view.$('.edit-lime').prop('disabled', true);
+    },
+
+    tableEditFinish: function() {
+      this.view.$('.edit-text').show();
+      this.view.$('.edit-lime').prop('disabled', false);
+      // enable all table edit buttons
+      this.view.$('.edit-table').prop('disabled', false);
     },
 
     resize: function() {},
@@ -390,6 +425,11 @@
       }
     },
 
+    // Discard the content of the LIME editor, returns a Deferred
+    discardChanges: function() {
+      return $.Deferred().resolve();
+    },
+
     resize: function() {
       LIME.app.resize();
     },
@@ -404,7 +444,6 @@
       'click .btn.edit-lime': 'toggleLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
-      'click .btn.edit-table': 'editTable',
     },
 
     initialize: function(options) {
@@ -422,9 +461,6 @@
       // setup the editor controllers
       this.sourceEditor = new Indigo.SourceEditorController({view: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
-      this.tableEditor = new Indigo.TableEditorView({view: this});
-      this.tableEditor.on('start', this.tableEditStart, this);
-      this.tableEditor.on('finish', this.tableEditFinish, this);
 
       this.showDocumentSheet();
     },
@@ -440,30 +476,10 @@
         });
     },
 
-    editTable: function(e) {
-      var $btn = $(e.currentTarget),
-          table = document.getElementById($btn.data('table-id'));
-      this.tableEditor.setTable(table);
-      // disable other table edit buttons
-      this.$('.edit-table').prop('disabled', true);
-    },
-
-    tableEditStart: function() {
-      this.$('.edit-text').hide();
-      this.$('.edit-lime').prop('disabled', true);
-    },
-
-    tableEditFinish: function() {
-      this.$('.edit-text').show();
-      this.$('.edit-lime').prop('disabled', false);
-      // enable all table edit buttons
-      this.$('.edit-table').prop('disabled', false);
-    },
-
     stopEditing: function() {
       if (this.activeEditor && this.editing) {
         this.editing = false;
-        return this.activeEditor.saveChanges();
+        return this.activeEditor.discardChanges();
       } else {
         this.editing = false;
         return $.Deferred().resolve();

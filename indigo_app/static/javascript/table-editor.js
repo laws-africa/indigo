@@ -22,9 +22,6 @@ function TableEditor(table) {
   };
 
   self.attach = function() {
-    // make cells editable
-    self.$table.find('td, th').attr('contenteditable', 'true');
-
     // event handlers
     self.$table.on('mousedown', 'td, th', self.cellFocused);
     self.$table.on('mouseover', 'td, th', self.overCell);
@@ -38,9 +35,6 @@ function TableEditor(table) {
     self.$table.off('mouseover', 'td, th', self.overCell);
     self.$table.off('mousedown', 'td, th', self.mouseDown);
     self.$table.off('mouseup', 'td, th', self.mouseUp);
-
-    // make cells un-editable
-    self.$table.find('td, th').removeAttr('contenteditable');
   };
 
   self.mapTable = function() {
@@ -92,7 +86,7 @@ function TableEditor(table) {
     if (index === 0) {
       // first row, just add cells
       for (i = 0; i < width; i++) {
-        row.insertCell().contentEditable = 'true';
+        row.insertCell();
       }
 
     } else {
@@ -104,7 +98,7 @@ function TableEditor(table) {
         // only insert a cell if the above cell doesn't span this one
         if (above.coords[1] + above.rowSpan <= index) {
           // doesn't span, add the cell
-          row.insertCell().contentEditable = 'true';
+          row.insertCell();
         } else {
           // it does span this row
           above.rowSpan += 1;
@@ -126,7 +120,7 @@ function TableEditor(table) {
     if (index === 0) {
       // first column, just add cells
       for (i = 0; i < height; i++) {
-        rows[i].insertCell(0).contentEditable = 'true';
+        rows[i].insertCell(0);
       }
 
     } else {
@@ -145,10 +139,9 @@ function TableEditor(table) {
 
           if (left) {
             var newCell = document.createElement(left.tagName);
-            newCell.contentEditable = 'true';
             left.insertAdjacentElement('afterend', newCell);
           } else {
-            rows[y].insertCell(0).contentEditable = 'true';
+            rows[y].insertCell(0);
           }
         } else {
           // it does span this column
@@ -383,7 +376,6 @@ function TableEditor(table) {
     function appendCells(cell, cols) {
       for (var c = 0; c < cols; c++) {
         var newCell = document.createElement(cell.tagName);
-        newCell.contentEditable = 'true';
         cell.insertAdjacentElement('afterend', newCell);
       }
     }
@@ -421,7 +413,6 @@ function TableEditor(table) {
 
             if (!cell && col < 0) {
               cell = rowElem.insertCell(0);
-              cell.contentEditable = 'true';
               cols--;
             }
           }

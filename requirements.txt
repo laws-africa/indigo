@@ -20,7 +20,7 @@ django-taggit-serializer==0.1.1
 django-wkhtmltopdf==2.0.3
 djangorestframework==3.2.3
 djangorestframework-xml==1.2.0
--e git+https://github.com/aerkalov/ebooklib.git@a87ef643690a89d8a72389c65073913bde58d1df#egg=EbookLib-master
+git+https://github.com/aerkalov/ebooklib.git@a87ef643690a89d8a72389c65073913bde58d1df#egg=EbookLib-master
 enum34==1.0.4
 futures==3.0.3
 gevent==1.0.1

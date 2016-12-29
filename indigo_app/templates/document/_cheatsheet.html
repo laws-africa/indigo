@@ -1,0 +1,103 @@
+<div class="modal fade" tabindex="-1" role="dialog" id="cheatsheet-modal">
+  <div class="modal-dialog modal-lg cheatsheet" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Indigo Editor Cheatsheet</h4>
+      </div>
+      <div class="modal-body">
+
+        <section class="clearfix">
+          <pre>PREFACE</pre>
+          <p>Starts the preface of the document.<br>Must come before preamble and body.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>PREAMBLE</pre>
+          <p>Starts the preamble of the document.<br>Must come after the preface and before the body.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>Chapter 2 - Interpretation
+
+Chapter 2</pre>
+          <p>Starts a new chapter.<br>The chapter number is required, but the heading is optional.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>Part 2 - Interpretation
+
+Part 2</pre>
+          <p>Starts a new part.<br>The part number is required, but the heading is optional.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>2. Definitions
+
+3.
+A section without a heading.</pre>
+          <p>Starts a new section.<br>The section heading is optional.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>(2) The content of subsection 2</pre>
+          <p>Starts a new numbered subsection.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>The following rules apply:
+(a) first rule,
+(b) second rule, and
+(c) third rule.</pre>
+          <p>Creates a numbered list.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>Statement or subsection without a number.</pre>
+          <p>Plain paragraphs without a number can be written as-is.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>Schedule
+
+Schedule - Second Schedule
+
+Schedule 3 - Important Title
+
+Schedule 4 - Schedule with a Heading
+The Heading</pre>
+          <p>Starts a new schedule.<br>The number, title and heading are all optional. The heading must be on the next line.</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>{|
+|-
+! header 1
+! header 2
+! header 3
+|-
+| row 1, cell 1
+| row 1, cell 2
+| row 1, cell 3
+|-
+| row 2, cell 1
+| row 2, cell 2
+| row 2, cell 3
+|}</pre>
+          <p>Draws a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.</p>
+        </section>
+        <section class="clearfix">
+          <pre>\1. An item that isn't a section
+\(a) text that isn't a list item
+\Chapter that isn't a chapter</pre>
+          <p>Escape special items by starting the line with a backslash.<br>This prevents Indigo from interpreting special headings or numbers. They're treated as regular text instead.</p>
+        </section>
+
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-link" href="http://indigo.readthedocs.org/en/latest/guide/editing.html" target="_blank">Full editor documentation</a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

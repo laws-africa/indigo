@@ -60,7 +60,6 @@ We describe using Heroku below.
 5. Set config options::
 
     $ heroku config:set indigo \
-        BUILDPACK_URL=https://github.com/ddollar/heroku-buildpack-multi.git \
         DISABLE_COLLECTSTATIC=1 \
         DJANGO_DEBUG=false \
         DJANGO_SECRET_KEY=some random characters \

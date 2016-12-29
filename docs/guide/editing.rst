@@ -133,12 +133,15 @@ Follow these guidelines to tell Indigo about the structure of your document:
 
       (b) sublist item b
 
-- Start a Schedule like this::
+- Start a Schedule like the example below. The number ``1``, the ``Title`` and ``Heading`` parts are optional, you can leave them out if necessary::
 
       Schedule 1 - Title
       Heading
-
-The number, ``Title`` and ``Heading`` are optional, you can leave them out if necessary.
+      
+      or
+      
+      Schedule - First Schedule
+      Subtitle
 
 
 Tables
@@ -184,6 +187,26 @@ row 1, cell 1 row 1, cell 2 row 1, cell 3
 Notice how we don't explicitly make the header row bold. We simply indicate in the **structure** that those cells
 are headers by using ``!`` at the start of the cell's line instead of the normal ``|``. Indigo will format the cell appropriately.
 
+Telling Indigo to Ignore Special Items
+--------------------------------------
+
+Sometimes it's useful to be able to tell Indigo not to interpret a line
+specially. Do this by starting the line with a backslash ``\``.
+
+This is particularly useful when a paragraph starts with a text that Indigo
+would normally interpret as a section or subsection. For example::
+
+   Fill in this form:
+
+   \1. State .......................................
+   \2. Date Received ..........................
+   \3. Checked ..................................
+   \4. Certificate Issued .......................
+   \5. Certificate No. ..........................
+   \6. Treasury Receipt No. .................
+
+By starting each line with ``\`` Indigo knows that it shouldn't treat those
+lines as section numbers.
 
 Adding new Chapters, Parts and Sections
 ---------------------------------------

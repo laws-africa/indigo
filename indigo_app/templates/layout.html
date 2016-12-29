@@ -59,8 +59,11 @@
         <div class="btn-group">
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-question-circle"></i></button>
           <ul class="pull-right dropdown-menu dropdown-right">
+            <li><a href="#cheatsheet-modal" data-toggle="modal"><i class="fa fa-info-circle fa-fw"></i> Editor Cheatsheet</a></li>
             <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank"><i class="fa fa-question fa-fw"></i> Documentation</a></li>
-            <li><a href="mailto:mariyab@africanlii.org" target="_blank"><i class="fa fa-user fa-fw"></i> Request an account</a></li>
+            {% if SUPPORT_EMAIL %}
+            <li><a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank"><i class="fa fa-user fa-fw"></i> Request an account</a></li>
+            {% endif %}
             <li><a href="mailto:greg@code4sa.org" target="_blank"><i class="fa fa-envelope fa-fw"></i> Feedback</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="https://github.com/Code4SA/indigo" target="_blank"><i class="fa fa-github fa-fw"></i> Indigo on GitHub</a></li>
@@ -79,5 +82,6 @@
   {% include "user/_login_modal.html" %}
   {% include "user/_profile_modal.html" %}
   {% include "user/_change_password_modal.html" %}
+  {% include "document/_cheatsheet.html" %}
 
 {% endblock page-content %}

@@ -1,4 +1,4 @@
 source 'https://rubygems.org'
 ruby '2.1.6'
 
-gem 'slaw', '~> 0.9.0'
+gem 'slaw', '~> 0.10.1'

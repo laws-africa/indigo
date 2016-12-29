@@ -48,8 +48,8 @@
       // setup text editor
       this.$textEditor = this.$('.document-text-editor');
       this.textEditor = ace.edit(this.$(".document-text-editor .ace-editor")[0]);
-      this.textEditor.setTheme("ace/theme/chrome");
-      this.textEditor.getSession().setMode("ace/mode/text");
+      this.textEditor.setTheme("ace/theme/xcode");
+      this.textEditor.getSession().setMode("ace/mode/indigo");
       this.textEditor.setValue();
       this.textEditor.getSession().setUseWrapMode(true);
       this.textEditor.setShowPrintMargin(false);

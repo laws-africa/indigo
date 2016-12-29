@@ -4,17 +4,22 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The SourceEditorController manages the interaction between
-  // the model, the document editor view, and the source (xml) and
+  // The SourceEditorView manages the interaction between
+  // the model, the wrapping document editor view, and the source (xml) and
   // text editor components.
-  Indigo.SourceEditorController = function(options) {
-    this.initialize.apply(this, arguments);
-  };
-  _.extend(Indigo.SourceEditorController.prototype, Backbone.Events, {
+  Indigo.SourceEditorView = Backbone.View.extend({
+    el: '#content-tab',
+    events: {
+      'click .text-editor-buttons .btn.save': 'saveTextEditor',
+      'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
+      'click .btn.edit-text': 'editText',
+      'click .btn.edit-table': 'editTable',
+    },
+
     initialize: function(options) {
       var self = this;
 
-      this.view = options.view;
+      this.parent = options.parent;
       this.name = 'source';
       this.grammar_fragments = {
         chapter: 'chapters',
@@ -33,7 +38,7 @@
         });
 
       // setup xml editor
-      this.xmlEditor = ace.edit(this.view.$el.find(".document-xml-editor .ace-editor")[0]);
+      this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
       this.xmlEditor.setTheme("ace/theme/monokai");
       this.xmlEditor.getSession().setMode("ace/mode/xml");
       this.xmlEditor.setValue();
@@ -41,8 +46,8 @@
       this.onEditorChange = _.debounce(_.bind(this.xmlEditorChanged, this), 500);
 
       // setup text editor
-      this.$textEditor = this.view.$el.find('.document-text-editor');
-      this.textEditor = ace.edit(this.view.$el.find(".document-text-editor .ace-editor")[0]);
+      this.$textEditor = this.$('.document-text-editor');
+      this.textEditor = ace.edit(this.$(".document-text-editor .ace-editor")[0]);
       this.textEditor.setTheme("ace/theme/chrome");
       this.textEditor.getSession().setMode("ace/mode/text");
       this.textEditor.setValue();
@@ -51,14 +56,9 @@
       this.textEditor.$blockScrolling = Infinity;
 
       // setup table editor
-      this.tableEditor = new Indigo.TableEditorView({view: this, documentContent: this.view.documentContent});
+      this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
-
-      this.view.$el.find('.text-editor-buttons .btn.save').on('click', _.bind(this.saveTextEditor, this));
-      this.view.$el.find('.text-editor-buttons .btn.cancel').on('click', _.bind(this.closeTextEditor, this));
-      this.view.$el.find('.btn.edit-text').on('click', _.bind(this.editText, this));
-      this.view.$el.on('click', '.btn.edit-table', _.bind(this.editTable, this));
 
       var textTransform = new XSLTProcessor();
       $.get('/static/xsl/act_text.xsl')
@@ -72,32 +72,31 @@
       e.preventDefault();
 
       // disable the edit button
-      this.view.$el.find('.btn.edit-text').prop('disabled', true);
+      this.$('.btn.edit-text').prop('disabled', true);
 
       // ensure source code is hidden
-      this.view.$el.find('.btn.show-source.active').click();
+      this.$('.btn.show-source.active').click();
 
       var self = this;
-      var $editable = this.view.$el.find('.akoma-ntoso').children().first();
+      var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
-      var text = this.xmlToText(this.view.fragment);
+      var text = this.xmlToText(this.parent.fragment);
 
       // show the text editor
-      this.view.$el
-        .find('.document-content-view, .document-content-header')
+      this.$('.document-content-view, .document-content-header')
         .addClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', true);
 
       this.$textEditor
-        .data('fragment', this.view.fragment.tagName)
+        .data('fragment', this.parent.fragment.tagName)
         .show();
 
       this.textEditor.setValue(text);
       this.textEditor.gotoLine(1, 0);
       this.textEditor.focus();
 
-      this.view.$el.find('.document-sheet-container').scrollTop(0);
+      this.$('.document-sheet-container').scrollTop(0);
     },
 
     xmlToText: function(element) {
@@ -112,8 +111,8 @@
 
     saveTextEditor: function(e) {
       var self = this;
-      var $editable = this.view.$el.find('.akoma-ntoso').children().first();
-      var $btn = this.view.$el.find('.text-editor-buttons .btn.save');
+      var $editable = this.$('.akoma-ntoso').children().first();
+      var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragment = this.$textEditor.data('fragment');
       fragment = this.grammar_fragments[fragment] || fragment;
@@ -121,7 +120,7 @@
       // should we delete the item?
       if (!content.trim() && fragment != 'akomaNtoso') {
         if (confirm('Go ahead and delete this section from the document?')) {
-          this.view.removeFragment();
+          this.parent.removeFragment();
         }
         return;
       }
@@ -147,7 +146,7 @@
             newFragment = newFragment.documentElement.children;
           }
 
-          self.view.updateFragment(self.view.fragment, newFragment);
+          self.parent.updateFragment(self.parent.fragment, newFragment);
           self.closeTextEditor();
           self.render();
           self.setXmlEditorValue(Indigo.toXml(newFragment[0]));
@@ -199,8 +198,7 @@
         this.pendingTextSave.reject();
         this.pendingTextSave = null;
       }
-      this.view.$el
-        .find('.document-content-view, .document-content-header')
+      this.$('.document-content-view, .document-content-header')
         .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', false);
@@ -211,7 +209,7 @@
       this.tableEditor.discardChanges();
       this.closeTextEditor();
       this.render();
-      this.view.$el.find('.document-sheet-container').scrollTop(0);
+      this.$('.document-sheet-container').scrollTop(0);
 
       this.setXmlEditorValue(Indigo.toXml(node));
     },
@@ -232,7 +230,7 @@
       // TODO: handle errors here
       var newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
 
-      this.view.updateFragment(this.view.fragment, [newFragment]);
+      this.parent.updateFragment(this.parent.fragment, [newFragment]);
       this.render();
     },
 
@@ -251,11 +249,11 @@
     },
 
     render: function() {
-      if (this.htmlTransform && this.view.fragment) {
-        var html = this.htmlTransform.transformToFragment(this.view.fragment, document);
+      if (this.htmlTransform && this.parent.fragment) {
+        var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
         this.makeTablesEditable(html);
-        this.view.$el.find('.akoma-ntoso').html('').get(0).appendChild(html);
+        this.$('.akoma-ntoso').html('').get(0).appendChild(html);
       }
     },
 
@@ -280,19 +278,19 @@
           table = document.getElementById($btn.data('table-id'));
       this.tableEditor.editTable(table);
       // disable other table edit buttons
-      this.view.$('.edit-table').prop('disabled', true);
+      this.$('.edit-table').prop('disabled', true);
     },
 
     tableEditStart: function() {
-      this.view.$('.edit-text').hide();
-      this.view.$('.edit-lime').prop('disabled', true);
+      this.$('.edit-text').hide();
+      this.$('.edit-lime').prop('disabled', true);
     },
 
     tableEditFinish: function() {
-      this.view.$('.edit-text').show();
-      this.view.$('.edit-lime').prop('disabled', false);
+      this.$('.edit-text').show();
+      this.$('.edit-lime').prop('disabled', false);
       // enable all table edit buttons
-      this.view.$('.edit-table').prop('disabled', false);
+      this.$('.edit-table').prop('disabled', false);
     },
 
     resize: function() {},
@@ -458,8 +456,8 @@
       this.tocView = options.tocView;
       this.tocView.on('item-selected', this.editTocItem, this);
 
-      // setup the editor controllers
-      this.sourceEditor = new Indigo.SourceEditorController({view: this});
+      // setup the editor views
+      this.sourceEditor = new Indigo.SourceEditorView({parent: this});
       this.limeEditor = new Indigo.LimeEditorController({view: this});
 
       this.showDocumentSheet();

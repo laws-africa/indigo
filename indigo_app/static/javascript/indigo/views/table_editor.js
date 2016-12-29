@@ -28,7 +28,7 @@
     initialize: function(options) {
       var self = this;
 
-      this.view = options.view;
+      this.parent = options.parent;
       this.documentContent = options.documentContent;
       this.editor = new TableEditor();
       this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
@@ -68,7 +68,7 @@
 
       // update DOM
       this.documentContent.replaceNode(oldTable, [table]);
-      this.view.render();
+      this.parent.render();
     },
 
     tableToAkn: function(table) {

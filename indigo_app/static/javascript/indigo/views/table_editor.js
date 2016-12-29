@@ -4,7 +4,12 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  // The TableEditorView handles inline editing of tables.
+  /* The TableEditorView handles inline editing of tables.
+   * It works in conjunction with CKEditor and the standalone TableEditor
+   * support script. CKEditor provides the actual editing support and
+   * enforces decent HTML. The TableEditor script treats the table like
+   * an Excel spreadsheet and allows adding rows, merging cells, etc.
+   */
   Indigo.TableEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
@@ -14,149 +19,144 @@
       'click .table-insert-column-right': 'insertColumnRight',
       'click .table-delete-row': 'deleteRow',
       'click .table-delete-column': 'deleteColumn',
-      'click .table-merge-cells': 'mergeCells',
-      'click .table-split-cells': 'splitCells',
+      'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
-      'click .table-editor-wrapper .save-edit-table': 'saveEdits',
-      'click .table-editor-wrapper .cancel-edit-table': 'cancelEdits',
+      'click .save-edit-table': 'saveChanges',
+      'click .cancel-edit-table': 'discardChanges',
     },
 
     initialize: function(options) {
-      this.view = options.view;
+      var self = this;
+
+      this.parent = options.parent;
+      this.documentContent = options.documentContent;
       this.editor = new TableEditor();
-      this.editor.onCellChanged = _.bind(this.cellChanged, this);
+      this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
       this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
+      this.editing = false;
+
+      this.ckeditor = null;
+      // setup CKEditor
+      CKEDITOR.disableAutoInline = true;
+      // make TH and TD editable
+      CKEDITOR.dtd.$editable.th = 1;
+      CKEDITOR.dtd.$editable.td = 1;
+
+      // setup transforms
+      var htmlTransform = new XSLTProcessor();
+      $.get('/static/xsl/html_to_akn.xsl')
+        .then(function(xml) {
+          htmlTransform.importStylesheet(xml);
+          self.htmlTransform = htmlTransform;
+        });
     },
 
-    saveEdits: function(e) {
-      var table = this.tableToAkn(this.editor.table),
-          oldTable = this.view.documentContent.xmlDocument.getElementById(this.editor.table.id);
+    saveChanges: function(e) {
+      if (!this.editing) return;
 
-      this.setTable(null);
+      var table = this.editor.table,
+          oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.id);
+
+      // stop editing
+      this.editor.table.parentElement.contentEditable = "false";
+      this.ckeditor.destroy();
+      this.ckeditor = null;
+      this.editTable(null);
+
+      // get new xml
+      table = this.tableToAkn(table);
 
       // update DOM
-      this.view.documentContent.replaceNode(oldTable, [table]);
-      this.view.sourceEditor.render();
+      this.documentContent.replaceNode(oldTable, [table]);
+      this.parent.render();
     },
 
     tableToAkn: function(table) {
-      var self = this,
-          xml = new XMLSerializer().serializeToString(table);
-      table = $.parseXML(xml).documentElement;
-      // for some reason, we must remove the xmlns attribute and then re-set it
-      table.removeAttribute("xmlns");
-      table.setAttribute("xmlns", this.view.documentContent.xmlDocument.documentElement.namespaceURI);
+      if (!this.htmlTransform) return null;
 
-      _.each(table.querySelectorAll("[contenteditable]"), function(n) {
-        n.removeAttribute("contenteditable");
-      });
+      // html -> string -> xml so that the XML is well formed
+      var xml = $.parseXML(new XMLSerializer().serializeToString(table));
 
-      _.each(table.querySelectorAll(".selected"), function(n) {
-        $(n).removeClass("selected");
-      });
-
-      _.each(table.querySelectorAll("[class]"), function(n) {
-        if (n.className === "") n.removeAttribute("class");
-      });
-
-      // TODO: remove tbody and tfoot
-
-      // transform br to eol
-      _.each(table.querySelectorAll("br"), function(br) {
-        br.parentElement.replaceChild(self.editor.renameNode(br, "eol"), br);
-      });
-
-      // transform akn-foo to <foo>, going bottom-up
-      var nodes = table.querySelectorAll('[class*="akn-"]');
-      for (var i = nodes.length-1; i >= 0; i--) {
-        var node = nodes[i],
-            aknClass = _.find(node.className.split(" "), function(c) {
-              return c.startsWith("akn-");
-            }),
-            newTag = aknClass.substring(4);
-
-        var newNode = this.editor.renameNode(node, newTag);
-
-        $(newNode).removeClass(aknClass);
-        if (newNode.className === "")
-          newNode.removeAttribute("class");
-
-        node.parentElement.replaceChild(newNode, node);
-      }
-
-      // ensure direct children of td, th tags are wrapped in p tags
-      _.each(table.querySelectorAll("td, th"), function(cell) {
-        if (!cell.hasChildNodes) return;
-
-        var lastP = null, next,
-            first = true;
-        for (var node = cell.childNodes[0]; node; node = next) {
-          next = node.nextSibling;
-
-          // trim leading and trailing whitespace
-          if ((first || next === null) && node.nodeType == node.TEXT_NODE && node.textContent.trim() === "") {
-            node.remove();
-            continue;
-          }
-
-          if (node.tagName == 'p') {
-            lastP = node;
-          } else {
-            if (lastP === null) {
-              lastP = node.ownerDocument.createElement('p');
-              node.parentElement.insertBefore(lastP, node);
-            }
-
-            lastP.appendChild(node);
-          }
-
-          first = false;
-        }
-      });
-
-      return table;
+      // xhtml -> akn
+      return this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
     },
 
-    cancelEdits: function(e) {
+    discardChanges: function(e) {
+      if (!this.editing) return;
       if (!confirm("You'll lose you changes, are you sure?")) return;
 
       var table = this.editor.table,
           initialTable = this.initialTable;
 
-      this.setTable(null);
+      this.editTable(null);
+      table.parentElement.contentEditable = "false";
+
+      // nuke the active ckeditor instance, if any
+      if (this.ckeditor) {
+        this.ckeditor.destroy(true);
+        this.ckeditor = null;
+      }
 
       // undo changes
       table.parentElement.replaceChild(initialTable, table);
     },
 
-    setTable: function(table) {
+    // start editing an HTML table
+    editTable: function(table) {
+      var self = this;
+
       if (this.editor.table == table)
         return;
 
       if (table) {
         // cancel existing edit
         if (this.editor.table) {
-          self.cancelEdits();
+          this.discardChanges();
         }
 
-        $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
-
         this.initialTable = table.cloneNode(true);
-        this.editor.setTable(table);
+        var container = table.parentElement;
 
+        $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
+        container.contentEditable = "true";
         this.$('.table-editor-buttons').show();
-        this.editor.cells[0][0].focus();
+
+        // attach the CKEditor to the wrapper div
+        this.ckeditor = CKEDITOR.inline(container);
+        this.ckeditor.on('contentDom', function(e) {
+          var table = self.ckeditor.element.$.firstElementChild;
+
+          // ckeditor strips id from the table elem
+          table.id = self.initialTable.id;
+
+          self.editor.setTable(table);
+          self.editor.cells[0][0].click();
+        });
+
+        this.editing = true;
+        this.trigger('start');
       } else {
         this.$('.table-editor-buttons').hide();
         this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
 
         this.editor.setTable(null);
         this.initialTable = null;
+
+        this.editing = false;
+        this.trigger('finish');
       }
     },
 
-    cellChanged: function() {
-      $('.table-toggle-heading').toggleClass('active', this.editor.activeCell && this.editor.activeCell.tagName == 'TH');
+    selectionChanged: function() {
+      var selected = this.editor.getSelectedCells(),
+          merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
+          headings = _.any(selected, function(c) { return c.tagName == 'TH'; });
+
+      $('.table-merge-cells')
+        .prop('disabled', !merged && selected.length < 2)
+        .toggleClass('active', merged);
+
+      $('.table-toggle-heading').toggleClass('active', headings);
     },
 
     insertRowAbove: function() {
@@ -193,16 +193,25 @@
       // update the active cell
     },
 
-    mergeCells: function(e) {
-      this.editor.mergeSelection();
-    },
+    toggleMergeCells: function(e) {
+      var merged = _.any(this.editor.getSelectedCells(), function(c) { return c.colSpan > 1 || c.rowSpan > 1; });
 
-    splitCells: function(e) {
-      this.editor.splitSelection();
+      if (merged) {
+        this.editor.splitSelection();
+      } else {
+        this.editor.mergeSelection();
+        this.selectionChanged();
+      }
     },
 
     toggleHeading: function(e) {
-      this.editor.toggleHeading();
+      var self = this,
+          selection = this.editor.getSelectedCells();
+
+      var heading = _.any(selection, function(c) { return c.tagName == 'TH'; });
+      _.each(selection, function(c) {
+        self.editor.toggleHeading(c, !heading);
+      });
     },
   });
 })(window);

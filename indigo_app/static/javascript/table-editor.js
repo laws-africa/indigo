@@ -2,6 +2,7 @@ function TableEditor(table) {
   var self = this;
 
   self.onCellChanged = function() {};
+  self.onSelectionChanged = function() {};
 
   self.setTable = function(table) {
     if (self.$table) {
@@ -21,11 +22,8 @@ function TableEditor(table) {
   };
 
   self.attach = function() {
-    // make cells editable
-    self.$table.find('td, th').attr('contenteditable', 'true');
-
     // event handlers
-    self.$table.on('focus', 'td, th', self.cellFocused);
+    self.$table.on('mousedown', 'td, th', self.cellFocused);
     self.$table.on('mouseover', 'td, th', self.overCell);
     self.$table.on('mousedown', 'td, th', self.mouseDown);
     self.$table.on('mouseup', 'td, th', self.mouseUp);
@@ -33,13 +31,10 @@ function TableEditor(table) {
 
   self.detach = function() {
     // detach events
-    self.$table.off('focus', 'td, th', self.cellFocused);
+    self.$table.off('mousedown', 'td, th', self.cellFocused);
     self.$table.off('mouseover', 'td, th', self.overCell);
     self.$table.off('mousedown', 'td, th', self.mouseDown);
     self.$table.off('mouseup', 'td, th', self.mouseUp);
-
-    // make cells un-editable
-    self.$table.find('td, th').removeAttr('contenteditable');
   };
 
   self.mapTable = function() {
@@ -91,7 +86,7 @@ function TableEditor(table) {
     if (index === 0) {
       // first row, just add cells
       for (i = 0; i < width; i++) {
-        row.insertCell().contentEditable = 'true';
+        row.insertCell();
       }
 
     } else {
@@ -103,7 +98,7 @@ function TableEditor(table) {
         // only insert a cell if the above cell doesn't span this one
         if (above.coords[1] + above.rowSpan <= index) {
           // doesn't span, add the cell
-          row.insertCell().contentEditable = 'true';
+          row.insertCell();
         } else {
           // it does span this row
           above.rowSpan += 1;
@@ -125,7 +120,7 @@ function TableEditor(table) {
     if (index === 0) {
       // first column, just add cells
       for (i = 0; i < height; i++) {
-        rows[i].insertCell(0).contentEditable = 'true';
+        rows[i].insertCell(0);
       }
 
     } else {
@@ -144,10 +139,9 @@ function TableEditor(table) {
 
           if (left) {
             var newCell = document.createElement(left.tagName);
-            newCell.contentEditable = 'true';
             left.insertAdjacentElement('afterend', newCell);
           } else {
-            rows[y].insertCell(0).contentEditable = 'true';
+            rows[y].insertCell(0);
           }
         } else {
           // it does span this column
@@ -233,13 +227,14 @@ function TableEditor(table) {
     return newnode;
   };
 
-  self.toggleHeading = function() {
-    if (!self.activeCell) return;
+  self.toggleHeading = function(cell, makeHeading) {
+    if (cell.tagName == 'TH' && makeHeading) return;
+    if (cell.tagName == 'TD' && !makeHeading) return;
 
-    var cell = self.renameNode(self.activeCell, self.activeCell.tagName == 'TH' ? 'td' : 'th');
-    self.activeCell.parentElement.replaceChild(cell, self.activeCell);
+    var newCell = self.renameNode(cell, makeHeading ? 'th' : 'td');
+    cell.parentElement.replaceChild(newCell, cell);
     self.mapTable();
-    self.activeCell = cell;
+    if (self.activeCell == cell) self.activeCell = newCell;
 
     cell.focus();
   };
@@ -266,6 +261,7 @@ function TableEditor(table) {
     ];
 
     self.highlightSelection();
+    self.onSelectionChanged();
   };
 
   self.highlightSelection = function() {
@@ -283,6 +279,10 @@ function TableEditor(table) {
     }
 
     return cells;
+  };
+
+  self.getSelectedCells = function() {
+    return self.getCellRange.apply(self, self.selection);
   };
 
   // Find the cell that spans coordinates (x, y)
@@ -376,7 +376,6 @@ function TableEditor(table) {
     function appendCells(cell, cols) {
       for (var c = 0; c < cols; c++) {
         var newCell = document.createElement(cell.tagName);
-        newCell.contentEditable = 'true';
         cell.insertAdjacentElement('afterend', newCell);
       }
     }
@@ -414,7 +413,6 @@ function TableEditor(table) {
 
             if (!cell && col < 0) {
               cell = rowElem.insertCell(0);
-              cell.contentEditable = 'true';
               cols--;
             }
           }
@@ -436,6 +434,10 @@ function TableEditor(table) {
       if (self.activeCell != e.target) {
         self.activeCell = e.target;
         self.activeCoords = self.activeCell.coords;
+
+        self.$table.find('.active').removeClass("active");
+        $(self.activeCell).addClass("active");
+
         self.setSelection.apply(self, self.activeCoords);
 
         self.onCellChanged();

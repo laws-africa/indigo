@@ -126,6 +126,10 @@
         this.ckeditor.on('contentDom', function(e) {
           var table = self.ckeditor.element.$.firstElementChild;
 
+          // we only make the active cell editable, this prevents weird
+          // text selection artifacts
+          self.ckeditor.element.$.contentEditable = false;
+
           // ckeditor strips id from the table elem
           table.id = self.initialTable.id;
 

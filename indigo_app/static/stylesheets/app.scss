@@ -679,12 +679,14 @@ legend {
       background-color: $selection-colour;
     }
 
-    .cke_focus {
-      th.active,
-      td.active {
-        outline: $selection-colour auto 5px;
-        background-color: transparent;
-      }
+    th.active,
+    td.active {
+      outline: $selection-colour auto 5px;
+    }
+
+    th.active.selected:focus,
+    td.active.selected:focus {
+      background-color: transparent;
     }
   }
 }

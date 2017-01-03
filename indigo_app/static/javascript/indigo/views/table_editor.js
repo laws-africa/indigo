@@ -32,6 +32,7 @@
       this.documentContent = options.documentContent;
       this.editor = new TableEditor();
       this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
+      this.editor.onCellChanged = _.bind(this.cellChanged, this);
       this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
       this.editing = false;
 
@@ -58,7 +59,6 @@
           oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.id);
 
       // stop editing
-      this.editor.table.parentElement.contentEditable = "false";
       this.ckeditor.destroy();
       this.ckeditor = null;
       this.editTable(null);
@@ -89,7 +89,6 @@
           initialTable = this.initialTable;
 
       this.editTable(null);
-      table.parentElement.contentEditable = "false";
 
       // nuke the active ckeditor instance, if any
       if (this.ckeditor) {
@@ -115,27 +114,11 @@
         }
 
         this.initialTable = table.cloneNode(true);
-        var container = table.parentElement;
-
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
-        container.contentEditable = "true";
         this.$('.table-editor-buttons').show();
 
-        // attach the CKEditor to the wrapper div
-        this.ckeditor = CKEDITOR.inline(container);
-        this.ckeditor.on('contentDom', function(e) {
-          var table = self.ckeditor.element.$.firstElementChild;
-
-          // we only make the active cell editable, this prevents weird
-          // text selection artifacts
-          self.ckeditor.element.$.contentEditable = false;
-
-          // ckeditor strips id from the table elem
-          table.id = self.initialTable.id;
-
-          self.editor.setTable(table);
-          self.editor.cells[0][0].click();
-        });
+        self.editor.setTable(table);
+        self.editor.cells[0][0].click();
 
         this.editing = true;
         this.trigger('start');
@@ -149,6 +132,17 @@
         this.editing = false;
         this.trigger('finish');
       }
+    },
+
+    cellChanged: function() {
+      // cell has changed, unbind and re-bind editor
+      if (this.ckeditor) {
+        this.ckeditor.element.$.contentEditable = false;
+        this.ckeditor.destroy();
+      }
+
+      this.editor.activeCell.contentEditable = true;
+      this.ckeditor = CKEDITOR.inline(this.editor.activeCell, {removePlugins: 'toolbar'});
     },
 
     selectionChanged: function() {

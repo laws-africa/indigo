@@ -430,12 +430,11 @@ function TableEditor(table) {
   /** Event handlers **/
 
   self.cellFocused = function(e) {
-    if (e.target.tagName == 'TH' || e.target.tagName === 'TD') {
-      if (self.activeCell != e.target) {
-        if (self.activeCell) self.activeCell.contentEditable = false;
+    var elem = e.currentTarget;
 
-        self.activeCell = e.target;
-        self.activeCell.contentEditable = true;
+    if (elem.tagName == 'TH' || elem.tagName === 'TD') {
+      if (self.activeCell != elem) {
+        self.activeCell = elem;
         self.activeCoords = self.activeCell.coords;
 
         self.$table.find('.active').removeClass("active");

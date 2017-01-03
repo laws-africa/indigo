@@ -689,6 +689,11 @@ legend {
       background-color: transparent;
     }
   }
+
+  td > p:last-child,
+  th > p:last-child {
+    margin-bottom: 0px;
+  }
 }
 
 .cheatsheet {

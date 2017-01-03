@@ -210,6 +210,8 @@
       _.each(selection, function(c) {
         self.editor.toggleHeading(c, !heading);
       });
+
+      this.selectionChanged();
     },
   });
 })(window);

@@ -103,19 +103,11 @@
   </xsl:template>
 
   <xsl:template match="a:p">
-    <xsl:call-template name="escape">
-      <xsl:with-param name="value" select="." />
-    </xsl:call-template>
+    <xsl:apply-templates/>
     <!-- p tags must end with a newline -->
     <xsl:text>
 
 </xsl:text>
-  </xsl:template>
-
-  <xsl:template match="a:listIntroduction|a:intro">
-    <xsl:call-template name="escape">
-      <xsl:with-param name="value" select="." />
-    </xsl:call-template>
   </xsl:template>
 
   <xsl:template match="a:blockList">
@@ -142,6 +134,13 @@
 </xsl:text>
     </xsl:if>
     <xsl:apply-templates select="./*[not(self::a:intro)]" />
+  </xsl:template>
+
+  <!-- first text nodes of these elems must be escaped if they have special chars -->
+  <xsl:template match="a:p/text()[1] | a:listIntroduction/text()[1] | a:intro/text()[1]">
+    <xsl:call-template name="escape">
+      <xsl:with-param name="value" select="." />
+    </xsl:call-template>
   </xsl:template>
 
   <!-- components/schedules -->

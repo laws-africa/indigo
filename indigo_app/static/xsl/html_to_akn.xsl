@@ -24,17 +24,20 @@
 		<xsl:element name="{name(.)}">
       <xsl:apply-templates select="@colspan | @rowspan" />
 
-      <xsl:for-each select="node()">
-        <xsl:choose>
-          <xsl:when test="name(.) = 'p'">
-            <xsl:apply-templates select="."/>
-          </xsl:when>
+      <p>
+        <xsl:for-each select="node()">
+          <xsl:choose>
+            <xsl:when test="name(.) = 'p'">
+              <!-- ignore p (we already have one) and do children -->
+              <xsl:apply-templates select="node()"/>
+            </xsl:when>
 
-          <xsl:otherwise>
-            <p><xsl:apply-templates select="."/></p>
-          </xsl:otherwise>
-        </xsl:choose>
-      </xsl:for-each>
+            <xsl:otherwise>
+              <xsl:apply-templates select="."/>
+            </xsl:otherwise>
+          </xsl:choose>
+        </xsl:for-each>
+      </p>
 
     </xsl:element>
   </xsl:template>
@@ -60,7 +63,7 @@
   <!-- text -->
 
   <xsl:template match="text()">
-    <xsl:value-of select="."/>
+    <xsl:value-of select="normalize-space(.)"/>
   </xsl:template>
 
 </xsl:stylesheet>

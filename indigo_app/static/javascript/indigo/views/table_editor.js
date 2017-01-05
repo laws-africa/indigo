@@ -74,7 +74,7 @@
     tableToAkn: function(table) {
       if (!this.htmlTransform) return null;
 
-      // html -> string -> xml so that the XML is well formed
+      // html -> string -> xhtml so that the XML is well formed
       var xml = $.parseXML(new XMLSerializer().serializeToString(table));
 
       // xhtml -> akn
@@ -142,7 +142,11 @@
       }
 
       this.editor.activeCell.contentEditable = true;
-      this.ckeditor = CKEDITOR.inline(this.editor.activeCell, {removePlugins: 'toolbar'});
+      this.ckeditor = CKEDITOR.inline(this.editor.activeCell, {
+        removePlugins: 'toolbar',
+        enterMode: CKEDITOR.ENTER_BR,
+        shiftEnterMode: CKEDITOR.ENTER_BR,
+      });
     },
 
     selectionChanged: function() {

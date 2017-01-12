@@ -29,7 +29,7 @@ class Slaw(object):
 
     def slaw(self, args):
         """ Call slaw with ``args`` """
-        cmd = ['slaw'] + args
+        cmd = ['bundle', 'exec', 'slaw'] + args
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()

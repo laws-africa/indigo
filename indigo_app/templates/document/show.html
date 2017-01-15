@@ -1,4 +1,5 @@
 {% extends "document/layout.html" %}
+{% load static %}
 
 {% block main-content %}
 
@@ -47,6 +48,10 @@ window.Indigo.countries = {{ countries_json|safe }};
 
 window.Indigo.Preloads.document = {{ document_json|safe }};
 window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
+
+CKEDITOR_BASEPATH = '/static/ckeditor/';
 </script>
+
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
 
 {% endblock %}

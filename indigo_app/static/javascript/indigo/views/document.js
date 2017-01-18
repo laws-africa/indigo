@@ -196,8 +196,10 @@
     save: function() {
       var self = this;
       var is_new = self.document.isNew();
-      var force = this.bodyEditorView.dirty || is_new;
       var deferred = null;
+
+      // always save properties if we save content
+      this.propertiesView.dirty = this.bodyEditorView.dirty || is_new;
 
       var fail = function() {
         self.$saveBtn
@@ -227,7 +229,7 @@
       // take precendence.
       deferred.then(function() {
         self.bodyEditorView.save().then(function() {
-          self.propertiesView.save(force).then(function() {
+          self.propertiesView.save().then(function() {
             self.attachmentsView.save().then(function() {
               if (is_new) {
                 // redirect

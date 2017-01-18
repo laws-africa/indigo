@@ -198,11 +198,11 @@
       }
     },
 
-    save: function(force) {
+    save: function() {
       // TODO: validation
 
       // don't do anything if it hasn't changed
-      if (!this.dirty && !force) {
+      if (!this.dirty) {
         return $.Deferred().resolve();
       }
 

@@ -255,6 +255,24 @@ button.btn-link.help {
   overflow-y: hidden;
 }
 
+.sheet-editor {
+  .quick-edit {
+    position: absolute;
+    left: 27px;
+    margin-top: 2px;
+
+    a {
+      color: #eee;
+      padding: 5px;
+    }
+
+    a:hover {
+      color: #e38d13;
+      text-decoration: none;
+    }
+  }
+}
+
 .ace-editor,
 #lime {
   width: 100%;

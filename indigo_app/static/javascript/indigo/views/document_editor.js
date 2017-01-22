@@ -12,8 +12,9 @@
     events: {
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
       'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
-      'click .btn.edit-text': 'editText',
+      'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
+      'click .quick-edit a': 'quickEdit',
     },
 
     initialize: function(options) {
@@ -28,6 +29,8 @@
         component: 'schedules',
         components: 'schedules_container',
       };
+      this.quickEditable = '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components';
+      this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fa fa-pencil"></i></a></div>');
 
       // setup renderer
       var htmlTransform = new XSLTProcessor();
@@ -68,8 +71,19 @@
         });
     },
 
-    editText: function(e) {
+    fullEdit: function(e) {
       e.preventDefault();
+      this.editFragmentText(this.parent.fragment);
+    },
+
+    quickEdit: function(e) {
+      var elemId = e.currentTarget.parentElement.parentElement.id;
+      var node = this.parent.fragment.querySelector('#' + elemId);
+      this.editFragmentText(node);
+    },
+
+    editFragmentText: function(fragment) {
+      this.fragment = fragment;
 
       // disable the edit button
       this.$('.btn.edit-text').prop('disabled', true);
@@ -80,7 +94,7 @@
       var self = this;
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
-      var text = this.xmlToText(this.parent.fragment);
+      var text = this.xmlToText(this.fragment);
 
       // show the text editor
       this.$('.document-content-view, .document-content-header')
@@ -89,7 +103,7 @@
         .prop('disabled', true);
 
       this.$textEditor
-        .data('fragment', this.parent.fragment.tagName)
+        .data('fragment', this.fragment.tagName)
         .show();
 
       this.textEditor.setValue(text);
@@ -120,7 +134,7 @@
       // should we delete the item?
       if (!content.trim() && fragment != 'akomaNtoso') {
         if (confirm('Go ahead and delete this section from the document?')) {
-          this.parent.removeFragment();
+          this.parent.removeFragment(this.fragment);
         }
         return;
       }
@@ -146,7 +160,7 @@
             newFragment = newFragment.documentElement.children;
           }
 
-          self.parent.updateFragment(self.parent.fragment, newFragment);
+          self.parent.updateFragment(self.fragment, newFragment);
           self.closeTextEditor();
           self.render();
           self.setXmlEditorValue(Indigo.toXml(newFragment[0]));
@@ -253,6 +267,7 @@
         var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
         this.makeTablesEditable(html);
+        this.makeElementsQuickEditable(html);
         this.$('.akoma-ntoso').html('').get(0).appendChild(html);
       }
     },
@@ -271,6 +286,13 @@
         // directly attached to the table element
         $w.find('.table-container').append(table);
       }
+    },
+
+    makeElementsQuickEditable: function(html) {
+      $(html.firstElementChild)
+        .find(this.quickEditable)
+        .addClass('quick-editable')
+        .prepend(this.quickEditTemplate);
     },
 
     editTable: function(e) {
@@ -504,14 +526,18 @@
       }
     },
 
-    removeFragment: function() {
-      this.documentContent.replaceNode(this.fragment, null);
+    removeFragment: function(fragment) {
+      fragment = fragment || this.fragment;
+      this.documentContent.replaceNode(fragment, null);
     },
 
     updateFragment: function(oldNode, newNodes) {
       this.updating = true;
       try {
-        this.fragment = this.documentContent.replaceNode(oldNode, newNodes);
+        var updated = this.documentContent.replaceNode(oldNode, newNodes);
+        if (oldNode == this.fragment) {
+          this.fragment = updated;
+        }
       } finally {
         this.updating = false;
       }

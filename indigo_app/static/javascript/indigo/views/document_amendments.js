@@ -132,13 +132,15 @@
 
       var amended_expressions = _.map(dates, function(date) {
         var doc = self.expressionSet.atDate(date);
-
-        return {
+        var info = {
           date: date,
           document: doc && doc.toJSON(),
           current: doc && doc.get('id') == document_id,
           amendments: _.map(self.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
         };
+        info.linkable = info.document && !info.current;
+
+        return info;
       });
 
       // initial publication

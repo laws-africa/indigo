@@ -40,9 +40,9 @@
     {{#each amended_expressions}}
       <li>
         <h5>
-          {{#if document}}<a href="/documents/{{ document.id }}">{{ date }}</a>{{else}}{{ date }}{{/if}}
+          {{#if linkable}}<a href="/documents/{{ document.id }}">{{ date }}</a>{{else}}{{ date }}{{/if}}
           {{#if initial}}<span class="label label-info initial">initial publication</span>{{/if}}
-          {{#if current}}<span class="label label-info current">currently editing</span>{{/if}}
+          {{#if current}}<span class="label label-info current">this document</span>{{/if}}
         </h5>
 
         {{#if amendments}}

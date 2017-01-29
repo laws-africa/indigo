@@ -94,6 +94,7 @@
     el: '.document-amendments-view',
     amendmentsTemplate: '#amendments-template',
     amendedVersionsTemplate: '#amended-versions-template',
+    amendmentExpressionsTemplate: '#amendment-expressions-template',
     events: {
       'click .add-amendment': 'addAmendment',
       'click .edit-amendment': 'editAmendment',
@@ -103,18 +104,50 @@
     initialize: function() {
       this.amendmentsTemplate = Handlebars.compile($(this.amendmentsTemplate).html());
       this.amendedVersionsTemplate = Handlebars.compile($(this.amendedVersionsTemplate).html());
+      this.amendmentExpressionsTemplate = Handlebars.compile($(this.amendmentExpressionsTemplate).html());
 
       this.model.on('change:amendments sync', this.render, this);
+      this.model.on('change:frbr_uri', this.frbrChanged, this);
+      this.frbrChanged();
 
       this.box = new Indigo.AmendmentView({model: null, document: this.model});
 
       this.stickit();
     },
 
+    frbrChanged: function() {
+      if (this.expressionSet) this.expressionSet.stopListening(this.expressionSet);
+      this.expressionSet = this.model.collection.expressionSet(this.model.get('frbr_uri'));
+      this.listenTo(this.expressionSet, 'add remove reset', this.render);
+      this.render();
+    },
+
     render: function() {
+      var self = this;
       var count = 0;
       var document_id = this.model.get('id');
       var amendments = this.model.get('amendments').toJSON();
+
+      // build up a view of amended expressions
+      var amended_expressions = _.map(this.expressionSet.dates, function(date) {
+        var doc = self.expressionSet.atDate(date);
+
+        return {
+          date: date,
+          document: doc && doc.toJSON(),
+          current: doc && doc.get('id') == document_id,
+          amendments: self.expressionSet.amendmentsAtDate(date),
+        };
+      });
+
+      // initial publication
+      if (amended_expressions.length > 0) {
+        amended_expressions[0].initial = amended_expressions[0].date == this.expressionSet.initialPublicationDate;
+      }
+
+      this.$el.find('.amendment-expressions').html(this.amendmentExpressionsTemplate({
+        amended_expressions: amended_expressions,
+      }));
 
       if (amendments.length > 0) {
         count = amendments.length;
@@ -179,6 +212,5 @@
         this.model.trigger('change change:amendments');
       }
     },
-
   });
 })(window);

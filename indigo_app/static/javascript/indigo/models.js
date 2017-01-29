@@ -144,7 +144,70 @@
     parse: function(response) {
       // TODO: handle actual pagination
       return response.results;
-    }
+    },
+
+    /**
+     * Return an ExpressionSet for the collection of documents for +frbr_uri+.
+     */
+    expressionSet: function(frbr_uri) {
+      // TODO: cache
+      return new Indigo.ExpressionSet(null, {library: this, frbr_uri: frbr_uri});
+    },
+  });
+
+  /**
+   * A collection of documents that are all expressions of the same work, based
+   * on the frbr_uri. Updated dynamically as document URIs change.
+   *
+   * TODO: factory function
+   */
+  Indigo.ExpressionSet = Backbone.Collection.extend({
+    model: Indigo.Document,
+    comparator: 'expression_date',
+
+    initialize: function(models, options) {
+      this.frbr_uri = options.frbr_uri;
+      this.library = options.library;
+
+      this.listenTo(this.library, 'reset add remove', this.build);
+      this.listenTo(this.library, 'change:frbr_uri', this.checkFrbrUriChange);
+      this.build();
+    },
+
+    build: function() {
+      this.reset(this.library.where({frbr_uri: this.frbr_uri}));
+
+      this.dates = _.uniq(this.pluck('expression_date'));
+      this.dates.sort();
+
+      this.initialPublicationDate = this.length === 0 ? null : this.at(0).get('publication_date');
+
+      // unique collection of amendments
+      this.amendments = _.inject(this.models, function(memo, doc) {
+        if (doc.get('amendments')) {
+          memo.concat(doc.get('amendments'));
+        }
+        return memo;
+      }, []);
+      this.amendments = _.uniq(this.amendments, false, function(a) {
+        return a.get('amending_uri');
+      });
+      this.amendments = new Backbone.Collection(this.amendments);
+    },
+
+    checkFrbrUriChange: function(model, new_value) {
+      if (new_value == this.frbr_uri || model.previous('frbr_uri') == frbr_uri) {
+        this.build();
+      }
+    },
+
+    atDate: function(date) {
+      return this.findWhere({expression_date: date});
+    },
+
+    amendmentsAtDate: function(date) {
+      return this.amendments.where({date: date});
+    },
   });
 
   Indigo.User = Backbone.Model.extend({

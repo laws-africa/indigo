@@ -6,6 +6,11 @@
 </header>
 
 <div class="boxed-group-inner document-amendments-view">
+
+  <div class="amendment-expressions"></div>
+
+  <hr>
+
   <p>These are applied amendments which have lead to <strong>this version</strong> of the document.</p>
 
   <div class="amendments-list"></div>
@@ -23,6 +28,31 @@
   </div>
 
   <div class="amended-versions-list"></div>
+
+  <script id="amendment-expressions-template" type="text/x-handlebars-template">
+  {% verbatim %}
+
+  <ol class="expression-timeline">
+    {{#each amended_expressions}}
+      <li>
+        <h5>
+          {{#if document}}<a href="/documents/{{ document.id }}">{{ date }}</a>{{else}}{{ date }}{{/if}}
+          {{#if initial}}<span class="label label-info initial">initial publication</span>{{/if}}
+          {{#if current}}<span class="label label-info current">currently editing</span>{{/if}}
+        </h5>
+
+        {{#if amendments}}
+          <ul class="amendments">
+          {{#each amendments}}
+            <li>Amended by {{ title }}</li>
+          {{/each}}
+          </ul>
+        {{/if}}
+      </li>
+    {{/each}}
+  </ol>
+  {% endverbatim %}
+  </script>
 
   <script id="amendments-template" type="text/x-handlebars-template">
   {% verbatim %}

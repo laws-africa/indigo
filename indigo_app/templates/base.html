@@ -29,6 +29,12 @@
     {% block js %}
     {% javascript "js" %}
 
+    <script type="text/javascript">
+      if (!window.Indigo) window.Indigo = {};
+      if (!window.Indigo.Preloads) window.Indigo.Preloads = {};
+    </script>
+
+
     {% if GOOGLE_ANALYTICS_ID %}
     <script>
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){

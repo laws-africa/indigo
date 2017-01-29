@@ -111,8 +111,6 @@
       this.frbrChanged();
 
       this.box = new Indigo.AmendmentView({model: null, document: this.model});
-
-      this.stickit();
     },
 
     frbrChanged: function() {

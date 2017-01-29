@@ -75,17 +75,20 @@
     },
 
     initialize: function() {
-      var library = new Indigo.Library(),
+      var library = Indigo.library,
           document_id = $('[data-document-id]').data('document-id') || null;
 
       this.$saveBtn = $('.workspace-buttons .btn.save');
       this.dirty = false;
 
-      // The document page eager loads the document details into this
-      // variable.
-      var info = Indigo.Preloads.document;
+      if (document_id) {
+        // get it from the library
+        this.document = Indigo.library.get(document_id);
+      } else {
+        // only for new documents
+        this.document = new Indigo.Document(Indigo.Preloads.document, {collection: library, parse: true});
+      }
 
-      this.document = new Indigo.Document(info, {collection: library, parse: true});
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
 

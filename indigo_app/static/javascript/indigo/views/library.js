@@ -31,7 +31,7 @@
 
       this.on('change', this.summarizeAndRender, this);
 
-      this.model = new Indigo.Library();
+      this.model = Indigo.library;
       this.model.on('change reset', function() { this.trigger('change'); }, this);
 
       this.user = Indigo.userView.model;
@@ -42,10 +42,6 @@
           self.$el.find('.filter-country').val(country).change();
         }
       });
-    },
-
-    loadDocuments: function() {
-      this.model.reset(Indigo.Preloads.library);
     },
 
     summarizeAndRender: function() {
@@ -254,7 +250,7 @@
       // filtering the documents
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
-      this.filterView.loadDocuments();
+      this.filterView.trigger('change');
     },
 
     changeSort: function(e) {

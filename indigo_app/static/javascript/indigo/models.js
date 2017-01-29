@@ -158,8 +158,6 @@
   /**
    * A collection of documents that are all expressions of the same work, based
    * on the frbr_uri. Updated dynamically as document URIs change.
-   *
-   * TODO: factory function
    */
   Indigo.ExpressionSet = Backbone.Collection.extend({
     model: Indigo.Document,
@@ -185,7 +183,7 @@
       // unique collection of amendments
       this.amendments = _.inject(this.models, function(memo, doc) {
         if (doc.get('amendments')) {
-          memo.concat(doc.get('amendments'));
+          memo = memo.concat(doc.get('amendments').models);
         }
         return memo;
       }, []);
@@ -193,6 +191,9 @@
         return a.get('amending_uri');
       });
       this.amendments = new Backbone.Collection(this.amendments);
+
+      this.amendmentDates = _.uniq(this.amendments.pluck('date'));
+      this.amendmentDates.sort();
     },
 
     checkFrbrUriChange: function(model, new_value) {

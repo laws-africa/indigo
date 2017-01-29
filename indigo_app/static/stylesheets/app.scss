@@ -752,20 +752,20 @@ legend {
     display: block;
     left: 10px;
     top: 20px;
-    bottom: 20px;
+    bottom: 0px;
     position: absolute;
     width: 4px;
     opacity: 0.35;
   }
 
-  li {
+  &> li {
     position: relative;
     margin-left: 40px;
     background-color: #efefef;
     padding: 10px 10px;
     margin-bottom: 15px;
 
-    h5 {
+    &> h5 {
       margin-top: 0px;
       font-weight: bold;
     }
@@ -795,5 +795,10 @@ legend {
       top: 10px;
       left: -20px;
     }
+  }
+
+  .amendments {
+    list-style: none;
+    padding-left: 0px;
   }
 }

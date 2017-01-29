@@ -127,14 +127,17 @@
       var amendments = this.model.get('amendments').toJSON();
 
       // build up a view of amended expressions
-      var amended_expressions = _.map(this.expressionSet.dates, function(date) {
+      var dates = this.expressionSet.dates.concat(this.expressionSet.amendmentDates);
+      dates.sort();
+
+      var amended_expressions = _.map(dates, function(date) {
         var doc = self.expressionSet.atDate(date);
 
         return {
           date: date,
           document: doc && doc.toJSON(),
           current: doc && doc.get('id') == document_id,
-          amendments: self.expressionSet.amendmentsAtDate(date),
+          amendments: _.map(self.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
         };
       });
 

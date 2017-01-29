@@ -127,7 +127,7 @@
       var amendments = this.model.get('amendments').toJSON();
 
       // build up a view of amended expressions
-      var dates = this.expressionSet.dates.concat(this.expressionSet.amendmentDates);
+      var dates = _.uniq(this.expressionSet.dates.concat(this.expressionSet.amendmentDates));
       dates.sort();
 
       var amended_expressions = _.map(dates, function(date) {

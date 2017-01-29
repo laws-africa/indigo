@@ -3,6 +3,8 @@
 import tempfile
 from datetime import date
 import os.path
+import re
+
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from rest_framework.renderers import JSONRenderer
@@ -202,29 +204,32 @@ class ConvertAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
         today = date.today().strftime('%Y-%m-%d')
+        output = response.data['output'].decode('utf-8')
+        frbr_uri = re.search(r'<FRBRuri value="(.*?)"/>', output).groups(0)[0]
+
         self.maxDiff = None
-        self.assertEqual(response.data['output'].decode('utf-8'), u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+        self.assertEqual(output, u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
   <act contains="originalVersion">
     <meta>
       <identification source="#slaw">
         <FRBRWork>
-          <FRBRthis value="/za/act/1980/01/main"/>
-          <FRBRuri value="/za/act/1980/01"/>
+          <FRBRthis value=\"""" + frbr_uri + u"""/main"/>
+          <FRBRuri value=\"""" + frbr_uri + u""""/>
           <FRBRalias value="Imported from """ + fname + u""""/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
           <FRBRcountry value="za"/>
         </FRBRWork>
         <FRBRExpression>
-          <FRBRthis value="/za/act/1980/01/eng@1980-01-01/main"/>
-          <FRBRuri value="/za/act/1980/01/eng@1980-01-01"/>
+          <FRBRthis value=\"""" + frbr_uri + u"""/eng@1980-01-01/main"/>
+          <FRBRuri value=\"""" + frbr_uri + u"""/eng@1980-01-01"/>
           <FRBRdate date="1980-01-01" name="Generation"/>
           <FRBRauthor href="#council"/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
-          <FRBRthis value="/za/act/1980/01/eng@1980-01-01/main"/>
-          <FRBRuri value="/za/act/1980/01/eng@1980-01-01"/>
+          <FRBRthis value=\"""" + frbr_uri + u"""/eng@1980-01-01/main"/>
+          <FRBRuri value=\"""" + frbr_uri + u"""/eng@1980-01-01"/>
           <FRBRdate date=\"""" + today + u"""\" name="Generation"/>
           <FRBRauthor href="#slaw"/>
         </FRBRManifestation>

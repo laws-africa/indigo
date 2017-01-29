@@ -11,14 +11,11 @@ import json
 def document(request, doc_id=None):
     if doc_id:
         doc = get_object_or_404(Document, pk=doc_id)
-        xml = doc.document_xml
         doc_json = json.dumps(None)
     else:
         # it's new!
-        doc = Document(title='(untitled)')
+        doc = Document.randomized(request.user, title='(untitled)')
         doc.tags = None
-        # ensure the doc exists
-        xml = doc.doc.to_xml()
         doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
 
     form = DocumentForm(instance=doc)
@@ -33,7 +30,7 @@ def document(request, doc_id=None):
     return render(request, 'document/show.html', {
         'document': doc,
         'document_json': doc_json,
-        'document_content_json': json.dumps(xml),
+        'document_content_json': json.dumps(doc.document_xml),
         'documents_json': documents_json,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),

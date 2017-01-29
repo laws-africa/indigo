@@ -2,6 +2,9 @@ import os
 import logging
 from itertools import groupby
 import re
+import random
+import datetime
+import string
 
 from django.conf import settings
 from django.db import models
@@ -15,7 +18,7 @@ import reversion
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act
+from cobalt.act import Act, FrbrUri
 
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
@@ -385,6 +388,18 @@ class Document(models.Model):
             else:
                 doc._amended_versions = amended_versions
 
+    @classmethod
+    def randomized(cls, user=None, **kwargs):
+        """ Helper to return a new document with a random FRBR URI
+        """
+        country = kwargs.pop('country', None) or (user.editor.country_code if user and user.is_authenticated() else None)
+        frbr_uri = random_frbr_uri(country=country)
+
+        doc = cls(frbr_uri=frbr_uri.work_uri(False), publication_date=frbr_uri.expression_date, expression_date=frbr_uri.expression_date, **kwargs)
+        doc.copy_attributes()
+
+        return doc
+
 
 # version tracking
 reversion.register(Document)
@@ -444,3 +459,13 @@ class Colophon(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+
+def random_frbr_uri(country=None):
+    today = datetime.datetime.now()
+    number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in xrange(5))
+    country = country or DEFAULT_COUNTRY
+    return FrbrUri(country=country.lower(), locality=None, doctype="act",
+                   subtype=None, actor=None, date=str(today.year),
+                   expression_date=today.strftime("%Y-%m-%d"),
+                   number=number.lower())

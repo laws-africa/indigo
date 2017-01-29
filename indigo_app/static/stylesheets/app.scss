@@ -736,3 +736,64 @@ legend {
     }
   }
 }
+
+.amendment-expressions {
+  position: relative;
+}
+
+.expression-timeline {
+  list-style: none;
+  padding-left: 0px;
+
+  &::after {
+    background: #ddd;
+    z-index: 0;
+    content: "";
+    display: block;
+    left: 10px;
+    top: 20px;
+    bottom: 20px;
+    position: absolute;
+    width: 4px;
+    opacity: 0.35;
+  }
+
+  li {
+    position: relative;
+    margin-left: 40px;
+    background-color: #efefef;
+    padding: 10px 10px;
+    margin-bottom: 15px;
+
+    h5 {
+      margin-top: 0px;
+      font-weight: bold;
+    }
+
+    &::before {
+      right: 100%;
+      border: #ddd 5px solid;
+      content: " ";
+      position: absolute;
+      top: 10px;
+      left: -40px;
+      background-color: #333;
+      width: 22px;
+      height: 22px;
+      z-index: 1;
+    }
+    
+    &::after {
+      right: 100%;
+      border: solid transparent;
+      content: " ";
+      width: 0;
+      height: 0;
+      position: absolute;
+      border-right-color: #efefef;
+      border-width: 10px;
+      top: 10px;
+      left: -20px;
+    }
+  }
+}

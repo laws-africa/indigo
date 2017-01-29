@@ -428,6 +428,10 @@ legend {
     text-align: center;
     padding-bottom: 25px;
     margin-bottom: 25px;
+
+    &.incoming {
+      background-color: #efefef;
+    }
   }
 
   .file-input-field {

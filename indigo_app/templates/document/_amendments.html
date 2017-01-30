@@ -35,7 +35,7 @@
         {{#if amendments}}
           <ul class="amendments">
           {{#each amendments}}
-            <li data-index="{{ @index }}">
+            <li data-uri="{{ amending_uri }}">
               <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
               <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
               Amended by {{ amending_title }}

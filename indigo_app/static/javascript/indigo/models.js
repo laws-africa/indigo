@@ -175,6 +175,10 @@
     build: function() {
       this.reset(this.library.where({frbr_uri: this.frbr_uri}));
 
+      if (this.amendments) {
+        this.stopListening(this.amendments);
+      }
+
       // unique collection of amendments
       this.amendments = _.inject(this.models, function(memo, doc) {
         if (doc.get('amendments')) {
@@ -186,12 +190,34 @@
         return a.get('amending_uri');
       });
       this.amendments = new Backbone.Collection(this.amendments);
+      this.listenTo(this.amendments, 'add remove', this.amendmentChanged);
+      this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
     },
 
     checkFrbrUriChange: function(model, new_value) {
       if (new_value == this.frbr_uri || model.previous('frbr_uri') == frbr_uri) {
         this.build();
       }
+    },
+
+    /**
+     * An amendment changed. Ensure that all expressions have appropriate amendments.
+     */
+    amendmentsChanged: function() {
+      // TODO: handle add and remove separately?
+    },
+
+    /**
+     * The date of an amendment changed. Ensure that all expressions linked to that date change, too.
+     */
+    amendmentDateChanged: function(model, newDate) {
+      var prev = model.previous("date");
+
+      this.each(function(doc) {
+        if (doc.get('expression_date') == prev) {
+          doc.set('expression_date', newDate);
+        }
+      });
     },
 
     initialPublicationDate: function() {

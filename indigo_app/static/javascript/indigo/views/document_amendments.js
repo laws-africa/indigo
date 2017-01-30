@@ -20,7 +20,8 @@
 
     initialize: function(options) {
       this.document = options.document;
-      this.chooser = new Indigo.DocumentChooserView({el: this.$el.find('.document-chooser')});
+      this.collection = options.collection;
+      this.chooser = new Indigo.DocumentChooserView({el: this.$('.document-chooser')});
       this.chooser.on('chosen', this.chosen, this);
     },
 
@@ -49,14 +50,16 @@
 
     save: function(e) {
       if (this.isNew) {
-        this.document.get('amendments').add(this.model);
+        this.collection.add(this.model);
       } else {
-        this.originalModel.attributes = _.clone(this.model.attributes);
-        this.originalModel.trigger('change');
+        this.originalModel.set(this.model.attributes);
       }
 
-      this.document.get('amendments').sort();
-      this.document.trigger('change change:amendments');
+      // TODO: we're not actually editing this doc's amendments, but the expressionSet's amendments
+      // so, we should be updating THAT collection of amendments and the expressionSet is responsible
+      // for adjusting all documents as necessary
+      // this.document.get('amendments').sort();
+      // this.document.trigger('change change:amendments');
       this.$el.modal('hide');
     },
     
@@ -107,7 +110,7 @@
       this.model.on('change:frbr_uri', this.frbrChanged, this);
       this.frbrChanged();
 
-      this.box = new Indigo.AmendmentView({model: null, document: this.model});
+      this.box = new Indigo.AmendmentView({model: null, document: this.model, collection: this.expressionSet.amendments});
     },
 
     frbrChanged: function() {
@@ -160,8 +163,8 @@
     editAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).closest('li').data('index');
-      var amendment = this.expressionSet.amendments.at(index);
+      var uri = $(e.target).closest('li').data('uri');
+      var amendment = this.expressionSet.amendments.findWhere({amending_uri: uri});
 
       this.box.show(amendment);
     },
@@ -169,8 +172,8 @@
     deleteAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).closest('li').data('index');
-      var amendment = this.expressionSet.amendments.at(index);
+      var uri = $(e.target).closest('li').data('uri');
+      var amendment = this.expressionSet.amendments.findWhere({amending_uri: uri});
 
       if (confirm("Really delete this amendment?")) {
         this.expressionSet.amendments.remove(amendment);

@@ -750,22 +750,21 @@ legend {
   padding-left: 0px;
 
   &::after {
-    background: #ddd;
+    background: #eee;
     z-index: 0;
     content: "";
     display: block;
     left: 10px;
     top: 20px;
-    bottom: 0px;
+    bottom: 30px;
     position: absolute;
     width: 4px;
-    opacity: 0.35;
   }
 
   &> li {
     position: relative;
     margin-left: 40px;
-    background-color: #efefef;
+    background-color: #eee;
     padding: 10px 10px;
     margin-bottom: 15px;
 
@@ -776,14 +775,15 @@ legend {
 
     &::before {
       right: 100%;
-      border: #ddd 5px solid;
+      border: #eee 5px solid;
+      border-radius: 50%;
       content: " ";
       position: absolute;
       top: 10px;
-      left: -40px;
-      background-color: #333;
-      width: 22px;
-      height: 22px;
+      left: -38px;
+      background-color: white;
+      width: 20px;
+      height: 20px;
       z-index: 1;
     }
     

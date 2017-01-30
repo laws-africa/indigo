@@ -92,8 +92,6 @@
    */
   Indigo.DocumentAmendmentsView = Backbone.View.extend({
     el: '.document-amendments-view',
-    amendmentsTemplate: '#amendments-template',
-    amendedVersionsTemplate: '#amended-versions-template',
     amendmentExpressionsTemplate: '#amendment-expressions-template',
     events: {
       'click .add-amendment': 'addAmendment',
@@ -102,10 +100,9 @@
     },
 
     initialize: function() {
-      this.amendmentsTemplate = Handlebars.compile($(this.amendmentsTemplate).html());
-      this.amendedVersionsTemplate = Handlebars.compile($(this.amendedVersionsTemplate).html());
       this.amendmentExpressionsTemplate = Handlebars.compile($(this.amendmentExpressionsTemplate).html());
 
+      // TODO: sanity check
       this.model.on('change:amendments sync', this.render, this);
       this.model.on('change:frbr_uri', this.frbrChanged, this);
       this.frbrChanged();
@@ -114,22 +111,25 @@
     },
 
     frbrChanged: function() {
-      if (this.expressionSet) this.expressionSet.stopListening(this.expressionSet);
+      if (this.expressionSet) this.stopListening(this.expressionSet);
       this.expressionSet = this.model.collection.expressionSet(this.model.get('frbr_uri'));
       this.listenTo(this.expressionSet, 'add remove reset', this.render);
+      this.listenTo(this.expressionSet.amendments, 'change add remove reset', this.render);
       this.render();
     },
 
     render: function() {
       var self = this;
-      var count = 0;
       var document_id = this.model.get('id');
-      var amendments = this.model.get('amendments').toJSON();
+      var dates = this.expressionSet.allDates(),
+          pubDate = this.expressionSet.initialPublicationDate();
+
+      if (pubDate) {
+        dates.push(pubDate);
+        dates.sort();
+      }
 
       // build up a view of amended expressions
-      var dates = _.uniq(this.expressionSet.dates.concat(this.expressionSet.amendmentDates));
-      dates.sort();
-
       var amended_expressions = _.map(dates, function(date) {
         var doc = self.expressionSet.atDate(date);
         var info = {
@@ -137,57 +137,19 @@
           document: doc && doc.toJSON(),
           current: doc && doc.get('id') == document_id,
           amendments: _.map(self.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
+          initial: date == pubDate,
         };
         info.linkable = info.document && !info.current;
 
         return info;
       });
 
-      // initial publication
-      if (amended_expressions.length > 0) {
-        amended_expressions[0].initial = amended_expressions[0].date == this.expressionSet.initialPublicationDate;
-      }
-
-      this.$el.find('.amendment-expressions').html(this.amendmentExpressionsTemplate({
+      this.$('.amendment-expressions').html(this.amendmentExpressionsTemplate({
         amended_expressions: amended_expressions,
       }));
 
-      if (amendments.length > 0) {
-        count = amendments.length;
-
-        // link in the amended versions
-        _.each(this.model.get('amended_versions') || [], function(version) {
-          _.each(amendments, function(a) {
-            if (a.date == version.expression_date) {
-              if (version.id == document_id) {
-                // it's this version
-                a.this_document = true;
-              } else {
-                a.amended_id = version.id;
-              }
-            }
-          });
-        });
-      }
-      this.$el.find('.amendments-list').html(this.amendmentsTemplate({
-        amendments: amendments,
-      }));
-
       // update amendment count in nav tabs
-      $('.sidebar .nav .amendment-count').text(count === 0 ? '' : count);
-
-      // amended versions
-      var amended_versions = _.map(this.model.get('amended_versions'), function(v) {
-        v = _.clone(v);
-        if (v.id == document_id) {
-          v.this_document = true;
-        }
-        return v;
-      });
-
-      this.$el.find('.amended-versions-list').html(this.amendedVersionsTemplate({
-        amended_versions: amended_versions,
-      }));
+      $('.sidebar .nav .amendment-count').text(this.expressionSet.length === 0 ? '' : this.expressionSet.length);
     },
 
     addAmendment: function(e) {
@@ -198,8 +160,8 @@
     editAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).closest('tr').data('index');
-      var amendment = this.model.get('amendments').at(index);
+      var index = $(e.target).closest('li').data('index');
+      var amendment = this.expressionSet.amendments.at(index);
 
       this.box.show(amendment);
     },
@@ -207,11 +169,12 @@
     deleteAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).closest('tr').data('index');
-      var amendment = this.model.get('amendments').at(index);
+      var index = $(e.target).closest('li').data('index');
+      var amendment = this.expressionSet.amendments.at(index);
 
       if (confirm("Really delete this amendment?")) {
-        this.model.get('amendments').remove(amendment);
+        this.expressionSet.amendments.remove(amendment);
+        // TODO: sanity check
         this.model.trigger('change change:amendments');
       }
     },

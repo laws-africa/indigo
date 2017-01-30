@@ -175,11 +175,6 @@
     build: function() {
       this.reset(this.library.where({frbr_uri: this.frbr_uri}));
 
-      this.dates = _.uniq(this.pluck('expression_date'));
-      this.dates.sort();
-
-      this.initialPublicationDate = this.length === 0 ? null : this.at(0).get('publication_date');
-
       // unique collection of amendments
       this.amendments = _.inject(this.models, function(memo, doc) {
         if (doc.get('amendments')) {
@@ -191,15 +186,34 @@
         return a.get('amending_uri');
       });
       this.amendments = new Backbone.Collection(this.amendments);
-
-      this.amendmentDates = _.uniq(this.amendments.pluck('date'));
-      this.amendmentDates.sort();
     },
 
     checkFrbrUriChange: function(model, new_value) {
       if (new_value == this.frbr_uri || model.previous('frbr_uri') == frbr_uri) {
         this.build();
       }
+    },
+
+    initialPublicationDate: function() {
+      return this.length === 0 ? null : this.at(0).get('publication_date');
+    },
+
+    dates: function() {
+      var dates = _.uniq(this.pluck('expression_date'));
+      dates.sort();
+      return dates;
+    },
+
+    amendmentDates: function() {
+      var dates = _.uniq(this.amendments.pluck('date'));
+      dates.sort();
+      return dates;
+    },
+
+    allDates: function() {
+      var dates = _.uniq(this.dates().concat(this.amendmentDates()));
+      dates.sort();
+      return dates;
     },
 
     atDate: function(date) {

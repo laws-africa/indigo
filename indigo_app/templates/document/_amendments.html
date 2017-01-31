@@ -8,11 +8,7 @@
 <div class="boxed-group-inner document-amendments-view">
   <p>These are applied amendments which have lead to <strong>this version</strong> of the document.</p>
 
-  <div class="row">
-    <div class="col-md-6">
-      <div class="amendment-expressions"></div>
-    </div>
-  </div>
+  <div class="amendment-expressions"></div>
 
   <p>
     <button class="btn btn-default clone"><i class="fa fa-copy"></i> Clone this document</button>
@@ -27,34 +23,40 @@
       <li>
         <h5>
           {{ date }}
+          {{#if initial}} — Initial publication{{/if}}
           {{#if current}}<span class="label label-info current">this version</span>{{/if}}
         </h5>
-
-        {{#if initial}}<div>Initial publication</div>{{/if}}
 
         {{#if amendments}}
           <ul class="amendments">
           {{#each amendments}}
             <li data-uri="{{ amending_uri }}">
-              <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
-              <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
-              Amended by {{ amending_title }}
+              Amended by
+              {{#if amending_id }}
+                <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
+              {{else}}
+                {{ amending_title }}
+              {{/if}}
+              —
+              <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>
             </li>
           {{/each}}
           </ul>
         {{/if}}
 
-        {{#if document}}
-        <div>
-          {{#if linkable}}
-          <a href="/documents/{{ document.id }}">{{ document.title }}</a>
+        <div class="document">
+          {{#if document}}
+            {{#if linkable}}
+            <a href="/documents/{{ document.id }}">{{ document.title }}</a>
+            {{else}}
+            {{ document.title }}
+            {{/if}}
+            as at {{ date }}
+            {{#if current}}<span class="label label-info current">this document</span>{{/if}}
           {{else}}
-          {{ document.title }}
+            <span class="text-muted">No editable revision at this date</a>
           {{/if}}
-          as at {{ date }}
-          {{#if current}}<span class="label label-info current">this document</span>{{/if}}
         </div>
-        {{/if}}
       </li>
     {{/each}}
     <li>

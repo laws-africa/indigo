@@ -750,7 +750,7 @@ legend {
   padding-left: 0px;
 
   &::after {
-    background: #eee;
+    background: #ddd;
     z-index: 0;
     content: "";
     display: block;
@@ -775,15 +775,15 @@ legend {
 
     &::before {
       right: 100%;
-      border: #eee 5px solid;
+      border: #ddd 4px solid;
       border-radius: 50%;
       content: " ";
       position: absolute;
       top: 10px;
-      left: -38px;
+      left: -37px;
       background-color: white;
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       z-index: 1;
     }
     

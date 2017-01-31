@@ -26,8 +26,8 @@
     {{#each amended_expressions}}
       <li>
         <h5>
-          {{#if linkable}}<a href="/documents/{{ document.id }}">{{ date }}</a>{{else}}{{ date }}{{/if}}
-          {{#if current}}<span class="label label-info current">this document</span>{{/if}}
+          {{ date }}
+          {{#if current}}<span class="label label-info current">this version</span>{{/if}}
         </h5>
 
         {{#if initial}}<div>Initial publication</div>{{/if}}
@@ -42,6 +42,18 @@
             </li>
           {{/each}}
           </ul>
+        {{/if}}
+
+        {{#if document}}
+        <div>
+          {{#if linkable}}
+          <a href="/documents/{{ document.id }}">{{ document.title }}</a>
+          {{else}}
+          {{ document.title }}
+          {{/if}}
+          as at {{ date }}
+          {{#if current}}<span class="label label-info current">this document</span>{{/if}}
+        </div>
         {{/if}}
       </li>
     {{/each}}

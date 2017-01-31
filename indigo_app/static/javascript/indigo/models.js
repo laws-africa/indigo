@@ -112,7 +112,15 @@
     urlRoot: '/api/documents',
 
     parse: function(json) {
+      var self = this;
+
       json.amendments = this.reifyAmendments(json.amendments);
+
+      // ensure that changes to amendments fire model changes
+      this.listenTo(json.amendments, 'change add remove', function() {
+        self.trigger('change change:amendments');
+      });
+
       return json;
     },
 
@@ -167,19 +175,24 @@
       this.frbr_uri = options.frbr_uri;
       this.library = options.library;
 
+      // update ourselves if the document library changes
       this.listenTo(this.library, 'reset add remove', this.build);
       this.listenTo(this.library, 'change:frbr_uri', this.checkFrbrUriChange);
+
+      // watch documents for changed expression dates
+      this.on('change:expression_date', this.alignDocumentAmendments, this);
+
       this.build();
     },
 
     build: function() {
       this.reset(this.library.where({frbr_uri: this.frbr_uri}));
 
+      // build up a unique collection of amendments
       if (this.amendments) {
         this.stopListening(this.amendments);
       }
 
-      // unique collection of amendments
       this.amendments = _.inject(this.models, function(memo, doc) {
         if (doc.get('amendments')) {
           memo = memo.concat(doc.get('amendments').models);
@@ -190,7 +203,10 @@
         return a.get('amending_uri');
       });
       this.amendments = new Backbone.Collection(this.amendments);
-      this.listenTo(this.amendments, 'add remove', this.amendmentChanged);
+
+      this.listenTo(this.amendments, 'remove', this.amendmentRemoved);
+      // when an amendment is added, ensure all docs have their amendments updated
+      this.listenTo(this.amendments, 'add', this.alignAllDocumentAmendments);
       this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
     },
 
@@ -200,24 +216,57 @@
       }
     },
 
-    /**
-     * An amendment changed. Ensure that all expressions have appropriate amendments.
-     */
-    amendmentsChanged: function() {
-      // TODO: handle add and remove separately?
+    // An amendment was added. Ensure that all expressions have appropriate amendments.
+    amendmentRemoved: function(amendment) {
+      // adjust docs who had this expression date, finding a new one
+      var oldDate = amendment.get('date'),
+          dates = this.amendmentDates(),
+          newDate = _.indexOf(dates, oldDate) - 1;
+
+      newDate = (newDate < 0) ? this.initialPublicationDate() : dates[newDate];
+      this.each(function(doc) {
+        if (doc.get('expression_date') == oldDate) {
+          doc.set('expression_date', newDate);
+        }
+      });
+
+      this.alignAllDocumentAmendments();
     },
 
-    /**
-     * The date of an amendment changed. Ensure that all expressions linked to that date change, too.
-     */
+    // The date of an amendment changed. Ensure that all expressions linked to that date change, too,
+    // and that all documents have the correct amendments.
     amendmentDateChanged: function(model, newDate) {
-      var prev = model.previous("date");
+      var prev = model.previous("date"),
+          self = this;
 
       this.each(function(doc) {
         if (doc.get('expression_date') == prev) {
           doc.set('expression_date', newDate);
         }
       });
+
+      this.alignAllDocumentAmendments();
+    },
+
+    alignAllDocumentAmendments: function() {
+      var self = this;
+
+      this.each(function(d) {
+        self.alignDocumentAmendments(d, {silent: true});
+      });
+
+      this.trigger('change');
+    },
+
+    // Ensure that all this document has all the appropriate amendments linked to it.
+    alignDocumentAmendments: function(doc, options) {
+      var date = doc.get('expression_date');
+
+      doc.get('amendments').set(this.amendments.filter(function(a) {
+        return a.get('date') <= date;
+      }));
+
+      if (!options && !options.silent) this.trigger('change');
     },
 
     initialPublicationDate: function() {

@@ -105,8 +105,7 @@
     initialize: function() {
       this.amendmentExpressionsTemplate = Handlebars.compile($(this.amendmentExpressionsTemplate).html());
 
-      // TODO: sanity check
-      this.model.on('change:amendments sync', this.render, this);
+      this.model.on('change:amendments', this.render, this);
       this.model.on('change:frbr_uri', this.frbrChanged, this);
       this.frbrChanged();
 
@@ -116,7 +115,7 @@
     frbrChanged: function() {
       if (this.expressionSet) this.stopListening(this.expressionSet);
       this.expressionSet = this.model.collection.expressionSet(this.model.get('frbr_uri'));
-      this.listenTo(this.expressionSet, 'add remove reset', this.render);
+      this.listenTo(this.expressionSet, 'add remove reset change', this.render);
       this.listenTo(this.expressionSet.amendments, 'change add remove reset', this.render);
       this.render();
     },
@@ -177,8 +176,6 @@
 
       if (confirm("Really delete this amendment?")) {
         this.expressionSet.amendments.remove(amendment);
-        // TODO: sanity check
-        this.model.trigger('change change:amendments');
       }
     },
   });

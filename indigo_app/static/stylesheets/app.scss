@@ -750,15 +750,15 @@ legend {
   padding-left: 0px;
 
   &::after {
-    background: #ddd;
-    z-index: 0;
     content: "";
     display: block;
+    position: absolute;
     left: 10px;
     top: 20px;
     bottom: 30px;
-    position: absolute;
     width: 4px;
+    background: #ddd;
+    z-index: 0;
   }
 
   &> li {
@@ -771,6 +771,29 @@ legend {
     &> h5 {
       margin-top: 0px;
       font-weight: bold;
+    }
+
+    &.current {
+      border: 1px solid #5bc0de;
+
+      h5::before {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 9px;
+        left: -22px;
+        width: 0;
+        height: 0;
+        border-color: transparent #5bc0de transparent transparent;
+        border-width: 11px;
+        border-style: solid;
+        z-index: 0;
+      }
+
+      &.current::before {
+        border-color: #5bc0de;
+        left: -38px;
+      }
     }
 
     &::before {

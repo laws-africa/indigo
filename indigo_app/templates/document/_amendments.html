@@ -20,7 +20,7 @@
 
   <ol class="expression-timeline">
     {{#each amended_expressions}}
-      <li>
+      <li class="{{#if current}}current{{/if}}">
         <h5>
           {{ date }}
           {{#if initial}} — Initial publication{{/if}}

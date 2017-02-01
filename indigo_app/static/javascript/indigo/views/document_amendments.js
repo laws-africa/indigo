@@ -107,24 +107,20 @@
 
       this.model.on('change:amendments', this.render, this);
       this.model.on('change:frbr_uri', this.frbrChanged, this);
-      this.frbrChanged();
 
-      this.box = new Indigo.AmendmentView({model: null, document: this.model, collection: this.expressionSet.amendments});
-    },
+      this.listenTo(this.model.expressionSet, 'add remove reset change', this.render);
+      this.listenTo(this.model.expressionSet.amendments, 'change add remove reset', this.render);
 
-    frbrChanged: function() {
-      if (this.expressionSet) this.stopListening(this.expressionSet);
-      this.expressionSet = this.model.collection.expressionSet(this.model.get('frbr_uri'));
-      this.listenTo(this.expressionSet, 'add remove reset change', this.render);
-      this.listenTo(this.expressionSet.amendments, 'change add remove reset', this.render);
+      this.box = new Indigo.AmendmentView({model: null, document: this.model, collection: this.model.expressionSet.amendments});
+
       this.render();
     },
 
     render: function() {
       var self = this;
       var document_id = this.model.get('id');
-      var dates = this.expressionSet.allDates(),
-          pubDate = this.expressionSet.initialPublicationDate();
+      var dates = this.model.expressionSet.allDates(),
+          pubDate = this.model.expressionSet.initialPublicationDate();
 
       if (pubDate) {
         dates.push(pubDate);
@@ -134,12 +130,12 @@
 
       // build up a view of amended expressions
       var amended_expressions = _.map(dates, function(date) {
-        var doc = self.expressionSet.atDate(date);
+        var doc = self.model.expressionSet.atDate(date);
         var info = {
           date: date,
           document: doc && doc.toJSON(),
           current: doc && doc.get('id') == document_id,
-          amendments: _.map(self.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
+          amendments: _.map(self.model.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
           initial: date == pubDate,
         };
         info.linkable = info.document && !info.current;
@@ -152,7 +148,7 @@
       }));
 
       // update amendment count in nav tabs
-      $('.sidebar .nav .amendment-count').text(this.expressionSet.length === 0 ? '' : this.expressionSet.length);
+      $('.sidebar .nav .amendment-count').text(this.model.expressionSet.length === 0 ? '' : this.model.expressionSet.length);
     },
 
     addAmendment: function(e) {
@@ -164,7 +160,7 @@
       e.preventDefault();
 
       var uri = $(e.target).closest('li').data('uri');
-      var amendment = this.expressionSet.amendments.findWhere({amending_uri: uri});
+      var amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
 
       this.box.show(amendment);
     },
@@ -173,10 +169,10 @@
       e.preventDefault();
 
       var uri = $(e.target).closest('li').data('uri');
-      var amendment = this.expressionSet.amendments.findWhere({amending_uri: uri});
+      var amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
 
       if (confirm("Really delete this amendment?")) {
-        this.expressionSet.amendments.remove(amendment);
+        this.model.expressionSet.amendments.remove(amendment);
       }
     },
   });

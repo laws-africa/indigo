@@ -157,9 +157,16 @@
     /**
      * Return an ExpressionSet for the collection of documents for +frbr_uri+.
      */
-    expressionSet: function(frbr_uri) {
-      // TODO: cache
-      return new Indigo.ExpressionSet(null, {library: this, frbr_uri: frbr_uri});
+    expressionSet: function(document) {
+      if (!document.expressionSet) {
+        document.expressionSet = new Indigo.ExpressionSet(null, {
+          library: this,
+          frbr_uri: document.get('frbr_uri'),
+          follow: document,
+        });
+      }
+
+      return document.expressionSet;
     },
   });
 
@@ -181,6 +188,11 @@
 
       // watch documents for changed expression dates
       this.on('change:expression_date', this.alignDocumentAmendments, this);
+
+      // should we follow a particular document even if its frbr_uri changes?
+      if (options.follow) {
+        this.listenTo(options.follow, 'change:frbr_uri', this.followingFrbrUriChanged, this);
+      }
 
       this.build();
     },
@@ -210,8 +222,18 @@
       this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
     },
 
+    followingFrbrUriChanged: function(model, frbr_uri) {
+      if (this.frbr_uri != frbr_uri) {
+        this.frbr_uri = frbr_uri;
+        this.build();
+      }
+    },
+
     checkFrbrUriChange: function(model, new_value) {
-      if (new_value == this.frbr_uri || model.previous('frbr_uri') == frbr_uri) {
+      // if the model we're following has changed, rely on the followingFrbrUriChanged instead
+      if (this.follow && model == this.follow) return;
+
+      if (new_value == this.frbr_uri || model.previous('frbr_uri') == this.frbr_uri) {
         this.build();
       }
     },

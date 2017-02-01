@@ -91,10 +91,11 @@
 
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
+      this.document.expressionSet = Indigo.library.expressionSet(this.document);
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);
-
+      
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
 

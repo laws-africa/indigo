@@ -189,6 +189,9 @@
         return $.Deferred().resolve();
       }
 
+      // TODO: save modified documents in the amendment view's expressionSet
+      // actually, saving just using the expression set is sufficient to ensure this
+      // document is saved too -- BUT we don't have access to it here :(
       return this.model.save();
     },
   });

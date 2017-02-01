@@ -260,8 +260,15 @@
 
     // Ensure that all this document has all the appropriate amendments linked to it.
     alignDocumentAmendments: function(doc, options) {
-      var date = doc.get('expression_date');
+      var date;
 
+      // ensure the document has an expression date
+      if (!doc.has('expression_date')) {
+        doc.set('expression_date', doc.get('publication_date'));
+      }
+      date = doc.get('expression_date');
+
+      // apply amendments that are at or before the expression date
       doc.get('amendments').set(this.amendments.filter(function(a) {
         return a.get('date') <= date;
       }));

@@ -131,7 +131,6 @@
 
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
-      this.model.on('change:amendments change:publication_date', this.setExpressionDate, this);
     },
 
     calculateUri: function() {
@@ -154,22 +153,6 @@
       parts = _.map(parts, function(p) { return p.replace(/[ \/]/g, ''); });
 
       this.model.set('frbr_uri', parts.join('/').toLowerCase());
-    },
-
-    setExpressionDate: function() {
-      // the expression date is the publication date, or the latest amendment
-      // date if there are amendments
-      if (!this.model.get('expression_date')) {
-        var amendments = this.model.get('amendments');
-
-        if (amendments.length > 0) {
-          this.model.set('expression_date', amendments.at(amendments.length-1).get('date'));
-        } else {
-          this.model.set('expression_date', this.model.get('publication_date'));
-        }
-
-        this.$el.find('[data-provide=datepicker]').datepicker('update');
-      }
     },
 
     showPublishedUrl: function() {

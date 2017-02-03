@@ -203,7 +203,7 @@
       var deferred = null;
 
       // always save properties if we save content
-      this.propertiesView.dirty = this.bodyEditorView.dirty || is_new;
+      this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty || is_new;
 
       var fail = function() {
         self.$saveBtn

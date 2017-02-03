@@ -170,6 +170,8 @@
     setDirty: function() {
       if (!this.dirty) {
         this.dirty = true;
+        // TODO: we may be able to get rid of this, if all existing subscribers
+        // can rely on watching the model for being dirty
         this.trigger('dirty');
       }
     },
@@ -189,10 +191,14 @@
         return $.Deferred().resolve();
       }
 
-      // TODO: save modified documents in the amendment view's expressionSet
-      // actually, saving just using the expression set is sufficient to ensure this
-      // document is saved too -- BUT we don't have access to it here :(
-      return this.model.save();
+      // save modified documents using the expression set is sufficient to
+      // ensure this document is saved too
+      var dirty = this.model.expressionSet.filter(function(d) { return d.dirty; });
+
+      // save the dirty ones and chain the deferreds into a single deferred
+      $.when.apply($, dirty.map(function(d) {
+        return d.save();
+      }));
     },
   });
 })(window);

@@ -111,6 +111,22 @@
 
     urlRoot: '/api/documents',
 
+    initialize: function(options) {
+      this.dirty = false;
+
+      // this is useful to know when the model needs to be saved
+      this.on('change', this.setDirty, this);
+      this.on('sync', this.setClean, this);
+    },
+
+    setDirty: function() {
+      this.dirty = true;
+    },
+
+    setClean: function() {
+      this.dirty = false;
+    },
+
     parse: function(json) {
       var self = this;
 

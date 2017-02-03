@@ -123,14 +123,12 @@
       this.dirty = false;
       this.model.on('change', this.setDirty, this);
       this.model.on('sync', this.setClean, this);
-
-      // only attach URI building handlers after the first sync
-      this.listenToOnce(this.model, 'sync', function() {
-        this.model.on('change:number change:nature change:country change:year change:locality change:subtype', _.bind(this.calculateUri, this));
-      });
+      this.model.expressionSet.on('change', this.setDirty, this);
 
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
+
+      this.calculateUri();
     },
 
     calculateUri: function() {
@@ -170,8 +168,6 @@
     setDirty: function() {
       if (!this.dirty) {
         this.dirty = true;
-        // TODO: we may be able to get rid of this, if all existing subscribers
-        // can rely on watching the model for being dirty
         this.trigger('dirty');
       }
     },
@@ -184,6 +180,7 @@
     },
 
     save: function() {
+      var self = this;
       // TODO: validation
 
       // don't do anything if it hasn't changed
@@ -196,9 +193,11 @@
       var dirty = this.model.expressionSet.filter(function(d) { return d.dirty; });
 
       // save the dirty ones and chain the deferreds into a single deferred
-      $.when.apply($, dirty.map(function(d) {
+      return $.when.apply($, dirty.map(function(d) {
         return d.save();
-      }));
+      })).done(function() {
+        self.setClean();
+      });
     },
   });
 })(window);

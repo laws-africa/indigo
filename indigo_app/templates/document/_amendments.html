@@ -10,11 +10,6 @@
 
   <div class="amendment-expressions"></div>
 
-  <p>
-    <button class="btn btn-default clone"><i class="fa fa-copy"></i> Clone this document</button>
-  </p>
-  <p class="help-block">Clone a document before applying new amendments that will result in a new version.</p>
-
   <script id="amendment-expressions-template" type="text/x-handlebars-template">
   {% verbatim %}
 
@@ -54,7 +49,9 @@
             as at {{ date }}
             {{#if current}}<span class="label label-info current">this document</span>{{/if}}
           {{else}}
-            <span class="text-muted">No editable revision at this date</a>
+            <span class="text-muted">No editable version at this date</span>
+            —
+            <a href="#" class="create-expression" data-date="{{ date }}">create and edit an amended version</a>
           {{/if}}
         </div>
       </li>

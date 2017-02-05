@@ -71,7 +71,6 @@
       'click .btn.delete-document': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
-      'click .btn.clone': 'createClone',
     },
 
     initialize: function() {
@@ -283,38 +282,5 @@
           });
       }
     },
-
-    // Create a clone of the document and redirect them there
-    createClone: function(e) {
-      if (confirm('Create a copy of this document? Unsaved changes will be lost!')) {
-        // clone and reset some attributes
-        var clone = this.document.clone();
-        clone.set({
-          content: this.documentContent.get('content'),
-          draft: true,
-          title: 'Copy of ' + clone.get('title'),
-          id: null,
-        });
-
-        var $btn = $(e.target);
-        $btn
-          .toggleClass('disabled')
-          .find('.fa')
-          .toggleClass('fa-copy fa-pulse fa-spinner');
-
-        clone
-          .save(null, {parse: false})
-          .done(function(response) {
-            // redirect
-            document.location = '/documents/' + response.id + '/';
-          })
-          .fail(function() {
-            $btn
-              .toggleClass('disabled')
-              .find('.fa')
-              .toggleClass('fa-copy fa-pulse fa-spinner');
-          });
-      }
-    }
   });
 })(window);

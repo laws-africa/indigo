@@ -100,6 +100,7 @@
       'click .add-amendment': 'addAmendment',
       'click .edit-amendment': 'editAmendment',
       'click .delete-amendment': 'deleteAmendment',
+      'click .create-expression': 'createExpression',
     },
 
     initialize: function() {
@@ -169,5 +170,20 @@
         this.model.expressionSet.amendments.remove(amendment);
       }
     },
+
+    createExpression: function(e) {
+      e.preventDefault();
+
+      // create an amended version of this document at a particular date
+      var date = $(e.target).data('date');
+
+      if (confirm('Create a new amended versiot at ' + date + '? Unsaved changes will be lost!')) {
+        Indigo.progressView.peg();
+        this.model.expressionSet.createExpressionAt(date).done(function(doc) {
+          document.location = '/documents/' + doc.get('id') + '/';
+        });
+      }
+    },
+
   });
 })(window);

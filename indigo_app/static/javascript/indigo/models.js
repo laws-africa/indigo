@@ -347,6 +347,46 @@
     amendmentsAtDate: function(date) {
       return this.amendments.where({date: date});
     },
+
+    // Create a new expression. Returns a deferred that is resolved
+    // with the new document document.
+    createExpressionAt: function(date) {
+      // find the first expression at or before this date, and clone that
+      // expression
+      var prev = _.last(this.filter(function(d) {
+        return d.get('expression_date') <= date;
+      }));
+      if (!prev) prev = this.at(0);
+
+      var doc = prev.clone();
+      var result = $.Deferred();
+
+      doc.set({
+        draft: true,
+        title: 'Copy of ' + doc.get('title'),
+        id: null,
+        expression_date: date,
+      });
+
+      if (doc.get('content')) {
+        return result.resolve(doc);
+      } else {
+        // load the content
+        var content = new Indigo.DocumentContent({document: prev});
+        content.fetch()
+          .done(function() {
+            doc.set('content', content.get('content'));
+            doc.save()
+              .then(function() {
+                result.resolve(doc);
+              })
+              .fail(result.fail);
+          })
+          .fail(result.fail);
+      }
+
+      return result;
+    },
   });
 
   Indigo.User = Backbone.Model.extend({

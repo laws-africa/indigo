@@ -217,25 +217,16 @@
       this.reset(this.library.where({frbr_uri: this.frbr_uri}));
 
       // build up a unique collection of amendments
-      if (this.amendments) {
-        this.stopListening(this.amendments);
-      }
-
-      this.amendments = _.inject(this.models, function(memo, doc) {
+      var amendments = _.inject(this.models, function(memo, doc) {
         if (doc.get('amendments')) {
           memo = memo.concat(doc.get('amendments').models);
         }
         return memo;
       }, []);
-      this.amendments = _.uniq(this.amendments, false, function(a) {
+      amendments = _.uniq(this.amendments, false, function(a) {
         return a.get('amending_uri');
       });
-      this.amendments = new Backbone.Collection(this.amendments);
-
-      this.listenTo(this.amendments, 'remove', this.amendmentRemoved);
-      // when an amendment is added, ensure all docs have their amendments updated
-      this.listenTo(this.amendments, 'add', this.alignAllDocumentAmendments);
-      this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
+      this.amendments.reset(amendments);
     },
 
     followingFrbrUriChanged: function(model, frbr_uri) {
@@ -330,9 +321,16 @@
       return dates;
     },
 
+    // All dates covered by this expression set, including document dates,
+    // amendment dates and the initial publication date.
     allDates: function() {
-      var dates = _.uniq(this.dates().concat(this.amendmentDates()));
+      var dates = this.dates().concat(this.amendmentDates()),
+          pubDate = this.initialPublicationDate();
+
+      if (pubDate) dates.push(pubDate);
       dates.sort();
+      dates = _.uniq(dates, true);
+
       return dates;
     },
 

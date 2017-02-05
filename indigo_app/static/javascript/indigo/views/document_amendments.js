@@ -122,12 +122,6 @@
       var dates = this.model.expressionSet.allDates(),
           pubDate = this.model.expressionSet.initialPublicationDate();
 
-      if (pubDate) {
-        dates.push(pubDate);
-        dates.sort();
-        dates = _.uniq(dates, true);
-      }
-
       // build up a view of amended expressions
       var amended_expressions = _.map(dates, function(date) {
         var doc = self.model.expressionSet.atDate(date);

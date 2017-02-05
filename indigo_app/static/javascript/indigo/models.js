@@ -210,6 +210,12 @@
         this.listenTo(options.follow, 'change:frbr_uri', this.followingFrbrUriChanged, this);
       }
 
+      this.amendments = new Backbone.Collection();
+      this.listenTo(this.amendments, 'remove', this.amendmentRemoved);
+      // when an amendment is added, ensure all docs have their amendments updated
+      this.listenTo(this.amendments, 'add', this.alignAllDocumentAmendments);
+      this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
+
       this.build();
     },
 

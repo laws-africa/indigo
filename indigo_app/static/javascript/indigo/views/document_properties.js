@@ -16,6 +16,9 @@
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
+    events: {
+      'click .btn-amendments': 'showAmendments',
+    },
     bindings: {
       '#document_country': {
         observe: 'country',
@@ -77,6 +80,9 @@
       '#document_expression_date': {
         observe: 'expression_date',
         onSet: emptyIsNull,
+        selectOptions: {
+          collection: 'this.expressionDates',
+        }
       },
       '#document_language': 'language',
       '#document_draft': {
@@ -118,7 +124,8 @@
     },
 
     initialize: function() {
-      this.stickit();
+      // the choices in the expression_date dropdown
+      this.expressionDates = new Backbone.Collection();
 
       this.dirty = false;
       this.model.on('change', this.setDirty, this);
@@ -128,7 +135,30 @@
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
 
+      // update the choices of expression dates when necessary
+      this.model.on('change:publication_date', this.updateExpressionDates, this);
+      this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
+
       this.calculateUri();
+      this.updateExpressionDates();
+      this.stickit();
+    },
+
+    updateExpressionDates: function() {
+      var dates = this.model.expressionSet.allDates(),
+          pubDate = this.model.expressionSet.initialPublicationDate();
+
+      this.expressionDates.set(_.map(dates, function(date) {
+        return {
+          value: date,
+          label: date + ' - ' + (date == pubDate ? 'initial publication' : 'amendment'),
+        };
+      }), {merge: false});
+    },
+
+    showAmendments: function(e) {
+      e.preventDefault();
+      $('.sidebar a[href="#amendments-tab"]').click();
     },
 
     calculateUri: function() {

@@ -368,6 +368,9 @@
         expression_date: date,
       });
 
+      // ensure it has the necessary amendments linked to it
+      this.alignDocumentAmendments(doc, {silent: true});
+
       if (doc.get('content')) {
         return result.resolve(doc);
       } else {

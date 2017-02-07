@@ -229,7 +229,7 @@
         }
         return memo;
       }, []);
-      amendments = _.uniq(this.amendments, false, function(a) {
+      amendments = _.uniq(amendments, false, function(a) {
         return a.get('amending_uri');
       });
       this.amendments.reset(amendments);

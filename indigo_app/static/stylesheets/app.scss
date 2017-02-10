@@ -3,7 +3,7 @@ $workspace-header-colour: #ddd;
 $workspace-header-border-colour: #ccc;
 $header-colour2: #f5f5f5;
 
-$header-height: 45px;
+$header-height: 70px;
 
 $sidebar-width: 260px;
 $sidebar-colour: #eee;
@@ -74,16 +74,22 @@ fieldset {
   padding: 5px;
   background-color: $workspace-header-colour;
   border-bottom: 2px solid $workspace-header-border-colour;
-}
 
-.workspace-title {
-  position: absolute;
-  top: 5px;
-  left: $sidebar-width;
-  right: 0px;
+  .workspace-title {
+    position: absolute;
+    top: 5px;
+    left: 80px;
+    right: 0px;
 
-  h4 {
-    max-width: 80%;
+    h4 {
+      max-width: 80%;
+    }
+  }
+
+  .menu {
+    position: absolute;
+    top: 25px;
+    left: -10px;
   }
 }
 
@@ -93,22 +99,13 @@ fieldset {
   padding-right: 20px;
 }
 
-.library-box {
+.brand-box {
   position: relative;
-
-  .btn-link {
-    padding-left: 5px;
-    padding-right: 5px;
-  }
 
   .btn-link:hover,
   .btn-link:active,
   .btn-link:focus {
     text-decoration: none;
-  }
-
-  .dropdown {
-    display: inline-block;
   }
 }
 

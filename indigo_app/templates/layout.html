@@ -13,20 +13,8 @@
 {% block page-content %}
   <div class="workspace">
     <header class="workspace-header">
-      <div class="library-box">
+      <div class="brand-box">
         <h4 class="brand">Indigo</h4>
-
-        <a href="{% url 'library' %}" class="btn btn-link">Library</a>
-
-        <div class="dropdown">
-          <a href="#" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-            New <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="{% url 'new_document' %}"><i class="fa fa-plus-circle"></i> New document</a></li>
-            <li><a href="{% url 'import_document' %}"><i class="fa fa-plus-circle"></i> Import a document</a></li>
-          </ul>
-        </div>
       </div>
 
       <div class="workspace-title">

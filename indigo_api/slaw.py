@@ -63,17 +63,17 @@ class Importer(Slaw):
     """ Should we tell Slaw to reformat before parsing? Only do this with initial imports. """
     reformat = False
 
-    def import_from_upload(self, upload):
+    def import_from_upload(self, upload, request):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
         if upload.content_type in ['text/xml', 'application/xml']:
-            doc = Document()
+            doc = Document.randomized(request.user)
             doc.content = upload.read().decode('utf-8')
         else:
             with self.tempfile_for_upload(upload) as f:
                 self.reformat = True
-                doc = self.import_from_file(f.name)
+                doc = self.import_from_file(f.name, request)
 
             if not self.fragment:
                 doc.title = "Imported from %s" % upload.name
@@ -81,21 +81,18 @@ class Importer(Slaw):
 
         return doc
 
-    def import_from_text(self, input):
+    def import_from_text(self, input, request):
         """ Create a new Document by importing it from plain text.
         """
         with tempfile.NamedTemporaryFile() as f:
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
-            doc = self.import_from_file(f.name)
-
-            if not self.fragment:
-                doc.copy_attributes()
+            doc = self.import_from_file(f.name, request)
 
         return doc
 
-    def import_from_file(self, fname):
+    def import_from_file(self, fname, request):
         cmd = ['parse', '--no-definitions']
 
         if self.fragment:
@@ -123,8 +120,11 @@ class Importer(Slaw):
         if self.fragment:
             doc = Fragment(stdout.decode('utf-8'))
         else:
-            doc = Document()
+            doc = Document.randomized(request.user)
+            frbr_uri = doc.frbr_uri
             doc.content = stdout.decode('utf-8')
+            doc.frbr_uri = frbr_uri  # reset it
+            doc.copy_attributes()
 
         self.log.info("Successfully imported from %s" % fname)
         return doc

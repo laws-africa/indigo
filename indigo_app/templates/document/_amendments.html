@@ -1,90 +1,66 @@
 <header class="boxed-group-header">
   <h4>
-    Applied Amendments
+    Amended Versions
     <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
   </h4>
 </header>
 
 <div class="boxed-group-inner document-amendments-view">
-  <p>These are applied amendments which have lead to <strong>this version</strong> of the document.</p>
+  <div class="amendment-expressions"></div>
 
-  <div class="amendments-list"></div>
+  <script id="amendment-expressions-template" type="text/x-handlebars-template">
+  {% verbatim %}
 
-  <div class="row">
-    <div class="col-sm-6">
+  <ol class="expression-timeline">
+    {{#each amended_expressions}}
+      <li class="{{#if current}}current{{/if}}">
+        <h5>
+          {{ date }}
+          {{#if initial}} — Initial publication{{/if}}
+          {{#if current}}<span class="label label-info current">this version</span>{{/if}}
+        </h5>
+
+        {{#if amendments}}
+          <ul class="amendments">
+          {{#each amendments}}
+            <li data-uri="{{ amending_uri }}">
+              Amended by
+              {{#if amending_id }}
+                <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
+              {{else}}
+                {{ amending_title }}
+              {{/if}}
+              —
+              <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>
+            </li>
+          {{/each}}
+          </ul>
+        {{/if}}
+
+        <div class="document">
+          {{#if document}}
+            {{#if linkable}}
+            <a href="/documents/{{ document.id }}">{{ document.title }}</a>
+            {{else}}
+            {{ document.title }}
+            {{/if}}
+            as at {{ date }}
+            {{#if current}}<span class="label label-info current">this document</span>{{/if}}
+          {{else}}
+            <span class="text-muted">No editable version at this date</span>
+            —
+            <a href="#" class="create-expression" data-date="{{ date }}">create and edit an amended version</a>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+    <li>
       <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
-    </div>
-    <div class="col-sm-6">
-      <p>
-        <button class="btn btn-default clone"><i class="fa fa-copy"></i> Clone this document</button>
-      </p>
-      <p class="help-block">Clone a document before applying new amendments that will result in a new version.</p>
-    </div>
-  </div>
-
-  <div class="amended-versions-list"></div>
-
-  <script id="amendments-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  {{#if amendments}}
-    <table class="table table-condensed table-striped amendments-list">
-      <tr>
-        <th></th>
-        <th>Amended on</th>
-        <th>Amended by</th>
-      </tr>
-      {{#each amendments}}
-        <tr data-index="{{ @index }}">
-          <td class="buttons">
-            <a href="#" class="edit-amendment"><i class="fa fa-fw fa-pencil"></i></a>
-            <a href="#" class="delete-amendment"><i class="fa fa-fw fa-remove"></i></a>
-          </td>
-          <td class="date">
-            {{#if amended_id}}
-              <a href="/documents/{{ amended_id }}">{{ date }}</a>
-            {{else}}
-              {{ date }}
-            {{/if}}
-
-            {{#if this_document}}
-            (this document)
-            {{/if}}
-          </td>
-          <td>
-            {{#if amending_id}}
-              <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
-            {{else}}
-              {{ amending_title }}
-            {{/if}}
-          </td>
-        </tr>
-      {{/each}}
-    </table>
-  {{/if}}
+    </li>
+  </ol>
   {% endverbatim %}
   </script>
 
-  <script id="amended-versions-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  {{#if amended_versions}}
-  <h4>Other amended versions of this document</h4>
-
-  <ul>
-  {{#each amended_versions}}
-    {{#if this_document}}
-      <li>Version as at {{ expression_date }} (this document)</li>
-    {{else}}
-      <li><a href="/documents/{{ id }}">Version as at {{ expression_date }}</a></li>
-    {{/if}}
-  {{/each}}
-  </ul>
-
-  {{/if}}
-
-  {% endverbatim %}
-  </script>
 </div>
 
 {% include "document/_amendment_modal.html" %}

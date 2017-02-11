@@ -476,7 +476,7 @@ class ConvertView(APIView):
         if upload:
             # we got a file
             try:
-                document = self.get_importer().import_from_upload(upload)
+                document = self.get_importer().import_from_upload(upload, self.request)
                 return serializer, document
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
@@ -491,7 +491,7 @@ class ConvertView(APIView):
 
         elif input_format == 'text/plain':
             try:
-                document = self.get_importer().import_from_text(self.request.data['content'])
+                document = self.get_importer().import_from_text(self.request.data['content'], self.request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'content': e.message or "error during import"})

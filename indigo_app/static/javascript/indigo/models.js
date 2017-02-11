@@ -111,8 +111,32 @@
 
     urlRoot: '/api/documents',
 
+    initialize: function(options) {
+      this.dirty = false;
+
+      // this is useful to know when the model needs to be saved
+      this.on('change', this.setDirty, this);
+      this.on('sync', this.setClean, this);
+    },
+
+    setDirty: function() {
+      this.dirty = true;
+    },
+
+    setClean: function() {
+      this.dirty = false;
+    },
+
     parse: function(json) {
+      var self = this;
+
       json.amendments = this.reifyAmendments(json.amendments);
+
+      // ensure that changes to amendments fire model changes
+      this.listenTo(json.amendments, 'change add remove', function() {
+        self.trigger('change change:amendments');
+      });
+
       return json;
     },
 
@@ -144,7 +168,228 @@
     parse: function(response) {
       // TODO: handle actual pagination
       return response.results;
-    }
+    },
+
+    /**
+     * Return an ExpressionSet for the collection of documents for +frbr_uri+.
+     */
+    expressionSet: function(document) {
+      if (!document.expressionSet) {
+        document.expressionSet = new Indigo.ExpressionSet(null, {
+          library: this,
+          frbr_uri: document.get('frbr_uri'),
+          follow: document,
+        });
+      }
+
+      return document.expressionSet;
+    },
+  });
+
+  /**
+   * A collection of documents that are all expressions of the same work, based
+   * on the frbr_uri. Updated dynamically as document URIs change.
+   */
+  Indigo.ExpressionSet = Backbone.Collection.extend({
+    model: Indigo.Document,
+    comparator: 'expression_date',
+
+    initialize: function(models, options) {
+      this.frbr_uri = options.frbr_uri;
+      this.library = options.library;
+
+      // update ourselves if the document library changes
+      this.listenTo(this.library, 'reset add remove', this.build);
+      this.listenTo(this.library, 'change:frbr_uri', this.checkFrbrUriChange);
+
+      // watch documents for changed expression dates
+      this.on('change:expression_date', this.alignDocumentAmendments, this);
+
+      // should we follow a particular document even if its frbr_uri changes?
+      if (options.follow) {
+        this.listenTo(options.follow, 'change:frbr_uri', this.followingFrbrUriChanged, this);
+      }
+
+      this.amendments = new Backbone.Collection();
+      this.listenTo(this.amendments, 'remove', this.amendmentRemoved);
+      // when an amendment is added, ensure all docs have their amendments updated
+      this.listenTo(this.amendments, 'add', this.alignAllDocumentAmendments);
+      this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
+
+      this.build();
+    },
+
+    build: function() {
+      this.reset(this.library.where({frbr_uri: this.frbr_uri}));
+
+      // build up a unique collection of amendments
+      var amendments = _.inject(this.models, function(memo, doc) {
+        if (doc.get('amendments')) {
+          memo = memo.concat(doc.get('amendments').models);
+        }
+        return memo;
+      }, []);
+      amendments = _.uniq(amendments, false, function(a) {
+        return a.get('amending_uri');
+      });
+      this.amendments.reset(amendments);
+    },
+
+    followingFrbrUriChanged: function(model, frbr_uri) {
+      if (this.frbr_uri != frbr_uri) {
+        this.frbr_uri = frbr_uri;
+        this.build();
+      }
+    },
+
+    checkFrbrUriChange: function(model, new_value) {
+      // if the model we're following has changed, rely on the followingFrbrUriChanged instead
+      if (this.follow && model == this.follow) return;
+
+      if (new_value == this.frbr_uri || model.previous('frbr_uri') == this.frbr_uri) {
+        this.build();
+      }
+    },
+
+    // An amendment was added. Ensure that all expressions have appropriate amendments.
+    amendmentRemoved: function(amendment) {
+      // adjust docs who had this expression date, finding a new one
+      var oldDate = amendment.get('date'),
+          dates = this.amendmentDates(),
+          newDate = _.indexOf(dates, oldDate) - 1;
+
+      newDate = (newDate < 0) ? this.initialPublicationDate() : dates[newDate];
+      this.each(function(doc) {
+        if (doc.get('expression_date') == oldDate) {
+          doc.set('expression_date', newDate);
+        }
+      });
+
+      this.alignAllDocumentAmendments();
+    },
+
+    // The date of an amendment changed. Ensure that all expressions linked to that date change, too,
+    // and that all documents have the correct amendments.
+    amendmentDateChanged: function(model, newDate) {
+      var prev = model.previous("date"),
+          self = this;
+
+      this.each(function(doc) {
+        if (doc.get('expression_date') == prev) {
+          doc.set('expression_date', newDate);
+        }
+      });
+
+      this.alignAllDocumentAmendments();
+    },
+
+    alignAllDocumentAmendments: function() {
+      var self = this;
+
+      this.each(function(d) {
+        self.alignDocumentAmendments(d, {silent: true});
+      });
+
+      this.trigger('change');
+    },
+
+    // Ensure that all this document has all the appropriate amendments linked to it.
+    alignDocumentAmendments: function(doc, options) {
+      var date;
+
+      // ensure the document has an expression date
+      if (!doc.has('expression_date')) {
+        doc.set('expression_date', doc.get('publication_date'));
+      }
+      date = doc.get('expression_date');
+
+      // apply amendments that are at or before the expression date
+      doc.get('amendments').set(this.amendments.filter(function(a) {
+        return a.get('date') <= date;
+      }));
+
+      if (!options && !options.silent) this.trigger('change');
+    },
+
+    initialPublicationDate: function() {
+      return this.length === 0 ? null : this.at(0).get('publication_date');
+    },
+
+    dates: function() {
+      var dates = _.uniq(this.pluck('expression_date'));
+      dates.sort();
+      return dates;
+    },
+
+    amendmentDates: function() {
+      var dates = _.uniq(this.amendments.pluck('date'));
+      dates.sort();
+      return dates;
+    },
+
+    // All dates covered by this expression set, including document dates,
+    // amendment dates and the initial publication date.
+    allDates: function() {
+      var dates = this.dates().concat(this.amendmentDates()),
+          pubDate = this.initialPublicationDate();
+
+      if (pubDate) dates.push(pubDate);
+      dates.sort();
+      dates = _.uniq(dates, true);
+
+      return dates;
+    },
+
+    atDate: function(date) {
+      return this.findWhere({expression_date: date});
+    },
+
+    amendmentsAtDate: function(date) {
+      return this.amendments.where({date: date});
+    },
+
+    // Create a new expression. Returns a deferred that is resolved
+    // with the new document document.
+    createExpressionAt: function(date) {
+      // find the first expression at or before this date, and clone that
+      // expression
+      var prev = _.last(this.filter(function(d) {
+        return d.get('expression_date') <= date;
+      }));
+      if (!prev) prev = this.at(0);
+
+      var doc = prev.clone();
+      var result = $.Deferred();
+
+      doc.set({
+        draft: true,
+        title: 'Copy of ' + doc.get('title'),
+        id: null,
+        expression_date: date,
+      });
+
+      // ensure it has the necessary amendments linked to it
+      this.alignDocumentAmendments(doc, {silent: true});
+
+      if (doc.get('content')) {
+        return result.resolve(doc);
+      } else {
+        // load the content
+        var content = new Indigo.DocumentContent({document: prev});
+        content.fetch()
+          .done(function() {
+            doc.set('content', content.get('content'));
+            doc.save()
+              .then(function() {
+                result.resolve(doc);
+              })
+              .fail(result.fail);
+          })
+          .fail(result.fail);
+      }
+
+      return result;
+    },
   });
 
   Indigo.User = Backbone.Model.extend({

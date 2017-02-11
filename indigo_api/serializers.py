@@ -346,7 +346,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
                 importer = Importer()
                 importer.section_number_position = posn
-                document = importer.import_from_upload(upload)
+                document = importer.import_from_upload(upload, self.context['request'])
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})

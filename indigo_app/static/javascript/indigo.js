@@ -79,6 +79,12 @@ $(function() {
     }
   };
 
+  // setup the library
+  Indigo.library = new Indigo.Library();
+  if (Indigo.Preloads.library) {
+    Indigo.library.reset({results: Indigo.Preloads.library}, {parse: true});
+  }
+
   // always load the user view
   Indigo.userView = new Indigo.UserView();
 
@@ -86,5 +92,6 @@ $(function() {
   var view = $('body').data('backbone-view');
   if (view && Indigo[view]) {
     Indigo.view = new Indigo[view]();
+    Indigo.view.render();
   }
 });

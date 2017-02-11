@@ -87,6 +87,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.data['title'], 'Document title')
+        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
 
     def test_update(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
@@ -420,6 +421,7 @@ class DocumentAPITest(APITestCase):
         # check the doc
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.data['draft'], True)
+        assert_not_equal(response.data['frbr_uri'], '/za/act/1980/01')
 
         # check the attachment
         response = self.client.get('/api/documents/%s/attachments' % id)

@@ -145,9 +145,12 @@
 
       <div class="form-group">
         <label for="document_expression_date" class="col-sm-2 control-label">Expression date</label>
-        <div class="col-sm-8">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_expression_date" placeholder="yyyy-mm-dd">
-          <p class="help-block">Date of this version of the document, usually the publication date, amendment date, or commencment date</p>
+        <div class="col-sm-4">
+          <select class="form-control" id="document_expression_date"></select>
+          <p class="help-block">Date of this version of the document, either the publication date or an amendment date</p>
+        </div>
+        <div class="col-sm-4">
+          <a href="#" class="btn btn-default btn-amendments">Manage amendments</a>
         </div>
       </div>
 

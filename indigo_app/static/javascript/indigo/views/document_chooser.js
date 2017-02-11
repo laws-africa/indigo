@@ -24,13 +24,11 @@
       this.searchableFields = ['title', 'year', 'number'];
       this.chosen = null;
 
-      this.model = new Indigo.Library();
-      this.model.on('change, reset', this.render, this);
+      this.model = Indigo.library;
+      this.listenTo(this.model, 'change reset', this.render);
       this.on('change:filter', this.render, this);
 
       this.setFilters({});
-
-      this.model.fetch({reset: true});
     },
 
     choose: function(item) {

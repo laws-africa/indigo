@@ -428,6 +428,10 @@ legend {
     text-align: center;
     padding-bottom: 25px;
     margin-bottom: 25px;
+
+    &.incoming {
+      background-color: #efefef;
+    }
   }
 
   .file-input-field {
@@ -734,5 +738,107 @@ legend {
       float: left;
       padding-left: 20px;
     }
+  }
+}
+
+.amendment-expressions {
+  position: relative;
+}
+
+.expression-timeline {
+  list-style: none;
+  padding-left: 0px;
+
+  &::after {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 10px;
+    top: 20px;
+    bottom: 30px;
+    width: 4px;
+    background: #ddd;
+    z-index: 0;
+  }
+
+  &> li {
+    position: relative;
+    margin-left: 40px;
+    background-color: #eee;
+    padding: 10px 10px;
+    margin-bottom: 15px;
+
+    &> h5 {
+      margin-top: 0px;
+      font-weight: bold;
+    }
+
+    &.current {
+      border: 1px solid #5bc0de;
+
+      h5::before {
+        content: " ";
+        display: block;
+        position: absolute;
+        top: 9px;
+        left: -22px;
+        width: 0;
+        height: 0;
+        border-color: transparent #5bc0de transparent transparent;
+        border-width: 11px;
+        border-style: solid;
+        z-index: 0;
+      }
+
+      &.current::before {
+        border-color: #5bc0de;
+        left: -38px;
+      }
+    }
+
+    &::before {
+      right: 100%;
+      border: #ddd 4px solid;
+      border-radius: 50%;
+      content: " ";
+      position: absolute;
+      top: 10px;
+      left: -37px;
+      background-color: white;
+      width: 18px;
+      height: 18px;
+      z-index: 1;
+    }
+    
+    &::after {
+      right: 100%;
+      border: solid transparent;
+      content: " ";
+      width: 0;
+      height: 0;
+      position: absolute;
+      border-right-color: #efefef;
+      border-width: 10px;
+      top: 10px;
+      left: -20px;
+    }
+
+    .amendments + .document {
+      margin: 10px 0px 0px 25px;
+      position: relative;
+
+      &::before {
+        content: "⤷";
+        position: absolute;
+        top: -10px;
+        left: -25px;
+        font-size: 24px;
+      }
+    }
+  }
+
+  .amendments {
+    list-style: none;
+    padding-left: 0px;
   }
 }

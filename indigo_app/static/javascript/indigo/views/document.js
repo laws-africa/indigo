@@ -71,27 +71,30 @@
       'click .btn.delete-document': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
-      'click .btn.clone': 'createClone',
     },
 
     initialize: function() {
-      var library = new Indigo.Library(),
+      var library = Indigo.library,
           document_id = $('[data-document-id]').data('document-id') || null;
 
       this.$saveBtn = $('.workspace-buttons .btn.save');
       this.dirty = false;
 
-      // The document page eager loads the document details into this
-      // variable.
-      var info = Indigo.Preloads.document;
+      if (document_id) {
+        // get it from the library
+        this.document = Indigo.library.get(document_id);
+      } else {
+        // only for new documents
+        this.document = new Indigo.Document(Indigo.Preloads.document, {collection: library, parse: true});
+      }
 
-      this.document = new Indigo.Document(info, {collection: library, parse: true});
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
+      this.document.expressionSet = Indigo.library.expressionSet(this.document);
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);
-
+      
       this.user = Indigo.userView.model;
       this.user.on('change', this.userChanged, this);
 
@@ -199,7 +202,7 @@
       var deferred = null;
 
       // always save properties if we save content
-      this.propertiesView.dirty = this.bodyEditorView.dirty || is_new;
+      this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty || is_new;
 
       var fail = function() {
         self.$saveBtn
@@ -279,38 +282,5 @@
           });
       }
     },
-
-    // Create a clone of the document and redirect them there
-    createClone: function(e) {
-      if (confirm('Create a copy of this document? Unsaved changes will be lost!')) {
-        // clone and reset some attributes
-        var clone = this.document.clone();
-        clone.set({
-          content: this.documentContent.get('content'),
-          draft: true,
-          title: 'Copy of ' + clone.get('title'),
-          id: null,
-        });
-
-        var $btn = $(e.target);
-        $btn
-          .toggleClass('disabled')
-          .find('.fa')
-          .toggleClass('fa-copy fa-pulse fa-spinner');
-
-        clone
-          .save(null, {parse: false})
-          .done(function(response) {
-            // redirect
-            document.location = '/documents/' + response.id + '/';
-          })
-          .fail(function() {
-            $btn
-              .toggleClass('disabled')
-              .find('.fa')
-              .toggleClass('fa-copy fa-pulse fa-spinner');
-          });
-      }
-    }
   });
 })(window);

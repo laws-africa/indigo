@@ -9,15 +9,13 @@
     events: {
       'click .btn.choose-file': 'chooseFile',
       'click .btn.import': 'submitForm',
+      'dragleave .dropzone': 'noDrag',
+      'dragover .dropzone': 'dragover',
+      'drop .dropzone': 'drop',
+      'change [name=file]': 'fileSelected',
     },
 
     initialize: function() {
-      var self = this;
-
-      this.$el.find('.dropzone')
-        .on('dragover', _.bind(this.dragover, this))
-        .on('drop', _.bind(this.drop, this));
-      this.$el.find('[name=file]').on('change', _.bind(this.fileSelected, this));
       this.$form = this.$el.find('form.import-form');
     },
 
@@ -25,31 +23,35 @@
       e.stopPropagation();
       e.preventDefault();
       e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.$('.dropzone').addClass('incoming');
+      this.$('.alert').hide();
+    },
 
-      this.$el.find('.alert').hide();
+    noDrag: function() {
+      this.$('.dropzone').removeClass('incoming');
     },
 
     drop: function(e) {
       e.stopPropagation();
       e.preventDefault();
-      this.$el.find('.dropzone').removeClass('dragging');
+      this.$('.dropzone').removeClass('dragging incoming');
 
       this.setFile(e.originalEvent.dataTransfer.files[0]);
     },
 
     chooseFile: function(e) {
-      this.$el.find('[name=file]').click();
+      this.$('[name=file]').click();
     },
 
     fileSelected: function(e) {
-      this.$el.find('.alert').hide();
+      this.$('.alert').hide();
       this.setFile(e.originalEvent.target.files[0]);
     },
 
     setFile: function(file) {
       this.file = file;
-      this.$el.find('.file-detail').text(this.file.name);
-      this.$el.find('button.import').prop('disabled', false);
+      this.$('.file-detail').text(this.file.name);
+      this.$('button.import').prop('disabled', false);
     },
 
     submitForm: function(e) {

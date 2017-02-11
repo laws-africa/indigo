@@ -16,6 +16,9 @@
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
+    events: {
+      'click .btn-amendments': 'showAmendments',
+    },
     bindings: {
       '#document_country': {
         observe: 'country',
@@ -77,6 +80,9 @@
       '#document_expression_date': {
         observe: 'expression_date',
         onSet: emptyIsNull,
+        selectOptions: {
+          collection: 'this.expressionDates',
+        }
       },
       '#document_language': 'language',
       '#document_draft': {
@@ -118,20 +124,41 @@
     },
 
     initialize: function() {
-      this.stickit();
+      // the choices in the expression_date dropdown
+      this.expressionDates = new Backbone.Collection();
 
       this.dirty = false;
       this.model.on('change', this.setDirty, this);
       this.model.on('sync', this.setClean, this);
-
-      // only attach URI building handlers after the first sync
-      this.listenToOnce(this.model, 'sync', function() {
-        this.model.on('change:number change:nature change:country change:year change:locality change:subtype', _.bind(this.calculateUri, this));
-      });
+      this.model.expressionSet.on('change', this.setDirty, this);
 
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
-      this.model.on('change:amendments change:publication_date', this.setExpressionDate, this);
+
+      // update the choices of expression dates when necessary
+      this.model.on('change:publication_date', this.updateExpressionDates, this);
+      this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
+
+      this.calculateUri();
+      this.updateExpressionDates();
+      this.stickit();
+    },
+
+    updateExpressionDates: function() {
+      var dates = this.model.expressionSet.allDates(),
+          pubDate = this.model.expressionSet.initialPublicationDate();
+
+      this.expressionDates.set(_.map(dates, function(date) {
+        return {
+          value: date,
+          label: date + ' - ' + (date == pubDate ? 'initial publication' : 'amendment'),
+        };
+      }), {merge: false});
+    },
+
+    showAmendments: function(e) {
+      e.preventDefault();
+      $('.sidebar a[href="#amendments-tab"]').click();
     },
 
     calculateUri: function() {
@@ -154,22 +181,6 @@
       parts = _.map(parts, function(p) { return p.replace(/[ \/]/g, ''); });
 
       this.model.set('frbr_uri', parts.join('/').toLowerCase());
-    },
-
-    setExpressionDate: function() {
-      // the expression date is the publication date, or the latest amendment
-      // date if there are amendments
-      if (!this.model.get('expression_date')) {
-        var amendments = this.model.get('amendments');
-
-        if (amendments.length > 0) {
-          this.model.set('expression_date', amendments.at(amendments.length-1).get('date'));
-        } else {
-          this.model.set('expression_date', this.model.get('publication_date'));
-        }
-
-        this.$el.find('[data-provide=datepicker]').datepicker('update');
-      }
     },
 
     showPublishedUrl: function() {
@@ -199,6 +210,7 @@
     },
 
     save: function() {
+      var self = this;
       // TODO: validation
 
       // don't do anything if it hasn't changed
@@ -206,7 +218,16 @@
         return $.Deferred().resolve();
       }
 
-      return this.model.save();
+      // save modified documents using the expression set is sufficient to
+      // ensure this document is saved too
+      var dirty = this.model.expressionSet.filter(function(d) { return d.dirty; });
+
+      // save the dirty ones and chain the deferreds into a single deferred
+      return $.when.apply($, dirty.map(function(d) {
+        return d.save();
+      })).done(function() {
+        self.setClean();
+      });
     },
   });
 })(window);

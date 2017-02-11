@@ -20,13 +20,19 @@
               <li><a href="{% url 'import_document' %}">Import a Document</a></li>
             </ul>
           </li>
+          <li><a href="{% url 'library' %}">Open...</a></li>
+          <li role="separator" class="divider"></li>
           <li class="save"><a href="#">Save</a></li>
           <li><a href="#">Recent Changes</a></li>
-          <li><a href="#">Download as...</a></li>
+          <li class="dropdown-submenu">
+            <a href="#">Download As</a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a></li>
+              <li><a href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a></li>
+              <li><a href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a></li>
+            </ul>
+          </li>
           <li class="delete-document"><a href="#">Delete</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="{% url 'library' %}">Library</a></li>
-          <li role="separator" class="divider"></li>
         </ul>
       </div>
 

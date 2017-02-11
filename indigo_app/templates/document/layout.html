@@ -13,6 +13,13 @@
       <div class="btn-group">
         <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">File</button>
         <ul class="dropdown-menu">
+          <li class="dropdown-submenu">
+            <a href="#">New</a>
+            <ul class="dropdown-menu">
+              <li><a href="{% url 'new_document' %}">New Document</a></li>
+              <li><a href="{% url 'import_document' %}">Import a Document</a></li>
+            </ul>
+          </li>
           <li class="save"><a href="#">Save</a></li>
           <li><a href="#">Recent Changes</a></li>
           <li><a href="#">Download as...</a></li>
@@ -20,8 +27,6 @@
           <li role="separator" class="divider"></li>
           <li><a href="{% url 'library' %}">Library</a></li>
           <li role="separator" class="divider"></li>
-          <li><a href="{% url 'new_document' %}">New Document</a></li>
-          <li><a href="{% url 'import_document' %}">Import a Document</a></li>
         </ul>
       </div>
 
@@ -31,9 +36,6 @@
           <li><a href="#">Cut</a></li>
           <li><a href="#">Copy</a></li>
           <li><a href="#">Paste</a></li>
-          <li role="separator" class="divider"></li>
-          <li><a href="#">Undo</a></li>
-          <li><a href="#">Redo</a></li>
         </ul>
       </div>
 

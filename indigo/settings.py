@@ -197,6 +197,7 @@ PIPELINE_CSS = {
             'bower_components/fontawesome/css/font-awesome.css',
             'bower_components/bootstrap-datepicker/css/datepicker3.css',
             'stylesheets/select2-4.0.0.min.css',
+            'stylesheets/bootstrap-submenu.scss',
             'stylesheets/app.scss',
         ),
         'output_filename': 'app.css',

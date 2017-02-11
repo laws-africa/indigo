@@ -69,7 +69,7 @@
     events: {
       'click .workspace-buttons .btn.save': 'save',
       'click .menu .save a': 'save',
-      'click .btn.delete-document': 'delete',
+      'click .menu .delete-document': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
@@ -191,8 +191,8 @@
     },
 
     allowDelete: function() {
-      this.$el.find('.btn.delete-document').prop('disabled',
-        this.document.isNew() || !this.user.authenticated() || !this.document.get('draft'));
+      this.$menu.find('.delete-document').toggleClass('disabled',
+        this.document.isNew() || !this.user.authenticated());
     },
 
     userChanged: function() {
@@ -280,6 +280,11 @@
     },
 
     delete: function() {
+      if (!this.document.get('draft')) {
+        alert('You cannot delete published documents. Please mark the document as a draft and try again.');
+        return;
+      }
+
       if (confirm('Are you sure you want to delete this document?')) {
         this.document
           .destroy()

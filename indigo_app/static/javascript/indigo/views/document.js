@@ -68,6 +68,7 @@
     el: 'body',
     events: {
       'click .workspace-buttons .btn.save': 'save',
+      'click .menu .save a': 'save',
       'click .btn.delete-document': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
@@ -78,6 +79,7 @@
           document_id = $('[data-document-id]').data('document-id') || null;
 
       this.$saveBtn = $('.workspace-buttons .btn.save');
+      this.$menu = $('.workspace-header .menu');
       this.dirty = false;
 
       if (document_id) {
@@ -169,6 +171,7 @@
           .removeClass('btn-default')
           .addClass('btn-info')
           .prop('disabled', false);
+        this.$menu.find('.save').removeClass('disabled');
       }
     },
 
@@ -183,6 +186,7 @@
           .find('.fa')
             .removeClass('fa-pulse fa-spinner')
             .addClass('fa-save');
+        this.$menu.find('.save').addClass('disabled');
       }
     },
 
@@ -210,6 +214,7 @@
           .find('.fa')
             .removeClass('fa-pulse fa-spinner')
             .addClass('fa-save');
+        self.$menu.find('.save').removeClass('disabled');
       };
 
       this.$saveBtn
@@ -217,6 +222,7 @@
         .find('.fa')
           .removeClass('fa-save')
           .addClass('fa-pulse fa-spinner');
+      this.$menu.find('.save').addClass('disabled');
 
       if (is_new) {
         // save properties first, to get an ID, then

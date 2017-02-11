@@ -13,8 +13,7 @@
       <div class="btn-group">
         <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">File</button>
         <ul class="dropdown-menu">
-          <li><a href="#">Save</a></li>
-          <li><a href="#">Create a Copy</a></li>
+          <li class="save"><a href="#">Save</a></li>
           <li><a href="#">Recent Changes</a></li>
           <li><a href="#">Delete</a></li>
           <li><a href="#">Download as...</a></li>
@@ -41,11 +40,14 @@
       <div class="btn-group">
         <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Help</button>
         <ul class="dropdown-menu">
-          <li><a href="#">Indigo Help</a></li>
-          <li><a href="#">Cheatsheet</a></li>
-          <li><a href="#">Feedback</a></li>
+          <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Indigo Help</a></li>
+          <li><a href="#cheatsheet-modal" data-toggle="modal">Editor Cheatsheet</a></li>
+          {% if SUPPORT_EMAIL %}
+          <li><a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">Request an account</a></li>
+          {% endif %}
+          <li><a href="mailto:greg@code4sa.org" target="_blank">Feedback</a></li>
           <li role="separator" class="divider"></li>
-          <li><a href="#">Indigo On Github</a></li>
+          <li><a href="https://github.com/Code4SA/indigo" target="_blank">Indigo on GitHub</a></li>
         </ul>
       </div>
     </div>

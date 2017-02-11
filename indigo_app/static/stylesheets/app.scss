@@ -3,7 +3,8 @@ $workspace-header-colour: #ddd;
 $workspace-header-border-colour: #ccc;
 $header-colour2: #f5f5f5;
 
-$header-height: 70px;
+$header-height: 45px;
+$workspace-header-height: 70px;
 
 $sidebar-width: 260px;
 $sidebar-colour: #eee;
@@ -69,7 +70,7 @@ fieldset {
 }
 
 .workspace-header {
-  height: $header-height;
+  height: $workspace-header-height;
   width: 100%;
   padding: 5px;
   background-color: $workspace-header-colour;
@@ -121,7 +122,7 @@ fieldset {
 
 .workspace-content {
   position: absolute;
-  top: $header-height;
+  top: $workspace-header-height;
   bottom: 0px;
   left: 0px;
   right: 0px;
@@ -136,7 +137,7 @@ fieldset {
 
 .sidebar {
   position: absolute;
-  top: $header-height;
+  top: $workspace-header-height;
   bottom: 0px;
   width: $sidebar-width;
   background-color: $sidebar-colour;
@@ -352,7 +353,7 @@ legend {
 
 #progress-bar {
   position: fixed;
-  top: 42px;
+  top: $workspace-header-height - 3;
   right: 0px;
   left: 0px;
   height: 6px;

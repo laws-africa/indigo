@@ -148,6 +148,16 @@
         this.propertiesView.calculateUri();
         this.setDirty();
       }
+
+      // make menu peers behave like real menus on hover
+      $('.menu .btn-link').on('mouseover', function(e) {
+        var $menuItem = $(this),
+            $parent = $menuItem.parent();
+            
+        if (!$parent.hasClass("open") && $parent.siblings(".open").length) {
+          $menuItem.click();
+        }
+      });
     },
 
     windowUnloading: function(e) {

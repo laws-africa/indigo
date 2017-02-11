@@ -1,5 +1,18 @@
-// from http://bootsnipp.com/snippets/featured/multi-level-dropdown-menu-bs3
+// extra menu stuff
+.dropdown-menu > li > a {
+  padding-left: 25px;
 
+  &> i.fa {
+    // fa-fw
+    width: 1.28571429em;
+    text-align: center;
+
+    margin-left: -21px;
+    margin-right: -1px;
+  }
+}
+
+// from http://bootsnipp.com/snippets/featured/multi-level-dropdown-menu-bs3
 .dropdown-submenu {
   position: relative;
 }
@@ -46,18 +59,4 @@
   -webkit-border-radius: 6px 0 6px 6px;
   -moz-border-radius: 6px 0 6px 6px;
   border-radius: 6px 0 6px 6px;
-}
-
-// extra menu stuff
-.dropdown-menu > li > a {
-  padding-left: 25px;
-
-  &> i.fa {
-    // fa-fw
-    width: 1.28571429em;
-    text-align: center;
-
-    margin-left: -21px;
-    margin-right: -1px;
-  }
 }

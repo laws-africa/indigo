@@ -67,6 +67,7 @@
   Indigo.DocumentView = Backbone.View.extend({
     el: 'body',
     events: {
+      'click .menu .disabled a': 'stopDisabledMenuClick',
       'click .workspace-buttons .btn.save': 'save',
       'click .menu .save a': 'save',
       'click .menu .delete-document': 'delete',
@@ -292,6 +293,12 @@
             document.location = '/library';
           });
       }
+    },
+
+    stopDisabledMenuClick: function(e) {
+      // stop menu clicks on disabled items from doing anything
+      e.preventDefault();
+      e.stopImmediatePropagation();
     },
   });
 })(window);

@@ -2,7 +2,6 @@
 {% load static %}
 
 {% block main-content %}
-
 <div class="tab-content high">
   <div id="props-tab" class="tab-pane active high">
     {% include "document/_properties.html" %}
@@ -14,10 +13,6 @@
 
   <div id="attachments-tab" class="tab-pane high">
     {% include "document/_attachments.html" %}
-  </div>
-
-  <div id="analysis-tab" class="tab-pane high">
-    {% include "document/_analysis.html" %}
   </div>
 
   <div id="revisions-tab" class="tab-pane high">
@@ -33,6 +28,7 @@
   </div>
 </div>
 
+{% include "document/_defined_terms.html" %}
 {% endblock %}
 
 {% block js %}

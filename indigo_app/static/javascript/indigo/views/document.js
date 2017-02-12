@@ -71,7 +71,7 @@
       'click .menu .dropdown-submenu a': 'stopMenuClick',
       'click .workspace-buttons .btn.save': 'save',
       'click .menu .save a': 'save',
-      'click .menu .delete-document': 'delete',
+      'click .menu .delete-document a': 'delete',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },

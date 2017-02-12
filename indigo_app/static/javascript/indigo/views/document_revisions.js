@@ -13,6 +13,7 @@
     events: {
       'click .restore-revision': 'restore',
       'click .revision': 'showRevision',
+      'click .dismiss': 'dismiss',
     },
 
     initialize: function(options) {
@@ -23,6 +24,18 @@
       this.model.on('change sync', this.render, this);
 
       this.document.on('sync', this.refresh, this);
+
+      $('.menu .revisions a').on('click', _.bind(this.show, this));
+    },
+
+    show: function(e) {
+      e.preventDefault();
+      this.$el.addClass('in');
+    },
+
+    dismiss: function(e) {
+      e.preventDefault();
+      this.$el.removeClass('in');
     },
 
     refresh: function() {

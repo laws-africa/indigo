@@ -483,7 +483,7 @@ legend {
 /* table of contents browser */
 .toc {
   position: absolute;
-  top: 130px;
+  top: 105px;
   left: 0px;
   right: 0px;
   bottom: 0px;
@@ -601,6 +601,22 @@ legend {
 }
 
 /* revision list */
+.document-revisions-view {
+
+  position: fixed;
+  top: $workspace-header-height;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
+  display: none;
+  background: white;
+
+  &.in {
+    display: block;
+  }
+}
+
 .revisions-container {
   position: absolute;
   top: 0px;

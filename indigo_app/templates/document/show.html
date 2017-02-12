@@ -15,10 +15,6 @@
     {% include "document/_attachments.html" %}
   </div>
 
-  <div id="revisions-tab" class="tab-pane high">
-    {% include "document/_revisions.html" %}
-  </div>
-
   <div id="content-tab" class="tab-pane high">
     {% include "document/_content.html" %}
   </div>
@@ -29,6 +25,8 @@
 </div>
 
 {% include "document/_defined_terms.html" %}
+{% include "document/_revisions.html" %}
+
 {% endblock %}
 
 {% block js %}

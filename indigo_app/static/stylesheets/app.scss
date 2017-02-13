@@ -1,5 +1,5 @@
 $border-colour: #ddd;
-$workspace-header-colour: #ddd;
+$workspace-header-colour: white;
 $workspace-header-border-colour: #ccc;
 $header-colour2: #f5f5f5;
 
@@ -84,31 +84,15 @@ fieldset {
 
     h4 {
       max-width: 80%;
+      margin: 0px;
     }
   }
 
   .menu {
     position: absolute;
-    top: 25px;
-    left: -10px;
-
-    .btn-group .btn-link {
-      color: inherit;
-
-      &:hover,
-      &:active,
-      &:focus {
-        color: inherit;
-        text-decoration: none;
-      }
-    }
+    top: 30px;
+    left: -7px;
   }
-}
-
-.brand {
-  display: inline;
-  float: left;
-  padding-right: 20px;
 }
 
 .brand-box {
@@ -118,6 +102,13 @@ fieldset {
   .btn-link:active,
   .btn-link:focus {
     text-decoration: none;
+  }
+
+  .brand {
+    display: inline;
+    float: left;
+    padding-right: 20px;
+    margin: 0px;
   }
 }
 

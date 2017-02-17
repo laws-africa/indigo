@@ -4,7 +4,7 @@ $workspace-header-border-colour: #ccc;
 $header-colour2: #f5f5f5;
 
 $header-height: 45px;
-$workspace-header-height: 70px;
+$workspace-header-height: 45px;
 
 $sidebar-width: 260px;
 $sidebar-colour: #eee;
@@ -67,31 +67,75 @@ fieldset {
   bottom: 0px;
   width: 100%;
   overflow: hidden;
-}
 
-.workspace-header {
-  height: $workspace-header-height;
-  width: 100%;
-  padding: 5px;
-  background-color: $workspace-header-colour;
-  border-bottom: 2px solid $workspace-header-border-colour;
+  .workspace-header {
+    position: relative;
 
-  .workspace-title {
-    position: absolute;
-    top: 5px;
-    left: 80px;
-    right: 0px;
+    height: $workspace-header-height;
+    width: 100%;
+    padding: 5px;
+    background-color: $workspace-header-colour;
+    border-bottom: 2px solid $workspace-header-border-colour;
 
-    h4 {
-      max-width: 80%;
-      margin: 0px;
+    .workspace-title {
+      position: absolute;
+      top: 5px;
+      left: 80px;
+      right: 0px;
+
+      h4 {
+        max-width: 80%;
+        margin: 0px;
+      }
+    }
+
+    .menu {
+      position: absolute;
+      top: 30px;
+      left: -7px;
     }
   }
 
-  .menu {
+  &.has-menu {
+    .workspace-header {
+      height: $workspace-header-height + 25px;
+    }
+
+    .workspace-body {
+      top: $workspace-header-height + 25px;
+    }
+  }
+
+  .workspace-buttons {
     position: absolute;
-    top: 30px;
-    left: -7px;
+    top: 5px;
+    right: 5px;
+  }
+
+  .workspace-body {
+    position: absolute;
+    top: $workspace-header-height;
+
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+  }
+
+  /* a page either has a workspace-content on its own,
+     or a sidebar and a workspace-content */
+
+  .workspace-content {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+
+    .boxed-group-inner {
+      padding: 10px;
+    }
   }
 }
 
@@ -112,34 +156,11 @@ fieldset {
   }
 }
 
-.workspace-buttons {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-}
-
-
-/* a page either has a workspace-content on its own,
-   or a sidebar and a workspace-content */
-
-.workspace-content {
-  position: absolute;
-  top: $workspace-header-height;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  overflow: hidden;
-
-  .boxed-group-inner {
-    padding: 10px;
-  }
-}
-
 /* sidebar */
 
 .sidebar {
   position: absolute;
-  top: $workspace-header-height;
+  top: 0px;
   bottom: 0px;
   width: $sidebar-width;
   background-color: $sidebar-colour;
@@ -354,8 +375,8 @@ legend {
 }
 
 #progress-bar {
-  position: fixed;
-  top: $workspace-header-height - 3;
+  position: absolute;
+  bottom: -4px;
   right: 0px;
   left: 0px;
   height: 6px;
@@ -594,8 +615,8 @@ legend {
 /* revision list */
 .document-revisions-view {
 
-  position: fixed;
-  top: $workspace-header-height;
+  position: absolute;
+  top: 0px;
   left: 0px;
   right: 0px;
   bottom: 0px;

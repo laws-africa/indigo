@@ -1,50 +1,116 @@
-{% extends "document/layout.html" %}
+{% extends "layout.html" %}
+
+{% load pipeline %}
 {% load static %}
 
-{% block main-content %}
-<div class="tab-content high">
-  <div id="props-tab" class="tab-pane active high">
-    {% include "document/_properties.html" %}
+
+{% block header %}
+  <span data-document-id="{{ document.id|default:"" }}"></span>
+  <h4 class="document-title">{{ document.title }}</h4>
+
+  {% include 'document/_menu.html' %}
+{% endblock %}
+
+{% block workspace-classes %}has-menu{% endblock %}
+
+
+{% block header-buttons %}
+  <button class="btn btn-default save" disabled style="display: none"><i class="fa fa-save"></i> Save</button>
+{% endblock %}
+
+
+{% block content %}
+  {% include "document/_sidebar.html" %}
+
+  <div class="workspace-content">
+    <div class="tab-content high">
+      <div id="props-tab" class="tab-pane active high">
+        {% include "document/_properties.html" %}
+      </div>
+
+      <div id="amendments-tab" class="tab-pane high">
+        {% include "document/_amendments.html" %}
+      </div>
+
+      <div id="attachments-tab" class="tab-pane high">
+        {% include "document/_attachments.html" %}
+      </div>
+
+      <div id="content-tab" class="tab-pane high">
+        {% include "document/_content.html" %}
+      </div>
+
+      <div id="preview-tab" class="tab-pane high">
+        {% include "document/_preview.html" %}
+      </div>
+    </div>
   </div>
 
-  <div id="amendments-tab" class="tab-pane high">
-    {% include "document/_amendments.html" %}
-  </div>
+  {% include "document/_defined_terms.html" %}
+  {% include "document/_revisions.html" %}
+{% endblock %}
 
-  <div id="attachments-tab" class="tab-pane high">
-    {% include "document/_attachments.html" %}
-  </div>
+{% block head-css %}
+  {{ block.super }}
 
-  <div id="content-tab" class="tab-pane high">
-    {% include "document/_content.html" %}
-  </div>
+  {% if DEBUG and INDIGO_LIME_DEBUG %}
+    {# CSS for development LIME #}
 
-  <div id="preview-tab" class="tab-pane high">
-    {% include "document/_preview.html" %}
-  </div>
-</div>
+    <link rel="stylesheet" href="/static/lime/develop/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/lime/develop/resources/stylesheets/extjs4.editor.css" />
+    <link rel="stylesheet" type="text/css" href="/static/lime/develop/resources/stylesheets/extjs4.viewport.css" />
 
-{% include "document/_defined_terms.html" %}
-{% include "document/_revisions.html" %}
+  {% else %}
+    {# CSS for production LIME #}
+    {% stylesheet "lime" %}
+  {% endif %}
 
 {% endblock %}
 
 {% block js %}
-{{ block.super }}
+  {{ block.super }}
+  <script type="text/javascript" src="/static/javascript/ace/ace.js"></script>
 
-{# include the document as JSON #}
-<script type="text/javascript">
-// inject country code-to-name mappings into JS
-window.Indigo.countries = {{ countries_json|safe }};
+  <!-- LIME stuff -->
 
-window.Indigo.Preloads.document = {{ document_json|safe }};
-window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
+  {% if DEBUG and INDIGO_LIME_DEBUG %}
+    {# development dependencies for LIME so that we don't have to recompile it the whole time #}
 
-window.Indigo.Preloads.library = {{ documents_json|safe }};
+    <script>var LIME_base_url = '/static/lime/develop/';</script>
+    <script src="/static/lime/develop/ext/ext-all-dev.js"></script>
+    <script src="/static/lime/develop/bootstrap.js"></script>
+    <script src="/static/lime/develop/app.js"></script>
 
-CKEDITOR_BASEPATH = '/static/ckeditor/';
-</script>
+    <!-- Load EXTJS4 extension for tinyMCE -->
+    <script type="text/javascript" src="/static/lime/develop/lib/tinymce4/tinymce.min.js"></script>
+    <script type="text/javascript" src="/static/lime/develop/lib/vkbeautify/vkbeautify.js"></script>
 
-<script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
+  {% else %}
+    {# production dependencies for LIME #}
+    <script>
+var LIME_base_url = '/static/lime/dist/';
+var LIME_bootstrap_scripts = [
+  '{% static 'lime-bootstrap.js' %}',
+  // these need to be loaded separately due to the way they load their dependent scripts
+  '/static/lime/dist/lib/vkbeautify/vkbeautify.js',
+];
+    </script>
+    <script type="text/javascript" src="/static/lime/dist/lib/tinymce4/tinymce.min.js"></script>
+  {% endif %}
+
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  window.Indigo.countries = {{ countries_json|safe }};
+
+  window.Indigo.Preloads.document = {{ document_json|safe }};
+  window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
+
+  window.Indigo.Preloads.library = {{ documents_json|safe }};
+
+  CKEDITOR_BASEPATH = '/static/ckeditor/';
+  </script>
+
+  <script type="text/javascript" src="{% static 'ckeditor/ckeditor.js' %}"></script>
 
 {% endblock %}

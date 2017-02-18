@@ -68,7 +68,7 @@
     el: 'body',
     events: {
       'click .menu .disabled a': 'stopMenuClick',
-      'click .menu .dropdown-submenu a': 'stopMenuClick',
+      'click .menu .dropdown-submenu > a': 'stopMenuClick',
       'click .workspace-buttons .btn.save': 'save',
       'click .menu .save a': 'save',
       'click .menu .delete-document a': 'delete',

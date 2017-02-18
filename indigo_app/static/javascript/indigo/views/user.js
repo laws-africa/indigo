@@ -7,8 +7,8 @@
   Indigo.UserView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .js-user-buttons .btn.login': 'showLoginBox',
-      'click .js-user-buttons .logout': 'logout',
+      'click #user-buttons .btn.login': 'showLoginBox',
+      'click #user-buttons .logout': 'logout',
 
       // in the login modal
       'click .btn.forgot-password': 'showForgotPassword',

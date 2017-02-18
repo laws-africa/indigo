@@ -106,9 +106,20 @@ fieldset {
     }
   }
 
+  #user-buttons {
+    position: absolute;
+    top: 0px;
+    right: 5px;
+
+    .btn-link:hover,
+    .btn-link:focus {
+      text-decoration: none;
+    }
+  }
+
   .workspace-buttons {
     position: absolute;
-    top: 5px;
+    bottom: 5px;
     right: 5px;
   }
 

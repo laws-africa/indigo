@@ -17,7 +17,6 @@
   // ensure menu title interfaces with menu nicely
   .btn-group > .btn-link {
     color: inherit;
-    background-color: white;
 
     padding: 3px 7px;
 
@@ -31,7 +30,7 @@
 
   .btn-group.open {
     &> .btn-link {
-      background-color: #ddd;
+      background-color: #ccc;
       z-index: 1100;
     }
 

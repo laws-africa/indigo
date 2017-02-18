@@ -72,6 +72,7 @@
       'click .workspace-buttons .btn.save': 'save',
       'click .menu .save a': 'save',
       'click .menu .delete-document a': 'delete',
+      'click .menu .clone-document a': 'clone',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
@@ -298,11 +299,31 @@
       }
 
       if (confirm('Are you sure you want to delete this document?')) {
+        Indigo.progressView.peg();
         this.document
           .destroy()
           .then(function() {
             document.location = '/library';
           });
+      }
+    },
+
+    clone: function() {
+      var title = prompt('Name for the copy', 'Copy of ' + this.document.get('title'));
+
+      if (title) {
+        var clone = this.document.clone();
+        clone.set({
+          draft: true,
+          title: title,
+          id: null,
+          content: this.documentContent.get('content'),
+        });
+
+        Indigo.progressView.peg();
+        clone.save().then(function(doc) {
+          document.location = '/documents/' + doc.id + '/';
+        });
       }
     },
 

@@ -80,7 +80,7 @@ fieldset {
     .workspace-title {
       position: absolute;
       top: 5px;
-      left: 80px;
+      left: 100px;
       right: 0px;
 
       h4 {
@@ -151,19 +151,14 @@ fieldset {
 }
 
 .brand-box {
-  position: relative;
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 5px;
 
-  .btn-link:hover,
-  .btn-link:active,
-  .btn-link:focus {
-    text-decoration: none;
-  }
-
-  .brand {
-    display: inline;
-    float: left;
-    padding-right: 20px;
-    margin: 0px;
+  img {
+    height: 100%;
+    width: auto;
   }
 }
 
@@ -573,7 +568,7 @@ legend {
 .library-buttons {
   float: left;
   margin-top: 2px;
-  margin-left: 116px;
+  margin-left: 96px;
   margin-right: 10px;
 }
 

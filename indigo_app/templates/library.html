@@ -3,6 +3,18 @@
 {% block title %}Library{% endblock %}
 
 {% block header %}
+  <div class="library-buttons">
+    <div class="btn-group">
+      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
+        New <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><a href="{% url 'new_document' %}">New Document</a></li>
+        <li><a href="{% url 'import_document' %}">Import a Document</a></li>
+      </ul>
+    </div>
+  </div>
+
   <div class="input-group header-search-box">
     <span class="input-group-addon"><i class="fa fa-search"></i></span>
     <input type="text" class="form-control filter-search" placeholder="Search documents">

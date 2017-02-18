@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load staticfiles %}
 
 {% block body-attributes %}
   data-backbone-view="{{ view }}"
@@ -11,42 +12,31 @@
 {% endblock %}
 
 {% block page-content %}
-  <div class="workspace">
+  <div class="workspace {% block workspace-classes %}{% endblock %}">
     <header class="workspace-header">
-      <div class="library-box">
-        <h4 class="brand">Indigo</h4>
-
-        <a href="{% url 'library' %}" class="btn btn-link">Library</a>
-
-        <div class="dropdown">
-          <a href="#" class="btn btn-link dropdown-toggle" data-toggle="dropdown">
-            New <span class="caret"></span>
-          </a>
-          <ul class="dropdown-menu" role="menu">
-            <li><a href="{% url 'new_document' %}"><i class="fa fa-plus-circle"></i> New document</a></li>
-            <li><a href="{% url 'import_document' %}"><i class="fa fa-plus-circle"></i> Import a document</a></li>
-          </ul>
-        </div>
+      <div class="brand-box">
+        <a href="{% url 'library' %}"><img src="{% static '/static/images/logo.png' %}" title="Indigo"></a>
       </div>
 
       <div class="workspace-title">
         {% block header %}{% endblock %}
       </div>
 
-      <div class="workspace-buttons js-user-buttons">
+      <div class="workspace-buttons">
         {% block header-buttons %}{% endblock %}
+      </div>
 
+      <div id="user-buttons">
         <div class="btn-group">
-          <button type="button" class="btn btn-default login not-logged-in"><i class="fa fa-sign-in"></i> Log in</button>
+          <button type="button" class="btn btn-default btn-sm login not-logged-in"><i class="fa fa-sign-in"></i> Log in</button>
         </div>
 
         <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle logged-in" data-toggle="dropdown">
+          <button type="button" class="btn btn-link btn-sm dropdown-toggle logged-in" data-toggle="dropdown">
             <i class="fa fa-user"></i>
-              <span class="username">
-                {% if user.is_authenticated %}{{ user.first_name|default:user.email }}{% endif %}
-              </span>
-            <span class="caret"></span>
+            <span class="username">
+              {% if user.is_authenticated %}{{ user.first_name|default:user.email }}{% endif %}
+            </span>
           </button>
           <ul class="pull-right dropdown-menu dropdown-right">
             <li><a class="profile" data-toggle="modal" href="#user-profile-box"><i class="fa fa-user fa-fw"></i> Profile</a></li>
@@ -57,7 +47,7 @@
         </div>
 
         <div class="btn-group">
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><i class="fa fa-question-circle"></i></button>
+          <button type="button" class="btn btn-link btn-sm dropdown-toggle" data-toggle="dropdown">Help</button>
           <ul class="pull-right dropdown-menu dropdown-right">
             <li><a href="#cheatsheet-modal" data-toggle="modal"><i class="fa fa-info-circle fa-fw"></i> Editor Cheatsheet</a></li>
             <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank"><i class="fa fa-question fa-fw"></i> Documentation</a></li>
@@ -70,12 +60,14 @@
           </ul>
         </div>
       </div>
+
+      <div id="progress-bar" style="display: none">
+        <div class="progress-bar progress-bar-striped progress-bar-info active" role="progressbar" style="width: 100%"></div>
+      </div>
     </header>
 
+    <div class="workspace-body">
     {% block content %}{% endblock content %}
-
-    <div id="progress-bar" style="display: none">
-      <div class="progress-bar progress-bar-striped progress-bar-info active" role="progressbar" style="width: 100%"></div>
     </div>
   </div>
 

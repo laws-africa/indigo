@@ -1,0 +1,52 @@
+<nav class="menu">
+  <div class="btn-toolbar">
+    <div class="btn-group">
+      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">File</button>
+      <ul class="dropdown-menu">
+        <li class="dropdown-submenu">
+          <a href="#">New</a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'new_document' %}">New Document</a></li>
+            <li><a href="{% url 'import_document' %}">Import a Document</a></li>
+          </ul>
+        </li>
+        <li><a href="{% url 'library' %}">Open...</a></li>
+        <li role="separator" class="divider"></li>
+        <li class="save"><a href="#">Save</a></li>
+        <li class="delete-document"><a href="#">Delete</a></li>
+        <li class="clone-document"><a href="#">Make a Copy</a></li>
+        <li role="separator" class="divider"></li>
+        <li class="revisions"><a href="#">Recent Changes</a></li>
+        <li class="dropdown-submenu">
+          <a href="#">Download As</a>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a></li>
+            <li><a href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a></li>
+            <li><a href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+
+    <div class="btn-group">
+      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Analysis</button>
+      <ul class="dropdown-menu">
+        <li><a href="#defined-terms-modal" data-toggle="modal">Defined Terms...</a></li>
+      </ul>
+    </div>
+
+    <div class="btn-group">
+      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Help</button>
+      <ul class="dropdown-menu">
+        <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Indigo Help</a></li>
+        <li><a href="#cheatsheet-modal" data-toggle="modal">Editor Cheatsheet</a></li>
+        {% if SUPPORT_EMAIL %}
+        <li><a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">Request an account</a></li>
+        {% endif %}
+        <li><a href="mailto:greg@code4sa.org" target="_blank">Feedback</a></li>
+        <li role="separator" class="divider"></li>
+        <li><a href="https://github.com/Code4SA/indigo" target="_blank">Indigo on GitHub</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>

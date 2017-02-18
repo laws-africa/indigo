@@ -5,10 +5,10 @@
   Indigo = exports.Indigo;
 
   /**
-   * Handle the document analysis view.
+   * Handle the defined terms view.
    */
-  Indigo.DocumentAnalysisView = Backbone.View.extend({
-    el: '.document-analysis-view',
+  Indigo.DocumentDefinedTermsView = Backbone.View.extend({
+    el: '#defined-terms-modal',
     termsTemplate: '#terms-template',
     events: {
       'click .link-terms': 'linkTerms',

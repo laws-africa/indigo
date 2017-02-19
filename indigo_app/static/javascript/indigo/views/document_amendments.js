@@ -143,7 +143,7 @@
       }));
 
       // update amendment count in nav tabs
-      $('.sidebar .nav .amendment-count').text(this.model.expressionSet.length === 0 ? '' : this.model.expressionSet.length);
+      $('.sidebar .nav .amendment-count').text(this.model.expressionSet.length <= 1 ? '' : this.model.expressionSet.length);
     },
 
     addAmendment: function(e) {

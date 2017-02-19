@@ -618,7 +618,9 @@
 
     // Save the content of the document, returns a Deferred
     saveModel: function() {
-      return this.documentContent.save();
+      // XXX works around https://github.com/Code4SA/indigo/issues/20 by not parsing
+      // the response to the save() call
+      return this.documentContent.save(null, {ignoreResponse: true});
     },
   });
 })(window);

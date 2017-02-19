@@ -101,6 +101,14 @@
 
       return first;
     },
+
+    parse: function(resp, options) {
+      if (options && options.ignoreResponse) {
+        return {};
+      } else {
+        return resp;
+      }
+    }
   });
 
   Indigo.Document = Backbone.Model.extend({

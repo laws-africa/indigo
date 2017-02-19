@@ -134,6 +134,7 @@
 
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
+      this.model.on('change:country change:locality change:subtype change:number change:year', this.calculateUri, this);
 
       // update the choices of expression dates when necessary
       this.model.on('change:publication_date', this.updateExpressionDates, this);

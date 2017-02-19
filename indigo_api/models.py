@@ -223,6 +223,13 @@ class Document(models.Model):
         self.copy_attributes()
         return super(Document, self).save(*args, **kwargs)
 
+    def save_with_revision(self, user):
+        """ Save this document and create a new revision at the same time.
+        """
+        with reversion.create_revision():
+            reversion.set_user(user)
+            self.save()
+
     def copy_attributes(self, from_model=True):
         """ Copy attributes from the model into the document, or reverse
         if `from_model` is False. """

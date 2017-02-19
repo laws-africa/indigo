@@ -389,9 +389,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 document.created_by_user = user
 
         # save as a revision
-        with reversion.create_revision():
-            reversion.set_user(user)
-            document.save()
+        document.save_with_revision(user)
 
         # these require that the document is saved
         if tags is not None:

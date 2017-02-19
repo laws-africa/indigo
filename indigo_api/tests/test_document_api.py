@@ -150,8 +150,13 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
+        revisions1 = self.client.get('/api/documents/%s/revisions' % id).data
         response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'in γνωρίζω body')})
         assert_equal(response.status_code, 200)
+        revisions2 = self.client.get('/api/documents/%s/revisions' % id).data
+
+        # ensure a revision is created
+        assert_not_equal(revisions1, revisions2, 'revision not created')
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
@@ -160,6 +165,10 @@ class DocumentAPITest(APITestCase):
         # also try updating the content at /content
         response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture(u'also γνωρίζω the body')})
         assert_equal(response.status_code, 200)
+        revisions3 = self.client.get('/api/documents/%s/revisions' % id).data
+
+        # ensure a revision is created
+        assert_not_equal(revisions2, revisions3, 'revision not created')
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)

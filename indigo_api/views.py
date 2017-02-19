@@ -124,7 +124,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         if request.method == 'PUT':
             try:
                 instance.reset_xml(request.data.get('content'))
-                instance.save()
+                instance.save_with_revision(request.user)
             except LxmlError as e:
                 raise ValidationError({'content': ["Invalid XML: %s" % e.message]})
 

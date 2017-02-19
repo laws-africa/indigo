@@ -19,11 +19,12 @@
     initialize: function(options) {
       this.template = Handlebars.compile($(this.template).html());
       this.document = options.document;
+      this.documentContent = options.documentContent;
 
       this.model = new Indigo.RevisionList(null, {document: this.document});
-      this.model.on('change sync', this.render, this);
-
-      this.document.on('sync', this.refresh, this);
+      this.listenTo(this.model, 'change sync', this.render);
+      this.listenTo(this.document, 'sync', this.refresh);
+      this.listenTo(this.documentContent, 'sync', this.refresh);
 
       $('.menu .revisions a').on('click', _.bind(this.show, this));
     },

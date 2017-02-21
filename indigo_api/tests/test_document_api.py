@@ -174,6 +174,25 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_in(u'<p>also γνωρίζω the body</p>', response.data['content'])
 
+    def test_update_content_and_properties(self):
+        # ensure properties override content
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+        assert_equal(response.data['title'], '(untitled)')
+
+        response = self.client.patch('/api/documents/%s' % id, {
+            'content': document_fixture(u'in γνωρίζω body'),
+            'title': 'the title'})
+        assert_equal(response.status_code, 200)
+
+        response = self.client.get('/api/documents/%s/content' % id)
+        assert_equal(response.status_code, 200)
+        assert_in(u'<p>in γνωρίζω body</p>', response.data['content'])
+
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.data['title'], 'the title')
+
     def test_frbr_uri_lowercased(self):
         # ACT should be changed to act
         response = self.client.post('/api/documents', {'frbr_uri': '/za/ACT/1998/2'})

@@ -637,6 +637,7 @@ legend {
 
   display: none;
   background: white;
+  z-index: 2;
 
   &.in {
     display: block;

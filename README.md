@@ -50,7 +50,9 @@ Production deployment
 
 Read the [documentation for details on deploying Indigo](http://indigo.readthedocs.org/en/latest/running/index.html).
 
-License
--------
+License and Copyright
+---------------------
 
 The project is licensed under a [GNU GPL 3 license](LICENSE).
+
+Indigo is Copyright 2015-2017 AfricanLII.

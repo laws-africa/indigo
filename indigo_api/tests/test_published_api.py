@@ -183,6 +183,27 @@ class PublishedAPITest(APITestCase):
                 'url': 'http://testserver/api/za/act/2014/10/eng/main/section/1',
                 'title': 'Section 1.'}])
 
+    def test_published_toc_uses_expression_date_in_urls(self):
+        # use @2014-02-12
+        response = self.client.get('/api/za/act/2014/10/eng@2014-02-12/toc.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['toc'], [
+            {'id': 'section-1', 'type': 'section', 'num': '1.',
+                'component': 'main', 'subcomponent': 'section/1',
+                'url': 'http://testserver/api/za/act/2014/10/eng%402014-02-12/main/section/1',
+                'title': 'Section 1.'}])
+
+        # use :2014-02-12
+        response = self.client.get('/api/za/act/2014/10/eng:2014-02-12/toc.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['toc'], [
+            {'id': 'section-1', 'type': 'section', 'num': '1.',
+                'component': 'main', 'subcomponent': 'section/1',
+                'url': 'http://testserver/api/za/act/2014/10/eng%3A2014-02-12/main/section/1',
+                'title': 'Section 1.'}])
+
     def test_published_subcomponents(self):
         response = self.client.get('/api/za/act/2014/10/eng/main/section/1.xml')
         assert_equal(response.status_code, 200)

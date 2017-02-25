@@ -62,10 +62,10 @@ class DocumentViewMixin(object):
         if getattr(self.request.accepted_renderer, 'serializer_class', None):
             self.serializer_class = self.request.accepted_renderer.serializer_class
 
-    def table_of_contents(self, document):
+    def table_of_contents(self, document, uri=None):
         # this updates the TOC entries by adding a 'url' component
         # based on the document's URI and the path of the TOC subcomponent
-        uri = document.doc.frbr_uri
+        uri = uri or document.doc.frbr_uri
         toc = document.table_of_contents()
 
         def add_url(item):
@@ -310,7 +310,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
             # table of contents
             if (self.component, format) == ('toc', 'json'):
-                return Response({'toc': self.table_of_contents(document)})
+                uri = document.doc.frbr_uri
+                uri.expression_date = self.frbr_uri.expression_date
+                return Response({'toc': self.table_of_contents(document, uri)})
 
             # json description
             if (self.component, format) == ('main', 'json'):

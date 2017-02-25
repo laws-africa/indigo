@@ -147,8 +147,27 @@ Follow these guidelines to tell Indigo about the structure of your document:
 Tables
 ------
 
-Often a piece of legislation will include tables, for example in Schedules. These can be tricky to edit
-using the Simple Editor. Indigo uses the same text format for tables that `Wikipedia <http://wikipedia.org/>`_ uses.
+Often a piece of legislation will include tables, for example in Schedules.
+
+The easiest way to edit these is to click the **Edit Table** button at the top
+right corner of the table.
+
+- Simply type your changes into the table and click **Update** when you're done.
+
+- Use the buttons in the toolbar to add and remove columns and rows, and to set cells as heading cells.
+
+    .. image:: edit-table.gif
+
+- To **merge** cells, use the mouse to select the cells and click **Merge cells**.
+
+- To **split merged cells**, select the cells and click the **Merge cells** button again.
+
+    .. image:: merge-cells.gif
+
+Editing Tables in the Simple Editor
+...................................
+
+You can also edit tables in the simple editor. Indigo uses the same text format for tables that `Wikipedia <http://wikipedia.org/>`_ uses.
 
 .. seealso::
 

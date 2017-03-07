@@ -70,6 +70,7 @@ Entire Act
     GET /api/frbr-uri
 
 * Parameter ``coverpage``: should the response contain a generated coverpage? Use 1 for true, anything else for false. Default: 1. (HTML-only)
+* Parameter ``standalone``: should the response by a full HTML document, including CSS, that can stand on its own? Use 1 for true, anything else for false. Default: false. (HTML-only)
 * Content types: JSON, XML, HTML, PDF, ePUB
 
 

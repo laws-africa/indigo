@@ -4,7 +4,7 @@ import re
 import os.path
 import codecs
 
-from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
+from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import get_cache
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
@@ -139,7 +139,7 @@ class HTMLRenderer(object):
 
         for option in options:
             try:
-                if find_template(option):
+                if get_template(option):
                     return option
             except TemplateDoesNotExist:
                 pass

@@ -117,23 +117,25 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Templates
-TEMPLATE_DEBUG = DEBUG
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-)
-
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.request',
-    'django.core.context_processors.media',
-    'django.core.context_processors.csrf',
-    'django.core.context_processors.tz',
-    'indigo_app.context_processors.general',
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.request',
+                'django.template.context_processors.media',
+                'django.template.context_processors.csrf',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+                'indigo_app.context_processors.general',
+            ]
+        }
+    }
+]
 
 # attachments
 if not DEBUG:

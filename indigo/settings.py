@@ -286,6 +286,8 @@ PIPELINE = {
     'COMPILERS': [
         'indigo.pipeline.PyScssCompiler',
     ],
+    'PIPELINE_ENABLED': not DEBUG,
+    'PIPELINE_COLLECTOR_ENABLED': True,
 }
 
 PYSCSS_LOAD_PATHS = [

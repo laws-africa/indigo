@@ -13,7 +13,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
-import reversion
+from reversion import revisions as reversion
+from reversion.models import Version
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -206,7 +207,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         version = revision.version_set.all()[0]
 
         # most recent version just before this one
-        old_version = reversion.models.Version.objects\
+        old_version = Version.objects\
             .filter(content_type=version.content_type)\
             .filter(object_id_int=version.object_id_int)\
             .filter(id__lt=version.id)\

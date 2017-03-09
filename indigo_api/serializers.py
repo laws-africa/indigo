@@ -216,7 +216,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     publication_date = serializers.DateField(required=False, allow_null=True)
 
-    tags = TagListSerializerField(child=serializers.CharField(), required=False)
+    tags = TagListSerializerField(required=False)
     amendments = AmendmentSerializer(many=True, required=False)
 
     amended_versions = serializers.SerializerMethodField()

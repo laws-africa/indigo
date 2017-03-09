@@ -5,7 +5,7 @@ import os.path
 import codecs
 
 from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
-from django.core.cache import get_cache
+from django.core.cache import caches
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
@@ -481,7 +481,7 @@ class PDFResponseRenderer(BaseRenderer):
 
     def __init__(self, *args, **kwargs):
         super(PDFResponseRenderer, self).__init__(*args, **kwargs)
-        self.cache = get_cache('default')
+        self.cache = caches['default']
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):

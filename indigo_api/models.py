@@ -14,7 +14,8 @@ from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 import arrow
 from taggit.managers import TaggableManager
-import reversion
+import reversion.revisions
+import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
@@ -226,8 +227,8 @@ class Document(models.Model):
     def save_with_revision(self, user):
         """ Save this document and create a new revision at the same time.
         """
-        with reversion.create_revision():
-            reversion.set_user(user)
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
             self.save()
 
     def copy_attributes(self, from_model=True):
@@ -409,7 +410,7 @@ class Document(models.Model):
 
 
 # version tracking
-reversion.register(Document)
+reversion.revisions.register(Document)
 
 
 def attachment_filename(instance, filename):

@@ -190,103 +190,103 @@ STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
 
 
 # django-pipeline and pyscss settings
-
-PIPELINE_CSS = {
-    'css': {
-        'source_filenames': (
-            'bower_components/bootstrap/dist/css/bootstrap.min.css',
-            'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
-            'bower_components/fontawesome/css/font-awesome.css',
-            'bower_components/bootstrap-datepicker/css/datepicker3.css',
-            'stylesheets/select2-4.0.0.min.css',
-            'stylesheets/bootstrap-menus.scss',
-            'stylesheets/app.scss',
-        ),
-        'output_filename': 'app.css',
+PIPELINE = {
+    'STYLESHEETS': {
+        'css': {
+            'source_filenames': (
+                'bower_components/bootstrap/dist/css/bootstrap.min.css',
+                'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
+                'bower_components/fontawesome/css/font-awesome.css',
+                'bower_components/bootstrap-datepicker/css/datepicker3.css',
+                'stylesheets/select2-4.0.0.min.css',
+                'stylesheets/bootstrap-menus.scss',
+                'stylesheets/app.scss',
+            ),
+            'output_filename': 'app.css',
+        },
+        'export': {
+            'source_filenames': (
+                # these are both in indigo_api/static/
+                'stylesheets/bootstrap.min.css',
+                'stylesheets/export.scss',
+            ),
+            'output_filename': 'export.css',
+        },
+        'epub': {
+            'source_filenames': (
+                # these are in indigo_api/static/
+                'stylesheets/bootstrap.min.css',
+                'stylesheets/export.scss',
+                'stylesheets/epub.scss',
+            ),
+            'output_filename': 'epub.css',
+        },
+        'lime': {
+            'source_filenames': (
+                'lime/dist/resources/LIME-all.css',
+                'lime/dist/resources/stylesheets/extjs4.editor.css',
+                'lime/dist/resources/stylesheets/extjs4.viewport.css',
+            ),
+            'output_filename': 'lime.css',
+        }
     },
-    'export': {
-        'source_filenames': (
-            # these are both in indigo_api/static/
-            'stylesheets/bootstrap.min.css',
-            'stylesheets/export.scss',
-        ),
-        'output_filename': 'export.css',
+    'JAVASCRIPT': {
+        'js': {
+            'source_filenames': (
+                'bower_components/jquery/dist/jquery.min.js',
+                'bower_components/jquery-cookie/jquery.cookie.js',
+                'bower_components/underscore/underscore-min.js',
+                'bower_components/backbone/backbone.js',
+                'bower_components/backbone.stickit/backbone.stickit.js',
+                'bower_components/bootstrap/dist/js/bootstrap.min.js',
+                'bower_components/handlebars/handlebars.min.js',
+                'bower_components/moment/min/moment.min.js',
+                'bower_components/moment/locale/en-gb.js',
+                'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
+                'javascript/select2-4.0.0.min.js',
+                'javascript/caret.js',
+                'javascript/prettyprint.js',
+                'javascript/table-editor.js',
+                'javascript/indigo/models.js',
+                'javascript/indigo/views/user.js',
+                'javascript/indigo/views/reset_password.js',
+                'javascript/indigo/views/document_defined_terms.js',
+                'javascript/indigo/views/document_amendments.js',
+                'javascript/indigo/views/document_repeal.js',
+                'javascript/indigo/views/document_attachments.js',
+                'javascript/indigo/views/document_properties.js',
+                'javascript/indigo/views/document_chooser.js',
+                'javascript/indigo/views/document_toc.js',
+                'javascript/indigo/views/table_editor.js',
+                'javascript/indigo/views/document_editor.js',
+                'javascript/indigo/views/document_revisions.js',
+                'javascript/indigo/views/document.js',
+                'javascript/indigo/views/library.js',
+                'javascript/indigo/views/error_box.js',
+                'javascript/indigo/views/progress.js',
+                'javascript/indigo/views/import.js',
+                'javascript/indigo/timestamps.js',
+                'javascript/indigo.js',
+            ),
+            'output_filename': 'app.js',
+        },
+        'lime': {
+            'source_filenames': (
+                'lime/dist/app.js',
+                'javascript/lime-post.js'
+            ),
+            'output_filename': 'lime-bootstrap.js',
+        }
     },
-    'epub': {
-        'source_filenames': (
-            # these are in indigo_api/static/
-            'stylesheets/bootstrap.min.css',
-            'stylesheets/export.scss',
-            'stylesheets/epub.scss',
-        ),
-        'output_filename': 'epub.css',
-    },
-    'lime': {
-        'source_filenames': (
-            'lime/dist/resources/LIME-all.css',
-            'lime/dist/resources/stylesheets/extjs4.editor.css',
-            'lime/dist/resources/stylesheets/extjs4.viewport.css',
-        ),
-        'output_filename': 'lime.css',
-    }
+    'CSS_COMPRESSOR': None,
+    'JS_COMPRESSOR': None,
+    # don't wrap javascript, this breaks LIME
+    # see https://github.com/cyberdelia/django-pipeline/blob/ea74ea43ec6caeb4ec46cdeb7d7d70598e64ad1d/pipeline/compressors/__init__.py#L62
+    'DISABLE_WRAPPER': True,
+    'COMPILERS': [
+        'indigo.pipeline.PyScssCompiler',
+    ],
 }
-PIPELINE_JS = {
-    'js': {
-        'source_filenames': (
-            'bower_components/jquery/dist/jquery.min.js',
-            'bower_components/jquery-cookie/jquery.cookie.js',
-            'bower_components/underscore/underscore-min.js',
-            'bower_components/backbone/backbone.js',
-            'bower_components/backbone.stickit/backbone.stickit.js',
-            'bower_components/bootstrap/dist/js/bootstrap.min.js',
-            'bower_components/handlebars/handlebars.min.js',
-            'bower_components/moment/min/moment.min.js',
-            'bower_components/moment/locale/en-gb.js',
-            'bower_components/bootstrap-datepicker/js/bootstrap-datepicker.js',
-            'javascript/select2-4.0.0.min.js',
-            'javascript/caret.js',
-            'javascript/prettyprint.js',
-            'javascript/table-editor.js',
-            'javascript/indigo/models.js',
-            'javascript/indigo/views/user.js',
-            'javascript/indigo/views/reset_password.js',
-            'javascript/indigo/views/document_defined_terms.js',
-            'javascript/indigo/views/document_amendments.js',
-            'javascript/indigo/views/document_repeal.js',
-            'javascript/indigo/views/document_attachments.js',
-            'javascript/indigo/views/document_properties.js',
-            'javascript/indigo/views/document_chooser.js',
-            'javascript/indigo/views/document_toc.js',
-            'javascript/indigo/views/table_editor.js',
-            'javascript/indigo/views/document_editor.js',
-            'javascript/indigo/views/document_revisions.js',
-            'javascript/indigo/views/document.js',
-            'javascript/indigo/views/library.js',
-            'javascript/indigo/views/error_box.js',
-            'javascript/indigo/views/progress.js',
-            'javascript/indigo/views/import.js',
-            'javascript/indigo/timestamps.js',
-            'javascript/indigo.js',
-        ),
-        'output_filename': 'app.js',
-    },
-    'lime': {
-        'source_filenames': (
-            'lime/dist/app.js',
-            'javascript/lime-post.js'
-        ),
-        'output_filename': 'lime-bootstrap.js',
-    }
-}
-
-PIPELINE_CSS_COMPRESSOR = None
-PIPELINE_JS_COMPRESSOR = None
-# don't wrap javascript, this breaks LIME
-# see https://github.com/cyberdelia/django-pipeline/blob/ea74ea43ec6caeb4ec46cdeb7d7d70598e64ad1d/pipeline/compressors/__init__.py#L62
-PIPELINE_DISABLE_WRAPPER = True
-PIPELINE_COMPILERS = (
-    'indigo.pipeline.PyScssCompiler',
-)
 
 PYSCSS_LOAD_PATHS = [
     os.path.join(BASE_DIR, 'indigo_api', 'static'),

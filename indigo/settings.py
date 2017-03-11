@@ -60,7 +60,8 @@ INSTALLED_APPS = (
     'indigo_app',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
+    #'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -333,7 +334,7 @@ GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # server-side google analytics
 GOOGLE_ANALYTICS_INCLUDE_PATH = ['/api/']
 if GOOGLE_ANALYTICS_ID and not DEBUG:
-    MIDDLEWARE_CLASSES += ('indigo.middleware.GoogleAnalyticsMiddleware',)
+    MIDDLEWARE += ('indigo.middleware.GoogleAnalyticsMiddleware',)
 
 # disable email in development
 if DEBUG:

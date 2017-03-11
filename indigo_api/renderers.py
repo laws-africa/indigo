@@ -57,7 +57,7 @@ class HTMLRenderer(object):
         # use this to render the bulk of the document with the Cobalt XSLT renderer
         renderer = self._xml_renderer(document)
 
-        if element:
+        if element is not None:
             # just a fragment of the document
             content_html = renderer.render(element)
             if not self.standalone:

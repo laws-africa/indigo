@@ -323,7 +323,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # the item we're interested in
             self.element = document.doc.components().get(self.component)
 
-        if self.element and format in ['xml', 'html', 'pdf', 'epub']:
+        if self.element is not None and format in ['xml', 'html', 'pdf', 'epub']:
             return Response(document)
 
         raise Http404

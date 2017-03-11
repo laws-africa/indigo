@@ -12,7 +12,7 @@ from rest_framework.renderers import JSONRenderer
 from indigo_api.tests.fixtures import *  # noqa
 
 
-class ConvertAPITest(APITestCase):
+class RenderParseAPITest(APITestCase):
     fixtures = ['user', 'published']
 
     def setUp(self):
@@ -20,118 +20,57 @@ class ConvertAPITest(APITestCase):
         JSONRenderer.charset = 'utf-8'
         self.client.login(username='email@example.com', password='password')
 
-    def test_convert_no_output(self):
-        response = self.client.post('/api/convert', {
-            'content': {
-                'frbr_uri': '/',
-                'content': document_fixture(text='hello'),
-            },
-            'inputformat': 'application/json',
-        })
-        assert_equal(response.status_code, 400)
-        assert_in('outputformat', response.data)
-
-    def test_convert_no_inputformat(self):
-        response = self.client.post('/api/convert', {
-            'content': {
-                'frbr_uri': '/',
-                'content': document_fixture(text='hello'),
-            },
-            'outputformat': 'application/json',
-        })
-        assert_equal(response.status_code, 400)
-        assert_in('inputformat', response.data)
-
-    def test_convert_json(self):
-        response = self.client.post('/api/convert', {
-            'content': {
-                'content': document_fixture(text='hello'),
-                # these should be ignored
-                'tags': ['foo', 'bar'],
-            },
-            'inputformat': 'application/json',
-            'outputformat': 'application/json',
-        })
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['frbr_uri'], '/za/act/1900/1')
-        assert_true(response.data['content'].startswith('<akomaNtoso'))
-        assert_is_none(response.data['tags'])
-        assert_is_none(response.data['id'])
-
-    def test_convert_with_null_publication(self):
-        response = self.client.post('/api/convert', {
-            'content': {
+    def test_render_with_null_publication(self):
+        response = self.client.post('/api/render', {
+            'document': {
                 'content': document_fixture(text='hello'),
                 'publication_name': None,
                 'publication_number': None,
                 'publication_date': None,
             },
-            'inputformat': 'application/json',
-            'outputformat': 'application/json',
         }, format='json')
         assert_equal(response.status_code, 200)
 
-    def test_convert_with_empty_publication(self):
-        response = self.client.post('/api/convert', {
-            'content': {
+    def test_render_with_empty_publication(self):
+        response = self.client.post('/api/render', {
+            'document': {
                 'content': document_fixture(text='hello'),
                 'publication_name': '',
                 'publication_number': '',
             },
-            'inputformat': 'application/json',
-            'outputformat': 'application/json',
         }, format='json')
         assert_equal(response.status_code, 200)
 
-    def test_convert_json_to_xml(self):
-        response = self.client.post('/api/convert', {
-            'content': {
-                'frbr_uri': '/za/act/1980/02',
-                'content': document_fixture(text='hello'),
-            },
-            'inputformat': 'application/json',
-            'outputformat': 'application/xml',
-        })
-        assert_equal(response.status_code, 200)
-        assert_true(response.data['output'].startswith('<akomaNtoso'))
-        assert_in('hello', response.data['output'])
-
-    def test_convert_json_to_html(self):
-        response = self.client.post('/api/convert', {
-            'content': {
+    def test_render_json_to_html(self):
+        response = self.client.post('/api/render', {
+            'document': {
                 'frbr_uri': '/za/act/1980/20',
                 'content': document_fixture(text='hello'),
             },
-            'inputformat': 'application/json',
-            'outputformat': 'text/html',
         })
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
 
-    def test_convert_json_to_html_round_trip(self):
+    def test_render_json_to_html_round_trip(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')
 
         data = response.data
         data['content'] = document_fixture(text='hello')
 
-        response = self.client.post('/api/convert', {
-            'content': data,
-            'inputformat': 'application/json',
-            'outputformat': 'text/html',
+        response = self.client.post('/api/render', {
+            'document': data,
         })
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Repealed Act', response.data['output'])
 
-    def test_convert_json_to_html_with_unicode(self):
-        response = self.client.post('/api/convert', {
-            'content': {
+    def test_render_json_to_html_with_unicode(self):
+        response = self.client.post('/api/render', {
+            'document': {
                 'frbr_uri': '/za/act/1980/20',
                 'content': document_fixture(text=u'hello κόσμε'),
             },
-            'inputformat': 'application/json',
-            'outputformat': 'text/html',
         })
         assert_equal(response.status_code, 200)
         assert_true(response.data['output'].startswith('\n\n<div'))

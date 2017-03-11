@@ -459,7 +459,7 @@ class LinkTermsSerializer(serializers.Serializer):
     """
     Helper to handle input elements for the /analysis/link-terms API
     """
-    document = serializers.CharField()
+    document = serializers.JSONField()
 
 
 class NoopSerializer(object):

@@ -137,8 +137,8 @@ class ConvertAPITest(APITestCase):
         assert_true(response.data['output'].startswith('\n\n<div'))
         assert_in('Act 20 of 1980', response.data['output'])
 
-    def test_convert_text_fragment(self):
-        response = self.client.post('/api/convert', {
+    def test_parse_text_fragment(self):
+        response = self.client.post('/api/parse', {
             'content': """
                 Chapter 2
                 The Beginning
@@ -147,8 +147,6 @@ class ConvertAPITest(APITestCase):
                 (1) In the beginning
                 (2) There was nothing
             """,
-            'inputformat': 'text/plain',
-            'outputformat': 'application/xml',
             'fragment': 'chapter',
             'id_prefix': 'prefix',
         })
@@ -183,7 +181,7 @@ class ConvertAPITest(APITestCase):
 </akomaNtoso>
 """, response.data['output'].decode('utf-8'))
 
-    def test_convert_file(self):
+    def test_parse_file(self):
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
         tmp_file.write("""
         Chapter 2
@@ -196,9 +194,7 @@ class ConvertAPITest(APITestCase):
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 
-        response = self.client.post('/api/convert', {
-            'inputformat': 'text/plain',
-            'outputformat': 'application/xml',
+        response = self.client.post('/api/parse', {
             'file': tmp_file,
         }, format='multipart')
         assert_equal(response.status_code, 200)

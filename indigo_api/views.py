@@ -20,7 +20,7 @@ import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
+from .serializers import DocumentSerializer, ConvertSerializer, ParseSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
 from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
@@ -450,6 +450,50 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
+
+
+class ParseView(APIView):
+    """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
+    """
+
+    # Allow anyone to use this API, it uses POST but doesn't change
+    # any documents in the database and so is safe.
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = ParseSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        fragment = serializer.validated_data.get('fragment')
+        importer = Importer()
+        importer.fragment = fragment
+        importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
+
+        upload = self.request.data.get('file')
+        if upload:
+            # we got a file
+            try:
+                document = importer.import_from_upload(upload, self.request)
+            except ValueError as e:
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'file': e.message or "error during import"})
+        else:
+            # plain text
+            try:
+                text = serializer.validated_data.get('content')
+                document = importer.import_from_text(text, self.request)
+            except ValueError as e:
+                log.error("Error during import: %s" % e.message, exc_info=e)
+                raise ValidationError({'content': e.message or "error during import"})
+
+        if not document:
+            raise ValidationError("Nothing to parse! Either 'file' or 'content' must be provided.")
+
+        # output
+        if fragment:
+            return Response({'output': document.to_xml()})
+        else:
+            return Response({'output': document.document_xml})
 
 
 class ConvertView(APIView):

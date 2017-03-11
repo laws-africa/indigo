@@ -185,8 +185,6 @@
         });
 
       var data = {
-        'inputformat': 'text/plain',
-        'outputformat': 'application/xml',
         'content': content,
       };
       if (fragment != 'akomaNtoso') {
@@ -194,7 +192,7 @@
       }
 
       $.ajax({
-        url: '/api/convert',
+        url: '/api/parse',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",

@@ -18,7 +18,8 @@ urlpatterns = [
         views.PublishedDocumentDetailView.as_view({'get': 'get'}),
         name='published-document-detail'),
 
-    url(r'^convert(\.(?P<format>[a-z0-9]))?$', views.ConvertView.as_view(), name='convert'),
+    url(r'^render(\.(?P<format>[a-z0-9]))?$', views.ConvertView.as_view(), name='convert'),
+    url(r'^parse$', views.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', views.LinkTermsView.as_view(), name='link-terms'),
 
     url(r'^', include(router.urls)),

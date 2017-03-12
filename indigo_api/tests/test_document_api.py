@@ -293,6 +293,8 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False})
         assert_equal(response.status_code, 201)
         id = response.data['id']
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.data['draft'], False)
 
         # this user cannot unpublish
         self.client.login(username='non-publisher@example.com', password='password')

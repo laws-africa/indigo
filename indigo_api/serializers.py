@@ -371,8 +371,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def create(self, validated_data):
         document = Document()
-        # force drafts for new documents
-        validated_data['draft'] = True
         return self.update(document, validated_data)
 
     def update(self, document, validated_data):

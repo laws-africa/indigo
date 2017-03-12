@@ -270,13 +270,10 @@
             data = this.document.toJSON();
 
         data.content = this.documentContent.toXml();
-        data = JSON.stringify({
-          'inputformat': 'application/json',
-          'outputformat': 'text/html',
-          'content': data});
+        data = JSON.stringify({'document': data});
 
         $.ajax({
-          url: '/api/convert',
+          url: '/api/render',
           type: "POST",
           data: data,
           contentType: "application/json; charset=utf-8",

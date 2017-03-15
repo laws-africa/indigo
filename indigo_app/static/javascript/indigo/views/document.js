@@ -91,6 +91,7 @@
       } else {
         // only for new documents
         this.document = new Indigo.Document(Indigo.Preloads.document, {collection: library, parse: true});
+        Indigo.library.add(this.document);
       }
 
       this.document.on('change', this.setDirty, this);

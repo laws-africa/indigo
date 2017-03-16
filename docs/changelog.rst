@@ -4,7 +4,8 @@ Changelog
 2.0 (?)
 -------
 
-* Upgraded to Django 1.9
+* Upgraded to Django 1.10
+* Upgraded a number of dependencies to support Django 1.10
 * FEATURE: significantly improved mechanism for maintaining amended versions of documents
 * FEATURE: you can now edit tables directly inline in a document
 * FEATURE: quickly edit a document section without having to open it via the TOC

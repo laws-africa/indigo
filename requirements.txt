@@ -1,7 +1,7 @@
 Django==1.10.6
 Werkzeug==0.11
 arrow==0.5.0
-boto==2.38.0
+boto3==1.4.4
 cobalt==0.1.10
 defusedxml==0.4.1
 dj-database-url==0.3.0
@@ -14,7 +14,7 @@ django-nose==1.4.4
 django-pipeline==1.6.11
 django-rest-auth==0.9.1
 django-reversion==1.10.2
-django-storages==1.1.8
+django-storages==1.5.2
 django-taggit==0.22.0
 django-taggit-serializer==0.1.5
 django-wkhtmltopdf==2.0.3

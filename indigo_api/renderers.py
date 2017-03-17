@@ -4,8 +4,8 @@ import re
 import os.path
 import codecs
 
-from django.template.loader import find_template, render_to_string, TemplateDoesNotExist
-from django.core.cache import get_cache
+from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
+from django.core.cache import caches
 from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
@@ -57,7 +57,7 @@ class HTMLRenderer(object):
         # use this to render the bulk of the document with the Cobalt XSLT renderer
         renderer = self._xml_renderer(document)
 
-        if element:
+        if element is not None:
             # just a fragment of the document
             content_html = renderer.render(element)
             if not self.standalone:
@@ -139,7 +139,7 @@ class HTMLRenderer(object):
 
         for option in options:
             try:
-                if find_template(option):
+                if get_template(option):
                     return option
             except TemplateDoesNotExist:
                 pass
@@ -481,7 +481,7 @@ class PDFResponseRenderer(BaseRenderer):
 
     def __init__(self, *args, **kwargs):
         super(PDFResponseRenderer, self).__init__(*args, **kwargs)
-        self.cache = get_cache('default')
+        self.cache = caches['default']
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):

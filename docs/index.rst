@@ -26,12 +26,13 @@ Contents
 .. toctree::
    :maxdepth: 1
 
+   running/index
    guide/index
    guide/law-intro
    rest/general
    rest/public
    rest/app
-   running/index
+   changelog
 
 Documents
 ---------

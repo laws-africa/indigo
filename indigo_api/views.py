@@ -13,19 +13,19 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
-import reversion
+from reversion import revisions as reversion
+from reversion.models import Version
 
 import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, ConvertSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
+from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
 from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
 from cobalt import FrbrUri
-from cobalt.render import HTMLRenderer
 import newrelic.agent
 
 log = logging.getLogger(__name__)
@@ -206,7 +206,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         version = revision.version_set.all()[0]
 
         # most recent version just before this one
-        old_version = reversion.models.Version.objects\
+        old_version = Version.objects\
             .filter(content_type=version.content_type)\
             .filter(object_id_int=version.object_id_int)\
             .filter(id__lt=version.id)\
@@ -322,7 +322,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # the item we're interested in
             self.element = document.doc.components().get(self.component)
 
-        if self.element and format in ['xml', 'html', 'pdf', 'epub']:
+        if self.element is not None and format in ['xml', 'html', 'pdf', 'epub']:
             return Response(document)
 
         raise Http404
@@ -451,92 +451,63 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
 
 
-class ConvertView(APIView):
-    """
-    Support for converting between two document types. This allows conversion from
-    plain text, JSON, XML, and PDF to plain text, JSON, XML and HTML.
+class ParseView(APIView):
+    """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
     """
 
     # Allow anyone to use this API, it uses POST but doesn't change
     # any documents in the database and so is safe.
     permission_classes = (AllowAny,)
 
-    def post(self, request, format=None):
-        serializer, document = self.handle_input()
-        output_format = serializer.validated_data.get('outputformat')
-        return self.handle_output(document, output_format)
-
-    def handle_input(self):
-        self.fragment = self.request.data.get('fragment')
-        document = None
-        serializer = ConvertSerializer(data=self.request.data)
+    def post(self, request):
+        serializer = ParseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        input_format = serializer.validated_data.get('inputformat')
+        fragment = serializer.validated_data.get('fragment')
+        importer = Importer()
+        importer.fragment = fragment
+        importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
 
         upload = self.request.data.get('file')
         if upload:
             # we got a file
             try:
-                document = self.get_importer().import_from_upload(upload, self.request)
-                return serializer, document
+                document = importer.import_from_upload(upload, self.request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
-
-        elif input_format == 'application/json':
-            doc_serializer = DocumentSerializer(
-                data=self.request.data['content'],
-                context={'request': self.request})
-            doc_serializer.is_valid(raise_exception=True)
-            document = doc_serializer.update_document(Document())
-
-        elif input_format == 'text/plain':
+        else:
+            # plain text
             try:
-                document = self.get_importer().import_from_text(self.request.data['content'], self.request)
+                text = serializer.validated_data.get('content')
+                document = importer.import_from_text(text, self.request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'content': e.message or "error during import"})
 
         if not document:
-            raise ValidationError("Nothing to convert! Either 'file' or 'content' must be provided.")
+            raise ValidationError("Nothing to parse! Either 'file' or 'content' must be provided.")
 
-        return serializer, document
+        # output
+        if fragment:
+            return Response({'output': document.to_xml()})
+        else:
+            return Response({'output': document.document_xml})
 
-    def handle_output(self, document, output_format):
-        if output_format == 'application/json':
-            if self.fragment:
-                raise ValidationError("Cannot output application/json from a fragment")
 
-            # disable tags, they can't be used without committing this object to the db
-            document.tags = None
+class RenderView(APIView):
+    """ Support for rendering a document on the server.
+    """
+    # Allow anyone to use this API, it uses POST but doesn't change
+    # any documents in the database and so is safe.
+    permission_classes = (AllowAny,)
 
-            doc_serializer = DocumentSerializer(instance=document, context={'request': self.request})
-            data = doc_serializer.data
-            data['content'] = document.document_xml.decode('utf-8')
-            return Response(data)
+    def post(self, request, format=None):
+        serializer = RenderSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
-        if output_format == 'application/xml':
-            if self.fragment:
-                return Response({'output': document.to_xml()})
-            else:
-                return Response({'output': document.document_xml})
-
-        if output_format == 'text/html':
-            if self.fragment:
-                # TODO: use document.to_html
-                return Response(HTMLRenderer().render(document.to_xml()))
-            else:
-                return Response({'output': document.to_html()})
-
-        # TODO: handle plain text output
-
-    def get_importer(self):
-        importer = Importer()
-        importer.fragment = self.request.data.get('fragment')
-        importer.fragment_id_prefix = self.request.data.get('id_prefix')
-
-        return importer
+        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
+        return Response({'output': document.to_html()})
 
 
 class LinkTermsView(APIView):

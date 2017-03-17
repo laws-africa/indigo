@@ -18,6 +18,7 @@ class ColophonAdminForm(forms.ModelForm):
 
     class Meta:
         model = Colophon
+        fields = ('name', 'country', 'body')
 
 
 @admin.register(Colophon)

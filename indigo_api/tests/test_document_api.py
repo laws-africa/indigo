@@ -174,6 +174,38 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_in(u'<p>also γνωρίζω the body</p>', response.data['content'])
 
+    def test_revert_a_revision(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there')})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'goodbye')})
+        assert_equal(response.status_code, 200)
+
+        revisions = self.client.get('/api/documents/%s/revisions' % id).data
+        revision_id = revisions['results'][1]['id']
+
+        response = self.client.post('/api/documents/%s/revisions/%s/restore' % (id, revision_id))
+        assert_equal(response.status_code, 200)
+
+        response = self.client.get('/api/documents/%s/content' % id)
+        assert_equal(response.status_code, 200)
+        assert_in(u'<p>hello in there</p>', response.data['content'])
+
+    def test_get_a_revision_diff(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there')})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'goodbye')})
+        assert_equal(response.status_code, 200)
+
+        revisions = self.client.get('/api/documents/%s/revisions' % id).data
+        revision_id = revisions['results'][1]['id']
+
+        response = self.client.get('/api/documents/%s/revisions/%s/diff' % (id, revision_id))
+        assert_equal(response.status_code, 200)
+
     def test_update_content_and_properties(self):
         # ensure properties override content
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
@@ -261,6 +293,8 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False})
         assert_equal(response.status_code, 201)
         id = response.data['id']
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.data['draft'], False)
 
         # this user cannot unpublish
         self.client.login(username='non-publisher@example.com', password='password')

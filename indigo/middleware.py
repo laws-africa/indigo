@@ -1,9 +1,10 @@
 from django.conf import settings
+from django.utils.deprecation import MiddlewareMixin
 
 from UniversalAnalytics import Tracker
 
 
-class GoogleAnalyticsMiddleware(object):
+class GoogleAnalyticsMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         if self.ignore(request):
             return response

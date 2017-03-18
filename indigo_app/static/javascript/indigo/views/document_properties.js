@@ -135,6 +135,8 @@
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
       this.model.on('change:country change:locality change:subtype change:number change:year', this.calculateUri, this);
+      this.model.on('change:country', this.updatePublicationOptions, this);
+      this.updatePublicationOptions();
 
       // update the choices of expression dates when necessary
       this.model.on('change:publication_date', this.updateExpressionDates, this);
@@ -143,6 +145,17 @@
       this.calculateUri();
       this.updateExpressionDates();
       this.stickit();
+    },
+
+    updatePublicationOptions: function() {
+      var country = Indigo.countries[this.model.get('country')],
+          pubs = (country ? country.publications : []).sort();
+
+      $("#publication_list").empty().append(_.map(pubs, function(pub) {
+        var opt = document.createElement("option");
+        opt.setAttribute("value", pub);
+        return opt;
+      }));
     },
 
     updateExpressionDates: function() {

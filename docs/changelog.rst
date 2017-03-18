@@ -11,6 +11,7 @@ Changelog
 * FEATURE: quickly edit a document section without having to open it via the TOC
 * FEATURE: support for newlines in tables
 * FEATURE: improved document page layout
+* FEATURE: pre-loaded set of publication names per country
 * FIX: bug when saving an edited section
 * FIX: ensure TOC urls use expression dates
 * FIX: faster document saving

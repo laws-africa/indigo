@@ -20,7 +20,7 @@ def document(request, doc_id=None):
 
     form = DocumentForm(instance=doc)
 
-    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'country').all()
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries = {c.code: c.as_json() for c in countries}
     countries_json = json.dumps(countries)
 
@@ -53,7 +53,7 @@ def import_document(request):
 
 
 def library(request):
-    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'country').all()
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries = {c.code: c.as_json() for c in countries}
     countries_json = json.dumps(countries)
 

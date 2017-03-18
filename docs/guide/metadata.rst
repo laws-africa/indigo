@@ -45,6 +45,10 @@ Promulgation
 
 **Publication name** (optional) is the name of the publication in which it was published, such as *National Gazette*.
 
+.. note::
+
+    Administrators can set the publication names which are available in the drop-down list. Click on your name in the top-right corner and choose **Site Settings**, then edit a country in the Indigo Editor section.
+
 **Publication number** (optional) is the number of the publication in which it was published, such as a gazette number.
 
 **Assent date** (optional) is the date on which the President or other authority assented to the document, in the format ``YYYY-MM-DD``.

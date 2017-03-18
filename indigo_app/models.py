@@ -42,6 +42,7 @@ class Country(models.Model):
         return {
             'name': self.name,
             'localities': {loc.code: loc.name for loc in self.locality_set.all()},
+            'publications': [pub.name for pub in self.publication_set.all()],
         }
 
     def __unicode__(self):
@@ -83,6 +84,19 @@ class Editor(models.Model):
             self.country = value
         else:
             self.country = Country.objects.get(country_id=value.upper())
+
+
+class Publication(models.Model):
+    """ The publications available in the UI. They aren't enforced by the API.
+    """
+    country = models.ForeignKey(Country, null=False)
+    name = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Name of this publication")
+
+    class Meta:
+        ordering = ['name']
+
+    def __unicode__(self):
+        return unicode(self.name)
 
 
 @receiver(post_save, sender=User)

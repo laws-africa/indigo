@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Language, Country, Locality, Editor
+from .models import Language, Country, Locality, Editor, Publication
 
 
 class EditorInline(admin.StackedInline):
@@ -18,6 +18,12 @@ class LocalityInline(admin.TabularInline):
     extra = 0
 
 
+class PublicationInline(admin.TabularInline):
+    model = Publication
+    can_delete = True
+    extra = 0
+
+
 # Define a new User admin
 class UserAdmin(UserAdmin):
     inlines = (EditorInline, )
@@ -26,12 +32,7 @@ class UserAdmin(UserAdmin):
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
     list_display = ('country',)
-    inlines = (LocalityInline, )
-
-
-@admin.register(Locality)
-class LocalityAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'country')
+    inlines = (LocalityInline, PublicationInline)
 
 
 admin.site.register(Language)

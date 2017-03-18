@@ -4,10 +4,6 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Language, Country, Locality, Editor
 
-# Register your models here.
-admin.site.register(Language)
-admin.site.register(Country)
-
 
 class EditorInline(admin.StackedInline):
     model = Editor
@@ -16,16 +12,29 @@ class EditorInline(admin.StackedInline):
     verbose_name_plural = 'editor'
 
 
+class LocalityInline(admin.TabularInline):
+    model = Locality
+    can_delete = True
+    extra = 0
+
+
 # Define a new User admin
 class UserAdmin(UserAdmin):
     inlines = (EditorInline, )
 
 
+@admin.register(Country)
+class CountryAdmin(admin.ModelAdmin):
+    list_display = ('country',)
+    inlines = (LocalityInline, )
+
+
+@admin.register(Locality)
 class LocalityAdmin(admin.ModelAdmin):
     list_display = ('code', 'name', 'country')
 
-admin.site.register(Locality, LocalityAdmin)
 
+admin.site.register(Language)
 
 # Re-register UserAdmin
 admin.site.unregister(User)

@@ -3,6 +3,8 @@ Indigo
 
 [![Build Status](https://travis-ci.org/Code4SA/indigo.svg)](http://travis-ci.org/Code4SA/indigo)
 
+![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
+
 Indigo is AfricanLII's document management system for managing, capturing and publishing
 legislation in the [Akoma Ntoso](http://www.akomantoso.org/) format.
 

@@ -115,6 +115,15 @@
   .akoma-ntoso .coverpage {
     text-align: center;
     margin-bottom: 1.6em; }
+    .akoma-ntoso .coverpage .notice-list {
+      margin: 0px;
+      padding: 0px; }
+      .akoma-ntoso .coverpage .notice-list li {
+        list-style: none; }
+    .akoma-ntoso .coverpage .assent-date,
+    .akoma-ntoso .coverpage .commencement-date {
+      margin-bottom: 0.8em;
+      font-weight: bold; }
     .akoma-ntoso .coverpage .amendment-list {
       margin-top: 1.6em;
       padding: 0px; }
@@ -122,10 +131,6 @@
       list-style: none;
       margin-bottom: 0.8em;
       font-style: italic; }
-    .akoma-ntoso .coverpage .assent-date,
-    .akoma-ntoso .coverpage .commencement-date {
-      margin-bottom: 0.8em;
-      font-weight: bold; }
 
 /*
  * Tables

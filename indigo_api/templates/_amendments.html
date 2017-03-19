@@ -1,3 +1,4 @@
+{% if document.amendments %}
 <ol class="amendment-list">
   {% for amendment in document.amendments %}
   <li class="amendment">
@@ -6,3 +7,4 @@
   </li>
   {% endfor %}
 </ol>
+{% endif %}

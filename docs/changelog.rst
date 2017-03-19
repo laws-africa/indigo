@@ -12,6 +12,7 @@ Changelog
 * FEATURE: support for newlines in tables
 * FEATURE: improved document page layout
 * FEATURE: pre-loaded set of publication names per country
+* Assent and commencement notices are no longer H3 elements, so PDFs don't include them in their TOCs. #28
 * FIX: bug when saving an edited section
 * FIX: ensure TOC urls use expression dates
 * FIX: faster document saving

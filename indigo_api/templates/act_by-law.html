@@ -1,21 +1,3 @@
-{% load documents %}
+{% extends 'act.html' %}
 
-{% if coverpage %}
-<div class="coverpage">
-  <h1>{{ document.title }}</h1>
-
-  {% if document.assent_date %}
-  <h3 class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</h3>
-  {% endif %}
-
-  {% if document.commencement_date %}
-  <h3 class="commencement-date">Commences on {{ document.commencement_date|date:"j E Y" }} unless otherwise noted</h3>
-  {% endif %}
-
-  {% if document.amendments %}
-  {% include '_amendments.html' %}
-  {% endif %}
-</div>
-{% endif %}
-
-{{ content_html | safe }}
+{% block subtitle %}{% endblock %}

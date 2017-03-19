@@ -1,24 +1,42 @@
 {% load documents %}
 
-<div class="coverpage">
-  <h1>{{ document.title }}</h1>
-  <h2>
-    {% with type=document|friendly_document_type %}
-      {{ document|friendly_document_type }} {{ document|friendly_document_number }} {% if type != "Chapter" %}of {{ document.year }}{% endif %}
-    {% endwith %}
-  </h2>
+{% block coverpage %}
+{% if coverpage %}
+  <div class="coverpage">
+    {% block title %}
+      <h1>{{ document.title }}</h1>
+    {% endblock %}
 
-  {% if document.assent_date %}
-  <div class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</div>
-  {% endif %}
+    {% block subtitle %}
+    <h2>
+      {% with type=document|friendly_document_type %}
+        {{ document|friendly_document_type }} {{ document|friendly_document_number }} {% if type != "Chapter" %}of {{ document.year }}{% endif %}
+      {% endwith %}
+    </h2>
+    {% endblock %}
 
-  {% if document.commencement_date %}
-  <div class="commencement-date">Commences on {{ document.commencement_date|date:"j E Y" }} unless otherwise noted</div>
-  {% endif %}
+    {% block notices %}
+      <ul class="notice-list">
+        {% if document.assent_date %}
+        <li class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</li>
+        {% endif %}
 
-  {% if document.amendments %}
-  {% include '_amendments.html' %}
-  {% endif %}
-</div>
+        {% if document.commencement_date %}
+        <li class="commencement-date">Commences on {{ document.commencement_date|date:"j E Y" }} unless otherwise noted</li>
+        {% endif %}
+      </ul>
+    {% endblock %}
 
+    {% block amendments %}
+      {% include '_amendments.html' %}
+    {% endblock %}
+  </div>
+{% endif %}
+{% endblock %}
+
+{% block content %}
 {{ content_html | safe }}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

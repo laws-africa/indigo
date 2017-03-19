@@ -49,7 +49,7 @@ class RenderParseAPITest(APITestCase):
             },
         })
         assert_equal(response.status_code, 200)
-        assert_true(response.data['output'].startswith('\n\n<div'))
+        assert_in('<div class="coverpage">', response.data['output'])
         assert_in('Act 20 of 1980', response.data['output'])
 
     def test_render_json_to_html_round_trip(self):
@@ -62,7 +62,7 @@ class RenderParseAPITest(APITestCase):
             'document': data,
         })
         assert_equal(response.status_code, 200)
-        assert_true(response.data['output'].startswith('\n\n<div'))
+        assert_in('<div class="coverpage">', response.data['output'])
         assert_in('Repealed Act', response.data['output'])
 
     def test_render_json_to_html_with_unicode(self):
@@ -73,7 +73,7 @@ class RenderParseAPITest(APITestCase):
             },
         })
         assert_equal(response.status_code, 200)
-        assert_true(response.data['output'].startswith('\n\n<div'))
+        assert_in('<div class="coverpage">', response.data['output'])
         assert_in('Act 20 of 1980', response.data['output'])
 
     def test_parse_text_fragment(self):

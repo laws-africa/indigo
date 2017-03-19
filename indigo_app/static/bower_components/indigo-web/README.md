@@ -5,6 +5,14 @@ They make Akoma Ntoso documents look beautiful.
 
 ## Usage
 
+### From CDN
+
+Use the assets directly from a CDN:
+
+    <link rel="stylesheet" type="text/css" href="//indigo-web.openup.org.za/dist/0.1.1/css/akoma-ntoso.min.css">
+
+### From your server
+
 Install indigo-web using bower:
 
     $ bower install indigo-web
@@ -22,7 +30,26 @@ Or use the SCSS files:
 You can override variables when using SCSS by copying them from ``_variables.scss`` into ``_custom.scss`` and changing
 their values.
 
+## Building
+
+To build changes:
+
+* gem install sass
+* ./build.sh
+* git add css/*
+
+## Release process
+
+* update VERSION
+* update Version History (below)
+* push to github and tag release
+* Travis should build the tagged version and release it
+
 # Version history
+
+## 0.1.2 (19 March 2017)
+
+* Styling for rendering commencement and assent notices as list items, not headings.
 
 ## 0.1.1 (19 March 2015)
 
@@ -31,19 +58,6 @@ their values.
 ## 0.1.0 (19 March 2015)
 
 * Initial release
-
-# Releasing a new version
-
-1. Compile the SCSS:
-
-```bash
-scss -t compressed scss/akoma-ntoso.scss css/akoma-ntoso.min.css
-scss scss/akoma-ntoso.scss css/akoma-ntoso.css
-git add css/*
-```
-
-2. Update the README.md to describe changes.
-3. Create and tag a release on GitHub
 
 # License
 

@@ -455,7 +455,7 @@ class DocumentAPISerializer(serializers.Serializer):
     """
     Helper to handle input documents for general document APIs
     """
-    document = DocumentSerializer()
+    document = DocumentSerializer(required=True)
 
 
 class NoopSerializer(object):

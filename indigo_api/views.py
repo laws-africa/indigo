@@ -521,9 +521,10 @@ class LinkTermsView(APIView):
 
     def post(self, request):
         serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
+        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
 
-        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
         self.link_terms(document)
 
         return Response({'document': {'content': document.document_xml}})
@@ -542,12 +543,13 @@ class LinkReferencesView(APIView):
 
     def post(self, request):
         serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
+        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
 
-        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
         self.find_references(document)
 
-        return Response({'document': {'content': document.content}})
+        return Response({'document': {'content': document.document_xml}})
 
     def find_references(self, document):
         ActRefFinder().find_references_in_document(document)

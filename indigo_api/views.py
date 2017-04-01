@@ -20,11 +20,12 @@ import lxml.html.diff
 from lxml.etree import LxmlError
 
 from .models import Document, Attachment
-from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, LinkTermsSerializer, RevisionSerializer
+from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, DocumentAPISerializer, RevisionSerializer
 from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions
+from .analysis import ActRefFinder
 from cobalt import FrbrUri
 import newrelic.agent
 
@@ -511,8 +512,7 @@ class RenderView(APIView):
 
 
 class LinkTermsView(APIView):
-    """
-    Support for running term discovery and linking on a document.
+    """ Support for running term discovery and linking on a document.
     """
 
     # Allow anyone to use this API, it uses POST but doesn't change
@@ -520,20 +520,34 @@ class LinkTermsView(APIView):
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        serializer = LinkTermsSerializer(data=self.request.data)
+        serializer = DocumentAPISerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
 
-        doc_serializer = DocumentSerializer(
-            data=self.request.data['document'],
-            context={'request': self.request})
-        doc_serializer.is_valid(raise_exception=True)
-        if not doc_serializer.validated_data.get('content'):
-            raise ValidationError({'document': ["Content cannot be empty."]})
-
-        document = doc_serializer.update_document(Document())
+        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
         self.link_terms(document)
 
         return Response({'document': {'content': document.document_xml}})
 
     def link_terms(self, doc):
         Slaw().link_terms(doc)
+
+
+class LinkReferencesView(APIView):
+    """ Find and link references to other documents (acts)
+    """
+
+    # Allow anyone to use this API, it uses POST but doesn't change
+    # any documents in the database and so is safe.
+    permission_classes = (AllowAny,)
+
+    def post(self, request):
+        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
+        self.find_references(document)
+
+        return Response({'document': {'content': document.content}})
+
+    def find_references(self, document):
+        ActRefFinder().find_references_in_document(document)

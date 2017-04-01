@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^render$', views.RenderView.as_view(), name='render'),
     url(r'^parse$', views.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', views.LinkTermsView.as_view(), name='link-terms'),
+    url(r'^analysis/link-references$', views.LinkReferencesView.as_view(), name='link-references'),
 
     url(r'^', include(router.urls)),
 ]

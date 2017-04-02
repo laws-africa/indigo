@@ -68,3 +68,33 @@ class ActRefFinderTestCase(APITestCase):
   </section>
 </body>
 ''', etree.tostring(doc.doc.body, pretty_print=True))
+
+    def test_ignore_existing(self):
+        doc = Document(content=document_fixture(xml=u"""
+<section id="section-1">
+  <num>1.</num>
+  <heading>Tester</heading>
+  <paragraph id="section-1.paragraph-0">
+    <content>
+      <p>Something to do with <ref href="/za/act/2012/22">Act no 22 of 2012</ref>.</p>
+      <p>And another thing about <ref href="/za/act/1998/4"><b>Act 4 of 1998</b></ref>.</p>
+    </content>
+  </paragraph>
+</section>
+        """))
+
+        self.finder.find_references_in_document(doc)
+        self.maxDiff = None
+        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <section id="section-1">
+    <num>1.</num>
+    <heading>Tester</heading>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p>Something to do with <ref href="/za/act/2012/22">Act no 22 of 2012</ref>.</p>
+        <p>And another thing about <ref href="/za/act/1998/4"><b>Act 4 of 1998</b></ref>.</p>
+      </content>
+    </paragraph>
+  </section>
+</body>
+''', etree.tostring(doc.doc.body, pretty_print=True))

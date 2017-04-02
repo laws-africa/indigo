@@ -3,8 +3,6 @@ from lxml import etree
 
 
 class ActRefFinder(object):
-    # TODO: handle act and Act in xpath
-    act_xpath = etree.XPath(".//text()[contains(., 'Act')]")
     act_re = re.compile(r'Act,?\s+(no\.?\s*)?(\d+)+\s+of\s+(\d{4})', re.I)
 
     def find_references_in_document(self, document):
@@ -18,6 +16,7 @@ class ActRefFinder(object):
 
     def find_references(self, root, frbr_uri):
         ns = root.nsmap[None]
+        act_xpath = etree.XPath(".//text()[contains(., 'Act') and not(ancestor::a:ref)]", namespaces={'a': ns})
 
         def make_ref(match):
             ref = etree.Element("{%s}ref" % ns)
@@ -27,8 +26,7 @@ class ActRefFinder(object):
 
         # TODO: do this through preamble, schedules, etc.
         for root in root.xpath('.//a:body', namespaces={'a': ns}):
-            for candidate in self.act_xpath(root):
-                # TODO: check if already in a ref?
+            for candidate in act_xpath(root):
                 node = candidate.getparent()
 
                 if not candidate.is_tail:

@@ -84,7 +84,6 @@ class ActRefFinderTestCase(APITestCase):
         """))
 
         self.finder.find_references_in_document(doc)
-        self.maxDiff = None
         self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <section id="section-1">
     <num>1.</num>

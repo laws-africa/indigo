@@ -24,8 +24,7 @@ class ActRefFinder(object):
             ref.set('href', '/%s/act/%s/%s' % (frbr_uri.country, match.group(3), match.group(2)))
             return ref
 
-        # TODO: do this through preamble, schedules, etc.
-        for root in root.xpath('.//a:body', namespaces={'a': ns}):
+        for root in root.xpath('.//a:coverpage|.//a:preface|.//a:preamble|.//a:body|.//a:mainBody|.//a:conclusions', namespaces={'a': ns}):
             for candidate in act_xpath(root):
                 node = candidate.getparent()
 

@@ -4,6 +4,8 @@
   exclude-result-prefixes="a">
 
   <xsl:output method="html" />
+  <!-- base URL of the resolver for resolving ref elements -->
+  <xsl:param name="resolverUrl">http://authority.com</xsl:param>
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">
@@ -108,6 +110,13 @@
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </section>
+  </xsl:template>
+
+  <!-- references -->
+  <xsl:template match="a:ref">
+    <a class="akn-ref" data-href="{@href}" href="{$resolverUrl}{@href}">
+      <xsl:apply-templates />
+    </a>
   </xsl:template>
 
   <!-- for all nodes, generate a SPAN element with a class matching

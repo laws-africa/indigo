@@ -1,0 +1,50 @@
+.resolver {
+  header {
+    margin-bottom: 40px;
+
+    img {
+      float: right;
+      max-width: 100%;
+      height: 100px;
+    }
+  }
+
+  .references {
+    clear: both;
+    margin-top: 40px;
+
+    &> li {
+      // TODO: mobile
+      float: left;
+      width: 30%;
+      margin-right: 10px;
+
+      h3 {
+        margin-top: 0px;
+        color: #337ab7;
+      }
+
+      h5 {
+        margin-bottom: 0px;
+        font-weight: normal;
+      }
+    }
+
+    a {
+      display: block;
+      min-height: 7em;
+      padding: 10px;
+      border: 1px solid #ccc;
+      box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.25);
+      color: inherit;
+
+      transition: all 200ms ease-out;
+
+      &:hover {
+        box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.25);
+        text-decoration: none;
+        border-color: #337ab7;
+      }
+    }
+  }
+}

@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load staticfiles pipeline %}
+
+{% block body-class %}resolver{% endblock %}
+{% block title %}Sources for {{ query.title }}{% endblock %}
+
+{% block head-css %}
+{% stylesheet "resolver" %}
+{% endblock %}
+
+{% block page-content %}
+<div class="container">
+  <header>
+    <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+    <h1>{{ query.title }}</h1>
+  </header>
+
+  <p class="lead">We found {{ references|length }} authorit{{ references|length|pluralize:"y,ies" }} for this {{ query.frbr_uri.doctype }}:</p>
+
+  <ul class="references list-unstyled">
+    {% for ref in references %}
+    <li>
+      <a href="{{ ref.url }}">
+        <h3>{{ ref.title }}</h3>
+        <h5>{{ ref.authority.name }}</h5>
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+
+  <footer>
+  </footer>
+</div>
+{% endblock %}
+
+{% block js %}
+{% if GOOGLE_ANALYTICS_ID %}
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '{{ GOOGLE_ANALYTICS_ID }}', 'auto');
+  ga('send', 'pageview');
+</script>
+{% endif %}
+{% endblock %}

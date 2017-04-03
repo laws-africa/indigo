@@ -22,7 +22,8 @@ def resolve(request, frbr_uri):
         'query': {
             'frbr_uri': frbr_uri,
             # TODO: more generic
-            'title': "%s %s of %s" % (frbr_uri.doctype.title(), frbr_uri.number, frbr_uri.date)
+            'title': "%s %s of %s" % (frbr_uri.doctype.title(), frbr_uri.number, frbr_uri.date),
+            'type': frbr_uri.subtype or frbr_uri.doctype,
         },
         'references': references,
     })

@@ -5,23 +5,50 @@
     img {
       float: right;
       max-width: 100%;
-      height: 100px;
+      height: 70px;
+
+      @media (max-width: 991px) {
+        height: 50px;
+      }
     }
+  }
+
+  footer {
+    margin-top: 60px;
+    border-top: 1px solid #ccc;
   }
 
   .references {
     clear: both;
     margin-top: 40px;
+    &::after {
+      display: table;
+      content: " ";
+      clear: both;
+    }
 
     &> li {
-      // TODO: mobile
       float: left;
-      width: 30%;
-      margin-right: 10px;
+      width: 48%;
+      margin-bottom: 20px;
+
+      &:first-child {
+        margin-right: 20px;
+      }
+
+      @media (max-width: 767px) {
+        width: 100%;
+        margin-right: 0px;
+      }
 
       h3 {
         margin-top: 0px;
         color: #337ab7;
+      }
+
+      h4 {
+        margin-top: 0px;
+        margin-bottom: 15px;
       }
 
       h5 {

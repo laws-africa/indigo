@@ -10,26 +10,31 @@
 
 {% block page-content %}
 <div class="container">
-  <header>
-    <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
-    <h1>{{ query.title }}</h1>
-  </header>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <header>
+        <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+        <h1>{{ query.title }}</h1>
+      </header>
 
-  <p class="lead">We found {{ references|length }} authorit{{ references|length|pluralize:"y,ies" }} for this {{ query.frbr_uri.doctype }}:</p>
+      <h3>Which source would you like to use for this {{ query.frbr_uri.doctype }}?</h3>
 
-  <ul class="references list-unstyled">
-    {% for ref in references %}
-    <li>
-      <a href="{{ ref.url }}">
-        <h3>{{ ref.title }}</h3>
-        <h5>{{ ref.authority.name }}</h5>
-      </a>
-    </li>
-    {% endfor %}
-  </ul>
+      <ul class="references list-unstyled">
+        {% for ref in references %}
+        <li>
+          <a href="{{ ref.url }}">
+            <h4>{{ ref.authority.name }}</h4>
+            <h3>{{ ref.title }}</h3>
+            <h5>{{ query.title }}</h5>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
 
-  <footer>
-  </footer>
+      <footer>
+      </footer>
+    </div>
+  </div>
 </div>
 {% endblock %}
 

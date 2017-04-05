@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest
+from django.conf import settings
 
 from cobalt.uri import FrbrUri
 
@@ -26,4 +27,5 @@ def resolve(request, frbr_uri):
             'type': frbr_uri.subtype or frbr_uri.doctype,
         },
         'references': references,
+        'settings': settings,
     })

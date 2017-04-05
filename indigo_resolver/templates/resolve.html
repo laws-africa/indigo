@@ -13,7 +13,6 @@
   <div class="row">
     <div class="col-md-8 col-md-offset-2">
       <header>
-        <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
         <h1>{{ query.title }}</h1>
       </header>
 
@@ -31,7 +30,17 @@
         {% endfor %}
       </ul>
 
+      <p class="text-muted"><em>{{ settings.INDIGO_ORGANISATION }} doesn't endorse these third-party websites.</em></p>
+
       <footer>
+        <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+        <div class="attribution">
+          {{ settings.INDIGO_ORGANISATION }}<br>
+          <a href="{{ settings.INDIGO_URL }}">{{ settings.INDIGO_URL }}</a>
+          {% if settings.SUPPORT_EMAIL %}
+          · <a href="mailto:{{ settings.SUPPORT_EMAIL }}">{{ settings.SUPPORT_EMAIL }}</a>
+          {% endif %}
+        </div>
       </footer>
     </div>
   </div>

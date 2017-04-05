@@ -1,6 +1,12 @@
 .resolver {
   header {
     margin-bottom: 40px;
+  }
+
+  footer {
+    margin-top: 30px;
+    padding-top: 10px;
+    border-top: 1px solid #ccc;
 
     img {
       float: right;
@@ -13,14 +19,11 @@
     }
   }
 
-  footer {
-    margin-top: 60px;
-    border-top: 1px solid #ccc;
-  }
-
   .references {
     clear: both;
     margin-top: 40px;
+    margin-bottom: 40px;
+
     &::after {
       display: table;
       content: " ";

@@ -114,7 +114,17 @@
 
   <!-- references -->
   <xsl:template match="a:ref">
-    <a class="akn-ref" data-href="{@href}" href="{$resolverUrl}{@href}">
+    <a class="akn-ref" data-href="{@href}">
+      <xsl:attribute name="href">
+        <xsl:choose>
+          <xsl:when test="starts-with(@href, '/')">
+              <xsl:value-of select="concat($resolverUrl, @href)" />
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:value-of select="@href" />
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:apply-templates />
     </a>
   </xsl:template>

@@ -5,7 +5,7 @@
 
   <xsl:output method="html" />
   <!-- base URL of the resolver for resolving ref elements -->
-  <xsl:param name="resolverUrl">http://authority.com</xsl:param>
+  <xsl:param name="resolverUrl">http://example.com</xsl:param>
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">
@@ -114,7 +114,17 @@
 
   <!-- references -->
   <xsl:template match="a:ref">
-    <a class="akn-ref" data-href="{@href}" href="{$resolverUrl}{@href}">
+    <a class="akn-ref" data-href="{@href}">
+      <xsl:attribute name="href">
+        <xsl:choose>
+          <xsl:when test="starts-with(@href, '/')">
+              <xsl:value-of select="concat($resolverUrl, @href)" />
+          </xsl:when>
+          <xsl:otherwise>
+              <xsl:value-of select="@href" />
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
       <xsl:copy-of select="@*[local-name() != 'href']" />
       <xsl:apply-templates />
     </a>

@@ -230,6 +230,14 @@
     <xsl:text>]</xsl:text>
   </xsl:template>
 
+  <xsl:template match="a:ref">
+    <xsl:text>[</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>](</xsl:text>
+    <xsl:value-of select="@href" />
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+
   <xsl:template match="a:eol">
     <xsl:text>
 </xsl:text>

@@ -115,6 +115,7 @@
   <!-- references -->
   <xsl:template match="a:ref">
     <a class="akn-ref" data-href="{@href}" href="{$resolverUrl}{@href}">
+      <xsl:copy-of select="@*[local-name() != 'href']" />
       <xsl:apply-templates />
     </a>
   </xsl:template>

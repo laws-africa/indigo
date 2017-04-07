@@ -5,7 +5,7 @@
 
   <xsl:output method="html" />
   <!-- base URL of the resolver for resolving ref elements -->
-  <xsl:param name="resolverUrl">http://authority.com</xsl:param>
+  <xsl:param name="resolverUrl">http://example.com</xsl:param>
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">

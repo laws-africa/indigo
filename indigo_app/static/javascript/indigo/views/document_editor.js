@@ -275,6 +275,7 @@
     makeLinksExternal: function(html) {
       html.querySelectorAll('a').forEach(function(a) {
         a.setAttribute("target", "_blank");
+        $(a).tooltip({title: a.getAttribute('data-href')});
       });
     },
 

@@ -16,7 +16,8 @@
         <h1>{{ query.title }}</h1>
       </header>
 
-      <h3>Which source would you like to use for this {{ query.frbr_uri.doctype }}?</h3>
+      {% if references %}
+      <h3>Which source would you like to use for this {{ query.type }}?</h3>
 
       <ul class="references list-unstyled">
         {% for ref in references %}
@@ -31,6 +32,10 @@
       </ul>
 
       <p class="text-muted"><em>{{ settings.INDIGO_ORGANISATION }} doesn't endorse these third-party websites.</em></p>
+      {% else %}
+
+      <h3>We couldn't find any sources for this {{ query.type }} :(</h3>
+      {% endif %}
 
       <footer>
         <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">

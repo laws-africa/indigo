@@ -3,7 +3,18 @@ from lxml import etree
 
 
 class ActRefFinder(object):
+    """ Finds references to Acts in documents, of the form:
+
+        Act 52 of 2001
+        Act no. 52 of 1998
+    """
+
     act_re = re.compile(r'Act,?\s+(no\.?\s*)?(\d+)+\s+of\s+(\d{4})', re.I)
+    # the ancestor elements that can contain references
+    ancestors = ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions']
+
+    def __init__(self):
+        self.ancestor_xpath = '|'.join('.//a:%s' % a for a in self.ancestors)
 
     def find_references_in_document(self, document):
         """ Find references in +document+, which is an Indigo Document object.
@@ -24,7 +35,7 @@ class ActRefFinder(object):
             ref.set('href', '/%s/act/%s/%s' % (frbr_uri.country, match.group(3), match.group(2)))
             return ref
 
-        for root in root.xpath('.//a:coverpage|.//a:preface|.//a:preamble|.//a:body|.//a:mainBody|.//a:conclusions', namespaces={'a': ns}):
+        for root in root.xpath(self.ancestor_xpath, namespaces={'a': ns}):
             for candidate in act_xpath(root):
                 node = candidate.getparent()
 

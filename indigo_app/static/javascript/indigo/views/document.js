@@ -119,6 +119,7 @@
       this.attachmentsView.on('clean', this.setClean, this);
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
+      this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
 
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
 

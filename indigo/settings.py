@@ -261,6 +261,7 @@ PIPELINE = {
                 'javascript/indigo/views/user.js',
                 'javascript/indigo/views/reset_password.js',
                 'javascript/indigo/views/document_defined_terms.js',
+                'javascript/indigo/views/document_references.js',
                 'javascript/indigo/views/document_amendments.js',
                 'javascript/indigo/views/document_repeal.js',
                 'javascript/indigo/views/document_attachments.js',

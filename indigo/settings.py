@@ -287,6 +287,13 @@ PIPELINE = {
                 'javascript/lime-post.js'
             ),
             'output_filename': 'lime-bootstrap.js',
+        },
+        'resolver': {
+            'source_filenames': (
+                'bower_components/jquery/dist/jquery.min.js',
+                'javascript/resolver.js',
+            ),
+            'output_filename': 'resolver.js',
         }
     },
     'CSS_COMPRESSOR': None,

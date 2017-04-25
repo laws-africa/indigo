@@ -84,7 +84,7 @@ class RenderParseAPITest(APITestCase):
                 1. First Verse
                 κόσμε
                 (1) In the beginning
-                (2) There was nothing
+                (2) There was nothing and an Act no 2 of 2010.
             """,
             'fragment': 'chapter',
             'id_prefix': 'prefix',
@@ -112,7 +112,7 @@ class RenderParseAPITest(APITestCase):
       <subsection id="section-1.2">
         <num>(2)</num>
         <content>
-          <p>There was nothing</p>
+          <p>There was nothing and an Act no 2 of 2010.</p>
         </content>
       </subsection>
     </section>
@@ -128,7 +128,7 @@ class RenderParseAPITest(APITestCase):
         1. First Verse
         κόσμε
         (1) In the beginning
-        (2) There was nothing
+        (2) There was nothing and an Act no 2 of 2010.
         """)
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
@@ -195,7 +195,7 @@ class RenderParseAPITest(APITestCase):
           <subsection id="section-1.2">
             <num>(2)</num>
             <content>
-              <p>There was nothing</p>
+              <p>There was nothing and an <ref href="/za/act/2010/2">Act no 2 of 2010</ref>.</p>
             </content>
           </subsection>
         </section>

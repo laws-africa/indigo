@@ -49,6 +49,9 @@ class Command(BaseCommand):
         refs = {r.frbr_uri: r for r in self.authority.references.all()}
 
         for entry in data:
+            if 'year' not in entry or 'num' not in entry:
+                continue
+
             frbr_uri = '/'.join(['', self.country, 'act', entry['year'], entry['num']])
             ref = refs.get(frbr_uri)
             if not ref:

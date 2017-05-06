@@ -36,5 +36,15 @@ class AuthorityReference(models.Model):
     class Meta:
         unique_together = ('authority', 'frbr_uri')
 
+    def authority_name(self):
+        if self.authority.url:
+            return self.authority.name
+
+        domain = self.url.split("/")[2].lower()
+        if domain.startswith('www.'):
+            domain = domain[4:]
+
+        return domain
+
     def __str__(self):
         return u'%s - "%s"' % (self.frbr_uri, self.title)

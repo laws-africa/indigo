@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles pipeline %}
 
-{% block body-class %}resolver{% endblock %}
+{% block body-class %}resolver {% if not references %}no-refs{% endif %}{% endblock %}
+{% block body-attributes %}data-frbr-uri="{{ query.frbr_uri | escape }}"{% endblock %}
 {% block title %}Sources for {{ query.title }}{% endblock %}
 
 {% block head-css %}

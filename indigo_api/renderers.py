@@ -41,12 +41,13 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None, no_stub_content=False):
+    def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None, no_stub_content=False, resolver=None):
         self.template_name = template_name
         self.standalone = standalone
         self.cobalt_kwargs = cobalt_kwargs or {}
         self.coverpage = coverpage
         self.no_stub_content = no_stub_content
+        self.resolver = resolver
 
     def render(self, document, element=None):
         """ Render this document to HTML.
@@ -147,7 +148,19 @@ class HTMLRenderer(object):
         raise ValueError("Couldn't find a template to use for %s. Tried: %s" % (uri, ', '.join(options)))
 
     def _xml_renderer(self, document):
-        return CobaltHTMLRenderer(act=document.doc, **self.cobalt_kwargs)
+        return CobaltHTMLRenderer(
+            act=document.doc,
+            resolver_url=self.resolver_url(),
+            **self.cobalt_kwargs)
+
+    def resolver_url(self):
+        if self.resolver in ['no', 'none']:
+            return ''
+
+        if self.resolver and self.resolver.startswith('http'):
+            return self.resolver
+
+        return settings.RESOLVER_URL
 
 
 class HTMLResponseRenderer(StaticHTMLRenderer):
@@ -161,6 +174,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         renderer = HTMLRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.standalone = renderer_context['request'].GET.get('standalone') == '1'
+        renderer.resolver = renderer_context['request'].GET.get('resolver')
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
@@ -493,6 +507,7 @@ class PDFResponseRenderer(BaseRenderer):
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = PDFRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
+        renderer.resolver = renderer_context['request'].GET.get('resolver')
 
         # check the cache
         key = self.cache_key(data, view)
@@ -564,6 +579,7 @@ class EPUBResponseRenderer(PDFResponseRenderer):
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = EPUBRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
+        renderer.resolver = renderer_context['request'].GET.get('resolver')
 
         # check the cache
         key = self.cache_key(data, view)

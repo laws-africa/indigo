@@ -625,9 +625,10 @@ legend {
     margin-bottom: 5px;
   }
 
-  .document-chooser-list {
-    max-height: 295px;
-    overflow-y: scroll;
+  .document-chooser-list,
+  .scrollable {
+    max-height: 350px;
+    overflow-y: auto;
   }
 }
 

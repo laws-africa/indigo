@@ -261,6 +261,7 @@ PIPELINE = {
                 'javascript/indigo/views/user.js',
                 'javascript/indigo/views/reset_password.js',
                 'javascript/indigo/views/document_defined_terms.js',
+                'javascript/indigo/views/document_references.js',
                 'javascript/indigo/views/document_amendments.js',
                 'javascript/indigo/views/document_repeal.js',
                 'javascript/indigo/views/document_attachments.js',
@@ -286,6 +287,13 @@ PIPELINE = {
                 'javascript/lime-post.js'
             ),
             'output_filename': 'lime-bootstrap.js',
+        },
+        'resolver': {
+            'source_filenames': (
+                'bower_components/jquery/dist/jquery.min.js',
+                'javascript/resolver.js',
+            ),
+            'output_filename': 'resolver.js',
         }
     },
     'CSS_COMPRESSOR': None,
@@ -340,6 +348,8 @@ EMAIL_SUBJECT_PREFIX = '[Indigo] '
 INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
 INDIGO_URL = os.environ.get('INDIGO_URL', 'https://indigo.code4sa.org')
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # server-side google analytics

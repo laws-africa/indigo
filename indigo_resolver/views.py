@@ -1,3 +1,5 @@
+from random import shuffle
+
 from django.shortcuts import render
 from django.http import HttpResponseBadRequest
 from django.conf import settings
@@ -14,10 +16,12 @@ def resolve(request, frbr_uri):
         return HttpResponseBadRequest("Invalid FRBR URI")
 
     # TODO: handle expression URIs and dates?
-    references = AuthorityReference.objects\
-        .filter(frbr_uri__in=[frbr_uri.work_uri(), frbr_uri.expression_uri()])\
-        .prefetch_related('authority')\
-        .all()
+    references = list(
+        AuthorityReference.objects
+        .filter(frbr_uri__in=[frbr_uri.work_uri(), frbr_uri.expression_uri()])
+        .prefetch_related('authority')
+        .all())
+    shuffle(references)
 
     return render(request, 'resolve.html', {
         'query': {

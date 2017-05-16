@@ -1,0 +1,49 @@
+<div class="modal fade" id="references-modal" tabindex="-1">
+  <div class="modal-dialog modal-md">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title">References to Other Acts</h4>
+      </div>
+      <div class="modal-body scrollable">
+
+      <div class="document-references-list"></div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default find-references"><i class="fa fa-refresh"></i> Find References</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="references-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+{{#if references}}
+  <table class="table table-striped table-condensed">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Reference</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each references}}
+      <tr>
+        <td>{{ title }}</td>
+        <td><a href="{{ url }}" target="_blank">{{ href }}</a></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+{{else}}
+<p>
+  <em>The document does not reference any other documents.</em>
+</p>
+{{/if}}
+
+{% endverbatim %}
+</script>

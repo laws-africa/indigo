@@ -6,6 +6,7 @@ import logging
 from django.conf import settings
 
 from .models import Document
+from .analysis import ActRefFinder
 from cobalt.act import Fragment
 
 
@@ -74,6 +75,7 @@ class Importer(Slaw):
             with self.tempfile_for_upload(upload) as f:
                 self.reformat = True
                 doc = self.import_from_file(f.name, request)
+                self.analyse_after_import(doc)
 
             if not self.fragment:
                 doc.title = "Imported from %s" % upload.name
@@ -142,3 +144,9 @@ class Importer(Slaw):
         f.seek(0)
 
         return f
+
+    def analyse_after_import(self, doc):
+        """ Run analysis after import.
+        Usually only used on PDF documents.
+        """
+        ActRefFinder().find_references_in_document(doc)

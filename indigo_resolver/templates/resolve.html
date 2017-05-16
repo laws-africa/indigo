@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% load staticfiles pipeline %}
 
-{% block body-class %}resolver{% endblock %}
+{% block body-class %}resolver {% if not references %}no-refs{% endif %}{% endblock %}
+{% block body-attributes %}data-frbr-uri="{{ query.frbr_uri | escape }}"{% endblock %}
 {% block title %}Sources for {{ query.title }}{% endblock %}
 
 {% block head-css %}
@@ -22,8 +23,8 @@
       <ul class="references list-unstyled">
         {% for ref in references %}
         <li>
-          <a href="{{ ref.url }}">
-            <h4>{{ ref.authority.name }}</h4>
+          <a href="{{ ref.url }}" data-authority="{{ ref.authority.name }}">
+            <h4>{{ ref.authority_name }}</h4>
             <h3>{{ ref.title }}</h3>
             <h5>{{ query.title }}</h5>
           </a>
@@ -53,7 +54,8 @@
 {% endblock %}
 
 {% block js %}
-{% if GOOGLE_ANALYTICS_ID %}
+{% javascript "resolver" %}
+
 <script>
   (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
   (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
@@ -63,5 +65,4 @@
   ga('create', '{{ GOOGLE_ANALYTICS_ID }}', 'auto');
   ga('send', 'pageview');
 </script>
-{% endif %}
 {% endblock %}

@@ -275,14 +275,16 @@
     makeLinksExternal: function(html) {
       html.querySelectorAll('a').forEach(function(a) {
         a.setAttribute("target", "_blank");
+        $(a).tooltip({title: a.getAttribute('data-href')});
       });
     },
 
     makeTablesEditable: function(html) {
-      var tables = html.querySelectorAll('table[id]');
+      var tables = html.querySelectorAll('table[id]'),
+          self = this;
 
       tables.forEach(function(table) {
-        var w = this.tableEditor.tableWrapper.cloneNode(true),
+        var w = self.tableEditor.tableWrapper.cloneNode(true),
             $w = $(w);
 
         $w.find('button').data('table-id', table.id);

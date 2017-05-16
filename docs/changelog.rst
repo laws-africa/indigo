@@ -1,8 +1,8 @@
 Changelog
 =========
 
-2.0 (?)
--------
+2.0 (6 April 2017)
+------------------
 
 * Upgraded to Django 1.10
 * Upgraded a number of dependencies to support Django 1.10

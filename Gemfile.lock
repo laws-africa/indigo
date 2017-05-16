@@ -14,7 +14,7 @@ GEM
       pkg-config (~> 1.1.7)
     pkg-config (1.1.7)
     polyglot (0.3.5)
-    slaw (0.12.0)
+    slaw (0.13.0)
       log4r (~> 1.1.10)
       mimemagic (~> 0.2.1)
       nokogiri (~> 1.6.0)
@@ -45,4 +45,4 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  slaw (~> 0.12.0)
+  slaw (~> 0.13.0)

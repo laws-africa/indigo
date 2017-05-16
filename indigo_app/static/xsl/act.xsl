@@ -4,6 +4,8 @@
   exclude-result-prefixes="a">
 
   <xsl:output method="html" />
+  <!-- base URL of the resolver for resolving ref elements -->
+  <xsl:param name="resolverUrl" />
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">
@@ -110,9 +112,37 @@
     </section>
   </xsl:template>
 
+  <!-- references -->
+  <xsl:template match="a:ref">
+    <xsl:choose>
+      <!-- if it's an absolute URL and there's no resolver URL, don't create an A element -->
+      <xsl:when test="starts-with(@href, '/') and $resolverUrl = ''">
+        <xsl:call-template name="generic-elem" />
+      </xsl:when>
+
+      <xsl:otherwise>
+        <!-- Create an A element that links to this ref -->
+        <a class="akn-ref" data-href="{@href}">
+          <xsl:attribute name="href">
+            <xsl:choose>
+              <xsl:when test="starts-with(@href, '/')">
+                  <xsl:value-of select="concat($resolverUrl, @href)" />
+              </xsl:when>
+              <xsl:otherwise>
+                  <xsl:value-of select="@href" />
+              </xsl:otherwise>
+            </xsl:choose>
+          </xsl:attribute>
+          <xsl:copy-of select="@*[local-name() != 'href']" />
+          <xsl:apply-templates />
+        </a>
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+
   <!-- for all nodes, generate a SPAN element with a class matching
        the AN name of the node and copy over the attributes -->
-  <xsl:template match="*">
+  <xsl:template match="*" name="generic-elem">
     <span class="akn-{local-name()}">
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />

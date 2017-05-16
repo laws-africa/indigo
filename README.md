@@ -1,7 +1,7 @@
 Indigo
 ======
 
-[![Build Status](https://travis-ci.org/Code4SA/indigo.svg)](http://travis-ci.org/Code4SA/indigo)
+[![Build Status](https://travis-ci.org/OpenUpSA/indigo.svg)](http://travis-ci.org/OpenUpSA/indigo)
 
 ![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
 

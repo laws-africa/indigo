@@ -436,7 +436,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
 class RenderSerializer(serializers.Serializer):
     """
-    Helper to handle input elements for the /convert API
+    Helper to handle input elements for the /render API
     """
     document = DocumentSerializer()
 
@@ -451,11 +451,11 @@ class ParseSerializer(serializers.Serializer):
     id_prefix = serializers.CharField(write_only=True, required=False)
 
 
-class LinkTermsSerializer(serializers.Serializer):
+class DocumentAPISerializer(serializers.Serializer):
     """
-    Helper to handle input elements for the /analysis/link-terms API
+    Helper to handle input documents for general document APIs
     """
-    document = serializers.JSONField()
+    document = DocumentSerializer(required=True)
 
 
 class NoopSerializer(object):

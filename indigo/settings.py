@@ -58,6 +58,8 @@ INSTALLED_APPS = (
 
     # the Indigo browser application
     'indigo_app',
+    # the Indigo act resolver
+    'indigo_resolver',
 )
 
 MIDDLEWARE = (
@@ -222,6 +224,13 @@ PIPELINE = {
             ),
             'output_filename': 'epub.css',
         },
+        'resolver': {
+            'source_filenames': (
+                'bower_components/bootstrap/dist/css/bootstrap.min.css',
+                'stylesheets/resolver.scss',
+            ),
+            'output_filename': 'resolver.css',
+        },
         'lime': {
             'source_filenames': (
                 'lime/dist/resources/LIME-all.css',
@@ -294,6 +303,7 @@ PIPELINE = {
 PYSCSS_LOAD_PATHS = [
     os.path.join(BASE_DIR, 'indigo_api', 'static'),
     os.path.join(BASE_DIR, 'indigo_app', 'static'),
+    os.path.join(BASE_DIR, 'indigo_resolver', 'static'),
 ]
 
 
@@ -329,6 +339,7 @@ EMAIL_SUBJECT_PREFIX = '[Indigo] '
 
 INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
 INDIGO_URL = os.environ.get('INDIGO_URL', 'https://indigo.code4sa.org')
+RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # server-side google analytics

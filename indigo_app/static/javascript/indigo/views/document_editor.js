@@ -37,6 +37,7 @@
       $.get('/static/xsl/act.xsl')
         .then(function(xml) {
           htmlTransform.importStylesheet(xml);
+          htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
           self.htmlTransform = htmlTransform;
         });
 
@@ -264,18 +265,24 @@
       if (this.htmlTransform && this.parent.fragment) {
         var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
+        this.makeLinksExternal(html);
         this.makeTablesEditable(html);
         this.makeElementsQuickEditable(html);
         this.$('.akoma-ntoso').html('').get(0).appendChild(html);
       }
     },
 
+    makeLinksExternal: function(html) {
+      html.querySelectorAll('a').forEach(function(a) {
+        a.setAttribute("target", "_blank");
+      });
+    },
+
     makeTablesEditable: function(html) {
       var tables = html.querySelectorAll('table[id]');
 
-      for (var i = 0; i < tables.length; i++) {
-        var table = tables[i],
-            w = this.tableEditor.tableWrapper.cloneNode(true),
+      tables.forEach(function(table) {
+        var w = this.tableEditor.tableWrapper.cloneNode(true),
             $w = $(w);
 
         $w.find('button').data('table-id', table.id);
@@ -283,7 +290,7 @@
         // we bind the CKEditor instance to this div, since CKEditor can't be
         // directly attached to the table element
         $w.find('.table-container').append(table);
-      }
+      });
     },
 
     makeElementsQuickEditable: function(html) {

@@ -119,7 +119,7 @@ class Document(models.Model):
     # Date of assent. AKN doesn't have a good spot for this, so it only goes in the DB.
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
-    stub = models.BooleanField(default=False, help_text="This is a placeholder document without full content")
+    stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
     """ Is this a stub without full content? """
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")

@@ -11,14 +11,14 @@
       <legend>Basic details</legend>
 
       <div class="form-group">
-        <label for="document_title" class="col-sm-2 control-label">Short title</label>
+        <label for="document_title" class="col-sm-2 control-label required">Short title</label>
         <div class="col-sm-10">
-          <input type="text" class="form-control" id="document_title" placeholder="Title">
+          <input type="text" class="form-control" id="document_title" placeholder="Title" required>
         </div>
       </div>
 
       <div class="form-group">
-        <label for="document_country" class="col-sm-2 control-label">Country</label>
+        <label for="document_country" class="col-sm-2 control-label required">Country</label>
         <div class="col-sm-4">
           <select id="document_country" class="form-control">
             {% for opt in countries %}
@@ -34,7 +34,7 @@
       </div>
 
       <div class="form-group">
-        <label for="document_language" class="col-sm-2 control-label">Language</label>
+        <label for="document_language" class="col-sm-2 control-label required">Language</label>
         <div class="col-sm-4">
           <select id="document_language" class="form-control">
             {% for opt in languages %}
@@ -55,14 +55,14 @@
       </div>
 
       <div class="form-group">
-        <label for="document_year" class="col-sm-2 control-label">Year</label>
+        <label for="document_year" class="col-sm-2 control-label required">Year</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_year">
+          <input type="text" class="form-control" id="document_year" required pattern="\d{4}">
           <p class="help-block">Year in which the act was introduced</p>
         </div>
-        <label for="document_number" class="col-sm-2 control-label">Number</label>
+        <label for="document_number" class="col-sm-2 control-label required">Number</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_number">
+          <input type="text" class="form-control" id="document_number" required pattern="[^\s]+">
           <p class="help-block">Number within the year of introduction</p>
         </div>
       </div>
@@ -108,9 +108,9 @@
       <legend>Promulgation</legend>
 
       <div class="form-group">
-        <label for="document_publication_date" class="col-sm-2 control-label">Publication date</label>
+        <label for="document_publication_date" class="col-sm-2 control-label required">Publication date</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd">
+          <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
           <p class="help-block">Date when first published</p>
         </div>
 
@@ -133,13 +133,13 @@
       <div class="form-group">
         <label for="document_assent_date" class="col-sm-2 control-label">Assent date</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_assent_date" placeholder="yyyy-mm-dd">
+          <input type="text" class="form-control" data-provide="datepicker" id="document_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
           <p class="help-block">Date when signed by the President</p>
         </div>
 
         <label for="document_commencement_date" class="col-sm-2 control-label">Commencement date</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_commencement_date" placeholder="yyyy-mm-dd">
+          <input type="text" class="form-control" data-provide="datepicker" id="document_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
           <p class="help-block">Date when most of the document commences</p>
         </div>
       </div>

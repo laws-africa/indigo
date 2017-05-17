@@ -1,14 +1,9 @@
-<header class="boxed-group-header">
-  <h4>
-    Document metadata
-    <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-  </h4>
-</header>
-
 <div class="boxed-group-inner document-properties-view">
   <div class="form-horizontal">
     <fieldset>
-      <legend>Basic details</legend>
+      <legend>Details of this Work
+        <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
+      </legend>
 
       <div class="form-group">
         <label for="document_title" class="col-sm-2 control-label required">Short title</label>
@@ -55,51 +50,22 @@
       </div>
 
       <div class="form-group">
-        <label for="document_year" class="col-sm-2 control-label required">Year</label>
-        <div class="col-sm-4">
+        <label for="document_year" class="col-sm-2 control-label required">Year of introduction</label>
+        <div class="col-sm-2">
           <input type="text" class="form-control" id="document_year" required pattern="\d{4}">
-          <p class="help-block">Year in which the act was introduced</p>
         </div>
-        <label for="document_number" class="col-sm-2 control-label required">Number</label>
+      </div>
+
+      <div class="form-group">
+        <label for="document_number" class="col-sm-2 control-label required">Number within year</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" id="document_number" required pattern="[^\s]+">
-          <p class="help-block">Number within the year of introduction</p>
+          <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR Work URI</label>
-        <div class="col-sm-10">
-          <input type="text" class="form-control disabled" id="document_frbr_uri" disabled>
-          <p class="help-block">{{ form.fields.frbr_uri.help_text }}</p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="document_tags" class="col-sm-2 control-label">Tags</label>
+        <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR Work URI that identifies this work globally</label>
         <div class="col-sm-4">
-          <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
-        </div>
-
-        <label for="document_updated_at" class="col-sm-2 control-label">Last saved</label>
-        <div class="col-sm-4">
-          <div id="document_updated_at" class="form-control-static"></div>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-4">
-          <div class="checkbox">
-            <label>
-              <input id="document_stub" type="checkbox" value="1"> This is a stub document
-            </label>
-            <p class="help-block">{{ form.fields.stub.help_text }}</p>
-          </div>
-        </div>
-
-        <label for="document_created_at" class="col-sm-2 control-label">First created</label>
-        <div class="col-sm-4">
-          <div id="document_created_at" class="form-control-static"></div>
+          <div id="document_frbr_uri" class="form-control-static"></div>
         </div>
       </div>
     </fieldset>
@@ -113,16 +79,16 @@
           <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
           <p class="help-block">Date when first published</p>
         </div>
+      </div>
 
+      <div class="form-group">
         <label for="document_publication_name" class="col-sm-2 control-label">Publication name</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" id="document_publication_name" list="publication_list">
           <p class="help-block">Original publication, eg. national gazette</p>
         </div>
         <datalist id="publication_list"></datalist>
-      </div>
 
-      <div class="form-group">
         <label for="document_publication_number" class="col-sm-2 control-label">Publication number</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" id="document_publication_number">
@@ -130,17 +96,29 @@
         </div>
       </div>
 
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+          <hr>
+        </div>
+      </div>
+
       <div class="form-group">
+        <label for="document_commencement_date" class="col-sm-2 control-label">Commencement date</label>
+        <div class="col-sm-4">
+          <input type="text" class="form-control" data-provide="datepicker" id="document_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+          <p class="help-block">Date when most of the document comes into force</p>
+        </div>
+
         <label for="document_assent_date" class="col-sm-2 control-label">Assent date</label>
         <div class="col-sm-4">
           <input type="text" class="form-control" data-provide="datepicker" id="document_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
           <p class="help-block">Date when signed by the President</p>
         </div>
+      </div>
 
-        <label for="document_commencement_date" class="col-sm-2 control-label">Commencement date</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
-          <p class="help-block">Date when most of the document commences</p>
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+          <hr>
         </div>
       </div>
 
@@ -154,37 +132,75 @@
           <a href="#" class="btn btn-default btn-amendments">Manage amendments</a>
         </div>
       </div>
-
-      <div class="form-group">
-        <label class="col-sm-2 control-label">Repeal</label>
-        <div class="col-sm-10">
-          <div class="document-repeal-view form-control-static"></div>
-        </div>
-      </div>
     </fieldset>
 
     <fieldset>
-      <legend>Draft and Publishing</legend>
+      <legend>Housekeeping</legend>
 
       <div class="form-group">
-        <div class="col-sm-offset-2 col-sm-10">
+        <label for="document_tags" class="col-sm-2 control-label">Tags</label>
+        <div class="col-sm-4">
+          <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-4">
           <div class="checkbox">
             <label>
-              <input id="document_draft" type="checkbox" value="1"> This is a draft document
+              <input id="document_draft" type="checkbox" value="1"> Draft, unpublished document
             </label>
             <p class="help-block">{{ form.fields.draft.help_text }}</p>
           </div>
         </div>
-      </div>
 
-      <div class="form-group published-url" style="display: none">
-        <label class="col-sm-2 control-label">Published URL</label>
-        <div class="col-sm-10">
-          <div class="form-control-static"><a href="#" target="_blank" id="document_published_url"></a></div>
+        <div class="published-url" style="display: none">
+          <label class="col-sm-2 control-label">Published URL</label>
+          <div class="col-sm-4">
+            <div class="form-control-static"><a href="#" target="_blank" id="document_published_url"></a></div>
+          </div>
         </div>
       </div>
-    </fieldset>
 
+      <div class="form-group">
+        <div class="col-sm-offset-2 col-sm-4">
+          <div class="checkbox">
+            <label>
+              <input id="document_stub" type="checkbox" value="1"> This is a stub document with limited content
+            </label>
+            <p class="help-block">{{ form.fields.stub.help_text }}</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-2 control-label">Repealed?</label>
+        <div class="col-sm-10">
+          <div class="document-repeal-view form-control-static"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-10 col-sm-offset-2">
+          <hr>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="document_updated_at" class="col-sm-2 control-label">Last saved</label>
+        <div class="col-sm-4">
+          <div id="document_updated_at" class="form-control-static"></div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="document_created_at" class="col-sm-2 control-label">First created</label>
+        <div class="col-sm-4">
+          <div id="document_created_at" class="form-control-static"></div>
+        </div>
+      </div>
+
+    </fieldset>
   </div>
 </div>
 

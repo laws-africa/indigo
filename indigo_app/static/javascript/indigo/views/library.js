@@ -251,6 +251,7 @@
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
       this.filterView.trigger('change');
+      Indigo.userView.model.on('change', this.render, this);
     },
 
     changeSort: function(e) {
@@ -268,7 +269,10 @@
     },
 
     render: function() {
-      var docs = this.filterView.filtered;
+      var docs = this.filterView.filtered,
+          expressionSets = _.uniq(docs.map(function(doc) {
+            return Indigo.library.expressionSet(doc);
+          }), 'frbr_uri');
 
       docs.comparator = this.sortField;
       docs.sort();
@@ -278,9 +282,36 @@
         docs.reverse();
       }
 
+      // TODO: sorting
+      expressionSets = _.map(expressionSets, function(set) {
+        var items = _.sortBy(set.toJSON(), 'expression_date'),
+            first,
+            rest,
+            currentUserId = Indigo.userView.model.get('id');
+        items.reverse();
+
+        items.forEach(function(d) {
+          if (d.updated_by_user) {
+            if (d.updated_by_user && d.updated_by_user.id == currentUserId) d.updated_by_user.display_name = 'you';
+          }
+        });
+
+        first = items[0];
+        rest = items.slice(1);
+        rest.forEach(function(d) { 
+          if (d.title == first.title) d.title = '';
+        });
+
+        return {
+          'first': items[0],
+          'rest': items.slice(1),
+        };
+      });
+
       this.$el.html(this.template({
         count: docs.length,
         documents: docs,
+        expressionSets: expressionSets,
         sortField: this.sortField,
         sortDesc: this.sortDesc,
       }));

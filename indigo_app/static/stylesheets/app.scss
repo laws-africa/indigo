@@ -506,14 +506,17 @@ legend {
   table-layout: fixed;
 
   th.title { width: 63% }
-  th.year { width: 7% }
-  th.number { width: 20% }
-  th.updated_at { width: 10% }
+  th.year { width: 17% }
+  th.updated_at { width: 20% }
 
   td, th {
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+  }
+
+  td.amended-version {
+    padding-left: 25px;
   }
 }
 

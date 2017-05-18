@@ -515,8 +515,14 @@ legend {
     overflow: hidden;
   }
 
-  td.amended-version {
-    padding-left: 25px;
+  tr.amended-version {
+    td:first-child {
+      padding-left: 25px;
+    }
+
+    td {
+      border-top: 0px;
+    }
   }
 }
 

@@ -139,7 +139,8 @@
       this.updatePublicationOptions();
 
       // update the choices of expression dates when necessary
-      this.model.on('change:publication_date', this.updateExpressionDates, this);
+      this.model.on('change:publication_date', this.matchPublicationExpressionDates, this);
+      this.model.on('change:publication_date change:expression_date', this.updateExpressionDates, this);
       this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
 
       this.calculateUri();
@@ -156,6 +157,20 @@
         opt.setAttribute("value", pub);
         return opt;
       }));
+    },
+
+    matchPublicationExpressionDates: function(model, new_value) {
+      // if the publication date has changed and the expression date
+      // matches the old publication date, change the expression date, too
+      var old_pub_date = this.model.previous("publication_date");
+
+      if (this.model.get("expression_date") == old_pub_date) {
+        this.model.set("expression_date", new_value);
+      }
+
+      if (this.model.get("commencement_date") == old_pub_date) {
+        this.model.set("commencement_date", new_value);
+      }
     },
 
     updateExpressionDates: function() {

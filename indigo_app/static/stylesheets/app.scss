@@ -373,6 +373,25 @@ legend {
   font-size: 18px;
 }
 
+.document-properties-view {
+  fieldset {
+    margin-bottom: 20px;
+    background-color: $header-colour2;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid $border-colour;
+
+    h4 {
+      margin: -10px -10px 10px -10px;
+      padding: 10px;
+      background-color: $sidebar-colour;
+      border-bottom: 1px solid $border-colour;
+      margin-bottom: 10px;
+      border-radius: 5px 5px 0px 0px;
+    }
+  }
+}
+
 #error-box {
   position: fixed;
   top: 10px;

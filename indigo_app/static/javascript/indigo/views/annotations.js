@@ -31,30 +31,90 @@
    */
   Indigo.AnnotationThreadView = Backbone.View.extend({
     className: 'annotation-thread ig',
+    events: {
+      'click button.post': 'postReply',
+      'focus textarea': 'replyFocus',
+      'blur textarea': 'replyBlur',
+      'click': 'focused',
+    },
 
     initialize: function(options) {
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
+      this.annotationTemplate = options.template;
+
       // views for each annotation
       this.annotationViews = this.model.map(function(note) {
         return new Indigo.AnnotationView({model: note, template: options.template});
       });
 
       this.render();
+
+      $('body').on('click', _.bind(this.blurred, this));
     },
 
     render: function() {
       this.$el.empty();
 
       this.annotationViews.forEach(function(note) { 
-        note.render();
         this.el.appendChild(note.el);
       }, this);
+
+      $('<div class="annotation reply-container">')
+        .append('<textarea class="form-control reply-box" placeholder="Reply...">')
+        .append('<button class="btn btn-info btn-sm post hidden">Reply</button>')
+        .appendTo(this.el);
     },
 
     display: function() {
       var node = document.getElementById(this.root.get('anchor').id);
       if (node) node.appendChild(this.el);
+    },
+
+    focused: function() {
+      this.$el.addClass('focused');
+    },
+
+    blurred: function(e) {
+      if (!(this.el == e.target || jQuery.contains(this.el, e.target))) {
+        this.$el.removeClass('focused');
+      }
+    },
+
+    replyFocus: function(e) {
+      this.$el.find('.btn.post').removeClass('hidden');
+    },
+
+    replyBlur: function(e) {
+      this.$el.find('.btn.post').toggleClass('hidden', this.$el.find('textarea').val() === '');
+    },
+
+    postReply: function(e) {
+      var text = this.$el.find('textarea').val(),
+          user = Indigo.userView.model,
+          view,
+          reply;
+
+      // TODO: format the text?
+
+      reply = new Indigo.Annotation({
+        text: text,
+        in_reply_to: this.root.get('id'),
+        created_by_user: {
+          id: user.get('id'),
+          display_name: user.get('first_name'), // XXX
+        }
+      });
+      view = new Indigo.AnnotationView({model: reply, template: this.annotationTemplate});
+
+      // TODO: save it
+
+      this.model.add(reply);
+      this.annotationViews.push(view);
+
+      view.$el.insertBefore(this.$el.find('.reply-container')[0]);
+
+      this.$el.find('textarea').val('');
     },
   });
 
@@ -105,8 +165,7 @@
         return new Backbone.Collection(notes);
       });
 
-      var template = this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
-
+      var template = Handlebars.compile($("#annotation-template").html());
       this.threadViews = threads.map(function(thread) {
         return new Indigo.AnnotationThreadView({model: thread, template: template});
       });

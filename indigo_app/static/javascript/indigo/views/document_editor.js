@@ -268,7 +268,8 @@
         this.makeLinksExternal(html);
         this.makeTablesEditable(html);
         this.makeElementsQuickEditable(html);
-        this.$('.akoma-ntoso').html('').get(0).appendChild(html);
+        this.$('.akoma-ntoso').empty().get(0).appendChild(html);
+        this.trigger('rendered');
       }
     },
 

@@ -134,6 +134,8 @@
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
 
+      this.annotationsView = new Indigo.DocumentAnnotationsView({model: this.document});
+
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 

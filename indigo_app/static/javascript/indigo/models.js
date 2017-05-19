@@ -511,4 +511,6 @@
     },
   });
 
+  Indigo.Annotation = Backbone.Model.extend({});
+
 })(window);

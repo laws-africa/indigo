@@ -920,6 +920,39 @@ legend {
   }
 }
 
+.annotations-container {
+  &.document-sheet {
+    /* XXX */
+    margin-right: 200px;
+  }
+
+  /* XXX */
+  .akn-subsection {
+    position: relative;
+  }
+
+  .annotation-thread {
+    position: absolute;
+    top: 0px;
+    right: -200px;
+    width: 150px;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+    font-size: 13px;
+  }
+
+  .annotation {
+    background-color: $header-colour2;
+    padding: 5px;
+    .author {
+      margin-bottom: 5px;
+    }
+  }
+
+  .annotation + .annotation {
+    border-top: 1px solid $border-colour;
+  }
+}
+
 /* form validation */
 .form-control:invalid {
   border: 1px solid #843534;

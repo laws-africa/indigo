@@ -276,6 +276,7 @@ PIPELINE = {
                 'javascript/indigo/views/error_box.js',
                 'javascript/indigo/views/progress.js',
                 'javascript/indigo/views/import.js',
+                'javascript/indigo/views/annotations.js',
                 'javascript/indigo/timestamps.js',
                 'javascript/indigo.js',
             ),

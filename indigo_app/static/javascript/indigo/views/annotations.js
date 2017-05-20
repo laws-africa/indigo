@@ -123,6 +123,8 @@
    * Handle all the annotations in a document
    */
   Indigo.DocumentAnnotationsView = Backbone.View.extend({
+    el: "#document-sheet",
+
     initialize: function() {
       this.annotations = new Backbone.Collection();
       this.annotations.add([{
@@ -169,10 +171,23 @@
       this.threadViews = threads.map(function(thread) {
         return new Indigo.AnnotationThreadView({model: thread, template: template});
       });
+
+      this.$addButton = $("#add-annotation-floater");
+      this.$el.on('mouseenter', '.akn-subsection', _.bind(this.enterSection, this));
+      this.$el.on('mouseleave', '.akn-subsection', _.bind(this.leaveSection, this));
     },
 
     renderAnnotations: function() {
       this.threadViews.forEach(function(v) { v.display(); });
+    },
+
+    enterSection: function(e) {
+      e.currentTarget.appendChild(this.$addButton[0]);
+      this.$addButton.show();
+    },
+
+    leaveSection: function(e) {
+      //this.$addButton.hide();
     },
   });
 })(window);

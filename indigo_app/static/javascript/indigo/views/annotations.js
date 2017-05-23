@@ -219,6 +219,8 @@
     },
 
     enterSection: function(e) {
+      if (!Indigo.userView.model.authenticated()) return;
+
       if ($(e.currentTarget).find(".annotation-thread").length === 0) {
         e.currentTarget.appendChild(this.$newButton[0]);
         this.$newButton.show();

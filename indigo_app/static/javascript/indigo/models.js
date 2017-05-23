@@ -511,6 +511,27 @@
     },
   });
 
-  Indigo.Annotation = Backbone.Model.extend({});
+  Indigo.Annotation = Backbone.Model.extend({
+    // XXX
+    url: '/foo/bar',
+  });
+
+  // new annotation for the current user
+  Indigo.Annotation.newForCurrentUser = function(values) {
+    var user = Indigo.userView.model;
+
+    values = _.extend({
+      created_by_user: {
+        id: user.get('id'),
+        display_name: user.get('first_name'), // XXX
+      },
+    }, values);
+
+    return new Indigo.Annotation(values);
+  };
+
+  Indigo.AnnotationList = Backbone.Collection.extend({
+    model: Indigo.Annotation,
+  });
 
 })(window);

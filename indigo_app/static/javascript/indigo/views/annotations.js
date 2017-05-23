@@ -78,6 +78,12 @@
     display: function() {
       var node = document.getElementById(this.root.get('anchor').id);
       if (node) node.appendChild(this.el);
+
+      // the DOM elements get rudely remove from the view when the document
+      // sheet is re-rendered, which seems to break event handlers, so
+      // we have to re-bind them
+      this.delegateEvents();
+      this.annotationViews.forEach(function(v) { v.delegateEvents(); });
     },
 
     focused: function() {

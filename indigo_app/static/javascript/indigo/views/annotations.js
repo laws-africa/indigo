@@ -197,9 +197,16 @@
     },
 
     textareaChanged: function(e) {
-      $(e.currentTarget)
+      var input = e.currentTarget;
+
+      $(input)
         .siblings('.btn.save, .btn.post')
-        .attr('disabled', e.currentTarget.value.trim() === '');
+        .attr('disabled', input.value.trim() === '');
+
+
+      if (input.scrollHeight > input.clientHeight) {
+        input.style.height = input.scrollHeight + "px";
+      }
     },
   });
 

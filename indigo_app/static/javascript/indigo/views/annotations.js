@@ -21,7 +21,10 @@
       this.listenTo(this.model, 'destroy', this.remove);
 
       // is this view dealing with starting a new annotation thread?
-      this.isNew = !this.model.get('text');
+      this.isNew = this.model.isNew();
+      if (this.isNew) {
+        this.listenToOnce(this.model, 'sync', this.created);
+      }
 
       this.render();
     },
@@ -35,6 +38,7 @@
           .show()
           .get(0);
         this.el.appendChild(template);
+        this.$el.addClass('is-new');
       } else {
         this.$el.empty().append(this.template(this.model.toJSON()));
       }
@@ -45,6 +49,12 @@
         this.remove();
         this.model.destroy();
       }
+    },
+
+    created: function() {
+      this.isNew = false;
+      this.$el.removeClass('is-new');
+      this.render();
     },
 
     cancel: function(e) {
@@ -58,12 +68,7 @@
 
       // TODO: parse?
       this.model.set('text', text);
-
-      if (this.isNew) {
-        // TODO: save it
-        this.isNew = false;
-        this.render();
-      }
+      this.model.save();
     },
   });
 
@@ -93,7 +98,6 @@
       });
 
       this.listenTo(this.model, 'destroy', this.annotationDeleted);
-      this.listenTo(this.model, 'change:text', this.annotationTextChanged);
       $('body').on('click', _.bind(this.blurred, this));
 
       this.render();
@@ -110,10 +114,6 @@
         .append('<textarea class="form-control reply-box" placeholder="Reply...">')
         .append('<button class="btn btn-info btn-sm post hidden" disabled>Reply</button>')
         .appendTo(this.el);
-
-      if (this.model.length == 1 && this.model.at(0).isNew) {
-        this.$el.addClass('is-new');
-      }
     },
 
     display: function(forInput) {
@@ -156,7 +156,8 @@
     postReply: function(e) {
       var text = this.$el.find('textarea').val(),
           view,
-          reply;
+          reply,
+          self = this;
 
       // TODO: format the text?
 
@@ -164,24 +165,21 @@
         text: text,
         in_reply_to: this.root.get('id'),
       });
-      view = new Indigo.AnnotationView({model: reply, template: this.annotationTemplate});
 
-      // TODO: save it
+      this.$el.find('.btn.post').prop('disabled', true);
 
-      this.model.add(reply);
-      this.annotationViews.push(view);
+      reply
+        .save()
+        .then(function() {
+          view = new Indigo.AnnotationView({model: reply, template: self.annotationTemplate});
+          self.model.add(reply);
+          self.annotationViews.push(view);
 
-      view.$el.insertBefore(this.$el.find('.reply-container')[0]);
+          view.$el.insertBefore(self.$el.find('.reply-container')[0]);
 
-      this.$el.find('textarea').val('');
-      this.$el.find('.btn.post').addClass('hidden');
-    },
-
-    annotationTextChanged: function(e) {
-      // remove the is-new class when our only child gets text
-      if (this.model.length == 1 && this.model.at(0).get('text')) {
-        this.$el.removeClass('is-new');
-      }
+          self.$el.find('textarea').val('');
+          self.$el.find('.btn.post').addClass('hidden');
+        });
     },
 
     annotationDeleted: function(note) {

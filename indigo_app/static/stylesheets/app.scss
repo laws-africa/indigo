@@ -949,12 +949,6 @@ legend {
         display: block;
       }
     }
-
-    &.is-new {
-      .reply-container {
-        display: none;
-      }
-    }
   }
 
   .annotation {
@@ -988,6 +982,10 @@ legend {
   }
 
   .reply-container {
+    display: none;
+  }
+
+  .annotation.is-new + .reply-container {
     display: none;
   }
 

@@ -949,6 +949,12 @@ legend {
         display: block;
       }
     }
+
+    &.is-new {
+      .reply-container {
+        display: none;
+      }
+    }
   }
 
   .annotation {
@@ -983,12 +989,17 @@ legend {
     display: none;
   }
 
+  .is-new .reply-container {
+    display: none;
+  }
+
   #new-annotation-floater {
     position: absolute;
     top: 0px;
     right: -48px;
     width: 40px;
     height: 40px;
+    z-index: 120;
 
     border-radius: 50%;
     border: 1px solid $border-colour;

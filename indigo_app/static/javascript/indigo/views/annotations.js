@@ -12,23 +12,57 @@
     },
     events: {
       'click .delete-anntn': 'delete',
+      'click .btn.save': 'save',
+      'click .btn.cancel': 'cancel',
     },
 
     initialize: function(options) {
       this.template = options.template;
       this.listenTo(this.model, 'destroy', this.remove);
 
+      // is this view dealing with starting a new annotation thread?
+      this.isNew = !this.model.get('text');
+
       this.render();
     },
 
     render: function() {
-      this.$el.empty().append(this.template(this.model.toJSON()));
+      if (this.isNew) {
+        // controls for adding a new annotation
+        var template = $("#new-annotation-template")
+          .clone()
+          .attr('id', '')
+          .show()
+          .get(0);
+        this.el.appendChild(template);
+      } else {
+        this.$el.empty().append(this.template(this.model.toJSON()));
+      }
     },
     
     delete: function(e) {
       if (confirm("Are you sure?")) {
         this.remove();
         this.model.destroy();
+      }
+    },
+
+    cancel: function(e) {
+      this.remove();
+      this.model.destroy();
+    },
+
+    save: function(e) {
+      var text = this.$el.find('textarea').val();
+      if (!text) return;
+
+      // TODO: parse?
+      this.model.set('text', text);
+
+      if (this.isNew) {
+        // TODO: save it
+        this.isNew = false;
+        this.render();
       }
     },
   });
@@ -43,12 +77,15 @@
       'focus textarea': 'replyFocus',
       'blur textarea': 'replyBlur',
       'click': 'focused',
+      'input textarea': 'textareaChanged',
     },
 
     initialize: function(options) {
+      this.annotationTemplate = options.template;
+
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
-      this.annotationTemplate = options.template;
+      this.anchor = options.anchor || this.root.get('anchor').id;
 
       // views for each annotation
       this.annotationViews = this.model.map(function(note) {
@@ -56,10 +93,10 @@
       });
 
       this.listenTo(this.model, 'destroy', this.annotationDeleted);
+      this.listenTo(this.model, 'change:text', this.annotationTextChanged);
+      $('body').on('click', _.bind(this.blurred, this));
 
       this.render();
-
-      $('body').on('click', _.bind(this.blurred, this));
     },
 
     render: function() {
@@ -71,12 +108,16 @@
 
       $('<div class="annotation reply-container">')
         .append('<textarea class="form-control reply-box" placeholder="Reply...">')
-        .append('<button class="btn btn-info btn-sm post hidden">Reply</button>')
+        .append('<button class="btn btn-info btn-sm post hidden" disabled>Reply</button>')
         .appendTo(this.el);
+
+      if (this.model.length == 1 && this.model.at(0).isNew) {
+        this.$el.addClass('is-new');
+      }
     },
 
-    display: function() {
-      var node = document.getElementById(this.root.get('anchor').id);
+    display: function(forInput) {
+      var node = document.getElementById(this.anchor);
       if (node) node.appendChild(this.el);
 
       // the DOM elements get rudely remove from the view when the document
@@ -84,6 +125,14 @@
       // we have to re-bind them
       this.delegateEvents();
       this.annotationViews.forEach(function(v) { v.delegateEvents(); });
+
+      if (forInput) {
+        this.$el.addClass('focused');
+        this.$el
+          .find('textarea')
+          .first()
+          .focus();
+      }
     },
 
     focused: function() {
@@ -125,6 +174,14 @@
       view.$el.insertBefore(this.$el.find('.reply-container')[0]);
 
       this.$el.find('textarea').val('');
+      this.$el.find('.btn.post').addClass('hidden');
+    },
+
+    annotationTextChanged: function(e) {
+      // remove the is-new class when our only child gets text
+      if (this.model.length == 1 && this.model.at(0).get('text')) {
+        this.$el.removeClass('is-new');
+      }
     },
 
     annotationDeleted: function(note) {
@@ -138,6 +195,12 @@
         this.trigger('deleted', this);
       }
     },
+
+    textareaChanged: function(e) {
+      $(e.currentTarget)
+        .siblings('.btn.save, .btn.post')
+        .attr('disabled', e.currentTarget.value.trim() === '');
+    },
   });
 
 
@@ -148,11 +211,11 @@
     el: "#document-sheet",
     events: {
       'click #new-annotation-floater': 'newAnnotation',
-      'click #new-annotation-box .cancel': 'cancelNewAnnotation',
-      'click #new-annotation-box .save': 'saveNewAnnotation',
     },
 
     initialize: function() {
+      this.threadViews = [];
+
       this.annotations = new Indigo.AnnotationList();
       this.annotations.add([{
         id: 1,
@@ -197,7 +260,7 @@
       });
 
       var template = this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
-      this.threadViews = threads.map(_.bind(this.makeView, this));
+      threads.forEach(_.bind(this.makeView, this));
 
       this.$newButton = $("#new-annotation-floater");
       this.$newBox = $("#new-annotation-box");
@@ -206,7 +269,10 @@
 
     makeView: function(thread) {
       var view = new Indigo.AnnotationThreadView({model: thread, template: this.annotationTemplate});
+
       this.listenTo(view, 'deleted', this.threadDeleted);
+      this.threadViews.push(view);
+
       return view;
     },
 
@@ -229,43 +295,22 @@
       }
     },
 
+    // setup a new annotation thread
     newAnnotation: function(e) {
       // XXX
-      var $anchor = this.$newButton.closest('.akn-subsection');
+      var anchor = this.$newButton.closest('.akn-subsection').attr('id'),
+          root = Indigo.Annotation.newForCurrentUser({
+            anchor: {
+              id: anchor,
+            },
+          }),
+          thread = new Backbone.Collection([root]),
+          view = this.makeView(thread);
 
       this.$newButton.hide();
-      this.$newBox
-        .appendTo($anchor)
-        .data('anchor-id', $anchor.attr('id'))
-        .show()
-        .find('textarea')
-        .focus();
-    },
+      view.display(true);
 
-    cancelNewAnnotation: function(e) {
-      this.$newBox.remove().find('textarea').val('');
-    },
-
-    saveNewAnnotation: function(e) {
-      // TODO: format the text?
-      var text = this.$newBox.find('textarea').val();
-
-      var note = Indigo.Annotation.newForCurrentUser({
-        text: text,
-        anchor: {
-          // XXX
-          id: this.$newBox.closest('.akn-subsection').attr('id'),
-        },
-      });
-
-      // TODO: save it
-      var thread = new Backbone.Collection([note]);
-      var view = this.makeView(thread);
-      this.threadViews.push(view);
-
-      this.$newBox.hide().find('textarea').val('');
-
-      view.display();
+      e.stopPropagation();
     },
   });
 })(window);

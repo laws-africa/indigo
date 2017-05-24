@@ -26,7 +26,19 @@
         this.listenToOnce(this.model, 'sync', this.created);
       }
 
+      this.listenTo(Indigo.userView.model, 'change', this.setReadonly);
+      this.setReadonly();
+
       this.render();
+    },
+
+    readonly: function() {
+      return (!Indigo.userView.model.authenticated() ||
+              Indigo.userView.model.get('id') != this.model.get('created_by_user').id);
+    },
+
+    setReadonly: function() {
+      this.$el.toggleClass('readonly', this.readonly());
     },
 
     render: function() {

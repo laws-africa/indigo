@@ -963,6 +963,10 @@ legend {
       border-top: 1px solid $border-colour;
     }
 
+    &.is-new + .reply-container {
+      display: none;
+    }
+
     &.root {
       background-color: white;
     }
@@ -979,13 +983,15 @@ legend {
       min-width: 0px;
       font-size: 12px;
     }
+
+    &.readonly {
+      .btn-group {
+        display: none;
+      }
+    }
   }
 
   .reply-container {
-    display: none;
-  }
-
-  .annotation.is-new + .reply-container {
     display: none;
   }
 

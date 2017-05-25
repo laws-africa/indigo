@@ -511,10 +511,7 @@
     },
   });
 
-  Indigo.Annotation = Backbone.Model.extend({
-    // XXX
-    url: '/foo/bar',
-  });
+  Indigo.Annotation = Backbone.Model.extend({});
 
   // new annotation for the current user
   Indigo.Annotation.newForCurrentUser = function(values) {
@@ -532,6 +529,19 @@
 
   Indigo.AnnotationList = Backbone.Collection.extend({
     model: Indigo.Annotation,
+
+    initialize: function(models, options) {
+      this.document = options.document;
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
+    },
+
+    url: function() {
+      return this.document.url() + '/annotations';
+    },
   });
 
 })(window);

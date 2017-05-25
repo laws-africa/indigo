@@ -99,6 +99,7 @@
 
     initialize: function(options) {
       this.annotationTemplate = options.template;
+      this.document = options.document;
 
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
@@ -177,6 +178,7 @@
         text: text,
         in_reply_to: this.root.get('id'),
       });
+      this.document.annotations.add(reply);
 
       this.$el.find('.btn.post').prop('disabled', true);
 
@@ -233,7 +235,10 @@
     initialize: function() {
       this.threadViews = [];
 
-      this.annotations = new Indigo.AnnotationList();
+      this.$newButton = $("#new-annotation-floater");
+      this.$el.on('mouseenter', '.akn-subsection', _.bind(this.enterSection, this));
+
+      this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
       this.annotations.add([{
         id: 1,
         anchor: {
@@ -267,25 +272,29 @@
         in_reply_to: 2,
       }]);
 
-      // group by thread and transform into collections
-      var threads = _.map(this.annotations.groupBy(function(a) {
-        return a.get('in_reply_to') || a.get('id');
-      }), function(notes) {
-        var thread = new Backbone.Collection(notes);
-        notes.forEach(function(n) { n.thread = thread; });
-        return thread;
+      var self = this;
+
+      this.annotations.fetch().then(function() {
+        // group by thread and transform into collections
+        var threads = _.map(self.annotations.groupBy(function(a) {
+          return a.get('in_reply_to') || a.get('id');
+        }), function(notes) {
+          var thread = new Backbone.Collection(notes);
+          notes.forEach(function(n) { n.thread = thread; });
+          return thread;
+        });
+
+        var template = self.annotationTemplate = Handlebars.compile($("#annotation-template").html());
+        threads.forEach(_.bind(self.makeView, self));
       });
-
-      var template = this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
-      threads.forEach(_.bind(this.makeView, this));
-
-      this.$newButton = $("#new-annotation-floater");
-      this.$newBox = $("#new-annotation-box");
-      this.$el.on('mouseenter', '.akn-subsection', _.bind(this.enterSection, this));
     },
 
     makeView: function(thread) {
-      var view = new Indigo.AnnotationThreadView({model: thread, template: this.annotationTemplate});
+      var view = new Indigo.AnnotationThreadView({
+        model: thread,
+        template: this.annotationTemplate,
+        document: this.model
+      });
 
       this.listenTo(view, 'deleted', this.threadDeleted);
       this.threadViews.push(view);
@@ -321,8 +330,12 @@
               id: anchor,
             },
           }),
-          thread = new Backbone.Collection([root]),
-          view = this.makeView(thread);
+          thread,
+          view;
+
+      this.annotations.add(root);
+      thread = new Backbone.Collection([root]),
+      view = this.makeView(thread);
 
       this.$newButton.hide();
       view.display(true);

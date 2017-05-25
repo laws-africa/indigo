@@ -19,8 +19,8 @@ from reversion.models import Version
 import lxml.html.diff
 from lxml.etree import LxmlError
 
-from .models import Document, Attachment
-from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, DocumentAPISerializer, RevisionSerializer
+from .models import Document, Attachment, Annotation
+from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer
 from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
@@ -169,6 +169,14 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     def view(self, request, *args, **kwargs):
         attachment = self.get_object()
         return view_attachment(attachment)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.document).all()
+
+
+class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
+    queryset = Annotation.objects
+    serializer_class = AnnotationSerializer
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()

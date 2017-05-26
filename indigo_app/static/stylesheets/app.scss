@@ -941,12 +941,24 @@ legend {
     transition: right 150ms ease-in-out;
     z-index: 100;
 
+    a.dropdown-toggle {
+      color: #ccc;
+    }
+
     &.focused {
       right: -175px;
       z-index: 110;
 
       .reply-container {
         display: block;
+      }
+
+    }
+
+    &.focused,
+    &:hover {
+      a.dropdown-toggle {
+        color: $font-colour;
       }
     }
   }

@@ -93,7 +93,7 @@
       'click button.post': 'postReply',
       'focus textarea': 'replyFocus',
       'blur textarea': 'replyBlur',
-      'click': 'focused',
+      'click': 'focus',
       'input textarea': 'textareaChanged',
     },
 
@@ -140,7 +140,7 @@
       this.annotationViews.forEach(function(v) { v.delegateEvents(); });
 
       if (forInput) {
-        this.$el.addClass('focused');
+        this.focus();
         this.$el
           .find('textarea')
           .first()
@@ -148,14 +148,20 @@
       }
     },
 
-    focused: function() {
+    focus: function() {
       this.$el.addClass('focused');
+      this.$el.parent().addClass('annotation-focused');
     },
 
     blurred: function(e) {
       if (!(this.el == e.target || jQuery.contains(this.el, e.target))) {
-        this.$el.removeClass('focused');
+        this.blur();
       }
+    },
+
+    blur: function(e) {
+      this.$el.removeClass('focused');
+      this.$el.parent().removeClass('annotation-focused');
     },
 
     replyFocus: function(e) {
@@ -204,6 +210,7 @@
           this.model.toArray().forEach(function(n) { n.destroy(); });
         }
 
+        this.blur();
         this.remove();
         this.trigger('deleted', this);
       }
@@ -334,7 +341,7 @@
           thread,
           view;
 
-      this.$el.find('.annotation-thread.focused').removeClass('focused');
+      this.threadViews.forEach(function(v) { v.blur(); });
 
       this.annotations.add(root);
       thread = new Backbone.Collection([root]);

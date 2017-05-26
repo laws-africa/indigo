@@ -931,6 +931,10 @@ legend {
     position: relative;
   }
 
+  .annotation-focused {
+    background: rgba(255, 255, 0, 0.25);
+  }
+
   .annotation-thread {
     position: absolute;
     top: 0px;

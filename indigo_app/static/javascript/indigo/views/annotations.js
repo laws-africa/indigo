@@ -323,18 +323,26 @@
     },
 
     enterSection: function(e) {
-      console.log('mouseover ' + e.currentTarget.id);
       if (!Indigo.userView.model.authenticated()) return;
 
-      if ($(e.currentTarget).children(".annotation-thread").length === 0) {
-        e.currentTarget.appendChild(this.$newButton[0]);
-        this.$newButton.show();
+      var target = e.currentTarget,
+          $target = $(target);
+
+      if (!$target.is(ANNOTATABLE)) return;
+
+      if ($target.children(".annotation-thread").length === 0) {
+        this.showAnnotationButton(target);
       } else {
         this.$newButton.hide();
       }
 
       e.stopPropagation();
     },
+
+    showAnnotationButton: _.debounce(function(target) {
+      target.appendChild(this.$newButton[0]);
+      this.$newButton.show();
+    }, 100),
 
     // setup a new annotation thread
     newAnnotation: function(e) {

@@ -484,5 +484,9 @@ class Annotation(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+')
     in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     text = models.TextField(null=False, blank=False)
+    anchor_id = models.CharField(max_length=512, null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def anchor(self):
+        return {'id': self.anchor_id}

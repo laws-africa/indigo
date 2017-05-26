@@ -177,6 +177,7 @@
       reply = Indigo.Annotation.newForCurrentUser({
         text: text,
         in_reply_to: this.root.get('id'),
+        anchor: this.root.get('anchor'),
       });
       this.document.annotations.add(reply);
 
@@ -279,7 +280,7 @@
         var threads = _.map(self.annotations.groupBy(function(a) {
           return a.get('in_reply_to') || a.get('id');
         }), function(notes) {
-          var thread = new Backbone.Collection(notes);
+          var thread = new Backbone.Collection(notes, {comparator: 'created_at'});
           notes.forEach(function(n) { n.thread = thread; });
           return thread;
         });

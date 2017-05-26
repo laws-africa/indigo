@@ -477,9 +477,15 @@ class NoopSerializer(object):
         self.data = instance
 
 
+class AnnotationAnchorSerializer(serializers.Serializer):
+    id = serializers.CharField()
+
+
 class AnnotationSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     created_by_user = UserSerializer(read_only=True)
+    anchor = AnnotationAnchorSerializer()
+    in_reply_to = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects.all(), allow_null=True, required=False)
 
     class Meta:
         model = Annotation
@@ -491,16 +497,22 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'in_reply_to',
             'created_at',
             'updated_at',
+            'anchor',
         )
         read_only_fields = ('id', 'created_by_user', 'in_reply_to', 'created_at', 'updated_at')
 
     def create(self, validated_data):
-        args = {}
-        args.update(validated_data)
-        args['created_by_user'] = self.context['request'].user
-        args['document'] = self.context['document']
+        validated_data['created_by_user'] = self.context['request'].user
+        validated_data['document'] = self.context['document']
+        validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
+        return super(AnnotationSerializer, self).create(validated_data)
 
-        return super(AnnotationSerializer, self).create(args)
+    def update(self, instance, validated_data):
+        if 'in_reply_to' in validated_data:
+            del validated_data['in_reply_to']
+
+        validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
+        return super(AnnotationSerializer, self).update(instance, validated_data)
 
     def get_url(self, instance):
         if not instance.pk:

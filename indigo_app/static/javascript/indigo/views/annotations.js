@@ -334,8 +334,10 @@
           thread,
           view;
 
+      this.$el.find('.annotation-thread.focused').removeClass('focused');
+
       this.annotations.add(root);
-      thread = new Backbone.Collection([root]),
+      thread = new Backbone.Collection([root]);
       view = this.makeView(thread);
 
       this.$newButton.hide();

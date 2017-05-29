@@ -514,6 +514,11 @@ class AnnotationSerializer(serializers.ModelSerializer):
         validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
         return super(AnnotationSerializer, self).update(instance, validated_data)
 
+    def validate_in_reply_to(self, in_reply_to):
+        if in_reply_to:
+            if in_reply_to.document_id != self.context['document'].id:
+                raise ValidationError({'in_reply_to': "Annotation being replied to must be for the same document (%s)" % self.context['document'].id})
+
     def get_url(self, instance):
         if not instance.pk:
             return None

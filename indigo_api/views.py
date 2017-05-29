@@ -24,7 +24,7 @@ from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, 
 from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
-from .authz import DocumentPermissions
+from .authz import DocumentPermissions, AnnotationPermissions
 from .analysis import ActRefFinder
 from cobalt import FrbrUri
 import newrelic.agent
@@ -177,6 +177,7 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
+    permission_classes = (AnnotationPermissions,)
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()

@@ -16,8 +16,10 @@
     },
     events: {
       'click .delete-anntn': 'delete',
+      'click .edit-anntn': 'edit',
       'click .btn.save': 'save',
       'click .btn.cancel': 'cancel',
+      'click .btn.unedit': 'unedit',
     },
 
     initialize: function(options) {
@@ -26,9 +28,7 @@
 
       // is this view dealing with starting a new annotation thread?
       this.isNew = this.model.isNew();
-      if (this.isNew) {
-        this.listenToOnce(this.model, 'sync', this.created);
-      }
+      this.listenTo(this.model, 'sync', this.saved);
 
       this.listenTo(Indigo.userView.model, 'change', this.setReadonly);
       this.setReadonly();
@@ -46,6 +46,8 @@
     },
 
     render: function() {
+      this.$el.empty();
+
       if (this.isNew) {
         // controls for adding a new annotation
         var template = $("#new-annotation-template")
@@ -56,7 +58,7 @@
         this.el.appendChild(template);
         this.$el.addClass('is-new');
       } else {
-        this.$el.empty().append(this.template(this.model.toJSON()));
+        this.$el.append(this.template(this.model.toJSON()));
       }
     },
     
@@ -67,7 +69,7 @@
       }
     },
 
-    created: function() {
+    saved: function() {
       this.isNew = false;
       this.$el.removeClass('is-new');
       this.render();
@@ -85,6 +87,24 @@
       // TODO: parse?
       this.model.set('text', text);
       this.model.save();
+    },
+
+    edit: function(e) {
+      var $textarea = $(document.createElement('textarea'));
+      // TODO: unparse?
+      $textarea.addClass('form-control').val(this.model.get('text'));
+
+      this.$el
+        .append('<button class="btn btn-info btn-sm save">Save</button>')
+        .append('<button class="btn btn-default btn-sm unedit pull-right">Cancel</button>')
+        .find('.content')
+        .replaceWith($textarea);
+
+      $textarea.focus();
+    },
+
+    unedit: function(e) {
+      this.render();
     },
   });
 

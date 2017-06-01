@@ -24,6 +24,23 @@ class AnnotationAPITest(APITestCase):
         assert_is_none(response.data['in_reply_to'])
         assert_is_not_none(response.data['created_by_user'])
 
+    def test_reply(self):
+        response = self.client.post('/api/documents/10/annotations', {
+            'text': 'hello',
+            'anchor': {'id': 'section.1'},
+        })
+
+        assert_equal(response.status_code, 201)
+        note_id = response.data['id']
+
+        reply = self.client.post('/api/documents/10/annotations', {
+            'text': 'reply',
+            'anchor': {'id': 'section.1'},
+            'in_reply_to': note_id,
+        })
+        assert_equal(reply.status_code, 201)
+        assert_equal(reply.data['in_reply_to'], note_id)
+
     def test_change(self):
         # create
         response = self.client.post('/api/documents/10/annotations', {

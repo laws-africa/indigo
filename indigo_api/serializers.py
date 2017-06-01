@@ -485,7 +485,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     created_by_user = UserSerializer(read_only=True)
     anchor = AnnotationAnchorSerializer()
-    in_reply_to = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects.all(), allow_null=True, required=False)
+    in_reply_to = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, allow_null=True, required=False)
 
     class Meta:
         model = Annotation
@@ -518,6 +518,7 @@ class AnnotationSerializer(serializers.ModelSerializer):
         if in_reply_to:
             if in_reply_to.document_id != self.context['document'].id:
                 raise ValidationError({'in_reply_to': "Annotation being replied to must be for the same document (%s)" % self.context['document'].id})
+        return in_reply_to
 
     def get_url(self, instance):
         if not instance.pk:

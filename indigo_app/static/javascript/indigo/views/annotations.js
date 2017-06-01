@@ -6,7 +6,7 @@
 
   var ANNOTATABLE = ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
                     ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
-                    ".akn-subheading, .akn-item";
+                    ".akn-subheading, .akn-item, table";
 
   /** This view handles a single annotation in a thread.
    */
@@ -346,7 +346,6 @@
 
     // setup a new annotation thread
     newAnnotation: function(e) {
-      // XXX
       var anchor = this.$newButton.closest(ANNOTATABLE).attr('id'),
           root = Indigo.Annotation.newForCurrentUser({
             anchor: {

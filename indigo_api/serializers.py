@@ -493,11 +493,12 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'text',
-            'created_by_user',
+            'anchor',
             'in_reply_to',
+            'closed',
+            'created_by_user',
             'created_at',
             'updated_at',
-            'anchor',
         )
         read_only_fields = ('id', 'created_by_user', 'in_reply_to', 'created_at', 'updated_at')
 

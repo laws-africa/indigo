@@ -981,6 +981,10 @@ legend {
         color: $font-colour;
       }
     }
+
+    &.closed {
+      display: none;
+    }
   }
 
   .annotation {

@@ -485,6 +485,7 @@ class Annotation(models.Model):
     in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     text = models.TextField(null=False, blank=False)
     anchor_id = models.CharField(max_length=512, null=False, blank=False)
+    closed = models.BooleanField(default=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

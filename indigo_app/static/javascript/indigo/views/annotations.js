@@ -17,6 +17,7 @@
     events: {
       'click .delete-anntn': 'delete',
       'click .edit-anntn': 'edit',
+      'click .close-annotation': 'close',
       'click .btn.save': 'save',
       'click .btn.cancel': 'cancel',
       'click .btn.unedit': 'unedit',
@@ -112,6 +113,11 @@
       e.stopPropagation();
       this.render();
     },
+
+    close: function(e) {
+      this.model.set('closed', true);
+      this.model.save();
+    },
   });
 
 
@@ -141,6 +147,7 @@
       });
 
       this.listenTo(this.model, 'destroy', this.annotationDeleted);
+      this.listenTo(this.root, 'change:closed', this.setClosed);
       $('body').on('click', _.bind(this.blurred, this));
 
       this.render();
@@ -159,7 +166,19 @@
         .appendTo(this.el);
     },
 
+    setClosed: function() {
+      this.$el.toggleClass('closed', this.root.get('closed'));
+
+      if (this.root.get('closed')) {
+        this.$el.remove();
+      } else {
+        this.display();
+      }
+    },
+
     display: function(forInput) {
+      if (this.root.get('closed')) return;
+
       var node = document.getElementById(this.anchor);
       if (node) node.appendChild(this.el);
 
@@ -269,46 +288,14 @@
     },
 
     initialize: function() {
+      var self = this;
+
       this.threadViews = [];
 
       this.$newButton = $("#new-annotation-floater");
       this.$el.on('mouseover', ANNOTATABLE, _.bind(this.enterSection, this));
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
-      this.annotations.add([{
-        id: 1,
-        anchor: {
-          id: 'section-1.1.1',
-        },
-        text: 'this is my annotation',
-        created_by_user: {
-          id: 1,
-          display_name: 'Greg K.',
-        },
-      }, {
-        id: 2,
-        anchor: {
-          id: 'section-1.1.2',
-        },
-        text: 'and another one',
-        created_by_user: {
-          id: 1,
-          display_name: 'Greg K.',
-        },
-      }, {
-        id: 3,
-        anchor: {
-          id: 'section-1.1.2',
-        },
-        text: 'a reply to someone',
-        created_by_user: {
-          id: 1,
-          display_name: 'Greg K.',
-        },
-        in_reply_to: 2,
-      }]);
-
-      var self = this;
 
       this.annotations.fetch().then(function() {
         // group by thread and transform into collections

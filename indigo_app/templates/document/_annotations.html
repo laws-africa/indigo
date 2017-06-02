@@ -9,7 +9,8 @@
 </div>
 
 <div class="author">{{ created_by_user.display_name }}</div>
-<div class="content">{{ text }}</div>
+<div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
+<div class="content">{{{ html }}}</div>
 {% endverbatim %}
 </script>
 

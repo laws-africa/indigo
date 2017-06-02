@@ -511,21 +511,19 @@
     },
   });
 
-  Indigo.Annotation = Backbone.Model.extend({});
+  var showdownConverter = new showdown.Converter({
+    'noHeaderId': true,
+    'simplifiedAutoLink': true,
+    'excludeTrailingPunctuationFromURLs': true,
+    'simpleLineBreaks': true,
+    'openLinksInNewWindow': true,
+  });
 
-  // new annotation for the current user
-  Indigo.Annotation.newForCurrentUser = function(values) {
-    var user = Indigo.userView.model;
-
-    values = _.extend({
-      created_by_user: {
-        id: user.get('id'),
-        display_name: user.get('first_name'), // XXX
-      },
-    }, values);
-
-    return new Indigo.Annotation(values);
-  };
+  Indigo.Annotation = Backbone.Model.extend({
+    toHtml: function() {
+      return showdownConverter.makeHtml(this.get('text'));
+    },
+  });
 
   Indigo.AnnotationList = Backbone.Collection.extend({
     model: Indigo.Annotation,

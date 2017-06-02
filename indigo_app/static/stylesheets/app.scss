@@ -987,8 +987,17 @@ legend {
     background-color: $header-colour2;
     padding: 5px;
 
-    .author {
+    .time-ago {
+      color: #777;
       margin-bottom: 5px;
+    }
+
+    .content {
+      overflow-wrap: break-word;
+
+      p:last-child {
+        margin-bottom: 0px;
+      }
     }
 
     & + .annotation {

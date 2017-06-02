@@ -38,6 +38,7 @@
 
     readonly: function() {
       return (!Indigo.userView.model.authenticated() ||
+              !this.model.get('created_by_user') ||
               Indigo.userView.model.get('id') != this.model.get('created_by_user').id);
     },
 
@@ -58,7 +59,12 @@
         this.el.appendChild(template);
         this.$el.addClass('is-new');
       } else {
-        this.$el.append(this.template(this.model.toJSON()));
+        var html = this.model.toHtml(),
+            json = this.model.toJSON();
+
+        json.html = html;
+        json.created_at_text = moment(json.created_at).fromNow();
+        this.$el.append(this.template(json));
       }
     },
     
@@ -84,14 +90,12 @@
       var text = this.$el.find('textarea').val();
       if (!text) return;
 
-      // TODO: parse?
       this.model.set('text', text);
       this.model.save();
     },
 
     edit: function(e) {
       var $textarea = $(document.createElement('textarea'));
-      // TODO: unparse?
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
@@ -100,7 +104,7 @@
         .find('.content')
         .replaceWith($textarea);
 
-      $textarea.focus();
+      $textarea.focus().trigger('input');
     },
 
     unedit: function(e) {
@@ -203,9 +207,7 @@
           reply,
           self = this;
 
-      // TODO: format the text?
-
-      reply = Indigo.Annotation.newForCurrentUser({
+      reply = new Indigo.Annotation({
         text: text,
         in_reply_to: this.root.get('id'),
         anchor: this.root.get('anchor'),
@@ -368,7 +370,7 @@
     // setup a new annotation thread
     newAnnotation: function(e) {
       var anchor = this.$newButton.closest(ANNOTATABLE).attr('id'),
-          root = Indigo.Annotation.newForCurrentUser({
+          root = new Indigo.Annotation({
             anchor: {
               id: anchor,
             },

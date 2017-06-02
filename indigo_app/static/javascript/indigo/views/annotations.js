@@ -65,6 +65,7 @@
         json.html = html;
         json.created_at_text = moment(json.created_at).fromNow();
         this.$el.append(this.template(json));
+        this.setReadonly();
       }
     },
     

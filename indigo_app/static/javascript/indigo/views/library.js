@@ -251,6 +251,7 @@
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
       this.filterView.trigger('change');
+      Indigo.userView.model.on('change', this.render, this);
     },
 
     changeSort: function(e) {
@@ -268,19 +269,52 @@
     },
 
     render: function() {
-      var docs = this.filterView.filtered;
+      var docs = this.filterView.filtered,
+          sortDesc = this.sortDesc,
+          expressionSets = _.uniq(docs.map(function(doc) {
+            return Indigo.library.expressionSet(doc);
+          }), 'frbr_uri');
 
-      docs.comparator = this.sortField;
-      docs.sort();
+      // TODO: sorting
+      expressionSets = expressionSets.map(function(set) {
+        var first,
+            rest,
+            currentUserId = Indigo.userView.model.get('id'),
+            dates,
+            items;
 
-      docs = docs.toJSON();
-      if (this.sortDesc) {
-        docs.reverse();
-      }
+        // latest expression first
+        items = _.sortBy(set.toJSON(), 'expression_date');
+        items.reverse();
+
+        // current user's name -> you
+        items.forEach(function(d) {
+          if (d.updated_by_user && d.updated_by_user.id == currentUserId) d.updated_by_user.display_name = 'you';
+        });
+
+        first = items[0];
+        rest = items.slice(1);
+        rest.forEach(function(d) { 
+          if (d.title == first.title) d.title = '';
+        });
+
+        dates = _.compact(_.pluck(items, 'updated_at'));
+        dates.sort();
+
+        return {
+          'year': first.year + ' / ' + first.number,
+          'title': first.title,
+          'updated_at': sortDesc ? dates.slice(-1) : dates[0],
+          'first': first,
+          'rest': items.slice(1),
+        };
+      });
+      expressionSets = _.sortBy(expressionSets, this.sortField);
+      if (sortDesc) expressionSets.reverse();
 
       this.$el.html(this.template({
         count: docs.length,
-        documents: docs,
+        expressionSets: expressionSets,
         sortField: this.sortField,
         sortDesc: this.sortDesc,
       }));

@@ -14,7 +14,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('username', 'email', 'first_name', 'last_name', 'permissions', 'country_code', 'is_staff', 'id')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'permissions', 'country_code', 'is_staff')
         read_only_fields = ('email', 'is_staff', 'id')
 
     def get_permissions(self, user):

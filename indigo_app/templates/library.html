@@ -49,14 +49,46 @@
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="year" data-sort="year">Year</th>
-      <th class="number" data-sort="number">Number</th>
+      <th class="year" data-sort="year">Year / Number</th>
       <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
   <tbody>
-    {{#each documents}}
+    {{#each expressionSets}}
       <tr>
+        <td>
+          {{#if first.draft}}
+            <i class="fa fa-fw fa-circle draft" title="draft"></i>
+          {{else}}
+            <i class="fa fa-fw fa-circle published" title="published"></i>
+          {{/if}}
+          <a href="/documents/{{ first.id }}/">
+            {{#if first.title}}
+              {{ first.title }}
+            {{else}}
+              (untitled)
+            {{/if}}</a>
+
+          {{#if rest }}
+            <span class="text-muted">as at {{ first.expression_date }}</span>
+          {{/if}}
+
+          {{#if first.stub}}
+            <span class="label label-info">stub</span>
+          {{/if}}
+
+          {{#each first.tags}}
+            <span class="label label-default">{{this}}</span>
+          {{/each}}
+        </td>
+        <td>{{ first.year }} / {{ first.number }}</td>
+        <td>
+          <span class="time-ago" data-timestamp="{{ first.updated_at }}">{{ first.updated_at }}</span>
+          <span class="text-muted">{{#if first.updated_by_user.display_name}}- {{ first.updated_by_user.display_name }}{{/if}}</span>
+        </td>
+      </tr>
+      {{#each rest}}
+      <tr class="amended-version">
         <td>
           {{#if draft}}
             <i class="fa fa-fw fa-circle draft" title="draft"></i>
@@ -66,18 +98,8 @@
           <a href="/documents/{{ id }}/">
             {{#if title}}
               {{ title }}
-            {{else}}
-              (untitled)
             {{/if}}
-          </a>
-
-          {{#if amended_versions}}
-            <span class="text-muted">@ {{ expression_date }}</span>
-          {{/if}}
-
-          {{#if amendments}}
-            <i class="fa fa-fw fa-edit" title="amended"></i>
-          {{/if}}
+            as at {{ expression_date }}</a>
 
           {{#if stub}}
             <span class="label label-info">stub</span>
@@ -87,13 +109,13 @@
             <span class="label label-default">{{this}}</span>
           {{/each}}
         </td>
-        <td>{{ year }}</td>
-        <td>{{ number }}</td>
+        <td></td>
         <td>
-          <span class="hidden">{{ updated_at }}</span>
           <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+          <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
         </td>
       </tr>
+      {{/each}}
     {{/each}}
   </tbody>
   <tfoot>

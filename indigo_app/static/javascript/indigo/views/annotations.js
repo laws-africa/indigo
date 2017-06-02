@@ -190,11 +190,11 @@
     },
 
     replyFocus: function(e) {
-      $(e.target).parent().find('.btn.post').removeClass('hidden');
+      $(e.target).closest('.annotation').find('.btn.post').removeClass('hidden');
     },
 
     replyBlur: function(e) {
-      $(e.target).parent().find('.btn.post').toggleClass('hidden', this.$el.find('textarea').val() === '');
+      $(e.target).closest('.annotation').find('.btn.post').toggleClass('hidden', this.$el.find('textarea').val() === '');
     },
 
     postReply: function(e) {

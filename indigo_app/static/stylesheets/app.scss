@@ -1012,6 +1012,12 @@ legend {
       background-color: white;
     }
 
+    &.reply {
+      .close-annotation {
+        display: none;
+      }
+    }
+
     textarea {
       margin-bottom: 5px;
       padding: 5px;
@@ -1027,7 +1033,7 @@ legend {
     }
 
     &.readonly {
-      .btn-group {
+      .buttons {
         display: none;
       }
     }

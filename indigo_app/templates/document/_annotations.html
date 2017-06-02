@@ -1,11 +1,15 @@
 <script id="annotation-template" type="text/x-handlebars-template">
 {% verbatim %}
-<div class="btn-group pull-right">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-  <ul class="dropdown-menu">
-    <li><a href="#" class="edit-anntn">Edit</a></li>
-    <li><a href="#" class="delete-anntn">Delete</a></li>
-  </ul>
+<div class="buttons pull-right">
+  <button class="btn btn-default btn-xs close-annotation" title="Mark as done"><i class="fa fa-check"></i></button>
+
+  <div class="btn-group">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="#" class="edit-anntn">Edit</a></li>
+      <li><a href="#" class="delete-anntn">Delete</a></li>
+    </ul>
+  </div>
 </div>
 
 <div class="author">{{ created_by_user.display_name }}</div>

@@ -175,9 +175,17 @@
   </xsl:template>
 
   <!-- special HTML elements -->
-  <xsl:template match="a:a | a:abbr | a:b | a:i | a:span | a:sub | a:sup | a:u">
+  <xsl:template match="a:a">
+    <xsl:element name="a">
+      <xsl:copy-of select="@href" />
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates />
+    </xsl:element>
+  </xsl:template>
+
+  <xsl:template match="a:abbr | a:b | a:i | a:span | a:sub | a:sup | a:u">
     <xsl:element name="{local-name()}">
-      <xsl:copy-of select="@*" />
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </xsl:element>
   </xsl:template>

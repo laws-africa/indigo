@@ -6,6 +6,8 @@
   <xsl:output method="html" />
   <!-- base URL of the resolver for resolving ref elements -->
   <xsl:param name="resolverUrl" />
+  <!-- default ID scoping to fall back on if we can't find an appropriate one for a node -->
+  <xsl:param name="defaultIdScope" />
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">
@@ -19,21 +21,34 @@
     </xsl:element>
   </xsl:template>
 
-  <!-- copy over attributes using a data- prefix, except for 'id' which is copied as-is -->
-  <xsl:template match="@*" >
-    <xsl:choose>
-      <xsl:when test="local-name(.) = 'id'">
-        <xsl:attribute name="{local-name(.)}">
-          <xsl:value-of select="." />
-        </xsl:attribute>
-      </xsl:when>
-      <xsl:otherwise>
-        <xsl:variable name="attName" select="concat('data-', local-name(.))"/>
-        <xsl:attribute name="{$attName}">
-          <xsl:value-of select="." />
-        </xsl:attribute>
-      </xsl:otherwise>
-    </xsl:choose>
+  <!-- id attribute is scoped if necessary, and the original saved as data-id -->
+  <xsl:template match="@id">
+    <xsl:attribute name="id">
+      <!-- scope the id to the containing doc, if any, using a default if provided -->
+      <xsl:variable name="prefix" select="./ancestor::a:doc[@name][1]/@name"/>
+      <xsl:choose>
+        <xsl:when test="$prefix != ''">
+          <xsl:value-of select="concat($prefix, '/')" />
+        </xsl:when>
+        <xsl:when test="$defaultIdScope != ''">
+          <xsl:value-of select="concat($defaultIdScope, '/')" />
+        </xsl:when>
+      </xsl:choose>
+
+      <xsl:value-of select="." />
+    </xsl:attribute>
+
+    <xsl:attribute name="data-id">
+      <xsl:value-of select="." />
+    </xsl:attribute>
+  </xsl:template>
+
+  <!-- copy over attributes using a data- prefix, except for 'id' which is prefixed if necessary as-is -->
+  <xsl:template match="@*">
+    <xsl:variable name="attName" select="concat('data-', local-name(.))"/>
+    <xsl:attribute name="{$attName}">
+      <xsl:value-of select="." />
+    </xsl:attribute>
   </xsl:template>
 
   <!-- for parts and chapters, include an easily stylable heading -->
@@ -154,6 +169,7 @@
   <xsl:template match="a:table | a:tr | a:th | a:td">
     <xsl:element name="{local-name()}">
       <xsl:copy-of select="@*" />
+      <xsl:apply-templates select="@id" />
       <xsl:apply-templates />
     </xsl:element>
   </xsl:template>

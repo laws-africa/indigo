@@ -170,6 +170,7 @@
       this.$el.toggleClass('closed', this.root.get('closed'));
 
       if (this.root.get('closed')) {
+        this.blur();
         this.$el.remove();
       } else {
         this.display();

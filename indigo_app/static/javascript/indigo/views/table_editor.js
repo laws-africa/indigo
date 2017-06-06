@@ -56,11 +56,13 @@
       if (!this.editing) return;
 
       var table = this.editor.table,
-          oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.id);
+          oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.getAttribute('data-id'));
 
       // stop editing
-      this.ckeditor.destroy();
-      this.ckeditor = null;
+      if (this.ckeditor) {
+        this.ckeditor.destroy();
+        this.ckeditor = null;
+      }
       this.editTable(null);
 
       // get new xml

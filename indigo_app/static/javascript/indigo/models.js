@@ -66,7 +66,7 @@
           throw "Expected exactly one newNode, got " + newNodes.length;
         }
         console.log('Replacing whole document');
-        this.xmlDocument = first;
+        this.xmlDocument = first.ownerDocument;
 
       } else {
         if (del) {

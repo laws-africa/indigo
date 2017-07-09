@@ -156,7 +156,7 @@
 
           if (fragment === 'akomaNtoso') {
             // entire document
-            newFragment = [newFragment];
+            newFragment = [newFragment.documentElement];
           } else {
             newFragment = newFragment.documentElement.children;
           }

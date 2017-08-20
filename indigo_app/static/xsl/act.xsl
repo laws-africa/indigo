@@ -21,8 +21,10 @@
     </xsl:element>
   </xsl:template>
 
-  <!-- id attribute is scoped if necessary, and the original saved as data-id -->
-  <xsl:template match="@id">
+  <!-- helper to build an id attribute with an arbitrary value, scoped to the containing doc (if necessary) -->
+  <xsl:template name="scoped-id">
+    <xsl:param name="id" select="." />
+
     <xsl:attribute name="id">
       <!-- scope the id to the containing doc, if any, using a default if provided -->
       <xsl:variable name="prefix" select="./ancestor::a:doc[@name][1]/@name"/>
@@ -35,8 +37,15 @@
         </xsl:when>
       </xsl:choose>
 
-      <xsl:value-of select="." />
+      <xsl:value-of select="$id" />
     </xsl:attribute>
+  </xsl:template>
+
+  <!-- id attribute is scoped if necessary, and the original saved as data-id -->
+  <xsl:template match="@id">
+    <xsl:call-template name="scoped-id">
+      <xsl:with-param name="id" select="." />
+    </xsl:call-template>
 
     <xsl:attribute name="data-id">
       <xsl:value-of select="." />
@@ -102,7 +111,8 @@
 
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <article class="akn-doc">
+    <!-- a:doc doesn't an id, so add one -->
+    <article class="akn-doc" id="{@name}">
       <xsl:apply-templates select="@*" />
       <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
         <h2>
@@ -122,6 +132,11 @@
        the AN name of the node and copy over the attributes -->
   <xsl:template match="a:coverPage | a:preface | a:preamble | a:conclusions">
     <section class="akn-{local-name()}">
+      <!-- these components don't have ids in AKN, so add them -->
+      <xsl:call-template name="scoped-id">
+        <xsl:with-param name="id" select="local-name()" />
+      </xsl:call-template>
+
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </section>

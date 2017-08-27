@@ -254,21 +254,3 @@ Viewing the XML
 It can be useful to see what the Akoma Ntoso for a piece of the document looks like. Click the **Show Code** button to do this:
 
 .. image:: show-code.png
-
-
-Advanced Editing
-----------------
-
-Indigo also has an advanced editing mode that uses the `LIME editor <http://lime.cirsfid.unibo.it/>`_ from the creators of Akoma Ntoso. This editor exposes some of the details of the Akoma Ntoso markup structure. It allows you to use the full expressiveness of Akoma Ntoso, but is more complicated to use than the Simple Editor and requires that you understand the Akoma Ntoso format.
-
-To edit a document or section in the Advanced Editor, click the **Advanced Editor** button in the top-right corner near the Simple Editor button.
-
-.. image:: edit-lime.png
-
-Editing in the Advanced Editor is like painting with a paintbrush.
-
-1. Write (or cut-and-paste) the content you wish to add
-2. Highlight the text you want to mark
-3. Click the markup element in the Document Markup pane to mark the highlighted text.
-
-You can preview your changes by changing back to the Simple Editor by clicking the **Simple Editor** button to the left of the **Advanced Editor** button.

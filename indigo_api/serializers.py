@@ -12,7 +12,7 @@ from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment
+from .models import Document, Attachment, Annotation
 from .slaw import Importer
 
 log = logging.getLogger(__name__)
@@ -201,6 +201,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     attachments_url = serializers.SerializerMethodField()
     """ URL of document attachments. """
 
+    annotations_url = serializers.SerializerMethodField()
+    """ URL of document annotations. """
+
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
 
@@ -243,7 +246,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'stub', 'tags', 'amendments', 'amended_versions',
             'repeal',
 
-            'published_url', 'toc_url', 'attachments_url', 'links',
+            'published_url', 'toc_url', 'attachments_url', 'links', 'annotations_url',
         )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
@@ -261,6 +264,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk:
             return None
         return reverse('document-attachments-list', request=self.context['request'], kwargs={'document_id': doc.pk})
+
+    def get_annotations_url(self, doc):
+        if not doc.pk:
+            return None
+        return reverse('document-annotations-list', request=self.context['request'], kwargs={'document_id': doc.pk})
 
     def get_published_url(self, doc, with_date=False):
         if not doc.pk or doc.draft:
@@ -467,3 +475,56 @@ class NoopSerializer(object):
         self.context = kwargs.pop('context', {})
         self.kwargs = kwargs
         self.data = instance
+
+
+class AnnotationAnchorSerializer(serializers.Serializer):
+    id = serializers.CharField()
+
+
+class AnnotationSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+    created_by_user = UserSerializer(read_only=True)
+    anchor = AnnotationAnchorSerializer()
+    in_reply_to = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, allow_null=True, required=False)
+
+    class Meta:
+        model = Annotation
+        fields = (
+            'id',
+            'url',
+            'text',
+            'anchor',
+            'in_reply_to',
+            'closed',
+            'created_by_user',
+            'created_at',
+            'updated_at',
+        )
+        read_only_fields = ('id', 'created_by_user', 'in_reply_to', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        validated_data['created_by_user'] = self.context['request'].user
+        validated_data['document'] = self.context['document']
+        validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
+        return super(AnnotationSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        if 'in_reply_to' in validated_data:
+            del validated_data['in_reply_to']
+
+        validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
+        return super(AnnotationSerializer, self).update(instance, validated_data)
+
+    def validate_in_reply_to(self, in_reply_to):
+        if in_reply_to:
+            if in_reply_to.document_id != self.context['document'].id:
+                raise ValidationError({'in_reply_to': "Annotation being replied to must be for the same document (%s)" % self.context['document'].id})
+        return in_reply_to
+
+    def get_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('document-annotations-detail', request=self.context['request'], kwargs={
+            'document_id': instance.document.pk,
+            'pk': instance.pk,
+        })

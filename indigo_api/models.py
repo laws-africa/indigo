@@ -477,3 +477,17 @@ def random_frbr_uri(country=None):
                    subtype=None, actor=None, date=str(today.year),
                    expression_date=today.strftime("%Y-%m-%d"),
                    number=number.lower())
+
+
+class Annotation(models.Model):
+    document = models.ForeignKey(Document, related_name='annotations')
+    created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+')
+    in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
+    text = models.TextField(null=False, blank=False)
+    anchor_id = models.CharField(max_length=512, null=False, blank=False)
+    closed = models.BooleanField(default=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def anchor(self):
+        return {'id': self.anchor_id}

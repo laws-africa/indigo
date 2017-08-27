@@ -511,4 +511,35 @@
     },
   });
 
+  var showdownConverter = new showdown.Converter({
+    'noHeaderId': true,
+    'simplifiedAutoLink': true,
+    'excludeTrailingPunctuationFromURLs': true,
+    'simpleLineBreaks': true,
+    'openLinksInNewWindow': true,
+  });
+
+  Indigo.Annotation = Backbone.Model.extend({
+    toHtml: function() {
+      return showdownConverter.makeHtml(this.get('text'));
+    },
+  });
+
+  Indigo.AnnotationList = Backbone.Collection.extend({
+    model: Indigo.Annotation,
+
+    initialize: function(models, options) {
+      this.document = options.document;
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
+    },
+
+    url: function() {
+      return this.document.url() + '/annotations';
+    },
+  });
+
 })(window);

@@ -1,0 +1,27 @@
+<script id="annotation-template" type="text/x-handlebars-template">
+{% verbatim %}
+<div class="buttons pull-right">
+  <button class="btn btn-default btn-xs close-annotation" title="Mark as done"><i class="fa fa-check"></i></button>
+
+  <div class="btn-group">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
+    <ul class="dropdown-menu">
+      <li><a href="#" class="edit-anntn">Edit</a></li>
+      <li><a href="#" class="delete-anntn">Delete</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="author">{{ created_by_user.display_name }}</div>
+<div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
+<div class="content">{{{ html }}}</div>
+{% endverbatim %}
+</script>
+
+<div id="new-annotation-floater" style="display: none"><i class="fa fa-comment"></i></div>
+
+<div id="new-annotation-template" style="display: none">
+  <textarea class="form-control" placeholder="Comment..."></textarea>
+  <button class="btn btn-info btn-sm save" disabled>Comment</button>
+  <button class="btn btn-default btn-sm pull-right cancel">Cancel</button>
+</div>

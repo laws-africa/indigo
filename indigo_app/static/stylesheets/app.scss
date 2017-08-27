@@ -283,9 +283,13 @@ button.btn-link.help {
 }
 
 .sheet-editor {
+  .quick-editable {
+    position: relative;
+  }
+
   .quick-edit {
     position: absolute;
-    left: 27px;
+    left: -25px;
     margin-top: 2px;
 
     a {
@@ -671,7 +675,7 @@ legend {
 
   display: none;
   background: white;
-  z-index: 2;
+  z-index: 200;
 
   &.in {
     display: block;
@@ -926,6 +930,164 @@ legend {
   .amendments {
     list-style: none;
     padding-left: 0px;
+  }
+}
+
+.annotations-container {
+  &.document-sheet {
+    /* XXX */
+    margin-right: 200px;
+  }
+
+  /* annotatable elements */
+  .akn-coverPage,
+  .akn-preface,
+  .akn-preamble,
+  .akn-conclusions,
+  .akn-chapter,
+  .akn-part,
+  .akn-section,
+  .akn-subsection,
+  .akn-blockList,
+  .akn-heading,
+  .akn-subheading,
+  .akn-item,
+  table {
+    position: relative;
+  }
+
+  .annotation-focused {
+    background: rgba(255, 255, 0, 0.25);
+  }
+
+  .annotation-thread {
+    position: absolute;
+    top: 0px;
+    right: -200px;
+    width: 150px;
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.25);
+    font-size: 12px;
+    transition: right 150ms ease-in-out;
+    z-index: 100;
+
+    a.dropdown-toggle {
+      color: #ccc;
+    }
+
+    &.focused {
+      right: -175px;
+      z-index: 110;
+
+      .reply-container {
+        display: block;
+      }
+
+    }
+
+    &.focused,
+    &:hover {
+      a.dropdown-toggle {
+        color: $font-colour;
+      }
+    }
+
+    &.closed {
+      display: none;
+    }
+  }
+
+  .annotation {
+    background-color: $header-colour2;
+    padding: 5px;
+
+    .time-ago {
+      color: #777;
+      margin-bottom: 5px;
+    }
+
+    .content {
+      overflow-wrap: break-word;
+
+      p:last-child {
+        margin-bottom: 0px;
+      }
+    }
+
+    & + .annotation {
+      border-top: 1px solid $border-colour;
+    }
+
+    &.is-new + .reply-container {
+      display: none;
+    }
+
+    &.root {
+      background-color: white;
+    }
+
+    &.reply {
+      .close-annotation {
+        display: none;
+      }
+    }
+
+    textarea {
+      margin-bottom: 5px;
+      padding: 5px;
+      font-size: 12px;
+      overflow: hidden;
+      height: 2.25em;
+      resize: none;
+    }
+
+    .dropdown-menu {
+      min-width: 0px;
+      font-size: 12px;
+    }
+
+    &.readonly {
+      .buttons {
+        display: none;
+      }
+    }
+  }
+
+  .reply-container {
+    display: none;
+  }
+
+  #new-annotation-floater {
+    position: absolute;
+    top: 0px;
+    right: -37px;
+    width: 40px;
+    height: 40px;
+    z-index: 120;
+
+    border-radius: 50%;
+    border: 1px solid $border-colour;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+    background-color: white;
+    opacity: 0.75;
+
+    text-align: center;
+    color: #aaa;
+    font-size: 20px;
+    padding-top: 7px;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+      color: inherit;
+    }
+  }
+}
+
+body.unauthenticated .annotations-container {
+  .reply-container,
+  .dropdown-toggle,
+  #new-annotation-floater {
+    display: none !important;
   }
 }
 

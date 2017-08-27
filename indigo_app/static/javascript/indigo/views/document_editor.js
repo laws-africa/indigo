@@ -263,13 +263,29 @@
 
     render: function() {
       if (this.htmlTransform && this.parent.fragment) {
+        this.htmlTransform.setParameter(null, 'defaultIdScope', this.getFragmentIdScope() || '');
         var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
         this.makeLinksExternal(html);
         this.makeTablesEditable(html);
         this.makeElementsQuickEditable(html);
-        this.$('.akoma-ntoso').html('').get(0).appendChild(html);
+        this.$('.akoma-ntoso').empty().get(0).appendChild(html);
+        this.trigger('rendered');
       }
+    },
+
+    getFragmentIdScope: function() {
+      // default scope for ID elements
+      var ns = this.parent.fragment.namespaceURI;
+      var idScope = this.parent.fragment.ownerDocument.evaluate(
+        "./ancestor::a:doc[@name][1]/@name",
+        this.parent.fragment,
+        function(x) { if (x == "a") return ns; },
+        XPathResult.ANY_TYPE,
+        null);
+
+      idScope = idScope.iterateNext();
+      return idScope ? idScope.value : null;
     },
 
     makeLinksExternal: function(html) {

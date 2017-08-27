@@ -1,7 +1,0 @@
-{
-	"elements": {
-		"body": {
-			"children": ["title", "chapter", "section", "article", "clause", "subclause", "list", "point", "paragraph", "romanI", "mod"]
-		}
-	}
-}

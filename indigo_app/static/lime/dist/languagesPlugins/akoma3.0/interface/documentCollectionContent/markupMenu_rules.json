@@ -1,4 +1,0 @@
-{
-	"rootElements": ["coverPage", "preface", "preamble", "collectionBody", "conclusions"],
-	"commonElements": ["commonElement", "genericElement", "externalFragment", "commonsInline", "contentInline", "commonReference", "remark",  "foreign"]
-}

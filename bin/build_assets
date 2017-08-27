@@ -4,15 +4,9 @@ set -eo pipefail
 MANAGE_FILE=$(find . -maxdepth 3 -type f -name 'manage.py' | head -1)
 MANAGE_FILE=${MANAGE_FILE:2}
 
-# Copy over useful LIME stuff, which is used by the assets build below
-echo "-----> copying LIME"
-mkdir -p staticfiles/lime/dist/
-cp -vR indigo_app/static/lime/dist/ staticfiles/lime/
-
 echo "-----> running collectstatic"
 # Note that we ignore 'docs' directories because some bower components
 # have badly formed docs CSS
-# Ignore lime files because we'll do those manually
-python $MANAGE_FILE collectstatic --noinput -i docs -i lime 2>&1
+python $MANAGE_FILE collectstatic --noinput -i docs 2>&1
 
 echo

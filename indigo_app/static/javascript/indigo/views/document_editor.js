@@ -328,154 +328,15 @@
 
     tableEditStart: function() {
       this.$('.edit-text').hide();
-      this.$('.edit-lime').prop('disabled', true);
     },
 
     tableEditFinish: function() {
       this.$('.edit-text').show();
-      this.$('.edit-lime').prop('disabled', false);
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
     },
 
     resize: function() {},
-  });
-
-  // The LimeEditorController manages the interaction between
-  // the LIME-based editor, the model, and the document editor view.
-  Indigo.LimeEditorController = function(options) {
-    this.initialize.apply(this, arguments);
-  };
-  _.extend(Indigo.LimeEditorController.prototype, Backbone.Events, {
-    initialize: function(options) {
-      this.view = options.view;
-      this.initialized = false;
-      this.name = 'lime';
-    },
-
-    editFragment: function(node) {
-      var self = this;
-
-      if (typeof(LIME) == 'undefined') {
-        // we load LIME asynchronously when it's first needed,
-        // and we need a callback to know when that's done
-        $(document).on('ext:loaded', function() {
-          Ext.onReady(function() {
-            self.editFragmentWithLime(node);
-          });
-        });
-
-        // load the LIME script, this will eventually trigger the 'lime-loaded' event
-        _.each(LIME_bootstrap_scripts, function(fname) {
-          var script = document.createElement('script');
-          script.src = fname;
-          document.body.appendChild(script);
-        });
-
-      } else {
-        // LIME already loaded, go ahead and edit
-        this.editFragmentWithLime(node);
-      }
-    },
-
-    editFragmentWithLime: function(node) {
-      // if we're editing the entire document,
-      // strip the metadata when we next edit the 
-      this.stripMeta = !node.querySelector('meta');
-      this.fragmentType = node.tagName;
-      this.editing = true;
-
-      this.resize();
-
-      var config = {
-        docMarkingLanguage: "akoma2.0",
-        docType: "act",
-        docLocale: this.view.model.get('country'),
-        docLang: "eng",
-      };
-
-      if (!this.initialized) {
-        // We only want to interact with the editor once the document
-        // is fully loaded, which we get as a callback from the
-        // application. We only setup this event handler once.
-        LIME.app.on('documentLoaded', this.documentLoaded, this);
-        this.initialized = true;
-      }
-
-      this.loading = true;
-      LIME.XsltTransforms.transform(
-        node,
-        LIME_base_url + 'languagesPlugins/akoma2.0/AknToXhtml.xsl',
-        {},
-        function(html) {
-          config.docText = html.firstChild.outerHTML;
-          LIME.app.fireEvent("loadDocument", config);
-        }
-      );
-
-      Indigo.ga('send', 'event', 'edit-with-lime', this.fragmentType);
-    },
-
-    documentLoaded: function() {
-      // document has loaded
-      this.loading = false;
-    },
-
-    // Save the content of the LIME editor into the DOM, returns a Deferred
-    updateFromLime: function() {
-      var self = this;
-      var start = new Date().getTime();
-      var oldFragment = this.view.fragment;
-      var deferred = $.Deferred();
-
-      console.log('Updating XML from LIME');
-
-      LIME.app.fireEvent("translateRequest", function(xml) {
-        var stop = new Date().getTime();
-        console.log('Got XML from LIME in ' + (stop-start) + ' msecs');
-
-        // reset the changed flag
-        LIME.app.getController('Editor').changed = false;
-
-        if (self.stripMeta) {
-          // We're editing just a fragment.
-          // LIME inserts a meta element which we need to strip.
-          var meta = xml.querySelector('meta');
-          if (meta) {
-            meta.remove();
-          }
-        }
-
-        // LIME wraps the document in some extra stuff, just find the
-        // item we started with
-        xml = xml.querySelector(self.fragmentType);
-        self.view.updateFragment(oldFragment, [xml]);
-
-        deferred.resolve();
-      }, {
-        serialize: false,
-      });
-
-      return deferred;
-    },
-
-    // Save the content of the LIME editor into the DOM, returns a Deferred
-    saveChanges: function() {
-      if (!this.loading) {
-        return this.updateFromLime();
-      } else {
-        return $.Deferred().resolve();
-      }
-    },
-
-    // Discard the content of the LIME editor, returns a Deferred
-    discardChanges: function() {
-      return $.Deferred().resolve();
-    },
-
-    resize: function() {
-      LIME.app.resize();
-    },
   });
 
 
@@ -484,7 +345,6 @@
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: '#content-tab',
     events: {
-      'click .btn.edit-lime': 'toggleLime',
       'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
     },
@@ -503,7 +363,6 @@
 
       // setup the editor views
       this.sourceEditor = new Indigo.SourceEditorView({parent: this});
-      this.limeEditor = new Indigo.LimeEditorController({view: this});
 
       this.showDocumentSheet();
     },
@@ -572,33 +431,9 @@
       this.stopEditing()
         .then(function() {
           self.$el.find('.sheet-editor').addClass('in');
-          self.$el.find('.lime-editor').removeClass('in');
           self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
           self.$el.find('.btn.edit-text').addClass('btn-warning').removeClass('btn-default');
-          self.$el.find('.btn.edit-lime').addClass('btn-default').removeClass('btn-warning active');
           self.activeEditor = self.sourceEditor;
-          self.editFragment(self.fragment);
-        });
-    },
-
-    toggleLime: function(e) {
-      if (this.activeEditor === this.limeEditor) {
-        // stop editing in lime
-        e.preventDefault();
-        this.showDocumentSheet(e);
-        return;
-      }
-
-      var self = this;
-
-      this.stopEditing()
-        .then(function() {
-          self.$el.find('.sheet-editor').removeClass('in');
-          self.$el.find('.lime-editor').addClass('in');
-          self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', true);
-          self.$el.find('.btn.edit-text').addClass('btn-default').removeClass('btn-warning active');
-          self.$el.find('.btn.edit-lime').addClass('btn-default active').removeClass('btn-default');
-          self.activeEditor = self.limeEditor;
           self.editFragment(self.fragment);
         });
     },

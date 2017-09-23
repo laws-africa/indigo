@@ -544,6 +544,17 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/pdf')
         assert_in('pdf-content', response.content)
 
+    def test_document_xml(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.xml' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/xml')
+        assert_equal(response['Content-Disposition'], 'attachment; filename=1998-2.xml')
+        assert_true(response.content.startswith('<akomaNtoso'))
+
     def test_document_epub(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)

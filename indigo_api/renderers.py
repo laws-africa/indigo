@@ -22,6 +22,19 @@ from .serializers import NoopSerializer
 from .models import Document, Colophon, DEFAULT_LANGUAGE
 
 
+def generate_filename(data, view, format):
+    if isinstance(data, Document):
+        parts = [data.year, data.number]
+        if hasattr(view, 'component'):
+            parts.extend([view.component if view.component != 'main' else None, view.subcomponent])
+    else:
+        parts = view.kwargs['frbr_uri'].split('/')
+
+    parts = [re.sub('[/ .]', '-', p) for p in parts if p]
+
+    return '-'.join(parts) + '.' + format
+
+
 class AkomaNtosoRenderer(XMLRenderer):
     """ Django Rest Framework Akoma Ntoso Renderer.
     """
@@ -32,7 +45,10 @@ class AkomaNtosoRenderer(XMLRenderer):
             return super(AkomaNtosoRenderer, self).render(data, media_type, renderer_context)
 
         view = renderer_context['view']
-        if view.component == 'main' and not view.subcomponent:
+        filename = generate_filename(data, view, self.format)
+        renderer_context['response']['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             return data.document_xml
 
         return ET.tostring(view.element, pretty_print=True)
@@ -551,16 +567,7 @@ class PDFResponseRenderer(BaseRenderer):
         return [self.format] + parts
 
     def get_filename(self, data, view):
-        if isinstance(data, Document):
-            parts = [data.year, data.number]
-            if hasattr(view, 'component'):
-                parts.extend([view.component if view.component != 'main' else None, view.subcomponent])
-        else:
-            parts = view.kwargs['frbr_uri'].split('/')
-
-        parts = [re.sub('[/ .]', '-', p) for p in parts if p]
-
-        return '-'.join(parts) + '.' + self.format
+        return generate_filename(data, view, self.format)
 
 
 class EPUBResponseRenderer(PDFResponseRenderer):

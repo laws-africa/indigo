@@ -95,7 +95,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     serializer_class = DocumentSerializer
     permission_classes = (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
     renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
-                        HTMLResponseRenderer, renderers.BrowsableAPIRenderer)
+                        HTMLResponseRenderer, AkomaNtosoRenderer, renderers.BrowsableAPIRenderer)
 
     def perform_destroy(self, instance):
         if not instance.draft:

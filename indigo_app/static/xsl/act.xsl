@@ -170,6 +170,14 @@
     </xsl:choose>
   </xsl:template>
 
+  <!-- images -->
+  <xsl:template match="a:img">
+    <img>
+      <xsl:copy-of select="@*" />
+      <xsl:apply-templates />
+    </img>
+  </xsl:template>
+
   <!-- for all nodes, generate a SPAN element with a class matching
        the AN name of the node and copy over the attributes -->
   <xsl:template match="*" name="generic-elem">

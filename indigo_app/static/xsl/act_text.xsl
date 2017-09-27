@@ -238,6 +238,14 @@
     <xsl:text>)</xsl:text>
   </xsl:template>
 
+  <xsl:template match="a:img">
+    <xsl:text>![</xsl:text>
+    <xsl:value-of select="@alt" />
+    <xsl:text>](</xsl:text>
+    <xsl:value-of select="@src" />
+    <xsl:text>)</xsl:text>
+  </xsl:template>
+
   <xsl:template match="a:eol">
     <xsl:text>
 </xsl:text>

@@ -176,6 +176,9 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 
 def attachment_media_view(request, *args, **kwargs):
+    """ This is a helper view to serve up a named attachment file via
+    a "media/file.ext" url, which is part of the AKN standard.
+    """
     qs = Document.objects.defer('document_xml')
     doc_id = kwargs['document_id']
     document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
@@ -283,6 +286,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
 
+    def perform_content_negotiation(self, request, force=False):
+        # force content negotiation to succeed, because sometimes the suffix format
+        # doesn't match a renderer
+        return super(PublishedDocumentDetailView, self).perform_content_negotiation(request, force=True)
+
     def get(self, request, **kwargs):
         # try parse it as an FRBR URI, if that succeeds, we'll lookup the document
         # that document matches, otherwise we'll assume they're trying to
@@ -328,10 +336,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         if self.component == 'media':
             kwargs['document_id'] = document.id
             kwargs['filename'] = self.subcomponent
-            # TODO: this doesn't work, because the content negotiator doesn't let us get this far,
-            # because it thinks '.png' is not allowed
-            if self.frbr_uri.format:
-                kwargs['filename'] += '.' + self.frbr_uri.format
+            if self.format_kwarg:
+                kwargs['filename'] += '.' + self.format_kwarg
             return attachment_media_view(request, *args, **kwargs)
 
         if self.subcomponent:

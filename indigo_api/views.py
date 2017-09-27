@@ -324,6 +324,16 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         # get the document
         document = self.get_object()
 
+        # asking for a media attachment?
+        if self.component == 'media':
+            kwargs['document_id'] = document.id
+            kwargs['filename'] = self.subcomponent
+            # TODO: this doesn't work, because the content negotiator doesn't let us get this far,
+            # because it thinks '.png' is not allowed
+            if self.frbr_uri.format:
+                kwargs['filename'] += '.' + self.frbr_uri.format
+            return attachment_media_view(request, *args, **kwargs)
+
         if self.subcomponent:
             self.element = document.doc.get_subcomponent(self.component, self.subcomponent)
         else:

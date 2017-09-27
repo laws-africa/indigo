@@ -3,6 +3,7 @@ import logging
 
 from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
+from django.shortcuts import get_list_or_404
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -172,6 +173,16 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
+
+
+def attachment_media_view(request, *args, **kwargs):
+    qs = Document.objects.defer('document_xml')
+    doc_id = kwargs['document_id']
+    document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
+    filename = kwargs['filename']
+
+    attachment = get_list_or_404(Attachment.objects, document=document, filename=filename)[0]
+    return view_attachment(attachment)
 
 
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):

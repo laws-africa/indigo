@@ -24,5 +24,7 @@ urlpatterns = [
     url(r'^analysis/link-terms$', views.LinkTermsView.as_view(), name='link-terms'),
     url(r'^analysis/link-references$', views.LinkReferencesView.as_view(), name='link-references'),
 
+    url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachment_media_view, name='document-media'),
+
     url(r'^', include(router.urls)),
 ]

@@ -173,6 +173,26 @@
 
       return json;
     },
+
+    /**
+     * Build and return a fully qualified manifestation URL for this document.
+     */
+    manifestationUrl: function() {
+      var url = window.location.origin;
+
+      if (this.get('draft')) {
+        url = url + this.url();
+
+      } else {
+        // full published url
+        url = url + "/api" + this.get('frbr_uri') + '/' + this.get('language');
+        if (this.get('expression_date')) {
+          url = url + '@' + this.get('expression_date');
+        }
+      }
+
+      return url;
+    },
   });
 
   Indigo.Library = Backbone.Collection.extend({

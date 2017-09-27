@@ -213,12 +213,7 @@
     },
 
     showPublishedUrl: function() {
-      var url = window.location.origin + "/api" +
-        this.model.get('frbr_uri') + '/' + this.model.get('language');
-
-      if (this.model.get('expression_date')) {
-        url = url + '@' + this.model.get('expression_date');
-      }
+      var url = this.model.manifestationUrl();
 
       this.$el.find('.published-url').toggle(!this.model.get('draft'));
       this.$el.find('#document_published_url').attr('href', url).text(url);

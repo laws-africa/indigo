@@ -264,6 +264,7 @@
     render: function() {
       if (this.htmlTransform && this.parent.fragment) {
         this.htmlTransform.setParameter(null, 'defaultIdScope', this.getFragmentIdScope() || '');
+        this.htmlTransform.setParameter(null, 'manifestationUrl', this.parent.model.manifestationUrl());
         var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
         this.makeLinksExternal(html);

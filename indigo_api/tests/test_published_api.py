@@ -1,3 +1,5 @@
+import tempfile
+
 from mock import patch
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
@@ -307,3 +309,25 @@ class PublishedAPITest(APITestCase):
             {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'alternate', 'title': 'Table of Contents'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.epub', 'mediaType': 'application/epub+zip', 'rel': 'alternate', 'title': 'ePUB'},
         ])
+
+    def test_published_media_attachments(self):
+        response = self.client.get('/api/za/act/2001/8/eng.json')
+        assert_equal(response.status_code, 200)
+        id = response.data['id']
+
+        # should not exist
+        response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
+        assert_equal(response.status_code, 404)
+
+        # create a doc with an attachment
+        self.client.login(username='email@example.com', password='password')
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("hello!")
+        tmp_file.seek(0)
+        response = self.client.post('/api/documents/%s/attachments' % id,
+                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
+        assert_equal(response.status_code, 201)
+
+        # now should exist
+        response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
+        assert_equal(response.status_code, 200)

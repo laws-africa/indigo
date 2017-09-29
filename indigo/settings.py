@@ -348,7 +348,7 @@ EMAIL_SUBJECT_PREFIX = '[Indigo] '
 
 
 INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
-INDIGO_URL = os.environ.get('INDIGO_URL', 'https://indigo.code4sa.org')
+INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000

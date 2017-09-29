@@ -544,6 +544,8 @@ class RenderView(APIView):
         serializer.is_valid(raise_exception=True)
 
         document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
+        # the serializer ignores the id field, but we need it for rendering
+        document.id = serializer.initial_data['document'].get('id')
         return Response({'output': document.to_html()})
 
 

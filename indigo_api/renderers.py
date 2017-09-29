@@ -164,9 +164,14 @@ class HTMLRenderer(object):
         raise ValueError("Couldn't find a template to use for %s. Tried: %s" % (uri, ', '.join(options)))
 
     def _xml_renderer(self, document):
+        params = {
+            'resolverUrl': self.resolver_url(),
+            'manifestationUrl': document.manifestation_url(settings.INDIGO_URL),
+        }
+
         return CobaltHTMLRenderer(
             act=document.doc,
-            resolver_url=self.resolver_url(),
+            xslt_params=params,
             **self.cobalt_kwargs)
 
     def resolver_url(self):

@@ -5,7 +5,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Indigo Editor Cheatsheet</h4>
       </div>
-      <div class="modal-body">
+      <div class="modal-body scrollable">
 
         <section class="clearfix">
           <pre>PREFACE</pre>
@@ -86,6 +86,17 @@ The Heading</pre>
 |}</pre>
           <p>Draws a table using <a href="https://en.wikipedia.org/wiki/Help:Table/Manual_tables" target="_blank">Wikimedia table syntax</a>.</p>
         </section>
+
+        <section class="clearfix">
+          <pre>[link text](http://example.com/link)</pre>
+          <p>Creates a hyperlink</p>
+        </section>
+
+        <section class="clearfix">
+          <pre>![alternative text](/media/image.png)</pre>
+          <p>Embeds an image, using <code>alternative text</code> if the image can't be found.</p>
+        </section>
+
         <section class="clearfix">
           <pre>\1. An item that isn't a section
 \(a) text that isn't a list item

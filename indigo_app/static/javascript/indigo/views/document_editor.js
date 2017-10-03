@@ -70,6 +70,15 @@
           textTransform.importStylesheet(xml);
           self.textTransform = textTransform;
         });
+
+      // menu events
+      this.$menu = $('.workspace-header .menu');
+      this.$menu.find('.edit-find a').on('click', _.bind(this.editFind, this));
+      this.$menu.find('.edit-find-next a').on('click', _.bind(this.editFindNext, this));
+      this.$menu.find('.edit-find-previous a').on('click', _.bind(this.editFindPrevious, this));
+      this.$menu.find('.edit-find-replace a').on('click', _.bind(this.editFindReplace, this));
+
+      // TODO: disable menu items when ace editor is not visible
     },
 
     fullEdit: function(e) {
@@ -335,6 +344,32 @@
       this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
+    },
+
+    editFind: function(e) {
+      e.preventDefault();
+      this.currentAceEditor().execCommand('find');
+    },
+
+    editFindNext: function(e) {
+      e.preventDefault();
+      this.currentAceEditor().execCommand('findnext');
+    },
+
+    editFindPrevious: function(e) {
+      e.preventDefault();
+      this.currentAceEditor().execCommand('findprevious');
+    },
+
+    editFindReplace: function(e) {
+      e.preventDefault();
+      this.currentAceEditor().execCommand('replace');
+    },
+
+    currentAceEditor: function() {
+      // which ace editor is currently active?
+      // TODO xmlEditor?
+      if (this.$textEditor.is(':visible')) return this.textEditor;
     },
 
     resize: function() {},

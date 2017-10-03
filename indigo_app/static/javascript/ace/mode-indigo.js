@@ -39,6 +39,12 @@ var IndigoHighlightRules = function() {
                 token: "comment.line.remark",
                 regex: /\[\[(?!]])?.*]]/,
             }, {
+                token: "markup.underline.link",
+                regex: /\[[^\]]*\]\([^\)]*\)/,
+            }, {
+                token: "constant.other.image",
+                regex: /!\[[^\]]*\]\([^\)]*\)/,
+            }, {
                 token: "constant.language.table",
                 regex: /^{\|/,
                 next: "table",

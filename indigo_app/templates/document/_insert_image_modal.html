@@ -1,0 +1,32 @@
+<div class="modal fade" id="insert-image-modal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Choose an image</h4>
+      </div>
+
+      <div class="modal-body scrollable">
+        <div class="image-list-holder"></div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary save" value="Insert Image">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script id="image-list-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<ul class="image-list image-chooser clearfix">
+  {{#each images}}
+  <li><a href="#" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}"><img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail"><div class="filename">{{ filename }}</div></a></li>
+  {{/each}}
+</ul>
+
+{% endverbatim %}
+</script>

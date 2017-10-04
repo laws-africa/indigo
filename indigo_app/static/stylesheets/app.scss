@@ -1104,3 +1104,31 @@ body.unauthenticated .annotations-container {
   content: " *";
   color: red;
 }
+
+ul.image-list {
+  padding-left: 0px;
+
+  &> li {
+    list-style: none;
+    float: left;
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+
+    &> a {
+      padding: 10px;
+      display: block;
+
+      &.selected {
+        background-color: $selection-colour;
+        border-radius: 5px;
+      }
+    }
+
+    .img-thumbnail {
+      max-height: 100px;
+    }
+  }
+}

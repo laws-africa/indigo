@@ -73,10 +73,12 @@
 
       // menu events
       this.$menu = $('.workspace-header .menu');
-      this.$menu.find('.edit-find a').on('click', _.bind(this.editFind, this));
-      this.$menu.find('.edit-find-next a').on('click', _.bind(this.editFindNext, this));
-      this.$menu.find('.edit-find-previous a').on('click', _.bind(this.editFindPrevious, this));
-      this.$menu.find('.edit-find-replace a').on('click', _.bind(this.editFindReplace, this));
+      this.$menu
+        .on('click', '.edit-find a', _.bind(this.editFind, this))
+        .on('click', '.edit-find-next a', _.bind(this.editFindNext, this))
+        .on('click', '.edit-find-previous a', _.bind(this.editFindPrevious, this))
+        .on('click', '.edit-find-replace a', _.bind(this.editFindReplace, this))
+        .on('click', '.edit-insert-image a', _.bind(this.insertImage, this));
     },
 
     fullEdit: function(e) {
@@ -369,6 +371,52 @@
     editFindReplace: function(e) {
       e.preventDefault();
       this.textEditor.execCommand('replace');
+    },
+
+    /**
+     * Setup the box to insert an image into the document text.
+     */
+    insertImage: function(e) {
+      var self = this;
+
+      e.preventDefault();
+
+      if (!this.insertImageBox) {
+        // setup insert-image box
+        this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
+      }
+
+      // are we on an image tag in the editor?
+      var posn = this.textEditor.getCursorPosition(),
+          session = this.textEditor.getSession(),
+          token = session.getTokenAt(posn.row, posn.column),
+          selected = null,
+          alt_text = "", filename, parts;
+
+      if (token.type == "constant.other.image") {
+        parts = token.value.split(/[[()\]]/);
+        alt_text = parts[1];
+        filename = parts[3];
+        if (filename.startsWith("media/")) filename = filename.substr(6);
+
+        selected = this.parent.model.attachments().findWhere({filename: filename});
+      } else {
+        token = null;
+      }
+
+      this.insertImageBox.show(function(image) {
+        var tag = "![" + (alt_text) + "](media/" + image.get('filename') + ")";
+
+        if (token) {
+          // replace existing image
+          var Range = ace.require("ace/range").Range;
+          var range = new Range(posn.row, token.start, posn.row, token.start + token.value.length);
+          session.getDocument().replace(range, tag);
+        } else {
+          // new image
+          self.textEditor.insert(tag);
+        }
+      }, selected);
     },
 
     resize: function() {},

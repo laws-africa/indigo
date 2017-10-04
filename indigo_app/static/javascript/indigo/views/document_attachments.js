@@ -4,7 +4,8 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  /** This handles editing of a document attachment.
+  /**
+   * This handles editing of a document attachment.
    */
   Indigo.AttachmentEditorView = Backbone.View.extend({
     el: '#attachment-box',
@@ -61,7 +62,7 @@
       this.dirty = false;
       this.deleted = [];
 
-      this.model = new Indigo.AttachmentList(null, {document: this.document});
+      this.model = this.document.attachments();
       this.model.on('change add remove reset saved', this.render, this);
       this.model.on('change add remove', this.setDirty, this);
       this.model.on('saved', this.setClean, this);
@@ -69,13 +70,6 @@
       this.box = new Indigo.AttachmentEditorView({document: this.document});
 
       this.stickit();
-
-      if (this.document.get('id')) {
-        this.model.fetch({reset: true});
-      } else {
-        // new document
-        this.model.reset([]);
-      }
     },
 
     render: function() {
@@ -184,6 +178,70 @@
       } while (bytes > 1024);
 
       return Math.max(bytes, 0.1).toFixed(1) + byteUnits[i];
+    }
+  });
+
+  /**
+   * This handles inserting/editing an image based on the list of document attachments.
+   * It's triggered from the document editor view.
+   */
+  Indigo.InsertImageView = Backbone.View.extend({
+    el: '#insert-image-modal',
+    events: {
+      'click .btn.save': 'save',
+      'click .image-chooser li > a': 'imageClicked',
+    },
+    template: '#image-list-template',
+
+    initialize: function(options) {
+      this.document = options.document;
+      this.model = this.document.attachments();
+      this.callback = options.callback;
+      this.template = Handlebars.compile($(this.template).html());
+      this.selectedItem = null;
+    },
+
+    show: function(callback, selectedItem) {
+      this.selectedItem = selectedItem;
+      this.callback = callback;
+      this.render();
+      this.$el.modal('show');
+    },
+
+    save: function(e) {
+      this.$el.modal('hide');
+      this.callback(this.selectedItem);
+    },
+
+    render: function() {
+      var selected = this.selectedItem;
+      var images = _.filter(this.model.toJSON(), function(a) {
+        return a.mime_type.startsWith('image/');
+      });
+
+      // toggle selected
+      if (selected) {
+        images.forEach(function(a) {
+          a.selected = a.id == selected.get('id');
+        });
+      }
+
+      this.$el.find('.image-list-holder').html(this.template({
+        images: images,
+      }));
+    },
+
+    imageClicked: function(e) {
+      var $item = $(e.currentTarget);
+
+      this.$el.find('.selected').not($item).removeClass('selected');
+      $item.toggleClass('selected');
+
+      if ($item.hasClass("selected")) {
+        this.selectedItem = this.model.get($item.data('id'));
+      } else {
+        this.selectedItem = null;
+      }
     }
   });
 })(window);

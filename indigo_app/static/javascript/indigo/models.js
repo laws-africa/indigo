@@ -174,6 +174,20 @@
       return json;
     },
 
+    attachments: function() {
+      if (!this.attachmentList) {
+        this.attachmentList = new Indigo.AttachmentList(null, {document: this});
+
+        if (this.get('id')) {
+          this.attachmentList.fetch({reset: true});
+        } else {
+          this.attachmentList.reset([]);
+        }
+      }
+
+      return this.attachmentList;
+    },
+
     /**
      * Build and return a fully qualified manifestation URL for this document.
      */

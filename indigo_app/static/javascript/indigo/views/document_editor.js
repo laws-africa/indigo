@@ -70,6 +70,13 @@
           textTransform.importStylesheet(xml);
           self.textTransform = textTransform;
         });
+
+      // menu events
+      this.$menu = $('.workspace-header .menu');
+      this.$menu.find('.edit-find a').on('click', _.bind(this.editFind, this));
+      this.$menu.find('.edit-find-next a').on('click', _.bind(this.editFindNext, this));
+      this.$menu.find('.edit-find-previous a').on('click', _.bind(this.editFindPrevious, this));
+      this.$menu.find('.edit-find-replace a').on('click', _.bind(this.editFindReplace, this));
     },
 
     fullEdit: function(e) {
@@ -96,6 +103,9 @@
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.fragment);
+
+      // adjust menu items
+      this.$menu.find('.text-editor-only').removeClass('disabled');
 
       // show the text editor
       this.$('.document-content-view, .document-content-header')
@@ -211,10 +221,14 @@
         this.pendingTextSave.reject();
         this.pendingTextSave = null;
       }
+
       this.$('.document-content-view, .document-content-header')
         .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', false);
+
+      // adjust menu items
+      this.$menu.find('.text-editor-only').addClass('disabled');
     },
 
     editFragment: function(node) {
@@ -335,6 +349,26 @@
       this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
+    },
+
+    editFind: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('find');
+    },
+
+    editFindNext: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('findnext');
+    },
+
+    editFindPrevious: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('findprevious');
+    },
+
+    editFindReplace: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('replace');
     },
 
     resize: function() {},

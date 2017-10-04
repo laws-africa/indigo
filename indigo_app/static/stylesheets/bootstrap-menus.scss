@@ -1,5 +1,9 @@
 // extra menu stuff
 .menu {
+  .dropdown-menu {
+    min-width: 220px;
+  }
+
   // support icons
   .dropdown-menu > li > a {
     padding-left: 25px;
@@ -39,6 +43,21 @@
       border-top-left-radius: 0px;
     }
   }
+
+  .shortcut {
+    float: right;
+    margin-right: -10px;
+  }
+}
+
+body.osx .menu {
+  .shortcut.osx { display: block; }
+  .shortcut.win { display: none; }
+}
+
+body.win .menu {
+  .shortcut.osx { display: none; }
+  .shortcut.win { display: block; }
 }
 
 // from http://bootsnipp.com/snippets/featured/multi-level-dropdown-menu-bs3

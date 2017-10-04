@@ -77,8 +77,6 @@
       this.$menu.find('.edit-find-next a').on('click', _.bind(this.editFindNext, this));
       this.$menu.find('.edit-find-previous a').on('click', _.bind(this.editFindPrevious, this));
       this.$menu.find('.edit-find-replace a').on('click', _.bind(this.editFindReplace, this));
-
-      // TODO: disable menu items when ace editor is not visible
     },
 
     fullEdit: function(e) {
@@ -105,6 +103,9 @@
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.fragment);
+
+      // adjust menu items
+      this.$menu.find('.text-editor-only').removeClass('disabled');
 
       // show the text editor
       this.$('.document-content-view, .document-content-header')
@@ -220,10 +221,14 @@
         this.pendingTextSave.reject();
         this.pendingTextSave = null;
       }
+
       this.$('.document-content-view, .document-content-header')
         .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', false);
+
+      // adjust menu items
+      this.$menu.find('.text-editor-only').addClass('disabled');
     },
 
     editFragment: function(node) {
@@ -348,28 +353,22 @@
 
     editFind: function(e) {
       e.preventDefault();
-      this.currentAceEditor().execCommand('find');
+      this.textEditor.execCommand('find');
     },
 
     editFindNext: function(e) {
       e.preventDefault();
-      this.currentAceEditor().execCommand('findnext');
+      this.textEditor.execCommand('findnext');
     },
 
     editFindPrevious: function(e) {
       e.preventDefault();
-      this.currentAceEditor().execCommand('findprevious');
+      this.textEditor.execCommand('findprevious');
     },
 
     editFindReplace: function(e) {
       e.preventDefault();
-      this.currentAceEditor().execCommand('replace');
-    },
-
-    currentAceEditor: function() {
-      // which ace editor is currently active?
-      // TODO xmlEditor?
-      if (this.$textEditor.is(':visible')) return this.textEditor;
+      this.textEditor.execCommand('replace');
     },
 
     resize: function() {},

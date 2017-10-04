@@ -94,4 +94,10 @@ $(function() {
     Indigo.view = new Indigo[view]();
     Indigo.view.render();
   }
+
+  // osx vs windows
+  var isOSX = navigator.userAgent.indexOf("OS X") > -1;
+  $('body')
+    .toggleClass("win", !isOSX)
+    .toggleClass("osx", isOSX);
 });

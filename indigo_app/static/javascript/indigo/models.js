@@ -495,6 +495,7 @@
 
     initialize: function(models, options) {
       this.document = options.document;
+      this.listenTo(this, 'change:filename', this.sort);
     },
 
     url: function() {

@@ -700,8 +700,17 @@ legend {
   }
 
   .add-attachment {
-    cursor: pointer;
     border: 5px dashed $border-colour;
+
+    &.incoming {
+      background-color: $selection-colour;
+    }
+
+    cursor: default !important;
+  }
+
+  input[type=file] {
+    display: none;
   }
 }
 

@@ -51,9 +51,12 @@
     events: {
       'click .edit-attachment': 'editAttachment',
       'click .delete-attachment': 'deleteAttachment',
-      'click .add-attachment': 'addAttachment',
+      'click .add-attachment .btn': 'addAttachment',
       'click .attachments-list > li': 'attachmentClicked',
       'click .wrapper > a': 'attachmentClicked',
+      'dragleave': 'noDrag',
+      'dragover': 'dragover',
+      'drop': 'drop',
       'change [type=file]': 'fileUploaded',
     },
 
@@ -106,9 +109,7 @@
     },
 
     addAttachment: function(e) {
-      if (e.target == e.currentTarget) {
-        this.$('input[type=file]').click();
-      }
+      this.$('input[type=file]').click();
     },
 
     deleteAttachment: function(e) {
@@ -126,11 +127,7 @@
     },
 
     fileUploaded: function(e) {
-      var self = this;
-
-      _.each(e.originalEvent.target.files, function(f) {
-        self.attachFile(f);
-      });
+      _.forEach(e.originalEvent.target.files, _.bind(this.attachFile, this));
     },
 
     attachFile: function(file) {
@@ -175,7 +172,26 @@
 
         this.trigger('selectionChanged', this.selectedItem);
       }
-    }
+    },
+
+    dragover: function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      e.originalEvent.dataTransfer.dropEffect = 'copy';
+      this.$('.add-attachment').addClass('incoming');
+    },
+
+    noDrag: function() {
+      this.$('.add-attachment').removeClass('incoming');
+    },
+
+    drop: function(e) {
+      e.stopPropagation();
+      e.preventDefault();
+      this.$('.add-attachment').removeClass('incoming');
+
+      _.forEach(e.originalEvent.dataTransfer.files, _.bind(this.attachFile, this));
+    },
   });
 
   /**

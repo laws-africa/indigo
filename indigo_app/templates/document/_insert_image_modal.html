@@ -18,15 +18,3 @@
     </div>
   </div>
 </div>
-
-<script id="image-list-template" type="text/x-handlebars-template">
-{% verbatim %}
-
-<ul class="image-list image-chooser clearfix">
-  {{#each images}}
-  <li><a href="#" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}"><img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail"><div class="filename">{{ filename }}</div></a></li>
-  {{/each}}
-</ul>
-
-{% endverbatim %}
-</script>

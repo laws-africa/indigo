@@ -15,37 +15,31 @@
 <script id="attachments-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-striped attachments-list">
-  <tr>
-    <th></th>
-    <th>Filename</th>
-    <th>Size</th>
-    <th>Type</th>
-  </tr>
+<ul class="image-list clearfix attachments-list">
   {{#each attachments}}
-    <tr data-index="{{ @index }}">
-      <td class="buttons">
-        <a href="#" class="edit-attachment"><i class="fa fa-fw fa-pencil"></i></a>
-        <a href="#" class="delete-attachment"><i class="fa fa-fw fa-remove"></i></a>
-      </td>
-      <td>
-        {{#if view_url }}
-        <a href="{{ view_url }}" target="_blank">{{ filename }}</a>
-        <i class="fa fa-external-link fa-fw text-muted"></i>
+  <li data-index="{{ @index }}" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}">
+    <div class="wrapper">
+      <div class="icon {{#unless isImage}}not-image{{/unless}}">
+        {{#if isImage}}
+          <img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail">
         {{else}}
-        {{ filename }} <i>(new)</i>
+          {{#if icon}}<i class="fa {{ icon }}"></i>{{/if}}
         {{/if}}
-      </td>
-      <td>{{ prettySize }}</td>
-      <td>{{ mime_type }}</td>
-    </tr>
+      </div>
+      <div class="filename">
+        {{ filename }}
+        <span class="filesize">{{ prettySize }}</span>
+      </div>
+      <div class="buttons">
+        <a href="#" class="edit-attachment"><i class="fa fa-fw fa-pencil"></i></a>
+        <a href="#" class="delete-attachment"><i class="fa fa-fw fa-trash"></i></a>
+      </div>
+    </div>
+  </li>
   {{/each}}
-  <tr>
-    <td class="buttons"></td>
-    <td colspan="3">
-      <input type="file" id="new-attachment-file" multiple="true">
-    </td>
-  </tr>
+  <li class="add-attachment">
+    <input type="file" id="new-attachment-file" multiple="true">
+  </li>
 </ul>
 
 {% endverbatim %}

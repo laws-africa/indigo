@@ -646,9 +646,51 @@ legend {
 
 /* attachments list */
 .attachments-list {
-  .buttons {
-    width: 1%;
-    white-space: nowrap;
+  padding-left: 0px;
+
+  &> li {
+    list-style: none;
+    float: left;
+    width: 150px;
+    height: 150px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+
+    &.selected .wrapper {
+      background-color: $selection-colour;
+      border-radius: 5px;
+    }
+  }
+
+  .wrapper {
+    padding: 5px;
+  }
+
+  .icon {
+    width: 120px;
+    height: 120px;
+    margin: auto;
+  }
+
+  .img-thumbnail {
+    max-height: 120px;
+  }
+
+  .not-image {
+    .fa {
+      font-size: 64px;
+      margin-top: 25px;
+      color: gray;
+    }
+  }
+
+  .filesize {
+    color: gray;
+  }
+
+  .add-attachment {
+    border: 5px dashed $border-colour;
   }
 }
 
@@ -1103,32 +1145,4 @@ body.unauthenticated .annotations-container {
 .control-label.required::after {
   content: " *";
   color: red;
-}
-
-ul.image-list {
-  padding-left: 0px;
-
-  &> li {
-    list-style: none;
-    float: left;
-    width: 150px;
-    height: 150px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-
-    &> a {
-      padding: 10px;
-      display: block;
-
-      &.selected {
-        background-color: $selection-colour;
-        border-radius: 5px;
-      }
-    }
-
-    .img-thumbnail {
-      max-height: 100px;
-    }
-  }
 }

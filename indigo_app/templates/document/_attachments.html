@@ -15,21 +15,23 @@
 <script id="attachments-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<ul class="image-list clearfix attachments-list">
+<ul class="attachments-list clearfix {{#if selectable}}selectable{{/if}}">
   {{#each attachments}}
   <li data-index="{{ @index }}" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}">
     <div class="wrapper">
-      <div class="icon {{#unless isImage}}not-image{{/unless}}">
-        {{#if isImage}}
-          <img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail">
-        {{else}}
-          {{#if icon}}<i class="fa {{ icon }}"></i>{{/if}}
-        {{/if}}
-      </div>
-      <div class="filename">
-        {{ filename }}
-        <span class="filesize">{{ prettySize }}</span>
-      </div>
+      <a href="{{ view_url }}" target="_blank">
+        <div class="icon {{#unless isImage}}not-image{{/unless}}">
+          {{#if isImage}}
+            <img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail">
+          {{else}}
+            {{#if icon}}<i class="fa {{ icon }}"></i>{{/if}}
+          {{/if}}
+        </div>
+        <div class="filename">
+          {{ filename }}
+          <span class="filesize">{{ prettySize }}</span>
+        </div>
+      </a>
       <div class="buttons">
         <a href="#" class="edit-attachment"><i class="fa fa-fw fa-pencil"></i></a>
         <a href="#" class="delete-attachment"><i class="fa fa-fw fa-trash"></i></a>

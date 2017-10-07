@@ -51,6 +51,8 @@
     events: {
       'click .edit-attachment': 'editAttachment',
       'click .delete-attachment': 'deleteAttachment',
+      'click .add-attachment': 'addAttachment',
+      'click .attachments-list > li': 'attachmentClicked',
       'change [type=file]': 'fileUploaded',
     },
 
@@ -63,7 +65,16 @@
     initialize: function(options) {
       this.template = Handlebars.compile($(this.template).html());
       this.box = new Indigo.AttachmentEditorView();
+      this.filter = options.filter;
+      this.selectable = !!options.selectable;
+
       this.model.on('change add remove reset saved', this.render, this);
+    },
+
+    selectItem: function(model) {
+      this.selectedItem = model;
+      this.trigger('selectionChanged', this.selectedItem);
+      this.render();
     },
 
     render: function() {
@@ -71,16 +82,18 @@
       var models = this.model.toJSON();
       var count = models.length;
 
-      // TODO: filter to just images?
+      if (this.filter) models = models.filter(this.filter);
 
       _.each(models, function(m) {
         m.prettySize = self.prettySize(m.size);
         m.isImage = m.mime_type.startsWith('image/');
         m.icon = self.ICONS[m.mime_type] || 'fa-file-o';
+        m.selected = self.selectedItem && self.selectedItem.get('id') == m.id;
       });
 
       this.$el.html(this.template({
         attachments: models,
+        selectable: this.selectable,
       }));
     },
 
@@ -89,6 +102,12 @@
 
       var index = $(e.target).closest('li').data('index');
       this.box.show(this.model.at(index));
+    },
+
+    addAttachment: function(e) {
+      if (e.target == e.currentTarget) {
+        this.$('input[type=file]').click();
+      }
     },
 
     deleteAttachment: function(e) {
@@ -137,6 +156,23 @@
       } while (bytes > 1024);
 
       return Math.max(bytes, 0.1).toFixed(0) + byteUnits[i];
+    },
+
+    attachmentClicked: function(e) {
+      if (!this.selectable) return;
+
+      var $item = $(e.currentTarget);
+
+      this.$el.find('.selected').not($item).removeClass('selected');
+      $item.toggleClass('selected');
+
+      if ($item.hasClass("selected")) {
+        this.selectedItem = this.model.get($item.data('id'));
+      } else {
+        this.selectedItem = null;
+      }
+
+      this.trigger('selectionChanged', this.selectedItem);
     }
   });
 
@@ -209,59 +245,38 @@
     el: '#insert-image-modal',
     events: {
       'click .btn.save': 'save',
-      'click .image-chooser li > a': 'imageClicked',
     },
-    template: '#image-list-template',
 
     initialize: function(options) {
-      this.document = options.document;
-      this.model = this.document.attachments();
+      this.model = options.document.attachments();
       this.callback = options.callback;
-      this.template = Handlebars.compile($(this.template).html());
       this.selectedItem = null;
+      this.listView = new Indigo.AttachmentListView({
+        model: this.model,
+        el: this.$('.image-list-holder')[0],
+        selectable: true,
+        filter: function(a) {
+          return a.mime_type.startsWith('image/');
+        }
+      });
+
+      this.listenTo(this.listView, 'selectionChanged', this.selectionChanged);
     },
 
     show: function(callback, selectedItem) {
       this.selectedItem = selectedItem;
       this.callback = callback;
-      this.render();
+      this.listView.selectItem(this.selectedItem);
       this.$el.modal('show');
+    },
+
+    selectionChanged: function(selection) {
+      this.$('.save').prop('disabled', selection === null);
     },
 
     save: function(e) {
       this.$el.modal('hide');
-      this.callback(this.selectedItem);
+      this.callback(this.listView.selectedItem);
     },
-
-    render: function() {
-      var selected = this.selectedItem;
-      var images = _.filter(this.model.toJSON(), function(a) {
-        return a.mime_type.startsWith('image/');
-      });
-
-      // toggle selected
-      if (selected) {
-        images.forEach(function(a) {
-          a.selected = a.id == selected.get('id');
-        });
-      }
-
-      this.$el.find('.image-list-holder').html(this.template({
-        images: images,
-      }));
-    },
-
-    imageClicked: function(e) {
-      var $item = $(e.currentTarget);
-
-      this.$el.find('.selected').not($item).removeClass('selected');
-      $item.toggleClass('selected');
-
-      if ($item.hasClass("selected")) {
-        this.selectedItem = this.model.get($item.data('id'));
-      } else {
-        this.selectedItem = null;
-      }
-    }
   });
 })(window);

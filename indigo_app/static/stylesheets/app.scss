@@ -663,6 +663,16 @@ legend {
     }
   }
 
+  &.selectable {
+    li {
+      cursor: pointer;
+    }
+
+    .buttons {
+      display: none;
+    }
+  }
+
   .wrapper {
     padding: 5px;
   }

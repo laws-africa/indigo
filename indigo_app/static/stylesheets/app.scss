@@ -652,7 +652,7 @@ legend {
     list-style: none;
     float: left;
     width: 150px;
-    height: 150px;
+    height: 200px;
     margin-right: 10px;
     margin-bottom: 10px;
     text-align: center;
@@ -700,6 +700,7 @@ legend {
   }
 
   .add-attachment {
+    cursor: pointer;
     border: 5px dashed $border-colour;
   }
 }

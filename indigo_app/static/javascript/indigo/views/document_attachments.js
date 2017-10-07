@@ -53,6 +53,7 @@
       'click .delete-attachment': 'deleteAttachment',
       'click .add-attachment': 'addAttachment',
       'click .attachments-list > li': 'attachmentClicked',
+      'click .wrapper > a': 'attachmentClicked',
       'change [type=file]': 'fileUploaded',
     },
 
@@ -143,7 +144,7 @@
         size: file.size,
         mime_type: file.type,
         file: file,
-      });
+      }).save();
     },
 
     prettySize: function(bytes) {
@@ -159,20 +160,21 @@
     },
 
     attachmentClicked: function(e) {
-      if (!this.selectable) return;
+      if (this.selectable && !$(e.target).closest('li').hasClass('add-attachment')) {
+        e.preventDefault();
+        var $item = $(e.currentTarget);
 
-      var $item = $(e.currentTarget);
+        this.$el.find('.selected').not($item).removeClass('selected');
+        $item.toggleClass('selected');
 
-      this.$el.find('.selected').not($item).removeClass('selected');
-      $item.toggleClass('selected');
+        if ($item.hasClass("selected")) {
+          this.selectedItem = this.model.get($item.data('id'));
+        } else {
+          this.selectedItem = null;
+        }
 
-      if ($item.hasClass("selected")) {
-        this.selectedItem = this.model.get($item.data('id'));
-      } else {
-        this.selectedItem = null;
+        this.trigger('selectionChanged', this.selectedItem);
       }
-
-      this.trigger('selectionChanged', this.selectedItem);
     }
   });
 

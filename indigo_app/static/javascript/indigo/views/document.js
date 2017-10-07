@@ -78,7 +78,8 @@
 
     initialize: function() {
       var library = Indigo.library,
-          document_id = $('[data-document-id]').data('document-id') || null;
+          document_id = $('[data-document-id]').data('document-id') || null,
+          self = this;
 
       this.$saveBtn = $('.workspace-buttons .btn.save');
       this.$menu = $('.workspace-header .menu');
@@ -119,6 +120,11 @@
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);
       this.attachmentsView.on('clean', this.setClean, this);
+      this.document.attachments().on('add remove reset', function() {
+        // update attachment count in nav tabs
+        var count = self.document.attachments().length;
+        $('.sidebar .nav .attachment-count').text(count === 0 ? '' : count);
+      });
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});

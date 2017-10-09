@@ -70,6 +70,15 @@
           textTransform.importStylesheet(xml);
           self.textTransform = textTransform;
         });
+
+      // menu events
+      this.$menu = $('.workspace-header .menu');
+      this.$menu
+        .on('click', '.edit-find a', _.bind(this.editFind, this))
+        .on('click', '.edit-find-next a', _.bind(this.editFindNext, this))
+        .on('click', '.edit-find-previous a', _.bind(this.editFindPrevious, this))
+        .on('click', '.edit-find-replace a', _.bind(this.editFindReplace, this))
+        .on('click', '.edit-insert-image a', _.bind(this.insertImage, this));
     },
 
     fullEdit: function(e) {
@@ -96,6 +105,9 @@
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.fragment);
+
+      // adjust menu items
+      this.$menu.find('.text-editor-only').removeClass('disabled');
 
       // show the text editor
       this.$('.document-content-view, .document-content-header')
@@ -211,10 +223,14 @@
         this.pendingTextSave.reject();
         this.pendingTextSave = null;
       }
+
       this.$('.document-content-view, .document-content-header')
         .removeClass('show-text-editor')
         .find('.toggle-editor-buttons .btn')
         .prop('disabled', false);
+
+      // adjust menu items
+      this.$menu.find('.text-editor-only').addClass('disabled');
     },
 
     editFragment: function(node) {
@@ -264,6 +280,7 @@
     render: function() {
       if (this.htmlTransform && this.parent.fragment) {
         this.htmlTransform.setParameter(null, 'defaultIdScope', this.getFragmentIdScope() || '');
+        this.htmlTransform.setParameter(null, 'manifestationUrl', this.parent.model.manifestationUrl());
         var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
         this.makeLinksExternal(html);
@@ -334,6 +351,72 @@
       this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
+    },
+
+    editFind: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('find');
+    },
+
+    editFindNext: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('findnext');
+    },
+
+    editFindPrevious: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('findprevious');
+    },
+
+    editFindReplace: function(e) {
+      e.preventDefault();
+      this.textEditor.execCommand('replace');
+    },
+
+    /**
+     * Setup the box to insert an image into the document text.
+     */
+    insertImage: function(e) {
+      var self = this;
+
+      e.preventDefault();
+
+      if (!this.insertImageBox) {
+        // setup insert-image box
+        this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
+      }
+
+      // are we on an image tag in the editor?
+      var posn = this.textEditor.getCursorPosition(),
+          session = this.textEditor.getSession(),
+          token = session.getTokenAt(posn.row, posn.column),
+          selected = null,
+          alt_text = "", filename, parts;
+
+      if (token.type == "constant.other.image") {
+        parts = token.value.split(/[[()\]]/);
+        alt_text = parts[1];
+        filename = parts[3];
+        if (filename.startsWith("media/")) filename = filename.substr(6);
+
+        selected = this.parent.model.attachments().findWhere({filename: filename});
+      } else {
+        token = null;
+      }
+
+      this.insertImageBox.show(function(image) {
+        var tag = "![" + (alt_text) + "](media/" + image.get('filename') + ")";
+
+        if (token) {
+          // replace existing image
+          var Range = ace.require("ace/range").Range;
+          var range = new Range(posn.row, token.start, posn.row, token.start + token.value.length);
+          session.getDocument().replace(range, tag);
+        } else {
+          // new image
+          self.textEditor.insert(tag);
+        }
+      }, selected);
     },
 
     resize: function() {},

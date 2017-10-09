@@ -646,9 +646,71 @@ legend {
 
 /* attachments list */
 .attachments-list {
-  .buttons {
-    width: 1%;
-    white-space: nowrap;
+  padding-left: 0px;
+
+  &> li {
+    list-style: none;
+    float: left;
+    width: 150px;
+    height: 200px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+
+    &.selected .wrapper {
+      background-color: $selection-colour;
+      border-radius: 5px;
+    }
+  }
+
+  &.selectable {
+    li {
+      cursor: pointer;
+    }
+
+    .buttons {
+      display: none;
+    }
+  }
+
+  .wrapper {
+    padding: 5px;
+  }
+
+  .icon {
+    width: 120px;
+    height: 120px;
+    margin: auto;
+  }
+
+  .img-thumbnail {
+    max-height: 120px;
+  }
+
+  .not-image {
+    .fa {
+      font-size: 64px;
+      margin-top: 25px;
+      color: gray;
+    }
+  }
+
+  .filesize {
+    color: gray;
+  }
+
+  .add-attachment {
+    border: 5px dashed $border-colour;
+
+    &.incoming {
+      background-color: $selection-colour;
+    }
+
+    cursor: default !important;
+  }
+
+  input[type=file] {
+    display: none;
   }
 }
 
@@ -659,7 +721,7 @@ legend {
 
   .document-chooser-list,
   .scrollable {
-    max-height: 350px;
+    max-height: 500px;
     overflow-y: auto;
   }
 }

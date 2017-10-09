@@ -8,6 +8,8 @@
   <xsl:param name="resolverUrl" />
   <!-- default ID scoping to fall back on if we can't find an appropriate one for a node -->
   <xsl:param name="defaultIdScope" />
+  <!-- fully-qualified manifestation URL -->
+  <xsl:param name="manifestationUrl" />
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">
@@ -168,6 +170,35 @@
         </a>
       </xsl:otherwise>
     </xsl:choose>
+  </xsl:template>
+
+  <!-- images -->
+  <xsl:template match="a:img">
+    <img>
+      <xsl:copy-of select="@*" />
+
+      <!-- make relative image URLs absolute, using the manifestationUrl as a base -->
+      <xsl:attribute name="src">
+        <xsl:choose>
+          <xsl:when test="starts-with(@src, 'http://') or starts-with(@src, 'https://')">
+            <!-- already absolute -->
+            <xsl:value-of select="@src" />
+          </xsl:when>
+          <xsl:otherwise>
+
+            <xsl:choose>
+              <xsl:when test="starts-with(@src, '/')">
+                <xsl:value-of select="concat($manifestationUrl, @src)" />
+              </xsl:when>
+              <xsl:otherwise>
+                <xsl:value-of select="concat($manifestationUrl, '/', @src)" />
+              </xsl:otherwise>
+            </xsl:choose>
+
+          </xsl:otherwise>
+        </xsl:choose>
+      </xsl:attribute>
+    </img>
   </xsl:template>
 
   <!-- for all nodes, generate a SPAN element with a class matching

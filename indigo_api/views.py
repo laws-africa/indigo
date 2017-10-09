@@ -3,6 +3,7 @@ import logging
 
 from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
+from django.shortcuts import get_list_or_404
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -174,6 +175,19 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
         return queryset.filter(document=self.document).all()
 
 
+def attachment_media_view(request, *args, **kwargs):
+    """ This is a helper view to serve up a named attachment file via
+    a "media/file.ext" url, which is part of the AKN standard.
+    """
+    qs = Document.objects.defer('document_xml')
+    doc_id = kwargs['document_id']
+    document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
+    filename = kwargs['filename']
+
+    attachment = get_list_or_404(Attachment.objects, document=document, filename=filename)[0]
+    return view_attachment(attachment)
+
+
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
@@ -272,6 +286,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
 
+    def perform_content_negotiation(self, request, force=False):
+        # force content negotiation to succeed, because sometimes the suffix format
+        # doesn't match a renderer
+        return super(PublishedDocumentDetailView, self).perform_content_negotiation(request, force=True)
+
     def get(self, request, **kwargs):
         # try parse it as an FRBR URI, if that succeeds, we'll lookup the document
         # that document matches, otherwise we'll assume they're trying to
@@ -312,6 +331,14 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         # get the document
         document = self.get_object()
+
+        # asking for a media attachment?
+        if self.component == 'media':
+            kwargs['document_id'] = document.id
+            kwargs['filename'] = self.subcomponent
+            if self.format_kwarg:
+                kwargs['filename'] += '.' + self.format_kwarg
+            return attachment_media_view(request, *args, **kwargs)
 
         if self.subcomponent:
             self.element = document.doc.get_subcomponent(self.component, self.subcomponent)
@@ -517,6 +544,8 @@ class RenderView(APIView):
         serializer.is_valid(raise_exception=True)
 
         document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
+        # the serializer ignores the id field, but we need it for rendering
+        document.id = serializer.initial_data['document'].get('id')
         return Response({'output': document.to_html()})
 
 

@@ -236,6 +236,24 @@ You can easily add a new chapter, part or section to a document. To do so:
 2. at the bottom, add the new chapter, part or section heading and content
 3. click the green Update button
 
+Links
+-----
+
+Add a link in the text of your document using this syntax::
+
+    [link text](http://example.com/page)
+
+That will create a link like this: `link text <http://example.com/page>`_
+
+Images
+------
+
+You can embed an image in your document using this syntax::
+
+    ![alternative text](/media/image.png)
+
+That will create an image using the ``image.png`` file added to your document as an attachment.
+
 Downloading PDF and Standalone HTML
 -----------------------------------
 

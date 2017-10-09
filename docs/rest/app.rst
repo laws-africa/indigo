@@ -72,8 +72,11 @@ In subsequent requests that require authentication, include the token as a heade
 
    For more information on token authentication, see the `authentication documentation for the Django Rest Framework <http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication>`_.
 
+Documents
+---------
+
 List Documents
---------------
+..............
 
 .. code:: http
 
@@ -82,7 +85,7 @@ List Documents
 Lists the documents in the library. The results will be :ref:`paginated <pagination>`.
 
 Get a Document
---------------
+..............
 
 .. code:: http
 
@@ -91,7 +94,7 @@ Get a Document
 Fetches a JSON description of a document. This does not include the full content or body of the document since those may be very large.
 
 Update a Document
------------------
+.................
 
 .. code:: http
 
@@ -114,7 +117,7 @@ You can also update the content of the document using ``PUT /api/documents/{id}/
 
 
 Delete a Document
------------------
+.................
 
 .. code:: http
 
@@ -124,7 +127,7 @@ Marks the document as deleted. The document can be recovered from the Django Adm
 otherwise.
 
 Create a Document
------------------
+.................
 
 .. code:: http
 
@@ -138,7 +141,7 @@ Create a Document
 Updates a document. Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
 
 Get Document Content
---------------------
+....................
 
 .. code:: http
 
@@ -147,7 +150,7 @@ Get Document Content
 Fetches a JSON description of the raw XML content of a document.
 
 Update Document Content
------------------------
+.......................
 
 .. code:: http
 
@@ -170,7 +173,7 @@ from the new XML, overwriting any existing fields. The new XML must be valid Ako
 Updates the body of the document. The new XML must be valid Akoma Ntoso 2.0 XML ``<body>`` element.
 
 Convert a Document
-------------------
+..................
 
 .. code:: http
 
@@ -197,7 +200,7 @@ Not all formats have all the detail necessary to convert to other formats. For i
 to convert to a complete JSON or Akoma Ntoso XML format. In this cases, placeholder values are used (eg. for the FRBR URI, publication time, etc.).
 
 Find and Link Defined Terms
----------------------------
+...........................
 
 .. code:: http
 
@@ -208,3 +211,65 @@ Find and Link Defined Terms
   * ``document``: a document description, only the ``content`` element is required
 
 Finds defined terms in a document, and finds references to those terms.
+
+Attachments
+-----------
+
+You can attach arbitrary binary files to documents. Each file has a ``filename`` and ``mime_type``.
+
+.. note::
+
+  Attachments are also made available when embedding images into a document. An attachment with a
+  ``filename`` of ``logo.png`` is available at ``<document url>/media/logo.png``.
+
+
+List Attachments
+................
+
+.. code:: http
+
+    GET /api/documents/{id}/attachments
+
+Fetches a JSON description of the attachments to a document.
+
+================= =================================================================================== ==========
+Field             Description                                                                         Type      
+================= =================================================================================== ==========
+id                Unique id of this attachment. Read-only.                                            Integer
+created_at        Timestamp of when the attachment was first created. Read-only.                      ISO8601
+download_url      URL for downloading this attachment. Read-only.                                     URL
+filenmae          Name for this attachment.                                                           String
+mime_type         The `mime type <https://en.wikipedia.org/wiki/Media_type>`_ of the attachment.      String
+size              Size of the attachment in bytes. Read-only.                                         Integer
+updated_at        Timestamp of when the attachment was last updated. Read-only.                       ISO8601
+url               URL for fetching details of this attachment. Read-only.                             URL
+view_url          URL for viewing the attachment in-line in the browser, if possible. Read-only.      URL
+================= =================================================================================== ==========
+
+Create an Attachment
+....................
+
+.. code:: http
+
+    POST /api/documents/{id}/attachments
+
+Creates a new attachment. Include a ``file`` multi-part field to upload the binary content.
+
+Update an Attachment
+....................
+
+.. code:: http
+
+    PUT /api/documents/{id}/attachments/{id}
+    PATCH /api/documents/{id}/attachments/{id}
+
+Update an attachment.
+
+Delete an Attachment
+....................
+
+.. code:: http
+
+    DELETE /api/documents/{id}/attachments/{id}
+
+Deletes an attachment.

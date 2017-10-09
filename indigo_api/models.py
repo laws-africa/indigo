@@ -12,6 +12,7 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
+from django.urls import reverse
 import arrow
 from taggit.managers import TaggableManager
 import reversion.revisions
@@ -313,6 +314,14 @@ class Document(models.Model):
         """ Render a child element of this document into PDF. """
         from .renderers import PDFRenderer
         return PDFRenderer().render(self, element=element)
+
+    def manifestation_url(self, fqdn=''):
+        """ Fully-qualified manifestation URL.
+        """
+        if self.draft:
+            return fqdn + reverse('document-detail', kwargs={'pk': self.id})
+        else:
+            return fqdn + '/api' + self.doc.expression_frbr_uri().manifestation_uri()
 
     def _make_act(self, xml):
         id = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)

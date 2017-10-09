@@ -173,6 +173,40 @@
 
       return json;
     },
+
+    attachments: function() {
+      if (!this.attachmentList) {
+        this.attachmentList = new Indigo.AttachmentList(null, {document: this});
+
+        if (this.get('id')) {
+          this.attachmentList.fetch({reset: true});
+        } else {
+          this.attachmentList.reset([]);
+        }
+      }
+
+      return this.attachmentList;
+    },
+
+    /**
+     * Build and return a fully qualified manifestation URL for this document.
+     */
+    manifestationUrl: function() {
+      var url = window.location.origin;
+
+      if (this.get('draft')) {
+        url = url + this.url();
+
+      } else {
+        // full published url
+        url = url + "/api" + this.get('frbr_uri') + '/' + this.get('language');
+        if (this.get('expression_date')) {
+          url = url + '@' + this.get('expression_date');
+        }
+      }
+
+      return url;
+    },
   });
 
   Indigo.Library = Backbone.Collection.extend({
@@ -461,6 +495,7 @@
 
     initialize: function(models, options) {
       this.document = options.document;
+      this.listenTo(this, 'change:filename', this.sort);
     },
 
     url: function() {

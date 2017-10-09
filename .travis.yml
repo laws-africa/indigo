@@ -4,8 +4,8 @@ python:
 env:
   - DATABASE_URL=postgres://postgres:@localhost:5432/indigo_test
 before_install:
-  - "rvm install ruby-2.1.6"
-  - "rvm use ruby-2.1.6"
+  - "rvm install ruby-2.3.3"
+  - "rvm use ruby-2.3.3"
 install: 
   - "pip install -r requirements.txt"
   - "bundle install"

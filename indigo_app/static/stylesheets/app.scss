@@ -937,6 +937,7 @@ legend {
 
     &.current {
       border: 1px solid $blue;
+      background-color: $grey;
 
       h5::before {
         content: " ";
@@ -952,9 +953,14 @@ legend {
         z-index: 0;
       }
 
-      &.current::before {
+      &::before {
         border-color: $blue;
+        background-color: $blue;
         left: -38px;
+      }
+
+      &::after {
+        border-right-color: $grey;
       }
     }
 

@@ -317,6 +317,10 @@ PYSCSS_LOAD_PATHS = [
 ]
 
 
+# SSL indicator from the nginx proxy
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+
 # REST
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (

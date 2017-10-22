@@ -1,13 +1,23 @@
-$border-colour: #ddd;
-$workspace-header-colour: #ddd;
-$workspace-header-border-colour: #ccc;
-$header-colour2: #f5f5f5;
+$grey-lightest: #f5f5f5;
+$grey-lighter: #eee;
+$grey: #ddd;
+$grey-darker: #ccc;
+$grey-darkest: #aaa;
+
+$orange: #f0ad4e;
+$blue: #5bc0de;
+$link-active: #337ab7;
+
+$border-colour: $grey;
+$workspace-header-colour: $grey;
+$workspace-header-border-colour: $grey-darker;
+$header-colour2: $grey-lighter;
 
 $header-height: 45px;
 $workspace-header-height: 45px;
 
 $sidebar-width: 260px;
-$sidebar-colour: #eee;
+$sidebar-colour: $grey-lighter;
 
 $font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
 $font-size: 14px;
@@ -20,7 +30,7 @@ html, body {
 }
 
 .label-default {
-  background-color: #aaa;
+  background-color: $grey-darkest;
 }
 
 /* permissions-based styles */
@@ -215,10 +225,10 @@ fieldset {
 /* headers with help buttons */
 a.help,
 button.btn-link.help {
-  color: #aaa;
+  color: $grey-darkest;
 
   &:hover {
-    color: #337ab7;
+    color: $link-active;
   }
 }
 
@@ -293,12 +303,12 @@ button.btn-link.help {
     margin-top: 2px;
 
     a {
-      color: #eee;
+      color: $grey-lighter;
       padding: 5px;
     }
 
     a:hover {
-      color: #e38d13;
+      color: $orange;
       text-decoration: none;
     }
   }
@@ -423,11 +433,11 @@ legend {
   overflow-x: hidden;
   overflow-y: auto;
 
-  background: #aaa;
+  background: $grey-darkest;
   margin: 0px;
 
   .document-sheet {
-    border: 1px solid #aaa;
+    border: 1px solid $grey-darkest;
     box-shadow: 0 0 10px #888;
     padding: 30px;
     margin: 20px;
@@ -480,7 +490,7 @@ legend {
     margin-bottom: 25px;
 
     &.incoming {
-      background-color: #efefef;
+      background-color: $grey-lighter;
     }
   }
 
@@ -490,7 +500,7 @@ legend {
 
   .example {
     padding: 1px 8px;
-    background: #efefef;
+    background: $grey-lighter;
     border-radius: 5px;
     h5 {
       font-weight: bold;
@@ -542,7 +552,7 @@ legend {
   background-color: white;
 
   margin-top: 5px;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid $grey;
 
   font-size: 13px;
 
@@ -562,13 +572,13 @@ legend {
       &.active,
       &.active:hover {
         border-radius: 5px;
-        background-color: #337ab7;
+        background-color: $link-active;
         color: white;
       }
 
       &:hover {
         border-radius: 5px;
-        background-color: #eee;
+        background-color: $grey-lighter;
       }
     }
   }
@@ -814,11 +824,11 @@ legend {
 }
 
 .fa.draft {
-  color: #f0ad4e;
+  color: $orange;
 }
 
 .fa.published {
-  color: #5bc0de;
+  color: $blue;
 }
 
 /* table editor */
@@ -873,7 +883,7 @@ legend {
   section {
     clear: both;
 
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid $grey-lighter;
     margin-bottom: 10px;
 
     &:last-child {
@@ -909,14 +919,14 @@ legend {
     top: 20px;
     bottom: 30px;
     width: 4px;
-    background: #ddd;
+    background: $grey;
     z-index: 0;
   }
 
   &> li {
     position: relative;
     margin-left: 40px;
-    background-color: #eee;
+    background-color: $grey-lighter;
     padding: 10px 10px;
     margin-bottom: 15px;
 
@@ -926,7 +936,7 @@ legend {
     }
 
     &.current {
-      border: 1px solid #5bc0de;
+      border: 1px solid $blue;
 
       h5::before {
         content: " ";
@@ -936,21 +946,21 @@ legend {
         left: -22px;
         width: 0;
         height: 0;
-        border-color: transparent #5bc0de transparent transparent;
+        border-color: transparent $blue transparent transparent;
         border-width: 11px;
         border-style: solid;
         z-index: 0;
       }
 
       &.current::before {
-        border-color: #5bc0de;
+        border-color: $blue;
         left: -38px;
       }
     }
 
     &::before {
       right: 100%;
-      border: #ddd 4px solid;
+      border: $grey 4px solid;
       border-radius: 50%;
       content: " ";
       position: absolute;
@@ -969,7 +979,7 @@ legend {
       width: 0;
       height: 0;
       position: absolute;
-      border-right-color: #efefef;
+      border-right-color: $grey-lighter;
       border-width: 10px;
       top: 10px;
       left: -20px;
@@ -1033,7 +1043,7 @@ legend {
     z-index: 100;
 
     a.dropdown-toggle {
-      color: #ccc;
+      color: $grey-darker;
     }
 
     &.focused {
@@ -1063,7 +1073,7 @@ legend {
     padding: 5px;
 
     .time-ago {
-      color: #777;
+      color: $grey-darkest;
       margin-bottom: 5px;
     }
 
@@ -1133,7 +1143,7 @@ legend {
     opacity: 0.75;
 
     text-align: center;
-    color: #aaa;
+    color: $grey-darkest;
     font-size: 20px;
     padding-top: 7px;
     cursor: pointer;

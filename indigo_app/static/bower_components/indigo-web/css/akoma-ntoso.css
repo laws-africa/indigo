@@ -112,6 +112,8 @@
     font-weight: bold; }
   .akoma-ntoso .akn-remark {
     font-style: italic; }
+  .akoma-ntoso img {
+    max-width: 100%; }
   .akoma-ntoso .coverpage {
     text-align: center;
     margin-bottom: 1.6em; }

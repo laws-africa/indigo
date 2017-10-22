@@ -1,5 +1,7 @@
 # Indigo Web
 
+[![Build Status](https://travis-ci.org/Code4SA/indigo-web.svg)](http://travis-ci.org/Code4SA/indigo-web)
+
 Stylesheets for use with HTML documents published using the [Indigo platform](https://indigo.readthedocs.org).
 They make Akoma Ntoso documents look beautiful.
 
@@ -9,7 +11,7 @@ They make Akoma Ntoso documents look beautiful.
 
 Use the assets directly from a CDN:
 
-    <link rel="stylesheet" type="text/css" href="//indigo-web.openup.org.za/dist/0.1.1/css/akoma-ntoso.min.css">
+    <link rel="stylesheet" type="text/css" href="//indigo-web.openup.org.za/dist/0.1.3/css/akoma-ntoso.min.css">
 
 ### From your server
 
@@ -47,15 +49,19 @@ To build changes:
 
 # Version history
 
+## 0.1.3 (22 October 2017)
+
+* Styling for images
+
 ## 0.1.2 (19 March 2017)
 
 * Styling for rendering commencement and assent notices as list items, not headings.
 
-## 0.1.1 (19 March 2015)
+## 0.1.1 (19 March 2016)
 
 * Bump base font size to 15px to improve legibility with serif fonts.
 
-## 0.1.0 (19 March 2015)
+## 0.1.0 (19 March 2016)
 
 * Initial release
 

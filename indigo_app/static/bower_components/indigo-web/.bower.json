@@ -1,6 +1,6 @@
 {
   "name": "indigo-web",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "authors": [
     "Greg Kempe <greg@kempe.net>"
   ],
@@ -17,14 +17,14 @@
     "test",
     "tests"
   ],
-  "_release": "0.1.2",
+  "_release": "0.1.3",
   "_resolution": {
     "type": "version",
-    "tag": "v0.1.2",
-    "commit": "de5eb9e5423dd56f62961bb867ddf679b7b398d6"
+    "tag": "v0.1.3",
+    "commit": "4f1302fcdae1ced3a7f92cffef757ec9b64fd294"
   },
   "_source": "https://github.com/Code4SA/indigo-web.git",
-  "_target": "^0.1.2",
+  "_target": "^0.1.3",
   "_originalSource": "indigo-web",
   "_direct": true
 }

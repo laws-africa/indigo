@@ -393,7 +393,7 @@
           selected = null,
           alt_text = "", filename, parts;
 
-      if (token.type == "constant.other.image") {
+      if (token && token.type == "constant.other.image") {
         parts = token.value.split(/[[()\]]/);
         alt_text = parts[1];
         filename = parts[3];

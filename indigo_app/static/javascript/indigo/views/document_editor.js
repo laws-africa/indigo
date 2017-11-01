@@ -78,7 +78,8 @@
         .on('click', '.edit-find-next a', _.bind(this.editFindNext, this))
         .on('click', '.edit-find-previous a', _.bind(this.editFindPrevious, this))
         .on('click', '.edit-find-replace a', _.bind(this.editFindReplace, this))
-        .on('click', '.edit-insert-image a', _.bind(this.insertImage, this));
+        .on('click', '.edit-insert-image a', _.bind(this.insertImage, this))
+        .on('click', '.edit-insert-table a', _.bind(this.insertTable, this));
     },
 
     fullEdit: function(e) {
@@ -416,7 +417,30 @@
           // new image
           self.textEditor.insert(tag);
         }
+
+        self.textEditor.focus();
       }, selected);
+    },
+
+    insertTable: function(e) {
+      e.preventDefault();
+
+      var table = ["{|", "|-", "! heading 1", "! heading 2", "|-", "| cell 1", "| cell 2", "|-", "| cell 3", "| cell 4", "|-", "|}", ""],
+          posn = this.textEditor.getCursorPosition(),
+          range = this.textEditor.getSelectionRange();
+
+      this.textEditor.clearSelection();
+
+      table = "\n{|\n|-\n";
+      var lines = this.textEditor.getSession().getTextRange(range).split("\n");
+      lines.forEach(function(line) {
+        table = table + "| " + line + "\n|-\n";
+      });
+      table = table + "|}\n";
+      this.textEditor.getSession().replace(range, table);
+
+      this.textEditor.moveCursorTo(posn.row + 3, 2);
+      this.textEditor.focus();
     },
 
     resize: function() {},

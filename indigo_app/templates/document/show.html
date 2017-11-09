@@ -16,6 +16,21 @@
 
 {% block header-buttons %}
   <button class="btn btn-default save" disabled style="display: none"><i class="fa fa-save"></i> Save</button>
+  <div id="document-activity-view"></div>
+
+  <script id="document-activity-template" type="text/x-handlebars-template">
+  {% verbatim %}
+
+  <ul>
+    {{#each activity}}
+      <li class="{{#if is_asleep }}is-asleep{{/if}}">
+        {{ user.display_name }}
+      </li>
+    {{/each}}
+  </ul>
+
+  {% endverbatim %}
+  </script>
 {% endblock %}
 
 

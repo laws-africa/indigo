@@ -512,7 +512,7 @@ class DocumentActivity(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    DEAD_SECS = 10 * 60
+    DEAD_SECS = 5 * 60
     ASLEEP_SECS = 2 * 60
 
     class Meta:

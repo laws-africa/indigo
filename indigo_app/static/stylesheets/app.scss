@@ -1182,3 +1182,25 @@ body.unauthenticated .annotations-container {
   content: " *";
   color: red;
 }
+
+#document-activity-view {
+  float: left;
+
+  ul {
+    margin-top: 10px;
+  }
+
+  li {
+    list-style: none;
+    float: left;
+    background: pink;
+    overflow: hidden;
+    height: 20px;
+    margin-right: 5px;
+    padding: 2px 2px;
+
+    &.is-asleep {
+      opacity: 0.5;
+    }
+  }
+}

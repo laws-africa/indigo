@@ -8,7 +8,6 @@ router.register(r'documents', views.DocumentViewSet, base_name='document')
 router.register(r'documents/(?P<document_id>[0-9]+)/attachments', views.AttachmentViewSet, base_name='document-attachments')
 router.register(r'documents/(?P<document_id>[0-9]+)/revisions', views.RevisionViewSet, base_name='document-revisions')
 router.register(r'documents/(?P<document_id>[0-9]+)/annotations', views.AnnotationViewSet, base_name='document-annotations')
-router.register(r'documents/(?P<document_id>[0-9]+)/activity', views.DocumentActivityViewSet, base_name='document-activity')
 
 urlpatterns = [
     # viewing a specific document identified by FRBR URI fragment,
@@ -26,6 +25,8 @@ urlpatterns = [
     url(r'^analysis/link-references$', views.LinkReferencesView.as_view(), name='link-references'),
 
     url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachment_media_view, name='document-media'),
+    url(r'documents/(?P<document_id>[0-9]+)/activity', views.DocumentActivityViewSet.as_view({
+        'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
 
     url(r'^', include(router.urls)),
 ]

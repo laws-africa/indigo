@@ -505,6 +505,7 @@ class Annotation(models.Model):
 
 class DocumentActivity(models.Model):
     """ Tracks user activity in a document, to help multiple editors see who's doing what.
+    Clients ping the server every 5 seconds.
     """
     document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities', db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities')
@@ -512,8 +513,10 @@ class DocumentActivity(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    DEAD_SECS = 5 * 60
-    ASLEEP_SECS = 2 * 60
+    # dead after we haven't heard from them in how long?
+    DEAD_SECS = 2 * 60
+    # asleep after we haven't heard from them in how long?
+    ASLEEP_SECS = 1 * 60
 
     class Meta:
         unique_together = ('document', 'user', 'nonce')

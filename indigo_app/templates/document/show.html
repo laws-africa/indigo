@@ -23,8 +23,8 @@
 
   <ul>
     {{#each activity}}
-      <li class="{{#if is_asleep }}is-asleep{{/if}}">
-        {{ user.display_name }}
+      <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
+        <i class="fa fa-user"></i> {{ user.display_name }}
       </li>
     {{/each}}
   </ul>

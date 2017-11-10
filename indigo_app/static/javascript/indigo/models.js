@@ -579,7 +579,6 @@
 
   Indigo.DocumentActivity = Backbone.Model.extend({
     idAttribute: "nonce",
-    comparator: 'created_at',
   });
 
 })(window);

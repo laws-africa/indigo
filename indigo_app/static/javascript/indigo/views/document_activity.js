@@ -15,8 +15,11 @@
       this.template = Handlebars.compile($(this.template).html());
 
       this.document = options.document;
-      this.model = new Backbone.Collection([], {model: Indigo.DocumentActivity});
-      this.listenTo(this.model, 'add remove change', this.render);
+      this.collection = new Backbone.Collection([], {
+        model: Indigo.DocumentActivity,
+        comparator: 'created_at',
+      });
+      this.listenTo(this.collection, 'add remove change', this.render);
 
       if (this.document.get('id')) {
         this.loop();
@@ -50,15 +53,19 @@
         data: {nonce: this.nonce},
         global: false,
       }).then(function(resp) {
-        self.model.set(resp.results);
+        self.collection.set(resp.results);
+        self.collection.sort();
       });
     },
 
     render: function() {
       var self = this;
-      var items = this.model.toJSON();
+      var items = this.collection.toJSON();
       // exclude us
       items = _.filter(items, function(a) { return a.nonce != self.nonce; });
+      items.forEach(function(a) {
+        a.user.colour = a.nonce.charCodeAt(0) % 8;
+      });
 
       this.$el.html(this.template({activity: items}));
     },

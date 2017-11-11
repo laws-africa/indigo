@@ -332,9 +332,8 @@ class Document(models.Model):
 
     @property
     def django_language(self):
-        from languages_plus.models import Language
-        # TODO: cache
-        return Language.objects.get_by_code(self.language).iso_639_1
+        from indigo_api.utils import language3_to_2
+        return language3_to_2(self.language) or self.language
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])

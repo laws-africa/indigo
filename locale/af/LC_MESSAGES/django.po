@@ -18,8 +18,12 @@ msgstr ""
 
 #: indigo_api/templates/_amendments.html:7
 #, python-format
-msgid "[Amended by <span class=\"amending-title\">%(amending_title)s</span> on <span class=\"date\">%(date)s</span>]"
-msgstr "[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op <span class=\"date\">%(date)s</span>]"
+msgid ""
+"[Amended by <span class=\"amending-title\">%(amending_title)s</span> on "
+"<span class=\"date\">%(date)s</span>]"
+msgstr ""
+"[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op "
+"<span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/act.html:17
 #, python-format
@@ -59,4 +63,3 @@ msgstr "Regeringsbrief"
 #: indigo_app/apps.py:15
 msgid "By-law"
 msgstr "Verordening"
-

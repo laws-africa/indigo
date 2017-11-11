@@ -1,7 +1,9 @@
-{% load documents %}
+{% load documents i18n %}
 
 {% block coverpage %}
 {% if coverpage %}
+  {% language document.django_language %}
+
   <div class="coverpage">
     {% block title %}
       <h1>{{ document.title }}</h1>
@@ -10,7 +12,12 @@
     {% block subtitle %}
     <h2>
       {% with type=document|friendly_document_type %}
-        {{ document|friendly_document_type }} {{ document|friendly_document_number }} {% if type != "Chapter" %}of {{ document.year }}{% endif %}
+        {% trans type as t_type %}
+        {% if type != "Chapter" %}
+          {% blocktrans with number=document|friendly_document_number year=document.year type=t_type %}{{ type }} {{ number }} of {{ year }}{% endblocktrans %}
+        {% else %}
+          {{ t_type }} {{ document|friendly_document_number }}
+        {% endif %}
       {% endwith %}
     </h2>
     {% endblock %}
@@ -18,11 +25,15 @@
     {% block notices %}
       <ul class="notice-list">
         {% if document.assent_date %}
-        <li class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</li>
+        <li class="assent-date">
+          {% blocktrans with date=document.assent_date|date:"j E Y" %}Assented to on {{ date }}{% endblocktrans %}
+        </li>
         {% endif %}
 
         {% if document.commencement_date %}
-        <li class="commencement-date">Commences on {{ document.commencement_date|date:"j E Y" }} unless otherwise noted</li>
+        <li class="commencement-date">
+          {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
+        </li>
         {% endif %}
       </ul>
     {% endblock %}
@@ -31,6 +42,8 @@
       {% include '_amendments.html' %}
     {% endblock %}
   </div>
+
+  {% endlanguage %}
 {% endif %}
 {% endblock %}
 

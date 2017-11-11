@@ -282,6 +282,7 @@
       if (this.htmlTransform && this.parent.fragment) {
         this.htmlTransform.setParameter(null, 'defaultIdScope', this.getFragmentIdScope() || '');
         this.htmlTransform.setParameter(null, 'manifestationUrl', this.parent.model.manifestationUrl());
+        this.htmlTransform.setParameter(null, 'lang', this.parent.model.get('language'));
         var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
 
         this.makeLinksExternal(html);

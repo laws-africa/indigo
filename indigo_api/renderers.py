@@ -20,6 +20,7 @@ from languages_plus.models import Language
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
 from .models import Document, Colophon, DEFAULT_LANGUAGE
+from .utils import localize_toc
 
 
 def generate_filename(data, view, format):
@@ -167,6 +168,7 @@ class HTMLRenderer(object):
         params = {
             'resolverUrl': self.resolver_url(),
             'manifestationUrl': document.manifestation_url(settings.INDIGO_URL),
+            'lang': document.language,
         }
 
         return CobaltHTMLRenderer(
@@ -418,7 +420,8 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
 
         # generate the individual items for each navigable element
         children = []
-        for item in document.doc.table_of_contents():
+        toc = localize_toc(document.doc.table_of_contents(), document.django_language)
+        for item in toc:
             children.append(self.add_item(item, file_dir))
 
         # add everything as a child of this document

@@ -1,4 +1,4 @@
-# -*- coding: utf8 -*-
+# -*- coding: utf-8 -*-
 
 import tempfile
 import os.path
@@ -627,3 +627,14 @@ class DocumentAPITest(APITestCase):
         assert_not_in('class="colophon"', response.content)
         assert_not_in('class="toc"', response.content)
         assert_in('<div ', response.content)
+
+    def test_published_html_l10n(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'language': 'afr'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.html' % id)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_not_in('<akomaNtoso', response.content)
+        assert_in('<div', response.content)
+        assert_in('Daad 2 van 1998', response.content)

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-11 10:01+0000\n"
-"PO-Revision-Date: 2017-11-11 06:13-0500\n"
+"PO-Revision-Date: 2017-11-11 06:27-0500\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -19,47 +19,47 @@ msgstr ""
 #: indigo_api/templates/_amendments.html:7
 #, python-format
 msgid "[Amended by <span class=\"amending-title\">%(amending_title)s</span> on <span class=\"date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op <span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/act.html:17
 #| msgid "Act %(number)s of %(year)s"
 msgid "%(type)s %(number)s of %(year)s"
-msgstr ""
+msgstr "%(type)s %(number)s van %(year)s"
 
 #: indigo_api/templates/act.html:19
 #| msgid "Chapter %(number)s"
 msgid "%(type)s %(number)s"
-msgstr ""
+msgstr "%(type)s %(number)s"
 
 #: indigo_api/templates/act.html:29
 #, python-format
 msgid "Assented to on %(date)s"
-msgstr ""
+msgstr "Ingestem op %(date)s"
 
 #: indigo_api/templates/act.html:35
 #, python-format
 msgid "Commences on %(date)s unless otherwise noted"
-msgstr ""
+msgstr "Aanvang op %(date)s tensy anders vermeld"
 
 #: indigo_api/templates/export/standalone.html:17
 msgid "Table of Contents"
-msgstr ""
+msgstr "Inhoudsopgawe"
 
 #: indigo_app/apps.py:11
 msgid "Chapter"
-msgstr ""
+msgstr "Hoofstuk"
 
 #: indigo_app/apps.py:12
 msgid "Act"
-msgstr ""
+msgstr "Daad"
 
 #: indigo_app/apps.py:13
 msgid "Government Notice"
-msgstr ""
+msgstr "Regeringsbrief"
 
 #: indigo_app/apps.py:14
 msgid "By-law"
-msgstr ""
+msgstr "Verordening"
 
 #~ msgid "Provincial Notice"
 #~ msgstr "Provinsiale Kennisgewing"

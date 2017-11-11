@@ -60,3 +60,5 @@ msgstr ""
 
 #: indigo_app/apps.py:15
 msgid "By-law"
+msgstr ""
+

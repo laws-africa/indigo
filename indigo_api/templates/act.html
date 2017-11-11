@@ -16,7 +16,7 @@
         {% if type != "Chapter" %}
           {% blocktrans with number=document|friendly_document_number year=document.year type=t_type %}{{ type }} {{ number }} of {{ year }}{% endblocktrans %}
         {% else %}
-          {% blocktrans with number=document|friendly_document_number %}{{ type }} {{ number }}{% endblocktrans %}
+          {{ t_type }} {{ document|friendly_document_number }}
         {% endif %}
       {% endwith %}
     </h2>

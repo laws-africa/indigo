@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openup-indigo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-11-11 11:26+0000\n"
+"PO-Revision-Date: 2017-11-11 06:30-0500\n"
+"Last-Translator: longhotsummer <greg@kempe.net>\n"
+"Language-Team: Swati\n"
+"Language: ss_ZA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openup-indigo\n"
+"X-Crowdin-Language: ss\n"
+"X-Crowdin-File: /i18n/locale/af/LC_MESSAGES/django.po\n"
+
+#: indigo_api/templates/_amendments.html:7
+#, python-format
+msgid "[Amended by <span class=\"amending-title\">%(amending_title)s</span> on <span class=\"date\">%(date)s</span>]"
+msgstr ""
+
+#: indigo_api/templates/act.html:17
+#, python-format
+msgid "%(type)s %(number)s of %(year)s"
+msgstr ""
+
+#: indigo_api/templates/act.html:29
+#, python-format
+msgid "Assented to on %(date)s"
+msgstr ""
+
+#: indigo_api/templates/act.html:35
+#, python-format
+msgid "Commences on %(date)s unless otherwise noted"
+msgstr ""
+
+#: indigo_api/templates/export/standalone.html:17
+msgid "Table of Contents"
+msgstr ""
+
+#: indigo_app/apps.py:11
+msgid "Chapter"
+msgstr ""
+
+#: indigo_app/apps.py:12
+msgid "Act"
+msgstr ""
+
+#: indigo_app/apps.py:13
+msgid "Government Notice"
+msgstr ""
+
+#: indigo_app/apps.py:14
+msgid "By-law"
+msgstr ""
+

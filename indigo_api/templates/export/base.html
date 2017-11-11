@@ -1,4 +1,6 @@
-{% load pipeline_inline %}
+{% load pipeline_inline i18n %}
+
+{% language document.django_language %}
 
 <!DOCTYPE html>
 <html>
@@ -15,3 +17,5 @@
     {% endblock content %}
   </body>
 </html>
+
+{% endlanguage %}

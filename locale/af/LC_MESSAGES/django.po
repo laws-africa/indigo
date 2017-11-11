@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 08:39+0000\n"
+"POT-Creation-Date: 2017-11-11 08:52+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,15 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: indigo_api/templates/_amendments.html:7
+#, python-format
+msgid ""
+"[Amended by <span class=\"amending-title\">%(amending_title)s</span> on "
+"<span class=\"date\">%(date)s</span>]"
+msgstr ""
+"[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op "
+"<span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/act.html:24
 #, python-format
@@ -27,3 +36,7 @@ msgstr "Ingestem op %(date)s"
 #, python-format
 msgid "Commences on %(date)s unless otherwise noted"
 msgstr "Aanvang op %(date)s tensy anders vermeld"
+
+#: indigo_api/templates/export/standalone.html:19
+msgid "Table of Contents"
+msgstr "Inhoudsopgawe"

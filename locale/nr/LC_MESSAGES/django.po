@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 12:07+0000\n"
-"PO-Revision-Date: 2017-11-11 08:08-0500\n"
+"POT-Creation-Date: 2017-11-11 13:59+0000\n"
+"PO-Revision-Date: 2017-11-11 09:11-0500\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Southern Ndebele\n"
 "Language: nr_ZA\n"
@@ -40,23 +40,27 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: indigo_app/apps.py:11
-msgid "Chapter"
-msgstr "Isahluko"
-
-#: indigo_app/apps.py:12
-msgid "Part"
+#: indigo_api/utils.py:49 indigo_api/utils.py:68
+msgid "Section"
 msgstr ""
 
-#: indigo_app/apps.py:13
+#: indigo_api/utils.py:65
 msgid "Act"
 msgstr ""
 
-#: indigo_app/apps.py:14
+#: indigo_api/utils.py:66
+msgid "Chapter"
+msgstr "Isahluko"
+
+#: indigo_api/utils.py:67
+msgid "Part"
+msgstr ""
+
+#: indigo_api/utils.py:69
 msgid "Government Notice"
 msgstr ""
 
-#: indigo_app/apps.py:15
+#: indigo_api/utils.py:70
 msgid "By-law"
 msgstr ""
 

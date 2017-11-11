@@ -9,6 +9,7 @@ class IndigoAppConfig(AppConfig):
 
 # Ensure that these translations are included by makemessages
 _('Chapter')
+_('Part')
 _('Act')
 _('Government Notice')
 _('By-law')

@@ -32,7 +32,8 @@
 
       function work() {
         self.markActive();
-        window.setTimeout(work, 5 * 1000);
+        // ping the server every few seconds to tell them we're alive
+        window.setTimeout(work, 10 * 1000);
       }
 
       work();

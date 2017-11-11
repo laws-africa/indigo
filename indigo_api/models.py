@@ -505,7 +505,10 @@ class Annotation(models.Model):
 
 class DocumentActivity(models.Model):
     """ Tracks user activity in a document, to help multiple editors see who's doing what.
-    Clients ping the server every 5 seconds.
+
+    Clients ping the server every 5 seconds with a nonce that uniquely identifies them.
+    If an entry with that nonce doesn't exist, it's created. Otherwise it's refreshed.
+    Entries are vacuumed every ping, cleaning out stale entries.
     """
     document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities', db_index=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities')

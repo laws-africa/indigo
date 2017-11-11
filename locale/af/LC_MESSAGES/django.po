@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 11:26+0000\n"
-"PO-Revision-Date: 2017-11-11 06:49-0500\n"
+"POT-Creation-Date: 2017-11-11 12:07+0000\n"
+"PO-Revision-Date: 2017-11-11 07:10-0500\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -45,14 +45,18 @@ msgid "Chapter"
 msgstr "Hoofstuk"
 
 #: indigo_app/apps.py:12
+msgid "Part"
+msgstr ""
+
+#: indigo_app/apps.py:13
 msgid "Act"
 msgstr "Daad"
 
-#: indigo_app/apps.py:13
+#: indigo_app/apps.py:14
 msgid "Government Notice"
 msgstr "Regeringsbrief"
 
-#: indigo_app/apps.py:14
+#: indigo_app/apps.py:15
 msgid "By-law"
 msgstr "Verordening"
 

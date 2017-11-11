@@ -330,6 +330,12 @@ class Document(models.Model):
         doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
         return doc
 
+    @property
+    def django_language(self):
+        from languages_plus.models import Language
+        # TODO: cache
+        return Language.objects.get_by_code(self.language).iso_639_1
+
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
 

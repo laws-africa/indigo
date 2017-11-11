@@ -1,7 +1,9 @@
-{% load documents %}
+{% load documents i18n %}
 
 {% block coverpage %}
 {% if coverpage %}
+  {% language document.django_language %}
+
   <div class="coverpage">
     {% block title %}
       <h1>{{ document.title }}</h1>
@@ -18,11 +20,15 @@
     {% block notices %}
       <ul class="notice-list">
         {% if document.assent_date %}
-        <li class="assent-date">Assented to on {{ document.assent_date|date:"j E Y" }}</li>
+        <li class="assent-date">
+          {% blocktrans with date=document.assent_date|date:"j E Y" %}Assented to on {{ date }}{% endblocktrans %}
+        </li>
         {% endif %}
 
         {% if document.commencement_date %}
-        <li class="commencement-date">Commences on {{ document.commencement_date|date:"j E Y" }} unless otherwise noted</li>
+        <li class="commencement-date">
+          {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
+        </li>
         {% endif %}
       </ul>
     {% endblock %}
@@ -31,6 +37,8 @@
       {% include '_amendments.html' %}
     {% endblock %}
   </div>
+
+  {% endlanguage %}
 {% endif %}
 {% endblock %}
 

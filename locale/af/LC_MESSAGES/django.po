@@ -1,43 +1,30 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
-#
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 10:01+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2017-11-11 11:26+0000\n"
+"PO-Revision-Date: 2017-11-11 06:49-0500\n"
+"Last-Translator: longhotsummer <greg@kempe.net>\n"
+"Language-Team: Afrikaans\n"
+"Language: af_ZA\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openup-indigo\n"
+"X-Crowdin-Language: af\n"
+"X-Crowdin-File: /i18n/locale/af/LC_MESSAGES/django.po\n"
 
 #: indigo_api/templates/_amendments.html:7
 #, python-format
-msgid ""
-"[Amended by <span class=\"amending-title\">%(amending_title)s</span> on "
-"<span class=\"date\">%(date)s</span>]"
-msgstr ""
-"[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op "
-"<span class=\"date\">%(date)s</span>]"
+msgid "[Amended by <span class=\"amending-title\">%(amending_title)s</span> on <span class=\"date\">%(date)s</span>]"
+msgstr "[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op <span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/act.html:17
-#, fuzzy, python-format
-#| msgid "Act %(number)s of %(year)s"
+#, python-format
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s van %(year)s"
-
-#: indigo_api/templates/act.html:19
-#, fuzzy, python-format
-#| msgid "Chapter %(number)s"
-msgid "%(type)s %(number)s"
-msgstr "%(type)s %(number)s"
 
 #: indigo_api/templates/act.html:29
 #, python-format
@@ -63,11 +50,9 @@ msgstr "Daad"
 
 #: indigo_app/apps.py:13
 msgid "Government Notice"
-msgstr "Regerings Kennisgewing"
+msgstr "Regeringsbrief"
 
 #: indigo_app/apps.py:14
 msgid "By-law"
 msgstr "Verordening"
 
-#~ msgid "Provincial Notice"
-#~ msgstr "Provinsiale Kennisgewing"

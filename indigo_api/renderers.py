@@ -167,6 +167,7 @@ class HTMLRenderer(object):
         params = {
             'resolverUrl': self.resolver_url(),
             'manifestationUrl': document.manifestation_url(settings.INDIGO_URL),
+            'lang': document.language,
         }
 
         return CobaltHTMLRenderer(

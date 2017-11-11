@@ -10,6 +10,8 @@
   <xsl:param name="defaultIdScope" />
   <!-- fully-qualified manifestation URL -->
   <xsl:param name="manifestationUrl" />
+  <!-- 3-letter language code of document -->
+  <xsl:param name="lang" />
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">
@@ -67,7 +69,10 @@
     <section class="akn-part">
       <xsl:apply-templates select="@*" />
       <h2>
-        <xsl:text>Part </xsl:text>
+        <xsl:choose>
+          <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
+          <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
+        </xsl:choose>
         <xsl:value-of select="./a:num" />
         <xsl:text> - </xsl:text>
         <xsl:value-of select="./a:heading" />
@@ -81,7 +86,10 @@
     <section class="akn-chapter">
       <xsl:apply-templates select="@*" />
       <h2>
-        <xsl:text>Chapter </xsl:text>
+        <xsl:choose>
+          <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
+          <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
+        </xsl:choose>
         <xsl:value-of select="./a:num" />
         <br/>
         <xsl:value-of select="./a:heading" />

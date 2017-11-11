@@ -7,7 +7,6 @@ def general(request):
     """
     return {
         'DEBUG': settings.DEBUG,
-        'INDIGO_LIME_DEBUG': settings.INDIGO_LIME_DEBUG,
         'SUPPORT_EMAIL': settings.SUPPORT_EMAIL,
         'GOOGLE_ANALYTICS_ID': settings.GOOGLE_ANALYTICS_ID,
         'RESOLVER_URL': settings.RESOLVER_URL,

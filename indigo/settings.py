@@ -87,11 +87,6 @@ else:
     # on heroku, use the bundled version at bin/pdftotext
     INDIGO_PDFTOTEXT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bin', 'pdftotext'))
 
-# LIME editor
-# We use the compiled version of the LIME editor in production and, by default, development.
-# Set this to True to use the development version in development.
-INDIGO_LIME_DEBUG = False
-
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
 
@@ -231,14 +226,6 @@ PIPELINE = {
             ),
             'output_filename': 'resolver.css',
         },
-        'lime': {
-            'source_filenames': (
-                'lime/dist/resources/LIME-all.css',
-                'lime/dist/resources/stylesheets/extjs4.editor.css',
-                'lime/dist/resources/stylesheets/extjs4.viewport.css',
-            ),
-            'output_filename': 'lime.css',
-        }
     },
     'JAVASCRIPT': {
         'js': {
@@ -283,13 +270,6 @@ PIPELINE = {
                 'javascript/indigo.js',
             ),
             'output_filename': 'app.js',
-        },
-        'lime': {
-            'source_filenames': (
-                'lime/dist/app.js',
-                'javascript/lime-post.js'
-            ),
-            'output_filename': 'lime-bootstrap.js',
         },
         'resolver': {
             'source_filenames': (

@@ -128,7 +128,6 @@
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
-
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
@@ -144,6 +143,8 @@
 
       this.annotationsView = new Indigo.DocumentAnnotationsView({model: this.document});
       this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
+
+      this.activityView = new Indigo.DocumentActivityView({document: this.document});
 
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));

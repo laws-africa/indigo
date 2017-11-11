@@ -25,6 +25,8 @@ urlpatterns = [
     url(r'^analysis/link-references$', views.LinkReferencesView.as_view(), name='link-references'),
 
     url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachment_media_view, name='document-media'),
+    url(r'documents/(?P<document_id>[0-9]+)/activity', views.DocumentActivityViewSet.as_view({
+        'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
 
     url(r'^', include(router.urls)),
 ]

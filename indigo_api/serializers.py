@@ -12,7 +12,7 @@ from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment, Annotation
+from .models import Document, Attachment, Annotation, DocumentActivity
 from .slaw import Importer
 
 log = logging.getLogger(__name__)
@@ -528,3 +528,24 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'document_id': instance.document.pk,
             'pk': instance.pk,
         })
+
+
+class DocumentActivitySerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+
+    class Meta:
+        model = DocumentActivity
+        fields = (
+            'user',
+            'created_at',
+            'updated_at',
+            'nonce',
+            'is_asleep',
+        )
+        read_only_fields = ('created_at', 'updated_at')
+        extra_kwargs = {'nonce': {'required': True}}
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        validated_data['document'] = self.context['document']
+        return super(DocumentActivitySerializer, self).create(validated_data)

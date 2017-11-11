@@ -1182,3 +1182,35 @@ body.unauthenticated .annotations-container {
   content: " *";
   color: red;
 }
+
+#document-activity-view {
+  float: left;
+
+  ul {
+    margin-top: 7px;
+  }
+
+  li {
+    list-style: none;
+    float: left;
+    margin-right: 5px;
+    padding: 2px 3px;
+    font-size: smaller;
+    color: white;
+    border-radius: 3px;
+
+    &.is-asleep {
+      opacity: 0.5;
+    }
+  }
+
+  // https://bl.ocks.org/mbostock/5577023
+  .user-0 { background-color: #1b9e77; }
+  .user-1 { background-color: #d95f02; }
+  .user-2 { background-color: #7570b3; }
+  .user-3 { background-color: #e7298a; }
+  .user-4 { background-color: #66a61e; }
+  .user-5 { background-color: #e6ab02; }
+  .user-6 { background-color: #a6761d; }
+  .user-7 { background-color: #666666; }
+}

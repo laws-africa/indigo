@@ -8,20 +8,20 @@ from django.shortcuts import get_list_or_404
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
-from rest_framework import mixins, viewsets, renderers
+from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, AllowAny
+from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, DjangoModelPermissions, AllowAny
 from reversion import revisions as reversion
 from reversion.models import Version
 
 import lxml.html.diff
 from lxml.etree import LxmlError
 
-from .models import Document, Attachment, Annotation
-from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer
+from .models import Document, Attachment, Annotation, DocumentActivity
+from .serializers import DocumentSerializer, RenderSerializer, ParseSerializer, AttachmentSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer, DocumentActivitySerializer
 from .renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer
 from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
@@ -250,6 +250,47 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         return self.document.revisions()
+
+
+class DocumentActivityViewSet(DocumentResourceView,
+                              mixins.ListModelMixin,
+                              mixins.CreateModelMixin,
+                              viewsets.GenericViewSet):
+    """ API endpoint to see who's working in a document.
+    """
+    serializer_class = DocumentActivitySerializer
+    permission_classes = (DjangoModelPermissions,)
+
+    def get_queryset(self):
+        return self.document.activities.prefetch_related('user').all()
+
+    def list(self, request, *args, **kwargs):
+        # clean up old activity
+        DocumentActivity.vacuum(self.document)
+        return super(DocumentActivityViewSet, self).list(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        # does it already exist?
+        activity = None
+
+        # update activity if we have a nonce
+        if request.data['nonce']:
+            activity = self.get_queryset().filter(user=request.user, nonce=request.data['nonce']).first()
+
+        if activity:
+            activity.touch()
+            activity.save()
+        else:
+            # new activity
+            super(DocumentActivityViewSet, self).create(request, *args, **kwargs)
+
+        return self.list(request, *args, **kwargs)
+
+    def destroy(self, request, *args, **kwargs):
+        activity = self.get_queryset().filter(user=request.user, nonce=request.data['nonce']).first()
+        if activity:
+            activity.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,

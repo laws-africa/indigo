@@ -577,4 +577,8 @@
     },
   });
 
+  Indigo.DocumentActivity = Backbone.Model.extend({
+    idAttribute: "nonce",
+  });
+
 })(window);

@@ -13,6 +13,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.urls import reverse
+from django.utils import timezone
 import arrow
 from taggit.managers import TaggableManager
 import reversion.revisions
@@ -500,3 +501,36 @@ class Annotation(models.Model):
 
     def anchor(self):
         return {'id': self.anchor_id}
+
+
+class DocumentActivity(models.Model):
+    """ Tracks user activity in a document, to help multiple editors see who's doing what.
+
+    Clients ping the server every 5 seconds with a nonce that uniquely identifies them.
+    If an entry with that nonce doesn't exist, it's created. Otherwise it's refreshed.
+    Entries are vacuumed every ping, cleaning out stale entries.
+    """
+    document = models.ForeignKey(Document, on_delete=models.CASCADE, null=False, related_name='activities', db_index=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='document_activities')
+    nonce = models.CharField(max_length=10, blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    # dead after we haven't heard from them in how long?
+    DEAD_SECS = 2 * 60
+    # asleep after we haven't heard from them in how long?
+    ASLEEP_SECS = 1 * 60
+
+    class Meta:
+        unique_together = ('document', 'user', 'nonce')
+
+    def touch(self):
+        self.updated_at = timezone.now()
+
+    def is_asleep(self):
+        return (timezone.now() - self.updated_at).total_seconds() > self.ASLEEP_SECS
+
+    @classmethod
+    def vacuum(cls, document):
+        threshold = timezone.now() - datetime.timedelta(seconds=cls.DEAD_SECS)
+        cls.objects.filter(document=document, updated_at__lte=threshold).delete()

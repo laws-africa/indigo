@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 08:52+0000\n"
+"POT-Creation-Date: 2017-11-11 10:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,16 +27,47 @@ msgstr ""
 "[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op "
 "<span class=\"date\">%(date)s</span>]"
 
-#: indigo_api/templates/act.html:24
+#: indigo_api/templates/act.html:17
+#, fuzzy, python-format
+#| msgid "Act %(number)s of %(year)s"
+msgid "%(type)s %(number)s of %(year)s"
+msgstr "%(type)s %(number)s van %(year)s"
+
+#: indigo_api/templates/act.html:19
+#, fuzzy, python-format
+#| msgid "Chapter %(number)s"
+msgid "%(type)s %(number)s"
+msgstr "%(type)s %(number)s"
+
+#: indigo_api/templates/act.html:29
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr "Ingestem op %(date)s"
 
-#: indigo_api/templates/act.html:30
+#: indigo_api/templates/act.html:35
 #, python-format
 msgid "Commences on %(date)s unless otherwise noted"
 msgstr "Aanvang op %(date)s tensy anders vermeld"
 
-#: indigo_api/templates/export/standalone.html:19
+#: indigo_api/templates/export/standalone.html:17
 msgid "Table of Contents"
 msgstr "Inhoudsopgawe"
+
+#: indigo_app/apps.py:11
+msgid "Chapter"
+msgstr "Hoofstuk"
+
+#: indigo_app/apps.py:12
+msgid "Act"
+msgstr "Daad"
+
+#: indigo_app/apps.py:13
+msgid "Government Notice"
+msgstr "Regerings Kennisgewing"
+
+#: indigo_app/apps.py:14
+msgid "By-law"
+msgstr "Verordening"
+
+#~ msgid "Provincial Notice"
+#~ msgstr "Provinsiale Kennisgewing"

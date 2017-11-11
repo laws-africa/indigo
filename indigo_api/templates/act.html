@@ -12,7 +12,12 @@
     {% block subtitle %}
     <h2>
       {% with type=document|friendly_document_type %}
-        {{ document|friendly_document_type }} {{ document|friendly_document_number }} {% if type != "Chapter" %}of {{ document.year }}{% endif %}
+        {% trans type as t_type %}
+        {% if type != "Chapter" %}
+          {% blocktrans with number=document|friendly_document_number year=document.year type=t_type %}{{ type }} {{ number }} of {{ year }}{% endblocktrans %}
+        {% else %}
+          {% blocktrans with number=document|friendly_document_number %}{{ type }} {{ number }}{% endblocktrans %}
+        {% endif %}
       {% endwith %}
     </h2>
     {% endblock %}

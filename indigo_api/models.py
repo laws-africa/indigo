@@ -23,6 +23,8 @@ from countries_plus.models import Country as MasterCountry
 
 from cobalt.act import Act, FrbrUri
 
+from .utils import language3_to_2, localize_toc
+
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
 
@@ -274,7 +276,9 @@ class Document(models.Model):
         self.copy_attributes(from_model=False)
 
     def table_of_contents(self):
-        return [t.as_dict() for t in self.doc.table_of_contents()]
+        toc = self.doc.table_of_contents()
+        localize_toc(toc, self.django_language)
+        return [t.as_dict() for t in toc]
 
     def amended_versions(self):
         """ Return a list of all the amended versions of this work.
@@ -332,7 +336,6 @@ class Document(models.Model):
 
     @property
     def django_language(self):
-        from indigo_api.utils import language3_to_2
         return language3_to_2(self.language) or self.language
 
     def __unicode__(self):

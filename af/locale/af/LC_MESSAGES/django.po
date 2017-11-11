@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 10:01+0000\n"
-"PO-Revision-Date: 2017-11-11 06:27-0500\n"
+"POT-Creation-Date: 2017-11-11 11:26+0000\n"
+"PO-Revision-Date: 2017-11-11 06:30-0500\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -22,14 +22,9 @@ msgid "[Amended by <span class=\"amending-title\">%(amending_title)s</span> on <
 msgstr "[Gewysig deur <span class=\"amending-title\">%(amending_title)s</span> op <span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/act.html:17
-#| msgid "Act %(number)s of %(year)s"
+#, python-format
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s van %(year)s"
-
-#: indigo_api/templates/act.html:19
-#| msgid "Chapter %(number)s"
-msgid "%(type)s %(number)s"
-msgstr "%(type)s %(number)s"
 
 #: indigo_api/templates/act.html:29
 #, python-format
@@ -60,7 +55,4 @@ msgstr "Regeringsbrief"
 #: indigo_app/apps.py:14
 msgid "By-law"
 msgstr "Verordening"
-
-#~ msgid "Provincial Notice"
-#~ msgstr "Provinsiale Kennisgewing"
 

@@ -638,3 +638,11 @@ class DocumentAPITest(APITestCase):
         assert_not_in('<akomaNtoso', response.content)
         assert_in('<div', response.content)
         assert_in('Daad 2 van 1998', response.content)
+
+    def test_document_zipfile(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'language': 'afr'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.get('/api/documents/%s.zip' % id)
+        assert_equal(response.accepted_media_type, 'application/zip')

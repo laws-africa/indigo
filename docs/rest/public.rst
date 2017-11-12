@@ -39,7 +39,7 @@ Listing Acts
     GET /api/za/act/
     GET /api/za/act/2007/
   
-* Content types: JSON, PDF, EPUB
+* Content types: JSON, PDF, EPUB, ZIP
 
 These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
 
@@ -72,7 +72,7 @@ Entire Act
 * Parameter ``coverpage``: should the response contain a generated coverpage? Use 1 for true, anything else for false. Default: 1. (HTML-only)
 * Parameter ``standalone``: should the response by a full HTML document, including CSS, that can stand on its own? Use 1 for true, anything else for false. Default: false. (HTML-only)
 * Parameter ``resolver``: the fully-qualified URL to use when resolving absolute references to other Akoma Ntoso documents. Use 'no' or 'none' to disable. Default is to use the Indigo resolver. (HTML-only)
-* Content types: JSON, XML, HTML, PDF, ePUB
+* Content types: JSON, XML, HTML, PDF, ePUB, ZIP
 
 
 This returns the entire contents of an act. For example, the English HTML version of ``/za/act/1998/84/eng`` is available at:
@@ -154,12 +154,11 @@ in various forms.
 
     GET /api/frbr-uri/toc-item-uri.format
 
-* Content types: XML, HTML, PDF, ePUB
+* Content types: XML, HTML, PDF, ePUB, ZIP
 
 Using HTML Responses
 --------------------
 
-TODO:
-
-* talk about CSS
-
+Indigo transforms Akoma Ntoso XML into HTML5 content that looks best when styled with
+`Indigo Web <https://github.com/Code4SA/indigo-web>`_ stylesheets. You can link
+to the stylesheets provided by that package, or you can pull them into your website.

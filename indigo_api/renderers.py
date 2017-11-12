@@ -3,6 +3,7 @@ import tempfile
 import re
 import os.path
 import codecs
+import zipfile
 
 from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import caches
@@ -23,7 +24,7 @@ from .models import Document, Colophon, DEFAULT_LANGUAGE
 from .utils import localize_toc
 
 
-def generate_filename(data, view, format):
+def generate_filename(data, view, format=None):
     if isinstance(data, Document):
         parts = [data.year, data.number]
         if hasattr(view, 'component'):
@@ -32,8 +33,11 @@ def generate_filename(data, view, format):
         parts = view.kwargs['frbr_uri'].split('/')
 
     parts = [re.sub('[/ .]', '-', p) for p in parts if p]
+    fname = '-'.join(parts)
+    if format:
+        fname += '.' + format
 
-    return '-'.join(parts) + '.' + format
+    return fname
 
 
 class AkomaNtosoRenderer(XMLRenderer):
@@ -619,3 +623,41 @@ class EPUBResponseRenderer(PDFResponseRenderer):
             self.cache.set(key, epub)
 
         return epub
+
+
+class ZIPResponseRenderer(BaseRenderer):
+    """ Django Rest Framework zipfile renderer.
+
+    Generates a zip file containing the primary document as main.xml, an all attachments
+    inside a media folder.
+    """
+    media_type = 'application/zip'
+    format = 'zip'
+    serializer_class = NoopSerializer
+
+    def render(self, data, media_type=None, renderer_context=None):
+        if not isinstance(data, (Document, list)):
+            return ''
+
+        view = renderer_context['view']
+        filename = generate_filename(data, view, self.format)
+        renderer_context['response']['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+        with tempfile.NamedTemporaryFile(suffix='.zip') as f:
+            self.build_zipfile(data, f.name)
+            return f.read()
+
+    def build_zipfile(self, data, fname):
+        # one or many documents?
+        many = isinstance(data, list)
+        if not many:
+            data = [data]
+
+        with zipfile.ZipFile(fname, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for document in data:
+                # if storing many, prefix them
+                prefix = (generate_filename(document, None) + '/') if many else ''
+                zf.writestr(prefix + "main.xml", document.document_xml.encode('utf-8'))
+
+                for attachment in document.attachments.all():
+                    zf.writestr(prefix + "media/" + attachment.filename, attachment.file.read())

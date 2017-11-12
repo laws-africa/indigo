@@ -33,6 +33,7 @@ response type is JSON.
 * ``.html`` or ``Accept: text/html``: return human friendly HTML
 * ``.epub`` or ``Accept: application/epub+zip``: return an ePUB (ebook) document
 * ``.pdf`` or ``Accept: application/pdf``: return a PDF document
+* ``.zip`` or ``Accept: application/zip``: return a ZIP file with the document XML and media attachments
 
 .. note::
 

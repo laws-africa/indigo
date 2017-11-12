@@ -24,6 +24,7 @@
             <li><a href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a></li>
             <li><a href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a></li>
             <li><a href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="fa fa-file-code-o"></i> Akoma Ntoso XML</a></li>
+            <li><a href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="fa fa-file-zip-o"></i> ZIP Archive</a></li>
           </ul>
         </li>
       </ul>

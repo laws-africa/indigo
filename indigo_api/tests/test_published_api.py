@@ -331,3 +331,13 @@ class PublishedAPITest(APITestCase):
         # now should exist
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
         assert_equal(response.status_code, 200)
+
+    def test_published_zipfile(self):
+        response = self.client.get('/api/za/act/2001/8/eng.zip')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/zip')
+
+    def test_published_zipfile_many(self):
+        response = self.client.get('/api/za/act/2001.zip')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/zip')

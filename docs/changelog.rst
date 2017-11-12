@@ -7,6 +7,7 @@ Changelog
 * FEATURE: support images in documents
 * FEATURE: download as XML
 * FEATURE: annotations/comments on documents
+* FEATURE: download documents as ZIP archives
 * You can now highlight lines of text in the editor and transform them into a table, using the Edit > Insert Table menu item.
 * Edit menu with Find, Replace, Insert Table, Insert Image, etc.
 * Presence indicators for other users editing the same document

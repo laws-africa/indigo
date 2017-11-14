@@ -4,12 +4,13 @@ import logging
 from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
 from django.shortcuts import get_list_or_404
+from django.db.models import F
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers, status
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
@@ -27,6 +28,7 @@ from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions, AnnotationPermissions
 from .analysis import ActRefFinder
+from .utils import Headline
 from cobalt import FrbrUri
 import newrelic.agent
 
@@ -634,3 +636,36 @@ class LinkReferencesView(APIView):
 
     def find_references(self, document):
         ActRefFinder().find_references_in_document(document)
+
+
+class SearchView(DocumentViewMixin, ListAPIView):
+    """ Search!
+    """
+    serializer_class = DocumentSerializer
+    pagination_class = PageNumberPagination
+
+    def filter_queryset(self, queryset):
+        from django.contrib.postgres.search import SearchQuery, SearchRank
+
+        query = SearchQuery(self.request.query_params.get('q'))
+        rank = SearchRank(F('search_vector'), query)
+
+        # TODO: add filtering
+
+        queryset = queryset\
+            .filter(search_vector=query)\
+            .annotate(rank=rank, snippet=Headline(F('search_text'), query))\
+            .order_by('-rank')
+
+        return queryset
+
+    def get_serializer(self, queryset, *args, **kwargs):
+        serializer = super(SearchView, self).get_serializer(queryset, *args, **kwargs)
+
+        # add _rank and _snippet to the serialized docs
+        for i, doc in enumerate(queryset):
+            assert doc.id == serializer.data[i]['id']
+            serializer.data[i]['_rank'] = doc.rank
+            serializer.data[i]['_snippet'] = doc.snippet
+
+        return serializer

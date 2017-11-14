@@ -5,6 +5,7 @@ from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
 from django.shortcuts import get_list_or_404
 from django.db.models import F
+from django.contrib.postgres.search import SearchQuery, SearchRank
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -17,6 +18,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, DjangoModelPermissions, AllowAny
 from reversion import revisions as reversion
 from reversion.models import Version
+from django_filters.rest_framework import DjangoFilterBackend
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -35,6 +37,16 @@ import newrelic.agent
 log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+# Default document fields that can be use to filter list views
+DOCUMENT_FILTER_FIELDS = {
+    'frbr_uri': ['exact', 'startswith'],
+    'country': ['exact'],
+    'language': ['exact'],
+    'draft': ['exact'],
+    'stub': ['exact'],
+}
 
 
 def ping(request):
@@ -100,6 +112,8 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
                         HTMLResponseRenderer, AkomaNtosoRenderer, ZIPResponseRenderer,
                         renderers.BrowsableAPIRenderer)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = DOCUMENT_FILTER_FIELDS
 
     def perform_destroy(self, instance):
         if not instance.draft:
@@ -643,18 +657,18 @@ class SearchView(DocumentViewMixin, ListAPIView):
     """
     serializer_class = DocumentSerializer
     pagination_class = PageNumberPagination
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = DOCUMENT_FILTER_FIELDS
 
     def filter_queryset(self, queryset):
-        from django.contrib.postgres.search import SearchQuery, SearchRank
-
         query = SearchQuery(self.request.query_params.get('q'))
-        rank = SearchRank(F('search_vector'), query)
 
-        # TODO: add filtering
-
+        queryset = super(SearchView, self).filter_queryset(queryset)
         queryset = queryset\
             .filter(search_vector=query)\
-            .annotate(rank=rank, snippet=Headline(F('search_text'), query))\
+            .annotate(
+                rank=SearchRank(F('search_vector'), query),
+                snippet=Headline(F('search_text'), query))\
             .order_by('-rank')
 
         return queryset

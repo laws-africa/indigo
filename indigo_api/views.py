@@ -660,6 +660,9 @@ class SearchView(DocumentViewMixin, ListAPIView):
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
 
+    # Search scope, either 'documents' or 'works'.
+    scope = 'documents'
+
     def filter_queryset(self, queryset):
         query = SearchQuery(self.request.query_params.get('q'))
 
@@ -670,6 +673,11 @@ class SearchView(DocumentViewMixin, ListAPIView):
                 rank=SearchRank(F('search_vector'), query),
                 snippet=Headline(F('search_text'), query))\
             .order_by('-rank')
+
+        if self.scope == 'works':
+            # we're searching for distinct works, so only
+            # get the latest expression of all matching documents
+            queryset = queryset.latest_expression()
 
         return queryset
 

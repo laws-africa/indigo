@@ -46,6 +46,7 @@ DOCUMENT_FILTER_FIELDS = {
     'language': ['exact'],
     'draft': ['exact'],
     'stub': ['exact'],
+    'expression_date': ['exact', 'lte', 'gte'],
 }
 
 

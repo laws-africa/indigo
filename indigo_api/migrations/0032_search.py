@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
             CREATE OR REPLACE FUNCTION search_text_trigger() RETURNS trigger AS $$
             begin
               new.search_vector :=
-                 setweight(to_tsvector('pg_catalog.english', coalesce(new.search_text,'')), 'A') ||
-                 setweight(to_tsvector('pg_catalog.english', coalesce(new.title,'')), 'B');
+                 setweight(to_tsvector('pg_catalog.english', coalesce(new.title,'')), 'A') ||
+                 setweight(to_tsvector('pg_catalog.english', coalesce(new.search_text,'')), 'B');
               return new;
             end
             $$ LANGUAGE plpgsql;

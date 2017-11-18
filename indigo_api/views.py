@@ -676,9 +676,15 @@ class SearchView(DocumentViewMixin, ListAPIView):
             .order_by('-rank')
 
         if self.scope == 'works':
-            # we're searching for distinct works, so only
-            # get the latest expression of all matching documents
-            queryset = queryset.latest_expression()
+            # Search for distinct works, which means getting the latest
+            # expression of all matching works. To do this, they must
+            # be ordered by expression date, which means paginating
+            # search results by rank is a problem.
+            # So, get all matching expressions, then paginate by re-querying
+            # by document id, and order by rank.
+            doc_ids = [d.id for d in queryset.latest_expression().only('id').prefetch_related(None)]
+
+            queryset = queryset.filter(id__in=doc_ids)
 
         return queryset
 

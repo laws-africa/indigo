@@ -657,6 +657,11 @@ class SearchPagination(PageNumberPagination):
     page_size = 20
 
 
+class SearchRankCD(SearchRank):
+    # this takes proximity into account
+    function = 'ts_rank_cd'
+
+
 class SearchView(DocumentViewMixin, ListAPIView):
     """ Search!
     """
@@ -689,7 +694,7 @@ class SearchView(DocumentViewMixin, ListAPIView):
         # or doing it only on the required document ids, doesn't seem to have an impact.
         queryset = queryset\
             .annotate(
-                rank=SearchRank(F('search_vector'), query),
+                rank=SearchRankCD(F('search_vector'), query),
                 snippet=Headline(F('search_text'), query, options='StartSel=<mark>, StopSel=</mark>'))\
             .order_by('-rank')
 

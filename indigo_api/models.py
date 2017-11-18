@@ -11,7 +11,7 @@ from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.postgres.search import SearchVectorField, SearchVector
+from django.contrib.postgres.search import SearchVectorField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -30,6 +30,11 @@ DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)
+
+
+class DocumentManager(models.Manager):
+    def get_queryset(self):
+        return super(DocumentManager, self).get_queryset().defer("search_text", "search_vector")
 
 
 class DocumentQuerySet(models.QuerySet):
@@ -96,7 +101,7 @@ class Document(models.Model):
             ('publish_document', 'Can publish and edit non-draft documents'),
         )
 
-    objects = DocumentQuerySet.as_manager()
+    objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
     db_table = 'documents'
 

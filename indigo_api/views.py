@@ -653,11 +653,15 @@ class LinkReferencesView(APIView):
         ActRefFinder().find_references_in_document(document)
 
 
+class SearchPagination(PageNumberPagination):
+    page_size = 20
+
+
 class SearchView(DocumentViewMixin, ListAPIView):
     """ Search!
     """
     serializer_class = DocumentSerializer
-    pagination_class = PageNumberPagination
+    pagination_class = SearchPagination
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
 
@@ -668,12 +672,7 @@ class SearchView(DocumentViewMixin, ListAPIView):
         query = SearchQuery(self.request.query_params.get('q'))
 
         queryset = super(SearchView, self).filter_queryset(queryset)
-        queryset = queryset\
-            .filter(search_vector=query)\
-            .annotate(
-                rank=SearchRank(F('search_vector'), query),
-                snippet=Headline(F('search_text'), query))\
-            .order_by('-rank')
+        queryset = queryset.filter(search_vector=query)
 
         if self.scope == 'works':
             # Search for distinct works, which means getting the latest
@@ -683,8 +682,16 @@ class SearchView(DocumentViewMixin, ListAPIView):
             # So, get all matching expressions, then paginate by re-querying
             # by document id, and order by rank.
             doc_ids = [d.id for d in queryset.latest_expression().only('id').prefetch_related(None)]
-
             queryset = queryset.filter(id__in=doc_ids)
+
+        # the most expensive part of the search is the snippet/headline generation, which
+        # doesn't use the search vector. It adds about 500ms to the query. Doing it here,
+        # or doing it only on the required document ids, doesn't seem to have an impact.
+        queryset = queryset\
+            .annotate(
+                rank=SearchRank(F('search_vector'), query),
+                snippet=Headline(F('search_text'), query, options='StartSel=<mark>, StopSel=</mark>'))\
+            .order_by('-rank')
 
         return queryset
 

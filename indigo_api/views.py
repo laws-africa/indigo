@@ -5,7 +5,7 @@ from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
 from django.shortcuts import get_list_or_404
 from django.db.models import F
-from django.contrib.postgres.search import SearchQuery, SearchRank
+from django.contrib.postgres.search import SearchQuery
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -30,7 +30,7 @@ from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions, AnnotationPermissions
 from .analysis import ActRefFinder
-from .utils import Headline
+from .utils import Headline, SearchPagination, SearchRankCD
 from cobalt import FrbrUri
 import newrelic.agent
 
@@ -651,15 +651,6 @@ class LinkReferencesView(APIView):
 
     def find_references(self, document):
         ActRefFinder().find_references_in_document(document)
-
-
-class SearchPagination(PageNumberPagination):
-    page_size = 20
-
-
-class SearchRankCD(SearchRank):
-    # this takes proximity into account
-    function = 'ts_rank_cd'
 
 
 class SearchView(DocumentViewMixin, ListAPIView):

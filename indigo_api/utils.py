@@ -1,6 +1,19 @@
 from django.utils import lru_cache
 from django.utils.translation import override, ugettext as _
+from django.contrib.postgres.search import Value, Func, SearchRank
+from django.db.models import TextField
+
 from languages_plus.models import Language
+from rest_framework.pagination import PageNumberPagination
+
+
+# Ensure that these translations are included by makemessages
+_('Act')
+_('Chapter')
+_('Part')
+_('Section')
+_('Government Notice')
+_('By-law')
 
 
 @lru_cache.lru_cache()
@@ -61,10 +74,26 @@ def friendly_toc_title(item):
     return title
 
 
-# Ensure that these translations are included by makemessages
-_('Act')
-_('Chapter')
-_('Part')
-_('Section')
-_('Government Notice')
-_('By-law')
+class Headline(Func):
+    """ Helper class for using the `ts_headline` postgres function when executing
+    search queries.
+    """
+    function = 'ts_headline'
+
+    def __init__(self, field, query, config=None, options=None, **extra):
+        expressions = [field, query]
+        if config:
+            expressions.insert(0, Value(config))
+        if options:
+            expressions.append(Value(options))
+        extra.setdefault('output_field', TextField())
+        super(Headline, self).__init__(*expressions, **extra)
+
+
+class SearchPagination(PageNumberPagination):
+    page_size = 20
+
+
+class SearchRankCD(SearchRank):
+    # this takes proximity into account
+    function = 'ts_rank_cd'

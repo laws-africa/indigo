@@ -19,6 +19,8 @@ urlpatterns = [
         views.PublishedDocumentDetailView.as_view({'get': 'get'}),
         name='published-document-detail'),
 
+    url(r'^search/documents$', views.SearchView.as_view(scope='documents'), name='search'),
+    url(r'^search/works$', views.SearchView.as_view(scope='works'), name='search'),
     url(r'^render$', views.RenderView.as_view(), name='render'),
     url(r'^parse$', views.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', views.LinkTermsView.as_view(), name='link-terms'),

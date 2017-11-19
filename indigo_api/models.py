@@ -11,6 +11,7 @@ from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.postgres.search import SearchVectorField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -29,6 +30,11 @@ DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)
+
+
+class DocumentManager(models.Manager):
+    def get_queryset(self):
+        return super(DocumentManager, self).get_queryset().defer("search_text", "search_vector")
 
 
 class DocumentQuerySet(models.QuerySet):
@@ -95,7 +101,7 @@ class Document(models.Model):
             ('publish_document', 'Can publish and edit non-draft documents'),
         )
 
-    objects = DocumentQuerySet.as_manager()
+    objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
     db_table = 'documents'
 
@@ -130,6 +136,10 @@ class Document(models.Model):
 
     # freeform tags via django-taggit
     tags = TaggableManager()
+
+    # for full text search
+    search_text = models.TextField(null=True, blank=True)
+    search_vector = SearchVectorField(null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -226,6 +236,7 @@ class Document(models.Model):
 
     def save(self, *args, **kwargs):
         self.copy_attributes()
+        self.update_search_text()
         return super(Document, self).save(*args, **kwargs)
 
     def save_with_revision(self, user):
@@ -260,6 +271,16 @@ class Document(models.Model):
 
         # update the model's XML from the Act XML
         self.refresh_xml()
+
+    def update_search_text(self):
+        """ Update the `search_text` field with a raw representation of all the text in the document.
+        This is used by the `search_vector` field when doing full text search. The `search_vector`
+        field is updated from the `search_text` field using a PostgreSQL trigger, installed by
+        migration 0032.
+        """
+        xpath = '|'.join('//a:%s//text()' % c for c in ['coverPage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions'])
+        texts = self.doc.root.xpath(xpath, namespaces={'a': self.doc.namespace})
+        self.search_text = ' '.join(texts)
 
     def refresh_xml(self):
         log.debug("Refreshing document xml for %s" % self)

@@ -4,18 +4,21 @@ import logging
 from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_control
 from django.shortcuts import get_list_or_404
+from django.db.models import F
+from django.contrib.postgres.search import SearchQuery
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers, status
-from rest_framework.generics import get_object_or_404
+from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, DjangoModelPermissions, AllowAny
 from reversion import revisions as reversion
 from reversion.models import Version
+from django_filters.rest_framework import DjangoFilterBackend
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -27,12 +30,24 @@ from .atom import AtomRenderer, AtomFeed
 from .slaw import Importer, Slaw
 from .authz import DocumentPermissions, AnnotationPermissions
 from .analysis import ActRefFinder
+from .utils import Headline, SearchPagination, SearchRankCD
 from cobalt import FrbrUri
 import newrelic.agent
 
 log = logging.getLogger(__name__)
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+# Default document fields that can be use to filter list views
+DOCUMENT_FILTER_FIELDS = {
+    'frbr_uri': ['exact', 'startswith'],
+    'country': ['exact'],
+    'language': ['exact'],
+    'draft': ['exact'],
+    'stub': ['exact'],
+    'expression_date': ['exact', 'lte', 'gte'],
+}
 
 
 def ping(request):
@@ -98,6 +113,8 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
                         HTMLResponseRenderer, AkomaNtosoRenderer, ZIPResponseRenderer,
                         renderers.BrowsableAPIRenderer)
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = DOCUMENT_FILTER_FIELDS
 
     def perform_destroy(self, instance):
         if not instance.draft:
@@ -634,3 +651,53 @@ class LinkReferencesView(APIView):
 
     def find_references(self, document):
         ActRefFinder().find_references_in_document(document)
+
+
+class SearchView(DocumentViewMixin, ListAPIView):
+    """ Search!
+    """
+    serializer_class = DocumentSerializer
+    pagination_class = SearchPagination
+    filter_backends = (DjangoFilterBackend,)
+    filter_fields = DOCUMENT_FILTER_FIELDS
+
+    # Search scope, either 'documents' or 'works'.
+    scope = 'documents'
+
+    def filter_queryset(self, queryset):
+        query = SearchQuery(self.request.query_params.get('q'))
+
+        queryset = super(SearchView, self).filter_queryset(queryset)
+        queryset = queryset.filter(search_vector=query)
+
+        if self.scope == 'works':
+            # Search for distinct works, which means getting the latest
+            # expression of all matching works. To do this, they must
+            # be ordered by expression date, which means paginating
+            # search results by rank is a problem.
+            # So, get all matching expressions, then paginate by re-querying
+            # by document id, and order by rank.
+            doc_ids = [d.id for d in queryset.latest_expression().only('id').prefetch_related(None)]
+            queryset = queryset.filter(id__in=doc_ids)
+
+        # the most expensive part of the search is the snippet/headline generation, which
+        # doesn't use the search vector. It adds about 500ms to the query. Doing it here,
+        # or doing it only on the required document ids, doesn't seem to have an impact.
+        queryset = queryset\
+            .annotate(
+                rank=SearchRankCD(F('search_vector'), query),
+                snippet=Headline(F('search_text'), query, options='StartSel=<mark>, StopSel=</mark>'))\
+            .order_by('-rank')
+
+        return queryset
+
+    def get_serializer(self, queryset, *args, **kwargs):
+        serializer = super(SearchView, self).get_serializer(queryset, *args, **kwargs)
+
+        # add _rank and _snippet to the serialized docs
+        for i, doc in enumerate(queryset):
+            assert doc.id == serializer.data[i]['id']
+            serializer.data[i]['_rank'] = doc.rank
+            serializer.data[i]['_snippet'] = doc.snippet
+
+        return serializer

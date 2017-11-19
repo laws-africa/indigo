@@ -162,3 +162,32 @@ Using HTML Responses
 Indigo transforms Akoma Ntoso XML into HTML5 content that looks best when styled with
 `Indigo Web <https://github.com/Code4SA/indigo-web>`_ stylesheets. You can link
 to the stylesheets provided by that package, or you can pull them into your website.
+
+Search
+------
+
+.. code:: http
+
+    GET /api/search/works?q=<search-term>
+
+* Parameter ``q``: the search string
+* Filter parameters:
+
+  * ``country``
+  * ``draft``
+  * ``frbr_uri``, ``frbr_uri__startswith``
+  * ``language``
+  * ``stub``
+  * ``expression_date``, ``expression_date__lte``, ``expression_date__gte``
+
+* Content types: JSON
+
+This API searches through works (acts). It returns all works that match the
+search term, in search rank order. Each result also has a numeric ``_rank`` and
+an HTML ``_snippet`` with highlighted results.
+
+Use additional parameters to filter the search results.
+
+If more than one expression of a particular work matches the search, then only
+the most recent matching expression is returned. If you would like all
+matching documents, use the ``/api/search/documents`` search API.

@@ -37,7 +37,8 @@ var IndigoHighlightRules = function() {
                 caseInsensitive: true,
             }, {
                 token: "comment.line.remark",
-                regex: /\[\[(?!]])?.*]]/,
+                regex: /\[\[/,
+                next: "remark",
             }, {
                 token: "markup.underline.link",
                 regex: /\[[^\]]*\]\([^\)]*\)/,
@@ -48,6 +49,21 @@ var IndigoHighlightRules = function() {
                 token: "constant.language.table",
                 regex: /^{\|/,
                 next: "table",
+            }
+        ],
+        "remark": [
+            // remarks can contain links
+            {
+                token: "markup.underline.link",
+                regex: /\[[^\]]*\]\([^\)]*\)/,
+            },
+            {
+                token: "comment.line.remark",
+                regex: /]]/,
+                next: "start",
+            },
+            {
+                defaultToken: "comment.line.remark"
             }
         ],
         "table": [

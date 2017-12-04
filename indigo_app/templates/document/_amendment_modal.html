@@ -1,9 +1,9 @@
-<div class="modal fade" id="amendment-box">
+<div class="modal fade" id="document-chooser-box">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">What caused this amendment?</h4>
+        <h4 class="modal-title">What caused this <span class="noun">amendment</span>?</h4>
       </div>
 
       <div class="modal-body">
@@ -11,7 +11,7 @@
 
           <ul class="nav nav-pills">
             <li class="active"><a href="#tab-amendment-list" data-toggle="tab">Document from the library</a></li>
-            <li><a href="#tab-custom-amendment" data-toggle="tab">Not in the library</a></li>
+            <li><a href="#tab-custom-amendment" data-toggle="tab">Document not in the library</a></li>
           </ul>
 
           <!-- Tab panes -->
@@ -21,20 +21,64 @@
             </div>
 
             <div role="tabpanel" class="tab-pane" id="tab-custom-amendment">
-              <div class="form-group">
-                <label for="amendment_date" class="control-label">Date of amendment</label>
-                <input type="text" class="form-control" data-provide="datepicker" id="amendment_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
-              </div>
+              <form>
+                <div class="form-group">
+                  <label for="chooser_doc_title" class="control-label required">Title of <span class="verb">amending</span> document</label>
+                  <input type="text" class="form-control" id="chooser_doc_title" required>
+                </div>
 
-              <div class="form-group">
-                <label for="amendment_title" class="control-label">Title of amending document</label>
-                <input type="text" class="form-control" id="amendment_title" required>
-              </div>
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="chooser_doc_date" class="control-label required">Date of <span class="noun">amendment</span></label>
+                      <input type="text" class="form-control" data-provide="datepicker" id="chooser_doc_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
+                    </div>
+                  </div>
 
-              <div class="form-group">
-                <label for="amendment_uri" class="control-label">URI of amending document</label>
-                <input type="text" class="form-control" id="amendment_uri" required pattern="[^\s]+">
-              </div>
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="chooser_doc_number" class="control-label required">Number within year</label>
+                      <input type="text" class="form-control" id="chooser_doc_number" required pattern="[^\s]+">
+                      <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="row">
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="chooser_doc_country" class="control-label required">Country</label>
+                      <select id="chooser_doc_country" class="form-control">
+                        {% for opt in countries %}
+                        <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="col-sm-6">
+                    <div class="form-group">
+                      <label for="chooser_doc_locality" class="control-label">Locality</label>
+                      <select class="form-control" id="chooser_doc_locality"></select>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="chooser_doc_subtype" class="control-label">Subtype</label>
+                      <select id="chooser_doc_subtype" class="form-control">
+                        <option value="">(none)</option>
+                        {% for subtype in subtypes %}
+                        <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+                        {% endfor %}
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label for="chooser_doc_frbr_uri" class="control-label">FRBR URI of <span class="verb">amending</span> document</label>
+                  <input type="text" class="form-control" id="chooser_doc_frbr_uri" required pattern="[^\s]+">
+                </div>
+              </form>
             </div>
           </div>
         </div>

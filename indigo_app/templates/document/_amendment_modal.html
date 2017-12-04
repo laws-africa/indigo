@@ -10,17 +10,17 @@
         <div role="tabpanel">
 
           <ul class="nav nav-pills">
-            <li class="active"><a href="#tab-amendment-list" data-toggle="tab">Document from the library</a></li>
-            <li><a href="#tab-custom-amendment" data-toggle="tab">Document not in the library</a></li>
+            <li class="active"><a href="#tab-document-list" data-toggle="tab">Document from the library</a></li>
+            <li><a href="#tab-custom-doc" data-toggle="tab">Document not in the library</a></li>
           </ul>
 
           <!-- Tab panes -->
           <div class="tab-content">
-            <div role="tabpanel" class="tab-pane active" id="tab-amendment-list">
+            <div role="tabpanel" class="tab-pane active" id="tab-document-list">
               {% include 'document/_chooser.html' %}
             </div>
 
-            <div role="tabpanel" class="tab-pane" id="tab-custom-amendment">
+            <div role="tabpanel" class="tab-pane" id="tab-custom-doc">
               <form>
                 <div class="form-group">
                   <label for="chooser_doc_title" class="control-label required">Title of <span class="verb">amending</span> document</label>
@@ -76,7 +76,7 @@
 
                 <div class="form-group">
                   <label for="chooser_doc_frbr_uri" class="control-label">FRBR URI of <span class="verb">amending</span> document</label>
-                  <input type="text" class="form-control" id="chooser_doc_frbr_uri" required pattern="[^\s]+">
+                  <input type="text" class="form-control" id="chooser_doc_frbr_uri" readonly="readonly">
                 </div>
               </form>
             </div>

@@ -98,9 +98,18 @@
         verb: 'amending',
       });
 
-      chooser.setFilters({country: this.model.get('country')});
       // choose the document the model corresponds to
-      chooser.choose(chooser.collection.findWhere({frbr_uri: amendment.get('amending_uri')}));
+      var item = chooser.collection.findWhere({frbr_uri: amendment.get('amending_uri')});
+      if (!item) {
+        item = Indigo.Document.newFromFrbrUri(amendment.get('amending_uri'));
+        item.set({
+          expression_date: amendment.get('date'),
+          title: amendment.get('amending_title'),
+          id: amendment.get('amending_id'),
+        });
+      }
+      chooser.choose(item);
+      chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           amendment.set({

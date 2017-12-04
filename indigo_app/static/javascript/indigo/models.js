@@ -234,6 +234,23 @@
       return url;
     },
   });
+  /** Create a new document by parsing an frbr URI */
+  Indigo.Document.newFromFrbrUri = function(frbr_uri) {
+    // /za-cpt/act/by-law/2011/foo
+    var parts = frbr_uri.split('/'),
+        tmp = parts[1].split('-'),
+        country = tmp[0],
+        locality = tmp.length > 1 ? tmp[1] : null,
+        bump = parts.length > 5 ? 1 : 0;
+
+    return new Indigo.Document({
+      country: country,
+      locality: locality,
+      subtype: parts.length > 5 ? parts[3] : null,
+      year: parts[3 + bump],
+      number: parts[4 + bump],
+    });
+  };
 
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,

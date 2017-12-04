@@ -81,9 +81,15 @@
     },
 
     choose: function(item) {
+      if (item) this.model.set(item.attributes);
       this.chosen = this.collection.get(item);
+      if (!this.chosen && item) {
+        this.$el.find('.nav li:eq(1) a').click();
+      } else {
+        this.$el.find('.nav li:eq(0) a').click();
+      }
+
       this.render();
-      // TODO: scroll into view if it's not visible
     },
 
     setFilters: function(filters) {
@@ -131,6 +137,8 @@
         documents: docs,
         count: this.collection.length,
       }));
+
+      // TODO: scroll active item into view
     },
 
     // filter the documents according to our filters
@@ -188,9 +196,18 @@
     },
 
     save: function() {
+      var item;
+
       this.close();
-      // TODO: use the manual model, or the picked one?
-      this.deferred.resolve(this.chosen);
+
+      // use the manual model, or the picked one?
+      if (this.$el.find('#tab-document-list').hasClass('active')) {
+        item = this.chosen;
+      } else {
+        item = this.model;
+      }
+
+      this.deferred.resolve(item);
     },
 
     close: function() {

@@ -134,7 +134,6 @@
 
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
       this.model.on('change:repeal sync', this.showRepeal, this);
-      this.model.on('change:country change:locality change:subtype change:number change:year', this.calculateUri, this);
       this.model.on('change:country', this.updatePublicationOptions, this);
       this.updatePublicationOptions();
 
@@ -143,7 +142,7 @@
       this.model.on('change:publication_date change:expression_date', this.updateExpressionDates, this);
       this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
 
-      this.calculateUri();
+      this.model.updateFrbrUri();
       this.updateExpressionDates();
       this.stickit();
     },
@@ -188,28 +187,6 @@
     showAmendments: function(e) {
       e.preventDefault();
       $('.sidebar a[href="#amendments-tab"]').click();
-    },
-
-    calculateUri: function() {
-      // rebuild the FRBR uri when one of its component sources changes
-      var parts = [''];
-
-      var country = this.model.get('country');
-      if (this.model.get('locality')) {
-        country += "-" + this.model.get('locality');
-      }
-      parts.push(country);
-      parts.push(this.model.get('nature'));
-      if (this.model.get('subtype')) {
-        parts.push(this.model.get('subtype'));
-      }
-      parts.push(this.model.get('year'));
-      parts.push(this.model.get('number'));
-
-      // clean the parts
-      parts = _.map(parts, function(p) { return p.replace(/[ \/]/g, ''); });
-
-      this.model.set('frbr_uri', parts.join('/').toLowerCase());
     },
 
     showPublishedUrl: function() {

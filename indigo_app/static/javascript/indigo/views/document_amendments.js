@@ -105,7 +105,6 @@
         item.set({
           expression_date: amendment.get('date'),
           title: amendment.get('amending_title'),
-          id: amendment.get('amending_id'),
         });
       }
       chooser.choose(item);

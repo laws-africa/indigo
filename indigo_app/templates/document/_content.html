@@ -81,8 +81,8 @@
 
 <div class="boxed-group-inner boxed-group-inner-minimal document-content-view">
   <div class="sheet-editor collapse in">
-    <div class="document-sheet-container">
-      <div class="document-sheet annotations-container" id="document-sheet">
+    <div class="document-sheet-container sheet-outer">
+      <div class="annotations-container sheet-inner" id="document-sheet">
         <div class="akoma-ntoso"></div>
       </div>
     </div>
@@ -91,8 +91,10 @@
       <div class="ace-editor"></div>
     </div>
 
-    <div class="document-text-editor">
-      <div class="ace-editor"></div>
+    <div class="document-text-editor sheet-outer">
+      <div class="ace-editor-wrapper sheet-inner">
+        <div class="ace-editor"></div>
+      </div>
     </div>
   </div>
 </div>

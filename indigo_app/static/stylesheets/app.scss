@@ -305,8 +305,8 @@ button.btn-link.help {
   }
 }
 
+.ace-editor-wrapper,
 .ace-editor {
-  width: 100%;
   height: 100%;
 }
 
@@ -412,7 +412,18 @@ legend {
   z-index: 100;
 }
 
-/* make a document sheet look like paper */
+/* make document sheets look like paper */
+.sheet-outer {
+  background: $grey-darkest;
+  padding: 20px;
+
+  .sheet-inner {
+    border: 1px solid $grey-darkest;
+    box-shadow: 0 0 10px #888;
+    background: white;
+  }
+}
+
 .document-sheet-container {
   position: absolute;
   top: 0px;
@@ -423,15 +434,10 @@ legend {
   overflow-x: hidden;
   overflow-y: auto;
 
-  background: $grey-darkest;
   margin: 0px;
 
-  .document-sheet {
-    border: 1px solid $grey-darkest;
-    box-shadow: 0 0 10px #888;
+  .sheet-inner {
     padding: 30px;
-    margin: 20px;
-    background: white;
     // work around a Chrome rendering bug with sections that
     // are very short
     min-height: 100%;
@@ -1002,7 +1008,7 @@ legend {
 }
 
 .annotations-container {
-  &.document-sheet {
+  &.sheet-inner {
     /* XXX */
     margin-right: 200px;
   }

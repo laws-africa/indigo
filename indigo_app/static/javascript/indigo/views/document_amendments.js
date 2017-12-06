@@ -4,85 +4,6 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  /** This handles editing and creation of Amendment instances.
-   */
-  Indigo.AmendmentView = Backbone.View.extend({
-    el: '#amendment-box',
-    events: {
-      'hidden.bs.modal': 'dismiss',
-      'click .btn.save': 'save',
-    },
-    bindings: {
-      '#amendment_date': 'date',
-      '#amendment_title': 'amending_title',
-      '#amendment_uri': 'amending_uri',
-    },
-
-    initialize: function(options) {
-      this.document = options.document;
-      this.collection = options.collection;
-      this.chooser = new Indigo.DocumentChooserView({el: this.$('.document-chooser')});
-      this.chooser.on('chosen', this.chosen, this);
-    },
-
-    show: function(model) {
-      var amending_doc = null;
-
-      this.isNew = !model;
-      this.originalModel = model;
-
-      if (model) {
-        // clone the amendment and edit the clone
-        this.model = model.clone();
-        // find the document the model corresponds to
-        amending_doc = this.chooser.model.findWhere({frbr_uri: this.model.get('amending_uri')});
-      } else {
-        this.model = new Indigo.Amendment();
-      }
-
-      this.chooser.setFilters({country: this.document.get('country')});
-      this.chooser.choose(amending_doc);
-
-      this.stickit();
-
-      this.$el.modal('show');
-    },
-
-    save: function(e) {
-      if (this.isNew) {
-        this.collection.add(this.model);
-      } else {
-        this.originalModel.set(this.model.attributes);
-      }
-
-      // TODO: we're not actually editing this doc's amendments, but the expressionSet's amendments
-      // so, we should be updating THAT collection of amendments and the expressionSet is responsible
-      // for adjusting all documents as necessary
-      // this.document.get('amendments').sort();
-      // this.document.trigger('change change:amendments');
-      this.$el.modal('hide');
-    },
-    
-    dismiss: function() {
-      this.unstickit();
-      this.model = null;
-      this.originalModel = null;
-    },
-
-    chosen: function() {
-      // user chose a new item in the document chooser
-      var chosen = this.chooser.chosen;
-      if (chosen) {
-        this.model.set({
-          date: chosen.get('expression_date'),
-          amending_title: chosen.get('title'),
-          amending_uri: chosen.get('frbr_uri'),
-          amending_id: chosen.get('id'),
-        });
-      }
-    }
-  });
-
   /**
    * Handle the document amendments display.
    *
@@ -111,8 +32,6 @@
 
       this.listenTo(this.model.expressionSet, 'add remove reset change', this.render);
       this.listenTo(this.model.expressionSet.amendments, 'change add remove reset', this.render);
-
-      this.box = new Indigo.AmendmentView({model: null, document: this.model, collection: this.model.expressionSet.amendments});
 
       this.render();
     },
@@ -148,7 +67,25 @@
 
     addAmendment: function(e) {
       e.preventDefault();
-      this.box.show(null);
+
+      var amendments = this.model.expressionSet.amendments;
+      var chooser = new Indigo.DocumentChooserView({
+        noun: 'amendment',
+        verb: 'amending',
+      });
+
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.choose(null);
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          amendments.add(new Indigo.Amendment({
+            date: chosen.get('expression_date'),
+            amending_title: chosen.get('title'),
+            amending_uri: chosen.get('frbr_uri'),
+            amending_id: chosen.get('id'),
+          }));
+        }
+      });
     },
 
     editAmendment: function(e) {
@@ -156,8 +93,32 @@
 
       var uri = $(e.target).closest('li').data('uri');
       var amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
+      var chooser = new Indigo.DocumentChooserView({
+        noun: 'amendment',
+        verb: 'amending',
+      });
 
-      this.box.show(amendment);
+      // choose the document the model corresponds to
+      var item = chooser.collection.findWhere({frbr_uri: amendment.get('amending_uri')});
+      if (!item) {
+        item = Indigo.Document.newFromFrbrUri(amendment.get('amending_uri'));
+        item.set({
+          expression_date: amendment.get('date'),
+          title: amendment.get('amending_title'),
+        });
+      }
+      chooser.choose(item);
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          amendment.set({
+            date: chosen.get('expression_date'),
+            amending_title: chosen.get('title'),
+            amending_uri: chosen.get('frbr_uri'),
+            amending_id: chosen.get('id'),
+          });
+        }
+      });
     },
 
     deleteAmendment: function(e) {

@@ -4,68 +4,6 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  /** This handles editing of a document's repeal details.
-   */
-  Indigo.RepealEditorView = Backbone.View.extend({
-    el: '#repeal-box',
-    events: {
-      'hidden.bs.modal': 'dismiss',
-      'click .btn.save': 'save',
-    },
-    bindings: {
-      '#repeal_date': 'date',
-      '#repeal_title': 'repealing_title',
-      '#repeal_uri': 'repealing_uri',
-    },
-
-    initialize: function(options) {
-      this.document = options.document;
-      this.chooser = new Indigo.DocumentChooserView({el: this.$el.find('.document-chooser')});
-      this.chooser.on('chosen', this.chosen, this);
-    },
-
-    show: function() {
-      var repealing_doc = null;
-
-      this.model = new Backbone.Model(this.document.get('repeal'));
-
-      // find the document the model corresponds to
-      if (this.model.get('amending_uri')) {
-        repealing_doc = this.chooser.model.findWhere({frbr_uri: this.model.get('amending_uri')});
-      }
-
-      this.chooser.setFilters({country: this.document.get('country')});
-      this.chooser.choose(repealing_doc);
-
-      this.stickit();
-
-      this.$el.modal('show');
-    },
-
-    save: function(e) {
-      this.document.set('repeal', this.model.toJSON());
-      this.$el.modal('hide');
-    },
-    
-    dismiss: function() {
-      this.unstickit();
-      this.model = null;
-    },
-
-    chosen: function() {
-      // user chose a new item in the document chooser
-      var chosen = this.chooser.chosen;
-      if (chosen) {
-        this.model.set({
-          date: chosen.get('expression_date'),
-          repealing_title: chosen.get('title'),
-          repealing_uri: chosen.get('frbr_uri'),
-          repealing_id: chosen.get('id'),
-        });
-      }
-    }
-  });
-
   /**
    * Handle the document repeal view.
    */
@@ -81,10 +19,6 @@
       this.template = Handlebars.compile($(this.template).html());
 
       this.model.on('change:repeal sync', this.render, this);
-
-      this.box = new Indigo.RepealEditorView({document: this.model});
-
-      this.stickit();
     },
 
     render: function() {
@@ -95,7 +29,41 @@
 
     changeRepeal: function(e) {
       e.preventDefault();
-      this.box.show();
+
+      var repeal = this.model.get('repeal'),
+          document = this.model,
+          item;
+      var chooser = new Indigo.DocumentChooserView({
+        noun: 'repeal',
+        verb: 'repealing',
+      });
+
+      repeal = repeal ?  new Backbone.Model(repeal) : null;
+
+      if (repeal && repeal.get('repealing_uri')) {
+        // find the document the model corresponds to
+        item = chooser.collection.findWhere({frbr_uri: repeal.get('repealing_uri')});
+      }
+      if (!item && repeal) {
+        item = Indigo.Document.newFromFrbrUri(repeal.get('repealing_uri'));
+        item.set({
+          expression_date: repeal.get('date'),
+          title: repeal.get('repealing_title'),
+        });
+      }
+
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.choose(item);
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          document.set('repeal', {
+            date: chosen.get('expression_date'),
+            repealing_title: chosen.get('title'),
+            repealing_uri: chosen.get('frbr_uri'),
+            repealing_id: chosen.get('id'),
+          });
+        }
+      });
     },
 
     deleteRepeal: function(e) {

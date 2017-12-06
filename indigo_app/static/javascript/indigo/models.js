@@ -120,6 +120,7 @@
     defaults: {
       draft: true,
       title: '(none)',
+      nature: 'act',
     },
 
     urlRoot: '/api/documents',
@@ -130,6 +131,9 @@
       // this is useful to know when the model needs to be saved
       this.on('change', this.setDirty, this);
       this.on('sync', this.setClean, this);
+
+      // keep frbr_uri up to date
+      this.on('change:country change:locality change:subtype change:number change:year', this.updateFrbrUri, this);
     },
 
     setDirty: function() {
@@ -188,6 +192,28 @@
       return this.attachmentList;
     },
 
+    updateFrbrUri: function() {
+      // rebuild the FRBR uri when one of its component sources changes
+      var parts = [''];
+
+      var country = this.get('country');
+      if (this.get('locality')) {
+        country += "-" + this.get('locality');
+      }
+      parts.push(country);
+      parts.push(this.get('nature'));
+      if (this.get('subtype')) {
+        parts.push(this.get('subtype'));
+      }
+      parts.push(this.get('year'));
+      parts.push(this.get('number'));
+
+      // clean the parts
+      parts = _.map(parts, function(p) { return (p || "").replace(/[ \/]/g, ''); });
+
+      this.set('frbr_uri', parts.join('/').toLowerCase());
+    },
+
     /**
      * Build and return a fully qualified manifestation URL for this document.
      */
@@ -208,6 +234,23 @@
       return url;
     },
   });
+  /** Create a new document by parsing an frbr URI */
+  Indigo.Document.newFromFrbrUri = function(frbr_uri) {
+    // /za-cpt/act/by-law/2011/foo
+    var parts = frbr_uri.split('/'),
+        tmp = parts[1].split('-'),
+        country = tmp[0],
+        locality = tmp.length > 1 ? tmp[1] : null,
+        bump = parts.length > 5 ? 1 : 0;
+
+    return new Indigo.Document({
+      country: country,
+      locality: locality,
+      subtype: parts.length > 5 ? parts[3] : null,
+      year: parts[3 + bump],
+      number: parts[4 + bump],
+    });
+  };
 
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,

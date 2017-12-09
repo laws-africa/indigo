@@ -32,6 +32,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    'indigo_api',
+
+    # the Indigo browser application
+    'indigo_app',
+    # the Indigo act resolver
+    'indigo_resolver',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -55,12 +62,6 @@ INSTALLED_APPS = (
     'reversion',
     'ckeditor',
     'corsheaders',
-    'indigo_api',
-
-    # the Indigo browser application
-    'indigo_app',
-    # the Indigo act resolver
-    'indigo_resolver',
 )
 
 MIDDLEWARE = (
@@ -113,6 +114,10 @@ USE_TZ = True
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
+
+
+# Auth
+LOGIN_REDIRECT_URL = '/library'
 
 
 # Templates

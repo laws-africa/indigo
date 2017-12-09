@@ -439,7 +439,7 @@ class Document(models.Model):
     def randomized(cls, user=None, **kwargs):
         """ Helper to return a new document with a random FRBR URI
         """
-        country = kwargs.pop('country', None) or (user.editor.country_code if user and user.is_authenticated() else None)
+        country = kwargs.pop('country', None) or (user.editor.country_code if user and user.is_authenticated else None)
         frbr_uri = random_frbr_uri(country=country)
 
         doc = cls(frbr_uri=frbr_uri.work_uri(False), publication_date=frbr_uri.expression_date, expression_date=frbr_uri.expression_date, **kwargs)
@@ -459,7 +459,7 @@ def attachment_filename(instance, filename):
 
 
 class Attachment(models.Model):
-    document = models.ForeignKey(Document, related_name='attachments')
+    document = models.ForeignKey(Document, related_name='attachments', on_delete=models.CASCADE)
     file = models.FileField(upload_to=attachment_filename)
     size = models.IntegerField()
     filename = models.CharField(max_length=255, help_text="Unique attachment filename", db_index=True)
@@ -519,7 +519,7 @@ def random_frbr_uri(country=None):
 
 
 class Annotation(models.Model):
-    document = models.ForeignKey(Document, related_name='annotations')
+    document = models.ForeignKey(Document, related_name='annotations', on_delete=models.CASCADE)
     created_by_user = models.ForeignKey(User, on_delete=models.CASCADE, null=False, related_name='+')
     in_reply_to = models.ForeignKey('self', on_delete=models.CASCADE, null=True)
     text = models.TextField(null=False, blank=False)

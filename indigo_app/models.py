@@ -12,7 +12,7 @@ from indigo_api.models import Document
 class Language(models.Model):
     """ The languages available in the UI. They aren't enforced by the API.
     """
-    language = models.OneToOneField(MasterLanguage)
+    language = models.OneToOneField(MasterLanguage, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['language__name_en']
@@ -24,7 +24,7 @@ class Language(models.Model):
 class Country(models.Model):
     """ The countries available in the UI. They aren't enforced by the API.
     """
-    country = models.OneToOneField(MasterCountry)
+    country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['country__name']
@@ -52,7 +52,7 @@ class Country(models.Model):
 class Locality(models.Model):
     """ The localities available in the UI. They aren't enforced by the API.
     """
-    country = models.ForeignKey(Country, null=False)
+    country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
     code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
 
@@ -69,7 +69,7 @@ class Editor(models.Model):
     """ A complement to Django's User model that adds extra
     properties that we need, like a default country.
     """
-    user = models.OneToOneField(User)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
 
     @property
@@ -89,7 +89,7 @@ class Editor(models.Model):
 class Publication(models.Model):
     """ The publications available in the UI. They aren't enforced by the API.
     """
-    country = models.ForeignKey(Country, null=False)
+    country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE)
     name = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Name of this publication")
 
     class Meta:

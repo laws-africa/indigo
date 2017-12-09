@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('mime_type', models.CharField(max_length=255)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('document', models.ForeignKey(related_name='attachments', to='indigo_api.Document')),
+                ('document', models.ForeignKey(related_name='attachments', to='indigo_api.Document', on_delete=models.CASCADE)),
             ],
             options={
             },

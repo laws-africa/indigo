@@ -7,15 +7,7 @@
   Indigo.UserView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click #user-buttons .btn.login': 'showLoginBox',
       'click #user-buttons .logout': 'logout',
-
-      // in the login modal
-      'click .btn.forgot-password': 'showForgotPassword',
-      'click .btn.show-login-form': 'showLoginForm',
-      'show.bs.modal #login-box': 'modalShown',
-      'submit form.login-form': 'authenticate',
-      'submit form.forgot-password-form': 'forgotPassword',
 
       // user profile modal
       'show.bs.modal #user-profile-box': 'modalShown',
@@ -58,8 +50,6 @@
 
       this.stickit();
 
-      // login modal
-      this.$loginBox = $('#login-box');
       // profile modal
       this.$profileBox = $('#user-profile-box');
       // password modal
@@ -139,68 +129,12 @@
       this.$el.toggleClass('is-staff', this.model.get('is_staff'));
     },
 
-    showLoginBox: function() {
-      this.$loginBox.modal();
-      this.$loginBox.find('.forgot-password-form').hide();
-      this.$loginBox.find('.login-form').show();
-    },
-
-    showLoginForm: function(e) {
-      e.preventDefault();
-
-      this.$loginBox.find('.forgot-password-form').hide();
-      this.$loginBox.find('.login-form').show();
-    },
-
-    showForgotPassword: function(e) {
-      e.preventDefault();
-
-      this.$loginBox.find('.login-form').hide();
-      this.$loginBox.find('.forgot-password-form').show();
-    },
-
-    authenticate: function(e) {
-      e.preventDefault();
-      var self = this;
-
-      $.post('/auth/login/', this.$loginBox.find('.login-form').serialize())
-        .error(function(xhr) {
-          // bad creds
-          self.$loginBox.find('.alert-danger').show().text("Your username or password are incorrect.");
-        })
-        .then(function(xhr) {
-          // logged in
-          self.model.fetch()
-            .then(function() {
-              self.$loginBox.modal('hide');
-            });
-          // update the csrf token we use
-          Indigo.csrfToken = $.cookie('csrftoken');
-        });
-    },
-
-    forgotPassword: function(e) {
-      e.preventDefault();
-      var self = this;
-
-      $.post('/auth/password/reset/', this.$loginBox.find('.forgot-password-form').serialize())
-        .fail(function(xhr, msg) {
-          self.$loginBox.find('.alert-danger').show().text(msg);
-        })
-        .then(function(xhr) {
-          // reset sent
-          self.$loginBox.find('.forgot-password-form').hide();
-          self.$loginBox.find('.login-form').show();
-          self.$loginBox.find('.alert-success').show().text('An email with password reset instructions has been sent. Please check your inbox.');
-        });
-    },
-
     logout: function() {
       var user = this.model;
 
       if (confirm('Are you sure you want to logout?')) {
         $.post('/auth/logout/')
-          .then(function() { user.clear(); });
+          .then(function() { window.location = '/user/login/'; });
       }
     },
   });

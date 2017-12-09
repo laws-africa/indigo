@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
 
 from indigo_api.models import Document, Subtype
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer
@@ -8,6 +10,7 @@ from .forms import DocumentForm
 import json
 
 
+@login_required
 def document(request, doc_id=None):
     if doc_id:
         doc = get_object_or_404(Document, pk=doc_id)
@@ -41,6 +44,7 @@ def document(request, doc_id=None):
     })
 
 
+@login_required
 def import_document(request):
     doc = Document(frbr_uri='/')
     form = DocumentForm(instance=doc)
@@ -52,6 +56,7 @@ def import_document(request):
     })
 
 
+@login_required
 def library(request):
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries = {c.code: c.as_json() for c in countries}

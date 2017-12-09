@@ -117,6 +117,7 @@ CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Auth
+LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = '/library'
 
 

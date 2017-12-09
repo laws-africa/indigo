@@ -32,4 +32,7 @@
   <button type="submit" class="btn btn-block btn-primary">Login</button>
 
   <p class="text-center forgot"><a href="{% url 'password_reset' %}">Forgot your password?</a></p>
+  {% if SUPPORT_EMAIL %}
+  <p class="text-center"><a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">Request an account</a></p>
+  {% endif %}
 {% endblock %}

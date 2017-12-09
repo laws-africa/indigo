@@ -1,11 +1,18 @@
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView
+from django.contrib.auth import views as auth_views
 
 from . import views
 
+
 urlpatterns = [
     # auth
-    url('^user/', include('django.contrib.auth.urls')),
+    url('^user/login/$', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
+    url('^user/password-reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    url('^user/password-reset/sent/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    url('^user/password-reset/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    url('^user/password-reset/complete/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     # homepage
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
@@ -17,6 +24,4 @@ urlpatterns = [
 
     # rest-based auth
     url(r'^auth/', include('rest_auth.urls')),
-    url(r'^auth/password/reset-confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        views.password_reset_confirm, name='password_reset_confirm'),
 ]

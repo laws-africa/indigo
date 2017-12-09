@@ -66,10 +66,3 @@ def library(request):
         'countries': Country.objects.select_related('country').all(),
         'view': 'LibraryView',
     })
-
-
-def password_reset_confirm(request, uidb64, token):
-    return render(request, 'user/password_reset_confirm.html', {
-        'uid': uidb64,
-        'token': token,
-    })

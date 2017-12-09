@@ -31,7 +31,7 @@ class AuthorityReference(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    authority = models.ForeignKey(Authority, related_name='references')
+    authority = models.ForeignKey(Authority, related_name='references', on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ('authority', 'frbr_uri')

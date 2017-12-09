@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('name', models.CharField(help_text=b'Local name of this locality', max_length=512)),
                 ('code', models.CharField(help_text=b'Unique code of this locality (used in the FRBR URI)', max_length=100)),
-                ('country', models.ForeignKey(to='indigo_app.Country')),
+                ('country', models.ForeignKey(to='indigo_app.Country', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['name'],

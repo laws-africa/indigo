@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             name='Country',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('country', models.OneToOneField(to='countries_plus.Country')),
+                ('country', models.OneToOneField(to='countries_plus.Country', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ['country__name'],

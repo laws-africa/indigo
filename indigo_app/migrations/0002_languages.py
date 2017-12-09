@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
             name='Language',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('language', models.OneToOneField(to='languages_plus.Language')),
+                ('language', models.OneToOneField(to='languages_plus.Language', on_delete=models.CASCADE)),
             ],
             options={'ordering': ['language__name_en']},
             bases=(models.Model,),

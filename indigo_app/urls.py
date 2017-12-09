@@ -4,6 +4,10 @@ from django.views.generic.base import RedirectView
 from . import views
 
 urlpatterns = [
+    # auth
+    url('^user/', include('django.contrib.auth.urls')),
+
+    # homepage
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
 
     url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
@@ -11,6 +15,7 @@ urlpatterns = [
     url(r'^documents/import/$', views.import_document, name='import_document'),
     url(r'^library/$', views.library, name='library'),
 
+    # rest-based auth
     url(r'^auth/', include('rest_auth.urls')),
     url(r'^auth/password/reset-confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         views.password_reset_confirm, name='password_reset_confirm'),

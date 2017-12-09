@@ -455,12 +455,6 @@ legend {
   color: #333;
 }
 
-
-/* standalone pages, such as the password reset form */
-.standalone {
-  margin-top: 100px;
-}
-
 .sorted-table {
   th {
     cursor: pointer;
@@ -1210,3 +1204,6 @@ body.unauthenticated .annotations-container {
   .user-6 { background-color: #a6761d; }
   .user-7 { background-color: #666666; }
 }
+
+/* standalone pages, such as the password reset form */
+@import 'standalone';

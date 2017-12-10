@@ -522,6 +522,28 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s/media/test.txt' % id)
         assert_equal(response.status_code, 200)
 
+    def test_attachment_as_media_anonymous(self):
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # create it
+        # create a doc with an attachment
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("hello!")
+        tmp_file.seek(0)
+        response = self.client.post('/api/documents/%s/attachments' % id,
+                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
+        assert_equal(response.status_code, 201)
+
+        # now should exist
+        response = self.client.get('/api/documents/%s/media/test.txt' % id)
+        assert_equal(response.status_code, 200)
+
+        # not allowed
+        self.client.logout()
+        response = self.client.get('/api/documents/%s/media/test.txt' % id)
+        assert_equal(response.status_code, 403)
 
     def test_update_attachment(self):
         # create a doc with an attachment

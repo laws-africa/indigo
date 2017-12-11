@@ -1,0 +1,19 @@
+/* standalone pages, such as the password reset form */
+.standalone {
+  margin-top: 100px;
+}
+
+.framed-indigo-box {
+  background-color: $grey-lightest;
+  padding: 20px 10px;
+  box-shadow: 1px 1px 5px 2px rgba(0, 0, 0, 0.25);
+
+  img.logo {
+    margin-bottom: 40px;
+    max-height: 75px;
+  }
+
+  .forgot {
+    margin-top: 20px;
+  }
+}

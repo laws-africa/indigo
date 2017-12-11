@@ -13,9 +13,9 @@ from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, DjangoModelPermissions, AllowAny
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated, AllowAny
 from reversion import revisions as reversion
 from reversion.models import Version
 from django_filters.rest_framework import DjangoFilterBackend
@@ -60,6 +60,16 @@ def view_attachment(attachment):
     response['Content-Disposition'] = 'inline; filename=%s' % attachment.filename
     response['Content-Length'] = str(attachment.size)
     return response
+
+
+def view_attachment_by_filename(doc_id, filename):
+    """ This is a helper view to serve up a named attachment file via
+    a "media/file.ext" url, which is part of the AKN standard.
+    """
+    qs = Document.objects.defer('document_xml')
+    document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
+    attachment = get_list_or_404(Attachment.objects, document=document, filename=filename)[0]
+    return view_attachment(attachment)
 
 
 def download_attachment(attachment):
@@ -109,7 +119,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     API endpoint that allows Documents to be viewed or edited.
     """
     serializer_class = DocumentSerializer
-    permission_classes = (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
+    permission_classes = (DjangoModelPermissions, DocumentPermissions)
     renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
                         HTMLResponseRenderer, AkomaNtosoRenderer, ZIPResponseRenderer,
                         renderers.BrowsableAPIRenderer)
@@ -159,7 +169,10 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
 
 
 class DocumentResourceView(object):
-    """ Helper mixin for views that hang off of a document URL. """
+    """ Helper mixin for views that hang off of a document URL.
+
+    Includes enforcing permissions based on the document, not the resource.
+    """
     def initial(self, request, **kwargs):
         self.document = self.lookup_document()
         super(DocumentResourceView, self).initial(request, **kwargs)
@@ -178,6 +191,7 @@ class DocumentResourceView(object):
 class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
+    permission_classes = (IsAuthenticated,)
 
     @detail_route(methods=['GET'])
     def download(self, request, *args, **kwargs):
@@ -193,23 +207,21 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
         return queryset.filter(document=self.document).all()
 
 
+@permission_classes((IsAuthenticated,))
+@api_view()
 def attachment_media_view(request, *args, **kwargs):
     """ This is a helper view to serve up a named attachment file via
     a "media/file.ext" url, which is part of the AKN standard.
     """
-    qs = Document.objects.defer('document_xml')
     doc_id = kwargs['document_id']
-    document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
     filename = kwargs['filename']
-
-    attachment = get_list_or_404(Attachment.objects, document=document, filename=filename)[0]
-    return view_attachment(attachment)
+    return view_attachment_by_filename(doc_id, filename)
 
 
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
-    permission_classes = (AnnotationPermissions,)
+    permission_classes = (IsAuthenticated, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
@@ -217,6 +229,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     serializer_class = RevisionSerializer
+    permission_classes = (IsAuthenticated,)
 
     @detail_route(methods=['POST'])
     def restore(self, request, *args, **kwargs):
@@ -277,7 +290,7 @@ class DocumentActivityViewSet(DocumentResourceView,
     """ API endpoint to see who's working in a document.
     """
     serializer_class = DocumentActivitySerializer
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()
@@ -340,6 +353,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
+    permission_classes = (AllowAny,)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
@@ -394,11 +408,10 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         # asking for a media attachment?
         if self.component == 'media':
-            kwargs['document_id'] = document.id
-            kwargs['filename'] = self.subcomponent
+            filename = self.subcomponent
             if self.format_kwarg:
-                kwargs['filename'] += '.' + self.format_kwarg
-            return attachment_media_view(request, *args, **kwargs)
+                filename += '.' + self.format_kwarg
+            return view_attachment_by_filename(document.id, filename)
 
         if self.subcomponent:
             self.element = document.doc.get_subcomponent(self.component, self.subcomponent)
@@ -551,10 +564,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 class ParseView(APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
     """
-
-    # Allow anyone to use this API, it uses POST but doesn't change
-    # any documents in the database and so is safe.
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = ParseSerializer(data=request.data)
@@ -595,9 +605,7 @@ class ParseView(APIView):
 class RenderView(APIView):
     """ Support for rendering a document on the server.
     """
-    # Allow anyone to use this API, it uses POST but doesn't change
-    # any documents in the database and so is safe.
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request, format=None):
         serializer = RenderSerializer(data=request.data)
@@ -612,10 +620,7 @@ class RenderView(APIView):
 class LinkTermsView(APIView):
     """ Support for running term discovery and linking on a document.
     """
-
-    # Allow anyone to use this API, it uses POST but doesn't change
-    # any documents in the database and so is safe.
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = DocumentAPISerializer(data=self.request.data)
@@ -634,10 +639,7 @@ class LinkTermsView(APIView):
 class LinkReferencesView(APIView):
     """ Find and link references to other documents (acts)
     """
-
-    # Allow anyone to use this API, it uses POST but doesn't change
-    # any documents in the database and so is safe.
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         serializer = DocumentAPISerializer(data=self.request.data)
@@ -660,6 +662,7 @@ class SearchView(DocumentViewMixin, ListAPIView):
     pagination_class = SearchPagination
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
+    permission_classes = (AllowAny,)
 
     # Search scope, either 'documents' or 'works'.
     scope = 'documents'
@@ -669,6 +672,10 @@ class SearchView(DocumentViewMixin, ListAPIView):
 
         queryset = super(SearchView, self).filter_queryset(queryset)
         queryset = queryset.filter(search_vector=query)
+
+        # anonymous users can't see drafts
+        if not self.request.user.is_authenticated:
+            queryset = queryset.filter(draft=False)
 
         if self.scope == 'works':
             # Search for distinct works, which means getting the latest

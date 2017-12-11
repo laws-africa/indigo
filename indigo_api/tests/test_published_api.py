@@ -332,6 +332,25 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
         assert_equal(response.status_code, 200)
 
+    def test_published_media_attachments_anonymous(self):
+        response = self.client.get('/api/za/act/2001/8/eng.json')
+        assert_equal(response.status_code, 200)
+        id = response.data['id']
+
+        # create a doc with an attachment
+        self.client.login(username='email@example.com', password='password')
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("hello!")
+        tmp_file.seek(0)
+        response = self.client.post('/api/documents/%s/attachments' % id,
+                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
+        assert_equal(response.status_code, 201)
+
+        # exists
+        self.client.logout()
+        response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
+        assert_equal(response.status_code, 200)
+
     def test_published_zipfile(self):
         response = self.client.get('/api/za/act/2001/8/eng.zip')
         assert_equal(response.status_code, 200)

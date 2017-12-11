@@ -7,8 +7,11 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class AnalysisTestCase(APITestCase):
+    fixtures = ['user']
+
     def setUp(self):
         self.client.default_format = 'json'
+        assert_true(self.client.login(username='email@example.com', password='password'))
 
     def test_link_terms_no_input(self):
         response = self.client.post('/api/analysis/link-terms', {

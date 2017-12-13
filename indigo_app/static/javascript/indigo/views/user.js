@@ -31,6 +31,7 @@
         onSet: 'updateEmail',
       },
       '#profile_country_code': 'country_code',
+      '#profile_auth_token': 'auth_token',
     },
 
     initialize: function() {

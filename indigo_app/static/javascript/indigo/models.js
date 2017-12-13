@@ -483,7 +483,7 @@
   });
 
   Indigo.User = Backbone.Model.extend({
-    url: '/auth/user/',
+    url: '/api/auth/user/',
 
     authenticated: function() {
       return !!this.get('username');

@@ -30,5 +30,9 @@ urlpatterns = [
     url(r'documents/(?P<document_id>[0-9]+)/activity', views.DocumentActivityViewSet.as_view({
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
 
+    # rest-based auth
+    url(r'^auth/', include('rest_auth.urls')),
+    url(r'^auth/new-token/$', views.new_auth_token),
+
     url(r'^', include(router.urls)),
 ]

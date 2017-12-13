@@ -16,6 +16,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated, AllowAny
+from rest_framework.authtoken.models import Token
 from reversion import revisions as reversion
 from reversion.models import Version
 from django_filters.rest_framework import DjangoFilterBackend
@@ -708,3 +709,11 @@ class SearchView(DocumentViewMixin, ListAPIView):
             serializer.data[i]['_snippet'] = doc.snippet
 
         return serializer
+
+
+@api_view(['POST'])
+@permission_classes((IsAuthenticated,))
+def new_auth_token(request):
+    Token.objects.filter(user=request.user).delete()
+    token, _ = Token.objects.get_or_create(user=request.user)
+    return Response({'auth_token': token.key})

@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
 from .models import Country
 
@@ -11,14 +12,20 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """
     permissions = serializers.SerializerMethodField()
     country_code = serializers.CharField(allow_null=True, max_length=2, min_length=2, source='editor.country_code')
+    auth_token = serializers.SerializerMethodField()
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'permissions', 'country_code', 'is_staff')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'permissions', 'country_code', 'is_staff',
+                  'auth_token')
         read_only_fields = ('email', 'is_staff', 'id')
 
     def get_permissions(self, user):
         return [p for p in user.get_all_permissions() if p.startswith('indigo_api.')]
+
+    def get_auth_token(self, user):
+        if self.context['request'].user == user:
+            return Token.objects.get_or_create(user=user)[0].key
 
     def validate_country_code(self, value):
         if value is not None:

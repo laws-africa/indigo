@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.conf.urls import url
 from django.views.generic.base import RedirectView
 from django.contrib.auth import views as auth_views
 
@@ -21,7 +21,4 @@ urlpatterns = [
     url(r'^documents/new/$', views.document, name='new_document'),
     url(r'^documents/import/$', views.import_document, name='import_document'),
     url(r'^library/$', views.library, name='library'),
-
-    # rest-based auth
-    url(r'^auth/', include('rest_auth.urls')),
 ]

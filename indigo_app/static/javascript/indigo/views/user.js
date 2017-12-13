@@ -8,6 +8,7 @@
     el: 'body',
     events: {
       'click #user-buttons .logout': 'logout',
+      'click .user-profile-form .new-auth-token': 'newAuthToken',
 
       // user profile modal
       'show.bs.modal #user-profile-box': 'modalShown',
@@ -31,6 +32,7 @@
         onSet: 'updateEmail',
       },
       '#profile_country_code': 'country_code',
+      '#profile_auth_token': 'auth_token',
     },
 
     initialize: function() {
@@ -79,7 +81,7 @@
       var self = this;
       e.preventDefault();
 
-      $.post('/auth/password/change/', this.$passwordBox.find('form').serialize())
+      $.post('/api/auth/password/change/', this.$passwordBox.find('form').serialize())
         .error(function(xhr, status, error) {
           if (xhr.status == 400) {
             var errors = [];
@@ -104,7 +106,7 @@
             'password': self.$passwordBox.find('[name=new_password2]').val(),
           };
 
-          $.post('/auth/login/', creds)
+          $.post('/api/auth/login/', creds)
             .error(function(xhr) {
               // hmm, refresh page
               window.location.reload();
@@ -130,11 +132,20 @@
     },
 
     logout: function() {
+      if (confirm('Are you sure you want to logout?')) {
+        $.post('/api/auth/logout/')
+          .then(function() { window.location = '/user/login/'; });
+      }
+    },
+
+    newAuthToken: function() {
       var user = this.model;
 
-      if (confirm('Are you sure you want to logout?')) {
-        $.post('/auth/logout/')
-          .then(function() { window.location = '/user/login/'; });
+      if (confirm('Are you sure you want to generate a new API token?')) {
+        $.post('/api/auth/new-token/')
+          .then(function(resp) {
+            user.set('auth_token', resp.auth_token);
+          });
       }
     },
   });

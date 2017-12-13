@@ -17,7 +17,7 @@
       var form = $('.password-reset-form');
       form.find('[name=new_password2]').val(form.find('[name=new_password1]').val());
 
-      $.post('/auth/password/reset/confirm/', $('.password-reset-form').serialize())
+      $.post('/api/auth/password/reset/confirm/', $('.password-reset-form').serialize())
         .error(function(xhr) {
           var text = "We were unable to reset your password, try resetting it from the start again.";
           var resp = xhr.responseJSON;

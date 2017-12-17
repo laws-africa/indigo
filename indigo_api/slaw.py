@@ -64,6 +64,10 @@ class Importer(Slaw):
     """ Should we tell Slaw to reformat before parsing? Only do this with initial imports. """
     reformat = False
 
+    """ Two-letter country code.
+    """
+    country = None
+
     def import_from_upload(self, upload, request):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
@@ -122,7 +126,7 @@ class Importer(Slaw):
         if self.fragment:
             doc = Fragment(stdout.decode('utf-8'))
         else:
-            doc = Document.randomized(request.user)
+            doc = Document.randomized(country=self.country)
             frbr_uri = doc.frbr_uri
             doc.content = stdout.decode('utf-8')
             doc.frbr_uri = frbr_uri  # reset it

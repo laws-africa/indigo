@@ -575,6 +575,7 @@ class ParseView(APIView):
         importer = Importer()
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
+        importer.country = request.user.editor.country_code
 
         upload = self.request.data.get('file')
         if upload:

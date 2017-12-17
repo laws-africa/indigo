@@ -748,13 +748,14 @@ legend {
   position: absolute;
   top: 0px;
   bottom: 0px;
+  right: 0px;
   width: $sidebar-width;
   overflow-x: hidden;
   overflow-y: scroll;
 }
 
 .revisions-container + .document-sheet-container {
-  left: $sidebar-width;
+  right: $sidebar-width;
 }
 
 .revision-preview {
@@ -772,28 +773,30 @@ legend {
 
 .revision-list {
   .revision {
-    padding: 5px 10px;
+    padding: 5px 5px 5px 20px;
     border-bottom: 1px solid $border-colour;
     cursor: pointer;
+    position: relative;
 
     &.active {
       background-color: $sidebar-colour;
 
-      .revision-controls,
-      .chevron {
+      .revision-controls {
         display: block;
+      }
+
+      &::before {
+        content: "\f053";
+        font-family: FontAwesome;
+        position: absolute;
+        left: 5px;
+        color: $grey-darkest;
       }
     }
 
     &:hover {
       background-color: $sidebar-colour;
     }
-  }
-
-  .chevron {
-    float: right;
-    margin-top: 3px;
-    display: none;
   }
 
   .revision-date {
@@ -806,10 +809,6 @@ legend {
 
   .revision-comment {
     font-style: italic;
-  }
-
-  .revision-summary {
-    margin-left: 10px;
   }
 }
 

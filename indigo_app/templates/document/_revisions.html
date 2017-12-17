@@ -9,8 +9,8 @@
   <div class="boxed-group-inner boxed-group-inner-minimal">
     <div class="revisions-container"></div>
 
-    <div class="document-sheet-container">
-      <div class="revision-preview document-sheet">
+    <div class="document-sheet-container sheet-outer">
+      <div class="revision-preview sheet-inner">
         <div class="akoma-ntoso"></div>
       </div>
     </div>
@@ -23,7 +23,6 @@
 <ol class="revision-list list-unstyled">
 {{#each revisions}}
   <li class="revision" data-id="{{ id }}" data-index="{{ @index }}">
-    <i class="chevron text-muted fa fa-chevron-right"></i>
     <div>
       <span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span>
     </div>

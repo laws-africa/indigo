@@ -51,11 +51,9 @@
     findReferences: function(e) {
       var self = this,
           $btn = this.$el.find('.find-references'),
-          data = {
-            document: {
-              content: this.model.toXml()
-            }
-          };
+          data = {'document': this.model.document.toJSON()};
+
+      data.document.content = this.model.toXml();
 
       $btn
         .prop('disabled', true)

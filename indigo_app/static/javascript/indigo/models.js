@@ -15,6 +15,7 @@
       this.document = options.document;
       this.xmlDocument = null;
       this.on('change:content', this.contentChanged, this);
+      this.on('change:dom', this.domChanged, this);
     },
 
     isNew: function() {
@@ -28,15 +29,25 @@
 
     contentChanged: function(model, newValue, options) {
       // don't bother updating the DOM if the source of this event
-      // is a change to the DOM
-      if (options.fromXmlDocument) return;
+      // is already a change to the DOM
+      if (options && options.fromXmlDocument) return;
 
       try {
         this.xmlDocument = $.parseXML(newValue);
-        this.trigger('change:dom', options);
       } catch(e) {
         Indigo.errorView.show("The document has invalid XML.");
+        return;
       }
+
+      this.trigger('change:dom', options);
+    },
+
+    domChanged: function(model, options) {
+      // don't bother updating the content if this event was
+      // originally triggered by a content change
+      if (options && options.fromContent) return;
+
+      this.set('content', this.toXml(), {fromXmlDocument: true});
     },
 
     // serialise an XML node, or the entire document if node is not given, to a string
@@ -95,10 +106,7 @@
         }
       }
 
-      // save the updated XML
-      this.set('content', prettyPrintXml(Indigo.toXml(this.xmlDocument)), {fromXmlDocument: true});
       this.trigger('change:dom');
-
       return first;
     },
 

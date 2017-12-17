@@ -12,12 +12,13 @@
     template: '#references-template',
     events: {
       'click .find-references': 'findReferences',
+      'click .remove-references': 'removeReferences',
     },
 
     initialize: function(options) {
       this.template = Handlebars.compile($(this.template).html());
       // TODO: do this on modal popup?
-      this.model.on('change', this.render, this);
+      this.model.on('change change:dom', this.render, this);
     },
 
     render: function() {
@@ -73,6 +74,24 @@
             .prop('disabled', false)
             .find('.fa').removeClass('fa-spin');
         });
+    },
+
+    removeReferences: function(e) {
+      // remove all non-absolute refs
+      var changed = false;
+
+      this.model.xmlDocument.querySelectorAll('ref').forEach(function(ref) {
+        if ((ref.getAttribute('href') || "").startsWith('/')) {
+          // get rid of ref
+          var parent = ref.parentNode;
+          while (ref.firstChild) parent.insertBefore(ref.firstChild, ref);
+          parent.removeChild(ref);
+
+          changed = true;
+        }
+      });
+
+      if (changed) this.model.trigger('change:dom');
     },
   });
 })(window);

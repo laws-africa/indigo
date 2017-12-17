@@ -67,7 +67,8 @@
 
       formData.append('file', this.file);
       formData.append('file_options.section_number_position',
-                      this.$el.find('[name="file_options.section_number_position"]:checked').val());
+                      this.$('[name="file_options.section_number_position"]:checked').val());
+      formData.append('country', this.$('[name=country]').val());
 
       this.$el.find('.file-inputs').hide();
       this.$el.find('.progress-box').show();

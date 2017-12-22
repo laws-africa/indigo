@@ -8,23 +8,21 @@ GEM
     log4r (1.1.10)
     mime-types (1.25.1)
     mimemagic (0.2.1)
-    mini_portile2 (2.1.0)
-    nokogiri (1.6.8)
-      mini_portile2 (~> 2.1.0)
-      pkg-config (~> 1.1.7)
-    pkg-config (1.1.7)
+    mini_portile2 (2.3.0)
+    nokogiri (1.8.1)
+      mini_portile2 (~> 2.3.0)
     polyglot (0.3.5)
-    slaw (0.15.1)
+    slaw (0.15.2)
       log4r (~> 1.1.10)
       mimemagic (~> 0.2.1)
-      nokogiri (~> 1.6.0)
+      nokogiri (~> 1.8.1)
       thor (~> 0.19.1)
       treetop (~> 1.5)
       twitter-text (~> 1.12.0)
       wikicloth (~> 0.8.3)
       yomu (~> 0.2.2)
     thor (0.19.4)
-    treetop (1.6.3)
+    treetop (1.6.9)
       polyglot (~> 0.3)
     twitter-text (1.12.0)
       unf (~> 0.1.0)
@@ -37,7 +35,7 @@ GEM
       htmlentities
       nokogiri
       twitter-text
-    yomu (0.2.2)
+    yomu (0.2.4)
       json (~> 1.8)
       mime-types (~> 1.23)
 
@@ -45,7 +43,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  slaw (~> 0.15.1)
+  slaw (~> 0.15.2)
 
 RUBY VERSION
    ruby 2.3.3p222

@@ -235,7 +235,7 @@ button.btn-link.help {
   padding: 5px;
 }
 
-.boxed-group-inner.boxed-group-inner-minimal {
+.workspace .boxed-group-inner.boxed-group-inner-minimal {
   padding: 0px;
 }
 
@@ -472,6 +472,8 @@ legend {
 }
 
 .import-form {
+  padding: 10px 0px;
+
   .dropzone {
     width: 100%;
     border: 5px dashed $border-colour;
@@ -501,8 +503,28 @@ legend {
     margin-bottom: 0px;
   }
 
+  input[type=radio]:checked + .example {
+    background-color: $selection-colour;
+  }
+
   section {
     margin-bottom: 25px;
+  }
+
+  .pages {
+    display: none;
+    width: 100%;
+    height: 562px;
+
+    position: relative;
+    overflow-y: scroll;
+    padding: 5px;
+    background: $grey-lighter;
+
+    .page {
+      border: 1px solid $grey-darkest;
+      position: absolute;
+    }
   }
 }
 

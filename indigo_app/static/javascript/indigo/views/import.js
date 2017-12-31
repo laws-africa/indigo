@@ -49,9 +49,62 @@
     },
 
     setFile: function(file) {
+      var self = this;
+
       this.file = file;
       this.$('.file-detail').text(this.file.name);
       this.$('button.import').prop('disabled', false);
+
+      if (this.file.type == "application/pdf") {
+
+        var reader = new FileReader();
+        reader.onload = function() {
+          self.drawPDF(this.result);
+        };
+        reader.readAsArrayBuffer(this.file);
+
+      } else {
+        this.$('.pages').hide();
+      }
+    },
+
+    drawPDF: function(data) {
+      var self = this,
+          container = this.$('.pages').empty().show()[0],
+          pageHeight = 550,
+          nextLeft = 100;
+
+      PDFJS.disableWorker = true;
+
+      function renderPage(pdf, pageNum) {
+        pdf.getPage(pageNum).then(function(page) {
+          var canvas = document.createElement('canvas');
+          canvas.setAttribute('id', 'page-' + pageNum);
+          canvas.setAttribute('class', 'page');
+          container.appendChild(canvas);
+
+          var scale = pageHeight / page.getViewport(1).height;
+          var viewport = page.getViewport(scale);
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          canvas.style.left = nextLeft + 'px';
+
+          nextLeft = nextLeft + canvas.width + 5 + 2;
+
+          //if (pageNum == 1) container.style.height = canvas.height + 5 + 'px';
+
+          page.render({
+            canvasContext: canvas.getContext('2d'),
+            viewport: viewport
+          }).then(function() {
+            if (pageNum < pdf.numPages) renderPage(pdf, pageNum + 1);
+          });
+        });
+      }
+
+      PDFJS.getDocument({data: data}).then(function(pdf) {
+        renderPage(pdf, 1);
+      });
     },
 
     submitForm: function(e) {

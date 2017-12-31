@@ -525,6 +525,12 @@ legend {
       border: 1px solid $grey-darkest;
       position: absolute;
     }
+
+    .padding {
+      position: absolute;
+      width: 100px;
+      height: 10px;
+    }
   }
 }
 

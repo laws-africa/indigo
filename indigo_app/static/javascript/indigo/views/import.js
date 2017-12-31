@@ -89,13 +89,18 @@
 
           nextLeft = nextLeft + canvas.width + 5 + 2;
 
-          //if (pageNum == 1) container.style.height = canvas.height + 5 + 'px';
-
           page.render({
             canvasContext: canvas.getContext('2d'),
             viewport: viewport
           }).then(function() {
-            if (pageNum < pdf.numPages) renderPage(pdf, pageNum + 1);
+            if (pageNum < pdf.numPages) {
+              renderPage(pdf, pageNum + 1);
+            } else {
+              var padding = document.createElement('div');
+              padding.setAttribute('class', 'padding');
+              padding.style.left = nextLeft + 'px';
+              container.append(padding);
+            }
           });
         });
       }

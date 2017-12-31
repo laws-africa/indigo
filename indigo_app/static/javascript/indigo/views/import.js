@@ -74,8 +74,6 @@
           pageHeight = 550,
           nextLeft = 100;
 
-      PDFJS.disableWorker = true;
-
       function renderPage(pdf, pageNum) {
         pdf.getPage(pageNum).then(function(page) {
           var canvas = document.createElement('canvas');

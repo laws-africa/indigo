@@ -5,7 +5,7 @@
 {% block js %}
   <script src="{% static 'javascript/pdfjs/pdf.js' %}"></script>
   <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/svg.js/2.6.3/svg.min.js"></script>
+  <script src="{% static 'javascript/svg.min.js' %}"></script>
   {{ block.super }}
 {% endblock %}
 

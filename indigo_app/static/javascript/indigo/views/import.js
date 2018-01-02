@@ -8,6 +8,7 @@
    * Manages the movement/selection of the crop box for PDF file import.
    */
   Indigo.CropBoxView = Backbone.View.extend({
+    cornerSize: 20,
     el: '.pages',
     events: {
       'mousemove': 'mousemove',
@@ -25,7 +26,18 @@
         width: 0,
         height: 0,
       });
-      this.listenTo(this.cropbox, 'change', this.render);
+      this.listenTo(this.cropbox, 'change', this.refresh);
+    },
+
+    createBox: function(svg) {
+      var g = svg.group().addClass('cropbox'),
+          s = this.cornerSize;
+
+      g.rect(0, 0).addClass('box').attr('data-movement', 'move');
+      // add box corners
+      ['ne', 'nw', 'se', 'sw'].forEach(function(c) {
+        g.rect(s, s).addClass(c).addClass('corner').attr('data-movement', c);
+      });
     },
 
     newPages: function(width, height) {
@@ -34,35 +46,75 @@
       this.pageWidth = width;
       this.pageHeight = height;
       this.cropbox.set({
-        top: 20,
         left: 20,
+        top: 20,
         width: this.pageWidth - 20 * 2,
         height: this.pageHeight - 20 * 2,
       });
     },
 
-    mousemove: function(e) {
-      if (!this.moving) return;
+    /* Calculate the final cropbox, return an array [left, top, width, height]
+     * in PDF coordinates.
+     */
+    calculateCropBox: function(scale) {
+      var attrs = this.cropbox.attributes;
 
-      this.cropbox.set({
-        top:  Math.min(this.pageWidth, Math.max(0, this.cropbox.get('top') + e.originalEvent.movementX)),
-        left: Math.min(this.pageHeight, Math.max(0, this.cropbox.get('left') + e.originalEvent.movementY)),
-      });
+      return [
+        attrs.left / scale,
+        attrs.top / scale,
+        attrs.width / scale,
+        attrs.height / scale,
+      ];
+    },
+
+    mousemove: function(e) {
+      if (this.moving) {
+        var dx = e.originalEvent.movementX,
+            dy = e.originalEvent.movementY,
+            attrs = this.cropbox.attributes;
+
+        this.cropbox.set({
+          left:   Math.min(this.pageWidth,  Math.max(0, attrs.left + this.movement[0] * dx)),
+          top:    Math.min(this.pageHeight, Math.max(0, attrs.top + this.movement[1] * dy)),
+          width:  Math.min(this.pageWidth,  Math.max(0, attrs.width + this.movement[2] * dx)),
+          height: Math.min(this.pageHeight, Math.max(0, attrs.height + this.movement[3] * dy)),
+        });
+      }
     },
 
     mousedown: function(e) {
       this.moving = true;
+
+      // how this movement will affect the cropbox:
+      //   left (x), top (y), width (x), height (y)
+      this.movement = {
+        'nw':   [1, 1, -1, -1],
+        'ne':   [0, 1,  1, -1],
+        'sw':   [1, 0, -1,  1],
+        'se':   [0, 0,  1,  1],
+        'move': [1, 1,  0,  0],
+      }[e.target.getAttribute('data-movement')];
     },
 
     mouseup: function(e) {
       this.moving = false;
     },
 
-    render: function() {
-      this.$boxes.attr('x', this.cropbox.get('top'));
-      this.$boxes.attr('y', this.cropbox.get('left'));
-      this.$boxes.attr('width', this.cropbox.get('width'));
-      this.$boxes.attr('height', this.cropbox.get('height'));
+    refresh: function() {
+      var w = this.cropbox.get('width'),
+          h = this.cropbox.get('height');
+
+      this.$boxes.attr('transform', 'translate(' + this.cropbox.get('left') + ',' + this.cropbox.get('top') + ')');
+      this.$boxes.find('.box').attr({
+        width: w,
+        height: h,
+      });
+      this.$boxes.find('.ne').attr('x', w - this.cornerSize);
+      this.$boxes.find('.se').attr({
+        x: w - this.cornerSize,
+        y: h - this.cornerSize,
+      });
+      this.$boxes.find('.sw').attr('y', h - this.cornerSize);
     },
   });
 
@@ -119,18 +171,23 @@
       this.$('button.import').prop('disabled', false);
 
       if (this.file.type == "application/pdf") {
-
         var reader = new FileReader();
         reader.onload = function() {
           self.drawPDF(this.result);
         };
         reader.readAsArrayBuffer(this.file);
-
       } else {
+        this.scale = null;
         this.$('.pages').hide();
       }
     },
 
+    /**
+     * Renders the full pdf onto a set of pages, so that we can draw cropbox
+     * controls around them. The PDFs are rendered onto a canvas element
+     * and then turned into an image to be used in an SVG object. This makes
+     * it easier to update the cropbox overly than working on canvas directly.
+     */
     drawPDF: function(data) {
       var self = this,
           container = this.$('.pages').empty().show()[0],
@@ -141,8 +198,8 @@
         pdf.getPage(pageNum).then(function(page) {
           var canvas = document.createElement('canvas');
 
-          var scale = pageHeight / page.getViewport(1).height;
-          var viewport = page.getViewport(scale);
+          self.scale = pageHeight / page.getViewport(1).height;
+          var viewport = page.getViewport(self.scale);
           canvas.height = viewport.height;
           canvas.width = viewport.width;
 
@@ -151,15 +208,17 @@
             viewport: viewport
           }).then(function() {
             var page = document.createElement('div');
-            page.setAttribute('class', 'page');
-            page.style.width = canvas.width + 2 + 'px';
-            page.style.height = canvas.height + 2 + 'px';
-            page.style.left = nextLeft + 'px';
             page.id = 'page-' + pageNum;
-            nextLeft = nextLeft + canvas.width + 5 + 2;
+            page.setAttribute('class', 'page');
+            page.style.width = canvas.width + 'px';
+            page.style.height = canvas.height + 'px';
+            page.style.left = nextLeft + 'px';
+            nextLeft = nextLeft + canvas.width + 5 + 2; // spacing and border
             container.appendChild(page);
 
-            renderPageWithCrop(page, canvas);
+            var svg = SVG(page).size(canvas.width, canvas.height);
+            svg.image(canvas.toDataURL(), canvas.width, canvas.height);
+            self.cropBoxView.createBox(svg);
 
             if (pageNum < pdf.numPages) {
               // next page
@@ -177,13 +236,7 @@
         });
       }
 
-      function renderPageWithCrop(page, canvas) {
-        var svg = SVG(page).size(canvas.width, canvas.height);
-
-        svg.image(canvas.toDataURL(), canvas.width, canvas.height);
-        svg.rect(0, 0).addClass('cropbox');
-      }
-
+      // kick off the rendering, one page at a time
       PDFJS.getDocument({data: data}).then(function(pdf) {
         renderPage(pdf, 1);
       });

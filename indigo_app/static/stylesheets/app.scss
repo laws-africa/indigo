@@ -522,8 +522,9 @@ legend {
     background: $grey-lighter;
 
     .page {
-      border: 1px solid $grey-darkest;
       position: absolute;
+      box-sizing: content-box;
+      border: 1px solid $grey-darkest;
     }
 
     .padding {
@@ -535,7 +536,15 @@ legend {
     .cropbox {
       fill-opacity: 0.25;
       fill: #0983f6;
+      cursor: move;
     }
+
+    .corner {
+      fill-opacity: 0.75;
+    }
+
+    .ne, .sw { cursor: nesw-resize; }
+    .nw, .se { cursor: nwse-resize; }
   }
 }
 

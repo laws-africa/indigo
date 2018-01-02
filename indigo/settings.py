@@ -83,11 +83,7 @@ WSGI_APPLICATION = 'indigo.wsgi.application'
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # where does the pdftotext binary live?
-if DEBUG:
-    INDIGO_PDFTOTEXT = 'pdftotext'
-else:
-    # on heroku, use the bundled version at bin/pdftotext
-    INDIGO_PDFTOTEXT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'bin', 'pdftotext'))
+INDIGO_PDFTOTEXT = 'pdftotext'
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

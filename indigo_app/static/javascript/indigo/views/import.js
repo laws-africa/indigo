@@ -253,10 +253,12 @@
       var self = this;
       var formData = new FormData();
 
-      formData.append('file', this.file);
-      formData.append('file_options.section_number_position',
-                      this.$('[name="file_options.section_number_position"]:checked').val());
       formData.append('country', this.$('[name=country]').val());
+      formData.append('file', this.file);
+      formData.append('file_options..section_number_position',
+                      this.$('[name="file_options.section_number_position"]:checked').val());
+      // cropbox info?
+      if (this.scale) formData.append('file_options..cropbox', this.cropBoxView.calculateCropBox(this.scale));
 
       this.$el.find('.file-inputs').hide();
       this.$el.find('.progress-box').show();

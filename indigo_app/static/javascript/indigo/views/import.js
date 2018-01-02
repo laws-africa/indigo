@@ -8,7 +8,7 @@
    * Manages the movement/selection of the crop box for PDF file import.
    */
   Indigo.CropBoxView = Backbone.View.extend({
-    cornerSize: 20,
+    cornerSize: 15,
     el: '.pages',
     events: {
       'mousemove': 'mousemove',

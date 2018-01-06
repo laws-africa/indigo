@@ -89,7 +89,7 @@
 
     quickEdit: function(e) {
       var elemId = e.currentTarget.parentElement.parentElement.id,
-          node = this.parent.fragment;
+          node = this.parent.documentContent.xmlDocument;
 
       // the id might be scoped
       elemId.split("/").forEach(function(id) {

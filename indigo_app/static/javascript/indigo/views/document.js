@@ -160,7 +160,6 @@
         this.documentContent.trigger('sync');
       } else {
         // new document, pretend it's dirty
-        this.propertiesView.calculateUri();
         this.setDirty();
       }
 

@@ -88,9 +88,15 @@
     },
 
     quickEdit: function(e) {
-      var elemId = e.currentTarget.parentElement.parentElement.id;
-      var node = this.parent.fragment.querySelector('#' + elemId);
-      this.editFragmentText(node);
+      var elemId = e.currentTarget.parentElement.parentElement.id,
+          node = this.parent.fragment;
+
+      // the id might be scoped
+      elemId.split("/").forEach(function(id) {
+        node = node.querySelector('[id="' + id + '"]');
+      });
+
+      if (node) this.editFragmentText(node);
     },
 
     editFragmentText: function(fragment) {

@@ -50,7 +50,7 @@
         top: 20,
         width: this.pageWidth - 20 * 2,
         height: this.pageHeight - 20 * 2,
-      });
+      }).trigger('change');
     },
 
     /* Calculate the final cropbox, return an array [left, top, width, height]
@@ -190,31 +190,35 @@
      */
     drawPDF: function(data) {
       var self = this,
-          container = this.$('.pages').empty().show()[0],
+          container = this.$('.pages').empty().show().addClass('loading')[0],
           pageHeight = 550,
           nextLeft = 100;
 
       function renderPage(pdf, pageNum) {
-        pdf.getPage(pageNum).then(function(page) {
+        var page = document.createElement('page');
+        page.setAttribute('class', 'page loading');
+        page.id = 'pdf-page-' + pageNum;
+        page.style.width = '338px';
+        page.style.height = '550px';
+        page.style.left = nextLeft + 'px';
+        container.appendChild(page);
+
+        pdf.getPage(pageNum).then(function(pdfPage) {
           var canvas = document.createElement('canvas');
 
-          self.scale = pageHeight / page.getViewport(1).height;
-          var viewport = page.getViewport(self.scale);
+          self.scale = pageHeight / pdfPage.getViewport(1).height;
+          var viewport = pdfPage.getViewport(self.scale);
           canvas.height = viewport.height;
           canvas.width = viewport.width;
 
-          page.render({
+          pdfPage.render({
             canvasContext: canvas.getContext('2d'),
             viewport: viewport
           }).then(function() {
-            var page = document.createElement('div');
-            page.id = 'page-' + pageNum;
-            page.setAttribute('class', 'page');
             page.style.width = canvas.width + 'px';
             page.style.height = canvas.height + 'px';
-            page.style.left = nextLeft + 'px';
+            page.classList.remove('loading');
             nextLeft = nextLeft + canvas.width + 5 + 2; // spacing and border
-            container.appendChild(page);
 
             var svg = SVG(page).size(canvas.width, canvas.height);
             svg.image(canvas.toDataURL(), canvas.width, canvas.height);
@@ -224,11 +228,13 @@
               // next page
               renderPage(pdf, pageNum + 1);
             } else {
+              // we're done
               // last padding element
               var padding = document.createElement('div');
               padding.setAttribute('class', 'padding');
               padding.style.left = nextLeft + 'px';
               container.append(padding);
+              container.classList.remove('loading');
 
               self.cropBoxView.newPages(canvas.width, canvas.height);
             }

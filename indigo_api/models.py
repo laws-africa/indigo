@@ -147,6 +147,17 @@ class Document(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
+    # extra details which are primarily stored in the XML, but which are first class API attributes
+    # so we cache them in the database
+    publication_name = models.CharField(null=True, blank=True, max_length=255)
+    publication_date = models.CharField(null=True, blank=True, max_length=255)
+    publication_number = models.CharField(null=True, blank=True, max_length=255)
+
+    # caching attributes
+    _repeal = None
+    _amendments = None
+    _work_uri = None
+
     @property
     def doc(self):
         """ The wrapped `an.act.Act` that this document works with. """
@@ -167,53 +178,29 @@ class Document(models.Model):
 
     @property
     def year(self):
-        return self.doc.year
+        return self.work_uri.date.split('-', 1)[0]
 
     @property
     def number(self):
-        return self.doc.number
+        return self.work_uri.number
 
     @property
     def nature(self):
-        return self.doc.nature
+        return self.work_uri.doctype
 
     @property
     def subtype(self):
-        return self.doc.frbr_uri.subtype
+        return self.work_uri.subtype
 
     @property
     def locality(self):
-        return self.doc.frbr_uri.locality
-
-    @property
-    def publication_name(self):
-        return self.doc.publication_name
-
-    @publication_name.setter
-    def publication_name(self, value):
-        self.doc.publication_name = value
-
-    @property
-    def publication_number(self):
-        return self.doc.publication_number
-
-    @publication_number.setter
-    def publication_number(self, value):
-        self.doc.publication_number = value
-
-    @property
-    def publication_date(self):
-        return self.doc.publication_date
-
-    @publication_date.setter
-    def publication_date(self, value):
-        self.doc.publication_date = value
+        return self.work_uri.locality
 
     @property
     def amendments(self):
         # we cache these values so that we can decorate them
         # with extra info when serializing
-        if not hasattr(self, '_amendments') or self._amendments is None:
+        if self._amendments is None:
             self._amendments = self.doc.amendments
         return self._amendments
 
@@ -225,7 +212,7 @@ class Document(models.Model):
 
     @property
     def repeal(self):
-        if not hasattr(self, '_repeal') or self._repeal is None:
+        if self._repeal is None:
             self._repeal = self.doc.repeal
         return self._repeal
 
@@ -233,6 +220,13 @@ class Document(models.Model):
     def repeal(self, value):
         self._repeal = None
         self.doc.repeal = value
+
+    @property
+    def work_uri(self):
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this document universally. """
+        if self._work_uri is None:
+            self._work_uri = FrbrUri.parse(self.frbr_uri)
+        return self._work_uri
 
     def save(self, *args, **kwargs):
         self.copy_attributes()
@@ -258,13 +252,20 @@ class Document(models.Model):
             self.doc.work_date = self.doc.publication_date
             self.doc.expression_date = self.expression_date or self.doc.publication_date or arrow.now()
             self.doc.manifestation_date = self.updated_at or arrow.now()
+            self.doc.publication_number = self.publication_number
+            self.doc.publication_name = self.publication_name
+            self.doc.publication_date = self.publication_date
 
         else:
             self.title = self.doc.title
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
+            self.publication_number = self.doc.publication_number
+            self.publication_name = self.doc.publication_name
+            self.publication_date = self.doc.publication_date
             # ensure these are refreshed
+            self._work_uri = None
             self._amendments = None
             self._amended_versions = None
             self._repeal = None

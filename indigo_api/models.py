@@ -35,7 +35,10 @@ log = logging.getLogger(__name__)
 
 class DocumentManager(models.Manager):
     def get_queryset(self):
-        return super(DocumentManager, self).get_queryset().defer("search_text", "search_vector")
+        # defer expensive or unnecessary fields
+        return super(DocumentManager, self)\
+            .get_queryset()\
+            .defer("search_text", "search_vector")
 
 
 class DocumentQuerySet(models.QuerySet):
@@ -44,6 +47,9 @@ class DocumentQuerySet(models.QuerySet):
 
     def published(self):
         return self.filter(draft=False)
+
+    def no_xml(self):
+        return self.defer('document_xml')
 
     def latest_expression(self):
         """ Select only the most recent expression for documents with the same frbr_uri.
@@ -400,10 +406,8 @@ class Document(models.Model):
         """
         # uris that amended docs in the set
         uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
-        amending_docs = Document.objects\
-            .filter(deleted__exact=False)\
+        amending_docs = Document.objects.undeleted().no_xml()\
             .filter(frbr_uri__in=list(uris))\
-            .defer('document_xml')\
             .order_by('expression_date')\
             .all()
 
@@ -422,10 +426,8 @@ class Document(models.Model):
         """
         # uris that amended docs in the set
         uris = set(d.repeal.repealing_uri for d in documents if d.repeal)
-        repealing_docs = Document.objects\
-            .filter(deleted__exact=False)\
+        repealing_docs = Document.objects.undeleted().no_xml()\
             .filter(frbr_uri__in=list(uris))\
-            .defer('document_xml')\
             .order_by('expression_date')\
             .all()
 
@@ -445,10 +447,8 @@ class Document(models.Model):
         list of all the documents which form the same group of amended versions.
         """
         uris = [d.frbr_uri for d in documents]
-        docs = Document.objects\
-            .filter(deleted__exact=False)\
+        docs = Document.objects.undeleted().no_xml()\
             .filter(frbr_uri__in=uris)\
-            .defer('document_xml')\
             .order_by('frbr_uri', 'expression_date')\
             .all()
 

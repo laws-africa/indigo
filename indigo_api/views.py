@@ -67,7 +67,7 @@ def view_attachment_by_filename(doc_id, filename):
     """ This is a helper view to serve up a named attachment file via
     a "media/file.ext" url, which is part of the AKN standard.
     """
-    qs = Document.objects.defer('document_xml')
+    qs = Document.objects.undeleted().no_xml()
     document = get_object_or_404(qs, deleted__exact=False, id=doc_id)
     attachment = get_list_or_404(Attachment.objects, document=document, filename=filename)[0]
     return view_attachment(attachment)
@@ -80,7 +80,7 @@ def download_attachment(attachment):
 
 
 class DocumentViewMixin(object):
-    queryset = Document.objects.undeleted().prefetch_related('tags', 'created_by_user', 'updated_by_user')
+    queryset = Document.objects.undeleted().no_xml().prefetch_related('tags', 'created_by_user', 'updated_by_user')
 
     def initial(self, request, **kwargs):
         super(DocumentViewMixin, self).initial(request, **kwargs)
@@ -179,9 +179,9 @@ class DocumentResourceView(object):
         super(DocumentResourceView, self).initial(request, **kwargs)
 
     def lookup_document(self):
-        qs = Document.objects.defer('document_xml')
+        qs = Document.objects.undeleted().no_xml()
         doc_id = self.kwargs['document_id']
-        return get_object_or_404(qs, deleted__exact=False, id=doc_id)
+        return get_object_or_404(qs, id=doc_id)
 
     def get_serializer_context(self):
         context = super(DocumentResourceView, self).get_serializer_context()

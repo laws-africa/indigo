@@ -12,6 +12,7 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -22,7 +23,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri
+from cobalt.act import Act, FrbrUri, RepealEvent, datestring
 
 from .utils import language3_to_2, localize_toc
 
@@ -152,6 +153,7 @@ class Document(models.Model):
     publication_name = models.CharField(null=True, blank=True, max_length=255)
     publication_date = models.CharField(null=True, blank=True, max_length=255)
     publication_number = models.CharField(null=True, blank=True, max_length=255)
+    repeal_event = JSONField(null=True)
 
     # caching attributes
     _repeal = None
@@ -213,13 +215,24 @@ class Document(models.Model):
     @property
     def repeal(self):
         if self._repeal is None:
-            self._repeal = self.doc.repeal
+            e = self.repeal_event
+            if e:
+                d = e.get('date')
+                d = arrow.get(d).date() if d else None
+                self._repeal = RepealEvent(d, e.get('repealing_title'), e.get('repealing_uri'))
         return self._repeal
 
     @repeal.setter
     def repeal(self, value):
         self._repeal = None
-        self.doc.repeal = value
+        if value:
+            self.repeal_event = {
+                'date': datestring(value.date),
+                'repealing_title': value.repealing_title,
+                'repealing_uri': value.repealing_uri,
+            }
+        else:
+            self.repeal_event = None
 
     @property
     def work_uri(self):
@@ -255,6 +268,7 @@ class Document(models.Model):
             self.doc.publication_number = self.publication_number
             self.doc.publication_name = self.publication_name
             self.doc.publication_date = self.publication_date
+            self.doc.repeal = self.repeal
 
         else:
             self.title = self.doc.title
@@ -264,6 +278,7 @@ class Document(models.Model):
             self.publication_number = self.doc.publication_number
             self.publication_name = self.doc.publication_name
             self.publication_date = self.doc.publication_date
+            self.repeal = self.doc.repeal
             # ensure these are refreshed
             self._work_uri = None
             self._amendments = None

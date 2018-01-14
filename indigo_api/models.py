@@ -23,7 +23,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri, RepealEvent, datestring
+from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from .utils import language3_to_2, localize_toc
 
@@ -154,6 +154,7 @@ class Document(models.Model):
     publication_date = models.CharField(null=True, blank=True, max_length=255)
     publication_number = models.CharField(null=True, blank=True, max_length=255)
     repeal_event = JSONField(null=True)
+    amendment_events = JSONField(null=True)
 
     # caching attributes
     _repeal = None
@@ -203,14 +204,26 @@ class Document(models.Model):
         # we cache these values so that we can decorate them
         # with extra info when serializing
         if self._amendments is None:
-            self._amendments = self.doc.amendments
+            self._amendments = [
+                AmendmentEvent(
+                    arrow.get(a.get('date')).date() if a.get('date') else None,
+                    a.get('amending_title'),
+                    a.get('amending_uri')
+                ) for a in self.amendment_events or []]
         return self._amendments
 
     @amendments.setter
     def amendments(self, value):
         self._amendments = None
         self._amended_versions = None
-        self.doc.amendments = value
+        if value:
+            self.amendment_events = [{
+                'date': datestring(a.date) if a.date else None,
+                'amending_title': a.amending_title,
+                'amending_uri': a.amending_uri,
+            } for a in value]
+        else:
+            self.amendment_events = None
 
     @property
     def repeal(self):
@@ -269,6 +282,7 @@ class Document(models.Model):
             self.doc.publication_name = self.publication_name
             self.doc.publication_date = self.publication_date
             self.doc.repeal = self.repeal
+            self.doc.amendments = self.amendments
 
         else:
             self.title = self.doc.title
@@ -279,6 +293,7 @@ class Document(models.Model):
             self.publication_name = self.doc.publication_name
             self.publication_date = self.doc.publication_date
             self.repeal = self.doc.repeal
+            self.amendments = self.doc.amendments
             # ensure these are refreshed
             self._work_uri = None
             self._amendments = None

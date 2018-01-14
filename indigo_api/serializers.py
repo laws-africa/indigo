@@ -274,7 +274,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk or doc.draft:
             return None
         else:
-            uri = doc.doc.frbr_uri
+            uri = doc.work_uri
             if with_date and doc.expression_date:
                 uri.expression_date = '@' + datestring(doc.expression_date)
             else:

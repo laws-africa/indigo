@@ -68,6 +68,10 @@ class Importer(Slaw):
     """
     country = None
 
+    """ Crop box to import within, as [left, top, width, height]
+    """
+    cropbox = None
+
     def import_from_upload(self, upload, request):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
@@ -111,6 +115,9 @@ class Importer(Slaw):
 
         if self.section_number_position:
             cmd.extend(['--section-number-position', self.section_number_position])
+
+        if self.cropbox:
+            cmd.extend(['--crop', ','.join(self.cropbox)])
 
         cmd.extend(['--pdftotext', settings.INDIGO_PDFTOTEXT])
         cmd.append(fname)

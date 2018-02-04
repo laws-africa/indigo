@@ -169,6 +169,7 @@ class RenderParseAPITest(APITestCase):
           <FRBRauthor href="#slaw"/>
         </FRBRManifestation>
       </identification>
+      <publication number="" name="" showAs="" date=""/>
       <references source="#this">
         <TLCOrganization id="slaw" href="https://github.com/longhotsummer/slaw" showAs="Slaw"/>
         <TLCOrganization id="council" href="/ontology/organization/za/council" showAs="Council"/>

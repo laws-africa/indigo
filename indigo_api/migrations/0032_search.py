@@ -7,12 +7,22 @@ from django.db import migrations, models
 
 
 def index_documents(apps, schema_editor):
+    from indigo_api.models import Document as DocModel
+
     # We get the model from the versioned app registry;
     # if we directly import it, it'll be the wrong version
-    from indigo_api.models import Document
+    Document = apps.get_model("indigo_api", "Document")
+
     db_alias = schema_editor.connection.alias
     docs = Document.objects.using(db_alias).all()
     for d in docs:
+        # we need the search logic from the real Document model, so
+        # create a fake document
+        tmp = DocModel()
+        tmp.reset_xml(d.document_xml)
+        tmp.update_search_text()
+        # copy the search text over and save it
+        d.search_text = tmp.search_text
         d.save()
 
 

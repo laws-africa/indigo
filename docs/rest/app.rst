@@ -137,8 +137,13 @@ Create a Document
 
   * all the document fields described in :ref:`rest_general_guide`
   * ``content``: an (optional) content field with the raw XML of the content of the document. ``string``
+  * ``file``: an HTTP file attachment (optional). If this is provided, the content of the document is determined from this file.
+  * ``file_options..section_number_position``: section number position when ``file`` is given. One of ``before-title``, ``after-title`` or ``guess`` (default). Optional. ``string``
+  * ``file_options..cropbox``: crop box for PDF files, as a comma-separated list of integers: ``left, top, width, height``. Optional. ``string``
 
-Updates a document. Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
+The ``file`` and ``file_options`` parameters are generally only used when creating a new document. The content of the file will be extracted and parsed. For PDFs, specify a ``cropbox`` to limit content to within the box on each page.
+
+Use `PUT` when updating all the details of a document. Use `PATCH` when updating only some fields.
 
 Get Document Content
 ....................
@@ -171,46 +176,6 @@ from the new XML, overwriting any existing fields. The new XML must be valid Ako
   * ``body``: raw XML of the document body. ``string``
 
 Updates the body of the document. The new XML must be valid Akoma Ntoso 2.0 XML ``<body>`` element.
-
-Convert a Document
-..................
-
-.. code:: http
-
-    POST /api/convert
-
-* Parameters:
-
-  * ``inputformat``: the format of the data in ``content``, required if ``content`` is given. One of: ``text/plain``, ``application/xml``, ``application/json``
-  * ``outputformat``: the desired output format. One of: ``application/xml``, ``text/html``, ``text/json``
-  * ``file``: an HTTP file attachment (optional). If this is provided, remaining input parameters are ignored. ``file``
-  * ``content``: content to convert. ``string``
-
-Converts one type of content into another. This allows you to convert a PDF or Word document
-into Akoma Ntoso XML, HTML or plain text.
-
-The content to be converted `from` must be passed in as either a file upload in the ``file`` parameter or in the raw in the ``content`` parameter.
-If you use ``content``, you must provide an ``inputformat`` parameter that describes the format of the input. If ``file`` is used, the format is
-determined by the mime type of the uploaded file.
-
-The output data depends on the ``outputformat`` parameter. For most outputs, the response is a JSON object with a single ``output``
-property.
-
-Not all formats have all the detail necessary to convert to other formats. For instance, plain text doesn't have enough information
-to convert to a complete JSON or Akoma Ntoso XML format. In this cases, placeholder values are used (eg. for the FRBR URI, publication time, etc.).
-
-Find and Link Defined Terms
-...........................
-
-.. code:: http
-
-    POST /api/analysis/link-terms
-
-* Parameters:
-
-  * ``document``: a document description, only the ``content`` element is required
-
-Finds defined terms in a document, and finds references to those terms.
 
 Attachments
 -----------
@@ -273,3 +238,63 @@ Delete an Attachment
     DELETE /api/documents/{id}/attachments/{id}
 
 Deletes an attachment.
+
+Helpers
+-------
+
+Parse Text into Akoma Ntoso
+...........................
+
+.. code:: http
+
+    POST /api/parse
+
+* Parameters:
+
+  * ``file``: an HTTP file attachment (optional). If this is provided, remaining input parameters are ignored. ``file``
+  * ``content``: content to convert. ``string``
+  * ``fragment``: if this is a fragment, not a whole document, the name of the fragment type. Optional. ``string``
+  * ``id_prefix``: prefix to use when generating IDs, especially when parsing a fragment. Optinal. ``string``
+
+Parse plain text into Akoma Ntoso. If a ``file`` is given, then ``content`` is ignored. Otherwise, ``content`` is the text to parse.
+If the content is only a fragment of text, not a full document, then specify the fragment type, such as ``sections``, and the
+prefix to use when generating IDs.
+
+Render Akoma Ntoso into HTML
+............................
+
+.. code:: http
+
+    POST /api/render
+
+* Parameters:
+
+  * ``document``: a document object, included the ``content`` attribute.
+
+Renders a full document into HTML.
+
+Find and Link Defined Terms
+...........................
+
+.. code:: http
+
+    POST /api/analysis/link-terms
+
+* Parameters:
+
+  * ``document``: a document description, only the ``content`` element is required
+
+Finds defined terms in a document, and finds references to those terms.
+
+Find and Link Referenced Acts
+..............................
+
+.. code:: http
+
+    POST /api/analysis/link-references
+
+* Parameters:
+
+  * ``document``: a document description, including the ``content`` element
+
+Finds and links references to other acts in the document.

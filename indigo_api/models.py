@@ -12,6 +12,7 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -22,7 +23,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri
+from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from .utils import language3_to_2, localize_toc
 
@@ -34,7 +35,10 @@ log = logging.getLogger(__name__)
 
 class DocumentManager(models.Manager):
     def get_queryset(self):
-        return super(DocumentManager, self).get_queryset().defer("search_text", "search_vector")
+        # defer expensive or unnecessary fields
+        return super(DocumentManager, self)\
+            .get_queryset()\
+            .defer("search_text", "search_vector")
 
 
 class DocumentQuerySet(models.QuerySet):
@@ -43,6 +47,9 @@ class DocumentQuerySet(models.QuerySet):
 
     def published(self):
         return self.filter(draft=False)
+
+    def no_xml(self):
+        return self.defer('document_xml')
 
     def latest_expression(self):
         """ Select only the most recent expression for documents with the same frbr_uri.
@@ -147,6 +154,19 @@ class Document(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
+    # extra details which are primarily stored in the XML, but which are first class API attributes
+    # so we cache them in the database
+    publication_name = models.CharField(null=True, blank=True, max_length=255)
+    publication_date = models.CharField(null=True, blank=True, max_length=255)
+    publication_number = models.CharField(null=True, blank=True, max_length=255)
+    repeal_event = JSONField(null=True)
+    amendment_events = JSONField(null=True)
+
+    # caching attributes
+    _repeal = None
+    _amendments = None
+    _work_uri = None
+
     @property
     def doc(self):
         """ The wrapped `an.act.Act` that this document works with. """
@@ -167,72 +187,78 @@ class Document(models.Model):
 
     @property
     def year(self):
-        return self.doc.year
+        return self.work_uri.date.split('-', 1)[0]
 
     @property
     def number(self):
-        return self.doc.number
+        return self.work_uri.number
 
     @property
     def nature(self):
-        return self.doc.nature
+        return self.work_uri.doctype
 
     @property
     def subtype(self):
-        return self.doc.frbr_uri.subtype
+        return self.work_uri.subtype
 
     @property
     def locality(self):
-        return self.doc.frbr_uri.locality
-
-    @property
-    def publication_name(self):
-        return self.doc.publication_name
-
-    @publication_name.setter
-    def publication_name(self, value):
-        self.doc.publication_name = value
-
-    @property
-    def publication_number(self):
-        return self.doc.publication_number
-
-    @publication_number.setter
-    def publication_number(self, value):
-        self.doc.publication_number = value
-
-    @property
-    def publication_date(self):
-        return self.doc.publication_date
-
-    @publication_date.setter
-    def publication_date(self, value):
-        self.doc.publication_date = value
+        return self.work_uri.locality
 
     @property
     def amendments(self):
         # we cache these values so that we can decorate them
         # with extra info when serializing
-        if not hasattr(self, '_amendments') or self._amendments is None:
-            self._amendments = self.doc.amendments
+        if self._amendments is None:
+            self._amendments = [
+                AmendmentEvent(
+                    arrow.get(a.get('date')).date() if a.get('date') else None,
+                    a.get('amending_title'),
+                    a.get('amending_uri')
+                ) for a in self.amendment_events or []]
         return self._amendments
 
     @amendments.setter
     def amendments(self, value):
         self._amendments = None
         self._amended_versions = None
-        self.doc.amendments = value
+        if value:
+            self.amendment_events = [{
+                'date': datestring(a.date) if a.date else None,
+                'amending_title': a.amending_title,
+                'amending_uri': a.amending_uri,
+            } for a in value]
+        else:
+            self.amendment_events = None
 
     @property
     def repeal(self):
-        if not hasattr(self, '_repeal') or self._repeal is None:
-            self._repeal = self.doc.repeal
+        if self._repeal is None:
+            e = self.repeal_event
+            if e:
+                d = e.get('date')
+                d = arrow.get(d).date() if d else None
+                self._repeal = RepealEvent(d, e.get('repealing_title'), e.get('repealing_uri'))
         return self._repeal
 
     @repeal.setter
     def repeal(self, value):
         self._repeal = None
-        self.doc.repeal = value
+        if value:
+            self.repeal_event = {
+                'date': datestring(value.date),
+                'repealing_title': value.repealing_title,
+                'repealing_uri': value.repealing_uri,
+            }
+        else:
+            self.repeal_event = None
+
+    @property
+    def work_uri(self):
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this document universally. """
+        if self._work_uri is None:
+            self._work_uri = FrbrUri.parse(self.frbr_uri)
+        return self._work_uri
 
     def save(self, *args, **kwargs):
         self.copy_attributes()
@@ -258,13 +284,24 @@ class Document(models.Model):
             self.doc.work_date = self.doc.publication_date
             self.doc.expression_date = self.expression_date or self.doc.publication_date or arrow.now()
             self.doc.manifestation_date = self.updated_at or arrow.now()
+            self.doc.publication_number = self.publication_number
+            self.doc.publication_name = self.publication_name
+            self.doc.publication_date = self.publication_date
+            self.doc.repeal = self.repeal
+            self.doc.amendments = self.amendments
 
         else:
             self.title = self.doc.title
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
+            self.publication_number = self.doc.publication_number
+            self.publication_name = self.doc.publication_name
+            self.publication_date = self.doc.publication_date
+            self.repeal = self.doc.repeal
+            self.amendments = self.doc.amendments
             # ensure these are refreshed
+            self._work_uri = None
             self._amendments = None
             self._amended_versions = None
             self._repeal = None
@@ -369,10 +406,8 @@ class Document(models.Model):
         """
         # uris that amended docs in the set
         uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
-        amending_docs = Document.objects\
-            .filter(deleted__exact=False)\
+        amending_docs = Document.objects.undeleted().no_xml()\
             .filter(frbr_uri__in=list(uris))\
-            .defer('document_xml')\
             .order_by('expression_date')\
             .all()
 
@@ -391,10 +426,8 @@ class Document(models.Model):
         """
         # uris that amended docs in the set
         uris = set(d.repeal.repealing_uri for d in documents if d.repeal)
-        repealing_docs = Document.objects\
-            .filter(deleted__exact=False)\
+        repealing_docs = Document.objects.undeleted().no_xml()\
             .filter(frbr_uri__in=list(uris))\
-            .defer('document_xml')\
             .order_by('expression_date')\
             .all()
 
@@ -414,10 +447,8 @@ class Document(models.Model):
         list of all the documents which form the same group of amended versions.
         """
         uris = [d.frbr_uri for d in documents]
-        docs = Document.objects\
-            .filter(deleted__exact=False)\
+        docs = Document.objects.undeleted().no_xml()\
             .filter(frbr_uri__in=uris)\
-            .defer('document_xml')\
             .order_by('frbr_uri', 'expression_date')\
             .all()
 

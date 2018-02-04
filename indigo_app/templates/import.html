@@ -1,107 +1,121 @@
 {% extends "layout.html" %}
+{% load staticfiles %}
 
 {% block title %}Import{% endblock %}
+{% block js %}
+  <script src="{% static 'javascript/pdfjs/pdf.js' %}"></script>
+  <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
+  <script src="{% static 'javascript/svg.min.js' %}"></script>
+  {{ block.super }}
+{% endblock %}
+
 {% block content %}
 
 <div class="workspace-content">
-  <div class="boxed-group-inner" id="import-document">
+  <div class="boxed-group-inner boxed-group-inner-minimal" id="import-document">
     <form class="import-form" method="POST">
-      <div class="row">
-        <div class="col-sm-offset-3 col-sm-6">
+      <div class="file-inputs">
+        <div class="row">
+          <div class="col-md-offset-2 col-md-8">
 
-          <div class="panel panel-default">
-            <div class="panel-heading">
-              <h4 class="panel-title">
-                Import a document
-                <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-              </h4>
-            </div>
+            <h3>
+              Import a document
+              <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
+            </h3>
 
-            <div class="panel-body">
-              <div class="file-inputs">
-                <section>
-                  <p>You can import legislation from most document formats including PDF, Word, RTF and plain text.</p>
+            <section>
+              <h4>What country is this for?</h4>
+              <select name="country" class="form-control">
+                {% for opt in countries %}
+                <option value="{{ opt.country.iso.lower }}" {% if user.editor.country_code == opt.country.iso %}selected{% endif %}>{{ opt.country.name }}</option>
+                {% endfor %}
+              </select>
+            </section>
 
-                  <p class="alert alert-danger" style="display: none"></p>
+            <section>
+              <p class="alert alert-danger" style="display: none"></p>
 
-                  <div class="file-input-field"><input type="file" id="file" name="file"></div>
+              <div class="file-input-field"><input type="file" id="file" name="file"></div>
 
-                  <div class="dropzone">
-                    <h3>Drag and drop your file here</h3>
-                    <h4>or</h4>
-                    <p>
-                      <button class="btn btn-primary choose-file" type="button">Choose a file</button>
-                    </p>
-                    <div class="file-detail"></div>
-                  </div>
-                </section>
+              <div class="dropzone">
+                <h3>Drag and drop your file here</h3>
+                <h4>or</h4>
+                <p>
+                  <button class="btn btn-primary choose-file" type="button">Choose a file</button>
+                </p>
+                <div class="file-detail">You can import legislation from most document formats including PDF, Word, RTF and plain text.</div>
+              </div>
+            </section>
 
-                <section>
-                  <h4>What country is this for?</h4>
-                  <select name="country" class="form-control">
-                    {% for opt in countries %}
-                    <option value="{{ opt.country.iso.lower }}" {% if user.editor.country_code == opt.country.iso %}selected{% endif %}>{{ opt.country.name }}</option>
-                    {% endfor %}
-                  </select>
-                </section>
+          </div>
+        </div>
 
-                <section>
-                  <h4>What do section titles look like?</h4>
+        <section class="pages"></section>
+
+        <div class="row">
+          <div class="col-md-offset-2 col-md-8">
+
+            <section>
+              <h4>What do section titles look like?</h4>
+
+              <div class="row">
+                <div class="col-sm-4">
                   <div class="radio">
                     <label>
                       <input type="radio" name="file_options.section_number_position" value="guess" checked>
                       Guess automatically (recommended)
                     </label>
                   </div>
+                </div>
 
-                  <div class="row">
-                    <div class="col-sm-6">
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="file_options.section_number_position" value="before-title">
-                          Section number comes before title:
-                          <div class="example">
-                            <h5>12a. Section heading</h5>
-                            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum...</p>
-                          </div>
-                        </label>
+                <div class="col-sm-4">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="file_options.section_number_position" value="before-title">
+                      <div class="example">
+                        <h5>12. Section heading</h5>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum...</p>
                       </div>
-                    </div>
-
-                    <div class="col-sm-6">
-                      <div class="radio">
-                        <label>
-                          <input type="radio" name="file_options.section_number_position" value="after-title">
-                          Section number comes after title:
-                          <div class="example">
-                            <h5>Section heading</h5>
-                            <p><strong>12a.</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
-                          </div>
-                        </label>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              </div>
-
-              <section class="progress-box" style="display: none">
-                <div>
-                  <p>Importing, this may take a few minutes...</p>
-                  <div class="progress">
-                    <div class="progress-bar progress-bar-striped active" style="width: 100%"></div>
+                    </label>
                   </div>
                 </div>
-              </section>
-            </div>
 
-            <div class="panel-footer text-right">
-              <button type="button" class="btn btn-success import" disabled="disabled">Import document</button>
-            </div>
+                <div class="col-sm-4">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="file_options.section_number_position" value="after-title">
+                      <div class="example">
+                        <h5>Section heading</h5>
+                        <p><strong>12.</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <button type="button" class="btn btn-success import" disabled="disabled">Go for it!</button>
+            </section>
           </div>
         </div>
       </div>
-    </div>
-  </form>
+
+      <div class="row">
+        <div class="col-md-offset-2 col-md-8">
+
+          <section class="progress-box" style="display: none">
+            <div>
+              <p>Importing, this may take a few minutes...</p>
+              <div class="progress">
+                <div class="progress-bar progress-bar-striped active" style="width: 100%"></div>
+              </div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>
 
 {% endblock %}

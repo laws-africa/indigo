@@ -274,7 +274,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk or doc.draft:
             return None
         else:
-            uri = doc.doc.frbr_uri
+            uri = doc.work_uri
             if with_date and doc.expression_date:
                 uri.expression_date = '@' + datestring(doc.expression_date)
             else:
@@ -350,12 +350,17 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             # we got a file
             try:
                 # import options
-                posn = data.get('file_options', {}).get('section_number_position', 'guess')
+                opts = data.get('file_options', {})
+                posn = opts.get('section_number_position', 'guess')
+                cropbox = opts.get('cropbox', None)
+                if cropbox:
+                    cropbox = cropbox.split(',')
                 request = self.context['request']
 
                 importer = Importer()
                 importer.section_number_position = posn
                 importer.country = data.get('country') or request.user.editor.country_code
+                importer.cropbox = cropbox
                 document = importer.import_from_upload(upload, request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)

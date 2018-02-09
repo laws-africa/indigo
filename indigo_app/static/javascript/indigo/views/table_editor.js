@@ -148,6 +148,7 @@
         removePlugins: 'toolbar',
         enterMode: CKEDITOR.ENTER_BR,
         shiftEnterMode: CKEDITOR.ENTER_BR,
+        allowedContent: 'a[!href]; img[!src]; span(akn-remark)',
       });
     },
 

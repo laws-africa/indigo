@@ -54,6 +54,25 @@
     <eol/>
   </xsl:template>
 
+  <xsl:template match="html:a">
+    <ref>
+      <xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute>
+      <xsl:apply-templates />
+    </ref>
+  </xsl:template>
+
+  <xsl:template match="html:img">
+    <img>
+      <xsl:attribute name="src"><xsl:value-of select="@src" /></xsl:attribute>
+    </img>
+  </xsl:template>
+
+  <xsl:template match="html:span[@class='akn-remark']">
+    <remark status="editorial">
+      <xsl:apply-templates />
+    </remark>
+  </xsl:template>
+
   <!-- attributes -->
 
   <xsl:template match="@id | @colspan | @rowspan">
@@ -63,7 +82,7 @@
   <!-- text -->
 
   <xsl:template match="text()">
-    <xsl:value-of select="normalize-space(.)"/>
+    <xsl:value-of select="."/>
   </xsl:template>
 
 </xsl:stylesheet>

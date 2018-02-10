@@ -63,7 +63,7 @@
 
   <xsl:template match="html:img">
     <img>
-      <xsl:attribute name="src"><xsl:value-of select="@src" /></xsl:attribute>
+      <xsl:attribute name="src"><xsl:value-of select="@data-src" /></xsl:attribute>
     </img>
   </xsl:template>
 

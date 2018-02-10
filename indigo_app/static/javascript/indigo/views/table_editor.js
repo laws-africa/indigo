@@ -86,16 +86,16 @@
       xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {
         var text = p.firstChild;
 
-        if (text.nodeType == text.TEXT_NODE) {
+        if (text && text.nodeType == text.TEXT_NODE) {
           text.textContent = text.textContent.replace(/^\s+/, '');
         }
       });
 
       // strip whitespace at end of last p tag in table cells
       xml.querySelectorAll('table td > p:last-child, table th > p:last-child').forEach(function(p) {
-        var text = p.firstChild;
+        var text = p.lastChild;
 
-        if (text.nodeType == text.TEXT_NODE) {
+        if (text && text.nodeType == text.TEXT_NODE) {
           text.textContent = text.textContent.replace(/\s+$/, '');
         }
       });

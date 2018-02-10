@@ -441,7 +441,10 @@
       table = "\n{|\n|-\n";
       var lines = this.textEditor.getSession().getTextRange(range).split("\n");
       lines.forEach(function(line) {
-        table = table + "| " + line + "\n|-\n";
+        // ignore empty lines
+        if (line.trim() !== "") {
+          table = table + "| " + line + "\n|-\n";
+        }
       });
       table = table + "|}\n";
       this.textEditor.getSession().replace(range, table);

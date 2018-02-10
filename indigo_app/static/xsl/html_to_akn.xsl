@@ -56,7 +56,7 @@
 
   <xsl:template match="html:a">
     <ref>
-      <xsl:attribute name="href"><xsl:value-of select="@href" /></xsl:attribute>
+      <xsl:attribute name="href"><xsl:value-of select="@data-href" /></xsl:attribute>
       <xsl:apply-templates />
     </ref>
   </xsl:template>

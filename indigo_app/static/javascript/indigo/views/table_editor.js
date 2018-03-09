@@ -80,7 +80,27 @@
       var xml = $.parseXML(new XMLSerializer().serializeToString(table));
 
       // xhtml -> akn
-      return this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
+      xml = this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
+
+      // strip whitespace at start of first p tag in table cells
+      xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {
+        var text = p.firstChild;
+
+        if (text && text.nodeType == text.TEXT_NODE) {
+          text.textContent = text.textContent.replace(/^\s+/, '');
+        }
+      });
+
+      // strip whitespace at end of last p tag in table cells
+      xml.querySelectorAll('table td > p:last-child, table th > p:last-child').forEach(function(p) {
+        var text = p.lastChild;
+
+        if (text && text.nodeType == text.TEXT_NODE) {
+          text.textContent = text.textContent.replace(/\s+$/, '');
+        }
+      });
+
+      return xml;
     },
 
     discardChanges: function(e) {
@@ -148,6 +168,7 @@
         removePlugins: 'toolbar',
         enterMode: CKEDITOR.ENTER_BR,
         shiftEnterMode: CKEDITOR.ENTER_BR,
+        allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark)',
       });
     },
 

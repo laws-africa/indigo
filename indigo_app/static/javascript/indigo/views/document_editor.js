@@ -432,18 +432,26 @@
     insertTable: function(e) {
       e.preventDefault();
 
-      var table = ["{|", "|-", "! heading 1", "! heading 2", "|-", "| cell 1", "| cell 2", "|-", "| cell 3", "| cell 4", "|-", "|}", ""],
+      var table,
           posn = this.textEditor.getCursorPosition(),
           range = this.textEditor.getSelectionRange();
 
-      this.textEditor.clearSelection();
+      if (this.textEditor.getSelectedText().length > 0) {
+        this.textEditor.clearSelection();
 
-      table = "\n{|\n|-\n";
-      var lines = this.textEditor.getSession().getTextRange(range).split("\n");
-      lines.forEach(function(line) {
-        table = table + "| " + line + "\n|-\n";
-      });
-      table = table + "|}\n";
+        table = "\n{|\n|-\n";
+        var lines = this.textEditor.getSession().getTextRange(range).split("\n");
+        lines.forEach(function(line) {
+          // ignore empty lines
+          if (line.trim() !== "") {
+            table = table + "| " + line + "\n|-\n";
+          }
+        });
+        table = table + "|}\n";
+      } else {
+        table = ["", "{|", "|-", "! heading 1", "! heading 2", "|-", "| cell 1", "| cell 2", "|-", "| cell 3", "| cell 4", "|-", "|}", ""].join("\n");
+      }
+
       this.textEditor.getSession().replace(range, table);
 
       this.textEditor.moveCursorTo(posn.row + 3, 2);

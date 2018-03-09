@@ -200,7 +200,7 @@
 
   <!-- images -->
   <xsl:template match="a:img">
-    <img>
+    <img data-src="{@src}">
       <xsl:copy-of select="@*" />
 
       <!-- make relative image URLs absolute, using the manifestationUrl as a base -->

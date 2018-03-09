@@ -12,6 +12,9 @@ def friendly_document_type(document):
     if uri.number.startswith('cap'):
         return 'Chapter'
 
+    if document.subtype == "reg" and uri.number.startswith('gnr'):
+        return 'Gazette Notice Regulation'
+
     if uri.subtype:
         # use the subtype full name, if we have it
         subtype = Subtype.objects.filter(abbreviation=uri.subtype).first()
@@ -26,4 +29,9 @@ def friendly_document_type(document):
 def friendly_document_number(document):
     if document.number.startswith('cap'):
         return document.number[3:]
+
+    # Gazette Notice Regulation for SA
+    if document.subtype == "reg" and document.number.startswith('gnr'):
+        return document.number[3:]
+
     return document.number

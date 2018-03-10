@@ -4,6 +4,7 @@ import shutil
 import logging
 
 from django.conf import settings
+import mammoth
 
 from .models import Document
 from .analysis import ActRefFinder
@@ -76,25 +77,36 @@ class Importer(Slaw):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
+        self.reformat = True
+
         if upload.content_type in ['text/xml', 'application/xml']:
+            # just assume it's valid AKN xml
             doc = Document.randomized(request.user)
             doc.content = upload.read().decode('utf-8')
-        else:
-            with self.tempfile_for_upload(upload) as f:
-                self.reformat = True
-                doc = self.import_from_file(f.name, request)
-                self.analyse_after_import(doc)
+            return doc
 
-            if not self.fragment:
-                doc.title = "Imported from %s" % upload.name
-                doc.copy_attributes()
+        if upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+            # pre-process docx to HTML and then import html
+            html = self.docx_to_html(upload)
+            doc = self.import_from_text(html, request, '.html')
+
+        else:
+            # slaw will do its best
+            with self.tempfile_for_upload(upload) as f:
+                doc = self.import_from_file(f.name, request)
+
+        self.analyse_after_import(doc)
+
+        if not self.fragment:
+            doc.title = "Imported from %s" % upload.name
+            doc.copy_attributes()
 
         return doc
 
-    def import_from_text(self, input, request):
+    def import_from_text(self, input, request, suffix=''):
         """ Create a new Document by importing it from plain text.
         """
-        with tempfile.NamedTemporaryFile() as f:
+        with tempfile.NamedTemporaryFile(suffix=suffix) as f:
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
@@ -160,3 +172,7 @@ class Importer(Slaw):
         Usually only used on PDF documents.
         """
         ActRefFinder().find_references_in_document(doc)
+
+    def docx_to_html(self, docx_file):
+        result = mammoth.convert_to_html(docx_file)
+        return result.value

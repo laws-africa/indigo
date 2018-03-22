@@ -8,6 +8,7 @@ router.register(r'documents', views.DocumentViewSet, base_name='document')
 router.register(r'documents/(?P<document_id>[0-9]+)/attachments', views.AttachmentViewSet, base_name='document-attachments')
 router.register(r'documents/(?P<document_id>[0-9]+)/revisions', views.RevisionViewSet, base_name='document-revisions')
 router.register(r'documents/(?P<document_id>[0-9]+)/annotations', views.AnnotationViewSet, base_name='document-annotations')
+router.register(r'works', views.WorkViewSet, base_name='work')
 
 urlpatterns = [
     # viewing a specific document identified by FRBR URI fragment,

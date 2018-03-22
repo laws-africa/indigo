@@ -12,7 +12,7 @@ from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment, Annotation, DocumentActivity
+from .models import Document, Attachment, Annotation, DocumentActivity, Work
 from .slaw import Importer
 
 log = logging.getLogger(__name__)
@@ -556,3 +556,30 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
         validated_data['user'] = self.context['request'].user
         validated_data['document'] = self.context['document']
         return super(DocumentActivitySerializer, self).create(validated_data)
+
+
+class WorkSerializer(serializers.ModelSerializer):
+    updated_by_user = UserSerializer(read_only=True)
+    created_by_user = UserSerializer(read_only=True)
+    draft = serializers.BooleanField(default=True)
+
+    class Meta:
+        model = Work
+        fields = (
+            # readonly, url is part of the rest framework
+            'id', 'url',
+            'title', 'draft',
+            'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
+
+            # frbr_uri components
+            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+        )
+        read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        validated_data['created_by_user'] = self.context['request'].user
+        return super(WorkSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['updated_by_user'] = self.context['request'].user
+        return super(WorkSerializer, self).update(instance, validated_data)

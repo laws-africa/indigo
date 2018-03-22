@@ -33,6 +33,64 @@ DEFAULT_COUNTRY = 'za'
 log = logging.getLogger(__name__)
 
 
+class WorkQuerySet(models.QuerySet):
+    def undeleted(self):
+        return self.filter(deleted=False)
+
+
+class Work(models.Model):
+    """ A work is an abstract document, such as an act. It has basic metadata and
+    allows us to track works that we don't have documents for, and provides a
+    logical parent for documents, which are expressions of a work.
+    """
+
+    frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
+    """ The FRBR Work URI of this work that uniquely identifies it globally """
+
+    title = models.CharField(max_length=1024, null=True, default='(untitled)')
+    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
+
+    draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
+    """ Is this a draft? """
+
+    deleted = models.BooleanField(default=False, help_text="Has this work been deleted?")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    objects = WorkQuerySet.as_manager()
+
+    @property
+    def work_uri(self):
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """
+        if self._work_uri is None:
+            self._work_uri = FrbrUri.parse(self.frbr_uri)
+        return self._work_uri
+
+    @property
+    def year(self):
+        return self.work_uri.date.split('-', 1)[0]
+
+    @property
+    def number(self):
+        return self.work_uri.number
+
+    @property
+    def nature(self):
+        return self.work_uri.doctype
+
+    @property
+    def subtype(self):
+        return self.work_uri.subtype
+
+    @property
+    def locality(self):
+        return self.work_uri.locality
+
+
 class DocumentManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields

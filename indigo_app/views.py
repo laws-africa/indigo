@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 
 from indigo_api.models import Document, Subtype
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer
-from indigo_api.views import DocumentViewSet
+from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
 from .forms import DocumentForm
 import json

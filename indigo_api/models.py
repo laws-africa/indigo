@@ -90,6 +90,9 @@ class Work(models.Model):
     def locality(self):
         return self.work_uri.locality
 
+    def __unicode__(self):
+        return '%s (%s)' % (self.frbr_uri, self.title)
+
 
 class DocumentManager(models.Manager):
     def get_queryset(self):

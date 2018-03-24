@@ -10,8 +10,8 @@ admin.site.register(Subtype)
 
 @admin.register(Work)
 class WorkAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'frbr_uri', 'country', 'draft', 'deleted')
-    list_filter = ('draft', 'country', 'deleted')
+    list_display = ('__str__', 'frbr_uri', 'country', 'deleted')
+    list_filter = ('country', 'deleted')
     readonly_fields = ('created_by_user', 'updated_by_user')
 
 

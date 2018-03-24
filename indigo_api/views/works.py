@@ -21,13 +21,11 @@ class WorkViewSet(viewsets.ModelViewSet):
     filter_fields = {
         'frbr_uri': ['exact', 'startswith'],
         'country': ['exact'],
-        'draft': ['exact'],
     }
 
     def perform_destroy(self, instance):
-        if not instance.draft:
-            raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
         instance.deleted = True
+        # TODO: cascade to documents
         instance.save()
 
     def perform_update(self, serializer):

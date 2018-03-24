@@ -56,9 +56,6 @@ class Work(models.Model):
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
-    draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
-    """ Is this a draft? """
-
     deleted = models.BooleanField(default=False, help_text="Has this work been deleted?")
 
     created_at = models.DateTimeField(auto_now_add=True)

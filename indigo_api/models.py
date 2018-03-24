@@ -190,7 +190,7 @@ class Document(models.Model):
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
-    title = models.CharField(max_length=1024, null=True, default='(untitled)')
+    title = models.CharField(max_length=1024, null=False)
     country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
     """ The 3-letter ISO-639-2 language code of this document """
@@ -394,7 +394,7 @@ class Document(models.Model):
             setattr(self, attr, getattr(self.work, attr))
 
         # copy over title if it's not set
-        if not self.title or self.title == '(untitled)':
+        if not self.title:
             self.title = self.work.title
 
     def update_search_text(self):
@@ -485,7 +485,7 @@ class Document(models.Model):
         return language3_to_2(self.language) or self.language
 
     def __unicode__(self):
-        return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
+        return 'Document<%s, %s>' % (self.id, self.title[0:50])
 
     @classmethod
     def decorate_amendments(cls, documents):

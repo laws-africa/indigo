@@ -70,5 +70,17 @@
       "deleted": false,
       "frbr_uri": "/za/act/1900/1"
     }
+  },
+  {
+    "pk": 7,
+    "model": "indigo_api.work",
+    "fields": {
+      "title": "Work with draft documents",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/1945/1"
+    }
   }
 ]

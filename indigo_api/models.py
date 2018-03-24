@@ -97,6 +97,15 @@ class Work(models.Model):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
+@receiver(signals.post_save, sender=Work)
+def post_save_work(sender, instance, **kwargs):
+    """ Cascade (soft) deletes to linked documents
+    """
+    if not kwargs['raw'] and not kwargs['created']:
+        if instance.deleted:
+            Document.objects.filter(work=instance).update(deleted=True)
+
+
 class DocumentManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields

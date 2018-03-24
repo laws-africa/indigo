@@ -173,6 +173,10 @@ class Document(models.Model):
 
     db_table = 'documents'
 
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, db_index=True, null=False)
+    """ The work this document is an expression of. Details from the work will be inherited by this document.
+    """
+
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
@@ -334,10 +338,12 @@ class Document(models.Model):
             self.save()
 
     def copy_attributes(self, from_model=True):
-        """ Copy attributes from the model into the document, or reverse
+        """ Copy attributes from the model into the XML document, or reverse
         if `from_model` is False. """
 
         if from_model:
+            self.copy_attributes_from_work()
+
             self.doc.title = self.title
             self.doc.frbr_uri = self.frbr_uri
             self.doc.language = self.language
@@ -369,6 +375,17 @@ class Document(models.Model):
 
         # update the model's XML from the Act XML
         self.refresh_xml()
+
+    def copy_attributes_from_work(self):
+        """ Copy various attributes from this document's Work onto this
+        document.
+        """
+        for attr in ['frbr_uri', 'country']:
+            setattr(self, attr, getattr(self.work, attr))
+
+        # copy over title if it's not set
+        if not self.title or self.title == '(untitled)':
+            self.title = self.work.title
 
     def update_search_text(self):
         """ Update the `search_text` field with a raw representation of all the text in the document.

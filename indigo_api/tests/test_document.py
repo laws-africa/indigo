@@ -4,20 +4,22 @@ from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
 
-from indigo_api.models import Document
+from indigo_api.models import Document, Work
 from indigo_api.tests.fixtures import *  # noqa
 
 
 class DocumentTestCase(TestCase):
+    fixtures = ['work']
+
     def setUp(self):
-        pass
+        self.work = Work.objects.get(id=1)
 
     def test_empty_document(self):
         d = Document()
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01")
+        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work)
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))
@@ -47,3 +49,12 @@ class DocumentTestCase(TestCase):
 
         d.expression_date = None
         assert_equal(d.expression_date, None)
+
+    def test_inherit_from_work(self):
+        w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document')
+        d = Document(work=w)
+        d.save()
+
+        d = Document.objects.get(pk=d.id)
+        assert_equal(w.frbr_uri, d.frbr_uri)
+        assert_equal(w.title, d.title)

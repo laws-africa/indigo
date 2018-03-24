@@ -17,6 +17,7 @@ from rest_framework.authtoken.models import Token
 from reversion import revisions as reversion
 from reversion.models import Version
 from django_filters.rest_framework import DjangoFilterBackend
+from cobalt import FrbrUri
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -275,16 +276,18 @@ class ParseView(APIView):
         serializer.is_valid(raise_exception=True)
 
         fragment = serializer.validated_data.get('fragment')
+        frbr_uri = FrbrUri.parse(serializer.validated_data.get('frbr_uri'))
+
         importer = Importer()
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
-        importer.country = request.user.editor.country_code
+        importer.country = frbr_uri.country
 
         upload = self.request.data.get('file')
         if upload:
             # we got a file
             try:
-                document = importer.import_from_upload(upload, self.request)
+                document = importer.import_from_upload(upload, frbr_uri.work_uri(), self.request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
@@ -292,7 +295,7 @@ class ParseView(APIView):
             # plain text
             try:
                 text = serializer.validated_data.get('content')
-                document = importer.import_from_text(text, self.request)
+                document = importer.import_from_text(text, frbr_uri.work_uri())
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'content': e.message or "error during import"})

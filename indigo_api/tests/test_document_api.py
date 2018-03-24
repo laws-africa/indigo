@@ -15,7 +15,7 @@ from indigo_api.renderers import PDFRenderer
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['user', 'colophon']
+    fixtures = ['user', 'work', 'colophon']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
@@ -27,7 +27,7 @@ class DocumentAPITest(APITestCase):
 
         assert_equal(response.status_code, 201)
         assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
-        assert_equal(response.data['title'], '(untitled)')
+        assert_equal(response.data['title'], 'Test Act')
         assert_equal(response.data['nature'], 'act')
         assert_equal(response.data['year'], '1998')
         assert_equal(response.data['number'], '2')
@@ -59,21 +59,21 @@ class DocumentAPITest(APITestCase):
 
     def test_create_with_locality(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za-cpt/act/1998/2',
+            'frbr_uri': '/za/act/1998/2',
             'draft': False,
         })
 
         assert_equal(response.status_code, 201)
-        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
-        response = self.client.get('/api/za-cpt/act/1998/2')
+        response = self.client.get('/api/za/act/1998/2')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
     def test_create_title_overrides_content_xml(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za-cpt/act/1998/2',
+            'frbr_uri': '/za/act/1998/2',
             'content': document_fixture('in the body'),
             'title': 'Document title',
             'draft': True,
@@ -87,7 +87,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.data['title'], 'Document title')
-        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
     def test_update(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
@@ -211,7 +211,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
-        assert_equal(response.data['title'], '(untitled)')
+        assert_equal(response.data['title'], 'Test Act')
 
         response = self.client.patch('/api/documents/%s' % id, {
             'content': document_fixture(u'in γνωρίζω body'),
@@ -477,7 +477,7 @@ class DocumentAPITest(APITestCase):
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 
-        response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
+        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -557,7 +557,7 @@ class DocumentAPITest(APITestCase):
         """)
         tmp_file.seek(0)
 
-        response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
+        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 

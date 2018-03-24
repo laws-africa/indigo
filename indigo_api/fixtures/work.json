@@ -11,5 +11,70 @@
       "deleted": false,
       "frbr_uri": "/za/act/2014/10"
     }
+  },
+  {
+    "pk": 2,
+    "model": "indigo_api.work",
+    "fields": {
+      "draft": false,
+      "title": "Test Act",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/1998/2"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "indigo_api.work",
+    "fields": {
+      "draft": false,
+      "title": "Act with amendments",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/2010/1"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "indigo_api.work",
+    "fields": {
+      "draft": false,
+      "title": "Repealed Act",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/2001/8"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "indigo_api.work",
+    "fields": {
+      "draft": false,
+      "title": "Amendmenting act",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/2010/2"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "indigo_api.work",
+    "fields": {
+      "draft": false,
+      "title": "Test suite document fixture act",
+      "country": "za",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z",
+      "deleted": false,
+      "frbr_uri": "/za/act/1900/1"
+    }
   }
 ]

@@ -215,6 +215,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     draft = serializers.BooleanField(default=True)
 
+    # if a title isn't given, it's taken from the associated work
+    title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
+
     publication_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     publication_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     publication_date = serializers.DateField(required=False, allow_null=True)
@@ -347,6 +350,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         """
         upload = data.pop('file', None)
         if upload:
+            frbr_uri = self.validate_frbr_uri(data.get('frbr_uri'))
+
             # we got a file
             try:
                 # import options
@@ -361,7 +366,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 importer.section_number_position = posn
                 importer.country = data.get('country') or request.user.editor.country_code
                 importer.cropbox = cropbox
-                document = importer.import_from_upload(upload, request)
+                document = importer.import_from_upload(upload, frbr_uri, request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
@@ -380,9 +385,17 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate_frbr_uri(self, value):
         try:
-            return FrbrUri.parse(value.lower()).work_uri()
+            if not value:
+                raise ValueError()
+            value = FrbrUri.parse(value.lower()).work_uri()
         except ValueError:
-            raise ValidationError("Invalid FRBR URI")
+            raise ValidationError("Invalid FRBR URI: %s" % value)
+
+        # does a work exist for this frbr_uri?
+        # raises ValueError if it doesn't
+        Work.objects.get_for_frbr_uri(value)
+
+        return value
 
     def create(self, validated_data):
         document = Document()
@@ -438,6 +451,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         for attr, value in validated_data.items():
             setattr(document, attr, value)
 
+        # Link to the appropriate work, based on the FRBR URI
+        # Raises ValueError if the work doesn't exist
+        document.work = Work.objects.get_for_frbr_uri(document.frbr_uri)
+
         document.copy_attributes()
         return document
 
@@ -464,6 +481,7 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
+    frbr_uri = serializers.CharField(write_only=True, required=True)
 
 
 class DocumentAPISerializer(serializers.Serializer):

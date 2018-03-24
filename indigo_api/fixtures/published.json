@@ -11,7 +11,8 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "deleted": false,
       "frbr_uri": "/za/act/2014/10",
-      "expression_date": "2014-02-12"
+      "expression_date": "2014-02-12",
+      "work_id": 1
     }
   },
   {
@@ -30,6 +31,7 @@
       "created_at": "2015-06-04T13:53:43.229Z",
       "updated_at": "2015-06-04T14:01:09.847Z",
       "stub": true,
+      "work_id": 3,
       "commencement_date": "2010-06-01"
     }
   },
@@ -49,6 +51,7 @@
       "created_at": "2015-06-04T13:53:43.229Z",
       "updated_at": "2015-06-04T14:01:09.847Z",
       "stub": true,
+      "work_id": 3,
       "commencement_date": "2010-06-01"
     }
   },
@@ -64,6 +67,7 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "deleted": false,
       "frbr_uri": "/za/act/2001/8",
+      "work_id": 4,
       "repeal_event": {
           "date": "2014-02-12",
           "repealing_uri": "/za/act/2014/10",

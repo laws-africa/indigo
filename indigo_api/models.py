@@ -37,6 +37,12 @@ class WorkQuerySet(models.QuerySet):
     def undeleted(self):
         return self.filter(deleted=False)
 
+    def get_for_frbr_uri(self, frbr_uri):
+        work = self.undeleted().filter(frbr_uri=frbr_uri).first()
+        if work is None:
+            raise ValueError("Work for FRBR URI '%s' doesn't exist" % frbr_uri)
+        return work
+
 
 class Work(models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
@@ -175,6 +181,10 @@ class Document(models.Model):
 
     work = models.ForeignKey(Work, on_delete=models.CASCADE, db_index=True, null=False)
     """ The work this document is an expression of. Details from the work will be inherited by this document.
+    This is not exposed externally. Instead, the document is automatically linked to the appropriate
+    work using the FRBR URI.
+
+    You cannot create a document that has an FRBR URI that doesn't match a work.
     """
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
@@ -545,11 +555,12 @@ class Document(models.Model):
                 doc._amended_versions = amended_versions
 
     @classmethod
-    def randomized(cls, user=None, **kwargs):
+    def randomized(cls, frbr_uri, **kwargs):
         """ Helper to return a new document with a random FRBR URI
         """
-        country = kwargs.pop('country', None) or (user.editor.country_code if user and user.is_authenticated else None)
-        frbr_uri = random_frbr_uri(country=country)
+        frbr_uri = FrbrUri.parse(frbr_uri)
+        kwargs['country'] = frbr_uri.country
+        kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
 
         doc = cls(frbr_uri=frbr_uri.work_uri(False), publication_date=frbr_uri.expression_date, expression_date=frbr_uri.expression_date, **kwargs)
         doc.copy_attributes()

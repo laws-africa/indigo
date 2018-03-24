@@ -206,6 +206,7 @@
 
       var data = {
         'content': content,
+        'frbr_uri': this.parent.model.get('frbr_uri'),
       };
       if (fragment != 'akomaNtoso') {
         data.fragment = fragment;

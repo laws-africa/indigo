@@ -177,8 +177,6 @@ class Document(models.Model):
 
     objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
-    db_table = 'documents'
-
     work = models.ForeignKey(Work, on_delete=models.CASCADE, db_index=True, null=False)
     """ The work this document is an expression of. Details from the work will be inherited by this document.
     This is not exposed externally. Instead, the document is automatically linked to the appropriate

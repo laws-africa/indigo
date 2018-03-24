@@ -44,7 +44,7 @@ class Work(models.Model):
     logical parent for documents, which are expressions of a work.
     """
 
-    frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
+    frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')

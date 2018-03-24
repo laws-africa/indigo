@@ -19,7 +19,7 @@ class Migration(migrations.Migration):
             name='Work',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('frbr_uri', models.CharField(default=b'/', help_text=b'Used globally to identify this work', max_length=512)),
+                ('frbr_uri', models.CharField(max_length=512, null=False, unique=True, help_text="Used globally to identify this work")),
                 ('title', models.CharField(default=b'(untitled)', max_length=1024, null=True)),
                 ('country', models.CharField(default=b'za', max_length=2)),
                 ('draft', models.BooleanField(default=True, help_text=b"Drafts aren't available through the public API")),

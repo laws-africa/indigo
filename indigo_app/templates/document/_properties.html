@@ -1,4 +1,6 @@
 <div class="boxed-group-inner document-properties-view">
+  <div id="document-work-details"></div>
+
   <div class="form-horizontal">
     <fieldset>
       <h4>Details of this Work
@@ -203,6 +205,31 @@
     </fieldset>
   </div>
 </div>
+
+
+<script id="document-work-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <h3 class="panel-title">{{ work.title }}</h3>
+  </div>
+  <div class="panel-body">
+    <dl class="dl-horizontal">
+      <dt>FRBR URI</dt>
+      <dd>{{ work.frbr_uri }}</dd>
+      <dt>Country / Locality</dt>
+      <dd>{{ work.country }}{{#if work.locality }} / {{ work.locality }}{{/if}}</dd>
+      <dt>Published in</dt>
+      <dd>{{ work.publication_name }} number {{ work.publication_number }}</dd>
+      <dt>Publication date</dt>
+      <dd>{{ work.publication_date }}</dd>
+    </dl>
+  </div>
+</div>
+
+{% endverbatim %}
+</script>
 
 
 <script id="repeal-template" type="text/x-handlebars-template">

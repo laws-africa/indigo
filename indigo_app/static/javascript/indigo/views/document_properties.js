@@ -16,6 +16,7 @@
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
+    workDetailTemplate: '#document-work-template',
     events: {
       'click .btn-amendments': 'showAmendments',
     },
@@ -142,9 +143,14 @@
       this.model.on('change:publication_date change:expression_date', this.updateExpressionDates, this);
       this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
 
+      this.workDetailTemplate = Handlebars.compile($(this.workDetailTemplate).html());
+      this.model.work.on('change', this.render, this);
+
       this.model.updateFrbrUri();
       this.updateExpressionDates();
       this.stickit();
+
+      this.render();
     },
 
     updatePublicationOptions: function() {
@@ -229,6 +235,12 @@
       })).done(function() {
         self.setClean();
       });
+    },
+
+    render: function() {
+      this.$('#document-work-details').html(this.workDetailTemplate({
+        work: this.model.work.toJSON(),
+      }));
     },
   });
 })(window);

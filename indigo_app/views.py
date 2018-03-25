@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 
 from indigo_api.models import Document, Subtype
-from indigo_api.serializers import DocumentSerializer, DocumentListSerializer
+from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
 from .forms import DocumentForm
@@ -14,12 +14,15 @@ import json
 def document(request, doc_id=None):
     if doc_id:
         doc = get_object_or_404(Document, pk=doc_id)
+        # don't serialize this doc, we'll get it from the library
         doc_json = json.dumps(None)
     else:
         # it's new!
         doc = Document.randomized(request.user, title='(untitled)')
         doc.tags = None
         doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
+
+    work_json = json.dumps(WorkSerializer(instance=doc.work, context={'request': request}).data)
 
     form = DocumentForm(instance=doc)
 
@@ -35,6 +38,7 @@ def document(request, doc_id=None):
         'document_json': doc_json,
         'document_content_json': json.dumps(doc.document_xml),
         'documents_json': documents_json,
+        'work_json': work_json,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),

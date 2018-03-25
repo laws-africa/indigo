@@ -97,6 +97,8 @@
         Indigo.library.add(this.document);
       }
 
+      this.document.work = new Backbone.Model(Indigo.Preloads.work);
+
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
       this.document.expressionSet = Indigo.library.expressionSet(this.document);

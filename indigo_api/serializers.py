@@ -586,7 +586,7 @@ class WorkSerializer(serializers.ModelSerializer):
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'title', 'draft',
+            'title', 'draft', 'publication_name', 'publication_number', 'publication_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components

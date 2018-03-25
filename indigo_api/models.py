@@ -58,6 +58,11 @@ class Work(models.Model):
 
     deleted = models.BooleanField(default=False, help_text="Has this work been deleted?")
 
+    # publication details
+    publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
+    publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
+    publication_date = models.CharField(null=True, blank=True, max_length=255, help_text="Date of publication (YYYY-MM-DD)")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -394,7 +399,7 @@ class Document(models.Model):
         """ Copy various attributes from this document's Work onto this
         document.
         """
-        for attr in ['frbr_uri', 'country']:
+        for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
             setattr(self, attr, getattr(self.work, attr))
 
         # copy over title if it's not set

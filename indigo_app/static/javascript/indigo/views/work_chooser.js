@@ -14,6 +14,7 @@
     events: {
       'keyup .work-chooser-search': 'filterBySearch',
       'click .work-chooser-search-clear': 'resetSearch',
+      'change .work-chooser-country': 'countryChanged',
       'click tr': 'itemClicked',
       'hidden.bs.modal': 'dismiss',
       'shown.bs.modal': 'shown',
@@ -83,9 +84,23 @@
       this.$el.find('.work-chooser-search').val('').trigger('keyup');
     },
 
+    countryChanged: function(e) {
+      var value = e.target.selectedOptions[0].value;
+
+      if (value != this.filters.country) {
+        this.filters.country = value;
+        this.trigger('change:filter');
+      }
+    },
+
     render: function() {
       var works = this.filtered();
       var chosen = this.chosen;
+
+      // ensure selections are up to date
+      if (this.filters.country) {
+        this.$('select.work-chooser-country option[value="' + this.filters.country + '"]').attr('selected', true);
+      }
 
       // convert to json and add a chosen indicator
       works = works.map(function(d) {
@@ -134,6 +149,15 @@
           });
         });
       }
+
+      // sort by year (desc) then title (asc)
+      collection.comparator = function(a, b) {
+        if (a.get('year') == b.get('year')) {
+          return a.get('title').localeCompare(b.get('title'));
+        }
+
+        return (b.get('year') - a.get('year'));
+      };
 
       collection.reset(works);
       return collection;

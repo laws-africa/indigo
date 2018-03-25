@@ -579,14 +579,13 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
-    draft = serializers.BooleanField(default=True)
 
     class Meta:
         model = Work
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'title', 'draft', 'publication_name', 'publication_number', 'publication_date',
+            'title', 'publication_name', 'publication_number', 'publication_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components

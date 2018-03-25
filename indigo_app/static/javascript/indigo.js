@@ -79,10 +79,18 @@ $(function() {
     }
   };
 
-  // setup the library
+  // setup the document library
   Indigo.library = new Indigo.Library();
   if (Indigo.Preloads.library) {
     Indigo.library.reset({results: Indigo.Preloads.library}, {parse: true});
+  }
+
+  // setup the collection of works
+  Indigo.works = new Indigo.WorksCollection();
+  if (Indigo.Preloads.works) {
+    Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
+  } else {
+    Indigo.works.fetch();
   }
 
   // always load the user view

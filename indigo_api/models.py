@@ -71,6 +71,8 @@ class Work(models.Model):
 
     objects = WorkQuerySet.as_manager()
 
+    _work_uri = None
+
     @property
     def work_uri(self):
         """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """

@@ -19,6 +19,7 @@
     workDetailTemplate: '#document-work-template',
     events: {
       'click .btn-amendments': 'showAmendments',
+      'click .btn-change-work': 'changeWork',
     },
     bindings: {
       '#document_country': {
@@ -134,7 +135,6 @@
       this.model.expressionSet.on('change', this.setDirty, this);
 
       this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
-      this.model.on('change:repeal sync', this.showRepeal, this);
       this.model.on('change:country', this.updatePublicationOptions, this);
       this.updatePublicationOptions();
 
@@ -144,7 +144,7 @@
       this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
 
       this.workDetailTemplate = Handlebars.compile($(this.workDetailTemplate).html());
-      this.model.work.on('change', this.render, this);
+      this.model.on('change:work', this.render, this);
 
       this.model.updateFrbrUri();
       this.updateExpressionDates();
@@ -193,6 +193,21 @@
     showAmendments: function(e) {
       e.preventDefault();
       $('.sidebar a[href="#amendments-tab"]').click();
+    },
+
+    changeWork: function() {
+      if (!confirm("Are you sure you want to change the work this document is linked to?")) return;
+
+      var document = this.model;
+      var chooser = new Indigo.WorkChooserView({});
+
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.choose(document.work);
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          document.setWork(chosen);
+        }
+      });
     },
 
     showPublishedUrl: function() {

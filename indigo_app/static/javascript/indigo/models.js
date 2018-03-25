@@ -124,6 +124,42 @@
     },
   });
 
+  Indigo.Work = Backbone.Model.extend({
+    defaults: {
+      title: '(untitled)',
+      nature: 'act',
+    },
+
+    urlRoot: '/api/works',
+
+    initialize: function(options) {
+      // keep frbr_uri up to date
+      this.on('change:country change:locality change:subtype change:number change:year', this.updateFrbrUri, this);
+    },
+
+    updateFrbrUri: function() {
+      // rebuild the FRBR uri when one of its component sources changes
+      var parts = [''];
+
+      var country = this.get('country');
+      if (this.get('locality')) {
+        country += "-" + this.get('locality');
+      }
+      parts.push(country);
+      parts.push(this.get('nature'));
+      if (this.get('subtype')) {
+        parts.push(this.get('subtype'));
+      }
+      parts.push(this.get('year'));
+      parts.push(this.get('number'));
+
+      // clean the parts
+      parts = _.map(parts, function(p) { return (p || "").replace(/[ \/]/g, ''); });
+
+      this.set('frbr_uri', parts.join('/').toLowerCase());
+    },
+  });
+
   Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,
@@ -241,7 +277,14 @@
 
       return url;
     },
+
+    setWork: function(work) {
+      this.set('frbr_uri', work.get('frbr_uri'));
+      this.work = work;
+      this.trigger('change change:work');
+    },
   });
+
   /** Create a new document by parsing an frbr URI */
   Indigo.Document.newFromFrbrUri = function(frbr_uri) {
     // /za-cpt/act/by-law/2011/foo
@@ -281,6 +324,15 @@
       }
 
       return document.expressionSet;
+    },
+  });
+
+  Indigo.WorksCollection = Backbone.Collection.extend({
+    model: Indigo.Work,
+    url: '/api/works',
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
     },
   });
 

@@ -797,9 +797,20 @@ legend {
   }
 
   .document-chooser-list,
+  .work-chooser-list,
   .scrollable {
     max-height: 450px;
     overflow-y: auto;
+  }
+}
+
+/* work chooser modal */
+.work-chooser-list {
+  td.frbr_uri {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
+    overflow-x: hidden;
   }
 }
 

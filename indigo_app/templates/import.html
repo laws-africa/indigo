@@ -7,6 +7,11 @@
   <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
   <script src="{% static 'javascript/svg.min.js' %}"></script>
   {{ block.super }}
+
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  window.Indigo.countries = {{ countries_json|safe }};
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -18,21 +23,18 @@
         <div class="row">
           <div class="col-md-offset-2 col-md-8">
 
-            <h3>
+            <h2>
               Import a document
               <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-            </h3>
+            </h2>
 
-            <section>
-              <h4>What country is this for?</h4>
-              <select name="country" class="form-control">
-                {% for opt in countries %}
-                <option value="{{ opt.country.iso.lower }}" {% if user.editor.country_code == opt.country.iso %}selected{% endif %}>{{ opt.country.name }}</option>
-                {% endfor %}
-              </select>
+            <section class="numbered" data-num="1">
+              <h4>Which work is this document for?</h4>
+              <div id="work-info"></div>
+              <button type="button" class="btn btn-primary choose-work">Choose a work</button>
             </section>
 
-            <section>
+            <section class="numbered" data-num="2">
               <p class="alert alert-danger" style="display: none"></p>
 
               <div class="file-input-field"><input type="file" id="file" name="file"></div>
@@ -55,7 +57,7 @@
         <div class="row">
           <div class="col-md-offset-2 col-md-8">
 
-            <section>
+            <section class="numbered" data-num="3">
               <h4>What do section titles look like?</h4>
 
               <div class="row">
@@ -117,5 +119,14 @@
     </form>
   </div>
 </div>
+
+<script id="work-detail-template" type="text/x-handlebars-template">
+{% verbatim %}
+<h5>{{ title }}</h5>
+<p>{{ frbr_uri }}</p>
+{% endverbatim %}
+</script>
+
+{% include "work/_work_chooser_modal.html" %}
 
 {% endblock %}

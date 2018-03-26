@@ -27,8 +27,7 @@ def document(request, doc_id=None):
     form = DocumentForm(instance=doc)
 
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
-    countries = {c.code: c.as_json() for c in countries}
-    countries_json = json.dumps(countries)
+    countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
     serializer = DocumentListSerializer(context={'request': request})
     documents_json = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
@@ -42,7 +41,7 @@ def document(request, doc_id=None):
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
-        'countries': Country.objects.select_related('country').all(),
+        'countries': countries,
         'countries_json': countries_json,
         'view': 'DocumentView',
     })
@@ -52,10 +51,14 @@ def document(request, doc_id=None):
 def import_document(request):
     doc = Document(frbr_uri='/')
     form = DocumentForm(instance=doc)
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
+    countries_json = json.dumps({c.code: c.as_json() for c in countries})
+
     return render(request, 'import.html', {
         'document': doc,
         'form': form,
-        'countries': Country.objects.select_related('country').all(),
+        'countries': countries,
+        'countries_json': countries_json,
         'view': 'ImportView',
     })
 
@@ -63,8 +66,7 @@ def import_document(request):
 @login_required
 def library(request):
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
-    countries = {c.code: c.as_json() for c in countries}
-    countries_json = json.dumps(countries)
+    countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
     serializer = DocumentListSerializer(context={'request': request})
     documents_json = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
@@ -72,6 +74,6 @@ def library(request):
     return render(request, 'library.html', {
         'countries_json': countries_json,
         'documents_json': documents_json,
-        'countries': Country.objects.select_related('country').all(),
+        'countries': countries,
         'view': 'LibraryView',
     })

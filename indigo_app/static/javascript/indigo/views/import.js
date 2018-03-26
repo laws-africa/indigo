@@ -122,16 +122,31 @@
     el: '#import-document',
     events: {
       'click .btn.choose-file': 'chooseFile',
+      'click .btn.choose-work': 'chooseWork',
       'click .btn.import': 'submitForm',
       'dragleave .dropzone': 'noDrag',
       'dragover .dropzone': 'dragover',
       'drop .dropzone': 'drop',
       'change [name=file]': 'fileSelected',
     },
+    workTemplate: '#work-detail-template',
 
     initialize: function() {
       this.$form = this.$el.find('form.import-form');
       this.cropBoxView = new Indigo.CropBoxView();
+      this.workTemplate = Handlebars.compile($(this.workTemplate).html());
+    },
+
+    chooseWork: function() {
+      var chooser = new Indigo.WorkChooserView({}),
+          self = this;
+
+      chooser.setFilters({country: Indigo.userView.model.get('country_code').toLowerCase()});
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          self.setWork(chosen);
+        }
+      });
     },
 
     dragover: function(e) {
@@ -168,7 +183,7 @@
 
       this.file = file;
       this.$('.file-detail').text(this.file.name);
-      this.$('button.import').prop('disabled', false);
+      this.$('button.import').prop('disabled', !(!!this.work));
 
       if (this.file.type == "application/pdf") {
         var reader = new FileReader();
@@ -180,6 +195,12 @@
         this.scale = null;
         this.$('.pages').hide();
       }
+    },
+
+    setWork: function(work) {
+      this.work = work;
+      this.$('button.import').prop('disabled', !(!!this.work && !!this.file));
+      this.$('#work-info').empty().html(this.workTemplate(this.work.toJSON()));
     },
 
     /**
@@ -259,7 +280,8 @@
       var self = this;
       var formData = new FormData();
 
-      formData.append('country', this.$('[name=country]').val());
+      formData.append('country', this.work.get('country'));
+      formData.append('frbr_uri', this.work.get('frbr_uri'));
       formData.append('file', this.file);
       formData.append('file_options..section_number_position',
                       this.$('[name="file_options.section_number_position"]:checked').val());

@@ -474,6 +474,10 @@ legend {
 .import-form {
   padding: 10px 0px;
 
+  h2 {
+    margin-bottom: 30px;
+  }
+
   .dropzone {
     width: 100%;
     border: 5px dashed $border-colour;
@@ -509,6 +513,25 @@ legend {
 
   section {
     margin-bottom: 25px;
+    position: relative;
+
+    &.numbered::before {
+      content: attr(data-num);
+      display: block;
+      position: absolute;
+      left: -45px;
+      top: -7px;
+      width: 35px;
+      height: 35px;
+      padding-top: 2px;
+
+      border-radius: 50%;
+      background-color: $blue;
+      text-align: center;
+      font-size: 20px;
+      color: white;
+      font-weight: bold;
+    }
   }
 
   .pages {

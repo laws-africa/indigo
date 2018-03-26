@@ -3,7 +3,7 @@
 
   <div class="form-horizontal">
     <fieldset>
-      <h4>Details of this Work
+      <h4>Details of this Expression
         <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
       </h4>
 
@@ -11,22 +11,6 @@
         <label for="document_title" class="col-sm-2 control-label required">Short title</label>
         <div class="col-sm-10">
           <input type="text" class="form-control" id="document_title" placeholder="Title" required>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="document_country" class="col-sm-2 control-label required">Country</label>
-        <div class="col-sm-4">
-          <select id="document_country" class="form-control">
-            {% for opt in countries %}
-            <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
-            {% endfor %}
-          </select>
-        </div>
-
-        <label for="document_locality" class="col-sm-2 control-label">Locality</label>
-        <div class="col-sm-4">
-          <select class="form-control" id="document_locality"></select>
         </div>
       </div>
 
@@ -39,68 +23,16 @@
             {% endfor %}
           </select>
         </div>
-
-        <label for="document_subtype" class="col-sm-2 control-label">Document subtype</label>
-        <div class="col-sm-4">
-          <select id="document_subtype" class="form-control">
-            <option value="">(none)</option>
-            {% for subtype in subtypes %}
-            <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
-            {% endfor %}
-          </select>
-        </div>
       </div>
 
       <div class="form-group">
-        <label for="document_year" class="col-sm-2 control-label required">Year of introduction</label>
-        <div class="col-sm-2">
-          <input type="text" class="form-control" id="document_year" required pattern="\d{4}">
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="document_number" class="col-sm-2 control-label required">Number within year</label>
+        <label for="document_expression_date" class="col-sm-2 control-label required">Expression date</label>
         <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_number" required pattern="[^\s]+">
-          <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
+          <select class="form-control" id="document_expression_date"></select>
+          <p class="help-block">Date of this version of the document, either the publication date or an amendment date</p>
         </div>
-
-        <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR Work URI that identifies this work globally</label>
         <div class="col-sm-4">
-          <div id="document_frbr_uri" class="form-control-static"></div>
-        </div>
-      </div>
-    </fieldset>
-
-    <fieldset>
-      <h4>Promulgation</h4>
-
-      <div class="form-group">
-        <label for="document_publication_date" class="col-sm-2 control-label required">Publication date</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
-          <p class="help-block">Date when first published</p>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label for="document_publication_name" class="col-sm-2 control-label">Publication name</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_publication_name" list="publication_list">
-          <p class="help-block">Original publication, eg. national gazette</p>
-        </div>
-        <datalist id="publication_list"></datalist>
-
-        <label for="document_publication_number" class="col-sm-2 control-label">Publication number</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" id="document_publication_number">
-          <p class="help-block">Publication's sequence number, eg. gazette number</p>
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-10 col-sm-offset-2">
-          <hr>
+          <a href="#" class="btn btn-default btn-amendments">Manage amendments</a>
         </div>
       </div>
 
@@ -118,20 +50,10 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-sm-10 col-sm-offset-2">
-          <hr>
-        </div>
-      </div>
-
       <div class="form-group">
-        <label for="document_expression_date" class="col-sm-2 control-label">Expression date</label>
-        <div class="col-sm-4">
-          <select class="form-control" id="document_expression_date"></select>
-          <p class="help-block">Date of this version of the document, either the publication date or an amendment date</p>
-        </div>
-        <div class="col-sm-4">
-          <a href="#" class="btn btn-default btn-amendments">Manage amendments</a>
+        <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR Work URI that identifies this work globally</label>
+        <div class="col-sm-10">
+          <div id="document_frbr_uri" class="form-control-static"></div>
         </div>
       </div>
     </fieldset>
@@ -219,7 +141,12 @@
       <dt>FRBR URI</dt>
       <dd>{{ work.frbr_uri }}</dd>
       <dt>Country / Locality</dt>
-      <dd>{{ work.country }}{{#if work.locality }} / {{ work.locality }}{{/if}}</dd>
+      <dd>
+        {{ work.country_name }}
+        {{#if work.locality }}
+          / {{#if work.locality_name }}{{ work.locality_name }}{{else}}{{ work.locality }}{{/if}}
+        {{/if}}
+      </dd>
       <dt>Published in</dt>
       <dd>{{ work.publication_name }} number {{ work.publication_number }}</dd>
       <dt>Publication date</dt>

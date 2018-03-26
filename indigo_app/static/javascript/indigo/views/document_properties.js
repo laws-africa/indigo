@@ -253,8 +253,15 @@
     },
 
     render: function() {
+      var work = this.model.work.toJSON(),
+          country = Indigo.countries[work.country],
+          locality = work.locality ? country.localities[work.locality] : null;
+
+      work.country_name = country.name;
+      work.locality_name = locality ? locality.name : null;
+
       this.$('#document-work-details').html(this.workDetailTemplate({
-        work: this.model.work.toJSON(),
+        work: work,
       }));
     },
   });

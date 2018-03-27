@@ -1,0 +1,142 @@
+{% extends "layout.html" %}
+
+{% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
+
+{% block content %}
+<div class="workspace-content">
+  <div class="boxed-group-inner boxed-group-inner-minimal" id="edit-work-view">
+    <div class="container">
+      <br>
+
+      <div class="panel panel-default" id="edit-work-view">
+        <div class="panel-heading">
+          <h3 class="panel-title">Work Details</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-horizontal">
+
+            <fieldset>
+              <div class="form-group">
+                <label for="work_title" class="col-sm-2 control-label required">Short title</label>
+                <div class="col-sm-10">
+                  <input type="text" class="form-control" id="work_title" placeholder="Title" required>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_country" class="col-sm-2 control-label required">Country</label>
+                <div class="col-sm-4">
+                  <select id="work_country" class="form-control">
+                    {% for opt in countries %}
+                    <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <label for="work_locality" class="col-sm-2 control-label">Locality</label>
+                <div class="col-sm-4">
+                  <select class="form-control" id="work_locality"></select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_subtype" class="col-sm-2 control-label col-sm-offset-6">Work subtype</label>
+                <div class="col-sm-4">
+                  <select id="work_subtype" class="form-control">
+                    <option value="">(none)</option>
+                    {% for subtype in subtypes %}
+                    <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_year" class="col-sm-2 control-label required">Year of introduction</label>
+                <div class="col-sm-2">
+                  <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_number" class="col-sm-2 control-label required">Number within year</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
+                  <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR Work URI that identifies this work globally</label>
+                <div class="col-sm-4">
+                  <div id="work_frbr_uri" class="form-control-static"></div>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Promulgation</legend>
+
+              <div class="form-group">
+                <label for="work_publication_date" class="col-sm-2 control-label required">Publication date</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" data-provide="datepicker" id="work_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
+                  <p class="help-block">Date when first published</p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_publication_name" class="col-sm-2 control-label">Publication name</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" id="work_publication_name" list="publication_list">
+                  <p class="help-block">Original publication, eg. national gazette</p>
+                </div>
+                <datalist id="publication_list"></datalist>
+
+                <label for="work_publication_number" class="col-sm-2 control-label">Publication number</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" id="work_publication_number">
+                  <p class="help-block">Publication's sequence number, eg. gazette number</p>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="work_commencement_date" class="col-sm-2 control-label">Commencement date</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" data-provide="datepicker" id="work_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+                  <p class="help-block">Date when most of the work comes into force</p>
+                </div>
+
+                <label for="work_assent_date" class="col-sm-2 control-label">Assent date</label>
+                <div class="col-sm-4">
+                  <input type="text" class="form-control" data-provide="datepicker" id="work_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+                  <p class="help-block">Date when signed by the President</p>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+        </div>
+
+        <div class="panel-footer text-right">
+          <button class="btn btn-info save" type="button">Save work</button>
+          <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  window.Indigo.countries = {{ countries_json|safe }};
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  </script>
+
+{% endblock %}

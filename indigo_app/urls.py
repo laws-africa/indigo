@@ -20,5 +20,7 @@ urlpatterns = [
     url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
     url(r'^documents/new/$', views.document, name='new_document'),
     url(r'^documents/import/$', views.import_document, name='import_document'),
+    url(r'^works/(?P<work_id>\d+)/$', views.edit_work, name='work'),
+    url(r'^works/new/$', views.edit_work, name='new_work'),
     url(r'^library/$', views.library, name='library'),
 ]

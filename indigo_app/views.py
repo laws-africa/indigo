@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
+from django.http import Http404
 
 
-from indigo_api.models import Document, Subtype
+from indigo_api.models import Document, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
@@ -14,6 +15,8 @@ import json
 def document(request, doc_id=None):
     if doc_id:
         doc = get_object_or_404(Document, pk=doc_id)
+        if doc.deleted:
+            raise Http404()
         # don't serialize this doc, we'll get it from the library
         doc_json = json.dumps(None)
     else:
@@ -44,6 +47,32 @@ def document(request, doc_id=None):
         'countries': countries,
         'countries_json': countries_json,
         'view': 'DocumentView',
+    })
+
+
+@login_required
+def edit_work(request, work_id=None):
+    if work_id:
+        work = get_object_or_404(Work, pk=work_id)
+        if work.deleted:
+            raise Http404()
+        work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+    else:
+        # it's new!
+        work = None
+        work_json = {}
+
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
+    countries_json = json.dumps({c.code: c.as_json() for c in countries})
+
+    return render(request, 'work/edit.html', {
+        'work': work,
+        'work_json': work_json,
+        'subtypes': Subtype.objects.order_by('name').all(),
+        'languages': Language.objects.select_related('language').all(),
+        'countries': countries,
+        'countries_json': countries_json,
+        'view': 'WorkView',
     })
 
 

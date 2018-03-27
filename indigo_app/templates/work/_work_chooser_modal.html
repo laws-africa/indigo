@@ -1,0 +1,93 @@
+<div class="modal fade" id="work-chooser-box">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Choose a work</h4>
+      </div>
+
+      <div class="modal-body">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <div class="row">
+
+              <div class="col-xs-3">
+                <select class="form-control work-chooser-country">
+                  {% for country in countries %}
+                  <option value="{{ country.code }}">{{ country }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+
+              <div class="col-xs-4 col-xs-offset-5">
+                <div class="input-group">
+                  <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
+                  <div class="input-group-btn">
+                    <button class="work-chooser-search-clear btn btn-default"><strong>&times;</strong></button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+          <div class="work-chooser-list"></div>
+        </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn btn-default new-work pull-left">Add a new work</a>
+        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary save" value="OK">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script id="work-chooser-table-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<table class="table table-condensed table-hover work-list-table">
+  <thead>
+    <tr>
+      <th class="year">Year</th>
+      <th class="title">Title</th>
+      <th class="frbr_uri">FRBR URI</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each works}}
+      <tr data-id="{{ id }}" class="{{#if chosen }}info chosen{{/if}}">
+        <td>{{ year }}</td>
+        <td>{{ title }}</td>
+        <td class="frbr_uri">{{ frbr_uri }}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+{% endverbatim %}
+</script>
+
+
+<div class="modal fade" id="new-work-box">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Create a new work</h4>
+      </div>
+
+      <div class="modal-body">
+      </div>
+
+      <div class="modal-footer">
+        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary save" value="Save">
+      </div>
+
+    </div>
+  </div>
+</div>

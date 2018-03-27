@@ -120,7 +120,9 @@
 
         <div class="panel-footer text-right">
           <button class="btn btn-info save" type="button">Save work</button>
+          {% if work %}
           <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
+          {% endif %}
         </div>
       </div>
 

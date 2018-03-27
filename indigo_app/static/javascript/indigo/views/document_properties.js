@@ -146,7 +146,6 @@
       this.workDetailTemplate = Handlebars.compile($(this.workDetailTemplate).html());
       this.model.on('change:work', this.render, this);
 
-      this.model.updateFrbrUri();
       this.updateExpressionDates();
       this.stickit();
 

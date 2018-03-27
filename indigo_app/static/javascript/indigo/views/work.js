@@ -91,7 +91,11 @@
           isNew = this.model.isNew();
 
       this.model.save().done(function() {
-        if (isNew) window.history.replaceState({}, '', '/works/' + self.model.get('id'));
+        if (isNew) {
+          // redirect
+          Indigo.progressView.peg();
+          window.location = '/works/' + self.model.get('id');
+        }
       });
     },
 

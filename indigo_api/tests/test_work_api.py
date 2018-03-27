@@ -25,3 +25,14 @@ class WorkAPITest(APITestCase):
         # should be gone
         response = self.client.get('/api/documents/20')
         assert_equal(response.status_code, 404)
+
+    def test_validates_uri(self):
+        response = self.client.post('/api/works', {
+            'frbr_uri': 'bad'
+        })
+        assert_equal(response.status_code, 400)
+
+        response = self.client.post('/api/works', {
+            'frbr_uri': ''
+        })
+        assert_equal(response.status_code, 400)

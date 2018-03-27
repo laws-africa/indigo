@@ -600,3 +600,10 @@ class WorkSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         validated_data['updated_by_user'] = self.context['request'].user
         return super(WorkSerializer, self).update(instance, validated_data)
+
+    def validate_frbr_uri(self, value):
+        try:
+            value = FrbrUri.parse(value.lower()).work_uri()
+        except ValueError:
+            raise ValidationError("Invalid FRBR URI: %s" % value)
+        return value

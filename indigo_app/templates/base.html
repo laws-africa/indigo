@@ -34,6 +34,9 @@
       if (!window.Indigo.Preloads) window.Indigo.Preloads = {};
 
       window.Indigo.resolverUrl = '{{ RESOLVER_URL }}';
+      {% if user.is_authenticated %}
+      window.Indigo.Preloads.user = {{ USER_JSON|safe }};
+      {% endif %}
     </script>
 
 

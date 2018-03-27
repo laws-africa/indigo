@@ -94,6 +94,9 @@ $(function() {
   }
 
   // always load the user view
+  Indigo.user = new Indigo.User(Indigo.Preloads.user || {
+    permissions: [],
+  });
   Indigo.userView = new Indigo.UserView();
 
   // what view must we load?

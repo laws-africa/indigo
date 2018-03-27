@@ -97,10 +97,6 @@ class Importer(Slaw):
 
         self.analyse_after_import(doc)
 
-        if not self.fragment:
-            doc.title = "Imported from %s" % upload.name
-            doc.copy_attributes()
-
         return doc
 
     def import_from_text(self, input, frbr_uri, suffix=''):
@@ -148,6 +144,7 @@ class Importer(Slaw):
             doc = Document.randomized(frbr_uri)
             doc.content = stdout.decode('utf-8')
             doc.frbr_uri = frbr_uri  # reset it
+            doc.title = None
             doc.copy_attributes()
 
         self.log.info("Successfully imported from %s" % fname)

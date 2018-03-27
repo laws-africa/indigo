@@ -484,7 +484,8 @@ class DocumentAPITest(APITestCase):
         # check the doc
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.data['draft'], True)
-        assert_not_equal(response.data['frbr_uri'], '/za/act/1980/01')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(response.data['title'], 'Test Act')
 
         # check the attachment
         response = self.client.get('/api/documents/%s/attachments' % id)

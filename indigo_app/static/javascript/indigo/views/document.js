@@ -7,25 +7,19 @@
   // Handle the rendering of the document title, and the browser window title
   Indigo.DocumentTitleView = Backbone.View.extend({
     el: '.workspace-header',
-    bindings: {
-      '.document-title': {
-        observe: ['title', 'draft'],
-        updateMethod: 'html',
-        onGet: 'render',
-      }
-    },
 
     initialize: function() {
-      this.stickit();
-      this.model.on('change:title sync', this.setWindowTitle);
+      this.listenTo(this.model, 'change:title change:expression_date change:draft sync', this.render);
     },
 
-    setWindowTitle: function() {
-      document.title = this.get('title');
+    getTitle: function() {
+      return this.model.get('title') + ' @ ' + this.model.get('expression_date');
     },
 
     render: function(title) {
-      var html = this.model.get('title');
+      var html = this.getTitle();
+
+      document.title = html;
 
       if (this.model.get('draft')) {
         html = html + ' <span class="label label-warning">draft</span>';
@@ -33,7 +27,7 @@
         html = html + ' <span class="label label-info">published</span>';
       }
 
-      return html;
+      this.$('.document-title').html(html);
     },
   });
 

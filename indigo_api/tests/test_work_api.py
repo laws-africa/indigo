@@ -26,6 +26,18 @@ class WorkAPITest(APITestCase):
         response = self.client.get('/api/documents/20')
         assert_equal(response.status_code, 404)
 
+    def test_cascade_frbr_uri_changes(self):
+        response = self.client.get('/api/documents/20')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['frbr_uri'], '/za/act/1945/1')
+
+        response = self.client.patch('/api/works/7', {'frbr_uri': '/za/act/2999/1'})
+        assert_equal(response.status_code, 200)
+
+        response = self.client.get('/api/documents/20')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['frbr_uri'], '/za/act/2999/1')
+
     def test_validates_uri(self):
         response = self.client.post('/api/works', {
             'frbr_uri': 'bad'

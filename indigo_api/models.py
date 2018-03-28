@@ -112,6 +112,13 @@ def post_save_work(sender, instance, **kwargs):
     """ Cascade (soft) deletes to linked documents
     """
     if not kwargs['raw'] and not kwargs['created']:
+        # cascade updates to ensure documents
+        # pick up changes to inherited attributes
+        for doc in instance.document_set.all():
+            doc.copy_attributes()
+            doc.save()
+
+        # cascade deletes
         if instance.deleted:
             Document.objects.filter(work=instance).update(deleted=True)
 

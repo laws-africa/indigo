@@ -63,23 +63,42 @@
     },
 
     initialize: function(options) {
+      this.dirty = false;
+
       this.workExpressionsTemplate = Handlebars.compile($(this.workExpressionsTemplate).html());
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.model.expressionSet = Indigo.library.expressionSet(this.model);
 
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:title', this.updatePageTitle);
-      this.listenTo(this.model, 'change', this.canSave);
+      this.listenTo(this.model, 'change', this.setDirty);
       this.listenTo(this.model, 'change:frbr_uri', this.renderExpressions);
       this.updatePublicationOptions();
+
+      this.listenTo(this.model, 'sync', this.setClean);
+      this.listenTo(this.model, 'change', this.canSave);
+
+      // prevent the user from navigating away without saving changes
+      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
       this.model.updateFrbrUri();
       this.stickit();
       this.renderExpressions();
+      this.canSave();
     },
 
     updatePageTitle: function() {
       document.title = this.model.get('title') + ' - Indigo';
+    },
+
+    setDirty: function() {
+      this.dirty = true;
+      this.canSave();
+    },
+
+    setClean: function() {
+      this.dirty = false;
+      this.canSave();
     },
 
     updatePublicationOptions: function() {
@@ -94,7 +113,7 @@
     },
 
     canSave: function() {
-      this.$('.btn.save').attr('disabled', !this.model.isValid());
+      this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
     },
 
     save: function() {
@@ -141,6 +160,13 @@
         expressions: expressions,
         work: this.model.toJSON(),
       }));
+    },
+
+    windowUnloading: function(e) {
+      if (this.dirty) {
+        e.preventDefault();
+        return 'You will lose your changes!';
+      }
     },
   });
 })(window);

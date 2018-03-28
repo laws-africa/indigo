@@ -36,3 +36,16 @@ class WorkAPITest(APITestCase):
             'frbr_uri': ''
         })
         assert_equal(response.status_code, 400)
+
+    def test_update_publication_date(self):
+        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test'})
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        response = self.client.patch('/api/works/%s' % id, {'publication_date': '2015-01-01'})
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['publication_date'], '2015-01-01')
+
+        response = self.client.get('/api/works/%s' % id)
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['publication_date'], '2015-01-01')

@@ -119,19 +119,6 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
 
-    def test_update_publication_date(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {'publication_date': '2015-01-01'})
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['publication_date'], '2015-01-01')
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['publication_date'], '2015-01-01')
-
     def test_update_expression_date(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)

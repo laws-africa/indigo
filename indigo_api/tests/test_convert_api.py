@@ -2,7 +2,6 @@
 
 import tempfile
 from datetime import date
-import os.path
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
@@ -131,7 +130,6 @@ class RenderParseAPITest(APITestCase):
         (2) There was nothing and an Act no 2 of 2010.
         """)
         tmp_file.seek(0)
-        fname = os.path.basename(tmp_file.name)
 
         response = self.client.post('/api/parse', {
             'file': tmp_file,
@@ -150,7 +148,7 @@ class RenderParseAPITest(APITestCase):
         <FRBRWork>
           <FRBRthis value=\"/za/act/1998/2/main\"/>
           <FRBRuri value=\"/za/act/1998/2\"/>
-          <FRBRalias value="Imported from """ + fname + u""""/>
+          <FRBRalias value="Test Act"/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
           <FRBRcountry value="za"/>

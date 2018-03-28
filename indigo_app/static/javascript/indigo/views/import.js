@@ -135,6 +135,12 @@
       this.$form = this.$el.find('form.import-form');
       this.cropBoxView = new Indigo.CropBoxView();
       this.workTemplate = Handlebars.compile($(this.workTemplate).html());
+
+      // are we starting with an injected frbr_uri for a work?
+      if (Indigo.Preloads.work) {
+        var work = new Indigo.Work(Indigo.Preloads.work);
+        this.setWork(work);
+      }
     },
 
     chooseWork: function() {

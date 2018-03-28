@@ -18,6 +18,7 @@
       'click .btn.save': 'save',
       'click .btn.delete': 'deleteWork',
     },
+    workExpressionsTemplate: '#work-expressions-template',
     bindings: {
       '#work_country': {
         observe: 'country',
@@ -62,14 +63,19 @@
     },
 
     initialize: function(options) {
+      this.workExpressionsTemplate = Handlebars.compile($(this.workExpressionsTemplate).html());
       this.model = new Indigo.Work(Indigo.Preloads.work);
+      this.model.expressionSet = Indigo.library.expressionSet(this.model);
+
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:title', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.canSave);
+      this.listenTo(this.model, 'change:frbr_uri', this.renderExpressions);
       this.updatePublicationOptions();
 
       this.model.updateFrbrUri();
       this.stickit();
+      this.renderExpressions();
     },
 
     updatePageTitle: function() {
@@ -110,6 +116,31 @@
           window.location = '/';
         });
       }
+    },
+
+    renderExpressions: function() {
+      var self = this;
+      var dates = this.model.expressionSet.allDates(),
+          pubDate = this.model.expressionSet.initialPublicationDate();
+
+      // build up a view of expressions for this work
+      var expressions = _.map(dates, function(date) {
+        var doc = self.model.expressionSet.atDate(date);
+        var info = {
+          date: date,
+          document: doc && doc.toJSON(),
+          amendments: _.map(self.model.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
+          initial: date == pubDate,
+        };
+        info.linkable = info.document && !info.current;
+
+        return info;
+      });
+
+      this.$('.work-expressions').html(this.workExpressionsTemplate({
+        expressions: expressions,
+        work: this.model.toJSON(),
+      }));
     },
   });
 })(window);

@@ -134,9 +134,69 @@
         </div>
       </div>
 
+      <!-- expressions -->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Amended versions of this work</h3>
+        </div>
+        <div class="panel-body">
+          <div class="work-expressions"></div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>
+
+<script id="work-expressions-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<div class="amendment-expressions">
+  <ol class="expression-timeline">
+    {{#each expressions}}
+      <li>
+        <h5>
+          {{ date }}
+          {{#if initial}} — Initial publication{{/if}}
+        </h5>
+
+        {{#if amendments}}
+          <ul class="amendments">
+          {{#each amendments}}
+            <li data-uri="{{ amending_uri }}">
+              Amended by
+              {{#if amending_id }}
+                <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
+              {{else}}
+                {{ amending_title }}
+              {{/if}}
+            </li>
+          {{/each}}
+          </ul>
+        {{/if}}
+
+        <div class="document">
+          {{#if document}}
+            {{#if linkable}}
+            <a href="/documents/{{ document.id }}">{{ document.title }}</a>
+            {{else}}
+            {{ document.title }}
+            {{/if}}
+            as at {{ date }}
+          {{else}}
+            <span class="text-muted">No editable version at this date</span>
+          {{/if}}
+        </div>
+      </li>
+    {{/each}}
+    <li>
+      <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Import a new document for this work</a>
+    </li>
+  </ol>
+</div>
+
+{% endverbatim %}
+</script>
 {% endblock %}
 
 {% block js %}
@@ -147,6 +207,7 @@
   // inject country code-to-name mappings into JS
   window.Indigo.countries = {{ countries_json|safe }};
   window.Indigo.Preloads.work = {{ work_json|safe }};
+  window.Indigo.Preloads.library = {{ documents_json|safe }};
   </script>
 
 {% endblock %}

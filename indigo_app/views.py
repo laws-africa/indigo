@@ -65,6 +65,9 @@ def edit_work(request, work_id=None):
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
+    serializer = DocumentListSerializer(context={'request': request})
+    documents_json = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
+
     return render(request, 'work/edit.html', {
         'work': work,
         'work_json': work_json,
@@ -72,22 +75,38 @@ def edit_work(request, work_id=None):
         'languages': Language.objects.select_related('language').all(),
         'countries': countries,
         'countries_json': countries_json,
+        'documents_json': documents_json,
         'view': 'WorkView',
     })
 
 
 @login_required
 def import_document(request):
-    doc = Document(frbr_uri='/')
+    frbr_uri = request.GET.get('frbr_uri')
+    doc = Document(frbr_uri=frbr_uri or '/')
+
     form = DocumentForm(instance=doc)
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
+
+    work = None
+    work_json = None
+
+    if frbr_uri:
+        try:
+            work = Work.objects.get_for_frbr_uri(frbr_uri)
+            work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+        except ValueError:
+            pass
 
     return render(request, 'import.html', {
         'document': doc,
         'form': form,
         'countries': countries,
         'countries_json': countries_json,
+        'frbr_uri': frbr_uri,
+        'work': work,
+        'work_json': work_json,
         'view': 'ImportView',
     })
 

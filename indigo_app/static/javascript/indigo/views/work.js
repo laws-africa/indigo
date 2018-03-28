@@ -65,6 +65,7 @@
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:title', this.updatePageTitle);
+      this.listenTo(this.model, 'change', this.canSave);
       this.updatePublicationOptions();
 
       this.model.updateFrbrUri();
@@ -84,6 +85,10 @@
         opt.setAttribute("value", pub);
         return opt;
       }));
+    },
+
+    canSave: function() {
+      this.$('.btn.save').attr('disabled', !this.model.isValid());
     },
 
     save: function() {

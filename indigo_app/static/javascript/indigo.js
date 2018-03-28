@@ -36,6 +36,8 @@ $(function() {
         } else {
           Indigo.errorView.show("Please log in first.");
         }
+      } else if (xhr.status == 400) {
+        Indigo.errorView.show("There was a problem with your request.");
       }
     })
     .ajaxStart(function(event) {

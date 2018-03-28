@@ -214,11 +214,10 @@
 
     render: function() {
       var work = this.model.work.toJSON(),
-          country = Indigo.countries[work.country],
-          locality = work.locality ? country.localities[work.locality] : null;
+          country = Indigo.countries[work.country];
 
       work.country_name = country.name;
-      work.locality_name = locality ? locality.name : null;
+      work.locality_name = work.locality ? country.localities[work.locality] : null;
 
       this.$('#document-work-details').html(this.workDetailTemplate({
         work: work,

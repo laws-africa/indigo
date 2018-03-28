@@ -128,9 +128,9 @@
       <dd>{{ work.frbr_uri }}</dd>
       <dt>Country / Locality</dt>
       <dd>
-        {{ work.country_name }}
+        {{ work.country_name }} ({{ work.country }})
         {{#if work.locality }}
-          / {{#if work.locality_name }}{{ work.locality_name }}{{else}}{{ work.locality }}{{/if}}
+          / {{#if work.locality_name }}{{ work.locality_name }} ({{ work.locality }}){{else}}{{ work.locality }}{{/if}}
         {{/if}}
       </dd>
       <dt>Published in</dt>

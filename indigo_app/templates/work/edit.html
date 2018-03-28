@@ -8,6 +8,11 @@
     <div class="container">
       <br>
 
+      {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+      {% else %}
+      <div class="alert alert-danger">You don't have permission to create or change a work.</div>
+      {% endif %}
+
       <div class="panel panel-default" id="edit-work-view">
         <div class="panel-heading">
           <h3 class="panel-title">Work Details</h3>
@@ -119,8 +124,11 @@
         </div>
 
         <div class="panel-footer text-right">
+          {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
           <button class="btn btn-info save" type="button">Save work</button>
-          {% if work %}
+          {% endif %}
+
+          {% if perms.indigo_api.can_delete_work %}
           <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
           {% endif %}
         </div>

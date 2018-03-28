@@ -218,9 +218,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     # if a title isn't given, it's taken from the associated work
     title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
 
-    publication_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    publication_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    publication_date = serializers.DateField(required=False, allow_null=True)
+    # taken from the work
+    publication_name = serializers.CharField(read_only=True)
+    publication_number = serializers.CharField(read_only=True)
+    publication_date = serializers.DateField(read_only=True)
+    commencement_date = serializers.DateField(read_only=True)
+    assent_date = serializers.DateField(read_only=True)
 
     tags = TagListSerializerField(required=False)
     amendments = AmendmentSerializer(many=True, required=False)
@@ -586,6 +589,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date',
+            'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components

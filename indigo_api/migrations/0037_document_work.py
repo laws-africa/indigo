@@ -11,19 +11,21 @@ def create_works(apps, schema_editor):
     Work = apps.get_model("indigo_api", "Work")
     db_alias = schema_editor.connection.alias
 
-    documents = Document.objects.using(db_alias).values('id', 'frbr_uri', 'title', 'country', 'publication_name', 'publication_date', 'publication_number')
+    documents = Document.objects.using(db_alias).all()
     # works to create
-    work_detail = {d['frbr_uri']: d for d in documents}
+    work_detail = {d.frbr_uri: d for d in documents}
 
     # create them
     works = [
         Work(
             frbr_uri=uri,
-            title=d['title'],
-            country=d['country'],
-            publication_name=d['publication_name'],
-            publication_date=d['publication_date'],
-            publication_number=d['publication_number'],
+            title=d.title,
+            country=d.country,
+            publication_name=d.publication_name,
+            publication_date=d.publication_date,
+            publication_number=d.publication_number,
+            commencement_date=d.commencement_date,
+            assent_date=d.assent_date,
         ) for uri, d in work_detail.iteritems()
     ]
     Work.objects.using(db_alias).bulk_create(works)

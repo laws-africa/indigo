@@ -63,6 +63,9 @@ class Work(models.Model):
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
     publication_date = models.CharField(null=True, blank=True, max_length=255, help_text="Date of publication (YYYY-MM-DD)")
 
+    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
+    assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -217,11 +220,6 @@ class Document(models.Model):
     # It can be null only so that users aren't forced to add a value.
     expression_date = models.DateField(null=True, blank=True, help_text="Date of publication or latest amendment")
 
-    # Date of commencement. AKN doesn't have a good spot for this, so it only goes in the DB.
-    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
-    # Date of assent. AKN doesn't have a good spot for this, so it only goes in the DB.
-    assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
-
     stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
     """ Is this a stub without full content? """
 
@@ -345,6 +343,14 @@ class Document(models.Model):
         if self._work_uri is None:
             self._work_uri = FrbrUri.parse(self.frbr_uri)
         return self._work_uri
+
+    @property
+    def commencement_date(self):
+        return self.work.commencement_date
+
+    @property
+    def assent_date(self):
+        return self.work.assent_date
 
     def save(self, *args, **kwargs):
         self.copy_attributes()

@@ -37,20 +37,6 @@
       </div>
 
       <div class="form-group">
-        <label for="document_commencement_date" class="col-sm-2 control-label">Commencement date</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
-          <p class="help-block">Date when most of the document comes into force</p>
-        </div>
-
-        <label for="document_assent_date" class="col-sm-2 control-label">Assent date</label>
-        <div class="col-sm-4">
-          <input type="text" class="form-control" data-provide="datepicker" id="document_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
-          <p class="help-block">Date when signed by the President</p>
-        </div>
-      </div>
-
-      <div class="form-group">
         <label for="document_frbr_uri" class="col-sm-2 control-label">FRBR Work URI that identifies this work globally</label>
         <div class="col-sm-10">
           <div id="document_frbr_uri" class="form-control-static"></div>
@@ -151,6 +137,10 @@
       <dd>{{ work.publication_name }} number {{ work.publication_number }}</dd>
       <dt>Publication date</dt>
       <dd>{{ work.publication_date }}</dd>
+      <dt>Commencement date</dt>
+      <dd>{{ work.commencement_date }}</dd>
+      <dt>Date of Assent</dt>
+      <dd>{{ work.assent_date }}</dd>
     </dl>
   </div>
   <div class="panel-footer">

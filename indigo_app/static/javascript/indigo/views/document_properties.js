@@ -22,31 +22,6 @@
       'click .btn-change-work': 'changeWork',
     },
     bindings: {
-      '#document_country': {
-        observe: 'country',
-        onSet: function(val) {
-          // trigger a redraw of the localities, using this country
-          this.country = val;
-          this.model.set('locality', null);
-          this.model.trigger('change:locality', this.model);
-          return val;
-        },
-      },
-      '#document_locality': {
-        observe: 'locality',
-        selectOptions: {
-          collection: function() {
-            var country = Indigo.countries[this.country || this.model.get('country')];
-            return country ? country.localities : [];
-          },
-          defaultOption: {label: "(none)", value: null},
-        }
-      },
-      '#document_nature': 'nature',
-      '#document_subtype': 'subtype',
-      '#document_year': 'year',
-      '#document_number': 'number',
-      '#document_frbr_uri': 'frbr_uri',
       '#document_title': 'title',
       '#document_tags': {
         observe: 'tags',
@@ -64,20 +39,6 @@
           // add them
           $el.val(val).trigger('change');
         },
-      },
-      '#document_publication_date': {
-        observe: 'publication_date',
-        onSet: emptyIsNull,
-      },
-      '#document_publication_name': 'publication_name',
-      '#document_publication_number': 'publication_number',
-      '#document_commencement_date': {
-        observe: 'commencement_date',
-        onSet: emptyIsNull,
-      },
-      '#document_assent_date': {
-        observe: 'assent_date',
-        onSet: emptyIsNull,
       },
       '#document_expression_date': {
         observe: 'expression_date',

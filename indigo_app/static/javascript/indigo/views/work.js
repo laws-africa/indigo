@@ -72,7 +72,7 @@
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:title', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
-      this.listenTo(this.model, 'change:frbr_uri', this.renderExpressions);
+      this.listenTo(this.model, 'change:frbr_uri', _.debounce(_.bind(this.renderExpressions, this), 500));
       this.updatePublicationOptions();
 
       this.listenTo(this.model, 'sync', this.setClean);
@@ -140,27 +140,39 @@
 
     renderExpressions: function() {
       var self = this;
-      var dates = this.model.expressionSet.allDates(),
-          pubDate = this.model.expressionSet.initialPublicationDate();
+      var documents = new Indigo.Library(),
+          frbr_uri = this.model.get('frbr_uri');
 
-      // build up a view of expressions for this work
-      var expressions = _.map(dates, function(date) {
-        var doc = self.model.expressionSet.atDate(date);
-        var info = {
-          date: date,
-          document: doc && doc.toJSON(),
-          amendments: _.map(self.model.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
-          initial: date == pubDate,
-        };
-        info.linkable = info.document && !info.current;
+      // only load documents with this frbr_uri
+      documents.url = documents.url + '?frbr_uri' + encodeURIComponent(frbr_uri);
+      documents.fetch().done(function() {
+        var expressionSet = new Indigo.ExpressionSet(null, {
+          library: documents,
+          frbr_uri: frbr_uri,
+        });
 
-        return info;
+        var dates = expressionSet.allDates(),
+            pubDate = expressionSet.initialPublicationDate();
+
+        // build up a view of expressions for this work
+        var expressions = _.map(dates, function(date) {
+          var doc = expressionSet.atDate(date);
+          var info = {
+            date: date,
+            document: doc && doc.toJSON(),
+            amendments: _.map(expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
+            initial: date == pubDate,
+          };
+          info.linkable = info.document;
+
+          return info;
+        });
+
+        self.$('.work-expressions').html(self.workExpressionsTemplate({
+          expressions: expressions,
+          work: self.model.toJSON(),
+        }));
       });
-
-      this.$('.work-expressions').html(this.workExpressionsTemplate({
-        expressions: expressions,
-        work: this.model.toJSON(),
-      }));
     },
 
     windowUnloading: function(e) {

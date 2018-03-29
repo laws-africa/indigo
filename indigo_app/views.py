@@ -65,9 +65,6 @@ def edit_work(request, work_id=None):
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
-    serializer = DocumentListSerializer(context={'request': request})
-    documents_json = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
-
     return render(request, 'work/edit.html', {
         'work': work,
         'work_json': work_json,
@@ -75,7 +72,6 @@ def edit_work(request, work_id=None):
         'languages': Language.objects.select_related('language').all(),
         'countries': countries,
         'countries_json': countries_json,
-        'documents_json': documents_json,
         'view': 'WorkView',
     })
 

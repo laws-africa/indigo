@@ -208,7 +208,6 @@
   // inject country code-to-name mappings into JS
   window.Indigo.countries = {{ countries_json|safe }};
   window.Indigo.Preloads.work = {{ work_json|safe }};
-  window.Indigo.Preloads.library = {{ documents_json|safe }};
   </script>
 
 {% endblock %}

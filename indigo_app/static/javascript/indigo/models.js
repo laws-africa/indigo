@@ -164,10 +164,10 @@
     validate: function(attrs, options) {
       var errors = {};
 
-      if (!attrs.title) errors['title'] = 'A title must be specified';
-      if (!attrs.country) errors['country'] = 'A country must be specified';
-      if (!attrs.year) errors['year'] = 'A year must be specified';
-      if (!attrs.number) errors['number'] = 'A number must be specified';
+      if (!attrs.title) errors.title = 'A title must be specified';
+      if (!attrs.country) errors.country = 'A country must be specified';
+      if (!attrs.year) errors.year = 'A year must be specified';
+      if (!attrs.number) errors.number = 'A number must be specified';
 
       if (!_.isEmpty(errors)) return errors;
     },

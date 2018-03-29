@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
+{% block header %}<h4>{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>{% endblock %}
 
 {% block content %}
 <div class="workspace-content">

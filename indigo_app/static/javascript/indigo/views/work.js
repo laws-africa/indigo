@@ -89,6 +89,7 @@
 
     updatePageTitle: function() {
       document.title = this.model.get('title') + ' - Indigo';
+      if (!this.model.isNew()) $('.workspace-header h4').text(this.model.get('title'));
     },
 
     setDirty: function() {

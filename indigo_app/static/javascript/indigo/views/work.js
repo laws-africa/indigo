@@ -139,6 +139,8 @@
     },
 
     renderExpressions: function() {
+      if (this.model.isNew()) return;
+
       var self = this;
       var documents = new Indigo.Library(),
           frbr_uri = this.model.get('frbr_uri');

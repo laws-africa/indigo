@@ -135,6 +135,7 @@
         </div>
       </div>
 
+      {% if work %}
       <!-- expressions -->
       <div class="panel panel-default">
         <div class="panel-heading">
@@ -144,6 +145,7 @@
           <div class="work-expressions"></div>
         </div>
       </div>
+      {% endif %}
 
     </div>
   </div>
@@ -191,7 +193,10 @@
       </li>
     {{/each}}
     <li>
-      <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Import a new document for this work</a>
+      <a href="/documents/new/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Create a blank document for this work</a>
+    </li>
+    <li>
+      <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-cloud-upload"></i> Import a new document for this work</a>
     </li>
   </ol>
 </div>

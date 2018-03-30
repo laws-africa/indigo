@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
+from django.urls import reverse
 
 
 from indigo_api.models import Document, Subtype, Work
@@ -21,7 +22,16 @@ def document(request, doc_id=None):
         doc_json = json.dumps(None)
     else:
         # it's new!
-        doc = Document.randomized(request.user, title='(untitled)')
+        frbr_uri = request.GET.get('frbr_uri')
+        if not frbr_uri:
+            return HttpResponseRedirect(reverse('library'))
+
+        try:
+            doc = Document.randomized(frbr_uri)
+        except ValueError:
+            # bad url
+            return HttpResponseRedirect(reverse('library'))
+
         doc.tags = None
         doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
 

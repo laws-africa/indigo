@@ -24,8 +24,9 @@ class WorkViewSet(viewsets.ModelViewSet):
     }
 
     def perform_destroy(self, instance):
+        if not instance.can_delete():
+            raise MethodNotAllowed('DELETE', 'DELETE not allowed for works with attached documents, delete documents first.')
         instance.deleted = True
-        # TODO: cascade to documents
         instance.save()
 
     def perform_update(self, serializer):

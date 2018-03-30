@@ -15,16 +15,20 @@ class WorkAPITest(APITestCase):
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
 
-    def test_delete_cascades(self):
+    def test_prevent_delete(self):
         response = self.client.get('/api/documents/20')
         assert_equal(response.status_code, 200)
 
         response = self.client.delete('/api/works/7')
+        assert_equal(response.status_code, 405)
+
+        # delete document
+        response = self.client.delete('/api/documents/20')
         assert_equal(response.status_code, 204)
 
-        # should be gone
-        response = self.client.get('/api/documents/20')
-        assert_equal(response.status_code, 404)
+        # now can delete
+        response = self.client.delete('/api/works/7')
+        assert_equal(response.status_code, 204)
 
     def test_cascade_frbr_uri_changes(self):
         response = self.client.get('/api/documents/20')

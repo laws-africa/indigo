@@ -103,6 +103,9 @@ class Work(models.Model):
     def locality(self):
         return self.work_uri.locality
 
+    def can_delete(self):
+        return not self.document_set.filter(deleted=False).exists()
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -117,10 +120,6 @@ def post_save_work(sender, instance, **kwargs):
         for doc in instance.document_set.all():
             doc.copy_attributes()
             doc.save()
-
-        # cascade deletes
-        if instance.deleted:
-            Document.objects.filter(work=instance).update(deleted=True)
 
 
 class DocumentManager(models.Manager):

@@ -129,8 +129,12 @@
           <button class="btn btn-info save" type="button">{% if work %}Save work{% else %}Create work{% endif %}</button>
           {% endif %}
 
-          {% if work and perms.indigo_api.can_delete_work %}
-          <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
+          {% if work %}
+            {% if not work.can_delete %}
+              <p class="pull-left">This work cannot be deleted while linked documents exist.</p>
+            {% elif perms.indigo_api.can_delete_work %}
+              <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
+            {% endif %}
           {% endif %}
         </div>
       </div>

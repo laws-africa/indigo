@@ -46,18 +46,6 @@
               </div>
 
               <div class="form-group">
-                <label for="work_subtype" class="col-sm-2 control-label col-sm-offset-6">Work subtype</label>
-                <div class="col-sm-4">
-                  <select id="work_subtype" class="form-control">
-                    <option value="">(none)</option>
-                    {% for subtype in subtypes %}
-                    <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
                 <label for="work_year" class="col-sm-2 control-label required">Year of introduction</label>
                 <div class="col-sm-2">
                   <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
@@ -70,12 +58,23 @@
                   <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
                   <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
                 </div>
+
+                <label for="work_subtype" class="col-sm-2 control-label">Work subtype</label>
+                <div class="col-sm-4">
+                  <select id="work_subtype" class="form-control">
+                    <option value="">(none)</option>
+                    {% for subtype in subtypes %}
+                    <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
               </div>
 
               <div class="form-group">
-                <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR Work URI that identifies this work globally</label>
+                <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR URI</label>
                 <div class="col-sm-4">
                   <div id="work_frbr_uri" class="form-control-static"></div>
+                  <p class="help-block">Uniquely identifies this work globally</p>
                 </div>
               </div>
             </fieldset>

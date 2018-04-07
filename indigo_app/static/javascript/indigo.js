@@ -96,10 +96,10 @@ $(function() {
   // setup the collection of works
   Indigo.works = new Indigo.WorksCollection();
   if (Indigo.Preloads.works) {
-    Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country');
+    Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country_code');
     Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
   } else {
-    Indigo.works.setCountry(Indigo.user.get('country'));
+    Indigo.works.setCountry(Indigo.user.get('country_code'));
   }
 
   // what view must we load?

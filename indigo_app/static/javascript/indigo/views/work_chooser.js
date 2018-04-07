@@ -59,7 +59,7 @@
     setFilters: function(filters) {
       this.filters = _.extend({
         search: null,
-        country: null,
+        country: Indigo.works.country,
         tags: [],
         status: 'all',
       }, filters || {});
@@ -85,12 +85,8 @@
     },
 
     countryChanged: function(e) {
-      var value = e.target.selectedOptions[0].value;
-
-      if (value != this.filters.country) {
-        this.filters.country = value;
-        this.trigger('change:filter');
-      }
+      this.filters.country = e.target.selectedOptions[0].value;
+      Indigo.works.setCountry(this.filters.country);
     },
 
     render: function() {

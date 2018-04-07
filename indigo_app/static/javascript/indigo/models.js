@@ -317,13 +317,29 @@
 
     url: function() {
       var url = '/api/documents';
-      if (this.country) url += '?country=' + encodeURIComponent(this.country);
+      var params = _.clone(this.params || {});
+
+      if (this.country) {
+        params.conutry = this.country;
+      }
+
+      if (params) {
+        url += '?' + _.map(params, function(val, key) {
+          return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+        }).join('&');
+      }
+
       return url;
     },
 
     parse: function(response) {
       // TODO: handle actual pagination
       return response.results;
+    },
+
+    setParams: function(params) {
+      this.params = params;
+      return this.fetch({reset: true});
     },
 
     setCountry: function(country) {

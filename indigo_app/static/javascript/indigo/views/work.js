@@ -66,14 +66,16 @@
       this.dirty = false;
 
       this.workExpressionsTemplate = Handlebars.compile($(this.workExpressionsTemplate).html());
-      this.model = new Indigo.Work(Indigo.Preloads.work);
-      this.model.expressionSet = Indigo.library.expressionSet(this.model);
 
+      this.model = new Indigo.Work(Indigo.Preloads.work);
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:title', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
-      this.listenTo(this.model, 'change:frbr_uri', _.debounce(_.bind(this.renderExpressions, this), 500));
-      this.updatePublicationOptions();
+      this.listenTo(this.model, 'change:frbr_uri', _.debounce(_.bind(this.refreshExpressions, this), 500));
+
+      this.filteredLibrary = new Indigo.Library({country: null});
+      this.model.expressionSet = this.filteredLibrary.expressionSet(this.model);
+      this.listenTo(this.model.expressionSet, 'change reset', this.renderExpressions);
 
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change', this.canSave);
@@ -82,8 +84,9 @@
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
       this.model.updateFrbrUri();
+      this.updatePublicationOptions();
       this.stickit();
-      this.renderExpressions();
+      this.refreshExpressions();
       this.canSave();
     },
 
@@ -138,43 +141,36 @@
       }
     },
 
+    refreshExpressions: function() {
+      // only load documents with this frbr_uri
+      this.filteredLibrary.setParams({frbr_uri: this.model.get('frbr_uri')});
+    },
+
     renderExpressions: function() {
       if (this.model.isNew()) return;
 
-      var self = this;
-      var documents = new Indigo.Library(),
-          frbr_uri = this.model.get('frbr_uri');
+      var expressionSet = this.model.expressionSet,
+          dates = expressionSet.allDates(),
+          pubDate = expressionSet.initialPublicationDate();
 
-      // only load documents with this frbr_uri
-      documents.url = documents.url + '?frbr_uri' + encodeURIComponent(frbr_uri);
-      documents.fetch().done(function() {
-        var expressionSet = new Indigo.ExpressionSet(null, {
-          library: documents,
-          frbr_uri: frbr_uri,
-        });
+      // build up a view of expressions for this work
+      var expressions = _.map(dates, function(date) {
+        var doc = expressionSet.atDate(date);
+        var info = {
+          date: date,
+          document: doc && doc.toJSON(),
+          amendments: _.map(expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
+          initial: date == pubDate,
+        };
+        info.linkable = info.document;
 
-        var dates = expressionSet.allDates(),
-            pubDate = expressionSet.initialPublicationDate();
-
-        // build up a view of expressions for this work
-        var expressions = _.map(dates, function(date) {
-          var doc = expressionSet.atDate(date);
-          var info = {
-            date: date,
-            document: doc && doc.toJSON(),
-            amendments: _.map(expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
-            initial: date == pubDate,
-          };
-          info.linkable = info.document;
-
-          return info;
-        });
-
-        self.$('.work-expressions').html(self.workExpressionsTemplate({
-          expressions: expressions,
-          work: self.model.toJSON(),
-        }));
+        return info;
       });
+
+      this.$('.work-expressions').html(this.workExpressionsTemplate({
+        expressions: expressions,
+        work: this.model.toJSON(),
+      }));
     },
 
     windowUnloading: function(e) {

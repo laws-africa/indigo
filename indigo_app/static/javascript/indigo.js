@@ -99,7 +99,7 @@ $(function() {
     Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country_code');
     Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
   } else {
-    Indigo.works.setCountry(Indigo.user.get('country_code'));
+    Indigo.works.setCountry(Indigo.Preloads.country_code || Indigo.user.get('country_code'));
   }
 
   // what view must we load?

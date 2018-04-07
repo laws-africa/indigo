@@ -75,7 +75,7 @@ class Editor(models.Model):
     @property
     def country_code(self):
         if self.country:
-            return self.country.country_id
+            return self.country.country_id.lower()
         return None
 
     @country_code.setter

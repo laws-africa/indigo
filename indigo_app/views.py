@@ -123,12 +123,15 @@ def library(request):
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
     serializer = DocumentListSerializer(context={'request': request})
-    documents_json = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
+    docs = DocumentViewSet.queryset.filter(country=request.user.editor.country_code)
+    documents_json = json.dumps(serializer.to_representation(docs))
 
     serializer = WorkSerializer(context={'request': request}, many=True)
-    works_json = json.dumps(serializer.to_representation(Work.objects.undeleted().all()))
+    works = Work.objects.undeleted().filter(country=request.user.editor.country_code)
+    works_json = json.dumps(serializer.to_representation(works))
 
     return render(request, 'library.html', {
+        'countries': countries,
         'countries_json': countries_json,
         'documents_json': documents_json,
         'works_json': works_json,

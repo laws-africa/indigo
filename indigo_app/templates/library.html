@@ -25,15 +25,21 @@
 
 <div class="sidebar library-sidebar">
   <div class="boxed-group-inner">
-    <div id="filters">
-    </div>
+    <section>
+      <select class="form-control filter-country" name="country-filter">
+        {% for country in countries %}
+          <option {% if user.editor.country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
+        {% endfor %}
+      </select>
+    </section>
+
+    <div id="filters"></div>
   </div>
 </div>
 
 <div class="workspace-content">
   <div class="boxed-group-inner">
-    <div id="library">
-    </div>
+    <div id="library"></div>
   </div>
 </div>
 
@@ -169,6 +175,7 @@
 window.Indigo.countries = {{ countries_json|safe }};
 
 // include the documents as JSON
+window.Indigo.Preloads.country_code = '{{ user.editor.country_code }}';
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>

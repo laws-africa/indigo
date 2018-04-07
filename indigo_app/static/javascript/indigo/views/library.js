@@ -22,7 +22,7 @@
     template: '#filters-template',
     events: {
       'click .filter-tag': 'filterByTag',
-      'change .filter-country': 'filterByCountry',
+      'change .filter-country': 'changeCountry',
       'change .filter-locality': 'filterByLocality',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
@@ -35,29 +35,20 @@
       this.filtered = new Indigo.Library();
       this.filters = {
         search: null,
-        country: null,
+        country: Indigo.Preloads.country_code,
         locality: null,
         tags: [],
         status: 'all',
       };
       this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
 
-      this.on('change', this.summarizeAndRender, this);
+      this.listenTo(this, 'change', this.summarizeAndRender);
 
       this.works = Indigo.works;
-      this.listenTo(this.works, 'change reset', function() { this.trigger('change'); });
+      this.listenTo(this.works, 'change', function() { this.trigger('change'); });
 
       this.library = Indigo.library;
       this.listenTo(this.library, 'change reset', function() { this.trigger('change'); });
-
-      this.user = Indigo.userView.model;
-      this.user.on('change:country_code sync', function() {
-        var country = this.get('country_code');
-        if (country) {
-          country = country.toLowerCase();
-          self.$el.find('.filter-country').val(country).change();
-        }
-      });
     },
 
     summarizeAndRender: function() {
@@ -80,7 +71,7 @@
      */
     filterAndSummarize: function() {
       var filters = this.filters,
-          works = this.works.models,
+          works,
           docs = {};
 
       this.summary = {};
@@ -97,28 +88,8 @@
         });
       };
 
-      // count countries, sort alphabetically
-      this.summary.countries = _.sortBy(
-        _.map(
-          _.countBy(works, function(d) { return d.get('country'); }),
-          function(count, code) {
-            return {
-              code: code,
-              name: Indigo.countries[code].name,
-              count: count,
-              active: filters.country === code,
-            };
-          }
-        ),
-        function(info) { return info.name; });
-      this.summary.show_countries = this.summary.countries.length > 1;
-
-      // filter by country
-      if (filters.country) {
-        works = _.filter(works, function(work) {
-          return work.get('country') == filters.country;
-        });
-      }
+      // filter by country -- works is scoped to country, so this should be all the works
+      works = this.works.where({'country': filters.country});
 
       // count localities, sort alphabetically
       this.summary.localities = _.sortBy(
@@ -233,14 +204,20 @@
       this.trigger('change');
     },
 
-    filterByCountry: function(e) {
+    changeCountry: function(e) {
+      var self = this,
+          country = $(e.currentTarget).val();
+
       e.preventDefault();
 
-      this.filters.country = $(e.currentTarget).val() || null;
-      this.filters.locality = null;
-      this.filters.tags = [];
+      Indigo.works.setCountry(country).done(function() {
+        self.filters.country = country;
+        self.filters.locality = null;
+        self.filters.tags = [];
 
-      this.trigger('change');
+        // this will eventually trigger a change event on us
+        Indigo.library.setCountry(self.filters.country);
+      });
     },
 
     filterByLocality: function(e) {

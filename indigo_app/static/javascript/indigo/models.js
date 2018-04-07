@@ -313,10 +313,25 @@
 
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,
-    url: '/api/documents',
+    country: null,
+
+    url: function() {
+      var url = '/api/documents';
+      if (this.country) url += '?country=' + encodeURIComponent(this.country);
+      return url;
+    },
+
     parse: function(response) {
       // TODO: handle actual pagination
       return response.results;
+    },
+
+    setCountry: function(country) {
+      if (this.country != country) {
+        this.country = country;
+        return this.fetch({reset: true});
+      }
+      return $.Deferred().resolve();
     },
 
     /**
@@ -335,13 +350,25 @@
     },
   });
 
-  // TODO: scope to country
   Indigo.WorksCollection = Backbone.Collection.extend({
     model: Indigo.Work,
-    url: '/api/works',
+    country: null,
+
+    url: function() {
+      return '/api/works?country=' + encodeURIComponent(this.country);
+    },
+
     parse: function(response) {
       // TODO: handle actual pagination
       return response.results;
+    },
+
+    setCountry: function(country) {
+      if (this.country != country) {
+        this.country = country;
+        return this.fetch({reset: true});
+      }
+      return $.Deferred().resolve();
     },
   });
 

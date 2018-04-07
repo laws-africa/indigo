@@ -171,6 +171,26 @@
 
       if (!_.isEmpty(errors)) return errors;
     },
+
+    /**
+     * Return a collection of all the documents linked to this work
+     */
+    documents: function() {
+      if (!this._documents) {
+        var self = this;
+        var docs = this._documents = new Indigo.Library();
+
+        var repopulate = function() {
+          docs.reset(Indigo.library.where({frbr_uri: self.get('frbr_uri')}));
+        };
+
+        docs.on('add remove', repopulate);
+        this.on('change:frbr_uri', repopulate);
+        repopulate();
+      }
+
+      return this._documents;
+    },
   });
 
   Indigo.Document = Backbone.Model.extend({
@@ -315,6 +335,7 @@
     },
   });
 
+  // TODO: scope to country
   Indigo.WorksCollection = Backbone.Collection.extend({
     model: Indigo.Work,
     url: '/api/works',

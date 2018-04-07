@@ -4,6 +4,19 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
+  /**
+   * The filter view takes various filter settings from the user
+   * and determines which works and documents to show.
+   *
+   * Each time a filter is changed, this view's 'change' event is fired
+   * and: 
+   *   - filteredWorks is a collection of the works to show
+   *   - filteredDocs is a map from work id to a collection of docs to show for each work
+   *
+   * Most filtering is done on the works, but some fields (such as title) are search for
+   * both on a work and its documents, because a document can have a different title to a
+   * work.
+   */
   Indigo.LibraryFilterView = Backbone.View.extend({
     el: '.workspace',
     template: '#filters-template',
@@ -31,8 +44,11 @@
 
       this.on('change', this.summarizeAndRender, this);
 
-      this.model = Indigo.library;
-      this.model.on('change reset', function() { this.trigger('change'); }, this);
+      this.works = Indigo.works;
+      this.listenTo(this.works, 'change reset', function() { this.trigger('change'); });
+
+      this.library = Indigo.library;
+      this.listenTo(this.library, 'change reset', function() { this.trigger('change'); });
 
       this.user = Indigo.userView.model;
       this.user.on('change:country_code sync', function() {
@@ -49,17 +65,42 @@
       this.render();
     },
 
+    /**
+     * Filter the works/docs and calculate summary counts.
+     *
+     * These are intertwined because we generally need to summarise a field
+     * just before we filter by it (eg. tags), but after preceding filters have
+     * been applied. The order is:
+     *
+     *  - country
+     *  - locality
+     *  - status
+     *  - tags
+     *  - search
+     */
     filterAndSummarize: function() {
-      var filters = this.filters;
-      var docs = this.model.models;
+      var filters = this.filters,
+          works = this.works.models,
+          docs = {};
 
       this.summary = {};
 
-      // ** country
+      // Helper to choose works by applying a predicate to each work's documents.
+      var filterWorksByDocs = function(predicate, testWork) {
+        return _.filter(works, function(work) {
+          if (testWork && predicate(work)) return true;
+
+          // test the documents
+          var id = work.get('id');
+          docs[id] = _.filter(docs[id], predicate);
+          return docs[id].length > 0;
+        });
+      };
+
       // count countries, sort alphabetically
       this.summary.countries = _.sortBy(
         _.map(
-          _.countBy(docs, function(d) { return d.get('country'); }),
+          _.countBy(works, function(d) { return d.get('country'); }),
           function(count, code) {
             return {
               code: code,
@@ -71,32 +112,19 @@
         ),
         function(info) { return info.name; });
       this.summary.show_countries = this.summary.countries.length > 1;
+
       // filter by country
       if (filters.country) {
-        docs = _.filter(docs, function(doc) {
-          return doc.get('country') == filters.country;
+        works = _.filter(works, function(work) {
+          return work.get('country') == filters.country;
         });
       }
 
-      // ** status
-      // filter by status
-      if (filters.status !== 'all') {
-        docs = _.filter(docs, function(doc) {
-          if (filters.status === "draft") {
-            return doc.get('draft') === true;
-          }
-          else if (filters.status === "published"){
-            return doc.get('draft') === false;
-          }
-        });
-      }
-
-      // ** locality
       // count localities, sort alphabetically
       this.summary.localities = _.sortBy(
         _.map(
           _.countBy(
-            _.filter(docs, function(d) { return d.get('locality'); }),
+            _.filter(works, function(d) { return d.get('locality'); }),
                     function(d) { return d.get('country') + '/' + d.get('locality'); }),
           function(count, code) {
             var parts = code.split('/'),
@@ -113,28 +141,43 @@
           }
         ),
         function(info) { return info.code; });
+
       // filter by locality
       if (filters.locality) {
         var parts = filters.locality.split('/'),
             country = parts[0],
             loc = parts[1];
 
-        docs = _.filter(docs, function(doc) {
-          return doc.get('country') == country && doc.get('locality') == loc;
+        works = _.filter(works, function(work) {
+          return work.get('country') == country && work.get('locality') == loc;
         });
       }
 
-      // ** tags
+      // setup our collection of documents for each work
+      works.forEach(function(work) {
+        docs[work.get('id')] = work.documents().models;
+      });
+
+      if (filters.status !== 'all') {
+        // filter documents by status
+        works = filterWorksByDocs(function(doc) {
+          return (filters.status === "draft" && doc.get('draft') ||
+                  filters.status === "published" && !doc.get('draft'));
+        });
+      }
+
       // count tags, sort in descending order
       var tags = {};
       _.each(filters.tags, function(t) { tags[t] = 1; });
 
+      // pull all the docs together
+      var allDocs = _.reduce(works, function(list, w) { return list.concat(docs[w.get('id')] || []); }, []);
       this.summary.tags = _.sortBy(
         _.map(
           // count occurrences of each tag
           _.countBy(
             // build up a list of tags
-            _.reduce(docs, function(list, d) { return list.concat(d.get('tags') || []); }, [])
+            _.reduce(allDocs, function(list, d) { return list.concat(d.get('tags') || []); }, [])
           ),
           // turn counts into useful objects
           function(count, tag) {
@@ -147,27 +190,29 @@
         ),
         // sort most tagged to least
         function(info) { return -info.count; });
-      // filter by tags
+
       if (filters.tags.length > 0) {
-        docs = _.filter(docs, function(doc) {
+        // filter documents by tags
+        works = filterWorksByDocs(function(doc) {
           return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
         });
       }
 
-      // search
+      // do search on both works and docs
       if (filters.search) {
         var needle = filters.search.toLowerCase();
-        var self = this;
+        var fields = this.searchableFields;
 
-        docs = _.filter(docs, function(doc) {
-          return _.any(self.searchableFields, function(field) {
-            var val = doc.get(field);
+        works = filterWorksByDocs(function(x) {
+          return _.any(fields, function(field) {
+            var val = x.get(field);
             return val && val.toLowerCase().indexOf(needle) > -1;
           });
-        });
+        }, true); // true to also test the work, not just its docs
       }
 
-      this.filtered.reset(docs);
+      this.filteredWorks = works;
+      this.filteredDocs = docs;
     },
 
     filterByTag: function(e) {
@@ -226,7 +271,7 @@
 
       $('#filters').html(this.template({
         summary: this.summary,
-        count: this.model.length,
+        count: this.works.length,
         filters: this.filters,
         filter_status: filter_status,
       }));
@@ -269,52 +314,46 @@
     },
 
     render: function() {
-      var docs = this.filterView.filtered,
-          sortDesc = this.sortDesc,
-          expressionSets = _.uniq(docs.map(function(doc) {
-            return Indigo.library.expressionSet(doc);
-          }), 'frbr_uri');
+      var works = this.filterView.filteredWorks,
+          docs = this.filterView.filteredDocs,
+          sortDesc = this.sortDesc;
 
-      // TODO: sorting
-      expressionSets = expressionSets.map(function(set) {
-        var first,
-            rest,
-            currentUserId = Indigo.userView.model.get('id'),
-            dates,
-            items;
+      // tie works and docs together
+      works = _.map(works, function(work) {
+        var currentUserId = Indigo.userView.model.get('id');
 
+        work = work.toJSON();
+
+        work.docs = _.map(docs[work.id] || [], function(d) { return d.toJSON(); });
         // latest expression first
-        items = _.sortBy(set.toJSON(), 'expression_date');
-        items.reverse();
+        work.docs = _.sortBy(work.docs, 'expression_date');
+        work.docs.reverse();
 
         // current user's name -> you
-        items.forEach(function(d) {
+        work.docs.forEach(function(d, i) {
           if (d.updated_by_user && d.updated_by_user.id == currentUserId) d.updated_by_user.display_name = 'you';
+
+          // only show doc titles that are different to the work
+          if (i > 0 && d.title == work.title) d.title = '';
         });
 
-        first = items[0];
-        rest = items.slice(1);
-        rest.forEach(function(d) { 
-          if (d.title == first.title) d.title = '';
-        });
+        if (work.docs.length > 0) {
+          var dates = _.compact(_.pluck(work.docs, 'updated_at'));
+          dates.sort();
 
-        dates = _.compact(_.pluck(items, 'updated_at'));
-        dates.sort();
+          // if we're sorting works by date later on, sort using the youngest/oldest, as appropriate
+          work.updated_at = sortDesc ? dates.slice(-1) : dates[0];
+        }
 
-        return {
-          'year': first.year + ' / ' + first.number,
-          'title': first.title,
-          'updated_at': sortDesc ? dates.slice(-1) : dates[0],
-          'first': first,
-          'rest': items.slice(1),
-        };
+        return work;
       });
-      expressionSets = _.sortBy(expressionSets, this.sortField);
-      if (sortDesc) expressionSets.reverse();
+
+      works = _.sortBy(works, this.sortField);
+      if (sortDesc) works.reverse();
 
       this.$el.html(this.template({
-        count: docs.length,
-        expressionSets: expressionSets,
+        count: works.length,
+        works: works,
         sortField: this.sortField,
         sortDesc: this.sortDesc,
       }));

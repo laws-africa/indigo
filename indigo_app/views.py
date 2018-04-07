@@ -125,9 +125,13 @@ def library(request):
     serializer = DocumentListSerializer(context={'request': request})
     documents_json = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
 
+    serializer = WorkSerializer(context={'request': request}, many=True)
+    works_json = json.dumps(serializer.to_representation(Work.objects.all()))
+
     return render(request, 'library.html', {
         'countries_json': countries_json,
         'documents_json': documents_json,
+        'works_json': works_json,
         'countries': countries,
         'view': 'LibraryView',
     })

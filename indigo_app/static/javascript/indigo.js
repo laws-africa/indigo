@@ -81,6 +81,12 @@ $(function() {
     }
   };
 
+  // always load the user view
+  Indigo.user = new Indigo.User(Indigo.Preloads.user || {
+    permissions: [],
+  });
+  Indigo.userView = new Indigo.UserView();
+
   // setup the document library
   Indigo.library = new Indigo.Library();
   if (Indigo.Preloads.library) {
@@ -92,14 +98,9 @@ $(function() {
   if (Indigo.Preloads.works) {
     Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
   } else {
+    // TODO: scope to country
     Indigo.works.fetch();
   }
-
-  // always load the user view
-  Indigo.user = new Indigo.User(Indigo.Preloads.user || {
-    permissions: [],
-  });
-  Indigo.userView = new Indigo.UserView();
 
   // what view must we load?
   var view = $('body').data('backbone-view');

@@ -125,7 +125,18 @@
   <select class="form-control filter-country" name="country-filter">
     <option {{#unless filters.country}}selected{{/unless}} value="">All countries ({{ count }})</option>
     {{#each summary.countries}}
-    <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{ count }})</option>
+      <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{ count }})</option>
+    {{/each}}
+  </select>
+</section>
+{{/if}}
+
+{{#if summary.localities}}
+<section>
+  <select class="form-control filter-locality" name="locality-filter">
+    <option {{#unless filters.locality}}selected{{/unless}} value="">All localities ({{ count }})</option>
+    {{#each summary.localities}}
+      <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{count}})</option>
     {{/each}}
   </select>
 </section>
@@ -144,21 +155,6 @@
     </label>
   </div>
 </section>
-
-{{#if summary.localities}}
-<section>
-  <ul class="nav nav-pills nav-stacked">
-    <li class="{{#unless filters.locality}}active{{/unless}}">
-      <a href="#" class="filter-locality" data-locality="">All localities <span class="badge">{{ count }}</span></a>
-    </li>
-    {{#each summary.localities}}
-    <li class="{{#if active}}active{{/if}}">
-      <a href="#" class="filter-locality" data-locality="{{code}}">{{name}} <span class="badge">{{count}}</span></a>
-    </li>
-    {{/each}}
-  </ul>
-</section>
-{{/if}}
 
 <section class="tag-filters">
   {{#each summary.tags}}

@@ -23,7 +23,7 @@
     events: {
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'filterByCountry',
-      'click .filter-locality': 'filterByLocality',
+      'change .filter-locality': 'filterByLocality',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
     },
@@ -246,7 +246,7 @@
     filterByLocality: function(e) {
       e.preventDefault();
 
-      this.filters.locality = $(e.currentTarget).data('locality') || null;
+      this.filters.locality = $(e.currentTarget).val() || null;
       this.filters.tags = [];
 
       this.trigger('change');

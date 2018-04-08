@@ -8,7 +8,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
+from cobalt import Act, FrbrUri, AmendmentEvent
 from cobalt.act import datestring
 import reversion
 
@@ -230,7 +230,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
-    repeal = RepealSerializer(required=False, allow_null=True)
+    repeal = RepealSerializer(read_only=True)
+    """ Repeal information, inherited from the work. """
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
@@ -446,9 +447,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         amendments = validated_data.pop('amendments', None)
         if amendments is not None:
             document.amendments = [AmendmentEvent(**a) for a in amendments]
-
-        repeal = validated_data.pop('repeal', None)
-        document.repeal = RepealEvent(**repeal) if repeal else None
 
         # save rest of changes
         for attr, value in validated_data.items():

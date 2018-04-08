@@ -66,6 +66,10 @@ class Work(models.Model):
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
+    # repeal information
+    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Work that repealed this work")
+    repealed_date = models.DateField(null=True, blank=True, help_text="Date of repeal of this work")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -102,6 +106,14 @@ class Work(models.Model):
     @property
     def locality(self):
         return self.work_uri.locality
+
+    @property
+    def repeal(self):
+        """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
+        None if this work hasn't been repealed.
+        """
+        if self.repealed_by:
+            return RepealEvent(self.repealed_date, self.title, self.frbr_uri)
 
     def can_delete(self):
         return not self.document_set.filter(deleted=False).exists()
@@ -249,11 +261,9 @@ class Document(models.Model):
     publication_name = models.CharField(null=True, blank=True, max_length=255)
     publication_date = models.CharField(null=True, blank=True, max_length=255)
     publication_number = models.CharField(null=True, blank=True, max_length=255)
-    repeal_event = JSONField(null=True)
     amendment_events = JSONField(null=True)
 
     # caching attributes
-    _repeal = None
     _amendments = None
     _work_uri = None
 
@@ -323,25 +333,7 @@ class Document(models.Model):
 
     @property
     def repeal(self):
-        if self._repeal is None:
-            e = self.repeal_event
-            if e:
-                d = e.get('date')
-                d = arrow.get(d).date() if d else None
-                self._repeal = RepealEvent(d, e.get('repealing_title'), e.get('repealing_uri'))
-        return self._repeal
-
-    @repeal.setter
-    def repeal(self, value):
-        self._repeal = None
-        if value:
-            self.repeal_event = {
-                'date': datestring(value.date),
-                'repealing_title': value.repealing_title,
-                'repealing_uri': value.repealing_uri,
-            }
-        else:
-            self.repeal_event = None
+        return self.work.repeal
 
     @property
     def work_uri(self):
@@ -387,7 +379,7 @@ class Document(models.Model):
             self.doc.publication_number = self.publication_number
             self.doc.publication_name = self.publication_name
             self.doc.publication_date = self.publication_date
-            self.doc.repeal = self.repeal
+            self.doc.repeal = self.work.repeal
             self.doc.amendments = self.amendments
 
         else:
@@ -398,13 +390,11 @@ class Document(models.Model):
             self.publication_number = self.doc.publication_number
             self.publication_name = self.doc.publication_name
             self.publication_date = self.doc.publication_date
-            self.repeal = self.doc.repeal
             self.amendments = self.doc.amendments
             # ensure these are refreshed
             self._work_uri = None
             self._amendments = None
             self._amended_versions = None
-            self._repeal = None
 
         # update the model's XML from the Act XML
         self.refresh_xml()

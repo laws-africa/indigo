@@ -37,7 +37,22 @@ $(function() {
           Indigo.errorView.show("Please log in first.");
         }
       } else if (xhr.status == 400) {
-        Indigo.errorView.show("There was a problem with your request.");
+        var details;
+        msg = "There was a problem with your request";
+
+        if (xhr.responseJSON && _.isObject(xhr.responseJSON)) {
+          details = "<ul>";
+          details += _.map(xhr.responseJSON, function(val, key) {
+            return '<li>' + key.replace('_', ' ') + ": " + val + "</li>";
+          }).join(" ");
+          details += "</ul>";
+
+          msg += ":";
+        } else {
+          msg += ".";
+        }
+
+        Indigo.errorView.show(msg, details);
       }
     })
     .ajaxStart(function(event) {

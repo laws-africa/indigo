@@ -10,10 +10,11 @@
       'click .close': 'close',
     },
 
-    show: function(message) {
+    show: function(message, html) {
       var left = $(window).width()/2 - this.$el.width()/2;
 
       this.message = message;
+      this.html = html || "";
       this.render();
       this.$el
         .css('left', left)
@@ -26,7 +27,8 @@
     },
 
     render: function() {
-      this.$el.find('p').text(this.message);
+      this.$('.message').text(this.message);
+      this.$('.detail').html(this.html);
     }
   });
 })(window);

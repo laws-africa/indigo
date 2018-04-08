@@ -580,6 +580,7 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
+    repealed_by = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
 
     class Meta:
         model = Work
@@ -589,6 +590,9 @@ class WorkSerializer(serializers.ModelSerializer):
             'title', 'publication_name', 'publication_number', 'publication_date',
             'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
+
+            # repeal
+            'repealed_date', 'repealed_by',
 
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',

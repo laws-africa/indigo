@@ -113,7 +113,7 @@ class Work(models.Model):
         None if this work hasn't been repealed.
         """
         if self.repealed_by:
-            return RepealEvent(self.repealed_date, self.title, self.frbr_uri)
+            return RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
 
     def can_delete(self):
         return not self.document_set.filter(deleted=False).exists()

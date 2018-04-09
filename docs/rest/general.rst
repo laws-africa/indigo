@@ -122,13 +122,13 @@ Field             Description                                                   
 ================= =================================================================================== ========== =========================
 amendments        List of amendments that have been applied to create this version of the document.   See below  ``[]``
 amended_versions  List of different amended versions of this document in the library. Read-only.      See below  ``[]``
-assent_date       Date when the document was assented to. Optional.                                   ISO8601
+assent_date       Date when the document was assented to. Read-only.                                  ISO8601
 content_url       URL of the full content of the document. Read-only.                                 URL        Auto-generated
 country           ISO 3166-1 alpha-2 country code that this document is applicable to.                String
 created_at        Timestamp of when the document was first created. Read-only.                        ISO8601    Current time
 draft             Is this a draft document or is it available in the public API?                      Boolean    ``true``
 expression_date   Date of this expression (or publication). Required.                                 ISO8601    Publication date
-commencement_date Date of this commencement of most of the document. Optional.                        ISO8601
+commencement_date Date of this commencement of most of the document. Read-only.                       ISO8601
 frbr_uri          FRBR URI for this document.                                                         String     None, a value must be provided
 id                Unique ID of this document. Read-only.                                              Integer    Auto-generated
 language          Three letter ISO-639-2 language code for the language of the document.              String     ``"eng"``

@@ -9,7 +9,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class DocumentTestCase(TestCase):
-    fixtures = ['work']
+    fixtures = ['work', 'published']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)
@@ -58,3 +58,16 @@ class DocumentTestCase(TestCase):
         d = Document.objects.get(pk=d.id)
         assert_equal(w.frbr_uri, d.frbr_uri)
         assert_equal(w.title, d.title)
+
+    def test_repeal_from_work(self):
+        rep = Work.objects.get(id=2)
+        d = Document.objects.get(id=1)
+        w = d.work
+        w.repealed_by = rep
+        w.repealed_date = rep.publication_date
+        w.save()
+
+        d = Document.objects.get(id=1)
+        assert_equal(d.repeal.repealing_uri, rep.frbr_uri)
+        assert_equal(d.repeal.repealing_title, rep.title)
+        assert_equal(d.repeal.date, rep.publication_date)

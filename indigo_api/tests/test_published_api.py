@@ -289,7 +289,7 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.data['repeal'], {
             'date': '2014-02-12',
             'repealing_uri': '/za/act/2014/10',
-            'repealing_title': 'Repeal',
+            'repealing_title': 'Water Act',
             'repealing_id': 1,
         })
 

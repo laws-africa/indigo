@@ -79,6 +79,7 @@ class Work(models.Model):
     objects = WorkQuerySet.as_manager()
 
     _work_uri = None
+    _repeal = None
 
     @property
     def work_uri(self):
@@ -112,8 +113,15 @@ class Work(models.Model):
         """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
         None if this work hasn't been repealed.
         """
-        if self.repealed_by:
-            return RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+        if self._repeal is None:
+            if self.repealed_by:
+                self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+        return self._repeal
+
+    def save(self, *args, **kwargs):
+        if not self.repealed_by:
+            self.repealed_date = None
+        return super(Work, self).save(*args, **kwargs)
 
     def can_delete(self):
         return not self.document_set.filter(deleted=False).exists()

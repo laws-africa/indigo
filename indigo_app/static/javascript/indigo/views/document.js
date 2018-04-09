@@ -111,7 +111,6 @@
       this.propertiesView.on('clean', this.setClean, this);
 
       this.amendmentsView = new Indigo.DocumentAmendmentsView({model: this.document});
-      this.repealView = new Indigo.DocumentRepealView({model: this.document});
 
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);

@@ -84,7 +84,7 @@
 
               <div class="form-group">
                 <label for="work_publication_date" class="col-sm-2 control-label required">Publication date</label>
-                <div class="col-sm-4">
+                <div class="col-md-2 col-sm-4">
                   <input type="text" class="form-control" data-provide="datepicker" id="work_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
                   <p class="help-block">Date when first published</p>
                 </div>
@@ -107,15 +107,34 @@
 
               <div class="form-group">
                 <label for="work_commencement_date" class="col-sm-2 control-label">Commencement date</label>
-                <div class="col-sm-4">
+                <div class="col-md-2 col-sm-4">
                   <input type="text" class="form-control" data-provide="datepicker" id="work_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
                   <p class="help-block">Date when most of the work comes into force</p>
                 </div>
 
-                <label for="work_assent_date" class="col-sm-2 control-label">Assent date</label>
-                <div class="col-sm-4">
+                <label for="work_assent_date" class="col-sm-2 col-md-offset-2 control-label">Assent date</label>
+                <div class="col-md-2 col-sm-4">
                   <input type="text" class="form-control" data-provide="datepicker" id="work_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
                   <p class="help-block">Date when signed by the President</p>
+                </div>
+              </div>
+            </fieldset>
+
+            <fieldset>
+              <legend>Repeal</legend>
+
+              <div class="form-group">
+                <label class="col-sm-2 control-label">Repealed by</label>
+                <div class="col-sm-10">
+                  <div class="work-repeal-view form-control-static"></div>
+                  <button class="btn btn-default change-repeal">Choose repealing work</button>
+                </div>
+              </div>
+
+              <div class="form-group repeal-date">
+                <label class="col-sm-2 control-label">Repeal date</label>
+                <div class="col-md-2 col-sm-4">
+                  <input type="text" class="form-control" data-provide="datepicker" id="work_repealed_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
                 </div>
               </div>
             </fieldset>
@@ -206,6 +225,22 @@
 
 {% endverbatim %}
 </script>
+
+<script id="work-repeal-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+{{#if repealed_by }}
+  <a href="/works/{{ repealed_by.id }}">{{ repealed_by.title }}</a>
+  <a href="#" class="delete-repeal"><i class="fa fa-close fa-fw"></i></a>
+{{else}}
+  <i>Not repealed.</i>
+{{/if}}
+
+{% endverbatim %}
+</script>
+
+{% include "work/_work_chooser_modal.html" %}
+
 {% endblock %}
 
 {% block js %}

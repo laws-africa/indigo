@@ -17,8 +17,11 @@
     events: {
       'click .btn.save': 'save',
       'click .btn.delete': 'deleteWork',
+      'click .change-repeal': 'changeRepeal',
+      'click .delete-repeal': 'deleteRepeal',
     },
     workExpressionsTemplate: '#work-expressions-template',
+    workRepealTemplate: '#work-repeal-template',
     bindings: {
       '#work_country': {
         observe: 'country',
@@ -60,12 +63,17 @@
         observe: 'assent_date',
         onSet: emptyIsNull,
       },
+      '#work_repealed_date': {
+        observe: 'repealed_date',
+        onSet: emptyIsNull,
+      },
     },
 
     initialize: function(options) {
       this.dirty = false;
 
       this.workExpressionsTemplate = Handlebars.compile($(this.workExpressionsTemplate).html());
+      this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
@@ -79,6 +87,7 @@
 
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change', this.canSave);
+      this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
 
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
@@ -87,6 +96,7 @@
       this.updatePublicationOptions();
       this.stickit();
       this.refreshExpressions();
+      this.repealChanged();
       this.canSave();
     },
 
@@ -171,6 +181,46 @@
         expressions: expressions,
         work: this.model.toJSON(),
       }));
+    },
+
+    deleteRepeal: function() {
+      this.model.set('repealed_by', null);
+    },
+
+    changeRepeal: function() {
+      var chooser = new Indigo.WorkChooserView({}),
+          self = this;
+
+      if (this.model.get('repealed_by')) {
+        chooser.choose(Indigo.works.get(this.model.get('repealed_by')));
+      }
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          self.model.set('repealed_by', chosen.get('id'));
+          self.model.set('repealed_date', chosen.get('publication_date'));
+        }
+      });
+    },
+
+    repealChanged: function() {
+      var repeal,
+          self = this,
+          repealed_by = this.model.get('repealed_by');
+
+      if (repealed_by) {
+        repealed_by = new Indigo.Work({id: repealed_by});
+        repealed_by.fetch().done(function() {
+          self.$el.addClass('is-repealed');
+          self.$('.work-repeal-view').html(self.workRepealTemplate({
+            repealed_by: repealed_by.toJSON(),
+          }));
+        });
+
+      } else {
+        this.$el.removeClass('is-repealed');
+        this.$('.work-repeal-view').html(this.workRepealTemplate({}));
+      }
     },
 
     windowUnloading: function(e) {

@@ -377,6 +377,10 @@ legend {
   font-size: 18px;
 }
 
+.panel.is-form .panel-body {
+  background-color: $grey-lightest;
+}
+
 #error-box {
   position: fixed;
   top: 10px;

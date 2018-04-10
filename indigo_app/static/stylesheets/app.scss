@@ -1301,6 +1301,17 @@ body.unauthenticated .annotations-container {
 }
 
 #edit-work-view {
+  .work-title {
+    margin-top: 0px;
+    margin-bottom: 20px;
+  }
+
+  .floating-sidebar {
+    position: fixed;
+    min-width: 190px;
+    margin-top: 46px;
+  }
+
   .repeal-date {
     display: none;
   }

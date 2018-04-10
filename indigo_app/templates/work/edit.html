@@ -5,23 +5,38 @@
 
 {% block content %}
 <div class="workspace-content">
-  <div class="boxed-group-inner boxed-group-inner-minimal" id="edit-work-view">
-    <div class="container">
-      <br>
+  <div class="boxed-group-inner" id="edit-work-view">
+    <div class="row">
+      <div class="col-md-2 hidden-xs hidden-sm">
+        <aside class="floating-sidebar">
+          <div class="list-group">
+            <a href="#details" class="list-group-item">Work details</a>
+            <a href="#promulgation" class="list-group-item">Promulgation</a>
+            <a href="#repeal" class="list-group-item">Repeal</a>
+            <a href="#expressions" class="list-group-item">Amended versions</a>
+          </div>
+        </aside>
+      </div>
 
-      {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
-      {% else %}
-      <div class="alert alert-danger">You don't have permission to create or change a work.</div>
-      {% endif %}
+      <div class="col-md-10" id="details">
+        {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+        <button class="btn btn-info save pull-right" type="button">{% if work %}Save work{% else %}Create work{% endif %}</button>
+        {% endif %}
 
-      <div class="panel panel-default is-form" id="edit-work-view">
-        <div class="panel-heading">
-          <h3 class="panel-title">Work Details</h3>
-        </div>
-        <div class="panel-body">
-          <div class="form-horizontal">
+        <h3 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h3>
 
-            <fieldset>
+        {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+        {% else %}
+        <div class="alert alert-danger">You don't have permission to create or change a work.</div>
+        {% endif %}
+
+        <div class="panel panel-default is-form">
+          <div class="panel-heading">
+            <h3 class="panel-title">Work details</h3>
+          </div>
+          <div class="panel-body">
+            <div class="form-horizontal">
+
               <div class="form-group">
                 <label for="work_title" class="col-sm-2 control-label required">Short title</label>
                 <div class="col-sm-10">
@@ -35,7 +50,7 @@
                   <select id="work_country" class="form-control">
                     {% for opt in countries %}
                     <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
-                    {% endfor %}
+                  {% endfor %}
                   </select>
                 </div>
 
@@ -77,10 +92,16 @@
                   <p class="help-block">Uniquely identifies this work globally</p>
                 </div>
               </div>
-            </fieldset>
+            </div>
+          </div>
+        </div>
 
-            <fieldset>
-              <legend>Promulgation</legend>
+        <div class="panel panel-default is-form" id="promulgation">
+          <div class="panel-heading">
+            <h3 class="panel-title">Promulgation</h3>
+          </div>
+          <div class="panel-body">
+            <div class="form-horizontal">
 
               <div class="form-group">
                 <label for="work_publication_date" class="col-sm-2 control-label required">Publication date</label>
@@ -118,10 +139,16 @@
                   <p class="help-block">Date when signed by the President</p>
                 </div>
               </div>
-            </fieldset>
+            </div>
+          </div>
+        </div>
 
-            <fieldset>
-              <legend>Repeal</legend>
+        <div class="panel panel-default is-form" id="repeal">
+          <div class="panel-heading">
+            <h3 class="panel-title">Repeal</h3>
+          </div>
+          <div class="panel-body">
+            <div class="form-horizontal">
 
               <div class="form-group">
                 <label class="col-sm-2 control-label">Repealed by</label>
@@ -137,38 +164,31 @@
                   <input type="text" class="form-control" data-provide="datepicker" id="work_repealed_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
                 </div>
               </div>
-            </fieldset>
+            </div>
           </div>
-
         </div>
 
-        <div class="panel-footer text-right">
-          {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
-          <button class="btn btn-info save" type="button">{% if work %}Save work{% else %}Create work{% endif %}</button>
+        {% if work %}
+        <!-- expressions -->
+        <div class="panel panel-default" id="expressions">
+          <div class="panel-heading">
+            <h3 class="panel-title">Amended versions of this work</h3>
+          </div>
+          <div class="panel-body">
+            <div class="work-expressions"></div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% if work %}
+          {% if not work.can_delete %}
+            <p class="pull-left">This work cannot be deleted while linked documents exist.</p>
+          {% elif perms.indigo_api.can_delete_work %}
+            <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
           {% endif %}
+        {% endif %}
 
-          {% if work %}
-            {% if not work.can_delete %}
-              <p class="pull-left">This work cannot be deleted while linked documents exist.</p>
-            {% elif perms.indigo_api.can_delete_work %}
-              <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
-            {% endif %}
-          {% endif %}
-        </div>
       </div>
-
-      {% if work %}
-      <!-- expressions -->
-      <div class="panel panel-default">
-        <div class="panel-heading">
-          <h3 class="panel-title">Amended versions of this work</h3>
-        </div>
-        <div class="panel-body">
-          <div class="work-expressions"></div>
-        </div>
-      </div>
-      {% endif %}
-
     </div>
   </div>
 </div>

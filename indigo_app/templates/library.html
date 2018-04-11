@@ -1,30 +1,10 @@
-{% extends "layout.html" %}
+{% extends "main.html" %}
 
 {% block title %}Library{% endblock %}
 
-{% block header %}
-  <div class="library-buttons">
-    <div class="btn-group">
-      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-        New <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a href="{% url 'new_work' %}">New Work</a></li>
-        <li><a href="{% url 'import_document' %}">Import a Document</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="input-group header-search-box">
-    <span class="input-group-addon"><i class="fa fa-search"></i></span>
-    <input type="text" class="form-control filter-search" placeholder="Search documents">
-  </div>
-{% endblock %}
-
 {% block content %}
-
-<div class="sidebar library-sidebar">
-  <div class="boxed-group-inner">
+<main id="library-view">
+  <aside class="library-sidebar">
     <section>
       <select class="form-control filter-country" name="country-filter">
         {% for country in countries %}
@@ -34,15 +14,16 @@
     </section>
 
     <div id="filters"></div>
-  </div>
-</div>
+  </aside>
 
-<div class="workspace-content">
-  <div class="boxed-group-inner">
+  <div class="library-wrapper">
+    <div class="library-filter-box">
+      <input type="text" class="form-control filter-search" placeholder="Filter documents">
+    </div>
+
     <div id="library"></div>
   </div>
-</div>
-
+</main>
 {% endblock %}
 
 {% block js %}

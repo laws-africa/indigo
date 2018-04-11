@@ -18,7 +18,7 @@
    * work.
    */
   Indigo.LibraryFilterView = Backbone.View.extend({
-    el: '.workspace',
+    el: '#library-view',
     template: '#filters-template',
     events: {
       'click .filter-tag': 'filterByTag',

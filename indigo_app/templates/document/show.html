@@ -1,74 +1,75 @@
-{% extends "layout.html" %}
+{% extends "main.html" %}
 
 {% load pipeline %}
 {% load static %}
 
-
-{% block header %}
-  <span data-document-id="{{ document.id|default:"" }}"></span>
-  <h4 class="document-title">{{ document.title }}</h4>
-
-  {% include 'document/_menu.html' %}
-{% endblock %}
-
-{% block workspace-classes %}has-menu{% endblock %}
-
-
-{% block header-buttons %}
-  <button class="btn btn-default save" disabled><i class="fa fa-save"></i> Save</button>
-  <div id="document-activity-view"></div>
-
-  <script id="document-activity-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  <ul>
-    {{#each activity}}
-      <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
-        <i class="fa fa-user"></i> {{ user.display_name }}
-      </li>
-    {{/each}}
-  </ul>
-
-  {% endverbatim %}
-  </script>
-{% endblock %}
-
-
 {% block content %}
-  {% include "document/_sidebar.html" %}
+<div class="workspace">
+  <header class="workspace-header">
+    <div class="workspace-title">
+      <span data-document-id="{{ document.id|default:"" }}"></span>
+      <h4 class="document-title">{{ document.title }}</h4>
+    </div>
 
-  <div class="workspace-content">
-    <div class="tab-content high">
-      <div id="props-tab" class="tab-pane active high">
-        {% include "document/_properties.html" %}
-      </div>
+    {% include 'document/_menu.html' %}
 
-      <div id="amendments-tab" class="tab-pane high">
-        {% include "document/_amendments.html" %}
-      </div>
+    <div class="workspace-buttons">
+      <button class="btn btn-default save" disabled><i class="fa fa-save"></i> Save</button>
+      <div id="document-activity-view"></div>
 
-      <div id="attachments-tab" class="tab-pane high">
-        {% include "document/_attachments.html" %}
-      </div>
+      <script id="document-activity-template" type="text/x-handlebars-template">
+      {% verbatim %}
 
-      <div id="content-tab" class="tab-pane high">
-        {% include "document/_content.html" %}
-      </div>
+      <ul>
+        {{#each activity}}
+          <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
+            <i class="fa fa-user"></i> {{ user.display_name }}
+          </li>
+        {{/each}}
+      </ul>
+      {% endverbatim %}
+      </script>
+    </div>
+  </header>
 
-      <div id="preview-tab" class="tab-pane high">
-        {% include "document/_preview.html" %}
+  <div class="workspace-body">
+
+    {% include "document/_sidebar.html" %}
+
+    <div class="workspace-content">
+      <div class="tab-content high">
+        <div id="props-tab" class="tab-pane active high">
+          {% include "document/_properties.html" %}
+        </div>
+
+        <div id="amendments-tab" class="tab-pane high">
+          {% include "document/_amendments.html" %}
+        </div>
+
+        <div id="attachments-tab" class="tab-pane high">
+          {% include "document/_attachments.html" %}
+        </div>
+
+        <div id="content-tab" class="tab-pane high">
+          {% include "document/_content.html" %}
+        </div>
+
+        <div id="preview-tab" class="tab-pane high">
+          {% include "document/_preview.html" %}
+        </div>
       </div>
     </div>
-  </div>
 
-  {% include "document/_defined_terms.html" %}
-  {% include "document/_references.html" %}
-  {% include "document/_revisions.html" %}
-  {% include "document/_annotations.html" %}
-  {% include "document/_insert_image_modal.html" %}
-  {% include "document/_document_chooser_modal.html" %}
-  {% include "document/_cheatsheet.html" %}
-  {% include "work/_work_chooser_modal.html" %}
+    {% include "document/_defined_terms.html" %}
+    {% include "document/_references.html" %}
+    {% include "document/_revisions.html" %}
+    {% include "document/_annotations.html" %}
+    {% include "document/_insert_image_modal.html" %}
+    {% include "document/_document_chooser_modal.html" %}
+    {% include "document/_cheatsheet.html" %}
+    {% include "work/_work_chooser_modal.html" %}
+  </div>
+</div>
 {% endblock %}
 
 {% block js %}

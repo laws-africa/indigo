@@ -3,15 +3,6 @@
     <div class="btn-group">
       <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">File</button>
       <ul class="dropdown-menu">
-        <li class="dropdown-submenu">
-          <a href="#">New</a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'new_work' %}">New Work</a></li>
-            <li><a href="{% url 'import_document' %}">Import a Document</a></li>
-          </ul>
-        </li>
-        <li><a href="{% url 'library' %}">Open...</a></li>
-        <li role="separator" class="divider"></li>
         <li class="save"><a href="#">Save</a></li>
         <li class="delete-document"><a href="#">Delete</a></li>
         <li class="clone-document"><a href="#">Make a Copy</a></li>
@@ -48,20 +39,6 @@
       <ul class="dropdown-menu">
         <li><a href="#defined-terms-modal" data-toggle="modal">Defined Terms...</a></li>
         <li><a href="#references-modal" data-toggle="modal">References to Acts...</a></li>
-      </ul>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Help</button>
-      <ul class="dropdown-menu">
-        <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Indigo Help</a></li>
-        <li><a href="#cheatsheet-modal" data-toggle="modal">Editor Cheatsheet</a></li>
-        {% if SUPPORT_EMAIL %}
-        <li><a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">Request an account</a></li>
-        {% endif %}
-        <li><a href="mailto:greg@code4sa.org" target="_blank">Feedback</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="https://github.com/Code4SA/indigo" target="_blank">Indigo on GitHub</a></li>
       </ul>
     </div>
   </div>

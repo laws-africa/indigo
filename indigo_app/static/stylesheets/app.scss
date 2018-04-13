@@ -13,8 +13,9 @@ $workspace-header-colour: $grey;
 $workspace-header-border-colour: $grey-darker;
 $header-colour2: $grey-lighter;
 
+$navbar-height: 50px;
 $header-height: 45px;
-$workspace-header-height: 45px;
+$workspace-header-height: 63px;
 
 $sidebar-width: 260px;
 $sidebar-colour: $grey-lighter;
@@ -76,11 +77,10 @@ fieldset {
   padding-bottom: 50px;
 }
 
-/* workspace */
-
+/* document workspace */
 .workspace {
   position: absolute;
-  top: 0px;
+  top: $navbar-height;
   bottom: 0px;
   width: 100%;
   overflow: hidden;
@@ -95,42 +95,11 @@ fieldset {
     border-bottom: 2px solid $workspace-header-border-colour;
 
     .workspace-title {
-      position: absolute;
-      top: 5px;
-      left: 100px;
-      right: 0px;
+      padding-left: 5px;
 
       h4 {
-        max-width: 80%;
         margin: 0px;
       }
-    }
-
-    .menu {
-      position: absolute;
-      top: 30px;
-      left: -7px;
-    }
-  }
-
-  &.has-menu {
-    .workspace-header {
-      height: $workspace-header-height + 25px;
-    }
-
-    .workspace-body {
-      top: $workspace-header-height + 25px;
-    }
-  }
-
-  #user-buttons {
-    position: absolute;
-    top: 0px;
-    right: 5px;
-
-    .btn-link:hover,
-    .btn-link:focus {
-      text-decoration: none;
     }
   }
 
@@ -383,6 +352,7 @@ button.btn-link.help {
   bottom: 0px;
   left: 0px;
   right: 0px;
+  z-index: 1040;
 }
 
 /* misc */

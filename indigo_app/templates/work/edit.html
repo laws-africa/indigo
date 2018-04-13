@@ -19,7 +19,7 @@
 
     <div class="col-md-10" id="details">
       {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
-      <button class="btn btn-info save pull-right" type="button">{% if work %}Save work{% else %}Create work{% endif %}</button>
+      <button class="btn btn-info save pull-right" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
       {% endif %}
 
       <h3 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h3>

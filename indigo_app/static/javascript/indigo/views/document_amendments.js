@@ -4,6 +4,73 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
+  Indigo.SingleAmendmentView = Backbone.View.extend({
+    attributes: {
+      class: 'well well-sm',
+    },
+    template: '#amendment-editor-template',
+    events: {
+      'click .change-amending-work': 'changeWork',
+      'click .save': 'save',
+      'click .cancel': 'cancel',
+    },
+    bindings: {
+      '.amendment-date': 'date',
+    },
+
+    initialize: function(options) {
+      this.originalModel = this.model;
+      this.model = this.originalModel.clone();
+
+      this.country = options.country;
+      this.listenTo(this.model, 'change', this.update);
+      this.template = Handlebars.compile($(this.template).html());
+
+      this.render();
+      this.stickit();
+    },
+
+    changeWork: function() {
+      var chooser = new Indigo.WorkChooserView({}),
+          self = this;
+
+      if (this.model.get('amending_uri')) {
+        chooser.choose(Indigo.works.findWhere({frbr_uri: this.model.get('amending_uri')}));
+      }
+      chooser.setFilters({country: this.country});
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          self.model.set('amending_uri', chosen.get('frbr_uri'));
+          self.model.set('amending_title', chosen.get('title'));
+          self.model.set('date', chosen.get('publication_date'));
+        }
+      });
+    },
+
+    show: function() {
+      this.deferred = $.Deferred();
+      return this.deferred;
+    },
+
+    update: function() {
+      this.$('.amending-title').text(this.model.get('amending_title'));
+      this.$('.amending-uri').text(this.model.get('amending_uri'));
+    },
+
+    render: function() {
+      this.$el.html(this.template(this.model.toJSON()));
+    },
+
+    save: function() {
+      this.originalModel.set(this.model.attributes);
+      this.deferred.resolve();
+    },
+
+    cancel: function() {
+      this.deferred.resolve();
+    },
+  });
+
   /**
    * Handle the document amendments display.
    *
@@ -68,21 +135,17 @@
     addAmendment: function(e) {
       e.preventDefault();
 
-      var amendments = this.model.expressionSet.amendments;
-      var chooser = new Indigo.DocumentChooserView({
-        noun: 'amendment',
-        verb: 'amending',
-      });
+      var chooser = new Indigo.WorkChooserView({}),
+          self = this;
 
       chooser.setFilters({country: this.model.get('country')});
-      chooser.choose(null);
       chooser.showModal().done(function(chosen) {
         if (chosen) {
-          amendments.add(new Indigo.Amendment({
-            date: chosen.get('expression_date'),
+          // TODO: uri for amending doc may not be unique
+          self.model.expressionSet.amendments.add(new Indigo.Amendment({
+            date: chosen.get('publication_date'),
             amending_title: chosen.get('title'),
             amending_uri: chosen.get('frbr_uri'),
-            amending_id: chosen.get('id'),
           }));
         }
       });
@@ -91,34 +154,23 @@
     editAmendment: function(e) {
       e.preventDefault();
 
-      var uri = $(e.target).closest('li').data('uri');
-      var amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
-      var chooser = new Indigo.DocumentChooserView({
-        noun: 'amendment',
-        verb: 'amending',
+      var $li = $(e.target).closest('li'),
+          // TODO: uri for amending doc may not be unique
+          uri = $li.data('uri'),
+          amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri}),
+          self = this;
+
+      var editor = new Indigo.SingleAmendmentView({
+        model: amendment,
+        country: this.model.get('country'),
+      });
+      editor.show().always(function() {
+        editor.remove();
+        self.$('.amendment-info').show();
       });
 
-      // choose the document the model corresponds to
-      var item = chooser.collection.findWhere({frbr_uri: amendment.get('amending_uri')});
-      if (!item) {
-        item = Indigo.Document.newFromFrbrUri(amendment.get('amending_uri'));
-        item.set({
-          expression_date: amendment.get('date'),
-          title: amendment.get('amending_title'),
-        });
-      }
-      chooser.choose(item);
-      chooser.setFilters({country: this.model.get('country')});
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          amendment.set({
-            date: chosen.get('expression_date'),
-            amending_title: chosen.get('title'),
-            amending_uri: chosen.get('frbr_uri'),
-            amending_id: chosen.get('id'),
-          });
-        }
-      });
+      $li.append(editor.el);
+      this.$('.amendment-info').hide();
     },
 
     deleteAmendment: function(e) {

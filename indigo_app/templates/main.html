@@ -1,5 +1,7 @@
-{% extends "layout.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
+
+{% block body-attributes %}data-backbone-view="{{ view }}"{% endblock %}
 
 {% block page-content %}
   {% block navbar %}

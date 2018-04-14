@@ -116,7 +116,12 @@
           date: date,
           document: doc && doc.toJSON(),
           current: doc && doc.get('id') == document_id,
-          amendments: _.map(self.model.expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
+          amendments: _.map(self.model.expressionSet.amendmentsAtDate(date), function(a) {
+            a = a.toJSON();
+            a.work = Indigo.works.findWhere({frbr_uri: a.amending_uri});
+            a.work = a.work ? a.work.toJSON() : null;
+            return a;
+          }),
           initial: date == pubDate,
         };
         info.linkable = info.document && !info.current;

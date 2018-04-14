@@ -26,10 +26,10 @@
             <li data-uri="{{ amending_uri }}">
               <div class="amendment-info">
                 Amended by
-                {{#if amending_id }}
-                  <a href="/documents/{{ amending_id }}">{{ amending_title }}</a>
+                {{#if work}}
+                <a href="/works/{{ work.id }}">{{ amending_title }}</a>
                 {{else}}
-                  {{ amending_title }}
+                {{ amending_title }}
                 {{/if}}
                 —
                 <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>

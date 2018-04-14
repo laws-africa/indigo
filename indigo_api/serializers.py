@@ -581,6 +581,7 @@ class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
     repealed_by = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
+    parent_work = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
 
     class Meta:
         model = Work
@@ -590,6 +591,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'title', 'publication_name', 'publication_number', 'publication_date',
             'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
+            'parent_work',
 
             # repeal
             'repealed_date', 'repealed_by',

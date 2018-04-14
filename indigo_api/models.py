@@ -70,6 +70,9 @@ class Work(models.Model):
     repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Work that repealed this work")
     repealed_date = models.DateField(null=True, blank=True, help_text="Date of repeal of this work")
 
+    # optional parent work
+    parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Parent related work", related_name='child_works')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

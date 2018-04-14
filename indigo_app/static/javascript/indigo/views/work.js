@@ -19,6 +19,8 @@
       'click .btn.delete': 'deleteWork',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
+      'click .choose-parent': 'changeParent',
+      'click .delete-parent': 'deleteParent',
     },
     workExpressionsTemplate: '#work-expressions-template',
     workRepealTemplate: '#work-repeal-template',
@@ -89,11 +91,13 @@
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change', this.canSave);
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
+      this.listenTo(this.model, 'change:parent_work', this.parentChanged);
 
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
       this.model.updateFrbrUri();
+      this.listenToOnce(Indigo.works, 'sync', this.parentChanged);
       this.updatePublicationOptions();
       this.stickit();
       this.refreshExpressions();
@@ -230,6 +234,46 @@
       } else {
         this.$el.removeClass('is-repealed');
         this.$('.work-repeal-view').html(this.workRepealTemplate({}));
+      }
+    },
+
+    changeParent: function() {
+      var chooser = new Indigo.WorkChooserView({}),
+          self = this;
+
+      if (this.model.get('parent_work')) {
+        chooser.choose(Indigo.works.get(this.model.get('parent_work')));
+      }
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          self.model.set('parent_work', chosen.get('id'));
+        }
+      });
+    },
+
+    deleteParent: function(e) {
+      e.preventDefault();
+      this.model.set('parent_work', null);
+    },
+
+    parentChanged: function() {
+      if (this.model.get('parent_work')) {
+        var parent = Indigo.works.get(this.model.get('parent_work'));
+        if (!parent) {
+          return;
+        }
+
+        this.$('#work_parent_work')
+          .removeClass('hidden')
+          .find('.work_parent_title')
+            .text(parent.get('title'))
+            .attr('href', '/works/' + parent.get('id'))
+            .end()
+          .find('.work_parent_uri')
+            .text(parent.get('frbr_uri'));
+      } else {
+        this.$('#work_parent_work').addClass('hidden');
       }
     },
 

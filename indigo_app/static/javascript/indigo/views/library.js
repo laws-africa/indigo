@@ -72,7 +72,8 @@
     filterAndSummarize: function() {
       var filters = this.filters,
           works,
-          docs = {};
+          docs = {},
+          country;
 
       this.summary = {};
 
@@ -90,38 +91,29 @@
 
       // filter by country -- works is scoped to country, so this should be all the works
       works = this.works.where({'country': filters.country});
+      country = Indigo.countries[filters.country];
 
       // count localities, sort alphabetically
       this.summary.localities = _.sortBy(
         _.map(
-          _.countBy(
-            _.filter(works, function(d) { return d.get('locality'); }),
-                    function(d) { return d.get('country') + '/' + d.get('locality'); }),
+          _.countBy(works, function(d) { return d.get('locality') || "-"; }),
           function(count, code) {
-            var parts = code.split('/'),
-                country = Indigo.countries[parts[0]],
-                loc_code = parts[1],
-                loc = country ? country.localities[loc_code] : null;
+            var loc = country.localities[code];
 
             return {
               code: code,
-              name: loc || loc_code,
+              name: loc || '(none)',
               count: count,
               active: filters.locality === code,
             };
           }
         ),
-        function(info) { return info.code; });
+        function(info) { return info.name; });
 
       // filter by locality
       if (filters.locality) {
-        var parts = filters.locality.split('/'),
-            country = parts[0],
-            loc = parts[1];
-
-        works = _.filter(works, function(work) {
-          return work.get('country') == country && work.get('locality') == loc;
-        });
+        var loc = filters.locality == '-' ? null : filters.locality;
+        works = _.filter(works, function(work) { return work.get('locality') == loc; });
       }
 
       // setup our collection of documents for each work
@@ -223,7 +215,9 @@
     filterByLocality: function(e) {
       e.preventDefault();
 
-      this.filters.locality = $(e.currentTarget).val() || null;
+      var val = $(e.currentTarget).val();
+
+      this.filters.locality = val;
       this.filters.tags = [];
 
       this.trigger('change');

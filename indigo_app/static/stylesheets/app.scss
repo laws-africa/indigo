@@ -1334,7 +1334,10 @@ body.unauthenticated .annotations-container {
 #edit-work-view {
   .work-title {
     margin-top: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
+  }
+  h5.work-frbr-uri {
+    margin-top: 0px;
   }
 
   .floating-sidebar {

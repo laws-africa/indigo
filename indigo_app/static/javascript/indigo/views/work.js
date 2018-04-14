@@ -78,7 +78,7 @@
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:country change:locality', this.updateBreadcrumb);
-      this.listenTo(this.model, 'change:title', this.updatePageTitle);
+      this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
       this.listenTo(this.model, 'change:frbr_uri', _.debounce(_.bind(this.refreshExpressions, this), 500));
 
@@ -104,6 +104,7 @@
     updatePageTitle: function() {
       document.title = this.model.get('title') + ' - Indigo';
       if (!this.model.isNew()) $('.workspace-header h4, .work-title').text(this.model.get('title'));
+      this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
     },
 
     setDirty: function() {

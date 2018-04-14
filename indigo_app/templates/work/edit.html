@@ -19,6 +19,7 @@
       {% endif %}
 
       <h3 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h3>
+      <h5 class="work-frbr-uri text-muted">{% if work %}{{ work.frbr_uri }}{% endif %}</h3>
 
       {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
       {% else %}

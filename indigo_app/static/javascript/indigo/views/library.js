@@ -24,6 +24,7 @@
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
       'change .filter-locality': 'filterByLocality',
+      'change .filter-nature': 'filterByNature',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
     },
@@ -65,6 +66,7 @@
      *
      *  - country
      *  - locality
+     *  - nature
      *  - status
      *  - tags
      *  - search
@@ -109,11 +111,43 @@
           }
         ),
         function(info) { return info.name; });
+      this.summary.localities.unshift({
+        code: null,
+        name: 'All localities',
+        count: works.length,
+        active: !!filters.locality,
+      });
 
       // filter by locality
       if (filters.locality) {
         var loc = filters.locality == '-' ? null : filters.locality;
         works = _.filter(works, function(work) { return work.get('locality') == loc; });
+      }
+
+      // count nature, sort alphabetically
+      this.summary.natures = _.sortBy(
+        _.map(
+          _.countBy(works, function(d) { return d.get('nature'); }),
+          function(count, nature) {
+            return {
+              nature: nature,
+              name: nature,
+              count: count,
+              active: filters.nature === nature,
+            };
+          }
+        ),
+        function(info) { return info.nature; });
+      this.summary.natures.unshift({
+        nature: null,
+        name: 'All natures',
+        count: works.length,
+        active: !!filters.nature,
+      });
+
+      // filter by nature
+      if (filters.nature) {
+        works = _.filter(works, function(work) { return work.get('nature') == filters.nature; });
       }
 
       // setup our collection of documents for each work
@@ -215,9 +249,17 @@
     filterByLocality: function(e) {
       e.preventDefault();
 
-      var val = $(e.currentTarget).val();
+      this.filters.locality = $(e.currentTarget).val();
+      this.filters.nature = null;
+      this.filters.tags = [];
 
-      this.filters.locality = val;
+      this.trigger('change');
+    },
+
+    filterByNature: function(e) {
+      e.preventDefault();
+
+      this.filters.nature = $(e.currentTarget).val();
       this.filters.tags = [];
 
       this.trigger('change');

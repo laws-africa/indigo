@@ -6,6 +6,7 @@
 <main id="library-view">
   <aside class="library-sidebar">
     <section>
+      <label>Country</label>
       <select class="form-control filter-country" name="country-filter">
         {% for country in countries %}
           <option {% if user.editor.country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
@@ -107,27 +108,25 @@
 <script id="filters-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-{{#if summary.show_countries}}
-<section>
-  <select class="form-control filter-country" name="country-filter">
-    <option {{#unless filters.country}}selected{{/unless}} value="">All countries ({{ count }})</option>
-    {{#each summary.countries}}
-      <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{ count }})</option>
-    {{/each}}
-  </select>
-</section>
-{{/if}}
-
 {{#if summary.localities}}
 <section>
+  <label>Locality</label>
   <select class="form-control filter-locality" name="locality-filter">
-    <option {{#unless filters.locality}}selected{{/unless}} value="">All localities ({{ count }})</option>
     {{#each summary.localities}}
       <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{count}})</option>
     {{/each}}
   </select>
 </section>
 {{/if}}
+
+<section>
+  <label>Nature</label>
+  <select class="form-control filter-nature" name="nature-filter">
+    {{#each summary.natures}}
+      <option {{#if active}}selected{{/if}} value="{{nature}}">{{name}} ({{count}})</option>
+    {{/each}}
+  </select>
+</section>
 
 <section>
   <div class="btn-group" data-toggle="buttons">

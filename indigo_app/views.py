@@ -72,6 +72,11 @@ def edit_work(request, work_id=None):
         work = None
         work_json = {}
 
+    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
+    locality = None
+    if work.locality:
+        locality = country.locality_set.filter(code=work.locality)[0]
+
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
@@ -80,6 +85,8 @@ def edit_work(request, work_id=None):
         'work_json': work_json,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
+        'country': country,
+        'locality': locality,
         'countries': countries,
         'countries_json': countries_json,
         'view': 'WorkView',

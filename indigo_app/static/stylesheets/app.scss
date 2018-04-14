@@ -71,6 +71,13 @@ fieldset {
   }
 }
 
+/* breadcrumbs */
+.breadcrumb {
+  padding: 5px 0px;
+  margin-bottom: 10px;
+  background-color: transparent;
+}
+
 /* main content, in partnership with navbar */
 .navbar ~ #main-content {
   padding-top: 60px;
@@ -1327,7 +1334,6 @@ body.unauthenticated .annotations-container {
   .floating-sidebar {
     position: fixed;
     min-width: 190px;
-    margin-top: 46px;
   }
 
   .repeal-date {

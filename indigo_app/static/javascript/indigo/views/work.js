@@ -77,6 +77,7 @@
 
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
+      this.listenTo(this.model, 'change:country change:locality', this.updateBreadcrumb);
       this.listenTo(this.model, 'change:title', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
       this.listenTo(this.model, 'change:frbr_uri', _.debounce(_.bind(this.refreshExpressions, this), 500));
@@ -124,6 +125,14 @@
         opt.setAttribute("value", pub);
         return opt;
       }));
+    },
+
+    updateBreadcrumb: function() {
+      var country = Indigo.countries[this.model.get('country')],
+          locality = this.model.get('locality');
+
+      this.$('.work-country').text(country.name);
+      this.$('.work-locality').text(locality ? country.localities[locality] + ' (' + locality + ')' : '');
     },
 
     canSave: function() {

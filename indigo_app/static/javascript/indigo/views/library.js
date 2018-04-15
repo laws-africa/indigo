@@ -110,7 +110,7 @@
             };
           }
         ),
-        function(info) { return info.name; });
+        function(info) { return info.code == '-' ? '' : info.name.toLocaleLowerCase; });
       this.summary.localities.unshift({
         code: null,
         name: 'All localities',

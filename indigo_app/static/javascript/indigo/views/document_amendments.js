@@ -162,8 +162,7 @@
       var $li = $(e.target).closest('li'),
           // TODO: uri for amending doc may not be unique
           uri = $li.data('uri'),
-          amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri}),
-          self = this;
+          amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
 
       var editor = new Indigo.SingleAmendmentView({
         model: amendment,
@@ -171,11 +170,11 @@
       });
       editor.show().always(function() {
         editor.remove();
-        self.$('.amendment-info').show();
+        $li.find('.amendment-info').show();
       });
 
       $li.append(editor.el);
-      this.$('.amendment-info').hide();
+      $li.find('.amendment-info').hide();
     },
 
     deleteAmendment: function(e) {

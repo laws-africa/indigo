@@ -192,7 +192,7 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
 
 
-# django-pipeline and pyscss settings
+# django-pipeline for javascript
 PIPELINE = {
     'JAVASCRIPT': {
         'js': {
@@ -247,23 +247,13 @@ PIPELINE = {
             'output_filename': 'resolver.js',
         }
     },
-    'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
     # don't wrap javascript, this breaks LIME
     # see https://github.com/cyberdelia/django-pipeline/blob/ea74ea43ec6caeb4ec46cdeb7d7d70598e64ad1d/pipeline/compressors/__init__.py#L62
     'DISABLE_WRAPPER': True,
-    'COMPILERS': [
-        'indigo.pipeline.PyScssCompiler',
-    ],
     'PIPELINE_ENABLED': not DEBUG,
     'PIPELINE_COLLECTOR_ENABLED': True,
 }
-
-PYSCSS_LOAD_PATHS = [
-    os.path.join(BASE_DIR, 'indigo_api', 'static'),
-    os.path.join(BASE_DIR, 'indigo_app', 'static'),
-    os.path.join(BASE_DIR, 'indigo_resolver', 'static'),
-]
 
 
 # SSL indicator from the nginx proxy

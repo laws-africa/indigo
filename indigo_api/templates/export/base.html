@@ -1,4 +1,4 @@
-{% load pipeline_inline i18n %}
+{% load i18n sass_tags %}
 
 {% language document.django_language %}
 
@@ -7,7 +7,7 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head-css %}
-    {% inline_stylesheet "export" %}
+    <link rel="stylesheet" href="{% sass_src 'stylesheets/export.scss' %}">
     {% endblock %}
 
     {% block head-meta %}{% endblock %}

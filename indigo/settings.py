@@ -195,14 +195,6 @@ STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
 # django-pipeline and pyscss settings
 PIPELINE = {
     'STYLESHEETS': {
-        'export': {
-            'source_filenames': (
-                # these are both in indigo_api/static/
-                'stylesheets/bootstrap.min.css',
-                'stylesheets/export.scss',
-            ),
-            'output_filename': 'export.css',
-        },
         'epub': {
             'source_filenames': (
                 # these are in indigo_api/static/

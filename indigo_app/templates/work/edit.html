@@ -7,9 +7,9 @@
 <main id="main-content" class="container-fluid">
   <div id="edit-work-view">
     <ul class="breadcrumb">
-      <li class="work-country">{{ country.name }}</li>
+      <li class="work-country">{{ country.name }} · {{ country.code }}</li>
       {% if locality %}
-      <li class="work-locality">{{ locality.name }} ({{ locality.code }})</li>
+      <li class="work-locality">{{ locality.name }} · {{ locality.code }}</li>
       {% endif %}
     </ul>
 

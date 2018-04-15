@@ -136,8 +136,8 @@
       var country = Indigo.countries[this.model.get('country')],
           locality = this.model.get('locality');
 
-      this.$('.work-country').text(country.name);
-      this.$('.work-locality').text(locality ? country.localities[locality] + ' (' + locality + ')' : '');
+      this.$('.work-country').text(country.name + ' · ' + this.model.get('country'));
+      this.$('.work-locality').text(locality ? country.localities[locality] + ' · ' + locality : '');
     },
 
     canSave: function() {

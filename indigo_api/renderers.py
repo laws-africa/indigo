@@ -384,6 +384,7 @@ class EPUBRenderer(HTMLRenderer):
 
         # compile scss and add the file
         processor = SassProcessor()
+        processor.processor_enabled = True
         path = processor('stylesheets/epub.scss')
         with processor.storage.open(path) as f:
             css = f.read()

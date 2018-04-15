@@ -1,4 +1,4 @@
-{% load i18n inline_scss %}
+{% load i18n inline_scss sass_tags %}
 
 {% language document.django_language %}
 
@@ -7,6 +7,8 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head-css %}
+    {# this ensure thas the stylesheet is built during compilescss #}
+    <!-- {% sass_src 'stylesheets/export.scss' %} -->
     <style type="text/css">{% inline_scss 'stylesheets/export.scss' %}</style>
     {% endblock %}
 

@@ -1,4 +1,4 @@
-{% load i18n sass_tags %}
+{% load i18n inline_scss %}
 
 {% language document.django_language %}
 
@@ -7,7 +7,7 @@
   <head>
     <title>{% block title %}{% endblock %}</title>
     {% block head-css %}
-    <link rel="stylesheet" href="{% sass_src 'stylesheets/export.scss' %}">
+    <style type="text/css">{% inline_scss 'stylesheets/export.scss' %}</style>
     {% endblock %}
 
     {% block head-meta %}{% endblock %}

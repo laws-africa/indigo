@@ -36,6 +36,9 @@ def document(request, doc_id=None):
         doc_json = json.dumps(DocumentSerializer(instance=doc, context={'request': request}).data)
 
     work_json = json.dumps(WorkSerializer(instance=doc.work, context={'request': request}).data)
+    serializer = WorkSerializer(context={'request': request}, many=True)
+    works = Work.objects.undeleted().filter(country=doc.country)
+    works_json = json.dumps(serializer.to_representation(works))
 
     form = DocumentForm(instance=doc)
 
@@ -51,6 +54,7 @@ def document(request, doc_id=None):
         'document_content_json': json.dumps(doc.document_xml),
         'documents_json': documents_json,
         'work_json': work_json,
+        'works_json': works_json,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),

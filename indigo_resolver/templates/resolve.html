@@ -1,12 +1,12 @@
 {% extends 'base.html' %}
-{% load staticfiles pipeline %}
+{% load staticfiles pipeline sass_tags %}
 
 {% block body-class %}resolver {% if not references %}no-refs{% endif %}{% endblock %}
 {% block body-attributes %}data-frbr-uri="{{ query.frbr_uri | escape }}"{% endblock %}
 {% block title %}Sources for {{ query.title }}{% endblock %}
 
 {% block head-css %}
-{% stylesheet "resolver" %}
+  <link rel="stylesheet" href="{% sass_src 'stylesheets/resolver.scss' %}">
 {% endblock %}
 
 {% block page-content %}

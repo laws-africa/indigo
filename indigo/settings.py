@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sass_processor',
     'pipeline',
     'rest_framework',
     'rest_framework.authtoken',
@@ -182,6 +183,7 @@ STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "sass_processor.finders.CssFinder",
     "pipeline.finders.PipelineFinder",
 )
 
@@ -193,18 +195,6 @@ STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
 # django-pipeline and pyscss settings
 PIPELINE = {
     'STYLESHEETS': {
-        'css': {
-            'source_filenames': (
-                'bower_components/bootstrap/dist/css/bootstrap.min.css',
-                'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
-                'bower_components/fontawesome/css/font-awesome.css',
-                'bower_components/bootstrap-datepicker/css/datepicker3.css',
-                'stylesheets/select2-4.0.0.min.css',
-                'stylesheets/bootstrap-menus.scss',
-                'stylesheets/app.scss',
-            ),
-            'output_filename': 'app.css',
-        },
         'export': {
             'source_filenames': (
                 # these are both in indigo_api/static/
@@ -221,13 +211,6 @@ PIPELINE = {
                 'stylesheets/epub.scss',
             ),
             'output_filename': 'epub.css',
-        },
-        'resolver': {
-            'source_filenames': (
-                'bower_components/bootstrap/dist/css/bootstrap.min.css',
-                'stylesheets/resolver.scss',
-            ),
-            'output_filename': 'resolver.css',
         },
     },
     'JAVASCRIPT': {

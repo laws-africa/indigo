@@ -1,4 +1,5 @@
 {% load pipeline %}
+{% load sass_tags %}
 
 <!DOCTYPE html>
 <html>
@@ -9,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     {% block head-css %}
-    {% stylesheet "css" %}
+    <link rel="stylesheet" href="{% sass_src 'stylesheets/app.scss' %}">
     {% endblock %}
 
     {% block head-meta %}{% endblock %}

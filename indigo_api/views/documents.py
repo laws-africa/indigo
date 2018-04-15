@@ -51,7 +51,7 @@ def ping(request):
 
 
 class DocumentViewMixin(object):
-    queryset = Document.objects.undeleted().no_xml().prefetch_related('tags', 'created_by_user', 'updated_by_user')
+    queryset = Document.objects.undeleted().no_xml().prefetch_related('tags', 'work', 'created_by_user', 'updated_by_user')
 
     def initial(self, request, **kwargs):
         super(DocumentViewMixin, self).initial(request, **kwargs)

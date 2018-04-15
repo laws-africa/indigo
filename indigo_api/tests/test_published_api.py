@@ -4,8 +4,14 @@ from mock import patch
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
+from sass_processor.processor import SassProcessor
 
 from indigo_api.renderers import PDFRenderer
+
+
+# Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
+# but during testing we haven't compiled assets
+SassProcessor.processor_enabled = True
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277

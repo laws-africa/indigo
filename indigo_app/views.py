@@ -98,6 +98,35 @@ def edit_work(request, work_id=None):
 
 
 @login_required
+def work_amendments(request, work_id):
+    work = get_object_or_404(Work, pk=work_id)
+    if work.deleted:
+        raise Http404()
+    work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+
+    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
+    locality = None
+    if work.locality:
+        locality = country.locality_set.filter(code=work.locality)[0]
+
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
+    countries_json = json.dumps({c.code: c.as_json() for c in countries})
+
+    amendments_json = {}
+
+    return render(request, 'work/amendments.html', {
+        'country': country,
+        'locality': locality,
+        'amendments_json': amendments_json,
+        'work': work,
+        'work_json': work_json,
+        'countries': countries,
+        'countries_json': countries_json,
+        'view': 'WorkAmendmentsView',
+    })
+
+
+@login_required
 def import_document(request):
     frbr_uri = request.GET.get('frbr_uri')
     doc = Document(frbr_uri=frbr_uri or '/')

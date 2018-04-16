@@ -395,7 +395,7 @@ legend {
   right: 0px;
   left: 0px;
   height: 5px;
-  z-index: 1050;
+  z-index: 1030;
 }
 
 /* make document sheets look like paper */
@@ -1361,6 +1361,14 @@ body.unauthenticated .annotations-container {
   &.is-repealed {
     .repeal-date {
       display: block;
+    }
+  }
+}
+
+#work-amendments-view {
+  .work-amendments {
+    th.date {
+      width: 15%;
     }
   }
 }

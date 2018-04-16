@@ -223,6 +223,7 @@ PIPELINE = {
                 'javascript/indigo/views/document_chooser.js',
                 'javascript/indigo/views/document_toc.js',
                 'javascript/indigo/views/work.js',
+                'javascript/indigo/views/work_amendments.js',
                 'javascript/indigo/views/work_chooser.js',
                 'javascript/indigo/views/table_editor.js',
                 'javascript/indigo/views/document_editor.js',

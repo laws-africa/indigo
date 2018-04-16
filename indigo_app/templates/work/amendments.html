@@ -5,7 +5,7 @@
 
 {% block content %}
 <main id="main-content" class="container">
-  <div id="work-amendments-view">
+  <div id="work-amendments-view" class="work-view">
     <ul class="breadcrumb">
       <li class="work-country">{{ country.name }} · {{ country.code }}</li>
       {% if locality %}
@@ -19,6 +19,13 @@
       <h3 class="work-title">{{ work.title }}</h3>
       <h5 class="work-frbr-uri text-muted">{{ work.frbr_uri }}</h3>
     </header>
+
+    <nav class="sub-nav">
+      <ul class="nav nav-tabs">
+        <li role="presentation"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+        <li role="presentation" class="active"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+      </ul>
+    </nav>
 
     <div class="panel panel-default">
       <div class="panel-heading">

@@ -5,7 +5,7 @@
 
 {% block content %}
 <main id="main-content" class="container">
-  <div id="edit-work-view">
+  <div id="edit-work-view" class="work-view">
     <ul class="breadcrumb">
       <li class="work-country">{{ country.name }} · {{ country.code }}</li>
       {% if locality %}
@@ -26,6 +26,13 @@
       <div class="alert alert-danger">You don't have permission to create or change a work.</div>
       {% endif %}
     </header>
+
+    <nav class="sub-nav">
+      <ul class="nav nav-tabs">
+        <li role="presentation" class="active"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+        <li role="presentation"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+      </ul>
+    </nav>
 
     <div class="row">
       <div class="col-md-2 hidden-xs hidden-sm">

@@ -1340,11 +1340,12 @@ body.unauthenticated .annotations-container {
   .user-7 { background-color: #666666; }
 }
 
-#edit-work-view {
+.work-view {
   .work-title {
     margin-top: 5px;
     margin-bottom: 5px;
   }
+
   h5.work-frbr-uri {
     margin-top: 0px;
   }
@@ -1354,6 +1355,12 @@ body.unauthenticated .annotations-container {
     min-width: 190px;
   }
 
+  .sub-nav {
+    margin-bottom: 10px;
+  }
+}
+
+#edit-work-view {
   .repeal-date {
     display: none;
   }

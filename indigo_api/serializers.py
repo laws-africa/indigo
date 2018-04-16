@@ -12,7 +12,7 @@ from cobalt import Act, FrbrUri, AmendmentEvent
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment, Annotation, DocumentActivity, Work
+from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from .slaw import Importer
 
 log = logging.getLogger(__name__)
@@ -583,6 +583,9 @@ class WorkSerializer(serializers.ModelSerializer):
     repealed_by = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
     parent_work = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
 
+    amendments_url = serializers.SerializerMethodField()
+    """ URL of document amendments. """
+
     class Meta:
         model = Work
         fields = (
@@ -591,7 +594,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'title', 'publication_name', 'publication_number', 'publication_date',
             'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
-            'parent_work',
+            'parent_work', 'amendments_url',
 
             # repeal
             'repealed_date', 'repealed_by',
@@ -615,3 +618,43 @@ class WorkSerializer(serializers.ModelSerializer):
         except ValueError:
             raise ValidationError("Invalid FRBR URI: %s" % value)
         return value
+
+    def get_amendments_url(self, work):
+        if not work.pk:
+            return None
+        return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
+
+
+class WorkAmendmentSerializer(serializers.ModelSerializer):
+    updated_by_user = UserSerializer(read_only=True)
+    created_by_user = UserSerializer(read_only=True)
+    amending_work = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=True, allow_null=False)
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Amendment
+        fields = (
+            # readonly, url is part of the rest framework
+            'id', 'url',
+            'amending_work', 'date',
+            'updated_by_user', 'created_by_user',
+            'created_at', 'updated_at',
+        )
+        read_only_fields = ('created_at', 'updated_at')
+
+    def create(self, validated_data):
+        validated_data['created_by_user'] = self.context['request'].user
+        validated_data['amended_work'] = self.context['work']
+        return super(WorkAmendmentSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['updated_by_user'] = self.context['request'].user
+        return super(WorkAmendmentSerializer, self).update(instance, validated_data)
+
+    def get_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('work-amendments-detail', request=self.context['request'], kwargs={
+            'work_id': instance.amended_work.pk,
+            'pk': instance.pk,
+        })

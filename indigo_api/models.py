@@ -145,6 +145,20 @@ def post_save_work(sender, instance, **kwargs):
             doc.save()
 
 
+class Amendment(models.Model):
+    """ An amendment to a work, performed by an amending work.
+    """
+    amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work amended.", related_name='amendments')
+    amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work making the amendment.", related_name='+')
+    date = models.DateField(null=False, blank=False, help_text="Date of the amendment")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+
 class DocumentManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields

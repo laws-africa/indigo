@@ -108,6 +108,7 @@
         if (chosen) {
           // TODO: uri for amending doc may not be unique
           self.collection.add(new Backbone.Model({
+            amending_work: chosen.get('id'),
             work: chosen,
             date: chosen.get('publication_date'),
           }));

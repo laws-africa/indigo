@@ -48,14 +48,7 @@
   });
 
   /**
-   * Handle the document amendments display.
-   *
-   * Note that the amendments attribute of the document might
-   * be changed outside of this view, in particular it could become
-   * a new AmendmentList collection. That means we can't attach
-   * event handlers, so the views above (and ours) must trigger
-   * events on the owning document itself, not just the AmendmentList
-   * collection.
+   * Handle the work amendments display.
    */
   Indigo.WorkAmendmentsView = Backbone.View.extend({
     el: '#work-amendments-view',
@@ -72,16 +65,20 @@
 
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.deleted = new Backbone.Collection();
+      this.deleted.url = this.model.url() + '/amendments';
 
       // TODO: load from preloads
-      this.collection = new Backbone.Collection([], {
+      this.collection = new Backbone.Collection(Indigo.Preloads.amendments, {
         comparator: function(a, b) {
           // most recent first
           return -(a.get('date') || '').localeCompare(b.get('date'));
         },
       });
+      this.collection.each(function(a) {
+        a.set('work', new Indigo.Work(a.get('work')));
+      });
       this.collection.url = this.model.url() + '/amendments';
-      this.listenTo(this.collection, 'add remove change', this.render);
+      this.listenTo(this.collection, 'add remove change sort', this.render);
 
       this.render();
     },
@@ -121,13 +118,15 @@
 
       var $row = $(e.target).closest('tr'),
           index = $row.data('index'),
-          amendment = this.collection.at(index);
+          amendment = this.collection.at(index),
+          self = this;
 
       var editor = new Indigo.EditWorkAmendmentView({
         model: amendment,
         country: this.model.get('country'),
       });
       editor.show().always(function() {
+        self.collection.sort();
         editor.remove();
         $row.show();
       });

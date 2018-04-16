@@ -5,7 +5,7 @@ from django.urls import reverse
 
 
 from indigo_api.models import Document, Subtype, Work
-from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer
+from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
 from .forms import DocumentForm
@@ -112,7 +112,8 @@ def work_amendments(request, work_id):
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
-    amendments_json = {}
+    serializer = WorkAmendmentSerializer(context={'request': request, 'with_work': True}, many=True)
+    amendments_json = json.dumps(serializer.to_representation(work.amendments))
 
     return render(request, 'work/amendments.html', {
         'country': country,

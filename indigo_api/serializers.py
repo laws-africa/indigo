@@ -658,3 +658,9 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
+
+    def to_representation(self, obj):
+        info = super(WorkAmendmentSerializer, self).to_representation(obj)
+        if self.context.get('with_work'):
+            info['work'] = WorkSerializer(context=self.context).to_representation(obj.amending_work)
+        return info

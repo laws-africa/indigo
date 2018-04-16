@@ -1,224 +1,208 @@
-{% extends "main.html" %}
+{% extends "work/layout.html" %}
 
-{% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
-{% block header %}<h4>{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>{% endblock %}
+{% block view-id %}edit-work-view{% endblock %}
 
-{% block content %}
-<main id="main-content" class="container">
-  <div id="edit-work-view" class="work-view">
-    <ul class="breadcrumb">
-      <li class="work-country">{{ country.name }} · {{ country.code }}</li>
-      {% if locality %}
-      <li class="work-locality">{{ locality.name }} · {{ locality.code }}</li>
-      {% endif %}
-    </ul>
+{% block subnav %}
+  {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+  <button class="btn btn-info save pull-right" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
+  {% endif %}
 
-    <header>
-      {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
-      <button class="btn btn-info save pull-right" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
-      {% endif %}
+  <ul class="nav nav-tabs">
+    <li role="presentation" class="active"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+    <li role="presentation"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+  </ul>
+{% endblock %}
 
-      <h3 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h3>
-      <h5 class="work-frbr-uri text-muted">{% if work %}{{ work.frbr_uri }}{% endif %}</h3>
+{% block work-content %}
+  {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+  {% else %}
+  <div class="alert alert-danger">You don't have permission to create or change a work.</div>
+  {% endif %}
 
-      {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
-      {% else %}
-      <div class="alert alert-danger">You don't have permission to create or change a work.</div>
-      {% endif %}
-    </header>
+  <div class="row">
+    <div class="col-md-2 hidden-xs hidden-sm">
+      <aside class="floating-sidebar">
+        <div class="list-group">
+          <a href="#details" class="list-group-item">Work details</a>
+          <a href="#promulgation" class="list-group-item">Promulgation</a>
+          <a href="#repeal" class="list-group-item">Repeal</a>
+          <a href="#expressions" class="list-group-item">Amended versions</a>
+        </div>
+      </aside>
+    </div>
 
-    <nav class="sub-nav">
-      <ul class="nav nav-tabs">
-        <li role="presentation" class="active"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
-        <li role="presentation"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
-      </ul>
-    </nav>
+    <div class="col-md-10" id="details">
 
-    <div class="row">
-      <div class="col-md-2 hidden-xs hidden-sm">
-        <aside class="floating-sidebar">
-          <div class="list-group">
-            <a href="#details" class="list-group-item">Work details</a>
-            <a href="#promulgation" class="list-group-item">Promulgation</a>
-            <a href="#repeal" class="list-group-item">Repeal</a>
-            <a href="#expressions" class="list-group-item">Amended versions</a>
-          </div>
-        </aside>
-      </div>
+      <div class="panel panel-default is-form">
+        <div class="panel-heading">
+          <h3 class="panel-title">Work details</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-horizontal">
 
-      <div class="col-md-10" id="details">
+            <div class="form-group">
+              <label for="work_title" class="col-sm-2 control-label required">Short title</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="work_title" placeholder="Title" required>
+              </div>
+            </div>
 
-        <div class="panel panel-default is-form">
-          <div class="panel-heading">
-            <h3 class="panel-title">Work details</h3>
-          </div>
-          <div class="panel-body">
-            <div class="form-horizontal">
-
-              <div class="form-group">
-                <label for="work_title" class="col-sm-2 control-label required">Short title</label>
-                <div class="col-sm-10">
-                  <input type="text" class="form-control" id="work_title" placeholder="Title" required>
-                </div>
+            <div class="form-group">
+              <label for="work_country" class="col-sm-2 control-label required">Country</label>
+              <div class="col-sm-4">
+                <select id="work_country" class="form-control">
+                  {% for opt in countries %}
+                  <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
+                {% endfor %}
+                </select>
               </div>
 
-              <div class="form-group">
-                <label for="work_country" class="col-sm-2 control-label required">Country</label>
-                <div class="col-sm-4">
-                  <select id="work_country" class="form-control">
-                    {% for opt in countries %}
-                    <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
+              <label for="work_locality" class="col-sm-2 control-label">Locality</label>
+              <div class="col-sm-4">
+                <select class="form-control" id="work_locality"></select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="work_year" class="col-sm-2 control-label required">Year of introduction</label>
+              <div class="col-sm-2">
+                <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="work_number" class="col-sm-2 control-label required">Number within year</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
+                <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
+              </div>
+
+              <label for="work_subtype" class="col-sm-2 control-label">Work subtype</label>
+              <div class="col-sm-4">
+                <select id="work_subtype" class="form-control">
+                  <option value="">(none)</option>
+                  {% for subtype in subtypes %}
+                  <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
                   {% endfor %}
-                  </select>
-                </div>
+                </select>
+              </div>
+            </div>
 
-                <label for="work_locality" class="col-sm-2 control-label">Locality</label>
-                <div class="col-sm-4">
-                  <select class="form-control" id="work_locality"></select>
-                </div>
+            <div class="form-group">
+              <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR URI</label>
+              <div class="col-sm-4">
+                <div id="work_frbr_uri" class="form-control-static"></div>
+                <p class="help-block">Uniquely identifies this work globally</p>
               </div>
 
-              <div class="form-group">
-                <label for="work_year" class="col-sm-2 control-label required">Year of introduction</label>
-                <div class="col-sm-2">
-                  <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
+              <label class="col-sm-2 control-label">Parent work</label>
+              <div class="col-sm-4">
+                <div id="work_parent_work" class="form-control-static hidden">
+                  <a class="work_parent_title"></a>
+                  <br>
+                  <span class="work_parent_uri"></span>
+                  <br>
+                  <a href="#" class="delete-parent">remove</a>
                 </div>
-              </div>
-
-              <div class="form-group">
-                <label for="work_number" class="col-sm-2 control-label required">Number within year</label>
-                <div class="col-sm-4">
-                  <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
-                  <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
-                </div>
-
-                <label for="work_subtype" class="col-sm-2 control-label">Work subtype</label>
-                <div class="col-sm-4">
-                  <select id="work_subtype" class="form-control">
-                    <option value="">(none)</option>
-                    {% for subtype in subtypes %}
-                    <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR URI</label>
-                <div class="col-sm-4">
-                  <div id="work_frbr_uri" class="form-control-static"></div>
-                  <p class="help-block">Uniquely identifies this work globally</p>
-                </div>
-
-                <label class="col-sm-2 control-label">Parent work</label>
-                <div class="col-sm-4">
-                  <div id="work_parent_work" class="form-control-static hidden">
-                    <a class="work_parent_title"></a>
-                    <br>
-                    <span class="work_parent_uri"></span>
-                    <br>
-                    <a href="#" class="delete-parent">remove</a>
-                  </div>
-                  <button class="btn btn-default choose-parent">Choose parent work</button>
-                </div>
+                <button class="btn btn-default choose-parent">Choose parent work</button>
               </div>
             </div>
           </div>
         </div>
-
-        <div class="panel panel-default is-form" id="promulgation">
-          <div class="panel-heading">
-            <h3 class="panel-title">Promulgation</h3>
-          </div>
-          <div class="panel-body">
-            <div class="form-horizontal">
-
-              <div class="form-group">
-                <label for="work_publication_date" class="col-sm-2 control-label required">Publication date</label>
-                <div class="col-md-2 col-sm-4">
-                  <input type="text" class="form-control" data-provide="datepicker" id="work_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
-                  <p class="help-block">Date when first published</p>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="work_publication_name" class="col-sm-2 control-label">Publication name</label>
-                <div class="col-sm-4">
-                  <input type="text" class="form-control" id="work_publication_name" list="publication_list">
-                  <p class="help-block">Original publication, eg. national gazette</p>
-                </div>
-                <datalist id="publication_list"></datalist>
-
-                <label for="work_publication_number" class="col-sm-2 control-label">Publication number</label>
-                <div class="col-sm-4">
-                  <input type="text" class="form-control" id="work_publication_number">
-                  <p class="help-block">Publication's sequence number, eg. gazette number</p>
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="work_commencement_date" class="col-sm-2 control-label">Commencement date</label>
-                <div class="col-md-2 col-sm-4">
-                  <input type="text" class="form-control" data-provide="datepicker" id="work_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
-                  <p class="help-block">Date when most of the work comes into force</p>
-                </div>
-
-                <label for="work_assent_date" class="col-sm-2 col-md-offset-2 control-label">Assent date</label>
-                <div class="col-md-2 col-sm-4">
-                  <input type="text" class="form-control" data-provide="datepicker" id="work_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
-                  <p class="help-block">Date when signed by the President</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="panel panel-default is-form" id="repeal">
-          <div class="panel-heading">
-            <h3 class="panel-title">Repeal</h3>
-          </div>
-          <div class="panel-body">
-            <div class="form-horizontal">
-
-              <div class="form-group">
-                <label class="col-sm-2 control-label">Repealed by</label>
-                <div class="col-sm-10">
-                  <div class="work-repeal-view form-control-static"></div>
-                  <button class="btn btn-default change-repeal">Choose repealing work</button>
-                </div>
-              </div>
-
-              <div class="form-group repeal-date">
-                <label class="col-sm-2 control-label required">Repeal date</label>
-                <div class="col-md-2 col-sm-4">
-                  <input type="text" class="form-control" data-provide="datepicker" id="work_repealed_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {% if work %}
-        <!-- expressions -->
-        <div class="panel panel-default" id="expressions">
-          <div class="panel-heading">
-            <h3 class="panel-title">Amended versions of this work</h3>
-          </div>
-          <div class="panel-body">
-            <div class="work-expressions"></div>
-          </div>
-        </div>
-        {% endif %}
-
-        {% if work %}
-          {% if not work.can_delete %}
-            <p class="pull-left">This work cannot be deleted while linked documents exist.</p>
-          {% elif perms.indigo_api.can_delete_work %}
-            <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
-          {% endif %}
-        {% endif %}
-
       </div>
+
+      <div class="panel panel-default is-form" id="promulgation">
+        <div class="panel-heading">
+          <h3 class="panel-title">Promulgation</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-horizontal">
+
+            <div class="form-group">
+              <label for="work_publication_date" class="col-sm-2 control-label required">Publication date</label>
+              <div class="col-md-2 col-sm-4">
+                <input type="text" class="form-control" data-provide="datepicker" id="work_publication_date" placeholder="yyyy-mm-dd" required pattern="\d{4}-\d\d-\d\d">
+                <p class="help-block">Date when first published</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="work_publication_name" class="col-sm-2 control-label">Publication name</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" id="work_publication_name" list="publication_list">
+                <p class="help-block">Original publication, eg. national gazette</p>
+              </div>
+              <datalist id="publication_list"></datalist>
+
+              <label for="work_publication_number" class="col-sm-2 control-label">Publication number</label>
+              <div class="col-sm-4">
+                <input type="text" class="form-control" id="work_publication_number">
+                <p class="help-block">Publication's sequence number, eg. gazette number</p>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label for="work_commencement_date" class="col-sm-2 control-label">Commencement date</label>
+              <div class="col-md-2 col-sm-4">
+                <input type="text" class="form-control" data-provide="datepicker" id="work_commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+                <p class="help-block">Date when most of the work comes into force</p>
+              </div>
+
+              <label for="work_assent_date" class="col-sm-2 col-md-offset-2 control-label">Assent date</label>
+              <div class="col-md-2 col-sm-4">
+                <input type="text" class="form-control" data-provide="datepicker" id="work_assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+                <p class="help-block">Date when signed by the President</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel panel-default is-form" id="repeal">
+        <div class="panel-heading">
+          <h3 class="panel-title">Repeal</h3>
+        </div>
+        <div class="panel-body">
+          <div class="form-horizontal">
+
+            <div class="form-group">
+              <label class="col-sm-2 control-label">Repealed by</label>
+              <div class="col-sm-10">
+                <div class="work-repeal-view form-control-static"></div>
+                <button class="btn btn-default change-repeal">Choose repealing work</button>
+              </div>
+            </div>
+
+            <div class="form-group repeal-date">
+              <label class="col-sm-2 control-label required">Repeal date</label>
+              <div class="col-md-2 col-sm-4">
+                <input type="text" class="form-control" data-provide="datepicker" id="work_repealed_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if work %}
+      <!-- expressions -->
+      <div class="panel panel-default" id="expressions">
+        <div class="panel-heading">
+          <h3 class="panel-title">Amended versions of this work</h3>
+        </div>
+        <div class="panel-body">
+          <div class="work-expressions"></div>
+        </div>
+      </div>
+      {% endif %}
+
+      {% if work %}
+        {% if not work.can_delete %}
+          <p class="pull-left">This work cannot be deleted while linked documents exist.</p>
+        {% elif perms.indigo_api.can_delete_work %}
+          <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
+        {% endif %}
+      {% endif %}
+
     </div>
   </div>
 </div>
@@ -288,21 +272,5 @@
 
 {% endverbatim %}
 </script>
-
-{% include "work/_work_chooser_modal.html" %}
-
-{% endblock %}
-
-{% block js %}
-  {{ block.super }}
-
-  {# include the document as JSON #}
-  <script type="text/javascript">
-  // inject country code-to-name mappings into JS
-  window.Indigo.countries = {{ countries_json|safe }};
-  window.Indigo.Preloads.country_code = '{{ user.editor.country_code }}';
-  window.Indigo.Preloads.country = {{ countries_json|safe }};
-  window.Indigo.Preloads.work = {{ work_json|safe }};
-  </script>
 
 {% endblock %}

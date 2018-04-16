@@ -17,7 +17,7 @@
       <ul class="nav navbar-nav">
         <li><a href="{% url 'library' %}">Library</a></li>
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Works</a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Works <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{% url 'new_work' %}">Create a New Work</a></li>
             <li><a href="{% url 'import_document' %}">Import a Document</a></li>
@@ -25,7 +25,7 @@
         </li>
 
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help</a>
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">Help <span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="#cheatsheet-modal" data-toggle="modal"><i class="fa fa-info-circle fa-fw"></i> Editor Cheatsheet</a></li>
             <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank"><i class="fa fa-question fa-fw"></i> Documentation</a></li>

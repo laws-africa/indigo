@@ -33,7 +33,6 @@
 
     render: function() {
       var amendment = this.model.toJSON();
-      amendment.work = amendment.work.toJSON();
       this.$el.html(this.template(amendment));
     },
 
@@ -67,28 +66,28 @@
       this.deleted = new Backbone.Collection();
       this.deleted.url = this.model.url() + '/amendments';
 
-      // TODO: load from preloads
       this.collection = new Backbone.Collection(Indigo.Preloads.amendments, {
+        parse: true,
+        model: Indigo.WorkAmendment,
         comparator: function(a, b) {
           // most recent first
           return -(a.get('date') || '').localeCompare(b.get('date'));
         },
       });
-      this.collection.each(function(a) {
-        a.set('work', new Indigo.Work(a.get('work')));
-      });
       this.collection.url = this.model.url() + '/amendments';
       this.listenTo(this.collection, 'add remove change sort', this.render);
+      this.listenTo(this.collection, 'add remove change', this.setDirty);
+      this.listenTo(this.collection, 'sync', this.setClean);
+
+      // prevent the user from navigating away without saving changes
+      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
 
       this.render();
+      this.canSave();
     },
 
     render: function() {
       var amendments = this.collection.toJSON();
-      amendments.forEach(function(a) {
-        a.work = a.work.toJSON();
-      });
-
       this.$('.work-amendments').html(this.template({
         amendments: amendments,
       }));
@@ -103,10 +102,8 @@
       chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
-          // TODO: uri for amending doc may not be unique
-          self.collection.add(new Backbone.Model({
-            amending_work: chosen.get('id'),
-            work: chosen,
+          self.collection.add(new Indigo.WorkAmendment({
+            amending_work: chosen,
             date: chosen.get('publication_date'),
           }));
         }
@@ -151,6 +148,27 @@
       this.deleted.invoke('destroy');
       this.deleted.reset([]);
       this.collection.invoke('save');
+    },
+
+    canSave: function() {
+      this.$('.btn.save-work').attr('disabled', !this.dirty);
+    },
+
+    setDirty: function() {
+      this.dirty = true;
+      this.canSave();
+    },
+
+    setClean: function() {
+      this.dirty = false;
+      this.canSave();
+    },
+
+    windowUnloading: function(e) {
+      if (this.dirty) {
+        e.preventDefault();
+        return 'You will lose your changes!';
+      }
     },
 
   });

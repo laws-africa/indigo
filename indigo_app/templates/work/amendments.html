@@ -33,8 +33,8 @@
     {{#each amendments}}
       <tr data-index="{{ @index }}">
         <td>{{ date }}</td>
-        <td><a href="/works/{{ work.id }}">{{ work.title }}</a></td>
-        <td>{{ work.frbr_uri }}</td>
+        <td><a href="/works/{{ work.id }}">{{ amending_work.title }}</a></td>
+        <td>{{ amending_work.frbr_uri }}</td>
         <td class="text-right">
           <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>
         </td>
@@ -56,8 +56,8 @@
   <td>
     <input type="text" class="form-control amendment-date" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
   </td>
-  <td>{{ work.title }}</td>
-  <td>{{ work.frbr_uri }}</td>
+  <td>{{ amending_work.title }}</td>
+  <td>{{ amending_work.frbr_uri }}</td>
   <td class="text-right">
     <button class="btn btn-link cancel">Cancel</button>
     <button class="btn btn-primary save-amendment">OK</button>

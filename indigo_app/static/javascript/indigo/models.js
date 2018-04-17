@@ -193,6 +193,19 @@
     },
   });
 
+  Indigo.WorkAmendment = Backbone.Model.extend({
+    parse: function(json) {
+      json.amending_work = new Indigo.Work(json.amending_work);
+      return json;
+    },
+
+    toJSON: function() {
+      var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      json.amending_work = this.get('amending_work').toJSON();
+      return json;
+    },
+  });
+
   Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,

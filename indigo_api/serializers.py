@@ -1,5 +1,6 @@
 import logging
 import os.path
+from collections import OrderedDict
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
@@ -625,10 +626,55 @@ class WorkSerializer(serializers.ModelSerializer):
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
 
 
+class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
+    """ Related field that serializers the entirety of the related object.
+    For updates, only the primary key field is considered, everything else is
+    ignored.
+    """
+    serializer = None
+
+    def __init__(self, serializer=None, *args, **kwargs):
+        if serializer is not None:
+            self.serializer = serializer
+        assert self.serializer is not None, 'The `serializer` argument is required.'
+
+        super(SerializedRelatedField, self).__init__(*args, **kwargs)
+
+    def use_pk_only_optimization(self):
+        return False
+
+    def to_internal_value(self, data):
+        # support both a dict and passing in the primary key directly
+        if isinstance(data, dict):
+            data = data['id']
+        return super(SerializedRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        return self.serializer(context=self.context).to_representation(value)
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            # Ensure that field.choices returns something sensible
+            # even when accessed with a read-only field.
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict([
+            (
+                item.pk,
+                self.display_value(item)
+            )
+            for item in queryset
+        ])
+
+
 class WorkAmendmentSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
-    amending_work = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=True, allow_null=False)
+    amending_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=True, allow_null=False, serializer=WorkSerializer)
     url = serializers.SerializerMethodField()
 
     class Meta:
@@ -658,9 +704,3 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
-
-    def to_representation(self, obj):
-        info = super(WorkAmendmentSerializer, self).to_representation(obj)
-        if self.context.get('with_work'):
-            info['work'] = WorkSerializer(context=self.context).to_representation(obj.amending_work)
-        return info

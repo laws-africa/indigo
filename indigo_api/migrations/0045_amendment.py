@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
-        ('indigo_api', '0045_works_for_amendments'),
+        ('indigo_api', '0044_work_parent_work'),
     ]
 
     operations = [

@@ -22,7 +22,10 @@
   {% verbatim %}
 
   <div class="amendment-expressions">
-      <ol class="expression-timeline">
+    <ol class="expression-timeline">
+      <li>
+        <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+      </li>
       {{#each amendments}}
         <li class="item">
           {{#unless ../readonly}}
@@ -55,7 +58,10 @@
         </li>
       {{/each}}
       <li>
-        <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+        <a href="/documents/new/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Create a blank document for this work</a>
+      </li>
+      <li>
+        <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-cloud-upload"></i> Import a new document for this work</a>
       </li>
     </ol>
   </div>

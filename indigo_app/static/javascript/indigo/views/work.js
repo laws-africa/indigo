@@ -22,7 +22,6 @@
       'click .choose-parent': 'changeParent',
       'click .delete-parent': 'deleteParent',
     },
-    workExpressionsTemplate: '#work-expressions-template',
     workRepealTemplate: '#work-repeal-template',
     bindings: {
       '#work_country': {
@@ -74,7 +73,6 @@
     initialize: function(options) {
       this.dirty = false;
 
-      this.workExpressionsTemplate = Handlebars.compile($(this.workExpressionsTemplate).html());
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work);
@@ -82,11 +80,6 @@
       this.listenTo(this.model, 'change:country change:locality', this.updateBreadcrumb);
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
-      this.listenTo(this.model, 'change:frbr_uri', _.debounce(_.bind(this.refreshExpressions, this), 500));
-
-      this.filteredLibrary = new Indigo.Library({country: null});
-      this.model.expressionSet = this.filteredLibrary.expressionSet(this.model);
-      this.listenTo(this.model.expressionSet, 'change reset', this.renderExpressions);
 
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change', this.canSave);
@@ -100,7 +93,6 @@
       this.listenToOnce(Indigo.works, 'sync', this.parentChanged);
       this.updatePublicationOptions();
       this.stickit();
-      this.refreshExpressions();
       this.repealChanged();
       this.canSave();
     },
@@ -163,38 +155,6 @@
           window.location = '/';
         });
       }
-    },
-
-    refreshExpressions: function() {
-      // only load documents with this frbr_uri
-      this.filteredLibrary.setParams({frbr_uri: this.model.get('frbr_uri')});
-    },
-
-    renderExpressions: function() {
-      if (this.model.isNew()) return;
-
-      var expressionSet = this.model.expressionSet,
-          dates = expressionSet.allDates(),
-          pubDate = expressionSet.initialPublicationDate();
-
-      // build up a view of expressions for this work
-      var expressions = _.map(dates, function(date) {
-        var doc = expressionSet.atDate(date);
-        var info = {
-          date: date,
-          document: doc && doc.toJSON(),
-          amendments: _.map(expressionSet.amendmentsAtDate(date), function(a) { return a.toJSON(); }),
-          initial: date == pubDate,
-        };
-        info.linkable = info.document;
-
-        return info;
-      });
-
-      this.$('.work-expressions').html(this.workExpressionsTemplate({
-        expressions: expressions,
-        work: this.model.toJSON(),
-      }));
     },
 
     deleteRepeal: function() {

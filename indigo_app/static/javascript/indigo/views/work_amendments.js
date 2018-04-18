@@ -96,6 +96,7 @@
       this.$('.work-amendments').html(this.template({
         amendments: amendments,
         readonly: Indigo.user.hasPerm('indigo_api.can_change_amendment'),
+        work: this.model.toJSON(),
       }));
     },
 

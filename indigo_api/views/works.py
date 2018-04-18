@@ -58,7 +58,7 @@ class WorkViewSet(viewsets.ModelViewSet):
 
 
 class WorkAmendmentViewSet(WorkResourceView, viewsets.ModelViewSet):
-    queryset = Amendment.objects
+    queryset = Amendment.objects.prefetch_related('amending_work', 'created_by_user', 'updated_by_user')
     serializer_class = WorkAmendmentSerializer
     permission_classes = (DjangoModelPermissions,)
 

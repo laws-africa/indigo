@@ -113,7 +113,8 @@ def work_amendments(request, work_id):
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
     serializer = WorkAmendmentSerializer(context={'request': request}, many=True)
-    amendments_json = json.dumps(serializer.to_representation(work.amendments))
+    amendments = work.amendments.prefetch_related('created_by_user', 'updated_by_user', 'amending_work')
+    amendments_json = json.dumps(serializer.to_representation(amendments))
 
     return render(request, 'work/amendments.html', {
         'country': country,

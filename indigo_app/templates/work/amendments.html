@@ -14,60 +14,62 @@
 {% endblock %}
 
 {% block work-content %}
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Amendments to this work</h3>
-    </div>
-    <div class="work-amendments"></div>
-  </div>
+  <h3>Amendments to this work</h3>
+
+  <div class="work-amendments"></div>
 
   <script id="work-amendments-template" type="text/x-handlebars-template">
   {% verbatim %}
 
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th class="date">Date</th>
-        <th colspan="3">Amending work</th>
-      </tr>
-    </thead>
-    <tbody>
-    {{#each amendments}}
-      <tr data-index="{{ @index }}">
-        <td>{{ date }}</td>
-        <td><a href="/works/{{ work.id }}">{{ amending_work.title }}</a></td>
-        <td>{{ amending_work.frbr_uri }}</td>
-        <td class="text-right">
+  <div class="amendment-expressions">
+      <ol class="expression-timeline">
+      {{#each amendments}}
+        <li class="item">
           {{#unless ../readonly}}
-          <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>
+          <div class="dropdown pull-right">
+            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Edit <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="#" class="edit-amendment" data-index="{{ @index }}">Change date</a></li>
+              <li><a href="#" class="delete-amendment" data-index="{{ @index }}">Delete</a></li>
+            </ul>
+          </div>
           {{/unless}}
-        </td>
-      </tr>
-    {{/each}}
-    {{#unless readonly}}
-      <tr>
-        <td colspan="4">
-          <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
-        </td>
-      </tr>
-    {{/unless}}
-    </tbody>
-  </table>
+          <div class="edit-wrapper"></div>
+
+          <h5 class="date">{{ date }}</h5>
+
+          <h5><a href="/works/{{ work.id }}">{{ amending_work.title }}</a></h5>
+          <h6>{{ amending_work.frbr_uri }}</h6>
+
+          <div class="documents">
+            {{#if documents}}
+              {{#each documents}}
+                <a href="/documents/{{ id }}">{{ title }}</a>
+              {{/each}}
+            {{else}}
+              <span class="text-muted">No editable version at this date</span>
+              —
+              <a href="#" class="create-expression" data-date="{{ date }}">create and edit an amended version</a>
+            {{/if}}
+          </div>
+        </li>
+      {{/each}}
+      <li>
+        <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+      </li>
+    </ol>
+  </div>
 
   {% endverbatim %}
   </script>
 
   <script id="amendment-editor-template" type="text/x-handlebars-template">
   {% verbatim %}
-  <td>
+  <div class="form-inline">
     <input type="text" class="form-control amendment-date" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
-  </td>
-  <td>{{ amending_work.title }}</td>
-  <td>{{ amending_work.frbr_uri }}</td>
-  <td class="text-right">
     <button class="btn btn-link cancel">Cancel</button>
     <button class="btn btn-primary save-amendment">OK</button>
-  </td>
+  </div>
   {% endverbatim %}
   </script>
 {% endblock %}

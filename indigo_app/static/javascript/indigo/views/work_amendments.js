@@ -5,7 +5,6 @@
   Indigo = exports.Indigo;
 
   Indigo.EditWorkAmendmentView = Backbone.View.extend({
-    tagName: 'tr',
     template: '#amendment-editor-template',
     events: {
       'click .save-amendment': 'save',
@@ -42,7 +41,7 @@
     },
 
     cancel: function() {
-      this.deferred.resolve();
+      this.deferred.reject();
     },
   });
 
@@ -120,29 +119,33 @@
     editAmendment: function(e) {
       e.preventDefault();
 
-      var $row = $(e.target).closest('tr'),
-          index = $row.data('index'),
+      var index = $(e.target).data('index'),
+          $item = $(e.target).closest('.item'),
           amendment = this.collection.at(index),
+          $container = $item.find('.edit-wrapper'),
           self = this;
 
       var editor = new Indigo.EditWorkAmendmentView({
         model: amendment,
         country: this.model.get('country'),
       });
-      editor.show().always(function() {
-        self.collection.sort();
-        editor.remove();
-        $row.show();
-      });
+      editor.show()
+        .done(function() {
+          self.collection.sort();
+        })
+        .always(function() {
+          editor.remove();
+          $item.find('.date').show();
+        });
 
-      $row.hide();
-      editor.$el.insertAfter($row);
+      $item.find('.date').hide();
+      $container.append(editor.el);
     },
 
     deleteAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).closest('tr').data('index');
+      var index = $(e.target).data('index');
       var amendment = this.collection.at(index);
 
       if (confirm("Really delete this amendment?")) {

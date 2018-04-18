@@ -3,7 +3,9 @@
 {% block view-id %}work-amendments-view{% endblock %}
 
 {% block subnav %}
+  {% if perms.indigo_api.can_change_amendment %}
   <button class="btn btn-info save-work pull-right" type="button">Save</button>
+  {% endif %}
 
   <ul class="nav nav-tabs">
     <li role="presentation"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
@@ -36,15 +38,19 @@
         <td><a href="/works/{{ work.id }}">{{ amending_work.title }}</a></td>
         <td>{{ amending_work.frbr_uri }}</td>
         <td class="text-right">
+          {{#unless ../readonly}}
           <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>
+          {{/unless}}
         </td>
       </tr>
     {{/each}}
+    {{#unless readonly}}
       <tr>
         <td colspan="4">
           <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
         </td>
       </tr>
+    {{/unless}}
     </tbody>
   </table>
 

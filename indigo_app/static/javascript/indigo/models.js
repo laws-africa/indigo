@@ -617,6 +617,10 @@
     isNew: function() {
       return !this.authenticated();
     },
+
+    hasPerm: function(perm) {
+      return this.get('permissions').indexOf(perm) > -1;
+    },
   });
 
   Indigo.Amendment = Backbone.Model.extend({});

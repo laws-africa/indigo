@@ -1035,14 +1035,15 @@ legend {
 .expression-timeline {
   list-style: none;
   padding-left: 0px;
+  margin-left: 130px;
 
   &::after {
     content: "";
     display: block;
     position: absolute;
-    left: 10px;
+    left: 140px;
     top: 20px;
-    bottom: 30px;
+    bottom: 40px;
     width: 4px;
     background: $grey;
     z-index: 0;
@@ -1058,6 +1059,11 @@ legend {
     &> h5 {
       margin-top: 0px;
       font-weight: bold;
+
+      &.date {
+        position: absolute;
+        left: -120px;
+      }
     }
 
     &.current {

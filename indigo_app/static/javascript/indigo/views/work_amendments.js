@@ -93,6 +93,12 @@
         a.documents = _.map(self.documents.where({expression_date: a.date}), function(a) { return a.toJSON(); });
       });
 
+      amendments.push({
+        initial: true,
+        date: this.model.get('publication_date'),
+        documents: _.map(self.documents.where({expression_date: this.model.get('publication_date')}), function(a) { return a.toJSON(); }),
+      });
+
       this.$('.work-amendments').html(this.template({
         amendments: amendments,
         readonly: Indigo.user.hasPerm('indigo_api.can_change_amendment'),
@@ -136,10 +142,8 @@
         })
         .always(function() {
           editor.remove();
-          $item.find('.date').show();
         });
 
-      $item.find('.date').hide();
       $container.append(editor.el);
     },
 

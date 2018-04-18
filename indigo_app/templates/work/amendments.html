@@ -26,28 +26,37 @@
       <li>
         <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
       </li>
+      <li>
+        <a href="/documents/new/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Create a blank document for this work</a>
+        &nbsp;
+        <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-cloud-upload"></i> Import a new document for this work</a>
+      </li>
       {{#each amendments}}
         <li class="item">
-          {{#unless ../readonly}}
+          {{#unless ../readonly}}{{#unless initial}}
           <div class="dropdown pull-right">
-            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Edit <span class="caret"></span></button>
+            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
             <ul class="dropdown-menu">
               <li><a href="#" class="edit-amendment" data-index="{{ @index }}">Change date</a></li>
               <li><a href="#" class="delete-amendment" data-index="{{ @index }}">Delete</a></li>
             </ul>
           </div>
-          {{/unless}}
+          {{/unless}}{{/unless}}
           <div class="edit-wrapper"></div>
 
           <h5 class="date">{{ date }}</h5>
 
-          <h5><a href="/works/{{ work.id }}">{{ amending_work.title }}</a></h5>
-          <h6>{{ amending_work.frbr_uri }}</h6>
+          {{#if initial}}
+            <h5>Initial publication</h5>
+          {{else}}
+            <h5>Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h5>
+            <h6>{{ amending_work.frbr_uri }}</h6>
+          {{/if}}
 
           <div class="documents">
             {{#if documents}}
               {{#each documents}}
-                <a href="/documents/{{ id }}">{{ title }}</a>
+                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
               {{/each}}
             {{else}}
               <span class="text-muted">No editable version at this date</span>
@@ -57,12 +66,6 @@
           </div>
         </li>
       {{/each}}
-      <li>
-        <a href="/documents/new/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Create a blank document for this work</a>
-      </li>
-      <li>
-        <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-cloud-upload"></i> Import a new document for this work</a>
-      </li>
     </ol>
   </div>
 

@@ -222,6 +222,8 @@
       this.$('#document-work-details').html(this.workDetailTemplate({
         work: work,
       }));
+
+      this.$('a.manage-amendments').attr('href', '/works/' + work.id + '/amendments/');
     },
   });
 })(window);

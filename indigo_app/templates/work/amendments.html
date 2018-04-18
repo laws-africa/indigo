@@ -78,6 +78,7 @@
   {# include the document as JSON #}
   <script type="text/javascript">
   window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
+  window.Indigo.Preloads.documents = {{ documents_json|safe }};
   </script>
 
 {% endblock %}

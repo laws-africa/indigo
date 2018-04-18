@@ -114,6 +114,10 @@ def work_amendments(request, work_id):
     if work.locality:
         locality = country.locality_set.filter(code=work.locality)[0]
 
+    docs = DocumentViewSet.queryset.filter(work=work).all()
+    serializer = DocumentSerializer(context={'request': request}, many=True)
+    documents_json = json.dumps(serializer.to_representation(docs))
+
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
@@ -129,6 +133,7 @@ def work_amendments(request, work_id):
         'work_json': work_json,
         'countries': countries,
         'countries_json': countries_json,
+        'documents_json': documents_json,
         'view': 'WorkAmendmentsView',
     })
 

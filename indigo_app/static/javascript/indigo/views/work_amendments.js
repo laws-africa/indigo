@@ -64,6 +64,7 @@
 
       this.model = new Indigo.Work(Indigo.Preloads.work);
       this.deleted = new Indigo.WorkAmendmentCollection([], {work: this.model});
+      this.documents = new Indigo.Library(Indigo.Preloads.documents, {country: this.model.get('country')});
 
       this.collection = new Indigo.WorkAmendmentCollection(Indigo.Preloads.amendments, {
         work: this.model,
@@ -85,7 +86,14 @@
     },
 
     render: function() {
-      var amendments = this.collection.toJSON();
+      var amendments = this.collection.toJSON(),
+          self = this;
+
+      // pull in documents
+      amendments.forEach(function(a) {
+        a.documents = _.map(self.documents.where({expression_date: a.date}), function(a) { return a.toJSON(); });
+      });
+
       this.$('.work-amendments').html(this.template({
         amendments: amendments,
         readonly: Indigo.user.hasPerm('indigo_api.can_change_amendment'),

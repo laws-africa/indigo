@@ -141,7 +141,7 @@ def post_save_work(sender, instance, **kwargs):
         # cascade updates to ensure documents
         # pick up changes to inherited attributes
         for doc in instance.document_set.all():
-            doc.copy_attributes()
+            # forces call to doc.copy_attributes()
             doc.save()
 
 
@@ -157,6 +157,14 @@ class Amendment(models.Model):
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+
+@receiver(signals.post_save, sender=Amendment)
+def post_save_amendment(sender, instance, **kwargs):
+    if not kwargs['raw']:
+        for doc in instance.amended_work.document_set.all():
+            # forces call to doc.copy_attributes()
+            doc.save()
 
 
 class DocumentManager(models.Manager):
@@ -415,7 +423,6 @@ class Document(models.Model):
             self.publication_number = self.doc.publication_number
             self.publication_name = self.doc.publication_name
             self.publication_date = self.doc.publication_date
-            self.amendments = self.doc.amendments
             # ensure these are refreshed
             self._work_uri = None
             self._amendments = None
@@ -430,6 +437,17 @@ class Document(models.Model):
         """
         for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
             setattr(self, attr, getattr(self.work, attr))
+
+        # TODO: no need to stash _amendment_events any more
+
+        # copy over amendments before this publication date
+        if self.expression_date:
+            amendments = self.work.amendments.filter(date__lte=self.expression_date)
+            self.amendments = [AmendmentEvent(
+                amending_uri=a.amending_work.frbr_uri,
+                amending_title=a.amending_work.title,
+                date=a.date,
+            ) for a in amendments]
 
         # copy over title if it's not set
         if not self.title:

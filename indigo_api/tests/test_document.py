@@ -4,7 +4,7 @@ from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
 
-from indigo_api.models import Document, Work
+from indigo_api.models import Document, Work, Amendment
 from indigo_api.tests.fixtures import *  # noqa
 
 
@@ -52,7 +52,7 @@ class DocumentTestCase(TestCase):
 
     def test_inherit_from_work(self):
         w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document')
-        d = Document(work=w)
+        d = Document(work=w, expression_date='2011-02-01')
         d.save()
 
         d = Document.objects.get(pk=d.id)
@@ -71,3 +71,24 @@ class DocumentTestCase(TestCase):
         assert_equal(d.repeal.repealing_uri, rep.frbr_uri)
         assert_equal(d.repeal.repealing_title, rep.title)
         assert_equal(d.repeal.date, rep.publication_date)
+
+    def test_amendments_from_work(self):
+        amending = Work.objects.get(id=1)
+        # this work has two docs:
+        #  2 - expression date: 2011-01-01
+        #  3 - expression date: 2012-02-02
+        amended = Work.objects.get(id=3)
+        d = date(2011, 12, 10)
+
+        # this will impact only work 2
+        a = Amendment(amending_work=amending, amended_work=amended, date=d)
+        a.save()
+
+        doc = Document.objects.get(id=2)
+        assert_equal(doc.amendments, [])
+
+        doc = Document.objects.get(id=3)
+        assert_equal(len(doc.amendments), 1)
+        assert_equal(doc.amendments[0].amending_uri, amending.frbr_uri)
+        assert_equal(doc.amendments[0].amending_title, amending.title)
+        assert_equal(doc.amendments[0].date, d)

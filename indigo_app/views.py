@@ -40,6 +40,10 @@ def document(request, doc_id=None):
     works = Work.objects.undeleted().filter(country=doc.country)
     works_json = json.dumps(serializer.to_representation(works))
 
+    amendments_json = json.dumps(
+        WorkAmendmentSerializer(context={'request': request}, many=True)
+        .to_representation(doc.work.amendments))
+
     form = DocumentForm(instance=doc)
 
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
@@ -55,6 +59,7 @@ def document(request, doc_id=None):
         'documents_json': documents_json,
         'work_json': work_json,
         'works_json': works_json,
+        'amendments_json': amendments_json,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),

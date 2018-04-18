@@ -63,18 +63,16 @@
       this.template = Handlebars.compile($(this.template).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work);
-      this.deleted = new Backbone.Collection();
-      this.deleted.url = this.model.url() + '/amendments';
+      this.deleted = new Indigo.WorkAmendmentCollection([], {work: this.model});
 
-      this.collection = new Backbone.Collection(Indigo.Preloads.amendments, {
+      this.collection = new Indigo.WorkAmendmentCollection(Indigo.Preloads.amendments, {
+        work: this.model,
         parse: true,
-        model: Indigo.WorkAmendment,
         comparator: function(a, b) {
           // most recent first
           return -(a.get('date') || '').localeCompare(b.get('date'));
         },
       });
-      this.collection.url = this.model.url() + '/amendments';
       this.listenTo(this.collection, 'add remove change sort', this.render);
       this.listenTo(this.collection, 'add remove change', this.setDirty);
       this.listenTo(this.collection, 'sync', this.setClean);

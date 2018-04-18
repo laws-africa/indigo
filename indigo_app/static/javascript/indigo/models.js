@@ -206,6 +206,23 @@
     },
   });
 
+  Indigo.WorkAmendmentCollection = Backbone.Collection.extend({
+    model: Indigo.WorkAmendment,
+
+    initialize: function(models, options) {
+      this.work = options.work;
+    },
+
+    url: function() {
+      return this.work.url() + '/amendments';
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results ? response.results : response;
+    },
+  });
+
   Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,

@@ -130,10 +130,15 @@
 
     updateExpressionDates: function() {
       var dates = _.unique(this.amendments.pluck('date')),
-          pubDate = this.model.work.get('publication_date');
+          pubDate = this.model.work.get('publication_date'),
+          expDate = this.model.get('expression_date');
 
       if (pubDate) dates.push(pubDate);
       dates.sort();
+
+      if (dates.length > 0 && (!expDate || dates.indexOf(expDate) == -1)) {
+        this.model.set('expression_date', dates[0]);
+      }
 
       this.expressionDates.set(_.map(dates, function(date) {
         return {

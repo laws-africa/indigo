@@ -129,6 +129,32 @@ class Work(models.Model):
     def can_delete(self):
         return not self.document_set.filter(deleted=False).exists()
 
+    def create_expression_at(self, date):
+        """ Create a new expression at a particular date.
+
+        This uses an existing document at or before this date as a template, if available.
+        """
+        doc = Document()
+
+        # most recent expression at or before this date
+        template = self.document_set\
+            .undeleted()\
+            .filter(expression_date__lte=date)\
+            .order_by('-expression_date')\
+            .first()
+
+        if template:
+            doc.title = template.title
+            doc.content = template.content
+
+        doc.draft = True
+        doc.language = DEFAULT_LANGUAGE
+        doc.expression_date = date
+        doc.work = self
+        doc.save()
+
+        return doc
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

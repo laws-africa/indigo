@@ -129,6 +129,32 @@ class Work(models.Model):
     def can_delete(self):
         return not self.document_set.filter(deleted=False).exists()
 
+    def create_expression_at(self, date):
+        """ Create a new expression at a particular date.
+
+        This uses an existing document at or before this date as a template, if available.
+        """
+        doc = Document()
+
+        # most recent expression at or before this date
+        template = self.document_set\
+            .undeleted()\
+            .filter(expression_date__lte=date)\
+            .order_by('-expression_date')\
+            .first()
+
+        if template:
+            doc.title = template.title
+            doc.content = template.content
+
+        doc.draft = True
+        doc.language = DEFAULT_LANGUAGE
+        doc.expression_date = date
+        doc.work = self
+        doc.save()
+
+        return doc
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -141,7 +167,29 @@ def post_save_work(sender, instance, **kwargs):
         # cascade updates to ensure documents
         # pick up changes to inherited attributes
         for doc in instance.document_set.all():
-            doc.copy_attributes()
+            # forces call to doc.copy_attributes()
+            doc.save()
+
+
+class Amendment(models.Model):
+    """ An amendment to a work, performed by an amending work.
+    """
+    amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work amended.", related_name='amendments')
+    amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work making the amendment.", related_name='+')
+    date = models.DateField(null=False, blank=False, help_text="Date of the amendment")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+
+@receiver(signals.post_save, sender=Amendment)
+def post_save_amendment(sender, instance, **kwargs):
+    if not kwargs['raw']:
+        for doc in instance.amended_work.document_set.all():
+            # forces call to doc.copy_attributes()
             doc.save()
 
 
@@ -401,7 +449,6 @@ class Document(models.Model):
             self.publication_number = self.doc.publication_number
             self.publication_name = self.doc.publication_name
             self.publication_date = self.doc.publication_date
-            self.amendments = self.doc.amendments
             # ensure these are refreshed
             self._work_uri = None
             self._amendments = None
@@ -416,6 +463,17 @@ class Document(models.Model):
         """
         for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
             setattr(self, attr, getattr(self.work, attr))
+
+        # TODO: no need to stash _amendment_events any more
+
+        # copy over amendments before this publication date
+        if self.expression_date:
+            amendments = self.work.amendments.filter(date__lte=self.expression_date)
+            self.amendments = [AmendmentEvent(
+                amending_uri=a.amending_work.frbr_uri,
+                amending_title=a.amending_work.title,
+                date=a.date,
+            ) for a in amendments]
 
         # copy over title if it's not set
         if not self.title:

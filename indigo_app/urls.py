@@ -22,5 +22,6 @@ urlpatterns = [
     url(r'^documents/import/$', views.import_document, name='import_document'),
     url(r'^works/(?P<work_id>\d+)/$', views.edit_work, name='work'),
     url(r'^works/new/$', views.edit_work, name='new_work'),
+    url(r'^works/(?P<work_id>\d+)/amendments/$', views.work_amendments, name='work_amendments'),
     url(r'^library/$', views.library, name='library'),
 ]

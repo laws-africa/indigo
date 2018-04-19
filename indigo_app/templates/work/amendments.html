@@ -1,0 +1,95 @@
+{% extends "work/layout.html" %}
+
+{% block view-id %}work-amendments-view{% endblock %}
+
+{% block subnav %}
+  {% if perms.indigo_api.can_change_amendment %}
+  <button class="btn btn-info save-work pull-right" type="button">Save</button>
+  {% endif %}
+
+  <ul class="nav nav-tabs">
+    <li role="presentation"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+    <li role="presentation" class="active"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+  </ul>
+{% endblock %}
+
+{% block work-content %}
+  <h3>Amendments to this work</h3>
+
+  <div class="work-amendments"></div>
+
+  <script id="work-amendments-template" type="text/x-handlebars-template">
+  {% verbatim %}
+
+  <div class="amendment-expressions">
+    <ol class="expression-timeline">
+      <li>
+        <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+      </li>
+      <li>
+        <a href="/documents/new/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Create a blank document for this work</a>
+        &nbsp;
+        <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-cloud-upload"></i> Import a new document for this work</a>
+      </li>
+      {{#each amendments}}
+        <li class="item">
+          {{#unless ../readonly}}{{#unless initial}}
+          <div class="dropdown pull-right">
+            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+            <ul class="dropdown-menu">
+              <li><a href="#" class="edit-amendment" data-index="{{ @index }}">Change date</a></li>
+              <li><a href="#" class="delete-amendment" data-index="{{ @index }}">Delete</a></li>
+            </ul>
+          </div>
+          {{/unless}}{{/unless}}
+          <div class="edit-wrapper"></div>
+
+          <h5 class="date">{{ date }}</h5>
+
+          {{#if initial}}
+            <h5>Initial publication</h5>
+          {{else}}
+            <h5>Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h5>
+            <h6>{{ amending_work.frbr_uri }}</h6>
+          {{/if}}
+
+          <div class="documents">
+            {{#if documents}}
+              {{#each documents}}
+                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
+              {{/each}}
+            {{else}}
+              <span class="text-muted">No editable version at this date</span>
+              —
+              <a href="#" class="create-expression" data-date="{{ date }}">create and edit an amended version</a>
+            {{/if}}
+          </div>
+        </li>
+      {{/each}}
+    </ol>
+  </div>
+
+  {% endverbatim %}
+  </script>
+
+  <script id="amendment-editor-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <div class="form-inline">
+    <input type="text" class="form-control amendment-date" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
+    <button class="btn btn-link cancel">Cancel</button>
+    <button class="btn btn-primary save-amendment">OK</button>
+  </div>
+  {% endverbatim %}
+  </script>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
+  window.Indigo.Preloads.documents = {{ documents_json|safe }};
+  </script>
+
+{% endblock %}

@@ -36,7 +36,7 @@
             <p class="help-block">Date of this version of the document, either the publication date or an amendment date</p>
           </div>
           <div class="col-sm-4">
-            <a href="#" class="btn btn-default btn-amendments">Manage amendments</a>
+            <a href="{% url 'work_amendments' document.work.id %}" class="btn btn-link manage-amendments">Manage amendments</a>
           </div>
         </div>
       </div>

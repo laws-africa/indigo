@@ -11,6 +11,7 @@ from cobalt.act import FrbrUri
 def create_amendments(apps, schema_editor):
     Document = apps.get_model("indigo_api", "Document")
     Work = apps.get_model("indigo_api", "Work")
+    Amendment = apps.get_model("indigo_api", "Amendment")
     db_alias = schema_editor.connection.alias
 
     # ensure works existing for all amending documents
@@ -20,6 +21,7 @@ def create_amendments(apps, schema_editor):
     for doc in documents:
         for amendment in (doc.amendment_events or []):
             work = works.get(amendment['amending_uri'])
+            date = arrow.get(amendment['date']).date()
 
             if not work:
                 # validate frbr_uri
@@ -27,7 +29,6 @@ def create_amendments(apps, schema_editor):
                     FrbrUri.parse(amendment['amending_uri'])
                 except ValueError:
                     continue
-                date = arrow.get(amendment['date']).date()
 
                 work = Work(
                     title=amendment['amending_title'],
@@ -37,11 +38,16 @@ def create_amendments(apps, schema_editor):
                 work.save()
                 works[work.frbr_uri] = work
 
+            # hard link the amendment to the work
+            if not doc.work.amendments.filter(amending_work=work, date=date).exists():
+                a = Amendment(date=date, amending_work=work, amended_work=doc.work)
+                a.save()
+
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0044_work_parent_work'),
+        ('indigo_api', '0045_amendment'),
     ]
 
     operations = [

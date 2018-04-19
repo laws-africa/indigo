@@ -193,6 +193,36 @@
     },
   });
 
+  Indigo.WorkAmendment = Backbone.Model.extend({
+    parse: function(json) {
+      json.amending_work = new Indigo.Work(json.amending_work);
+      return json;
+    },
+
+    toJSON: function() {
+      var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      json.amending_work = this.get('amending_work').toJSON();
+      return json;
+    },
+  });
+
+  Indigo.WorkAmendmentCollection = Backbone.Collection.extend({
+    model: Indigo.WorkAmendment,
+
+    initialize: function(models, options) {
+      this.work = options.work;
+    },
+
+    url: function() {
+      return this.work.url() + '/amendments';
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results ? response.results : response;
+    },
+  });
+
   Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,
@@ -603,6 +633,10 @@
 
     isNew: function() {
       return !this.authenticated();
+    },
+
+    hasPerm: function(perm) {
+      return this.get('permissions').indexOf(perm) > -1;
     },
   });
 

@@ -89,39 +89,29 @@
     initialize: function() {
       // the choices in the expression_date dropdown
       this.expressionDates = new Backbone.Collection();
+      this.amendments = new Indigo.WorkAmendmentCollection(Indigo.Preloads.amendments, {
+        work: this.model,
+      });
 
       this.dirty = false;
-      this.model.on('change', this.setDirty, this);
-      this.model.on('sync', this.setClean, this);
-      this.model.expressionSet.on('change', this.setDirty, this);
+      this.listenTo(this.model, 'change', this.setDirty);
+      this.listenTo(this.model, 'sync', this.setClean);
+      this.listenTo(this.model.expressionSet, 'change', this.setDirty);
 
-      this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
-      this.model.on('change:country', this.updatePublicationOptions, this);
-      this.updatePublicationOptions();
+      this.listenTo(this.model, 'change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl);
 
       // update the choices of expression dates when necessary
-      this.model.on('change:publication_date', this.matchPublicationExpressionDates, this);
-      this.model.on('change:publication_date change:expression_date', this.updateExpressionDates, this);
-      this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
+      this.listenTo(this.model, 'change:publication_date', this.matchPublicationExpressionDates);
+      this.listenTo(this.model, 'change:publication_date', this.updateExpressionDates);
+      this.listenTo(this.amendments, 'change add remove reset', this.updateExpressionDates);
 
       this.workDetailTemplate = Handlebars.compile($(this.workDetailTemplate).html());
-      this.model.on('change:work', this.render, this);
+      this.listenTo(this.model, 'change:work', this.workChanged);
 
       this.updateExpressionDates();
       this.stickit();
 
       this.render();
-    },
-
-    updatePublicationOptions: function() {
-      var country = Indigo.countries[this.model.get('country')],
-          pubs = (country ? country.publications : []).sort();
-
-      $("#publication_list").empty().append(_.map(pubs, function(pub) {
-        var opt = document.createElement("option");
-        opt.setAttribute("value", pub);
-        return opt;
-      }));
     },
 
     matchPublicationExpressionDates: function(model, new_value) {
@@ -139,8 +129,11 @@
     },
 
     updateExpressionDates: function() {
-      var dates = this.model.expressionSet.allDates(),
-          pubDate = this.model.expressionSet.initialPublicationDate();
+      var dates = _.unique(this.amendments.pluck('date')),
+          pubDate = this.model.work.get('publication_date');
+
+      if (pubDate) dates.push(pubDate);
+      dates.sort();
 
       this.expressionDates.set(_.map(dates, function(date) {
         return {
@@ -222,6 +215,13 @@
       this.$('#document-work-details').html(this.workDetailTemplate({
         work: work,
       }));
+    },
+
+    workChanged: function() {
+      this.amendments.work = this.model.work;
+      this.amendments.fetch({reset: true});
+      this.$('a.manage-amendments').attr('href', '/works/' + this.model.work.get('id') + '/amendments/');
+      this.render();
     },
   });
 })(window);

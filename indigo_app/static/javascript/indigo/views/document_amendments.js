@@ -99,6 +99,7 @@
 
       this.listenTo(this.model.expressionSet, 'add remove reset change', this.render);
       this.listenTo(this.model.expressionSet.amendments, 'change add remove reset', this.render);
+      this.listenTo(this.model, 'change:work', this.render);
 
       this.render();
     },
@@ -135,6 +136,8 @@
 
       // update amendment count in nav tabs
       $('.sidebar .nav .amendment-count').text(this.model.expressionSet.length <= 1 ? '' : this.model.expressionSet.length);
+
+      $('.manage-amendments').attr('href', '/works/' + this.model.work.get('id') + '/amendments/');
     },
 
     addAmendment: function(e) {

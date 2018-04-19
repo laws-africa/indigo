@@ -5,7 +5,7 @@ from django.urls import reverse
 
 
 from indigo_api.models import Document, Subtype, Work
-from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer
+from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
 from .forms import DocumentForm
@@ -40,6 +40,10 @@ def document(request, doc_id=None):
     works = Work.objects.undeleted().filter(country=doc.country)
     works_json = json.dumps(serializer.to_representation(works))
 
+    amendments_json = json.dumps(
+        WorkAmendmentSerializer(context={'request': request}, many=True)
+        .to_representation(doc.work.amendments))
+
     form = DocumentForm(instance=doc)
 
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
@@ -55,6 +59,7 @@ def document(request, doc_id=None):
         'documents_json': documents_json,
         'work_json': work_json,
         'works_json': works_json,
+        'amendments_json': amendments_json,
         'form': form,
         'subtypes': Subtype.objects.order_by('name').all(),
         'languages': Language.objects.select_related('language').all(),
@@ -94,6 +99,42 @@ def edit_work(request, work_id=None):
         'countries': countries,
         'countries_json': countries_json,
         'view': 'WorkView',
+    })
+
+
+@login_required
+def work_amendments(request, work_id):
+    work = get_object_or_404(Work, pk=work_id)
+    if work.deleted:
+        raise Http404()
+    work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+
+    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
+    locality = None
+    if work.locality:
+        locality = country.locality_set.filter(code=work.locality)[0]
+
+    docs = DocumentViewSet.queryset.filter(work=work).all()
+    serializer = DocumentSerializer(context={'request': request}, many=True)
+    documents_json = json.dumps(serializer.to_representation(docs))
+
+    countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
+    countries_json = json.dumps({c.code: c.as_json() for c in countries})
+
+    serializer = WorkAmendmentSerializer(context={'request': request}, many=True)
+    amendments = work.amendments.prefetch_related('created_by_user', 'updated_by_user', 'amending_work')
+    amendments_json = json.dumps(serializer.to_representation(amendments))
+
+    return render(request, 'work/amendments.html', {
+        'country': country,
+        'locality': locality,
+        'amendments_json': amendments_json,
+        'work': work,
+        'work_json': work_json,
+        'countries': countries,
+        'countries_json': countries_json,
+        'documents_json': documents_json,
+        'view': 'WorkAmendmentsView',
     })
 
 

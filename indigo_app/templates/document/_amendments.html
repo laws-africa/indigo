@@ -1,7 +1,7 @@
 <header class="boxed-group-header">
   <h4>
-    Amended Versions
-    <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
+    Amended versions of this work -
+    <a href="#" class="manage-amendments">manage amendments</a>
   </h4>
 </header>
 
@@ -14,9 +14,12 @@
   <ol class="expression-timeline">
     {{#each amended_expressions}}
       <li class="{{#if current}}current{{/if}}">
-        <h5>
+        <h5 class="date">
           {{ date }}
-          {{#if initial}} — Initial publication{{/if}}
+        </h5>
+
+        <h5>
+          {{#if initial}}Initial publication{{/if}}
           {{#if current}}<span class="label label-info current">this version</span>{{/if}}
         </h5>
 
@@ -31,8 +34,6 @@
                 {{else}}
                 {{ amending_title }}
                 {{/if}}
-                —
-                <a href="#" class="edit-amendment">change</a> · <a href="#" class="delete-amendment">delete</a>
               </div>
             </li>
           {{/each}}
@@ -50,15 +51,10 @@
             {{#if current}}<span class="label label-info current">this document</span>{{/if}}
           {{else}}
             <span class="text-muted">No editable version at this date</span>
-            —
-            <a href="#" class="create-expression" data-date="{{ date }}">create and edit an amended version</a>
           {{/if}}
         </div>
       </li>
     {{/each}}
-    <li>
-      <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
-    </li>
   </ol>
   {% endverbatim %}
   </script>

@@ -395,7 +395,7 @@ legend {
   right: 0px;
   left: 0px;
   height: 5px;
-  z-index: 1050;
+  z-index: 1030;
 }
 
 /* make document sheets look like paper */
@@ -1035,14 +1035,15 @@ legend {
 .expression-timeline {
   list-style: none;
   padding-left: 0px;
+  margin-left: 130px;
 
   &::after {
     content: "";
     display: block;
     position: absolute;
-    left: 10px;
+    left: 140px;
     top: 20px;
-    bottom: 30px;
+    bottom: 40px;
     width: 4px;
     background: $grey;
     z-index: 0;
@@ -1058,6 +1059,11 @@ legend {
     &> h5 {
       margin-top: 0px;
       font-weight: bold;
+
+      &.date {
+        position: absolute;
+        left: -120px;
+      }
     }
 
     &.current {
@@ -1340,11 +1346,12 @@ body.unauthenticated .annotations-container {
   .user-7 { background-color: #666666; }
 }
 
-#edit-work-view {
+.work-view {
   .work-title {
     margin-top: 5px;
     margin-bottom: 5px;
   }
+
   h5.work-frbr-uri {
     margin-top: 0px;
   }
@@ -1354,6 +1361,12 @@ body.unauthenticated .annotations-container {
     min-width: 190px;
   }
 
+  .sub-nav {
+    margin-bottom: 10px;
+  }
+}
+
+#edit-work-view {
   .repeal-date {
     display: none;
   }
@@ -1361,6 +1374,14 @@ body.unauthenticated .annotations-container {
   &.is-repealed {
     .repeal-date {
       display: block;
+    }
+  }
+}
+
+#work-amendments-view {
+  .work-amendments {
+    th.date {
+      width: 15%;
     }
   }
 }

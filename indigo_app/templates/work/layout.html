@@ -1,0 +1,44 @@
+{% extends "main.html" %}
+
+{% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
+{% block header %}<h4>{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>{% endblock %}
+
+{% block content %}
+<main id="main-content" class="container work-view">
+  <div id="{% block view-id %}{% endblock %}">
+    <ul class="breadcrumb">
+      <li class="work-country">{{ country.name }} · {{ country.code }}</li>
+      {% if locality %}
+      <li class="work-locality">{{ locality.name }} · {{ locality.code }}</li>
+      {% endif %}
+    </ul>
+
+    <header>
+      <h3 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h3>
+      <h5 class="work-frbr-uri text-muted">{% if work %}{{ work.frbr_uri }}{% endif %}</h3>
+
+      <nav class="sub-nav">
+        {% block subnav %}{% endblock %}
+      </nav>
+    </header>
+
+    {% block work-content %}{% endblock %}
+  </div>
+</div>
+
+{% include "work/_work_chooser_modal.html" %}
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  window.Indigo.countries = {{ countries_json|safe }};
+  window.Indigo.Preloads.country_code = '{{ user.editor.country_code }}';
+  window.Indigo.Preloads.country = {{ countries_json|safe }};
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  </script>
+
+{% endblock %}

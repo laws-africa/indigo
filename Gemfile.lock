@@ -1,9 +1,6 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    builder (3.2.3)
-    expression_parser (0.9.0)
-    htmlentities (4.3.4)
     json (1.8.6)
     log4r (1.1.10)
     mime-types (1.25.1)
@@ -12,14 +9,13 @@ GEM
     nokogiri (1.8.1)
       mini_portile2 (~> 2.3.0)
     polyglot (0.3.5)
-    slaw (0.17.0)
+    slaw (0.17.1)
       log4r (~> 1.1.10)
       mimemagic (~> 0.2.1)
       nokogiri (~> 1.8.1)
       thor (~> 0.19.1)
       treetop (~> 1.5)
       twitter-text (~> 1.12.0)
-      wikicloth (~> 0.8.3)
       yomu (~> 0.2.2)
     thor (0.19.4)
     treetop (1.6.9)
@@ -29,12 +25,6 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.4)
-    wikicloth (0.8.3)
-      builder
-      expression_parser
-      htmlentities
-      nokogiri
-      twitter-text
     yomu (0.2.4)
       json (~> 1.8)
       mime-types (~> 1.23)
@@ -43,7 +33,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  slaw (~> 0.17.0)
+  slaw (~> 0.17.1)
 
 RUBY VERSION
    ruby 2.3.3p222

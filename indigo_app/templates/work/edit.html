@@ -8,8 +8,12 @@
   {% endif %}
 
   <ul class="nav nav-tabs">
+    {% if work %}
     <li role="presentation" class="active"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
     <li role="presentation"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+    {% else %}
+    <li role="presentation" class="active"><a href="#">Work Details</a></li>
+    {% endif %}
   </ul>
 {% endblock %}
 

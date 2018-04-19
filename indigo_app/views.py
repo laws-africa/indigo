@@ -76,15 +76,18 @@ def edit_work(request, work_id=None):
         if work.deleted:
             raise Http404()
         work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+        country_code = work.country
+        locality = work.locality
     else:
         # it's new!
         work = None
         work_json = {}
+        country_code = request.user.editor.country_code
+        locality = None
 
-    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
-    locality = None
-    if work.locality:
-        locality = country.locality_set.filter(code=work.locality)[0]
+    country = Country.objects.select_related('country').filter(country__iso__iexact=country_code).first()
+    if locality:
+        locality = country.locality_set.filter(code=locality)[0]
 
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})

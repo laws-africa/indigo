@@ -1070,12 +1070,12 @@ legend {
       border: 1px solid $blue;
       background-color: $grey;
 
-      h5::before {
+      h5.date::before {
         content: " ";
         display: block;
         position: absolute;
-        top: 9px;
-        left: -22px;
+        top: -1px;
+        left: 98px;
         width: 0;
         height: 0;
         border-color: transparent $blue transparent transparent;

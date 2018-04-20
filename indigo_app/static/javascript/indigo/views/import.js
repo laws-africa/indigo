@@ -141,6 +141,9 @@
         var work = new Indigo.Work(Indigo.Preloads.work);
         this.setWork(work);
       }
+
+      // are we starting with an injected expression date?
+      this.expression_date = Indigo.queryParams.expression_date;
     },
 
     chooseWork: function() {
@@ -291,6 +294,9 @@
       formData.append('file', this.file);
       formData.append('file_options..section_number_position',
                       this.$('[name="file_options.section_number_position"]:checked').val());
+      if (this.expression_date) {
+        formData.append('expression_date', this.expression_date);
+      }
       // cropbox info?
       if (this.scale) formData.append('file_options..cropbox', this.cropBoxView.calculateCropBox(this.scale));
 

@@ -26,11 +26,6 @@
       <li>
         <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
       </li>
-      <li>
-        <a href="/documents/new/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-plus"></i> Create a blank document for this work</a>
-        &nbsp;
-        <a href="/documents/import/?frbr_uri={{ work.frbr_uri }}" class="btn btn-default"><i class="fa fa-cloud-upload"></i> Import a new document for this work</a>
-      </li>
       {{#each amendments}}
         <li class="item">
           {{#unless ../readonly}}{{#unless initial}}
@@ -60,9 +55,13 @@
               {{/each}}
             {{else}}
               <span class="text-muted">No editable version at this date</span>
-              —
-              <a href="#" class="create-expression" data-date="{{ date }}">create and edit an amended version</a>
             {{/if}}
+          </div>
+          <br>
+
+          <div class="buttons">
+            <button class="btn btn-default create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
+            <a class="btn btn-default" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
           </div>
         </li>
       {{/each}}

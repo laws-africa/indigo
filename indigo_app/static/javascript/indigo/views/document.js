@@ -170,7 +170,7 @@
     },
 
     windowUnloading: function(e) {
-      if (this.propertiesView.dirty || this.bodyEditorView.dirty) {
+      if (this.propertiesView.dirty || this.bodyEditorView.dirty || this.bodyEditorView.editing) {
         e.preventDefault();
         return 'You will lose your changes!';
       }

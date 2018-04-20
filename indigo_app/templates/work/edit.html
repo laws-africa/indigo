@@ -15,59 +15,56 @@
   <div class="alert alert-danger">You don't have permission to create or change a work.</div>
   {% endif %}
 
-  <div class="panel panel-default is-form">
-    <div class="panel-heading">
-      <h3 class="panel-title">Work details</h3>
-    </div>
-    <div class="panel-body">
-      <div class="form-horizontal">
+  <div class="card is-form">
+    <h3 class="card-header">Work details</h3>
+    <div class="card-body">
 
-        <div class="form-group">
-          <label for="work_title" class="col-sm-2 control-label required">Short title</label>
-          <div class="col-sm-10">
-            <input type="text" class="form-control" id="work_title" placeholder="Title" required>
-          </div>
+      <div class="form-row">
+        <div class="form-group col-12">
+          <label for="work_title" class="required">Short title</label>
+          <input type="text" class="form-control" id="work_title" placeholder="Title" required>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-sm">
+          <label for="work_country" class="required">Country</label>
+          <select id="work_country" class="form-control">
+            {% for opt in countries %}
+            <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
+          {% endfor %}
+          </select>
         </div>
 
-        <div class="form-group">
-          <label for="work_country" class="col-sm-2 control-label required">Country</label>
-          <div class="col-sm-4">
-            <select id="work_country" class="form-control">
-              {% for opt in countries %}
-              <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
+        <div class="form-group col-sm">
+          <label for="work_locality">Locality</label>
+          <select class="form-control" id="work_locality"></select>
+        </div>
+
+        <div class="form-group col-sm">
+          <label for="work_subtype">Work subtype</label>
+          <select id="work_subtype" class="form-control">
+            <option value="">(none)</option>
+            {% for subtype in subtypes %}
+            <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
             {% endfor %}
-            </select>
-          </div>
+          </select>
+        </div>
+      </div>
 
-          <label for="work_locality" class="col-sm-2 control-label">Locality</label>
-          <div class="col-sm-4">
-            <select class="form-control" id="work_locality"></select>
-          </div>
+      <div class="form-row">
+        <div class="form-group col-sm-6">
+          <label for="work_year" class="required">Year of introduction</label>
+          <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
         </div>
 
-        <div class="form-group">
-          <label for="work_year" class="col-sm-2 control-label required">Year of introduction</label>
-          <div class="col-sm-2">
-            <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
-          </div>
+        <div class="form-group col-sm-6">
+          <label for="work_number" class="required">Number within year</label>
+          <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
+          <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
         </div>
+      </div>
 
-        <div class="form-group">
-          <label for="work_number" class="col-sm-2 control-label required">Number within year</label>
-          <div class="col-sm-4">
-            <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
-            <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
-          </div>
-
-          <label for="work_subtype" class="col-sm-2 control-label">Work subtype</label>
-          <div class="col-sm-4">
-            <select id="work_subtype" class="form-control">
-              <option value="">(none)</option>
-              {% for subtype in subtypes %}
-              <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
-              {% endfor %}
-            </select>
-          </div>
         </div>
 
         <div class="form-group">

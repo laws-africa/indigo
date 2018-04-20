@@ -26,8 +26,9 @@ $font-colour: #333;
 $selection-colour: #b2d8fc;
 
 
-@import 'bower_components/bootstrap/dist/css/bootstrap.min';
-@import 'bower_components/bootstrap/dist/css/bootstrap-theme.min';
+//@import 'bower_components/bootstrap/dist/css/bootstrap.min';
+//@import 'bower_components/bootstrap/dist/css/bootstrap-theme.min';
+@import 'lib/bootstrap-4.1.0/css/bootstrap.min';
 @import 'bower_components/fontawesome/css/font-awesome';
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';
 @import 'select2-4.0.0.min';

@@ -28,7 +28,11 @@ $selection-colour: #b2d8fc;
 
 //@import 'bower_components/bootstrap/dist/css/bootstrap.min';
 //@import 'bower_components/bootstrap/dist/css/bootstrap-theme.min';
-@import 'lib/bootstrap-4.1.0/css/bootstrap.min';
+//@import 'lib/bootstrap-4.1.0/css/bootstrap.min';
+
+@import "bootstrap-variables";
+
+@import 'lib/bootstrap-4.1.0/scss/bootstrap';
 @import 'bower_components/fontawesome/css/font-awesome';
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';
 @import 'select2-4.0.0.min';
@@ -58,10 +62,6 @@ body.unauthenticated {
 .requires-staff { display: none; }
 body.is-staff {
   .requires-staff { display: block; }
-}
-
-.form-group {
-  margin-bottom: 10px;
 }
 
 .high {

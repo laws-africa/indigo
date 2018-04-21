@@ -27,7 +27,7 @@
       </div>
 
       <div class="form-row">
-        <div class="form-group col-sm">
+        <div class="form-group col-md-4">
           <label for="work_country" class="required">Country</label>
           <select id="work_country" class="form-control">
             {% for opt in countries %}
@@ -36,12 +36,27 @@
           </select>
         </div>
 
-        <div class="form-group col-sm">
+        <div class="form-group col-md-4 offset-md-2">
           <label for="work_locality">Locality</label>
           <select class="form-control" id="work_locality"></select>
         </div>
+      </div>
 
-        <div class="form-group col-sm">
+      <div class="form-row">
+        <div class="form-group col-md-3">
+          <label for="work_year" class="required">Year of introduction</label>
+          <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="work_number" class="required">Number within year</label>
+          <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
+          <p class="form-text text-muted">Number or short name that uniquely identifies this legislation within the year of introduction</p>
+        </div>
+
+        <div class="form-group col-md-6">
           <label for="work_subtype">Work subtype</label>
           <select id="work_subtype" class="form-control">
             <option value="">(none)</option>
@@ -51,21 +66,6 @@
           </select>
         </div>
       </div>
-
-      <div class="form-row">
-        <div class="form-group col-sm-6">
-          <label for="work_year" class="required">Year of introduction</label>
-          <input type="text" class="form-control" id="work_year" required pattern="\d{4}">
-        </div>
-
-        <div class="form-group col-sm-6">
-          <label for="work_number" class="required">Number within year</label>
-          <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
-          <p class="help-block">Number or short name that uniquely identifies this legislation within the year of introduction</p>
-        </div>
-      </div>
-
-        </div>
 
         <div class="form-group">
           <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR URI</label>

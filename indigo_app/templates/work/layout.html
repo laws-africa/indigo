@@ -7,9 +7,9 @@
 <main id="main-content" class="container work-view">
   <div id="{% block view-id %}{% endblock %}">
     <ul class="breadcrumb text-muted">
-      <li class="work-country">{{ country.name }} · {{ country.code }}</li>
+      <li><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
       {% if locality %}
-      <li class="work-locality">{{ locality.name }} · {{ locality.code }}</li>
+      <li><a class="work-locality" href="{% url 'library' %}?country={{ country.code}}&locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
       {% endif %}
       <li class="work-frbr-uri">{{ work.frbr_uri }}</li>
     </ul>

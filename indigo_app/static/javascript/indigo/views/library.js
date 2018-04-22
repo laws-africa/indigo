@@ -66,14 +66,15 @@
     },
 
     loadState: function() {
-      var tags = Indigo.queryParams.tags;
+      var country = Indigo.queryParams.country || this.filters.get('country'),
+          tags = Indigo.queryParams.tags;
       if (tags) {
         tags = tags.split(',');
       }
 
       this.filters.set({
+        country: country,
         locality: Indigo.queryParams.locality,
-        country: Indigo.queryParams.country,
         status: Indigo.queryParams.status || 'all',
         nature: Indigo.queryParams.nature,
         tags: tags || [],

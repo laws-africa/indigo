@@ -7,9 +7,6 @@
 <div class="workspace" data-document-id="{{ document.id|default:"" }}">
   <header class="workspace-header">
     <ul class="breadcrumb text-muted">
-      <li class="work-country">South Africa · za</li>
-      <li class="work-locality">Cape Town · cpt</li>
-      <li class="work-frbr-uri"><a href="{% url 'work' document.work.id %}">{{ document.frbr_uri }}</a></li>
     </ul>
     <div class="workspace-title">
       <h4 class="document-title">{{ document.title }}</h4>
@@ -17,11 +14,11 @@
 
     <script id="breadcrumb-template" type="text/x-handlebars-template">
     {% verbatim %}
-      <li class="work-country">{{ country.name }} · {{ document.country }}</li>
+      <li><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
       {{#if locality}}
-      <li class="work-locality">{{ locality }} · {{ document.locality }}</li>
+      <li><a href="/library/?country={{ document.country }}&locality={{ locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
       {{/if}}
-      <li class="work-frbr-uri"><a href="/works/{{ work.id }}/">{{ document.frbr_uri }}</a></li>
+      <li><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
     {% endverbatim %}
     </script>
 

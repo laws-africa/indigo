@@ -4,8 +4,8 @@
 {% block header %}<h4>{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>{% endblock %}
 
 {% block content %}
-<main id="main-content" class="container work-view">
-  <div id="{% block view-id %}{% endblock %}">
+<div class="work-view">
+  <header class="main-header container-fluid">
     <ul class="breadcrumb text-muted">
       <li><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
       {% if locality %}
@@ -14,15 +14,17 @@
       <li class="work-frbr-uri">{{ work.frbr_uri }}</li>
     </ul>
 
-    <header>
-      <h4 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>
+    <h4 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>
 
-      <nav class="sub-nav">
-        {% block subnav %}{% endblock %}
-      </nav>
-    </header>
+    <nav class="sub-nav">
+      {% block subnav %}{% endblock %}
+    </nav>
+  </header>
 
-    {% block work-content %}{% endblock %}
+  <div class="main-content">
+    <div class="container">
+      {% block work-content %}{% endblock %}
+    </div>
   </div>
 </div>
 

@@ -2,29 +2,28 @@
 
 {% block title %}Library{% endblock %}
 
+{% block view-id %}library-view{% endblock %}
 {% block content %}
-<main id="library-view">
-  <aside class="library-sidebar">
-    <section>
-      <label>Country</label>
-      <select class="form-control filter-country" name="country-filter">
-        {% for country in countries %}
-          <option {% if user.editor.country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
-        {% endfor %}
-      </select>
-    </section>
+<aside class="library-sidebar">
+  <section>
+    <label>Country</label>
+    <select class="form-control filter-country" name="country-filter">
+      {% for country in countries %}
+        <option {% if user.editor.country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
+      {% endfor %}
+    </select>
+  </section>
 
-    <div id="filters"></div>
-  </aside>
+  <div id="filters"></div>
+</aside>
 
-  <div class="library-wrapper">
-    <div class="library-filter-box">
-      <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
-    </div>
-
-    <div id="library"></div>
+<div class="library-wrapper">
+  <div class="library-filter-box">
+    <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
   </div>
-</main>
+
+  <div id="library"></div>
+</div>
 {% endblock %}
 
 {% block js %}

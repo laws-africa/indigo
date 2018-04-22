@@ -7,7 +7,7 @@
   <button class="btn btn-info save pull-right" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
   {% endif %}
 
-  <ul class="nav nav-tabs">
+  <ul class="nav nav-pills">
     {% if work %}
     <li role="presentation" class="active"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
     <li role="presentation"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>

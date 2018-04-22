@@ -7,9 +7,9 @@
   <button class="btn btn-info save-work pull-right" type="button">Save</button>
   {% endif %}
 
-  <ul class="nav nav-tabs">
-    <li role="presentation"><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
-    <li role="presentation" class="active"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+  <ul class="nav nav-pills">
+    <li><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+    <li class="active"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
   </ul>
 {% endblock %}
 

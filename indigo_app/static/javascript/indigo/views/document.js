@@ -7,9 +7,11 @@
   // Handle the rendering of the document title, and the browser window title
   Indigo.DocumentTitleView = Backbone.View.extend({
     el: '.workspace-header',
+    breadcrumbTemplate: '#breadcrumb-template',
 
     initialize: function() {
-      this.listenTo(this.model, 'change:title change:expression_date change:draft sync', this.render);
+      this.breadcrumbTemplate = Handlebars.compile($(this.breadcrumbTemplate).html());
+      this.listenTo(this.model, 'change:title change:expression_date change:draft sync change:frbr_uri', this.render);
     },
 
     getTitle: function() {
@@ -28,6 +30,18 @@
       }
 
       this.$('.document-title').html(html);
+      
+      // breadcrumb
+      var country = Indigo.countries[this.model.get('country')],
+          locality = this.model.get('locality');
+      locality = locality ? country.localities[locality] : null;
+
+      this.$('.breadcrumb').html(this.breadcrumbTemplate({
+        document: this.model.toJSON(),
+        country: country,
+        locality: locality,
+        work: this.model.work.toJSON(),
+      }));
     },
   });
 
@@ -72,7 +86,7 @@
 
     initialize: function() {
       var library = Indigo.library,
-          document_id = $('[data-document-id]').data('document-id') || null,
+          document_id = $('.workspace[data-document-id]').data('document-id') || null,
           self = this;
 
       this.$saveBtn = $('.workspace-buttons .btn.save');

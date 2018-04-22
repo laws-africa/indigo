@@ -6,16 +6,16 @@
 {% block content %}
 <main id="main-content" class="container work-view">
   <div id="{% block view-id %}{% endblock %}">
-    <ul class="breadcrumb">
+    <ul class="breadcrumb text-muted">
       <li class="work-country">{{ country.name }} · {{ country.code }}</li>
       {% if locality %}
       <li class="work-locality">{{ locality.name }} · {{ locality.code }}</li>
       {% endif %}
+      <li class="work-frbr-uri">{{ work.frbr_uri }}</li>
     </ul>
 
     <header>
-      <h3 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h3>
-      <h5 class="work-frbr-uri text-muted">{% if work %}{{ work.frbr_uri }}{% endif %}</h3>
+      <h4 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>
 
       <nav class="sub-nav">
         {% block subnav %}{% endblock %}

@@ -15,7 +15,7 @@ $header-colour2: $grey-lighter;
 
 $navbar-height: 50px;
 $header-height: 45px;
-$workspace-header-height: 63px;
+$workspace-header-height: 90px;
 
 $sidebar-width: 260px;
 $sidebar-colour: $grey-lighter;
@@ -82,9 +82,13 @@ fieldset {
 
 /* breadcrumbs */
 .breadcrumb {
-  padding: 5px 0px;
+  padding: 0px;
   margin-bottom: 10px;
   background-color: transparent;
+
+  & > li + li:before {
+    content: "≫\0a0";
+  }
 }
 
 /* main content, in partnership with navbar */
@@ -116,6 +120,11 @@ fieldset {
       h4 {
         margin: 0px;
       }
+    }
+
+    .breadcrumb {
+      padding: 0px 5px 0px 5px;
+      margin-bottom: 2px;
     }
   }
 
@@ -1362,6 +1371,7 @@ body.unauthenticated .annotations-container {
   }
 
   .sub-nav {
+    margin-top: 10px;
     margin-bottom: 10px;
   }
 }

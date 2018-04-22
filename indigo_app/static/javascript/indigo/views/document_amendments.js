@@ -84,12 +84,6 @@
   Indigo.DocumentAmendmentsView = Backbone.View.extend({
     el: '.document-amendments-view',
     amendmentExpressionsTemplate: '#amendment-expressions-template',
-    events: {
-      'click .add-amendment': 'addAmendment',
-      'click .edit-amendment': 'editAmendment',
-      'click .delete-amendment': 'deleteAmendment',
-      'click .create-expression': 'createExpression',
-    },
 
     initialize: function() {
       this.amendmentExpressionsTemplate = Handlebars.compile($(this.amendmentExpressionsTemplate).html());
@@ -138,71 +132,6 @@
       $('.sidebar .nav .amendment-count').text(this.model.expressionSet.length <= 1 ? '' : this.model.expressionSet.length);
 
       $('.manage-amendments').attr('href', '/works/' + this.model.work.get('id') + '/amendments/');
-    },
-
-    addAmendment: function(e) {
-      e.preventDefault();
-
-      var chooser = new Indigo.WorkChooserView({}),
-          self = this;
-
-      chooser.setFilters({country: this.model.get('country')});
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          // TODO: uri for amending doc may not be unique
-          self.model.expressionSet.amendments.add(new Indigo.Amendment({
-            date: chosen.get('publication_date'),
-            amending_title: chosen.get('title'),
-            amending_uri: chosen.get('frbr_uri'),
-          }));
-        }
-      });
-    },
-
-    editAmendment: function(e) {
-      e.preventDefault();
-
-      var $li = $(e.target).closest('li'),
-          // TODO: uri for amending doc may not be unique
-          uri = $li.data('uri'),
-          amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
-
-      var editor = new Indigo.SingleAmendmentView({
-        model: amendment,
-        country: this.model.get('country'),
-      });
-      editor.show().always(function() {
-        editor.remove();
-        $li.find('.amendment-info').show();
-      });
-
-      $li.append(editor.el);
-      $li.find('.amendment-info').hide();
-    },
-
-    deleteAmendment: function(e) {
-      e.preventDefault();
-
-      var uri = $(e.target).closest('li').data('uri');
-      var amendment = this.model.expressionSet.amendments.findWhere({amending_uri: uri});
-
-      if (confirm("Really delete this amendment?")) {
-        this.model.expressionSet.amendments.remove(amendment);
-      }
-    },
-
-    createExpression: function(e) {
-      e.preventDefault();
-
-      // create an amended version of this document at a particular date
-      var date = $(e.target).data('date');
-
-      if (confirm('Create a new amended versiot at ' + date + '? Unsaved changes will be lost!')) {
-        Indigo.progressView.peg();
-        this.model.expressionSet.createExpressionAt(date).done(function(doc) {
-          document.location = '/documents/' + doc.get('id') + '/';
-        });
-      }
     },
 
   });

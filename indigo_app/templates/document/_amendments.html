@@ -59,31 +59,4 @@
   {% endverbatim %}
   </script>
 
-  <script id="amendment-editor-template" type="text/x-handlebars-template">
-  {% verbatim %}
-    <div class="row">
-      <div class="col-sm-3">
-        <div class="form-group">
-          <label class="control-label required">Amendment date</label>
-          <input type="text" class="form-control amendment-date" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
-        </div>
-      </div>
-
-      <div class="col-sm-6">
-        <div class="form-group">
-          <label class="control-label">Amended by</label>
-          <div class="amending-title">{{ amending_title }}</div>
-          <div class="amending-uri">{{ amending_uri }}</div>
-          <button class="btn btn-default change-amending-work">Choose amending work</button>
-        </div>
-      </div>
-
-      <div class="col-sm-3">
-        <button class="btn btn-primary save pull-right">OK</button>
-        <button class="btn btn-link cancel pull-right">Cancel</button>
-      </div>
-    </div>
-  {% endverbatim %}
-  </script>
-
 </div>

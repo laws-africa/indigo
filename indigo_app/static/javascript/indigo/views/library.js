@@ -32,16 +32,20 @@
     initialize: function() {
       var self = this;
 
+      this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
       this.template = Handlebars.compile($(this.template).html());
       this.filtered = new Indigo.Library();
-      this.filters = {
+      this.filters = new Backbone.Model({
         search: null,
         country: Indigo.Preloads.country_code,
         locality: null,
         tags: [],
         status: 'all',
-      };
-      this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
+      });
+      this.listenTo(this.filters, 'change:country', this.countryChanged);
+      this.listenTo(this.filters, 'change', function() { this.trigger('change'); });
+      this.listenTo(this.filters, 'change', this.saveState);
+      this.loadState();
 
       this.listenTo(this, 'change', this.summarizeAndRender);
 
@@ -50,6 +54,30 @@
 
       this.library = Indigo.library;
       this.listenTo(this.library, 'change reset', function() { this.trigger('change'); });
+    },
+
+    saveState: function() {
+      // make the query string url
+      var url = _.compact(_.map(this.filters.attributes, function(val, key) {
+        if (key != 'search' && !_.isNaN(val) && (_.isNumber(val) || !_.isEmpty(val))) return key + '=' + encodeURIComponent(val);
+      })).join('&');
+
+      history.replaceState({}, document.title, url ? ('?' + url) : "");
+    },
+
+    loadState: function() {
+      var tags = Indigo.queryParams.tags;
+      if (tags) {
+        tags = tags.split(',');
+      }
+
+      this.filters.set({
+        locality: Indigo.queryParams.locality,
+        country: Indigo.queryParams.country,
+        status: Indigo.queryParams.status || 'all',
+        nature: Indigo.queryParams.nature,
+        tags: tags || [],
+      });
     },
 
     summarizeAndRender: function() {
@@ -72,7 +100,7 @@
      *  - search
      */
     filterAndSummarize: function() {
-      var filters = this.filters,
+      var filters = this.filters.attributes,
           works,
           docs = {},
           country;
@@ -217,75 +245,80 @@
 
       var $link = $(e.currentTarget);
       var tag = $link.data('tag');
-      var ix = this.filters.tags.indexOf(tag);
+      var ix = this.filters.get('tags').indexOf(tag);
 
       if (ix > -1) {
         $link.removeClass('label-info').addClass('label-default');
-        this.filters.tags.splice(ix, 1);
+        this.filters.get('tags').splice(ix, 1);
+        this.filters.trigger('change change:tags');
       } else {
         $link.removeClass('label-default').addClass('label-info');
-        this.filters.tags.push(tag);
+        this.filters.get('tags').push(tag);
+        this.filters.trigger('change change:tags');
       }
-
-      this.trigger('change');
     },
 
     changeCountry: function(e) {
-      var self = this,
-          country = $(e.currentTarget).val();
-
       e.preventDefault();
+      var country = $(e.currentTarget).val();
+
+      this.filters.set({
+        country: country,
+        locality: null,
+        tags: [],
+      });
+    },
+
+    countryChanged: function(model, country) {
+      this.$('.filter-country').val(country);
 
       Indigo.works.setCountry(country).done(function() {
-        self.filters.country = country;
-        self.filters.locality = null;
-        self.filters.tags = [];
-
         // this will eventually trigger a change event on us
-        Indigo.library.setCountry(self.filters.country);
+        Indigo.library.setCountry(country);
       });
     },
 
     filterByLocality: function(e) {
       e.preventDefault();
 
-      this.filters.locality = $(e.currentTarget).val();
-      this.filters.nature = null;
-      this.filters.tags = [];
-
-      this.trigger('change');
+      this.filters.set({
+        locality: $(e.currentTarget).val(),
+        nature: null,
+        tags: [],
+      });
     },
 
     filterByNature: function(e) {
       e.preventDefault();
 
-      this.filters.nature = $(e.currentTarget).val();
-      this.filters.tags = [];
-
-      this.trigger('change');
+      this.filters.set({
+        nature: $(e.currentTarget).val(),
+        tags: [],
+      });
     },
 
     filterByStatus: function(e) {
-      this.filters.status = $(e.currentTarget).val();
-      this.trigger('change');
+      this.filters.set({
+        status: $(e.currentTarget).val(),
+        tags: [],
+      });
     },
 
     filterBySearch: function(e) {
       var needle = this.$el.find('.filter-search').val().trim();
-      if (needle != this.filters.search) {
-        this.filters.search = needle;
-        this.trigger('change');
+      if (needle != this.filters.get('search')) {
+        this.filters.set('search', needle);
       }
     },
 
     render: function() {
       var filter_status = {};
-      filter_status[this.filters.status] = 1;
+      filter_status[this.filters.get('status')] = 1;
 
       $('#filters').html(this.template({
         summary: this.summary,
         count: this.works.length,
-        filters: this.filters,
+        filters: this.filters.toJSON(),
         filter_status: filter_status,
       }));
     },

@@ -4,7 +4,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 
-from indigo_api.models import Document, Subtype, Work
+from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
@@ -153,11 +153,40 @@ def work_related(request, work_id):
     if work.locality:
         locality = country.locality_set.filter(code=work.locality)[0]
 
+    # parents and children
+    family = []
+    if work.parent_work:
+        family.append({
+            'rel': 'child of',
+            'work': work.parent_work,
+        })
+    family = family + [{
+        'rel': 'parent of',
+        'work': w,
+    } for w in work.child_works.all()]
+
+    # amended works
+    amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').order_by('amended_work__frbr_uri').all()
+    amended = [{
+        'rel': 'amends',
+        'work': a.amended_work,
+    } for a in amended]
+
+    # amending works
+    amended_by = Amendment.objects.filter(amended_work=work).prefetch_related('amending_work').order_by('amending_work__frbr_uri').all()
+    amended_by = [{
+        'rel': 'amended by',
+        'work': a.amending_work,
+    } for a in amended_by]
+
     return render(request, 'work/related.html', {
         'country': country,
         'locality': locality,
         'work': work,
         'work_json': work_json,
+        'family': family,
+        'amended': amended,
+        'amended_by': amended_by,
         'view': '',
     })
 

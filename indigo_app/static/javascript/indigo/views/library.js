@@ -133,13 +133,13 @@
 
             return {
               code: code,
-              name: loc || '(none)',
+              name: code == '-' ? '(none)' : (loc || code),
               count: count,
               active: filters.locality === code,
             };
           }
         ),
-        function(info) { return info.code == '-' ? '' : info.name.toLocaleLowerCase; });
+        function(info) { return info.code == '-' ? '' : info.name.toLocaleLowerCase(); });
       this.summary.localities.unshift({
         code: null,
         name: 'All localities',

@@ -96,8 +96,6 @@
       this.dirty = false;
       this.listenTo(this.model, 'change', this.setDirty);
       this.listenTo(this.model, 'sync', this.setClean);
-      this.listenTo(this.model.expressionSet, 'change', this.setDirty);
-
       this.listenTo(this.model, 'change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl);
 
       // update the choices of expression dates when necessary
@@ -133,7 +131,7 @@
           pubDate = this.model.work.get('publication_date'),
           expDate = this.model.get('expression_date');
 
-      if (pubDate) dates.push(pubDate);
+      if (pubDate && dates.indexOf(pubDate) == -1) dates.push(pubDate);
       dates.sort();
 
       if (dates.length > 0 && (!expDate || dates.indexOf(expDate) == -1)) {
@@ -198,14 +196,7 @@
         return $.Deferred().resolve();
       }
 
-      // save modified documents using the expression set is sufficient to
-      // ensure this document is saved too
-      var dirty = this.model.expressionSet.filter(function(d) { return d.dirty; });
-
-      // save the dirty ones and chain the deferreds into a single deferred
-      return $.when.apply($, dirty.map(function(d) {
-        return d.save();
-      })).done(function() {
+      return this.model.save().done(function() {
         self.setClean();
       });
     },

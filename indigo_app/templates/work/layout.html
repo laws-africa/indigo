@@ -17,7 +17,17 @@
     <h4 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>
 
     <nav class="sub-nav">
-      {% block subnav %}{% endblock %}
+      {% block subnav %}
+      <ul class="nav nav-pills">
+        {% if work %}
+          <li {% if view == 'WorkView' %}class="active"{% endif %}><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+          <li {% if view == 'WorkAmendmentsView' %}class="active"{% endif %}><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+          <li {% if view == '' %}class="active"{% endif %}><a href="{% url 'work_related' work_id=work.id %}">Related Works</a></li>
+        {% else %}
+          <li class="active"><a href="#">Work Details</a></li>
+        {% endif %}
+      </ul>
+      {% endblock %}
     </nav>
   </header>
 

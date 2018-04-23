@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^works/(?P<work_id>\d+)/$', views.edit_work, name='work'),
     url(r'^works/new/$', views.edit_work, name='new_work'),
     url(r'^works/(?P<work_id>\d+)/amendments/$', views.work_amendments, name='work_amendments'),
+    url(r'^works/(?P<work_id>\d+)/related/$', views.work_related, name='work_related'),
     url(r'^library/$', views.library, name='library'),
 ]

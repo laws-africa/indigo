@@ -4,7 +4,7 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 
 
-from indigo_api.models import Document, Subtype, Work
+from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
@@ -138,6 +138,69 @@ def work_amendments(request, work_id):
         'countries_json': countries_json,
         'documents_json': documents_json,
         'view': 'WorkAmendmentsView',
+    })
+
+
+@login_required
+def work_related(request, work_id):
+    work = get_object_or_404(Work, pk=work_id)
+    if work.deleted:
+        raise Http404()
+    work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+
+    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
+    locality = None
+    if work.locality:
+        locality = country.locality_set.filter(code=work.locality)[0]
+
+    # parents and children
+    family = []
+    if work.parent_work:
+        family.append({
+            'rel': 'child of',
+            'work': work.parent_work,
+        })
+    family = family + [{
+        'rel': 'parent of',
+        'work': w,
+    } for w in work.child_works.all()]
+
+    # amended works
+    amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').order_by('amended_work__frbr_uri').all()
+    amended = [{
+        'rel': 'amends',
+        'work': a.amended_work,
+    } for a in amended]
+
+    # amending works
+    amended_by = Amendment.objects.filter(amended_work=work).prefetch_related('amending_work').order_by('amending_work__frbr_uri').all()
+    amended_by = [{
+        'rel': 'amended by',
+        'work': a.amending_work,
+    } for a in amended_by]
+
+    # repeals
+    repeals = []
+    if work.repealed_by:
+        repeals.append({
+            'rel': 'repealed by',
+            'work': work.repealed_by,
+        })
+    repeals = repeals + [{
+        'rel': 'repeals',
+        'work': w,
+    } for w in Work.objects.filter(repealed_by=work).all()]
+
+    return render(request, 'work/related.html', {
+        'country': country,
+        'locality': locality,
+        'work': work,
+        'work_json': work_json,
+        'family': family,
+        'amended': amended,
+        'amended_by': amended_by,
+        'repeals': repeals,
+        'view': '',
     })
 
 

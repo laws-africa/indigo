@@ -143,6 +143,7 @@ Field             Description                                                   
 ================= =================================================================================== ========== =========================
 assent_date       Date when the work was assented to. Optional.                                       ISO8601
 commencement_date Date of this commencement of most of the work. Optional.                            ISO8601
+commencing_work   Work that determined the commencement date, if any. Optional.                       Object
 country           ISO 3166-1 alpha-2 country code that this work is applicable to.                    String
 created_at        Timestamp of when the work was first created. Read-only.                            ISO8601    Current time
 frbr_uri          FRBR URI for this work.                                                             String     None, a value must be provided
@@ -151,7 +152,7 @@ locality          The code of the locality within the country. Optional. Read-on
 nature            The nature of this work, normally "act".                                            String     ``"act"``
 number            Number of this act in its year of publication, or some other unique way of          String
                   identifying it within the year
-repealed_by       Work ID of the work that repealed this work, if any. Optional.                      Integer
+repealed_by       Work that repealed this work, if any. Optional.                                     Object
 repealed_date     Date when this work was repealed. Optional.                                         ISO8601
 subtype           Subtype code of the work. Optional. Read-only.                                      String
 title             work short title.                                                                   String     None, a value must be provided

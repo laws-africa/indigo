@@ -72,6 +72,9 @@ class Work(models.Model):
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Parent related work", related_name='child_works')
 
+    # optional work that determined the commencement date of this work
+    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Date that marked this work as commenced", related_name='+')
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -121,8 +124,17 @@ class Work(models.Model):
         return self._repeal
 
     def save(self, *args, **kwargs):
+        # prevent circular references
+        if self.commencing_work == self:
+            self.commencing_work = None
+        if self.repealed_by == self:
+            self.repealed_by = None
+        if self.parent_work == self:
+            self.parent_work = None
+
         if not self.repealed_by:
             self.repealed_date = None
+
         return super(Work, self).save(*args, **kwargs)
 
     def can_delete(self):
@@ -197,6 +209,7 @@ class DocumentManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(DocumentManager, self)\
             .get_queryset()\
+            .prefetch_related('work')\
             .defer("search_text", "search_vector")
 
 

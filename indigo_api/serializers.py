@@ -19,6 +19,56 @@ from .slaw import Importer
 log = logging.getLogger(__name__)
 
 
+class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
+    """ Related field that serializers the entirety of the related object.
+    For updates, only the primary key field is considered, everything else is
+    ignored.
+    """
+    serializer = None
+
+    def __init__(self, serializer=None, *args, **kwargs):
+        if serializer is not None:
+            self.serializer = serializer
+        assert self.serializer is not None, 'The `serializer` argument is required.'
+
+        super(SerializedRelatedField, self).__init__(*args, **kwargs)
+
+    def get_serializer(self):
+        if isinstance(self.serializer, basestring):
+            self.serializer = globals()[self.serializer]
+        return self.serializer
+
+    def use_pk_only_optimization(self):
+        return False
+
+    def to_internal_value(self, data):
+        # support both a dict and passing in the primary key directly
+        if isinstance(data, dict):
+            data = data['id']
+        return super(SerializedRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        return self.get_serializer()(context=self.context).to_representation(value)
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            # Ensure that field.choices returns something sensible
+            # even when accessed with a read-only field.
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict([
+            (
+                item.pk,
+                self.display_value(item)
+            )
+            for item in queryset
+        ])
+
+
 class AmendmentEventSerializer(serializers.Serializer):
     """ Serializer matching :class:`cobalt.act.AmendmentEvent`
     """
@@ -569,8 +619,9 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
-    repealed_by = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
-    parent_work = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
+    repealed_by = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
+    parent_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
+    commencing_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -583,7 +634,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'title', 'publication_name', 'publication_number', 'publication_date',
             'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
-            'parent_work', 'amendments_url',
+            'parent_work', 'commencing_work', 'amendments_url',
 
             # repeal
             'repealed_date', 'repealed_by',
@@ -612,51 +663,6 @@ class WorkSerializer(serializers.ModelSerializer):
         if not work.pk:
             return None
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
-
-
-class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
-    """ Related field that serializers the entirety of the related object.
-    For updates, only the primary key field is considered, everything else is
-    ignored.
-    """
-    serializer = None
-
-    def __init__(self, serializer=None, *args, **kwargs):
-        if serializer is not None:
-            self.serializer = serializer
-        assert self.serializer is not None, 'The `serializer` argument is required.'
-
-        super(SerializedRelatedField, self).__init__(*args, **kwargs)
-
-    def use_pk_only_optimization(self):
-        return False
-
-    def to_internal_value(self, data):
-        # support both a dict and passing in the primary key directly
-        if isinstance(data, dict):
-            data = data['id']
-        return super(SerializedRelatedField, self).to_internal_value(data)
-
-    def to_representation(self, value):
-        return self.serializer(context=self.context).to_representation(value)
-
-    def get_choices(self, cutoff=None):
-        queryset = self.get_queryset()
-        if queryset is None:
-            # Ensure that field.choices returns something sensible
-            # even when accessed with a read-only field.
-            return {}
-
-        if cutoff is not None:
-            queryset = queryset[:cutoff]
-
-        return OrderedDict([
-            (
-                item.pk,
-                self.display_value(item)
-            )
-            for item in queryset
-        ])
 
 
 class WorkAmendmentSerializer(serializers.ModelSerializer):

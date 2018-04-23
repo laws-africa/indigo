@@ -21,8 +21,11 @@
       'click .delete-repeal': 'deleteRepeal',
       'click .choose-parent': 'changeParent',
       'click .delete-parent': 'deleteParent',
+      'click .change-commencing-work': 'changeCommencingWork',
+      'click .delete-commencing-work': 'deleteCommencingWork',
     },
     workRepealTemplate: '#work-repeal-template',
+    commencingWorkTemplate: '#commencing-work-template',
     bindings: {
       '#work_country': {
         observe: 'country',
@@ -74,8 +77,9 @@
       this.dirty = false;
 
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
+      this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
 
-      this.model = new Indigo.Work(Indigo.Preloads.work);
+      this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:country change:locality', this.updateBreadcrumb);
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
@@ -84,6 +88,7 @@
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change', this.canSave);
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
+      this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
 
       // prevent the user from navigating away without saving changes
@@ -94,6 +99,7 @@
       this.updatePublicationOptions();
       this.stickit();
       this.repealChanged();
+      this.commencingWorkChanged();
       this.canSave();
     },
 
@@ -162,7 +168,8 @@
       }
     },
 
-    deleteRepeal: function() {
+    deleteRepeal: function(e) {
+      e.preventDefault();
       this.model.set('repealed_by', null);
     },
 
@@ -176,7 +183,7 @@
       chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
-          self.model.set('repealed_by', chosen.get('id'));
+          self.model.set('repealed_by', chosen);
           self.model.set('repealed_date', chosen.get('publication_date'));
         }
       });
@@ -184,21 +191,48 @@
 
     repealChanged: function() {
       var repeal,
-          self = this,
           repealed_by = this.model.get('repealed_by');
 
       if (repealed_by) {
-        repealed_by = new Indigo.Work({id: repealed_by});
-        repealed_by.fetch().done(function() {
-          self.$el.addClass('is-repealed');
-          self.$('.work-repeal-view').html(self.workRepealTemplate({
-            repealed_by: repealed_by.toJSON(),
-          }));
-        });
-
+        this.$el.addClass('is-repealed');
+        this.$('.work-repeal-view').html(this.workRepealTemplate({
+          repealed_by: repealed_by.toJSON(),
+        }));
       } else {
         this.$el.removeClass('is-repealed');
         this.$('.work-repeal-view').html(this.workRepealTemplate({}));
+      }
+    },
+
+    deleteCommencingWork: function(e) {
+      e.preventDefault();
+      this.model.set('commencing_work', null);
+    },
+
+    changeCommencingWork: function() {
+      var chooser = new Indigo.WorkChooserView({}),
+          self = this;
+
+      if (this.model.get('commencing_work')) {
+        chooser.choose(Indigo.works.get(this.model.get('commencing_work')));
+      }
+      chooser.setFilters({country: this.model.get('country')});
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          self.model.set('commencing_work', chosen);
+        }
+      });
+    },
+
+    commencingWorkChanged: function() {
+      var commencing_work = this.model.get('commencing_work');
+
+      if (commencing_work) {
+        this.$('.work-commencing-work').html(this.commencingWorkTemplate({
+          commencing_work: commencing_work.toJSON(),
+        }));
+      } else {
+        this.$('.work-commencing-work').html(this.commencingWorkTemplate({}));
       }
     },
 
@@ -212,7 +246,7 @@
       chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
-          self.model.set('parent_work', chosen.get('id'));
+          self.model.set('parent_work', chosen);
         }
       });
     },
@@ -224,10 +258,7 @@
 
     parentChanged: function() {
       if (this.model.get('parent_work')) {
-        var parent = Indigo.works.get(this.model.get('parent_work'));
-        if (!parent) {
-          return;
-        }
+        var parent = this.model.get('parent_work');
 
         this.$('#work_parent_work')
           .removeClass('hidden')

@@ -11,7 +11,10 @@
 
     initialize: function() {
       this.breadcrumbTemplate = Handlebars.compile($(this.breadcrumbTemplate).html());
+      this.expressions = this.model.work.documents();
+
       this.listenTo(this.model, 'change:title change:expression_date change:draft sync change:frbr_uri', this.render);
+      this.listenTo(this.expressions, 'sync change', this.render);
     },
 
     getTitle: function() {
@@ -33,14 +36,30 @@
       
       // breadcrumb
       var country = Indigo.countries[this.model.get('country')],
-          locality = this.model.get('locality');
+          locality = this.model.get('locality'),
+          dates = this.model.work.expressionDates(),
+          docs = this.expressions,
+          current_id = this.model.get('id');
       locality = locality ? country.localities[locality] : null;
+      dates.reverse();
+
+      var expressions = _.map(dates, function(date) {
+        return {
+          date: date,
+          documents: _.map(docs.where({expression_date: date}), function(d) {
+            d = d.toJSON();
+            d.current = current_id == d.id;
+            return d;
+          })
+        };
+      });
 
       this.$('.breadcrumb').html(this.breadcrumbTemplate({
         document: this.model.toJSON(),
         country: country,
         locality: locality,
         work: this.model.work.toJSON(),
+        expressions: expressions,
       }));
     },
   });
@@ -96,20 +115,12 @@
       // stop disable menus
       $('.menu').on('click', '.disabled a', _.bind(this.stopMenuClick));
 
-      if (document_id) {
-        // get it from the library
-        this.document = Indigo.library.get(document_id);
-      } else {
-        // only for new documents
-        this.document = new Indigo.Document(Indigo.Preloads.document, {collection: library, parse: true});
-        Indigo.library.add(this.document);
-      }
-
-      this.document.work = new Backbone.Model(Indigo.Preloads.work);
+      // get it from the library
+      this.document = Indigo.library.get(document_id);
+      this.document.work = new Indigo.Work(Indigo.Preloads.work);
 
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);
-      this.document.expressionSet = Indigo.library.expressionSet(this.document);
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);

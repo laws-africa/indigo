@@ -89,6 +89,10 @@ fieldset {
   & > li + li:before {
     content: "≫\0a0";
   }
+
+  .expressions {
+    position: relative;
+  }
 }
 
 /* main content, in partnership with navbar */

@@ -28,12 +28,7 @@
           {{#each amendments}}
             <li data-uri="{{ amending_uri }}">
               <div class="amendment-info">
-                Amended by
-                {{#if work}}
-                <a href="/works/{{ work.id }}">{{ amending_title }}</a>
-                {{else}}
-                {{ amending_title }}
-                {{/if}}
+                Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a>
               </div>
             </li>
           {{/each}}

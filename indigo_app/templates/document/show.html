@@ -17,9 +17,24 @@
     {% verbatim %}
       <li><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
       {{#if locality}}
-      <li><a href="/library/?country={{ document.country }}&locality={{ locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+      <li><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
       {{/if}}
       <li><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+      <li class="expressions">
+        <a href="#" data-toggle="dropdown">{{ document.expression_date }} <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {{#each expressions}}
+            {{#each documents}}
+              <li {{#if current}}class="disabled"{{/if}}><a href="/documents/{{ id }}">
+                {{ ../date }}
+                {{#if current}} - this document{{/if}}
+              </a></li>
+            {{/each}}
+          {{/each}}
+          <li role="separator" class="divider"></li>
+          <li><a href="/works/{{ work.id }}/amendments/">Manage amendments...</a></li>
+        </ul>
+      </li>
     {% endverbatim %}
     </script>
 

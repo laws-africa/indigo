@@ -90,33 +90,30 @@
 
       this.model.on('change:amendments', this.render, this);
       this.model.on('change:frbr_uri', this.frbrChanged, this);
+      this.amendments = this.model.work.amendments();
 
-      this.listenTo(this.model.expressionSet, 'add remove reset change', this.render);
-      this.listenTo(this.model.expressionSet.amendments, 'change add remove reset', this.render);
+      this.listenTo(this.amendments, 'change sync', this.render);
       this.listenTo(this.model, 'change:work', this.render);
 
+      this.amendments.fetch({reset: true});
       this.render();
     },
 
     render: function() {
       var self = this;
       var document_id = this.model.get('id');
-      var dates = this.model.expressionSet.allDates(),
-          pubDate = this.model.expressionSet.initialPublicationDate();
+      var dates = this.model.work.expressionDates(),
+          pubDate = this.model.work.get('publication_date'),
+          docs = this.model.work.documents();
 
       // build up a view of amended expressions
       var amended_expressions = _.map(dates, function(date) {
-        var doc = self.model.expressionSet.atDate(date);
+        var doc = docs.findWhere({expression_date: date});
         var info = {
           date: date,
           document: doc && doc.toJSON(),
           current: doc && doc.get('id') == document_id,
-          amendments: _.map(self.model.expressionSet.amendmentsAtDate(date), function(a) {
-            a = a.toJSON();
-            a.work = Indigo.works.findWhere({frbr_uri: a.amending_uri});
-            a.work = a.work ? a.work.toJSON() : null;
-            return a;
-          }),
+          amendments: _.map(self.amendments.where({date: date}), function(a) { return a.toJSON(); }),
           initial: date == pubDate,
         };
         info.linkable = info.document && !info.current;
@@ -129,7 +126,7 @@
       }));
 
       // update amendment count in nav tabs
-      $('.sidebar .nav .amendment-count').text(this.model.expressionSet.length <= 1 ? '' : this.model.expressionSet.length);
+      $('.sidebar .nav .amendment-count').text(this.amendments.length <= 1 ? '' : this.amendments.length);
 
       $('.manage-amendments').attr('href', '/works/' + this.model.work.get('id') + '/amendments/');
     },

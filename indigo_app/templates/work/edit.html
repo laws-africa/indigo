@@ -136,6 +136,15 @@
             <p class="help-block">Date when signed by the President</p>
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="work_commencement_date" class="col-sm-2 control-label">Commenced by</label>
+          <div class="col-sm-10">
+            <div class="work-commencing-work form-control-static"></div>
+            <button class="btn btn-default change-commencing-work">Choose commencing work</button>
+            <p class="help-block">Work which indicated the commencement date</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -183,6 +192,19 @@
   <a href="#" class="delete-repeal"><i class="fa fa-close fa-fw"></i></a>
 {{else}}
   <i>Not repealed.</i>
+{{/if}}
+
+{% endverbatim %}
+</script>
+
+<script id="commencing-work-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+{{#if commencing_work }}
+  <a href="/works/{{ commencing_work.id }}">{{ commencing_work.title }}</a>
+  <a href="#" class="delete-commencing-work"><i class="fa fa-close fa-fw"></i></a>
+{{else}}
+  <i>None.</i>
 {{/if}}
 
 {% endverbatim %}

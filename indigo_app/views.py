@@ -179,6 +179,18 @@ def work_related(request, work_id):
         'work': a.amending_work,
     } for a in amended_by]
 
+    # repeals
+    repeals = []
+    if work.repealed_by:
+        repeals.append({
+            'rel': 'repealed by',
+            'work': work.repealed_by,
+        })
+    repeals = repeals + [{
+        'rel': 'repeals',
+        'work': w,
+    } for w in Work.objects.filter(repealed_by=work).all()]
+
     return render(request, 'work/related.html', {
         'country': country,
         'locality': locality,
@@ -187,6 +199,7 @@ def work_related(request, work_id):
         'family': family,
         'amended': amended,
         'amended_by': amended_by,
+        'repeals': repeals,
         'view': '',
     })
 

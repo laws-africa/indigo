@@ -12,6 +12,15 @@
     </div>
   {% endif %}
 
+  {% if repeals %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Repeals</h3>
+      </div>
+      {% include 'work/_related_table.html' with items=repeals %}
+    </div>
+  {% endif %}
+
   {% if amended %}
     <div class="panel panel-default">
       <div class="panel-heading">

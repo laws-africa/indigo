@@ -6,33 +6,34 @@
         <h4 class="modal-title">Choose a work</h4>
       </div>
 
-      <div class="modal-body">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <div class="row">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <div class="row">
 
-              <div class="col-xs-3">
-                <select class="form-control work-chooser-country">
-                  {% for country in countries %}
-                  <option value="{{ country.code }}">{{ country }}</option>
-                  {% endfor %}
-                </select>
-              </div>
+            <div class="col-xs-3">
+              <select class="form-control work-chooser-country">
+                {% for country in countries %}
+                <option value="{{ country.code }}">{{ country }}</option>
+                {% endfor %}
+              </select>
+            </div>
 
-              <div class="col-xs-4 col-xs-offset-5">
-                <div class="input-group">
-                  <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
-                  <div class="input-group-btn">
-                    <button class="work-chooser-search-clear btn btn-default"><strong>&times;</strong></button>
-                  </div>
+            <div class="col-xs-3">
+              <select class="form-control work-chooser-locality"></select>
+            </div>
+
+            <div class="col-xs-4 col-xs-offset-2">
+              <div class="input-group">
+                <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
+                <div class="input-group-btn">
+                  <button class="work-chooser-search-clear btn btn-default"><strong>&times;</strong></button>
                 </div>
               </div>
-
             </div>
-          </div>
-          <div class="work-chooser-list"></div>
-        </div>
 
+          </div>
+        </div>
+        <div class="work-chooser-list"></div>
       </div>
 
       <div class="modal-footer">

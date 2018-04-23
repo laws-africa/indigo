@@ -15,6 +15,7 @@
       'keyup .work-chooser-search': 'filterBySearch',
       'click .work-chooser-search-clear': 'resetSearch',
       'change .work-chooser-country': 'countryChanged',
+      'change .work-chooser-locality': 'localityChanged',
       'click tr': 'itemClicked',
       'hidden.bs.modal': 'dismiss',
       'shown.bs.modal': 'shown',
@@ -33,6 +34,7 @@
       this.$el.find('.modal-title').text(options.title);
 
       this.setFilters({});
+      this.updateLocalities();
     },
 
     /**
@@ -86,12 +88,49 @@
 
     countryChanged: function(e) {
       this.filters.country = e.target.selectedOptions[0].value;
+      this.filters.locality = null;
       Indigo.works.setCountry(this.filters.country);
+      this.updateLocalities();
+    },
+
+    localityChanged: function(e) {
+      this.filters.locality = e.target.selectedOptions[0].value;
+      this.trigger('change:filter');
+    },
+
+    updateLocalities: function() {
+      var localities = _.clone(Indigo.countries[this.filters.country].localities);
+      var $select = this.$('select.work-chooser-locality')
+        .empty()
+        .toggle(!_.isEmpty(localities));
+
+      localities = _.map(localities, function(name, code) {
+        return {
+          name: name,
+          code: code,
+        };
+      });
+      localities.push({
+        name: '(all localities)',
+        code: '',
+      });
+      localities.push({
+        name: '(none)',
+        code: '-',
+      });
+      localities = _.sortBy(localities, function(x) { return x.name.toLocaleLowerCase(); });
+
+      _.each(localities, function(loc) {
+        var opt = document.createElement('option');
+        opt.setAttribute('value', loc.code);
+        opt.innerText = loc.name;
+        $select.append(opt);
+      });
     },
 
     render: function() {
-      var works = this.filtered();
-      var chosen = this.chosen;
+      var works = this.filtered(),
+          chosen = this.chosen;
 
       // ensure selections are up to date
       if (this.filters.country) {
@@ -126,10 +165,11 @@
         });
       }
 
-      // tags
-      if (filters.tags.length > 0) {
+      // locality
+      if (filters.locality) {
+        var loc = filters.locality == '-' ? null : filters.locality;
         works = _.filter(works, function(doc) {
-          return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
+          return doc.get('locality') == loc;
         });
       }
 

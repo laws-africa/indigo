@@ -871,6 +871,12 @@ legend {
 }
 
 /* work chooser modal */
+#work-chooser-box {
+  .panel {
+    margin-bottom: 0px;
+  }
+}
+
 .work-chooser-list {
   td.frbr_uri {
     text-overflow: ellipsis;

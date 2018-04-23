@@ -350,66 +350,6 @@ class DocumentAPITest(APITestCase):
             },
         ])
 
-    def test_create_with_amendments(self):
-        # this document made the amendments
-        response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/2010/2',
-            'expression_date': '2010-01-01',
-        })
-        assert_equal(response.status_code, 201)
-        amending_id = response.data['id']
-        assert_is_not_none(amending_id)
-
-        # this is the amended document
-        response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2',
-            'amendments': [{
-                'date': '2010-01-01',
-                'amending_title': 'Act 2 of 2010',
-                'amending_uri': '/za/act/2010/2',
-            }]
-        })
-        assert_equal(response.status_code, 201)
-        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
-        assert_equal(response.data['amendments'], [{
-            'date': '2010-01-01',
-            'amending_title': 'Act 2 of 2010',
-            'amending_uri': '/za/act/2010/2',
-            'amending_id': amending_id,
-        }])
-
-        # ensure it shows amending_id when listed
-        response = self.client.get('/api/documents')
-        assert_equal(response.status_code, 200)
-        doc = list(d for d in response.data['results'] if d['frbr_uri'] == '/za/act/1998/2')[0]
-        assert_equal(doc['amendments'], [{
-            'date': '2010-01-01',
-            'amending_title': 'Act 2 of 2010',
-            'amending_uri': '/za/act/2010/2',
-            'amending_id': amending_id,
-        }])
-
-    def test_update_with_amendments(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {
-            'amendments': [{
-                'date': '2010-01-01',
-                'amending_title': 'Act 2 of 2010',
-                'amending_uri': '/za/act/2010/2',
-            }]
-        })
-
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['amendments'], [{
-            'date': '2010-01-01',
-            'amending_title': 'Act 2 of 2010',
-            'amending_uri': '/za/act/2010/2',
-            'amending_id': None,
-        }])
-
     def test_create_from_file(self):
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
         tmp_file.write("""

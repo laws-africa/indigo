@@ -9,7 +9,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import Act, FrbrUri, AmendmentEvent
+from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
@@ -227,7 +227,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     assent_date = serializers.DateField(read_only=True)
 
     tags = TagListSerializerField(required=False)
-    amendments = AmendmentSerializer(many=True, required=False)
+    amendments = AmendmentSerializer(many=True, read_only=True)
 
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
@@ -444,10 +444,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         content = validated_data.pop('content', None)
         if content is not None:
             document.content = content
-
-        amendments = validated_data.pop('amendments', None)
-        if amendments is not None:
-            document.amendments = [AmendmentEvent(**a) for a in amendments]
 
         # save rest of changes
         for attr, value in validated_data.items():

@@ -12,6 +12,7 @@
     initialize: function() {
       this.breadcrumbTemplate = Handlebars.compile($(this.breadcrumbTemplate).html());
       this.listenTo(this.model, 'change:title change:expression_date change:draft sync change:frbr_uri', this.render);
+      this.listenTo(this.model.work.amendments(), 'sync', this.render);
     },
 
     getTitle: function() {
@@ -33,14 +34,22 @@
       
       // breadcrumb
       var country = Indigo.countries[this.model.get('country')],
-          locality = this.model.get('locality');
+          locality = this.model.get('locality'),
+          amendments,
+          docs = this.model.work.documents();
       locality = locality ? country.localities[locality] : null;
+
+      amendments = this.model.work.amendments().toJSON();
+      amendments.forEach(function(a) {
+        a.documents = _.map(docs.findWhere({expression_date: a.date}), function(d) { return d.toJSON(); });
+      });
 
       this.$('.breadcrumb').html(this.breadcrumbTemplate({
         document: this.model.toJSON(),
         country: country,
         locality: locality,
         work: this.model.work.toJSON(),
+        amendments: amendments,
       }));
     },
   });
@@ -105,7 +114,7 @@
         Indigo.library.add(this.document);
       }
 
-      this.document.work = new Backbone.Model(Indigo.Preloads.work);
+      this.document.work = new Indigo.Work(Indigo.Preloads.work);
 
       this.document.on('change', this.setDirty, this);
       this.document.on('change', this.allowDelete, this);

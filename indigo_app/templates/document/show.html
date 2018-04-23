@@ -20,6 +20,16 @@
       <li><a href="/library/?country={{ document.country }}&locality={{ locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
       {{/if}}
       <li><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+      <li class="expressions">
+        <a href="#" data-toggle="dropdown">{{ document.expression_date }} <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+          {{#each amendments}}
+            {{#each documents}}
+              <li><a href="/documents/{{ id }}">{{ ../date }}</li>
+            {{/each}}
+          {{/each}}
+        </ul>
+      </li>
     {% endverbatim %}
     </script>
 

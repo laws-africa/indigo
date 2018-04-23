@@ -90,11 +90,14 @@
 
       this.model.on('change:amendments', this.render, this);
       this.model.on('change:frbr_uri', this.frbrChanged, this);
+      this.amendments = this.model.work.amendments();
 
       this.listenTo(this.model.expressionSet, 'add remove reset change', this.render);
       this.listenTo(this.model.expressionSet.amendments, 'change add remove reset', this.render);
       this.listenTo(this.model, 'change:work', this.render);
+      this.listenTo(this.amendments, 'change sync', this.render);
 
+      this.amendments.fetch({reset: true});
       this.render();
     },
 

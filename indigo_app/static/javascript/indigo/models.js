@@ -191,6 +191,28 @@
 
       return this._documents;
     },
+
+    /**
+     * Return a collection representing the amendments for this work,
+     * most recent first.
+     */
+    amendments: function() {
+      if (!this._amendments) {
+        this._amendments = new Indigo.WorkAmendmentCollection([], {
+          work: this,
+          parse: true,
+          comparator: function(a, b) {
+            // most recent first
+            return -(a.get('date') || '').localeCompare(b.get('date'));
+          },
+        });
+        this.on('change:id', function(model) {
+          model._amendments.fetch({reset: true});
+        });
+      }
+
+      return this._amendments;
+    },
   });
 
   Indigo.WorkAmendment = Backbone.Model.extend({

@@ -620,7 +620,7 @@ class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
     repealed_by = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
-    parent_work = serializers.PrimaryKeyRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True)
+    parent_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
     commencing_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
 
     amendments_url = serializers.SerializerMethodField()

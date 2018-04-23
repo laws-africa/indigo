@@ -191,6 +191,18 @@ def work_related(request, work_id):
         'work': w,
     } for w in Work.objects.filter(repealed_by=work).all()]
 
+    # commencement
+    commencement = []
+    if work.commencing_work:
+        commencement.append({
+            'rel': 'commenced by',
+            'work': work.commencing_work,
+        })
+    commencement = commencement + [{
+        'rel': 'commenced',
+        'work': w,
+    } for w in Work.objects.filter(commencing_work=work).all()]
+
     return render(request, 'work/related.html', {
         'country': country,
         'locality': locality,
@@ -200,6 +212,7 @@ def work_related(request, work_id):
         'amended': amended,
         'amended_by': amended_by,
         'repeals': repeals,
+        'commencement': commencement,
         'view': '',
     })
 

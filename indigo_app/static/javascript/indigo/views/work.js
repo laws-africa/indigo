@@ -246,7 +246,7 @@
       chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
-          self.model.set('parent_work', chosen.get('id'));
+          self.model.set('parent_work', chosen);
         }
       });
     },
@@ -258,10 +258,7 @@
 
     parentChanged: function() {
       if (this.model.get('parent_work')) {
-        var parent = Indigo.works.get(this.model.get('parent_work'));
-        if (!parent) {
-          return;
-        }
+        var parent = this.model.get('parent_work');
 
         this.$('#work_parent_work')
           .removeClass('hidden')

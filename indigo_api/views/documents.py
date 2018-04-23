@@ -54,8 +54,8 @@ class DocumentViewMixin(object):
     queryset = Document.objects\
         .undeleted()\
         .no_xml()\
-        .prefetch_related('tags', 'work', 'created_by_user', 'updated_by_user',
-                          'commencing_work', 'repealed_by',
+        .prefetch_related('tags', 'created_by_user', 'updated_by_user',
+                          'work__parent_work', 'work__commencing_work', 'work__repealed_by',
                           'work__amendments', 'work__amendments__amending_work', 'work__amendments__amended_work')
 
     def initial(self, request, **kwargs):

@@ -209,6 +209,7 @@ class DocumentManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(DocumentManager, self)\
             .get_queryset()\
+            .prefetch_related('work')\
             .defer("search_text", "search_vector")
 
 

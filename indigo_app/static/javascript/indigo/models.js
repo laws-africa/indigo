@@ -142,6 +142,7 @@
     parse: function(json) {
       if (json.commencing_work) json.commencing_work = new Indigo.Work(json.commencing_work);
       if (json.repealed_by) json.repealed_by = new Indigo.Work(json.repealed_by);
+      if (json.parent_work) json.parent_work = new Indigo.Work(json.parent_work);
       return json;
     },
 
@@ -149,6 +150,7 @@
       var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
       if (json.commencing_work) json.commencing_work = json.commencing_work.toJSON();
       if (json.repealed_by) json.repealed_by = json.repealed_by.toJSON();
+      if (json.parent_work) json.parent_work = json.parent_work.toJSON();
       return json;
     },
 

@@ -21,6 +21,15 @@
     </div>
   {% endif %}
 
+  {% if commencement %}
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <h3 class="panel-title">Commencement</h3>
+      </div>
+      {% include 'work/_related_table.html' with items=commencement %}
+    </div>
+  {% endif %}
+
   {% if amended %}
     <div class="panel panel-default">
       <div class="panel-heading">

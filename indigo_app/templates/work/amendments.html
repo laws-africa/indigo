@@ -6,11 +6,7 @@
   {% if perms.indigo_api.can_change_amendment %}
   <button class="btn btn-info save-work pull-right" type="button">Save</button>
   {% endif %}
-
-  <ul class="nav nav-pills">
-    <li><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
-    <li class="active"><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
-  </ul>
+  {{ block.super }}
 {% endblock %}
 
 {% block work-content %}

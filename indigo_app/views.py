@@ -142,6 +142,27 @@ def work_amendments(request, work_id):
 
 
 @login_required
+def work_related(request, work_id):
+    work = get_object_or_404(Work, pk=work_id)
+    if work.deleted:
+        raise Http404()
+    work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
+
+    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
+    locality = None
+    if work.locality:
+        locality = country.locality_set.filter(code=work.locality)[0]
+
+    return render(request, 'work/related.html', {
+        'country': country,
+        'locality': locality,
+        'work': work,
+        'work_json': work_json,
+        'view': '',
+    })
+
+
+@login_required
 def import_document(request):
     frbr_uri = request.GET.get('frbr_uri')
     doc = Document(frbr_uri=frbr_uri or '/')

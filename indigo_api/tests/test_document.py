@@ -85,10 +85,11 @@ class DocumentTestCase(TestCase):
         a.save()
 
         doc = Document.objects.get(id=2)
-        assert_equal(doc.amendments, [])
+        assert_equal(doc.amendment_events(), [])
 
         doc = Document.objects.get(id=3)
-        assert_equal(len(doc.amendments), 1)
-        assert_equal(doc.amendments[0].amending_uri, amending.frbr_uri)
-        assert_equal(doc.amendments[0].amending_title, amending.title)
-        assert_equal(doc.amendments[0].date, d)
+        events = doc.amendment_events()
+        assert_equal(len(events), 1)
+        assert_equal(events[0].amending_uri, amending.frbr_uri)
+        assert_equal(events[0].amending_title, amending.title)
+        assert_equal(events[0].date, d)

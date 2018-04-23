@@ -12,7 +12,6 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
-from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -23,7 +22,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
+from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
 
 from .utils import language3_to_2, localize_toc
 
@@ -320,10 +319,8 @@ class Document(models.Model):
     publication_name = models.CharField(null=True, blank=True, max_length=255)
     publication_date = models.CharField(null=True, blank=True, max_length=255)
     publication_number = models.CharField(null=True, blank=True, max_length=255)
-    amendment_events = JSONField(null=True)
 
     # caching attributes
-    _amendments = None
     _work_uri = None
 
     @property
@@ -364,31 +361,16 @@ class Document(models.Model):
     def locality(self):
         return self.work_uri.locality
 
-    @property
     def amendments(self):
-        # we cache these values so that we can decorate them
-        # with extra info when serializing
-        if self._amendments is None:
-            self._amendments = [
-                AmendmentEvent(
-                    arrow.get(a.get('date')).date() if a.get('date') else None,
-                    a.get('amending_title'),
-                    a.get('amending_uri')
-                ) for a in self.amendment_events or []]
-        return self._amendments
-
-    @amendments.setter
-    def amendments(self, value):
-        self._amendments = None
-        self._amended_versions = None
-        if value:
-            self.amendment_events = [{
-                'date': datestring(a.date) if a.date else None,
-                'amending_title': a.amending_title,
-                'amending_uri': a.amending_uri,
-            } for a in value]
+        if self.expression_date:
+            return [a for a in self.work.amendments.all() if a.date <= self.expression_date]
         else:
-            self.amendment_events = None
+            return []
+
+    def amendment_events(self):
+        return [
+            AmendmentEvent(a.date, a.amending_work.title, a.amending_work.frbr_uri)
+            for a in self.amendments()]
 
     @property
     def repeal(self):
@@ -439,7 +421,6 @@ class Document(models.Model):
             self.doc.publication_name = self.publication_name
             self.doc.publication_date = self.publication_date
             self.doc.repeal = self.work.repeal
-            self.doc.amendments = self.amendments
 
         else:
             self.title = self.doc.title
@@ -451,7 +432,6 @@ class Document(models.Model):
             self.publication_date = self.doc.publication_date
             # ensure these are refreshed
             self._work_uri = None
-            self._amendments = None
             self._amended_versions = None
 
         # update the model's XML from the Act XML
@@ -464,16 +444,8 @@ class Document(models.Model):
         for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
             setattr(self, attr, getattr(self.work, attr))
 
-        # TODO: no need to stash _amendment_events any more
-
-        # copy over amendments before this publication date
-        if self.expression_date:
-            amendments = self.work.amendments.filter(date__lte=self.expression_date)
-            self.amendments = [AmendmentEvent(
-                amending_uri=a.amending_work.frbr_uri,
-                amending_title=a.amending_work.title,
-                date=a.date,
-            ) for a in amendments]
+        # copy over amendments at or before this expression date
+        self.doc.amendments = self.amendment_events()
 
         # copy over title if it's not set
         if not self.title:
@@ -568,26 +540,6 @@ class Document(models.Model):
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
-
-    @classmethod
-    def decorate_amendments(cls, documents):
-        """ Decorate the items in each document's ``amendments``
-        list with the document id of the amending document.
-        """
-        # uris that amended docs in the set
-        uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
-        amending_docs = Document.objects.undeleted().no_xml()\
-            .filter(frbr_uri__in=list(uris))\
-            .order_by('expression_date')\
-            .all()
-
-        for doc in documents:
-            for a in doc.amendments:
-                for amending in amending_docs:
-                    # match on the URI and the expression date
-                    if amending.frbr_uri == a.amending_uri and amending.expression_date == a.date:
-                        a.amending_document = amending
-                        break
 
     @classmethod
     def decorate_repeal(cls, documents):

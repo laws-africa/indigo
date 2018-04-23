@@ -19,7 +19,7 @@ from .slaw import Importer
 log = logging.getLogger(__name__)
 
 
-class AmendmentSerializer(serializers.Serializer):
+class AmendmentEventSerializer(serializers.Serializer):
     """ Serializer matching :class:`cobalt.act.AmendmentEvent`
     """
 
@@ -29,12 +29,6 @@ class AmendmentSerializer(serializers.Serializer):
     """ Title of amending document """
     amending_uri = serializers.CharField()
     """ FRBR URI of amending document """
-    amending_id = serializers.SerializerMethodField()
-    """ ID of the amending document, if available """
-
-    def get_amending_id(self, instance):
-        if hasattr(instance, 'amending_document') and instance.amending_document is not None:
-            return instance.amending_document.id
 
 
 class RepealSerializer(serializers.Serializer):
@@ -177,7 +171,6 @@ class DocumentListSerializer(serializers.ListSerializer):
         # Do some bulk post-processing, this is much more efficient
         # than doing each document one at a time and going to the DB
         # hundreds of times.
-        Document.decorate_amendments(iterable)
         Document.decorate_amended_versions(iterable)
         Document.decorate_repeal(iterable)
 
@@ -227,7 +220,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     assent_date = serializers.DateField(read_only=True)
 
     tags = TagListSerializerField(required=False)
-    amendments = AmendmentSerializer(many=True, read_only=True)
+    amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
 
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
@@ -458,7 +451,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def to_representation(self, instance):
         if not self.context.get('many', False):
-            Document.decorate_amendments([instance])
             Document.decorate_amended_versions([instance])
             Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)

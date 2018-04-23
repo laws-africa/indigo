@@ -18,7 +18,7 @@
       'click tr': 'itemClicked',
       'hidden.bs.modal': 'dismiss',
       'shown.bs.modal': 'shown',
-      'click .btn.save': 'save',
+      'click .btn.choose-work': 'save',
     },
 
     initialize: function(options) {

@@ -241,7 +241,7 @@
           self = this;
 
       if (this.model.get('parent_work')) {
-        chooser.choose(Indigo.works.get(this.model.get('parent_work')));
+        chooser.choose(this.model.get('parent_work'));
       }
       chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {

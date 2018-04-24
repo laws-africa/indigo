@@ -48,7 +48,13 @@ class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
         return super(SerializedRelatedField, self).to_internal_value(data)
 
     def to_representation(self, value):
-        return self.get_serializer()(context=self.context).to_representation(value)
+        context = {}
+        context.update(self.context)
+        context['depth'] = context.get('depth', 0) + 1
+        # don't recurse
+        if context['depth'] > 1:
+            return {'id': value.pk}
+        return self.get_serializer()(context=context).to_representation(value)
 
     def get_choices(self, cutoff=None):
         queryset = self.get_queryset()

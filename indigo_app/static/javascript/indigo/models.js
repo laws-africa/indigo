@@ -148,9 +148,9 @@
 
     toJSON: function() {
       var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
-      if (json.commencing_work) json.commencing_work = json.commencing_work.toJSON();
-      if (json.repealed_by) json.repealed_by = json.repealed_by.toJSON();
-      if (json.parent_work) json.parent_work = json.parent_work.toJSON();
+      if (json.commencing_work && json.commencing_work.toJSON) json.commencing_work = json.commencing_work.toJSON();
+      if (json.repealed_by && json.repealed_by.toJSON) json.repealed_by = json.repealed_by.toJSON();
+      if (json.parent_work && json.parent_work.toJSON) json.parent_work = json.parent_work.toJSON();
       return json;
     },
 

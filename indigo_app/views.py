@@ -189,7 +189,7 @@ def work_related(request, work_id):
     repeals = repeals + [{
         'rel': 'repeals',
         'work': w,
-    } for w in Work.objects.filter(repealed_by=work).all()]
+    } for w in work.repealed_works.all()]
 
     # commencement
     commencement = []
@@ -201,7 +201,7 @@ def work_related(request, work_id):
     commencement = commencement + [{
         'rel': 'commenced',
         'work': w,
-    } for w in Work.objects.filter(commencing_work=work).all()]
+    } for w in work.commenced_works.all()]
 
     return render(request, 'work/related.html', {
         'country': country,

@@ -8,7 +8,7 @@ import string
 
 from django.conf import settings
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
@@ -66,14 +66,14 @@ class Work(models.Model):
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
     # repeal information
-    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Work that repealed this work")
+    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Work that repealed this work", related_name='repealed_works')
     repealed_date = models.DateField(null=True, blank=True, help_text="Date of repeal of this work")
 
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Parent related work", related_name='child_works')
 
     # optional work that determined the commencement date of this work
-    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Date that marked this work as commenced", related_name='+')
+    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -138,7 +138,11 @@ class Work(models.Model):
         return super(Work, self).save(*args, **kwargs)
 
     def can_delete(self):
-        return not self.document_set.filter(deleted=False).exists()
+        return (not self.document_set.filter(deleted=False).exists()
+                and not self.child_works.exists()
+                and not self.repealed_works.exists()
+                and not self.commenced_works.exists()
+                and not Amendment.filter(Q(ammending_work=self) | Q(amended_work=self)).exists())
 
     def create_expression_at(self, date):
         """ Create a new expression at a particular date.

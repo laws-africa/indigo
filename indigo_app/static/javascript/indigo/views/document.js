@@ -99,6 +99,7 @@
       'click .menu .save a': 'save',
       'click .menu .delete-document a': 'delete',
       'click .menu .clone-document a': 'clone',
+      'click .menu .change-document-work a': 'changeWork',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
@@ -339,13 +340,10 @@
     },
 
     clone: function() {
-      var title = prompt('Name for the copy', 'Copy of ' + this.document.get('title'));
-
-      if (title) {
+      if (confirm('Go ahead and create a copy of this document?')) {
         var clone = this.document.clone();
         clone.set({
           draft: true,
-          title: title,
           id: null,
           content: this.documentContent.get('content'),
         });
@@ -355,6 +353,21 @@
           document.location = '/documents/' + doc.id + '/';
         });
       }
+    },
+
+    changeWork: function(e) {
+      if (!confirm("Are you sure you want to change the work this document is linked to?")) return;
+
+      var document = this.document;
+      var chooser = new Indigo.WorkChooserView({});
+
+      chooser.setFilters({country: document.get('country')});
+      chooser.choose(document.work);
+      chooser.showModal().done(function(chosen) {
+        if (chosen) {
+          document.setWork(chosen);
+        }
+      });
     },
 
     stopMenuClick: function(e) {

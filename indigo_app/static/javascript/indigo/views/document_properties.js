@@ -16,10 +16,8 @@
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
-    workDetailTemplate: '#document-work-template',
     events: {
       'click .btn-amendments': 'showAmendments',
-      'click .btn-change-work': 'changeWork',
     },
     bindings: {
       '#document_title': 'title',
@@ -101,10 +99,8 @@
       // update the choices of expression dates when necessary
       this.listenTo(this.model, 'change:publication_date', this.matchPublicationExpressionDates);
       this.listenTo(this.model, 'change:publication_date', this.updateExpressionDates);
-      this.listenTo(this.amendments, 'change add remove reset', this.updateExpressionDates);
-
-      this.workDetailTemplate = Handlebars.compile($(this.workDetailTemplate).html());
       this.listenTo(this.model, 'change:work', this.workChanged);
+      this.listenTo(this.amendments, 'change add remove reset', this.updateExpressionDates);
 
       this.updateExpressionDates();
       this.stickit();
@@ -151,21 +147,6 @@
       $('.sidebar a[href="#amendments-tab"]').click();
     },
 
-    changeWork: function() {
-      if (!confirm("Are you sure you want to change the work this document is linked to?")) return;
-
-      var document = this.model;
-      var chooser = new Indigo.WorkChooserView({});
-
-      chooser.setFilters({country: this.model.get('country')});
-      chooser.choose(document.work);
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          document.setWork(chosen);
-        }
-      });
-    },
-
     showPublishedUrl: function() {
       var url = this.model.manifestationUrl();
 
@@ -202,15 +183,11 @@
     },
 
     render: function() {
-      var work = this.model.work.toJSON(),
-          country = Indigo.countries[work.country];
+      var work = this.model.work;
 
-      work.country_name = country.name;
-      work.locality_name = work.locality ? country.localities[work.locality] : null;
-
-      this.$('#document-work-details').html(this.workDetailTemplate({
-        work: work,
-      }));
+      this.$('.document-work-title')
+        .text(work.get('title'))
+        .attr('href', '/works/' + work.get('id'));
     },
 
     workChanged: function() {

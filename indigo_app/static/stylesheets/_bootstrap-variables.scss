@@ -1,5 +1,5 @@
 // Typography
-$font-size-base: .875rem !default;
+$font-size-base: .875rem;
 
 // Options
 $enable-rounded: false !default;
@@ -18,3 +18,11 @@ $gray-800:  #2f353a !default; // lighten($gray-base, 10%);
 $gray-900:  #23282c !default; // lighten($gray-base, 5%);
 
 $card-cap-bg: $gray-100;
+
+$blue: #2d7ad4;
+$red: #f44336;
+$green: #439f78;
+$cyan: #232c4a;
+$yellow: #c08f40;
+
+$primary: $blue;

@@ -1341,7 +1341,7 @@ body.unauthenticated .annotations-container {
 
 label.required::after {
   content: " *";
-  color: red;
+  color: $danger;
 }
 
 #document-activity-view {

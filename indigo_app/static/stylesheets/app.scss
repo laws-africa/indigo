@@ -1334,7 +1334,7 @@ body.unauthenticated .annotations-container {
   }
 }
 
-.control-label.required::after {
+label.required::after {
   content: " *";
   color: red;
 }

@@ -553,7 +553,7 @@
 
       this.stopEditing()
         .then(function() {
-          self.$el.find('.sheet-editor').addClass('in');
+          self.$el.find('.sheet-editor').addClass('show');
           self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
           self.$el.find('.btn.edit-text').addClass('btn-warning').removeClass('btn-default');
           self.activeEditor = self.sourceEditor;

@@ -37,7 +37,7 @@ def document(request, doc_id=None):
 
     work_json = json.dumps(WorkSerializer(instance=doc.work, context={'request': request}).data)
     serializer = WorkSerializer(context={'request': request}, many=True)
-    works = Work.objects.undeleted().filter(country=doc.country)
+    works = Work.objects.filter(country=doc.country)
     works_json = json.dumps(serializer.to_representation(works))
 
     amendments_json = json.dumps(
@@ -73,8 +73,6 @@ def document(request, doc_id=None):
 def edit_work(request, work_id=None):
     if work_id:
         work = get_object_or_404(Work, pk=work_id)
-        if work.deleted:
-            raise Http404()
         work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
         country_code = work.country
         locality = work.locality
@@ -108,8 +106,6 @@ def edit_work(request, work_id=None):
 @login_required
 def work_amendments(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
-    if work.deleted:
-        raise Http404()
     work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
 
     country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
@@ -144,8 +140,6 @@ def work_amendments(request, work_id):
 @login_required
 def work_related(request, work_id):
     work = get_object_or_404(Work, pk=work_id)
-    if work.deleted:
-        raise Http404()
     work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
 
     country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
@@ -258,7 +252,7 @@ def library(request):
     documents_json = json.dumps(serializer.to_representation(docs))
 
     serializer = WorkSerializer(context={'request': request}, many=True)
-    works = Work.objects.undeleted().filter(country=request.user.editor.country_code)
+    works = Work.objects.filter(country=request.user.editor.country_code)
     works_json = json.dumps(serializer.to_representation(works))
 
     return render(request, 'library.html', {

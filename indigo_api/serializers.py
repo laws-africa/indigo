@@ -625,9 +625,9 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
-    repealed_by = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
-    parent_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
-    commencing_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=False, allow_null=True, serializer='WorkSerializer')
+    repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -674,7 +674,7 @@ class WorkSerializer(serializers.ModelSerializer):
 class WorkAmendmentSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
-    amending_work = SerializedRelatedField(queryset=Work.objects.undeleted(), required=True, allow_null=False, serializer=WorkSerializer)
+    amending_work = SerializedRelatedField(queryset=Work.objects, required=True, allow_null=False, serializer=WorkSerializer)
     url = serializers.SerializerMethodField()
 
     class Meta:

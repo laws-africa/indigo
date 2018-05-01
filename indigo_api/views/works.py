@@ -20,7 +20,7 @@ class WorkResourceView(object):
         super(WorkResourceView, self).initial(request, **kwargs)
 
     def lookup_work(self):
-        qs = Work.objects.undeleted()
+        qs = Work.objects
         work_id = self.kwargs['work_id']
         return get_object_or_404(qs, id=work_id)
 
@@ -34,7 +34,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Work.objects.undeleted()
+    queryset = Work.objects
     serializer_class = WorkSerializer
     # TODO permissions on creating and publishing works
     permission_classes = (DjangoModelPermissions,)
@@ -46,9 +46,8 @@ class WorkViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, instance):
         if not instance.can_delete():
-            raise MethodNotAllowed('DELETE', 'DELETE not allowed for works with attached documents, delete documents first.')
-        instance.deleted = True
-        instance.save()
+            raise MethodNotAllowed('DELETE', 'DELETE not allowed for works with related works or documents, unlink documents and works first.')
+        return super(WorkViewSet, self).perform_destroy(instance)
 
     def perform_update(self, serializer):
         # check permissions just before saving, to prevent users

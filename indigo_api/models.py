@@ -33,11 +33,8 @@ log = logging.getLogger(__name__)
 
 
 class WorkQuerySet(models.QuerySet):
-    def undeleted(self):
-        return self.filter(deleted=False)
-
     def get_for_frbr_uri(self, frbr_uri):
-        work = self.undeleted().filter(frbr_uri=frbr_uri).first()
+        work = self.filter(frbr_uri=frbr_uri).first()
         if work is None:
             raise ValueError("Work for FRBR URI '%s' doesn't exist" % frbr_uri)
         return work
@@ -54,8 +51,6 @@ class Work(models.Model):
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
-
-    deleted = models.BooleanField(default=False, help_text="Has this work been deleted?")
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")

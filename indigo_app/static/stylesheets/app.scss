@@ -496,8 +496,10 @@ legend {
 
   .example {
     padding: 1px 8px;
+    margin: -20px 0px 0px 20px;
     background: $grey-lighter;
     border-radius: 5px;
+    cursor: pointer;
     h5 {
       font-weight: bold;
     }

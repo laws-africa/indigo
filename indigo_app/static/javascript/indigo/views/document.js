@@ -27,9 +27,9 @@
       document.title = html;
 
       if (this.model.get('draft')) {
-        html = html + ' <span class="label label-warning">draft</span>';
+        html = html + ' <span class="badge badge-warning">draft</span>';
       } else {
-        html = html + ' <span class="label label-info">published</span>';
+        html = html + ' <span class="badge badge-info">published</span>';
       }
 
       this.$('.document-title').html(html);
@@ -212,7 +212,6 @@
         this.dirty = true;
         this.$saveBtn
           .removeClass('btn-default')
-          .addClass('btn-info')
           .prop('disabled', false);
         this.$menu.find('.save').removeClass('disabled');
       }
@@ -223,8 +222,6 @@
       if (!this.propertiesView.dirty && !this.bodyEditorView.dirty && !this.attachmentsView.dirty) {
         this.dirty = false;
         this.$saveBtn
-          .addClass('btn-default')
-          .removeClass('btn-info')
           .prop('disabled', true)
           .find('.fa')
             .removeClass('fa-pulse fa-spinner')

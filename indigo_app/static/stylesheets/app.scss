@@ -1,12 +1,12 @@
-$grey-lightest: #f5f5f5;
-$grey-lighter: #eee;
-$grey: #ddd;
-$grey-darker: #ccc;
-$grey-darkest: #aaa;
+@import "bootstrap-variables";
 
-$orange: #f0ad4e;
-$blue: #5bc0de;
-$link-active: #337ab7;
+@import 'lib/bootstrap-4.1.0/scss/bootstrap';
+
+$grey-lightest: $gray-100;
+$grey-lighter: $gray-200;
+$grey: $gray-300;
+$grey-darker: $gray-400;
+$grey-darkest: $gray-500;
 
 $border-colour: $grey;
 $workspace-header-colour: white;
@@ -22,14 +22,6 @@ $sidebar-colour: $grey-lighter;
 
 $selection-colour: #b2d8fc;
 
-
-//@import 'bower_components/bootstrap/dist/css/bootstrap.min';
-//@import 'bower_components/bootstrap/dist/css/bootstrap-theme.min';
-//@import 'lib/bootstrap-4.1.0/css/bootstrap.min';
-
-@import "bootstrap-variables";
-
-@import 'lib/bootstrap-4.1.0/scss/bootstrap';
 @import 'bower_components/fontawesome/css/font-awesome';
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';
 @import 'select2-4.0.0.min';
@@ -241,7 +233,7 @@ button.btn-link.help {
   color: $grey-darkest;
 
   &:hover {
-    color: $link-active;
+    color: $link-hover-color;
   }
 }
 
@@ -320,7 +312,7 @@ button.btn-link.help {
     }
 
     a:hover {
-      color: $orange;
+      color: $yellow;
       text-decoration: none;
     }
   }
@@ -421,11 +413,11 @@ legend {
 
 /* make document sheets look like paper */
 .sheet-outer {
-  background: $grey-darkest;
+  background: $gray-300;
   padding: 20px;
 
   .sheet-inner {
-    border: 1px solid $grey-darkest;
+    border: 1px solid $gray-400;
     box-shadow: 0 0 10px #888;
     background: white;
   }
@@ -668,13 +660,11 @@ legend {
 
       &.active,
       &.active:hover {
-        border-radius: 5px;
-        background-color: $link-active;
+        background-color: $link-color;
         color: white;
       }
 
       &:hover {
-        border-radius: 5px;
         background-color: $grey-lighter;
       }
     }
@@ -979,7 +969,7 @@ legend {
 }
 
 .fa.draft {
-  color: $orange;
+  color: $yellow;
 }
 
 .fa.published {

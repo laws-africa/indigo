@@ -1084,18 +1084,18 @@ legend {
     &> h5 {
       margin-top: 0px;
       font-weight: bold;
+    }
 
-      &.date {
-        position: absolute;
-        left: -120px;
-      }
+    .date {
+      position: absolute;
+      left: -130px;
     }
 
     &.current {
       border: 1px solid $blue;
       background-color: $grey;
 
-      h5.date::before {
+      .date::before {
         content: " ";
         display: block;
         position: absolute;

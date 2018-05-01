@@ -18,29 +18,30 @@
   <div class="amendment-expressions">
     <ol class="expression-timeline">
       <li>
-        <button class="btn btn-default add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+        <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
       </li>
       {{#each amendments}}
         <li class="item">
           {{#unless ../readonly}}{{#unless initial}}
           <div class="dropdown pull-right">
-            <button class="btn btn-default btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
-            <ul class="dropdown-menu">
-              <li><a href="#" class="edit-amendment" data-index="{{ @index }}">Change date</a></li>
-              <li><a href="#" class="delete-amendment" data-index="{{ @index }}">Delete</a></li>
-            </ul>
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+            <div class="dropdown-menu">
+              <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
+              <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
+            </div>
           </div>
           {{/unless}}{{/unless}}
-          <div class="edit-wrapper"></div>
 
-          <h5 class="date">{{ date }}</h5>
+          <h6 class="date">{{ date }}</h6>
 
           {{#if initial}}
-            <h5>Initial publication</h5>
+            <h6>Initial publication</h6>
           {{else}}
-            <h5>Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h5>
-            <h6>{{ amending_work.frbr_uri }}</h6>
+            <h6 class="mb-0">Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h6>
+            <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
           {{/if}}
+
+          <div class="edit-wrapper mb-3"></div>
 
           <div class="documents">
             {{#if documents}}
@@ -54,8 +55,8 @@
           <br>
 
           <div class="buttons">
-            <button class="btn btn-default create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
-            <a class="btn btn-default" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
+            <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
+            <a class="btn btn-outline-secondary" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
           </div>
         </li>
       {{/each}}
@@ -68,9 +69,9 @@
   <script id="amendment-editor-template" type="text/x-handlebars-template">
   {% verbatim %}
   <div class="form-inline">
-    <input type="text" class="form-control amendment-date" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
+    <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
+    <button class="btn btn-success save-amendment">OK</button>
     <button class="btn btn-link cancel">Cancel</button>
-    <button class="btn btn-primary save-amendment">OK</button>
   </div>
   {% endverbatim %}
   </script>

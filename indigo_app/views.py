@@ -197,6 +197,8 @@ def work_related(request, work_id):
         'work': w,
     } for w in work.commenced_works.all()]
 
+    no_related = (not family and not amended and not amended_by and not repeals and not commencement)
+
     return render(request, 'work/related.html', {
         'country': country,
         'locality': locality,
@@ -207,6 +209,7 @@ def work_related(request, work_id):
         'amended_by': amended_by,
         'repeals': repeals,
         'commencement': commencement,
+        'no_related': no_related,
         'view': '',
     })
 

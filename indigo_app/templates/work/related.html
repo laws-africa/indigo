@@ -3,6 +3,10 @@
 {% block view-id %}work-related-view{% endblock %}
 
 {% block work-content %}
+  {% if no_related %}
+  <p class="text-center">No related works.</p>
+  {% endif %}
+
   {% if family %}
     <div class="panel panel-default">
       <div class="panel-heading">

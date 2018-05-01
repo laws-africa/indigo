@@ -13,16 +13,13 @@ $workspace-header-colour: white;
 $workspace-header-border-colour: $grey-darker;
 $header-colour2: $grey-lighter;
 
-$navbar-height: 50px;
+$navbar-height: 57px;
 $header-height: 45px;
 $workspace-header-height: 85px;
 
 $sidebar-width: 260px;
 $sidebar-colour: $grey-lighter;
 
-$font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-$font-size: 14px;
-$font-colour: #333;
 $selection-colour: #b2d8fc;
 
 
@@ -455,7 +452,7 @@ legend {
 
 /* overrides for indigo inserts into akoma-ntoso trees */
 .akoma-ntoso .ig {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: $font-family-base;
   font-size: 14px;
   color: #333;
 }
@@ -694,7 +691,8 @@ legend {
 
 /* library */
 #library-view {
-  padding-top: 50px;
+  padding-top: $navbar-height;
+  padding-bottom: 0px;
 
   .filter-tag {
     display: inline-block;
@@ -765,7 +763,7 @@ legend {
   }
 
   #library {
-    padding-top: 50px;
+    padding-top: 45px;
 
     & > table {
       margin-bottom: 0px;
@@ -1221,7 +1219,7 @@ legend {
     &.focused,
     &:hover {
       a.dropdown-toggle {
-        color: $font-colour;
+        color: $body-color;
       }
     }
 

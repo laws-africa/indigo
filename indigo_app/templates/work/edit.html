@@ -15,8 +15,8 @@
   <div class="alert alert-danger">You don't have permission to create or change a work.</div>
   {% endif %}
 
-  <div class="card is-form">
-    <h3 class="card-header">Work details</h3>
+  <div class="card">
+    <h5 class="card-header">Work details</h5>
     <div class="card-body">
 
       <div class="form-row">
@@ -67,23 +67,22 @@
         </div>
       </div>
 
-        <div class="form-group">
-          <label for="work_frbr_uri" class="col-sm-2 control-label">FRBR URI</label>
-          <div class="col-sm-4">
-            <div id="work_frbr_uri" class="form-control-static"></div>
-            <p class="help-block">Uniquely identifies this work globally</p>
-          </div>
+      <div class="form-row">
+        <div class="form-group col-md-6">
+          <label for="work_frbr_uri">FRBR URI</label>
+          <div id="work_frbr_uri" class="form-text"></div>
+          <p class="form-text text-muted">Uniquely identifies this work globally</p>
+        </div>
 
-          <label class="col-sm-2 control-label">Parent work</label>
-          <div class="col-sm-4">
-            <div id="work_parent_work" class="form-control-static hidden">
-              <a class="work_parent_title"></a>
-              <br>
-              <span class="work_parent_uri"></span>
-              <br>
-              <a href="#" class="delete-parent">remove</a>
-            </div>
-            <button class="btn btn-default choose-parent">Choose parent work</button>
+        <div class="form-group col-md-6">
+          <button class="btn btn-outline-primary choose-parent pull-right">Choose parent work</button>
+          <label>Parent work</label>
+          <div id="work_parent_work" class="form-text" style="display: none">
+            <a class="work_parent_title"></a>
+            <br>
+            <span class="work_parent_uri"></span>
+            <br>
+            <a href="#" class="delete-parent">remove</a>
           </div>
         </div>
       </div>

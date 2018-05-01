@@ -75,8 +75,6 @@
   //   DocumentPropertiesView - handles editing the document metadata, such as
   //                            publication dates and URIs
   //
-  //   DocumentAmendmentsView - handles editing document amendment metadata
-  //
   //   DocumentAttachmentsView - handles managing document attachments
   //
   //   DocumentRepealView - handles setting a document as repealed
@@ -96,10 +94,10 @@
     events: {
       'click .menu .dropdown-submenu > a': 'stopMenuClick',
       'click .workspace-buttons .btn.save': 'save',
-      'click .menu .save a': 'save',
-      'click .menu .delete-document a': 'delete',
-      'click .menu .clone-document a': 'clone',
-      'click .menu .change-document-work a': 'changeWork',
+      'click .menu .save': 'save',
+      'click .menu .delete-document': 'delete',
+      'click .menu .clone-document': 'clone',
+      'click .menu .change-document-work': 'changeWork',
       'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
       'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
     },
@@ -135,8 +133,6 @@
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
       this.propertiesView.on('dirty', this.setDirty, this);
       this.propertiesView.on('clean', this.setClean, this);
-
-      this.amendmentsView = new Indigo.DocumentAmendmentsView({model: this.document});
 
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);

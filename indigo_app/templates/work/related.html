@@ -4,50 +4,40 @@
 
 {% block work-content %}
   {% if no_related %}
-  <p class="text-center">No related works.</p>
+  <div class="alert alert-info">No related works.</div>
   {% endif %}
 
   {% if family %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Parents and children</h3>
-      </div>
+    <div class="card mb-3">
+      <h5 class="card-header">Parents and children</h5>
       {% include 'work/_related_table.html' with items=family %}
     </div>
   {% endif %}
 
   {% if repeals %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Repeals</h3>
-      </div>
+    <div class="card mb-3">
+      <h5 class="card-header">Repeals</h5>
       {% include 'work/_related_table.html' with items=repeals %}
     </div>
   {% endif %}
 
   {% if commencement %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Commencement</h3>
-      </div>
+    <div class="card mb-3">
+      <h5 class="card-header">Commencement</h5>
       {% include 'work/_related_table.html' with items=commencement %}
     </div>
   {% endif %}
 
   {% if amended %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Works amended by this work</h3>
-      </div>
+    <div class="card mb-3">
+      <h5 class="card-header">Works amended by this work</h5>
       {% include 'work/_related_table.html' with items=amended %}
     </div>
   {% endif %}
 
   {% if amended_by %}
-    <div class="panel panel-default">
-      <div class="panel-heading">
-        <h3 class="panel-title">Works amending this work</h3>
-      </div>
+    <div class="card mb-3">
+      <h5 class="card-header">Works amending this work</h5>
       {% include 'work/_related_table.html' with items=amended_by %}
     </div>
   {% endif %}

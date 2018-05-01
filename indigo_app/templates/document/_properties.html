@@ -1,31 +1,26 @@
 <div class="boxed-group-inner document-properties-view">
   <div class="form-horizontal">
 
-    <div class="panel panel-default is-form">
-      <div class="panel-heading">
-        <h3 class="panel-title">
-          Details of this Expression
-          <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-        </h3>
-      </div>
-      <div class="panel-body">
-        <div class="form-group">
-          <label class="col-sm-2 control-label">Work</label>
-          <div class="col-sm-10">
-            <div class="form-control-static"><a href="{% url 'work' document.work.id %}" target="_blank" class="document-work-title"></a></div>
-          </div>
-        </div>
+    <div class="card mb-3">
+      <h5 class="card-header">
+        Details of this Expression
+        <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
+      </h5>
+      <div class="card-body">
 
         <div class="form-group">
-          <label for="document_title" class="col-sm-2 control-label required">Short title</label>
-          <div class="col-sm-10">
+          <label>Work</label>
+          <div class="form-text"><a href="{% url 'work' document.work.id %}" target="_blank" class="document-work-title"></a></div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-sm-8">
+            <label for="document_title" class="required">Short title</label>
             <input type="text" class="form-control" id="document_title" placeholder="Title" required>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="document_language" class="col-sm-2 control-label required">Language</label>
-          <div class="col-sm-4">
+          <div class="form-group col">
+            <label for="document_language" class="required">Language</label>
             <select id="document_language" class="form-control">
               {% for opt in languages %}
               <option value="{{ opt.language.iso_639_2B }}">{{ opt.language.name_en }}</option>
@@ -35,77 +30,62 @@
         </div>
 
         <div class="form-group">
-          <label for="document_expression_date" class="col-sm-2 control-label required">Expression date</label>
-          <div class="col-sm-4">
-            <select class="form-control" id="document_expression_date"></select>
-            <p class="help-block">Date of this version of the document, either the publication date or an amendment date</p>
-          </div>
-          <div class="col-sm-4">
-            <a href="{% url 'work_amendments' document.work.id %}" class="btn btn-link manage-amendments">Manage amendments</a>
+          <label for="document_expression_date" class="required">Expression date</label>
+
+          <div class="form-row">
+            <div class="col-sm-8">
+              <select class="form-control" id="document_expression_date"></select>
+              <p class="form-text text-muted">Date of this version of the document, either the publication date or an amendment date</p>
+            </div>
+            <div class="col">
+              <a href="{% url 'work_amendments' document.work.id %}" class="btn btn-outline-secondary manage-amendments">Manage amendments</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
 
-    <div class="panel panel-default is-form">
-      <div class="panel-heading">
-        <h3 class="panel-title">Housekeeping</h3>
-      </div>
-      <div class="panel-body">
+    <div class="card">
+      <h4 class="card-header">Housekeeping</h4>
+      <div class="card-body">
 
-        <div class="form-group">
-          <label for="document_tags" class="col-sm-2 control-label">Tags</label>
-          <div class="col-sm-4">
+        <div class="form-row">
+          <div class="form-group col-sm-4">
+            <label for="document_tags">Tags</label>
             <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
           </div>
 
-          <div class="col-sm-offset-2 col-sm-4">
-            <div class="checkbox">
-              <label>
-                <input id="document_stub" type="checkbox" value="1"> This is a stub document with limited content
-              </label>
-              <p class="help-block">{{ form.fields.stub.help_text }}</p>
-            </div>
+          <div class="form-group offset-sm-2 col-sm-6">
+            <label>
+              <input id="document_stub" type="checkbox" value="1"> This is a stub document with limited content
+            </label>
+            <p class="form-text text-muted">{{ form.fields.stub.help_text }}</p>
           </div>
         </div>
 
         <div class="form-group">
-          <div class="col-sm-offset-2 col-sm-4">
-            <div class="checkbox">
-              <label>
-                <input id="document_draft" type="checkbox" value="1"> Draft, unpublished document
-              </label>
-              <p class="help-block">{{ form.fields.draft.help_text }}</p>
-            </div>
-          </div>
+          <label>
+            <input id="document_draft" type="checkbox" value="1"> Draft, unpublished document
+          </label>
+          <p class="form-text text-muted">{{ form.fields.draft.help_text }}</p>
         </div>
 
-        <div class="form-group">
-          <div class="published-url" style="display: none">
-            <label class="col-sm-2 control-label">Published URL</label>
-            <div class="col-sm-10">
-              <div class="form-control-static"><a href="#" target="_blank" id="document_published_url"></a></div>
-            </div>
-          </div>
+        <div class="form-group published-url" style="display: none">
+          <label>Published URL</label>
+          <div class="form-text"><a href="#" target="_blank" id="document_published_url"></a></div>
         </div>
 
-        <div class="row">
-          <div class="col-sm-10 col-sm-offset-2">
-            <hr>
-          </div>
-        </div>
+        <hr>
 
-        <div class="form-group">
-          <label for="document_updated_at" class="col-sm-2 control-label">Last saved</label>
-          <div class="col-sm-4">
-            <div id="document_updated_at" class="form-control-static"></div>
+        <div class="form-row">
+          <div class="form-group col">
+            <label for="document_updated_at">Last saved</label>
+            <div id="document_updated_at" class="form-text"></div>
           </div>
-        </div>
 
-        <div class="form-group">
-          <label for="document_created_at" class="col-sm-2 control-label">First created</label>
-          <div class="col-sm-4">
-            <div id="document_created_at" class="form-control-static"></div>
+          <div class="form-group col">
+            <label for="document_created_at">First created</label>
+            <div id="document_created_at" class="form-text"></div>
           </div>
         </div>
       </div>

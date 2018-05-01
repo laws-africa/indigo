@@ -1,14 +1,12 @@
 <script id="annotation-template" type="text/x-handlebars-template">
 {% verbatim %}
 <div class="buttons pull-right">
-  <button class="btn btn-default btn-xs close-annotation" title="Mark as done"><i class="fa fa-check"></i></button>
+  <button class="btn btn-outline-secondary btn-sm close-annotation" title="Mark as done"><i class="fa fa-check"></i></button>
 
-  <div class="btn-group">
-    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></a>
-    <ul class="dropdown-menu">
-      <li><a href="#" class="edit-anntn">Edit</a></li>
-      <li><a href="#" class="delete-anntn">Delete</a></li>
-    </ul>
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
+  <div class="dropdown-menu">
+    <a href="#" class="dropdown-item edit-anntn">Edit</a>
+    <a href="#" class="dropdown-item delete-anntn">Delete</a>
   </div>
 </div>
 
@@ -22,6 +20,6 @@
 
 <div id="new-annotation-template" style="display: none">
   <textarea class="form-control" placeholder="Comment..."></textarea>
-  <button class="btn btn-info btn-sm save" disabled>Comment</button>
-  <button class="btn btn-default btn-sm pull-right cancel">Cancel</button>
+  <button class="btn btn-primary btn-sm save" disabled>Comment</button>
+  <button class="btn btn-outline-secondary btn-sm pull-right cancel">Cancel</button>
 </div>

@@ -258,7 +258,7 @@ button.btn-link.help {
 
 .boxed-group-header,
 .workspace-header {
-  h1, h2, h3, h4 {
+  h1, h2, h3, h4, h5 {
     line-height: 1.5;
     margin: 4px;
     text-overflow: ellipsis;
@@ -274,14 +274,11 @@ button.btn-link.help {
   .text-editor-buttons {
     display: none;
     padding-right: 5px;
-    .help {
-      font-size: 20px;
-    }
   }
 
   &.show-text-editor {
     .text-editor-buttons {
-      display: block;
+      display: inline-flex;
     }
   }
 }
@@ -312,7 +309,7 @@ button.btn-link.help {
     }
 
     a:hover {
-      color: $yellow;
+      color: $primary;
       text-decoration: none;
     }
   }

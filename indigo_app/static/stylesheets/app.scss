@@ -1064,7 +1064,7 @@ legend {
     content: "";
     display: block;
     position: absolute;
-    left: 140px;
+    left: 141px;
     top: 20px;
     bottom: 40px;
     width: 4px;
@@ -1075,9 +1075,10 @@ legend {
   &> li {
     position: relative;
     margin-left: 40px;
-    background-color: $grey-lighter;
+    background-color: $white;
     padding: 10px 10px;
     margin-bottom: 15px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
 
     &> h5 {
       margin-top: 0px;
@@ -1087,35 +1088,6 @@ legend {
     .date {
       position: absolute;
       left: -130px;
-    }
-
-    &.current {
-      border: 1px solid $blue;
-      background-color: $grey;
-
-      .date::before {
-        content: " ";
-        display: block;
-        position: absolute;
-        top: -1px;
-        left: 98px;
-        width: 0;
-        height: 0;
-        border-color: transparent $blue transparent transparent;
-        border-width: 11px;
-        border-style: solid;
-        z-index: 0;
-      }
-
-      &::before {
-        border-color: $blue;
-        background-color: $blue;
-        left: -38px;
-      }
-
-      &::after {
-        border-right-color: $grey;
-      }
     }
 
     &::before {
@@ -1139,7 +1111,7 @@ legend {
       width: 0;
       height: 0;
       position: absolute;
-      border-right-color: $grey-lighter;
+      border-right-color: $white;
       border-width: 10px;
       top: 10px;
       left: -20px;

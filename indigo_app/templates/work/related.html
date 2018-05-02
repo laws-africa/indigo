@@ -8,37 +8,22 @@
   {% endif %}
 
   {% if family %}
-    <div class="card mb-3">
-      <h5 class="card-header">Parents and children</h5>
-      {% include 'work/_related_table.html' with items=family %}
-    </div>
+    {% include 'work/_related_table.html' with items=family title="Parents and children" %}
   {% endif %}
 
   {% if repeals %}
-    <div class="card mb-3">
-      <h5 class="card-header">Repeals</h5>
-      {% include 'work/_related_table.html' with items=repeals %}
-    </div>
+    {% include 'work/_related_table.html' with items=repeals title="Repeals" %}
   {% endif %}
 
   {% if commencement %}
-    <div class="card mb-3">
-      <h5 class="card-header">Commencement</h5>
-      {% include 'work/_related_table.html' with items=commencement %}
-    </div>
+    {% include 'work/_related_table.html' with items=commencement title="Commencement" %}
   {% endif %}
 
   {% if amended %}
-    <div class="card mb-3">
-      <h5 class="card-header">Works amended by this work</h5>
-      {% include 'work/_related_table.html' with items=amended %}
-    </div>
+    {% include 'work/_related_table.html' with items=amended title="Works amended by this work" %}
   {% endif %}
 
   {% if amended_by %}
-    <div class="card mb-3">
-      <h5 class="card-header">Works amending this work</h5>
-      {% include 'work/_related_table.html' with items=amended_by %}
-    </div>
+    {% include 'work/_related_table.html' with items=amended_by title="Works amending this work"%}
   {% endif %}
 {% endblock %}

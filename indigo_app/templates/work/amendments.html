@@ -4,7 +4,7 @@
 
 {% block subnav %}
   {% if perms.indigo_api.can_change_amendment %}
-  <button class="btn btn-info save-work pull-right" type="button">Save</button>
+  <button class="btn btn-success save-work pull-right" type="button">Save</button>
   {% endif %}
   {{ block.super }}
 {% endblock %}

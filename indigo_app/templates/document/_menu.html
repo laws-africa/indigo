@@ -8,8 +8,8 @@
         <a class="dropdown-item clone-document" href="#">Make a Copy</a>
         <div role="separator" class="divider"></div>
         <a class="dropdown-item revisions" href="#">Recent Changes</a>
-        <div class="dropdown-item dropdown-submenu">
-          <div href="#">Download As</div>
+        <div class="dropdown-submenu">
+          <a href="#" class="dropdown-item">Download As</a>
           <div class="dropdown-menu">
             <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a>
             <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a>

@@ -482,7 +482,6 @@ legend {
     border: 5px dashed $border-colour;
     text-align: center;
     padding: 25px;
-    margin-bottom: 25px;
 
     &.incoming {
       background-color: $grey-lighter;
@@ -512,8 +511,7 @@ legend {
     background-color: $selection-colour;
   }
 
-  section {
-    margin-bottom: 25px;
+  .card {
     position: relative;
 
     &.numbered::before {
@@ -521,7 +519,7 @@ legend {
       display: block;
       position: absolute;
       left: -45px;
-      top: -7px;
+      top: 5px;
       width: 35px;
       height: 35px;
       padding-top: 2px;
@@ -544,7 +542,7 @@ legend {
     overflow-x: scroll;
     overflow-y: hidden;
     padding: 5px;
-    background: $grey-lighter;
+    background: $grey;
 
     // spinner waiting for first page
     &:empty::after {

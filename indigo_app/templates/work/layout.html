@@ -7,24 +7,26 @@
 <div class="work-view">
   <header class="main-header container-fluid">
     <ul class="breadcrumb text-muted">
-      <li><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
+      <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
       {% if locality %}
-      <li><a class="work-locality" href="{% url 'library' %}?country={{ country.code}}&locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+      <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' %}?country={{ country.code}}&locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
       {% endif %}
-      <li class="work-frbr-uri">{{ work.frbr_uri }}</li>
+      {% if work %}
+      <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
+      {% endif %}
     </ul>
 
-    <h4 class="work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>
+    <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
 
     <nav class="sub-nav">
       {% block subnav %}
       <ul class="nav nav-pills">
         {% if work %}
-          <li {% if view == 'WorkView' %}class="active"{% endif %}><a href="{% url 'work' work_id=work.id %}">Work Details</a></li>
-          <li {% if view == 'WorkAmendmentsView' %}class="active"{% endif %}><a href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
-          <li {% if view == '' %}class="active"{% endif %}><a href="{% url 'work_related' work_id=work.id %}">Related Works</a></li>
+          <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' work_id=work.id %}">Work Details</a></li>
+          <li class="nav-item"><a class="nav-link {% if view == 'WorkAmendmentsView' %}active{% endif %}" href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
+          <li class="nav-item"><a class="nav-link {% if view == '' %}active{% endif %}" href="{% url 'work_related' work_id=work.id %}">Related Works</a></li>
         {% else %}
-          <li class="active"><a href="#">Work Details</a></li>
+          <li class="nav-item"><a class="nav-link active" href="#">Work Details</a></li>
         {% endif %}
       </ul>
       {% endblock %}

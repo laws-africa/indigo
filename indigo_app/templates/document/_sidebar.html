@@ -1,11 +1,10 @@
 <div class="sidebar">
-  <ul class="nav nav-pills nav-stacked">
-    <li class="active"><a href="#props-tab" data-toggle="tab"><i class="fa fa-fw fa-cog"></i> Document Details</a></li>
-    <li><a href="#amendments-tab" data-toggle="tab"><i class="fa fa-fw fa-edit"></i> Amended Versions <span class="badge badge-default amendment-count"></span></a></li>
-    <li><a href="#attachments-tab" data-toggle="tab"><i class="fa fa-fw fa-paperclip"></i> Attachments <span class="badge badge-default attachment-count"></span></a></li>
-    <li><a href="#preview-tab" data-toggle="tab"><i class="fa fa-fw fa-search-plus"></i> Preview</a></li>
+  <ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link active" href="#props-tab" data-toggle="tab"><i class="fa fa-fw fa-cog"></i> Document Details</a></li>
+    <li class="nav-item"><a class="nav-link" href="#attachments-tab" data-toggle="tab"><i class="fa fa-fw fa-paperclip"></i> Attachments <span class="badge badge-secondary badge-pill attachment-count"></span></a></li>
+    <li class="nav-item"><a class="nav-link" href="#preview-tab" data-toggle="tab"><i class="fa fa-fw fa-search-plus"></i> Preview</a></li>
     <!-- this tab is always hidden -->
-    <li class="hidden"><a href="#content-tab" data-toggle="tab">Content</a></li>
+    <li class="nav-item d-none"><a class="nav-link" href="#content-tab" data-toggle="tab">Content</a></li>
   </ul>
 
   <div id="toc" class="toc"></div>
@@ -13,7 +12,7 @@
   {% verbatim %}
   <ol>
     {{#each toc}}
-    <li class="toc-item akn-{{ type }}" title="{{ title }}">
+    <li class="toc-item akn-{{ type }}">
       <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
     </li>
     {{/each}}

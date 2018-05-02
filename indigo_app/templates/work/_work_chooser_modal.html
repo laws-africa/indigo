@@ -2,15 +2,15 @@
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
+        <h5 class="modal-title">Choose a work</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title">Choose a work</h4>
       </div>
 
-      <div class="panel panel-default">
-        <div class="panel-heading">
+      <div class="card">
+        <div class="card-header">
           <div class="row">
 
-            <div class="col-xs-3">
+            <div class="col-3">
               <select class="form-control work-chooser-country">
                 {% for country in countries %}
                 <option value="{{ country.code }}">{{ country }}</option>
@@ -18,17 +18,12 @@
               </select>
             </div>
 
-            <div class="col-xs-3">
+            <div class="col-3">
               <select class="form-control work-chooser-locality"></select>
             </div>
 
-            <div class="col-xs-4 col-xs-offset-2">
-              <div class="input-group">
-                <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
-                <div class="input-group-btn">
-                  <button class="work-chooser-search-clear btn btn-default"><strong>&times;</strong></button>
-                </div>
-              </div>
+            <div class="col-4 col-offset-2">
+              <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
             </div>
 
           </div>
@@ -37,8 +32,8 @@
       </div>
 
       <div class="modal-footer">
-        <a href="/works/new" class="btn btn-link pull-left">Create a new work</a>
-        <a href="#" class="btn btn-link" data-dismiss="modal">Cancel</a>
+        <a href="/works/new" class="btn btn-link">Create a new work</a>
+        <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</a>
         <input type="submit" class="btn btn-primary choose-work" value="OK">
       </div>
 
@@ -50,7 +45,7 @@
 <script id="work-chooser-table-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-hover work-list-table">
+<table class="table table-sm table-hover work-list-table">
   <thead>
     <tr>
       <th class="year">Year</th>
@@ -60,7 +55,7 @@
   </thead>
   <tbody>
     {{#each works}}
-      <tr data-id="{{ id }}" class="{{#if chosen }}info chosen{{/if}}">
+      <tr data-id="{{ id }}" class="{{#if chosen }}table-primary chosen{{/if}}">
         <td>{{ year }}</td>
         <td>{{ title }}</td>
         <td class="frbr_uri">{{ frbr_uri }}</td>

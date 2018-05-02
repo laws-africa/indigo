@@ -261,7 +261,7 @@
         var parent = this.model.get('parent_work');
 
         this.$('#work_parent_work')
-          .removeClass('hidden')
+          .show('hidden')
           .find('.work_parent_title')
             .text(parent.get('title'))
             .attr('href', '/works/' + parent.get('id'))
@@ -269,7 +269,7 @@
           .find('.work_parent_uri')
             .text(parent.get('frbr_uri'));
       } else {
-        this.$('#work_parent_work').addClass('hidden');
+        this.$('#work_parent_work').hide();
       }
     },
 

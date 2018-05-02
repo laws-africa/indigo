@@ -74,12 +74,12 @@
       // menu events
       this.$menu = $('.workspace-header .menu');
       this.$menu
-        .on('click', '.edit-find a', _.bind(this.editFind, this))
-        .on('click', '.edit-find-next a', _.bind(this.editFindNext, this))
-        .on('click', '.edit-find-previous a', _.bind(this.editFindPrevious, this))
-        .on('click', '.edit-find-replace a', _.bind(this.editFindReplace, this))
-        .on('click', '.edit-insert-image a', _.bind(this.insertImage, this))
-        .on('click', '.edit-insert-table a', _.bind(this.insertTable, this));
+        .on('click', '.edit-find', _.bind(this.editFind, this))
+        .on('click', '.edit-find-next', _.bind(this.editFindNext, this))
+        .on('click', '.edit-find-previous', _.bind(this.editFindPrevious, this))
+        .on('click', '.edit-find-replace', _.bind(this.editFindReplace, this))
+        .on('click', '.edit-insert-image', _.bind(this.insertImage, this))
+        .on('click', '.edit-insert-table', _.bind(this.insertTable, this));
     },
 
     fullEdit: function(e) {
@@ -495,7 +495,7 @@
       this.stopEditing()
         .then(function() {
           if (item) {
-            self.$el.find('.boxed-group-header h4').text(item.title);
+            self.$el.find('.boxed-group-header h5').text(item.title);
             self.editFragment(item.element);
           }
         });
@@ -553,9 +553,8 @@
 
       this.stopEditing()
         .then(function() {
-          self.$el.find('.sheet-editor').addClass('in');
+          self.$el.find('.sheet-editor').addClass('show');
           self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
-          self.$el.find('.btn.edit-text').addClass('btn-warning').removeClass('btn-default');
           self.activeEditor = self.sourceEditor;
           self.editFragment(self.fragment);
         });

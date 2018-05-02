@@ -1,12 +1,12 @@
-$grey-lightest: #f5f5f5;
-$grey-lighter: #eee;
-$grey: #ddd;
-$grey-darker: #ccc;
-$grey-darkest: #aaa;
+@import "bootstrap-variables";
 
-$orange: #f0ad4e;
-$blue: #5bc0de;
-$link-active: #337ab7;
+@import 'lib/bootstrap-4.1.0/scss/bootstrap';
+
+$grey-lightest: $gray-100;
+$grey-lighter: $gray-200;
+$grey: $gray-300;
+$grey-darker: $gray-400;
+$grey-darkest: $gray-500;
 
 $border-colour: $grey;
 $workspace-header-colour: white;
@@ -15,19 +15,13 @@ $header-colour2: $grey-lighter;
 
 $navbar-height: 50px;
 $header-height: 45px;
-$workspace-header-height: 85px;
+$workspace-header-height: 90px;
 
 $sidebar-width: 260px;
 $sidebar-colour: $grey-lighter;
 
-$font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
-$font-size: 14px;
-$font-colour: #333;
 $selection-colour: #b2d8fc;
 
-
-@import 'bower_components/bootstrap/dist/css/bootstrap.min';
-@import 'bower_components/bootstrap/dist/css/bootstrap-theme.min';
 @import 'bower_components/fontawesome/css/font-awesome';
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';
 @import 'select2-4.0.0.min';
@@ -39,8 +33,8 @@ html, body {
   min-height: 100%;
 }
 
-.label-default {
-  background-color: $grey-darkest;
+body {
+  background-color: #e4e5e6;
 }
 
 /* permissions-based styles */
@@ -59,10 +53,6 @@ body.is-staff {
   .requires-staff { display: block; }
 }
 
-.form-group {
-  margin-bottom: 10px;
-}
-
 .high {
   height: 100%;
 }
@@ -73,36 +63,61 @@ fieldset {
 
 /* navbar */
 .navbar {
+  .navbar-brand {
+    padding: 0px;
+  }
+
   .navbar-brand > img {
-    margin-top: -10px;
-    margin-left: -10px;
+    margin: -10px 10px -10px 0px;
     height: 40px;
   }
+
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+  background-color: $gray-100;
 }
 
 /* breadcrumbs */
-.breadcrumb {
-  padding: 0px;
-  margin-bottom: 10px;
-  background-color: transparent;
+.main-header {
+  background-color: $white;
+  border-bottom: 1px solid $gray-300;
 
-  & > li + li:before {
-    content: "≫\0a0";
+  .breadcrumb {
+    margin: 0px 0px 5px 0px;
+    padding: 5px 0px 0px 0px;
+    background-color: transparent;
+
+    & > li + li:before {
+      content: "≫\0a0";
+    }
+
+    .expressions {
+      position: relative;
+    }
   }
 
-  .expressions {
-    position: relative;
+  .main-header-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
   }
+
+  .main-header-menu {
+    margin-top: -5px;
+  }
+}
+
+/* dropdowns */
+.dropdown-menu {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175)
 }
 
 /* main content, in partnership with navbar */
 .navbar ~ .main-container {
-  padding-top: 60px;
+  padding-top: $navbar-height;
   padding-bottom: 50px;
 }
 
 .main-header ~ .main-content {
-  border-top: 1px solid $workspace-header-border-colour;
   padding-top: 10px;
 }
 
@@ -119,28 +134,14 @@ fieldset {
 
     height: $workspace-header-height;
     width: 100%;
-    padding: 5px;
     background-color: $workspace-header-colour;
     border-bottom: 1px solid $workspace-header-border-colour;
-
-    .workspace-title {
-      padding-left: 5px;
-
-      h4 {
-        margin: 0px;
-      }
-    }
-
-    .breadcrumb {
-      padding: 0px 5px 0px 5px;
-      margin-bottom: 2px;
-    }
   }
 
   .workspace-buttons {
     position: absolute;
     bottom: 5px;
-    right: 5px;
+    right: 15px;
   }
 
   .workspace-body {
@@ -238,7 +239,7 @@ button.btn-link.help {
   color: $grey-darkest;
 
   &:hover {
-    color: $link-active;
+    color: $link-hover-color;
   }
 }
 
@@ -261,9 +262,8 @@ button.btn-link.help {
   top: $header-height;
 }
 
-.boxed-group-header,
-.workspace-header {
-  h1, h2, h3, h4 {
+.boxed-group-header {
+  h1, h2, h3, h4, h5 {
     line-height: 1.5;
     margin: 4px;
     text-overflow: ellipsis;
@@ -279,14 +279,11 @@ button.btn-link.help {
   .text-editor-buttons {
     display: none;
     padding-right: 5px;
-    .help {
-      font-size: 20px;
-    }
   }
 
   &.show-text-editor {
     .text-editor-buttons {
-      display: block;
+      display: inline-flex;
     }
   }
 }
@@ -317,7 +314,7 @@ button.btn-link.help {
     }
 
     a:hover {
-      color: $orange;
+      color: $primary;
       text-decoration: none;
     }
   }
@@ -418,11 +415,11 @@ legend {
 
 /* make document sheets look like paper */
 .sheet-outer {
-  background: $grey-darkest;
+  background: $gray-300;
   padding: 20px;
 
   .sheet-inner {
-    border: 1px solid $grey-darkest;
+    border: 1px solid $gray-400;
     box-shadow: 0 0 10px #888;
     background: white;
   }
@@ -454,7 +451,7 @@ legend {
 
 /* overrides for indigo inserts into akoma-ntoso trees */
 .akoma-ntoso .ig {
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-family: $font-family-base;
   font-size: 14px;
   color: #333;
 }
@@ -484,7 +481,7 @@ legend {
     width: 100%;
     border: 5px dashed $border-colour;
     text-align: center;
-    padding-bottom: 25px;
+    padding: 25px;
     margin-bottom: 25px;
 
     &.incoming {
@@ -498,8 +495,10 @@ legend {
 
   .example {
     padding: 1px 8px;
+    margin: -20px 0px 0px 20px;
     background: $grey-lighter;
     border-radius: 5px;
+    cursor: pointer;
     h5 {
       font-weight: bold;
     }
@@ -635,7 +634,7 @@ legend {
 /* table of contents browser */
 .toc {
   position: absolute;
-  top: 105px;
+  top: 80px;
   left: 0px;
   right: 0px;
   bottom: 0px;
@@ -663,13 +662,11 @@ legend {
 
       &.active,
       &.active:hover {
-        border-radius: 5px;
-        background-color: $link-active;
+        background-color: $link-color;
         color: white;
       }
 
       &:hover {
-        border-radius: 5px;
         background-color: $grey-lighter;
       }
     }
@@ -693,7 +690,8 @@ legend {
 
 /* library */
 #library-view {
-  padding-top: 50px;
+  padding-top: $navbar-height;
+  padding-bottom: 0px;
 
   .filter-tag {
     display: inline-block;
@@ -764,7 +762,8 @@ legend {
   }
 
   #library {
-    padding-top: 50px;
+    padding-top: 45px;
+    background-color: white;
 
     & > table {
       margin-bottom: 0px;
@@ -973,7 +972,7 @@ legend {
 }
 
 .fa.draft {
-  color: $orange;
+  color: $yellow;
 }
 
 .fa.published {
@@ -1065,7 +1064,7 @@ legend {
     content: "";
     display: block;
     position: absolute;
-    left: 140px;
+    left: 141px;
     top: 20px;
     bottom: 40px;
     width: 4px;
@@ -1076,47 +1075,19 @@ legend {
   &> li {
     position: relative;
     margin-left: 40px;
-    background-color: $grey-lighter;
+    background-color: $white;
     padding: 10px 10px;
     margin-bottom: 15px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
 
     &> h5 {
       margin-top: 0px;
       font-weight: bold;
-
-      &.date {
-        position: absolute;
-        left: -120px;
-      }
     }
 
-    &.current {
-      border: 1px solid $blue;
-      background-color: $grey;
-
-      h5.date::before {
-        content: " ";
-        display: block;
-        position: absolute;
-        top: -1px;
-        left: 98px;
-        width: 0;
-        height: 0;
-        border-color: transparent $blue transparent transparent;
-        border-width: 11px;
-        border-style: solid;
-        z-index: 0;
-      }
-
-      &::before {
-        border-color: $blue;
-        background-color: $blue;
-        left: -38px;
-      }
-
-      &::after {
-        border-right-color: $grey;
-      }
+    .date {
+      position: absolute;
+      left: -130px;
     }
 
     &::before {
@@ -1140,7 +1111,7 @@ legend {
       width: 0;
       height: 0;
       position: absolute;
-      border-right-color: $grey-lighter;
+      border-right-color: $white;
       border-width: 10px;
       top: 10px;
       left: -20px;
@@ -1220,7 +1191,7 @@ legend {
     &.focused,
     &:hover {
       a.dropdown-toggle {
-        color: $font-colour;
+        color: $body-color;
       }
     }
 
@@ -1333,9 +1304,9 @@ body.unauthenticated .annotations-container {
   }
 }
 
-.control-label.required::after {
+label.required::after {
   content: " *";
-  color: red;
+  color: $danger;
 }
 
 #document-activity-view {
@@ -1371,11 +1342,6 @@ body.unauthenticated .annotations-container {
 }
 
 .work-view {
-  .work-title {
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-
   h5.work-frbr-uri {
     margin-top: 0px;
   }

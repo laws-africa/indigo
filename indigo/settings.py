@@ -202,7 +202,7 @@ PIPELINE = {
                 'bower_components/underscore/underscore-min.js',
                 'bower_components/backbone/backbone.js',
                 'bower_components/backbone.stickit/backbone.stickit.js',
-                'bower_components/bootstrap/dist/js/bootstrap.min.js',
+                'lib/bootstrap-4.1.0/js/bootstrap.bundle.min.js',
                 'bower_components/handlebars/handlebars.min.js',
                 'bower_components/moment/min/moment.min.js',
                 'bower_components/moment/locale/en-gb.js',

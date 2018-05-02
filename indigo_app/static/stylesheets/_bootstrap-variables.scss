@@ -1,0 +1,31 @@
+// Typography
+$font-size-base: .875rem;
+
+// Options
+$enable-rounded: false !default;
+$breadcrumb-divider: quote("≫");
+
+// Colours
+$gray-base: #181b1e !default;
+$gray-100:  #f0f3f5 !default; // lighten($gray-base, 85%);
+$gray-200:  #e4e7ea !default; // lighten($gray-base, 80%);
+$gray-300:  #c8ced3 !default; // lighten($gray-base, 70%);
+$gray-400:  #acb4bc !default; // lighten($gray-base, 60%);
+$gray-500:  #8f9ba6 !default; // lighten($gray-base, 50%);
+$gray-600:  #73818f !default; // lighten($gray-base, 40%);
+$gray-700:  #5c6873 !default; // lighten($gray-base, 30%);
+$gray-800:  #2f353a !default; // lighten($gray-base, 10%);
+$gray-900:  #23282c !default; // lighten($gray-base, 5%);
+
+$card-cap-bg: $gray-100;
+$card-border-color: $gray-300;
+
+$blue: #2d7ad4;
+$red: #f44336;
+$green: #439f78;
+$cyan: #8183A8;
+$yellow: #c08f40;
+
+$primary: $blue;
+
+$spacer: $font-size-base;

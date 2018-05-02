@@ -32,7 +32,7 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-hover document-list-table sorted-table">
+<table class="table table-sm table-hover document-list-table sorted-table">
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
@@ -74,11 +74,11 @@
             {{/if}}
 
             {{#if stub}}
-              <span class="label label-info">stub</span>
+              <span class="badge badge-info">stub</span>
             {{/if}}
 
             {{#each tags}}
-              <span class="label label-default">{{this}}</span>
+              <span class="badge badge-secondary">{{this}}</span>
             {{/each}}
           </td>
           <td>{{#if @first}}{{ year }} / {{ number }}{{/if}}</td>
@@ -128,8 +128,8 @@
 </section>
 
 <section>
-  <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-default btn-sm {{#if filter_status.all}}active{{/if}}">
+  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-sm {{#if filter_status.all}}btn-secondary active{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
     </label>
     <label class="btn btn-sm {{#if filter_status.published}}btn-info active{{else}}btn-default{{/if}}">
@@ -143,7 +143,7 @@
 
 <section class="tag-filters">
   {{#each summary.tags}}
-  <a href="#" class="label {{#if active}}label-info{{else}}label-default{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
+  <a href="#" class="badge {{#if active}}badge-info{{else}}badge-secondary{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge badge-pill badge-light">{{this.count}}</span></a>
   {{/each}}
 </section>
 {% endverbatim %}

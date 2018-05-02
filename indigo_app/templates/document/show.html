@@ -5,35 +5,35 @@
 
 {% block content %}
 <div class="workspace" data-document-id="{{ document.id|default:"" }}">
-  <header class="workspace-header">
+  <header class="main-header container-fluid workspace-header">
     <ul class="breadcrumb text-muted">
-      <li>&nbsp;</li>
+      <li class="breadcrumb-item">&nbsp;</li>
     </ul>
     <div class="workspace-title">
-      <h4 class="document-title">{{ document.title }}</h4>
+      <h5 class="main-header-title document-title">{{ document.title }}</h5>
     </div>
 
     <script id="breadcrumb-template" type="text/x-handlebars-template">
     {% verbatim %}
-      <li><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+      <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
       {{#if locality}}
-      <li><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+      <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
       {{/if}}
-      <li><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
-      <li class="expressions">
-        <a href="#" data-toggle="dropdown">{{ document.expression_date }} <span class="caret"></span></a>
-        <ul class="dropdown-menu">
+      <li class="breadcrumb-item"><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+      <li class="breadcrumb-item expressions">
+        <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
+        <div class="dropdown-menu">
           {{#each expressions}}
             {{#each documents}}
-              <li {{#if current}}class="disabled"{{/if}}><a href="/documents/{{ id }}">
+              <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
                 {{ ../date }}
                 {{#if current}} - this document{{/if}}
-              </a></li>
+              </a>
             {{/each}}
           {{/each}}
-          <li role="separator" class="divider"></li>
-          <li><a href="/works/{{ work.id }}/amendments/">Manage amendments...</a></li>
-        </ul>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/works/{{ work.id }}/amendments/">Manage amendments...</a>
+        </div>
       </li>
     {% endverbatim %}
     </script>
@@ -41,7 +41,7 @@
     {% include 'document/_menu.html' %}
 
     <div class="workspace-buttons">
-      <button class="btn btn-default save" disabled><i class="fa fa-save"></i> Save</button>
+      <button class="btn btn-success save" disabled><i class="fa fa-save"></i> Save</button>
       <div id="document-activity-view"></div>
 
       <script id="document-activity-template" type="text/x-handlebars-template">
@@ -67,10 +67,6 @@
       <div class="tab-content high">
         <div id="props-tab" class="tab-pane active high">
           {% include "document/_properties.html" %}
-        </div>
-
-        <div id="amendments-tab" class="tab-pane high">
-          {% include "document/_amendments.html" %}
         </div>
 
         <div id="attachments-tab" class="tab-pane high">

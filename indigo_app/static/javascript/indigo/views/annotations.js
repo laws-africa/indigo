@@ -101,8 +101,8 @@
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
-        .append('<button class="btn btn-info btn-sm save">Save</button>')
-        .append('<button class="btn btn-default btn-sm unedit pull-right">Cancel</button>')
+        .append('<button class="btn btn-primary btn-sm save">Save</button>')
+        .append('<button class="btn btn-outline-secondary btn-sm unedit pull-right">Cancel</button>')
         .find('.content')
         .replaceWith($textarea);
 
@@ -162,7 +162,7 @@
 
       $('<div class="annotation reply-container">')
         .append('<textarea class="form-control reply-box" placeholder="Reply...">')
-        .append('<button class="btn btn-info btn-sm post hidden" disabled>Reply</button>')
+        .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
         .appendTo(this.el);
     },
 

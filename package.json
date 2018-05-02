@@ -1,0 +1,28 @@
+{
+  "name": "indigo",
+  "version": "3.0.0",
+  "description": "Indigo is a Django application for working with Akoma Ntoso legislation.",
+  "main": "",
+  "directories": {
+    "doc": "docs"
+  },
+  "dependencies": {
+    "bower": "^1.8.0",
+    "bootstrap": "^4.1.0",
+    "yarn": "^1.6.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "python manage.py test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OpenUpSA/indigo.git"
+  },
+  "author": "Greg Kempe (greg@openup.org.za)",
+  "license": "LGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/OpenUpSA/indigo/issues"
+  },
+  "homepage": "https://github.com/OpenUpSA/indigo#readme"
+}

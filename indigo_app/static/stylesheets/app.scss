@@ -15,7 +15,7 @@ $header-colour2: $grey-lighter;
 
 $navbar-height: 50px;
 $header-height: 45px;
-$workspace-header-height: 85px;
+$workspace-header-height: 90px;
 
 $sidebar-width: 260px;
 $sidebar-colour: $grey-lighter;
@@ -94,6 +94,16 @@ fieldset {
       position: relative;
     }
   }
+
+  .main-header-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
+
+  .main-header-menu {
+    margin-top: -5px;
+  }
 }
 
 /* dropdowns */
@@ -124,28 +134,14 @@ fieldset {
 
     height: $workspace-header-height;
     width: 100%;
-    padding: 5px;
     background-color: $workspace-header-colour;
     border-bottom: 1px solid $workspace-header-border-colour;
-
-    .workspace-title {
-      padding-left: 5px;
-
-      h4 {
-        margin: 0px;
-      }
-    }
-
-    .breadcrumb {
-      padding: 0px 5px 0px 5px;
-      margin-bottom: 2px;
-    }
   }
 
   .workspace-buttons {
     position: absolute;
     bottom: 5px;
-    right: 5px;
+    right: 15px;
   }
 
   .workspace-body {
@@ -266,8 +262,7 @@ button.btn-link.help {
   top: $header-height;
 }
 
-.boxed-group-header,
-.workspace-header {
+.boxed-group-header {
   h1, h2, h3, h4, h5 {
     line-height: 1.5;
     margin: 4px;

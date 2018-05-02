@@ -13,7 +13,7 @@ $workspace-header-colour: white;
 $workspace-header-border-colour: $grey-darker;
 $header-colour2: $grey-lighter;
 
-$navbar-height: 55px;
+$navbar-height: 50px;
 $header-height: 45px;
 $workspace-header-height: 85px;
 
@@ -63,11 +63,17 @@ fieldset {
 
 /* navbar */
 .navbar {
+  .navbar-brand {
+    padding: 0px;
+  }
+
   .navbar-brand > img {
-    margin-top: -10px;
-    margin-left: -10px;
+    margin: -10px 10px -10px 0px;
     height: 40px;
   }
+
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+  background-color: $gray-100;
 }
 
 /* breadcrumbs */

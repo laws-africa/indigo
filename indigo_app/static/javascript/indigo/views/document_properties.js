@@ -50,34 +50,6 @@
         observe: 'stub',
         onSet: bool,
       },
-      '#document_updated_at': {
-        observe: 'updated_at',
-        onGet: function(value, options) {
-          if (value) {
-            value = moment(value).calendar();
-            if (this.model.get('updated_by_user')) {
-              value += ' by ' + this.model.get('updated_by_user').display_name;
-            }
-            return value;
-          } else {
-            return "";
-          }
-        }
-      },
-      '#document_created_at': {
-        observe: 'created_at',
-        onGet: function(value, options) {
-          if (value) {
-            value = moment(value).calendar();
-            if (this.model.get('created_by_user')) {
-              value += ' by ' + this.model.get('created_by_user').display_name;
-            }
-            return value;
-          } else {
-            return "";
-          }
-        }
-      },
     },
 
     initialize: function() {

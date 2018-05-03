@@ -20,12 +20,19 @@ $gray-900:  #23282c !default; // lighten($gray-base, 5%);
 $card-cap-bg: $gray-100;
 $card-border-color: $gray-300;
 
+$white: #fff;
 $blue: #2d7ad4;
 $red: #f44336;
 $green: #439f78;
 $cyan: #8183A8;
 $yellow: #c08f40;
+$indigo: #305fa1;
 
 $primary: $blue;
 
 $spacer: $font-size-base;
+
+// navbar
+$navbar-dark-color:                 rgba($white, .8);
+$navbar-dark-hover-color:           rgba($white, .9);
+$navbar-dark-disabled-color:        rgba($white, .5);

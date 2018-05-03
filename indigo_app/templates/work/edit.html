@@ -3,14 +3,14 @@
 {% block view-id %}edit-work-view{% endblock %}
 
 {% block subnav %}
-  {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+  {% if work and perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
   <button class="btn btn-success save pull-right" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
   {% endif %}
   {{ block.super }}
 {% endblock %}
 
 {% block work-content %}
-  {% if work and perms.indigo_api.can_change_work or not work and perms.indigo_api.can_create_work %}
+  {% if work and perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
   {% else %}
   <div class="alert alert-danger">You don't have permission to create or change a work.</div>
   {% endif %}
@@ -167,7 +167,7 @@
       This work cannot be deleted while <a href="{% url 'work_amendments' work.id %}">linked documents</a>
       and <a href="{% url 'work_related' work.id %}">related works</a> exist.
     </p>
-    {% elif perms.indigo_api.can_delete_work %}
+    {% elif perms.indigo_api.delete_work %}
       <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
     {% endif %}
   {% endif %}

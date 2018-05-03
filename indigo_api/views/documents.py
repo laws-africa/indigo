@@ -168,7 +168,7 @@ class DocumentResourceView(object):
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
-    permission_classes = (IsAuthenticated, AnnotationPermissions)
+    permission_classes = (IsAuthenticated, DjangoModelPermissions, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()

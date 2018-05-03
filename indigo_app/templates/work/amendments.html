@@ -3,7 +3,7 @@
 {% block view-id %}work-amendments-view{% endblock %}
 
 {% block subnav %}
-  {% if perms.indigo_api.can_change_amendment %}
+  {% if perms.indigo_api.change_amendment %}
   <button class="btn btn-success save-work pull-right" type="button">Save</button>
   {% endif %}
   {{ block.super }}

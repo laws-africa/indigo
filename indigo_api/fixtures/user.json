@@ -17,7 +17,10 @@
                 ["delete_document", "indigo_api", "document"],
                 ["add_work", "indigo_api", "work"],
                 ["change_work", "indigo_api", "work"],
-                ["delete_work", "indigo_api", "work"]
+                ["delete_work", "indigo_api", "work"],
+                ["add_annotation", "indigo_api", "annotation"],
+                ["change_annotation", "indigo_api", "annotation"],
+                ["delete_annotation", "indigo_api", "annotation"]
             ],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "email": "email@example.com",

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from languages_plus.models import Language as MasterLanguage
@@ -97,6 +97,16 @@ class Publication(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+
+@receiver(pre_save, sender=User)
+def set_user_email(sender, **kwargs):
+    # ensure the user's username and email match
+    user = kwargs["instance"]
+    if user.email:
+        user.username = user.email
+    else:
+        user.email = user.username
 
 
 @receiver(post_save, sender=User)

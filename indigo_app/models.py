@@ -105,6 +105,8 @@ def create_editor(sender, **kwargs):
     user = kwargs["instance"]
     if not hasattr(user, 'editor'):
         editor = Editor(user=user)
+        # ensure there is a country
+        editor.country = Country.objects.first()
         editor.save()
 
 

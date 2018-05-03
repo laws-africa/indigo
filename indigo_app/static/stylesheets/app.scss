@@ -87,7 +87,7 @@ fieldset {
     background-color: transparent;
 
     & > li + li:before {
-      content: "≫\0a0";
+      content: "›";
     }
 
     .expressions {

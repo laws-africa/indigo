@@ -26,14 +26,6 @@
 
       document.title = html;
 
-      if (this.model.get('draft')) {
-        html = html + ' <span class="badge badge-warning">draft</span>';
-      } else {
-        html = html + ' <span class="badge badge-info">published</span>';
-      }
-
-      this.$('.document-title').html(html);
-      
       // breadcrumb
       var country = Indigo.countries[this.model.get('country')],
           locality = this.model.get('locality'),
@@ -94,6 +86,8 @@
     events: {
       'click .menu .dropdown-submenu > a': 'stopMenuClick',
       'click .workspace-buttons .btn.save': 'save',
+      'click .workspace-buttons .save-and-publish': 'saveAndPublish',
+      'click .workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
       'click .menu .save': 'save',
       'click .menu .delete-document': 'delete',
       'click .menu .clone-document': 'clone',
@@ -119,14 +113,11 @@
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
 
       this.document.on('change', this.setDirty, this);
-      this.document.on('change', this.allowDelete, this);
+      this.document.on('change:draft', this.draftChanged, this);
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);
       
-      this.user = Indigo.userView.model;
-      this.user.on('change', this.userChanged, this);
-
       this.previewDirty = true;
 
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
@@ -172,13 +163,8 @@
       // preload content
       this.documentContent.set('content', Indigo.Preloads.documentContent);
 
-      if (document_id) {
-        // pretend this document is unchanged
-        this.documentContent.trigger('sync');
-      } else {
-        // new document, pretend it's dirty
-        this.setDirty();
-      }
+      // pretend this document is unchanged
+      this.documentContent.trigger('sync');
 
       // make menu peers behave like real menus on hover
       $('.menu .btn-link').on('mouseover', function(e) {
@@ -230,23 +216,36 @@
       }
     },
 
-    allowDelete: function() {
-      this.$menu.find('.delete-document').toggleClass('disabled',
-        this.document.isNew() || !this.user.authenticated());
+    draftChanged: function() {
+      var draft = this.document.get('draft');
+
+      this.$('.workspace')
+        .toggleClass('is-draft', draft)
+        .toggleClass('is-published', !draft);
+
+      this.$menu.find('.delete-document').toggleClass('disabled', !draft);
     },
 
-    userChanged: function() {
-      this.$saveBtn.toggle(this.user.authenticated());
-      this.allowDelete();
+    saveAndPublish: function() {
+      if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm('Publish this document to users?')) {
+        this.document.set('draft', false);
+        this.save();
+      }
+    },
+
+    saveAndUnpublish: function() {
+      if (Indigo.user.hasPerm('indigo_api.publish_document') && confirm('Hide this document from users?')) {
+        this.document.set('draft', true);
+        this.save();
+      }
     },
 
     save: function() {
       var self = this;
-      var is_new = self.document.isNew();
       var deferred = null;
 
       // always save properties if we save content
-      this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty || is_new;
+      this.propertiesView.dirty = this.propertiesView.dirty || this.bodyEditorView.dirty;
 
       var fail = function() {
         self.$saveBtn
@@ -264,13 +263,7 @@
           .addClass('fa-pulse fa-spinner');
       this.$menu.find('.save').addClass('disabled');
 
-      if (is_new) {
-        // save properties first, to get an ID, then
-        // stash the ID and save the rest
-        deferred = this.propertiesView.save(true);
-      } else {
-        deferred = $.Deferred().resolve();
-      }
+      deferred = $.Deferred().resolve();
 
       // We save the content first, and then save
       // the properties on top of it, so that content
@@ -279,13 +272,7 @@
       deferred.then(function() {
         self.bodyEditorView.save().then(function() {
           self.propertiesView.save().then(function() {
-            self.attachmentsView.save().then(function() {
-              if (is_new) {
-                // redirect
-                Indigo.progressView.peg();
-                document.location = '/documents/' + self.document.get('id') + '/';
-              }
-            }).fail(fail);
+            self.attachmentsView.save().fail(fail);
           }).fail(fail);
         }).fail(fail);
       }).fail(fail);

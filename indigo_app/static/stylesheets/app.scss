@@ -171,15 +171,15 @@ fieldset {
   }
 }
 
-.brand-box {
-  position: absolute;
-  top: 5px;
-  bottom: 5px;
-  left: 5px;
+.is-published {
+  .if-draft {
+    display: none;
+  }
+}
 
-  img {
-    height: 100%;
-    width: auto;
+.is-draft {
+  .if-published {
+    display: none;
   }
 }
 

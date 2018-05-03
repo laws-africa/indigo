@@ -4,13 +4,17 @@
 {% load static %}
 
 {% block content %}
-<div class="workspace" data-document-id="{{ document.id|default:"" }}">
+<div class="workspace {% if document.draft %}is-draft{% else %}is-published{% endif %}" data-document-id="{{ document.id|default:"" }}">
   <header class="main-header container-fluid workspace-header">
     <ul class="breadcrumb text-muted">
       <li class="breadcrumb-item">&nbsp;</li>
     </ul>
     <div class="workspace-title">
-      <h5 class="main-header-title document-title">{{ document.title }}</h5>
+      <h5 class="main-header-title document-title">
+        {{ document.title }}
+        <span class="badge badge-info if-published">published</span>
+        <span class="badge badge-warning if-draft">draft</span>
+      </h5>
     </div>
 
     <script id="breadcrumb-template" type="text/x-handlebars-template">
@@ -41,7 +45,14 @@
     {% include 'document/_menu.html' %}
 
     <div class="workspace-buttons">
-      <button class="btn btn-success save" disabled><i class="fa fa-save"></i> Save</button>
+      <div class="btn-group">
+        <button class="btn btn-success save" disabled><i class="fa fa-save"></i> <span class="if-published">Save &amp; Publish</span><span class="if-draft">Save Draft</span></button>
+        <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; Publish</a>
+          <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; Save</a>
+        </div>
+      </div>
       <div id="document-activity-view"></div>
 
       <script id="document-activity-template" type="text/x-handlebars-template">

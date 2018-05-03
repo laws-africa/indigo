@@ -46,10 +46,6 @@
         }
       },
       '#document_language': 'language',
-      '#document_draft': {
-        observe: 'draft',
-        onSet: bool,
-      },
       '#document_stub': {
         observe: 'stub',
         onSet: bool,

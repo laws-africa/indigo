@@ -3,7 +3,7 @@ import re
 from .base import BaseRefsFinder
 
 
-class RefsFinderEN(BaseRefsFinder):
+class RefsFinderENG(BaseRefsFinder):
     """ Finds references to Acts in documents, of the form:
 
         Act 52 of 2001

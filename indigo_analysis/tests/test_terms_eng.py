@@ -5,13 +5,13 @@ from rest_framework.test import APITestCase
 from lxml import etree
 
 from indigo_api.tests.fixtures import *  # noqa
-from indigo_analysis.terms.en import TermsFinderEN
+from indigo_analysis.terms.eng import TermsFinderENG
 from indigo_api.models import Document
 
 
-class TermsFinderENTestCase(APITestCase):
+class TermsFinderENGTestCase(APITestCase):
     def setUp(self):
-        self.finder = TermsFinderEN()
+        self.finder = TermsFinderENG()
 
     def test_find_simple(self):
         doc = Document(content=document_fixture(xml=u"""

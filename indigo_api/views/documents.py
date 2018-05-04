@@ -366,7 +366,8 @@ class LinkReferencesView(APIView):
 
     def find_references(self, document):
         finder = RefFinders.for_document(document)
-        finder.find_references_in_document(document)
+        if finder:
+            finder.find_references_in_document(document)
 
 
 class SearchView(DocumentViewMixin, ListAPIView):

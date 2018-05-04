@@ -18,12 +18,11 @@
       this.render();
       this.$el
         .css('left', left)
-        .removeClass('hidden');
+        .show();
     },
 
     close: function() {
-      this.$el
-        .addClass('hidden');
+      this.$el.hide();
     },
 
     render: function() {

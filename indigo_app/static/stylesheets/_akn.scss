@@ -1,0 +1,9 @@
+/* akoma ntoso styles */
+@import 'bower_components/indigo-web/scss/akoma-ntoso';
+
+/* overrides for indigo inserts into akoma-ntoso trees */
+.akoma-ntoso .ig {
+  font-family: $font-family-base;
+  font-size: 14px;
+  color: #333;
+}

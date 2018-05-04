@@ -1,0 +1,149 @@
+.annotations-container {
+  &.sheet-inner {
+    /* XXX */
+    margin-right: 200px;
+  }
+
+  /* annotatable elements */
+  .akn-coverPage,
+  .akn-preface,
+  .akn-preamble,
+  .akn-conclusions,
+  .akn-chapter,
+  .akn-part,
+  .akn-section,
+  .akn-subsection,
+  .akn-blockList,
+  .akn-heading,
+  .akn-subheading,
+  .akn-item,
+  table {
+    position: relative;
+  }
+
+  .annotation-focused {
+    background: rgba(255, 255, 0, 0.25);
+  }
+
+  .annotation-thread {
+    position: absolute;
+    top: 0px;
+    right: -200px;
+    width: 150px;
+    box-shadow: 1px 1px 2px 2px rgba(0, 0, 0, 0.25);
+    font-size: 12px;
+    transition: right 150ms ease-in-out;
+    z-index: 100;
+
+    a.dropdown-toggle {
+      color: $grey-darker;
+    }
+
+    &.focused {
+      right: -175px;
+      z-index: 110;
+
+      .reply-container {
+        display: block;
+      }
+
+    }
+
+    &.focused,
+    &:hover {
+      a.dropdown-toggle {
+        color: $body-color;
+      }
+    }
+
+    &.closed {
+      display: none;
+    }
+  }
+
+  .annotation {
+    background-color: $header-colour2;
+    padding: 5px;
+
+    .time-ago {
+      color: $grey-darkest;
+      margin-bottom: 5px;
+    }
+
+    .content {
+      overflow-wrap: break-word;
+
+      p:last-child {
+        margin-bottom: 0px;
+      }
+    }
+
+    & + .annotation {
+      border-top: 1px solid $border-colour;
+    }
+
+    &.is-new + .reply-container {
+      display: none;
+    }
+
+    &.root {
+      background-color: white;
+    }
+
+    &.reply {
+      .close-annotation {
+        display: none;
+      }
+    }
+
+    textarea {
+      margin-bottom: 5px;
+      padding: 5px;
+      font-size: 12px;
+      overflow: hidden;
+      height: 2.25em;
+      resize: none;
+    }
+
+    .dropdown-menu {
+      min-width: 0px;
+      font-size: 12px;
+    }
+
+    &.readonly {
+      .buttons {
+        display: none;
+      }
+    }
+  }
+
+  .reply-container {
+    display: none;
+  }
+
+  #new-annotation-floater {
+    position: absolute;
+    top: 0px;
+    right: -37px;
+    width: 40px;
+    height: 40px;
+    z-index: 120;
+
+    border-radius: 50%;
+    border: 1px solid $border-colour;
+    box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+    background-color: white;
+    opacity: 0.75;
+
+    text-align: center;
+    color: $grey-darkest;
+    font-size: 20px;
+    padding-top: 7px;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+      color: inherit;
+    }
+  }
+}

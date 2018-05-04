@@ -1,0 +1,577 @@
+/* document workspace */
+.workspace {
+  position: absolute;
+  top: $navbar-height;
+  bottom: 0px;
+  width: 100%;
+  overflow: hidden;
+
+  .workspace-header {
+    position: relative;
+
+    height: $workspace-header-height;
+    width: 100%;
+    background-color: $workspace-header-colour;
+    border-bottom: 1px solid $workspace-header-border-colour;
+  }
+
+  .workspace-buttons {
+    position: absolute;
+    bottom: 5px;
+    right: 15px;
+  }
+
+  .workspace-body {
+    position: absolute;
+    top: $workspace-header-height;
+
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+  }
+
+  /* a page either has a workspace-content on its own,
+     or a sidebar and a workspace-content */
+
+  .workspace-content {
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    overflow: hidden;
+
+    .boxed-group-inner {
+      padding: 10px;
+    }
+  }
+}
+
+.is-published {
+  .if-draft {
+    display: none;
+  }
+}
+
+.is-draft {
+  .if-published {
+    display: none;
+  }
+}
+
+/* sidebar */
+
+.sidebar {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: $sidebar-width;
+  background-color: $sidebar-colour;
+
+  border-right: 1px solid $border-colour;
+
+  .nav {
+    padding: 5px;
+  }
+
+  .nav > li > a {
+    padding: 2px 5px;
+  }
+
+  section {
+    margin-bottom: 10px;
+  }
+}
+
+.sidebar + .workspace-content {
+  left: $sidebar-width;
+}
+
+.sidebar-right + .workspace-content {
+  left: 0px;
+  right: $sidebar-width;
+}
+
+.sidebar-right {
+  right: 0px;
+}
+
+/* boxed groups have a header and a full-height inner */
+
+.boxed-group-header {
+  height: $header-height;
+  padding: 5px;
+  background-color: $header-colour2;
+  border-bottom: 1px solid $border-colour;
+
+  .buttons {
+    float: right;
+  }
+}
+
+/* headers with help buttons */
+a.help,
+button.btn-link.help {
+  color: $grey-darkest;
+
+  &:hover {
+    color: $link-hover-color;
+  }
+}
+
+.boxed-group-inner {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 5px;
+}
+
+.workspace .boxed-group-inner.boxed-group-inner-minimal {
+  padding: 0px;
+}
+
+.boxed-group-header + .boxed-group-inner {
+  top: $header-height;
+}
+
+.boxed-group-header {
+  h1, h2, h3, h4, h5 {
+    line-height: 1.5;
+    margin: 4px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
+}
+
+/* editors */
+
+.document-content-header {
+  /* shown only when the text editor is active */
+  .text-editor-buttons {
+    display: none;
+    padding-right: 5px;
+  }
+
+  &.show-text-editor {
+    .text-editor-buttons {
+      display: inline-flex;
+    }
+  }
+}
+
+.sheet-editor {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+.sheet-editor {
+  .quick-editable {
+    position: relative;
+  }
+
+  .quick-edit {
+    position: absolute;
+    left: -25px;
+    margin-top: 2px;
+
+    a {
+      color: $grey-lighter;
+      padding: 5px;
+    }
+
+    a:hover {
+      color: $primary;
+      text-decoration: none;
+    }
+  }
+}
+
+.ace-editor-wrapper,
+.ace-editor {
+  height: 100%;
+}
+
+.document-xml-editor {
+  /* this is changed when the user chooses to show it */
+  display: none;
+  position: absolute;
+  padding-left: 5px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 50%;
+}
+
+.document-content-view {
+  // show or hide source code component
+  &.show-source {
+    .document-xml-editor {
+      display: block;
+    }
+
+    .document-sheet-container,
+    .document-text-editor {
+      width: 50%;
+    }
+  }
+
+  // show or hide plaintext editor component
+  &.show-text-editor {
+    .document-sheet-container {
+      display: none;
+    }
+
+    .document-text-editor {
+      display: block;
+    }
+  }
+}
+
+.document-text-editor {
+  // changed when the user chooses to view it
+  display: none;
+
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+
+  textarea {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+.fullscreen {
+  position: fixed;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 1040;
+}
+
+/* misc */
+
+/* make document sheets look like paper */
+.sheet-outer {
+  background: $gray-300;
+  padding: 20px;
+
+  .sheet-inner {
+    border: 1px solid $gray-400;
+    box-shadow: 0 0 10px #888;
+    background: white;
+  }
+}
+
+.document-sheet-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  margin: 0px;
+
+  .sheet-inner {
+    padding: 30px;
+    // work around a Chrome rendering bug with sections that
+    // are very short
+    min-height: 100%;
+  }
+}
+
+.document-list-table {
+  table-layout: fixed;
+
+  th.title { width: 63% }
+  th.year { width: 17% }
+  th.updated_at { width: 20% }
+
+  td, th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  tr.amended-version {
+    td:first-child {
+      padding-left: 25px;
+    }
+
+    td {
+      border-top: 0px;
+    }
+  }
+}
+
+/* table of contents browser */
+.toc {
+  position: absolute;
+  top: 80px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  background-color: white;
+
+  margin-top: 5px;
+  border-top: 1px solid $grey;
+
+  font-size: 13px;
+
+  ol {
+    list-style: none;
+    padding: 5px 5px 5px 10px;
+    
+    a {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-decoration: none;
+      margin-left: -5px;
+      padding: 0px 0px 0px 5px;
+
+      &.active,
+      &.active:hover {
+        background-color: $link-color;
+        color: white;
+      }
+
+      &:hover {
+        background-color: $grey-lighter;
+      }
+    }
+  }
+
+  .toc-item {
+    &.akn-akomaNtoso,
+    &.akn-coverpage,
+    &.akn-preface,
+    &.akn-preamble,
+    &.akn-chapter,
+    &.akn-part,
+    &.akn-conclusions,
+    &.akn-components,
+    &.akn-component {
+      font-weight: bold;
+      margin-top: 5px;
+    }
+  }
+}
+
+/* revision list */
+.document-revisions-view {
+
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
+  display: none;
+  background: white;
+  z-index: 200;
+
+  &.in {
+    display: block;
+  }
+}
+
+.revisions-container {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  width: $sidebar-width;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.revisions-container + .document-sheet-container {
+  right: $sidebar-width;
+}
+
+.revision-preview {
+  ins {
+    background-color: #a6f3a6;
+    text-decoration: none;
+  }
+
+  del {
+    color: #a33;
+    background-color: #f8cbcb;
+    text-decoration: line-through;
+  }
+}
+
+.revision-list {
+  .revision {
+    padding: 5px 5px 5px 20px;
+    border-bottom: 1px solid $border-colour;
+    cursor: pointer;
+    position: relative;
+
+    &.active {
+      background-color: $sidebar-colour;
+
+      .revision-controls {
+        display: block;
+      }
+
+      &::before {
+        content: "\f053";
+        font-family: FontAwesome;
+        position: absolute;
+        left: 5px;
+        color: $grey-darkest;
+      }
+    }
+
+    &:hover {
+      background-color: $sidebar-colour;
+    }
+  }
+
+  .revision-date {
+    font-weight: bold;
+  }
+
+  .revision-controls {
+    display: none;
+  }
+
+  .revision-comment {
+    font-style: italic;
+  }
+}
+
+.fa.draft {
+  color: $yellow;
+}
+
+.fa.published {
+  color: $blue;
+}
+
+/* table editor */
+.table-editor-wrapper {
+  .btn-toolbar {
+    margin-bottom: 5px;
+
+    .btn-group {
+      float: right;
+    }
+  }
+
+  .when-active {
+    display: none;
+  }
+
+  &.table-editor-active {
+    .when-active {
+      display: block;
+    }
+    .when-inactive {
+      display: none;
+    }
+
+    table {
+      outline: $selection-colour auto 5px;
+    }
+
+    th.selected,
+    td.selected {
+      background-color: $selection-colour;
+    }
+
+    th.active,
+    td.active {
+      outline: $selection-colour auto 5px;
+    }
+
+    th.active.selected:focus,
+    td.active.selected:focus {
+      background-color: transparent;
+    }
+  }
+
+  td > p:last-child,
+  th > p:last-child {
+    margin-bottom: 0px;
+  }
+}
+
+#document-activity-view {
+  float: left;
+
+  ul {
+    margin-top: 7px;
+  }
+
+  li {
+    list-style: none;
+    float: left;
+    margin-right: 5px;
+    padding: 2px 3px;
+    font-size: smaller;
+    color: white;
+    border-radius: 3px;
+
+    &.is-asleep {
+      opacity: 0.5;
+    }
+  }
+
+  // https://bl.ocks.org/mbostock/5577023
+  .user-0 { background-color: #1b9e77; }
+  .user-1 { background-color: #d95f02; }
+  .user-2 { background-color: #7570b3; }
+  .user-3 { background-color: #e7298a; }
+  .user-4 { background-color: #66a61e; }
+  .user-5 { background-color: #e6ab02; }
+  .user-6 { background-color: #a6761d; }
+  .user-7 { background-color: #666666; }
+}
+
+.cheatsheet {
+  section {
+    clear: both;
+
+    border-bottom: 1px solid $grey-lighter;
+    margin-bottom: 10px;
+
+    &:last-child {
+      border-bottom: 0px;
+    }
+
+    pre {
+      width: 40%;
+      float: left;
+    }
+
+    p {
+      width: 60%;
+      float: left;
+      padding-left: 20px;
+    }
+  }
+}

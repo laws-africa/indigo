@@ -128,7 +128,7 @@
       e.preventDefault();
 
       var index = $(e.target).data('index'),
-          $item = $(e.target).closest('.item'),
+          $item = $(e.target).closest('li'),
           amendment = this.collection.at(index),
           $container = $item.find('.edit-wrapper'),
           self = this;

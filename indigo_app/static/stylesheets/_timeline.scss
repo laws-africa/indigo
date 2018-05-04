@@ -1,60 +1,54 @@
 /* amendments list */
-.amendments-list {
-  margin-top: 20px;
 
-  .buttons {
-    width: 1%;
-    white-space: nowrap;
-  }
-
-  .date {
-    width: 10%;
-    white-space: nowrap;
-  }
-}
-
-.amendment-expressions {
-  position: relative;
-}
-
-.expression-timeline {
+.timeline {
   list-style: none;
   padding-left: 0px;
   margin-left: 130px;
+  position: relative;
 
-  &::after {
+  // timeline bar
+  &::before {
     content: "";
     display: block;
     position: absolute;
-    left: 141px;
+    left: 11px;
     top: 20px;
-    bottom: 40px;
-    width: 4px;
+    bottom: 0px;
+    width: 2px;
     background: $grey;
     z-index: 0;
   }
 
-  &> li {
+  // dot at bottom of timeline bar
+  &::after {
+    border: $grey 2px solid;
+    border-radius: 50%;
+    content: " ";
+    position: absolute;
+    bottom: 0px;
+    left: 8px;
+    background-color: $grey;
+    width: 8px;
+    height: 8px;
+  }
+
+  .timeline-date {
+    position: absolute;
+    left: -130px;
+  }
+
+  .timeline-item {
     position: relative;
     margin-left: 40px;
     background-color: $white;
-    padding: 10px 10px;
+    padding: $spacer;
     margin-bottom: 15px;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
 
-    &> h5 {
-      margin-top: 0px;
-      font-weight: bold;
-    }
-
-    .date {
-      position: absolute;
-      left: -130px;
-    }
-
+    // circle on timeline
     &::before {
       right: 100%;
-      border: $grey 4px solid;
+      border: $grey 2px solid;
       border-radius: 50%;
       content: " ";
       position: absolute;
@@ -66,6 +60,7 @@
       z-index: 1;
     }
     
+    // arrow at left of item
     &::after {
       right: 100%;
       border: solid transparent;
@@ -78,23 +73,5 @@
       top: 10px;
       left: -20px;
     }
-
-    .amendments + .document {
-      margin: 10px 0px 0px 25px;
-      position: relative;
-
-      &::before {
-        content: "⤷";
-        position: absolute;
-        top: -10px;
-        left: -25px;
-        font-size: 24px;
-      }
-    }
-  }
-
-  .amendments {
-    list-style: none;
-    padding-left: 0px;
   }
 }

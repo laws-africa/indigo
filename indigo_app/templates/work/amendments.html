@@ -15,53 +15,51 @@
   <script id="work-amendments-template" type="text/x-handlebars-template">
   {% verbatim %}
 
-  <div class="amendment-expressions">
-    <ol class="expression-timeline">
-      <li>
-        <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
-      </li>
-      {{#each amendments}}
-        <li class="item">
-          {{#unless ../readonly}}{{#unless initial}}
-          <div class="dropdown pull-right">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
-            <div class="dropdown-menu">
-              <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
-              <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
-            </div>
+  <ol class="timeline">
+    <li class="timeline-item">
+      <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+    </li>
+    {{#each amendments}}
+      <li class="timeline-item">
+        <h6 class="timeline-date">{{ date }}</h6>
+
+        {{#unless ../readonly}}{{#unless initial}}
+        <div class="dropdown pull-right">
+          <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+          <div class="dropdown-menu">
+            <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
+            <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
           </div>
-          {{/unless}}{{/unless}}
+        </div>
+        {{/unless}}{{/unless}}
 
-          <h6 class="date">{{ date }}</h6>
+        {{#if initial}}
+          <h6>Initial publication</h6>
+        {{else}}
+          <h6 class="mb-0">Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h6>
+          <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
+        {{/if}}
 
-          {{#if initial}}
-            <h6>Initial publication</h6>
+        <div class="edit-wrapper mb-3"></div>
+
+        <div class="documents">
+          {{#if documents}}
+            {{#each documents}}
+              <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
+            {{/each}}
           {{else}}
-            <h6 class="mb-0">Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h6>
-            <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
+            <span class="text-muted">No editable version at this date</span>
           {{/if}}
+        </div>
+        <br>
 
-          <div class="edit-wrapper mb-3"></div>
-
-          <div class="documents">
-            {{#if documents}}
-              {{#each documents}}
-                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
-              {{/each}}
-            {{else}}
-              <span class="text-muted">No editable version at this date</span>
-            {{/if}}
-          </div>
-          <br>
-
-          <div class="buttons">
-            <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
-            <a class="btn btn-outline-secondary" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
-          </div>
-        </li>
-      {{/each}}
-    </ol>
-  </div>
+        <div class="buttons">
+          <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
+          <a class="btn btn-outline-secondary" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
+        </div>
+      </li>
+    {{/each}}
+  </ol>
 
   {% endverbatim %}
   </script>

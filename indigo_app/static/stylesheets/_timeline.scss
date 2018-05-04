@@ -35,13 +35,13 @@
   .timeline-date {
     position: absolute;
     left: -130px;
+    top: 10px;
   }
 
   .timeline-item {
     position: relative;
     margin-left: 40px;
-    background-color: $white;
-    padding: $spacer;
+    border: 0px;
     margin-bottom: 15px;
     box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
 

@@ -16,44 +16,47 @@
   {% verbatim %}
 
   <ol class="timeline">
-    <li class="timeline-item">
-      <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+    <li class="timeline-item card">
+      <div class="card-body">
+        <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+      </div>
     </li>
     {{#each amendments}}
-      <li class="timeline-item">
+      <li class="timeline-item card">
         <h6 class="timeline-date">{{ date }}</h6>
 
-        {{#unless ../readonly}}{{#unless initial}}
-        <div class="dropdown pull-right">
-          <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
-          <div class="dropdown-menu">
-            <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
-            <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
+        <div class="card-body">
+          {{#unless ../readonly}}{{#unless initial}}
+          <div class="dropdown pull-right">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+            <div class="dropdown-menu">
+              <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
+              <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
+            </div>
+          </div>
+          {{/unless}}{{/unless}}
+
+          {{#if initial}}
+            <h6>Initial publication</h6>
+          {{else}}
+            <h6 class="mb-0">Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h6>
+            <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
+          {{/if}}
+
+          <div class="edit-wrapper mb-3"></div>
+
+          <div class="documents">
+            {{#if documents}}
+              {{#each documents}}
+                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
+              {{/each}}
+            {{else}}
+              <span class="text-muted">No editable version at this date</span>
+            {{/if}}
           </div>
         </div>
-        {{/unless}}{{/unless}}
 
-        {{#if initial}}
-          <h6>Initial publication</h6>
-        {{else}}
-          <h6 class="mb-0">Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h6>
-          <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
-        {{/if}}
-
-        <div class="edit-wrapper mb-3"></div>
-
-        <div class="documents">
-          {{#if documents}}
-            {{#each documents}}
-              <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
-            {{/each}}
-          {{else}}
-            <span class="text-muted">No editable version at this date</span>
-          {{/if}}
-        </div>
-        <br>
-
-        <div class="buttons">
+        <div class="card-footer text-right">
           <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
           <a class="btn btn-outline-secondary" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
         </div>

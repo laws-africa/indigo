@@ -38,15 +38,3 @@ $selection-colour: #b2d8fc;
 @import 'library';
 @import 'standalone';
 @import 'works';
-
-.modal {
-  .nav {
-    margin-bottom: 5px;
-  }
-
-  .work-chooser-list,
-  .scrollable {
-    max-height: 450px;
-    overflow-y: auto;
-  }
-}

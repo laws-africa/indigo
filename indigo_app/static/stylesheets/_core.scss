@@ -124,3 +124,10 @@ label.required::after {
   content: " *";
   color: $danger;
 }
+
+.modal {
+  .scrollable {
+    max-height: 450px;
+    overflow-y: auto;
+  }
+}

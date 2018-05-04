@@ -29,8 +29,10 @@ class AnalyzerFactory(object):
 
         matches = ((finder, finder.locale_match(target)) for finder in analyzers.itervalues())
         matches = [(f, m) for f, m in matches if m]
+        # best match
         matches.sort()
 
+        # create and return an instance of the analyzer
         return matches[0][0]() if matches else None
 
 
@@ -39,12 +41,12 @@ class LocaleBasedAnalyzer(object):
     """
 
     locale = (None, None, None)
-    """ Locale for this finder, as a tuple: (country, language, locality). None matches anything. """
+    """ Locale for this analyzer, as a tuple: (country, language, locality). None matches anything."""
 
     @classmethod
     def locale_match(cls, target):
-        # compare target and locale tuples pair-wise, eliminate clashes
-        # and score matches
+        """ Return a tuple ranking the match of `target` to this analyzer.
+        """
         m = []
 
         for tgt, us in itertools.izip(target, cls.locale):

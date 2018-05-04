@@ -29,7 +29,7 @@ from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRen
 from ..slaw import Importer, Slaw
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
-from indigo_analysis.refs import RefFinders
+from indigo_analysis.registry import analyzers
 
 log = logging.getLogger(__name__)
 
@@ -365,7 +365,7 @@ class LinkReferencesView(APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def find_references(self, document):
-        finder = RefFinders.for_document(document)
+        finder = analyzers.for_document('refs', document)
         if finder:
             finder.find_references_in_document(document)
 

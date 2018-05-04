@@ -1,10 +1,10 @@
 import re
 from lxml import etree
 
-from .base import BaseRefFinder
+from .base import BaseRefsFinder
 
 
-class RefFinderEN(BaseRefFinder):
+class RefsFinderEN(BaseRefsFinder):
     """ Finds references to Acts in documents, of the form:
 
         Act 52 of 2001

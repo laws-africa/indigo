@@ -14,21 +14,6 @@ from cobalt.act import Fragment
 class Slaw(object):
     log = logging.getLogger(__name__)
 
-    def link_terms(self, document):
-        """
-        Find and link defined terms in a document.
-        """
-        with tempfile.NamedTemporaryFile() as f:
-            f.write(document.content)
-            f.flush()
-            cmd = ['link-definitions', f.name]
-            code, stdout, stderr = self.slaw(cmd)
-            if code > 0:
-                raise ValueError(stderr)
-            document.content = stdout
-
-        return stdout
-
     def slaw(self, args):
         """ Call slaw with ``args`` """
         cmd = ['bundle', 'exec', 'slaw'] + args

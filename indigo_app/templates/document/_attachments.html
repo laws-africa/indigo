@@ -8,39 +8,43 @@
 <script id="attachments-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<ul class="attachments-list clearfix {{#if selectable}}selectable{{/if}}">
-  {{#each attachments}}
-  <li data-index="{{ @index }}" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}">
-    <div class="wrapper">
-      <a href="{{ view_url }}" target="_blank">
-        <div class="icon {{#unless isImage}}not-image{{/unless}}">
-          {{#if isImage}}
-            <img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail">
-          {{else}}
-            {{#if icon}}<i class="fa {{ icon }}"></i>{{/if}}
-          {{/if}}
+<div class="card">
+  <div class="card-body">
+    <ul class="attachments-list clearfix {{#if selectable}}selectable{{/if}}">
+      {{#each attachments}}
+      <li data-index="{{ @index }}" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}">
+        <div class="wrapper">
+          <a href="{{ view_url }}" target="_blank">
+            <div class="icon {{#unless isImage}}not-image{{/unless}}">
+              {{#if isImage}}
+                <img src="{{ view_url }}" alt="{{ filename }}" class="img-thumbnail">
+              {{else}}
+                {{#if icon}}<i class="fa {{ icon }}"></i>{{/if}}
+              {{/if}}
+            </div>
+            <div class="filename">
+              {{ filename }}
+            </div>
+            <div class="filesize">{{ prettySize }}</div>
+          </a>
+          <div class="buttons">
+            <a href="#" class="edit-attachment"><i class="fa fa-fw fa-pencil"></i></a>
+            <a href="#" class="delete-attachment"><i class="fa fa-fw fa-trash"></i></a>
+          </div>
         </div>
-        <div class="filename">
-          {{ filename }}
+      </li>
+      {{/each}}
+      <li class="add-attachment">
+        <div class="wrapper">
+          <input type="file" id="new-attachment-file" multiple="true">
+          <h4>Drag and drop a file</h4>
+          <h5>or</h5>
+          <button class="btn btn-secondary">Choose a file</button>
         </div>
-        <div class="filesize">{{ prettySize }}</div>
-      </a>
-      <div class="buttons">
-        <a href="#" class="edit-attachment"><i class="fa fa-fw fa-pencil"></i></a>
-        <a href="#" class="delete-attachment"><i class="fa fa-fw fa-trash"></i></a>
-      </div>
-    </div>
-  </li>
-  {{/each}}
-  <li class="add-attachment">
-    <div class="wrapper">
-      <input type="file" id="new-attachment-file" multiple="true">
-      <h4>Drag and drop a file</h4>
-      <h5>or</h5>
-      <button class="btn btn-secondary">Choose a file</button>
-    </div>
-  </li>
-</ul>
+      </li>
+    </ul>
+  </div>
+</div>
 
 {% endverbatim %}
 </script>

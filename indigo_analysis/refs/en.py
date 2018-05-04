@@ -56,7 +56,7 @@ class RefsFinderEN(BaseRefsFinder):
                         # now continue to check the new tail
                         node = ref
 
-                while node is not None:
+                while node is not None and node.tail:
                     match = self.act_re.search(node.tail)
                     if not match:
                         break

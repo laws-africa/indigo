@@ -26,7 +26,7 @@ import newrelic.agent
 from ..models import Document, Annotation, DocumentActivity
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer, DocumentActivitySerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
-from ..slaw import Importer, Slaw
+from ..slaw import Importer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
 from indigo_analysis.registry import analyzers
@@ -346,7 +346,9 @@ class LinkTermsView(APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def link_terms(self, doc):
-        Slaw().link_terms(doc)
+        finder = analyzers.for_document('terms', doc)
+        if finder:
+            finder.find_terms_in_document(doc)
 
 
 class LinkReferencesView(APIView):

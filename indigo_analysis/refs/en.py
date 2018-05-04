@@ -1,13 +1,18 @@
 import re
 from lxml import etree
 
+from .base import BaseRefFinder
 
-class ActRefFinder(object):
+
+class RefFinderEN(BaseRefFinder):
     """ Finds references to Acts in documents, of the form:
 
         Act 52 of 2001
         Act no. 52 of 1998
     """
+
+    # country, language, locality
+    locale = (None, 'eng', None)
 
     act_re = re.compile(r'Act,?\s+(no\.?\s*)?(\d+)+\s+of\s+(\d{4})', re.I)
     # the ancestor elements that can contain references

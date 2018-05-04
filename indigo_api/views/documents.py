@@ -28,8 +28,8 @@ from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer,
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..slaw import Importer, Slaw
 from ..authz import DocumentPermissions, AnnotationPermissions
-from ..analysis import ActRefFinder
 from ..utils import Headline, SearchPagination, SearchRankCD
+from indigo_analysis.refs import RefFinders
 
 log = logging.getLogger(__name__)
 
@@ -365,7 +365,8 @@ class LinkReferencesView(APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def find_references(self, document):
-        ActRefFinder().find_references_in_document(document)
+        finder = RefFinders.for_document(document)
+        finder.find_references_in_document(document)
 
 
 class SearchView(DocumentViewMixin, ListAPIView):

@@ -16,6 +16,8 @@ To log into the Admin area:
 
 .. note:: If the **Site Settings** option isn't visible, then you aren't a staff member and don't have permission to view the admin area.
 
+.. _permissions:
+
 Permissions
 -----------
 
@@ -32,6 +34,17 @@ To edit permissions,
 
 The permissions that are important are:
 
+**indigo_api | work | Can add work**
+		Allows the user to create new works. This doesn't allow a user to edit existing works.
+
+**indigo_api | work | Can change work**
+		Allows the user to edit existing works.
+
+**indigo_api | work | Can delete work**
+		Allows the user to delete works.
+
+.. note:: Only give work permissions to experienced users.
+
 **indigo_api | document | Can add document**
 		Allows the user to create and import a new document. This doesn't allow a user to edit existing documents.
 
@@ -45,6 +58,15 @@ The permissions that are important are:
 		Allows the user to mark a document as *published (not a draft)* and, along with the *change* permission, edit published documents.
 
 .. note:: Only give the **delete** and **publish** permissions to experienced users.
+
+**indigo_api | annotation | Can add annotations**
+		Allows the user to annotate (add comments) to documents.
+
+**indigo_api | annotation | Can change document**
+		Allows the user to edit their annotations.
+
+**indigo_api | annotation | Can delete annotation**
+		Allows the user to delete their annotations.
 
 Adding New Admins
 -----------------

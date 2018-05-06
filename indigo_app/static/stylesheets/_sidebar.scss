@@ -1,0 +1,52 @@
+.sidebar {
+  padding: 0;
+  color: #fff;
+  background: #29363d;
+  flex: 0 0 200px;
+
+  .sidebar-nav {
+    flex: 1;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: auto;
+    width: 200px;
+
+    .nav {
+      flex-direction: column;
+    }
+
+    .nav-link {
+      padding-left: 0px;
+
+      &> i {
+        width: 50px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+.sidebar-fixed {
+  .sidebar {
+    width: 200px;
+    position: fixed;
+    z-index: 1019;
+    height: calc(100vh - 50px);
+  }
+
+  .main-container {
+    margin-left: 200px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &.sidebar-minimized {
+    .sidebar {
+      width: 50px;
+    }
+
+    .main-container {
+      margin-left: 50px;
+    }
+  }
+}

@@ -35,6 +35,14 @@ fieldset {
   border-top: 0px;
 }
 
+.page-body {
+  margin-top: $navbar-height;
+
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
 /* navbar */
 .navbar {
   .navbar-brand {
@@ -87,7 +95,6 @@ fieldset {
 
 /* main content, in partnership with navbar */
 .navbar ~ .main-container {
-  padding-top: $navbar-height;
   padding-bottom: 50px;
 }
 

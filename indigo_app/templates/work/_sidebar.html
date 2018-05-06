@@ -1,0 +1,9 @@
+<div class="sidebar">
+  <nav class="sidebar-nav">
+    <ul class="nav">
+      <li class="nav-item"><a href="{% url 'work' work_id=work.id %}" class="nav-link"><i class="fa fa-pencil"></i> Work</a></li>
+      <li class="nav-item"><a href="{% url 'work_amendments' work_id=work.id %}" class="nav-link"><i class="fa fa-pencil"></i> Amendments</a></li>
+      <li class="nav-item"><a href="{% url 'work_related' work_id=work.id %}" class="nav-link"><i class="fa fa-pencil"></i> Related Works</a></li>
+    </ul>
+  </nav>
+</div>

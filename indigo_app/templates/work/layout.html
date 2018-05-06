@@ -2,6 +2,11 @@
 
 {% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
 {% block header %}<h4>{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>{% endblock %}
+{% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
+
+{% block sidebar %}
+  {% include 'work/_sidebar.html' %}
+{% endblock %}
 
 {% block content %}
 <div class="work-view">

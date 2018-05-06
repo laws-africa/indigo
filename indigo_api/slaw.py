@@ -7,27 +7,12 @@ from django.conf import settings
 import mammoth
 
 from .models import Document
-from .analysis import ActRefFinder
+from indigo_analysis.registry import analyzers
 from cobalt.act import Fragment
 
 
 class Slaw(object):
     log = logging.getLogger(__name__)
-
-    def link_terms(self, document):
-        """
-        Find and link defined terms in a document.
-        """
-        with tempfile.NamedTemporaryFile() as f:
-            f.write(document.content)
-            f.flush()
-            cmd = ['link-definitions', f.name]
-            code, stdout, stderr = self.slaw(cmd)
-            if code > 0:
-                raise ValueError(stderr)
-            document.content = stdout
-
-        return stdout
 
     def slaw(self, args):
         """ Call slaw with ``args`` """
@@ -167,7 +152,9 @@ class Importer(Slaw):
         """ Run analysis after import.
         Usually only used on PDF documents.
         """
-        ActRefFinder().find_references_in_document(doc)
+        finder = analyzers.for_document('refs', doc)
+        if finder:
+            finder.find_references_in_document(doc)
 
     def docx_to_html(self, docx_file):
         result = mammoth.convert_to_html(docx_file)

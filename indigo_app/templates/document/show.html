@@ -85,9 +85,6 @@
           {% include "document/_properties.html" %}
         </div>
 
-        <div id="attachments-tab" class="tab-pane high">
-          {% include "document/_attachments.html" %}
-        </div>
 
         <div id="content-tab" class="tab-pane high">
           {% include "document/_content.html" %}
@@ -99,6 +96,7 @@
       </div>
     </div>
 
+    {% include "document/_attachments.html" %}
     {% include "document/_defined_terms.html" %}
     {% include "document/_references.html" %}
     {% include "document/_revisions.html" %}

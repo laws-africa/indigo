@@ -1,12 +1,12 @@
 /* attachments list */
 .attachments-list {
   padding-left: 0px;
+  display: flex;
+  flex-flow: row wrap;
 
   &> li {
     list-style: none;
-    float: left;
     width: 150px;
-    height: 220px;
     margin-right: 10px;
     margin-bottom: 10px;
     text-align: center;

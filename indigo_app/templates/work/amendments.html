@@ -2,10 +2,6 @@
 
 {% block view-id %}work-amendments-view{% endblock %}
 
-{% block subnav %}
-  {{ block.super }}
-{% endblock %}
-
 {% block work-content %}
   {% if perms.indigo_api.change_amendment %}
     <div class="text-right mb-3">

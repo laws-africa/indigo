@@ -2,6 +2,11 @@
 
 {% load pipeline %}
 {% load static %}
+{% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
+
+{% block sidebar %}
+  {% include './_doc_sidebar.html' %}
+{% endblock %}
 
 {% block content %}
 <div class="workspace {% if document.draft %}is-draft{% else %}is-published{% endif %}" data-document-id="{{ document.id|default:"" }}">

@@ -36,11 +36,15 @@ fieldset {
 }
 
 .page-body {
-  margin-top: $navbar-height;
+  padding-top: $navbar-height;
 
   display: flex;
   flex-direction: row;
   flex-grow: 1;
+}
+
+.main-container {
+  flex: 1;
 }
 
 /* navbar */

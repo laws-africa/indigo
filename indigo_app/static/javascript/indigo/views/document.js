@@ -6,7 +6,7 @@
 
   // Handle the rendering of the document title, and the browser window title
   Indigo.DocumentTitleView = Backbone.View.extend({
-    el: '.workspace-header',
+    el: '.main-header',
     breadcrumbTemplate: '#breadcrumb-template',
 
     initialize: function() {
@@ -98,7 +98,6 @@
 
     initialize: function() {
       var library = Indigo.library,
-          document_id = $('.workspace[data-document-id]').data('document-id') || null,
           self = this;
 
       this.$saveBtn = $('.workspace-buttons .btn.save');
@@ -109,7 +108,7 @@
       $('.menu').on('click', '.disabled a', _.bind(this.stopMenuClick));
 
       // get it from the library
-      this.document = Indigo.library.get(document_id);
+      this.document = Indigo.library.get(Indigo.Preloads.document_id);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
 
       this.document.on('change', this.setDirty, this);

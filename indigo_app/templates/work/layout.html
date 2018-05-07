@@ -1,7 +1,6 @@
 {% extends "main.html" %}
 
 {% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
-{% block header %}<h4>{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h4>{% endblock %}
 {% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
 
 {% block sidebar %}
@@ -12,22 +11,28 @@
 <div class="work-view">
   <header class="main-header container-fluid">
     <ul class="breadcrumb text-muted">
-      <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
-      {% if locality %}
-      <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' %}?country={{ country.code}}&locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
-      {% endif %}
-      {% if work %}
-      <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
-      {% endif %}
+      {% block breadcrumbs %}
+        <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
+        {% if locality %}
+        <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' %}?country={{ country.code}}&locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+        {% endif %}
+        {% if work %}
+        <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
+        {% endif %}
+      {% endblock %}
     </ul>
 
-    <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
+    {% block main-header-title %}
+      <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
+    {% endblock %}
   </header>
 
   <div class="main-content">
-    <div class="container">
+    {% block main-content %}
+    <div class="container pt-3">
       {% block work-content %}{% endblock %}
     </div>
+    {% endblock %}
   </div>
 </div>
 

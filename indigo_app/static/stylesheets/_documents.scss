@@ -1,53 +1,3 @@
-/* document workspace */
-.workspace {
-  position: absolute;
-  top: $navbar-height;
-  bottom: 0px;
-  width: 100%;
-  overflow: hidden;
-
-  .workspace-header {
-    position: relative;
-
-    height: $workspace-header-height;
-    width: 100%;
-    background-color: $workspace-header-colour;
-    border-bottom: 1px solid $workspace-header-border-colour;
-  }
-
-  .workspace-buttons {
-    position: absolute;
-    bottom: 5px;
-    right: 15px;
-  }
-
-  .workspace-body {
-    position: absolute;
-    top: $workspace-header-height;
-
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    overflow: hidden;
-  }
-
-  /* a page either has a workspace-content on its own,
-     or a sidebar and a workspace-content */
-
-  .workspace-content {
-    position: absolute;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
-    overflow: hidden;
-
-    .boxed-group-inner {
-      padding: 10px;
-    }
-  }
-}
-
 .is-published {
   .if-draft {
     display: none;
@@ -60,54 +10,40 @@
   }
 }
 
-/* sidebar */
+/* document workspace */
+.document-workspace {
+  display: flex;
+  flex-direction: row;
 
-.document-sidebar {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  width: $document-sidebar-width;
-  background-color: $document-sidebar-colour;
-
-  border-right: 1px solid $border-colour;
-
-  .nav {
-    padding: 5px;
+  .document-workspace-content {
+    flex: 1;
+    height: calc(100vh - 50px - 96px);
+    position: relative;
   }
 
-  .nav > li > a {
-    padding: 2px 5px;
-  }
+  /* sidebar */
+  .document-sidebar {
+    flex: 0 0 200px;
+    // TODO
+    height: calc(100vh - 50px - 96px);
+    width: $document-sidebar-width;
 
-  section {
-    margin-bottom: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .nav {
+      padding: 5px;
+    }
+
+    .nav > li > a {
+      padding: 2px 5px;
+    }
   }
 }
 
-.document-sidebar + .workspace-content {
-  left: $document-sidebar-width;
-}
-
-.sidebar-right + .workspace-content {
-  left: 0px;
-  right: $document-sidebar-width;
-}
-
-.sidebar-right {
-  right: 0px;
-}
-
-/* boxed groups have a header and a full-height inner */
-
-.boxed-group-header {
-  height: $header-height;
-  padding: 5px;
-  background-color: $header-colour2;
-  border-bottom: 1px solid $border-colour;
-
-  .buttons {
-    float: right;
-  }
+.workspace-buttons {
+  margin-top: -15px;
+  padding-bottom: 5px;
 }
 
 /* headers with help buttons */
@@ -117,35 +53,6 @@ button.btn-link.help {
 
   &:hover {
     color: $link-hover-color;
-  }
-}
-
-.boxed-group-inner {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  bottom: 0px;
-  width: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-  padding: 5px;
-}
-
-.workspace .boxed-group-inner.boxed-group-inner-minimal {
-  padding: 0px;
-}
-
-.boxed-group-header + .boxed-group-inner {
-  top: $header-height;
-}
-
-.boxed-group-header {
-  h1, h2, h3, h4, h5 {
-    line-height: 1.5;
-    margin: 4px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow-x: hidden;
   }
 }
 
@@ -267,7 +174,6 @@ button.btn-link.help {
 
 /* make document sheets look like paper */
 .sheet-outer {
-  background: $gray-300;
   padding: 20px;
 
   .sheet-inner {
@@ -323,18 +229,6 @@ button.btn-link.help {
 
 /* table of contents browser */
 .toc {
-  position: absolute;
-  top: 80px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  overflow-x: hidden;
-  overflow-y: scroll;
-  background-color: white;
-
-  margin-top: 5px;
-  border-top: 1px solid $grey;
-
   font-size: 13px;
 
   ol {

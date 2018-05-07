@@ -1,55 +1,30 @@
-{% extends "main.html" %}
-
+{% extends "work/layout.html" %}
 {% load pipeline %}
 {% load static %}
-{% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
+
+{% block title %}{{ document.title }}{% endblock %}
+{% block body-class %}{{ block.super }} {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
 
 {% block sidebar %}
   {% include './_sidebar.html' %}
 {% endblock %}
 
-{% block content %}
-<div class="workspace {% if document.draft %}is-draft{% else %}is-published{% endif %}" data-document-id="{{ document.id|default:"" }}">
-  <header class="main-header container-fluid workspace-header">
-    <ul class="breadcrumb text-muted">
-      <li class="breadcrumb-item">&nbsp;</li>
-    </ul>
-    <div class="workspace-title">
-      <h5 class="main-header-title document-title">
-        {{ document.title }}
-        <span class="badge badge-info if-published">published</span>
-        <span class="badge badge-warning if-draft">draft</span>
-      </h5>
-    </div>
+{% block breadcrumbs %}
+  {# this will be filled in by the view #}
+  <li class="breadcrumb-item">&nbsp;</li>
+{% endblock %}
 
-    <script id="breadcrumb-template" type="text/x-handlebars-template">
-    {% verbatim %}
-      <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
-      {{#if locality}}
-      <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
-      {{/if}}
-      <li class="breadcrumb-item"><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
-      <li class="breadcrumb-item expressions">
-        <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
-        <div class="dropdown-menu">
-          {{#each expressions}}
-            {{#each documents}}
-              <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
-                {{ ../date }}
-                {{#if current}} - this document{{/if}}
-              </a>
-            {{/each}}
-          {{/each}}
-          <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="/works/{{ work.id }}/amendments/">Manage amendments...</a>
-        </div>
-      </li>
-    {% endverbatim %}
-    </script>
+{% block main-header-title %}
+  <h5 class="main-header-title">
+    <span class="document-title">{{ document.title }}</span>
+    <span class="badge badge-info if-published">published</span>
+    <span class="badge badge-warning if-draft">draft</span>
+  </h5>
 
+  <div class="d-flex">
     {% include 'document/_menu.html' %}
 
-    <div class="workspace-buttons">
+    <div class="workspace-buttons ml-auto">
       <div class="btn-group">
         <button class="btn btn-success save" disabled><i class="fa fa-save"></i> <span class="if-published">Save &amp; Publish</span><span class="if-draft">Save Draft</span></button>
         <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
@@ -58,9 +33,10 @@
           <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; Save</a>
         </div>
       </div>
-      <div id="document-activity-view"></div>
 
+      <div id="document-activity-view"></div>
       <script id="document-activity-template" type="text/x-handlebars-template">
+
       {% verbatim %}
 
       <ul>
@@ -73,35 +49,59 @@
       {% endverbatim %}
       </script>
     </div>
-  </header>
+  </div>
+{% endblock %}
 
-  <div class="workspace-body">
+{% block main-content %}
+  <div class="document-workspace">
 
     {% include "document/_doc_sidebar.html" %}
 
-    <div class="workspace-content">
-      <div class="tab-content high">
-        <div id="content-tab" class="tab-pane high">
-          {% include "document/_content.html" %}
-        </div>
+    <div class="document-workspace-content tab-content">
+      <div id="content-tab" class="tab-pane">
+        {% include "document/_content.html" %}
+      </div>
 
-        <div id="preview-tab" class="tab-pane high">
-          {% include "document/_preview.html" %}
-        </div>
+      <div id="preview-tab" class="tab-pane high">
+        {% include "document/_preview.html" %}
       </div>
     </div>
-
-    {% include "document/_properties.html" %}
-    {% include "document/_attachments.html" %}
-    {% include "document/_defined_terms.html" %}
-    {% include "document/_references.html" %}
-    {% include "document/_revisions.html" %}
-    {% include "document/_annotations.html" %}
-    {% include "document/_insert_image_modal.html" %}
-    {% include "document/_cheatsheet.html" %}
-    {% include "work/_work_chooser_modal.html" %}
   </div>
-</div>
+
+  <script id="breadcrumb-template" type="text/x-handlebars-template">
+  {% verbatim %}
+    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    {{#if locality}}
+    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    {{/if}}
+    <li class="breadcrumb-item"><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+    <li class="breadcrumb-item expressions">
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
+      <div class="dropdown-menu">
+        {{#each expressions}}
+          {{#each documents}}
+            <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
+              {{ ../date }}
+              {{#if current}} - this document{{/if}}
+            </a>
+          {{/each}}
+        {{/each}}
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/works/{{ work.id }}/amendments/">Manage amendments...</a>
+      </div>
+    </li>
+  {% endverbatim %}
+  </script>
+
+  {% include "document/_properties.html" %}
+  {% include "document/_attachments.html" %}
+  {% include "document/_defined_terms.html" %}
+  {% include "document/_references.html" %}
+  {% include "document/_revisions.html" %}
+  {% include "document/_annotations.html" %}
+  {% include "document/_insert_image_modal.html" %}
+  {% include "document/_cheatsheet.html" %}
+
 {% endblock %}
 
 {% block js %}
@@ -113,9 +113,8 @@
   // inject country code-to-name mappings into JS
   window.Indigo.countries = {{ countries_json|safe }};
 
-  window.Indigo.Preloads.document = {{ document_json|safe }};
+  window.Indigo.Preloads.document_id = {{ document.id }};
   window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
-  window.Indigo.Preloads.work = {{ work_json|safe }};
   window.Indigo.Preloads.works = {{ works_json|safe }};
   window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
 

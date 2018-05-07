@@ -34,11 +34,13 @@
 
       // setup renderer
       var htmlTransform = new XSLTProcessor();
+      this.editorReady = $.Deferred();
       $.get('/static/xsl/act.xsl')
         .then(function(xml) {
           htmlTransform.importStylesheet(xml);
           htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
           self.htmlTransform = htmlTransform;
+          self.editorReady.resolve();
         });
 
       // setup xml editor
@@ -494,6 +496,8 @@
 
       // setup the editor views
       this.sourceEditor = new Indigo.SourceEditorView({parent: this});
+      // XXX this is a deferred to indicate when the editor is ready to edit
+      this.editorReady = this.sourceEditor.editorReady;
 
       this.showDocumentSheet();
     },
@@ -503,7 +507,6 @@
       this.stopEditing()
         .then(function() {
           if (item) {
-            self.$el.find('.boxed-group-header h5').text(item.title);
             self.editFragment(item.element);
           }
         });

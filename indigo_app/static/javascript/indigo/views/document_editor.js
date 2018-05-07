@@ -72,7 +72,7 @@
         });
 
       // menu events
-      this.$menu = $('.workspace-header .menu');
+      this.$menu = $('.document-toolbar-menu');
       this.$menu
         .on('click', '.edit-find', _.bind(this.editFind, this))
         .on('click', '.edit-find-next', _.bind(this.editFindNext, this))
@@ -119,12 +119,8 @@
       // adjust menu items
       this.$menu.find('.text-editor-only').removeClass('disabled');
 
-      // TODO: show the text editor properly
       // show the text editor
-      this.$('.document-content-view, .document-content-header')
-        .addClass('show-text-editor')
-        .find('.toggle-editor-buttons .btn')
-        .prop('disabled', true);
+      this.$('.document-content-view').addClass('show-text-editor');
 
       this.$textEditor
         .data('fragment', this.fragment.tagName)
@@ -236,10 +232,7 @@
         this.pendingTextSave = null;
       }
 
-      this.$('.document-content-view, .document-content-header')
-        .removeClass('show-text-editor')
-        .find('.toggle-editor-buttons .btn')
-        .prop('disabled', false);
+      this.$('.document-content-view, .document-content-header').removeClass('show-text-editor');
 
       // adjust menu items
       this.$menu.find('.text-editor-only').addClass('disabled');
@@ -362,12 +355,20 @@
 
     tableEditStart: function() {
       this.$('.edit-text').hide();
+
+      // adjust the toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
     },
 
     tableEditFinish: function() {
       this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
+
+      // adjust the toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.general-buttons').removeClass('d-none');
     },
 
     editFind: function(e) {

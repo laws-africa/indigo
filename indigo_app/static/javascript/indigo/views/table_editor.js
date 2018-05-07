@@ -11,7 +11,7 @@
    * an Excel spreadsheet and allows adding rows, merging cells, etc.
    */
   Indigo.TableEditorView = Backbone.View.extend({
-    el: '#content-tab',
+    el: 'body',
     events: {
       'click .table-insert-row-above': 'insertRowAbove',
       'click .table-insert-row-below': 'insertRowBelow',
@@ -137,7 +137,6 @@
 
         this.initialTable = table.cloneNode(true);
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
-        this.$('.table-editor-buttons').show();
 
         self.editor.setTable(table);
         self.editor.cells[0][0].click();
@@ -145,7 +144,6 @@
         this.editing = true;
         this.trigger('start');
       } else {
-        this.$('.table-editor-buttons').hide();
         this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
 
         this.editor.setTable(null);

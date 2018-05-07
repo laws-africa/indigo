@@ -297,34 +297,31 @@ button.btn-link.help {
 
 /* revision list */
 .document-revisions-view {
+  background-color: $body-bg-color;
 
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-
-  display: none;
-  background: white;
-  z-index: 200;
-
-  &.in {
-    display: block;
+  .revisions-header {
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
+    background-color: white;
   }
-}
 
-.revisions-container {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
-  width: $document-sidebar-width;
-  overflow-x: hidden;
-  overflow-y: scroll;
-}
+  .revisions-main {
+    display: flex;
+  }
 
-.revisions-container + .document-sheet-container {
-  right: $document-sidebar-width;
+  .revisions-content {
+    position: relative;
+    height: calc(100vh - 106px);
+    flex: 1;
+  }
+
+  .revisions-container {
+    flex: 0 0 300px;
+    height: calc(100vh - 106px);
+    overflow-y: auto;
+    background-color: $white;
+    border-left: 1px solid $border-color;
+  }
 }
 
 .revision-preview {

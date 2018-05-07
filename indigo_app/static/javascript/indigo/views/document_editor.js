@@ -15,6 +15,12 @@
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit a': 'quickEdit',
+      'click .edit-find': 'editFind',
+      'click .edit-find-next': 'editFindNext',
+      'click .edit-find-previous': 'editFindPrevious',
+      'click .edit-find-replace': 'editFindReplace',
+      'click .insert-image': 'insertImage',
+      'click .insert-table': 'insertTable',
     },
 
     initialize: function(options) {
@@ -73,16 +79,6 @@
           self.textTransform = textTransform;
         });
 
-      // menu events
-      this.$menu = $('.document-toolbar-menu');
-      this.$menu
-        .on('click', '.edit-find', _.bind(this.editFind, this))
-        .on('click', '.edit-find-next', _.bind(this.editFindNext, this))
-        .on('click', '.edit-find-previous', _.bind(this.editFindPrevious, this))
-        .on('click', '.edit-find-replace', _.bind(this.editFindReplace, this))
-        .on('click', '.edit-insert-image', _.bind(this.insertImage, this))
-        .on('click', '.edit-insert-table', _.bind(this.insertTable, this));
-
       this.$toolbar = $('.document-toolbar');
     },
 
@@ -117,9 +113,6 @@
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.fragment);
-
-      // adjust menu items
-      this.$menu.find('.text-editor-only').removeClass('disabled');
 
       // show the text editor
       this.$('.document-content-view').addClass('show-text-editor');
@@ -235,9 +228,6 @@
       }
 
       this.$('.document-content-view, .document-content-header').removeClass('show-text-editor');
-
-      // adjust menu items
-      this.$menu.find('.text-editor-only').addClass('disabled');
 
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');

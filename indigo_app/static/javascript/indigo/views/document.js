@@ -131,7 +131,7 @@
       this.document.attachments().on('add remove reset', function() {
         // update attachment count in nav tabs
         var count = self.document.attachments().length;
-        $('.sidebar .nav .attachment-count').text(count === 0 ? '' : count);
+        $('.document-sidebar .nav .attachment-count').text(count === 0 ? '' : count);
       });
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});

@@ -17,10 +17,13 @@ $navbar-height: 50px;
 $header-height: 45px;
 $workspace-header-height: 90px;
 
-$sidebar-width: 260px;
-$sidebar-colour: $grey-lighter;
+$document-sidebar-width: 260px;
+$document-sidebar-colour: $grey-lighter;
 
 $selection-colour: #b2d8fc;
+
+// sidebar
+$sidebar-width: 200px;
 
 @import 'bower_components/fontawesome/css/font-awesome';
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';

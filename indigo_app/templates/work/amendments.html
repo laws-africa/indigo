@@ -3,13 +3,16 @@
 {% block view-id %}work-amendments-view{% endblock %}
 
 {% block subnav %}
-  {% if perms.indigo_api.change_amendment %}
-  <button class="btn btn-success save-work pull-right" type="button">Save</button>
-  {% endif %}
   {{ block.super }}
 {% endblock %}
 
 {% block work-content %}
+  {% if perms.indigo_api.change_amendment %}
+    <div class="text-right mb-3">
+      <button class="btn btn-success save-work" type="button">Save</button>
+    </div>
+  {% endif %}
+
   <div class="work-amendments"></div>
 
   <script id="work-amendments-template" type="text/x-handlebars-template">

@@ -1,9 +1,15 @@
 <div class="sidebar">
   <nav class="sidebar-nav">
     <ul class="nav">
-      <li class="nav-item"><a href="{% url 'work' work_id=work.id %}" class="nav-link"><i class="fa fa-pencil"></i> Work</a></li>
-      <li class="nav-item"><a href="{% url 'work_amendments' work_id=work.id %}" class="nav-link"><i class="fa fa-pencil"></i> Amendments</a></li>
-      <li class="nav-item"><a href="{% url 'work_related' work_id=work.id %}" class="nav-link"><i class="fa fa-pencil"></i> Related Works</a></li>
+      <li class="nav-item nav-heading">Work</li>
+
+      {% if work %}
+        <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' work_id=work.id %}"><i class="fa fa-cog"></i> Work Details</a></li>
+        <li class="nav-item"><a class="nav-link {% if view == 'WorkAmendmentsView' %}active{% endif %}" href="{% url 'work_amendments' work_id=work.id %}"><i class="fa fa-pencil"></i> Amendments</a></li>
+        <li class="nav-item"><a class="nav-link {% if view == '' %}active{% endif %}" href="{% url 'work_related' work_id=work.id %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
+      {% else %}
+        <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work Details</a></li>
+      {% endif %}
     </ul>
   </nav>
 </div>

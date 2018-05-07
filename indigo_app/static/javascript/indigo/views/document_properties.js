@@ -112,7 +112,7 @@
 
     showAmendments: function(e) {
       e.preventDefault();
-      $('.sidebar a[href="#amendments-tab"]').click();
+      $('.document-sidebar a[href="#amendments-tab"]').click();
     },
 
     showPublishedUrl: function() {

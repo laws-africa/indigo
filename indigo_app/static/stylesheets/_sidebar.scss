@@ -1,15 +1,15 @@
 .sidebar {
   padding: 0;
-  color: #fff;
-  background: #29363d;
-  flex: 0 0 200px;
+  color: $white;
+  background: $gray-800;
+  flex: 0 0 $sidebar-width;
 
   .sidebar-nav {
     flex: 1;
     position: relative;
     overflow-x: hidden;
     overflow-y: auto;
-    width: 200px;
+    width: $sidebar-width;
 
     .nav {
       flex-direction: column;
@@ -23,19 +23,41 @@
         text-align: center;
       }
     }
+
+    .nav-heading {
+      padding: .75rem 1rem;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(255, 255, 255, 0.5);
+      text-transform: uppercase;
+    }
+
+    a {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    a:hover {
+      background-color: $primary;
+      color: $white;
+    }
+
+    a.active {
+      background-color: $gray-700;
+      color: $white;
+    }
   }
 }
 
 .sidebar-fixed {
   .sidebar {
-    width: 200px;
+    width: $sidebar-width;
     position: fixed;
     z-index: 1019;
     height: calc(100vh - 50px);
   }
 
   .main-container {
-    margin-left: 200px;
+    margin-left: $sidebar-width;
     flex: 1;
     min-width: 0;
   }

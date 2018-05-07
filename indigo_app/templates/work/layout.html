@@ -22,20 +22,6 @@
     </ul>
 
     <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
-
-    <nav class="sub-nav">
-      {% block subnav %}
-      <ul class="nav nav-pills">
-        {% if work %}
-          <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' work_id=work.id %}">Work Details</a></li>
-          <li class="nav-item"><a class="nav-link {% if view == 'WorkAmendmentsView' %}active{% endif %}" href="{% url 'work_amendments' work_id=work.id %}">Amendments</a></li>
-          <li class="nav-item"><a class="nav-link {% if view == '' %}active{% endif %}" href="{% url 'work_related' work_id=work.id %}">Related Works</a></li>
-        {% else %}
-          <li class="nav-item"><a class="nav-link active" href="#">Work Details</a></li>
-        {% endif %}
-      </ul>
-      {% endblock %}
-    </nav>
   </header>
 
   <div class="main-content">

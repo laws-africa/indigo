@@ -1,8 +1,21 @@
-{% extends 'work/_sidebar.html' %}
+<div class="document-sidebar">
+  <ul class="nav nav-pills flex-column">
+    <li class="nav-item"><a class="nav-link active" href="#props-tab" data-toggle="tab"><i class="fa fa-fw fa-cog"></i> Document Details</a></li>
+    <li class="nav-item"><a class="nav-link" href="#preview-tab" data-toggle="tab"><i class="fa fa-fw fa-search-plus"></i> Preview</a></li>
+    <!-- this tab is always hidden -->
+    <li class="nav-item d-none"><a class="nav-link" href="#content-tab" data-toggle="tab">Content</a></li>
+  </ul>
 
-{% block sidebar-nav %}
-  {{ block.super }}
-
-  <li class="nav-item nav-heading">Document</li>
-  <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#attachments-modal"><i class="fa fa-paperclip"></i> Attachments</a></li>
-{% endblock %}
+  <div id="toc" class="toc"></div>
+  <script id="toc-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <ol>
+    {{#each toc}}
+    <li class="toc-item akn-{{ type }}">
+      <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
+    </li>
+    {{/each}}
+  </ol>
+  {% endverbatim %}
+  </script>
+</div>

@@ -5,7 +5,7 @@
 {% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
 
 {% block sidebar %}
-  {% include './_doc_sidebar.html' %}
+  {% include './_sidebar.html' %}
 {% endblock %}
 
 {% block content %}
@@ -77,7 +77,7 @@
 
   <div class="workspace-body">
 
-    {% include "document/_sidebar.html" %}
+    {% include "document/_doc_sidebar.html" %}
 
     <div class="workspace-content">
       <div class="tab-content high">

@@ -1,17 +1,11 @@
-<div class="boxed-group-inner document-properties-view">
-  <div class="form-horizontal">
-
-    <div class="card mb-3">
-      <h5 class="card-header">
-        Details of this Expression
-        <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-      </h5>
-      <div class="card-body">
-
-        <div class="form-group">
-          <label>Work</label>
-          <div class="form-text"><a href="{% url 'work' document.work.id %}" target="_blank" class="document-work-title"></a></div>
-        </div>
+<div class="modal fade" id="properties-modal">
+  <div class="modal-dialog modal-lg document-properties-view">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Details of this Expression</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+      <div class="modal-body form-horizontal">
 
         <div class="form-row">
           <div class="form-group col-sm-8">
@@ -48,9 +42,11 @@
         </div>
 
         <div class="form-row">
-          <div class="form-group col-sm-4">
+          <div class="form-group col-6">
             <label for="document_tags">Tags</label>
-            <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
+            <div class="form-text">
+              <select id="document_tags" multiple="true" class="form-control select2" data-placeholder="Type to add tags..." data-tags="true" data-token-separators="[,]"></select>
+            </div>
           </div>
         </div>
 
@@ -59,8 +55,12 @@
             <input id="document_stub" type="checkbox" value="1"> This is a stub document with limited content
           </label>
         </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" data-dismiss="modal" aria-label="Close">Close</button>
       </div>
     </div>
-
   </div>
 </div>

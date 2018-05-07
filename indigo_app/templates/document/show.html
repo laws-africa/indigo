@@ -81,11 +81,6 @@
 
     <div class="workspace-content">
       <div class="tab-content high">
-        <div id="props-tab" class="tab-pane active high">
-          {% include "document/_properties.html" %}
-        </div>
-
-
         <div id="content-tab" class="tab-pane high">
           {% include "document/_content.html" %}
         </div>
@@ -96,6 +91,7 @@
       </div>
     </div>
 
+    {% include "document/_properties.html" %}
     {% include "document/_attachments.html" %}
     {% include "document/_defined_terms.html" %}
     {% include "document/_references.html" %}

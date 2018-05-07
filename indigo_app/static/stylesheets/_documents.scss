@@ -41,9 +41,18 @@
   }
 }
 
-.workspace-buttons {
-  margin-top: -15px;
+.document-toolbar-wrapper {
+  display: flex;
   padding-bottom: 5px;
+
+  .document-toolbar-menu {
+    flex: 0 0 $sidebar-width;
+  }
+
+  .document-workspace-buttons {
+    margin-top: -6px;
+    margin-left: auto;
+  }
 }
 
 /* headers with help buttons */
@@ -159,15 +168,6 @@ button.btn-link.help {
     width: 100%;
     height: 100%;
   }
-}
-
-.fullscreen {
-  position: fixed;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  z-index: 1040;
 }
 
 /* misc */

@@ -8,7 +8,7 @@
   // the model, the wrapping document editor view, and the source (xml) and
   // text editor components.
   Indigo.SourceEditorView = Backbone.View.extend({
-    el: '#content-tab',
+    el: 'body',
     events: {
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
       'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
@@ -80,6 +80,8 @@
         .on('click', '.edit-find-replace', _.bind(this.editFindReplace, this))
         .on('click', '.edit-insert-image', _.bind(this.insertImage, this))
         .on('click', '.edit-insert-table', _.bind(this.insertTable, this));
+
+      this.$toolbar = $('.document-toolbar');
     },
 
     fullEdit: function(e) {
@@ -102,11 +104,12 @@
     editFragmentText: function(fragment) {
       this.fragment = fragment;
 
-      // disable the edit button
-      this.$('.btn.edit-text').prop('disabled', true);
-
       // ensure source code is hidden
       this.$('.btn.show-source.active').click();
+
+      // show the edit toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
 
       var self = this;
       var $editable = this.$('.akoma-ntoso').children().first();
@@ -116,6 +119,7 @@
       // adjust menu items
       this.$menu.find('.text-editor-only').removeClass('disabled');
 
+      // TODO: show the text editor properly
       // show the text editor
       this.$('.document-content-view, .document-content-header')
         .addClass('show-text-editor')
@@ -239,6 +243,10 @@
 
       // adjust menu items
       this.$menu.find('.text-editor-only').addClass('disabled');
+
+      // adjust the toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.general-buttons').removeClass('d-none');
     },
 
     editFragment: function(node) {
@@ -466,9 +474,8 @@
   // Handle the document editor, tracking changes and saving it back to the server.
   // The model is an Indigo.DocumentContent instance.
   Indigo.DocumentEditorView = Backbone.View.extend({
-    el: '#content-tab',
+    el: 'body',
     events: {
-      'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
     },
 
@@ -520,11 +527,6 @@
       }
     },
 
-    toggleFullscreen: function(e) {
-      this.$el.toggleClass('fullscreen');
-      this.activeEditor.resize();
-    },
-
     toggleShowCode: function(e) {
       if (this.activeEditor.name == 'source') {
         this.$el.find('.document-content-view').toggleClass('show-source');
@@ -554,7 +556,6 @@
       this.stopEditing()
         .then(function() {
           self.$el.find('.sheet-editor').addClass('show');
-          self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
           self.activeEditor = self.sourceEditor;
           self.editFragment(self.fragment);
         });

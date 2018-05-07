@@ -21,34 +21,9 @@
     <span class="badge badge-warning if-draft">draft</span>
   </h5>
 
-  <div class="d-flex">
+  <div class="document-toolbar-wrapper">
     {% include 'document/_menu.html' %}
-
-    <div class="workspace-buttons ml-auto">
-      <div class="btn-group">
-        <button class="btn btn-success save" disabled><i class="fa fa-save"></i> <span class="if-published">Save &amp; Publish</span><span class="if-draft">Save Draft</span></button>
-        <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
-        <div class="dropdown-menu">
-          <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; Publish</a>
-          <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; Save</a>
-        </div>
-      </div>
-
-      <div id="document-activity-view"></div>
-      <script id="document-activity-template" type="text/x-handlebars-template">
-
-      {% verbatim %}
-
-      <ul>
-        {{#each activity}}
-          <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
-            <i class="fa fa-user"></i> {{ user.display_name }}
-          </li>
-        {{/each}}
-      </ul>
-      {% endverbatim %}
-      </script>
-    </div>
+    {% include 'document/_toolbar.html' %}
   </div>
 {% endblock %}
 

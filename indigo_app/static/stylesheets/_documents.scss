@@ -180,6 +180,29 @@ button.btn-link.help {
     border: 1px solid $gray-400;
     box-shadow: 0 0 10px #888;
     background: white;
+    position: relative;
+
+    &.is-fragment::before {
+      content: ' ';
+      position: absolute;
+      left: 0px;
+      background: linear-gradient(transparent, white);
+      right: 0px;
+      height: 20px;
+      z-index: 100;
+      top: -20px;
+    }
+
+    &.is-fragment::after {
+      content: ' ';
+      position: absolute;
+      left: 0px;
+      background: linear-gradient(white, transparent);
+      right: 0px;
+      height: 20px;
+      z-index: 100;
+      bottom: -20px;
+    }
   }
 }
 

@@ -494,6 +494,7 @@
 
     editTocItem: function(item) {
       var self = this;
+
       this.stopEditing()
         .then(function() {
           if (item) {
@@ -515,8 +516,13 @@
     editFragment: function(fragment) {
       if (!this.updating && fragment) {
         console.log("Editing new fragment");
+
+        var isRoot = fragment.parentElement === null;
+
         this.editing = true;
         this.fragment = fragment;
+        this.$('.document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+
         this.activeEditor.editFragment(fragment);
       }
     },

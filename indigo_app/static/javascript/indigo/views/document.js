@@ -85,13 +85,13 @@
     el: 'body',
     events: {
       'click .menu .dropdown-submenu > a': 'stopMenuClick',
-      'click .workspace-buttons .btn.save': 'save',
-      'click .workspace-buttons .save-and-publish': 'saveAndPublish',
-      'click .workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
-      'click .menu .save': 'save',
-      'click .menu .delete-document': 'delete',
-      'click .menu .clone-document': 'clone',
-      'click .menu .change-document-work': 'changeWork',
+      'click .document-workspace-buttons .btn.save': 'save',
+      'click .document-workspace-buttons .save-and-publish': 'saveAndPublish',
+      'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
+      'click .document-toolbar-menu .save': 'save',
+      'click .document-toolbar-menu .delete-document': 'delete',
+      'click .document-toolbar-menu .clone-document': 'clone',
+      'click .document-toolbar-menu .change-document-work': 'changeWork',
       'click .sidebar-nav .show-preview': 'showPreview',
     },
 
@@ -99,8 +99,8 @@
       var library = Indigo.library,
           self = this;
 
-      this.$saveBtn = $('.workspace-buttons .btn.save');
-      this.$menu = $('.workspace-header .menu');
+      this.$saveBtn = $('.document-workspace-buttons .btn.save');
+      this.$menu = $('.document-toolbar-menu');
       this.dirty = false;
 
       // stop disable menus
@@ -191,9 +191,7 @@
 
       if (!this.dirty) {
         this.dirty = true;
-        this.$saveBtn
-          .removeClass('btn-default')
-          .prop('disabled', false);
+        this.$saveBtn.prop('disabled', false);
         this.$menu.find('.save').removeClass('disabled');
       }
     },

@@ -21,10 +21,11 @@
       return this.model.get('title') + ' @ ' + this.model.get('expression_date');
     },
 
-    render: function(title) {
-      var html = this.getTitle();
+    render: function() {
+      var title = this.getTitle();
 
-      document.title = html;
+      document.title = title;
+      $('.document-title').text(title);
 
       // breadcrumb
       var country = Indigo.countries[this.model.get('country')],
@@ -102,6 +103,7 @@
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
       this.dirty = false;
+      this.previewDirty = true;
 
       // stop disable menus
       $('.menu').on('click', '.disabled a', _.bind(this.stopMenuClick));
@@ -115,8 +117,6 @@
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);
-      
-      this.previewDirty = true;
 
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
@@ -126,16 +126,10 @@
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);
       this.attachmentsView.on('clean', this.setClean, this);
-      this.document.attachments().on('add remove reset', function() {
-        // update attachment count in nav tabs
-        var count = self.document.attachments().length;
-        $('.document-sidebar .nav .attachment-count').text(count === 0 ? '' : count);
-      });
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
-
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
@@ -161,10 +155,8 @@
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');
 
-      // preload content
+      // preload content and pretend this document is unchanged
       this.documentContent.set('content', Indigo.Preloads.documentContent);
-
-      // pretend this document is unchanged
       this.documentContent.trigger('sync');
 
       // make menu peers behave like real menus on hover
@@ -316,11 +308,13 @@
       }
 
       if (confirm('Are you sure you want to delete this document?')) {
+        var work_id = this.document.work.get('id');
+
         Indigo.progressView.peg();
         this.document
           .destroy()
           .then(function() {
-            document.location = '/library';
+            document.location = '/works/' + work_id + '/';
           });
       }
     },

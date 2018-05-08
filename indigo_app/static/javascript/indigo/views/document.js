@@ -6,7 +6,7 @@
 
   // Handle the rendering of the document title, and the browser window title
   Indigo.DocumentTitleView = Backbone.View.extend({
-    el: '.workspace-header',
+    el: '.main-header',
     breadcrumbTemplate: '#breadcrumb-template',
 
     initialize: function() {
@@ -21,10 +21,11 @@
       return this.model.get('title') + ' @ ' + this.model.get('expression_date');
     },
 
-    render: function(title) {
-      var html = this.getTitle();
+    render: function() {
+      var title = this.getTitle();
 
-      document.title = html;
+      document.title = title;
+      $('.document-title').text(title);
 
       // breadcrumb
       var country = Indigo.countries[this.model.get('country')],
@@ -85,31 +86,30 @@
     el: 'body',
     events: {
       'click .menu .dropdown-submenu > a': 'stopMenuClick',
-      'click .workspace-buttons .btn.save': 'save',
-      'click .workspace-buttons .save-and-publish': 'saveAndPublish',
-      'click .workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
-      'click .menu .save': 'save',
-      'click .menu .delete-document': 'delete',
-      'click .menu .clone-document': 'clone',
-      'click .menu .change-document-work': 'changeWork',
-      'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
-      'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
+      'click .document-workspace-buttons .btn.save': 'save',
+      'click .document-workspace-buttons .save-and-publish': 'saveAndPublish',
+      'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
+      'click .document-toolbar-menu .save': 'save',
+      'click .document-toolbar-menu .delete-document': 'delete',
+      'click .document-toolbar-menu .clone-document': 'clone',
+      'click .document-toolbar-menu .change-document-work': 'changeWork',
+      'click .sidebar-nav .show-preview': 'showPreview',
     },
 
     initialize: function() {
       var library = Indigo.library,
-          document_id = $('.workspace[data-document-id]').data('document-id') || null,
           self = this;
 
-      this.$saveBtn = $('.workspace-buttons .btn.save');
-      this.$menu = $('.workspace-header .menu');
+      this.$saveBtn = $('.document-workspace-buttons .btn.save');
+      this.$menu = $('.document-toolbar-menu');
       this.dirty = false;
+      this.previewDirty = true;
 
       // stop disable menus
       $('.menu').on('click', '.disabled a', _.bind(this.stopMenuClick));
 
       // get it from the library
-      this.document = Indigo.library.get(document_id);
+      this.document = Indigo.library.get(Indigo.Preloads.document_id);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
 
       this.document.on('change', this.setDirty, this);
@@ -117,8 +117,6 @@
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);
-      
-      this.previewDirty = true;
 
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
@@ -128,18 +126,11 @@
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);
       this.attachmentsView.on('clean', this.setClean, this);
-      this.document.attachments().on('add remove reset', function() {
-        // update attachment count in nav tabs
-        var count = self.document.attachments().length;
-        $('.sidebar .nav .attachment-count').text(count === 0 ? '' : count);
-      });
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
-
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
-      this.tocView.on('item-selected', this.showEditor, this);
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.document,
@@ -148,6 +139,10 @@
       });
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
+      this.bodyEditorView.editorReady.then(function() {
+        // select the first element in the toc
+        self.tocView.selectItem(0, true);
+      });
 
       this.annotationsView = new Indigo.DocumentAnnotationsView({model: this.document});
       this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
@@ -160,10 +155,8 @@
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');
 
-      // preload content
+      // preload content and pretend this document is unchanged
       this.documentContent.set('content', Indigo.Preloads.documentContent);
-
-      // pretend this document is unchanged
       this.documentContent.trigger('sync');
 
       // make menu peers behave like real menus on hover
@@ -184,21 +177,13 @@
       }
     },
 
-    showEditor: function(item) {
-      if (item) {
-        this.$el.find('a[href="#content-tab"]').click();
-      }
-    },
-
     setDirty: function() {
       // our preview is now dirty
       this.previewDirty = true;
 
       if (!this.dirty) {
         this.dirty = true;
-        this.$saveBtn
-          .removeClass('btn-default')
-          .prop('disabled', false);
+        this.$saveBtn.prop('disabled', false);
         this.$menu.find('.save').removeClass('disabled');
       }
     },
@@ -278,7 +263,18 @@
       }).fail(fail);
     },
 
-    renderPreview: function() {
+    showPreview: function(e) {
+      var $link = $(e.target);
+
+      if ($link.hasClass('active')) {
+        this.closePreview();
+        return;
+      }
+
+      $link.addClass('active');
+      this.$('.work-view').addClass('d-none');
+      this.$('.document-preview-view').removeClass('d-none');
+      
       if (this.previewDirty) {
         var self = this,
             data = this.document.toJSON();
@@ -293,14 +289,16 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json"})
           .then(function(response) {
-            $('#preview-tab .akoma-ntoso').html(response.output);
+            $('.preview-container .akoma-ntoso').html(response.output);
             self.previewDirty = false;
           });
       }
     },
 
-    tocDeselected: function(e) {
-      this.tocView.trigger('deselect');
+    closePreview: function() {
+      this.$('.sidebar-nav .show-preview').removeClass('active');
+      this.$('.work-view').removeClass('d-none');
+      this.$('.document-preview-view').addClass('d-none');
     },
 
     delete: function() {
@@ -310,11 +308,13 @@
       }
 
       if (confirm('Are you sure you want to delete this document?')) {
+        var work_id = this.document.work.get('id');
+
         Indigo.progressView.peg();
         this.document
           .destroy()
           .then(function() {
-            document.location = '/library';
+            document.location = '/works/' + work_id + '/';
           });
       }
     },

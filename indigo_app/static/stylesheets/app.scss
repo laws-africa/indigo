@@ -2,6 +2,8 @@
 
 @import 'lib/bootstrap-4.1.0/scss/bootstrap';
 
+$body-bg-color: #e4e5e8;
+
 $grey-lightest: $gray-100;
 $grey-lighter: $gray-200;
 $grey: $gray-300;
@@ -17,10 +19,13 @@ $navbar-height: 50px;
 $header-height: 45px;
 $workspace-header-height: 90px;
 
-$sidebar-width: 260px;
-$sidebar-colour: $grey-lighter;
+$document-sidebar-width: 260px;
+$document-sidebar-colour: $grey-lighter;
 
 $selection-colour: #b2d8fc;
+
+// sidebar
+$sidebar-width: 200px;
 
 @import 'bower_components/fontawesome/css/font-awesome';
 @import 'bower_components/bootstrap-datepicker/css/datepicker3';
@@ -35,6 +40,7 @@ $selection-colour: #b2d8fc;
 @import 'documents';
 @import 'importform';
 @import 'library';
+@import 'sidebar';
 @import 'standalone';
 @import 'timeline';
 @import 'works';

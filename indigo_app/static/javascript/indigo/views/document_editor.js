@@ -8,13 +8,19 @@
   // the model, the wrapping document editor view, and the source (xml) and
   // text editor components.
   Indigo.SourceEditorView = Backbone.View.extend({
-    el: '#content-tab',
+    el: 'body',
     events: {
       'click .text-editor-buttons .btn.save': 'saveTextEditor',
       'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit a': 'quickEdit',
+      'click .edit-find': 'editFind',
+      'click .edit-find-next': 'editFindNext',
+      'click .edit-find-previous': 'editFindPrevious',
+      'click .edit-find-replace': 'editFindReplace',
+      'click .insert-image': 'insertImage',
+      'click .insert-table': 'insertTable',
     },
 
     initialize: function(options) {
@@ -34,11 +40,13 @@
 
       // setup renderer
       var htmlTransform = new XSLTProcessor();
+      this.editorReady = $.Deferred();
       $.get('/static/xsl/act.xsl')
         .then(function(xml) {
           htmlTransform.importStylesheet(xml);
           htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
           self.htmlTransform = htmlTransform;
+          self.editorReady.resolve();
         });
 
       // setup xml editor
@@ -71,15 +79,7 @@
           self.textTransform = textTransform;
         });
 
-      // menu events
-      this.$menu = $('.workspace-header .menu');
-      this.$menu
-        .on('click', '.edit-find', _.bind(this.editFind, this))
-        .on('click', '.edit-find-next', _.bind(this.editFindNext, this))
-        .on('click', '.edit-find-previous', _.bind(this.editFindPrevious, this))
-        .on('click', '.edit-find-replace', _.bind(this.editFindReplace, this))
-        .on('click', '.edit-insert-image', _.bind(this.insertImage, this))
-        .on('click', '.edit-insert-table', _.bind(this.insertTable, this));
+      this.$toolbar = $('.document-toolbar');
     },
 
     fullEdit: function(e) {
@@ -102,25 +102,20 @@
     editFragmentText: function(fragment) {
       this.fragment = fragment;
 
-      // disable the edit button
-      this.$('.btn.edit-text').prop('disabled', true);
-
       // ensure source code is hidden
       this.$('.btn.show-source.active').click();
+
+      // show the edit toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
 
       var self = this;
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
       var text = this.xmlToText(this.fragment);
 
-      // adjust menu items
-      this.$menu.find('.text-editor-only').removeClass('disabled');
-
       // show the text editor
-      this.$('.document-content-view, .document-content-header')
-        .addClass('show-text-editor')
-        .find('.toggle-editor-buttons .btn')
-        .prop('disabled', true);
+      this.$('.document-content-view').addClass('show-text-editor');
 
       this.$textEditor
         .data('fragment', this.fragment.tagName)
@@ -232,13 +227,11 @@
         this.pendingTextSave = null;
       }
 
-      this.$('.document-content-view, .document-content-header')
-        .removeClass('show-text-editor')
-        .find('.toggle-editor-buttons .btn')
-        .prop('disabled', false);
+      this.$('.document-content-view, .document-content-header').removeClass('show-text-editor');
 
-      // adjust menu items
-      this.$menu.find('.text-editor-only').addClass('disabled');
+      // adjust the toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.general-buttons').removeClass('d-none');
     },
 
     editFragment: function(node) {
@@ -354,12 +347,20 @@
 
     tableEditStart: function() {
       this.$('.edit-text').hide();
+
+      // adjust the toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
     },
 
     tableEditFinish: function() {
       this.$('.edit-text').show();
       // enable all table edit buttons
       this.$('.edit-table').prop('disabled', false);
+
+      // adjust the toolbar
+      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.general-buttons').removeClass('d-none');
     },
 
     editFind: function(e) {
@@ -466,9 +467,8 @@
   // Handle the document editor, tracking changes and saving it back to the server.
   // The model is an Indigo.DocumentContent instance.
   Indigo.DocumentEditorView = Backbone.View.extend({
-    el: '#content-tab',
+    el: 'body',
     events: {
-      'click .btn.show-fullscreen': 'toggleFullscreen',
       'click .btn.show-source': 'toggleShowCode',
     },
 
@@ -485,17 +485,18 @@
       this.tocView.on('item-selected', this.editTocItem, this);
 
       // setup the editor views
-      this.sourceEditor = new Indigo.SourceEditorView({parent: this});
-
-      this.showDocumentSheet();
+      this.activeEditor = this.sourceEditor = new Indigo.SourceEditorView({parent: this});
+      // XXX this is a deferred to indicate when the editor is ready to edit
+      this.editorReady = this.sourceEditor.editorReady;
+      this.editFragment(null);
     },
 
     editTocItem: function(item) {
       var self = this;
+
       this.stopEditing()
         .then(function() {
           if (item) {
-            self.$el.find('.boxed-group-header h5').text(item.title);
             self.editFragment(item.element);
           }
         });
@@ -514,15 +515,15 @@
     editFragment: function(fragment) {
       if (!this.updating && fragment) {
         console.log("Editing new fragment");
+
+        var isRoot = fragment.parentElement === null;
+
         this.editing = true;
         this.fragment = fragment;
+        this.$('.document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+
         this.activeEditor.editFragment(fragment);
       }
-    },
-
-    toggleFullscreen: function(e) {
-      this.$el.toggleClass('fullscreen');
-      this.activeEditor.resize();
     },
 
     toggleShowCode: function(e) {
@@ -546,18 +547,6 @@
       } finally {
         this.updating = false;
       }
-    },
-
-    showDocumentSheet: function() {
-      var self = this;
-
-      this.stopEditing()
-        .then(function() {
-          self.$el.find('.sheet-editor').addClass('show');
-          self.$el.find('.btn.show-source, .btn.edit-text').prop('disabled', false);
-          self.activeEditor = self.sourceEditor;
-          self.editFragment(self.fragment);
-        });
     },
 
     setDirty: function() {

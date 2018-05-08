@@ -2,17 +2,13 @@
 
 {% block view-id %}edit-work-view{% endblock %}
 
-{% block subnav %}
-  {% if work and perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-  <button class="btn btn-success save pull-right" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
-  {% endif %}
-  {{ block.super }}
-{% endblock %}
-
 {% block work-content %}
   {% if work and perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
+    <div class="text-right mb-3">
+      <button class="btn btn-success save" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
+    </div>
   {% else %}
-  <div class="alert alert-danger">You don't have permission to create or change a work.</div>
+    <div class="alert alert-danger">You don't have permission to create or change a work.</div>
   {% endif %}
 
   <div class="card mb-3">

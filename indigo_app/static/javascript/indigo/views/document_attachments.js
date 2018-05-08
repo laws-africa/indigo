@@ -8,38 +8,34 @@
    * This handles editing a single document attachment.
    */
   Indigo.AttachmentEditorView = Backbone.View.extend({
-    el: '#attachment-box',
+    template: '#edit-attachment-template',
     events: {
-      'hidden.bs.modal': 'dismiss',
-      'click .btn.save': 'save',
-    },
-    bindings: {
-      '#attachment_filename': 'filename',
-      '#attachment_size': 'size',
-      '#attachment_mime_type': 'mime_type',
+      'submit form': 'save',
+      'click .btn.cancel': 'cancel',
     },
 
     initialize: function(options) {
+      this.template = Handlebars.compile($(this.template).html());
+      this.render();
+    },
+
+    render: function() {
+      this.$el.html(this.template());
+      this.$('input').val(this.model.get('filename'));
     },
 
     show: function(model) {
-      this.originalModel = model;
-      this.model = model.clone();
-
-      this.stickit();
-
-      this.$el.modal('show');
+      this.deferred = $.Deferred();
+      return this.deferred;
     },
 
     save: function(e) {
-      this.originalModel.set(this.model.attributes);
-      this.$el.modal('hide');
+      this.model.set('filename', this.$('input').val());
+      this.deferred.resolve();
     },
     
-    dismiss: function() {
-      this.unstickit();
-      this.model = null;
-      this.originalModel = null;
+    cancel: function() {
+      this.deferred.reject();
     }
   });
 
@@ -68,7 +64,6 @@
 
     initialize: function(options) {
       this.template = Handlebars.compile($(this.template).html());
-      this.box = new Indigo.AttachmentEditorView();
       this.filter = options.filter;
       this.selectable = !!options.selectable;
 
@@ -104,8 +99,22 @@
     editAttachment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).closest('li').data('index');
-      this.box.show(this.model.at(index));
+      var $li = $(e.target).closest('li'),
+          index = $li.data('index'),
+          attachment = this.model.at(index),
+          editor;
+
+      editor = new Indigo.AttachmentEditorView({
+        model: attachment,
+      });
+      editor.show()
+        .always(function() {
+          editor.remove();
+          $li.find('.attachment-details, .buttons').show();
+        });
+
+      $li.find('.attachment-details, .buttons').hide();
+      $li.find('.attachment-details').after(editor.el);
     },
 
     addAttachment: function(e) {

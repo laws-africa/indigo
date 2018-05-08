@@ -42,6 +42,12 @@
       top: 25px;
     }
   }
+}
+
+.dropdown-menu {
+  &.with-shortcuts {
+    min-width: 220px;
+  }
 
   .shortcut {
     float: right;
@@ -49,12 +55,12 @@
   }
 }
 
-body.osx .menu {
+body.osx .dropdown-menu {
   .shortcut.osx { display: block; }
   .shortcut.win { display: none; }
 }
 
-body.win .menu {
+body.win .dropdown-menu {
   .shortcut.osx { display: none; }
   .shortcut.win { display: block; }
 }

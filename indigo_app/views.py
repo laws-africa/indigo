@@ -57,6 +57,7 @@ def document(request, doc_id=None):
         'document_json': doc_json,
         'document_content_json': json.dumps(doc.document_xml),
         'documents_json': documents_json,
+        'work': doc.work,
         'work_json': work_json,
         'works_json': works_json,
         'amendments_json': amendments_json,

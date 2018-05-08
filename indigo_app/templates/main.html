@@ -12,7 +12,11 @@
     <div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" style="width: 100%; height: 5px;"></div>
   </div>
 
-  <main id="{% block view-id %}{% endblock %}" class="main-container">
-    {% block content %}{% endblock %}
-  </main>
+  <div class="page-body">
+    {% block sidebar %}{% endblock %}
+
+    <main id="{% block view-id %}{% endblock %}" class="main-container">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
 {% endblock page-content %}

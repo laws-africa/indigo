@@ -1,0 +1,19 @@
+<aside class="document-sidebar">
+  <ul class="nav nav-pills flex-column">
+    <!-- this tab is always hidden -->
+    <li class="nav-item d-none"><a class="nav-link" href="#content-tab" data-toggle="tab">Content</a></li>
+  </ul>
+
+  <div id="toc" class="toc"></div>
+  <script id="toc-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <ol>
+    {{#each toc}}
+    <li class="toc-item akn-{{ type }}">
+      <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
+    </li>
+    {{/each}}
+  </ol>
+  {% endverbatim %}
+  </script>
+</aside>

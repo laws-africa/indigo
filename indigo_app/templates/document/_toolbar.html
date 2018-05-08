@@ -1,0 +1,110 @@
+<div class="document-toolbar">
+  <div class="btn-toolbar">
+    <div class="btn-group btn-group-sm mr-2 general-buttons">
+      <button type="button" class="btn btn-outline-secondary show-source mr-2" data-toggle="buttons" title="Show XML"><i class="fa fa-code"></i> Show source</button>
+      <button type="button" class="btn btn-primary edit-text" title="Edit text"><i class="fa fa-pencil"></i> Edit</button>
+    </div>
+
+    <div class="btn-group btn-group-sm mr-2 text-editor-buttons d-none">
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Edit</button>
+        <div class="dropdown-menu with-shortcuts">
+          <a class="dropdown-item edit-find" href="#">Find... <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a>
+          <a class="dropdown-item edit-find-next" href="#">Find Next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
+          <a class="dropdown-item edit-find-previous" href="#">Find Previous<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a>
+          <a class="dropdown-item edit-find-replace" href="#">Find and Replace...</a>
+        </div>
+      </div>
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle mr-2" data-toggle="dropdown">Insert</button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item insert-image" href="#">Insert Image...</a>
+          <a class="dropdown-item insert-table" href="#">Insert Table</a>
+        </div>
+      </div>
+      <button class="btn btn-success save"><i class="fa fa-check"></i> Update</button>
+      <button class="btn btn-secondary cancel" title="Cancel"><i class="fa fa-close"></i> Cancel</button>
+    </div>
+
+    <!-- table editor buttons -->
+    <div class="btn-group table-editor-buttons d-none">
+      <!-- this wrapper is removed from the DOM and positioned inline alongside tables in the content view,
+           it's just useful to write the HTML here and not in Javascript. -->
+      <div class="table-editor-wrapper">
+        <div class="ig btn-toolbar">
+          <div class="btn-group btn-group-sm when-inactive">
+            <button class="btn btn-primary edit-table"><i class="fa fa-pencil"></i> Edit table</button>
+          </div>
+
+          <div class="btn-group btn-group-sm when-active">
+            <button class="btn btn-success save-edit-table"><i class="fa fa-check"></i> Update</button>
+            <button class="btn btn-secondary cancel-edit-table" title="Cancel"><i class="fa fa-close"></i></button>
+          </div>
+        </div>
+
+        <div class="table-container"></div>
+      </div>
+      <!-- end wrapper -->
+
+      <div class="btn-group btn-group-sm mr-2">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-plus"></i> Insert
+        </button>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item table-insert-row-above">Insert row above</a>
+          <a href="#" class="dropdown-item table-insert-row-below">Insert row below</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item table-insert-column-left">Insert column left</a>
+          <a href="#" class="dropdown-item table-insert-column-right">Insert column right</a>
+        </div>
+      </div>
+
+      <div class="btn-group btn-group-sm mr-2">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fa fa-minus"></i> Delete <span class="caret"></span>
+        </button>
+        <div class="dropdown-menu">
+          <a href="#" class="dropdown-item table-delete-row">Delete row</a>
+          <a href="#" class="dropdown-item table-delete-column">Delete column</a>
+        </div>
+      </div>
+
+      <div class="btn-group btn-group-sm mr-2">
+        <button type="button" class="btn btn-outline-secondary table-merge-cells">Merge cells</button>
+        <button type="button" class="btn btn-outline-secondary table-toggle-heading"><i class="fa fa-header"></i> Heading</button>
+      </div>
+
+      <div class="btn-group btn-group-sm mr-2">
+        <button class="btn btn-sm btn-success save-edit-table"><i class="fa fa-check"></i> Update</button>
+        <button class="btn btn-sm btn-secondary cancel-edit-table" title="Cancel"><i class="fa fa-close"></i> Cancel</button>
+      </div>
+    </div>
+    <!-- end table editor buttons -->
+  </div>
+</div>
+
+<div class="document-workspace-buttons">
+  <div class="btn-group">
+    <button class="btn btn-success save" disabled><i class="fa fa-save"></i> <span class="if-published">Save &amp; Publish</span><span class="if-draft">Save Draft</span></button>
+    <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; Publish</a>
+      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; Save</a>
+    </div>
+  </div>
+
+  <div id="document-activity-view"></div>
+  <script id="document-activity-template" type="text/x-handlebars-template">
+
+  {% verbatim %}
+
+  <ul>
+    {{#each activity}}
+      <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
+        <i class="fa fa-user"></i> {{ user.display_name }}
+      </li>
+    {{/each}}
+  </ul>
+  {% endverbatim %}
+  </script>
+</div>

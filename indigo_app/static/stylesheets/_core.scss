@@ -4,7 +4,7 @@ html, body {
 }
 
 body {
-  background-color: #e4e5e6;
+  background-color: $body-bg-color;
 }
 
 /* permissions-based styles */
@@ -33,6 +33,18 @@ fieldset {
 
 .table thead th {
   border-top: 0px;
+}
+
+.page-body {
+  padding-top: $navbar-height;
+
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.main-container {
+  flex: 1;
 }
 
 /* navbar */
@@ -87,12 +99,7 @@ fieldset {
 
 /* main content, in partnership with navbar */
 .navbar ~ .main-container {
-  padding-top: $navbar-height;
   padding-bottom: 50px;
-}
-
-.main-header ~ .main-content {
-  padding-top: 10px;
 }
 
 #error-box {

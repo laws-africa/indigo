@@ -33,7 +33,7 @@
           }
 
           // update the valid choices to ensure those we want are there
-          $el.select2({data: val});
+          $el.select2({data: val, width: '100%'});
           // add them
           $el.val(val).trigger('change');
         },
@@ -112,7 +112,7 @@
 
     showAmendments: function(e) {
       e.preventDefault();
-      $('.sidebar a[href="#amendments-tab"]').click();
+      $('.document-sidebar a[href="#amendments-tab"]').click();
     },
 
     showPublishedUrl: function() {

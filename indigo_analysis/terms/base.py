@@ -164,6 +164,9 @@ class BaseTermsFinder(LocaleBasedAnalyzer):
         """ Find and decorate references to terms in the document.
         The +terms+ param is a dict from term_id to actual term.
         """
+        if not terms:
+            return
+
         # term to term id
         term_lookup = {v: k for k, v in terms.iteritems()}
 

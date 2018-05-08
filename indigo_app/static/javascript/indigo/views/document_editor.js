@@ -485,11 +485,10 @@
       this.tocView.on('item-selected', this.editTocItem, this);
 
       // setup the editor views
-      this.sourceEditor = new Indigo.SourceEditorView({parent: this});
+      this.activeEditor = this.sourceEditor = new Indigo.SourceEditorView({parent: this});
       // XXX this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
-
-      this.showDocumentSheet();
+      this.editFragment(null);
     },
 
     editTocItem: function(item) {
@@ -548,17 +547,6 @@
       } finally {
         this.updating = false;
       }
-    },
-
-    showDocumentSheet: function() {
-      var self = this;
-
-      this.stopEditing()
-        .then(function() {
-          self.$el.find('.sheet-editor').addClass('show');
-          self.activeEditor = self.sourceEditor;
-          self.editFragment(self.fragment);
-        });
     },
 
     setDirty: function() {

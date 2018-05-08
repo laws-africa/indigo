@@ -29,18 +29,8 @@
 
 {% block main-content %}
   <div class="document-workspace">
-
     {% include "document/_doc_sidebar.html" %}
-
-    <div class="document-workspace-content tab-content">
-      <div id="content-tab" class="tab-pane">
-        {% include "document/_content.html" %}
-      </div>
-
-      <div id="preview-tab" class="tab-pane">
-        {% include "document/_preview.html" %}
-      </div>
-    </div>
+    {% include "document/_content.html" %}
   </div>
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">
@@ -75,12 +65,12 @@
   {% include "document/_annotations.html" %}
   {% include "document/_insert_image_modal.html" %}
   {% include "document/_cheatsheet.html" %}
-
 {% endblock %}
 
 {% block content %}
   {{ block.super }}
   {% include "document/_revisions.html" %}
+  {% include "document/_preview.html" %}
 {% endblock %}
 
 {% block js %}

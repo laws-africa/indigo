@@ -92,8 +92,7 @@
       'click .menu .delete-document': 'delete',
       'click .menu .clone-document': 'clone',
       'click .menu .change-document-work': 'changeWork',
-      'hidden.bs.tab a[href="#content-tab"]': 'tocDeselected',
-      'shown.bs.tab a[href="#preview-tab"]': 'renderPreview',
+      'click .sidebar-nav .show-preview': 'showPreview',
     },
 
     initialize: function() {
@@ -138,7 +137,6 @@
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
 
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
-      this.tocView.on('item-selected', this.showEditor, this);
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.document,
@@ -184,12 +182,6 @@
       if (this.propertiesView.dirty || this.bodyEditorView.dirty || this.bodyEditorView.editing) {
         e.preventDefault();
         return 'You will lose your changes!';
-      }
-    },
-
-    showEditor: function(item) {
-      if (item) {
-        this.$el.find('a[href="#content-tab"]').click();
       }
     },
 
@@ -281,7 +273,18 @@
       }).fail(fail);
     },
 
-    renderPreview: function() {
+    showPreview: function(e) {
+      var $link = $(e.target);
+
+      if ($link.hasClass('active')) {
+        this.closePreview();
+        return;
+      }
+
+      $link.addClass('active');
+      this.$('.work-view').addClass('d-none');
+      this.$('.document-preview-view').removeClass('d-none');
+      
       if (this.previewDirty) {
         var self = this,
             data = this.document.toJSON();
@@ -296,14 +299,16 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json"})
           .then(function(response) {
-            $('#preview-tab .akoma-ntoso').html(response.output);
+            $('.preview-container .akoma-ntoso').html(response.output);
             self.previewDirty = false;
           });
       }
     },
 
-    tocDeselected: function(e) {
-      this.tocView.trigger('deselect');
+    closePreview: function() {
+      this.$('.sidebar-nav .show-preview').removeClass('active');
+      this.$('.work-view').removeClass('d-none');
+      this.$('.document-preview-view').addClass('d-none');
     },
 
     delete: function() {

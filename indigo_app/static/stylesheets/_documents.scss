@@ -479,3 +479,14 @@ button.btn-link.help {
     }
   }
 }
+
+.document-preview-view {
+  background-color: $body-bg-color;
+
+  .preview-main {
+    position: relative;
+    height: calc(100vh - 50px);
+    max-width: 1024px;
+    margin: auto;
+  }
+}

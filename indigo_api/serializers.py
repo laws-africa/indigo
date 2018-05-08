@@ -1,5 +1,6 @@
 import logging
 import os.path
+from collections import OrderedDict
 from lxml.etree import LxmlError
 
 from django.db.models import Manager
@@ -8,17 +9,73 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import Act, FrbrUri, AmendmentEvent, RepealEvent
+from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment, Annotation, DocumentActivity
+from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from .slaw import Importer
 
 log = logging.getLogger(__name__)
 
 
-class AmendmentSerializer(serializers.Serializer):
+class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
+    """ Related field that serializers the entirety of the related object.
+    For updates, only the primary key field is considered, everything else is
+    ignored.
+    """
+    serializer = None
+
+    def __init__(self, serializer=None, *args, **kwargs):
+        if serializer is not None:
+            self.serializer = serializer
+        assert self.serializer is not None, 'The `serializer` argument is required.'
+
+        super(SerializedRelatedField, self).__init__(*args, **kwargs)
+
+    def get_serializer(self):
+        if isinstance(self.serializer, basestring):
+            self.serializer = globals()[self.serializer]
+        return self.serializer
+
+    def use_pk_only_optimization(self):
+        return False
+
+    def to_internal_value(self, data):
+        # support both a dict and passing in the primary key directly
+        if isinstance(data, dict):
+            data = data['id']
+        return super(SerializedRelatedField, self).to_internal_value(data)
+
+    def to_representation(self, value):
+        context = {}
+        context.update(self.context)
+        context['depth'] = context.get('depth', 0) + 1
+        # don't recurse
+        if context['depth'] > 1:
+            return {'id': value.pk}
+        return self.get_serializer()(context=context).to_representation(value)
+
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            # Ensure that field.choices returns something sensible
+            # even when accessed with a read-only field.
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict([
+            (
+                item.pk,
+                self.display_value(item)
+            )
+            for item in queryset
+        ])
+
+
+class AmendmentEventSerializer(serializers.Serializer):
     """ Serializer matching :class:`cobalt.act.AmendmentEvent`
     """
 
@@ -28,12 +85,6 @@ class AmendmentSerializer(serializers.Serializer):
     """ Title of amending document """
     amending_uri = serializers.CharField()
     """ FRBR URI of amending document """
-    amending_id = serializers.SerializerMethodField()
-    """ ID of the amending document, if available """
-
-    def get_amending_id(self, instance):
-        if hasattr(instance, 'amending_document') and instance.amending_document is not None:
-            return instance.amending_document.id
 
 
 class RepealSerializer(serializers.Serializer):
@@ -176,7 +227,6 @@ class DocumentListSerializer(serializers.ListSerializer):
         # Do some bulk post-processing, this is much more efficient
         # than doing each document one at a time and going to the DB
         # hundreds of times.
-        Document.decorate_amendments(iterable)
         Document.decorate_amended_versions(iterable)
         Document.decorate_repeal(iterable)
 
@@ -215,16 +265,23 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     draft = serializers.BooleanField(default=True)
 
-    publication_name = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    publication_number = serializers.CharField(required=False, allow_blank=True, allow_null=True)
-    publication_date = serializers.DateField(required=False, allow_null=True)
+    # if a title isn't given, it's taken from the associated work
+    title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
+
+    # taken from the work
+    publication_name = serializers.CharField(read_only=True)
+    publication_number = serializers.CharField(read_only=True)
+    publication_date = serializers.DateField(read_only=True)
+    commencement_date = serializers.DateField(read_only=True)
+    assent_date = serializers.DateField(read_only=True)
 
     tags = TagListSerializerField(required=False)
-    amendments = AmendmentSerializer(many=True, required=False)
+    amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
 
     amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
-    repeal = RepealSerializer(required=False, allow_null=True)
+    repeal = RepealSerializer(read_only=True)
+    """ Repeal information, inherited from the work. """
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
@@ -347,6 +404,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         """
         upload = data.pop('file', None)
         if upload:
+            frbr_uri = self.validate_frbr_uri(data.get('frbr_uri'))
+
             # we got a file
             try:
                 # import options
@@ -361,7 +420,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 importer.section_number_position = posn
                 importer.country = data.get('country') or request.user.editor.country_code
                 importer.cropbox = cropbox
-                document = importer.import_from_upload(upload, request)
+                document = importer.import_from_upload(upload, frbr_uri, request)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
@@ -380,9 +439,17 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def validate_frbr_uri(self, value):
         try:
-            return FrbrUri.parse(value.lower()).work_uri()
+            if not value:
+                raise ValueError()
+            value = FrbrUri.parse(value.lower()).work_uri()
         except ValueError:
-            raise ValidationError("Invalid FRBR URI")
+            raise ValidationError("Invalid FRBR URI: %s" % value)
+
+        # does a work exist for this frbr_uri?
+        # raises ValueError if it doesn't
+        Work.objects.get_for_frbr_uri(value)
+
+        return value
 
     def create(self, validated_data):
         document = Document()
@@ -427,23 +494,19 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if content is not None:
             document.content = content
 
-        amendments = validated_data.pop('amendments', None)
-        if amendments is not None:
-            document.amendments = [AmendmentEvent(**a) for a in amendments]
-
-        repeal = validated_data.pop('repeal', None)
-        document.repeal = RepealEvent(**repeal) if repeal else None
-
         # save rest of changes
         for attr, value in validated_data.items():
             setattr(document, attr, value)
+
+        # Link to the appropriate work, based on the FRBR URI
+        # Raises ValueError if the work doesn't exist
+        document.work = Work.objects.get_for_frbr_uri(document.frbr_uri)
 
         document.copy_attributes()
         return document
 
     def to_representation(self, instance):
         if not self.context.get('many', False):
-            Document.decorate_amendments([instance])
             Document.decorate_amended_versions([instance])
             Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)
@@ -464,6 +527,7 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
+    frbr_uri = serializers.CharField(write_only=True, required=True)
 
 
 class DocumentAPISerializer(serializers.Serializer):
@@ -556,3 +620,87 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
         validated_data['user'] = self.context['request'].user
         validated_data['document'] = self.context['document']
         return super(DocumentActivitySerializer, self).create(validated_data)
+
+
+class WorkSerializer(serializers.ModelSerializer):
+    updated_by_user = UserSerializer(read_only=True)
+    created_by_user = UserSerializer(read_only=True)
+    repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+
+    amendments_url = serializers.SerializerMethodField()
+    """ URL of document amendments. """
+
+    class Meta:
+        model = Work
+        fields = (
+            # readonly, url is part of the rest framework
+            'id', 'url',
+            'title', 'publication_name', 'publication_number', 'publication_date',
+            'commencement_date', 'assent_date',
+            'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
+            'parent_work', 'commencing_work', 'amendments_url',
+
+            # repeal
+            'repealed_date', 'repealed_by',
+
+            # frbr_uri components
+            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+        )
+        read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
+
+    def create(self, validated_data):
+        validated_data['created_by_user'] = self.context['request'].user
+        return super(WorkSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['updated_by_user'] = self.context['request'].user
+        return super(WorkSerializer, self).update(instance, validated_data)
+
+    def validate_frbr_uri(self, value):
+        try:
+            value = FrbrUri.parse(value.lower()).work_uri()
+        except ValueError:
+            raise ValidationError("Invalid FRBR URI: %s" % value)
+        return value
+
+    def get_amendments_url(self, work):
+        if not work.pk:
+            return None
+        return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
+
+
+class WorkAmendmentSerializer(serializers.ModelSerializer):
+    updated_by_user = UserSerializer(read_only=True)
+    created_by_user = UserSerializer(read_only=True)
+    amending_work = SerializedRelatedField(queryset=Work.objects, required=True, allow_null=False, serializer=WorkSerializer)
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Amendment
+        fields = (
+            # readonly, url is part of the rest framework
+            'id', 'url',
+            'amending_work', 'date',
+            'updated_by_user', 'created_by_user',
+            'created_at', 'updated_at',
+        )
+        read_only_fields = ('created_at', 'updated_at')
+
+    def create(self, validated_data):
+        validated_data['created_by_user'] = self.context['request'].user
+        validated_data['amended_work'] = self.context['work']
+        return super(WorkAmendmentSerializer, self).create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['updated_by_user'] = self.context['request'].user
+        return super(WorkAmendmentSerializer, self).update(instance, validated_data)
+
+    def get_url(self, instance):
+        if not instance.pk:
+            return None
+        return reverse('work-amendments-detail', request=self.context['request'], kwargs={
+            'work_id': instance.amended_work.pk,
+            'pk': instance.pk,
+        })

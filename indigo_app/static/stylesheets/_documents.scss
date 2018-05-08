@@ -1,0 +1,492 @@
+.is-published {
+  .if-draft {
+    display: none;
+  }
+}
+
+.is-draft {
+  .if-published {
+    display: none;
+  }
+}
+
+/* document workspace */
+.document-workspace {
+  display: flex;
+  flex-direction: row;
+
+  .document-workspace-content {
+    flex: 1;
+    height: calc(100vh - 50px - 96px);
+    position: relative;
+  }
+
+  /* sidebar */
+  .document-sidebar {
+    flex: 0 0 200px;
+    // TODO
+    height: calc(100vh - 50px - 96px);
+    width: $document-sidebar-width;
+
+    overflow-x: hidden;
+    overflow-y: auto;
+
+    .nav {
+      padding: 5px;
+    }
+
+    .nav > li > a {
+      padding: 2px 5px;
+    }
+  }
+}
+
+.document-toolbar-wrapper {
+  display: flex;
+  padding-bottom: 5px;
+
+  .document-toolbar-menu {
+    flex: 0 0 $sidebar-width;
+  }
+
+  .document-workspace-buttons {
+    margin-top: -6px;
+    margin-left: auto;
+  }
+}
+
+/* headers with help buttons */
+a.help,
+button.btn-link.help {
+  color: $grey-darkest;
+
+  &:hover {
+    color: $link-hover-color;
+  }
+}
+
+/* editors */
+
+.document-content-header {
+  /* shown only when the text editor is active */
+  .text-editor-buttons {
+    display: none;
+    padding-right: 5px;
+  }
+
+  &.show-text-editor {
+    .text-editor-buttons {
+      display: inline-flex;
+    }
+  }
+}
+
+.sheet-editor {
+  .quick-editable {
+    position: relative;
+  }
+
+  .quick-edit {
+    position: absolute;
+    left: -25px;
+    margin-top: 2px;
+
+    a {
+      color: $grey-lighter;
+      padding: 5px;
+    }
+
+    a:hover {
+      color: $primary;
+      text-decoration: none;
+    }
+  }
+}
+
+.ace-editor-wrapper,
+.ace-editor {
+  height: 100%;
+}
+
+.document-xml-editor {
+  /* this is changed when the user chooses to show it */
+  display: none;
+  position: absolute;
+  padding-left: 5px;
+  top: 0px;
+  bottom: 0px;
+  right: 0px;
+  left: 50%;
+}
+
+.document-content-view {
+  // show or hide source code component
+  &.show-source {
+    .document-xml-editor {
+      display: block;
+    }
+
+    .document-sheet-container,
+    .document-text-editor {
+      width: 50%;
+    }
+  }
+
+  // show or hide plaintext editor component
+  &.show-text-editor {
+    .document-sheet-container {
+      display: none;
+    }
+
+    .document-text-editor {
+      display: block;
+    }
+  }
+}
+
+.document-text-editor {
+  // changed when the user chooses to view it
+  display: none;
+
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+
+  textarea {
+    width: 100%;
+    height: 100%;
+  }
+}
+
+/* misc */
+
+/* make document sheets look like paper */
+.sheet-outer {
+  padding: 20px;
+
+  .sheet-inner {
+    border: 1px solid $gray-400;
+    box-shadow: 0 0 10px #888;
+    background: white;
+    position: relative;
+
+    &.is-fragment::before {
+      content: ' ';
+      position: absolute;
+      left: 0px;
+      background: linear-gradient(transparent, white);
+      right: 0px;
+      height: 20px;
+      z-index: 100;
+      top: -20px;
+    }
+
+    &.is-fragment::after {
+      content: ' ';
+      position: absolute;
+      left: 0px;
+      background: linear-gradient(white, transparent);
+      right: 0px;
+      height: 20px;
+      z-index: 100;
+      bottom: -20px;
+    }
+  }
+}
+
+.document-sheet-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  margin: 0px;
+
+  .sheet-inner {
+    padding: 30px;
+    // work around a Chrome rendering bug with sections that
+    // are very short
+    min-height: 100%;
+  }
+}
+
+.document-list-table {
+  table-layout: fixed;
+
+  th.title { width: 63% }
+  th.year { width: 17% }
+  th.updated_at { width: 20% }
+
+  td, th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+
+  tr.amended-version {
+    td:first-child {
+      padding-left: 25px;
+    }
+
+    td {
+      border-top: 0px;
+    }
+  }
+}
+
+/* table of contents browser */
+.toc {
+  font-size: 13px;
+
+  ol {
+    list-style: none;
+    padding: 5px 5px 5px 10px;
+    
+    a {
+      display: block;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-decoration: none;
+      margin-left: -5px;
+      padding: 0px 0px 0px 5px;
+
+      &.active,
+      &.active:hover {
+        background-color: $link-color;
+        color: white;
+      }
+
+      &:hover {
+        background-color: $grey-lighter;
+      }
+    }
+  }
+
+  .toc-item {
+    &.akn-akomaNtoso,
+    &.akn-coverpage,
+    &.akn-preface,
+    &.akn-preamble,
+    &.akn-chapter,
+    &.akn-part,
+    &.akn-conclusions,
+    &.akn-components,
+    &.akn-component {
+      font-weight: bold;
+      margin-top: 5px;
+    }
+  }
+}
+
+/* revision list */
+.document-revisions-view {
+  background-color: $body-bg-color;
+
+  .revisions-header {
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
+    background-color: white;
+  }
+
+  .revisions-main {
+    display: flex;
+  }
+
+  .revisions-content {
+    position: relative;
+    height: calc(100vh - 106px);
+    flex: 1;
+  }
+
+  .revisions-container {
+    flex: 0 0 300px;
+    height: calc(100vh - 106px);
+    overflow-y: auto;
+    background-color: $white;
+    border-left: 1px solid $border-color;
+  }
+}
+
+.revision-preview {
+  ins {
+    background-color: #a6f3a6;
+    text-decoration: none;
+  }
+
+  del {
+    color: #a33;
+    background-color: #f8cbcb;
+    text-decoration: line-through;
+  }
+}
+
+.revision-list {
+  .revision {
+    padding: 5px 5px 5px 20px;
+    border-bottom: 1px solid $border-colour;
+    cursor: pointer;
+    position: relative;
+
+    &.active {
+      background-color: $document-sidebar-colour;
+
+      .revision-controls {
+        display: block;
+      }
+
+      &::before {
+        content: "\f053";
+        font-family: FontAwesome;
+        position: absolute;
+        left: 5px;
+        color: $grey-darkest;
+      }
+    }
+
+    &:hover {
+      background-color: $document-sidebar-colour;
+    }
+  }
+
+  .revision-date {
+    font-weight: bold;
+  }
+
+  .revision-controls {
+    display: none;
+  }
+
+  .revision-comment {
+    font-style: italic;
+  }
+}
+
+.fa.draft {
+  color: $yellow;
+}
+
+.fa.published {
+  color: $blue;
+}
+
+/* table editor */
+.table-editor-wrapper {
+  .btn-toolbar {
+    margin-bottom: 5px;
+
+    .btn-group {
+      float: right;
+    }
+  }
+
+  .when-active {
+    display: none;
+  }
+
+  &.table-editor-active {
+    .when-active {
+      display: block;
+    }
+    .when-inactive {
+      display: none;
+    }
+
+    table {
+      outline: $selection-colour auto 5px;
+    }
+
+    th.selected,
+    td.selected {
+      background-color: $selection-colour;
+    }
+
+    th.active,
+    td.active {
+      outline: $selection-colour auto 5px;
+    }
+
+    th.active.selected:focus,
+    td.active.selected:focus {
+      background-color: transparent;
+    }
+  }
+
+  td > p:last-child,
+  th > p:last-child {
+    margin-bottom: 0px;
+  }
+}
+
+#document-activity-view {
+  float: left;
+
+  ul {
+    margin-top: 7px;
+  }
+
+  li {
+    list-style: none;
+    float: left;
+    margin-right: 5px;
+    padding: 2px 3px;
+    font-size: smaller;
+    color: white;
+    border-radius: 3px;
+
+    &.is-asleep {
+      opacity: 0.5;
+    }
+  }
+
+  // https://bl.ocks.org/mbostock/5577023
+  .user-0 { background-color: #1b9e77; }
+  .user-1 { background-color: #d95f02; }
+  .user-2 { background-color: #7570b3; }
+  .user-3 { background-color: #e7298a; }
+  .user-4 { background-color: #66a61e; }
+  .user-5 { background-color: #e6ab02; }
+  .user-6 { background-color: #a6761d; }
+  .user-7 { background-color: #666666; }
+}
+
+.cheatsheet {
+  section {
+    clear: both;
+
+    border-bottom: 1px solid $grey-lighter;
+    margin-bottom: 10px;
+
+    &:last-child {
+      border-bottom: 0px;
+    }
+
+    pre {
+      width: 40%;
+      float: left;
+    }
+
+    p {
+      width: 60%;
+      float: left;
+      padding-left: 20px;
+    }
+  }
+}
+
+.document-preview-view {
+  background-color: $body-bg-color;
+
+  .preview-main {
+    position: relative;
+    height: calc(100vh - 50px);
+    max-width: 1024px;
+    margin: auto;
+  }
+}

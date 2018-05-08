@@ -38,9 +38,10 @@
     },
 
     readonly: function() {
-      return (!Indigo.userView.model.authenticated() ||
+      return (!Indigo.user.authenticated() ||
+              !Indigo.user.hasPerm('indigo_api.change_annotation') ||
               !this.model.get('created_by_user') ||
-              Indigo.userView.model.get('id') != this.model.get('created_by_user').id);
+              Indigo.user.get('id') != this.model.get('created_by_user').id);
     },
 
     setReadonly: function() {
@@ -101,8 +102,8 @@
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
-        .append('<button class="btn btn-info btn-sm save">Save</button>')
-        .append('<button class="btn btn-default btn-sm unedit pull-right">Cancel</button>')
+        .append('<button class="btn btn-primary btn-sm save">Save</button>')
+        .append('<button class="btn btn-outline-secondary btn-sm unedit pull-right">Cancel</button>')
         .find('.content')
         .replaceWith($textarea);
 
@@ -160,10 +161,12 @@
         this.el.appendChild(note.el);
       }, this);
 
-      $('<div class="annotation reply-container">')
-        .append('<textarea class="form-control reply-box" placeholder="Reply...">')
-        .append('<button class="btn btn-info btn-sm post hidden" disabled>Reply</button>')
-        .appendTo(this.el);
+      if (Indigo.user.hasPerm('indigo_api.add_annotation')) {
+        $('<div class="annotation reply-container">')
+          .append('<textarea class="form-control reply-box" placeholder="Reply...">')
+          .append('<button class="btn btn-primary btn-sm post hidden" disabled>Reply</button>')
+          .appendTo(this.el);
+      }
     },
 
     setClosed: function() {
@@ -335,7 +338,8 @@
     },
 
     enterSection: function(e) {
-      if (!Indigo.userView.model.authenticated()) return;
+      if (!Indigo.user.authenticated() ||
+          !Indigo.user.hasPerm('indigo_api.add_annotation')) return;
 
       var target = e.currentTarget,
           $target = $(target);

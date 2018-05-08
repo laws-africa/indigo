@@ -26,17 +26,19 @@
       this.listenTo(this.document, 'sync', this.refresh);
       this.listenTo(this.documentContent, 'sync', this.refresh);
 
-      $('.menu .revisions a').on('click', _.bind(this.show, this));
+      $('.menu .revisions').on('click', _.bind(this.show, this));
     },
 
     show: function(e) {
       e.preventDefault();
-      this.$el.addClass('in');
+      $('.work-view').addClass('d-none');
+      this.$el.removeClass('d-none');
     },
 
     dismiss: function(e) {
       e.preventDefault();
-      this.$el.removeClass('in');
+      $('.work-view').removeClass('d-none');
+      this.$el.addClass('d-none');
     },
 
     refresh: function() {

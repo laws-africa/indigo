@@ -1,0 +1,128 @@
+.import-form {
+  .dropzone {
+    width: 100%;
+    border: 5px dashed $border-colour;
+    text-align: center;
+    padding: 25px;
+
+    &.incoming {
+      background-color: $grey-lighter;
+    }
+  }
+
+  .file-input-field {
+    display: none;
+  }
+
+  .example {
+    padding: 1px 8px;
+    margin: -20px 0px 0px 20px;
+    background: $grey-lighter;
+    border-radius: 5px;
+    cursor: pointer;
+    h5 {
+      font-weight: bold;
+    }
+  }
+
+  .radio {
+    margin-bottom: 0px;
+  }
+
+  input[type=radio]:checked + .example {
+    background-color: $selection-colour;
+  }
+
+  .card {
+    position: relative;
+
+    &.numbered::before {
+      content: attr(data-num);
+      display: block;
+      position: absolute;
+      left: -45px;
+      top: 5px;
+      width: 35px;
+      height: 35px;
+      padding-top: 2px;
+
+      border-radius: 50%;
+      background-color: $blue;
+      text-align: center;
+      font-size: 20px;
+      color: white;
+      font-weight: bold;
+    }
+  }
+
+  .pages {
+    display: none;
+    width: 100%;
+    height: 570px;
+
+    position: relative;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    padding: 5px;
+    background: $grey;
+
+    // spinner waiting for first page
+    &:empty::after {
+      content: " ";
+      position: relative;
+      display: block;
+      width: 30px;
+      height: 30px;
+      border: 3px solid $grey-darkest;
+      border-bottom-color: transparent;
+      border-radius: 50%;
+      left: 50%;
+      top: 50%;
+      animation: fa-spin 1s infinite steps(16);
+    }
+
+    .page {
+      position: absolute;
+      box-sizing: content-box;
+      border: 1px solid $grey-darkest;
+
+      // spinner for loading pages
+      &.loading::after {
+        content: " ";
+        position: relative;
+        display: block;
+        width: 30px;
+        height: 30px;
+        border: 3px solid $grey-darkest;
+        border-bottom-color: transparent;
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        animation: fa-spin 1s infinite steps(16);
+      }
+    }
+
+    .padding {
+      position: absolute;
+      width: 100px;
+      height: 10px;
+    }
+
+    .cropbox {
+      fill-opacity: 0.25;
+      fill: #0983f6;
+      cursor: move;
+    }
+
+    &.loading .cropbox {
+      display: none;
+    }
+
+    .corner {
+      fill-opacity: 0.75;
+    }
+
+    .ne, .sw { cursor: nesw-resize; }
+    .nw, .se { cursor: nwse-resize; }
+  }
+}

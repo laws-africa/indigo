@@ -89,6 +89,8 @@ We describe using Heroku below.
 
 11. You can configure new users and other things at `/admin`.
 
+12. You'll need to set some :ref:`permissions` for users.
+
 TODO:
 
 * document configuring country details

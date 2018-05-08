@@ -1,0 +1,68 @@
+<div class="modal fade" id="work-chooser-box">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Choose a work</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div class="row">
+
+            <div class="col-3">
+              <select class="form-control work-chooser-country">
+                {% for country in countries %}
+                <option value="{{ country.code }}">{{ country }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
+            <div class="col-3">
+              <select class="form-control work-chooser-locality"></select>
+            </div>
+
+            <div class="col-4 col-offset-2">
+              <input type="text" class="form-control work-chooser-search" placeholder="Search..." autocomplete="off">
+            </div>
+
+          </div>
+        </div>
+        <div class="work-chooser-list scrollable"></div>
+      </div>
+
+      <div class="modal-footer">
+        <a href="/works/new" class="btn btn-link">Create a new work</a>
+        <a href="#" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</a>
+        <input type="submit" class="btn btn-primary choose-work" value="OK">
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<script id="work-chooser-table-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+<table class="table table-sm table-hover work-list-table">
+  <thead>
+    <tr>
+      <th class="year">Year</th>
+      <th class="title">Title</th>
+      <th class="frbr_uri">FRBR URI</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{#each works}}
+      <tr data-id="{{ id }}" class="{{#if chosen }}table-primary chosen{{/if}}">
+        <td>{{ year }}</td>
+        <td>{{ title }}</td>
+        <td class="frbr_uri">{{ frbr_uri }}</td>
+      </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+{% endverbatim %}
+</script>

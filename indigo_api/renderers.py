@@ -2,21 +2,17 @@ import lxml.etree as ET
 import tempfile
 import re
 import os.path
-import codecs
 import zipfile
 
 from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import caches
-from django.contrib.staticfiles.storage import staticfiles_storage
 from django.conf import settings
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
 from ebooklib import epub
-from pipeline.templatetags.pipeline import PipelineMixin
-from pipeline.collector import default_collector
-from pipeline.packager import Packager
 from languages_plus.models import Language
+from sass_processor.processor import SassProcessor
 
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
@@ -329,7 +325,7 @@ class PDFRenderer(HTMLRenderer):
         return options
 
 
-class EPUBRenderer(PipelineMixin, HTMLRenderer):
+class EPUBRenderer(HTMLRenderer):
     """ Helper to render documents as ePubs.
 
     The PipelineMixin lets us look up the raw content of the compiled
@@ -384,20 +380,16 @@ class EPUBRenderer(PipelineMixin, HTMLRenderer):
         self.book.add_metadata('DC', 'publisher', settings.INDIGO_ORGANISATION)
 
     def add_css(self):
-        # compile assets
-        default_collector.collect(self.request)
-
-        # add the files that produce export.css
-        pkg = self.package_for('epub', 'css')
-        packager = Packager()
-        paths = packager.compile(pkg.paths)
-
         self.stylesheets = []
-        for path in paths:
-            with codecs.open(staticfiles_storage.path(path), 'r', 'utf-8') as f:
-                css = f.read()
-            self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
-            self.stylesheets.append(path)
+
+        # compile scss and add the file
+        processor = SassProcessor()
+        processor.processor_enabled = True
+        path = processor('stylesheets/epub.scss')
+        with processor.storage.open(path) as f:
+            css = f.read()
+        self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
+        self.stylesheets.append(path)
 
         # now ensure all html items link to the stylesheets
         for item in self.book.items:

@@ -1,13 +1,18 @@
-<header class="boxed-group-header">
-  <h4>
-    Attachments
-    <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/metadata.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
-  </h4>
-</header>
+<div class="modal fade" id="attachments-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg document-attachments-view">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Attachments</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+      </div>
 
-<div class="boxed-group-inner">
-  <div class="document-attachments-view">
-    <div class="document-attachments-list">
+      <div class="modal-body scrollable">
+        <div class="document-attachments-list"></div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" aria-label="Close">Close</button>
+      </div>
     </div>
   </div>
 </div>
@@ -15,7 +20,7 @@
 <script id="attachments-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<ul class="attachments-list clearfix {{#if selectable}}selectable{{/if}}">
+<ul class="attachments-list {{#if selectable}}selectable{{/if}}">
   {{#each attachments}}
   <li data-index="{{ @index }}" data-id="{{ id }}" class="{{#if selected}}selected{{/if}}">
     <div class="wrapper">
@@ -27,11 +32,11 @@
             {{#if icon}}<i class="fa {{ icon }}"></i>{{/if}}
           {{/if}}
         </div>
-        <div class="filename">
-          {{ filename }}
-        </div>
-        <div class="filesize">{{ prettySize }}</div>
       </a>
+      <div class="attachment-details">
+        <div class="filename"><a href="{{ view_url}}" target="_blank">{{ filename }}</a></div>
+        <div class="filesize">{{ prettySize }}</div>
+      </div>
       <div class="buttons">
         <a href="#" class="edit-attachment"><i class="fa fa-fw fa-pencil"></i></a>
         <a href="#" class="delete-attachment"><i class="fa fa-fw fa-trash"></i></a>
@@ -44,7 +49,7 @@
       <input type="file" id="new-attachment-file" multiple="true">
       <h4>Drag and drop a file</h4>
       <h5>or</h5>
-      <button class="btn btn-default">Choose a file</button>
+      <button class="btn btn-secondary">Choose a file</button>
     </div>
   </li>
 </ul>
@@ -52,4 +57,14 @@
 {% endverbatim %}
 </script>
 
-{% include 'document/_attachment_modal.html' %}
+<script id="edit-attachment-template" type="text/x-handlebars-template">
+{% verbatim %}
+<form>
+  <div class="mb-2"><input type="text" class="form-control form-control-sm" name="filename" required></div>
+  <div>
+    <button class="btn btn-sm btn-success save-attachment" type="submit">OK</button>
+    <button class="btn btn-sm btn-outline-secondary cancel">Cancel</button>
+  </div>
+</form>
+{% endverbatim %}
+</script>

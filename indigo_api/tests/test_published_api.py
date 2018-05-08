@@ -4,14 +4,20 @@ from mock import patch
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
+from sass_processor.processor import SassProcessor
 
 from indigo_api.renderers import PDFRenderer
+
+
+# Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
+# but during testing we haven't compiled assets
+SassProcessor.processor_enabled = True
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class PublishedAPITest(APITestCase):
-    fixtures = ['user', 'published', 'colophon']
+    fixtures = ['user', 'work', 'published', 'colophon']
 
     def test_published_json(self):
         response = self.client.get('/api/za/act/2014/10')
@@ -289,7 +295,7 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.data['repeal'], {
             'date': '2014-02-12',
             'repealing_uri': '/za/act/2014/10',
-            'repealing_title': 'Repeal',
+            'repealing_title': 'Water Act',
             'repealing_id': 1,
         })
 

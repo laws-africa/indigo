@@ -10,23 +10,24 @@
       'click .close': 'close',
     },
 
-    show: function(message) {
+    show: function(message, html) {
       var left = $(window).width()/2 - this.$el.width()/2;
 
       this.message = message;
+      this.html = html || "";
       this.render();
       this.$el
         .css('left', left)
-        .removeClass('hidden');
+        .show();
     },
 
     close: function() {
-      this.$el
-        .addClass('hidden');
+      this.$el.hide();
     },
 
     render: function() {
-      this.$el.find('p').text(this.message);
+      this.$('.message').text(this.message);
+      this.$('.detail').html(this.html);
     }
   });
 })(window);

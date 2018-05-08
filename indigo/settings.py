@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'sass_processor',
     'pipeline',
     'rest_framework',
     'rest_framework.authtoken',
@@ -65,7 +66,7 @@ INSTALLED_APPS = (
 )
 
 MIDDLEWARE = (
-    #'django.middleware.security.SecurityMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -145,7 +146,7 @@ if not DEBUG:
     AWS_ACCESS_KEY_ID = os.environ.get('AWS_ACCESS_KEY_ID')
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_S3_BUCKET')
-    AWS_S3_ENDPOINT_URL = os.environ.get("AWS_S3_HOST", "http://s3-eu-west-1.amazonaws.com")
+    AWS_S3_REGION_NAME = 'eu-west-1'
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
@@ -182,6 +183,7 @@ STATIC_URL = '/static/'
 STATICFILES_FINDERS = (
     "django.contrib.staticfiles.finders.FileSystemFinder",
     "django.contrib.staticfiles.finders.AppDirectoriesFinder",
+    "sass_processor.finders.CssFinder",
     "pipeline.finders.PipelineFinder",
 )
 
@@ -190,46 +192,8 @@ STATICFILES_FINDERS = (
 STATICFILES_STORAGE = 'indigo.pipeline.GzipManifestPipelineStorage'
 
 
-# django-pipeline and pyscss settings
+# django-pipeline for javascript
 PIPELINE = {
-    'STYLESHEETS': {
-        'css': {
-            'source_filenames': (
-                'bower_components/bootstrap/dist/css/bootstrap.min.css',
-                'bower_components/bootstrap/dist/css/bootstrap-theme.min.css',
-                'bower_components/fontawesome/css/font-awesome.css',
-                'bower_components/bootstrap-datepicker/css/datepicker3.css',
-                'stylesheets/select2-4.0.0.min.css',
-                'stylesheets/bootstrap-menus.scss',
-                'stylesheets/app.scss',
-            ),
-            'output_filename': 'app.css',
-        },
-        'export': {
-            'source_filenames': (
-                # these are both in indigo_api/static/
-                'stylesheets/bootstrap.min.css',
-                'stylesheets/export.scss',
-            ),
-            'output_filename': 'export.css',
-        },
-        'epub': {
-            'source_filenames': (
-                # these are in indigo_api/static/
-                'stylesheets/bootstrap.min.css',
-                'stylesheets/export.scss',
-                'stylesheets/epub.scss',
-            ),
-            'output_filename': 'epub.css',
-        },
-        'resolver': {
-            'source_filenames': (
-                'bower_components/bootstrap/dist/css/bootstrap.min.css',
-                'stylesheets/resolver.scss',
-            ),
-            'output_filename': 'resolver.css',
-        },
-    },
     'JAVASCRIPT': {
         'js': {
             'source_filenames': (
@@ -238,7 +202,7 @@ PIPELINE = {
                 'bower_components/underscore/underscore-min.js',
                 'bower_components/backbone/backbone.js',
                 'bower_components/backbone.stickit/backbone.stickit.js',
-                'bower_components/bootstrap/dist/js/bootstrap.min.js',
+                'lib/bootstrap-4.1.0/js/bootstrap.bundle.min.js',
                 'bower_components/handlebars/handlebars.min.js',
                 'bower_components/moment/min/moment.min.js',
                 'bower_components/moment/locale/en-gb.js',
@@ -254,11 +218,12 @@ PIPELINE = {
                 'javascript/indigo/views/document_defined_terms.js',
                 'javascript/indigo/views/document_references.js',
                 'javascript/indigo/views/document_amendments.js',
-                'javascript/indigo/views/document_repeal.js',
                 'javascript/indigo/views/document_attachments.js',
                 'javascript/indigo/views/document_properties.js',
-                'javascript/indigo/views/document_chooser.js',
                 'javascript/indigo/views/document_toc.js',
+                'javascript/indigo/views/work.js',
+                'javascript/indigo/views/work_amendments.js',
+                'javascript/indigo/views/work_chooser.js',
                 'javascript/indigo/views/table_editor.js',
                 'javascript/indigo/views/document_editor.js',
                 'javascript/indigo/views/document_revisions.js',
@@ -282,27 +247,21 @@ PIPELINE = {
             'output_filename': 'resolver.js',
         }
     },
-    'CSS_COMPRESSOR': None,
     'JS_COMPRESSOR': None,
     # don't wrap javascript, this breaks LIME
     # see https://github.com/cyberdelia/django-pipeline/blob/ea74ea43ec6caeb4ec46cdeb7d7d70598e64ad1d/pipeline/compressors/__init__.py#L62
     'DISABLE_WRAPPER': True,
-    'COMPILERS': [
-        'indigo.pipeline.PyScssCompiler',
-    ],
     'PIPELINE_ENABLED': not DEBUG,
     'PIPELINE_COLLECTOR_ENABLED': True,
 }
 
-PYSCSS_LOAD_PATHS = [
-    os.path.join(BASE_DIR, 'indigo_api', 'static'),
-    os.path.join(BASE_DIR, 'indigo_app', 'static'),
-    os.path.join(BASE_DIR, 'indigo_resolver', 'static'),
-]
-
 
 # SSL indicator from the nginx proxy
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_BROWSER_XSS_FILTER = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_HSTS_SECONDS = 3600
+SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 
 # REST

@@ -1,42 +1,6 @@
 Managing Documents
 ==================
 
-Library
--------
-
-The library lists all the documents in the system. You can filter them by country and by tag and search for them by title, year and number.
-
-
-.. image:: library.png
-
-
-Searching
-.........
-
-Search for a document by typing in the search box. This will limit the documents to only those that match your search. Searches ignore case and
-match against title, year and number. Clear the search by clicking the **x** button.
-
-
-Filtering by Country
-....................
-
-To show only documents for a particular country click the name of the country in the list on the right.
-
-
-Filtering by Tag
-................
-
-Tags are a powerful way to group and manage documents however you need to. You can add as many tags as you like to a document.
-
-Change a document's tags by clicking on the document name and changing them in the **Basic details** section of the Properties
-page.
-
-You can filter the documents to show only those with one or more tags. To do so, click the tag in the list of tags on the right.
-The number next to the tag is the number of documents that have that tag. Tags you are filtering by are highlighted in blue.
-
-If you choose to filter by multiple tags, only documents with all of the chosen tags will be shown.
-
-
 Importing a new document
 ------------------------
 
@@ -95,3 +59,75 @@ and clicking the **Delete this document** button.
 
     Administrators: visit ``/admin/indigo_api/document/`` and click on the document to recover, scroll down
     to find the **Deleted** checkbox, uncheck it and click **Save**.
+
+.. _editing_metadata:
+
+Editing Metadata
+----------------
+
+The metadata is important for describing the document and making it available through
+the API.
+
+.. image:: metadata.png
+
+Basic Details
+-------------
+
+**Work** The details of the work this document is linked to. Change the work by clicking the button.
+
+**Short title** is the generally used title of the document. Most pieces of legislation declare what the short title will be.
+
+**Language** is the language of the document.
+
+**Tags** is a free-form collection of tags for this document. Use tags to manage your documents during editing and even after publication. To add a new tag, click in the box, type a new tag and press enter or comma. You can add as many tabs as you like. To delete a tag, either backspace or click the **x** next to the tag's name.
+
+**Stub document** indicates that the document doesn't have all its content yet. This is useful when other documents reference this one but no source is available
+or the source has not been fully checked.
+
+.. note::
+
+    Administrators can add new countries, languages and document subtypes through the Admin interface. Click on your name in the top-right corner and choose **Site Settings**.
+
+Draft and Publishing
+....................
+
+**Draft** controls whether the document is available publically. While you are editing the document, this should be **checked**. Outside users cannot see draft documents. Once a document is ready to be used by outside users, uncheck this box to indicate it is published.
+
+.. note:: You cannot delete a published document. Mark it as a draft, first.
+
+Amendments
+..........
+
+The Amendments section records amendments that have been applied to reach **this version of the document**. If you are not editing the latest
+version of the document this must only include those amendments that have been applied to reach this point.
+
+To record an amendment, you need the following information about the **amending document** (the document that caused the amendments to happen):
+
+- the title
+- date of publication (date at which the amendments took place)
+- the FRBR URI of the document
+
+If the amending document is already in the library, you can choose it from the list and have all these details filled in automatically.
+
+To create a newly amended version of a document, edit the version just before the new amendments need to be applied and click **Clone Document**
+to create a copy, and then edit that copy.
+
+Attachments
+...........
+
+The Attachments section lets you attach files to your document. This is generally used to link a source PDF, Word or other file with your document, but you can upload any file you like. When creating a new document by importing a file, the file is automatically added as an attachment.
+
+To upload a new file, click on **Attachments** and then click the **Choose Files** button.
+
+You can change the name of an attachment by clicking the pencil (edit) icon.
+
+Defined Terms Analysis
+......................
+
+Indigo can find defined terms in a document and associate occurrences of a term with its definition. It does this by looking for a section called ``Definitions`` or ``Interpretation`` and looking for sentences that look like definitions. It then looks through the document to find uses of any defined terms it has found.
+
+To find and link terms, click **Analysis** and then **Find and link defined terms**.
+
+When viewing a document, Indigo marks the definition of a defined term **in bold**.
+
+.. important:: Defined terms are lost when a section is edited. It's best to find and link defined terms just before publishing a final document, or after doing a batch of updates.

@@ -1,42 +1,29 @@
-{% extends "layout.html" %}
+{% extends "main.html" %}
 
 {% block title %}Library{% endblock %}
 
-{% block header %}
-  <div class="library-buttons">
-    <div class="btn-group">
-      <button type="button" class="btn btn-primary btn-sm dropdown-toggle" data-toggle="dropdown">
-        New <span class="caret"></span>
-      </button>
-      <ul class="dropdown-menu">
-        <li><a href="{% url 'new_document' %}">New Document</a></li>
-        <li><a href="{% url 'import_document' %}">Import a Document</a></li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="input-group header-search-box">
-    <span class="input-group-addon"><i class="fa fa-search"></i></span>
-    <input type="text" class="form-control filter-search" placeholder="Search documents">
-  </div>
-{% endblock %}
-
+{% block view-id %}library-view{% endblock %}
 {% block content %}
+<aside class="library-sidebar">
+  <section>
+    <label>Country</label>
+    <select class="form-control filter-country" name="country-filter">
+      {% for country in countries %}
+        <option {% if user.editor.country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
+      {% endfor %}
+    </select>
+  </section>
 
-<div class="sidebar library-sidebar">
-  <div class="boxed-group-inner">
-    <div id="filters">
-    </div>
+  <div id="filters"></div>
+</aside>
+
+<div class="library-wrapper">
+  <div class="library-filter-box">
+    <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
   </div>
-</div>
 
-<div class="workspace-content">
-  <div class="boxed-group-inner">
-    <div id="library">
-    </div>
-  </div>
+  <div id="library"></div>
 </div>
-
 {% endblock %}
 
 {% block js %}
@@ -45,7 +32,7 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-condensed table-hover document-list-table sorted-table">
+<table class="table table-sm table-hover document-list-table sorted-table">
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
@@ -54,73 +41,62 @@
     </tr>
   </thead>
   <tbody>
-    {{#each expressionSets}}
-      <tr>
-        <td>
-          {{#if first.draft}}
-            <i class="fa fa-fw fa-circle draft" title="draft"></i>
-          {{else}}
-            <i class="fa fa-fw fa-circle published" title="published"></i>
-          {{/if}}
-          <a href="/documents/{{ first.id }}/">
-            {{#if first.title}}
-              {{ first.title }}
+    {{#each works}}
+      {{#unless docs}}
+        <tr>
+          <!-- work without any documents -->
+          <td>
+            <i class="fa fa-fw fa-circle" title="empty work"></i>
+            <a href="/works/{{ id }}">{{ title }}</a>
+          </td>
+          <td>{{ year }} / {{ number }}</td>
+          <td>
+            <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+            <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
+          </td>
+        </tr>
+      {{/unless}}
+
+      {{#each docs}}
+        <tr {{#unless @first}}class="amended-version"{{/unless}}>
+          <td>
+            {{#if draft}}
+              <i class="fa fa-fw fa-circle draft" title="draft"></i>
             {{else}}
-              (untitled)
-            {{/if}}</a>
-
-          {{#if rest }}
-            <span class="text-muted">as at {{ first.expression_date }}</span>
-          {{/if}}
-
-          {{#if first.stub}}
-            <span class="label label-info">stub</span>
-          {{/if}}
-
-          {{#each first.tags}}
-            <span class="label label-default">{{this}}</span>
-          {{/each}}
-        </td>
-        <td>{{ first.year }} / {{ first.number }}</td>
-        <td>
-          <span class="time-ago" data-timestamp="{{ first.updated_at }}">{{ first.updated_at }}</span>
-          <span class="text-muted">{{#if first.updated_by_user.display_name}}- {{ first.updated_by_user.display_name }}{{/if}}</span>
-        </td>
-      </tr>
-      {{#each rest}}
-      <tr class="amended-version">
-        <td>
-          {{#if draft}}
-            <i class="fa fa-fw fa-circle draft" title="draft"></i>
-          {{else}}
-            <i class="fa fa-fw fa-circle published" title="published"></i>
-          {{/if}}
-          <a href="/documents/{{ id }}/">
-            {{#if title}}
-              {{ title }}
+              <i class="fa fa-fw fa-circle published" title="published"></i>
             {{/if}}
-            as at {{ expression_date }}</a>
 
-          {{#if stub}}
-            <span class="label label-info">stub</span>
-          {{/if}}
+            {{#if @first}}
+              <a href="/documents/{{ id }}/">{{ title }}</a>
+              <span class="text-muted">as at {{ expression_date }}</span>
+            {{else}}
+              <a href="/documents/{{ id }}/">{{ title }} as at {{ expression_date }}</a>
+            {{/if}}
 
-          {{#each tags}}
-            <span class="label label-default">{{this}}</span>
-          {{/each}}
-        </td>
-        <td></td>
-        <td>
-          <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-          <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
-        </td>
-      </tr>
+            {{#if stub}}
+              <span class="badge badge-info">stub</span>
+            {{/if}}
+
+            {{#each tags}}
+              <span class="badge badge-secondary">{{this}}</span>
+            {{/each}}
+          </td>
+          <td>{{#if @first}}{{ year }} / {{ number }}{{/if}}</td>
+          <td>
+            {{#if @first}}
+              <span class="time-ago" data-timestamp="{{ ../updated_at }}">{{ ../updated_at }}</span>
+            {{else}}
+              <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+            {{/if}}
+            <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
+          </td>
+        </tr>
       {{/each}}
     {{/each}}
   </tbody>
   <tfoot>
     <tr>
-      <td class="active" colspan="5">{{ count }} documents</td>
+      <td class="active" colspan="5">{{ count }} works</td>
     </tr>
   </tfoot>
 </table>
@@ -131,20 +107,29 @@
 <script id="filters-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-{{#if summary.show_countries}}
+{{#if summary.localities}}
 <section>
-  <select class="form-control filter-country" name="country-filter">
-    <option {{#unless filters.country}}selected{{/unless}} value="">All countries ({{ count }})</option>
-    {{#each summary.countries}}
-    <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{ count }})</option>
+  <label>Locality</label>
+  <select class="form-control filter-locality" name="locality-filter">
+    {{#each summary.localities}}
+      <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{count}})</option>
     {{/each}}
   </select>
 </section>
 {{/if}}
 
 <section>
-  <div class="btn-group" data-toggle="buttons">
-    <label class="btn btn-default btn-sm {{#if filter_status.all}}active{{/if}}">
+  <label>Nature</label>
+  <select class="form-control filter-nature" name="nature-filter">
+    {{#each summary.natures}}
+      <option {{#if active}}selected{{/if}} value="{{nature}}">{{name}} ({{count}})</option>
+    {{/each}}
+  </select>
+</section>
+
+<section>
+  <div class="btn-group btn-group-toggle" data-toggle="buttons">
+    <label class="btn btn-sm {{#if filter_status.all}}btn-secondary active{{/if}}">
       <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
     </label>
     <label class="btn btn-sm {{#if filter_status.published}}btn-info active{{else}}btn-default{{/if}}">
@@ -156,24 +141,9 @@
   </div>
 </section>
 
-{{#if summary.localities}}
-<section>
-  <ul class="nav nav-pills nav-stacked">
-    <li class="{{#unless filters.locality}}active{{/unless}}">
-      <a href="#" class="filter-locality" data-locality="">All localities <span class="badge">{{ count }}</span></a>
-    </li>
-    {{#each summary.localities}}
-    <li class="{{#if active}}active{{/if}}">
-      <a href="#" class="filter-locality" data-locality="{{code}}">{{name}} <span class="badge">{{count}}</span></a>
-    </li>
-    {{/each}}
-  </ul>
-</section>
-{{/if}}
-
 <section class="tag-filters">
   {{#each summary.tags}}
-  <a href="#" class="label {{#if active}}label-info{{else}}label-default{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge">{{this.count}}</span></a>
+  <a href="#" class="badge {{#if active}}badge-info{{else}}badge-secondary{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge badge-pill badge-light">{{this.count}}</span></a>
   {{/each}}
 </section>
 {% endverbatim %}
@@ -184,7 +154,8 @@
 window.Indigo.countries = {{ countries_json|safe }};
 
 // include the documents as JSON
+window.Indigo.Preloads.country_code = '{{ user.editor.country_code }}';
+window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>
-
-{% endblock %}
+{% endblock %}}

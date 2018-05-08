@@ -1,28 +1,9 @@
-<header class="boxed-group-header">
-  {% if document.id %}
-    <div class="buttons">
-      <div class="dropdown">
-        <button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown">
-          <i class="fa fa-download"></i> Download
-          <span class="caret"></span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-right">
-          <li><a href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a></li>
-          <li><a href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-          <li><a href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a></li>
-          <li><a href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="fa fa-file-code-o"></i> Akoma Ntoso XML</a></li>
-          <li><a href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="fa fa-file-zip-o"></i> ZIP Archive</a></li>
-        </ul>
+<div class="document-preview-view d-none">
+  <div class="preview-main">
+    <div class="document-sheet-container sheet-outer">
+      <div class="preview-container sheet-inner">
+        <div class="akoma-ntoso"></div>
       </div>
-    </div>
-  {% endif %}
-  <h4>Preview</h4>
-</header>
-
-<div class="boxed-group-inner boxed-group-inner-minimal">
-  <div class="document-sheet-container sheet-outer">
-    <div class="preview-container sheet-inner">
-      <div class="akoma-ntoso"></div>
     </div>
   </div>
 </div>

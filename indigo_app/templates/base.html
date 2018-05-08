@@ -1,4 +1,5 @@
 {% load pipeline %}
+{% load sass_tags %}
 
 <!DOCTYPE html>
 <html>
@@ -9,7 +10,7 @@
     <meta name="csrf-token" content="{{ csrf_token }}">
 
     {% block head-css %}
-    {% stylesheet "css" %}
+    <link rel="stylesheet" href="{% sass_src 'stylesheets/app.scss' %}">
     {% endblock %}
 
     {% block head-meta %}{% endblock %}
@@ -18,13 +19,16 @@
   <body {% block body-attributes %}{% endblock %} class="{% block body-class %}
     {% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}
     {% endblock %}">
-    <div id="error-box" class="alert alert-danger hidden">
+    <div id="error-box" class="alert alert-danger" style="display: none">
       <button type="button" class="close">&times;</button>
-      <p></p>
+      <p class="message"></p>
+      <div class="detail"></div>
     </div>
 
-    {% block page-content %}
-    {% endblock page-content %}
+    {% block page-content %}{% endblock page-content %}
+
+    {% include "user/_profile_modal.html" %}
+    {% include "user/_change_password_modal.html" %}
 
     {% block js %}
     {% javascript "js" %}
@@ -34,6 +38,9 @@
       if (!window.Indigo.Preloads) window.Indigo.Preloads = {};
 
       window.Indigo.resolverUrl = '{{ RESOLVER_URL }}';
+      {% if user.is_authenticated %}
+      window.Indigo.Preloads.user = {{ USER_JSON|safe }};
+      {% endif %}
     </script>
 
 

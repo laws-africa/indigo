@@ -1,0 +1,98 @@
+/* library */
+#library-view {
+  padding-top: $navbar-height;
+  padding-bottom: 0px;
+
+  .filter-tag {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: normal;
+    margin-bottom: 5px;
+
+    .badge {
+      font-size: 9px;
+      padding: 3px 5px;
+    }
+  }
+
+  .library-filter-box {
+    position: fixed;
+    top: $navbar-height;
+    left: $document-sidebar-width;
+    right: 0px;
+    background-color: #eee;
+    z-index: 50;
+    padding: 5px;
+
+    background-color: $document-sidebar-colour;
+  }
+
+  .filter-search {
+    width: 40%;
+  }
+
+  .library-wrapper {
+    margin-left: $document-sidebar-width;
+  }
+
+  .library-sidebar {
+    position: fixed;
+    top: 50px;
+    bottom: 0px;
+    left: 0px;
+    width: $document-sidebar-width;
+    background-color: $document-sidebar-colour;
+    overflow-y: auto;
+    padding: 10px 5px 5px 5px;
+
+    .nav {
+      padding: 5px;
+    }
+
+    .nav > li > a {
+      padding: 2px 5px;
+    }
+
+    section {
+      margin-bottom: 10px;
+    }
+
+    .btn-group {
+      padding-left: 7px;
+      padding-top: 5px;
+    }
+
+    .nav-pills a .badge {
+      float: right;
+    }
+
+    .tag-filters {
+      padding-left: 7px;
+    }
+  }
+
+  #library {
+    padding-top: 45px;
+    background-color: white;
+
+    & > table {
+      margin-bottom: 0px;
+    }
+  }
+}
+
+.sorted-table {
+  th {
+    cursor: pointer;
+  }
+
+  th.sort-up::after {
+    font-family: fontawesome;
+    content: ' \f0dd';
+  }
+
+  th.sort-down::after {
+    font-family: fontawesome;
+    content: ' \f0de';
+  }
+}

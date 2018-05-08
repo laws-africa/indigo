@@ -124,6 +124,149 @@
     },
   });
 
+  Indigo.Work = Backbone.Model.extend({
+    defaults: function() {
+      return {
+        nature: 'act',
+        country: Indigo.user.get('country_code').toLowerCase(),
+      };
+    },
+
+    urlRoot: '/api/works',
+
+    initialize: function(options) {
+      // keep frbr_uri up to date
+      this.on('change:country change:locality change:subtype change:number change:year', this.updateFrbrUri, this);
+    },
+
+    parse: function(json) {
+      if (json.commencing_work) json.commencing_work = new Indigo.Work(json.commencing_work);
+      if (json.repealed_by) json.repealed_by = new Indigo.Work(json.repealed_by);
+      if (json.parent_work) json.parent_work = new Indigo.Work(json.parent_work);
+      return json;
+    },
+
+    toJSON: function() {
+      var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      if (json.commencing_work && json.commencing_work.toJSON) json.commencing_work = json.commencing_work.toJSON();
+      if (json.repealed_by && json.repealed_by.toJSON) json.repealed_by = json.repealed_by.toJSON();
+      if (json.parent_work && json.parent_work.toJSON) json.parent_work = json.parent_work.toJSON();
+      return json;
+    },
+
+    updateFrbrUri: function() {
+      // rebuild the FRBR uri when one of its component sources changes
+      var parts = [''];
+
+      var country = this.get('country');
+      if (this.get('locality')) {
+        country += "-" + this.get('locality');
+      }
+      parts.push(country);
+      parts.push(this.get('nature'));
+      if (this.get('subtype')) {
+        parts.push(this.get('subtype'));
+      }
+      parts.push(this.get('year'));
+      parts.push(this.get('number'));
+
+      // clean the parts
+      parts = _.map(parts, function(p) { return (p || "").replace(/[ \/]/g, ''); });
+
+      this.set('frbr_uri', parts.join('/').toLowerCase());
+    },
+
+    validate: function(attrs, options) {
+      var errors = {};
+
+      if (!attrs.title) errors.title = 'A title must be specified';
+      if (!attrs.country) errors.country = 'A country must be specified';
+      if (!attrs.year) errors.year = 'A year must be specified';
+      if (!attrs.number) errors.number = 'A number must be specified';
+
+      if (!_.isEmpty(errors)) return errors;
+    },
+
+    /**
+     * Return a collection of all the documents linked to this work
+     */
+    documents: function() {
+      if (!this._documents) {
+        var self = this;
+        var docs = this._documents = new Indigo.Library();
+
+        var repopulate = function() {
+          docs.reset(Indigo.library.where({frbr_uri: self.get('frbr_uri')}));
+        };
+
+        docs.on('add remove', repopulate);
+        this.on('change:frbr_uri', repopulate);
+        repopulate();
+      }
+
+      return this._documents;
+    },
+
+    /**
+     * Return a collection representing the amendments for this work,
+     * most recent first.
+     */
+    amendments: function() {
+      if (!this._amendments) {
+        this._amendments = new Indigo.WorkAmendmentCollection([], {
+          work: this,
+          parse: true,
+          comparator: function(a, b) {
+            // most recent first
+            return -(a.get('date') || '').localeCompare(b.get('date'));
+          },
+        });
+        this.on('change:id', function(model) {
+          model._amendments.fetch({reset: true});
+        });
+      }
+
+      return this._amendments;
+    },
+
+    /**
+     * Get a sorted array of dates of available expressions (documents) of this work.
+     */
+    expressionDates: function() {
+      return _.uniq(this.documents().pluck('expression_date')).sort();
+    },
+  });
+
+  Indigo.WorkAmendment = Backbone.Model.extend({
+    parse: function(json) {
+      json.amending_work = new Indigo.Work(json.amending_work);
+      return json;
+    },
+
+    toJSON: function() {
+      var json = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      json.amending_work = this.get('amending_work').toJSON();
+      return json;
+    },
+  });
+
+  Indigo.WorkAmendmentCollection = Backbone.Collection.extend({
+    model: Indigo.WorkAmendment,
+
+    initialize: function(models, options) {
+      this.work = options.work;
+    },
+
+    url: function() {
+      return this.work.url() + '/amendments';
+    },
+
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results ? response.results : response;
+    },
+  });
+
   Indigo.Document = Backbone.Model.extend({
     defaults: {
       draft: true,
@@ -139,9 +282,6 @@
       // this is useful to know when the model needs to be saved
       this.on('change', this.setDirty, this);
       this.on('sync', this.setClean, this);
-
-      // keep frbr_uri up to date
-      this.on('change:country change:locality change:subtype change:number change:year', this.updateFrbrUri, this);
     },
 
     setDirty: function() {
@@ -200,28 +340,6 @@
       return this.attachmentList;
     },
 
-    updateFrbrUri: function() {
-      // rebuild the FRBR uri when one of its component sources changes
-      var parts = [''];
-
-      var country = this.get('country');
-      if (this.get('locality')) {
-        country += "-" + this.get('locality');
-      }
-      parts.push(country);
-      parts.push(this.get('nature'));
-      if (this.get('subtype')) {
-        parts.push(this.get('subtype'));
-      }
-      parts.push(this.get('year'));
-      parts.push(this.get('number'));
-
-      // clean the parts
-      parts = _.map(parts, function(p) { return (p || "").replace(/[ \/]/g, ''); });
-
-      this.set('frbr_uri', parts.join('/').toLowerCase());
-    },
-
     /**
      * Build and return a fully qualified manifestation URL for this document.
      */
@@ -241,7 +359,14 @@
 
       return url;
     },
+
+    setWork: function(work) {
+      this.set('frbr_uri', work.get('frbr_uri'));
+      this.work = work;
+      this.trigger('change change:work');
+    },
   });
+
   /** Create a new document by parsing an frbr URI */
   Indigo.Document.newFromFrbrUri = function(frbr_uri) {
     // /za-cpt/act/by-law/2011/foo
@@ -262,231 +387,63 @@
 
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,
-    url: '/api/documents',
+    country: null,
+
+    url: function() {
+      var url = '/api/documents';
+      var params = _.clone(this.params || {});
+
+      if (this.country) {
+        params.conutry = this.country;
+      }
+
+      if (params) {
+        url += '?' + _.map(params, function(val, key) {
+          return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+        }).join('&');
+      }
+
+      return url;
+    },
+
     parse: function(response) {
       // TODO: handle actual pagination
       return response.results;
     },
 
-    /**
-     * Return an ExpressionSet for the collection of documents for +frbr_uri+.
-     */
-    expressionSet: function(document) {
-      if (!document.expressionSet) {
-        document.expressionSet = new Indigo.ExpressionSet(null, {
-          library: this,
-          frbr_uri: document.get('frbr_uri'),
-          follow: document,
-        });
-      }
+    setParams: function(params) {
+      this.params = params;
+      return this.fetch({reset: true});
+    },
 
-      return document.expressionSet;
+    setCountry: function(country) {
+      if (this.country != country) {
+        this.country = country;
+        return this.fetch({reset: true});
+      }
+      return $.Deferred().resolve();
     },
   });
 
-  /**
-   * A collection of documents that are all expressions of the same work, based
-   * on the frbr_uri. Updated dynamically as document URIs change.
-   */
-  Indigo.ExpressionSet = Backbone.Collection.extend({
-    model: Indigo.Document,
-    comparator: 'expression_date',
+  Indigo.WorksCollection = Backbone.Collection.extend({
+    model: Indigo.Work,
+    country: null,
 
-    initialize: function(models, options) {
-      this.frbr_uri = options.frbr_uri;
-      this.library = options.library;
+    url: function() {
+      return '/api/works?country=' + encodeURIComponent(this.country);
+    },
 
-      // update ourselves if the document library changes
-      this.listenTo(this.library, 'reset add remove', this.build);
-      this.listenTo(this.library, 'change:frbr_uri', this.checkFrbrUriChange);
+    parse: function(response) {
+      // TODO: handle actual pagination
+      return response.results;
+    },
 
-      // watch documents for changed expression dates
-      this.on('change:expression_date', this.alignDocumentAmendments, this);
-
-      // should we follow a particular document even if its frbr_uri changes?
-      if (options.follow) {
-        this.listenTo(options.follow, 'change:frbr_uri', this.followingFrbrUriChanged, this);
+    setCountry: function(country) {
+      if (this.country != country) {
+        this.country = country;
+        return this.fetch({reset: true});
       }
-
-      this.amendments = new Backbone.Collection();
-      this.listenTo(this.amendments, 'remove', this.amendmentRemoved);
-      // when an amendment is added, ensure all docs have their amendments updated
-      this.listenTo(this.amendments, 'add', this.alignAllDocumentAmendments);
-      this.listenTo(this.amendments, 'change:date', this.amendmentDateChanged);
-
-      this.build();
-    },
-
-    build: function() {
-      this.reset(this.library.where({frbr_uri: this.frbr_uri}));
-
-      // build up a unique collection of amendments
-      var amendments = _.inject(this.models, function(memo, doc) {
-        if (doc.get('amendments')) {
-          memo = memo.concat(doc.get('amendments').models);
-        }
-        return memo;
-      }, []);
-      amendments = _.uniq(amendments, false, function(a) {
-        return a.get('amending_uri');
-      });
-      this.amendments.reset(amendments);
-    },
-
-    followingFrbrUriChanged: function(model, frbr_uri) {
-      if (this.frbr_uri != frbr_uri) {
-        this.frbr_uri = frbr_uri;
-        this.build();
-      }
-    },
-
-    checkFrbrUriChange: function(model, new_value) {
-      // if the model we're following has changed, rely on the followingFrbrUriChanged instead
-      if (this.follow && model == this.follow) return;
-
-      if (new_value == this.frbr_uri || model.previous('frbr_uri') == this.frbr_uri) {
-        this.build();
-      }
-    },
-
-    // An amendment was added. Ensure that all expressions have appropriate amendments.
-    amendmentRemoved: function(amendment) {
-      // adjust docs who had this expression date, finding a new one
-      var oldDate = amendment.get('date'),
-          dates = this.amendmentDates(),
-          newDate = _.indexOf(dates, oldDate) - 1;
-
-      newDate = (newDate < 0) ? this.initialPublicationDate() : dates[newDate];
-      this.each(function(doc) {
-        if (doc.get('expression_date') == oldDate) {
-          doc.set('expression_date', newDate);
-        }
-      });
-
-      this.alignAllDocumentAmendments();
-    },
-
-    // The date of an amendment changed. Ensure that all expressions linked to that date change, too,
-    // and that all documents have the correct amendments.
-    amendmentDateChanged: function(model, newDate) {
-      var prev = model.previous("date"),
-          self = this;
-
-      this.each(function(doc) {
-        if (doc.get('expression_date') == prev) {
-          doc.set('expression_date', newDate);
-        }
-      });
-
-      this.alignAllDocumentAmendments();
-    },
-
-    alignAllDocumentAmendments: function() {
-      var self = this;
-
-      this.each(function(d) {
-        self.alignDocumentAmendments(d, {silent: true});
-      });
-
-      this.trigger('change');
-    },
-
-    // Ensure that all this document has all the appropriate amendments linked to it.
-    alignDocumentAmendments: function(doc, options) {
-      var date;
-
-      // ensure the document has an expression date
-      if (!doc.has('expression_date')) {
-        doc.set('expression_date', doc.get('publication_date'));
-      }
-      date = doc.get('expression_date');
-
-      // apply amendments that are at or before the expression date
-      doc.get('amendments').set(this.amendments.filter(function(a) {
-        return a.get('date') <= date;
-      }));
-
-      if (!options && !options.silent) this.trigger('change');
-    },
-
-    initialPublicationDate: function() {
-      return this.length === 0 ? null : this.at(0).get('publication_date');
-    },
-
-    dates: function() {
-      var dates = _.uniq(this.pluck('expression_date'));
-      dates.sort();
-      return dates;
-    },
-
-    amendmentDates: function() {
-      var dates = _.uniq(this.amendments.pluck('date'));
-      dates.sort();
-      return dates;
-    },
-
-    // All dates covered by this expression set, including document dates,
-    // amendment dates and the initial publication date.
-    allDates: function() {
-      var dates = this.dates().concat(this.amendmentDates()),
-          pubDate = this.initialPublicationDate();
-
-      if (pubDate) dates.push(pubDate);
-      dates.sort();
-      dates = _.uniq(dates, true);
-
-      return dates;
-    },
-
-    atDate: function(date) {
-      return this.findWhere({expression_date: date});
-    },
-
-    amendmentsAtDate: function(date) {
-      return this.amendments.where({date: date});
-    },
-
-    // Create a new expression. Returns a deferred that is resolved
-    // with the new document document.
-    createExpressionAt: function(date) {
-      // find the first expression at or before this date, and clone that
-      // expression
-      var prev = _.last(this.filter(function(d) {
-        return d.get('expression_date') <= date;
-      }));
-      if (!prev) prev = this.at(0);
-
-      var doc = prev.clone();
-      var result = $.Deferred();
-
-      doc.set({
-        draft: true,
-        title: 'Copy of ' + doc.get('title'),
-        id: null,
-        expression_date: date,
-      });
-
-      // ensure it has the necessary amendments linked to it
-      this.alignDocumentAmendments(doc, {silent: true});
-
-      if (doc.get('content')) {
-        return result.resolve(doc);
-      } else {
-        // load the content
-        var content = new Indigo.DocumentContent({document: prev});
-        content.fetch()
-          .done(function() {
-            doc.set('content', content.get('content'));
-            doc.save()
-              .then(function() {
-                result.resolve(doc);
-              })
-              .fail(result.fail);
-          })
-          .fail(result.fail);
-      }
-
-      return result;
+      return $.Deferred().resolve();
     },
   });
 
@@ -499,6 +456,10 @@
 
     isNew: function() {
       return !this.authenticated();
+    },
+
+    hasPerm: function(perm) {
+      return this.get('permissions').indexOf(perm) > -1;
     },
   });
 

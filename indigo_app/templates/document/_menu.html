@@ -1,68 +1,34 @@
-<nav class="menu">
+<nav class="menu document-toolbar-menu">
   <div class="btn-toolbar">
     <div class="btn-group">
-      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">File</button>
-      <ul class="dropdown-menu">
-        <li class="dropdown-submenu">
-          <a href="#">New</a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'new_document' %}">New Document</a></li>
-            <li><a href="{% url 'import_document' %}">Import a Document</a></li>
-          </ul>
-        </li>
-        <li><a href="{% url 'library' %}">Open...</a></li>
-        <li role="separator" class="divider"></li>
-        <li class="save"><a href="#">Save</a></li>
-        <li class="delete-document"><a href="#">Delete</a></li>
-        <li class="clone-document"><a href="#">Make a Copy</a></li>
-        <li role="separator" class="divider"></li>
-        <li class="revisions"><a href="#">Recent Changes</a></li>
-        <li class="dropdown-submenu">
-          <a href="#">Download As</a>
-          <ul class="dropdown-menu">
-            <li><a href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a></li>
-            <li><a href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a></li>
-            <li><a href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a></li>
-            <li><a href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="fa fa-file-code-o"></i> Akoma Ntoso XML</a></li>
-            <li><a href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="fa fa-file-zip-o"></i> ZIP Archive</a></li>
-          </ul>
-        </li>
-      </ul>
+      <button type="button" class="btn btn-link" data-toggle="dropdown">File</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item save" href="#">Save</a>
+        <a class="dropdown-item delete-document" href="#">Delete</a>
+        <a class="dropdown-item clone-document" href="#">Make a Copy</a>
+        <div role="separator" class="divider"></div>
+        <a class="dropdown-item revisions" href="#">Recent Changes</a>
+        <div class="dropdown-submenu">
+          <a href="#" class="dropdown-item">Download As</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="fa fa-file-code-o"></i> Akoma Ntoso XML</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="fa fa-file-zip-o"></i> ZIP Archive</a>
+          </div>
+        </div>
+        <div role="separator" class="dropdown-divider"></div>
+        <a class="dropdown-item change-document-work" href="#">Change Linked Work...</a>
+      </div>
     </div>
 
     <div class="btn-group">
-      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Edit</button>
-      <ul class="dropdown-menu">
-        <li class="edit-find text-editor-only disabled"><a href="#">Find... <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a></li>
-        <li class="edit-find-next text-editor-only disabled"><a href="#">Find Next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a></li>
-        <li class="edit-find-previous text-editor-only disabled"><a href="#">Find Previous<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a></li>
-        <li class="edit-find-replace text-editor-only disabled"><a href="#">Replace...</a></li>
-        <li role="separator" class="divider"></li>
-        <li class="edit-insert-image text-editor-only disabled"><a href="#">Insert Image...</a></li>
-        <li class="edit-insert-table text-editor-only disabled"><a href="#">Insert Table</a></li>
-      </ul>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Analysis</button>
-      <ul class="dropdown-menu">
-        <li><a href="#defined-terms-modal" data-toggle="modal">Defined Terms...</a></li>
-        <li><a href="#references-modal" data-toggle="modal">References to Acts...</a></li>
-      </ul>
-    </div>
-
-    <div class="btn-group">
-      <button type="button" class="btn btn-link dropdown-toggle" data-toggle="dropdown">Help</button>
-      <ul class="dropdown-menu">
-        <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Indigo Help</a></li>
-        <li><a href="#cheatsheet-modal" data-toggle="modal">Editor Cheatsheet</a></li>
-        {% if SUPPORT_EMAIL %}
-        <li><a href="mailto:{{ SUPPORT_EMAIL }}" target="_blank">Request an account</a></li>
-        {% endif %}
-        <li><a href="mailto:greg@code4sa.org" target="_blank">Feedback</a></li>
-        <li role="separator" class="divider"></li>
-        <li><a href="https://github.com/Code4SA/indigo" target="_blank">Indigo on GitHub</a></li>
-      </ul>
+      <button type="button" class="btn btn-link" data-toggle="dropdown">Analysis</button>
+      <div class="dropdown-menu">
+        <a class="dropdown-item" href="#defined-terms-modal" data-toggle="modal">Defined Terms...</a>
+        <a class="dropdown-item" href="#references-modal" data-toggle="modal">References to Acts...</a>
+      </div>
     </div>
   </div>
 </nav>

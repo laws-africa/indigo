@@ -17,7 +17,7 @@ Contents:
 
     account
     principles
+    works
     managing
-    metadata
     editing
     admin

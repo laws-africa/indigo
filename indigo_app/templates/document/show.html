@@ -1,72 +1,76 @@
-{% extends "layout.html" %}
-
+{% extends "work/layout.html" %}
 {% load pipeline %}
 {% load static %}
 
+{% block title %}{{ document.title }}{% endblock %}
+{% block body-class %}{{ block.super }} {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
 
-{% block header %}
-  <span data-document-id="{{ document.id|default:"" }}"></span>
-  <h4 class="document-title">{{ document.title }}</h4>
-
-  {% include 'document/_menu.html' %}
+{% block sidebar %}
+  {% include './_sidebar.html' %}
 {% endblock %}
 
-{% block workspace-classes %}has-menu{% endblock %}
-
-
-{% block header-buttons %}
-  <button class="btn btn-default save" disabled style="display: none"><i class="fa fa-save"></i> Save</button>
-  <div id="document-activity-view"></div>
-
-  <script id="document-activity-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  <ul>
-    {{#each activity}}
-      <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
-        <i class="fa fa-user"></i> {{ user.display_name }}
-      </li>
-    {{/each}}
-  </ul>
-
-  {% endverbatim %}
-  </script>
+{% block breadcrumbs %}
+  {# this will be filled in by the view #}
+  <li class="breadcrumb-item">&nbsp;</li>
 {% endblock %}
 
+{% block main-header-title %}
+  <h5 class="main-header-title">
+    <span class="document-title">{{ document.title }}</span>
+    <span class="badge badge-info if-published">published</span>
+    <span class="badge badge-warning if-draft">draft</span>
+  </h5>
 
-{% block content %}
-  {% include "document/_sidebar.html" %}
+  <div class="document-toolbar-wrapper">
+    {% include 'document/_menu.html' %}
+    {% include 'document/_toolbar.html' %}
+  </div>
+{% endblock %}
 
-  <div class="workspace-content">
-    <div class="tab-content high">
-      <div id="props-tab" class="tab-pane active high">
-        {% include "document/_properties.html" %}
-      </div>
-
-      <div id="amendments-tab" class="tab-pane high">
-        {% include "document/_amendments.html" %}
-      </div>
-
-      <div id="attachments-tab" class="tab-pane high">
-        {% include "document/_attachments.html" %}
-      </div>
-
-      <div id="content-tab" class="tab-pane high">
-        {% include "document/_content.html" %}
-      </div>
-
-      <div id="preview-tab" class="tab-pane high">
-        {% include "document/_preview.html" %}
-      </div>
-    </div>
+{% block main-content %}
+  <div class="document-workspace">
+    {% include "document/_doc_sidebar.html" %}
+    {% include "document/_content.html" %}
   </div>
 
+  <script id="breadcrumb-template" type="text/x-handlebars-template">
+  {% verbatim %}
+    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    {{#if locality}}
+    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    {{/if}}
+    <li class="breadcrumb-item"><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+    <li class="breadcrumb-item expressions">
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
+      <div class="dropdown-menu">
+        {{#each expressions}}
+          {{#each documents}}
+            <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
+              {{ ../date }}
+              {{#if current}} - this document{{/if}}
+            </a>
+          {{/each}}
+        {{/each}}
+        <div class="dropdown-divider"></div>
+        <a class="dropdown-item" href="/works/{{ work.id }}/amendments/">Manage amendments...</a>
+      </div>
+    </li>
+  {% endverbatim %}
+  </script>
+
+  {% include "document/_properties.html" %}
+  {% include "document/_attachments.html" %}
   {% include "document/_defined_terms.html" %}
   {% include "document/_references.html" %}
-  {% include "document/_revisions.html" %}
   {% include "document/_annotations.html" %}
   {% include "document/_insert_image_modal.html" %}
-  {% include "document/_document_chooser_modal.html" %}
+  {% include "document/_cheatsheet.html" %}
+{% endblock %}
+
+{% block content %}
+  {{ block.super }}
+  {% include "document/_revisions.html" %}
+  {% include "document/_preview.html" %}
 {% endblock %}
 
 {% block js %}
@@ -78,8 +82,10 @@
   // inject country code-to-name mappings into JS
   window.Indigo.countries = {{ countries_json|safe }};
 
-  window.Indigo.Preloads.document = {{ document_json|safe }};
+  window.Indigo.Preloads.document_id = {{ document.id }};
   window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
+  window.Indigo.Preloads.works = {{ works_json|safe }};
+  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
 
   window.Indigo.Preloads.library = {{ documents_json|safe }};
 

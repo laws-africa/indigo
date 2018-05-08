@@ -15,7 +15,7 @@ from indigo_api.renderers import PDFRenderer
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['user', 'colophon']
+    fixtures = ['user', 'work', 'colophon']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
@@ -27,7 +27,7 @@ class DocumentAPITest(APITestCase):
 
         assert_equal(response.status_code, 201)
         assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
-        assert_equal(response.data['title'], '(untitled)')
+        assert_equal(response.data['title'], 'Test Act')
         assert_equal(response.data['nature'], 'act')
         assert_equal(response.data['year'], '1998')
         assert_equal(response.data['number'], '2')
@@ -59,21 +59,21 @@ class DocumentAPITest(APITestCase):
 
     def test_create_with_locality(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za-cpt/act/1998/2',
+            'frbr_uri': '/za/act/1998/2',
             'draft': False,
         })
 
         assert_equal(response.status_code, 201)
-        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
-        response = self.client.get('/api/za-cpt/act/1998/2')
+        response = self.client.get('/api/za/act/1998/2')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
     def test_create_title_overrides_content_xml(self):
         response = self.client.post('/api/documents', {
-            'frbr_uri': '/za-cpt/act/1998/2',
+            'frbr_uri': '/za/act/1998/2',
             'content': document_fixture('in the body'),
             'title': 'Document title',
             'draft': True,
@@ -87,7 +87,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.data['title'], 'Document title')
-        assert_equal(response.data['frbr_uri'], '/za-cpt/act/1998/2')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
     def test_update(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
@@ -118,19 +118,6 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.status_code, 200)
         assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
-
-    def test_update_publication_date(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {'publication_date': '2015-01-01'})
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['publication_date'], '2015-01-01')
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['publication_date'], '2015-01-01')
 
     def test_update_expression_date(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
@@ -211,7 +198,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
-        assert_equal(response.data['title'], '(untitled)')
+        assert_equal(response.data['title'], 'Test Act')
 
         response = self.client.patch('/api/documents/%s' % id, {
             'content': document_fixture(u'in γνωρίζω body'),
@@ -363,108 +350,6 @@ class DocumentAPITest(APITestCase):
             },
         ])
 
-    def test_create_with_amendments(self):
-        # this document made the amendments
-        response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/2010/2',
-            'expression_date': '2010-01-01',
-        })
-        assert_equal(response.status_code, 201)
-        amending_id = response.data['id']
-        assert_is_not_none(amending_id)
-
-        # this is the amended document
-        response = self.client.post('/api/documents', {
-            'frbr_uri': '/za/act/1998/2',
-            'amendments': [{
-                'date': '2010-01-01',
-                'amending_title': 'Act 2 of 2010',
-                'amending_uri': '/za/act/2010/2',
-            }]
-        })
-        assert_equal(response.status_code, 201)
-        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
-        assert_equal(response.data['amendments'], [{
-            'date': '2010-01-01',
-            'amending_title': 'Act 2 of 2010',
-            'amending_uri': '/za/act/2010/2',
-            'amending_id': amending_id,
-        }])
-
-        # ensure it shows amending_id when listed
-        response = self.client.get('/api/documents')
-        assert_equal(response.status_code, 200)
-        doc = list(d for d in response.data['results'] if d['frbr_uri'] == '/za/act/1998/2')[0]
-        assert_equal(doc['amendments'], [{
-            'date': '2010-01-01',
-            'amending_title': 'Act 2 of 2010',
-            'amending_uri': '/za/act/2010/2',
-            'amending_id': amending_id,
-        }])
-
-    def test_update_with_amendments(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {
-            'amendments': [{
-                'date': '2010-01-01',
-                'amending_title': 'Act 2 of 2010',
-                'amending_uri': '/za/act/2010/2',
-            }]
-        })
-
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['amendments'], [{
-            'date': '2010-01-01',
-            'amending_title': 'Act 2 of 2010',
-            'amending_uri': '/za/act/2010/2',
-            'amending_id': None,
-        }])
-
-    def test_update_with_repeal(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {
-            'repeal': {
-                'date': '2010-01-01',
-                'repealing_title': 'Act 2 of 2010',
-                'repealing_uri': '/za/act/2010/2',
-            }
-        })
-
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['repeal'], {
-            'date': '2010-01-01',
-            'repealing_title': 'Act 2 of 2010',
-            'repealing_uri': '/za/act/2010/2',
-            'repealing_id': None,
-        })
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['repeal'], {
-            'date': '2010-01-01',
-            'repealing_title': 'Act 2 of 2010',
-            'repealing_uri': '/za/act/2010/2',
-            'repealing_id': None,
-        })
-
-    def test_update_null_repeal(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.patch('/api/documents/%s' % id, {
-            'repeal': None,
-        })
-
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['repeal'], None)
-
     def test_create_from_file(self):
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
         tmp_file.write("""
@@ -477,14 +362,15 @@ class DocumentAPITest(APITestCase):
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 
-        response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
+        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
         # check the doc
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.data['draft'], True)
-        assert_not_equal(response.data['frbr_uri'], '/za/act/1980/01')
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(response.data['title'], 'Test Act')
 
         # check the attachment
         response = self.client.get('/api/documents/%s/attachments' % id)
@@ -557,7 +443,7 @@ class DocumentAPITest(APITestCase):
         """)
         tmp_file.seek(0)
 
-        response = self.client.post('/api/documents', {'file': tmp_file}, format='multipart')
+        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 

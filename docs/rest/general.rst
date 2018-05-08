@@ -87,7 +87,6 @@ Both APIs describe a document (an act) as a JSON object, such as:
         "date": "2005-03-01",
         "amending_title": "Act to Amend Act 10 of 2004",
         "amending_uri": "/za/act/2005/1",
-        "amending_id": null
       }],
       "assent_date": "2004-03-03",
       "content_url": "http://indigo.code4sa.org/api/documents/1/content",
@@ -121,14 +120,15 @@ Each of these fields is described in the table below.
 Field             Description                                                                         Type       Default for new documents
 ================= =================================================================================== ========== =========================
 amendments        List of amendments that have been applied to create this version of the document.   See below  ``[]``
+                  Read-only.
 amended_versions  List of different amended versions of this document in the library. Read-only.      See below  ``[]``
-assent_date       Date when the document was assented to. Optional.                                   ISO8601
+assent_date       Date when the document was assented to. Read-only.                                  ISO8601
 content_url       URL of the full content of the document. Read-only.                                 URL        Auto-generated
 country           ISO 3166-1 alpha-2 country code that this document is applicable to.                String
 created_at        Timestamp of when the document was first created. Read-only.                        ISO8601    Current time
 draft             Is this a draft document or is it available in the public API?                      Boolean    ``true``
 expression_date   Date of this expression (or publication). Required.                                 ISO8601    Publication date
-commencement_date Date of this commencement of most of the document. Optional.                        ISO8601
+commencement_date Date of this commencement of most of the document. Read-only.                       ISO8601
 frbr_uri          FRBR URI for this document.                                                         String     None, a value must be provided
 id                Unique ID of this document. Read-only.                                              Integer    Auto-generated
 language          Three letter ISO-639-2 language code for the language of the document.              String     ``"eng"``
@@ -158,14 +158,11 @@ content        Raw XML content of the entire document.                          
 Amendments
 ----------
 
-Amendments describe documents that made amendments to this document. The amending document doesn't need to be stored
-in the system, but it does need a date, title and a URI. If it **is** in the system, then ``amending_id``
-will be its document id, otherwise it will be ``null``.
+Amendments describe works that made amendments to this document.
 
 =============== =================================================================================== ==========
 Field           Description                                                                         Type
 =============== =================================================================================== ==========
-amending_id     Document id of the amending document, if in the library. Read-only.                 Integer
 amending_title  Title of the amending document.                                                     String
 amending_uri    FRBR URI of the amending document.                                                  String
 date            Date of the amending document, the date at which the amendment took place.          ISO8601

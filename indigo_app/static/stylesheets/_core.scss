@@ -1,0 +1,140 @@
+html, body {
+  height: 100%;
+  min-height: 100%;
+}
+
+body {
+  background-color: $body-bg-color;
+}
+
+/* permissions-based styles */
+body.authenticated {
+  .logged-in { display: block; }
+  .not-logged-in { display: none; }
+}
+
+body.unauthenticated {
+  .logged-in { display: none; }
+  .not-logged-in { display: block; }
+}
+
+.requires-staff { display: none; }
+body.is-staff {
+  .requires-staff { display: block; }
+}
+
+.high {
+  height: 100%;
+}
+
+fieldset {
+  margin-bottom: 20px;
+}
+
+.table thead th {
+  border-top: 0px;
+}
+
+.page-body {
+  padding-top: $navbar-height;
+
+  display: flex;
+  flex-direction: row;
+  flex-grow: 1;
+}
+
+.main-container {
+  flex: 1;
+}
+
+/* navbar */
+.navbar {
+  .navbar-brand {
+    padding: 0px;
+  }
+
+  .navbar-brand > img {
+    margin: -10px 10px -10px 0px;
+    height: 40px;
+  }
+
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
+  background-color: $indigo;
+}
+
+/* breadcrumbs */
+.main-header {
+  background-color: $white;
+  border-bottom: 1px solid $gray-300;
+
+  .breadcrumb {
+    margin: 0px 0px 5px 0px;
+    padding: 5px 0px 0px 0px;
+    background-color: transparent;
+
+    & > li + li:before {
+      content: "›";
+    }
+
+    .expressions {
+      position: relative;
+    }
+  }
+
+  .main-header-title {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
+
+  .main-header-menu {
+    margin-top: -5px;
+  }
+}
+
+/* dropdowns */
+.dropdown-menu {
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175)
+}
+
+/* main content, in partnership with navbar */
+.navbar ~ .main-container {
+  padding-bottom: 50px;
+}
+
+#error-box {
+  position: fixed;
+  top: 10px;
+  width: 600px;
+  z-index: 9999;
+}
+
+#progress-bar {
+  position: fixed;
+  top: $navbar-height;
+  right: 0px;
+  left: 0px;
+  height: 5px;
+  z-index: 1030;
+}
+
+/* form validation */
+.form-control:invalid {
+  border: 1px solid #843534;
+
+  &:focus {
+    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px #ce8483;
+  }
+}
+
+label.required::after {
+  content: " *";
+  color: $danger;
+}
+
+.modal {
+  .scrollable {
+    max-height: 450px;
+    overflow-y: auto;
+  }
+}

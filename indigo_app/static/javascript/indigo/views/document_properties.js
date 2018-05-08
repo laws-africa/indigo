@@ -20,31 +20,6 @@
       'click .btn-amendments': 'showAmendments',
     },
     bindings: {
-      '#document_country': {
-        observe: 'country',
-        onSet: function(val) {
-          // trigger a redraw of the localities, using this country
-          this.country = val;
-          this.model.set('locality', null);
-          this.model.trigger('change:locality', this.model);
-          return val;
-        },
-      },
-      '#document_locality': {
-        observe: 'locality',
-        selectOptions: {
-          collection: function() {
-            var country = Indigo.countries[this.country || this.model.get('country')];
-            return country ? country.localities : [];
-          },
-          defaultOption: {label: "(none)", value: null},
-        }
-      },
-      '#document_nature': 'nature',
-      '#document_subtype': 'subtype',
-      '#document_year': 'year',
-      '#document_number': 'number',
-      '#document_frbr_uri': 'frbr_uri',
       '#document_title': 'title',
       '#document_tags': {
         observe: 'tags',
@@ -58,24 +33,10 @@
           }
 
           // update the valid choices to ensure those we want are there
-          $el.select2({data: val});
+          $el.select2({data: val, width: '100%'});
           // add them
           $el.val(val).trigger('change');
         },
-      },
-      '#document_publication_date': {
-        observe: 'publication_date',
-        onSet: emptyIsNull,
-      },
-      '#document_publication_name': 'publication_name',
-      '#document_publication_number': 'publication_number',
-      '#document_commencement_date': {
-        observe: 'commencement_date',
-        onSet: emptyIsNull,
-      },
-      '#document_assent_date': {
-        observe: 'assent_date',
-        onSet: emptyIsNull,
       },
       '#document_expression_date': {
         observe: 'expression_date',
@@ -85,77 +46,34 @@
         }
       },
       '#document_language': 'language',
-      '#document_draft': {
-        observe: 'draft',
-        onSet: bool,
-      },
       '#document_stub': {
         observe: 'stub',
         onSet: bool,
-      },
-      '#document_updated_at': {
-        observe: 'updated_at',
-        onGet: function(value, options) {
-          if (value) {
-            value = moment(value).calendar();
-            if (this.model.get('updated_by_user')) {
-              value += ' by ' + this.model.get('updated_by_user').display_name;
-            }
-            return value;
-          } else {
-            return "";
-          }
-        }
-      },
-      '#document_created_at': {
-        observe: 'created_at',
-        onGet: function(value, options) {
-          if (value) {
-            value = moment(value).calendar();
-            if (this.model.get('created_by_user')) {
-              value += ' by ' + this.model.get('created_by_user').display_name;
-            }
-            return value;
-          } else {
-            return "";
-          }
-        }
       },
     },
 
     initialize: function() {
       // the choices in the expression_date dropdown
       this.expressionDates = new Backbone.Collection();
+      this.amendments = new Indigo.WorkAmendmentCollection(Indigo.Preloads.amendments, {
+        work: this.model,
+      });
 
       this.dirty = false;
-      this.model.on('change', this.setDirty, this);
-      this.model.on('sync', this.setClean, this);
-      this.model.expressionSet.on('change', this.setDirty, this);
-
-      this.model.on('change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl, this);
-      this.model.on('change:repeal sync', this.showRepeal, this);
-      this.model.on('change:country', this.updatePublicationOptions, this);
-      this.updatePublicationOptions();
+      this.listenTo(this.model, 'change', this.setDirty);
+      this.listenTo(this.model, 'sync', this.setClean);
+      this.listenTo(this.model, 'change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl);
 
       // update the choices of expression dates when necessary
-      this.model.on('change:publication_date', this.matchPublicationExpressionDates, this);
-      this.model.on('change:publication_date change:expression_date', this.updateExpressionDates, this);
-      this.model.expressionSet.amendments.on('change:date add remove reset', this.updateExpressionDates, this);
+      this.listenTo(this.model, 'change:publication_date', this.matchPublicationExpressionDates);
+      this.listenTo(this.model, 'change:publication_date', this.updateExpressionDates);
+      this.listenTo(this.model, 'change:work', this.workChanged);
+      this.listenTo(this.amendments, 'change add remove reset', this.updateExpressionDates);
 
-      this.model.updateFrbrUri();
       this.updateExpressionDates();
       this.stickit();
-    },
 
-    updatePublicationOptions: function() {
-      var country = Indigo.countries[this.model.get('country')],
-          pubs = (country ? country.publications : []).sort();
-
-      $("#publication_list").empty().append(_.map(pubs, function(pub) {
-        var opt = document.createElement("option");
-        opt.setAttribute("value", pub);
-        return opt;
-      }));
+      this.render();
     },
 
     matchPublicationExpressionDates: function(model, new_value) {
@@ -173,8 +91,16 @@
     },
 
     updateExpressionDates: function() {
-      var dates = this.model.expressionSet.allDates(),
-          pubDate = this.model.expressionSet.initialPublicationDate();
+      var dates = _.unique(this.amendments.pluck('date')),
+          pubDate = this.model.work.get('publication_date'),
+          expDate = this.model.get('expression_date');
+
+      if (pubDate && dates.indexOf(pubDate) == -1) dates.push(pubDate);
+      dates.sort();
+
+      if (dates.length > 0 && (!expDate || dates.indexOf(expDate) == -1)) {
+        this.model.set('expression_date', dates[0]);
+      }
 
       this.expressionDates.set(_.map(dates, function(date) {
         return {
@@ -186,7 +112,7 @@
 
     showAmendments: function(e) {
       e.preventDefault();
-      $('.sidebar a[href="#amendments-tab"]').click();
+      $('.document-sidebar a[href="#amendments-tab"]').click();
     },
 
     showPublishedUrl: function() {
@@ -219,16 +145,24 @@
         return $.Deferred().resolve();
       }
 
-      // save modified documents using the expression set is sufficient to
-      // ensure this document is saved too
-      var dirty = this.model.expressionSet.filter(function(d) { return d.dirty; });
-
-      // save the dirty ones and chain the deferreds into a single deferred
-      return $.when.apply($, dirty.map(function(d) {
-        return d.save();
-      })).done(function() {
+      return this.model.save().done(function() {
         self.setClean();
       });
+    },
+
+    render: function() {
+      var work = this.model.work;
+
+      this.$('.document-work-title')
+        .text(work.get('title'))
+        .attr('href', '/works/' + work.get('id'));
+    },
+
+    workChanged: function() {
+      this.amendments.work = this.model.work;
+      this.amendments.fetch({reset: true});
+      this.$('a.manage-amendments').attr('href', '/works/' + this.model.work.get('id') + '/amendments/');
+      this.render();
     },
   });
 })(window);

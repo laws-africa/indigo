@@ -1,0 +1,77 @@
+/* amendments list */
+
+.timeline {
+  list-style: none;
+  padding-left: 0px;
+  margin-left: 130px;
+  position: relative;
+
+  // timeline bar
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    left: 11px;
+    top: 20px;
+    bottom: 0px;
+    width: 2px;
+    background: $grey;
+    z-index: 0;
+  }
+
+  // dot at bottom of timeline bar
+  &::after {
+    border: $grey 2px solid;
+    border-radius: 50%;
+    content: " ";
+    position: absolute;
+    bottom: 0px;
+    left: 8px;
+    background-color: $grey;
+    width: 8px;
+    height: 8px;
+  }
+
+  .timeline-date {
+    position: absolute;
+    left: -130px;
+    top: 10px;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-left: 40px;
+    border: 0px;
+    margin-bottom: 15px;
+    box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.15);
+
+    // circle on timeline
+    &::before {
+      right: 100%;
+      border: $grey 2px solid;
+      border-radius: 50%;
+      content: " ";
+      position: absolute;
+      top: 10px;
+      left: -37px;
+      background-color: white;
+      width: 18px;
+      height: 18px;
+      z-index: 1;
+    }
+    
+    // arrow at left of item
+    &::after {
+      right: 100%;
+      border: solid transparent;
+      content: " ";
+      width: 0;
+      height: 0;
+      position: absolute;
+      border-right-color: $white;
+      border-width: 10px;
+      top: 10px;
+      left: -20px;
+    }
+  }
+}

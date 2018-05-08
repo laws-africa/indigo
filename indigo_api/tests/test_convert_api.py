@@ -2,8 +2,6 @@
 
 import tempfile
 from datetime import date
-import os.path
-import re
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
@@ -13,7 +11,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class RenderParseAPITest(APITestCase):
-    fixtures = ['user', 'published']
+    fixtures = ['user', 'work', 'published']
 
     def setUp(self):
         self.client.default_format = 'json'
@@ -44,13 +42,13 @@ class RenderParseAPITest(APITestCase):
     def test_render_json_to_html(self):
         response = self.client.post('/api/render', {
             'document': {
-                'frbr_uri': '/za/act/1980/20',
+                'frbr_uri': '/za/act/1998/2',
                 'content': document_fixture(text='hello'),
             },
         })
         assert_equal(response.status_code, 200)
         assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Act 20 of 1980', response.data['output'])
+        assert_in('Act 2 of 1998', response.data['output'])
 
     def test_render_json_to_html_round_trip(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')
@@ -68,13 +66,13 @@ class RenderParseAPITest(APITestCase):
     def test_render_json_to_html_with_unicode(self):
         response = self.client.post('/api/render', {
             'document': {
-                'frbr_uri': '/za/act/1980/20',
+                'frbr_uri': '/za/act/1998/2',
                 'content': document_fixture(text=u'hello κόσμε'),
             },
         })
         assert_equal(response.status_code, 200)
         assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Act 20 of 1980', response.data['output'])
+        assert_in('Act 2 of 1998', response.data['output'])
 
     def test_parse_text_fragment(self):
         response = self.client.post('/api/parse', {
@@ -88,6 +86,7 @@ class RenderParseAPITest(APITestCase):
             """,
             'fragment': 'chapter',
             'id_prefix': 'prefix',
+            'frbr_uri': '/za/act/1998/2',
         })
         assert_equal(response.status_code, 200)
         self.maxDiff = None
@@ -131,16 +130,15 @@ class RenderParseAPITest(APITestCase):
         (2) There was nothing and an Act no 2 of 2010.
         """)
         tmp_file.seek(0)
-        fname = os.path.basename(tmp_file.name)
 
         response = self.client.post('/api/parse', {
             'file': tmp_file,
+            'frbr_uri': '/za/act/1998/2',
         }, format='multipart')
         assert_equal(response.status_code, 200)
 
         today = date.today().strftime('%Y-%m-%d')
         output = response.data['output'].decode('utf-8')
-        frbr_uri = re.search(r'<FRBRuri value="(.*?)"/>', output).groups(0)[0]
 
         self.maxDiff = None
         self.assertEqual(output, u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
@@ -148,23 +146,23 @@ class RenderParseAPITest(APITestCase):
     <meta>
       <identification source="#slaw">
         <FRBRWork>
-          <FRBRthis value=\"""" + frbr_uri + u"""/main"/>
-          <FRBRuri value=\"""" + frbr_uri + u""""/>
-          <FRBRalias value="Imported from """ + fname + u""""/>
+          <FRBRthis value=\"/za/act/1998/2/main\"/>
+          <FRBRuri value=\"/za/act/1998/2\"/>
+          <FRBRalias value="Test Act"/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
           <FRBRcountry value="za"/>
         </FRBRWork>
         <FRBRExpression>
-          <FRBRthis value=\"""" + frbr_uri + u"""/eng@1980-01-01/main"/>
-          <FRBRuri value=\"""" + frbr_uri + u"""/eng@1980-01-01"/>
+          <FRBRthis value=\"/za/act/1998/2/eng@1980-01-01/main"/>
+          <FRBRuri value=\"/za/act/1998/2/eng@1980-01-01"/>
           <FRBRdate date="1980-01-01" name="Generation"/>
           <FRBRauthor href="#council"/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
-          <FRBRthis value=\"""" + frbr_uri + u"""/eng@1980-01-01/main"/>
-          <FRBRuri value=\"""" + frbr_uri + u"""/eng@1980-01-01"/>
+          <FRBRthis value=\"/za/act/1998/2/eng@1980-01-01/main"/>
+          <FRBRuri value=\"/za/act/1998/2/eng@1980-01-01"/>
           <FRBRdate date=\"""" + today + u"""\" name="Generation"/>
           <FRBRauthor href="#slaw"/>
         </FRBRManifestation>

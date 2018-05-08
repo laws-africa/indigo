@@ -36,6 +36,23 @@ $(function() {
         } else {
           Indigo.errorView.show("Please log in first.");
         }
+      } else if (xhr.status == 400) {
+        var details;
+        msg = "There was a problem with your request";
+
+        if (xhr.responseJSON && _.isObject(xhr.responseJSON)) {
+          details = "<ul>";
+          details += _.map(xhr.responseJSON, function(val, key) {
+            return '<li>' + key.replace('_', ' ') + ": " + val + "</li>";
+          }).join(" ");
+          details += "</ul>";
+
+          msg += ":";
+        } else {
+          msg += ".";
+        }
+
+        Indigo.errorView.show(msg, details);
       }
     })
     .ajaxStart(function(event) {
@@ -65,6 +82,24 @@ $(function() {
     placement: 'auto top'
   });
 
+  // stash the query string params, if any
+  function getQueryParams(queryString) {
+    var query = (queryString || window.location.search).substring(1); // delete ?
+    if (!query) {
+      return {};
+    }
+    return _
+      .chain(query.split('&'))
+      .map(function(params) {
+        var p = params.split('=');
+        return [p[0], decodeURIComponent(p[1])];
+      })
+      .object()
+      .value();
+  }
+
+  Indigo.queryParams = getQueryParams();
+
   Indigo.progressView = new Indigo.ProgressView();
   Indigo.errorView = new Indigo.ErrorBoxView();
 
@@ -79,14 +114,26 @@ $(function() {
     }
   };
 
-  // setup the library
+  // always load the user view
+  Indigo.user = new Indigo.User(Indigo.Preloads.user || {
+    permissions: [],
+  });
+  Indigo.userView = new Indigo.UserView();
+
+  // setup the document library
   Indigo.library = new Indigo.Library();
   if (Indigo.Preloads.library) {
     Indigo.library.reset({results: Indigo.Preloads.library}, {parse: true});
   }
 
-  // always load the user view
-  Indigo.userView = new Indigo.UserView();
+  // setup the collection of works
+  Indigo.works = new Indigo.WorksCollection();
+  if (Indigo.Preloads.works) {
+    Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country_code');
+    Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
+  } else {
+    Indigo.works.setCountry(Indigo.Preloads.country_code || Indigo.user.get('country_code'));
+  }
 
   // what view must we load?
   var view = $('body').data('backbone-view');

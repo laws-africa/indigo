@@ -4,7 +4,7 @@ Using the Application REST API
 ==============================
 
 This guide is for developers who want to use the Indigo REST Application API to
-manage and edit documents. We assume that you have a basic understanding of web
+manage and edit works and documents. We assume that you have a basic understanding of web
 applications, REST APIs and the `Akoma Ntoso <http://www.akomantoso.org/>`_
 standard for legislation (acts).
 
@@ -12,15 +12,16 @@ See :ref:`rest_general_guide` for general API details such as content types and
 what the fields of a Document are.
 
 If you only want to fetch and render published legislation and don't care
-about editing legislation, see :ref:`rest_public_guide` instead.
+about works or editing legislation, see :ref:`rest_public_guide` instead.
 
 Application API
 ---------------
 
 The application API is the REST API used by the web editor to manage documents. With it you can:
 
-* create new documents
-* edit, update and delete existing documents
+* create, edit, update and delete works
+* list works
+* create, edit, update and delete documents
 * list and search for documents
 * manage users and passwords
 
@@ -71,6 +72,131 @@ In subsequent requests that require authentication, include the token as a heade
 .. seealso::
 
    For more information on token authentication, see the `authentication documentation for the Django Rest Framework <http://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication>`_.
+
+Works
+-----
+
+A Work is an Act, a by-law, a regulation, and so on. In Indigo, a work doesn't
+have any content -- it's just a description of the basic details of the act (or
+by-law, etc.). A work can be associated with many documents, each of which is an
+*expression* of the work.
+
+An Indigo work is uniquely identified by its FRBR URI. Documents are linked to a work through
+a common FRBR URI.
+
+Documents inherit a number of fields from a work, such as the FRBR URI, publication date, repeal status, etc.
+
+List Works
+..........
+
+.. code:: http
+
+    GET /api/works
+
+Lists the works. The results will be :ref:`paginated <pagination>`.
+
+Get a Work
+..........
+
+.. code:: http
+
+    GET /api/works/{id}
+
+Fetches a JSON description of a work. For example:
+
+.. code-block:: json
+
+    {
+      "assent_date": null,
+      "commencement_date": "2018-04-11",
+      "country": "za",
+      "created_at": "2018-04-07T11:59:28.181610Z",
+      "created_by_user": {
+        "id": 1,
+        "display_name": "Greg K."
+      },
+      "frbr_uri": "/za/act/2018/2",
+      "id": 246,
+      "locality": null,
+      "nature": "act",
+      "number": "2",
+      "publication_date": "2018-04-11",
+      "publication_name": "Government Gazette",
+      "publication_number": 1234,
+      "repealed_by": null,
+      "repealed_date": null,
+      "subtype": null,
+      "title": "An Act",
+      "updated_at": "2018-04-07T11:59:28.181651Z",
+      "updated_by_user": {
+        "id": 1,
+        "display_name": "Greg K."
+      },
+      "url": "http://indigo.code4sa.org/api/works/246",
+      "year": "2018"
+    }
+
+Each of these fields is described in the table below.
+
+================= =================================================================================== ========== =========================
+Field             Description                                                                         Type       Default for new works
+================= =================================================================================== ========== =========================
+assent_date       Date when the work was assented to. Optional.                                       ISO8601
+commencement_date Date of this commencement of most of the work. Optional.                            ISO8601
+commencing_work   Work that determined the commencement date, if any. Optional.                       Object
+country           ISO 3166-1 alpha-2 country code that this work is applicable to.                    String
+created_at        Timestamp of when the work was first created. Read-only.                            ISO8601    Current time
+frbr_uri          FRBR URI for this work.                                                             String     None, a value must be provided
+id                Unique ID of this work. Read-only.                                                  Integer    None, a value must be provided
+locality          The code of the locality within the country. Optional. Read-only.                   String
+nature            The nature of this work, normally "act".                                            String     ``"act"``
+number            Number of this act in its year of publication, or some other unique way of          String
+                  identifying it within the year
+repealed_by       Work that repealed this work, if any. Optional.                                     Object
+repealed_date     Date when this work was repealed. Optional.                                         ISO8601
+subtype           Subtype code of the work. Optional. Read-only.                                      String
+title             work short title.                                                                   String     None, a value must be provided
+updated_at        Timestamp of when the work was last updated. Read-only.                             ISO8601    Current time
+url               URL for fetching details of this work. Read-only.                                   URL        Auto-generated
+year              Year of publication                                                                 String 
+================= =================================================================================== ========== =========================
+
+Update a Work
+.................
+
+.. code:: http
+
+    PUT /api/work/{id}
+    PATCH /api/work/{id}
+
+* Parameters:
+
+  * all the work fields described above.
+
+Updates a work. Use `PUT` when updating all the details of a work. Use `PATCH` when updating only some fields.
+
+Delete a Work
+.................
+
+.. code:: http
+
+    DELETE /api/works/{id}
+
+Marks the work as deleted. The document can be recovered from the Django Admin area, but will never show up in any API
+otherwise.
+
+Works with linked documents cannot be deleted.
+
+Create a Work
+.............
+
+.. code:: http
+
+    POST /api/works
+
+* Parameters:
+
+  * all the document fields described above.
 
 Documents
 ---------

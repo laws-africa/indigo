@@ -7,27 +7,12 @@ from django.conf import settings
 import mammoth
 
 from .models import Document
-from .analysis import ActRefFinder
+from indigo_analysis.registry import analyzers
 from cobalt.act import Fragment
 
 
 class Slaw(object):
     log = logging.getLogger(__name__)
-
-    def link_terms(self, document):
-        """
-        Find and link defined terms in a document.
-        """
-        with tempfile.NamedTemporaryFile() as f:
-            f.write(document.content)
-            f.flush()
-            cmd = ['link-definitions', f.name]
-            code, stdout, stderr = self.slaw(cmd)
-            if code > 0:
-                raise ValueError(stderr)
-            document.content = stdout
-
-        return stdout
 
     def slaw(self, args):
         """ Call slaw with ``args`` """
@@ -73,7 +58,7 @@ class Importer(Slaw):
     """
     cropbox = None
 
-    def import_from_upload(self, upload, request):
+    def import_from_upload(self, upload, frbr_uri, request):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
@@ -81,40 +66,36 @@ class Importer(Slaw):
 
         if upload.content_type in ['text/xml', 'application/xml']:
             # just assume it's valid AKN xml
-            doc = Document.randomized(request.user)
+            doc = Document.randomized(frbr_uri)
             doc.content = upload.read().decode('utf-8')
             return doc
 
         if upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
             # pre-process docx to HTML and then import html
             html = self.docx_to_html(upload)
-            doc = self.import_from_text(html, request, '.html')
+            doc = self.import_from_text(html, frbr_uri, '.html')
 
         else:
             # slaw will do its best
             with self.tempfile_for_upload(upload) as f:
-                doc = self.import_from_file(f.name, request)
+                doc = self.import_from_file(f.name, frbr_uri)
 
         self.analyse_after_import(doc)
 
-        if not self.fragment:
-            doc.title = "Imported from %s" % upload.name
-            doc.copy_attributes()
-
         return doc
 
-    def import_from_text(self, input, request, suffix=''):
+    def import_from_text(self, input, frbr_uri, suffix=''):
         """ Create a new Document by importing it from plain text.
         """
         with tempfile.NamedTemporaryFile(suffix=suffix) as f:
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
-            doc = self.import_from_file(f.name, request)
+            doc = self.import_from_file(f.name, frbr_uri)
 
         return doc
 
-    def import_from_file(self, fname, request):
+    def import_from_file(self, fname, frbr_uri):
         cmd = ['parse', '--no-definitions']
 
         if self.fragment:
@@ -145,10 +126,10 @@ class Importer(Slaw):
         if self.fragment:
             doc = Fragment(stdout.decode('utf-8'))
         else:
-            doc = Document.randomized(country=self.country)
-            frbr_uri = doc.frbr_uri
+            doc = Document.randomized(frbr_uri)
             doc.content = stdout.decode('utf-8')
             doc.frbr_uri = frbr_uri  # reset it
+            doc.title = None
             doc.copy_attributes()
 
         self.log.info("Successfully imported from %s" % fname)
@@ -171,7 +152,9 @@ class Importer(Slaw):
         """ Run analysis after import.
         Usually only used on PDF documents.
         """
-        ActRefFinder().find_references_in_document(doc)
+        finder = analyzers.for_document('refs', doc)
+        if finder:
+            finder.find_references_in_document(doc)
 
     def docx_to_html(self, docx_file):
         result = mammoth.convert_to_html(docx_file)

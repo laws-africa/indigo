@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
 
 from languages_plus.models import Language as MasterLanguage
@@ -75,7 +75,7 @@ class Editor(models.Model):
     @property
     def country_code(self):
         if self.country:
-            return self.country.country_id
+            return self.country.country_id.lower()
         return None
 
     @country_code.setter
@@ -99,12 +99,24 @@ class Publication(models.Model):
         return unicode(self.name)
 
 
+@receiver(pre_save, sender=User)
+def set_user_email(sender, **kwargs):
+    # ensure the user's username and email match
+    user = kwargs["instance"]
+    if user.email:
+        user.username = user.email
+    else:
+        user.email = user.username
+
+
 @receiver(post_save, sender=User)
 def create_editor(sender, **kwargs):
     # create editor for user objects
     user = kwargs["instance"]
     if not hasattr(user, 'editor'):
         editor = Editor(user=user)
+        # ensure there is a country
+        editor.country = Country.objects.first()
         editor.save()
 
 

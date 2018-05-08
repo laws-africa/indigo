@@ -1,0 +1,51 @@
+/* work chooser modal */
+#work-chooser-box {
+  .panel {
+    margin-bottom: 0px;
+  }
+}
+
+.work-chooser-list {
+  td.frbr_uri {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 300px;
+    overflow-x: hidden;
+  }
+}
+
+.work-view {
+  h5.work-frbr-uri {
+    margin-top: 0px;
+  }
+
+  .floating-sidebar {
+    position: fixed;
+    min-width: 190px;
+  }
+
+  .sub-nav {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+#edit-work-view {
+  .repeal-date {
+    display: none;
+  }
+
+  &.is-repealed {
+    .repeal-date {
+      display: block;
+    }
+  }
+}
+
+#work-amendments-view {
+  .work-amendments {
+    th.date {
+      width: 15%;
+    }
+  }
+}

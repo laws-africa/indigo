@@ -1,41 +1,46 @@
-<div class="document-revisions-view">
-  <header class="boxed-group-header">
-    <div class="buttons">
+<div class="document-revisions-view d-none">
+  <header class="revisions-header row">
+    <div class="col">
+      <h5>Recent Changes</h5>
+    </div>
+
+    <div class="col text-right">
       <a href="#" class="btn btn-primary dismiss">Close</a>
     </div>
-    <h4>Recent Changes</h4>
   </header>
 
-  <div class="boxed-group-inner boxed-group-inner-minimal">
-    <div class="revisions-container"></div>
-
-    <div class="document-sheet-container sheet-outer">
-      <div class="revision-preview sheet-inner">
-        <div class="akoma-ntoso"></div>
+  <div class="revisions-main">
+    <div class="revisions-content">
+      <div class="document-sheet-container sheet-outer">
+        <div class="revision-preview sheet-inner">
+          <div class="akoma-ntoso"></div>
+        </div>
       </div>
     </div>
+
+    <aside class="revisions-container"></aside>
   </div>
-</div>
 
-<script id="revisions-template" type="text/x-handlebars-template">
-{% verbatim %}
+  <script id="revisions-template" type="text/x-handlebars-template">
+  {% verbatim %}
 
-<ol class="revision-list list-unstyled">
-{{#each revisions}}
-  <li class="revision" data-id="{{ id }}" data-index="{{ @index }}">
-    <div>
-      <span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span>
-    </div>
-    <div class="revision-summary">
-      <div class="revision-user">{{ user.display_name }}</div>
-      <div class="revision-comment">{{ comment }}</div>
-      <div class="revision-controls">
-        <a href="#" class="restore-revision">Restore this revision</a>
+  <ol class="revision-list list-unstyled">
+  {{#each revisions}}
+    <li class="revision" data-id="{{ id }}" data-index="{{ @index }}">
+      <div>
+        <span class="revision-date">{{ date_str }}</span> <span class="text-muted"> - {{ id }}</span>
       </div>
-    </div>
-  </li>
-{{/each}}
-</ol>
+      <div class="revision-summary">
+        <div class="revision-user">{{ user.display_name }}</div>
+        <div class="revision-comment">{{ comment }}</div>
+        <div class="revision-controls">
+          <a href="#" class="restore-revision">Restore this revision</a>
+        </div>
+      </div>
+    </li>
+  {{/each}}
+  </ol>
 
-{% endverbatim %}
-</script>
+  {% endverbatim %}
+  </script>
+</div>

@@ -8,11 +8,10 @@ import string
 
 from django.conf import settings
 from django.db import models
-from django.db.models import signals
+from django.db.models import signals, Q
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
-from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -23,7 +22,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
+from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
 
 from .utils import language3_to_2, localize_toc
 
@@ -33,11 +32,183 @@ DEFAULT_COUNTRY = 'za'
 log = logging.getLogger(__name__)
 
 
+class WorkQuerySet(models.QuerySet):
+    def get_for_frbr_uri(self, frbr_uri):
+        work = self.filter(frbr_uri=frbr_uri).first()
+        if work is None:
+            raise ValueError("Work for FRBR URI '%s' doesn't exist" % frbr_uri)
+        return work
+
+
+class Work(models.Model):
+    """ A work is an abstract document, such as an act. It has basic metadata and
+    allows us to track works that we don't have documents for, and provides a
+    logical parent for documents, which are expressions of a work.
+    """
+
+    frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
+    """ The FRBR Work URI of this work that uniquely identifies it globally """
+
+    title = models.CharField(max_length=1024, null=True, default='(untitled)')
+    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
+
+    # publication details
+    publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
+    publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
+    publication_date = models.CharField(null=True, blank=True, max_length=255, help_text="Date of publication (YYYY-MM-DD)")
+
+    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
+    assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+
+    # repeal information
+    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Work that repealed this work", related_name='repealed_works')
+    repealed_date = models.DateField(null=True, blank=True, help_text="Date of repeal of this work")
+
+    # optional parent work
+    parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Parent related work", related_name='child_works')
+
+    # optional work that determined the commencement date of this work
+    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    objects = WorkQuerySet.as_manager()
+
+    _work_uri = None
+    _repeal = None
+
+    @property
+    def work_uri(self):
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """
+        if self._work_uri is None:
+            self._work_uri = FrbrUri.parse(self.frbr_uri)
+        return self._work_uri
+
+    @property
+    def year(self):
+        return self.work_uri.date.split('-', 1)[0]
+
+    @property
+    def number(self):
+        return self.work_uri.number
+
+    @property
+    def nature(self):
+        return self.work_uri.doctype
+
+    @property
+    def subtype(self):
+        return self.work_uri.subtype
+
+    @property
+    def locality(self):
+        return self.work_uri.locality
+
+    @property
+    def repeal(self):
+        """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
+        None if this work hasn't been repealed.
+        """
+        if self._repeal is None:
+            if self.repealed_by:
+                self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+        return self._repeal
+
+    def save(self, *args, **kwargs):
+        # prevent circular references
+        if self.commencing_work == self:
+            self.commencing_work = None
+        if self.repealed_by == self:
+            self.repealed_by = None
+        if self.parent_work == self:
+            self.parent_work = None
+
+        if not self.repealed_by:
+            self.repealed_date = None
+
+        return super(Work, self).save(*args, **kwargs)
+
+    def can_delete(self):
+        return (not self.document_set.undeleted().exists()
+                and not self.child_works.exists()
+                and not self.repealed_works.exists()
+                and not self.commenced_works.exists()
+                and not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
+
+    def create_expression_at(self, date):
+        """ Create a new expression at a particular date.
+
+        This uses an existing document at or before this date as a template, if available.
+        """
+        doc = Document()
+
+        # most recent expression at or before this date
+        template = self.document_set\
+            .undeleted()\
+            .filter(expression_date__lte=date)\
+            .order_by('-expression_date')\
+            .first()
+
+        if template:
+            doc.title = template.title
+            doc.content = template.content
+
+        doc.draft = True
+        doc.language = DEFAULT_LANGUAGE
+        doc.expression_date = date
+        doc.work = self
+        doc.save()
+
+        return doc
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.frbr_uri, self.title)
+
+
+@receiver(signals.post_save, sender=Work)
+def post_save_work(sender, instance, **kwargs):
+    """ Cascade (soft) deletes to linked documents
+    """
+    if not kwargs['raw'] and not kwargs['created']:
+        # cascade updates to ensure documents
+        # pick up changes to inherited attributes
+        for doc in instance.document_set.all():
+            # forces call to doc.copy_attributes()
+            doc.save()
+
+
+class Amendment(models.Model):
+    """ An amendment to a work, performed by an amending work.
+    """
+    amended_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work amended.", related_name='amendments')
+    amending_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work making the amendment.", related_name='+')
+    date = models.DateField(null=False, blank=False, help_text="Date of the amendment")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+
+@receiver(signals.post_save, sender=Amendment)
+def post_save_amendment(sender, instance, **kwargs):
+    if not kwargs['raw']:
+        for doc in instance.amended_work.document_set.all():
+            # forces call to doc.copy_attributes()
+            doc.save()
+
+
 class DocumentManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields
         return super(DocumentManager, self)\
             .get_queryset()\
+            .prefetch_related('work')\
             .defer("search_text", "search_vector")
 
 
@@ -110,12 +281,18 @@ class Document(models.Model):
 
     objects = DocumentManager.from_queryset(DocumentQuerySet)()
 
-    db_table = 'documents'
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, db_index=True, null=False)
+    """ The work this document is an expression of. Details from the work will be inherited by this document.
+    This is not exposed externally. Instead, the document is automatically linked to the appropriate
+    work using the FRBR URI.
+
+    You cannot create a document that has an FRBR URI that doesn't match a work.
+    """
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, default='/', help_text="Used globally to identify this work")
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
-    title = models.CharField(max_length=1024, null=True, default='(untitled)')
+    title = models.CharField(max_length=1024, null=False)
     country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
     """ The 3-letter ISO-639-2 language code of this document """
@@ -130,11 +307,6 @@ class Document(models.Model):
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
     # It can be null only so that users aren't forced to add a value.
     expression_date = models.DateField(null=True, blank=True, help_text="Date of publication or latest amendment")
-
-    # Date of commencement. AKN doesn't have a good spot for this, so it only goes in the DB.
-    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
-    # Date of assent. AKN doesn't have a good spot for this, so it only goes in the DB.
-    assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
     stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
     """ Is this a stub without full content? """
@@ -159,12 +331,8 @@ class Document(models.Model):
     publication_name = models.CharField(null=True, blank=True, max_length=255)
     publication_date = models.CharField(null=True, blank=True, max_length=255)
     publication_number = models.CharField(null=True, blank=True, max_length=255)
-    repeal_event = JSONField(null=True)
-    amendment_events = JSONField(null=True)
 
     # caching attributes
-    _repeal = None
-    _amendments = None
     _work_uri = None
 
     @property
@@ -205,53 +373,20 @@ class Document(models.Model):
     def locality(self):
         return self.work_uri.locality
 
-    @property
     def amendments(self):
-        # we cache these values so that we can decorate them
-        # with extra info when serializing
-        if self._amendments is None:
-            self._amendments = [
-                AmendmentEvent(
-                    arrow.get(a.get('date')).date() if a.get('date') else None,
-                    a.get('amending_title'),
-                    a.get('amending_uri')
-                ) for a in self.amendment_events or []]
-        return self._amendments
-
-    @amendments.setter
-    def amendments(self, value):
-        self._amendments = None
-        self._amended_versions = None
-        if value:
-            self.amendment_events = [{
-                'date': datestring(a.date) if a.date else None,
-                'amending_title': a.amending_title,
-                'amending_uri': a.amending_uri,
-            } for a in value]
+        if self.expression_date:
+            return [a for a in self.work.amendments.all() if a.date <= self.expression_date]
         else:
-            self.amendment_events = None
+            return []
+
+    def amendment_events(self):
+        return [
+            AmendmentEvent(a.date, a.amending_work.title, a.amending_work.frbr_uri)
+            for a in self.amendments()]
 
     @property
     def repeal(self):
-        if self._repeal is None:
-            e = self.repeal_event
-            if e:
-                d = e.get('date')
-                d = arrow.get(d).date() if d else None
-                self._repeal = RepealEvent(d, e.get('repealing_title'), e.get('repealing_uri'))
-        return self._repeal
-
-    @repeal.setter
-    def repeal(self, value):
-        self._repeal = None
-        if value:
-            self.repeal_event = {
-                'date': datestring(value.date),
-                'repealing_title': value.repealing_title,
-                'repealing_uri': value.repealing_uri,
-            }
-        else:
-            self.repeal_event = None
+        return self.work.repeal
 
     @property
     def work_uri(self):
@@ -259,6 +394,14 @@ class Document(models.Model):
         if self._work_uri is None:
             self._work_uri = FrbrUri.parse(self.frbr_uri)
         return self._work_uri
+
+    @property
+    def commencement_date(self):
+        return self.work.commencement_date
+
+    @property
+    def assent_date(self):
+        return self.work.assent_date
 
     def save(self, *args, **kwargs):
         self.copy_attributes()
@@ -273,10 +416,12 @@ class Document(models.Model):
             self.save()
 
     def copy_attributes(self, from_model=True):
-        """ Copy attributes from the model into the document, or reverse
+        """ Copy attributes from the model into the XML document, or reverse
         if `from_model` is False. """
 
         if from_model:
+            self.copy_attributes_from_work()
+
             self.doc.title = self.title
             self.doc.frbr_uri = self.frbr_uri
             self.doc.language = self.language
@@ -287,8 +432,7 @@ class Document(models.Model):
             self.doc.publication_number = self.publication_number
             self.doc.publication_name = self.publication_name
             self.doc.publication_date = self.publication_date
-            self.doc.repeal = self.repeal
-            self.doc.amendments = self.amendments
+            self.doc.repeal = self.work.repeal
 
         else:
             self.title = self.doc.title
@@ -298,16 +442,26 @@ class Document(models.Model):
             self.publication_number = self.doc.publication_number
             self.publication_name = self.doc.publication_name
             self.publication_date = self.doc.publication_date
-            self.repeal = self.doc.repeal
-            self.amendments = self.doc.amendments
             # ensure these are refreshed
             self._work_uri = None
-            self._amendments = None
             self._amended_versions = None
-            self._repeal = None
 
         # update the model's XML from the Act XML
         self.refresh_xml()
+
+    def copy_attributes_from_work(self):
+        """ Copy various attributes from this document's Work onto this
+        document.
+        """
+        for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
+            setattr(self, attr, getattr(self.work, attr))
+
+        # copy over amendments at or before this expression date
+        self.doc.amendments = self.amendment_events()
+
+        # copy over title if it's not set
+        if not self.title:
+            self.title = self.work.title
 
     def update_search_text(self):
         """ Update the `search_text` field with a raw representation of all the text in the document.
@@ -397,27 +551,7 @@ class Document(models.Model):
         return language3_to_2(self.language) or self.language
 
     def __unicode__(self):
-        return 'Document<%s, %s>' % (self.id, (self.title or '(Untitled)')[0:50])
-
-    @classmethod
-    def decorate_amendments(cls, documents):
-        """ Decorate the items in each document's ``amendments``
-        list with the document id of the amending document.
-        """
-        # uris that amended docs in the set
-        uris = set(a.amending_uri for d in documents for a in d.amendments if a.amending_uri)
-        amending_docs = Document.objects.undeleted().no_xml()\
-            .filter(frbr_uri__in=list(uris))\
-            .order_by('expression_date')\
-            .all()
-
-        for doc in documents:
-            for a in doc.amendments:
-                for amending in amending_docs:
-                    # match on the URI and the expression date
-                    if amending.frbr_uri == a.amending_uri and amending.expression_date == a.date:
-                        a.amending_document = amending
-                        break
+        return 'Document<%s, %s>' % (self.id, self.title[0:50])
 
     @classmethod
     def decorate_repeal(cls, documents):
@@ -467,11 +601,12 @@ class Document(models.Model):
                 doc._amended_versions = amended_versions
 
     @classmethod
-    def randomized(cls, user=None, **kwargs):
+    def randomized(cls, frbr_uri, **kwargs):
         """ Helper to return a new document with a random FRBR URI
         """
-        country = kwargs.pop('country', None) or (user.editor.country_code if user and user.is_authenticated else None)
-        frbr_uri = random_frbr_uri(country=country)
+        frbr_uri = FrbrUri.parse(frbr_uri)
+        kwargs['country'] = frbr_uri.country
+        kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
 
         doc = cls(frbr_uri=frbr_uri.work_uri(False), publication_date=frbr_uri.expression_date, expression_date=frbr_uri.expression_date, **kwargs)
         doc.copy_attributes()

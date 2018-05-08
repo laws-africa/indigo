@@ -1,0 +1,25 @@
+<div class="card mb-3">
+  <h5 class="card-header">{{ title }}</h5>
+
+  <div class="card-body">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th></th>
+          <th colspan="2">Related work</th>
+          <th>Year</th>
+          <th>Number</th>
+        </tr>
+      </thead>
+    {% for item in items %}
+      <tr>
+        <td><strong>{{ item.rel|capfirst }}</strong></td>
+        <td><a href="{% url 'work' item.work.id %}">{{ item.work.title }}</a></td>
+        <td>{{ item.work.frbr_uri }}</td>
+        <td>{{ item.work.year }}</td>
+        <td>{{ item.work.number }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>

@@ -7,8 +7,6 @@
   .sidebar-nav {
     flex: 1;
     position: relative;
-    overflow-x: hidden;
-    overflow-y: auto;
     width: $sidebar-width;
 
     .nav {
@@ -22,6 +20,21 @@
         width: 50px;
         text-align: center;
       }
+
+      &:not(.disabled) {
+        color: rgba(255, 255, 255, 0.9);
+
+        &:hover,
+        &.active:hover {
+          background-color: $primary;
+          color: $white;
+        }
+
+        &.active {
+          background-color: rgba(255, 255, 255, 0.25);
+          color: $white;
+        }
+      }
     }
 
     .nav-heading {
@@ -30,21 +43,6 @@
       font-weight: 600;
       color: rgba(255, 255, 255, 0.5);
       text-transform: uppercase;
-    }
-
-    a {
-      color: rgba(255, 255, 255, 0.9);
-    }
-
-    a:hover,
-    a.active:hover {
-      background-color: $primary;
-      color: $white;
-    }
-
-    a.active {
-      background-color: rgba(255, 255, 255, 0.25);
-      color: $white;
     }
   }
 }

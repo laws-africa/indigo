@@ -165,6 +165,9 @@ class Work(models.Model):
 
         return doc
 
+    def expressions(self):
+        return self.document_set.undeleted().order_by('expression_date').all()
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

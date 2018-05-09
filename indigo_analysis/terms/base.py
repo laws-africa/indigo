@@ -81,7 +81,7 @@ class BaseTermsFinder(LocaleBasedAnalyzer):
             # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
 
             id = defn.get('refersTo')
-            if id:
+            if id and defn.text:
                 # strip starting hash
                 id = id[1:]
                 terms[id] = defn.text
@@ -102,7 +102,7 @@ class BaseTermsFinder(LocaleBasedAnalyzer):
         for section in doc.xpath('//a:section', namespaces=self.nsmap):
             # sections with headings like Definitions
             heading = self.heading_xpath(section)
-            if heading is None or not self.heading_re.match(heading[0].text):
+            if not heading or not self.heading_re.match(heading[0].text or ''):
                 continue
 
             # find items like "foo" means blah...

@@ -264,7 +264,7 @@
     },
 
     showPreview: function(e) {
-      var $link = $(e.target);
+      var $link = $(e.currentTarget);
 
       if ($link.hasClass('active')) {
         this.closePreview();

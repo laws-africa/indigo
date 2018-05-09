@@ -5,11 +5,11 @@ Indigo Platform
 
 Indigo is `AfricanLII's <http://africanlii.org/>`_ document management system for managing, capturing and publishing
 legislation in the `Akoma Ntoso <http://www.akomantoso.org/>`_ format, built by
-`Code for South Africa <http://code4sa.org>`_ with a grant from `Indigo Trust <http://indigotrust.org.uk/>`_.
+`OpenUp <https://openup.org.za>`_ with a grant from `Indigo Trust <http://indigotrust.org.uk/>`_.
 
-You can try it out at `indigo.code4sa.org <http://indigo.code4sa.org>`_.
+You can try it out at `indigo-sandbox.openup.org.za <https://indigo-sandbox.openup.org.za>`_. Login with the username and password `guest@example.com`.
 
-Visit our `GitHub repository <https://github.com/Code4SA/indigo>`_ to find out how you
+Visit our `GitHub repository <https://github.com/OpenUpSA/indigo>`_ to find out how you
 can contribute to the project.
 
 The Indigo platform is a Django python web application with three components:

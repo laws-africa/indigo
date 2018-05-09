@@ -520,7 +520,7 @@
 
         this.editing = true;
         this.fragment = fragment;
-        this.$('.document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+        this.$('.document-workspace-content .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.activeEditor.editFragment(fragment);
       }

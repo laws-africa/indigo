@@ -86,7 +86,7 @@
         self.htmlTransformReady.resolve();
       }
 
-      $.get('/static/xsl/act-' + country +'.xsl')
+      $.get('/static/xsl/act_' + country +'.xsl')
         .then(htmlLoaded)
         .fail(function() {
           $.get('/static/xsl/act.xsl')
@@ -104,10 +104,10 @@
         self.textTransformReady.resolve();
       }
 
-      $.get('/static/xsl/act_text-' + country +'.xsl')
+      $.get('/static/xsl/act-text_' + country +'.xsl')
         .then(textLoaded)
         .fail(function() {
-          $.get('/static/xsl/act_text.xsl')
+          $.get('/static/xsl/act-text.xsl')
             .then(textLoaded);
         });
     },

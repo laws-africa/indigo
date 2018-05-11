@@ -59,9 +59,14 @@ class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
     def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None, no_stub_content=False, resolver=None):
+        kwargs = {
+            'xslt_dir': os.path.abspath('indigo_app/static/xsl'),
+        }
+        kwargs.update(cobalt_kwargs or {})
+
         self.template_name = template_name
         self.standalone = standalone
-        self.cobalt_kwargs = cobalt_kwargs or {}
+        self.cobalt_kwargs = kwargs
         self.coverpage = coverpage
         self.no_stub_content = no_stub_content
         self.resolver = resolver

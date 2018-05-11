@@ -7,15 +7,16 @@
   // block elements
   .akn-paragraph,
   .akn-point,
-  .akn-intro {
+  .akn-intro,
+  .akn-list {
     display: block;
     margin-bottom: $akn-para-spacing;
   }
 
   /* numbered block elements */
   .akn-point,
-  .akn-paragraph {
-    display: block;
+  .akn-paragraph,
+  .akn-list {
     margin-left: $akn-para-indent;
 
     > .akn-num {

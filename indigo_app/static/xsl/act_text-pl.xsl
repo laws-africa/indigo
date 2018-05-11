@@ -114,16 +114,6 @@
 </xsl:text>
   </xsl:template>
 
-  <xsl:template match="a:blockList">
-    <xsl:if test="a:listIntroduction != ''">
-      <xsl:apply-templates select="a:listIntroduction" />
-      <xsl:text>
-
-</xsl:text>
-    </xsl:if>
-    <xsl:apply-templates select="./*[not(self::a:listIntroduction)]" />
-  </xsl:template>
-
   <xsl:template match="a:item">
     <xsl:value-of select="./a:num" />
     <xsl:text> </xsl:text>
@@ -141,7 +131,7 @@
   </xsl:template>
 
   <!-- first text nodes of these elems must be escaped if they have special chars -->
-  <xsl:template match="a:p[not(ancestor::a:table)]/text()[1] | a:listIntroduction/text()[1] | a:intro/text()[1]">
+  <xsl:template match="a:p[not(ancestor::a:table)]/text()[1] | a:intro/text()[1]">
     <xsl:call-template name="escape">
       <xsl:with-param name="value" select="." />
     </xsl:call-template>

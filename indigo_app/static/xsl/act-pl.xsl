@@ -65,32 +65,6 @@
   </xsl:template>
 
   <!-- for parts and chapters, include an easily stylable heading -->
-  <xsl:template match="a:part">
-    <section class="akn-part">
-      <xsl:apply-templates select="@*" />
-      <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Deel </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ndl'"><xsl:text>Ingcenye </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'nso'"><xsl:text>Karolo ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'sot'"><xsl:text>Karolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ssw'"><xsl:text>Incenye </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tsn'"><xsl:text>Karolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tso'"><xsl:text>Xiphemu xa </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ven'"><xsl:text>Tshipiḓa tsha </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'xho'"><xsl:text>iCandelo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
-        </xsl:choose>
-        <xsl:value-of select="./a:num" />
-        <xsl:text> - </xsl:text>
-        <xsl:value-of select="./a:heading" />
-      </h2>
-      
-      <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    </section>
-  </xsl:template>
-
   <xsl:template match="a:division">
     <section class="akn-division">
       <xsl:apply-templates select="@*" />
@@ -129,20 +103,7 @@
     <section class="akn-chapter">
       <xsl:apply-templates select="@*" />
       <h2>
-        <xsl:choose>
-          <xsl:when test="$lang = 'afr'"><xsl:text>Hoofstuk </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ndl'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'nso'"><xsl:text>Kgaolo ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'pol'"><xsl:text>Rozdział </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'sot'"><xsl:text>Kgaolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ssw'"><xsl:text>Sehluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tsn'"><xsl:text>Kgaolo </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'tso'"><xsl:text>Kavanyisa ka </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'ven'"><xsl:text>Ndima ya </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'xho'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
-          <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
-        </xsl:choose>
+        <xsl:text>Rozdział </xsl:text>
         <xsl:value-of select="./a:num" />
         <br/>
         <xsl:value-of select="./a:heading" />
@@ -156,22 +117,22 @@
     <section class="akn-section">
       <xsl:apply-templates select="@*" />
       <h3>
+        <xsl:text>§ </xsl:text>
         <xsl:value-of select="./a:num" />
-        <xsl:text> </xsl:text>
-        <xsl:value-of select="./a:heading" />
       </h3>
       
-      <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
-    </section>
-  </xsl:template>
-  
-  <xsl:template match="a:subsection">
-    <section class="akn-subsection">
-      <xsl:apply-templates select="@*" />
-      <xsl:apply-templates select="./*[not(self::a:heading)]" />
+      <xsl:apply-templates select="./*[not(self::a:num)]" />
     </section>
   </xsl:template>
 
+  <!-- for general block elements, generate a div -->
+  <xsl:template match="a:intro | a:point | a:paragraph">
+    <div class="akn-{local-name()}">
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates />
+    </div>
+  </xsl:template>
+  
   <!-- components/schedules -->
   <xsl:template match="a:doc">
     <!-- a:doc doesn't an id, so add one -->
@@ -191,7 +152,7 @@
     </article>
   </xsl:template>
 
-  <!-- for block elements, generate a span element with a class matching
+  <!-- for top-level block elements, generate a span element with a class matching
        the AN name of the node and copy over the attributes -->
   <xsl:template match="a:coverPage | a:preface | a:preamble | a:conclusions">
     <section class="akn-{local-name()}">

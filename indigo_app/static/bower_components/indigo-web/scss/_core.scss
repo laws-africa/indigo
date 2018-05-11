@@ -51,19 +51,22 @@
   }
 
   /* block containers */
-  .akn-akomaNtoso,
   .akn-act,
-  .akn-coverPage,
-  .akn-preface,
-  .akn-preamble,
-  .akn-conclusions,
-  .akn-chapter,
-  .akn-part,
-  .akn-section,
-  .akn-subsection,
+  .akn-akomaNtoso,
   .akn-blockList,
+  .akn-chapter,
+  .akn-conclusions,
+  .akn-coverPage,
+  .akn-division,
   .akn-heading,
-  .akn-subheading {
+  .akn-part,
+  .akn-point,
+  .akn-preamble,
+  .akn-preface,
+  .akn-section,
+  .akn-subdivision,
+  .akn-subheading,
+  .akn-subsection {
     display: block;
   }
 
@@ -78,8 +81,10 @@
   }
 
   .akn-chapter,
+  .akn-division,
   .akn-part,
-  .akn-section {
+  .akn-section,
+  .akn-subdivision {
     margin-bottom: $akn-section-spacing;
   }
 

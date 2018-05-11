@@ -1,0 +1,27 @@
+/*
+ * Poland (PL) AKN styles
+ */
+
+.akoma-ntoso.country-pl {
+
+  // block elements
+  .akn-paragraph,
+  .akn-point,
+  .akn-intro {
+    display: block;
+    margin-bottom: $akn-para-spacing;
+  }
+
+  /* numbered block elements */
+  .akn-point,
+  .akn-paragraph {
+    display: block;
+    margin-left: $akn-para-indent;
+
+    > .akn-num {
+      display: block;
+      float: left;
+      margin-left: -$akn-para-indent;
+    }
+  }
+}

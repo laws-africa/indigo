@@ -41,6 +41,7 @@
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change:country', this.loadXSL);
+      this.listenTo(this.parent.model, 'change:country change:language', this.render);
       this.loadXSL();
 
       // setup xml editor
@@ -330,7 +331,12 @@
         self.makeLinksExternal(html);
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
-        self.$('.akoma-ntoso').empty().get(0).appendChild(html);
+
+        var $akn = self.$('.akoma-ntoso');
+        // reset class name to ensure only one country class
+        $akn[0].className = "akoma-ntoso country-" + self.parent.model.get('country');
+        $akn.empty().append(html);
+
         self.trigger('rendered');
       });
     },

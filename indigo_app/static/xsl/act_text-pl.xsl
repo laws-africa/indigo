@@ -74,10 +74,18 @@
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
+  <xsl:template match="a:article">
+    <xsl:text>Art. </xsl:text>
+    <xsl:value-of select="a:num" />
+    <xsl:text>
+
+</xsl:text>
+    <xsl:apply-templates select="./*[not(self::a:num)]" />
+  </xsl:template>
+
   <xsl:template match="a:section">
     <xsl:text>§ </xsl:text>
     <xsl:value-of select="a:num" />
-    <xsl:text> </xsl:text>
     <xsl:text>
 
 </xsl:text>

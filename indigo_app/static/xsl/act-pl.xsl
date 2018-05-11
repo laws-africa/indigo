@@ -113,6 +113,18 @@
     </section>
   </xsl:template>
 
+  <xsl:template match="a:article">
+    <section class="akn-article">
+      <xsl:apply-templates select="@*" />
+      <h3>
+        <xsl:text>Artykuł </xsl:text>
+        <xsl:value-of select="./a:num" />
+      </h3>
+      
+      <xsl:apply-templates select="./*[not(self::a:num)]" />
+    </section>
+  </xsl:template>
+
   <xsl:template match="a:section">
     <section class="akn-section">
       <xsl:apply-templates select="@*" />

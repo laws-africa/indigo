@@ -58,19 +58,19 @@
   {% endverbatim %}
   </script>
 
-  {% include "document/_properties.html" %}
-  {% include "document/_attachments.html" %}
   {% include "document/_defined_terms.html" %}
   {% include "document/_references.html" %}
   {% include "document/_annotations.html" %}
   {% include "document/_insert_image_modal.html" %}
-  {% include "document/_cheatsheet.html" %}
 {% endblock %}
 
 {% block content %}
   {{ block.super }}
   {% include "document/_revisions.html" %}
   {% include "document/_preview.html" %}
+  {% include "document/_properties.html" %}
+  {% include "document/_attachments.html" %}
+  {% include "document/_cheatsheet.html" %}
 {% endblock %}
 
 {% block js %}

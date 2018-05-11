@@ -112,6 +112,12 @@ class Importer(Slaw):
         if self.cropbox:
             cmd.extend(['--crop', ','.join(self.cropbox)])
 
+        # TODO: better way of deciding which grammars are accepted
+        if self.country in ['za', 'pl']:
+            cmd.extend(['--grammar', self.country])
+        else:
+            cmd.extend(['--grammar', 'za'])
+
         cmd.extend(['--pdftotext', settings.INDIGO_PDFTOTEXT])
         cmd.append(fname)
 

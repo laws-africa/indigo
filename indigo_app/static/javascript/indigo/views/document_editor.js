@@ -39,15 +39,9 @@
       this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fa fa-pencil"></i></a></div>');
 
       // setup renderer
-      var htmlTransform = new XSLTProcessor();
       this.editorReady = $.Deferred();
-      $.get('/static/xsl/act.xsl')
-        .then(function(xml) {
-          htmlTransform.importStylesheet(xml);
-          htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
-          self.htmlTransform = htmlTransform;
-          self.editorReady.resolve();
-        });
+      this.listenTo(this.parent.model, 'change:country', this.loadXSL);
+      this.loadXSL();
 
       // setup xml editor
       this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
@@ -72,14 +66,49 @@
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
 
-      var textTransform = new XSLTProcessor();
-      $.get('/static/xsl/act_text.xsl')
-        .then(function(xml) {
-          textTransform.importStylesheet(xml);
-          self.textTransform = textTransform;
+      this.$toolbar = $('.document-toolbar');
+    },
+
+    loadXSL: function() {
+      var country = this.parent.model.get('country'),
+          self = this;
+
+      // setup akn to html transform
+      this.htmlTransformReady = $.Deferred();
+      function htmlLoaded(xml) {
+        var htmlTransform = new XSLTProcessor();
+        htmlTransform.importStylesheet(xml);
+        htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
+
+        self.htmlTransform = htmlTransform;
+        self.editorReady.resolve();
+        self.htmlTransformReady.resolve();
+      }
+
+      $.get('/static/xsl/act-' + country +'.xsl')
+        .then(htmlLoaded)
+        .fail(function() {
+          $.get('/static/xsl/act.xsl')
+            .then(htmlLoaded);
         });
 
-      this.$toolbar = $('.document-toolbar');
+
+      // setup akn to text transform
+      this.textTransformReady = $.Deferred();
+      function textLoaded(xml) {
+        var textTransform = new XSLTProcessor();
+        textTransform.importStylesheet(xml);
+
+        self.textTransform = textTransform;
+        self.textTransformReady.resolve();
+      }
+
+      $.get('/static/xsl/act_text-' + country +'.xsl')
+        .then(textLoaded)
+        .fail(function() {
+          $.get('/static/xsl/act_text.xsl')
+            .then(textLoaded);
+        });
     },
 
     fullEdit: function(e) {
@@ -100,6 +129,8 @@
     },
 
     editFragmentText: function(fragment) {
+      var self = this;
+
       this.fragment = fragment;
 
       // ensure source code is hidden
@@ -109,33 +140,41 @@
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
 
-      var self = this;
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
-      var text = this.xmlToText(this.fragment);
+      this.xmlToText(this.fragment).then(function(text) {
+        // show the text editor
+        self.$('.document-content-view').addClass('show-text-editor');
 
-      // show the text editor
-      this.$('.document-content-view').addClass('show-text-editor');
+        self.$textEditor
+          .data('fragment', self.fragment.tagName)
+          .show();
 
-      this.$textEditor
-        .data('fragment', this.fragment.tagName)
-        .show();
+        self.textEditor.setValue(text);
+        self.textEditor.gotoLine(1, 0);
+        self.textEditor.focus();
 
-      this.textEditor.setValue(text);
-      this.textEditor.gotoLine(1, 0);
-      this.textEditor.focus();
-
-      this.$('.document-sheet-container').scrollTop(0);
+        self.$('.document-sheet-container').scrollTop(0);
+      });
     },
 
     xmlToText: function(element) {
-      return this.textTransform
-        .transformToFragment(element, document)
-        .firstChild.textContent
-        // cleanup inline whitespace
-        .replace(/([^ ]) +/g, '$1 ')
-        // remove multiple consecutive blank lines
-        .replace(/^( *\n){2,}/gm, "\n");
+      var self = this,
+          deferred = $.Deferred();
+
+      this.textTransformReady.then(function() {
+        var text = self.textTransform
+          .transformToFragment(element, document)
+          .firstChild.textContent
+          // cleanup inline whitespace
+          .replace(/([^ ]) +/g, '$1 ')
+          // remove multiple consecutive blank lines
+          .replace(/^( *\n){2,}/gm, "\n");
+
+        deferred.resolve(text);
+      });
+
+      return deferred;
     },
 
     saveTextEditor: function(e) {
@@ -279,18 +318,21 @@
     },
 
     render: function() {
-      if (this.htmlTransform && this.parent.fragment) {
-        this.htmlTransform.setParameter(null, 'defaultIdScope', this.getFragmentIdScope() || '');
-        this.htmlTransform.setParameter(null, 'manifestationUrl', this.parent.model.manifestationUrl());
-        this.htmlTransform.setParameter(null, 'lang', this.parent.model.get('language'));
-        var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
+      if (!this.parent.fragment) return;
 
-        this.makeLinksExternal(html);
-        this.makeTablesEditable(html);
-        this.makeElementsQuickEditable(html);
-        this.$('.akoma-ntoso').empty().get(0).appendChild(html);
-        this.trigger('rendered');
-      }
+      var self = this;
+      this.htmlTransformReady.then(function() {
+        self.htmlTransform.setParameter(null, 'defaultIdScope', self.getFragmentIdScope() || '');
+        self.htmlTransform.setParameter(null, 'manifestationUrl', self.parent.model.manifestationUrl());
+        self.htmlTransform.setParameter(null, 'lang', self.parent.model.get('language'));
+        var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
+
+        self.makeLinksExternal(html);
+        self.makeTablesEditable(html);
+        self.makeElementsQuickEditable(html);
+        self.$('.akoma-ntoso').empty().get(0).appendChild(html);
+        self.trigger('rendered');
+      });
     },
 
     getFragmentIdScope: function() {

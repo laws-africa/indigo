@@ -70,12 +70,27 @@ Finally, run the server:
 python manage.py runserver
 ```
 
-You'll need some ruby dependencies. We strongly recommend installing and using [RVM](http://rvm.io/)
-or a similar Ruby version manager.
+You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library.
+We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby version manager. You'll
+need Ruby version 2.3.
+
+Once you've install Ruby, install [Bundler](https://bundler.io/) and the Indigo dependencies:
 
 ```bash
+gem install bundler
 bundle install
 ```
+
+You can test that Slaw is installed with `slaw --version`:
+
+```bash
+$ slaw --version
+slaw 1.0.0
+```
+
+
+Testing
+-------
 
 To run the tests use:
 

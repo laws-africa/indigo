@@ -56,7 +56,6 @@
 
         for (var i = 0; i < kids.length; i++) {
           var kid = kids[i];
-          var name = kid.localName;
 
           if (tradition.is_toc_element(kid)) {
             toc.push(generate_toc(kid));

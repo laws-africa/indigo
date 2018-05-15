@@ -42,12 +42,12 @@ more text
             '(b) its successor in title; or (c) a structure or person exercising a delegated power or carrying out an instruction, where any power in these By-laws, has been delegated or sub-delegated or an instruction given as contemplated in, section 59 of the Local Government: Municipal Systems Act, 2000 (Act No. 32 of 2000); or (d) a service provider fulfilling a responsibility under these By-laws, assigned to it in terms of section 81(2) of the Local Government: Municipal Systems Act, 2000, or any other law, as the case may be;'),
             "(b) its successor in title; or\n(c) a structure or person exercising a delegated power or carrying out an instruction, where any power in these By-laws, has been delegated or sub-delegated or an instruction given as contemplated in, section 59 of the Local Government: Municipal Systems Act, 2000 (Act No. 32 of 2000); or\n(d) a service provider fulfilling a responsibility under these By-laws, assigned to it in terms of section 81(2) of the Local Government: Municipal Systems Act, 2000, or any other law, as the case may be;")
 
-    def should_break_at_likely_subsections(self):
+    def test_break_at_likely_subsections(self):
         assert_equal(self.importer.break_lines(
             '(c) place a metal cot on any grave. (3) A person may only erect, place or leave, an object or decoration on a grave during the first 30 days following the burial. (4) Natural or artificial flowers contained in receptacles may be placed on a grave at any time, but in a grave within a berm section or with a headstone, such flowers may only be placed in the socket provided. (5) The officer-in-Charge may – (a) remove all withered natural flowers, faded or damaged artificial flowers and any receptacle placed on a grave; or'),
             "(c) place a metal cot on any grave.\n(3) A person may only erect, place or leave, an object or decoration on a grave during the first 30 days following the burial.\n(4) Natural or artificial flowers contained in receptacles may be placed on a grave at any time, but in a grave within a berm section or with a headstone, such flowers may only be placed in the socket provided.\n(5) The officer-in-Charge may – (a) remove all withered natural flowers, faded or damaged artificial flowers and any receptacle placed on a grave; or")
 
-    def should_break_lines_at_likely_section_titles(self):
+    def test_break_lines_at_likely_section_titles(self):
         assert_equal(self.importer.break_lines(
             'foo bar. New section title 62. (1) For the purpose'),
             "foo bar.\nNew section title\n62. (1) For the purpose")
@@ -61,47 +61,41 @@ more text
             'New section title 62.(1) For the purpose'),
             "New section title\n62.(1) For the purpose")
 
-    def should_clean_up_wrapped_definition_lines_after_pdf(self):
+    def test_clean_up_wrapped_definition_lines_after_pdf(self):
         assert_equal(self.importer.break_lines(
-            '“agricultural holding” means a portion of land not less than 0.8 hectares in extent used solely or mainly for the purpose of agriculture, horticulture or for breeding or keeping domesticated animals, poultry or bees; “approved” means as approved by the Council; “bund wall” means a containment wall surrounding an above ground storage tank, constructed of an impervious material and designed to contain 110% of the contents of the tank; “certificate of fitness” means a certificate contemplated in section 20; “certificate of registration” means a certificate contemplated in section 35;'),
-            "“agricultural holding” means a portion of land not less than 0.8 hectares in extent used solely or mainly for the purpose of agriculture, horticulture or for breeding or keeping domesticated animals, poultry or bees;\n“approved” means as approved by the Council;\n“bund wall” means a containment wall surrounding an above ground storage tank, constructed of an impervious material and designed to contain 110% of the contents of the tank;\n“certificate of fitness” means a certificate contemplated in section 20;\n“certificate of registration” means a certificate contemplated in section 35;")
+            '"agricultural holding" means a portion of land not less than 0.8 hectares in extent used solely or mainly for the purpose of agriculture, horticulture or for breeding or keeping domesticated animals, poultry or bees; "approved" means as approved by the Council; "bund wall" means a containment wall surrounding an above ground storage tank, constructed of an impervious material and designed to contain 110% of the contents of the tank; "certificate of fitness" means a certificate contemplated in section 20; "certificate of registration" means a certificate contemplated in section 35;'),
+            '"agricultural holding" means a portion of land not less than 0.8 hectares in extent used solely or mainly for the purpose of agriculture, horticulture or for breeding or keeping domesticated animals, poultry or bees;\n"approved" means as approved by the Council;\n"bund wall" means a containment wall surrounding an above ground storage tank, constructed of an impervious material and designed to contain 110% of the contents of the tank;\n"certificate of fitness" means a certificate contemplated in section 20;\n"certificate of registration" means a certificate contemplated in section 35;')
 
-    def should_break_at_CAPCASE_TO_Normal_Case(self):
+    def test_break_at_CAPCASE_TO_Normal_Case(self):
         assert_equal(self.importer.break_lines(
             'CHAPTER 3 PARKING METER PARKING GROUNDS Place of parking 7. No person may park or cause or permit to be parked any vehicle or allow a vehicle to be or remain in a parking meter parking ground otherwise than in a parking bay.'),
             "CHAPTER 3 PARKING METER PARKING GROUNDS\nPlace of parking 7. No person may park or cause or permit to be parked any vehicle or allow a vehicle to be or remain in a parking meter parking ground otherwise than in a parking bay.")
 
+    def test_should_unbreak_simple_lines(self):
+        assert_equal(self.importer.unbreak_lines("""
+8.2.3 an additional fee or tariff, which is
+to be determined by the City in its
+sole discretion, in respect of additional
+costs incurred or services.
+8.3 In the event that a person qualifies for
+a permit, but has motivated in writing
+the inability to pay the fee contemplated."""), """
+8.2.3 an additional fee or tariff, which is to be determined by the City in its sole discretion, in respect of additional costs incurred or services.
+8.3 In the event that a person qualifies for a permit, but has motivated in writing the inability to pay the fee contemplated.""")
 
+    def test_should_not_unbreak_section_headers(self):
+        assert_equal(self.importer.unbreak_lines("""
+8.4.3 must be a South African citizen, failing which, must be in possession of
+a valid work permit which includes, but is not limited to, a refugee
+permit; and
+8.4.4 must not employ and actively utilise the services of more than 20
+(twenty) persons."""), """
+8.4.3 must be a South African citizen, failing which, must be in possession of a valid work permit which includes, but is not limited to, a refugee permit; and
+8.4.4 must not employ and actively utilise the services of more than 20
+(twenty) persons.""")
 
-#  describe '#unbreak_lines' do
-#    it 'should unbreak simple lines' do
-#      subject.unbreak_lines("""
-#8.2.3 an additional fee or tariff, which is
-#to be determined by the City in its
-#sole discretion, in respect of additional
-#costs incurred or services.
-#8.3 In the event that a person qualifies for
-#a permit, but has motivated in writing
-#the inability to pay the fee contemplated.""").should == """
-#8.2.3 an additional fee or tariff, which is to be determined by the City in its sole discretion, in respect of additional costs incurred or services.
-#8.3 In the event that a person qualifies for a permit, but has motivated in writing the inability to pay the fee contemplated."""
-#    end
-#
-#    it 'should not unbreak section headers' do
-#      subject.unbreak_lines("""
-#8.4.3 must be a South African citizen, failing which, must be in possession of
-#a valid work permit which includes, but is not limited to, a refugee
-#permit; and
-#8.4.4 must not employ and actively utilise the services of more than 20
-#(twenty) persons.""").should == """
-#8.4.3 must be a South African citizen, failing which, must be in possession of a valid work permit which includes, but is not limited to, a refugee permit; and
-#8.4.4 must not employ and actively utilise the services of more than 20
-#(twenty) persons."""
-#    end
-#  end
 
 """
-
   describe '#strip_toc' do
     it 'should handle no toc' do
       s = "City of Johannesburg Metropolitan Municipality
@@ -164,4 +158,4 @@ Definitions and interpretation
 1. (1) In this Chapter, unless the context otherwise indicates-"
     end
   end
-"""        
+"""

@@ -1,0 +1,34 @@
+{% extends 'act.html' %}
+{% load documents i18n pl_tags %}
+
+{% block title %}
+  <h2 class="publication">
+    Dz.U. {{ document.publication_date.year }}
+    {% if document|publication_number %}
+      Nr {{ document|publication_number }}
+    {% endif %}
+    poz. {{ document|publication_poz }}
+  </h2>
+
+  <h2 class="doctype">
+    {% with type=document|friendly_document_type %}
+      {% trans type %}
+    {% endwith %}
+  </h2>
+
+  <h2 class="act-date">
+    z dnia {{ document.assent_date|date:"j E Y" }} r.
+  </h2>
+
+  <h1 class="title">{{ document.title }}</h1>
+{% endblock %}
+
+{% block notices %}
+  {% if document.commencement_date %}
+  <li class="commencement-date">
+    {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
+  </li>
+  {% endif %}
+{% endblock %}
+
+{% block subtitle %}{% endblock %}

@@ -142,9 +142,6 @@ class Importer(LocaleBasedAnalyzer):
             if self.fragment_id_prefix:
                 cmd.extend(['--id-prefix', self.fragment_id_prefix])
 
-        if self.reformat:
-            cmd.extend(['--reformat'])
-
         if self.section_number_position:
             cmd.extend(['--section-number-position', self.section_number_position])
 

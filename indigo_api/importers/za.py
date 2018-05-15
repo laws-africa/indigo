@@ -42,12 +42,10 @@ class ImporterZA(Importer):
 
         #text = self.unbreak_lines(text)
         text = self.break_lines(text)
-
-        #s = strip_toc(s)
+        #text = self.strip_toc(text)
 
         return text
 
-"""
     def break_lines(self, text):
         """ Make educated guesses about lines that should have been broken but haven't, and break them.
         There are lots of rules of thumb that make this work.
@@ -82,6 +80,7 @@ class ImporterZA(Importer):
 
         return text
 
+"""
       # Find likely candidates for unnecessarily broken lines
       # and unbreaks them.
       def unbreak_lines(s)
@@ -145,5 +144,4 @@ class ImporterZA(Importer):
 
         s
       end
-    
 """

@@ -15,7 +15,8 @@
   display: flex;
   flex-direction: row;
 
-  .document-workspace-content {
+  .document-workspace-content,
+  .document-xml-editor {
     flex: 1;
     height: calc(100vh - 50px - 96px);
     position: relative;
@@ -67,21 +68,30 @@ button.btn-link.help {
 
 /* editors */
 
-.document-content-header {
-  /* shown only when the text editor is active */
-  .text-editor-buttons {
-    display: none;
-    padding-right: 5px;
-  }
-
-  &.show-text-editor {
-    .text-editor-buttons {
-      display: inline-flex;
-    }
-  }
+.ace-editor-wrapper,
+.ace-editor {
+  height: 100%;
 }
 
-.sheet-editor {
+.document-sheet-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  margin: 0px;
+
+  .sheet-inner {
+    padding: 30px;
+    // work around a Chrome rendering bug with sections that
+    // are very short
+    min-height: 100%;
+  }
+
   .quick-editable {
     position: relative;
   }
@@ -103,11 +113,6 @@ button.btn-link.help {
   }
 }
 
-.ace-editor-wrapper,
-.ace-editor {
-  height: 100%;
-}
-
 .document-xml-editor {
   /* this is changed when the user chooses to show it */
   display: none;
@@ -116,19 +121,14 @@ button.btn-link.help {
   top: 0px;
   bottom: 0px;
   right: 0px;
-  left: 50%;
+  left: 0px;
 }
 
 .document-content-view {
   // show or hide source code component
-  &.show-source {
+  &.show-xml-editor {
     .document-xml-editor {
       display: block;
-    }
-
-    .document-sheet-container,
-    .document-text-editor {
-      width: 50%;
     }
   }
 
@@ -193,26 +193,6 @@ button.btn-link.help {
       z-index: 100;
       bottom: -20px;
     }
-  }
-}
-
-.document-sheet-container {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-
-  margin: 0px;
-
-  .sheet-inner {
-    padding: 30px;
-    // work around a Chrome rendering bug with sections that
-    // are very short
-    min-height: 100%;
   }
 }
 

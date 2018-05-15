@@ -135,7 +135,7 @@
       this.fragment = fragment;
 
       // ensure source code is hidden
-      this.$('.btn.show-source.active').click();
+      this.$('.btn.show-xml-editor.active').click();
 
       // show the edit toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
@@ -267,7 +267,7 @@
         this.pendingTextSave = null;
       }
 
-      this.$('.document-content-view, .document-content-header').removeClass('show-text-editor');
+      this.$('.document-content-view').removeClass('show-text-editor');
 
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
@@ -517,7 +517,7 @@
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .btn.show-source': 'toggleShowCode',
+      'click .btn.show-xml-editor': 'toggleShowXMLEditor',
     },
 
     initialize: function(options) {
@@ -568,16 +568,16 @@
 
         this.editing = true;
         this.fragment = fragment;
-        this.$('.document-workspace-content .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+        this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.activeEditor.editFragment(fragment);
       }
     },
 
-    toggleShowCode: function(e) {
-      if (this.activeEditor.name == 'source') {
-        this.$el.find('.document-content-view').toggleClass('show-source');
-      }
+    toggleShowXMLEditor: function(e) {
+      var show = !$(e.currentTarget).hasClass('active');
+      this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
+      this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
     },
 
     removeFragment: function(fragment) {

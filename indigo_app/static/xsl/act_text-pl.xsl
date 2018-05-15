@@ -106,6 +106,12 @@
     <xsl:apply-templates select="./*[not(self::a:num)]" />
   </xsl:template>
 
+  <xsl:template match="a:indent">
+    <xsl:value-of select="a:num" />
+    <xsl:text>- </xsl:text>
+    <xsl:apply-templates select="./*[not(self::a:num)]" />
+  </xsl:template>
+
   <!-- these are block elements and have a newline at the end -->
   <xsl:template match="a:heading">
     <xsl:apply-templates />

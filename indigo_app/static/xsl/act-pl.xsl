@@ -137,6 +137,14 @@
     </section>
   </xsl:template>
 
+  <xsl:template match="a:indent">
+    <section class="akn-indent">
+      <xsl:apply-templates select="@*" />
+      <xsl:text>- </xsl:text>
+      <xsl:apply-templates select="./a:content/a:p"/>
+    </section>
+  </xsl:template>
+
   <!-- for general block elements, generate a div -->
   <xsl:template match="a:intro | a:point | a:paragraph">
     <div class="akn-{local-name()}">

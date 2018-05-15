@@ -68,7 +68,30 @@ button.btn-link.help {
 
 /* editors */
 
-.sheet-editor {
+.ace-editor-wrapper,
+.ace-editor {
+  height: 100%;
+}
+
+.document-sheet-container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  margin: 0px;
+
+  .sheet-inner {
+    padding: 30px;
+    // work around a Chrome rendering bug with sections that
+    // are very short
+    min-height: 100%;
+  }
+
   .quick-editable {
     position: relative;
   }
@@ -88,11 +111,6 @@ button.btn-link.help {
       text-decoration: none;
     }
   }
-}
-
-.ace-editor-wrapper,
-.ace-editor {
-  height: 100%;
 }
 
 .document-xml-editor {
@@ -175,26 +193,6 @@ button.btn-link.help {
       z-index: 100;
       bottom: -20px;
     }
-  }
-}
-
-.document-sheet-container {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-
-  height: 100%;
-  overflow-x: hidden;
-  overflow-y: auto;
-
-  margin: 0px;
-
-  .sheet-inner {
-    padding: 30px;
-    // work around a Chrome rendering bug with sections that
-    // are very short
-    min-height: 100%;
   }
 }
 

@@ -9,7 +9,7 @@
   {% verbatim %}
   <ol>
     {{#each toc}}
-    <li class="toc-item akn-{{ type }}">
+    <li class="toc-item {{#if has_children}}has-children{{/if}}">
       <a href="#" class="{{#if selected}}active{{/if}}" data-index="{{ @index }}">{{ title }}</a>
     </li>
     {{/each}}

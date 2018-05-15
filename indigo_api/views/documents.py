@@ -26,7 +26,7 @@ import newrelic.agent
 from ..models import Document, Annotation, DocumentActivity
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer, DocumentActivitySerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
-from ..slaw import Importer
+from ..importers.registry import importers
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
 from indigo_analysis.registry import analyzers
@@ -283,10 +283,9 @@ class ParseView(APIView):
         fragment = serializer.validated_data.get('fragment')
         frbr_uri = FrbrUri.parse(serializer.validated_data.get('frbr_uri'))
 
-        importer = Importer()
+        importer = importers.for_locale(frbr_uri.country, frbr_uri.language, frbr_uri.locality)
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
-        importer.country = frbr_uri.country
 
         upload = self.request.data.get('file')
         if upload:

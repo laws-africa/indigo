@@ -51,17 +51,21 @@
       var toc = [];
       var tradition = Indigo.traditions.get(this.model.document.get('country'));
 
-      function iter_children(node) {
+      function iter_children(node, parent_item) {
         var kids = node.children;
 
         for (var i = 0; i < kids.length; i++) {
-          var kid = kids[i];
+          var kid = kids[i],
+              toc_item = null;
 
           if (tradition.is_toc_element(kid)) {
-            toc.push(generate_toc(kid));
+            toc_item = generate_toc(kid);
+            toc.push(toc_item);
+
+            if (parent_item) parent_item.has_children = true;
           }
 
-          iter_children(kid);
+          iter_children(kid, toc_item || parent_item);
         }
       }
 

@@ -249,19 +249,9 @@ button.btn-link.help {
     }
   }
 
-  .toc-item {
-    &.akn-akomaNtoso,
-    &.akn-coverpage,
-    &.akn-preface,
-    &.akn-preamble,
-    &.akn-chapter,
-    &.akn-part,
-    &.akn-conclusions,
-    &.akn-components,
-    &.akn-component {
-      font-weight: bold;
-      margin-top: 5px;
-    }
+  .toc-item.has-children {
+    font-weight: bold;
+    margin-top: 5px;
   }
 }
 

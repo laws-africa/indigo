@@ -1,3 +1,5 @@
+from __future__ import absolute_import
+
 import subprocess
 import tempfile
 import shutil
@@ -6,17 +8,50 @@ import logging
 from django.conf import settings
 import mammoth
 
-from .models import Document
-from indigo_analysis.registry import analyzers
+from indigo_api.models import Document
+from indigo_analysis.registry import analyzers, LocaleBasedAnalyzer
 from cobalt.act import Fragment
 
+from indigo_api.importers.registry import importers
 
-class Slaw(object):
+
+# TODO: move LocaleBasedAnalyzer into a better place
+@importers.register
+class Importer(LocaleBasedAnalyzer):
+    """
+    Import from PDF and other document types using Slaw.
+
+    Slaw is a commandline tool from the slaw Ruby Gem which generates Akoma Ntoso
+    from PDF and other documents. See https://rubygems.org/gems/slaw
+    """
     log = logging.getLogger(__name__)
 
-    def slaw(self, args):
-        """ Call slaw with ``args`` """
-        cmd = ['bundle', 'exec', 'slaw'] + args
+    locale = (None, None, None)
+    """ Locale for this analyzer, as a tuple: (country, language, locality). None matches anything."""
+
+    fragment = None
+    """ The name of the AKN element that we're importing, or None for a full act. """
+
+    fragment_id_prefix = None
+    """ The prefix for all ids generated for this fragment """
+
+    section_number_position = 'before-title'
+    """ By default, where do section numbers usually lie in relation to their
+    title? One of: ``before-title``, ``after-title`` or ``guess``.
+    """
+
+    reformat = False
+    """ Should we tell Slaw to reformat before parsing? Only do this with initial imports. """
+
+    cropbox = None
+    """ Crop box to import within, as [left, top, width, height]
+    """
+
+    slaw_grammar = 'za'
+    """ Slaw grammar to use
+    """
+
+    def shell(self, cmd):
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
@@ -26,37 +61,6 @@ class Slaw(object):
             self.log.info("Stderr: %s" % stderr.decode('utf-8'))
 
         return p.returncode, stdout, stderr
-
-
-class Importer(Slaw):
-    """
-    Import from PDF and other document types using Slaw.
-
-    Slaw is a commandline tool from the slaw Ruby Gem which generates Akoma Ntoso
-    from PDF and other documents. See https://rubygems.org/gems/slaw
-    """
-
-    """ The name of the AKN element that we're importing, or None for a full act. """
-    fragment = None
-
-    """ The prefix for all ids generated for this fragment """
-    fragment_id_prefix = None
-
-    """ By default, where do section numbers usually lie in relation to their
-    title? One of: ``before-title``, ``after-title`` or ``guess``.
-    """
-    section_number_position = 'before-title'
-
-    """ Should we tell Slaw to reformat before parsing? Only do this with initial imports. """
-    reformat = False
-
-    """ Two-letter country code.
-    """
-    country = None
-
-    """ Crop box to import within, as [left, top, width, height]
-    """
-    cropbox = None
 
     def import_from_upload(self, upload, frbr_uri, request):
         """ Create a new Document by importing it from a
@@ -75,6 +79,9 @@ class Importer(Slaw):
             html = self.docx_to_html(upload)
             doc = self.import_from_text(html, frbr_uri, '.html')
 
+        if upload.content_type == 'application/pdf':
+            doc = self.import_from_pdf(upload, frbr_uri)
+
         else:
             # slaw will do its best
             with self.tempfile_for_upload(upload) as f:
@@ -91,12 +98,44 @@ class Importer(Slaw):
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
-            doc = self.import_from_file(f.name, frbr_uri)
+            return self.import_from_file(f.name, frbr_uri)
 
-        return doc
+    def import_from_pdf(self, upload, frbr_uri):
+        """ Import from a PDF upload.
+        """
+        with self.tempfile_for_upload(upload) as f:
+            # pdf to text
+            text = self.pdf_to_text(f)
+            if self.reformat:
+                text = self.reformat_text(text)
+
+        return self.import_from_text(text, frbr_uri, '.txt')
+
+    def pdf_to_text(self, f):
+        cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
+
+        if self.cropbox:
+            # left, top, width, height
+            cropbox = (str(int(float(i))) for i in self.cropbox)
+            cropbox = zip("-x -y -W -H".split(), cropbox)
+            # flatten
+            cmd += [x for pair in cropbox for x in pair]
+
+        cmd += [f.name, '-']
+        code, stdout, stderr = self.shell(cmd)
+
+        if code > 0:
+            raise ValueError(stderr)
+
+        return stdout.decode('utf-8')
+
+    def reformat_text(self, text):
+        """ Clean up extracted text before giving it to Slaw.
+        """
+        return text
 
     def import_from_file(self, fname, frbr_uri):
-        cmd = ['parse']
+        cmd = ['bundle', 'exec', 'slaw', 'parse']
 
         if self.fragment:
             cmd.extend(['--fragment', self.fragment])
@@ -109,19 +148,10 @@ class Importer(Slaw):
         if self.section_number_position:
             cmd.extend(['--section-number-position', self.section_number_position])
 
-        if self.cropbox:
-            cmd.extend(['--crop', ','.join(self.cropbox)])
-
-        # TODO: better way of deciding which grammars are accepted
-        if self.country in ['za', 'pl']:
-            cmd.extend(['--grammar', self.country])
-        else:
-            cmd.extend(['--grammar', 'za'])
-
-        cmd.extend(['--pdftotext', settings.INDIGO_PDFTOTEXT])
+        cmd.extend(['--grammar', self.slaw_grammar])
         cmd.append(fname)
 
-        code, stdout, stderr = self.slaw(cmd)
+        code, stdout, stderr = self.shell(cmd)
 
         if code > 0:
             raise ValueError(stderr)

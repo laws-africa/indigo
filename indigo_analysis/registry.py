@@ -31,9 +31,10 @@ class AnalyzerFactory(object):
         matches = [(f, m) for f, m in matches if m]
         # best match
         matches.sort()
+        match = matches[-1][0]
 
         # create and return an instance of the analyzer
-        return matches[0][0]() if matches else None
+        return match() if matches else None
 
 
 class LocaleBasedAnalyzer(object):

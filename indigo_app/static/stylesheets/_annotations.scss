@@ -1,8 +1,5 @@
 .annotations-container {
-  &.sheet-inner {
-    /* XXX */
-    margin-right: 170px;
-  }
+  margin-right: 170px;
 
   /* annotatable elements */
   .akn-coverPage,
@@ -144,6 +141,16 @@
     &:hover {
       opacity: 1;
       color: inherit;
+    }
+  }
+
+  // hide annotations
+  &.hide-annotations {
+    margin-right: 0px;
+
+    .annotation-thread,
+    #new-annotation-floater {
+      display: none !important;
     }
   }
 }

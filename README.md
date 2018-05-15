@@ -22,24 +22,75 @@ Read the [full documentation at indigo.readthedocs.org](http://indigo.readthedoc
 Local development
 -----------------
 
-Clone the repo and ensure you have python, virtualenv and pip installed. 
+Clone the repo:
+
+```bash
+git clone https://github.com/OpenUpSA/indigo.git
+cd indigo
+```
+
+Ensure you have python 2.7, [virtualenv and pip](https://virtualenv.pypa.io/en/stable/installation/) installed.
+
+Create and activate a virtualenv and install dependencies:
 
 ```bash
 virtualenv env --no-site-packages
 source env/bin/activate
 pip install -r requirements.txt
+```
+
+Ensure you have [PostgreSQL](https://www.postgresql.org/) installed and running. Create a postgresql user with username and password `indigo`,
+and create a corresponding database called `indigo`.
+
+```bash
+sudo su - postgres createuser -d -P indigo
+sudo su - postgres createdb indigo
+```
+
+Then run migrations to setup the initial database:
+
+```bash
 python manage.py migrate
+python manage.py update_countries_plus
+```
+
+If you have trouble connecting to your database, you may need to change the default database settings in `indigo/settings.py`:
+
+    db_config = dj_database_url.config(default='postgres://indigo:indigo@localhost:5432/indigo')
+
+Then create the superuser:
+
+```bash
 python manage.py createsuperuser
+```
+
+Finally, run the server:
+
+```
 python manage.py runserver
 ```
 
-To support importing from PDF and other file formats, you'll need some ruby
-dependencies.  We strongly recommend installing and using [RVM](http://rvm.io/)
-or a similar Ruby version manager.
+You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library.
+We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby version manager. You'll
+need Ruby version 2.3.
+
+Once you've install Ruby, install [Bundler](https://bundler.io/) and the Indigo dependencies:
 
 ```bash
+gem install bundler
 bundle install
 ```
+
+You can test that Slaw is installed with `slaw --version`:
+
+```bash
+$ slaw --version
+slaw 1.0.0
+```
+
+
+Testing
+-------
 
 To run the tests use:
 

@@ -213,6 +213,7 @@ PIPELINE = {
                 'javascript/prettyprint.js',
                 'javascript/table-editor.js',
                 'javascript/indigo/models.js',
+                'javascript/indigo/traditions.js',
                 'javascript/indigo/views/user.js',
                 'javascript/indigo/views/reset_password.js',
                 'javascript/indigo/views/document_defined_terms.js',

@@ -49,62 +49,15 @@
     buildToc: function() {
       // Get the table of contents of this document
       var toc = [];
-
-      // these are the nodes we're interested in
-      var interesting = {
-        coverpage: 1,
-        preface: 1,
-        preamble: 1,
-        part: 1,
-        chapter: 1,
-        section: 1,
-        conclusions: 1,
-        components: 1,
-        component: 1,
-        akomaNtoso: 1,
-      };
-
-      var titles = {
-        akomaNtoso: function(i) { return "Entire document"; },
-        coverpage: function(i) { return "Coverpage"; },
-        preface: function(i) { return "Preface"; },
-        preamble: function(i) { return "Preamble"; },
-        conclusions: function(i) { return "Conclusions"; },
-        chapter: function(i) { return "Ch. " + i.num + " " + i.heading; },
-        part: function(i) { return "Part " + i.num + " " + i.heading; },
-        components: function(i) { return 'Schedules'; },
-        component: function(i) { 
-          var alias = i.element.querySelector('FRBRalias');
-          if (alias) {
-            return alias.getAttribute('value');
-          }
-
-          var component = i.element.querySelector('FRBRWork FRBRthis');
-          if (component) {
-            var parts = component.getAttribute('value').split('/');
-            component = parts[parts.length-1];
-          } else {
-            component = i.element.getAttribute('name') || "Component";
-          }
-
-          var match = component.match(/([^0-9]+)([0-9]+)/);
-          if (match) {
-            component = match[1] + ' ' + match[2];
-          }
-
-          return component.charAt(0).toUpperCase() + component.slice(1);
-        },
-        null: function(i) { return i.num + " " + i.heading; },
-      };
+      var tradition = Indigo.traditions.get(this.model.document.get('country'));
 
       function iter_children(node) {
         var kids = node.children;
 
         for (var i = 0; i < kids.length; i++) {
           var kid = kids[i];
-          var name = kid.localName;
 
-          if (interesting[name]) {
+          if (tradition.is_toc_element(kid)) {
             toc.push(generate_toc(kid));
           }
 
@@ -121,7 +74,7 @@
           'type': node.localName,
           'id': node.id,
         };
-        item.title = (titles[item.type] || titles[null])(item);
+        item.title = tradition.toc_element_title(item);
         return item;
       }
 

@@ -96,7 +96,7 @@ class Importer(Slaw):
         return doc
 
     def import_from_file(self, fname, frbr_uri):
-        cmd = ['parse', '--no-definitions']
+        cmd = ['parse']
 
         if self.fragment:
             cmd.extend(['--fragment', self.fragment])

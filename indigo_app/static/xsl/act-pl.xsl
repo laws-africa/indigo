@@ -138,23 +138,17 @@
   </xsl:template>
 
   <xsl:template match="a:indent">
-    <section class="akn-indent">
+    <div class="akn-indent">
       <xsl:apply-templates select="@*" />
-      <xsl:text>- </xsl:text>
+      <div class="akn-indent-num">
+        <xsl:text>– </xsl:text>
+      </div>
       <xsl:apply-templates select="./a:content/a:p"/>
-    </section>
-  </xsl:template>
-
-  <xsl:template match="a:paragraph">
-    <div class="akn-paragraph">
-      <xsl:apply-templates select="@*" />
-      <xsl:value-of select="./a:num" />
-      <xsl:apply-templates select="./*[not(self::a:num)]" />
     </div>
   </xsl:template>
 
   <!-- for general block elements, generate a div -->
-  <xsl:template match="a:intro | a:point | a:subparagraph">
+  <xsl:template match="a:intro | a:point | a:paragraph | a:alinea | a:subparagraph | a:list">
     <div class="akn-{local-name()}">
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />

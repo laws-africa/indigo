@@ -9,22 +9,23 @@
     }
   }
 
-  // block elements
-  .akn-paragraph,
-  .akn-point,
+  /* paragraph elements */
   .akn-intro,
-  .akn-list {
-    display: block;
+  .akn-list,
+  .akn-paragraph,
+  .akn-point {
     margin-bottom: $akn-para-spacing;
   }
 
   /* numbered block elements */
-  .akn-point,
+  .akn-alinea,
+  .akn-indent,
   .akn-paragraph,
-  .akn-list {
+  .akn-point {
     margin-left: $akn-para-indent;
 
-    > .akn-num {
+    > .akn-num,
+    > .akn-indent-num {
       display: block;
       float: left;
       margin-left: -$akn-para-indent;

@@ -100,12 +100,6 @@
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
-  <xsl:template match="a:point">
-    <xsl:value-of select="a:num" />
-    <xsl:text> </xsl:text>
-    <xsl:apply-templates select="./*[not(self::a:num)]" />
-  </xsl:template>
-
   <xsl:template match="a:indent">
     <xsl:value-of select="a:num" />
     <xsl:text>- </xsl:text>
@@ -128,7 +122,8 @@
 </xsl:text>
   </xsl:template>
 
-  <xsl:template match="a:item">
+  <!-- numbered lists -->
+  <xsl:template match="a:item | a:alinea | a:point">
     <xsl:value-of select="./a:num" />
     <xsl:text> </xsl:text>
     <xsl:apply-templates select="./*[not(self::a:num)]" />

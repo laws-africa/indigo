@@ -145,8 +145,16 @@
     </section>
   </xsl:template>
 
+  <xsl:template match="a:paragraph">
+    <div class="akn-paragraph">
+      <xsl:apply-templates select="@*" />
+      <xsl:value-of select="./a:num" />
+      <xsl:apply-templates select="./*[not(self::a:num)]" />
+    </div>
+  </xsl:template>
+
   <!-- for general block elements, generate a div -->
-  <xsl:template match="a:intro | a:point | a:paragraph">
+  <xsl:template match="a:intro | a:point | a:subparagraph">
     <div class="akn-{local-name()}">
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />

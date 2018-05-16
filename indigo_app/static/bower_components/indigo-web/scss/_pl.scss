@@ -3,6 +3,11 @@
  */
 
 .akoma-ntoso.country-pl {
+  .coverpage {
+    .doctype {
+      text-transform: uppercase;
+    }
+  }
 
   // block elements
   .akn-paragraph,

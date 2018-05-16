@@ -565,24 +565,30 @@
 
     // Save the content of the editor, returns a Deferred
     save: function() {
-      var self = this;
+      var self = this,
+          deferred = $.Deferred();
 
-      // don't do anything if it hasn't changed
+      function ok() { deferred.resolve(); }
+      function fail() { deferred.reject(); }
+
       if (!this.dirty) {
-        return $.Deferred().resolve();
-      }
+        // don't do anything if it hasn't changed
+        ok();
 
-      if (this.activeEditor) {
-        return this.activeEditor
+      } else if (this.activeEditor) {
+        this.activeEditor
           // ask the editor to returns its contents
           .saveChanges()
-          .then(function() {
+          .done(function() {
             // save the model
-            return self.saveModel();
-          });
+            self.saveModel().done(ok).fail(fail);
+          })
+          .fail(fail);
       } else {
-        return this.saveModel();
+        this.saveModel().done(ok).fail(fail);
       }
+
+      return deferred;
     },
 
     // Save the content of the document, returns a Deferred

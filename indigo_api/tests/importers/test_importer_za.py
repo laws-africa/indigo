@@ -94,11 +94,8 @@ permit; and
 8.4.4 must not employ and actively utilise the services of more than 20
 (twenty) persons.""")
 
-
-"""
-  describe '#strip_toc' do
-    it 'should handle no toc' do
-      s = "City of Johannesburg Metropolitan Municipality
+    def test_handle_no_toc(self):
+        s = """City of Johannesburg Metropolitan Municipality
 CULTURE AND RECREATION BY-LAWS ( )PUBLISHED IN PROVINCIAL GAZETTE EXTRAORDINARY NO 179 DATED 21 MAY 2004 UNDER NOTICE NUMBER 825
 
 CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY
@@ -108,12 +105,11 @@ CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY
 CULTURE AND RECREATION BY-LAWS
 CHAPTER 1 LIBRARY AND INFORMATION SERVICES
 Definitions and interpretation
-1. (1) In this Chapter, unless the context otherwise indicates-"
-      subject.strip_toc(s).should == s
-    end
+1. (1) In this Chapter, unless the context otherwise indicates-"""
+        assert_equal(self.importer.strip_toc(s), s)
 
-    it 'should strip table of contents' do
-      subject.strip_toc("City of Johannesburg Metropolitan Municipality
+    def test_strip_table_of_contents(self):
+        assert_equal(self.importer.strip_toc("""City of Johannesburg Metropolitan Municipality
 CULTURE AND RECREATION BY-LAWS ( )PUBLISHED IN PROVINCIAL GAZETTE EXTRAORDINARY NO 179 DATED 21 MAY 2004 UNDER NOTICE NUMBER 825
 
 CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY
@@ -145,7 +141,7 @@ Repeal
 SCHEDULE 1 BY-LAWS REPEALED
 CHAPTER 1 LIBRARY AND INFORMATION SERVICES
 Definitions and interpretation
-1. (1) In this Chapter, unless the context otherwise indicates-").should == "City of Johannesburg Metropolitan Municipality
+1. (1) In this Chapter, unless the context otherwise indicates-"""), """City of Johannesburg Metropolitan Municipality
 CULTURE AND RECREATION BY-LAWS ( )PUBLISHED IN PROVINCIAL GAZETTE EXTRAORDINARY NO 179 DATED 21 MAY 2004 UNDER NOTICE NUMBER 825
 
 CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY
@@ -155,7 +151,4 @@ CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY
 CULTURE AND RECREATION BY-LAWS
 CHAPTER 1 LIBRARY AND INFORMATION SERVICES
 Definitions and interpretation
-1. (1) In this Chapter, unless the context otherwise indicates-"
-    end
-  end
-"""
+1. (1) In this Chapter, unless the context otherwise indicates-""")

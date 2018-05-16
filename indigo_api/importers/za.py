@@ -40,9 +40,9 @@ class ImporterZA(Importer):
         text = self.boilerplate_re1.sub('', text)
         text = self.boilerplate_re2.sub('', text)
 
-        #text = self.unbreak_lines(text)
+        text = self.unbreak_lines(text)
         text = self.break_lines(text)
-        #text = self.strip_toc(text)
+        text = self.strip_toc(text)
 
         return text
 
@@ -80,68 +80,65 @@ class ImporterZA(Importer):
 
         return text
 
-"""
-      # Find likely candidates for unnecessarily broken lines
-      # and unbreaks them.
-      def unbreak_lines(s)
-        lines = s.split(/\n/)
+    def unbreak_lines(self, text):
+        """ Find likely candidates for unnecessarily broken lines and unbreaks them.
+        """
+        lines = text.split("\n")
         output = []
 
         # set of regex matcher pairs, one for the prev line, one for the current line
-        matchers = [
-          [/[a-z0-9]$/, /^\s*[a-z]/],  # line ends with and starst with lowercase
-          [/;$/, /^\s*(and|or)/],      # ends with ; then and/or on new line
-        ]
+        matchers = [(
+            # line ends with and starts with lowercase
+            re.compile(r'[a-z0-9]$'),
+            re.compile(r'^\s*[a-z]')
+        ), (
+            # ends with ; then and/or on new line
+            re.compile(r';$'),
+            re.compile(r'^\s*(and|or)'),
+        )]
 
-        prev = nil
-        lines.each_with_index do |line, i|
-          if i == 0
-            output << line
-          else
-            prev = output[-1]
-            unbreak = false
+        prev = None
+        for i, line in enumerate(lines):
+            if i == 0:
+                output.append(line)
+            else:
+                prev = output[-1]
+                unbreak = False
 
-            for prev_re, curr_re in matchers
-              if prev =~ prev_re and line =~ curr_re
-                unbreak = true
-                break
-              end
-            end
+                for prev_re, curr_re in matchers:
+                    if prev_re.search(prev) and curr_re.search(line):
+                        unbreak = True
+                        break
 
-            if unbreak
-              output[-1] = prev + ' ' + line
-            else
-              output << line
-            end
-          end
-        end
+                if unbreak:
+                    output[-1] = prev + ' ' + line
+                else:
+                    output.append(line)
 
-        output.join("\n")
-      end
+        return '\n'.join(output)
 
-      # Do our best to remove table of contents at the start,
-      # it really confuses the grammer.
-      def strip_toc(s)
-        # first, try to find 'TABLE OF CONTENTS' anywhere within the first 4K of text,
-        if toc_start = s[0..4096].match(/TABLE OF CONTENTS/i)
+    def strip_toc(self, text):
+        """ Do our best to remove table of contents at the start, it really confuses the grammer.
 
-          # grab the first non-blank line after that, it's our end-of-TOC marker
-          if eol = s.match(/^(.+?)$/, toc_start.end(0))
-            marker = eol[0]
+        We do this by finding the first non-empty line after the 'Table of Contents' section.
+        We then find the first place where that line is repeated, and consider that the start of the document.
+        """
+        # first, try to find 'TABLE OF CONTENTS' anywhere within the first 4K of text
+        toc_start = re.search(r'TABLE OF CONTENTS', text[:4096], re.IGNORECASE)
+        if toc_start:
+            # grab the first non-blank line after that, it will be our end-of-TOC marker
+            # eg '1. Definitions'
+            first_toc_entry = re.search(r'^\s*(.+)$', text[toc_start.end():], re.MULTILINE)
 
-            # search for the first line that is a prefix of marker (or vv), and delete
-            # everything in between
-            posn = eol.end(0)
-            while m = s.match(/^(.+?)$/, posn)
-              if marker.start_with?(m[0]) or m[0].start_with?(marker)
-                return s[0...toc_start.begin(0)] + s[m.begin(0)..-1]
-              end
+            if first_toc_entry:
+                marker = first_toc_entry.group(1).strip()
 
-              posn = m.end(0)
-            end
-          end
-        end
+                # search for the first line that has a prefix of marker (or vv), and delete
+                # everything in between
+                posn = toc_start.end() + first_toc_entry.end()
 
-        s
-      end
-"""
+                for match in re.finditer(r'^\s*(.+?)$', text[posn:], re.MULTILINE):
+                    if marker.startswith(match.group(1)) or match.group(1).strip().startswith(marker):
+                        return text[:toc_start.start()] + text[posn + match.start():]
+
+        return text

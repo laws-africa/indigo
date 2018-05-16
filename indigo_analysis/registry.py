@@ -28,9 +28,9 @@ class AnalyzerFactory(object):
         target = (country, language, locality)
 
         matches = ((finder, finder.locale_match(target)) for finder in analyzers.itervalues())
-        matches = [(f, m) for f, m in matches if m]
-        # best match
-        matches.sort()
+        matches = [(f, score) for f, score in matches if score]
+        # sort by score, best match last
+        matches.sort(key=lambda x: x[1])
         match = matches[-1][0]
 
         # create and return an instance of the analyzer
@@ -56,7 +56,7 @@ class LocaleBasedAnalyzer(object):
                 m.append(_inf)
             elif tgt == us:
                 # match
-                m.append(True)
+                m.append(1)
             else:
                 # no match
                 return None

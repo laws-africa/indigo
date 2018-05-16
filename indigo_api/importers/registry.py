@@ -11,8 +11,10 @@ class ImporterFactory(object):
 
         matches = ((cls, cls.locale_match(target)) for cls in self.registry.itervalues())
         matches = [(f, m) for f, m in matches if m]
-        # best match last
-        matches.sort()
+
+        matches = [(i, score) for i, score in matches if score]
+        # sort by score, best match last
+        matches.sort(key=lambda x: x[1])
         match = matches[-1][0]
 
         # create and return an instance of the analyzer

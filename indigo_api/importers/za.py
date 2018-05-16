@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 
 import re
 
@@ -124,7 +125,7 @@ class ImporterZA(Importer):
         We then find the first place where that line is repeated, and consider that the start of the document.
         """
         # first, try to find 'TABLE OF CONTENTS' anywhere within the first 4K of text
-        toc_start = re.search(r'TABLE OF CONTENTS', text[:4096], re.IGNORECASE)
+        toc_start = re.search(r'TABLE OF CONTENTS|arrangement of sections', text[:4096], re.IGNORECASE)
         if toc_start:
             # grab the first non-blank line after that, it will be our end-of-TOC marker
             # eg '1. Definitions'

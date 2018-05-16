@@ -11,18 +11,26 @@
     <xsl:param name="value"/>
 
     <xsl:variable name="prefix" select="translate(substring($value, 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
-    <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', 'NNNNNNNNNN')" />
+    <xsl:variable name="numprefix" select="translate(translate(substring($prefix, 1, 3), '1234567890', 'NNNNNNNNNN'), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'NNNNNNNNNNNNNNNNNNNNNNNNNN')" />
 
-    <!-- p tags must escape initial content that looks like a block element marker -->
+    <!-- p tags must escape initial content that looks like a block element marker.
+         Note that the two hyphens are different characters. -->
     <xsl:if test="$prefix = 'BODY' or
                   $prefix = 'PREAMBLE' or
                   $prefix = 'PREFACE' or
-                  starts-with($prefix, 'CHAPTER ') or
-                  starts-with($prefix, 'PART ') or
+                  starts-with($prefix, 'ROZDZIA') or
+                  starts-with($prefix, 'DZIA') or
+                  starts-with($prefix, 'ODDZIA') or
+                  starts-with($prefix, 'ART.') or
+                  starts-with($prefix, '§') or
                   starts-with($prefix, 'SCHEDULE ') or
                   starts-with($prefix, '{|') or
-                  starts-with($numprefix, '(') or
-                  starts-with($numprefix, 'N.')">
+                  starts-with($numprefix, 'N)') or
+                  starts-with($numprefix, 'NN)') or
+                  starts-with($numprefix, 'N.') or
+                  starts-with($numprefix, 'NN.') or
+                  starts-with($numprefix, '-') or
+                  starts-with($numprefix, '–')">
       <xsl:text>\</xsl:text>
     </xsl:if>
     <xsl:value-of select="$value"/>

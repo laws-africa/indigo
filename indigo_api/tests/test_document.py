@@ -93,3 +93,34 @@ class DocumentTestCase(TestCase):
         assert_equal(events[0].amending_uri, amending.frbr_uri)
         assert_equal(events[0].amending_title, amending.title)
         assert_equal(events[0].date, d)
+
+    def test_get_subcomponent(self):
+        d = Document(country='za')
+        d.content = document_fixture(xml="""
+        <body xmlns="http://www.akomantoso.org/2.0">
+          <section id="section-1">
+            <num>1.</num>
+            <heading>Foo</heading>
+            <content>
+              <p>hello</p>
+            </content>
+          </section>
+          <chapter id="chapter-2">
+            <num>2.</num>
+            <heading>The Chapter</heading>
+            <content>
+              <p>hi</p>
+            </content>
+          </chapter>
+        </body>
+        """)
+
+        assert_is_not_none(d.doc.components()['main'])
+        elem = d.get_subcomponent('main', 'chapter/2')
+        assert_equal(elem.get('id'), "chapter-2")
+
+        elem = d.get_subcomponent('main', 'section/1')
+        assert_equal(elem.get('id'), "section-1")
+
+        assert_is_none(d.get_subcomponent('main', 'chapter/99'))
+        assert_is_none(d.get_subcomponent('main', 'section/99'))

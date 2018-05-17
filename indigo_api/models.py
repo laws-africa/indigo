@@ -24,7 +24,7 @@ from countries_plus.models import Country as MasterCountry
 
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
 
-from .utils import language3_to_2, localize_toc
+from .utils import language3_to_2
 
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
@@ -491,8 +491,11 @@ class Document(models.Model):
         self.copy_attributes(from_model=False)
 
     def table_of_contents(self):
-        toc = self.doc.table_of_contents()
-        localize_toc(toc, self.django_language)
+        from indigo_analysis.registry import analyzers
+
+        builder = analyzers.for_document('toc', self)
+        toc = builder.table_of_contents_for_document(self)
+
         return [t.as_dict() for t in toc]
 
     def amended_versions(self):

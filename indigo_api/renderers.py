@@ -420,7 +420,7 @@ class EPUBRenderer(HTMLRenderer):
 
         # generate the individual items for each navigable element
         children = []
-        toc = document.doc.table_of_contents()
+        toc = document.table_of_contents()
         for item in toc:
             children.append(self.add_item(item, file_dir))
 

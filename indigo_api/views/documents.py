@@ -70,7 +70,7 @@ class DocumentViewMixin(object):
         # this updates the TOC entries by adding a 'url' component
         # based on the document's URI and the path of the TOC subcomponent
         uri = uri or document.doc.frbr_uri
-        toc = document.table_of_contents()
+        toc = [t.as_dict() for t in document.table_of_contents()]
 
         def add_url(item):
             uri.expression_component = item['component']

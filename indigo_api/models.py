@@ -24,6 +24,7 @@ from countries_plus.models import Country as MasterCountry
 
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
 
+from indigo.plugins import plugins
 from .utils import language3_to_2
 
 DEFAULT_LANGUAGE = 'eng'
@@ -491,9 +492,7 @@ class Document(models.Model):
         self.copy_attributes(from_model=False)
 
     def table_of_contents(self):
-        from indigo_analysis.registry import analyzers
-
-        builder = analyzers.for_document('toc', self)
+        builder = plugins.for_document('toc', self)
         return builder.table_of_contents_for_document(self)
 
     def get_subcomponent(self, component, subcomponent):

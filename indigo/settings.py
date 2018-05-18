@@ -32,9 +32,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
-    'indigo_api',
+    # local traditions
+    'indigo_pl',
+    'indigo_za',
 
-    # the Indigo browser application
+    # the Indigo API
+    'indigo_api',
+    # the Indigo editor application
     'indigo_app',
     # the Indigo act resolver
     'indigo_resolver',
@@ -54,7 +58,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_nose',
 
-    # the Indigo API
+    # required by the Indigo API
     'taggit',
     'taggit_serializer',
     'countries_plus',

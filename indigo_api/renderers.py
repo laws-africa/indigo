@@ -3,10 +3,12 @@ import tempfile
 import re
 import os.path
 import zipfile
+import logging
 
 from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import caches
 from django.conf import settings
+from django.contrib.staticfiles.finders import find as find_static
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
@@ -14,9 +16,79 @@ from ebooklib import epub
 from languages_plus.models import Language
 from sass_processor.processor import SassProcessor
 
-from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
 from .models import Document, Colophon, DEFAULT_LANGUAGE
+
+log = logging.getLogger(__name__)
+
+
+def file_candidates(document, prefix='', suffix=''):
+    """ Candidate files to use for this document.
+
+    This takes into account the country, type, subtype and language of the document,
+    providing a number of opportunities to adjust the rendering logic.
+
+    The following templates are looked for, in order:
+
+    * doctype-subtype-language-country
+    * doctype-subtype-language
+    * doctype-subtype-country
+    * doctype-subtype
+    * doctype-language-country
+    * doctype-country
+    * doctype-language
+    * doctype
+    """
+    uri = document.doc.frbr_uri
+    doctype = uri.doctype
+    language = uri.language
+    country = uri.country
+    subtype = uri.subtype
+
+    options = []
+    if subtype:
+        options.append('-'.join([doctype, subtype, language, country]))
+        options.append('-'.join([doctype, subtype, language]))
+        options.append('-'.join([doctype, subtype, country]))
+        options.append('-'.join([doctype, subtype]))
+
+    options.append('-'.join([doctype, language, country]))
+    options.append('-'.join([doctype, country]))
+    options.append('-'.join([doctype, language]))
+    options.append(doctype)
+
+    return [prefix + f + suffix for f in options]
+
+
+class XSLTRenderer(object):
+    """ Renders an Akoma Ntoso Act XML document using XSL transforms.
+    """
+
+    def __init__(self, xslt_filename, xslt_params=None):
+        self.xslt = ET.XSLT(ET.parse(xslt_filename))
+        self.xslt_params = xslt_params or {}
+
+    def render(self, node):
+        """ Render an XML Tree or Element object into an HTML string """
+        params = {
+            'defaultIdScope': ET.XSLT.strparam(self.defaultIdScope(node) or ''),
+        }
+        params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.iteritems()})
+        return ET.tostring(self.xslt(node, **params))
+
+    def render_xml(self, xml):
+        """ Render an XML string into an HTML string """
+        if not isinstance(xml, str):
+            xml = xml.encode('utf-8')
+        return self.render(ET.fromstring(xml))
+
+    def defaultIdScope(self, node):
+        """ Default scope for ID attributes when rendering.
+        """
+        ns = node.nsmap[None]
+        scope = node.xpath('./ancestor::a:doc[@name][1]/@name', namespaces={'a': ns})
+        if scope:
+            return scope[0]
 
 
 def generate_filename(data, view, format=None):
@@ -57,15 +129,9 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, cobalt_kwargs=None, no_stub_content=False, resolver=None):
-        kwargs = {
-            'xslt_dir': os.path.abspath('indigo_app/static/xsl'),
-        }
-        kwargs.update(cobalt_kwargs or {})
-
+    def __init__(self, coverpage=True, standalone=False, template_name=None, no_stub_content=False, resolver=None):
         self.template_name = template_name
         self.standalone = standalone
-        self.cobalt_kwargs = kwargs
         self.coverpage = coverpage
         self.no_stub_content = no_stub_content
         self.resolver = resolver
@@ -122,51 +188,39 @@ class HTMLRenderer(object):
 
         return colophon
 
-    def find_template(self, document, prefix=''):
+    def find_template(self, document):
         """ Return the filename of a template to use to render this document.
 
-        This takes into account the country, type, subtype and language of the document,
-        providing a number of opportunities to adjust the rendering logic.
-
         The normal Django templating system is used to find a template. The first template
-        found is used. The following templates are looked for, in order:
-
-        * doctype_subtype_language_country.html
-        * doctype_subtype_country.html
-        * doctype_subtype_language.html
-        * doctype_country.html
-        * doctype_subtype.html
-        * doctype_language_country.html
-        * doctype_country.html
-        * doctype_language.html
-        * doctype.html
+        found is used.
         """
-        uri = document.doc.frbr_uri
-        doctype = uri.doctype
-
-        options = []
-        if uri.subtype:
-            options.append('_'.join([doctype, uri.subtype, document.language, uri.country]))
-            options.append('_'.join([doctype, uri.subtype, uri.country]))
-            options.append('_'.join([doctype, uri.subtype, document.language]))
-            options.append('_'.join([doctype, uri.country]))
-            options.append('_'.join([doctype, uri.subtype]))
-
-        options.append('_'.join([doctype, document.language, uri.country]))
-        options.append('_'.join([doctype, uri.country]))
-        options.append('_'.join([doctype, document.language]))
-        options.append(doctype)
-
-        options = [prefix + f + '.html' for f in options]
-
-        for option in options:
+        candidates = file_candidates(document, suffix='.html')
+        for option in candidates:
             try:
+                log.debug("Looking for %s" % option)
                 if get_template(option):
+                    log.debug("Using xsl %s" % option)
                     return option
             except TemplateDoesNotExist:
                 pass
 
-        raise ValueError("Couldn't find a template to use for %s. Tried: %s" % (uri, ', '.join(options)))
+        raise ValueError("Couldn't find an HTML template to use for %s, tried: %s" % (document, candidates))
+
+    def find_xslt(self, document):
+        """ Return the filename of an xslt template to use to render this document.
+
+        The normal Django templating system is used to find a template. The first template
+        found is used.
+        """
+        candidates = file_candidates(document, prefix='xsl/', suffix='.xsl')
+        for option in candidates:
+            log.debug("Looking for %s" % option)
+            fname = find_static(option)
+            if fname:
+                log.debug("Using xsl %s" % fname)
+                return fname
+
+        raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
 
     def _xml_renderer(self, document):
         params = {
@@ -175,10 +229,7 @@ class HTMLRenderer(object):
             'lang': document.language,
         }
 
-        return CobaltHTMLRenderer(
-            act=document.doc,
-            xslt_params=params,
-            **self.cobalt_kwargs)
+        return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))
 
     def resolver_url(self):
         if self.resolver in ['no', 'none']:

@@ -7,17 +7,15 @@ import logging
 
 from django.conf import settings
 import mammoth
-
-from indigo_api.models import Document
-from indigo_analysis.registry import analyzers, LocaleBasedAnalyzer
 from cobalt.act import Fragment
 
-from indigo_api.importers.registry import importers
+from indigo_api.models import Document
+from indigo.plugins import plugins, LocaleBasedMatcher
 
 
 # TODO: move LocaleBasedAnalyzer into a better place
-@importers.register
-class Importer(LocaleBasedAnalyzer):
+@plugins.register('importer')
+class Importer(LocaleBasedMatcher):
     """
     Import from PDF and other document types using Slaw.
 
@@ -185,7 +183,7 @@ class Importer(LocaleBasedAnalyzer):
         """ Run analysis after import.
         Usually only used on PDF documents.
         """
-        finder = analyzers.for_document('refs', doc)
+        finder = plugins.for_document('refs', doc)
         if finder:
             finder.find_references_in_document(doc)
 

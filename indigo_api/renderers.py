@@ -17,7 +17,6 @@ from sass_processor.processor import SassProcessor
 from cobalt.render import HTMLRenderer as CobaltHTMLRenderer
 from .serializers import NoopSerializer
 from .models import Document, Colophon, DEFAULT_LANGUAGE
-from .utils import localize_toc
 
 
 def generate_filename(data, view, format=None):
@@ -421,7 +420,7 @@ class EPUBRenderer(HTMLRenderer):
 
         # generate the individual items for each navigable element
         children = []
-        toc = localize_toc(document.doc.table_of_contents(), document.django_language)
+        toc = document.table_of_contents()
         for item in toc:
             children.append(self.add_item(item, file_dir))
 

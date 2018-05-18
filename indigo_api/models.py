@@ -24,7 +24,7 @@ from countries_plus.models import Country as MasterCountry
 
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
 
-from .utils import language3_to_2, localize_toc
+from .utils import language3_to_2
 
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
@@ -491,9 +491,26 @@ class Document(models.Model):
         self.copy_attributes(from_model=False)
 
     def table_of_contents(self):
-        toc = self.doc.table_of_contents()
-        localize_toc(toc, self.django_language)
-        return [t.as_dict() for t in toc]
+        from indigo_analysis.registry import analyzers
+
+        builder = analyzers.for_document('toc', self)
+        return builder.table_of_contents_for_document(self)
+
+    def get_subcomponent(self, component, subcomponent):
+        """ Get the named subcomponent in this document, such as `chapter/2` or 'section/13A'.
+        :class:`lxml.objectify.ObjectifiedElement` or `None`.
+        """
+        def search_toc(items):
+            for item in items:
+                if item.component == component and item.subcomponent == subcomponent:
+                    return item.element
+
+                if item.children:
+                    found = search_toc(item.children)
+                    if found:
+                        return found
+
+        return search_toc(self.table_of_contents())
 
     def amended_versions(self):
         """ Return a list of all the amended versions of this work.

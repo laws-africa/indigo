@@ -110,7 +110,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             return view_attachment_by_filename(document.id, filename)
 
         if self.subcomponent:
-            self.element = document.doc.get_subcomponent(self.component, self.subcomponent)
+            self.element = document.get_subcomponent(self.component, self.subcomponent)
         else:
             # special cases of the entire document
 

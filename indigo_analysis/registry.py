@@ -1,8 +1,11 @@
 import itertools
+import logging
 from collections import defaultdict
 
 registry = defaultdict(dict)
 _inf = float("-inf")
+
+log = logging.getLogger(__name__)
 
 
 def register_analyzer(topic, cls):
@@ -31,6 +34,8 @@ class AnalyzerFactory(object):
         matches = [(f, score) for f, score in matches if score]
         # sort by score, best match last
         matches.sort(key=lambda x: x[1])
+        log.debug("Looking for %s analyzer for target %s, candidates (best is last): %s" % (topic, target, matches))
+
         match = matches[-1][0]
 
         # create and return an instance of the analyzer

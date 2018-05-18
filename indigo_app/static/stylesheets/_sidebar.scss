@@ -3,6 +3,10 @@
   color: rgba(255, 255, 255, 0.8);
   background: #284255;
   flex: 0 0 $sidebar-width;
+  transition: width 0.2s;
+
+  display: flex;
+  flex-direction: column;
 
   .sidebar-nav {
     flex: 1;
@@ -11,6 +15,11 @@
 
     .nav {
       flex-direction: column;
+    }
+
+    .nav-item {
+      overflow: hidden;
+      white-space: nowrap;
     }
 
     .nav-link {
@@ -64,6 +73,19 @@
   &.sidebar-minimized {
     .sidebar {
       width: 50px;
+
+      .nav-item {
+        max-width: 50px;
+
+        &:hover {
+          max-width: unset;
+          box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+        }
+      }
+
+      .nav-heading {
+        visibility: hidden;
+      }
     }
 
     .main-container {

@@ -236,6 +236,7 @@ PIPELINE = {
                 'javascript/indigo/views/document.js',
                 'javascript/indigo/views/library.js',
                 'javascript/indigo/views/error_box.js',
+                'javascript/indigo/views/sidebar.js',
                 'javascript/indigo/views/progress.js',
                 'javascript/indigo/views/import.js',
                 'javascript/indigo/views/annotations.js',

@@ -1,7 +1,7 @@
 from django.utils.translation import ugettext as _
 
-from indigo_analysis.registry import register_analyzer
 from indigo_analysis.toc.base import TOCBuilderBase
+from indigo.plugins import plugins
 
 
 def section_title(item):
@@ -16,6 +16,7 @@ def section_title(item):
     return title
 
 
+@plugins.register('toc')
 class TOCBuilderZA(TOCBuilderBase):
     locale = ('za', None, None)
 
@@ -27,5 +28,3 @@ class TOCBuilderZA(TOCBuilderBase):
         'part': lambda t: _('Part') + ' %s' % t.num + (' - %s' % t.heading if t.heading else ''),
         'section': section_title,
     }
-
-register_analyzer('toc', TOCBuilderZA)

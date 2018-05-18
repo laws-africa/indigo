@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 from lxml import etree
 
 from indigo_api.tests.fixtures import *  # noqa
-from indigo_analysis.refs.eng import RefsFinderENG
+from indigo_za.refs import RefsFinderENG
 from indigo_api.models import Document
 
 

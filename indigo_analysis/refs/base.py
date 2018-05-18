@@ -1,24 +1,14 @@
 from __future__ import absolute_import
 from lxml import etree
 
-from indigo_analysis.registry import register_analyzer, LocaleBasedAnalyzer
+from indigo.plugins import LocaleBasedMatcher
 
 
-class RefsRegistry(type):
-    def __new__(cls, name, *args):
-        newclass = super(RefsRegistry, cls).__new__(cls, name, *args)
-        if name != 'BaseRefsFinder':
-            register_analyzer('refs', newclass)
-        return newclass
-
-
-class BaseRefsFinder(LocaleBasedAnalyzer):
+class BaseRefsFinder(LocaleBasedMatcher):
     """ Finds references to Acts in documents.
 
     Subclasses must implement `find_references_in_document`.
     """
-
-    __metaclass__ = RefsRegistry
 
     act_re = None  # this must be defined by a subclass
     candidate_xpath = None  # this must be defined by a subclass

@@ -4,10 +4,10 @@ from __future__ import unicode_literals
 import re
 
 from indigo_api.importers.base import Importer
-from indigo_api.importers.registry import importers
+from indigo.plugins import plugins
 
 
-@importers.register
+@plugins.register('importer')
 class ImporterZA(Importer):
     """ Importer for the Polish tradition.
     """

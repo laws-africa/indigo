@@ -2,7 +2,7 @@ import re
 from lxml.html import _collect_string_content
 from django.utils.translation import override, ugettext as _
 
-from indigo_analysis.registry import register_analyzer, LocaleBasedAnalyzer
+from indigo.plugins import plugins, LocaleBasedMatcher
 
 
 # Ensure that these translations are included by makemessages
@@ -15,7 +15,8 @@ _('Part')
 _('Section')
 
 
-class TOCBuilderBase(LocaleBasedAnalyzer):
+@plugins.register('toc')
+class TOCBuilderBase(LocaleBasedMatcher):
     """ This builds a Table of Contents for an Act.
 
     A Table of Contents is a tree of :class:`TOCElement` instances, each element
@@ -175,9 +176,6 @@ class TOCBuilderBase(LocaleBasedAnalyzer):
                 title += u' ' + item.num
 
         return title
-
-
-register_analyzer('toc', TOCBuilderBase)
 
 
 class TOCElement(object):

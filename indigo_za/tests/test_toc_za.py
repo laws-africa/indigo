@@ -4,7 +4,7 @@ from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 
 from indigo_api.tests.fixtures import *  # noqa
-from indigo_analysis.toc.za import TOCBuilderZA
+from indigo_za.toc import TOCBuilderZA
 from indigo_api.models import Document
 
 

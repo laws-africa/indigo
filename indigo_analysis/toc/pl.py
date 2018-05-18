@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from indigo_analysis.registry import register_analyzer
 from indigo_analysis.toc.base import TOCBuilderBase
+from indigo.plugins import plugins
 
 
+@plugins.register('toc')
 class TOCBuilderPL(TOCBuilderBase):
     locale = ('pl', 'pol', None)
 
@@ -18,5 +19,3 @@ class TOCBuilderPL(TOCBuilderBase):
         'paragraph': lambda t: t.num,
         'section': lambda t: '§ %s' % t.num,
     }
-
-register_analyzer('toc', TOCBuilderPL)

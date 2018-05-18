@@ -14,7 +14,7 @@ from cobalt.act import datestring
 import reversion
 
 from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
-from .importers.registry import importers
+from indigo.plugins import plugins
 
 log = logging.getLogger(__name__)
 
@@ -417,7 +417,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 request = self.context['request']
 
                 country = data.get('country') or request.user.editor.country_code
-                importer = importers.for_locale(country, None, None)
+                importer = plugins.for_locale('importer', country, None, None)
 
                 importer.section_number_position = posn
                 importer.cropbox = cropbox

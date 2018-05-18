@@ -4,26 +4,16 @@ import logging
 from itertools import chain
 from lxml import etree
 
-from indigo_analysis.registry import register_analyzer, LocaleBasedAnalyzer
+from indigo.plugins import LocaleBasedMatcher
 
 log = logging.getLogger(__name__)
 
 
-class TermsRegistry(type):
-    def __new__(cls, name, *args):
-        newclass = super(TermsRegistry, cls).__new__(cls, name, *args)
-        if name != 'BaseTermsFinder':
-            register_analyzer('terms', newclass)
-        return newclass
-
-
-class BaseTermsFinder(LocaleBasedAnalyzer):
+class BaseTermsFinder(LocaleBasedMatcher):
     """ Finds references to defined terms in documents.
 
     Subclasses must implement `find_terms_in_document`.
     """
-
-    __metaclass__ = TermsRegistry
 
     heading_re = None  # subclasses must define this
     term_re = None     # subclasses must define this

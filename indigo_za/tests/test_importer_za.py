@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from nose.tools import *  # noqa
 
 from django.test import testcases
-from indigo_api.importers.za import ImporterZA
+from indigo_za.importer import ImporterZA
 
 
 class ImporterZATestCase(testcases.TestCase):

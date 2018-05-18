@@ -79,7 +79,7 @@ $(function() {
   // tooltips
   $('[title]').tooltip({
     container: 'body',
-    placement: 'auto top'
+    placement: 'auto',
   });
 
   // stash the query string params, if any

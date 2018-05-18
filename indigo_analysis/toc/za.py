@@ -15,7 +15,7 @@ def section_title(item):
 
 
 class TOCBuilderZA(TOCBuilderBase):
-    locale = (None, 'za', None)
+    locale = ('za', None, None)
 
     toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions']
     toc_non_unique_components = ['chapter', 'part']

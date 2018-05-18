@@ -57,6 +57,53 @@ class TOCBuilderZATestCase(APITestCase):
                 ]},
         ])
 
+    def test_table_of_contents_afr(self):
+        d = Document()
+        d.content = document_fixture(xml="""
+        <body xmlns="http://www.akomantoso.org/2.0">
+          <section id="section-1">
+            <num>1.</num>
+            <heading>Foo</heading>
+            <content>
+              <p>hello</p>
+            </content>
+          </section>
+          <chapter id="chapter-1">
+            <num>1.</num>
+            <heading>The Chapter</heading>
+            <part id="part-A">
+              <num>A</num>
+              <heading>The Part</heading>
+              <section id="section-2">
+                <num>2.</num>
+                <heading>Other</heading>
+                <content>
+                  <p>hi</p>
+                </content>
+              </section>
+            </part>
+          </chapter>
+        </body>
+        """)
+        d.language = 'afr'
+
+        toc = d.table_of_contents()
+        toc = [t.as_dict() for t in toc]
+        self.maxDiff = None
+        self.assertEqual(toc, [
+            {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo',
+                'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo'},
+            {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
+                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Hoofstuk 1. - The Chapter', 'children': [
+                    {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
+                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Deel A - The Part', 'children': [
+                         {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
+                          'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other'},
+                     ]
+                     },
+                ]},
+        ])
+
     def test_component_table_of_contents(self):
         d = Document()
         d.content = """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">

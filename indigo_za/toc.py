@@ -1,6 +1,6 @@
 from django.utils.translation import ugettext as _
 
-from indigo_analysis.toc.base import TOCBuilderBase
+from indigo.analysis.toc.base import TOCBuilderBase
 from indigo.plugins import plugins
 
 

@@ -2,7 +2,7 @@
 
 import re
 
-from indigo_analysis.terms.base import BaseTermsFinder
+from indigo.analysis.terms.base import BaseTermsFinder
 from indigo.plugins import plugins
 
 

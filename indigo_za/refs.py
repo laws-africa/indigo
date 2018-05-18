@@ -1,6 +1,6 @@
 import re
 
-from indigo_analysis.refs.base import BaseRefsFinder
+from indigo.analysis.refs.base import BaseRefsFinder
 from indigo.plugins import plugins
 
 

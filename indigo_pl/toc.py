@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from indigo_analysis.toc.base import TOCBuilderBase
+from indigo.analysis.toc.base import TOCBuilderBase
 from indigo.plugins import plugins
 
 

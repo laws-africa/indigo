@@ -3,7 +3,8 @@
 from nose.tools import *  # noqa
 
 from django.test import testcases
-from indigo_api.importers.pl import ImporterPL
+from indigo_pl.importer import ImporterPL
+
 
 class ImporterPLTestCase(testcases.TestCase):
     def setUp(self):
@@ -18,12 +19,12 @@ class ImporterPLTestCase(testcases.TestCase):
         text = u"All your base are be-\nlong to Legia Warszawa FC."
         reformatted = self.importer.reformat_text(text)
         assert_equal(reformatted, "All your base are belong to Legia Warszawa FC.")
-        
+
     def test_reformat_text_keep_linebreak_on_divisions(self):
         text = (u"DZIAŁ VIII All your base are belong to Legia Warszawa FC.\n"
                 u"DZIAŁ IX The right to consume sausages shall not be abrogated.")
         reformatted = self.importer.reformat_text(text)
-        assert_equal(reformatted, text)        
+        assert_equal(reformatted, text)
 
     def test_reformat_text_keep_linebreak_on_chapters(self):
         text = (u"Rozdział 1 All your base are belong to Legia Warszawa FC.\n"
@@ -42,7 +43,7 @@ class ImporterPLTestCase(testcases.TestCase):
                 u"2. The right to consume sausages shall not be abrogated.")
         reformatted = self.importer.reformat_text(text)
         assert_equal(reformatted, text)
-        
+
     def test_reformat_text_keep_linebreak_on_paragraphs_section_sign(self):
         text = (u"§ 1. All your base are belong to Legia Warszawa FC.\n"
                 u"§ 2. The right to consume sausages shall not be abrogated.")

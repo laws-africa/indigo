@@ -13,7 +13,7 @@ var IndigoPLHighlightRules = function() {
             {
                 // section and article
                 token: ["constant.numeric", "entity.name.tag"],
-                regex: /^((Art(\.|ykuł)|§)\s+[0-9][0-9a-z]*\.)/
+                regex: /^(art\.|artykuł|§)(\s+[0-9][0-9a-z]*\.)/
             }, {
                 token: "constant.language",
                 regex: /^(body|preamble|preface)\s*$/,

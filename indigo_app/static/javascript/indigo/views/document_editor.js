@@ -28,14 +28,6 @@
 
       this.parent = options.parent;
       this.name = 'source';
-      this.grammar_fragments = {
-        chapter: 'chapters',
-        part: 'parts',
-        section: 'sections',
-        component: 'schedules',
-        components: 'schedules_container',
-      };
-      this.quickEditable = '.akn-chapter, .akn-part, .akn-section, .akn-division, .akn-subdivision, .akn-article, .akn-component, .akn-components';
       this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fa fa-pencil"></i></a></div>');
 
       // setup renderer
@@ -184,7 +176,7 @@
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragment = this.$textEditor.data('fragment');
-      fragment = this.grammar_fragments[fragment] || fragment;
+      fragment = this.parent.model.tradition().settings.grammar.fragments[fragment] || fragment;
 
       // should we delete the item?
       if (!content.trim() && fragment != 'akomaNtoso') {
@@ -380,7 +372,7 @@
 
     makeElementsQuickEditable: function(html) {
       $(html.firstElementChild)
-        .find(this.quickEditable)
+        .find(this.parent.model.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
         .prepend(this.quickEditTemplate);
     },

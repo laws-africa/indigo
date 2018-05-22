@@ -367,6 +367,12 @@
       this.work = work;
       this.trigger('change change:work');
     },
+
+    /** Get the Tradition description for this document's country.
+     */
+    tradition: function() {
+      return Indigo.traditions.get(this.get('country'));
+    },
   });
 
   /** Create a new document by parsing an frbr URI */

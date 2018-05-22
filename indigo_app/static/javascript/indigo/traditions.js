@@ -36,6 +36,12 @@
   // Base
   Indigo.traditions.default = new Indigo.Tradition({
     country: null,
+    grammar: {
+      fragments: {
+        component: 'schedules',
+        components: 'schedules_container',
+      },
+    },
     toc: {
       elements: {
         akomaNtoso: 1,
@@ -86,6 +92,16 @@
   // South Africa
   Indigo.traditions.za = new Indigo.Tradition({
     country: 'za',
+    grammar: {
+      fragments: {
+        chapter: 'chapters',
+        part: 'parts',
+        section: 'sections',
+        component: 'schedules',
+        components: 'schedules_container',
+      },
+      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
+    },
     toc: {
       elements: Indigo.traditions.default.settings.toc.elements,
       titles: {
@@ -97,6 +113,19 @@
   // Poland
   Indigo.traditions.pl = new Indigo.Tradition({
     country: 'pl',
+    grammar: {
+      fragments: {
+        article: 'articles',
+        chapter: 'chapters',
+        component: 'schedules',
+        components: 'schedules_container',
+        division: 'divisions',
+        paragraph: 'paragraphs',
+        section: 'sections',
+        subdivision: 'subdivisions',
+      },
+      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-division, .akn-subdivision, .akn-article, .akn-component, .akn-components',
+    },
     toc: {
       elements: {
         akomaNtoso: 1,
@@ -119,7 +148,6 @@
         division    : function(i) { return "Dział " + i.num + " " + i.heading; },
         list        : function(i) { return i.num + " " + i.heading; },
         paragraph   : function(i) { return i.num + " " + i.heading; },
-        point       : function(i) { return i.num + " " + i.heading; },
         section     : function(i) { return "§ " + i.num + " " + i.heading; },
         subdivision : function(i) { return "Oddział " + i.num + " " + i.heading; },
       },

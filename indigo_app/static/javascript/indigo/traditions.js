@@ -38,9 +38,14 @@
     country: null,
     grammar: {
       fragments: {
+        chapter: 'chapters',
+        part: 'parts',
+        section: 'sections',
         component: 'schedules',
         components: 'schedules_container',
       },
+      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
+      aceMode: 'ace/mode/indigo',
     },
     toc: {
       elements: {
@@ -92,16 +97,7 @@
   // South Africa
   Indigo.traditions.za = new Indigo.Tradition({
     country: 'za',
-    grammar: {
-      fragments: {
-        chapter: 'chapters',
-        part: 'parts',
-        section: 'sections',
-        component: 'schedules',
-        components: 'schedules_container',
-      },
-      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
-    },
+    grammar: Indigo.traditions.default.settings.grammar,
     toc: {
       elements: Indigo.traditions.default.settings.toc.elements,
       titles: {
@@ -125,6 +121,7 @@
         subdivision: 'subdivisions',
       },
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-division, .akn-subdivision, .akn-article, .akn-component, .akn-components',
+      aceMode: 'ace/mode/indigo_pl',
     },
     toc: {
       elements: {

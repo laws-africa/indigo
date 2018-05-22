@@ -32,9 +32,8 @@
 
       // setup renderer
       this.editorReady = $.Deferred();
-      this.listenTo(this.parent.model, 'change:country', this.loadXSL);
+      this.listenTo(this.parent.model, 'change:country', this.countryChanged);
       this.listenTo(this.parent.model, 'change:country change:language', this.render);
-      this.loadXSL();
 
       // setup xml editor
       this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
@@ -48,7 +47,6 @@
       this.$textEditor = this.$('.document-text-editor');
       this.textEditor = ace.edit(this.$(".document-text-editor .ace-editor")[0]);
       this.textEditor.setTheme("ace/theme/xcode");
-      this.textEditor.getSession().setMode("ace/mode/indigo");
       this.textEditor.setValue();
       this.textEditor.getSession().setUseWrapMode(true);
       this.textEditor.setShowPrintMargin(false);
@@ -60,6 +58,13 @@
       this.tableEditor.on('finish', this.tableEditFinish, this);
 
       this.$toolbar = $('.document-toolbar');
+
+      this.countryChanged();
+    },
+
+    countryChanged: function() {
+      this.loadXSL();
+      this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
     },
 
     loadXSL: function() {

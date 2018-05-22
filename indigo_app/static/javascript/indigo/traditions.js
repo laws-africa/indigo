@@ -6,7 +6,7 @@
   if (!Indigo.traditions) Indigo.traditions = {};
 
   Indigo.traditions.get = function(country) {
-    return Indigo.traditions[country] || Indigo.traditions['default'];
+    return Indigo.traditions[country] || Indigo.traditions.default;
   };
 
   Indigo.Tradition = function(settings) {
@@ -35,9 +35,9 @@
 
   // Base
   Indigo.traditions.default = new Indigo.Tradition({
-    'country': null,
-    'toc': {
-      'elements': {
+    country: null,
+    toc: {
+      elements: {
         akomaNtoso: 1,
         chapter: 1,
         component: 1,
@@ -49,7 +49,7 @@
         preface: 1,
         section: 1,
       },
-      'titles': {
+      titles: {
         default     : function(i) { return i.num + " " + i.heading; },
         akomaNtoso  : function(i) { return "Entire document"; },
         chapter     : function(i) { return "Ch. " + i.num + " " + i.heading; },
@@ -85,10 +85,10 @@
 
   // South Africa
   Indigo.traditions.za = new Indigo.Tradition({
-    'country': 'za',
-    'toc': {
-      'elements': Indigo.traditions.default.settings.toc.elements,
-      'titles': {
+    country: 'za',
+    toc: {
+      elements: Indigo.traditions.default.settings.toc.elements,
+      titles: {
         // just rely on the defaults
       },
     },
@@ -96,9 +96,9 @@
 
   // Poland
   Indigo.traditions.pl = new Indigo.Tradition({
-    'country': 'pl',
-    'toc': {
-      'elements': {
+    country: 'pl',
+    toc: {
+      elements: {
         akomaNtoso: 1,
         article: 1,
         chapter: 1,
@@ -113,7 +113,7 @@
         section: 1,
         subdivision: 1,
       },
-      'titles': {
+      titles: {
         article     : function(i) { return "Art. " + i.num + " " + i.heading; },
         chapter     : function(i) { return "Rozdział " + i.num + " " + i.heading; },
         division    : function(i) { return "Dział " + i.num + " " + i.heading; },

@@ -7,52 +7,52 @@
 
   display: flex;
   flex-direction: column;
+}
 
-  .sidebar-nav {
-    flex: 1;
-    position: relative;
-    width: $sidebar-width;
+.sidebar-nav {
+  flex: 1;
+  position: relative;
+  width: $sidebar-width;
 
-    .nav {
-      flex-direction: column;
+  .nav {
+    flex-direction: column;
+  }
+
+  .nav-item {
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  .nav-link {
+    padding-left: 0px;
+    color: rgba(255, 255, 255, 0.9);
+
+    &> i {
+      width: 50px;
+      text-align: center;
     }
 
-    .nav-item {
-      overflow: hidden;
-      white-space: nowrap;
+    &.active {
+      background-color: rgba(255, 255, 255, 0.25);
+      color: $white;
     }
+  }
 
-    .nav-link {
-      padding-left: 0px;
+  // colour both the nav-item and the nav-link so that when we're in the dropdown
+  // of a submenu, the owning nav-item in the sidebar still appears active
+  .nav-item:hover,
+  .nav-link:hover,
+  .nav-link.active:hover {
+    background-color: $primary;
+    color: $white;
+  }
 
-      &> i {
-        width: 50px;
-        text-align: center;
-      }
-
-      &:not(.disabled) {
-        color: rgba(255, 255, 255, 0.9);
-
-        &:hover,
-        &.active:hover {
-          background-color: $primary;
-          color: $white;
-        }
-
-        &.active {
-          background-color: rgba(255, 255, 255, 0.25);
-          color: $white;
-        }
-      }
-    }
-
-    .nav-heading {
-      padding: .75rem 1rem;
-      font-size: 11px;
-      font-weight: 600;
-      color: rgba(255, 255, 255, 0.5);
-      text-transform: uppercase;
-    }
+  .nav-heading {
+    padding: .75rem 1rem;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
   }
 }
 

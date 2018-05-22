@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
+{% block body-class %}{{ block.super }} sidebar-minimized {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
 
 {% block sidebar %}
   {% include './_sidebar.html' %}

@@ -9,10 +9,13 @@
   flex-direction: column;
 }
 
+.sidebar-minimizer i::before {
+  content: "\f053";
+}
+
 .sidebar-nav {
   flex: 1;
   position: relative;
-  width: $sidebar-width;
 
   .nav {
     flex-direction: column;
@@ -21,6 +24,10 @@
   .nav-item {
     overflow: hidden;
     white-space: nowrap;
+
+    &:hover {
+      width: $sidebar-width;
+    }
   }
 
   .nav-link {
@@ -90,6 +97,10 @@
 
     .main-container {
       margin-left: 50px;
+    }
+
+    .sidebar-minimizer i::before {
+      content: "\f054";
     }
   }
 }

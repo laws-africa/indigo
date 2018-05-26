@@ -7,7 +7,6 @@
   // This view shows the table-of-contents of the document and handles clicks
   Indigo.DocumentTOCView = Backbone.View.extend({
     el: '#toc',
-    template: '#toc-template',
     events: {
       'click a': 'click',
     },
@@ -18,7 +17,6 @@
       });
       this.toc = [];
       this.model.on('change', this.rebuild, this);
-      this.template = Handlebars.compile($(this.template).html());
     },
 
     rebuild: function() {
@@ -28,7 +26,8 @@
 
         var oldLength = this.toc.length,
             index = this.selection.get('index');
-        this.toc = this.buildToc();
+
+        this.buildToc();
 
         if (index > this.toc.length-1) {
           // we've selected past the end of the TOC
@@ -50,7 +49,10 @@
 
     buildToc: function() {
       // Get the table of contents of this document
-      var toc = [];
+      // roots is a list of the root elements of the toc tree
+      // toc is an ordered list of all items in the toc
+      var roots = [],
+          toc = [];
       var tradition = Indigo.traditions.get(this.model.document.get('country'));
 
       function iter_children(node, parent_item) {
@@ -65,7 +67,12 @@
             toc_item.index = toc.length;
             toc.push(toc_item);
 
-            if (parent_item) parent_item.has_children = true;
+            if (parent_item) {
+              parent_item.children = parent_item.children || [];
+              parent_item.children.push(toc_item);
+            } else {
+              roots.push(toc_item);
+            }
           }
 
           iter_children(kid, toc_item || parent_item);
@@ -87,12 +94,35 @@
 
       iter_children(this.model.xmlDocument);
 
-      return toc;
+      this.toc = toc;
+      this.roots = roots;
     },
 
     render: function() {
-      this.$el.html(this.template({toc: this.toc}));
-      this.$el.find('[title]').tooltip();
+      // recursively build the TOC
+      function renderItem(root, item) {
+        var li = document.createElement('li');
+        li.classList.add('toc-item');
+
+        var a = document.createElement('a');
+        a.setAttribute('href', '#');
+        a.setAttribute('data-index', item.index);
+        a.textContent = item.title;
+        if (item.selected) a.classList.add('active');
+        li.appendChild(a);
+
+        if (item.children) {
+          var kids = document.createElement('ol');
+          li.appendChild(kids);
+          item.children.forEach(function(x) { renderItem(kids, x); });
+        }
+
+        root.appendChild(li);
+      }
+
+      var root = document.createElement('ol');
+      this.roots.forEach(function(x) { renderItem(root, x); });
+      this.$el.empty().append(root);
     },
 
     // select the i-th item in the TOC

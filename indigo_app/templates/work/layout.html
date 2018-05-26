@@ -12,9 +12,9 @@
   <header class="main-header container-fluid">
     <ul class="breadcrumb text-muted">
       {% block breadcrumbs %}
-        <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' %}?country={{ country.code }}">{{ country.name }} · {{ country.code }}</a></li>
+        <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
         {% if locality %}
-        <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' %}?country={{ country.code}}&locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+        <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
         {% endif %}
         {% if work %}
         <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>

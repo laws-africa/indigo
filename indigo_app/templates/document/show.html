@@ -35,9 +35,9 @@
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">
   {% verbatim %}
-    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
     {{#if locality}}
-    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/?locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
     {{/if}}
     <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">

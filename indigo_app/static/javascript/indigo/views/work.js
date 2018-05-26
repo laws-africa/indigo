@@ -135,11 +135,11 @@
           locality = this.model.get('locality');
 
       this.$('.work-country')
-        .attr('href', '/library?country=' + this.model.get('country'))
+        .attr('href', '/library/' + this.model.get('country') + '/')
         .text(country.name + ' · ' + this.model.get('country'));
 
       this.$('.work-locality')
-        .attr('href', '/library?country=' + this.model.get('country') + '&locality=' + locality)
+        .attr('href', '/library/' + this.model.get('country') + '/?locality=' + locality)
         .text(locality ? country.localities[locality] + ' · ' + locality : '');
     },
 

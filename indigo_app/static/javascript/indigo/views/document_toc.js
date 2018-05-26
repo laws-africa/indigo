@@ -13,11 +13,12 @@
     },
 
     initialize: function() {
+      this.selection = new Backbone.Model({
+        index: -1,
+      });
       this.toc = [];
-      this.selectedIndex = -1;
       this.model.on('change', this.rebuild, this);
       this.template = Handlebars.compile($(this.template).html());
-      this.on('deselect', function() { this.selectItem(-1); });
     },
 
     rebuild: function() {
@@ -25,20 +26,21 @@
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
 
-        var oldLength = this.toc.length;
+        var oldLength = this.toc.length,
+            index = this.selection.get('index');
         this.toc = this.buildToc();
 
-        if (this.selectedIndex > this.toc.length-1) {
+        if (index > this.toc.length-1) {
           // we've selected past the end of the TOC
           this.selectItem(this.toc.length-1);
 
-        } else if (this.selectedIndex > -1 && this.toc.length != oldLength) {
+        } else if (index > -1 && this.toc.length != oldLength) {
           // arrangament of the TOC has changed, re-select the item we want
-          this.selectItem(this.selectedIndex, true);
+          this.selectItem(index, true);
 
         } else {
-          if (this.selectedIndex > -1) {
-            this.toc[this.selectedIndex].selected = true;
+          if (index > -1) {
+            this.toc[index].selected = true;
           }
 
           this.render();
@@ -60,6 +62,7 @@
 
           if (tradition.is_toc_element(kid)) {
             toc_item = generate_toc(kid);
+            toc_item.index = toc.length;
             toc.push(toc_item);
 
             if (parent_item) parent_item.has_children = true;
@@ -94,23 +97,24 @@
 
     // select the i-th item in the TOC
     selectItem: function(i, force) {
+      var index = this.selection.get('index');
+
       i = Math.min(this.toc.length-1, i);
 
-      if (force || this.selectedIndex != i) {
+      if (force || index != i) {
         // unmark the old one
-        if (this.selectedIndex > -1 && this.selectedIndex < this.toc.length) {
-          delete (this.toc[this.selectedIndex].selected);
+        if (index > -1 && index < this.toc.length) {
+          delete (this.toc[index].selected);
         }
 
         if (i > -1) {
           this.toc[i].selected = true;
         }
 
-        this.selectedIndex = i;
         this.render();
 
         // only do this after rendering
-        this.trigger('item-selected', i > -1 ? this.toc[i] : null);
+        this.selection.set(i > -1 ? this.toc[i] : {});
       }
     },
 

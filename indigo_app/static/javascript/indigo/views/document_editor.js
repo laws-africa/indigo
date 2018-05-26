@@ -527,7 +527,7 @@
       this.documentContent.on('sync', this.setClean, this);
 
       this.tocView = options.tocView;
-      this.tocView.on('item-selected', this.editTocItem, this);
+      this.tocView.selection.on('change', this.tocSelectionChanged, this);
 
       // setup the editor views
       this.activeEditor = this.sourceEditor = new Indigo.SourceEditorView({parent: this});
@@ -536,13 +536,13 @@
       this.editFragment(null);
     },
 
-    editTocItem: function(item) {
+    tocSelectionChanged: function(selection) {
       var self = this;
 
       this.stopEditing()
         .then(function() {
-          if (item) {
-            self.editFragment(item.element);
+          if (selection) {
+            self.editFragment(selection.get('element'));
           }
         });
     },

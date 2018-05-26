@@ -155,7 +155,7 @@
         if (isNew) {
           // redirect
           Indigo.progressView.peg();
-          window.location = '/works/' + self.model.get('id');
+          window.location = '/works' + self.model.get('frbr_uri') + '/';
         }
       });
     },
@@ -264,7 +264,7 @@
           .show('hidden')
           .find('.work_parent_title')
             .text(parent.get('title'))
-            .attr('href', '/works/' + parent.get('id'))
+            .attr('href', '/works' + parent.get('frbr_uri') + '/')
             .end()
           .find('.work_parent_uri')
             .text(parent.get('frbr_uri'));

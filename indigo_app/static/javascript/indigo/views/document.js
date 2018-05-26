@@ -311,13 +311,13 @@
       }
 
       if (confirm('Are you sure you want to delete this document?')) {
-        var work_id = this.document.work.get('id');
+        var frbr_uri = this.document.work.get('frbr_uri');
 
         Indigo.progressView.peg();
         this.document
           .destroy()
           .then(function() {
-            document.location = '/works/' + work_id + '/';
+            document.location = '/works' + frbr_uri + '/';
           });
       }
     },

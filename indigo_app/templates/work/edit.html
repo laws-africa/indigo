@@ -160,8 +160,8 @@
   {% if work %}
     {% if not work.can_delete %}
     <p>
-      This work cannot be deleted while <a href="{% url 'work_amendments' work.id %}">linked documents</a>
-      and <a href="{% url 'work_related' work.id %}">related works</a> exist.
+      This work cannot be deleted while <a href="{% url 'work_amendments' work.frbr_uri %}">linked documents</a>
+      and <a href="{% url 'work_related' work.frbr_uri %}">related works</a> exist.
     </p>
     {% elif perms.indigo_api.delete_work %}
       <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
@@ -174,7 +174,7 @@
 {% verbatim %}
 
 {{#if repealed_by }}
-  <a href="/works/{{ repealed_by.id }}">{{ repealed_by.title }}</a><br>
+  <a href="/works{{ repealed_by.frbr_uri }}/">{{ repealed_by.title }}</a><br>
   <span>{{ repealed_by.frbr_uri }}</span><br>
   <a href="#" class="delete-repeal">remove</a>
 {{else}}
@@ -188,7 +188,7 @@
 {% verbatim %}
 
 {{#if commencing_work }}
-  <a href="/works/{{ commencing_work.id }}">{{ commencing_work.title }}</a><br>
+  <a href="/works{{ commencing_work.frbr_uri }}/">{{ commencing_work.title }}</a><br>
   <span>{{ commencing_work.frbr_uri }}</span><br>
   <a href="#" class="delete-commencing-work">remove</a>
 {{/if}}

@@ -118,7 +118,7 @@
         if (chosen) {
           self.collection.add(new Indigo.WorkAmendment({
             amending_work: chosen,
-            date: chosen.get('publication_date'),
+            date: chosen.get('commencement_date') || chosen.get('publication_date'),
           }));
         }
       });

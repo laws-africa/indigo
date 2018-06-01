@@ -24,5 +24,6 @@ urlpatterns = [
     url(r'^works(?P<frbr_uri>/\S+?)/amendments/$', views.work_amendments, name='work_amendments'),
     url(r'^works(?P<frbr_uri>/\S+?)/related/$', views.work_related, name='work_related'),
     url(r'^works(?P<frbr_uri>/\S+?)/$', views.edit_work, name='work'),
-    url(r'^library/(?P<country>[^\s/-]+)?/$', views.library, name='library'),
+    url(r'^library/$', views.library),
+    url(r'^library/(?P<country>[^\s/-]+)/$', views.library, name='library'),
 ]

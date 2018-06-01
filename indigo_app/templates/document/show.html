@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
+{% block body-class %}{{ block.super }} sidebar-minimized {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
 
 {% block sidebar %}
   {% include './_sidebar.html' %}
@@ -29,17 +29,17 @@
 
 {% block main-content %}
   <div class="document-workspace document-content-view">
-    {% include "document/_doc_sidebar.html" %}
+    {% include "document/_toc.html" %}
     {% include "document/_content.html" %}
   </div>
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">
   {% verbatim %}
-    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
     {{#if locality}}
-    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/?locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
     {{/if}}
-    <li class="breadcrumb-item"><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+    <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">
       <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
       <div class="dropdown-menu">
@@ -52,7 +52,7 @@
           {{/each}}
         {{/each}}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/works/{{ work.id }}/amendments/">Manage amendments...</a>
+        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">Manage amendments...</a>
       </div>
     </li>
   {% endverbatim %}

@@ -135,11 +135,11 @@
           locality = this.model.get('locality');
 
       this.$('.work-country')
-        .attr('href', '/library?country=' + this.model.get('country'))
+        .attr('href', '/library/' + this.model.get('country') + '/')
         .text(country.name + ' · ' + this.model.get('country'));
 
       this.$('.work-locality')
-        .attr('href', '/library?country=' + this.model.get('country') + '&locality=' + locality)
+        .attr('href', '/library/' + this.model.get('country') + '/?locality=' + locality)
         .text(locality ? country.localities[locality] + ' · ' + locality : '');
     },
 
@@ -155,7 +155,7 @@
         if (isNew) {
           // redirect
           Indigo.progressView.peg();
-          window.location = '/works/' + self.model.get('id');
+          window.location = '/works' + self.model.get('frbr_uri') + '/';
         }
       });
     },
@@ -264,7 +264,7 @@
           .show('hidden')
           .find('.work_parent_title')
             .text(parent.get('title'))
-            .attr('href', '/works/' + parent.get('id'))
+            .attr('href', '/works' + parent.get('frbr_uri') + '/')
             .end()
           .find('.work_parent_uri')
             .text(parent.get('frbr_uri'));

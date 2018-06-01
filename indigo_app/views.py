@@ -71,9 +71,10 @@ def document(request, doc_id=None):
 
 
 @login_required
-def edit_work(request, work_id=None):
-    if work_id:
-        work = get_object_or_404(Work, pk=work_id)
+def edit_work(request, frbr_uri=None):
+    if frbr_uri:
+        print frbr_uri
+        work = get_object_or_404(Work, frbr_uri=frbr_uri)
         work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
         country_code = work.country
         locality = work.locality
@@ -105,8 +106,8 @@ def edit_work(request, work_id=None):
 
 
 @login_required
-def work_amendments(request, work_id):
-    work = get_object_or_404(Work, pk=work_id)
+def work_amendments(request, frbr_uri):
+    work = get_object_or_404(Work, frbr_uri=frbr_uri)
     work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
 
     country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
@@ -139,8 +140,8 @@ def work_amendments(request, work_id):
 
 
 @login_required
-def work_related(request, work_id):
-    work = get_object_or_404(Work, pk=work_id)
+def work_related(request, frbr_uri):
+    work = get_object_or_404(Work, frbr_uri=frbr_uri)
     work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
 
     country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
@@ -247,16 +248,19 @@ def import_document(request):
 
 
 @login_required
-def library(request):
+def library(request, country=None):
+    if country is None:
+        return HttpResponseRedirect(reverse('library', kwargs={'country': request.user.editor.country_code}))
+
     countries = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
     countries_json = json.dumps({c.code: c.as_json() for c in countries})
 
     serializer = DocumentListSerializer(context={'request': request})
-    docs = DocumentViewSet.queryset.filter(country=request.user.editor.country_code)
+    docs = DocumentViewSet.queryset.filter(country=country)
     documents_json = json.dumps(serializer.to_representation(docs))
 
     serializer = WorkSerializer(context={'request': request}, many=True)
-    works = Work.objects.filter(country=request.user.editor.country_code)
+    works = Work.objects.filter(country=country)
     works_json = json.dumps(serializer.to_representation(works))
 
     return render(request, 'library.html', {
@@ -265,5 +269,6 @@ def library(request):
         'documents_json': documents_json,
         'works_json': works_json,
         'countries': countries,
+        'country_code': country,
         'view': 'LibraryView',
     })

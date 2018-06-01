@@ -32,9 +32,13 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
-    'indigo_api',
+    # local traditions
+    'indigo_pl',
+    'indigo_za',
 
-    # the Indigo browser application
+    # the Indigo API
+    'indigo_api',
+    # the Indigo editor application
     'indigo_app',
     # the Indigo act resolver
     'indigo_resolver',
@@ -54,7 +58,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_nose',
 
-    # the Indigo API
+    # required by the Indigo API
     'taggit',
     'taggit_serializer',
     'countries_plus',
@@ -213,6 +217,7 @@ PIPELINE = {
                 'javascript/prettyprint.js',
                 'javascript/table-editor.js',
                 'javascript/indigo/models.js',
+                'javascript/indigo/traditions.js',
                 'javascript/indigo/views/user.js',
                 'javascript/indigo/views/reset_password.js',
                 'javascript/indigo/views/document_defined_terms.js',
@@ -231,6 +236,7 @@ PIPELINE = {
                 'javascript/indigo/views/document.js',
                 'javascript/indigo/views/library.js',
                 'javascript/indigo/views/error_box.js',
+                'javascript/indigo/views/sidebar.js',
                 'javascript/indigo/views/progress.js',
                 'javascript/indigo/views/import.js',
                 'javascript/indigo/views/annotations.js',

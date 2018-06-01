@@ -1,9 +1,9 @@
 from django.utils import feedgenerator
-from cobalt.render import HTMLRenderer
 from rest_framework.reverse import reverse
 from rest_framework_xml.renderers import XMLRenderer
 
 from .serializers import NoopSerializer, DocumentSerializer
+from .renderers import HTMLRenderer
 
 
 class AtomFeed(feedgenerator.Atom1Feed):
@@ -104,7 +104,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
             handler.addQuickElement("im:commencement-date", doc.commencement_date.isoformat())
 
         if doc.publication_date:
-            handler.addQuickElement("im:publication-date", doc.publication_date.isoformat())
+            handler.addQuickElement("im:publication-date", doc.publication_date)
         if doc.publication_name:
             handler.addQuickElement("im:publication-name", doc.publication_name)
         if doc.publication_number:
@@ -119,7 +119,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
         if not doc.stub:
             try:
                 preface = doc.doc.act.preface
-                desc += "\n" + HTMLRenderer(act=doc.doc).render(preface)
+                desc += "\n" + HTMLRenderer().render(doc, preface)
             except AttributeError:
                 pass
 

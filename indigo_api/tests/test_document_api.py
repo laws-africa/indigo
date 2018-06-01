@@ -325,7 +325,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
         self.maxDiff = None
-        self.assertEqual(response.data['toc'], [
+        self.assertEqual([
             {
                 'type': 'chapter',
                 'num': '2',
@@ -334,7 +334,7 @@ class DocumentAPITest(APITestCase):
                 'component': 'main',
                 'title': 'Chapter 2 - Administrative provisions',
                 'subcomponent': 'chapter/2',
-                'url': 'http://testserver/api/za/act/1998/2/eng/main/chapter/2',
+                'url': 'http://testserver/api/za/act/1998/2/eng@1900-01-01/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
@@ -344,11 +344,11 @@ class DocumentAPITest(APITestCase):
                         'title': '3. Consent required for interment',
                         'component': 'main',
                         'subcomponent': 'section/3',
-                        'url': 'http://testserver/api/za/act/1998/2/eng/main/section/3',
+                        'url': 'http://testserver/api/za/act/1998/2/eng@1900-01-01/main/section/3',
                     },
                 ],
             },
-        ])
+        ], response.data['toc'])
 
     def test_create_from_file(self):
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')

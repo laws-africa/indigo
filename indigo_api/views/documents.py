@@ -23,13 +23,12 @@ import lxml.html.diff
 from lxml.etree import LxmlError
 import newrelic.agent
 
+from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer, DocumentActivitySerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
-from ..slaw import Importer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
-from indigo_analysis.registry import analyzers
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +69,7 @@ class DocumentViewMixin(object):
         # this updates the TOC entries by adding a 'url' component
         # based on the document's URI and the path of the TOC subcomponent
         uri = uri or document.doc.frbr_uri
-        toc = document.table_of_contents()
+        toc = [t.as_dict() for t in document.table_of_contents()]
 
         def add_url(item):
             uri.expression_component = item['component']
@@ -283,10 +282,9 @@ class ParseView(APIView):
         fragment = serializer.validated_data.get('fragment')
         frbr_uri = FrbrUri.parse(serializer.validated_data.get('frbr_uri'))
 
-        importer = Importer()
+        importer = plugins.for_locale('importer', frbr_uri.country, frbr_uri.language, frbr_uri.locality)
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
-        importer.country = frbr_uri.country
 
         upload = self.request.data.get('file')
         if upload:
@@ -346,7 +344,7 @@ class LinkTermsView(APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def link_terms(self, doc):
-        finder = analyzers.for_document('terms', doc)
+        finder = plugins.for_document('terms', doc)
         if finder:
             finder.find_terms_in_document(doc)
 
@@ -367,7 +365,7 @@ class LinkReferencesView(APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def find_references(self, document):
-        finder = analyzers.for_document('refs', document)
+        finder = plugins.for_document('refs', document)
         if finder:
             finder.find_references_in_document(document)
 

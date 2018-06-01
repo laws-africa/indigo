@@ -38,7 +38,7 @@
           {{#if initial}}
             <h6>Initial publication</h6>
           {{else}}
-            <h6 class="mb-0">Amended by <a href="/works/{{ amending_work.id }}">{{ amending_work.title }}</a></h6>
+            <h6 class="mb-0">Amended by <a href="/works{{ amending_work.frbr_uri }}/">{{ amending_work.title }}</a></h6>
             <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
           {{/if}}
 

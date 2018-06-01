@@ -14,7 +14,7 @@ from cobalt.act import datestring
 import reversion
 
 from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
-from .slaw import Importer
+from indigo.plugins import plugins
 
 log = logging.getLogger(__name__)
 
@@ -416,9 +416,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                     cropbox = cropbox.split(',')
                 request = self.context['request']
 
-                importer = Importer()
+                country = data.get('country') or request.user.editor.country_code
+                importer = plugins.for_locale('importer', country, None, None)
+
                 importer.section_number_position = posn
-                importer.country = data.get('country') or request.user.editor.country_code
                 importer.cropbox = cropbox
                 document = importer.import_from_upload(upload, frbr_uri, request)
             except ValueError as e:

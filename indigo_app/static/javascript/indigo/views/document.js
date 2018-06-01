@@ -277,7 +277,10 @@
       
       if (this.previewDirty) {
         var self = this,
-            data = this.document.toJSON();
+            data = this.document.toJSON(),
+            $container = $('.preview-container .akoma-ntoso').empty();
+
+        $container[0].className = 'preview-container akoma-ntoso country-' + data.country;
 
         data.content = this.documentContent.toXml();
         data = JSON.stringify({'document': data});
@@ -289,7 +292,7 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json"})
           .then(function(response) {
-            $('.preview-container .akoma-ntoso').html(response.output);
+            $container.html(response.output);
             self.previewDirty = false;
           });
       }
@@ -308,13 +311,13 @@
       }
 
       if (confirm('Are you sure you want to delete this document?')) {
-        var work_id = this.document.work.get('id');
+        var frbr_uri = this.document.work.get('frbr_uri');
 
         Indigo.progressView.peg();
         this.document
           .destroy()
           .then(function() {
-            document.location = '/works/' + work_id + '/';
+            document.location = '/works' + frbr_uri + '/';
           });
       }
     },

@@ -5,27 +5,30 @@
         <li class="nav-item nav-heading">Work</li>
 
         {% if work %}
-          <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' work_id=work.id %}"><i class="fa fa-cog"></i> Work Details</a></li>
+          <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-cog"></i> Work Details</a></li>
           <li class="nav-item dropright">
-            {% with work.expressions as expressions %}
-              <a class="nav-link {% if not expressions %}disabled{% endif %} dropdown-toggle" href="#" data-toggle="dropdown" data-boundary="viewport">
-                <i class="fa fa-fw fa-clock-o"></i> Point in Time
-              </a>
-              {% if expressions %}
-                <div class="dropdown-menu">
+            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-boundary="viewport">
+              <i class="fa fa-fw fa-clock-o"></i> Point in Time
+            </a>
+            <div class="dropdown-menu">
+              {% with work.expressions as expressions %}
+                {% if expressions %}
                   {% for doc in expressions reversed %}
                     <a class="dropdown-item" href="{% url 'document' doc_id=doc.id %}">{{ doc.expression_date|date:"Y-m-d" }}</a>
                   {% endfor %}
-                </div>
-              {% endif %}
-            {% endwith %}
+                  <div class="dropdown-divider"></div>
+                {% endif %}
+              {% endwith %}
+              <a class="dropdown-item" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">Manage amendments...</a>
+            </div>
           </li>
-          <li class="nav-item"><a class="nav-link {% if view == 'WorkAmendmentsView' %}active{% endif %}" href="{% url 'work_amendments' work_id=work.id %}"><i class="fa fa-calendar"></i> Amendments</a></li>
-          <li class="nav-item"><a class="nav-link {% if view == '' %}active{% endif %}" href="{% url 'work_related' work_id=work.id %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
+          <li class="nav-item"><a class="nav-link {% if view == 'WorkAmendmentsView' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}"><i class="fa fa-calendar"></i> Amendments</a></li>
+          <li class="nav-item"><a class="nav-link {% if view == '' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
         {% else %}
           <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work Details</a></li>
         {% endif %}
       {% endblock %}
     </ul>
   </nav>
+  <button class="sidebar-minimizer btn btn-dark"><i class="fa"></i></button>
 </div>

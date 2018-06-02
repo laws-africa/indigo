@@ -1,14 +1,14 @@
 {% load staticfiles %}
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-  <a class="navbar-brand" href="{% url 'library' %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+  <a class="navbar-brand" href="{% url 'library' country=request.user.editor.country_code %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
     <span class="navbar-toggler-icon"></span>
   </button>
 
   <div class="collapse navbar-collapse" id="navbar-collapse">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-      <li class="nav-item"><a class="nav-link" href="{% url 'library' %}">Library</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
       <li class="nav-item dropdown">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Works</a>
         <div class="dropdown-menu">

@@ -198,6 +198,9 @@ class Amendment(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
+    class Meta:
+        ordering = ['date']
+
 
 @receiver(signals.post_save, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):

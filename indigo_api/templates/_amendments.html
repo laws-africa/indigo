@@ -4,7 +4,7 @@
 <ol class="amendment-list">
   {% for amendment in document.amendments %}
   <li class="amendment">
-    {% blocktrans with amending_title=amendment.amending_title date=amendment.date|date:"j E Y" %}[Amended by <span class="amending-title">{{ amending_title }}</span> on <span class="date">{{ date }}</span>]{% endblocktrans %}
+    {% blocktrans with amending_title=amendment.amending_work.title date=amendment.date|date:"j E Y" %}[Amended by <span class="amending-title">{{ amending_title }}</span> on <span class="date">{{ date }}</span>]{% endblocktrans %}
   </li>
   {% endfor %}
 </ol>

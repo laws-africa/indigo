@@ -204,7 +204,7 @@
     draftChanged: function() {
       var draft = this.document.get('draft');
 
-      this.$('.workspace')
+      $('body')
         .toggleClass('is-draft', draft)
         .toggleClass('is-published', !draft);
 

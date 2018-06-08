@@ -17,12 +17,12 @@ class FindPublicationsView(APIView):
             locality = locality.lower()
 
         finder = plugins.for_locale('publications', country, None, locality)
+        publications = []
 
         if finder:
             try:
                 publications = finder.find_publications(request.GET)
             except ValueError as e:
                 raise ValidationError({'message': e.message})
-            return Response({'publications': publications})
 
-        return Response({'publications': []})
+        return Response({'publications': publications})

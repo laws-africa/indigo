@@ -281,7 +281,7 @@
           number = this.model.get('publication_number'),
           name = this.model.get('publication_name'),
           country = this.model.get('country'),
-          $holder = this.$('.work-publication-link');
+          $ul = this.$('.work-publication-links');
 
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
@@ -289,16 +289,22 @@
                   '&name=' + encodeURIComponent(name) +
                   '&number=' + encodeURIComponent(number);
 
-        $holder.text('');
+        $ul.empty();
 
         $.getJSON(url)
           .done(function(response) {
-            if (response.publications.length > 0) {
-              // TODO: many
-              $holder
-                .text(response.publications[0].url)
-                .attr('href', response.publications[0].url);
-            }
+            response.publications.forEach(function(pub) {
+              var li = document.createElement('li'),
+                  a = document.createElement('a');
+
+              a.innerText = pub.title || pub.url;
+              a.setAttribute('href', pub.url);
+              a.setAttribute('target', '_blank');
+              a.setAttribute('rel', 'noreferrer');
+
+              li.appendChild(a);
+              $ul.append(li);
+            });
           });
       }
     },

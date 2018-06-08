@@ -6,6 +6,7 @@ import views.attachments
 import views.works
 import views.public
 import views.misc
+import views.publications
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'documents', views.documents.DocumentViewSet, base_name='document')
@@ -31,6 +32,7 @@ urlpatterns = [
     url(r'^parse$', views.documents.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', views.documents.LinkTermsView.as_view(), name='link-terms'),
     url(r'^analysis/link-references$', views.documents.LinkReferencesView.as_view(), name='link-references'),
+    url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', views.publications.FindPublicationsView.as_view(), name='find-publications'),
 
     url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachments.attachment_media_view, name='document-media'),
     url(r'documents/(?P<document_id>[0-9]+)/activity', views.documents.DocumentActivityViewSet.as_view({

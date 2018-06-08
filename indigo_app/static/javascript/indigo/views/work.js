@@ -90,6 +90,8 @@
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
+      this.listenTo(this.model, 'change:country change:publication_date change:publication_name change:publication_number',
+                    _.debounce(this.publicationChanged, 1000));
 
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
@@ -100,6 +102,7 @@
       this.stickit();
       this.repealChanged();
       this.commencingWorkChanged();
+      this.publicationChanged();
       this.canSave();
     },
 
@@ -270,6 +273,33 @@
             .text(parent.get('frbr_uri'));
       } else {
         this.$('#work_parent_work').hide();
+      }
+    },
+
+    publicationChanged: function() {
+      var date = this.model.get('publication_date'),
+          number = this.model.get('publication_number'),
+          name = this.model.get('publication_name'),
+          country = this.model.get('country'),
+          $holder = this.$('.work-publication-link');
+
+      if (date && number) {
+        var url = '/api/publications/' + country + '/find' + 
+                  '?date=' + encodeURIComponent(date) + 
+                  '&name=' + encodeURIComponent(name) +
+                  '&number=' + encodeURIComponent(number);
+
+        $holder.text('');
+
+        $.getJSON(url)
+          .done(function(response) {
+            if (response.publications.length > 0) {
+              // TODO: many
+              $holder
+                .text(response.publications[0].url)
+                .attr('href', response.publications[0].url);
+            }
+          });
       }
     },
 

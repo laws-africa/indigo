@@ -15,6 +15,7 @@ import reversion
 
 from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from indigo.plugins import plugins
+from indigo_api.signals import document_published
 
 log = logging.getLogger(__name__)
 
@@ -495,6 +496,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if content is not None:
             document.content = content
 
+        draft = document.draft
+
         # save rest of changes
         for attr, value in validated_data.items():
             setattr(document, attr, value)
@@ -504,6 +507,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         document.work = Work.objects.get_for_frbr_uri(document.frbr_uri)
 
         document.copy_attributes()
+
+        # signals
+        if draft and not document.draft:
+            document_published.send(sender=self.__class__, document=document, request=self.context['request'])
+
         return document
 
     def to_representation(self, instance):

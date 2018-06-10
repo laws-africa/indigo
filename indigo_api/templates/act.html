@@ -27,9 +27,9 @@
         {% if document.publication_name and document.publication_date %}
         <li class="publication-info">
           {% if document.publication_number %}
-            {% blocktrans with date=document.publication_date name=document.publication_name number=document.publication_number %}Published in {{ name }} no. {{ number }} on {{ date }}{% endblocktrans %}
+            {% blocktrans with date=document.publication_date|date:"j E Y" name=document.publication_name number=document.publication_number %}Published in {{ name }} no. {{ number }} on {{ date }}{% endblocktrans %}
           {% else %}
-            {% blocktrans with date=document.publication_date name=document.publication_name %}Published in {{ name }} on {{ date }}{% endblocktrans %}
+            {% blocktrans with date=document.publication_date|date:"j E Y" name=document.publication_name %}Published in {{ name }} on {{ date }}{% endblocktrans %}
           {% endif %}
         </li>
         {% endif %}

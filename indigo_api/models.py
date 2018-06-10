@@ -56,7 +56,7 @@ class Work(models.Model):
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
-    publication_date = models.CharField(null=True, blank=True, max_length=255, help_text="Date of publication (YYYY-MM-DD)")
+    publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
@@ -333,12 +333,6 @@ class Document(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
-    # extra details which are primarily stored in the XML, but which are first class API attributes
-    # so we cache them in the database
-    publication_name = models.CharField(null=True, blank=True, max_length=255)
-    publication_date = models.CharField(null=True, blank=True, max_length=255)
-    publication_number = models.CharField(null=True, blank=True, max_length=255)
-
     # caching attributes
     _work_uri = None
 
@@ -410,6 +404,18 @@ class Document(models.Model):
     def assent_date(self):
         return self.work.assent_date
 
+    @property
+    def publication_name(self):
+        return self.work.publication_name
+
+    @property
+    def publication_number(self):
+        return self.work.publication_number
+
+    @property
+    def publication_date(self):
+        return self.work.publication_date
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         self.update_search_text()
@@ -446,9 +452,6 @@ class Document(models.Model):
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
-            self.publication_number = self.doc.publication_number
-            self.publication_name = self.doc.publication_name
-            self.publication_date = self.doc.publication_date
             # ensure these are refreshed
             self._work_uri = None
             self._amended_versions = None
@@ -460,7 +463,7 @@ class Document(models.Model):
         """ Copy various attributes from this document's Work onto this
         document.
         """
-        for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
+        for attr in ['frbr_uri', 'country']:
             setattr(self, attr, getattr(self.work, attr))
 
         # copy over amendments at or before this expression date
@@ -630,7 +633,7 @@ class Document(models.Model):
         kwargs['country'] = frbr_uri.country
         kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
 
-        doc = cls(frbr_uri=frbr_uri.work_uri(False), publication_date=frbr_uri.expression_date, expression_date=frbr_uri.expression_date, **kwargs)
+        doc = cls(frbr_uri=frbr_uri.work_uri(False), expression_date=frbr_uri.expression_date, **kwargs)
         doc.copy_attributes()
 
         return doc

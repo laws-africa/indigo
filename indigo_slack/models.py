@@ -23,7 +23,10 @@ def send_slack_message(message, url=None, **kwargs):
 
     log.debug("Sending message to slack at %s: %s" % (url, payload))
 
-    requests.post(url, json=payload)
+    try:
+        requests.post(url, json=payload, timeout=5)
+    except requests.exceptions.RequestException as e:
+        log.error("Error with slack call: %s" % e, exc_info=True)
 
 
 @receiver(document_published)

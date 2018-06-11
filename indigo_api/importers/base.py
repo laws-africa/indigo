@@ -76,10 +76,8 @@ class Importer(LocaleBasedMatcher):
             # pre-process docx to HTML and then import html
             html = self.docx_to_html(upload)
             doc = self.import_from_text(html, frbr_uri, '.html')
-
-        if upload.content_type == 'application/pdf':
+        elif upload.content_type == 'application/pdf':
             doc = self.import_from_pdf(upload, frbr_uri)
-
         else:
             # slaw will do its best
             with self.tempfile_for_upload(upload) as f:

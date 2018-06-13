@@ -3,7 +3,7 @@
 from indigo.analysis.publications.base import BasePublicationFinder
 from indigo.plugins import plugins
 
-import boto3
+import requests
 
 
 @plugins.register('publications')
@@ -13,8 +13,7 @@ class PublicationFinderZA(BasePublicationFinder):
     """ The locale this finder is suited for, as ``(country, language, locality)``.
     """
 
-    bucket = 'archive.opengazettes.org.za'
-    region = 'eu-west-1'
+    api_url = 'https://keeper.opengazettes.org.za/api/archived_gazettes/'
 
     def find_publications(self, params):
         # by now, we know it's for ZA
@@ -23,29 +22,21 @@ class PublicationFinderZA(BasePublicationFinder):
         number = params.get('number')
         place = self.get_place(params.get('name'))
 
-        if not (date and number):
-            raise ValueError("I need at least a date and number to find a gazette.")
+        if not date:
+            raise ValueError("I need at least a date to find a gazette.")
 
-        year = date.split('-', 1)[0]
-        date = '-dated-%s' % date
-        number = '-no-%s-' % number
-        prefix = 'archive/%s/%s/' % (place, year)
+        params = {
+            'publication_date': date,
+            'issue_number': number,
+            'jurisdiction_code': place,
+        }
 
-        client = boto3.client('s3', region_name=self.region)
-        paginator = client.get_paginator('list_objects')
-        operation_parameters = {'Bucket': self.bucket,
-                                'Prefix': prefix}
-        page_iterator = paginator.paginate(**operation_parameters)
-
-        items = []
-        for page in page_iterator:
-            for obj in page.get('Contents', []):
-                if date in obj['Key'] and number in obj['Key']:
-                    items.append(obj)
+        resp = requests.get(self.api_url, params=params, timeout=5.0)
+        items = resp.json()['results']
 
         return [{
-            'url': 'https://%s/%s' % (self.bucket, obj['Key']),
-            'size': obj['Size'],
+            'title': obj['full_title'],
+            'url': obj['archive_url'],
         } for obj in items]
 
     def get_place(self, name):

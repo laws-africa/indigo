@@ -73,7 +73,6 @@ def document(request, doc_id=None):
 @login_required
 def edit_work(request, frbr_uri=None):
     if frbr_uri:
-        print frbr_uri
         work = get_object_or_404(Work, frbr_uri=frbr_uri)
         work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
         country_code = work.country
@@ -144,10 +143,8 @@ def work_related(request, frbr_uri):
     work = get_object_or_404(Work, frbr_uri=frbr_uri)
     work_json = json.dumps(WorkSerializer(instance=work, context={'request': request}).data)
 
-    country = Country.objects.select_related('country').filter(country__iso__iexact=work.country)[0]
-    locality = None
-    if work.locality:
-        locality = country.locality_set.filter(code=work.locality)[0]
+    country = Country.for_work(work)
+    locality = country.work_locality(work)
 
     # parents and children
     family = []

@@ -15,6 +15,7 @@ import reversion
 
 from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from indigo.plugins import plugins
+from indigo_api.signals import document_published
 
 log = logging.getLogger(__name__)
 
@@ -328,20 +329,20 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         return reverse('document-annotations-list', request=self.context['request'], kwargs={'document_id': doc.pk})
 
     def get_published_url(self, doc, with_date=False):
-        if not doc.pk or doc.draft:
+        if doc.draft:
             return None
+
+        uri = doc.work_uri
+        if with_date and doc.expression_date:
+            uri.expression_date = '@' + datestring(doc.expression_date)
         else:
-            uri = doc.work_uri
-            if with_date and doc.expression_date:
-                uri.expression_date = '@' + datestring(doc.expression_date)
-            else:
-                uri.expression_date = None
+            uri.expression_date = None
 
-            uri = uri.expression_uri()[1:]
+        uri = uri.expression_uri()[1:]
 
-            uri = reverse('published-document-detail', request=self.context['request'],
-                          kwargs={'frbr_uri': uri})
-            return uri.replace('%40', '@')
+        uri = reverse('published-document-detail', request=self.context['request'],
+                      kwargs={'frbr_uri': uri})
+        return uri.replace('%40', '@')
 
     def get_amended_versions(self, doc):
         def describe(doc):
@@ -460,6 +461,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         """ Update and save document. """
         source_file = validated_data.pop('source_file', None)
         tags = validated_data.pop('tags', None)
+        draft = document.draft
 
         self.update_document(document, validated_data)
 
@@ -480,8 +482,13 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             # add the source file as an attachment
             AttachmentSerializer(context={'document': document}).create({'file': source_file})
 
-        # reload it to ensure tags are refreshed
+        # reload it to ensure tags are refreshed and we have an id for new documents
         document = Document.objects.get(pk=document.id)
+
+        # signals
+        if draft and not document.draft:
+            document_published.send(sender=self.__class__, document=document, request=self.context['request'])
+
         return document
 
     def update_document(self, document, validated_data=None):
@@ -502,8 +509,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # Link to the appropriate work, based on the FRBR URI
         # Raises ValueError if the work doesn't exist
         document.work = Work.objects.get_for_frbr_uri(document.frbr_uri)
-
         document.copy_attributes()
+
         return document
 
     def to_representation(self, instance):

@@ -69,6 +69,7 @@
         part        : function(i) { return "Part " + i.num + " " + i.heading; },
         preamble    : function(i) { return "Preamble"; },
         preface     : function(i) { return "Preface"; },
+        components  : function(i) { return "Schedules"; },
         component   : function(i) { 
           var alias = i.element.querySelector('FRBRalias');
           if (alias) {

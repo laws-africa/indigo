@@ -386,6 +386,20 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s/media/%s' % (id, fname))
         assert_equal(response.status_code, 200)
 
+    def test_create_from_docx(self):
+        fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
+        f = open(fname, 'r')
+
+        response = self.client.post('/api/documents', {'file': f, 'frbr_uri': '/za/act/1998/2'}, format='multipart')
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # check the doc
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.data['draft'], True)
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(response.data['title'], 'Test Act')
+
     def test_attachment_as_media(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
         assert_equal(response.status_code, 201)

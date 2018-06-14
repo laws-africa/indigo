@@ -90,6 +90,8 @@
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
+      this.listenTo(this.model, 'change:country change:publication_date change:publication_name change:publication_number',
+                    _.debounce(this.publicationChanged, 1000));
 
       // prevent the user from navigating away without saving changes
       $(window).on('beforeunload', _.bind(this.windowUnloading, this));
@@ -100,6 +102,7 @@
       this.stickit();
       this.repealChanged();
       this.commencingWorkChanged();
+      this.publicationChanged();
       this.canSave();
     },
 
@@ -270,6 +273,39 @@
             .text(parent.get('frbr_uri'));
       } else {
         this.$('#work_parent_work').hide();
+      }
+    },
+
+    publicationChanged: function() {
+      var date = this.model.get('publication_date'),
+          number = this.model.get('publication_number'),
+          name = this.model.get('publication_name'),
+          country = this.model.get('country'),
+          $ul = this.$('.work-publication-links');
+
+      if (date && number) {
+        var url = '/api/publications/' + country + '/find' + 
+                  '?date=' + encodeURIComponent(date) + 
+                  '&name=' + encodeURIComponent(name) +
+                  '&number=' + encodeURIComponent(number);
+
+        $ul.empty();
+
+        $.getJSON(url)
+          .done(function(response) {
+            response.publications.forEach(function(pub) {
+              var li = document.createElement('li'),
+                  a = document.createElement('a');
+
+              a.innerText = pub.title || pub.url;
+              a.setAttribute('href', pub.url);
+              a.setAttribute('target', '_blank');
+              a.setAttribute('rel', 'noreferrer');
+
+              li.appendChild(a);
+              $ul.append(li);
+            });
+          });
       }
     },
 

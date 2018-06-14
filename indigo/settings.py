@@ -36,6 +36,10 @@ INSTALLED_APPS = (
     'indigo_pl',
     'indigo_za',
 
+    # workflow
+    'indigo_workflow',
+    'viewflow',
+
     # the Indigo API
     'indigo_api',
     # the Indigo editor application

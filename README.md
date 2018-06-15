@@ -47,6 +47,18 @@ sudo su - postgres createuser -d -P indigo
 sudo su - postgres createdb indigo
 ```
 
+Check that you can connect to the postgresql database as your regular shell user (not indigo user) by means of password authentication:
+
+```
+psql -h localhost indigo indigo
+```
+
+If you can't connect, you can modify your `pg_hba.conf` (`/etc/postgresql/9.6/main/pg_hba.conf` for postgresql 9.6) to allow md5 encrypted password authentication for users on localhost by adding a line like this:
+
+```
+local	all		all     md5
+```
+
 Then run migrations to setup the initial database:
 
 ```bash

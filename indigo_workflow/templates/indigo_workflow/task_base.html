@@ -1,0 +1,59 @@
+{% extends 'main.html' %}
+{% load i18n viewflow %}
+
+{% block content %}
+<div class="container pt-3 pb-3">
+  <div class="process-header mb-3">
+    {% include 'indigo_workflow/_process_header.html' with process=activation.process child=True %}
+  </div>
+
+  <form role="form" method="POST">
+    {% csrf_token %}
+
+    <div class="card mb-3">
+      <div class="card-header">
+        {% block card-header %}
+        <h5 class="mb-0">
+          {{ activation.task.flow_task.task_title }}
+          <span class="badge {% if activation.task.status == "DONE" %}badge-success{% else %}badge-default{% endif %}">{{ activation.task.status }}</span>
+          - {{ activation.task.owner }}</h5>
+        </h5>
+        {% endblock %}
+      </div>
+      <div class="card-body">
+        {% block card-body %}
+          {% block card-detail %}{% endblock %}
+        {% endblock %}
+      </div>
+      <div class="card-footer">
+        {% block card-footer %}
+          <div class="row">
+            <div class="col">
+              {% if activation.task.finished %}
+                <div class="text-muted">Finished in {{ activation.task.started|timesince:activation.task.finished }}.</div>
+              {% endif %}
+
+              {% flowurl activation.task 'assign' user=request.user as assign_url %}
+              {% if assign_url %}
+                <button type="submit" name="_continue" class="btn btn-primary" formaction="{{ assign_url }}">{% trans 'Accept this task' %}</button>
+              {% endif %}
+
+              {% flowurl activation.task 'unassign' user=request.user as unassign_url %}
+              {% if unassign_url %}
+                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
+              {% endif %}
+            </div>
+            <div class="col text-right">
+              {# TODO: how to determine if this user is allowed to mark the task as done? Url for that? #}
+              {% if activation.task.status != "DONE" and activation.management_form and form %}
+                {{ activation.management_form }}
+                <button type="submit" class="btn btn-success">{% trans 'Task is complete' %}</button>
+              {% endif %}
+            </div>
+          </div>
+        {% endblock %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

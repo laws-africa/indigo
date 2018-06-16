@@ -21,6 +21,9 @@ urlpatterns = [
     url(r'^', include('indigo_app.urls')),
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
     url(r'^ping$', indigo_api.views.misc.ping),
+
+    # XXX
+    url(r'^workflow/', include('indigo_workflow.urls', namespace='workflow')),
 ]
 
 

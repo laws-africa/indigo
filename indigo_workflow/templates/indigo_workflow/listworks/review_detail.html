@@ -1,0 +1,11 @@
+{% extends 'indigo_workflow/task_base.html' %}
+{% load i18n viewflow %}
+
+{% block card-detail %}
+  {{ activation.task }}
+  detail of reviewing the task
+
+  {% if activation.task.status == "NEW" %}
+    {{ form.as_p }}
+  {% endif %}
+{% endblock %}

@@ -24,6 +24,10 @@
         {% block card-body %}
           <p class="lead">{{ activation.process.summary }}</p>
 
+          {% if activation.process.notes %}
+            <p>{{ activation.process.notes|linebreaks|urlize }}</p>
+          {% endif %}
+
           {% block card-detail %}{% endblock %}
         {% endblock %}
       </div>
@@ -49,6 +53,16 @@
               {% flowurl activation.task 'unassign' user=request.user as unassign_url %}
               {% if unassign_url %}
                 <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
+              {% endif %}
+
+              {% flowurl activation.task 'undo' user=request.user as undo_url %}
+              {% if activation.undo.can_proceed and undo_url %}
+                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ undo_url }}">{% trans 'Undo' %}</button>
+              {% endif %}
+
+              {% flowurl activation.task 'cancel' user=request.user as cancel_url %}
+              {% if activation.cancel.can_proceed and cancel_url %}
+                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ cancel_url }}">{% trans 'Cancel' %}</button>
               {% endif %}
             </div>
           </div>

@@ -12,40 +12,45 @@
     </div>
     <div class="card-body">
       {% block card-body %}
-        <p class="lead">{{ process.summary }}</p>
+        <h3>{{ process.summary }}</h3>
 
-        <h5>Tasks</h5>
+        {% if process.notes %}
+          <p>{{ process.notes|linebreaks|urlize }}</p>
+        {% endif %}
 
-        <ol>
-          {% for task in task_list %}
-            {% if task.flow_task_type == 'HUMAN' %}
-            <li>
-              <p><a href="{% flowurl task user=request.user %}">{{ task.summary|default:task.flow_task }}</a> - {{ task.get_status_display }}
-              {{ task.owner|default:"(no owner)" }}</p>
+        <h5>Tasks in this workflow</h5>
 
-              <form role="form" method="POST">
-                {% csrf_token %}
+        <form role="form" method="POST">
+          {% csrf_token %}
 
-                {% flowurl task 'assign' user=request.user as assign_url %}
-                {% if assign_url %}
-                <button type="submit" name="_continue" class="btn btn-primary" formaction="{{ assign_url }}">{% trans 'Assign and continue on this process' %}</button>
-                {% endif %}
+          <table class="table table-sm">
+            {% for task in task_list|human_tasks %}
+              <tr>
+                <td class="text-muted">#{{ forloop.counter }}</td>
+                <td>
+                  {% flowurl task 'detail' user=request.user as detail_url %}
+                  {% flowurl task 'execute' user=request.user as execute_url %}
+                  <a href="{{ execute_url|default:detail_url }}">
+                    {{ task.flow_task.task_title|default:task.summary|default:task.flow_task }}
+                  </a>
+                </td>
+                <td>{{ task.get_status_display }}</td>
+                <td>{{ task.owner|default:"" }}</td>
+                <td class="text-right">
+                  {% flowurl task 'assign' user=request.user as assign_url %}
+                  {% if assign_url %}
+                  <button type="submit" name="_continue" class="btn btn-primary" formaction="{{ assign_url }}">{% trans 'Accept this task' %}</button>
+                  {% endif %}
 
-                {% flowurl task 'unassign' user=request.user as unassign_url %}
-                {% if unassign_url %}
-                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
-                {% endif %}
-              </form>
-
-              {% flowurl task 'execute' user=request.user as execute_url %}
-              {% if execute_url %}
-              <a href="{{ execute_url }}" class="btn btn-primary">{% trans 'Execute' %}</a>
-              {% endif %}
-
-            </li>
-            {% endif %}
-          {% endfor %}
-        </ol>
+                  {% flowurl task 'unassign' user=request.user as unassign_url %}
+                  {% if unassign_url %}
+                  <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </table>
+        </form>
       {% endblock %}
     </div>
     <div class="card-footer">

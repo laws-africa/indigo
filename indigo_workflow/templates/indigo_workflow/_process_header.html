@@ -4,9 +4,9 @@
   <div class="col-7">
     <h5 class="mb-0">
       {% if child %}
-        <a href="{% flowurl process 'detail' %}">← {{ process.flow_class.process_title }}</a>
+        <a href="{% flowurl process 'detail' %}">← {{ process.flow_class.process_title }} - #{{ process.id }}</a>
       {% else %}
-        {{ process.flow_class.process_title }}
+        {{ process.flow_class.process_title }} - #{{ process.id }}
       {% endif %}
       <span class="badge {% if process.status == "DONE" %}badge-success{% else %}badge-default{% endif %}">{{ process.status }}</span>
     </h5>

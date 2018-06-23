@@ -5,21 +5,12 @@ from indigo_workflow import views
 from indigo_workflow.models import ListWorksProcess
 
 
-@flow.flow_start_func
-def start_list_works_flow(activation, country, locality):
-    activation.prepare()
-    activation.process.country = country
-    activation.process.locality = locality
-    activation.done()
-    return activation
-
-
 class ListWorksFlow(Flow):
     process_class = ListWorksProcess
     summary_template = "List works for {{ process.place_name }}"
 
     start = (
-        flow.StartFunction(start_list_works_flow)
+        flow.StartFunction(this.start_list_works_flow)
         .Next(this.instructions)
     )
 
@@ -39,8 +30,9 @@ class ListWorksFlow(Flow):
         flow.View(
             views.ReviewTaskView,
             fields=['approved'],
-            task_description="Review and approve listed works.",
-            task_result_summary="Works were reviewed.",
+            task_title="Review and approve listed works",
+            task_description="Review the listed works in the spreadsheet. The task is done if the list is complete and has all required details for all works.",
+            task_result_summary="{{ flow_task.task_description }}",
         )
         # TODO: appropriate permission
         .Permission('indigo_workflow.can_review_documents')
@@ -54,3 +46,13 @@ class ListWorksFlow(Flow):
     )
 
     end = flow.End()
+
+    @staticmethod
+    @flow.flow_start_func
+    def start_list_works_flow(activation, country, locality, notes):
+        activation.prepare()
+        activation.process.country = country
+        activation.process.locality = locality
+        activation.process.notes = notes
+        activation.done()
+        return activation

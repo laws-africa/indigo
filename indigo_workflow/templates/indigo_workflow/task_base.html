@@ -22,6 +22,8 @@
       </div>
       <div class="card-body">
         {% block card-body %}
+          <p class="lead">{{ activation.process.summary }}</p>
+
           {% block card-detail %}{% endblock %}
         {% endblock %}
       </div>
@@ -29,6 +31,11 @@
         {% block card-footer %}
           <div class="row">
             <div class="col">
+              {% if activation.task.status != "DONE" and activation.management_form and form %}
+                {{ activation.management_form }}
+                <button type="submit" class="btn btn-success">{% trans 'Task is complete' %}</button>
+              {% endif %}
+
               {% if activation.task.finished %}
                 <div class="text-muted">Finished in {{ activation.task.started|timesince:activation.task.finished }}.</div>
               {% endif %}
@@ -37,17 +44,11 @@
               {% if assign_url %}
                 <button type="submit" name="_continue" class="btn btn-primary" formaction="{{ assign_url }}">{% trans 'Accept this task' %}</button>
               {% endif %}
-
+            </div>
+            <div class="col text-right">
               {% flowurl activation.task 'unassign' user=request.user as unassign_url %}
               {% if unassign_url %}
                 <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
-              {% endif %}
-            </div>
-            <div class="col text-right">
-              {# TODO: how to determine if this user is allowed to mark the task as done? Url for that? #}
-              {% if activation.task.status != "DONE" and activation.management_form and form %}
-                {{ activation.management_form }}
-                <button type="submit" class="btn btn-success">{% trans 'Task is complete' %}</button>
               {% endif %}
             </div>
           </div>

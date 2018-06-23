@@ -12,7 +12,7 @@
     </div>
     <div class="card-body">
       {% block card-body %}
-        <p>{{ process.summary }}</p>
+        <p class="lead">{{ process.summary }}</p>
 
         <h5>Tasks</h5>
 
@@ -20,7 +20,7 @@
           {% for task in task_list %}
             {% if task.flow_task_type == 'HUMAN' %}
             <li>
-              <p><a href="{% flowurl task 'detail' %}">{{ task.summary|default:task.flow_task }}</a> - {{ task.get_status_display }}
+              <p><a href="{% flowurl task user=request.user %}">{{ task.summary|default:task.flow_task }}</a> - {{ task.get_status_display }}
               {{ task.owner|default:"(no owner)" }}</p>
 
               <form role="form" method="POST">

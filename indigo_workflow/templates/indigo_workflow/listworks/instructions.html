@@ -1,0 +1,7 @@
+{% extends 'indigo_workflow/task_base.html' %}
+{% load i18n viewflow %}
+
+{% block card-detail %}
+<h5>To do this task:</h5>
+<p>{{ activation.task.flow_task.task_description }}</p>
+{% endblock %}

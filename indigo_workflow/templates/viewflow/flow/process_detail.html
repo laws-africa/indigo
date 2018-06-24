@@ -1,6 +1,8 @@
 {% extends 'main.html' %}
 {% load i18n viewflow indigo_workflow %}
 
+{% block title %}{{ process.flow_class.process_title }} - #{{ process.id }}{% endblock %}
+
 {% block content %}
 <div class="container pt-3 pb-3">
 

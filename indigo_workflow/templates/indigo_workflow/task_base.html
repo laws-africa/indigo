@@ -1,6 +1,8 @@
 {% extends 'main.html' %}
 {% load i18n viewflow %}
 
+{% block title %}{{ activation.task.flow_task.task_title }}{% endblock %}
+
 {% block content %}
 <div class="container pt-3 pb-3">
   <div class="process-header mb-3">

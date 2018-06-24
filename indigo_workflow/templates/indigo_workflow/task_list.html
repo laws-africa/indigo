@@ -1,0 +1,47 @@
+{% extends 'main.html' %}
+{% load i18n viewflow %}
+
+{% block title %}Tasks{% endblock %}
+
+{% block content %}
+<div class="container pt-3 pb-3">
+
+  <div class="card mb-3">
+    <h5 class="card-header">Your tasks</h3>
+    <div class="card-body">
+
+      <table class="table table-sm">
+        {% for task in assigned_tasks %}
+          <tr>
+            <td>{{ task.flow_process }}</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+    </div>
+  </div>
+
+  <div class="card mb-3">
+    <h5 class="card-header">Available tasks</h3>
+    <div class="card-body">
+
+      <table class="table table-sm">
+        {% for task in available_tasks %}
+          <tr>
+            <td>{{ task.flow_process.summary }}</td>
+            <td>
+              {% flowurl task.process 'detail' user=request.user as detail_url %}
+              {% flowurl task 'execute' user=request.user as execute_url %}
+              <a href="{{ execute_url|default:detail_url }}">
+                {{ task.flow_task.task_title|default:task.summary|default:task.flow_task }}
+              </a>
+            </td>
+            <td>{{ task.created|timesince }} old</td>
+          </tr>
+        {% endfor %}
+      </table>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

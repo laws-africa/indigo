@@ -2,13 +2,14 @@ from viewflow import flow
 from viewflow.base import this, Flow
 
 from indigo_workflow import views
-from indigo_workflow.models import ListWorksProcess, CreateWorksProcess
+from indigo_workflow.models import ImplicitPlaceProcess
+from django.utils.html import format_html
 
 
 class ListWorksFlow(Flow):
-    """ Research works for a place and list them in the linked spreadsheet.
+    """ Research works for a place and list them in the linked spreadsheet
     """
-    process_class = ListWorksProcess
+    process_class = ImplicitPlaceProcess
     summary_template = "List works for {{ process.place_name }}"
 
     start = (
@@ -60,9 +61,9 @@ class ListWorksFlow(Flow):
 
 
 class CreateWorksFlow(Flow):
-    """ Create works for the items listed in the linked spreadsheet.
+    """ Create works for the items listed in the linked spreadsheet
     """
-    process_class = CreateWorksProcess
+    process_class = ImplicitPlaceProcess
     summary_template = "Create works for {{ process.place_name }}"
 
     start = (
@@ -75,7 +76,7 @@ class CreateWorksFlow(Flow):
         flow.View(
             views.HumanInteractionView,
             task_title="Create works for items in a spreadsheet",
-            task_description="Create a work for each item listed in the linked spreadsheet.",
+            task_description=format_html('<a href="/works/new">Create a work</a> for each item listed in the linked spreadsheet.'),
             task_result_summary="{{ flow_task.task_description }}",
         )
         .Next(this.review)
@@ -111,3 +112,6 @@ class CreateWorksFlow(Flow):
         activation.process.notes = notes
         activation.done()
         return activation
+
+
+all_flows = [ListWorksFlow, CreateWorksFlow]

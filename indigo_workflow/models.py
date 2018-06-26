@@ -3,7 +3,10 @@ from django.db import models
 from viewflow.models import Process
 
 
-class ListWorksProcess(Process):
+class ImplicitPlaceProcess(Process):
+    """ Process model for implict (rather than explicit) workflow
+    tasks that involve a particular place (country or locality).
+    """
     country = models.ForeignKey('indigo_app.country', null=False, related_name='list_works_tasks', help_text='Country to list works for')
     locality = models.ForeignKey('indigo_app.Locality', null=True, related_name='list_works_tasks', help_text='Locality to list works for')
     approved = models.BooleanField(default=False)

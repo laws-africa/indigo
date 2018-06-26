@@ -14,7 +14,7 @@
     </div>
     <div class="card-body">
       {% block card-body %}
-        <h3>{{ process.summary }}</h3>
+        <h4>{{ process.flow_class.process_title }}</h4>
 
         {% if process.notes %}
           <p>{{ process.notes|linebreaks|urlize }}</p>

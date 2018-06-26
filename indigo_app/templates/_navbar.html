@@ -9,6 +9,7 @@
   <div class="collapse navbar-collapse" id="navbar-collapse">
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
+      <li class="nav-item"><a class="nav-link" href="{% url 'workflow:tasks-dashboard' %}">Tasks</a></li>
       <li class="nav-item dropdown">
         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Works</a>
         <div class="dropdown-menu">

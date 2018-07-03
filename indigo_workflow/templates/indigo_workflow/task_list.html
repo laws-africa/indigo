@@ -77,5 +77,15 @@
 
     </div>
   </div>
+
+  <div class="dropdown">
+    <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create a new workflow</button>
+    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+      {% for flow in view.flows %}
+        <a class="dropdown-item" href="{% flowurl flow 'start' %}">{{ flow.process_title }}</a>
+      {% endfor %}
+    </div>
+  </div>
+
 </div>
 {% endblock %}

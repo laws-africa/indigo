@@ -33,11 +33,10 @@ class TaskListView(TemplateView):
         self.flows = indigo_workflow.flows.all_flows
 
     def get_context_data(self, **kwargs):
-        kwargs = super(TaskListView, self).get_context_data(**kwargs)
-        kwargs['assigned_tasks'] = Task.objects.inbox(self.flows, self.request.user).order_by('-created')
-        kwargs['available_tasks'] = Task.objects.queue(self.flows, self.request.user).order_by('-created')
-
-        return kwargs
+        context_data = super(TaskListView, self).get_context_data(**kwargs)
+        context_data['assigned_tasks'] = Task.objects.inbox(self.flows, self.request.user).order_by('-created')
+        context_data['available_tasks'] = Task.objects.queue(self.flows, self.request.user).order_by('-created')
+        return context_data
 
 
 class StartPlaceWorkflowView(views.StartFlowMixin, FormView):

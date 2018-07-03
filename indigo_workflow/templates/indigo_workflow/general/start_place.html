@@ -5,30 +5,33 @@
 
 {% block content %}
 <div class="container pt-3 pb-3">
-  <form role="form" method="POST">
+  <form role="form" method="POST" id="new-workflow-form">
     {% csrf_token %}
     {{ activation.management_form }}
 
     <div class="card mb-3">
       <h5 class="card-header">Create a new workflow</h5>
       <div class="card-body">
-        <div class="row">
-          <div class="col-md-6">
-            <h4>{{ activation.process.flow_class.process_title }}</h4>
+        <h4>{{ activation.process.flow_class.process_title }}</h4>
 
-            <div class="form-group">
-              <label for="{{ form.country.id_for_label }}">Country</label>
-              <select class="form-control" id="{{ form.country.id_for_label }}" name="{{ form.country.name }}" required>
-                {% for country in form.country.field.queryset %}
-                <option value="{{ country.id }}" {% if request.user.editor.country_code == country.code %}selected{% endif %}>{{ country.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label for="{{ form.country.id_for_label }}">Country</label>
+            <select class="form-control" id="{{ form.country.id_for_label }}" name="{{ form.country.name }}" required>
+              {% for country in form.country.field.queryset %}
+              <option value="{{ country.id }}" data-code="{{ country.code }}" {% if form.country.value == country.id %}selected{% endif %}>{{ country.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
 
-            <div class="form-group">
-              <label for="{{ form.notes.id_for_label }}">Notes and instructions</label>
-              <textarea class="form-control" id="{{ form.notes.id_for_label }}" name="{{ form.notes.name }}" rows="3" required></textarea>
-            </div>
+          <div class="form-group col-md-6">
+            <label for="{{ form.locality.id_for_label }}">Locality</label>
+            <select class="form-control" id="{{ form.locality.id_for_label }}" name="{{ form.locality.name }}"></select>
+          </div>
+
+          <div class="form-group col-md-6">
+            <label for="{{ form.notes.id_for_label }}">Additional instructions for completing this workflow</label>
+            <textarea class="form-control" id="{{ form.notes.id_for_label }}" name="{{ form.notes.name }}" rows="3" required placeholder="eg. Tips on doing this task really well."></textarea>
           </div>
         </div>
 
@@ -40,4 +43,12 @@
 
   </form>
 </div>
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript">
+// inject country code-to-name mappings into JS
+window.Indigo.countries = {{ countries_json|safe }};
+</script>
 {% endblock %}

@@ -66,7 +66,7 @@ def document(request, doc_id=None):
         'languages': Language.objects.select_related('language').all(),
         'countries': countries,
         'countries_json': countries_json,
-        'view': 'DocumentView',
+        'js_view': 'DocumentView',
     })
 
 
@@ -100,7 +100,7 @@ def edit_work(request, frbr_uri=None):
         'locality': locality,
         'countries': countries,
         'countries_json': countries_json,
-        'view': 'WorkView',
+        'js_view': 'WorkView',
     })
 
 
@@ -134,7 +134,7 @@ def work_amendments(request, frbr_uri):
         'countries': countries,
         'countries_json': countries_json,
         'documents_json': documents_json,
-        'view': 'WorkAmendmentsView',
+        'js_view': 'WorkAmendmentsView',
     })
 
 
@@ -209,7 +209,7 @@ def work_related(request, frbr_uri):
         'repeals': repeals,
         'commencement': commencement,
         'no_related': no_related,
-        'view': '',
+        'js_view': '',
     })
 
 
@@ -240,7 +240,7 @@ def import_document(request):
         'frbr_uri': frbr_uri,
         'work': work,
         'work_json': work_json,
-        'view': 'ImportView',
+        'js_view': 'ImportView',
     })
 
 
@@ -267,5 +267,5 @@ def library(request, country=None):
         'works_json': works_json,
         'countries': countries,
         'country_code': country,
-        'view': 'LibraryView',
+        'js_view': 'LibraryView',
     })

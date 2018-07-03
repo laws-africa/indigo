@@ -3,6 +3,7 @@ from django.views.generic import TemplateView, FormView
 
 import viewflow.flow.views as views
 from viewflow.flow.viewset import FlowViewSet as BaseFlowViewSet
+from viewflow.flow.views.mixins import FlowListMixin
 from viewflow.models import Task
 
 from .forms import ImplicitPlaceProcessForm
@@ -23,14 +24,8 @@ class ReviewTaskView(views.UpdateProcessView):
     template_name = 'indigo_workflow/general/review.html'
 
 
-class TaskListView(TemplateView):
+class TaskListView(TemplateView, FlowListMixin):
     template_name = 'indigo_workflow/task_list.html'
-
-    def __init__(self, *args, **kwargs):
-        super(TaskListView, self).__init__(*args, **kwargs)
-
-        import indigo_workflow.flows
-        self.flows = indigo_workflow.flows.all_flows
 
     def get_context_data(self, **kwargs):
         context_data = super(TaskListView, self).get_context_data(**kwargs)

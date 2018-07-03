@@ -24,8 +24,8 @@
             <tr>
               <td>{{ task.flow_process.summary }}</td>
               <td>
-                {% flowurl task.process 'detail' user=request.user as detail_url %}
-                {% flowurl task 'execute' user=request.user as execute_url %}
+                {% flowurl task.process 'detail' user=request.user ns=request.resolver_match.namespace ns_map=view.ns_map as detail_url %}
+                {% flowurl task 'execute' user=request.user ns=request.resolver_match.namespace ns_map=view.ns_map as execute_url %}
                 <a href="{{ execute_url|default:detail_url }}">
                   {{ task.flow_task.task_title|default:task.summary|default:task.flow_task }}
                 </a>
@@ -60,8 +60,8 @@
             <tr>
               <td>{{ task.flow_process.summary }}</td>
               <td>
-                {% flowurl task.process 'detail' user=request.user as detail_url %}
-                {% flowurl task 'execute' user=request.user as execute_url %}
+                {% flowurl task.process 'detail' user=request.user ns=request.resolver_match.namespace ns_map=view.ns_map as detail_url %}
+                {% flowurl task 'execute' user=request.user ns=request.resolver_match.namespace ns_map=view.ns_map as execute_url %}
                 <a href="{{ execute_url|default:detail_url }}">
                   {{ task.flow_task.task_title|default:task.summary|default:task.flow_task }}
                 </a>
@@ -82,7 +82,7 @@
     <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Create a new workflow</button>
     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
       {% for flow in view.flows %}
-        <a class="dropdown-item" href="{% flowurl flow 'start' %}">{{ flow.process_title }}</a>
+        <a class="dropdown-item" href="{% flowurl flow 'start' ns=request.resolver_match.namespace ns_map=view.ns_map %}">{{ flow.process_title }}</a>
       {% endfor %}
     </div>
   </div>

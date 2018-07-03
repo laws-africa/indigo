@@ -13,7 +13,7 @@ class ListWorksFlow(Flow):
     summary_template = "List works for {{ process.place_name }}"
 
     start = (
-        flow.StartFunction(this.start_workflow)
+        flow.Start(views.StartPlaceWorkflowView)
         .Next(this.instructions)
     )
 
@@ -48,16 +48,6 @@ class ListWorksFlow(Flow):
     )
 
     end = flow.End()
-
-    @staticmethod
-    @flow.flow_start_func
-    def start_workflow(activation, country, locality, notes):
-        activation.prepare()
-        activation.process.country = country
-        activation.process.locality = locality
-        activation.process.notes = notes
-        activation.done()
-        return activation
 
 
 class CreateWorksFlow(Flow):

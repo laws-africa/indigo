@@ -305,6 +305,16 @@ if DEBUG:
 SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
 
 
+# Messages
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.INFO: 'alert alert-primary',
+    messages.SUCCESS: 'alert alert-success',
+    messages.WARNING: 'alert alert-warning',
+    messages.ERROR: 'alert alert-danger',
+}
+
+
 # Logging
 LOGGING = {
     'version': 1,

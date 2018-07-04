@@ -46,7 +46,7 @@
 
                   {% flowurl task 'unassign' user=request.user as unassign_url %}
                   {% if unassign_url %}
-                  <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
+                  <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}" data-confirm="Are you sure you want to unassign this task?">{% trans 'Unassign' %}</button>
                   {% endif %}
                 </td>
               </tr>
@@ -63,9 +63,12 @@
           {% endif %}
         </div>
         <div class="col text-right">
-          {% if view.flow_class|manage_permission_name in perms and process.status == 'NEW' %}
-            <a class="btn btn-danger" href="{% flowurl process 'action_cancel' %}">{% trans 'Cancel workflow' %}</a>
-          {% endif %}
+          <form role="form" method="POST">
+            {% csrf_token %}
+            {% if view.flow_class|manage_permission_name in perms and process.status == 'NEW' %}
+            <button type="submit" name="_cancel_process" class="btn btn-danger" formaction="{% flowurl process 'action_cancel' %}?back={{ request.path }}" data-confirm="Are you sure you want to cancel this workflow?">{% trans 'Cancel workflow' %}</button>
+            {% endif %}
+          </form>
         </div>
       </div>
 

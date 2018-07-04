@@ -39,7 +39,7 @@
             <div class="col">
               {% if activation.task.status != "DONE" and activation.management_form and form %}
                 {{ activation.management_form }}
-                <button type="submit" class="btn btn-success">{% trans 'Task is complete' %}</button>
+                <button type="submit" class="btn btn-success" data-confirm="Are you sure the task is complete?">{% trans 'Task is complete' %}</button>
               {% endif %}
 
               {% if activation.task.finished %}
@@ -54,17 +54,17 @@
             <div class="col text-right">
               {% flowurl activation.task 'unassign' user=request.user as unassign_url %}
               {% if unassign_url %}
-                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}">{% trans 'Unassign' %}</button>
+                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ unassign_url }}" data-confirm="Are you sure you want to unassign this task?">{% trans 'Unassign' %}</button>
               {% endif %}
 
               {% flowurl activation.task 'undo' user=request.user as undo_url %}
               {% if activation.undo.can_proceed and undo_url %}
-                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ undo_url }}">{% trans 'Undo' %}</button>
+                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ undo_url }}" data-confirm="Are you sure you want to undo this task?">{% trans 'Undo' %}</button>
               {% endif %}
 
               {% flowurl activation.task 'cancel' user=request.user as cancel_url %}
               {% if activation.cancel.can_proceed and cancel_url %}
-                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ cancel_url }}">{% trans 'Cancel' %}</button>
+                <button type="submit" name="run_action" class="btn btn-danger" formaction="{{ cancel_url }}" data-confirm="Are you sure you want to cancel this task?">{% trans 'Cancel' %}</button>
               {% endif %}
             </div>
           </div>

@@ -1,0 +1,6 @@
+{% extends 'main.html' %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumb-item"><a href="{% url 'workflow:tasks-dashboard' %}">Tasks</a></li>
+{% endblock %}

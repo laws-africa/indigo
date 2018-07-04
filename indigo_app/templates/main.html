@@ -16,17 +16,18 @@
     {% block sidebar %}{% endblock %}
 
     <main id="{% block view-id %}{% endblock %}" class="main-container">
+      {% block main-header %}
+        <header class="main-header container-fluid">
+          <ul class="breadcrumb text-muted">
+            {% block breadcrumbs %}{% endblock %}
+          </ul>
+
+          {% block main-header-title %}{% endblock %}
+        </header>
+      {% endblock %}
+
       {% block messages %}
-        {% if messages %}
-          <div class="container pt-3 messages">
-            {% for message in messages %}
-            <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            </div>
-            {% endfor %}
-          </div>
-        {% endif %}
+        {% include '_messages.html' %}
       {% endblock %}
 
       {% block content %}{% endblock %}

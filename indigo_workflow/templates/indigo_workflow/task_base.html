@@ -1,7 +1,14 @@
-{% extends 'main.html' %}
+{% extends 'indigo_workflow/base.html' %}
 {% load i18n viewflow %}
 
 {% block title %}{{ activation.task.flow_task.task_title }}{% endblock %}
+
+{% block breadcrumbs %}
+{{ block.super }}
+<li class="breadcrumb-item">
+  <a href="{% flowurl activation.process 'detail' %}">Workflow #{{ activation.process.id }} - {{ activation.process.summary }}</a>
+</li>
+{% endblock %}
 
 {% block content %}
 <div class="container pt-3 pb-3">

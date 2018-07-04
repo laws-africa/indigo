@@ -7,26 +7,25 @@
   {% include './_sidebar.html' %}
 {% endblock %}
 
+
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
+  {% if locality %}
+  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+  {% endif %}
+  {% if work %}
+  <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
+  {% endif %}
+{% endblock %}
+
+
+{% block main-header-title %}
+  <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
+{% endblock %}
+
+
 {% block content %}
 <div class="work-view">
-  <header class="main-header container-fluid">
-    <ul class="breadcrumb text-muted">
-      {% block breadcrumbs %}
-        <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
-        {% if locality %}
-        <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
-        {% endif %}
-        {% if work %}
-        <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
-        {% endif %}
-      {% endblock %}
-    </ul>
-
-    {% block main-header-title %}
-      <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
-    {% endblock %}
-  </header>
-
   <div class="main-content">
     {% block main-content %}
     <div class="container pt-3">
@@ -38,6 +37,7 @@
 
 {% include "work/_work_chooser_modal.html" %}
 {% endblock %}
+
 
 {% block js %}
   {{ block.super }}

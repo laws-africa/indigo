@@ -14,6 +14,7 @@ class ListWorksFlow(Flow):
 
     start = (
         flow.Start(views.StartPlaceWorkflowView)
+        .Permission('indigo_api.review_work')
         .Next(this.instructions)
     )
 
@@ -25,6 +26,7 @@ class ListWorksFlow(Flow):
             task_description="List the short title, publication date, gazette name and number in the linked spreadsheet.",
             task_result_summary="{{ flow_task.task_description }}",
         )
+        .Permission('indigo_api.add_work')
         .Next(this.review)
     )
 
@@ -36,8 +38,7 @@ class ListWorksFlow(Flow):
             task_description="Review the listed works in the spreadsheet. The task is done if the list is complete and has all required details for all works.",
             task_result_summary="{{ flow_task.task_description }}",
         )
-        # TODO: appropriate permission
-        .Permission('indigo_workflow.can_review_documents')
+        .Permission('indigo_api.review_work')
         .Next(this.check_approved)
     )
 
@@ -58,6 +59,7 @@ class CreateWorksFlow(Flow):
 
     start = (
         flow.Start(views.StartPlaceWorkflowView)
+        .Permission('indigo_api.review_work')
         .Next(this.instructions)
     )
 
@@ -69,6 +71,7 @@ class CreateWorksFlow(Flow):
             task_description=format_html('<a href="/works/new">Create a work</a> for each item listed in the linked spreadsheet.'),
             task_result_summary="{{ flow_task.task_description }}",
         )
+        .Permission('indigo_api.add_work')
         .Next(this.review)
     )
 
@@ -80,8 +83,7 @@ class CreateWorksFlow(Flow):
             task_description="Review the created works in the spreadsheet. The task is done if all the works have been created.",
             task_result_summary="{{ flow_task.task_description }}",
         )
-        # TODO: appropriate permission
-        .Permission('indigo_workflow.can_review_documents')
+        .Permission('indigo_api.review_work')
         .Next(this.check_approved)
     )
 

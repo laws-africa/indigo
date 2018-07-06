@@ -46,6 +46,10 @@ class Work(models.Model):
     allows us to track works that we don't have documents for, and provides a
     logical parent for documents, which are expressions of a work.
     """
+    class Meta:
+        permissions = (
+            ('review', 'Can review work details'),
+        )
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
     """ The FRBR Work URI of this work that uniquely identifies it globally """

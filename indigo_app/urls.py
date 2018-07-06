@@ -20,10 +20,10 @@ urlpatterns = [
     url(r'^works/new/$', views.AddWorkView.as_view(), name='new_work'),
     url(r'^works(?P<frbr_uri>/\S+?)/amendments/$', views.WorkAmendmentsView.as_view(), name='work_amendments'),
     url(r'^works(?P<frbr_uri>/\S+?)/related/$', views.WorkRelatedView.as_view(), name='work_related'),
+    url(r'^works(?P<frbr_uri>/\S+?)/import/$', views.ImportDocumentView.as_view(), name='import_document'),
     url(r'^works(?P<frbr_uri>/\S+?)/$', views.WorkDetailView.as_view(), name='work'),
 
     url(r'^documents/(?P<doc_id>\d+)/$', views.DocumentDetailView.as_view(), name='document'),
-    url(r'^documents/import/$', views.ImportDocumentView.as_view(), name='import_document'),
 
     url(r'^library/$', views.LibraryView.as_view()),
     url(r'^library/(?P<country>[^\s/-]+)/$', views.LibraryView.as_view(), name='library'),

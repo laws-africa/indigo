@@ -57,7 +57,7 @@
 
         <div class="card-footer text-right">
           <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
-          <a class="btn btn-outline-secondary" href="/documents/import/?frbr_uri={{ ../work.frbr_uri }}&expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
+          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
         </div>
       </li>
     {{/each}}

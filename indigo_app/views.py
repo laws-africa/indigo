@@ -37,6 +37,34 @@ class AbstractAuthedIndigoView(LoginRequiredMixin, PermissionRequiredMixin, Indi
     raise_exception = True
 
 
+class LibraryView(AbstractAuthedIndigoView, TemplateView):
+    template_name = 'library.html'
+    # permissions
+    permission_required = ('indigo_api.view_work',)
+
+    def get(self, request, country=None, *args, **kwargs):
+        if country is None:
+            return HttpResponseRedirect(reverse('library', kwargs={'country': request.user.editor.country_code}))
+        return super(LibraryView, self).get(request, country=country, *args, **kwargs)
+
+    def get_context_data(self, country, **kwargs):
+        context = super(LibraryView, self).get_context_data(**kwargs)
+
+        context['country_code'] = country
+        context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
+        context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
+
+        serializer = DocumentListSerializer(context={'request': self.request})
+        docs = DocumentViewSet.queryset.filter(country=country)
+        context['documents_json'] = json.dumps(serializer.to_representation(docs))
+
+        serializer = WorkSerializer(context={'request': self.request}, many=True)
+        works = Work.objects.filter(country=country)
+        context['works_json'] = json.dumps(serializer.to_representation(works))
+
+        return context
+
+
 class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
     model = Work
     context_object_name = 'work'
@@ -164,30 +192,18 @@ class WorkRelatedView(AbstractWorkView):
         return context
 
 
-class LibraryView(AbstractAuthedIndigoView, TemplateView):
-    template_name = 'library.html'
-    # permissions
-    permission_required = ('indigo_api.view_work',)
+class ImportDocumentView(AbstractWorkView):
+    template_name = 'work/import_document.html'
+    permission_required = ('indigo_api.view_work', 'indigo_api.add_document')
+    js_view = 'ImportView'
 
-    def get(self, request, country=None, *args, **kwargs):
-        if country is None:
-            return HttpResponseRedirect(reverse('library', kwargs={'country': request.user.editor.country_code}))
-        return super(LibraryView, self).get(request, country=country, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(ImportDocumentView, self).get_context_data(**kwargs)
 
-    def get_context_data(self, country, **kwargs):
-        context = super(LibraryView, self).get_context_data(**kwargs)
-
-        context['country_code'] = country
-        context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
-        context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
-
-        serializer = DocumentListSerializer(context={'request': self.request})
-        docs = DocumentViewSet.queryset.filter(country=country)
-        context['documents_json'] = json.dumps(serializer.to_representation(docs))
-
-        serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = Work.objects.filter(country=country)
-        context['works_json'] = json.dumps(serializer.to_representation(works))
+        work = self.object
+        doc = Document(frbr_uri=work.frbr_uri or '/')
+        context['document'] = doc
+        context['form'] = DocumentForm(instance=doc)
 
         return context
 
@@ -239,38 +255,5 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         serializer = DocumentListSerializer(context={'request': self.request})
         context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
-
-        return context
-
-
-class ImportDocumentView(AbstractAuthedIndigoView, TemplateView):
-    template_name = 'import.html'
-    permission_required = ('indigo_api.view_work',)
-    js_view = 'ImportView'
-
-    def get_context_data(self, **kwargs):
-        context = super(ImportDocumentView, self).get_context_data(**kwargs)
-
-        frbr_uri = self.request.GET.get('frbr_uri')
-        doc = Document(frbr_uri=frbr_uri or '/')
-        context['document'] = doc
-
-        context['form'] = DocumentForm(instance=doc)
-        context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
-        context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
-
-        work = None
-        work_json = None
-
-        if frbr_uri:
-            try:
-                work = Work.objects.get_for_frbr_uri(frbr_uri)
-                work_json = json.dumps(WorkSerializer(instance=work, context={'request': self.request}).data)
-            except ValueError:
-                pass
-
-        context['frbr_uri'] = frbr_uri
-        context['work'] = work
-        context['work_json'] = work_json
 
         return context

@@ -122,40 +122,20 @@
     el: '#import-document',
     events: {
       'click .btn.choose-file': 'chooseFile',
-      'click .btn.choose-work': 'chooseWork',
       'click .btn.import': 'submitForm',
       'dragleave .dropzone': 'noDrag',
       'dragover .dropzone': 'dragover',
       'drop .dropzone': 'drop',
       'change [name=file]': 'fileSelected',
     },
-    workTemplate: '#work-detail-template',
 
     initialize: function() {
       this.$form = this.$el.find('form.import-form');
       this.cropBoxView = new Indigo.CropBoxView();
-      this.workTemplate = Handlebars.compile($(this.workTemplate).html());
-
-      // are we starting with an injected frbr_uri for a work?
-      if (Indigo.Preloads.work) {
-        var work = new Indigo.Work(Indigo.Preloads.work);
-        this.setWork(work);
-      }
+      this.work = new Indigo.Work(Indigo.Preloads.work);
 
       // are we starting with an injected expression date?
       this.expression_date = Indigo.queryParams.expression_date;
-    },
-
-    chooseWork: function() {
-      var chooser = new Indigo.WorkChooserView({}),
-          self = this;
-
-      chooser.setFilters({country: Indigo.userView.model.get('country_code').toLowerCase()});
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          self.setWork(chosen);
-        }
-      });
     },
 
     dragover: function(e) {
@@ -204,12 +184,6 @@
         this.scale = null;
         this.$('.pages').hide();
       }
-    },
-
-    setWork: function(work) {
-      this.work = work;
-      this.$('button.import').prop('disabled', !(!!this.work && !!this.file));
-      this.$('#work-info').empty().html(this.workTemplate(this.work.toJSON()));
     },
 
     /**

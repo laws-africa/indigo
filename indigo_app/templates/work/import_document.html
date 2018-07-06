@@ -1,45 +1,22 @@
-{% extends "main.html" %}
+{% extends "work/layout.html" %}
 {% load staticfiles %}
 
 {% block title %}Import{% endblock %}
-{% block js %}
-  <script src="{% static 'javascript/pdfjs/pdf.js' %}"></script>
-  <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
-  <script src="{% static 'javascript/svg.min.js' %}"></script>
-  {{ block.super }}
+{% block body-class %}{{ block.super }} sidebar-minimized{% endblock %}
 
-  <script type="text/javascript">
-  // inject country code-to-name mappings into JS
-  window.Indigo.countries = {{ countries_json|safe }};
-  {% if work %}
-  window.Indigo.Preloads.work = {{ work_json|safe }};
-  {% endif %}
-  </script>
-{% endblock %}
-
-{% block main-header %}{% endblock %}
-
-{% block content %}
+{% block main-content %}
 <main id="main-content" class="container-fluid">
   <form class="import-form mt-3" method="POST" id="import-document">
     <div class="file-inputs">
       <div class="row">
         <div class="offset-md-2 col-md-8">
 
-          <h4 class="mb-5">
+          <h4 class="mb-3">
             Import a document
             <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="fa fa-question-circle"></i></a>
           </h4>
 
           <section class="card numbered mb-3" data-num="1">
-            <h5 class="card-header">Which work is this document for?</h5>
-            <div class="card-body">
-              <div id="work-info"></div>
-              <button type="button" class="btn btn-primary choose-work">Choose a work</button>
-            </div>
-          </section>
-
-          <section class="card numbered mb-3" data-num="2">
             <div class="card-body">
               <p class="alert alert-danger" style="display: none"></p>
 
@@ -64,7 +41,7 @@
       <div class="row">
         <div class="offset-md-2 col-md-8">
 
-          <section class="card numbered mb-3 mt-3" data-num="3">
+          <section class="card numbered mb-3 mt-3" data-num="2">
             <h5 class="card-header">What do section titles look like?</h5>
             <div class="card-body">
               <div class="row">
@@ -104,7 +81,7 @@
             </div>
           </section>
 
-          <section>
+          <section class="card numbered mb-3 mt-3" data-num="3">
             <button type="button" class="btn btn-success import" disabled="disabled">Go for it!</button>
           </section>
         </div>
@@ -127,13 +104,22 @@
   </form>
 </main>
 
-<script id="work-detail-template" type="text/x-handlebars-template">
-{% verbatim %}
-<h5>{{ title }}</h5>
-<p>{{ frbr_uri }}</p>
-{% endverbatim %}
-</script>
-
 {% include "work/_work_chooser_modal.html" %}
 
+{% endblock %}
+
+
+{% block js %}
+  <script src="{% static 'javascript/pdfjs/pdf.js' %}"></script>
+  <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
+  <script src="{% static 'javascript/svg.min.js' %}"></script>
+  {{ block.super }}
+
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  window.Indigo.countries = {{ countries_json|safe }};
+  {% if work %}
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  {% endif %}
+  </script>
 {% endblock %}

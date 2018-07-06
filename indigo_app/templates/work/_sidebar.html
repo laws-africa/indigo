@@ -4,7 +4,7 @@
       {% block sidebar-nav %}
         <li class="nav-item nav-heading">Work</li>
 
-        {% if work %}
+        {% if work.pk %}
           <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-cog"></i> Work Details</a></li>
           <li class="nav-item dropright">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-boundary="viewport">

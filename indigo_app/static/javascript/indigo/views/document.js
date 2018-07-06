@@ -57,7 +57,7 @@
     },
   });
 
-  // The DocumentView is the primary view on the document detail page.
+  // The DocumentDetailView is the primary view on the document detail page.
   // It is responsible for managing the other views and allowing the user to
   // save their changes. It has nested sub views that handle separate portions
   // of the larger view page.
@@ -76,13 +76,13 @@
   //
   //   DocumentRevisionsView - handles walking through revisions to a document
   //
-  // When saving a document, the DocumentView tells the children to save their changes.
+  // When saving a document, the DocumentDetailView tells the children to save their changes.
   // In turn, they trigger 'dirty' and 'clean' events when their models change or
-  // once they've been saved. The DocumentView uses those signals to enable/disable
+  // once they've been saved. The DocumentDetailView uses those signals to enable/disable
   // the save button.
   //
   //
-  Indigo.DocumentView = Backbone.View.extend({
+  Indigo.DocumentDetailView = Backbone.View.extend({
     el: 'body',
     events: {
       'click .menu .dropdown-submenu > a': 'stopMenuClick',

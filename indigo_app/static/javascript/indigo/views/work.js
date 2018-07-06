@@ -12,7 +12,7 @@
   /**
    * A view that lets a user create or edit a Work.
    */
-  Indigo.WorkView = Backbone.View.extend({
+  Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
     events: {
       'click .btn.save': 'save',

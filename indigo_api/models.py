@@ -49,6 +49,7 @@ class Work(models.Model):
     class Meta:
         permissions = (
             ('review', 'Can review work details'),
+            ('view', 'Can list and view work details'),
         )
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")

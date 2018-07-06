@@ -1,6 +1,6 @@
 {% extends "main.html" %}
 
-{% block title %}{% if work %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
+{% block title %}{% if work.pk %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
 {% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
 
 {% block sidebar %}
@@ -13,14 +13,14 @@
   {% if locality %}
   <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
   {% endif %}
-  {% if work %}
+  {% if work.pk %}
   <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
   {% endif %}
 {% endblock %}
 
 
 {% block main-header-title %}
-  <h5 class="main-header-title work-title">{% if work %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
+  <h5 class="main-header-title work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
 {% endblock %}
 
 

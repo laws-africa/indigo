@@ -150,3 +150,7 @@ def on_work_changed(sender, work, request, **kwargs):
     user = request.user
     if user and user.is_authenticated and not user.has_perm('indigo_api.review_work'):
         ReviewWorkFlow.get_or_create(work)
+
+
+# Workflows associated to a single work
+single_work_flows = [ReviewWorkFlow]

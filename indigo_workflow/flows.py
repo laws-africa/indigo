@@ -1,9 +1,12 @@
+from django.utils.html import format_html
+from django.dispatch import receiver
 from viewflow import flow
 from viewflow.base import this, Flow
+from viewflow.activation import STATUS
 
+from indigo_api.signals import work_changed
 from indigo_workflow import views
-from indigo_workflow.models import ImplicitPlaceProcess
-from django.utils.html import format_html
+from indigo_workflow.models import ImplicitPlaceProcess, ReviewWorkProcess
 
 
 class ListWorksFlow(Flow):
@@ -96,4 +99,54 @@ class CreateWorksFlow(Flow):
     end = flow.End()
 
 
-all_flows = [ListWorksFlow, CreateWorksFlow]
+class ReviewWorkFlow(Flow):
+    """ Review the details of a work.
+    """
+    process_class = ReviewWorkProcess
+    summary_template = "Review metadata for {{ process.work.frbr_uri }}"
+
+    start = (
+        flow.StartFunction(this.start_workflow)
+        .Next(this.instructions)
+    )
+
+    # wait for human to do the work and then move the task into the next state
+    instructions = (
+        flow.View(
+            views.HumanInteractionView,
+            task_title="Review the metadata and details of the work",
+            task_description=format_html('View the work. The task is done if the details are correct and accurate. Make corrections if necessary.'),
+            task_result_summary="{{ flow_task.task_description }}",
+        )
+        .Permission('indigo_api.add_work')
+        .Next(this.end)
+    )
+
+    end = flow.End()
+
+    @staticmethod
+    @flow.flow_start_func
+    def start_workflow(activation, work):
+        activation.prepare()
+        activation.process.work = work
+        activation.done()
+        return activation
+
+    @classmethod
+    def get_or_create(cls, work):
+        """ Get (or create a new) existing, unfinished process for a work.
+        """
+        process = cls.process_class.objects.filter(work=work, status=STATUS.NEW).first()
+        if not process:
+            activation = cls.start.run(work)
+            process = activation.process
+        return process
+
+
+@receiver(work_changed)
+def on_work_changed(sender, work, request, **kwargs):
+    """ Create a new work review task for this work.
+    """
+    user = request.user
+    if user and user.is_authenticated and not user.has_perm('indigo_api.review_work'):
+        ReviewWorkFlow.get_or_create(work)

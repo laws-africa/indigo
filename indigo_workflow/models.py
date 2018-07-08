@@ -19,3 +19,9 @@ class ImplicitPlaceProcess(Process):
             s = self.locality.name + ", "
         s = s + self.country.name
         return s
+
+
+class ReviewWorkProcess(Process):
+    """ Process for reviewing the details of a particular work.
+    """
+    work = models.ForeignKey('indigo_api.work', null=False, related_name='review_work_tasks', help_text='Work to review')

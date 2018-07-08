@@ -1,12 +1,18 @@
 {% load staticfiles %}
 
 <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+  {% block navbar-brand %}
   <a class="navbar-brand" href="{% url 'library' country=request.user.editor.country_code %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+  {% endblock %}
+  {% block navbar-toggle %}
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
     <span class="navbar-toggler-icon"></span>
   </button>
+  {% endblock %}
 
+  {% block navbar %}
   <div class="collapse navbar-collapse" id="navbar-collapse">
+    {% block navbar-left %}
     <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
       <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
       <li class="nav-item"><a class="nav-link" href="{% url 'workflow:tasks-dashboard' %}">Tasks</a></li>
@@ -28,7 +34,9 @@
         </div>
       </li>
     </ul>
+    {% endblock %}
 
+    {% block navbar-user %}
     <ul class="navbar-nav" id="user-buttons">
       <li class="nav-item not-logged-in"><a href="login"><i class="fa fa-sign-in"></i> Log in</a></li>
 
@@ -47,6 +55,8 @@
         </div>
       </li>
     </ul>
+    {% endblock %}
 
   </div>
+  {% endblock %}
 </nav>

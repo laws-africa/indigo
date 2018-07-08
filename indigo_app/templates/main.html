@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block body-attributes %}data-backbone-view="{{ js_view }}"{% endblock %}
+{% block body-attributes %}data-backbone-view="{% block backbone-view %}{{ js_view }}{% endblock %}"{% endblock %}
 
 {% block page-content %}
   {% block navbar %}

@@ -15,7 +15,7 @@ import reversion
 
 from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from indigo.plugins import plugins
-from indigo_api.signals import document_published
+from indigo_api.signals import document_published, work_changed
 
 log = logging.getLogger(__name__)
 
@@ -660,11 +660,21 @@ class WorkSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data['created_by_user'] = self.context['request'].user
-        return super(WorkSerializer, self).create(validated_data)
+        result = super(WorkSerializer, self).create(validated_data)
+
+        # signals
+        work_changed.send(sender=self.__class__, work=result, request=self.context['request'])
+
+        return result
 
     def update(self, instance, validated_data):
         validated_data['updated_by_user'] = self.context['request'].user
-        return super(WorkSerializer, self).update(instance, validated_data)
+        result = super(WorkSerializer, self).update(instance, validated_data)
+
+        # signals
+        work_changed.send(sender=self.__class__, work=result, request=self.context['request'])
+
+        return result
 
     def validate_frbr_uri(self, value):
         try:

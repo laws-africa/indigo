@@ -5,7 +5,7 @@
         <li class="nav-item nav-heading">Work</li>
 
         {% if work.pk %}
-          <li class="nav-item"><a class="nav-link {% if view == 'WorkView' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-cog"></i> Work Details</a></li>
+          <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_detail' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-cog"></i> Work Details</a></li>
           <li class="nav-item dropright">
             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" data-boundary="viewport">
               <i class="fa fa-fw fa-clock-o"></i> Point in Time
@@ -22,8 +22,8 @@
               <a class="dropdown-item" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">Manage amendments...</a>
             </div>
           </li>
-          <li class="nav-item"><a class="nav-link {% if view == 'WorkAmendmentsView' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}"><i class="fa fa-calendar"></i> Amendments</a></li>
-          <li class="nav-item"><a class="nav-link {% if view == '' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
+          <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}"><i class="fa fa-calendar"></i> Amendments</a></li>
+          <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
         {% else %}
           <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work Details</a></li>
         {% endif %}

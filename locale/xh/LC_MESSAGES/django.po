@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-11-11 13:59+0000\n"
-"PO-Revision-Date: 2017-11-11 07:20-0500\n"
+"PO-Revision-Date: 2017-11-11 09:28-0500\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Xhosa\n"
 "Language: xh_ZA\n"
@@ -14,13 +14,11 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openup-indigo\n"
 "X-Crowdin-Language: xh\n"
-"X-Crowdin-File: /i18n/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /master/locale/af/LC_MESSAGES/django.po\n"
 
 #: indigo_api/templates/_amendments.html:7
 #, python-format
-msgid ""
-"[Amended by <span class=\"amending-title\">%(amending_title)s</span> on "
-"<span class=\"date\">%(date)s</span>]"
+msgid "[Amended by <span class=\"amending-title\">%(amending_title)s</span> on <span class=\"date\">%(date)s</span>]"
 msgstr ""
 
 #: indigo_api/templates/act.html:17
@@ -65,3 +63,4 @@ msgstr ""
 #: indigo_api/utils.py:70
 msgid "By-law"
 msgstr ""
+

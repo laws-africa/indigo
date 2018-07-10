@@ -1,4 +1,5 @@
-from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
+from django.contrib.auth.mixins import PermissionRequiredMixin
+from django.contrib.auth.views import redirect_to_login
 from django.views.generic import DetailView, TemplateView
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
@@ -30,11 +31,16 @@ class IndigoJSViewMixin(object):
         return self.js_view
 
 
-class AbstractAuthedIndigoView(LoginRequiredMixin, PermissionRequiredMixin, IndigoJSViewMixin):
+class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     """ Abstract view for authenticated Indigo views.
     """
     # permissions
     raise_exception = True
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+        return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
 
 
 class LibraryView(AbstractAuthedIndigoView, TemplateView):

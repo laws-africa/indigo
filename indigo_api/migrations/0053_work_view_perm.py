@@ -14,6 +14,6 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AlterModelOptions(
             name='work',
-            options={'permissions': (('review', 'Can review work details'), ('view', 'Can list and view work details'))},
+            options={'permissions': (('review_work', 'Can review work details'), ('view_work', 'Can list and view work details'))},
         ),
     ]

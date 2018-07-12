@@ -281,7 +281,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'PAGE_SIZE': 250,
+    'PAGE_SIZE': 500,
 }
 
 # Django Rest Auth

@@ -147,4 +147,12 @@ $(function() {
   $('body')
     .toggleClass("win", !isOSX)
     .toggleClass("osx", isOSX);
+
+  // prevent navigating away from dirty views
+  $(window).on('beforeunload', function(e) {
+    if (Indigo.view && Indigo.view.isDirty && Indigo.view.isDirty()) {
+      e.preventDefault();
+      return 'You will lose your changes!';
+    }
+  });
 });

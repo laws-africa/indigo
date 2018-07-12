@@ -93,9 +93,6 @@
       this.listenTo(this.model, 'change:country change:publication_date change:publication_name change:publication_number',
                     _.debounce(this.publicationChanged, 1000));
 
-      // prevent the user from navigating away without saving changes
-      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
-
       this.model.updateFrbrUri();
       this.listenToOnce(Indigo.works, 'sync', this.parentChanged);
       this.updatePublicationOptions();
@@ -309,11 +306,8 @@
       }
     },
 
-    windowUnloading: function(e) {
-      if (this.dirty) {
-        e.preventDefault();
-        return 'You will lose your changes!';
-      }
+    isDirty: function() {
+      return this.dirty;
     },
   });
 })(window);

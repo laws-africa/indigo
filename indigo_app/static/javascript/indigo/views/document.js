@@ -149,9 +149,6 @@
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});
 
-      // prevent the user from navigating away without saving changes
-      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
-
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');
 
@@ -170,11 +167,8 @@
       });
     },
 
-    windowUnloading: function(e) {
-      if (this.propertiesView.dirty || this.bodyEditorView.dirty || this.bodyEditorView.editing) {
-        e.preventDefault();
-        return 'You will lose your changes!';
-      }
+    isDirty: function(e) {
+      return this.propertiesView.dirty || this.bodyEditorView.isDirty();
     },
 
     setDirty: function() {

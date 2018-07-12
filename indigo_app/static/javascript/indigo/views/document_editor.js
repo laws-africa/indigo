@@ -28,6 +28,7 @@
 
       this.parent = options.parent;
       this.name = 'source';
+      this.editing = false;
       this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fa fa-pencil"></i></a></div>');
 
       // setup renderer
@@ -129,6 +130,7 @@
     editFragmentText: function(fragment) {
       var self = this;
 
+      this.editing = true;
       this.fragment = fragment;
 
       // ensure source code is hidden
@@ -269,6 +271,8 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
+
+      this.editing = false;
     },
 
     editFragment: function(node) {
@@ -396,6 +400,8 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
+
+      this.editing = true;
     },
 
     tableEditFinish: function() {
@@ -406,6 +412,8 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
+
+      this.editing = false;
     },
 
     editFind: function(e) {
@@ -519,7 +527,6 @@
 
     initialize: function(options) {
       this.dirty = false;
-      this.editing = false;
 
       this.documentContent = options.documentContent;
       // XXX: check
@@ -530,7 +537,7 @@
       this.tocView.selection.on('change', this.tocSelectionChanged, this);
 
       // setup the editor views
-      this.activeEditor = this.sourceEditor = new Indigo.SourceEditorView({parent: this});
+      this.sourceEditor = new Indigo.SourceEditorView({parent: this});
       // XXX this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
       this.editFragment(null);
@@ -548,13 +555,7 @@
     },
 
     stopEditing: function() {
-      if (this.activeEditor && this.editing) {
-        this.editing = false;
-        return this.activeEditor.discardChanges();
-      } else {
-        this.editing = false;
-        return $.Deferred().resolve();
-      }
+      return this.sourceEditor.discardChanges();
     },
 
     editFragment: function(fragment) {
@@ -563,11 +564,10 @@
 
         var isRoot = fragment.parentElement === null;
 
-        this.editing = true;
         this.fragment = fragment;
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
-        this.activeEditor.editFragment(fragment);
+        this.sourceEditor.editFragment(fragment);
       }
     },
 
@@ -608,6 +608,10 @@
       }
     },
 
+    isDirty: function() {
+      return this.dirty || this.sourceEditor.editing;
+    },
+
     // Save the content of the editor, returns a Deferred
     save: function() {
       var self = this,
@@ -620,8 +624,8 @@
         // don't do anything if it hasn't changed
         ok();
 
-      } else if (this.activeEditor) {
-        this.activeEditor
+      } else {
+        this.sourceEditor
           // ask the editor to returns its contents
           .saveChanges()
           .done(function() {
@@ -629,8 +633,6 @@
             self.saveModel().done(ok).fail(fail);
           })
           .fail(fail);
-      } else {
-        this.saveModel().done(ok).fail(fail);
       }
 
       return deferred;

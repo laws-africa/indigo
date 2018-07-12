@@ -78,9 +78,6 @@
       this.listenTo(this.collection, 'add remove change', this.setDirty);
       this.listenTo(this.collection, 'sync', this.setClean);
 
-      // prevent the user from navigating away without saving changes
-      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
-
       this.render();
       this.canSave();
     },
@@ -199,11 +196,8 @@
       this.canSave();
     },
 
-    windowUnloading: function(e) {
-      if (this.dirty) {
-        e.preventDefault();
-        return 'You will lose your changes!';
-      }
+    isDirty: function(e) {
+      return this.dirty;
     },
 
   });

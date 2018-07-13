@@ -26,3 +26,7 @@ class WorksTest(testcases.TestCase):
 
         response = self.client.get('/works/za/act/2010/1/amendments/')
         self.assertEqual(response.status_code, 200)
+
+    def test_import_view(self):
+        response = self.client.get('/works/za/act/2014/10/import/')
+        self.assertEqual(response.status_code, 200)

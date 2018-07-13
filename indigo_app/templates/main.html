@@ -1,11 +1,70 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block body-attributes %}data-backbone-view="{{ view }}"{% endblock %}
+{% block body-attributes %}data-backbone-view="{% block backbone-view %}{{ js_view }}{% endblock %}"{% endblock %}
 
 {% block page-content %}
   {% block navbar %}
-    {% include '_navbar.html' %}
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
+      {% block navbar-brand %}
+      <a class="navbar-brand" href="{% url 'library' country=request.user.editor.country_code %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+      {% endblock %}
+      {% block navbar-toggle %}
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      {% endblock %}
+
+      {% block navbar-content %}
+      <div class="collapse navbar-collapse" id="navbar-collapse">
+        {% block navbar-left %}
+        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'workflow:tasks-dashboard' %}">Tasks</a></li>
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Works</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="{% url 'new_work' %}">Create a New Work</a>
+            </div>
+          </li>
+
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="#cheatsheet-modal" data-toggle="modal"><i class="fa fa-info-circle fa-fw"></i> Editor Cheatsheet</a>
+              <a class="dropdown-item" href="http://indigo.readthedocs.org/en/latest/" target="_blank"><i class="fa fa-question fa-fw"></i> Documentation</a>
+              <a class="dropdown-item" href="mailto:greg@openup.org.za" target="_blank"><i class="fa fa-envelope fa-fw"></i> Feedback</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="https://github.com/OpenUpSA/indigo" target="_blank"><i class="fa fa-github fa-fw"></i> Indigo on GitHub</a>
+            </div>
+          </li>
+        </ul>
+        {% endblock %}
+
+        {% block navbar-user %}
+        <ul class="navbar-nav" id="user-buttons">
+          <li class="nav-item not-logged-in"><a href="login"><i class="fa fa-sign-in"></i> Log in</a></li>
+
+          <li class="nav-item dropdown">
+            <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
+              <i class="fa fa-user"></i>
+              <span class="username">
+                {% if user.is_authenticated %}{{ user.first_name|default:user.email }}{% endif %}
+              </span>
+            </a>
+            <div class="dropdown-menu dropdown-menu-right">
+              <a class="dropdown-item profile" data-toggle="modal" href="#user-profile-box"><i class="fa fa-user fa-fw"></i> Profile</a>
+              <a class="dropdown-item requires-staff profile" href="/admin/" target="_blank"><i class="fa fa-gear fa-fw"></i> Site Settings</a>
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item logout" href="#"><i class="fa fa-sign-out fa-fw"></i> Log out</a>
+            </div>
+          </li>
+        </ul>
+        {% endblock %}
+
+      </div>
+      {% endblock %}
+    </nav>
   {% endblock %}
 
   <div id="progress-bar" style="display: none">
@@ -16,6 +75,20 @@
     {% block sidebar %}{% endblock %}
 
     <main id="{% block view-id %}{% endblock %}" class="main-container">
+      {% block main-header %}
+        <header class="main-header container-fluid">
+          <ul class="breadcrumb text-muted">
+            {% block breadcrumbs %}{% endblock %}
+          </ul>
+
+          {% block main-header-title %}{% endblock %}
+        </header>
+      {% endblock %}
+
+      {% block messages %}
+        {% include '_messages.html' %}
+      {% endblock %}
+
       {% block content %}{% endblock %}
     </main>
   </div>

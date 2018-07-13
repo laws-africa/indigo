@@ -36,6 +36,10 @@ INSTALLED_APPS = (
     'indigo_pl',
     'indigo_za',
 
+    # workflow
+    'indigo_workflow',
+    'viewflow',
+
     # the Indigo API
     'indigo_api',
     # the Indigo editor application
@@ -219,29 +223,10 @@ PIPELINE = {
                 'javascript/table-editor.js',
                 'javascript/indigo/models.js',
                 'javascript/indigo/traditions.js',
-                'javascript/indigo/views/user.js',
-                'javascript/indigo/views/reset_password.js',
-                'javascript/indigo/views/document_defined_terms.js',
-                'javascript/indigo/views/document_references.js',
-                'javascript/indigo/views/document_amendments.js',
-                'javascript/indigo/views/document_attachments.js',
-                'javascript/indigo/views/document_properties.js',
-                'javascript/indigo/views/document_toc.js',
-                'javascript/indigo/views/work.js',
-                'javascript/indigo/views/work_amendments.js',
-                'javascript/indigo/views/work_chooser.js',
-                'javascript/indigo/views/table_editor.js',
-                'javascript/indigo/views/document_editor.js',
-                'javascript/indigo/views/document_revisions.js',
-                'javascript/indigo/views/document_activity.js',
-                'javascript/indigo/views/document.js',
-                'javascript/indigo/views/library.js',
-                'javascript/indigo/views/error_box.js',
-                'javascript/indigo/views/sidebar.js',
-                'javascript/indigo/views/progress.js',
-                'javascript/indigo/views/import.js',
-                'javascript/indigo/views/annotations.js',
-                'javascript/indigo/timestamps.js',
+                'javascript/indigo/*.js',
+                'javascript/indigo/views/*.js',
+                'javascript/indigo/views/**/*.js',
+                'javascript/indigo/**/*.js',
                 'javascript/indigo.js',
             ),
             'output_filename': 'app.js',
@@ -318,6 +303,16 @@ if DEBUG:
 
 # slack integration
 SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
+
+
+# Messages
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.INFO: 'alert alert-primary',
+    messages.SUCCESS: 'alert alert-success',
+    messages.WARNING: 'alert alert-warning',
+    messages.ERROR: 'alert alert-danger',
+}
 
 
 # Logging

@@ -18,6 +18,7 @@
                 ["add_work", "indigo_api", "work"],
                 ["change_work", "indigo_api", "work"],
                 ["delete_work", "indigo_api", "work"],
+                ["view_work", "indigo_api", "work"],
                 ["add_annotation", "indigo_api", "annotation"],
                 ["change_annotation", "indigo_api", "annotation"],
                 ["delete_annotation", "indigo_api", "annotation"]

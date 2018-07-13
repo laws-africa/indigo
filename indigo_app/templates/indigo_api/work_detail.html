@@ -176,32 +176,30 @@
     {% endif %}
   {% endif %}
 
-</div>
+  <script id="work-repeal-template" type="text/x-handlebars-template">
+  {% verbatim %}
 
-<script id="work-repeal-template" type="text/x-handlebars-template">
-{% verbatim %}
+  {{#if repealed_by }}
+    <a href="/works{{ repealed_by.frbr_uri }}/">{{ repealed_by.title }}</a><br>
+    <span>{{ repealed_by.frbr_uri }}</span><br>
+    <a href="#" class="delete-repeal">remove</a>
+  {{else}}
+    <i class="text-muted">Not repealed.</i>
+  {{/if}}
 
-{{#if repealed_by }}
-  <a href="/works{{ repealed_by.frbr_uri }}/">{{ repealed_by.title }}</a><br>
-  <span>{{ repealed_by.frbr_uri }}</span><br>
-  <a href="#" class="delete-repeal">remove</a>
-{{else}}
-  <i class="text-muted">Not repealed.</i>
-{{/if}}
+  {% endverbatim %}
+  </script>
 
-{% endverbatim %}
-</script>
+  <script id="commencing-work-template" type="text/x-handlebars-template">
+  {% verbatim %}
 
-<script id="commencing-work-template" type="text/x-handlebars-template">
-{% verbatim %}
+  {{#if commencing_work }}
+    <a href="/works{{ commencing_work.frbr_uri }}/">{{ commencing_work.title }}</a><br>
+    <span>{{ commencing_work.frbr_uri }}</span><br>
+    <a href="#" class="delete-commencing-work">remove</a>
+  {{/if}}
 
-{{#if commencing_work }}
-  <a href="/works{{ commencing_work.frbr_uri }}/">{{ commencing_work.title }}</a><br>
-  <span>{{ commencing_work.frbr_uri }}</span><br>
-  <a href="#" class="delete-commencing-work">remove</a>
-{{/if}}
-
-{% endverbatim %}
-</script>
+  {% endverbatim %}
+  </script>
 
 {% endblock %}

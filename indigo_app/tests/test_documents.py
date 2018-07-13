@@ -8,10 +8,6 @@ class LibraryTest(testcases.TestCase):
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
 
-    def test_import_view(self):
-        response = self.client.get('/documents/import/')
-        self.assertEqual(response.status_code, 200)
-
     def test_published_document(self):
         response = self.client.get('/documents/1/')
         self.assertEqual(response.status_code, 200)

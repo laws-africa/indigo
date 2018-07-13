@@ -5,12 +5,12 @@
 {% block work-content %}
   <div class="row mb-3">
     <div class="col">
-      {% if work %}
+      {% if work.pk %}
       <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">← Back to Overview</a>
       {% endif %}
     </div>
     <div class="col">
-      {% if work and perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
+      {% if work.pk and perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
         <div class="text-right">
           <button class="btn btn-success save" type="button">{% if work %}Save{% else %}Create{% endif %}</button>
         </div>

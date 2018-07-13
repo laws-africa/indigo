@@ -110,6 +110,11 @@ class AddWorkView(WorkDetailView):
         return work
 
 
+class WorkOverviewView(AbstractWorkView):
+    js_view = ''
+    template_name_suffix = '_overview'
+
+
 class WorkAmendmentsView(AbstractWorkView):
     template_name_suffix = '_amendments'
 

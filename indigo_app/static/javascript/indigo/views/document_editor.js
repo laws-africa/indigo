@@ -139,6 +139,7 @@
       // show the edit toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').addClass('d-none');
 
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
@@ -271,6 +272,7 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').removeClass('d-none');
 
       this.editing = false;
     },
@@ -400,6 +402,7 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').addClass('d-none');
 
       this.editing = true;
     },
@@ -412,6 +415,7 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').removeClass('d-none');
 
       this.editing = false;
     },

@@ -174,6 +174,11 @@ class Work(models.Model):
     def expressions(self):
         return self.document_set.undeleted().order_by('expression_date').all()
 
+    def initial_expressions(self):
+        """ Expressions at initial publication date.
+        """
+        return self.document_set.undeleted().filter(expression_date=self.publication_date).all()
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -205,6 +210,11 @@ class Amendment(models.Model):
 
     class Meta:
         ordering = ['date']
+
+    def expressions(self):
+        """ The amended work's documents (expressions) at this date.
+        """
+        return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
 
 
 @receiver(signals.post_save, sender=Amendment)

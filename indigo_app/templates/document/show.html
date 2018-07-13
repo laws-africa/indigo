@@ -3,7 +3,10 @@
 {% load static %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} sidebar-minimized {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
+{% block body-class %}{{ block.super }} sidebar-minimized
+  {% if document.draft %}is-draft{% else %}is-published{% endif %}
+  {% if work.repealed_date %}is-repealed{% endif %}
+{% endblock %}
 
 {% block sidebar %}
   {% include './_sidebar.html' %}
@@ -19,6 +22,7 @@
     <span class="document-title">{{ document.title }}</span>
     <span class="badge badge-info if-published">published</span>
     <span class="badge badge-warning if-draft">draft</span>
+    <span class="badge badge-info if-repealed">repealed</span>
   </h5>
 
   <div class="document-toolbar-wrapper">

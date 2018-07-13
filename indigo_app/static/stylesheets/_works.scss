@@ -34,16 +34,12 @@
   }
 }
 
-#edit-work-view {
-  .if-repealed {
-    display: none;
-  }
+.if-repealed {
+  display: none;
+}
 
-  &.is-repealed {
-    .if-repealed {
-      display: initial;
-    }
-  }
+.is-repealed .if-repealed {
+  display: initial;
 }
 
 #work-amendments-view {

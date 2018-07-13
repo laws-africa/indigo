@@ -179,6 +179,17 @@ class Work(models.Model):
         """
         return self.document_set.undeleted().filter(expression_date=self.publication_date).all()
 
+    def versions(self):
+        """ Return a queryset of `reversion.models.Version` objects for
+        revisions for this work, most recent first.
+        """
+        content_type = ContentType.objects.get_for_model(self)
+        return reversion.models.Version.objects\
+            .prefetch_related('revision')\
+            .filter(content_type=content_type)\
+            .filter(object_id_int=self.id)\
+            .order_by('-id')
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -656,6 +667,7 @@ class Document(models.Model):
 
 # version tracking
 reversion.revisions.register(Document)
+reversion.revisions.register(Work)
 
 
 def attachment_filename(instance, filename):

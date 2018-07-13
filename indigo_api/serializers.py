@@ -668,8 +668,13 @@ class WorkSerializer(serializers.ModelSerializer):
         return result
 
     def update(self, instance, validated_data):
-        validated_data['updated_by_user'] = self.context['request'].user
-        result = super(WorkSerializer, self).update(instance, validated_data)
+        user = self.context['request'].user
+        validated_data['updated_by_user'] = user
+
+        # save as a revision
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
+            result = super(WorkSerializer, self).update(instance, validated_data)
 
         # signals
         work_changed.send(sender=self.__class__, work=result, request=self.context['request'])

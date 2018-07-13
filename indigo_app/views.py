@@ -1,9 +1,10 @@
+from itertools import izip
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.views.generic import DetailView, TemplateView
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -113,6 +114,36 @@ class AddWorkView(WorkDetailView):
 class WorkOverviewView(AbstractWorkView):
     js_view = ''
     template_name_suffix = '_overview'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkOverviewView, self).get_context_data(**kwargs)
+
+        work = self.object
+        # most recent first
+        versions = work.versions()
+        import jsonpatch
+        # make pretty differences
+        for curr, prev in izip(versions, versions[1:]):
+            curr_d = curr.field_dict
+            prev_d = prev.field_dict
+
+            for fld in ['updated_at']:
+                for d in [curr_d, prev_d]:
+                    if fld in d:
+                        del d[fld]
+
+            patch = jsonpatch.make_patch(curr_d, prev_d)
+
+            curr.changes = [{
+                'field': p['path'][1:].replace('_', ' '),
+                'path': p['path'],
+                'old': prev_d[p['path'][1:]],
+                'new': curr_d[p['path'][1:]],
+            } for p in patch]
+
+        context['versions'] = versions
+
+        return context
 
 
 class WorkAmendmentsView(AbstractWorkView):

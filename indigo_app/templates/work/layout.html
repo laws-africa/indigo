@@ -20,7 +20,7 @@
 
 
 {% block main-header-title %}
-  <h5 class="main-header-title work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</h5>
+<h5 class="main-header-title"><span class="work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</span> <span class="badge badge-info if-repealed">repealed</span></h5>
 {% endblock %}
 
 

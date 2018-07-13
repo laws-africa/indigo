@@ -35,13 +35,13 @@
 }
 
 #edit-work-view {
-  .repeal-date {
+  .if-repealed {
     display: none;
   }
 
   &.is-repealed {
-    .repeal-date {
-      display: block;
+    .if-repealed {
+      display: initial;
     }
   }
 }

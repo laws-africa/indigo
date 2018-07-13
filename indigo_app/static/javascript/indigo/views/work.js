@@ -155,7 +155,7 @@
         if (isNew) {
           // redirect
           Indigo.progressView.peg();
-          window.location = '/works' + self.model.get('frbr_uri') + '/';
+          window.location = '/works' + self.model.get('frbr_uri') + '/edit/';
         }
       });
     },

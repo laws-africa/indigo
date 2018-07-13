@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^works(?P<frbr_uri>/\S+?)/amendments/$', views.WorkAmendmentsView.as_view(), name='work_amendments'),
     url(r'^works(?P<frbr_uri>/\S+?)/related/$', views.WorkRelatedView.as_view(), name='work_related'),
     url(r'^works(?P<frbr_uri>/\S+?)/import/$', views.ImportDocumentView.as_view(), name='import_document'),
-    url(r'^works(?P<frbr_uri>/\S+?)/edit$', views.WorkDetailView.as_view(), name='work_edit'),
+    url(r'^works(?P<frbr_uri>/\S+?)/edit/$', views.WorkDetailView.as_view(), name='work_edit'),
     url(r'^works(?P<frbr_uri>/\S+?)/$', views.WorkOverviewView.as_view(), name='work'),
 
     url(r'^documents/(?P<doc_id>\d+)/$', views.DocumentDetailView.as_view(), name='document'),

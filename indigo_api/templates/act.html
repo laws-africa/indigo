@@ -5,6 +5,12 @@
   {% language document.django_language %}
 
   <div class="coverpage">
+    {% if document.work.parent_work %}
+      {% block parent_title %}
+        <h1>{{ document.work.parent_work.title }}</h1>
+      {% endblock %}
+    {% endif %}
+
     {% block title %}
       <h1>{{ document.title }}</h1>
     {% endblock %}

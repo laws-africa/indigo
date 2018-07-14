@@ -144,24 +144,10 @@
 
   {% block versions %}
   {% if versions %}
-    <h4 class="mt-5">Versions</h4>
+    <h4 class="mt-5">Recent changes</h4>
 
     {% for ver in versions %}
-      <div class="card mb-3">
-        <div class="card-body">
-          <p>#{{ ver.revision.id }} - {{ ver.revision.date_created|date:"Y-m-d H:i" }} - {{ ver.revision.user }}</p>
-
-          <table class="table table-sm table-borderless">
-          {% for changed in ver.changes %}
-            <tr>
-              <td>{{ changed.field|title }}</td>
-              <td class="bg-danger">{{ changed.old }}</td>
-              <td class="bg-green">{{ changed.new }}</td>
-            </tr>
-          {% endfor %}
-          </table>
-        </div>
-      </div>
+      {% include 'work/_diff_card.html' with version=ver %}
     {% endfor %}
 
   {% endif %}

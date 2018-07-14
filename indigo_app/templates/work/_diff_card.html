@@ -1,0 +1,22 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <a href="#{{ version.id}}-changes" data-toggle="collapse" class="pull-right">{{ version.changes|length }} change{{ version.changes|length|pluralize}}</a>
+    <div>
+      <span class="text-muted">#{{ version.revision.id }}</span> -
+      <span class="time-ago" data-timestamp="{{ version.revision.date_created|date:'c' }}">{{ version.revision.date_created|date:"Y-m-d H:i" }}</span>
+      by {{ version.revision.user }}
+    </div>
+
+    <table class="table table-sm table-borderless diff-table mb-0 mt-3 collapse" id="{{ version.id }}-changes">
+    {% for changed in version.changes %}
+      <tr>
+        <th colspan="2">{{ changed.field|title }}</th>
+      </tr><tr>
+        <td style="width: 48%">{{ changed.old }}</td>
+        <td style="width: 4%" class="text-center">→</td>
+        <td style="width: 48%">{{ changed.new }}</td>
+      </tr>
+    {% endfor %}
+    </table>
+  </div>
+</div>

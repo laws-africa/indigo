@@ -23,6 +23,7 @@
             </div>
           </li>
           <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
+          <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}"><i class="fa fa-history"></i> Changes</a></li>
         {% else %}
           <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work Details</a></li>
         {% endif %}

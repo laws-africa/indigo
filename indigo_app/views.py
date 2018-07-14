@@ -1,10 +1,10 @@
-from itertools import izip
 import json
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
 from django.views.generic import DetailView, TemplateView
+from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect
@@ -14,6 +14,7 @@ from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
+from indigo_app.revisions import decorate_versions
 
 from .forms import DocumentForm
 
@@ -123,30 +124,7 @@ class WorkOverviewView(AbstractWorkView):
         context = super(WorkOverviewView, self).get_context_data(**kwargs)
 
         work = self.object
-        # most recent first
-        versions = work.versions()
-        import jsonpatch
-        # make pretty differences
-        for curr, prev in izip(versions, list(versions[1:]) + [None]):
-            curr_d = curr.field_dict
-            prev_d = {} if prev is None else prev.field_dict
-
-            for fld in ['updated_at', 'updated_by_user']:
-                for d in [curr_d, prev_d]:
-                    if fld in d:
-                        del d[fld]
-
-            patch = jsonpatch.make_patch(curr_d, prev_d)
-
-            curr.previous = prev
-            curr.changes = sorted([{
-                'field': p['path'][1:].replace('_', ' '),
-                'path': p['path'],
-                'old': prev_d.get(p['path'][1:]),
-                'new': curr_d.get(p['path'][1:]),
-            } for p in patch], key=lambda x: x['field'])
-
-        context['versions'] = versions
+        context['versions'] = decorate_versions(work.versions()[:3])
 
         return context
 
@@ -235,6 +213,27 @@ class WorkRelatedView(AbstractWorkView):
         context['commencement'] = commencement
 
         context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)
+
+        return context
+
+
+class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
+    js_view = ''
+    template_name_suffix = '_versions'
+    object_list = None
+    page_size = 20
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkVersionsView, self).get_context_data(**kwargs)
+        work = self.object
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(work.versions(), self.page_size)
+        context.update({
+            'paginator': paginator,
+            'page': page,
+            'is_paginated': is_paginated,
+            'versions': decorate_versions(versions),
+        })
 
         return context
 

@@ -23,7 +23,7 @@
         </tr>
       {% endfor %}
 
-      {% if version.previous %}
+      {% if version.previous and perms.indigo_api.change_work %}
         <tr>
           <td class="pt-3">
             <form action="{% url 'work_restore_version' frbr_uri=work.frbr_uri version_id=version.previous.id %}" method="POST">

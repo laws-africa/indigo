@@ -150,6 +150,10 @@
       {% include 'work/_diff_card.html' with version=ver current=forloop.first %}
     {% endfor %}
 
+    <div>
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All Changes</a>
+    </div>
+
   {% endif %}
   {% endblock %}
 

@@ -1,16 +1,22 @@
+import json
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
+from django.contrib import messages
 from django.views.generic import DetailView, TemplateView
+from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-
+from django.shortcuts import redirect
+from reversion import revisions as reversion
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
+from indigo_app.revisions import decorate_versions
+
 from .forms import DocumentForm
-import json
 
 
 class IndigoJSViewMixin(object):
@@ -114,6 +120,14 @@ class WorkOverviewView(AbstractWorkView):
     js_view = ''
     template_name_suffix = '_overview'
 
+    def get_context_data(self, **kwargs):
+        context = super(WorkOverviewView, self).get_context_data(**kwargs)
+
+        work = self.object
+        context['versions'] = decorate_versions(work.versions()[:3])
+
+        return context
+
 
 class WorkAmendmentsView(AbstractWorkView):
     template_name_suffix = '_amendments'
@@ -201,6 +215,46 @@ class WorkRelatedView(AbstractWorkView):
         context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)
 
         return context
+
+
+class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
+    js_view = ''
+    template_name_suffix = '_versions'
+    object_list = None
+    page_size = 20
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkVersionsView, self).get_context_data(**kwargs)
+        work = self.object
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(work.versions(), self.page_size)
+        context.update({
+            'paginator': paginator,
+            'page': page,
+            'is_paginated': is_paginated,
+            'versions': decorate_versions(versions),
+        })
+
+        return context
+
+
+class RestoreWorkVersionView(AbstractWorkView):
+    http_method_names = ['post']
+
+    def post(self, request, frbr_uri, version_id):
+        work = self.get_object()
+        version = work.versions().filter(pk=version_id).first()
+        if not version:
+            raise Http404()
+
+        with reversion.create_revision():
+            reversion.set_user(request.user)
+            reversion.set_comment("Restored version %s" % version.id)
+            version.revert()
+        messages.success(request, 'Restored version %s' % version.id)
+
+        url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': work.frbr_uri})
+        return redirect(url)
 
 
 class ImportDocumentView(AbstractWorkView):

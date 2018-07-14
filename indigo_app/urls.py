@@ -22,6 +22,8 @@ urlpatterns = [
     url(r'^works(?P<frbr_uri>/\S+?)/related/$', views.WorkRelatedView.as_view(), name='work_related'),
     url(r'^works(?P<frbr_uri>/\S+?)/import/$', views.ImportDocumentView.as_view(), name='import_document'),
     url(r'^works(?P<frbr_uri>/\S+?)/edit/$', views.WorkDetailView.as_view(), name='work_edit'),
+    url(r'^works(?P<frbr_uri>/\S+?)/revisions/$', views.WorkVersionsView.as_view(), name='work_versions'),
+    url(r'^works(?P<frbr_uri>/\S+?)/revisions/(?P<version_id>\d+)/restore$', views.RestoreWorkVersionView.as_view(), name='work_restore_version'),
     url(r'^works(?P<frbr_uri>/\S+?)/$', views.WorkOverviewView.as_view(), name='work'),
 
     url(r'^documents/(?P<doc_id>\d+)/$', views.DocumentDetailView.as_view(), name='document'),

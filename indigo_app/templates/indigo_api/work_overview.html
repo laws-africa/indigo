@@ -11,13 +11,16 @@
   <h3>{{ work.title }}</h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
+  {% block country %}
   <div class="mb-3">
     <p>
       {{ country.name }} · {{ country.code }}
       {% if work.locality %} — {{ locality.name }} · {{ locality.code }}{% endif %}
     </p>
   </div>
+  {% endblock %}
 
+  {% block primary-info %}
   <div class="card mt-4">
     <div class="card-body">
 
@@ -81,8 +84,10 @@
       </div>
     </div>
   </div>
+  {% endblock %}
 
-  <div class="row mb-3 mt-4">
+  {% block points_in_time %}
+  <div class="row mb-3 mt-5">
     <div class="col">
       <h4>Points in Time</h4>
     </div>
@@ -135,4 +140,21 @@
       </div>
     </li>
   </ol>
+  {% endblock %}
+
+  {% block versions %}
+  {% if versions %}
+    <h4 class="mt-5">Recent changes</h4>
+
+    {% for ver in versions %}
+      {% include 'work/_diff_card.html' with version=ver current=forloop.first %}
+    {% endfor %}
+
+    <div>
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All Changes</a>
+    </div>
+
+  {% endif %}
+  {% endblock %}
+
 {% endblock %}

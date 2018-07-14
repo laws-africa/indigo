@@ -1,17 +1,21 @@
 from itertools import izip
+import json
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
+from django.contrib import messages
 from django.views.generic import DetailView, TemplateView
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
+from django.shortcuts import redirect
+from reversion import revisions as reversion
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_app.models import Language, Country
+
 from .forms import DocumentForm
-import json
 
 
 class IndigoJSViewMixin(object):
@@ -134,6 +138,7 @@ class WorkOverviewView(AbstractWorkView):
 
             patch = jsonpatch.make_patch(curr_d, prev_d)
 
+            curr.previous = prev
             curr.changes = sorted([{
                 'field': p['path'][1:].replace('_', ' '),
                 'path': p['path'],
@@ -232,6 +237,25 @@ class WorkRelatedView(AbstractWorkView):
         context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)
 
         return context
+
+
+class RestoreWorkVersionView(AbstractWorkView):
+    http_method_names = ['post']
+
+    def post(self, request, frbr_uri, version_id):
+        work = self.get_object()
+        version = work.versions().filter(pk=version_id).first()
+        if not version:
+            raise Http404()
+
+        with reversion.create_revision():
+            reversion.set_user(request.user)
+            reversion.set_comment("Restored version %s" % version.id)
+            version.revert()
+        messages.success(request, 'Restored version %s' % version.id)
+
+        url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': work.frbr_uri})
+        return redirect(url)
 
 
 class ImportDocumentView(AbstractWorkView):

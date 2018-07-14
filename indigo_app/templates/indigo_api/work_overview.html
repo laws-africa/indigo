@@ -147,7 +147,7 @@
     <h4 class="mt-5">Recent changes</h4>
 
     {% for ver in versions %}
-      {% include 'work/_diff_card.html' with version=ver %}
+      {% include 'work/_diff_card.html' with version=ver current=forloop.first %}
     {% endfor %}
 
   {% endif %}

@@ -51,6 +51,14 @@
 }
 
 .diff-table {
+  thead {
+    th {
+      border-bottom: 1px solid $grey;
+    }
+    td {
+      border-bottom: 1px solid white;
+    }
+  }
   td, th {
     padding: 0px;
   }

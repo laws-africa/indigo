@@ -1,6 +1,7 @@
 {% extends "work/layout.html" %}
 
 {% block view-id %}work-related-view{% endblock %}
+{% block title %}Related Works - {{ block.super }}{% endblock %}
 
 {% block work-content %}
   {% if no_related %}

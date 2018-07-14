@@ -1,6 +1,7 @@
 {% extends "work/layout.html" %}
 
 {% block view-id %}work-amendments-view{% endblock %}
+{% block title %}Points in Time - {{ block.super }}{% endblock %}
 
 {% block work-content %}
   {% if perms.indigo_api.change_amendment %}

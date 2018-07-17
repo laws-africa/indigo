@@ -13,6 +13,7 @@ from reversion import revisions as reversion
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
+from indigo_api.signals import work_changed
 from indigo_app.models import Language, Country
 from indigo_app.revisions import decorate_versions
 
@@ -252,6 +253,9 @@ class RestoreWorkVersionView(AbstractWorkView):
             reversion.set_comment("Restored version %s" % version.id)
             version.revert()
         messages.success(request, 'Restored version %s' % version.id)
+
+        # signals
+        work_changed.send(sender=work.__class__, work=work, request=request)
 
         url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': work.frbr_uri})
         return redirect(url)

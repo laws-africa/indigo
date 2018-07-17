@@ -1,4 +1,4 @@
-{% load documents i18n %}
+{% load i18n %}
 
 {% block coverpage %}
 {% if coverpage %}
@@ -16,13 +16,9 @@
     {% endblock %}
 
     {% block subtitle %}
-    <h2>
-      {% with type=document|friendly_document_type %}
-        {% trans type as t_type %}
-        {% if type != "Chapter" %}
-          {% blocktrans with number=document|friendly_document_number year=document.year type=t_type %}{{ type }} {{ number }} of {{ year }}{% endblocktrans %}
-        {% else %}
-          {{ t_type }} {{ document|friendly_document_number }}
+      {% with document.work.numbered_title as subt %}
+        {% if subt %}
+          <h2>{{ subt }}</h2>
         {% endif %}
       {% endwith %}
     </h2>

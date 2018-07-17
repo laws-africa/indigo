@@ -1,5 +1,5 @@
 {% extends 'act.html' %}
-{% load documents i18n pl_tags %}
+{% load i18n indigo_pl %}
 
 {% block title %}
   <h2 class="publication">
@@ -11,9 +11,7 @@
   </h2>
 
   <h2 class="doctype">
-    {% with type=document|friendly_document_type %}
-      {% trans type %}
-    {% endwith %}
+    {% trans document.work.friendly_type %}
   </h2>
 
   <h2 class="act-date">

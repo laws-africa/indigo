@@ -12,3 +12,4 @@ class IndigoZAAppConfig(AppConfig):
         import indigo_za.refs  # noqa
         import indigo_za.terms  # noqa
         import indigo_za.toc  # noqa
+        import indigo_za.work_detail  # noqa

@@ -663,7 +663,7 @@ class WorkSerializer(serializers.ModelSerializer):
         result = super(WorkSerializer, self).create(validated_data)
 
         # signals
-        work_changed.send(sender=self.__class__, work=result, request=self.context['request'])
+        work_changed.send(sender=result.__class__, work=result, request=self.context['request'])
 
         return result
 

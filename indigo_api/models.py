@@ -198,6 +198,13 @@ class Work(models.Model):
         if plugin:
             return plugin.work_numbered_title(self)
 
+    def friendly_type(self):
+        """ Return a friendly document type for this work, such as "Act" or "By-law".
+        """
+        plugin = plugins.for_work('work-detail', self)
+        if plugin:
+            return plugin.work_friendly_type(self)
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

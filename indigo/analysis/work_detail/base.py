@@ -19,21 +19,31 @@ class BaseWorkDetail(LocaleBasedMatcher):
         """
         uri = work.work_uri
         number = work.number
-        work_type = 'Act'
+        work_type = self.work_friendly_type(work)
 
         # Should be in a locale-specific place
         if uri.number.startswith('cap'):
             # eg. Chapter 2
-            work_type = 'Chapter'
             number = number[3:]
             return _('%(type)s %(number)s') % {'type': _(work_type), 'number': number}
+
+        return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number, 'year': work.year}
+
+    def work_friendly_type(self, work):
+        """ Return a friendly document type for this work, such as "Act" or "By-law".
+        """
+        uri = work.work_uri
+
+        # TODO: Should be in a locale-specific place
+        if uri.number.startswith('cap'):
+            # eg. Chapter 2
+            return _('Chapter')
 
         elif uri.subtype:
             # use the subtype full name, if we have it
             subtype = Subtype.objects.filter(abbreviation=uri.subtype).first()
             if subtype:
-                work_type = subtype.name
-            else:
-                work_type = uri.subtype.upper()
+                return _(subtype.name)
+            return _(uri.subtype.upper())
 
-        return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number, 'year': work.year}
+        return _('Act')

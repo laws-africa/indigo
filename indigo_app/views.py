@@ -261,6 +261,24 @@ class RestoreWorkVersionView(AbstractWorkView):
         return redirect(url)
 
 
+class BatchAddWorkView(AbstractAuthedIndigoView, TemplateView):
+    template_name = 'work/new_batch.html'
+    # permissions
+    permission_required = ('indigo_api.add_work',)
+
+    def get_context_data(self, **kwargs):
+        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+
+        # TODO: handle form submission
+        # TODO: create the works
+        # TODO: render the response
+
+        works = []
+        context['works'] = works
+
+        return context
+
+
 class ImportDocumentView(AbstractWorkView):
     template_name = 'work/import_document.html'
     permission_required = ('indigo_api.view_work', 'indigo_api.add_document')

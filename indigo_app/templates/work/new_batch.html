@@ -1,0 +1,11 @@
+{% extends "main.html" %}
+
+{% block content %}
+<div class="container">
+  <ul>
+  {% for work in works %}
+    <li><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a></li>
+  {% endfor %}
+  </ul>
+</div>
+{% endblock %}

@@ -2,6 +2,13 @@
 
 {% load indigo_workflow viewflow %}
 
+{% block work-sidebar-nav %}
+  {{ block.super }}
+  {% if work.pk %}
+    <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_workflows' %}active{% endif %}" href="{% url 'workflow:work_workflows' frbr_uri=work.frbr_uri %}"><i class="fa fa-tasks"></i> Workflows</a></li>
+  {% endif %}
+{% endblock %}
+
 {% block navbar-user %}
   {% if work and work.pk %}
 

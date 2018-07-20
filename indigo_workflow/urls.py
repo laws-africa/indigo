@@ -15,4 +15,6 @@ urlpatterns = [
     url(r'^createworks/', include(FlowViewSet(CreateWorksFlow).urls, namespace=ns_map[CreateWorksFlow])),
     url(r'^reviewwork/', include(FlowViewSet(ReviewWorkFlow).urls, namespace=ns_map[ReviewWorkFlow])),
     url(r'^tasks/', views.TaskListView.as_view(ns_map=ns_map), name='tasks-dashboard'),
+
+    url(r'^works(?P<frbr_uri>/\S+?)/workflows/$', views.WorkWorkflowsView.as_view(), name='work_workflows'),
 ]

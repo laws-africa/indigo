@@ -40,14 +40,14 @@ def work_workflows(work, finished, limit=None):
     for flow_class in single_work_flows:
         process_class = flow_class.process_class
 
-        query = process_class.objects.filter(work=work).order_by('-created')
+        query = process_class.objects.filter(work=work).order_by('-finished' if finished else '-created')
         query = query.filter(process_ptr__status=STATUS.DONE if finished else STATUS.NEW)
         if limit:
             query = query[:limit]
 
         flows.extend(query)
 
-    flows.sort(key=lambda p: p.created, reverse=True)
+    flows.sort(key=lambda p: p.finished if finished else p.created, reverse=True)
     if limit:
         flows = flows[:limit]
 

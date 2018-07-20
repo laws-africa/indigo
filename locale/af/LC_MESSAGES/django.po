@@ -52,7 +52,7 @@ msgstr ""
 #: indigo/analysis/work_detail/base.py:39
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
-msgstr ""
+msgstr "%(type)s %(number)s van %(year)s"
 
 #: indigo_api/templates/_amendments.html:9
 #, python-format

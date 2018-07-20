@@ -4,18 +4,16 @@
 {% block title %}Workflows - {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  <h4>Active Workflows</h4>
-
   <div class="card mb-5">
+    <h5 class="card-header">Active Workflows</h3>
     <div class="card-body">
       {% work_workflows work=work finished=False as finished_workflows %}
       {% include 'indigo_api/_work_flow_table.html' with workflows=finished_workflows finished=False %}
     </div>
   </div>
 
-  <h4>Finished Workflows</h4>
-
   <div class="card">
+    <h5 class="card-header">Finished Workflows</h3>
     <div class="card-body">
       {% work_workflows work=work finished=True as finished_workflows %}
       {% include 'indigo_api/_work_flow_table.html' with workflows=finished_workflows finished=True %}

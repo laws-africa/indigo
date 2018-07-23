@@ -23,7 +23,7 @@
                   {% if expressions %}
                     <div class="dropdown-divider"></div>
                     {% for doc in expressions reversed %}
-                      <a class="dropdown-item" href="{% url 'document' doc_id=doc.id %}">{{ doc.expression_date|date:"Y-m-d" }}</a>
+                      <a class="dropdown-item" href="{% url 'document' doc_id=doc.id %}">{{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language }}</a>
                     {% endfor %}
                   {% endif %}
                 {% endwith %}

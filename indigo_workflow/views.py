@@ -67,5 +67,37 @@ class StartPlaceWorkflowView(views.StartFlowMixin, FormView):
         return context
 
 
+# TODO
+class StartWorkWorkflowView(views.StartFlowMixin, FormView):
+    template_name = 'indigo_workflow/general/start_work.html'
+    form_class = ImplicitPlaceProcessForm
+
+    def get_form_kwargs(self):
+        kwargs = super(StartPlaceWorkflowView, self).get_form_kwargs()
+        # bind the form to this process instance
+        kwargs['instance'] = self.activation.process
+        return kwargs
+
+    def get_initial(self):
+        return {
+            'country': self.request.user.editor.country,
+        }
+
+    def form_valid(self, form):
+        form.save()
+        return super(StartPlaceWorkflowView, self).form_valid(form)
+
+    def get_context_data(self, *args, **kwargs):
+        context = super(StartPlaceWorkflowView, self).get_context_data(*args, **kwargs)
+
+        # TODO
+
+        countries = context['form'].fields['country'].queryset.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
+        context['countries_json'] = json.dumps({c.code: c.as_json() for c in countries})
+        context['js_view'] = 'StartPlaceWorkflowView'
+
+        return context
+
+
 class WorkWorkflowsView(AbstractWorkView):
     template_name_suffix = '_workflows'

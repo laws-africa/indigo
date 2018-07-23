@@ -6,6 +6,7 @@ from viewflow.flow.viewset import FlowViewSet as BaseFlowViewSet
 from viewflow.flow.views.mixins import FlowListMixin
 from viewflow.models import Task
 
+from indigo_app.views import AbstractWorkView
 from .forms import ImplicitPlaceProcessForm
 
 
@@ -64,3 +65,7 @@ class StartPlaceWorkflowView(views.StartFlowMixin, FormView):
         context['js_view'] = 'StartPlaceWorkflowView'
 
         return context
+
+
+class WorkWorkflowsView(AbstractWorkView):
+    template_name_suffix = '_workflows'

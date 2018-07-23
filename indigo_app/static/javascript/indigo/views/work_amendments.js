@@ -99,7 +99,8 @@
 
       this.$('.work-amendments').html(this.template({
         amendments: amendments,
-        readonly: Indigo.user.hasPerm('indigo_api.can_change_amendment'),
+        can_add: Indigo.user.hasPerm('indigo_api.add_amendment'),
+        can_edit: Indigo.user.hasPerm('indigo_api.change_amendment'),
         work: this.model.toJSON(),
       }));
     },

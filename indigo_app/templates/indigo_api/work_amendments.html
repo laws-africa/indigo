@@ -16,17 +16,20 @@
   {% verbatim %}
 
   <ol class="timeline">
+    {{#if can_add}}
     <li class="timeline-item card">
       <div class="card-body">
         <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
       </div>
     </li>
+    {{/if}}
+
     {{#each amendments}}
       <li class="timeline-item card">
         <h6 class="timeline-date">{{ date }}</h6>
 
         <div class="card-body">
-          {{#unless ../readonly}}{{#unless initial}}
+          {{#if ../can_edit}}{{#unless initial}}
           <div class="dropdown pull-right">
             <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
             <div class="dropdown-menu">
@@ -34,7 +37,7 @@
               <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
             </div>
           </div>
-          {{/unless}}{{/unless}}
+          {{/unless}}{{/if}}
 
           {{#if initial}}
             <h6>Initial publication</h6>

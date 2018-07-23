@@ -48,7 +48,7 @@
           <div class="documents">
             {{#if documents}}
               {{#each documents}}
-                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
+                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a> · {{ language }}</div>
               {{/each}}
             {{else}}
               <span class="text-muted">No editable version at this date</span>

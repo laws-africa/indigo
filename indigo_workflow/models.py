@@ -27,7 +27,7 @@ class ReviewWorkProcess(Process):
     work = models.ForeignKey('indigo_api.work', null=False, related_name='review_work_tasks', help_text='Work to review')
 
 
-class CreatePointInTime(Process):
+class CreatePointInTimeProcess(Process):
     """ Process for creating a new point-in-time version of a particular work.
     """
     work = models.ForeignKey('indigo_api.work', null=False, related_name='create_pit_tasks', help_text='Work to create Point in Time for')

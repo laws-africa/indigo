@@ -159,7 +159,7 @@ class CreatePointInTimeFlow(Flow):
     summary_template = "Create a new Point in Time for {{ process.work.frbr_uri }} at {{ process.date|date:'Y-m-d' }} in {{ language.name }}"
 
     start = (
-        flow.Start(views.StartWorkWorkflowView)
+        flow.Start(views.StartCreatePointInTimeView)
         .Permission('indigo_api.add_amendment')
         .Next(this.instructions)
     )

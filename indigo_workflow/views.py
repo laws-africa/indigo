@@ -34,7 +34,7 @@ class TaskListView(TemplateView, FlowListMixin):
         context_data['available_tasks'] = Task.objects.queue(self.flows, self.request.user).order_by('-created')
         context_data['available_flows'] = [
             f for f in self.flows
-            if hasattr(f.start, 'can_execute') and f.start.can_execute(self.request.user)]
+            if getattr(f, 'start_from_ui', False) and hasattr(f.start, 'can_execute') and f.start.can_execute(self.request.user)]
         return context_data
 
 

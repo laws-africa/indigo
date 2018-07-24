@@ -14,6 +14,7 @@ class ListWorksFlow(Flow):
     """
     process_class = ImplicitPlaceProcess
     summary_template = "List works for {{ process.place_name }}"
+    start_from_ui = True
 
     start = (
         flow.Start(views.StartPlaceWorkflowView)
@@ -59,6 +60,7 @@ class CreateWorksFlow(Flow):
     """
     process_class = ImplicitPlaceProcess
     summary_template = "Create works for {{ process.place_name }}"
+    start_from_ui = True
 
     start = (
         flow.Start(views.StartPlaceWorkflowView)
@@ -153,10 +155,11 @@ def on_work_changed(sender, work, request, **kwargs):
 
 
 class CreatePointInTimeFlow(Flow):
-    """ Create a new point in time for a work.
+    """ Create a new point in time for a work
     """
     process_class = CreatePointInTimeProcess
     summary_template = "Create a new point in time for {{ process.work.frbr_uri }} at {{ process.date|date:'Y-m-d' }} in {{ process.language.language.name_en }}"
+    start_from_ui = False
 
     start = (
         flow.Start(views.StartCreatePointInTimeView)

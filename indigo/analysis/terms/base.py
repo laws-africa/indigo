@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 import re
 import logging
 from itertools import chain
@@ -25,7 +26,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
     open_quote = '"'
     close_quote = '"'
 
-    ontology_template = "/ontology/term/this.{language}.{term}"
+    ontology_template = u"/ontology/term/this.{language}.{term}"
 
     @property
     def language(self):

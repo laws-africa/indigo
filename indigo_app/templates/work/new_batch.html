@@ -2,10 +2,49 @@
 
 {% block content %}
 <div class="container">
-  <ul>
-  {% for work in works %}
-    <li><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a></li>
-  {% endfor %}
-  </ul>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th style="width: 10%">Status</th>
+        <th style="width: 10%">Row</th>
+        <th>Title / Error message</th>
+        <th>Uri</th>
+        <th>User</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for work in works %}
+        <tr>
+          <td>
+            {{ work.status }}
+          </td>
+          <td>
+            {{ work.row }}
+          </td>
+          <td>
+            {% if work.error_message %}
+            {{ work.error_message }}
+            {% else %}
+            <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.title }}</a>
+            {% endif %}
+          </td>
+          <td>
+            {% if work.error_message %}
+            —
+            {% else %}
+            <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
+            {% endif %}
+          </td>
+          <td>
+            {{ work.work.created_by_user }}
+            {{ user.get_username }}
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+
+  </table>
 </div>
 {% endblock %}

@@ -1,3 +1,5 @@
+
+
 import json
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -9,6 +11,12 @@ from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect
 from reversion import revisions as reversion
+
+from cobalt.act import FrbrUri
+from django.contrib.auth.models import User
+from django.contrib.auth import get_user
+from django.core.exceptions import ValidationError
+from django.http import HttpRequest
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -269,14 +277,132 @@ class BatchAddWorkView(AbstractAuthedIndigoView, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(BatchAddWorkView, self).get_context_data(**kwargs)
 
-        # TODO: handle form submission
-        # TODO: create the works
-        # TODO: render the response
+        def get_works():
 
-        works = []
+            table = get_table()
+            works = []
+
+            for idx, row in enumerate(table):
+                # TODO: match header row contents rather than using column numbers
+                row_number = idx+1
+
+                info = {
+                    'row': row_number,
+                }
+
+                frbr_uri = get_frbr_uri(row)
+
+                # TODO: fix get_uri to return uri as false if validation error?
+
+                if frbr_uri:
+
+                    try:
+                        work = Work.objects.get(frbr_uri=frbr_uri)
+                        info['work'] = work
+                        info['status'] = 2
+
+                    # TODO one day: also mark another work as duplicate if user is trying to import two of the same (currently only the second one will be '2')
+
+                    except Work.DoesNotExist:
+
+                        work = Work()
+
+                        work.frbr_uri = frbr_uri
+                        work.title = row[8]
+                        work.country = row[9]
+                        work.publication_name = row[10]
+                        work.publication_number = row[11]
+                        work.publication_date = row[12]
+                        work.commencement_date = row[13]
+                        work.assent_date = row[14]
+                        # work.created_by_user = gett_user()
+                        # work.updated_by_user = gett_user()
+
+                        info['work'] = work
+
+                        try:
+                            work.save()
+                            info['status'] = 1
+
+                        except ValidationError as e:
+                            info['status'] = 3
+                            info['error_message'] = e.message
+
+                works.append(info)
+
+            return works
+
+        def get_table():
+            # get list of lists where each inner list is a row in a spreadsheet
+            # use gspread
+            # TODO: unfake get_table()
+            # fake table!
+            return [
+                ['ZA', 'WC011', 'Act', 'By-law', '', '', 'liquor-trading-hours', '', 'By-law on liquor trading days and hours of Matzikama Municipality', 'ZA', 'Western Cape Provincial Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
+                ['ZA', '', 'Act', '', '', 'xyz', 'liquor', '', 'By-law on liquor trading', 'ZA', 'Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
+                ['ZA', '', 'Act', '', '', '2014', '6', '', 'The Cake Act', 'ZA', 'National Gazette', '40125', '2016-03-17', '', '', '', '', '', ''],
+            ]
+
+        def get_frbr_uri(row):
+            # TODO: also make less brittle (check header row instead)
+            # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete to, of, for, etc)
+            country = row[0].lower()
+            locality = row[1].lower()
+            doctype = row[2].lower()
+            subtype = row[3].lower()
+            actor = row[4].lower()
+            date = row[5]
+            number = row[6].lower()
+
+            try:
+                frbr_uri = FrbrUri(country=country, locality=locality, doctype=doctype, subtype=subtype, actor=actor, date=date, number=number)
+                return frbr_uri.work_uri()
+
+            except ValidationError as e:
+                return 'frbr uri message:', e.message
+
+
+        # def gett_user():
+        # spoiler: this doesn't work
+        #     request = HttpRequest()
+            # TODO: get current user
+            # return get_user(request)
+
+        works = get_works()
+
         context['works'] = works
 
         return context
+
+    # TODO: handle form submission
+    # TODO: create the works
+    # TODO: render the response
+
+
+""" each work should have this dict structure:
+        works = [
+            {
+                'row': 1,
+                'title': 'Hello',
+                'status': 3,                    # failure - duplicate
+                'frbr_uri': '/za/act/2016/4',   # shouldn't link in html
+            },
+            {
+                'row': 2,
+                'title': 'Hi again',
+                'status': 1,                    # sucess
+                'frbr_uri': '/za/act/2016/5',   # _should_ link in html
+            },
+            {
+                'row': 3,
+                'title': 'One more',
+                'status': 2,                    # failure - general
+                'frbr_uri': '/za/act/2017/-',   # shouldn't link in html
+            },
+        ]
+"""
+
+
 
 
 class ImportDocumentView(AbstractWorkView):

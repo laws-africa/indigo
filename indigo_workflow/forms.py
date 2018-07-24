@@ -34,7 +34,7 @@ class CreatePointInTimeProcessForm(forms.ModelForm):
         # ensure amendment is bound to the work at the right date
         if cleaned_data.get('amendment'):
             amendment = cleaned_data['amendment']
-            if (amendment.work != cleaned_data['work'] or amendment.date != cleaned_data['date']):
+            if (amendment.amended_work != cleaned_data['work'] or amendment.date != cleaned_data['date']):
                 del cleaned_data['amendment']
 
         # try to find an amendment matching the given date

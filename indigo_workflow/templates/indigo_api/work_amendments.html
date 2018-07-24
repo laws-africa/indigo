@@ -15,18 +15,26 @@
           <input type="hidden" name="_viewflow_activation-started" value="{% now 'Y-m-d H:i:s.u' %}" id="id__viewflow_activation-started">
           <input type="hidden" name="work" value="{{ work.pk }}">
           <input type="hidden" name="amendment" value="">
-          <input type="hidden" name="date" value="2018-01-01">
 
           <div class="modal-header">
-            <h5 class="modal-title">New Workflow - Create a Point in Time for This Work</h5>
+            <h5 class="modal-title">New Workflow</h5>
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
           </div>
 
           <div class="modal-body">
+            <h5 class="mb-3">To create a point in time for this work:</h5>
+
+            <div class="form-group">
+              <label for="wf_date">Point in Time Date</label>
+              <input type="text" readonly class="form-control-plaintext" id="wf_date" name="date">
+            </div>
+
             <div class="form-group">
               <label for="wf_language">Language</label>
-              <select name="language" id="wf_language" class="form-control">
-                <option value="1">English</option>
+              <select name="language" id="wf_language" class="form-control" required>
+                {% for lang in indigo_languages.all %}
+                  <option value="{{ lang.id }}">{{ lang.language.name_en }}</option>
+                {% endfor %}
               </select>
             </div>
           </div>

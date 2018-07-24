@@ -156,7 +156,7 @@ class CreatePointInTimeFlow(Flow):
     """ Create a new Point in Time for a work.
     """
     process_class = CreatePointInTimeProcess
-    summary_template = "Create a new Point in Time for {{ process.work.frbr_uri }} at {{ process.date|date:'Y-m-d' }} in {{ language.name }}"
+    summary_template = "Create a new point in time for {{ process.work.frbr_uri }} at {{ process.date|date:'Y-m-d' }} in {{ process.language.language.name_en }}"
 
     start = (
         flow.Start(views.StartCreatePointInTimeView)
@@ -169,7 +169,7 @@ class CreatePointInTimeFlow(Flow):
         flow.View(
             views.HumanInteractionView,
             task_title="Consolidate or import a point in time version of the work",
-            task_description=format_html('Visit the work\'s point in time page. Consolidate or import a version at the specific date, in the specific language.'),
+            task_description=format_html('Visit the work\'s point in time page. Consolidate or import a version at the specified date, in the specified language.'),
             task_result_summary="{{ flow_task.task_description }}",
         )
         .Permission('indigo_api.add_document')

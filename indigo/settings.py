@@ -143,6 +143,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'indigo_app.context_processors.general',
+                'indigo_app.context_processors.models',
             ]
         }
     }

@@ -137,15 +137,15 @@ $(function() {
 
   // what views must we load?
   var views = ($('body').data('backbone-view') || '').split(" ");
-  views.forEach(function(name) {
+  Indigo.views = _.reject(_.map(views, function(name) {
     if (name && Indigo[name]) {
       var view = new Indigo[name]();
-
-      // first one is the primary view
       Indigo.view = Indigo.view || view;
-      view.render();
+      return view;
     }
-  });
+  }), function(v) { return !v; });
+  _.invoke(Indigo.views, 'render');
+
 
   // osx vs windows
   var isOSX = navigator.userAgent.indexOf("OS X") > -1;

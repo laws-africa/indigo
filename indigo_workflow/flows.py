@@ -153,7 +153,7 @@ def on_work_changed(sender, work, request, **kwargs):
 
 
 class CreatePointInTimeFlow(Flow):
-    """ Create a new Point in Time for a work.
+    """ Create a new point in time for a work.
     """
     process_class = CreatePointInTimeProcess
     summary_template = "Create a new point in time for {{ process.work.frbr_uri }} at {{ process.date|date:'Y-m-d' }} in {{ process.language.language.name_en }}"

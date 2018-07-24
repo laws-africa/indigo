@@ -35,3 +35,5 @@ class CreatePointInTimeProcess(Process):
     language = models.ForeignKey('indigo_app.language', null=False, related_name='+')
     # the amendment may be null for initial imports
     amendment = models.ForeignKey('indigo_api.amendment', null=True, related_name='create_pit_tasks')
+
+    approved = models.BooleanField(default=False)

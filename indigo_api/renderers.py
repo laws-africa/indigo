@@ -199,7 +199,7 @@ class HTMLRenderer(object):
             try:
                 log.debug("Looking for %s" % option)
                 if get_template(option):
-                    log.debug("Using xsl %s" % option)
+                    log.debug("Using template %s" % option)
                     return option
             except TemplateDoesNotExist:
                 pass

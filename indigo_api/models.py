@@ -628,28 +628,6 @@ class Document(models.Model):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
 
     @classmethod
-    def decorate_repeal(cls, documents):
-        """ Decorate the repeal item of each document (if set) with the
-        document id of the repealing document.
-        """
-        # uris that amended docs in the set
-        uris = set(d.repeal.repealing_uri for d in documents if d.repeal)
-        repealing_docs = Document.objects.undeleted().no_xml()\
-            .filter(frbr_uri__in=list(uris))\
-            .order_by('expression_date')\
-            .all()
-
-        for doc in documents:
-            if doc.repeal:
-                repeal = doc.repeal
-
-                for repealing in repealing_docs:
-                    # match on the URI and the expression date
-                    if repealing.frbr_uri == repeal.repealing_uri and repealing.expression_date == repeal.date:
-                        repeal.repealing_document = repealing
-                        break
-
-    @classmethod
     def decorate_amended_versions(cls, documents):
         """ Decorate each documents with ``_amended_versions``, a (possibly empty)
         list of all the documents which form the same group of amended versions.

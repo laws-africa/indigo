@@ -89,7 +89,8 @@ class AmendmentEventSerializer(serializers.Serializer):
 
 
 class RepealSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.act.RepealEvent`
+    """ Serializer matching :class:`cobalt.act.RepealEvent`, for use describing
+    the repeal on a published document.
     """
 
     date = serializers.DateField()
@@ -98,21 +99,6 @@ class RepealSerializer(serializers.Serializer):
     """ Title of repealing document """
     repealing_uri = serializers.CharField()
     """ FRBR URI of repealing document """
-    repealing_id = serializers.SerializerMethodField()
-    """ ID of the repealing document, if available """
-
-    def validate_empty_values(self, data):
-        # we need to override this because for some reason the default
-        # value given by DRF if this field isn't provided is {}, not None,
-        # and we need to indicate that that is allowed.
-        # see https://github.com/tomchristie/django-rest-framework/pull/2796
-        if not data:
-            return True, data
-        return super(RepealSerializer, self).validate_empty_values(data)
-
-    def get_repealing_id(self, instance):
-        if hasattr(instance, 'repealing_document') and instance.repealing_document is not None:
-            return instance.repealing_document.id
 
 
 class AttachmentSerializer(serializers.ModelSerializer):
@@ -241,7 +227,6 @@ class DocumentListSerializer(serializers.ListSerializer):
         # than doing each document one at a time and going to the DB
         # hundreds of times.
         Document.decorate_amended_versions(iterable)
-        Document.decorate_repeal(iterable)
 
         return super(DocumentListSerializer, self).to_representation(data)
 
@@ -485,7 +470,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     def to_representation(self, instance):
         if not self.context.get('many', False):
             Document.decorate_amended_versions([instance])
-            Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)
 
 

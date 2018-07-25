@@ -1,5 +1,3 @@
-
-
 import json
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -16,6 +14,7 @@ from cobalt.act import FrbrUri
 from django.contrib.auth.models import User
 from django.contrib.auth import get_user
 from django.core.exceptions import ValidationError
+from django.views.generic import FormView
 from django.http import HttpRequest
 
 from indigo_api.models import Document, Subtype, Work, Amendment
@@ -25,7 +24,7 @@ from indigo_api.signals import work_changed
 from indigo_app.models import Language, Country
 from indigo_app.revisions import decorate_versions
 
-from .forms import DocumentForm
+from .forms import DocumentForm, BatchCreateWorkForm
 
 
 class IndigoJSViewMixin(object):
@@ -269,17 +268,15 @@ class RestoreWorkVersionView(AbstractWorkView):
         return redirect(url)
 
 
-class BatchAddWorkView(AbstractAuthedIndigoView, TemplateView):
+class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
     template_name = 'work/new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
+    form_class = BatchCreateWorkForm
 
-    def get_context_data(self, **kwargs):
-        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+    def form_valid(self, form):
+        def get_works(table):
 
-        def get_works():
-
-            table = get_table()
             works = []
 
             for idx, row in enumerate(table):
@@ -332,7 +329,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, TemplateView):
 
             return works
 
-        def get_table():
+        def get_table(spreadsheet_url):
             # get list of lists where each inner list is a row in a spreadsheet
             # use gspread
             # TODO: unfake get_table()
@@ -361,22 +358,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, TemplateView):
             except ValidationError as e:
                 return 'frbr uri message:', e.message
 
-
         # def gett_user():
         # spoiler: this doesn't work
         #     request = HttpRequest()
             # TODO: get current user
             # return get_user(request)
 
-        works = get_works()
-
-        context['works'] = works
-
-        return context
-
-    # TODO: handle form submission
-    # TODO: create the works
-    # TODO: render the response
+        table = get_table(form.cleaned_data['spreadsheet_url'])
+        works = get_works(table)
+        return self.render_to_response(self.get_context_data(works=works))
 
 
 """ each work should have this dict structure:

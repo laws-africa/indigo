@@ -38,8 +38,16 @@ class DocumentAPITest(APITestCase):
         id = response.data['id']
         assert_not_in('content', response.data)
         assert_not_in('toc', response.data)
-        assert_equal(response.data['content_url'], 'http://testserver/api/documents/%s/content' % id)
-        assert_equal(response.data['toc_url'], 'http://testserver/api/documents/%s/toc' % id)
+
+        links = response.data['links']
+        links.sort(key=lambda k: k['title'])
+
+        assert_equal(links, [
+            {'href': 'http://testserver/api/documents/%s/annotations' % id, 'rel': 'annotations', 'title': 'Annotations'},
+            {'href': 'http://testserver/api/documents/%s/attachments' % id, 'rel': 'attachments', 'title': 'Attachments'},
+            {'href': 'http://testserver/api/documents/%s/content' % id, 'rel': 'content', 'title': 'Content'},
+            {'href': 'http://testserver/api/documents/%s/toc' % id, 'rel': 'toc', 'title': 'Table of Contents'},
+        ])
 
         response = self.client.get('/api/documents/%s/content' % response.data['id'])
         assert_equal(response.status_code, 200)

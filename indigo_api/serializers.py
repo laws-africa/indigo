@@ -235,10 +235,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
-    content_url = serializers.SerializerMethodField()
-    """ A URL for the entire content of the document. The content isn't included in the
-    document description because it could be huge. """
-
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
 
@@ -282,7 +278,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'content', 'content_url', 'file', 'file_options', 'title', 'draft',
+            'content', 'file', 'file_options', 'title', 'draft',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components
@@ -296,11 +292,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'published_url', 'links',
         )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
-
-    def get_content_url(self, doc):
-        if not doc.pk:
-            return None
-        return reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk})
 
     def get_published_url(self, doc, with_date=False):
         if doc.draft:
@@ -332,6 +323,13 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def get_links(self, doc):
         return [
+            {
+                # A URL for the entire content of the document.
+                # The content isn't included in the document description because it could be huge.
+                "rel": "content",
+                "title": "Content",
+                "href": reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk}),
+            },
             {
                 "rel": "toc",
                 "title": "Table of Contents",

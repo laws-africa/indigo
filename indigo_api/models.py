@@ -22,7 +22,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
+from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
 from .utils import language3_to_2
@@ -375,7 +375,7 @@ class Document(models.Model):
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     # caching attributes
-    _work_uri = None
+    _expression_uri = None
 
     @property
     def doc(self):
@@ -432,10 +432,18 @@ class Document(models.Model):
 
     @property
     def work_uri(self):
-        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this document universally. """
-        if self._work_uri is None:
-            self._work_uri = FrbrUri.parse(self.frbr_uri)
-        return self._work_uri
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """
+        return self.work.work_uri
+
+    @property
+    def expression_uri(self):
+        """ The FRBR Expression URI as a :class:`FrbrUri` instance that uniquely identifies this expression universally. """
+        if self._expression_uri is None:
+            self._expression_uri = self.work_uri.clone()
+            self._expression_uri.language = self.language
+            if self.expression_date:
+                self._expression_uri.expression_date = '@' + datestring(self.expression_date)
+        return self._expression_uri
 
     @property
     def commencement_date(self):

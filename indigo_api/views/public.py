@@ -9,12 +9,12 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import AllowAny
 from cobalt import FrbrUri
 
-from ..serializers import DocumentSerializer
+from ..serializers import PublishedDocumentSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..atom import AtomRenderer, AtomFeed
 
 from .documents import DocumentViewMixin
-from .attachments import view_attachment_by_filename
+from .attachments import view_attachment_by_filename, MediaViewSet
 
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -44,7 +44,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # only published documents
     queryset = DocumentViewMixin.queryset.published()
 
-    serializer_class = DocumentSerializer
+    serializer_class = PublishedDocumentSerializer
     pagination_class = PageNumberPagination
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
@@ -103,7 +103,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         document = self.get_object()
 
         # asking for a media attachment?
-        if self.component == 'media':
+        if self.component == 'media' and self.subcomponent:
             filename = self.subcomponent
             if self.format_kwarg:
                 filename += '.' + self.format_kwarg
@@ -124,6 +124,15 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             if (self.component, format) == ('main', 'json'):
                 serializer = self.get_serializer(document)
                 return Response(serializer.data)
+
+            # media attachments
+            if (self.component, format) == ('media', 'json'):
+                view = MediaViewSet()
+                view.kwargs = {'document_id': document.id}
+                view.request = request
+                view.document = document
+                view.initial(request)
+                return view.list(request)
 
             # the item we're interested in
             self.element = document.doc.components().get(self.component)

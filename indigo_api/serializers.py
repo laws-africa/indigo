@@ -183,6 +183,18 @@ class AttachmentSerializer(serializers.ModelSerializer):
         return fname.replace('/', '')
 
 
+class MediaAttachmentSerializer(AttachmentSerializer):
+    class Meta:
+        model = Attachment
+        fields = ('url', 'filename', 'mime_type', 'size')
+        read_only_fields = fields
+
+    def get_url(self, instance):
+        uri = instance.document.expression_uri.expression_uri()[1:]
+        uri = reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
+        return uri + '/media/' + instance.filename
+
+
 class UserSerializer(serializers.ModelSerializer):
     display_name = serializers.SerializerMethodField()
 
@@ -242,18 +254,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ A URL for the entire content of the document. The content isn't included in the
     document description because it could be huge. """
 
-    toc_url = serializers.SerializerMethodField()
-    """ A URL for the table of content of the document. The TOC isn't included in the
-    document description because it could be huge and requires parsing the XML. """
-
     published_url = serializers.SerializerMethodField()
     """ Public URL of a published document. """
-
-    attachments_url = serializers.SerializerMethodField()
-    """ URL of document attachments. """
-
-    annotations_url = serializers.SerializerMethodField()
-    """ URL of document annotations. """
 
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
@@ -304,7 +306,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'stub', 'tags', 'amendments', 'amended_versions',
             'repeal',
 
-            'published_url', 'toc_url', 'attachments_url', 'links', 'annotations_url',
+            'published_url', 'links',
         )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
@@ -312,21 +314,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if not doc.pk:
             return None
         return reverse('document-content', request=self.context['request'], kwargs={'pk': doc.pk})
-
-    def get_toc_url(self, doc):
-        if not doc.pk:
-            return None
-        return reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk})
-
-    def get_attachments_url(self, doc):
-        if not doc.pk:
-            return None
-        return reverse('document-attachments-list', request=self.context['request'], kwargs={'document_id': doc.pk})
-
-    def get_annotations_url(self, doc):
-        if not doc.pk:
-            return None
-        return reverse('document-annotations-list', request=self.context['request'], kwargs={'document_id': doc.pk})
 
     def get_published_url(self, doc, with_date=False):
         if doc.draft:
@@ -357,46 +344,23 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         return [describe(d) for d in doc.amended_versions()]
 
     def get_links(self, doc):
-        if not doc.draft:
-            url = self.get_published_url(doc)
-            return [
-                {
-                    "rel": "alternate",
-                    "title": "HTML",
-                    "href": url + ".html",
-                    "mediaType": "text/html"
-                },
-                {
-                    "rel": "alternate",
-                    "title": "Standalone HTML",
-                    "href": url + ".html?standalone=1",
-                    "mediaType": "text/html"
-                },
-                {
-                    "rel": "alternate",
-                    "title": "Akoma Ntoso",
-                    "href": url + ".xml",
-                    "mediaType": "application/xml"
-                },
-                {
-                    "rel": "alternate",
-                    "title": "Table of Contents",
-                    "href": url + "/toc.json",
-                    "mediaType": "application/json"
-                },
-                {
-                    "rel": "alternate",
-                    "title": "PDF",
-                    "href": url + ".pdf",
-                    "mediaType": "application/pdf"
-                },
-                {
-                    "rel": "alternate",
-                    "title": "ePUB",
-                    "href": url + ".epub",
-                    "mediaType": "application/epub+zip"
-                },
-            ]
+        return [
+            {
+                "rel": "toc",
+                "title": "Table of Contents",
+                "href": reverse('document-toc', request=self.context['request'], kwargs={'pk': doc.pk}),
+            },
+            {
+                "rel": "attachments",
+                "title": "Attachments",
+                "href": reverse('document-attachments-list', request=self.context['request'], kwargs={'document_id': doc.pk}),
+            },
+            {
+                "rel": "annotations",
+                "title": "Annotations",
+                "href": reverse('document-annotations-list', request=self.context['request'], kwargs={'document_id': doc.pk}),
+            },
+        ]
 
     def validate(self, data):
         """
@@ -518,6 +482,85 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             Document.decorate_amended_versions([instance])
             Document.decorate_repeal([instance])
         return super(DocumentSerializer, self).to_representation(instance)
+
+
+class PublishedDocumentSerializer(DocumentSerializer):
+    """ Serializer for published documents.
+
+    Inherits most fields from the based document serializer.
+    """
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        list_serializer_class = DocumentListSerializer
+        model = Document
+        fields = (
+            'url', 'title',
+            'created_at', 'updated_at',
+
+            # frbr_uri components
+            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+
+            'publication_date', 'publication_name', 'publication_number',
+            'expression_date', 'commencement_date', 'assent_date',
+            'language', 'stub', 'amendments', 'amended_versions',
+            'repeal',
+
+            'links',
+        )
+        read_only_fields = fields
+
+    def get_url(self, doc):
+        uri = doc.expression_uri.expression_uri(False)[1:]
+        return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
+
+    def get_links(self, doc):
+        if not doc.draft:
+            url = self.get_url(doc)
+            return [
+                {
+                    "rel": "alternate",
+                    "title": "HTML",
+                    "href": url + ".html",
+                    "mediaType": "text/html"
+                },
+                {
+                    "rel": "alternate",
+                    "title": "Standalone HTML",
+                    "href": url + ".html?standalone=1",
+                    "mediaType": "text/html"
+                },
+                {
+                    "rel": "alternate",
+                    "title": "Akoma Ntoso",
+                    "href": url + ".xml",
+                    "mediaType": "application/xml"
+                },
+                {
+                    "rel": "alternate",
+                    "title": "PDF",
+                    "href": url + ".pdf",
+                    "mediaType": "application/pdf"
+                },
+                {
+                    "rel": "alternate",
+                    "title": "ePUB",
+                    "href": url + ".epub",
+                    "mediaType": "application/epub+zip"
+                },
+                {
+                    "rel": "toc",
+                    "title": "Table of Contents",
+                    "href": url + '/toc.json',
+                    "mediaType": "application/json"
+                },
+                {
+                    "rel": "media",
+                    "title": "Media",
+                    "href": url + '/media.json',
+                    "mediaType": "application/json"
+                },
+            ]
 
 
 class RenderSerializer(serializers.Serializer):

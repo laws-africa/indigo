@@ -309,17 +309,18 @@ class PublishedAPITest(APITestCase):
 
         assert_equal(links, [
             {'href': 'http://testserver/api/za/act/2001/8/eng.xml', 'mediaType': 'application/xml', 'rel': 'alternate', 'title': 'Akoma Ntoso'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng/attachments.json', 'mediaType': 'application/json', 'rel': 'attachments', 'title': 'Attachments'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'HTML'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.pdf', 'mediaType': 'application/pdf', 'rel': 'alternate', 'title': 'PDF'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html?standalone=1', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'Standalone HTML'},
-            {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'alternate', 'title': 'Table of Contents'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'toc', 'title': 'Table of Contents'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.epub', 'mediaType': 'application/epub+zip', 'rel': 'alternate', 'title': 'ePUB'},
         ])
 
     def test_published_media_attachments(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')
         assert_equal(response.status_code, 200)
-        id = response.data['id']
+        id = 4  # we know this is document 4
 
         # should not exist
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
@@ -341,7 +342,7 @@ class PublishedAPITest(APITestCase):
     def test_published_media_attachments_anonymous(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')
         assert_equal(response.status_code, 200)
-        id = response.data['id']
+        id = 4  # we know this is document 4
 
         # create a doc with an attachment
         self.client.login(username='email@example.com', password='password')
@@ -366,3 +367,13 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/act/2001.zip')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/zip')
+
+    def test_published_frbr_urls(self):
+        response = self.client.get('/api/za/act/2014/10/eng.json')
+        assert_equal(response.status_code, 200)
+
+        assert_equal(response.data['url'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12')
+
+        links = {link['rel']: link['href'] for link in response.data['links']}
+        assert_equal(links['toc'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/toc.json')
+        assert_equal(links['attachments'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/attachments.json')

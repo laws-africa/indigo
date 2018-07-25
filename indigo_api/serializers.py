@@ -293,33 +293,25 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         )
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
-    def get_published_url(self, doc, with_date=False):
+    def get_published_url(self, doc):
         if doc.draft:
             return None
 
-        uri = doc.work_uri
-        if with_date and doc.expression_date:
-            uri.expression_date = '@' + datestring(doc.expression_date)
-        else:
-            uri.expression_date = None
-
-        uri = uri.expression_uri()[1:]
-
-        uri = reverse('published-document-detail', request=self.context['request'],
-                      kwargs={'frbr_uri': uri})
+        uri = doc.expression_uri.expression_uri()[1:]
+        uri = reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
         return uri.replace('%40', '@')
 
     def get_amended_versions(self, doc):
-        def describe(doc):
-            info = {
-                'id': d.id,
-                'expression_date': datestring(d.expression_date),
-            }
-            if not d.draft:
-                info['published_url'] = self.get_published_url(d, with_date=True)
-            return info
+        return [self.describe_amended_version(doc, v) for v in doc.amended_versions()]
 
-        return [describe(d) for d in doc.amended_versions()]
+    def describe_amended_version(self, doc, version):
+        info = {
+            'id': version.id,
+            'expression_date': datestring(version.expression_date),
+        }
+        if not version.draft:
+            info['published_url'] = self.get_published_url(version)
+        return info
 
     def get_links(self, doc):
         return [
@@ -498,8 +490,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         read_only_fields = fields
 
     def get_url(self, doc):
-        uri = doc.expression_uri.expression_uri(False)[1:]
-        return reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
+        return self.get_published_url(doc)
 
     def get_links(self, doc):
         if not doc.draft:

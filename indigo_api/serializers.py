@@ -289,6 +289,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
 
+    expression_frbr_uri = serializers.SerializerMethodField()
+
     class Meta:
         list_serializer_class = DocumentListSerializer
         model = Document
@@ -299,7 +301,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components
-            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
@@ -417,6 +419,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
         return value
 
+    def get_expression_frbr_uri(self, doc):
+        return doc.expression_uri.expression_uri(False)
+
     def create(self, validated_data):
         document = Document()
         return self.update(document, validated_data)
@@ -499,7 +504,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'created_at', 'updated_at',
 
             # frbr_uri components
-            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',

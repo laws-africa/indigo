@@ -20,7 +20,7 @@
           <p>{{ process.notes|linebreaks|urlize }}</p>
         {% endif %}
 
-        <h5>Tasks in this workflow</h5>
+        <h5 class="mt-3">Tasks in this workflow</h5>
 
         <form role="form" method="POST">
           {% csrf_token %}
@@ -53,6 +53,12 @@
             {% endfor %}
           </table>
         </form>
+
+        {% if process.work %}
+          <div class="mt-3">
+          <a href="{% url 'work' frbr_uri=process.work.frbr_uri %}" class="btn btn-primary">View the work →</a>
+          </div>
+        {% endif %}
       {% endblock %}
     </div>
     <div class="card-footer">

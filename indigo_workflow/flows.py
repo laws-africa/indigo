@@ -6,7 +6,7 @@ from viewflow.activation import STATUS
 
 from indigo_api.signals import work_changed
 from indigo_workflow import views
-from indigo_workflow.models import ImplicitPlaceProcess, ReviewWorkProcess
+from indigo_workflow.models import ImplicitPlaceProcess, ReviewWorkProcess, CreatePointInTimeProcess
 
 
 class ListWorksFlow(Flow):
@@ -14,6 +14,7 @@ class ListWorksFlow(Flow):
     """
     process_class = ImplicitPlaceProcess
     summary_template = "List works for {{ process.place_name }}"
+    start_from_ui = True
 
     start = (
         flow.Start(views.StartPlaceWorkflowView)
@@ -59,6 +60,7 @@ class CreateWorksFlow(Flow):
     """
     process_class = ImplicitPlaceProcess
     summary_template = "Create works for {{ process.place_name }}"
+    start_from_ui = True
 
     start = (
         flow.Start(views.StartPlaceWorkflowView)
@@ -152,5 +154,51 @@ def on_work_changed(sender, work, request, **kwargs):
         ReviewWorkFlow.get_or_create(work)
 
 
+class CreatePointInTimeFlow(Flow):
+    """ Create a new point in time for a work
+    """
+    process_class = CreatePointInTimeProcess
+    summary_template = "Create a new point in time for {{ process.work.frbr_uri }} at {{ process.date|date:'Y-m-d' }} in {{ process.language.language.name_en }}"
+    start_from_ui = False
+
+    start = (
+        flow.Start(views.StartCreatePointInTimeView)
+        .Permission('indigo_api.add_amendment')
+        .Next(this.instructions)
+    )
+
+    # wait for human to do the work and then move the task into the next state
+    instructions = (
+        flow.View(
+            views.HumanInteractionView,
+            task_title="Consolidate or import a point in time version of the work",
+            task_description=format_html('Visit the work\'s point in time page. Consolidate or import a version at the specified date, in the specified language.'),
+            task_result_summary="{{ flow_task.task_description }}",
+        )
+        .Permission('indigo_api.add_document')
+        .Next(this.review)
+    )
+
+    review = (
+        flow.View(
+            views.ReviewTaskView,
+            fields=['approved'],
+            task_title="Review and approve the created point in time",
+            task_description="Review the document for the specific point in time and language. The task is done if the work has been correctly consolidated.",
+            task_result_summary="{{ flow_task.task_description }}",
+        )
+        .Permission('indigo_api.review_document')
+        .Next(this.check_approved)
+    )
+
+    check_approved = (
+        flow.If(lambda a: a.process.approved)
+        .Then(this.end)
+        .Else(this.instructions)
+    )
+
+    end = flow.End()
+
+
 # Workflows associated to a single work
-single_work_flows = [ReviewWorkFlow]
+single_work_flows = [ReviewWorkFlow, CreatePointInTimeFlow]

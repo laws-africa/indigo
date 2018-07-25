@@ -296,7 +296,6 @@ class PublishedAPITest(APITestCase):
             'date': '2014-02-12',
             'repealing_uri': '/za/act/2014/10',
             'repealing_title': 'Water Act',
-            'repealing_id': 1,
         })
 
     def test_published_alternate_links(self):
@@ -309,8 +308,8 @@ class PublishedAPITest(APITestCase):
 
         assert_equal(links, [
             {'href': 'http://testserver/api/za/act/2001/8/eng.xml', 'mediaType': 'application/xml', 'rel': 'alternate', 'title': 'Akoma Ntoso'},
-            {'href': 'http://testserver/api/za/act/2001/8/eng/attachments.json', 'mediaType': 'application/json', 'rel': 'attachments', 'title': 'Attachments'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'HTML'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng/media.json', 'mediaType': 'application/json', 'rel': 'media', 'title': 'Media'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.pdf', 'mediaType': 'application/pdf', 'rel': 'alternate', 'title': 'PDF'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html?standalone=1', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'Standalone HTML'},
             {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'toc', 'title': 'Table of Contents'},
@@ -376,4 +375,4 @@ class PublishedAPITest(APITestCase):
 
         links = {link['rel']: link['href'] for link in response.data['links']}
         assert_equal(links['toc'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/toc.json')
-        assert_equal(links['attachments'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/attachments.json')
+        assert_equal(links['media'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/media.json')

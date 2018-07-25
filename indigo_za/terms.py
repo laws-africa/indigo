@@ -40,4 +40,4 @@ class TermsFinderAFR(TermsFinderENG):
     # country, language, locality
     locale = (None, 'afr', None)
 
-    heading_re = re.compile(r'woordbepaling', re.IGNORECASE)
+    heading_re = re.compile(r'woordbepaling|woordomskrywing|woordomskrywings', re.IGNORECASE)

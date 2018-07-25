@@ -79,7 +79,6 @@ class WorkAPITest(APITestCase):
             'date': '2010-01-01',
             'repealing_title': 'Test Act',
             'repealing_uri': '/za/act/1998/2',
-            'repealing_id': None,
         })
 
     def test_update_null_repeal(self):

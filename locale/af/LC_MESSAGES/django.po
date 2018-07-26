@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-07-17 23:30+0400\n"
-"PO-Revision-Date: 2018-07-18 11:00\n"
+"PO-Revision-Date: 2018-07-26 07:41\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -22,7 +22,7 @@ msgstr "Daad"
 
 #: indigo/analysis/toc/base.py:10
 msgid "Article"
-msgstr ""
+msgstr "Artikel"
 
 #: indigo/analysis/toc/base.py:11
 msgid "By-law"
@@ -57,22 +57,22 @@ msgstr "%(type)s %(number)s van %(year)s"
 #: indigo_api/templates/_amendments.html:9
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/_amendments.html:11
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"date\">%(date)s</span>]"
 
 #: indigo_api/templates/act.html:33
 #, python-format
 msgid "Published in %(name)s no. %(number)s on %(date)s"
-msgstr ""
+msgstr "Gepubliseer in %(name)s no. %(number)s op %(date)s"
 
 #: indigo_api/templates/act.html:35
 #, python-format
 msgid "Published in %(name)s on %(date)s"
-msgstr ""
+msgstr "Gepubliseer in %(name)s op %(date)s"
 
 #: indigo_api/templates/act.html:43
 #, python-format

@@ -1,5 +1,7 @@
 {% extends "main.html" %}
 
+{% block title %}Batch import{% endblock %}
+
 {% block content %}
 <div class="container">
   <h3>Import new works</h3>
@@ -42,7 +44,6 @@
           </td>
           <td>
             {{ work.work.created_by_user }}
-            {{ user.get_username }}
           </td>
         </tr>
       {% endfor %}

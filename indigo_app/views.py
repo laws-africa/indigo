@@ -1,5 +1,9 @@
 import json
 
+import gspread
+from oauth2client.service_account import ServiceAccountCredentials
+
+
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
@@ -11,11 +15,9 @@ from django.shortcuts import redirect
 from reversion import revisions as reversion
 
 from cobalt.act import FrbrUri
-from django.contrib.auth.models import User
-from django.contrib.auth import get_user
 from django.core.exceptions import ValidationError
 from django.views.generic import FormView
-from django.http import HttpRequest
+from datetime import datetime
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -267,7 +269,6 @@ class RestoreWorkVersionView(AbstractWorkView):
         url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': work.frbr_uri})
         return redirect(url)
 
-
 class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
     template_name = 'work/new_batch.html'
     # permissions
@@ -275,11 +276,27 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
+
         def get_works(table):
 
             works = []
 
-            for idx, row in enumerate(table):
+            # getting information from header row
+            header_row = table[0]
+            columns = {}
+            fields = ['country', 'title', 'date', 'locality', 'doctype', 'actor']
+
+            # this works but only matches exact field names
+            for field in fields:
+                columns[field] = header_row.index(field)
+
+            # WIP -- not quite there yet
+            for idx, col in enumerate(header_row):
+                for field in fields:
+                    if field in col:
+                        columns[field] = idx
+
+            for idx, row in enumerate(table[1:]):
                 # TODO: match header row contents rather than using column numbers
                 row_number = idx+1
 
@@ -309,11 +326,12 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                         work.country = row[9]
                         work.publication_name = row[10]
                         work.publication_number = row[11]
-                        work.publication_date = row[12]
-                        work.commencement_date = row[13]
-                        work.assent_date = row[14]
-                        # work.created_by_user = gett_user()
-                        # work.updated_by_user = gett_user()
+                        work.publication_date = make_date(row[12])
+                        work.commencement_date = make_date(row[13])
+                        work.assent_date = make_date(row[14])
+                        work.created_by_user = self.request.user
+                        work.updated_by_user = self.request.user
+                        # TODO: get current user
 
                         info['work'] = work
 
@@ -325,20 +343,37 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                             info['status'] = 3
                             info['error_message'] = e.message
 
+                else:
+                    info['status'] = 4
+                    info['error_message'] = "the frbr_uri wasn't generated; please check your first 7 fields carefully"
+
                 works.append(info)
 
             return works
 
         def get_table(spreadsheet_url):
             # get list of lists where each inner list is a row in a spreadsheet
-            # use gspread
+            # use gspread, or just a csv? feel like that might be easier for users?
             # TODO: unfake get_table()
             # fake table!
-            return [
-                ['ZA', 'WC011', 'Act', 'By-law', '', '', 'liquor-trading-hours', '', 'By-law on liquor trading days and hours of Matzikama Municipality', 'ZA', 'Western Cape Provincial Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
-                ['ZA', '', 'Act', '', '', 'xyz', 'liquor', '', 'By-law on liquor trading', 'ZA', 'Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
-                ['ZA', '', 'Act', '', '', '2014', '6', '', 'The Cake Act', 'ZA', 'National Gazette', '40125', '2016-03-17', '', '', '', '', '', ''],
-            ]
+            # return [
+            #     ['ZA', 'WC011', 'Act', 'By-law', '', '', 'liquor-trading-hours', '', 'By-law on liquor trading days and hours of Matzikama Municipality', 'ZA', 'Western Cape Provincial Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
+            #     ['ZA', '', 'Act', '', '', 'xyz', 'liquor', '', 'By-law on liquor trading', 'ZA', 'Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
+            #     ['ZA', '', 'Act', '', '', '2014', '6', '', 'The Cake Act', 'ZA', 'National Gazette', '40125', '2016-03-17', '', '', '', '', '', ''],
+            # ]
+
+            scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
+            # user has enabled Drive and Sheets after creating a new project at google:
+            # https://github.com/burnash/gspread, http://gspread.readthedocs.io/en/latest/oauth2.html
+            credentials = ServiceAccountCredentials.from_json_keyfile_name('openbylaws metadata batch-310fffa29429.json', scope)
+            # user has created credentials, downloaded the json file mentioned above,
+            # and also shared the spreadsheet with the email address in the json file
+            gc = gspread.authorize(credentials)
+            wks = gc.open_by_url(spreadsheet_url).sheet1
+            # note 'sheet1' -- as I understand it you have to get a sheet from a book?
+            # so just important to note that the sheet will always have to be at sheet1, and probably not to rename it
+            table = wks.get_all_values()
+            return table
 
         def get_frbr_uri(row):
             # TODO: also make less brittle (check header row instead)
@@ -356,13 +391,18 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                 return frbr_uri.work_uri()
 
             except ValidationError as e:
-                return 'frbr uri message:', e.message
+                # will this do what I want in my if/else statements above?
+                # No -- how to skip trying to create a work if uri doesn't generate and give a different error message?
+                info['status'] = 4
+                info['error_message'] = 'frbr uri message:', e.message
+                return False
 
-        # def gett_user():
-        # spoiler: this doesn't work
-        #     request = HttpRequest()
-            # TODO: get current user
-            # return get_user(request)
+        def make_date(string):
+            if string == '':
+                date = None
+            else:
+                date = datetime.strptime(string, '%Y-%m-%d')
+            return date
 
         table = get_table(form.cleaned_data['spreadsheet_url'])
         works = get_works(table)

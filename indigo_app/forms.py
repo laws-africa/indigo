@@ -15,6 +15,6 @@ class BatchCreateWorkForm(forms.Form):
     spreadsheet_url = forms.URLField(required=True, validators=[
         URLValidator(
             schemes=['https'],
-            regex='^https://docs.google.com/spreadsheets/d/\w+/',
+            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])

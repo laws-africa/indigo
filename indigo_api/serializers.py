@@ -2,6 +2,7 @@ import logging
 import os.path
 from collections import OrderedDict
 from lxml.etree import LxmlError
+from itertools import groupby
 
 from django.db.models import Manager
 from django.contrib.auth.models import User
@@ -469,6 +470,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     Inherits most fields from the based document serializer.
     """
     url = serializers.SerializerMethodField()
+    points_in_time = serializers.SerializerMethodField()
 
     class Meta:
         list_serializer_class = DocumentListSerializer
@@ -482,12 +484,29 @@ class PublishedDocumentSerializer(DocumentSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'amendments', 'amended_versions',
+            'language', 'stub', 'amendments', 'points_in_time',
             'repeal',
 
             'links',
         )
         read_only_fields = fields
+
+    def get_points_in_time(self, doc):
+        result = []
+
+        expressions = doc.work.expressions()
+        for date, group in groupby(expressions, lambda e: e.expression_date):
+            result.append({
+                'date': datestring(date),
+                'expressions': [{
+                    'language': e.language,
+                    'expression_frbr_uri': e.expression_uri.expression_uri(),
+                    'url': self.get_url(e),
+                    'title': e.title,
+                } for e in group]
+            })
+
+        return result
 
     def get_url(self, doc):
         return self.get_published_url(doc)

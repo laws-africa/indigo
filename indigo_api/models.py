@@ -1,6 +1,5 @@
 import os
 import logging
-from itertools import groupby
 import re
 import random
 import datetime
@@ -502,8 +501,7 @@ class Document(models.Model):
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
             # ensure these are refreshed
-            self._work_uri = None
-            self._amended_versions = None
+            self._expression_uri = None
 
         # update the model's XML from the Act XML
         self.refresh_xml()
@@ -566,18 +564,6 @@ class Document(models.Model):
 
         return search_toc(self.table_of_contents())
 
-    def amended_versions(self):
-        """ Return a list of all the amended versions of this work.
-        This is all documents that share the same URI but have different
-        expression dates.
-
-        If there are no document besides this one, an empty list is returned.
-        """
-        if not hasattr(self, '_amended_versions'):
-            Document.decorate_amended_versions([self])
-
-        return self._amended_versions
-
     def revisions(self):
         """ Return a queryset of `reversion.models.Revision` objects for
         revisions for this document, most recent first.
@@ -626,31 +612,6 @@ class Document(models.Model):
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
-
-    @classmethod
-    def decorate_amended_versions(cls, documents):
-        """ Decorate each documents with ``_amended_versions``, a (possibly empty)
-        list of all the documents which form the same group of amended versions.
-        """
-        uris = [d.frbr_uri for d in documents]
-        docs = Document.objects.undeleted().no_xml()\
-            .filter(frbr_uri__in=uris)\
-            .order_by('frbr_uri', 'expression_date')\
-            .all()
-
-        # group by URI
-        groups = {}
-        for uri, group in groupby(docs, lambda d: d.frbr_uri):
-            groups[uri] = list(group)
-
-        for doc in documents:
-            amended_versions = groups.get(doc.frbr_uri, [])
-
-            # there are no amended versions if this is the only one
-            if len(amended_versions) == 0 or (len(amended_versions) == 1 and amended_versions[0].id == doc.id):
-                doc._amended_versions = []
-            else:
-                doc._amended_versions = amended_versions
 
     @classmethod
     def randomized(cls, frbr_uri, **kwargs):

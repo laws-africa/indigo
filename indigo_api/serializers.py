@@ -217,19 +217,6 @@ class DocumentListSerializer(serializers.ListSerializer):
             kwargs['child'] = DocumentSerializer()
 
         super(DocumentListSerializer, self).__init__(*args, **kwargs)
-        # mark on the child that we're doing many, so it doesn't
-        # try to decorate the children for us
-        self.context['many'] = True
-
-    def to_representation(self, data):
-        iterable = data.all() if isinstance(data, Manager) else data
-
-        # Do some bulk post-processing, this is much more efficient
-        # than doing each document one at a time and going to the DB
-        # hundreds of times.
-        Document.decorate_amended_versions(iterable)
-
-        return super(DocumentListSerializer, self).to_representation(data)
 
 
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
@@ -263,7 +250,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     tags = TagListSerializerField(required=False)
     amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
 
-    amended_versions = serializers.SerializerMethodField()
     """ List of amended versions of this document """
     repeal = RepealSerializer(read_only=True)
     """ Repeal information, inherited from the work. """
@@ -287,7 +273,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'tags', 'amendments', 'amended_versions',
+            'language', 'stub', 'tags', 'amendments',
             'repeal',
 
             'published_url', 'links',
@@ -301,18 +287,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         uri = doc.expression_uri.expression_uri()[1:]
         uri = reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
         return uri.replace('%40', '@')
-
-    def get_amended_versions(self, doc):
-        return [self.describe_amended_version(doc, v) for v in doc.amended_versions()]
-
-    def describe_amended_version(self, doc, version):
-        info = {
-            'id': version.id,
-            'expression_date': datestring(version.expression_date),
-        }
-        if not version.draft:
-            info['published_url'] = self.get_published_url(version)
-        return info
 
     def get_links(self, doc):
         return [
@@ -457,11 +431,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         document.copy_attributes()
 
         return document
-
-    def to_representation(self, instance):
-        if not self.context.get('many', False):
-            Document.decorate_amended_versions([instance])
-        return super(DocumentSerializer, self).to_representation(instance)
 
 
 class PublishedDocumentSerializer(DocumentSerializer):

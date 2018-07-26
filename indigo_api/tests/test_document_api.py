@@ -32,7 +32,6 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.data['year'], '1998')
         assert_equal(response.data['number'], '2')
         assert_equal(response.data['amendments'], [])
-        assert_equal(response.data['amended_versions'], [])
 
         # these should not be included directly, they should have URLs
         id = response.data['id']

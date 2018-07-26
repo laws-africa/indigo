@@ -273,20 +273,31 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['expression_date'], '2011-01-01')
 
-    def test_published_amended_versions(self):
+    def test_published_points_in_time(self):
         response = self.client.get('/api/za/act/2010/1/eng@.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['frbr_uri'], '/za/act/2010/1')
-        assert_equal(response.data['amended_versions'], [{
-            'id': 2,
-            'expression_date': '2011-01-01',
-            'published_url': 'http://testserver/api/za/act/2010/1/eng@2011-01-01',
-        }, {
-            'id': 3,
-            'expression_date': '2012-02-02',
-            'published_url': 'http://testserver/api/za/act/2010/1/eng@2012-02-02',
-        }])
+        assert_equal(response.data['points_in_time'], [
+            {
+                'date': '2011-01-01',
+                'expressions': [{
+                    'url': 'http://testserver/api/za/act/2010/1/eng@2011-01-01',
+                    'expression_frbr_uri': u'/za/act/2010/1/eng@2011-01-01',
+                    'language': u'eng',
+                    'title': u'Act with amendments'
+                }]
+            },
+            {
+                'date': '2012-02-02',
+                'expressions': [{
+                    'url': 'http://testserver/api/za/act/2010/1/eng@2012-02-02',
+                    'expression_frbr_uri': u'/za/act/2010/1/eng@2012-02-02',
+                    'language': u'eng',
+                    'title': u'Act with amendments'
+                }]
+            }
+        ])
 
     def test_published_repealed(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')

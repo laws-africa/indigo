@@ -25,7 +25,7 @@
     {{/if}}
 
     {{#each amendments}}
-      <li class="timeline-item card">
+      <li class="timeline-item card" data-date="{{ date }}" data-index="{{ @index }}">
         <h6 class="timeline-date">{{ date }}</h6>
 
         <div class="card-body">
@@ -33,8 +33,8 @@
           <div class="dropdown pull-right">
             <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
             <div class="dropdown-menu">
-              <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
-              <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
+              <a href="#" class="dropdown-item edit-amendment">Change date</a>
+              <a href="#" class="dropdown-item delete-amendment">Delete</a>
             </div>
           </div>
           {{/unless}}{{/if}}
@@ -60,7 +60,7 @@
         </div>
 
         <div class="card-footer text-right">
-          <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
+          <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil"></i> Create amended version</button>
           <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
         </div>
       </li>

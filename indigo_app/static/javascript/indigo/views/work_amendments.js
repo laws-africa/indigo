@@ -125,7 +125,7 @@
     editAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).data('index'),
+      var index = $(e.target).closest('.timeline-item').data('index'),
           $item = $(e.target).closest('li'),
           amendment = this.collection.at(index),
           $container = $item.find('.edit-wrapper'),
@@ -149,7 +149,7 @@
     deleteAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).data('index');
+      var index = $(e.target).closest('.timeline-item').data('index');
       var amendment = this.collection.at(index);
 
       if (confirm("Really delete this amendment?")) {
@@ -162,7 +162,7 @@
       e.preventDefault();
 
       // create an amended version of this document at a particular date
-      var date = $(e.target).data('date');
+      var date = $(e.target).closest('.timeline-item').data('date');
 
       if (confirm('Create a new amended versiot at ' + date + '? Unsaved changes will be lost!')) {
         Indigo.progressView.peg();

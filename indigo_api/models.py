@@ -324,6 +324,7 @@ class Document(models.Model):
     class Meta:
         permissions = (
             ('publish_document', 'Can publish and edit non-draft documents'),
+            ('view_published_document', 'Can view publish documents through the API'),
         )
 
     objects = DocumentManager.from_queryset(DocumentQuerySet)()

@@ -6,7 +6,7 @@ from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, BasePermission
 from cobalt import FrbrUri
 
 from ..serializers import PublishedDocumentSerializer
@@ -18,6 +18,13 @@ from .attachments import view_attachment_by_filename, MediaViewSet
 
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+class PublishedDocumentPermission(BasePermission):
+    """ Published document permissions.
+    """
+    def has_permission(self, request, view):
+        return request.user.has_perm('indigo_api.view_published_document')
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,
@@ -49,7 +56,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated, PublishedDocumentPermission)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)

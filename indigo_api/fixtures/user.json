@@ -67,7 +67,25 @@
                 ["delete_document", "indigo_api", "document"]
             ],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
-            "username": "non-publisher@example.com",
+            "date_joined": "2012-01-13 00:14:00+00:00"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "auth.user",
+        "fields": {
+            "username": "api-user@example.com",
+            "first_name": "user that can read via the api",
+            "last_name": "",
+            "is_active": true,
+            "is_superuser": false,
+            "is_staff": false,
+            "last_login": "2012-01-13 00:14:00+00:00",
+            "groups": [],
+            "user_permissions": [
+                ["view_published_document", "indigo_api", "document"]
+            ],
+            "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "date_joined": "2012-01-13 00:14:00+00:00"
         }
     }

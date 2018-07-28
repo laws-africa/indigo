@@ -19,6 +19,16 @@ SassProcessor.processor_enabled = True
 class PublishedAPITest(APITestCase):
     fixtures = ['user', 'work', 'published', 'colophon']
 
+    def setUp(self):
+        self.client.login(username='api-user@example.com', password='password')
+
+    def test_published_json_perms(self):
+        self.client.logout()
+        self.client.login(username='email@example.com', password='password')
+
+        response = self.client.get('/api/za/act/2014/10')
+        assert_equal(response.status_code, 403)
+
     def test_published_json(self):
         response = self.client.get('/api/za/act/2014/10')
         assert_equal(response.status_code, 200)
@@ -346,27 +356,18 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 201)
 
         # now should exist
+        self.client.login(username='api-user@example.com', password='password')
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
         assert_equal(response.status_code, 200)
 
-    def test_published_media_attachments_anonymous(self):
-        response = self.client.get('/api/za/act/2001/8/eng.json')
-        assert_equal(response.status_code, 200)
-        id = 4  # we know this is document 4
-
-        # create a doc with an attachment
-        self.client.login(username='email@example.com', password='password')
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!")
-        tmp_file.seek(0)
-        response = self.client.post('/api/documents/%s/attachments' % id,
-                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
-        assert_equal(response.status_code, 201)
-
-        # exists
+        # 403 for anonymous
         self.client.logout()
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
-        assert_equal(response.status_code, 200)
+        assert_equal(response.status_code, 403)
+
+        # even for a non-existent one
+        response = self.client.get('/api/za/act/2001/8/eng/media/bad.txt')
+        assert_equal(response.status_code, 403)
 
     def test_published_zipfile(self):
         response = self.client.get('/api/za/act/2001/8/eng.zip')

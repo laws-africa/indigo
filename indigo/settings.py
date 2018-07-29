@@ -61,7 +61,6 @@ INSTALLED_APPS = (
     'rest_auth',
     'django_filters',
     'django_extensions',
-    'django_nose',
 
     # required by the Indigo API
     'taggit',

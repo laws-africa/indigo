@@ -5,11 +5,8 @@ from rest_framework.decorators import permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.authtoken.models import Token
 
-import newrelic.agent
-
 
 def ping(request):
-    newrelic.agent.ignore_transaction()
     return HttpResponse("pong", content_type="text/plain")
 
 

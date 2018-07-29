@@ -21,7 +21,6 @@ from cobalt import FrbrUri
 
 import lxml.html.diff
 from lxml.etree import LxmlError
-import newrelic.agent
 
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
@@ -42,11 +41,6 @@ DOCUMENT_FILTER_FIELDS = {
     'stub': ['exact'],
     'expression_date': ['exact', 'lte', 'gte'],
 }
-
-
-def ping(request):
-    newrelic.agent.ignore_transaction()
-    return HttpResponse("pong", content_type="text/plain")
 
 
 class DocumentViewMixin(object):

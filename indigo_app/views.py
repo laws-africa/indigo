@@ -11,7 +11,7 @@ from django.shortcuts import redirect
 from reversion import revisions as reversion
 
 from indigo_api.models import Document, Subtype, Work, Amendment
-from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
+from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.signals import work_changed
 from indigo_app.models import Language, Country
@@ -67,7 +67,7 @@ class LibraryView(AbstractAuthedIndigoView, TemplateView):
         context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
         context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
 
-        serializer = DocumentListSerializer(context={'request': self.request})
+        serializer = DocumentSerializer(context={'request': self.request}, many=True)
         docs = DocumentViewSet.queryset.filter(country=country)
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
@@ -322,7 +322,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['languages'] = Language.objects.select_related('language').all()
 
-        serializer = DocumentListSerializer(context={'request': self.request})
+        serializer = DocumentSerializer(context={'request': self.request}, many=True)
         context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
 
         return context

@@ -216,14 +216,6 @@ class RevisionSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class DocumentListSerializer(serializers.ListSerializer):
-    def __init__(self, *args, **kwargs):
-        if 'child' not in kwargs:
-            kwargs['child'] = DocumentSerializer()
-
-        super(DocumentListSerializer, self).__init__(*args, **kwargs)
-
-
 class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
@@ -265,7 +257,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     expression_frbr_uri = serializers.SerializerMethodField()
 
     class Meta:
-        list_serializer_class = DocumentListSerializer
         model = Document
         fields = (
             # readonly, url is part of the rest framework
@@ -462,7 +453,6 @@ class PublishedDocumentSerializer(DocumentSerializer):
     points_in_time = serializers.SerializerMethodField()
 
     class Meta:
-        list_serializer_class = DocumentListSerializer
         model = Document
         fields = (
             'url', 'title',

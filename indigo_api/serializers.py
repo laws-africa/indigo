@@ -21,6 +21,12 @@ from indigo_api.signals import document_published, work_changed
 log = logging.getLogger(__name__)
 
 
+def published_doc_url(doc, request):
+    uri = doc.expression_uri.expression_uri()[1:]
+    uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
+    return uri.replace('%40', '@')
+
+
 class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
     """ Related field that serializers the entirety of the related object.
     For updates, only the primary key field is considered, everything else is
@@ -177,8 +183,7 @@ class MediaAttachmentSerializer(AttachmentSerializer):
         read_only_fields = fields
 
     def get_url(self, instance):
-        uri = instance.document.expression_uri.expression_uri()[1:]
-        uri = reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
+        uri = published_doc_url(instance, self.context['request'])
         return uri + '/media/' + instance.filename
 
 
@@ -283,10 +288,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     def get_published_url(self, doc):
         if doc.draft:
             return None
-
-        uri = doc.expression_uri.expression_uri()[1:]
-        uri = reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': uri})
-        return uri.replace('%40', '@')
+        return published_doc_url(doc, self.context['request'])
 
     def get_links(self, doc):
         return [
@@ -433,10 +435,28 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         return document
 
 
+class ExpressionSerializer(serializers.Serializer):
+    url = serializers.SerializerMethodField()
+    language = serializers.CharField()
+    expression_frbr_uri = serializers.SerializerMethodField()
+    expression_date = serializers.DateField()
+    title = serializers.CharField()
+
+    class Meta:
+        fields = ('url', 'language', 'expression_frbr_uri', 'title', 'expression_date')
+        read_only_fields = fields
+
+    def get_url(self, doc):
+        return published_doc_url(doc, self.context['request'])
+
+    def get_expression_frbr_uri(self, doc):
+        return doc.expression_uri.expression_uri()
+
+
 class PublishedDocumentSerializer(DocumentSerializer):
     """ Serializer for published documents.
 
-    Inherits most fields from the based document serializer.
+    Inherits most fields from the base document serializer.
     """
     url = serializers.SerializerMethodField()
     points_in_time = serializers.SerializerMethodField()
@@ -453,8 +473,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'amendments', 'points_in_time',
-            'repeal',
+            'language', 'stub', 'repeal', 'amendments', 'points_in_time',
 
             'links',
         )
@@ -467,12 +486,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         for date, group in groupby(expressions, lambda e: e.expression_date):
             result.append({
                 'date': datestring(date),
-                'expressions': [{
-                    'language': e.language,
-                    'expression_frbr_uri': e.expression_uri.expression_uri(),
-                    'url': self.get_url(e),
-                    'title': e.title,
-                } for e in group]
+                'expressions': ExpressionSerializer(many=True, context=self.context).to_representation(group),
             })
 
         return result

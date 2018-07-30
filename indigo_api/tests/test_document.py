@@ -19,7 +19,7 @@ class DocumentTestCase(TestCase):
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work)
+        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1))
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))

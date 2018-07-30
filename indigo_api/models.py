@@ -355,8 +355,7 @@ class Document(models.Model):
 
     # Date from the FRBRExpression element. This is either the publication date or the date of the last
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
-    # It can be null only so that users aren't forced to add a value.
-    expression_date = models.DateField(null=True, blank=True, help_text="Date of publication or latest amendment")
+    expression_date = models.DateField(null=False, blank=False, help_text="Date of publication or latest amendment")
 
     stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
     """ Is this a stub without full content? """

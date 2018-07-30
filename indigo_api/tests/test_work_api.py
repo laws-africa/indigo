@@ -82,7 +82,7 @@ class WorkAPITest(APITestCase):
         })
 
     def test_update_null_repeal(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 

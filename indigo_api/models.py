@@ -278,36 +278,38 @@ class DocumentQuerySet(models.QuerySet):
         """ Find a single document matching the FRBR URI.
 
         Raises ValueError if any part of the URI isn't valid.
+
+        See http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/cs01/akn-nc-v1.0-cs01.html#_Toc492651893
         """
         query = self.filter(frbr_uri=frbr_uri.work_uri())
 
         # filter on expression date
         expr_date = frbr_uri.expression_date
-        if expr_date:
-            try:
-                if expr_date == '@':
-                    # earliest document
-                    query = query.order_by('expression_date')
 
-                elif expr_date[0] == '@':
-                    # document at this date
-                    query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
+        if not expr_date:
+            # no expression date is equivalent to the "current" version, at time of retrieval
+            expr_date = ':' + datetime.date.today().strftime("%Y-%m-%d")
 
-                elif expr_date[0] == ':':
-                    # latest document at or before this date
-                    query = query\
-                        .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
-                        .order_by('-expression_date')
+        try:
+            if expr_date == '@':
+                # earliest document
+                query = query.order_by('expression_date')
 
-                else:
-                    raise ValueError("The expression date %s is not valid" % expr_date)
+            elif expr_date[0] == '@':
+                # document at this date
+                query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
 
-            except arrow.parser.ParserError:
+            elif expr_date[0] == ':':
+                # latest document at or before this date
+                query = query\
+                    .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
+                    .order_by('-expression_date')
+
+            else:
                 raise ValueError("The expression date %s is not valid" % expr_date)
 
-        else:
-            # always get the latest expression
-            query = query.order_by('-expression_date')
+        except arrow.parser.ParserError:
+            raise ValueError("The expression date %s is not valid" % expr_date)
 
         obj = query.first()
         if obj is None:

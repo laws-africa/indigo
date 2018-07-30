@@ -36,6 +36,7 @@ setup(
     ],
 
     packages=find_packages(exclude=['docs']),
+    include_package_data=True,
 
     python_requires='~=2.7',
     install_requires=[

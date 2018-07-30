@@ -482,7 +482,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         return result
 
     def get_url(self, doc):
-        return self.get_published_url(doc)
+        return self.context.get('url', self.get_published_url(doc))
 
     def get_links(self, doc):
         if not doc.draft:

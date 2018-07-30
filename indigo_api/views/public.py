@@ -130,6 +130,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # json description
             if (self.component, format) == ('main', 'json'):
                 serializer = self.get_serializer(document)
+                # use the request URI as the basis for this document
+                serializer.context['url'] = reverse(
+                    'published-document-detail',
+                    request=request,
+                    kwargs={'frbr_uri': self.frbr_uri.expression_uri()[1:]})
                 return Response(serializer.data)
 
             # media attachments

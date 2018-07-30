@@ -295,7 +295,8 @@ class PublishedAPITest(APITestCase):
                     'url': 'http://testserver/api/za/act/2010/1/eng@2011-01-01',
                     'expression_frbr_uri': u'/za/act/2010/1/eng@2011-01-01',
                     'language': u'eng',
-                    'title': u'Act with amendments'
+                    'title': u'Act with amendments',
+                    'expression_date': '2011-01-01',
                 }]
             },
             {
@@ -304,7 +305,8 @@ class PublishedAPITest(APITestCase):
                     'url': 'http://testserver/api/za/act/2010/1/eng@2012-02-02',
                     'expression_frbr_uri': u'/za/act/2010/1/eng@2012-02-02',
                     'language': u'eng',
-                    'title': u'Act with amendments'
+                    'title': u'Act with amendments',
+                    'expression_date': '2012-02-02',
                 }]
             }
         ])
@@ -380,7 +382,7 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/zip')
 
     def test_published_frbr_urls(self):
-        response = self.client.get('/api/za/act/2014/10/eng.json')
+        response = self.client.get('/api/za/act/2014/10/eng@2014-02-12.json')
         assert_equal(response.status_code, 200)
 
         assert_equal(response.data['url'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12')

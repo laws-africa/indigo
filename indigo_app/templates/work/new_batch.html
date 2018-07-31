@@ -1,10 +1,22 @@
 {% extends "main.html" %}
 
-{% block title %}Batch import{% endblock %}
+{% block title %}Create a new batch{% endblock %}
+
+{% block breadcrumbs %}
+  {% if country %}
+  <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
+  {% endif %}
+  {% if locality %}
+<li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+  {% endif %}
+{% endblock %}
+
+{% block main-header-title %}
+<h5 class="main-header-title" style="margin-left: 15%">Create a new batch</h5>
+{% endblock %}
 
 {% block content %}
 <div class="container">
-  <h3>Import new works</h3>
 
   {% if works %}
 
@@ -22,11 +34,11 @@
       {% for work in works %}
         <tr>
           <td>
-            {% if work.status == 1 %}
+            {% if work.status == 'success' %}
             <i class="fa fa-check-circle text-success"></i>
-            {% elif work.status == 2 %}
+            {% elif work.status == 'duplicate' %}
             <i class="fa fa-ban text-info"></i>
-            {% elif work.status == 3 %}
+            {% elif work.status == 'error' %}
             <i class="fa fa-warning text-danger"></i>
             {% endif %}
           </td>
@@ -34,14 +46,16 @@
             {{ work.row }}
           </td>
           <td>
-            {% if work.error_message %}
-            {{ work.error_message }}
-            {% else %}
+            {% if work.status == 'success' %}
             <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.title }}</a>
+            {% elif work.status == 'duplicate' %}
+            Work with this Uri already exists
+            {% elif work.status == 'error' %}
+            {{ work.error_message }}
             {% endif %}
           </td>
           <td>
-            {% if work.error_message %}
+            {% if work.status == 'error' %}
             —
             {% else %}
             <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
@@ -61,12 +75,16 @@
     <div class="card">
       <div class="card-body">
         <div class="form-group">
-          <label for="{{ form.spreadsheet_url.id_for_label }}">URL of the Google Sheet to import works from</label>
+          <label for="{{ form.spreadsheet_url.id_for_label }}">URL of the Google Sheet to import works from:
+          </label>
           <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="Enter Google Sheets URL" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
+
+        <p>The spreadsheet should be 'Published to the web' (look under 'File') and shared with 'Anyone with the link'</p>
+
       </div>
 
       <div class="card-footer">

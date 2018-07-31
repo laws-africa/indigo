@@ -1,3 +1,4 @@
+# coding=utf-8
 import json
 
 from django.contrib.auth.mixins import PermissionRequiredMixin
@@ -302,16 +303,16 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             try:
                 frbr_uri = self.get_frbr_uri(row)
             except ValueError as e:
-                info['status'] = 3
+                info['status'] = 'error'
                 info['error_message'] = e.message
                 continue
 
             try:
                 work = Work.objects.get(frbr_uri=frbr_uri)
                 info['work'] = work
-                info['status'] = 2
+                info['status'] = 'duplicate'
 
-            # TODO one day: also mark another work as duplicate if user is trying to import two of the same (currently only the second one will be '2')
+            # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
 
             except Work.DoesNotExist:
                 work = Work()
@@ -324,19 +325,21 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                 work.publication_date = self.make_date(row['publication_date'])
                 work.commencement_date = self.make_date(row['commencement_date'])
                 work.assent_date = self.make_date(row['assent_date'])
+                work.assent_date = self.make_date(row['repealed_date'])
+                work.publication_number = row['parent_work']
+                work.publication_number = row['commencing_work']
                 work.created_by_user = self.request.user
                 work.updated_by_user = self.request.user
 
                 try:
                     work.full_clean()
                     work.save()
-                    info['status'] = 1
+                    info['status'] = 'success'
                     info['work'] = work
 
                 except ValidationError as e:
-                    info['status'] = 3
+                    info['status'] = 'error'
                     info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
-
 
         return works
 
@@ -354,7 +357,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         except requests.RequestException as e:
             raise ValidationError("Error talking to Google Sheets: %s" % e.message)
 
-        rows = csv.reader(io.StringIO(response.text), encoding='utf-8')
+        rows = csv.reader(io.BytesIO(response.content), encoding='utf-8')
         return list(rows)
 
     def get_frbr_uri(self, row):
@@ -362,8 +365,18 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=row['number'], actor=None)
 
-        if not frbr_uri.country:
+        # TODO: simplify this somehow?
+
+        if ' ' in frbr_uri.work_uri():
+            raise ValueError('Check for spaces in grey columns – none allowed')
+        elif not frbr_uri.country:
             raise ValueError('A country must be specified')
+        elif not frbr_uri.doctype:
+            raise ValueError('A doctype must be specified – use \'Act\' if unsure')
+        elif not frbr_uri.date:
+            raise ValueError('A date must be specified')
+        elif not frbr_uri.number:
+            raise ValueError('A number must be specified')
 
         return frbr_uri.work_uri().lower()
 

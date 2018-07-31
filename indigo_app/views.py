@@ -1,9 +1,5 @@
 import json
 
-import gspread
-from oauth2client.service_account import ServiceAccountCredentials
-
-
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
@@ -18,6 +14,10 @@ from cobalt.act import FrbrUri
 from django.core.exceptions import ValidationError
 from django.views.generic import FormView
 from datetime import datetime
+import requests
+import unicodecsv as csv
+import io
+import re
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, DocumentListSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -343,18 +343,20 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         def get_table(spreadsheet_url):
             # get list of lists where each inner list is a row in a spreadsheet
-            scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
-            # user has enabled Drive and Sheets after creating a new project at google:
-            # https://github.com/burnash/gspread, http://gspread.readthedocs.io/en/latest/oauth2.html
-            credentials = ServiceAccountCredentials.from_json_keyfile_name('openbylaws metadata batch-310fffa29429.json', scope)
-            # user has created credentials, downloaded the json file mentioned above,
-            # and also shared the spreadsheet with the email address in the json file
-            gc = gspread.authorize(credentials)
-            wks = gc.open_by_url(spreadsheet_url).sheet1
-            # note 'sheet1' -- as I understand it you have to get a sheet from a book?
-            # so just important to note that the sheet will always have to be at sheet1, and probably not to rename it
-            table = wks.get_all_values()
-            return table
+
+            match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
+            if not match:
+                raise ValidationError("Unable to extract key from Google Sheets URL")
+
+            try:
+                url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv' % match.group(1)
+                response = requests.get(url, timeout=5)
+                response.raise_for_status()
+            except requests.RequestException as e:
+                raise ValidationError("Error talking to Google Sheets: %s" % e.message)
+
+            rows = csv.reader(io.StringIO(response.text), encoding='utf-8')
+            return list(rows)
 
         def get_frbr_uri(row):
             # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete and, to, of, for, etc)

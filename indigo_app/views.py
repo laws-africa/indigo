@@ -295,7 +295,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         for idx, row in enumerate(rows):
             info = {
-                'row': idx + 1,
+                'row': idx + 2,
             }
             works.append(info)
 
@@ -365,7 +365,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         if not frbr_uri.country:
             raise ValueError('A country must be specified')
 
-        return frbr_uri.work_uri()
+        return frbr_uri.work_uri().lower()
 
     def make_date(self, string):
         if string == '':

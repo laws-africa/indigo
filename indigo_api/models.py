@@ -124,6 +124,10 @@ class Work(models.Model):
                 self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
         return self._repeal
 
+    def clean(self):
+        # ensure the frbr uri is lowercased
+        self.frbr_uri = self.frbr_uri.lower()
+
     def save(self, *args, **kwargs):
         # prevent circular references
         if self.commencing_work == self:

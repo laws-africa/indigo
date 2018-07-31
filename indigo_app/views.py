@@ -328,13 +328,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                 work.updated_by_user = self.request.user
 
                 try:
+                    work.full_clean()
                     work.save()
                     info['status'] = 1
                     info['work'] = work
 
                 except ValidationError as e:
                     info['status'] = 3
-                    info['error_message'] = e.message
+                    info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
+
 
         return works
 

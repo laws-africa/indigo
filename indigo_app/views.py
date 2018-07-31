@@ -269,6 +269,7 @@ class RestoreWorkVersionView(AbstractWorkView):
         url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': work.frbr_uri})
         return redirect(url)
 
+
 class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
     template_name = 'work/new_batch.html'
     # permissions
@@ -281,30 +282,44 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
             works = []
 
+            # clean up headers
+            headers = [h.split(' ')[0].lower() for h in headers]
+
+            # transform rows into list of dicts for easy access
+            rows = [
+                {header: row[i] for i, header in enumerate(headers) if header}
+                for row in table[1:]
+            ]
+
             # getting information from header row
-            header_row = table[0]
-            columns = {}
-            fields = ['country', 'title', 'date', 'locality', 'doctype', 'actor']
+            # header_row = table[0]
+            # columns = {}
+            # fields = ['country', 'locality', 'doctype', 'subtype', 'actor', 'date', 'number', 'title', 'publication_name', 'publication_number', 'publication_date', 'commencement_date', 'assent_date', 'repealed_by', 'repealed_date', 'parent_work', 'commencing_work']
 
-            # this works but only matches exact field names
-            for field in fields:
-                columns[field] = header_row.index(field)
+            # for field in fields:
+            #         columns[field] = header_row.index(field)
+                # make a list of possible indices for each field name
+                # and assume the first is the correct one;
+                # store these in a library called 'columns'
+                # (does nothing if a field name is missing from the header row)
+                # possible_cell_indices = [idx for idx, cell in enumerate(header_row) if field in cell]
+                # if possible_cell_indices:
+                #     columns[field] = possible_cell_indices[0]
+                    # columns: {'parent_work': 17,
+                    # 'publication_name': 10, 'repealed_date': 16,
+                    # ...
+                    # 'commencing_work': 18}
 
-            # WIP -- not quite there yet
-            for idx, col in enumerate(header_row):
-                for field in fields:
-                    if field in col:
-                        columns[field] = idx
-
+            # getting Work info for each row in the table
             for idx, row in enumerate(table[1:]):
-                # TODO: match header row contents rather than using column numbers
+
                 row_number = idx+1
 
                 info = {
                     'row': row_number,
                 }
 
-                frbr_uri = get_frbr_uri(row)
+                frbr_uri = get_frbr_uri(row, columns)
 
                 # TODO: fix get_uri to return uri as false if validation error?
 
@@ -322,16 +337,41 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                         work = Work()
 
                         work.frbr_uri = frbr_uri
-                        work.title = row[8]
-                        work.country = row[9]
-                        work.publication_name = row[10]
-                        work.publication_number = row[11]
-                        work.publication_date = make_date(row[12])
-                        work.commencement_date = make_date(row[13])
-                        work.assent_date = make_date(row[14])
+
+                        # this doesn't work, because it's interpreting 'field_name' literally when assigning?
+
+                        # field_names = ['title', 'country', 'publication_name', 'publication_number', 'publication_date', 'commencement_date', 'assent_date', 'repealed_by', 'repealed_date', 'parent_work', 'commencing_work', 'test field (shouldn\'t break it)']
+                        #
+                        # for field_name in field_names:
+                        #
+                        #     if field_name in columns:
+                        #
+                        #         if 'date' in field_name:
+                        #             work.field_name = make_date(row[columns[field_name]])
+                        #
+                        #         else:
+                        #             work.field_name = row[columns[field_name]]
+
+                        # works but still clumsy, watcha gonna do
+                        work.title = row[columns['title']]
+                        work.country = row[columns['country']]
+                        work.publication_name = row[columns['publication_name']]
+                        work.publication_number = row[columns['publication_number']]
+                        work.publication_date = make_date(row[columns['publication_date']])
+                        work.commencement_date = make_date(row[columns['commencement_date']])
+                        work.assent_date = make_date(row[columns['assent_date']])
+
+                        # was:
+                        # work.title = row[8]
+                        # work.country = row[9]
+                        # work.publication_name = row[10]
+                        # work.publication_number = row[11]
+                        # work.publication_date = make_date(row[12])
+                        # work.commencement_date = make_date(row[13])
+                        # work.assent_date = make_date(row[14])
+
                         work.created_by_user = self.request.user
                         work.updated_by_user = self.request.user
-                        # TODO: get current user
 
                         info['work'] = work
 
@@ -345,7 +385,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                 else:
                     info['status'] = 4
-                    info['error_message'] = "the frbr_uri wasn't generated; please check your first 7 fields carefully"
+                    # info['error_message'] = e.message?
 
                 works.append(info)
 
@@ -353,15 +393,6 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         def get_table(spreadsheet_url):
             # get list of lists where each inner list is a row in a spreadsheet
-            # use gspread, or just a csv? feel like that might be easier for users?
-            # TODO: unfake get_table()
-            # fake table!
-            # return [
-            #     ['ZA', 'WC011', 'Act', 'By-law', '', '', 'liquor-trading-hours', '', 'By-law on liquor trading days and hours of Matzikama Municipality', 'ZA', 'Western Cape Provincial Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
-            #     ['ZA', '', 'Act', '', '', 'xyz', 'liquor', '', 'By-law on liquor trading', 'ZA', 'Gazette', '7339', '2014-12-12', '2014-12-12', '', '', '2018-06-01', '', ''],
-            #     ['ZA', '', 'Act', '', '', '2014', '6', '', 'The Cake Act', 'ZA', 'National Gazette', '40125', '2016-03-17', '', '', '', '', '', ''],
-            # ]
-
             scope = ['https://spreadsheets.google.com/feeds', 'https://www.googleapis.com/auth/drive']
             # user has enabled Drive and Sheets after creating a new project at google:
             # https://github.com/burnash/gspread, http://gspread.readthedocs.io/en/latest/oauth2.html
@@ -375,27 +406,44 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             table = wks.get_all_values()
             return table
 
-        def get_frbr_uri(row):
-            # TODO: also make less brittle (check header row instead)
-            # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete to, of, for, etc)
-            country = row[0].lower()
-            locality = row[1].lower()
-            doctype = row[2].lower()
-            subtype = row[3].lower()
-            actor = row[4].lower()
-            date = row[5]
-            number = row[6].lower()
+        def get_frbr_uri(row, columns):
+            # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete and, to, of, for, etc)
+
+            field_names = ['country', 'locality', 'doctype', 'subtype', 'actor', 'date', 'number']
+
+            fields = {}
+
+            for field_name in field_names:
+                if field_name != 'date':
+                    field = row[columns[field_name]].lower()
+                else:
+                    field = row[columns[field_name]]
+                fields[field_name] = field
+                # fields: {'locality': u'WC011', 'country': u'ZA',
+                # 'doctype': u'Act', 'actor': u'',
+                # 'number': u'liquor-trading-days-hours',
+                # 'subtype': u'By-law', 'date': u'2018'}
+
+            # was:
+            # country = row[0].lower()
+            # locality = row[1].lower()
+            # doctype = row[2].lower()
+            # subtype = row[3].lower()
+            # actor = row[4].lower()
+            # date = row[5]
+            # number = row[6].lower()
 
             try:
-                frbr_uri = FrbrUri(country=country, locality=locality, doctype=doctype, subtype=subtype, actor=actor, date=date, number=number)
+                frbr_uri = FrbrUri(country=fields['country'], locality=fields['locality'], doctype=fields['doctype'], subtype=fields['subtype'], actor=fields['actor'], date=fields['date'], number=fields['number'])
                 return frbr_uri.work_uri()
 
-            except ValidationError as e:
-                # will this do what I want in my if/else statements above?
-                # No -- how to skip trying to create a work if uri doesn't generate and give a different error message?
-                info['status'] = 4
-                info['error_message'] = 'frbr uri message:', e.message
-                return False
+            # TODO: pass this back somehow (?)
+            # TODO: check for other types of errors
+            # except TypeError as e:
+            #     return e.message
+
+            except TypeError:
+                return None
 
         def make_date(string):
             if string == '':

@@ -283,7 +283,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             works = []
 
             # clean up headers
-            headers = [h.split(' ')[0].lower() for h in headers]
+            headers = [h.split(' ')[0].lower() for h in table[0]]
 
             # transform rows into list of dicts for easy access
             rows = [
@@ -291,27 +291,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                 for row in table[1:]
             ]
 
-            # getting information from header row
-            # header_row = table[0]
-            # columns = {}
-            # fields = ['country', 'locality', 'doctype', 'subtype', 'actor', 'date', 'number', 'title', 'publication_name', 'publication_number', 'publication_date', 'commencement_date', 'assent_date', 'repealed_by', 'repealed_date', 'parent_work', 'commencing_work']
-
-            # for field in fields:
-            #         columns[field] = header_row.index(field)
-                # make a list of possible indices for each field name
-                # and assume the first is the correct one;
-                # store these in a library called 'columns'
-                # (does nothing if a field name is missing from the header row)
-                # possible_cell_indices = [idx for idx, cell in enumerate(header_row) if field in cell]
-                # if possible_cell_indices:
-                #     columns[field] = possible_cell_indices[0]
-                    # columns: {'parent_work': 17,
-                    # 'publication_name': 10, 'repealed_date': 16,
-                    # ...
-                    # 'commencing_work': 18}
-
-            # getting Work info for each row in the table
-            for idx, row in enumerate(table[1:]):
+            for idx, row in enumerate(rows):
 
                 row_number = idx+1
 
@@ -319,75 +299,45 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                     'row': row_number,
                 }
 
-                frbr_uri = get_frbr_uri(row, columns)
+                works.append(info)
 
-                # TODO: fix get_uri to return uri as false if validation error?
+                try:
+                    frbr_uri = get_frbr_uri(row)
+                except ValueError as e:
+                    info['status'] = 4
+                    info['error_message'] = e.message
+                    continue
 
-                if frbr_uri:
+                try:
+                    work = Work.objects.get(frbr_uri=frbr_uri)
+                    info['work'] = work
+                    info['status'] = 2
+
+                # TODO one day: also mark another work as duplicate if user is trying to import two of the same (currently only the second one will be '2')
+
+                except Work.DoesNotExist:
+
+                    work = Work()
+
+                    work.frbr_uri = frbr_uri
+                    work.title = row['title']
+                    work.country = row['country']
+                    work.publication_name = row['publication_name']
+                    work.publication_number = row['publication_number']
+                    work.publication_date = make_date(row['publication_date'])
+                    work.commencement_date = make_date(row['commencement_date'])
+                    work.assent_date = make_date(row['assent_date'])
+                    work.created_by_user = self.request.user
+                    work.updated_by_user = self.request.user
 
                     try:
-                        work = Work.objects.get(frbr_uri=frbr_uri)
-                        info['work'] = work
-                        info['status'] = 2
-
-                    # TODO one day: also mark another work as duplicate if user is trying to import two of the same (currently only the second one will be '2')
-
-                    except Work.DoesNotExist:
-
-                        work = Work()
-
-                        work.frbr_uri = frbr_uri
-
-                        # this doesn't work, because it's interpreting 'field_name' literally when assigning?
-
-                        # field_names = ['title', 'country', 'publication_name', 'publication_number', 'publication_date', 'commencement_date', 'assent_date', 'repealed_by', 'repealed_date', 'parent_work', 'commencing_work', 'test field (shouldn\'t break it)']
-                        #
-                        # for field_name in field_names:
-                        #
-                        #     if field_name in columns:
-                        #
-                        #         if 'date' in field_name:
-                        #             work.field_name = make_date(row[columns[field_name]])
-                        #
-                        #         else:
-                        #             work.field_name = row[columns[field_name]]
-
-                        # works but still clumsy, watcha gonna do
-                        work.title = row[columns['title']]
-                        work.country = row[columns['country']]
-                        work.publication_name = row[columns['publication_name']]
-                        work.publication_number = row[columns['publication_number']]
-                        work.publication_date = make_date(row[columns['publication_date']])
-                        work.commencement_date = make_date(row[columns['commencement_date']])
-                        work.assent_date = make_date(row[columns['assent_date']])
-
-                        # was:
-                        # work.title = row[8]
-                        # work.country = row[9]
-                        # work.publication_name = row[10]
-                        # work.publication_number = row[11]
-                        # work.publication_date = make_date(row[12])
-                        # work.commencement_date = make_date(row[13])
-                        # work.assent_date = make_date(row[14])
-
-                        work.created_by_user = self.request.user
-                        work.updated_by_user = self.request.user
-
+                        work.save()
+                        info['status'] = 1
                         info['work'] = work
 
-                        try:
-                            work.save()
-                            info['status'] = 1
-
-                        except ValidationError as e:
-                            info['status'] = 3
-                            info['error_message'] = e.message
-
-                else:
-                    info['status'] = 4
-                    # info['error_message'] = e.message?
-
-                works.append(info)
+                    except ValidationError as e:
+                        info['status'] = 3
+                        info['error_message'] = e.message
 
             return works
 
@@ -406,44 +356,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             table = wks.get_all_values()
             return table
 
-        def get_frbr_uri(row, columns):
+        def get_frbr_uri(row):
             # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete and, to, of, for, etc)
 
-            field_names = ['country', 'locality', 'doctype', 'subtype', 'actor', 'date', 'number']
+            frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=row['number'], actor=None)
 
-            fields = {}
+            if not frbr_uri.country:
+                raise ValueError('A country must be specified')
 
-            for field_name in field_names:
-                if field_name != 'date':
-                    field = row[columns[field_name]].lower()
-                else:
-                    field = row[columns[field_name]]
-                fields[field_name] = field
-                # fields: {'locality': u'WC011', 'country': u'ZA',
-                # 'doctype': u'Act', 'actor': u'',
-                # 'number': u'liquor-trading-days-hours',
-                # 'subtype': u'By-law', 'date': u'2018'}
-
-            # was:
-            # country = row[0].lower()
-            # locality = row[1].lower()
-            # doctype = row[2].lower()
-            # subtype = row[3].lower()
-            # actor = row[4].lower()
-            # date = row[5]
-            # number = row[6].lower()
-
-            try:
-                frbr_uri = FrbrUri(country=fields['country'], locality=fields['locality'], doctype=fields['doctype'], subtype=fields['subtype'], actor=fields['actor'], date=fields['date'], number=fields['number'])
-                return frbr_uri.work_uri()
-
-            # TODO: pass this back somehow (?)
-            # TODO: check for other types of errors
-            # except TypeError as e:
-            #     return e.message
-
-            except TypeError:
-                return None
+            return frbr_uri.work_uri()
 
         def make_date(string):
             if string == '':
@@ -455,32 +376,6 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         table = get_table(form.cleaned_data['spreadsheet_url'])
         works = get_works(table)
         return self.render_to_response(self.get_context_data(works=works))
-
-
-""" each work should have this dict structure:
-        works = [
-            {
-                'row': 1,
-                'title': 'Hello',
-                'status': 3,                    # failure - duplicate
-                'frbr_uri': '/za/act/2016/4',   # shouldn't link in html
-            },
-            {
-                'row': 2,
-                'title': 'Hi again',
-                'status': 1,                    # sucess
-                'frbr_uri': '/za/act/2016/5',   # _should_ link in html
-            },
-            {
-                'row': 3,
-                'title': 'One more',
-                'status': 2,                    # failure - general
-                'frbr_uri': '/za/act/2017/-',   # shouldn't link in html
-            },
-        ]
-"""
-
-
 
 
 class ImportDocumentView(AbstractWorkView):

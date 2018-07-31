@@ -15,7 +15,6 @@
         <th style="width: 10%">Row</th>
         <th>Title / Error message</th>
         <th>Uri</th>
-        <th>User</th>
       </tr>
     </thead>
 
@@ -41,9 +40,6 @@
             {% else %}
             <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
             {% endif %}
-          </td>
-          <td>
-            {{ work.work.created_by_user }}
           </td>
         </tr>
       {% endfor %}

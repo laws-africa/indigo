@@ -67,14 +67,14 @@ class Work(models.Model):
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
     # repeal information
-    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Work that repealed this work", related_name='repealed_works')
+    repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Work that repealed this work", related_name='repealed_works')
     repealed_date = models.DateField(null=True, blank=True, help_text="Date of repeal of this work")
 
     # optional parent work
-    parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Parent related work", related_name='child_works')
+    parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Parent related work", related_name='child_works')
 
     # optional work that determined the commencement date of this work
-    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
+    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

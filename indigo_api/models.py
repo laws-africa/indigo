@@ -283,6 +283,10 @@ class DocumentQuerySet(models.QuerySet):
         """
         query = self.filter(frbr_uri=frbr_uri.work_uri())
 
+        # filter on language
+        if frbr_uri.language:
+            query = query.filter(language=frbr_uri.language)
+
         # filter on expression date
         expr_date = frbr_uri.expression_date
 

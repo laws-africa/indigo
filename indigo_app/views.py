@@ -277,107 +277,100 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
+        table = self.get_table(form.cleaned_data['spreadsheet_url'])
+        works = self.get_works(table)
+        return self.render_to_response(self.get_context_data(works=works))
 
-        def get_works(table):
+    def get_works(self, table):
+        works = []
 
-            works = []
+        # clean up headers
+        headers = [h.split(' ')[0].lower() for h in table[0]]
 
-            # clean up headers
-            headers = [h.split(' ')[0].lower() for h in table[0]]
+        # transform rows into list of dicts for easy access
+        rows = [
+            {header: row[i] for i, header in enumerate(headers) if header}
+            for row in table[1:]
+        ]
 
-            # transform rows into list of dicts for easy access
-            rows = [
-                {header: row[i] for i, header in enumerate(headers) if header}
-                for row in table[1:]
-            ]
-
-            for idx, row in enumerate(rows):
-
-                row_number = idx+1
-
-                info = {
-                    'row': row_number,
-                }
-
-                works.append(info)
-
-                try:
-                    frbr_uri = get_frbr_uri(row)
-                except ValueError as e:
-                    info['status'] = 4
-                    info['error_message'] = e.message
-                    continue
-
-                try:
-                    work = Work.objects.get(frbr_uri=frbr_uri)
-                    info['work'] = work
-                    info['status'] = 2
-
-                # TODO one day: also mark another work as duplicate if user is trying to import two of the same (currently only the second one will be '2')
-
-                except Work.DoesNotExist:
-
-                    work = Work()
-
-                    work.frbr_uri = frbr_uri
-                    work.title = row['title']
-                    work.country = row['country']
-                    work.publication_name = row['publication_name']
-                    work.publication_number = row['publication_number']
-                    work.publication_date = make_date(row['publication_date'])
-                    work.commencement_date = make_date(row['commencement_date'])
-                    work.assent_date = make_date(row['assent_date'])
-                    work.created_by_user = self.request.user
-                    work.updated_by_user = self.request.user
-
-                    try:
-                        work.save()
-                        info['status'] = 1
-                        info['work'] = work
-
-                    except ValidationError as e:
-                        info['status'] = 3
-                        info['error_message'] = e.message
-
-            return works
-
-        def get_table(spreadsheet_url):
-            # get list of lists where each inner list is a row in a spreadsheet
-
-            match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
-            if not match:
-                raise ValidationError("Unable to extract key from Google Sheets URL")
+        for idx, row in enumerate(rows):
+            info = {
+                'row': idx + 1,
+            }
+            works.append(info)
 
             try:
-                url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv' % match.group(1)
-                response = requests.get(url, timeout=5)
-                response.raise_for_status()
-            except requests.RequestException as e:
-                raise ValidationError("Error talking to Google Sheets: %s" % e.message)
+                frbr_uri = self.get_frbr_uri(row)
+            except ValueError as e:
+                info['status'] = 4
+                info['error_message'] = e.message
+                continue
 
-            rows = csv.reader(io.StringIO(response.text), encoding='utf-8')
-            return list(rows)
+            try:
+                work = Work.objects.get(frbr_uri=frbr_uri)
+                info['work'] = work
+                info['status'] = 2
 
-        def get_frbr_uri(row):
-            # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete and, to, of, for, etc)
+            # TODO one day: also mark another work as duplicate if user is trying to import two of the same (currently only the second one will be '2')
 
-            frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=row['number'], actor=None)
+            except Work.DoesNotExist:
+                work = Work()
 
-            if not frbr_uri.country:
-                raise ValueError('A country must be specified')
+                work.frbr_uri = frbr_uri
+                work.title = row['title']
+                work.country = row['country']
+                work.publication_name = row['publication_name']
+                work.publication_number = row['publication_number']
+                work.publication_date = self.make_date(row['publication_date'])
+                work.commencement_date = self.make_date(row['commencement_date'])
+                work.assent_date = self.make_date(row['assent_date'])
+                work.created_by_user = self.request.user
+                work.updated_by_user = self.request.user
 
-            return frbr_uri.work_uri()
+                try:
+                    work.save()
+                    info['status'] = 1
+                    info['work'] = work
 
-        def make_date(string):
-            if string == '':
-                date = None
-            else:
-                date = datetime.strptime(string, '%Y-%m-%d')
-            return date
+                except ValidationError as e:
+                    info['status'] = 3
+                    info['error_message'] = e.message
 
-        table = get_table(form.cleaned_data['spreadsheet_url'])
-        works = get_works(table)
-        return self.render_to_response(self.get_context_data(works=works))
+        return works
+
+    def get_table(self, spreadsheet_url):
+        # get list of lists where each inner list is a row in a spreadsheet
+
+        match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
+        if not match:
+            raise ValidationError("Unable to extract key from Google Sheets URL")
+
+        try:
+            url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv' % match.group(1)
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            raise ValidationError("Error talking to Google Sheets: %s" % e.message)
+
+        rows = csv.reader(io.StringIO(response.text), encoding='utf-8')
+        return list(rows)
+
+    def get_frbr_uri(self, row):
+        # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete and, to, of, for, etc)
+
+        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=row['number'], actor=None)
+
+        if not frbr_uri.country:
+            raise ValueError('A country must be specified')
+
+        return frbr_uri.work_uri()
+
+    def make_date(self, string):
+        if string == '':
+            date = None
+        else:
+            date = datetime.strptime(string, '%Y-%m-%d')
+        return date
 
 
 class ImportDocumentView(AbstractWorkView):

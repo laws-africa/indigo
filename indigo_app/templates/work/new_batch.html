@@ -11,8 +11,8 @@
   <table class="table mt-3">
     <thead>
       <tr>
-        <th style="width: 10%">Status</th>
-        <th style="width: 10%">Row</th>
+        <th></th>
+        <th>Row</th>
         <th>Title / Error message</th>
         <th>Uri</th>
       </tr>
@@ -22,7 +22,13 @@
       {% for work in works %}
         <tr>
           <td>
-            {{ work.status }}
+            {% if work.status == 1 %}
+            <i class="fa fa-check-circle text-success"></i>
+            {% elif work.status == 2 %}
+            <i class="fa fa-ban text-info"></i>
+            {% elif work.status == 3 %}
+            <i class="fa fa-warning text-danger"></i>
+            {% endif %}
           </td>
           <td>
             {{ work.row }}

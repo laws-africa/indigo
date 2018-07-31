@@ -302,7 +302,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             try:
                 frbr_uri = self.get_frbr_uri(row)
             except ValueError as e:
-                info['status'] = 4
+                info['status'] = 3
                 info['error_message'] = e.message
                 continue
 

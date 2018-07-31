@@ -102,6 +102,7 @@ class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
         context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
+        context['subtypes'] = Subtype.objects.order_by('name').all()
 
         return context
 

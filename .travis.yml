@@ -9,7 +9,7 @@ before_install:
   - "rvm install ruby-2.3.3"
   - "rvm use ruby-2.3.3"
 install: 
-  - "pip install -r requirements.txt"
+  - "pip install .[test]"
   - "pip install coveralls"
   - "bundle install"
   - "npm install -g jshint"

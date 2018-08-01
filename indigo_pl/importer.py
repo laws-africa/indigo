@@ -23,7 +23,16 @@ class ImporterPL(Importer):
     """
     
     SUPERSCRIPT_START = "^^SUPERSCRIPT^^"
+    """Special label placed in law plaintext before a superscript string."""
+    
     SUPERSCRIPT_END = "$$SUPERSCRIPT$$"
+    """Special label placed in law plaintext after a superscript string."""
+    
+    HEADER_END_OFFSET = 50
+    """How far from top of page we assume header is over."""
+    
+    FOOTER_START_OFFSET = 1060
+    """How far from top of page we assume footer is starting."""
     
     locale = ('pl', None, None)
 
@@ -84,7 +93,8 @@ class ImporterPL(Importer):
             bool: True if tag is in header/footer, False otherwise.
         """
         return ((tag.name == "text") and tag.has_attr("top")
-            and ((int(tag["top"]) <= 50) or (int(tag["top"]) > 1060)))
+            and ((int(tag["top"]) <= self.HEADER_END_OFFSET) 
+                 or (int(tag["top"]) > self.FOOTER_START_OFFSET)))
 
     def process_superscripts(self, xml):
         """Modify the passed in XML by searching for tags which represent superscript numbering and

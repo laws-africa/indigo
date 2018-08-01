@@ -92,8 +92,9 @@ class ImporterPLTestCase(testcases.TestCase):
         header_text = u"Copyright ISAP"
         text = u"All your base are belong to Legia Warszawa FC."
         footer_text = u"page 3/123"
-        reformatted = self.importer.reformat_text(
-            make_tag(header_text, 10) + make_tag(text) + make_tag(footer_text, 1080))
+        reformatted = self.importer.reformat_text(""
+            + make_tag(header_text, ImporterPL.HEADER_END_OFFSET - 1) 
+            + make_tag(text) + make_tag(footer_text, ImporterPL.FOOTER_START_OFFSET + 1))
         assert_equal(reformatted, text)
         
     def test_reformat_process_superscripts(self):

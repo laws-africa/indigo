@@ -48,7 +48,7 @@ setup(
         'dj-database-url>=0.3.0',
         'django-compressor>=2.2',
         'django-cors-headers>1.3.1',
-        'django-countries-plus>=1.1',
+        'django-countries-plus==1.1',  # 1.2 breaks migrations
         'django-filter>=1.0,<2',
         'django-languages-plus>=0.1.5',
         'django-pipeline>=1.6.11',

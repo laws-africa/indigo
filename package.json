@@ -9,6 +9,7 @@
   "dependencies": {
     "bower": "^1.8.0",
     "bootstrap": "^4.1.0",
+    "indigo-web": "^1.0.1",
     "yarn": "^1.6.0"
   },
   "devDependencies": {},

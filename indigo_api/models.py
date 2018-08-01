@@ -24,7 +24,8 @@ from countries_plus.models import Country as MasterCountry
 
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
 
-from .utils import language3_to_2, localize_toc
+from indigo.plugins import plugins
+from .utils import language3_to_2
 
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
@@ -45,6 +46,11 @@ class Work(models.Model):
     allows us to track works that we don't have documents for, and provides a
     logical parent for documents, which are expressions of a work.
     """
+    class Meta:
+        permissions = (
+            ('review_work', 'Can review work details'),
+            ('view_work', 'Can list and view work details'),
+        )
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
     """ The FRBR Work URI of this work that uniquely identifies it globally """
@@ -55,7 +61,7 @@ class Work(models.Model):
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
-    publication_date = models.CharField(null=True, blank=True, max_length=255, help_text="Date of publication (YYYY-MM-DD)")
+    publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
@@ -168,6 +174,37 @@ class Work(models.Model):
     def expressions(self):
         return self.document_set.undeleted().order_by('expression_date').all()
 
+    def initial_expressions(self):
+        """ Expressions at initial publication date.
+        """
+        return self.document_set.undeleted().filter(expression_date=self.publication_date).all()
+
+    def versions(self):
+        """ Return a queryset of `reversion.models.Version` objects for
+        revisions for this work, most recent first.
+        """
+        content_type = ContentType.objects.get_for_model(self)
+        return reversion.models.Version.objects\
+            .prefetch_related('revision')\
+            .filter(content_type=content_type)\
+            .filter(object_id_int=self.id)\
+            .order_by('-id')
+
+    def numbered_title(self):
+        """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
+        This usually differs from the short title. May return None.
+        """
+        plugin = plugins.for_work('work-detail', self)
+        if plugin:
+            return plugin.work_numbered_title(self)
+
+    def friendly_type(self):
+        """ Return a friendly document type for this work, such as "Act" or "By-law".
+        """
+        plugin = plugins.for_work('work-detail', self)
+        if plugin:
+            return plugin.work_friendly_type(self)
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -196,6 +233,14 @@ class Amendment(models.Model):
 
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    class Meta:
+        ordering = ['date']
+
+    def expressions(self):
+        """ The amended work's documents (expressions) at this date.
+        """
+        return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
 
 
 @receiver(signals.post_save, sender=Amendment)
@@ -329,12 +374,6 @@ class Document(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
-    # extra details which are primarily stored in the XML, but which are first class API attributes
-    # so we cache them in the database
-    publication_name = models.CharField(null=True, blank=True, max_length=255)
-    publication_date = models.CharField(null=True, blank=True, max_length=255)
-    publication_number = models.CharField(null=True, blank=True, max_length=255)
-
     # caching attributes
     _work_uri = None
 
@@ -406,6 +445,18 @@ class Document(models.Model):
     def assent_date(self):
         return self.work.assent_date
 
+    @property
+    def publication_name(self):
+        return self.work.publication_name
+
+    @property
+    def publication_number(self):
+        return self.work.publication_number
+
+    @property
+    def publication_date(self):
+        return self.work.publication_date
+
     def save(self, *args, **kwargs):
         self.copy_attributes()
         self.update_search_text()
@@ -442,9 +493,6 @@ class Document(models.Model):
             self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
-            self.publication_number = self.doc.publication_number
-            self.publication_name = self.doc.publication_name
-            self.publication_date = self.doc.publication_date
             # ensure these are refreshed
             self._work_uri = None
             self._amended_versions = None
@@ -456,7 +504,7 @@ class Document(models.Model):
         """ Copy various attributes from this document's Work onto this
         document.
         """
-        for attr in ['frbr_uri', 'country', 'publication_name', 'publication_date', 'publication_number']:
+        for attr in ['frbr_uri', 'country']:
             setattr(self, attr, getattr(self.work, attr))
 
         # copy over amendments at or before this expression date
@@ -491,9 +539,24 @@ class Document(models.Model):
         self.copy_attributes(from_model=False)
 
     def table_of_contents(self):
-        toc = self.doc.table_of_contents()
-        localize_toc(toc, self.django_language)
-        return [t.as_dict() for t in toc]
+        builder = plugins.for_document('toc', self)
+        return builder.table_of_contents_for_document(self)
+
+    def get_subcomponent(self, component, subcomponent):
+        """ Get the named subcomponent in this document, such as `chapter/2` or 'section/13A'.
+        :class:`lxml.objectify.ObjectifiedElement` or `None`.
+        """
+        def search_toc(items):
+            for item in items:
+                if item.component == component and item.subcomponent == subcomponent:
+                    return item.element
+
+                if item.children:
+                    found = search_toc(item.children)
+                    if found:
+                        return found
+
+        return search_toc(self.table_of_contents())
 
     def amended_versions(self):
         """ Return a list of all the amended versions of this work.
@@ -611,7 +674,7 @@ class Document(models.Model):
         kwargs['country'] = frbr_uri.country
         kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
 
-        doc = cls(frbr_uri=frbr_uri.work_uri(False), publication_date=frbr_uri.expression_date, expression_date=frbr_uri.expression_date, **kwargs)
+        doc = cls(frbr_uri=frbr_uri.work_uri(False), expression_date=frbr_uri.expression_date, **kwargs)
         doc.copy_attributes()
 
         return doc
@@ -619,6 +682,7 @@ class Document(models.Model):
 
 # version tracking
 reversion.revisions.register(Document)
+reversion.revisions.register(Work)
 
 
 def attachment_filename(instance, filename):

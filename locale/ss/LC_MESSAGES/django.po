@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-11-11 13:59+0000\n"
-"PO-Revision-Date: 2017-11-11 07:10-0500\n"
+"POT-Creation-Date: 2018-07-17 23:30+0400\n"
+"PO-Revision-Date: 2018-07-26 10:04\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Swati\n"
 "Language: ss_ZA\n"
@@ -14,26 +14,72 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openup-indigo\n"
 "X-Crowdin-Language: ss\n"
-"X-Crowdin-File: /i18n/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /master/locale/af/LC_MESSAGES/django.po\n"
 
-#: indigo_api/templates/_amendments.html:7
-#, python-format
-msgid ""
-"[Amended by <span class=\"amending-title\">%(amending_title)s</span> on "
-"<span class=\"date\">%(date)s</span>]"
+#: indigo/analysis/toc/base.py:9
+msgid "Act"
 msgstr ""
 
-#: indigo_api/templates/act.html:17
+#: indigo/analysis/toc/base.py:10
+msgid "Article"
+msgstr ""
+
+#: indigo/analysis/toc/base.py:11
+msgid "By-law"
+msgstr ""
+
+#: indigo/analysis/toc/base.py:12 indigo_za/toc.py:27
+msgid "Chapter"
+msgstr "Sehluko"
+
+#: indigo/analysis/toc/base.py:13
+msgid "Government Notice"
+msgstr ""
+
+#: indigo/analysis/toc/base.py:14 indigo_za/toc.py:28
+msgid "Part"
+msgstr ""
+
+#: indigo/analysis/toc/base.py:15 indigo_za/toc.py:13
+msgid "Section"
+msgstr ""
+
+#: indigo/analysis/work_detail/base.py:29
+#, python-format
+msgid "%(type)s %(number)s"
+msgstr ""
+
+#: indigo/analysis/work_detail/base.py:39
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
 msgstr ""
 
-#: indigo_api/templates/act.html:29
+#: indigo_api/templates/_amendments.html:9
+#, python-format
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"date\">%(date)s</span>]"
+msgstr ""
+
+#: indigo_api/templates/_amendments.html:11
+#, python-format
+msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"date\">%(date)s</span>]"
+msgstr ""
+
+#: indigo_api/templates/act.html:33
+#, python-format
+msgid "Published in %(name)s no. %(number)s on %(date)s"
+msgstr ""
+
+#: indigo_api/templates/act.html:35
+#, python-format
+msgid "Published in %(name)s on %(date)s"
+msgstr ""
+
+#: indigo_api/templates/act.html:43
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr ""
 
-#: indigo_api/templates/act.html:35
+#: indigo_api/templates/act.html:49 indigo_pl/templates/act-pl.html:29
 #, python-format
 msgid "Commences on %(date)s unless otherwise noted"
 msgstr ""
@@ -42,26 +88,128 @@ msgstr ""
 msgid "Table of Contents"
 msgstr ""
 
-#: indigo_api/utils.py:49 indigo_api/utils.py:68
-msgid "Section"
+#: indigo_app/templates/registration/logged_out.html:6
+msgid "Thanks for spending some quality time with Indigo today."
 msgstr ""
 
-#: indigo_api/utils.py:65
-msgid "Act"
+#: indigo_app/templates/registration/logged_out.html:8
+msgid "Log in again"
 msgstr ""
 
-#: indigo_api/utils.py:66
-msgid "Chapter"
-msgstr "Sehluko"
-
-#: indigo_api/utils.py:67
-msgid "Part"
+#: indigo_app/templates/registration/password_change_form.html:4
+msgid "Documentation"
 msgstr ""
 
-#: indigo_api/utils.py:69
-msgid "Government Notice"
+#: indigo_app/templates/registration/password_change_form.html:4
+msgid "Change password"
 msgstr ""
 
-#: indigo_api/utils.py:70
-msgid "By-law"
+#: indigo_app/templates/registration/password_change_form.html:4
+msgid "Log out"
 msgstr ""
+
+#: indigo_app/templates/registration/password_change_form.html:7
+msgid "Home"
+msgstr ""
+
+#: indigo_app/templates/registration/password_change_form.html:8
+msgid "Password change"
+msgstr ""
+
+#: indigo_app/templates/registration/password_change_form.html:21
+msgid "Please correct the error below."
+msgstr ""
+
+#: indigo_app/templates/registration/password_change_form.html:21
+msgid "Please correct the errors below."
+msgstr ""
+
+#: indigo_app/templates/registration/password_change_form.html:26
+msgid "Please enter your old password, for security's sake, and then enter your new password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: indigo_app/templates/registration/password_change_form.html:54
+#: indigo_app/templates/registration/password_reset_confirm.html:23
+msgid "Change my password"
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_complete.html:6
+msgid "Your password has been set. You may go ahead and log in now."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_complete.html:8
+msgid "Log in"
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_confirm.html:8
+msgid "Please enter your new password twice so we can verify you typed it in correctly."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_confirm.html:28
+msgid "The password reset link was invalid, possibly because it has already been used.  Please request a new password reset."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_done.html:7
+msgid "We've emailed you instructions for setting your password, if an account exists with the email you entered. You should receive them shortly."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_done.html:9
+msgid "If you don't receive an email, please make sure you've entered the address you registered with, and check your spam folder."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_email.html:2
+#, python-format
+msgid "You're receiving this email because you requested a password reset for your user account at %(site_name)s."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_email.html:4
+msgid "Please go to the following page and choose a new password:"
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_email.html:8
+msgid "Your username, in case you've forgotten:"
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_email.html:10
+msgid "Thanks for using our site!"
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_email.html:12
+#, python-format
+msgid "The %(site_name)s team"
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_form.html:6
+msgid "Forgotten your password? Enter your email address below, and we'll email instructions for setting a new one."
+msgstr ""
+
+#: indigo_app/templates/registration/password_reset_form.html:17
+msgid "Reset my password"
+msgstr ""
+
+#: indigo_workflow/templates/indigo_workflow/task_base.html:49
+msgid "Task is complete"
+msgstr ""
+
+#: indigo_workflow/templates/indigo_workflow/task_base.html:58
+#: indigo_workflow/templates/viewflow/flow/process_detail.html:44
+msgid "Accept this task"
+msgstr ""
+
+#: indigo_workflow/templates/indigo_workflow/task_base.html:64
+#: indigo_workflow/templates/viewflow/flow/process_detail.html:49
+msgid "Unassign"
+msgstr ""
+
+#: indigo_workflow/templates/indigo_workflow/task_base.html:69
+msgid "Undo"
+msgstr ""
+
+#: indigo_workflow/templates/indigo_workflow/task_base.html:74
+msgid "Cancel"
+msgstr ""
+
+#: indigo_workflow/templates/viewflow/flow/process_detail.html:69
+msgid "Cancel workflow"
+msgstr ""
+

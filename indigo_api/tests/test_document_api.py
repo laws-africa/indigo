@@ -325,7 +325,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
         self.maxDiff = None
-        self.assertEqual(response.data['toc'], [
+        self.assertEqual([
             {
                 'type': 'chapter',
                 'num': '2',
@@ -334,7 +334,7 @@ class DocumentAPITest(APITestCase):
                 'component': 'main',
                 'title': 'Chapter 2 - Administrative provisions',
                 'subcomponent': 'chapter/2',
-                'url': 'http://testserver/api/za/act/1998/2/eng/main/chapter/2',
+                'url': 'http://testserver/api/za/act/1998/2/eng@1900-01-01/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
@@ -344,11 +344,11 @@ class DocumentAPITest(APITestCase):
                         'title': '3. Consent required for interment',
                         'component': 'main',
                         'subcomponent': 'section/3',
-                        'url': 'http://testserver/api/za/act/1998/2/eng/main/section/3',
+                        'url': 'http://testserver/api/za/act/1998/2/eng@1900-01-01/main/section/3',
                     },
                 ],
             },
-        ])
+        ], response.data['toc'])
 
     def test_create_from_file(self):
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
@@ -385,6 +385,20 @@ class DocumentAPITest(APITestCase):
         # test media view
         response = self.client.get('/api/documents/%s/media/%s' % (id, fname))
         assert_equal(response.status_code, 200)
+
+    def test_create_from_docx(self):
+        fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
+        f = open(fname, 'r')
+
+        response = self.client.post('/api/documents', {'file': f, 'frbr_uri': '/za/act/1998/2'}, format='multipart')
+        assert_equal(response.status_code, 201)
+        id = response.data['id']
+
+        # check the doc
+        response = self.client.get('/api/documents/%s' % id)
+        assert_equal(response.data['draft'], True)
+        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
+        assert_equal(response.data['title'], 'Test Act')
 
     def test_attachment_as_media(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2'})

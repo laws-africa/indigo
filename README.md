@@ -1,7 +1,7 @@
 Indigo
 ======
 
-[![Build Status](https://travis-ci.org/OpenUpSA/indigo.svg)](http://travis-ci.org/OpenUpSA/indigo)
+[![Build Status](https://travis-ci.org/OpenUpSA/indigo.svg)](http://travis-ci.org/OpenUpSA/indigo) [![Coverage Status](https://coveralls.io/repos/github/OpenUpSA/indigo/badge.svg?branch=master)](https://coveralls.io/github/OpenUpSA/indigo?branch=master)
 
 ![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
 
@@ -43,8 +43,20 @@ Ensure you have [PostgreSQL](https://www.postgresql.org/) installed and running.
 and create a corresponding database called `indigo`.
 
 ```bash
-sudo su - postgres createuser -d -P indigo
-sudo su - postgres createdb indigo
+sudo su - postgres -c 'createuser -d -P indigo'
+sudo su - postgres -c 'createdb indigo'
+```
+
+Check that you can connect to the postgresql database as your regular shell user (not indigo user) by means of password authentication:
+
+```
+psql -h localhost indigo indigo
+```
+
+If you can't connect, you can modify your `pg_hba.conf` (`/etc/postgresql/9.6/main/pg_hba.conf` for postgresql 9.6) to allow md5 encrypted password authentication for users on localhost by adding a line like this:
+
+```
+local	all		all     md5
 ```
 
 Then run migrations to setup the initial database:

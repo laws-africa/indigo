@@ -32,12 +32,21 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
-    'indigo_api',
+    # local traditions
+    'indigo_pl',
+    'indigo_za',
 
-    # the Indigo browser application
+    # workflow
+    'indigo_workflow',
+    'viewflow',
+
+    # the Indigo API
+    'indigo_api',
+    # the Indigo editor application
     'indigo_app',
     # the Indigo act resolver
     'indigo_resolver',
+    'indigo_slack',
 
     'django.contrib.admin',
     'django.contrib.auth',
@@ -52,9 +61,8 @@ INSTALLED_APPS = (
     'rest_auth',
     'django_filters',
     'django_extensions',
-    'django_nose',
 
-    # the Indigo API
+    # required by the Indigo API
     'taggit',
     'taggit_serializer',
     'countries_plus',
@@ -134,6 +142,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'indigo_app.context_processors.general',
+                'indigo_app.context_processors.models',
             ]
         }
     }
@@ -213,28 +222,11 @@ PIPELINE = {
                 'javascript/prettyprint.js',
                 'javascript/table-editor.js',
                 'javascript/indigo/models.js',
-                'javascript/indigo/views/user.js',
-                'javascript/indigo/views/reset_password.js',
-                'javascript/indigo/views/document_defined_terms.js',
-                'javascript/indigo/views/document_references.js',
-                'javascript/indigo/views/document_amendments.js',
-                'javascript/indigo/views/document_attachments.js',
-                'javascript/indigo/views/document_properties.js',
-                'javascript/indigo/views/document_toc.js',
-                'javascript/indigo/views/work.js',
-                'javascript/indigo/views/work_amendments.js',
-                'javascript/indigo/views/work_chooser.js',
-                'javascript/indigo/views/table_editor.js',
-                'javascript/indigo/views/document_editor.js',
-                'javascript/indigo/views/document_revisions.js',
-                'javascript/indigo/views/document_activity.js',
-                'javascript/indigo/views/document.js',
-                'javascript/indigo/views/library.js',
-                'javascript/indigo/views/error_box.js',
-                'javascript/indigo/views/progress.js',
-                'javascript/indigo/views/import.js',
-                'javascript/indigo/views/annotations.js',
-                'javascript/indigo/timestamps.js',
+                'javascript/indigo/traditions.js',
+                'javascript/indigo/*.js',
+                'javascript/indigo/views/*.js',
+                'javascript/indigo/views/**/*.js',
+                'javascript/indigo/**/*.js',
                 'javascript/indigo.js',
             ),
             'output_filename': 'app.js',
@@ -274,7 +266,7 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
-    'PAGE_SIZE': 250,
+    'PAGE_SIZE': 500,
 }
 
 # Django Rest Auth
@@ -308,6 +300,19 @@ if GOOGLE_ANALYTICS_ID and not DEBUG:
 # disable email in development
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# slack integration
+SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
+
+
+# Messages
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.INFO: 'alert alert-primary',
+    messages.SUCCESS: 'alert alert-success',
+    messages.WARNING: 'alert alert-warning',
+    messages.ERROR: 'alert alert-danger',
+}
 
 
 # Logging

@@ -6,6 +6,10 @@
 }
 
 .work-chooser-list {
+  tr {
+    cursor: pointer;
+  }
+
   td.frbr_uri {
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -30,16 +34,12 @@
   }
 }
 
-#edit-work-view {
-  .repeal-date {
-    display: none;
-  }
+.if-repealed {
+  display: none;
+}
 
-  &.is-repealed {
-    .repeal-date {
-      display: block;
-    }
-  }
+.is-repealed .if-repealed {
+  display: initial;
 }
 
 #work-amendments-view {
@@ -47,5 +47,22 @@
     th.date {
       width: 15%;
     }
+  }
+}
+
+.diff-table {
+  thead {
+    th {
+      border-bottom: 1px solid $grey;
+    }
+    td {
+      border-bottom: 1px solid white;
+    }
+  }
+  td, th {
+    padding: 0px;
+  }
+  th {
+    padding-top: 10px;
   }
 }

@@ -1,0 +1,93 @@
+{% extends "work/layout.html" %}
+
+{% block view-id %}work-amendments-view{% endblock %}
+{% block title %}Points in Time - {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  {% if perms.indigo_api.change_amendment %}
+    <div class="text-right mb-3">
+      <button class="btn btn-success save-work" type="button">Save</button>
+    </div>
+  {% endif %}
+
+  <div class="work-amendments"></div>
+
+  <script id="work-amendments-template" type="text/x-handlebars-template">
+  {% verbatim %}
+
+  <ol class="timeline">
+    {{#if can_add}}
+    <li class="timeline-item card">
+      <div class="card-body">
+        <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+      </div>
+    </li>
+    {{/if}}
+
+    {{#each amendments}}
+      <li class="timeline-item card" data-date="{{ date }}" data-index="{{ @index }}">
+        <h6 class="timeline-date">{{ date }}</h6>
+
+        <div class="card-body">
+          {{#if ../can_edit}}{{#unless initial}}
+          <div class="dropdown pull-right">
+            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+            <div class="dropdown-menu">
+              <a href="#" class="dropdown-item edit-amendment">Change date</a>
+              <a href="#" class="dropdown-item delete-amendment">Delete</a>
+            </div>
+          </div>
+          {{/unless}}{{/if}}
+
+          {{#if initial}}
+            <h6>Initial publication</h6>
+          {{else}}
+            <h6 class="mb-0">Amended by <a href="/works{{ amending_work.frbr_uri }}/">{{ amending_work.title }}</a></h6>
+            <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
+          {{/if}}
+
+          <div class="edit-wrapper mb-3"></div>
+
+          <div class="documents">
+            {{#if documents}}
+              {{#each documents}}
+                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a> · {{ language }}</div>
+              {{/each}}
+            {{else}}
+              <span class="text-muted">No editable version at this date</span>
+            {{/if}}
+          </div>
+        </div>
+
+        <div class="card-footer text-right">
+          <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil"></i> Create amended version</button>
+          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
+        </div>
+      </li>
+    {{/each}}
+  </ol>
+
+  {% endverbatim %}
+  </script>
+
+  <script id="amendment-editor-template" type="text/x-handlebars-template">
+  {% verbatim %}
+  <div class="form-inline">
+    <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
+    <button class="btn btn-success save-amendment">OK</button>
+    <button class="btn btn-link cancel">Cancel</button>
+  </div>
+  {% endverbatim %}
+  </script>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
+  window.Indigo.Preloads.documents = {{ documents_json|safe }};
+  </script>
+
+{% endblock %}

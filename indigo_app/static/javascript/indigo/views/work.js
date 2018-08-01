@@ -12,7 +12,7 @@
   /**
    * A view that lets a user create or edit a Work.
    */
-  Indigo.WorkView = Backbone.View.extend({
+  Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
     events: {
       'click .btn.save': 'save',
@@ -90,9 +90,8 @@
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
-
-      // prevent the user from navigating away without saving changes
-      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
+      this.listenTo(this.model, 'change:country change:publication_date change:publication_name change:publication_number',
+                    _.debounce(this.publicationChanged, 1000));
 
       this.model.updateFrbrUri();
       this.listenToOnce(Indigo.works, 'sync', this.parentChanged);
@@ -100,6 +99,7 @@
       this.stickit();
       this.repealChanged();
       this.commencingWorkChanged();
+      this.publicationChanged();
       this.canSave();
     },
 
@@ -135,11 +135,11 @@
           locality = this.model.get('locality');
 
       this.$('.work-country')
-        .attr('href', '/library?country=' + this.model.get('country'))
+        .attr('href', '/library/' + this.model.get('country') + '/')
         .text(country.name + ' · ' + this.model.get('country'));
 
       this.$('.work-locality')
-        .attr('href', '/library?country=' + this.model.get('country') + '&locality=' + locality)
+        .attr('href', '/library/' + this.model.get('country') + '/?locality=' + locality)
         .text(locality ? country.localities[locality] + ' · ' + locality : '');
     },
 
@@ -155,7 +155,7 @@
         if (isNew) {
           // redirect
           Indigo.progressView.peg();
-          window.location = '/works/' + self.model.get('id');
+          window.location = '/works' + self.model.get('frbr_uri') + '/edit/';
         }
       });
     },
@@ -264,7 +264,7 @@
           .show('hidden')
           .find('.work_parent_title')
             .text(parent.get('title'))
-            .attr('href', '/works/' + parent.get('id'))
+            .attr('href', '/works' + parent.get('frbr_uri') + '/')
             .end()
           .find('.work_parent_uri')
             .text(parent.get('frbr_uri'));
@@ -273,11 +273,41 @@
       }
     },
 
-    windowUnloading: function(e) {
-      if (this.dirty) {
-        e.preventDefault();
-        return 'You will lose your changes!';
+    publicationChanged: function() {
+      var date = this.model.get('publication_date'),
+          number = this.model.get('publication_number'),
+          name = this.model.get('publication_name'),
+          country = this.model.get('country'),
+          $ul = this.$('.work-publication-links');
+
+      if (date && number) {
+        var url = '/api/publications/' + country + '/find' + 
+                  '?date=' + encodeURIComponent(date) + 
+                  '&name=' + encodeURIComponent(name) +
+                  '&number=' + encodeURIComponent(number);
+
+        $ul.empty();
+
+        $.getJSON(url)
+          .done(function(response) {
+            response.publications.forEach(function(pub) {
+              var li = document.createElement('li'),
+                  a = document.createElement('a');
+
+              a.innerText = pub.title || pub.url;
+              a.setAttribute('href', pub.url);
+              a.setAttribute('target', '_blank');
+              a.setAttribute('rel', 'noreferrer');
+
+              li.appendChild(a);
+              $ul.append(li);
+            });
+          });
       }
+    },
+
+    isDirty: function() {
+      return this.dirty;
     },
   });
 })(window);

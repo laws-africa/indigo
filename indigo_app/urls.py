@@ -17,12 +17,17 @@ urlpatterns = [
     # homepage
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
 
-    url(r'^documents/(?P<doc_id>\d+)/$', views.document, name='document'),
-    url(r'^documents/new/$', views.document, name='new_document'),
-    url(r'^documents/import/$', views.import_document, name='import_document'),
-    url(r'^works/(?P<work_id>\d+)/$', views.edit_work, name='work'),
-    url(r'^works/new/$', views.edit_work, name='new_work'),
-    url(r'^works/(?P<work_id>\d+)/amendments/$', views.work_amendments, name='work_amendments'),
-    url(r'^works/(?P<work_id>\d+)/related/$', views.work_related, name='work_related'),
-    url(r'^library/$', views.library, name='library'),
+    url(r'^works/new/$', views.AddWorkView.as_view(), name='new_work'),
+    url(r'^works(?P<frbr_uri>/\S+?)/amendments/$', views.WorkAmendmentsView.as_view(), name='work_amendments'),
+    url(r'^works(?P<frbr_uri>/\S+?)/related/$', views.WorkRelatedView.as_view(), name='work_related'),
+    url(r'^works(?P<frbr_uri>/\S+?)/import/$', views.ImportDocumentView.as_view(), name='import_document'),
+    url(r'^works(?P<frbr_uri>/\S+?)/edit/$', views.WorkDetailView.as_view(), name='work_edit'),
+    url(r'^works(?P<frbr_uri>/\S+?)/revisions/$', views.WorkVersionsView.as_view(), name='work_versions'),
+    url(r'^works(?P<frbr_uri>/\S+?)/revisions/(?P<version_id>\d+)/restore$', views.RestoreWorkVersionView.as_view(), name='work_restore_version'),
+    url(r'^works(?P<frbr_uri>/\S+?)/$', views.WorkOverviewView.as_view(), name='work'),
+
+    url(r'^documents/(?P<doc_id>\d+)/$', views.DocumentDetailView.as_view(), name='document'),
+
+    url(r'^library/$', views.LibraryView.as_view()),
+    url(r'^library/(?P<country>[^\s/-]+)/$', views.LibraryView.as_view(), name='library'),
 ]

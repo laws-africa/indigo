@@ -10,7 +10,9 @@ before_install:
   - "rvm use ruby-2.3.3"
 install: 
   - "pip install -r requirements.txt"
+  - "pip install coveralls"
   - "bundle install"
-before_script:
   - "npm install -g jshint"
-script: python manage.py test && jshint indigo_app/static/javascript/indigo/
+script: coverage run manage.py test && jshint indigo_app/static/javascript/indigo/
+after_success:
+  - coveralls

@@ -1,0 +1,22 @@
+{% extends "standalone.html" %}
+{% load staticfiles %}
+
+{% block title %}Permission Denied{% endblock %}
+{% block standalone-content %}
+
+<div class="row">
+  <div class="col-md-10 offset-md-1 col-lg-8 offset-lg-2">
+
+    <div class="framed-indigo-box">
+      <div class="text-center">
+        <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+
+        <h3>Permission Denied</h3>
+
+        <p class="lead">You don't have the right permissions to do that.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

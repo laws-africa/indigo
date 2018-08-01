@@ -3,13 +3,14 @@
 {% block title %}Library{% endblock %}
 
 {% block view-id %}library-view{% endblock %}
+{% block main-header %}{% endblock %}
 {% block content %}
 <aside class="library-sidebar">
   <section>
     <label>Country</label>
     <select class="form-control filter-country" name="country-filter">
       {% for country in countries %}
-        <option {% if user.editor.country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
+        <option {% if country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
       {% endfor %}
     </select>
   </section>
@@ -47,7 +48,10 @@
           <!-- work without any documents -->
           <td>
             <i class="fa fa-fw fa-circle" title="empty work"></i>
-            <a href="/works/{{ id }}">{{ title }}</a>
+            <a href="/works{{ frbr_uri }}/">{{ title }}</a>
+            {{#if repealed}}
+              <span class="badge badge-info">repealed</span>
+            {{/if}}
           </td>
           <td>{{ year }} / {{ number }}</td>
           <td>
@@ -71,6 +75,10 @@
               <span class="text-muted">as at {{ expression_date }}</span>
             {{else}}
               <a href="/documents/{{ id }}/">{{ title }} as at {{ expression_date }}</a>
+            {{/if}}
+
+            {{#if ../repealed_date}}
+              <span class="badge badge-info">repealed</span>
             {{/if}}
 
             {{#if stub}}
@@ -154,7 +162,7 @@
 window.Indigo.countries = {{ countries_json|safe }};
 
 // include the documents as JSON
-window.Indigo.Preloads.country_code = '{{ user.editor.country_code }}';
+window.Indigo.Preloads.country_code = '{{ country_code }}';
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>

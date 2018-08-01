@@ -28,26 +28,13 @@
 
       this.parent = options.parent;
       this.name = 'source';
-      this.grammar_fragments = {
-        chapter: 'chapters',
-        part: 'parts',
-        section: 'sections',
-        component: 'schedules',
-        components: 'schedules_container',
-      };
-      this.quickEditable = '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components';
+      this.editing = false;
       this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fa fa-pencil"></i></a></div>');
 
       // setup renderer
-      var htmlTransform = new XSLTProcessor();
       this.editorReady = $.Deferred();
-      $.get('/static/xsl/act.xsl')
-        .then(function(xml) {
-          htmlTransform.importStylesheet(xml);
-          htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
-          self.htmlTransform = htmlTransform;
-          self.editorReady.resolve();
-        });
+      this.listenTo(this.parent.model, 'change:country', this.countryChanged);
+      this.listenTo(this.parent.model, 'change:country change:language', this.render);
 
       // setup xml editor
       this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
@@ -61,7 +48,6 @@
       this.$textEditor = this.$('.document-text-editor');
       this.textEditor = ace.edit(this.$(".document-text-editor .ace-editor")[0]);
       this.textEditor.setTheme("ace/theme/xcode");
-      this.textEditor.getSession().setMode("ace/mode/indigo");
       this.textEditor.setValue();
       this.textEditor.getSession().setUseWrapMode(true);
       this.textEditor.setShowPrintMargin(false);
@@ -72,14 +58,56 @@
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
 
-      var textTransform = new XSLTProcessor();
-      $.get('/static/xsl/act_text.xsl')
-        .then(function(xml) {
-          textTransform.importStylesheet(xml);
-          self.textTransform = textTransform;
+      this.$toolbar = $('.document-toolbar');
+
+      this.countryChanged();
+    },
+
+    countryChanged: function() {
+      this.loadXSL();
+      this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+    },
+
+    loadXSL: function() {
+      var country = this.parent.model.get('country'),
+          self = this;
+
+      // setup akn to html transform
+      this.htmlTransformReady = $.Deferred();
+      function htmlLoaded(xml) {
+        var htmlTransform = new XSLTProcessor();
+        htmlTransform.importStylesheet(xml);
+        htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
+
+        self.htmlTransform = htmlTransform;
+        self.editorReady.resolve();
+        self.htmlTransformReady.resolve();
+      }
+
+      $.get('/static/xsl/act-' + country +'.xsl')
+        .then(htmlLoaded)
+        .fail(function() {
+          $.get('/static/xsl/act.xsl')
+            .then(htmlLoaded);
         });
 
-      this.$toolbar = $('.document-toolbar');
+
+      // setup akn to text transform
+      this.textTransformReady = $.Deferred();
+      function textLoaded(xml) {
+        var textTransform = new XSLTProcessor();
+        textTransform.importStylesheet(xml);
+
+        self.textTransform = textTransform;
+        self.textTransformReady.resolve();
+      }
+
+      $.get('/static/xsl/act_text-' + country +'.xsl')
+        .then(textLoaded)
+        .fail(function() {
+          $.get('/static/xsl/act_text.xsl')
+            .then(textLoaded);
+        });
     },
 
     fullEdit: function(e) {
@@ -100,6 +128,9 @@
     },
 
     editFragmentText: function(fragment) {
+      var self = this;
+
+      this.editing = true;
       this.fragment = fragment;
 
       // ensure source code is hidden
@@ -108,34 +139,43 @@
       // show the edit toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').addClass('d-none');
 
-      var self = this;
       var $editable = this.$('.akoma-ntoso').children().first();
       // text from node in the actual XML document
-      var text = this.xmlToText(this.fragment);
+      this.xmlToText(this.fragment).then(function(text) {
+        // show the text editor
+        self.$('.document-content-view').addClass('show-text-editor');
 
-      // show the text editor
-      this.$('.document-content-view').addClass('show-text-editor');
+        self.$textEditor
+          .data('fragment', self.fragment.tagName)
+          .show();
 
-      this.$textEditor
-        .data('fragment', this.fragment.tagName)
-        .show();
+        self.textEditor.setValue(text);
+        self.textEditor.gotoLine(1, 0);
+        self.textEditor.focus();
 
-      this.textEditor.setValue(text);
-      this.textEditor.gotoLine(1, 0);
-      this.textEditor.focus();
-
-      this.$('.document-sheet-container').scrollTop(0);
+        self.$('.document-sheet-container').scrollTop(0);
+      });
     },
 
     xmlToText: function(element) {
-      return this.textTransform
-        .transformToFragment(element, document)
-        .firstChild.textContent
-        // cleanup inline whitespace
-        .replace(/([^ ]) +/g, '$1 ')
-        // remove multiple consecutive blank lines
-        .replace(/^( *\n){2,}/gm, "\n");
+      var self = this,
+          deferred = $.Deferred();
+
+      this.textTransformReady.then(function() {
+        var text = self.textTransform
+          .transformToFragment(element, document)
+          .firstChild.textContent
+          // cleanup inline whitespace
+          .replace(/([^ ]) +/g, '$1 ')
+          // remove multiple consecutive blank lines
+          .replace(/^( *\n){2,}/gm, "\n");
+
+        deferred.resolve(text);
+      });
+
+      return deferred;
     },
 
     saveTextEditor: function(e) {
@@ -144,7 +184,7 @@
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragment = this.$textEditor.data('fragment');
-      fragment = this.grammar_fragments[fragment] || fragment;
+      fragment = this.parent.model.tradition().settings.grammar.fragments[fragment] || fragment;
 
       // should we delete the item?
       if (!content.trim() && fragment != 'akomaNtoso') {
@@ -232,6 +272,9 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').removeClass('d-none');
+
+      this.editing = false;
     },
 
     editFragment: function(node) {
@@ -279,18 +322,26 @@
     },
 
     render: function() {
-      if (this.htmlTransform && this.parent.fragment) {
-        this.htmlTransform.setParameter(null, 'defaultIdScope', this.getFragmentIdScope() || '');
-        this.htmlTransform.setParameter(null, 'manifestationUrl', this.parent.model.manifestationUrl());
-        this.htmlTransform.setParameter(null, 'lang', this.parent.model.get('language'));
-        var html = this.htmlTransform.transformToFragment(this.parent.fragment, document);
+      if (!this.parent.fragment) return;
 
-        this.makeLinksExternal(html);
-        this.makeTablesEditable(html);
-        this.makeElementsQuickEditable(html);
-        this.$('.akoma-ntoso').empty().get(0).appendChild(html);
-        this.trigger('rendered');
-      }
+      var self = this;
+      this.htmlTransformReady.then(function() {
+        self.htmlTransform.setParameter(null, 'defaultIdScope', self.getFragmentIdScope() || '');
+        self.htmlTransform.setParameter(null, 'manifestationUrl', self.parent.model.manifestationUrl());
+        self.htmlTransform.setParameter(null, 'lang', self.parent.model.get('language'));
+        var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
+
+        self.makeLinksExternal(html);
+        self.makeTablesEditable(html);
+        self.makeElementsQuickEditable(html);
+
+        var $akn = self.$('.akoma-ntoso');
+        // reset class name to ensure only one country class
+        $akn[0].className = "akoma-ntoso country-" + self.parent.model.get('country');
+        $akn.empty().append(html);
+
+        self.trigger('rendered');
+      });
     },
 
     getFragmentIdScope: function() {
@@ -332,7 +383,7 @@
 
     makeElementsQuickEditable: function(html) {
       $(html.firstElementChild)
-        .find(this.quickEditable)
+        .find(this.parent.model.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
         .prepend(this.quickEditTemplate);
     },
@@ -351,6 +402,9 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').addClass('d-none');
+
+      this.editing = true;
     },
 
     tableEditFinish: function() {
@@ -361,6 +415,9 @@
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
+      this.$('.document-workspace-buttons').removeClass('d-none');
+
+      this.editing = false;
     },
 
     editFind: function(e) {
@@ -474,7 +531,6 @@
 
     initialize: function(options) {
       this.dirty = false;
-      this.editing = false;
 
       this.documentContent = options.documentContent;
       // XXX: check
@@ -482,34 +538,28 @@
       this.documentContent.on('sync', this.setClean, this);
 
       this.tocView = options.tocView;
-      this.tocView.on('item-selected', this.editTocItem, this);
+      this.tocView.selection.on('change', this.tocSelectionChanged, this);
 
       // setup the editor views
-      this.activeEditor = this.sourceEditor = new Indigo.SourceEditorView({parent: this});
+      this.sourceEditor = new Indigo.SourceEditorView({parent: this});
       // XXX this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
       this.editFragment(null);
     },
 
-    editTocItem: function(item) {
+    tocSelectionChanged: function(selection) {
       var self = this;
 
       this.stopEditing()
         .then(function() {
-          if (item) {
-            self.editFragment(item.element);
+          if (selection) {
+            self.editFragment(selection.get('element'));
           }
         });
     },
 
     stopEditing: function() {
-      if (this.activeEditor && this.editing) {
-        this.editing = false;
-        return this.activeEditor.discardChanges();
-      } else {
-        this.editing = false;
-        return $.Deferred().resolve();
-      }
+      return this.sourceEditor.discardChanges();
     },
 
     editFragment: function(fragment) {
@@ -518,11 +568,10 @@
 
         var isRoot = fragment.parentElement === null;
 
-        this.editing = true;
         this.fragment = fragment;
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
-        this.activeEditor.editFragment(fragment);
+        this.sourceEditor.editFragment(fragment);
       }
     },
 
@@ -563,6 +612,10 @@
       }
     },
 
+    isDirty: function() {
+      return this.dirty || this.sourceEditor.editing;
+    },
+
     // Save the content of the editor, returns a Deferred
     save: function() {
       var self = this,
@@ -575,8 +628,8 @@
         // don't do anything if it hasn't changed
         ok();
 
-      } else if (this.activeEditor) {
-        this.activeEditor
+      } else {
+        this.sourceEditor
           // ask the editor to returns its contents
           .saveChanges()
           .done(function() {
@@ -584,8 +637,6 @@
             self.saveModel().done(ok).fail(fail);
           })
           .fail(fail);
-      } else {
-        this.saveModel().done(ok).fail(fail);
       }
 
       return deferred;

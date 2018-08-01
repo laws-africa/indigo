@@ -78,9 +78,6 @@
       this.listenTo(this.collection, 'add remove change', this.setDirty);
       this.listenTo(this.collection, 'sync', this.setClean);
 
-      // prevent the user from navigating away without saving changes
-      $(window).on('beforeunload', _.bind(this.windowUnloading, this));
-
       this.render();
       this.canSave();
     },
@@ -102,7 +99,8 @@
 
       this.$('.work-amendments').html(this.template({
         amendments: amendments,
-        readonly: Indigo.user.hasPerm('indigo_api.can_change_amendment'),
+        can_add: Indigo.user.hasPerm('indigo_api.add_amendment'),
+        can_edit: Indigo.user.hasPerm('indigo_api.change_amendment'),
         work: this.model.toJSON(),
       }));
     },
@@ -118,7 +116,7 @@
         if (chosen) {
           self.collection.add(new Indigo.WorkAmendment({
             amending_work: chosen,
-            date: chosen.get('publication_date'),
+            date: chosen.get('commencement_date') || chosen.get('publication_date'),
           }));
         }
       });
@@ -127,7 +125,7 @@
     editAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).data('index'),
+      var index = $(e.target).closest('.timeline-item').data('index'),
           $item = $(e.target).closest('li'),
           amendment = this.collection.at(index),
           $container = $item.find('.edit-wrapper'),
@@ -151,7 +149,7 @@
     deleteAmendment: function(e) {
       e.preventDefault();
 
-      var index = $(e.target).data('index');
+      var index = $(e.target).closest('.timeline-item').data('index');
       var amendment = this.collection.at(index);
 
       if (confirm("Really delete this amendment?")) {
@@ -164,7 +162,7 @@
       e.preventDefault();
 
       // create an amended version of this document at a particular date
-      var date = $(e.target).data('date');
+      var date = $(e.target).closest('.timeline-item').data('date');
 
       if (confirm('Create a new amended versiot at ' + date + '? Unsaved changes will be lost!')) {
         Indigo.progressView.peg();
@@ -199,11 +197,8 @@
       this.canSave();
     },
 
-    windowUnloading: function(e) {
-      if (this.dirty) {
-        e.preventDefault();
-        return 'You will lose your changes!';
-      }
+    isDirty: function(e) {
+      return this.dirty;
     },
 
   });

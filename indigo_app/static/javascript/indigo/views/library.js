@@ -36,13 +36,12 @@
       this.template = Handlebars.compile($(this.template).html());
       this.filtered = new Indigo.Library();
       this.filters = new Backbone.Model({
-        search: null,
         country: Indigo.Preloads.country_code,
         locality: null,
         tags: [],
         status: 'all',
+        search: null,
       });
-      this.listenTo(this.filters, 'change:country', this.countryChanged);
       this.listenTo(this.filters, 'change', function() { this.trigger('change'); });
       this.listenTo(this.filters, 'change', this.saveState);
       this.loadState();
@@ -59,21 +58,21 @@
     saveState: function() {
       // make the query string url
       var url = _.compact(_.map(this.filters.attributes, function(val, key) {
-        if (key != 'search' && !_.isNaN(val) && (_.isNumber(val) || !_.isEmpty(val))) return key + '=' + encodeURIComponent(val);
+        if (key != 'search' && key != 'country' && !_.isNaN(val) && (_.isNumber(val) || !_.isEmpty(val))) return key + '=' + encodeURIComponent(val);
       })).join('&');
 
       history.replaceState({}, document.title, url ? ('?' + url) : "");
     },
 
     loadState: function() {
-      var country = Indigo.queryParams.country || this.filters.get('country'),
+      var 
           tags = Indigo.queryParams.tags;
       if (tags) {
         tags = tags.split(',');
       }
 
       this.filters.set({
-        country: country,
+        country: this.filters.get('country'),
         locality: Indigo.queryParams.locality,
         status: Indigo.queryParams.status || 'all',
         nature: Indigo.queryParams.nature,
@@ -103,8 +102,7 @@
     filterAndSummarize: function() {
       var filters = this.filters.attributes,
           works,
-          docs = {},
-          country;
+          docs = {};
 
       this.summary = {};
 
@@ -122,7 +120,7 @@
 
       // filter by country -- works is scoped to country, so this should be all the works
       works = this.works.where({'country': filters.country});
-      country = Indigo.countries[filters.country];
+      var country = Indigo.countries[filters.country];
 
       // count localities, sort alphabetically
       this.summary.localities = _.sortBy(
@@ -263,20 +261,7 @@
       e.preventDefault();
       var country = $(e.currentTarget).val();
 
-      this.filters.set({
-        country: country,
-        locality: null,
-        tags: [],
-      });
-    },
-
-    countryChanged: function(model, country) {
-      this.$('.filter-country').val(country);
-
-      Indigo.works.setCountry(country).done(function() {
-        // this will eventually trigger a change event on us
-        Indigo.library.setCountry(country);
-      });
+      window.location = '/library/' + country + '/';
     },
 
     filterByLocality: function(e) {

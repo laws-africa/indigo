@@ -155,13 +155,13 @@
 
       this.$('.document-work-title')
         .text(work.get('title'))
-        .attr('href', '/works/' + work.get('id'));
+        .attr('href', '/works' + work.get('frbr_uri'));
     },
 
     workChanged: function() {
       this.amendments.work = this.model.work;
       this.amendments.fetch({reset: true});
-      this.$('a.manage-amendments').attr('href', '/works/' + this.model.work.get('id') + '/amendments/');
+      this.$('a.manage-amendments').attr('href', '/works' + this.model.work.get('frbr_uri') + '/amendments/');
       this.render();
     },
   });

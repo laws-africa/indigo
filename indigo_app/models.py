@@ -45,8 +45,15 @@ class Country(models.Model):
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
+    def work_locality(self, work):
+        return self.locality_set.filter(code=work.locality).first()
+
     def __unicode__(self):
         return unicode(self.country.name)
+
+    @classmethod
+    def for_work(cls, work):
+        return cls.objects.select_related('country').filter(country__iso__iexact=work.country).first()
 
 
 class Locality(models.Model):
@@ -63,6 +70,12 @@ class Locality(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+    @classmethod
+    def for_work(cls, work):
+        if work.locality:
+            country = Country.for_work(work)
+            return country.work_locality(work)
 
 
 class Editor(models.Model):

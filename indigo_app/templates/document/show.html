@@ -3,10 +3,9 @@
 {% load static %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} {% if document.draft %}is-draft{% else %}is-published{% endif %} {% endblock %}
-
-{% block sidebar %}
-  {% include './_sidebar.html' %}
+{% block body-class %}{{ block.super }} sidebar-minimized
+  {% if document.draft %}is-draft{% else %}is-published{% endif %}
+  {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}
 
 {% block breadcrumbs %}
@@ -19,6 +18,7 @@
     <span class="document-title">{{ document.title }}</span>
     <span class="badge badge-info if-published">published</span>
     <span class="badge badge-warning if-draft">draft</span>
+    <span class="badge badge-info if-repealed">repealed</span>
   </h5>
 
   <div class="document-toolbar-wrapper">
@@ -29,30 +29,31 @@
 
 {% block main-content %}
   <div class="document-workspace document-content-view">
-    {% include "document/_doc_sidebar.html" %}
+    {% include "document/_toc.html" %}
     {% include "document/_content.html" %}
   </div>
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">
   {% verbatim %}
-    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
     {{#if locality}}
-    <li class="breadcrumb-item"><a href="/library/?country={{ document.country }}&locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/?locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
     {{/if}}
-    <li class="breadcrumb-item"><a href="/works/{{ work.id }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
+    <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">
-      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
       <div class="dropdown-menu">
         {{#each expressions}}
           {{#each documents}}
             <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
               {{ ../date }}
+              · {{ language }}
               {{#if current}} - this document{{/if}}
             </a>
           {{/each}}
         {{/each}}
         <div class="dropdown-divider"></div>
-        <a class="dropdown-item" href="/works/{{ work.id }}/amendments/">Manage amendments...</a>
+        <a class="dropdown-item" href="/works{{ work.frbr_uri }}/amendments/">Manage amendments...</a>
       </div>
     </li>
   {% endverbatim %}

@@ -1,10 +1,16 @@
-{% load i18n %}
+{% load i18n indigo %}
 
 {% if document.amendments %}
 <ol class="amendment-list">
   {% for amendment in document.amendments %}
   <li class="amendment">
-    {% blocktrans with amending_title=amendment.amending_title date=amendment.date|date:"j E Y" %}[Amended by <span class="amending-title">{{ amending_title }}</span> on <span class="date">{{ date }}</span>]{% endblocktrans %}
+    {% with amending_title=amendment.amending_work.title amending_numtitle=amendment.amending_work.numbered_title date=amendment.date|date:"j E Y" resolver_uri=amendment.amending_work|work_resolver_uri %}
+      {% if numtitle %}
+        {% blocktrans %}[Amended by <a href="{{ resolver_uri }}" class="amending-title">{{ amending_title }} ({{ amending_numtitle }})</a> on <span class="date">{{ date }}</span>]{% endblocktrans %}
+      {% else %}
+        {% blocktrans %}[Amended by <a href="{{ resolver_uri }}" class="amending-title">{{ amending_title }}</a> on <span class="date">{{ date }}</span>]{% endblocktrans %}
+      {% endif %}
+    {% endwith %}
   </li>
   {% endfor %}
 </ol>

@@ -66,7 +66,7 @@ setup(
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
-        'psycopg2>=2.7.3.2',
+        'psycopg2==2.7.3.2',  # 2.7.4 began using psycopg2-binary
         'whitenoise<2,>=1.0.6',
         'EbookLib>=0.15',
     ],

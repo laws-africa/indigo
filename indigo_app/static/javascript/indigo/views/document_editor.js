@@ -103,7 +103,7 @@
       this.fragment = fragment;
 
       // ensure source code is hidden
-      this.$('.btn.show-source.active').click();
+      this.$('.btn.show-xml-editor.active').click();
 
       // show the edit toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
@@ -227,7 +227,7 @@
         this.pendingTextSave = null;
       }
 
-      this.$('.document-content-view, .document-content-header').removeClass('show-text-editor');
+      this.$('.document-content-view').removeClass('show-text-editor');
 
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
@@ -469,7 +469,7 @@
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .btn.show-source': 'toggleShowCode',
+      'click .btn.show-xml-editor': 'toggleShowXMLEditor',
     },
 
     initialize: function(options) {
@@ -520,16 +520,16 @@
 
         this.editing = true;
         this.fragment = fragment;
-        this.$('.document-workspace-content .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
+        this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.activeEditor.editFragment(fragment);
       }
     },
 
-    toggleShowCode: function(e) {
-      if (this.activeEditor.name == 'source') {
-        this.$el.find('.document-content-view').toggleClass('show-source');
-      }
+    toggleShowXMLEditor: function(e) {
+      var show = !$(e.currentTarget).hasClass('active');
+      this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
+      this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
     },
 
     removeFragment: function(fragment) {
@@ -565,24 +565,30 @@
 
     // Save the content of the editor, returns a Deferred
     save: function() {
-      var self = this;
+      var self = this,
+          deferred = $.Deferred();
 
-      // don't do anything if it hasn't changed
+      function ok() { deferred.resolve(); }
+      function fail() { deferred.reject(); }
+
       if (!this.dirty) {
-        return $.Deferred().resolve();
-      }
+        // don't do anything if it hasn't changed
+        ok();
 
-      if (this.activeEditor) {
-        return this.activeEditor
+      } else if (this.activeEditor) {
+        this.activeEditor
           // ask the editor to returns its contents
           .saveChanges()
-          .then(function() {
+          .done(function() {
             // save the model
-            return self.saveModel();
-          });
+            self.saveModel().done(ok).fail(fail);
+          })
+          .fail(fail);
       } else {
-        return this.saveModel();
+        this.saveModel().done(ok).fail(fail);
       }
+
+      return deferred;
     },
 
     // Save the content of the document, returns a Deferred

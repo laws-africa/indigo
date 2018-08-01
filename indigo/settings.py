@@ -291,10 +291,6 @@ RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
-# server-side google analytics
-GOOGLE_ANALYTICS_INCLUDE_PATH = ['/api/']
-if GOOGLE_ANALYTICS_ID and not DEBUG:
-    MIDDLEWARE += ('indigo.middleware.GoogleAnalyticsMiddleware',)
 
 # disable email in development
 if DEBUG:

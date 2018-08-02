@@ -7,7 +7,7 @@ from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Document, Attachment
-from ..serializers import AttachmentSerializer
+from ..serializers import AttachmentSerializer, MediaAttachmentSerializer
 from .documents import DocumentResourceView
 
 
@@ -48,6 +48,18 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     def view(self, request, *args, **kwargs):
         attachment = self.get_object()
         return view_attachment(attachment)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.document).all()
+
+
+class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
+    """ Attachment view for published documents, under frbr-uri/media.json
+    """
+    queryset = Attachment.objects
+    serializer_class = MediaAttachmentSerializer
+    # TODO: perms
+    permission_classes = (IsAuthenticated,)
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()

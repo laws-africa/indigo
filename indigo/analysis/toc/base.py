@@ -13,6 +13,8 @@ _('Chapter')
 _('Government Notice')
 _('Part')
 _('Section')
+_('Preface')
+_('Preamble')
 
 
 @plugins.register('toc')
@@ -118,9 +120,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 # eg. schedule1 -> Schedule 1
                 m = self.component_id_re.match(component)
                 if m:
-                    heading = ' '.join(m.groups()).capitalize()
+                    typ, num = m.groups()
+                    heading = '%s %s' % (_(typ.capitalize()), num)
                 else:
-                    heading = component.capitalize()
+                    heading = _(component.capitalize())
         else:
             try:
                 heading = _collect_string_content(element.heading)

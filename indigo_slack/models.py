@@ -36,7 +36,7 @@ def doc_published(sender, document, request, **kwargs):
 
     if request and request.user.is_authenticated():
         serializer = DocumentSerializer(context={'request': request})
-        pub_url = serializer.get_published_url(document, with_date=True) + ".html?standalone=1"
+        pub_url = serializer.get_published_url(document) + ".html?standalone=1"
 
         url = reverse('document', request=request, kwargs={'doc_id': document.id})
 

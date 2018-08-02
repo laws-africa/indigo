@@ -5,6 +5,7 @@ import os.path
 import zipfile
 import logging
 
+import pkg_resources
 from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
 from django.core.cache import caches
 from django.conf import settings
@@ -265,6 +266,8 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
 class PDFRenderer(HTMLRenderer):
     """ Helper to render documents as PDFs.
     """
+    toc_xsl = pkg_resources.resource_filename('indigo_api', 'templates/export/pdf_toc.xsl')
+
     def __init__(self, toc=True, colophon=True, *args, **kwargs):
         super(PDFRenderer, self).__init__(*args, **kwargs)
         self.toc = toc
@@ -374,7 +377,7 @@ class PDFRenderer(HTMLRenderer):
             'footer-spacing': '%.2f' % footer_spacing,
             'footer-font-name': footer_font,
             'footer-font-size': footer_font_size,
-            'xsl-style-sheet': os.path.abspath('indigo_api/templates/export/pdf_toc.xsl'),
+            'xsl-style-sheet': self.toc_xsl,
         }
 
         return options

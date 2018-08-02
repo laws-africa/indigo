@@ -170,6 +170,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
         revisions = self.client.get('/api/documents/%s/revisions' % id).data
+        assert_equal(response.status_code, 200)
         revision_id = revisions['results'][1]['id']
 
         response = self.client.post('/api/documents/%s/revisions/%s/restore' % (id, revision_id))
@@ -188,6 +189,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
         revisions = self.client.get('/api/documents/%s/revisions' % id).data
+        assert_equal(response.status_code, 200)
         revision_id = revisions['results'][1]['id']
 
         response = self.client.get('/api/documents/%s/revisions/%s/diff' % (id, revision_id))

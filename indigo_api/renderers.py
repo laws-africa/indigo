@@ -199,7 +199,7 @@ class HTMLRenderer(object):
             try:
                 log.debug("Looking for %s" % option)
                 if get_template(option):
-                    log.debug("Using xsl %s" % option)
+                    log.debug("Using template %s" % option)
                     return option
             except TemplateDoesNotExist:
                 pass
@@ -359,6 +359,8 @@ class PDFRenderer(HTMLRenderer):
         margin_bottom = 36.3 - footer_spacing
         margin_left = 25.6
 
+        toc_xsl = get_template('export/pdf_toc.xsl').origin.name
+
         options = {
             'page-size': 'A4',
             'margin-top': '%.2fmm' % margin_top,
@@ -374,7 +376,7 @@ class PDFRenderer(HTMLRenderer):
             'footer-spacing': '%.2f' % footer_spacing,
             'footer-font-name': footer_font,
             'footer-font-size': footer_font_size,
-            'xsl-style-sheet': os.path.abspath('indigo_api/templates/export/pdf_toc.xsl'),
+            'xsl-style-sheet': toc_xsl,
         }
 
         return options

@@ -60,7 +60,6 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'rest_auth',
     'django_filters',
-    'django_extensions',
 
     # required by the Indigo API
     'taggit',
@@ -185,7 +184,7 @@ ASSETS_URL_EXPIRE = False
 # for each Django app
 
 # where the compiled assets go
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = 'staticfiles'
 # the URL for assets
 STATIC_URL = '/static/'
 
@@ -292,10 +291,6 @@ RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
-# server-side google analytics
-GOOGLE_ANALYTICS_INCLUDE_PATH = ['/api/']
-if GOOGLE_ANALYTICS_ID and not DEBUG:
-    MIDDLEWARE += ('indigo.middleware.GoogleAnalyticsMiddleware',)
 
 # disable email in development
 if DEBUG:

@@ -19,6 +19,16 @@ SassProcessor.processor_enabled = True
 class PublishedAPITest(APITestCase):
     fixtures = ['user', 'work', 'published', 'colophon']
 
+    def setUp(self):
+        self.client.login(username='api-user@example.com', password='password')
+
+    def test_published_json_perms(self):
+        self.client.logout()
+        self.client.login(username='email@example.com', password='password')
+
+        response = self.client.get('/api/za/act/2014/10')
+        assert_equal(response.status_code, 403)
+
     def test_published_json(self):
         response = self.client.get('/api/za/act/2014/10')
         assert_equal(response.status_code, 200)
@@ -273,20 +283,33 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['expression_date'], '2011-01-01')
 
-    def test_published_amended_versions(self):
+    def test_published_points_in_time(self):
         response = self.client.get('/api/za/act/2010/1/eng@.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['frbr_uri'], '/za/act/2010/1')
-        assert_equal(response.data['amended_versions'], [{
-            'id': 2,
-            'expression_date': '2011-01-01',
-            'published_url': 'http://testserver/api/za/act/2010/1/eng@2011-01-01',
-        }, {
-            'id': 3,
-            'expression_date': '2012-02-02',
-            'published_url': 'http://testserver/api/za/act/2010/1/eng@2012-02-02',
-        }])
+        assert_equal(response.data['points_in_time'], [
+            {
+                'date': '2011-01-01',
+                'expressions': [{
+                    'url': 'http://testserver/api/za/act/2010/1/eng@2011-01-01',
+                    'expression_frbr_uri': u'/za/act/2010/1/eng@2011-01-01',
+                    'language': u'eng',
+                    'title': u'Act with amendments',
+                    'expression_date': '2011-01-01',
+                }]
+            },
+            {
+                'date': '2012-02-02',
+                'expressions': [{
+                    'url': 'http://testserver/api/za/act/2010/1/eng@2012-02-02',
+                    'expression_frbr_uri': u'/za/act/2010/1/eng@2012-02-02',
+                    'language': u'eng',
+                    'title': u'Act with amendments',
+                    'expression_date': '2012-02-02',
+                }]
+            }
+        ])
 
     def test_published_repealed(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')
@@ -296,7 +319,6 @@ class PublishedAPITest(APITestCase):
             'date': '2014-02-12',
             'repealing_uri': '/za/act/2014/10',
             'repealing_title': 'Water Act',
-            'repealing_id': 1,
         })
 
     def test_published_alternate_links(self):
@@ -310,16 +332,17 @@ class PublishedAPITest(APITestCase):
         assert_equal(links, [
             {'href': 'http://testserver/api/za/act/2001/8/eng.xml', 'mediaType': 'application/xml', 'rel': 'alternate', 'title': 'Akoma Ntoso'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'HTML'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng/media.json', 'mediaType': 'application/json', 'rel': 'media', 'title': 'Media'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.pdf', 'mediaType': 'application/pdf', 'rel': 'alternate', 'title': 'PDF'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.html?standalone=1', 'mediaType': 'text/html', 'rel': 'alternate', 'title': 'Standalone HTML'},
-            {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'alternate', 'title': 'Table of Contents'},
+            {'href': 'http://testserver/api/za/act/2001/8/eng/toc.json', 'mediaType': 'application/json', 'rel': 'toc', 'title': 'Table of Contents'},
             {'href': 'http://testserver/api/za/act/2001/8/eng.epub', 'mediaType': 'application/epub+zip', 'rel': 'alternate', 'title': 'ePUB'},
         ])
 
     def test_published_media_attachments(self):
         response = self.client.get('/api/za/act/2001/8/eng.json')
         assert_equal(response.status_code, 200)
-        id = response.data['id']
+        id = 4  # we know this is document 4
 
         # should not exist
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
@@ -335,27 +358,18 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 201)
 
         # now should exist
+        self.client.login(username='api-user@example.com', password='password')
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
         assert_equal(response.status_code, 200)
 
-    def test_published_media_attachments_anonymous(self):
-        response = self.client.get('/api/za/act/2001/8/eng.json')
-        assert_equal(response.status_code, 200)
-        id = response.data['id']
-
-        # create a doc with an attachment
-        self.client.login(username='email@example.com', password='password')
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!")
-        tmp_file.seek(0)
-        response = self.client.post('/api/documents/%s/attachments' % id,
-                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
-        assert_equal(response.status_code, 201)
-
-        # exists
+        # 403 for anonymous
         self.client.logout()
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
-        assert_equal(response.status_code, 200)
+        assert_equal(response.status_code, 403)
+
+        # even for a non-existent one
+        response = self.client.get('/api/za/act/2001/8/eng/media/bad.txt')
+        assert_equal(response.status_code, 403)
 
     def test_published_zipfile(self):
         response = self.client.get('/api/za/act/2001/8/eng.zip')
@@ -366,3 +380,13 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/za/act/2001.zip')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/zip')
+
+    def test_published_frbr_urls(self):
+        response = self.client.get('/api/za/act/2014/10/eng@2014-02-12.json')
+        assert_equal(response.status_code, 200)
+
+        assert_equal(response.data['url'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12')
+
+        links = {link['rel']: link['href'] for link in response.data['links']}
+        assert_equal(links['toc'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/toc.json')
+        assert_equal(links['media'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/media.json')

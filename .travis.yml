@@ -9,8 +9,7 @@ before_install:
   - "rvm install ruby-2.3.3"
   - "rvm use ruby-2.3.3"
 install: 
-  - "pip install -r requirements.txt"
-  - "pip install coveralls"
+  - "pip install .[test]"
   - "bundle install"
   - "npm install -g jshint"
 script: coverage run manage.py test && jshint indigo_app/static/javascript/indigo/

@@ -61,7 +61,7 @@ setup(
         'django-viewflow>=1.2.5',
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
-        'djangorestframework>=3.6.2',
+        'djangorestframework>=3.6.2,<3.7',
         'jsonpatch>=1.23',
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',

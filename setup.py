@@ -43,6 +43,7 @@ setup(
         'django==1.11',
         'arrow>=0.5',
         'boto3>=1.7',
+        'beautifulsoup4==4.4.1',  # temporary, for indigo-pl
         'cobalt>=1.0.0',
         'django-ckeditor>=5.3.1',
         'dj-database-url>=0.3.0',

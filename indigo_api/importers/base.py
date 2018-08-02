@@ -91,9 +91,6 @@ class Importer(LocaleBasedMatcher):
         """ Create a new Document by importing it from plain text.
         """
         with tempfile.NamedTemporaryFile(suffix=suffix) as f:
-            self.log.info("INPUT TO SLAW")
-            self.log.info(input.encode('utf-8'))
-            self.log.info("END INPUT")
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
@@ -154,10 +151,6 @@ class Importer(LocaleBasedMatcher):
 
         if not stdout:
             raise ValueError("We couldn't get any useful text out of the file")
-
-        self.log.info("OUTPUT FROM SLAW")
-        self.log.info(stdout.decode('utf-8'))
-        self.log.info("END STDOUT")
 
         if self.fragment:
             doc = Fragment(stdout.decode('utf-8'))

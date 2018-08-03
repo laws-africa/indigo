@@ -102,6 +102,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
                 if list(container.iterchildren(self.def_tag)):
                     continue
 
+                if not container.text:
+                    continue
+
                 match = self.term_re.search(container.text)
                 if match:
                     term = match.group(1)

@@ -37,11 +37,10 @@
     linkTerms: function(e) {
       var self = this,
           $btn = this.$el.find('.link-terms'),
-          data = {
-            document: {
-              content: this.model.toXml()
-            }
-          };
+          data = {};
+
+      data.document = this.model.document.toJSON();
+      data.document.content = this.model.toXml();
 
       $btn
         .prop('disabled', true)

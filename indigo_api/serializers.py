@@ -183,7 +183,7 @@ class MediaAttachmentSerializer(AttachmentSerializer):
         read_only_fields = fields
 
     def get_url(self, instance):
-        uri = published_doc_url(instance, self.context['request'])
+        uri = published_doc_url(instance.document, self.context['request'])
         return uri + '/media/' + instance.filename
 
 

@@ -344,6 +344,11 @@ class PublishedAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         id = 4  # we know this is document 4
 
+        # should be empty
+        response = self.client.get('/api/za/act/2001/8/eng/media.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(len(response.data['results']), 0)
+
         # should not exist
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
         assert_equal(response.status_code, 404)
@@ -357,8 +362,13 @@ class PublishedAPITest(APITestCase):
                                     {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
         assert_equal(response.status_code, 201)
 
-        # now should exist
+        # should have one item
         self.client.login(username='api-user@example.com', password='password')
+        response = self.client.get('/api/za/act/2001/8/eng/media.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(len(response.data['results']), 1)
+
+        # now should exist
         response = self.client.get('/api/za/act/2001/8/eng/media/test.txt')
         assert_equal(response.status_code, 200)
 

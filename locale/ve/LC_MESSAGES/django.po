@@ -214,3 +214,4 @@ msgstr ""
 #: indigo_app/templates/registration/password_reset_form.html:17
 msgid "Reset my password"
 msgstr ""
+

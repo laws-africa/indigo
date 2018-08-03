@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-03 16:49+0200\n"
-"PO-Revision-Date: 2018-07-26 10:04\n"
+"PO-Revision-Date: 2018-08-03 14:50\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Northern Sotho\n"
 "Language: ns_ZA\n"
@@ -214,3 +214,4 @@ msgstr ""
 #: indigo_app/templates/registration/password_reset_form.html:17
 msgid "Reset my password"
 msgstr ""
+

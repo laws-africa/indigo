@@ -35,10 +35,6 @@ INSTALLED_APPS = (
     # local traditions
     'indigo_za',
 
-    # workflow
-    'indigo_workflow',
-    'viewflow',
-
     # the Indigo API
     'indigo_api',
     # the Indigo editor application

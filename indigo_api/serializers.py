@@ -472,7 +472,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     def get_points_in_time(self, doc):
         result = []
 
-        expressions = doc.work.expressions()
+        expressions = doc.work.expressions().published()
         for date, group in groupby(expressions, lambda e: e.expression_date):
             result.append({
                 'date': datestring(date),

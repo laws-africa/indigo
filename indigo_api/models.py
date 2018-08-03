@@ -171,12 +171,9 @@ class Work(models.Model):
         return doc
 
     def expressions(self):
-        return self.document_set.undeleted().order_by('expression_date').all()
-
-    def initial_expressions(self):
-        """ Expressions at initial publication date.
+        """ A queryset of expressions of this work, in ascending expression date order.
         """
-        return self.document_set.undeleted().filter(expression_date=self.publication_date).all()
+        return self.document_set.undeleted().order_by('expression_date')
 
     def versions(self):
         """ Return a queryset of `reversion.models.Version` objects for

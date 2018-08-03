@@ -1,6 +1,5 @@
 import os
 import logging
-from itertools import groupby
 import re
 import random
 import datetime
@@ -22,7 +21,7 @@ import reversion.models
 
 from countries_plus.models import Country as MasterCountry
 
-from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent
+from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
 from .utils import language3_to_2
@@ -172,12 +171,9 @@ class Work(models.Model):
         return doc
 
     def expressions(self):
-        return self.document_set.undeleted().order_by('expression_date').all()
-
-    def initial_expressions(self):
-        """ Expressions at initial publication date.
+        """ A queryset of expressions of this work, in ascending expression date order.
         """
-        return self.document_set.undeleted().filter(expression_date=self.publication_date).all()
+        return self.document_set.undeleted().order_by('expression_date')
 
     def versions(self):
         """ Return a queryset of `reversion.models.Version` objects for
@@ -279,36 +275,42 @@ class DocumentQuerySet(models.QuerySet):
         """ Find a single document matching the FRBR URI.
 
         Raises ValueError if any part of the URI isn't valid.
+
+        See http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/cs01/akn-nc-v1.0-cs01.html#_Toc492651893
         """
         query = self.filter(frbr_uri=frbr_uri.work_uri())
 
+        # filter on language
+        if frbr_uri.language:
+            query = query.filter(language=frbr_uri.language)
+
         # filter on expression date
         expr_date = frbr_uri.expression_date
-        if expr_date:
-            try:
-                if expr_date == '@':
-                    # earliest document
-                    query = query.order_by('expression_date')
 
-                elif expr_date[0] == '@':
-                    # document at this date
-                    query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
+        if not expr_date:
+            # no expression date is equivalent to the "current" version, at time of retrieval
+            expr_date = ':' + datetime.date.today().strftime("%Y-%m-%d")
 
-                elif expr_date[0] == ':':
-                    # latest document at or before this date
-                    query = query\
-                        .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
-                        .order_by('-expression_date')
+        try:
+            if expr_date == '@':
+                # earliest document
+                query = query.order_by('expression_date')
 
-                else:
-                    raise ValueError("The expression date %s is not valid" % expr_date)
+            elif expr_date[0] == '@':
+                # document at this date
+                query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
 
-            except arrow.parser.ParserError:
+            elif expr_date[0] == ':':
+                # latest document at or before this date
+                query = query\
+                    .filter(expression_date__lte=arrow.get(expr_date[1:]).date())\
+                    .order_by('-expression_date')
+
+            else:
                 raise ValueError("The expression date %s is not valid" % expr_date)
 
-        else:
-            # always get the latest expression
-            query = query.order_by('-expression_date')
+        except arrow.parser.ParserError:
+            raise ValueError("The expression date %s is not valid" % expr_date)
 
         obj = query.first()
         if obj is None:
@@ -325,6 +327,7 @@ class Document(models.Model):
     class Meta:
         permissions = (
             ('publish_document', 'Can publish and edit non-draft documents'),
+            ('view_published_document', 'Can view publish documents through the API'),
         )
 
     objects = DocumentManager.from_queryset(DocumentQuerySet)()
@@ -353,8 +356,7 @@ class Document(models.Model):
 
     # Date from the FRBRExpression element. This is either the publication date or the date of the last
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
-    # It can be null only so that users aren't forced to add a value.
-    expression_date = models.DateField(null=True, blank=True, help_text="Date of publication or latest amendment")
+    expression_date = models.DateField(null=False, blank=False, help_text="Date of publication or latest amendment")
 
     stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
     """ Is this a stub without full content? """
@@ -375,7 +377,7 @@ class Document(models.Model):
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     # caching attributes
-    _work_uri = None
+    _expression_uri = None
 
     @property
     def doc(self):
@@ -432,10 +434,18 @@ class Document(models.Model):
 
     @property
     def work_uri(self):
-        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this document universally. """
-        if self._work_uri is None:
-            self._work_uri = FrbrUri.parse(self.frbr_uri)
-        return self._work_uri
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """
+        return self.work.work_uri
+
+    @property
+    def expression_uri(self):
+        """ The FRBR Expression URI as a :class:`FrbrUri` instance that uniquely identifies this expression universally. """
+        if self._expression_uri is None:
+            self._expression_uri = self.work_uri.clone()
+            self._expression_uri.language = self.language
+            if self.expression_date:
+                self._expression_uri.expression_date = '@' + datestring(self.expression_date)
+        return self._expression_uri
 
     @property
     def commencement_date(self):
@@ -494,8 +504,7 @@ class Document(models.Model):
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
             # ensure these are refreshed
-            self._work_uri = None
-            self._amended_versions = None
+            self._expression_uri = None
 
         # update the model's XML from the Act XML
         self.refresh_xml()
@@ -558,18 +567,6 @@ class Document(models.Model):
 
         return search_toc(self.table_of_contents())
 
-    def amended_versions(self):
-        """ Return a list of all the amended versions of this work.
-        This is all documents that share the same URI but have different
-        expression dates.
-
-        If there are no document besides this one, an empty list is returned.
-        """
-        if not hasattr(self, '_amended_versions'):
-            Document.decorate_amended_versions([self])
-
-        return self._amended_versions
-
     def revisions(self):
         """ Return a queryset of `reversion.models.Revision` objects for
         revisions for this document, most recent first.
@@ -618,53 +615,6 @@ class Document(models.Model):
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
-
-    @classmethod
-    def decorate_repeal(cls, documents):
-        """ Decorate the repeal item of each document (if set) with the
-        document id of the repealing document.
-        """
-        # uris that amended docs in the set
-        uris = set(d.repeal.repealing_uri for d in documents if d.repeal)
-        repealing_docs = Document.objects.undeleted().no_xml()\
-            .filter(frbr_uri__in=list(uris))\
-            .order_by('expression_date')\
-            .all()
-
-        for doc in documents:
-            if doc.repeal:
-                repeal = doc.repeal
-
-                for repealing in repealing_docs:
-                    # match on the URI and the expression date
-                    if repealing.frbr_uri == repeal.repealing_uri and repealing.expression_date == repeal.date:
-                        repeal.repealing_document = repealing
-                        break
-
-    @classmethod
-    def decorate_amended_versions(cls, documents):
-        """ Decorate each documents with ``_amended_versions``, a (possibly empty)
-        list of all the documents which form the same group of amended versions.
-        """
-        uris = [d.frbr_uri for d in documents]
-        docs = Document.objects.undeleted().no_xml()\
-            .filter(frbr_uri__in=uris)\
-            .order_by('frbr_uri', 'expression_date')\
-            .all()
-
-        # group by URI
-        groups = {}
-        for uri, group in groupby(docs, lambda d: d.frbr_uri):
-            groups[uri] = list(group)
-
-        for doc in documents:
-            amended_versions = groups.get(doc.frbr_uri, [])
-
-            # there are no amended versions if this is the only one
-            if len(amended_versions) == 0 or (len(amended_versions) == 1 and amended_versions[0].id == doc.id):
-                doc._amended_versions = []
-            else:
-                doc._amended_versions = amended_versions
 
     @classmethod
     def randomized(cls, frbr_uri, **kwargs):

@@ -159,7 +159,7 @@ class AtomRenderer(XMLRenderer):
         return feed.writeString('utf-8')
 
     def add_item(self, feed, doc):
-        url = self.serializer.get_published_url(doc, with_date=True)
+        url = self.serializer.get_published_url(doc)
         feed.add_item(
             unique_id=url,
             pubdate=doc.created_at,

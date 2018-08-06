@@ -361,9 +361,17 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         return list(rows)
 
     def get_frbr_uri(self, row):
-        # TODO one day: generate 'number' based on title if number isn't an int (replace spaces with dashes, lowercase, delete and, to, of, for, etc)
+        # TODO: remove municipality name when by-law
 
-        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=row['number'], actor=None)
+        try:
+            int(row['number'])
+            number = row['number']
+        except ValueError:
+            number = row['title']
+            number = re.sub(", [0-9]{2,}", "", number)
+            number = number.replace(' ', '-').replace(',', '').replace('-Act', '').replace('Act-', '').lower().replace('relating-to-', '').replace('-and-', '-').replace('-to-', '-').replace('-of-', '-').replace('-for-', '-').replace('-on-', '-').replace('-the-', '-').replace('in-connection-with-', '').replace('by-law-', '').replace('-by-law', '')
+
+        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=number, actor=None)
 
         # TODO: simplify this somehow?
 

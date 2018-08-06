@@ -37,71 +37,60 @@
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="year" data-sort="year">Year / Number</th>
-      <th class="updated_at" data-sort="updated_at">Updated</th>
+      <th class="title" data-sort="title">Frbr uri</th>
+      <th class="title" data-sort="title">Languages</th>
+      <th class="title" data-sort="title">Points in time</th>
+      <!--<th class="title" data-sort="title">Workflows</th>-->
+      <th class="title" data-sort="title">Number of drafts</th>
     </tr>
   </thead>
+
   <tbody>
     {{#each works}}
-      {{#unless docs}}
-        <tr>
-          <!-- work without any documents -->
-          <td>
+      <tr>
+        <td>
+          {{#if docs}}
+            <i class="fa fa-fw fa-circle published" title="published"></i>
+          {{else}}
             <i class="fa fa-fw fa-circle" title="empty work"></i>
-            <a href="/works{{ frbr_uri }}/">{{ title }}</a>
-            {{#if repealed}}
-              <span class="badge badge-info">repealed</span>
-            {{/if}}
-          </td>
-          <td>{{ year }} / {{ number }}</td>
-          <td>
-            <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-            <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
-          </td>
-        </tr>
-      {{/unless}}
-
-      {{#each docs}}
-        <tr {{#unless @first}}class="amended-version"{{/unless}}>
-          <td>
-            {{#if draft}}
-              <i class="fa fa-fw fa-circle draft" title="draft"></i>
-            {{else}}
-              <i class="fa fa-fw fa-circle published" title="published"></i>
-            {{/if}}
-
-            {{#if @first}}
-              <a href="/documents/{{ id }}/">{{ title }}</a>
-              <span class="text-muted">as at {{ expression_date }}</span>
-            {{else}}
-              <a href="/documents/{{ id }}/">{{ title }} as at {{ expression_date }}</a>
-            {{/if}}
-
-            {{#if ../repealed_date}}
-              <span class="badge badge-info">repealed</span>
-            {{/if}}
-
-            {{#if stub}}
-              <span class="badge badge-info">stub</span>
-            {{/if}}
-
-            {{#each tags}}
-              <span class="badge badge-secondary">{{this}}</span>
+          {{/if}}
+          <a href="/works{{ frbr_uri }}/">{{ title }}</a>
+          {{#if repealed}}
+            <span class="badge badge-info">repealed</span>
+          {{/if}}
+        </td>
+        <td>
+          {{ frbr_uri }}
+        </td>
+        <td>
+          {{#if docs}}
+            {{#each docs}}
+              {{ language }}
             {{/each}}
-          </td>
-          <td>{{#if @first}}{{ year }} / {{ number }}{{/if}}</td>
-          <td>
-            {{#if @first}}
-              <span class="time-ago" data-timestamp="{{ ../updated_at }}">{{ ../updated_at }}</span>
-            {{else}}
-              <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-            {{/if}}
-            <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
-          </td>
-        </tr>
-      {{/each}}
+          {{/if}}
+        </td>
+        <td>
+          {{#if docs}}
+            <a href="/works{{ frbr_uri }}/amendments/">
+              {{#each docs}}
+                1
+              {{/each}}
+            </a>
+          {{/if}}
+        </td>
+        <td>
+          {{#if docs}}
+            {{#each docs}}
+              {{#if draft}}
+                1
+              {{/if}}
+            {{/each}}
+          {{/if}}
+        </td>
+      </tr>
     {{/each}}
   </tbody>
+
   <tfoot>
     <tr>
       <td class="active" colspan="5">{{ count }} works</td>

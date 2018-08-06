@@ -345,8 +345,11 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
+        # TODO: display the ValidationError strings within the form instead (as with URLValidator in .forms message)
 
         match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
+
+        # not sure this is doing anything? URLValidator picking this type of issue up already?
         if not match:
             raise ValidationError("Unable to extract key from Google Sheets URL")
 
@@ -358,11 +361,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             raise ValidationError("Error talking to Google Sheets: %s" % e.message)
 
         rows = csv.reader(io.BytesIO(response.content), encoding='utf-8')
-        return list(rows)
+        rows = list(rows)
+
+        if not rows or not rows[0]:
+            raise ValidationError("Your sheet did not import successfully; please check that it is 'Published to the web' and shared with 'Anyone with the link'")
+        else:
+            return rows
 
     def get_frbr_uri(self, row):
         # TODO: remove municipality name when by-law
-
         try:
             int(row['number'])
             number = row['number']

@@ -8,8 +8,8 @@
   <xsl:param name="resolverUrl" />
   <!-- default ID scoping to fall back on if we can't find an appropriate one for a node -->
   <xsl:param name="defaultIdScope" />
-  <!-- fully-qualified manifestation URL -->
-  <xsl:param name="manifestationUrl" />
+  <!-- fully-qualified media URL to prepend to relative media urls -->
+  <xsl:param name="mediaUrl" />
   <!-- 3-letter language code of document -->
   <xsl:param name="lang" />
 
@@ -203,7 +203,7 @@
     <img data-src="{@src}">
       <xsl:copy-of select="@*" />
 
-      <!-- make relative image URLs absolute, using the manifestationUrl as a base -->
+      <!-- make relative image URLs absolute, using the mediaUrl as a base -->
       <xsl:attribute name="src">
         <xsl:choose>
           <xsl:when test="starts-with(@src, 'http://') or starts-with(@src, 'https://')">
@@ -211,16 +211,7 @@
             <xsl:value-of select="@src" />
           </xsl:when>
           <xsl:otherwise>
-
-            <xsl:choose>
-              <xsl:when test="starts-with(@src, '/')">
-                <xsl:value-of select="concat($manifestationUrl, @src)" />
-              </xsl:when>
-              <xsl:otherwise>
-                <xsl:value-of select="concat($manifestationUrl, '/', @src)" />
-              </xsl:otherwise>
-            </xsl:choose>
-
+            <xsl:value-of select="concat($mediaUrl, @src)" />
           </xsl:otherwise>
         </xsl:choose>
       </xsl:attribute>

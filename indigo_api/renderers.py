@@ -310,7 +310,7 @@ class PDFRenderer(HTMLRenderer):
             colophon = self.render_colophon(document=document, documents=documents)
             if colophon:
                 colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
-                colophon_f.write(colophon)
+                colophon_f.write(colophon.encode('utf-8'))
                 colophon_f.flush()
                 args.extend(['cover', 'file://' + colophon_f.name])
 
@@ -319,7 +319,7 @@ class PDFRenderer(HTMLRenderer):
             args.extend(['toc', '--xsl-style-sheet', toc_xsl])
 
         with tempfile.NamedTemporaryFile(suffix='.html') as f:
-            f.write(html)
+            f.write(html.encode('utf-8'))
             f.flush()
             args.append('file://' + f.name)
             return self._wkhtmltopdf(args, **options)

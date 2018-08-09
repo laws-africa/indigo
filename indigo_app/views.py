@@ -43,6 +43,7 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     """
     # permissions
     raise_exception = True
+    permission_required = ()
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:

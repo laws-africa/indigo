@@ -25,7 +25,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
 
     def get_auth_token(self, user):
         if self.context['request'].user == user:
-            return Token.objects.get_or_create(user=user)[0].key
+            return user.editor.api_token().key
 
     def validate_country_code(self, value):
         if value is not None:

@@ -52,7 +52,11 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
               <a class="dropdown-item profile" data-toggle="modal" href="#user-profile-box"><i class="fa fa-user fa-fw"></i> Profile</a>
-              <a class="dropdown-item requires-staff profile" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site Settings</a>
+
+              {% if request.user.is_staff %}
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site Settings</a>
+              {% endif %}
               <div class="dropdown-divider"></div>
               <a class="dropdown-item logout" href="#"><i class="fa fa-sign-out-alt fa-fw"></i> Log out</a>
             </div>

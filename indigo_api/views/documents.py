@@ -417,11 +417,3 @@ class SearchView(DocumentViewMixin, ListAPIView):
             serializer.data[i]['_snippet'] = doc.snippet
 
         return serializer
-
-
-@api_view(['POST'])
-@permission_classes((IsAuthenticated,))
-def new_auth_token(request):
-    Token.objects.filter(user=request.user).delete()
-    token, _ = Token.objects.get_or_create(user=request.user)
-    return Response({'auth_token': token.key})

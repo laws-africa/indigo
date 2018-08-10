@@ -61,7 +61,6 @@ INSTALLED_APPS = (
     'pipeline',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
     'django_filters',
 
     # required by the Indigo API
@@ -264,11 +263,6 @@ REST_FRAMEWORK = {
     ],
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
     'PAGE_SIZE': 500,
-}
-
-# Django Rest Auth
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'indigo_app.serializers.UserDetailsSerializer',
 }
 
 

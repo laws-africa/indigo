@@ -7,7 +7,7 @@
   {% block navbar %}
     <nav class="navbar navbar-expand-md navbar-dark fixed-top">
       {% block navbar-brand %}
-      <a class="navbar-brand" href="{% url 'library' country=request.user.editor.country_code %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+      <a class="navbar-brand" href="{% if request.user.is_authenticated %}{% url 'library' country=request.user.editor.country_code %}{% else %}/{% endif %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
       {% endblock %}
       {% block navbar-toggle %}
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
@@ -19,6 +19,7 @@
       <div class="collapse navbar-collapse" id="navbar-collapse">
         {% block navbar-left %}
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+          {% if request.user.is_authenticated %}
           <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Works</a>
@@ -36,13 +37,13 @@
               <a class="dropdown-item" href="https://github.com/OpenUpSA/indigo" target="_blank"><i class="fa fa-github fa-fw"></i> Indigo on GitHub</a>
             </div>
           </li>
+          {% endif %}
         </ul>
         {% endblock %}
 
         {% block navbar-user %}
         <ul class="navbar-nav" id="user-buttons">
-          <li class="nav-item not-logged-in"><a href="login"><i class="fa fa-sign-in"></i> Log in</a></li>
-
+          {% if request.user.is_authenticated %}
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
               <i class="fa fa-user"></i>
@@ -52,11 +53,19 @@
             </a>
             <div class="dropdown-menu dropdown-menu-right">
               <a class="dropdown-item profile" data-toggle="modal" href="#user-profile-box"><i class="fa fa-user fa-fw"></i> Profile</a>
-              <a class="dropdown-item requires-staff profile" href="/admin/" target="_blank"><i class="fa fa-gear fa-fw"></i> Site Settings</a>
+
+              {% if request.user.is_staff %}
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site Settings</a>
+              {% endif %}
+
               <div class="dropdown-divider"></div>
               <a class="dropdown-item logout" href="#"><i class="fa fa-sign-out fa-fw"></i> Log out</a>
             </div>
           </li>
+          {% else %}
+          <li class="nav-item not-logged-in"><a href="login" class="nav-link"><i class="fa fa-sign-in"></i> Log in</a></li>
+          {% endif %}
         </ul>
         {% endblock %}
 

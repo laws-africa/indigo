@@ -1,0 +1,6 @@
+<div class="list-group">
+  <a href="{% url 'edit_account' %}" class="list-group-item list-group-item-action {% if active == 'profile' %}active{% endif %}">Profile</a>
+  <a href="{% url 'account_change_password' %}" class="list-group-item list-group-item-action {% if active == 'password' %}active{% endif %}">Password</a>
+  <a href="{% url 'account_email' %}" class="list-group-item list-group-item-action {% if active == 'emails' %}active{% endif %}">Email Addresses</a>
+  <a href="{% url 'edit_account_api' %}" class="list-group-item list-group-item-action {% if active == 'api' %}active{% endif %}">API Access</a>
+</div>

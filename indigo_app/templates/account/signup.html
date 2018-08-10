@@ -1,0 +1,79 @@
+{% extends "account/base.html" %}
+{% load account socialaccount %}
+
+{% block title %}Sign Up{% endblock %}
+
+{% block content %}
+<h1>Sign Up</h1>
+
+<p>Already have an account? Then please <a href="{{ login_url }}">log in</a>.</p>
+
+<form method="POST" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+  {% if redirect_field_value %}
+    <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
+  {% endif %}
+
+  {% if form.non_field_errors %}
+    <div class="text-danger">
+      {% for error in form.non_field_errors %}
+        <p>{{ error }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <div class="form-group">
+    <label for="{{ form.email.id_for_label }}">Email address</label>
+    <input type="email" class="form-control" name="{{ form.email.name }}" id="{{ form.email.id_for_label }}" value="{{ form.email.data|default:'' }}" required autofocus placeholder="you@example.com">
+    {% if form.email.errors %}
+      <div class="text-danger">
+        {% for error in form.email.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    <label for="{{ form.password1.id_for_label }}">Password</label>
+    <input type="password" class="form-control" name="{{ form.password1.name }}" id="{{ form.password1.id_for_label }}" required>
+    {% if form.password1.errors %}
+      <div class="text-danger">
+        {% for error in form.password1.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    <label for="{{ form.password2.id_for_label }}">Password (again)</label>
+    <input type="password" class="form-control" name="{{ form.password2.name }}" id="{{ form.password2.id_for_label }}" required>
+    {% if form.password2.errors %}
+      <div class="text-danger">
+        {% for error in form.password2.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="form-group">
+    {{ form.captcha }}
+    {% if form.captcha.errors %}
+      <div class="text-danger">
+        {% for error in form.captcha.errors %}
+          <p>{{ error }}</p>
+        {% endfor %}
+      </div>
+    {% endif %}
+  </div>
+
+  <button class="btn btn-success btn-block mb-3" type="submit">Sign up</button>
+
+  <div class="text-center">
+    <a href="{{ login_url }}">Log in</a>
+  </div>
+</form>
+
+{% endblock %}

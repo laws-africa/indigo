@@ -46,8 +46,8 @@ Local Installation
 Installation on Heroku and Dokku are similar and only really differ in the commands that are run.
 We describe using Heroku below.
 
-1. Install pipenv according to the instructions: [pipenv](https://docs.pipenv.org/)
-2. Clone the [github.com/OpenUpSA/example-indigo](https://github.com/OpenUpSA/example-indigo) repository. It has all Indigo's dependencies for Python, Ruby and Java described in it::
+1. Install pipenv according to the instructions: `pipenv <https://docs.pipenv.org/>`_
+2. Clone the `github.com/OpenUpSA/example-indigo <https://github.com/OpenUpSA/example-indigo>`_ repository. It has all Indigo's dependencies for Python, Ruby and Java described in it::
 
     $ git clone https://github.com/OpenUpSA/example-indigo
     $ cd indigo

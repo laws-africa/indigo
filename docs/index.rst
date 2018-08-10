@@ -29,6 +29,7 @@ Contents
    :maxdepth: 1
 
    running/index
+   running/configuration
    guide/index
    guide/law-intro
    rest/general

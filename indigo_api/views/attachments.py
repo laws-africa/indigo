@@ -53,23 +53,11 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
         return queryset.filter(document=self.document).all()
 
 
-class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
-    """ Attachment view for published documents, under frbr-uri/media.json
-    """
-    queryset = Attachment.objects
-    serializer_class = MediaAttachmentSerializer
-    # TODO: perms
-    permission_classes = (IsAuthenticated,)
-
-    def filter_queryset(self, queryset):
-        return queryset.filter(document=self.document).all()
-
-
 @permission_classes((IsAuthenticated,))
 @api_view()
 def attachment_media_view(request, *args, **kwargs):
     """ This is a helper view to serve up a named attachment file via
-    a "media/file.ext" url, which is part of the AKN standard.
+    a document's "media/file.ext" url, which is part of the AKN standard.
     """
     doc_id = kwargs['document_id']
     filename = kwargs['filename']

@@ -5,6 +5,7 @@ from django.dispatch import receiver
 
 from languages_plus.models import Language as MasterLanguage
 from countries_plus.models import Country as MasterCountry
+from rest_framework.authtoken.models import Token
 
 from indigo_api.models import Document
 
@@ -97,6 +98,10 @@ class Editor(models.Model):
             self.country = value
         else:
             self.country = Country.objects.get(country_id=value.upper())
+
+    def api_token(self):
+        # TODO: handle many
+        return Token.objects.get_or_create(user=self.user)[0]
 
 
 class Publication(models.Model):

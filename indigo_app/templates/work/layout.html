@@ -15,7 +15,7 @@
             <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-book"></i> Work Overview</a></li>
             <li class="nav-item dropright">
               <a class="nav-link dropdown-toggle {% if view.template_name_suffix == '_amendments' %}active{% endif %}" href="#" data-toggle="dropdown" data-boundary="viewport">
-                <i class="fa fa-fw fa-clock-o"></i> Points in Time
+                <i class="far fa-fw fa-clock"></i> Points in Time
               </a>
               <div class="dropdown-menu">
                 <a class="dropdown-item" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">Manage Points in Time...</a>

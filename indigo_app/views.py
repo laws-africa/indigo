@@ -327,6 +327,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
         context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
+        return context
 
 
 class UserProfileView(AbstractAuthedIndigoView, DetailView):

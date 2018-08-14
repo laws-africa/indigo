@@ -62,13 +62,14 @@ setup(
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.6.2,<3.7',
+        'EbookLib>=0.15',
         'jsonpatch>=1.23',
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
         'psycopg2==2.7.3.2',  # 2.7.4 began using psycopg2-binary
+        'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
-        'EbookLib>=0.15',
     ],
     extras_require={
         'dev': [

@@ -278,11 +278,12 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
+        country = form.cleaned_data['country']
         table = self.get_table(form.cleaned_data['spreadsheet_url'])
-        works = self.get_works(table)
+        works = self.get_works(country, table)
         return self.render_to_response(self.get_context_data(works=works))
 
-    def get_works(self, table):
+    def get_works(self, country, table):
         works = []
 
         # clean up headers
@@ -301,7 +302,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             works.append(info)
 
             try:
-                frbr_uri = self.get_frbr_uri(row)
+                frbr_uri = self.get_frbr_uri(country, row)
             except ValueError as e:
                 info['status'] = 'error'
                 info['error_message'] = e.message
@@ -319,7 +320,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                 work.frbr_uri = frbr_uri
                 work.title = row['title']
-                work.country = row['country']
+                work.country = country.code
                 work.publication_name = row['publication_name']
                 work.publication_number = row['publication_number']
                 work.publication_date = self.make_date(row['publication_date'])
@@ -368,7 +369,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         else:
             return rows
 
-    def get_frbr_uri(self, row):
+    def get_frbr_uri(self, country, row):
         # TODO: remove municipality name when by-law
         try:
             int(row['number'])
@@ -382,6 +383,8 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         # TODO: simplify this somehow?
 
+        if country.code != row['country'].lower():
+            raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
         if ' ' in frbr_uri.work_uri():
             raise ValueError('Check for spaces in grey columns – none allowed')
         elif not frbr_uri.country:

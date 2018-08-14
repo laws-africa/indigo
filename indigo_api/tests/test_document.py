@@ -19,7 +19,7 @@ class DocumentTestCase(TestCase):
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work)
+        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1))
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))
@@ -96,6 +96,7 @@ class DocumentTestCase(TestCase):
 
     def test_get_subcomponent(self):
         d = Document(country='za')
+        d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://www.akomantoso.org/2.0">
           <section id="section-1">

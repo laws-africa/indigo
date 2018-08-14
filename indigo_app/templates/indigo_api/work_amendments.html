@@ -16,25 +16,28 @@
   {% verbatim %}
 
   <ol class="timeline">
+    {{#if can_add}}
     <li class="timeline-item card">
       <div class="card-body">
         <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
       </div>
     </li>
+    {{/if}}
+
     {{#each amendments}}
-      <li class="timeline-item card">
+      <li class="timeline-item card" data-date="{{ date }}" data-index="{{ @index }}">
         <h6 class="timeline-date">{{ date }}</h6>
 
         <div class="card-body">
-          {{#unless ../readonly}}{{#unless initial}}
+          {{#if ../can_edit}}{{#unless initial}}
           <div class="dropdown pull-right">
             <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
             <div class="dropdown-menu">
-              <a href="#" class="dropdown-item edit-amendment" data-index="{{ @index }}">Change date</a>
-              <a href="#" class="dropdown-item delete-amendment" data-index="{{ @index }}">Delete</a>
+              <a href="#" class="dropdown-item edit-amendment">Change date</a>
+              <a href="#" class="dropdown-item delete-amendment">Delete</a>
             </div>
           </div>
-          {{/unless}}{{/unless}}
+          {{/unless}}{{/if}}
 
           {{#if initial}}
             <h6>Initial publication</h6>
@@ -48,7 +51,7 @@
           <div class="documents">
             {{#if documents}}
               {{#each documents}}
-                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a></div>
+                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a> · {{ language }}</div>
               {{/each}}
             {{else}}
               <span class="text-muted">No editable version at this date</span>
@@ -57,8 +60,8 @@
         </div>
 
         <div class="card-footer text-right">
-          <button class="btn btn-outline-secondary create-expression" data-date="{{ date }}"><i class="fa fa-pencil"></i> Create amended version</button>
-          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
+          <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil-alt"></i> Create amended version</button>
+          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-file-upload"></i> Import document</a>
         </div>
       </li>
     {{/each}}

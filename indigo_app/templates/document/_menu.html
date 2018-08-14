@@ -11,11 +11,11 @@
         <div class="dropdown-submenu">
           <a href="#" class="dropdown-item">Download As</a>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fa fa-book"></i> ePUB</a>
-            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="fa fa-file-pdf-o"></i> PDF</a>
-            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="fa fa-file-text"></i> Standalone HTML</a>
-            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="fa fa-file-code-o"></i> Akoma Ntoso XML</a>
-            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="fa fa-file-zip-o"></i> ZIP Archive</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fas fa-book"></i> ePUB</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="far fa-file-pdf"></i> PDF</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="far fa-file-alt"></i> Standalone HTML</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="far fa-file-code"></i> Akoma Ntoso XML</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="far fa-file-archive"></i> ZIP Archive</a>
           </div>
         </div>
         <div role="separator" class="dropdown-divider"></div>

@@ -43,8 +43,8 @@ Ensure you have [PostgreSQL](https://www.postgresql.org/) installed and running.
 and create a corresponding database called `indigo`.
 
 ```bash
-sudo su - postgres createuser -d -P indigo
-sudo su - postgres createdb indigo
+sudo su - postgres -c 'createuser -d -P indigo'
+sudo su - postgres -c 'createdb indigo'
 ```
 
 Check that you can connect to the postgresql database as your regular shell user (not indigo user) by means of password authentication:

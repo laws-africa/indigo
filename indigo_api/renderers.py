@@ -135,6 +135,7 @@ class HTMLRenderer(object):
         self.coverpage = coverpage
         self.no_stub_content = no_stub_content
         self.resolver = resolver
+        self.media_url = ''
 
     def render(self, document, element=None):
         """ Render this document to HTML.
@@ -142,7 +143,7 @@ class HTMLRenderer(object):
         :param document: document to render if +element+ is None
         :param element: element to render (optional)
         """
-        # use this to render the bulk of the document with the Cobalt XSLT renderer
+        # use this to render the bulk of the document
         renderer = self._xml_renderer(document)
 
         if element is not None:
@@ -199,7 +200,7 @@ class HTMLRenderer(object):
             try:
                 log.debug("Looking for %s" % option)
                 if get_template(option):
-                    log.debug("Using xsl %s" % option)
+                    log.debug("Using template %s" % option)
                     return option
             except TemplateDoesNotExist:
                 pass
@@ -225,7 +226,7 @@ class HTMLRenderer(object):
     def _xml_renderer(self, document):
         params = {
             'resolverUrl': self.resolver_url(),
-            'manifestationUrl': document.manifestation_url(settings.INDIGO_URL),
+            'mediaUrl': self.media_url or '',
             'lang': document.language,
         }
 
@@ -249,10 +250,13 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
 
         view = renderer_context['view']
+        request = renderer_context['request']
+
         renderer = HTMLRenderer()
-        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
-        renderer.standalone = renderer_context['request'].GET.get('standalone') == '1'
-        renderer.resolver = renderer_context['request'].GET.get('resolver')
+        renderer.no_stub_content = getattr(view, 'no_stub_content', False)
+        renderer.standalone = request.GET.get('standalone') == '1'
+        renderer.resolver = request.GET.get('resolver')
+        renderer.media_url = request.GET.get('media_url', '')
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
@@ -306,7 +310,7 @@ class PDFRenderer(HTMLRenderer):
             colophon = self.render_colophon(document=document, documents=documents)
             if colophon:
                 colophon_f = tempfile.NamedTemporaryFile(suffix='.html')
-                colophon_f.write(colophon)
+                colophon_f.write(colophon.encode('utf-8'))
                 colophon_f.flush()
                 args.extend(['cover', 'file://' + colophon_f.name])
 
@@ -315,7 +319,7 @@ class PDFRenderer(HTMLRenderer):
             args.extend(['toc', '--xsl-style-sheet', toc_xsl])
 
         with tempfile.NamedTemporaryFile(suffix='.html') as f:
-            f.write(html)
+            f.write(html.encode('utf-8'))
             f.flush()
             args.append('file://' + f.name)
             return self._wkhtmltopdf(args, **options)
@@ -359,6 +363,8 @@ class PDFRenderer(HTMLRenderer):
         margin_bottom = 36.3 - footer_spacing
         margin_left = 25.6
 
+        toc_xsl = get_template('export/pdf_toc.xsl').origin.name
+
         options = {
             'page-size': 'A4',
             'margin-top': '%.2fmm' % margin_top,
@@ -374,7 +380,7 @@ class PDFRenderer(HTMLRenderer):
             'footer-spacing': '%.2f' % footer_spacing,
             'footer-font-name': footer_font,
             'footer-font-size': footer_font_size,
-            'xsl-style-sheet': os.path.abspath('indigo_api/templates/export/pdf_toc.xsl'),
+            'xsl-style-sheet': toc_xsl,
         }
 
         return options

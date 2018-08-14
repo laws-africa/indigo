@@ -21,7 +21,6 @@ from cobalt import FrbrUri
 
 import lxml.html.diff
 from lxml.etree import LxmlError
-import newrelic.agent
 
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
@@ -42,11 +41,6 @@ DOCUMENT_FILTER_FIELDS = {
     'stub': ['exact'],
     'expression_date': ['exact', 'lte', 'gte'],
 }
-
-
-def ping(request):
-    newrelic.agent.ignore_transaction()
-    return HttpResponse("pong", content_type="text/plain")
 
 
 class DocumentViewMixin(object):
@@ -298,7 +292,7 @@ class ParseView(APIView):
             # plain text
             try:
                 text = serializer.validated_data.get('content')
-                document = importer.import_from_text(text, frbr_uri.work_uri())
+                document = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'content': e.message or "error during import"})

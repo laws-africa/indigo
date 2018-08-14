@@ -6,18 +6,39 @@ from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from cobalt import FrbrUri
 
-from ..serializers import DocumentSerializer
+from ..serializers import PublishedDocumentSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..atom import AtomRenderer, AtomFeed
 
-from .documents import DocumentViewMixin
-from .attachments import view_attachment_by_filename
+from .documents import DocumentViewMixin, DocumentResourceView
+from .attachments import view_attachment_by_filename, MediaAttachmentSerializer
+from ..models import Attachment
 
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+class PublishedDocumentPermission(BasePermission):
+    """ Published document permissions.
+    """
+    def has_permission(self, request, view):
+        return request.user.has_perm('indigo_api.view_published_document')
+
+
+class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
+    """ Attachment view for published documents, under frbr-uri/media.json
+    """
+    queryset = Attachment.objects
+    serializer_class = MediaAttachmentSerializer
+    # TODO: perms
+    permission_classes = (IsAuthenticated,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.document).all()
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,
@@ -44,12 +65,13 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # only published documents
     queryset = DocumentViewMixin.queryset.published()
 
-    serializer_class = DocumentSerializer
+    serializer_class = PublishedDocumentSerializer
     pagination_class = PageNumberPagination
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
-    permission_classes = (AllowAny,)
+    permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
@@ -103,7 +125,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         document = self.get_object()
 
         # asking for a media attachment?
-        if self.component == 'media':
+        if self.component == 'media' and self.subcomponent:
             filename = self.subcomponent
             if self.format_kwarg:
                 filename += '.' + self.format_kwarg
@@ -123,7 +145,21 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # json description
             if (self.component, format) == ('main', 'json'):
                 serializer = self.get_serializer(document)
+                # use the request URI as the basis for this document
+                serializer.context['url'] = reverse(
+                    'published-document-detail',
+                    request=request,
+                    kwargs={'frbr_uri': self.frbr_uri.expression_uri()[1:]})
                 return Response(serializer.data)
+
+            # media attachments
+            if (self.component, format) == ('media', 'json'):
+                view = MediaViewSet()
+                view.kwargs = {'document_id': document.id}
+                view.request = request
+                view.document = document
+                view.initial(request)
+                return view.list(request)
 
             # the item we're interested in
             self.element = document.doc.components().get(self.component)

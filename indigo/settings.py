@@ -33,12 +33,7 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
     # local traditions
-    'indigo_pl',
     'indigo_za',
-
-    # workflow
-    'indigo_workflow',
-    'viewflow',
 
     # the Indigo API
     'indigo_api',
@@ -60,8 +55,6 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'rest_auth',
     'django_filters',
-    'django_extensions',
-    'django_nose',
 
     # required by the Indigo API
     'taggit',
@@ -143,6 +136,7 @@ TEMPLATES = [
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
                 'indigo_app.context_processors.general',
+                'indigo_app.context_processors.models',
             ]
         }
     }
@@ -185,7 +179,7 @@ ASSETS_URL_EXPIRE = False
 # for each Django app
 
 # where the compiled assets go
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_ROOT = 'staticfiles'
 # the URL for assets
 STATIC_URL = '/static/'
 
@@ -260,7 +254,6 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
@@ -292,10 +285,6 @@ RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 
 GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
-# server-side google analytics
-GOOGLE_ANALYTICS_INCLUDE_PATH = ['/api/']
-if GOOGLE_ANALYTICS_ID and not DEBUG:
-    MIDDLEWARE += ('indigo.middleware.GoogleAnalyticsMiddleware',)
 
 # disable email in development
 if DEBUG:

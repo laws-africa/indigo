@@ -8,10 +8,6 @@
   {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}
 
-{% block sidebar %}
-  {% include './_sidebar.html' %}
-{% endblock %}
-
 {% block breadcrumbs %}
   {# this will be filled in by the view #}
   <li class="breadcrumb-item">&nbsp;</li>
@@ -45,12 +41,13 @@
     {{/if}}
     <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">
-      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }}</a>
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ document.expression_date }} · {{ document.language }}</a>
       <div class="dropdown-menu">
         {{#each expressions}}
           {{#each documents}}
             <a class="dropdown-item {{#if current}}disabled{{/if}}" href="/documents/{{ id }}">
               {{ ../date }}
+              · {{ language }}
               {{#if current}} - this document{{/if}}
             </a>
           {{/each}}

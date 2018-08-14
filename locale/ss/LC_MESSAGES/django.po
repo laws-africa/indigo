@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-07-17 23:30+0400\n"
-"PO-Revision-Date: 2017-11-11 07:10-0500\n"
+"POT-Creation-Date: 2018-08-03 16:49+0200\n"
+"PO-Revision-Date: 2018-08-03 14:50\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Swati\n"
 "Language: ss_ZA\n"
@@ -14,9 +14,9 @@ msgstr ""
 "X-Generator: crowdin.com\n"
 "X-Crowdin-Project: openup-indigo\n"
 "X-Crowdin-Language: ss\n"
-"X-Crowdin-File: /i18n/locale/af/LC_MESSAGES/django.po\n"
+"X-Crowdin-File: /master/locale/af/LC_MESSAGES/django.po\n"
 
-#: indigo/analysis/toc/base.py:9
+#: indigo/analysis/toc/base.py:9 indigo/analysis/work_detail/base.py:49
 msgid "Act"
 msgstr ""
 
@@ -28,7 +28,8 @@ msgstr ""
 msgid "By-law"
 msgstr ""
 
-#: indigo/analysis/toc/base.py:12 indigo_za/toc.py:27
+#: indigo/analysis/toc/base.py:12 indigo/analysis/work_detail/base.py:40
+#: indigo_za/toc.py:27
 msgid "Chapter"
 msgstr "Sehluko"
 
@@ -44,12 +45,20 @@ msgstr ""
 msgid "Section"
 msgstr ""
 
-#: indigo/analysis/work_detail/base.py:29
+#: indigo/analysis/toc/base.py:16
+msgid "Preface"
+msgstr ""
+
+#: indigo/analysis/toc/base.py:17
+msgid "Preamble"
+msgstr ""
+
+#: indigo/analysis/work_detail/base.py:28
 #, python-format
 msgid "%(type)s %(number)s"
 msgstr ""
 
-#: indigo/analysis/work_detail/base.py:39
+#: indigo/analysis/work_detail/base.py:30
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
 msgstr ""
@@ -84,7 +93,7 @@ msgstr ""
 msgid "Assented to on %(date)s"
 msgstr ""
 
-#: indigo_api/templates/act.html:49 indigo_pl/templates/act-pl.html:29
+#: indigo_api/templates/act.html:49
 #, python-format
 msgid "Commences on %(date)s unless otherwise noted"
 msgstr ""
@@ -206,28 +215,3 @@ msgstr ""
 msgid "Reset my password"
 msgstr ""
 
-#: indigo_workflow/templates/indigo_workflow/task_base.html:49
-msgid "Task is complete"
-msgstr ""
-
-#: indigo_workflow/templates/indigo_workflow/task_base.html:58
-#: indigo_workflow/templates/viewflow/flow/process_detail.html:44
-msgid "Accept this task"
-msgstr ""
-
-#: indigo_workflow/templates/indigo_workflow/task_base.html:64
-#: indigo_workflow/templates/viewflow/flow/process_detail.html:49
-msgid "Unassign"
-msgstr ""
-
-#: indigo_workflow/templates/indigo_workflow/task_base.html:69
-msgid "Undo"
-msgstr ""
-
-#: indigo_workflow/templates/indigo_workflow/task_base.html:74
-msgid "Cancel"
-msgstr ""
-
-#: indigo_workflow/templates/viewflow/flow/process_detail.html:69
-msgid "Cancel workflow"
-msgstr ""

@@ -109,7 +109,7 @@
             {% with amendment.expressions as docs %}
             {% if docs %}
               {% for doc in docs %}
-              <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a></div>
+              <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a> · {{ doc.language }}</div>
               {% endfor %}
             {% else %}
               <span class="text-muted">No editable version at this date</span>
@@ -127,10 +127,10 @@
         <h6>Initial publication</h6>
 
         <div class="documents">
-          {% with work.initial_expressions as docs %}
+          {% with work.initial_expressions.all as docs %}
           {% if docs %}
             {% for doc in docs %}
-            <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a></div>
+            <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a> · {{ doc.language }}</div>
             {% endfor %}
           {% else %}
             <span class="text-muted">No editable version at this date</span>

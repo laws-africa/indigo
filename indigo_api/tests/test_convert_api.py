@@ -25,6 +25,7 @@ class RenderParseAPITest(APITestCase):
                 'publication_name': None,
                 'publication_number': None,
                 'publication_date': None,
+                'expression_date': '2001-01-01',
             },
         }, format='json')
         assert_equal(response.status_code, 200)
@@ -35,6 +36,7 @@ class RenderParseAPITest(APITestCase):
                 'content': document_fixture(text='hello'),
                 'publication_name': '',
                 'publication_number': '',
+                'expression_date': '2001-01-01',
             },
         }, format='json')
         assert_equal(response.status_code, 200)
@@ -44,6 +46,7 @@ class RenderParseAPITest(APITestCase):
             'document': {
                 'frbr_uri': '/za/act/1998/2',
                 'content': document_fixture(text='hello'),
+                'expression_date': '2001-01-01',
             },
         })
         assert_equal(response.status_code, 200)
@@ -51,7 +54,8 @@ class RenderParseAPITest(APITestCase):
         assert_in('Act 2 of 1998', response.data['output'])
 
     def test_render_json_to_html_round_trip(self):
-        response = self.client.get('/api/za/act/2001/8/eng.json')
+        response = self.client.get('/api/documents/4.json')
+        assert_equal(response.status_code, 200)
 
         data = response.data
         data['content'] = document_fixture(text='hello')
@@ -68,6 +72,7 @@ class RenderParseAPITest(APITestCase):
             'document': {
                 'frbr_uri': '/za/act/1998/2',
                 'content': document_fixture(text=u'hello κόσμε'),
+                'expression_date': '2001-01-01',
             },
         })
         assert_equal(response.status_code, 200)

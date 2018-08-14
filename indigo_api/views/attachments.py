@@ -7,7 +7,7 @@ from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Document, Attachment
-from ..serializers import AttachmentSerializer
+from ..serializers import AttachmentSerializer, MediaAttachmentSerializer
 from .documents import DocumentResourceView
 
 
@@ -57,7 +57,7 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
 @api_view()
 def attachment_media_view(request, *args, **kwargs):
     """ This is a helper view to serve up a named attachment file via
-    a "media/file.ext" url, which is part of the AKN standard.
+    a document's "media/file.ext" url, which is part of the AKN standard.
     """
     doc_id = kwargs['document_id']
     filename = kwargs['filename']

@@ -1,4 +1,5 @@
 from __future__ import absolute_import
+
 import re
 import logging
 from itertools import chain
@@ -25,7 +26,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
     open_quote = '"'
     close_quote = '"'
 
-    ontology_template = "/ontology/term/this.{language}.{term}"
+    ontology_template = u"/ontology/term/this.{language}.{term}"
 
     @property
     def language(self):
@@ -99,6 +100,9 @@ class BaseTermsFinder(LocaleBasedMatcher):
             for container in self.defn_containers_xpath(section):
                 # only if we don't already have a definition here
                 if list(container.iterchildren(self.def_tag)):
+                    continue
+
+                if not container.text:
                     continue
 
                 match = self.term_re.search(container.text)

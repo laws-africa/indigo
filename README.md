@@ -36,7 +36,7 @@ Create and activate a virtualenv and install dependencies:
 ```bash
 virtualenv env --no-site-packages
 source env/bin/activate
-pip install -r requirements.txt
+pip install -e '.[test]'
 ```
 
 Ensure you have [PostgreSQL](https://www.postgresql.org/) installed and running. Create a postgresql user with username and password `indigo`,

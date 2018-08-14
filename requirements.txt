@@ -30,7 +30,6 @@ futures==3.0.3
 gevent==1.2.2
 git+https://github.com/aerkalov/ebooklib.git@a87ef643690a89d8a72389c65073913bde58d1df#egg=EbookLib-master
 greenlet==0.4.13
-gspread==3.0.1
 gunicorn==19.7.1
 ipython==2.4.0
 jsonpatch==1.23
@@ -41,10 +40,8 @@ mammoth==1.4.4
 mock==1.3.0
 newrelic==2.40.0.34
 nose==1.3.7
-oauth2client==4.1.2
 pathlib==1.0.1
 psycopg2==2.7.3.2
-PyOpenSSL==18.0.0
 python-dateutil==2.4.0
 pytz==2017.3
 rcssmin==1.0.6

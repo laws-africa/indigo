@@ -56,7 +56,7 @@
           <ul class="socialaccount_providers list-unstyled">
             {% for provider in socialaccount_providers %}
             <li>
-              <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='login' %}">
+              <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='connect' %}">
                 <i class="fab fa-fw fa-{{ provider.id }}"></i> Connect to {{provider.name}}
               </a>
             </li>

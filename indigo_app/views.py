@@ -254,6 +254,7 @@ class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
 
 class RestoreWorkVersionView(AbstractWorkView):
     http_method_names = ['post']
+    permission_required = ('indigo_api.change_work',)
 
     def post(self, request, frbr_uri, version_id):
         work = self.get_object()

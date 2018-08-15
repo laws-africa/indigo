@@ -101,7 +101,7 @@
 
       this.$el
         .append('<button class="btn btn-primary btn-sm save">Save</button>')
-        .append('<button class="btn btn-outline-secondary btn-sm unedit pull-right">Cancel</button>')
+        .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
         .find('.content')
         .replaceWith($textarea);
 

@@ -3,7 +3,7 @@
 {% block work-content %}
 
   {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-    <div class="pull-right">
+    <div class="float-right">
       <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit Work</a>
     </div>
   {% endif %}

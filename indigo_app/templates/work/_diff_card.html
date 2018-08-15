@@ -1,6 +1,6 @@
 <div class="card mb-3">
   <div class="card-body">
-    <a href="#{{ version.id }}-changes" data-toggle="collapse" class="pull-right">{{ version.changes|length }} change{{ version.changes|length|pluralize}}</a>
+    <a href="#{{ version.id }}-changes" data-toggle="collapse" class="float-right">{{ version.changes|length }} change{{ version.changes|length|pluralize}}</a>
     <div>
       <span class="time-ago" data-timestamp="{{ version.revision.date_created|date:'c' }}">{{ version.revision.date_created|date:"Y-m-d H:i" }}</span>
       by {{ version.revision.user }}

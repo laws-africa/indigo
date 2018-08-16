@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
 
     url(r'^works/new/$', views.AddWorkView.as_view(), name='new_work'),
+    url(r'^works/new-batch/$', views.BatchAddWorkView.as_view(), name='new_batch_work'),
     url(r'^works(?P<frbr_uri>/\S+?)/amendments/$', views.WorkAmendmentsView.as_view(), name='work_amendments'),
     url(r'^works(?P<frbr_uri>/\S+?)/related/$', views.WorkRelatedView.as_view(), name='work_related'),
     url(r'^works(?P<frbr_uri>/\S+?)/import/$', views.ImportDocumentView.as_view(), name='import_document'),

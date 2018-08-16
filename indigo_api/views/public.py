@@ -7,14 +7,16 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from cobalt import FrbrUri
 
 from ..serializers import PublishedDocumentSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..atom import AtomRenderer, AtomFeed
 
-from .documents import DocumentViewMixin
-from .attachments import view_attachment_by_filename, MediaViewSet
+from .documents import DocumentViewMixin, DocumentResourceView
+from .attachments import view_attachment_by_filename, MediaAttachmentSerializer
+from ..models import Attachment
 
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -25,6 +27,18 @@ class PublishedDocumentPermission(BasePermission):
     """
     def has_permission(self, request, view):
         return request.user.has_perm('indigo_api.view_published_document')
+
+
+class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
+    """ Attachment view for published documents, under frbr-uri/media.json
+    """
+    queryset = Attachment.objects
+    serializer_class = MediaAttachmentSerializer
+    # TODO: perms
+    permission_classes = (IsAuthenticated,)
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.document).all()
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,
@@ -57,6 +71,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)

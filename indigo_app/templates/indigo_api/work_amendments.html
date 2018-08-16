@@ -30,7 +30,7 @@
 
         <div class="card-body">
           {{#if ../can_edit}}{{#unless initial}}
-          <div class="dropdown pull-right">
+          <div class="dropdown float-right">
             <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
             <div class="dropdown-menu">
               <a href="#" class="dropdown-item edit-amendment">Change date</a>
@@ -60,8 +60,8 @@
         </div>
 
         <div class="card-footer text-right">
-          <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil"></i> Create amended version</button>
-          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-cloud-upload"></i> Import document</a>
+          <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil-alt"></i> Create amended version</button>
+          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-file-upload"></i> Import document</a>
         </div>
       </li>
     {{/each}}

@@ -3,7 +3,7 @@
 {% block work-content %}
 
   {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-    <div class="pull-right">
+    <div class="float-right">
       <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit Work</a>
     </div>
   {% endif %}
@@ -127,7 +127,7 @@
         <h6>Initial publication</h6>
 
         <div class="documents">
-          {% with work.initial_expressions as docs %}
+          {% with work.initial_expressions.all as docs %}
           {% if docs %}
             {% for doc in docs %}
             <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a> · {{ doc.language }}</div>

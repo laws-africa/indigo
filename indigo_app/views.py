@@ -386,7 +386,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         if country.code != row['country'].lower():
             raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
         if ' ' in frbr_uri.work_uri():
-            raise ValueError('Check for spaces in the first six columns – none allowed')
+            raise ValueError('Check for spaces in country, locality, doctype, subtype, date, number – none allowed')
         elif not frbr_uri.country:
             raise ValueError('A country must be specified')
         elif not frbr_uri.doctype:

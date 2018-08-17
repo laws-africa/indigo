@@ -17,8 +17,8 @@
 
       {% block navbar-content %}
       <div class="collapse navbar-collapse" id="navbar-collapse">
-        {% block navbar-left %}
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+        {% block navbar-left %}
           {% if request.user.is_authenticated %}
           <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
           <li class="nav-item dropdown">
@@ -45,11 +45,11 @@
             </div>
           </li>
           {% endif %}
-        </ul>
         {% endblock %}
+        </ul>
 
-        {% block navbar-user %}
         <ul class="navbar-nav" id="user-buttons">
+        {% block navbar-user %}
           {% if request.user.is_authenticated %}
             <li class="nav-item dropdown">
               <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
@@ -74,8 +74,8 @@
           {% else %}
             <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}" class="nav-link"><i class="fa fa-sign-in-alt"></i> Log in</a></li>
           {% endif %}
-        </ul>
         {% endblock %}
+        </ul>
 
       </div>
       {% endblock %}

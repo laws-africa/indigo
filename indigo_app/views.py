@@ -276,7 +276,7 @@ class RestoreWorkVersionView(AbstractWorkView):
 
 
 class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
-    template_name = 'work/new_batch.html'
+    template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm

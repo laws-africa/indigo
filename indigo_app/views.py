@@ -1,6 +1,9 @@
 # coding=utf-8
 import json
+import io
+import re
 
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
@@ -13,13 +16,9 @@ from django.shortcuts import redirect
 from reversion import revisions as reversion
 
 from cobalt.act import FrbrUri
-from django.core.exceptions import ValidationError
-from django.views.generic import FormView
 from datetime import datetime
 import requests
 import unicodecsv as csv
-import io
-import re
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -27,8 +26,7 @@ from indigo_api.views.documents import DocumentViewSet
 from indigo_api.signals import work_changed
 from indigo_app.models import Language, Country
 from indigo_app.revisions import decorate_versions
-
-from .forms import DocumentForm, UserForm, BatchCreateWorkForm
+from indigo_app.forms import DocumentForm, UserForm, BatchCreateWorkForm
 
 
 class IndigoJSViewMixin(object):

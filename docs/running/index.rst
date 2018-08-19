@@ -79,7 +79,7 @@ We describe using Heroku below.
 9. You can visit the admin interface to add your own country details and create new users: http://localhost:8000/admin
 
 Ruby dependencies
-=================
+.................
 
 You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need Ruby version 2.3.
 
@@ -94,7 +94,7 @@ You can test that Slaw is installed with slaw --version::
     slaw 1.0.1
 
 Django Customisation
-====================
+....................
 
 You can now easily change Django settings, add your own modules, change URLs, etc. You simply need to create your own settings file, import the settings from Indigo, and update `manage.py` to reference your new settings file. For example:
 

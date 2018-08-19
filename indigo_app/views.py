@@ -417,7 +417,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
 
 class ImportDocumentView(AbstractWorkView):
-    template_name = 'work/import_document.html'
+    template_name = 'indigo_api/work_import_document.html'
     permission_required = ('indigo_api.view_work', 'indigo_api.add_document')
     js_view = 'ImportView'
 

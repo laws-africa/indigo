@@ -43,7 +43,7 @@ class WorksTest(testcases.TestCase):
         with reversion.revisions.create_revision():
             work.title = 'changed title'
             work.save()
-        
+
         # this user doesn't have permission to edit works
         self.client.logout()
         self.assertTrue(self.client.login(username='non-deleter@example.com', password='password'))

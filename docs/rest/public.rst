@@ -1,37 +1,220 @@
 .. _rest_public_guide:
 
-Using the Public REST API
-=========================
+Using the Indigo API
+====================
 
-This guide is for developers who want to use the Indigo Public REST API
-to fetch and render documents for users to read or download. We assume that
-you have a basic understanding of web applications, REST APIs and the
-`Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legislation (acts).
+This guide is for developers who want to use the API to fetch legislative works. We assume that you have a basic understanding of REST APIs and the `Akoma Ntoso <http://www.akomantoso.org/>`_ standard for legislation (acts in particular).
 
-See :ref:`rest_general_guide` for general API details such as content types and
-what the fields of a Document are.
+.. note:: 
 
-If you want to manage and edit a collection of legislation see :ref:`rest_app_guide` instead.
+   The API relies heavily on Akoma Ntoso FRBR URIs, which are described in the `Akoma Ntoso naming convention standard <http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/akn-nc-v1.0.html>`_.
 
-Public API
-----------
+Getting Started
+---------------
 
-The public API is a read-only API for exploring a collection of legislative documents. Using it, you can:
+The API is a read-only API for listing and fetching published versions of legislative works. Using it, you can:
 
-* get a list of all acts by country and year
-* get the raw Akoma Ntoso XML of an act
-* get an human-friendly HTML version of an act
-* get an Atom feed of newly published acts
-
-The public API relies heavily on FRBR URIs (and URI fragments) for identifying content, be sure to read up on FRBR URIs above.
-
+* get a list of all works by country and year
+* get a JSON description of a work
+* get Akoma Ntoso XML for a work
+* get a human-friendly HTML version of a work
 
 .. note::
 
    When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/eng``.
 
-Listing Acts
-------------
+Location of the API
+-------------------
+
+The API is available at the `/api/` URL of your Indigo installation.
+
+Authentication
+--------------
+
+You must authenticate all calls to the API by including your API authentication token in your request. Include in your request an HTTP header called ``Authorization`` with a value of ``Token <your-api-token>``. For example::
+
+    Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
+
+.. _pagination:
+
+Pagination
+----------
+
+API calls that return lists will be paginated and return a limited number
+of items per page. The response includes information on the total number of items and the URLs to use to fetch the next and previous pages of items.
+
+Here's an example of the first page of a paginated response with 250 total items and two pages:
+
+.. code-block:: json
+
+    {
+      "count": 250,
+      "next": "https://indigo.example.com/api/za.json?page=2",
+      "previous": null,
+      "results": [ "..." ]
+    }
+
+In this case, fetching the ``next`` URL will return the second (and final) page.
+
+Content types
+-------------
+
+Some API calls can return content in multiple formats. You can specify the
+required content of your request by placing ``.format`` at the end of the URL.
+In most cases the default response type is JSON.
+
+* ``.json`` or ``Accept: application/json``: return JSON
+* ``.xml`` or ``Accept: application/xml``: return Akoma Ntoso XML
+* ``.html`` or ``Accept: text/html``: return human friendly HTML
+* ``.epub`` or ``Accept: application/epub+zip``: return an ePUB (ebook) document
+* ``.pdf`` or ``Accept: application/pdf``: return a PDF document
+* ``.zip`` or ``Accept: application/zip``: return a ZIP file with the document XML and media attachments
+
+.. note::
+
+   Not all responses support all formats, the documentation will be explicit
+   about what is supported.
+
+Fetching a Work
+---------------
+
+.. code:: http
+
+    GET /api/frbr-uri.json
+
+This returns the detail of a work as a JSON document. For example, this is the
+description of the English version of Act 55 of 1998.
+
+.. code-block:: json
+
+    {
+      "url": "https://indigo.example.com/api/za/act/1998/55/eng.json",
+      "title": "Employment Equity Act, 1998",
+      "created_at": "2017-12-23T10:05:55.105543Z",
+      "updated_at": "2018-06-07T08:07:51.170250Z",
+      "country": "za",
+      "locality": null,
+      "nature": "act",
+      "subtype": null,
+      "year": "1998",
+      "number": "55",
+      "frbr_uri": "/act/1998/55",
+      "expression_frbr_uri": "/act/1998/55/eng@2005-10-03",
+      "publication_date": "1998-10-19",
+      "publication_name": "Government Gazette",
+      "publication_number": "19370",
+      "expression_date": "2014-01-17",
+      "commencement_date": "1999-05-14",
+      "assent_date": "1998-10-12",
+      "language": "eng",
+      "stub": false,
+      "repeal": null,
+      "amendments": [
+        {
+          "date": "2014-01-17",
+          "amending_title": "Employment Equity Amendment Act, 2013",
+          "amending_uri": "/za/act/2013/47"
+        },
+      ],
+      "points_in_time": [
+        {
+          "date": "2014-01-17",
+          "expressions": [
+            {
+              "url": "https://indigo.example.com/api/act/1998/55/eng@2014-01-17",
+              "language": "eng",
+              "expression_frbr_uri": "/act/1998/55/eng@2014-01-17",
+              "expression_date": "2014-01-17",
+              "title": "Employment Equity Act, 1998"
+            }
+          ]
+        }
+      ],
+      "links": [
+        {
+          "href": "https://indigo.openbylaws.org.za/api/za-wc033/act/by-law/2005/beaches/eng.html",
+          "title": "HTML",
+          "rel": "alternate",
+          "mediaType": "text/html"
+        },
+        { "..." }
+      ]
+    }
+
+The fields of the response are described in the table below.
+
+=================== =================================================================================== ==========
+Field               Description                                                                         Type
+=================== =================================================================================== ==========
+amendments          List of amendments that have been applied to create this expression of the work.    See below
+assent_date         Date when the work was assented to.                                                 ISO8601
+content_url         URL of the full content of the work.                                                URL
+country             ISO 3166-1 alpha-2 country code that this work is applicable to.                    String
+created_at          Timestamp of when the work was first created.                                       ISO8601
+draft               Is this a draft work or is it available in the public API?                          Boolean
+expression_date     Date of this expression of the work.                                                ISO8601
+commencement_date   Date on which this work commences.                                                  ISO8601
+expression_frbr_uri FRBR URI of this expression of this work.                                           String
+frbr_uri            FRBR URI for this work.                                                             String
+id                  Unique ID of this work.                                                             Integer
+language            Three letter ISO-639-2 language code for this expression of the work.               String
+links               A description of links to other formats of this expression that are available
+                    through the API.
+locality            The code of the locality within the country.                                        String
+nature              The nature of this work, normally "act".                                            String
+number              Number of this work with its year, or some other unique way of identifying it       String
+                    within the year.
+publication_date    Date of original publication of the work.                                           ISO8601
+publication_name    Name of the publication in which the work was originally published.                 String
+publication_number  Number of the publication in which the work was originally published.               String
+repeal              Description of the repeal of this work, if it has been repealed.                    See below
+stub                Is this a stub work? Stub documents are generally empty.                            Boolean
+subtype             Subtype code of the work.                                                           String
+tags                List of string tags linked to the work. Optional.                                   Strings
+title               Short title of the work, in the appropriate language.                               String
+updated_at          Timestamp of when the work was last updated.                                        ISO8601
+url                 URL for fetching details of this work.                                              URL
+year                Year of the work.                                                                   String
+=================== =================================================================================== ==========
+
+
+Fetching the Akoma Ntoso of a Work
+..................................
+
+.. code:: http
+
+    GET /api/frbr-uri.xml
+
+This returns the Akoma Ntoso XML of a work.
+
+For example, fetch the English Akoma Ntoso version of ``/za/act/1998/84`` by calling:
+
+.. code:: http
+
+    GET /api/za/act/1998/84/eng.xml
+
+Fetching a Work as HTML
+.......................
+
+.. code:: http
+
+    GET /api/frbr-uri.html
+
+Fetch the HTML version of a work by specify `.html` as the format extensions in the URL.
+
+* Parameter ``coverpage``: should the response contain a generated coverpage? Use 1 for true, anything else for false. Default: 1.
+* Parameter ``standalone``: should the response by a full HTML document, including CSS, that can stand on its own? Use 1 for true, anything else for false. Default: false.
+* Parameter ``resolver``: the fully-qualified URL to use when resolving absolute references to other Akoma Ntoso documents. Use 'no' or 'none' to disable. Default is to use the Indigo resolver.
+* Parameter ``media-url``: the fully-qualified URL prefix to use when generating links to media, such as images.
+
+For example, fetch the English HTML version of ``/za/act/1998/84`` by calling:
+
+.. code:: http
+
+    GET /api/za/act/1998/84/eng.html
+
+Listing Works
+-------------
 
 .. code:: http
 
@@ -41,47 +224,7 @@ Listing Acts
   
 * Content types: JSON, PDF, EPUB, ZIP
 
-These endpoints list all acts for a country or year.  To list the available acts for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
-
-Atom Feeds
-----------
-
-.. code:: http
-
-    GET /api/za/summary.atom
-    GET /api/za/full.atom
-    GET /api/za/act/summary.atom
-    GET /api/za/act/full.atom
-    GET /api/za/act/2007/summary.atom
-    GET /api/za/act/2007/full.atom
-
-* Content types: Atom
-
-There are two Atom feeds for documents: a summary feed (``summary.atom``) and a full content feed (``full.atom``). The summary feed has the act title, metadata and the act preface (if any) of each document. The full content feed has the full HTML content of each document.
-
-The Atom feeds are paginated and contain the most recently updated documents first. The summary feeds contains more items per page than the full feeds because the latter are much larger. Follow the ``next`` links in the feeds to fetch additional pages.
-
-
-Entire Act
-----------
-
-.. code:: http
-
-    GET /api/frbr-uri
-
-* Parameter ``coverpage``: should the response contain a generated coverpage? Use 1 for true, anything else for false. Default: 1. (HTML-only)
-* Parameter ``standalone``: should the response by a full HTML document, including CSS, that can stand on its own? Use 1 for true, anything else for false. Default: false. (HTML-only)
-* Parameter ``resolver``: the fully-qualified URL to use when resolving absolute references to other Akoma Ntoso documents. Use 'no' or 'none' to disable. Default is to use the Indigo resolver. (HTML-only)
-* Content types: JSON, XML, HTML, PDF, ePUB, ZIP
-
-
-This returns the entire contents of an act. For example, the English HTML version of ``/za/act/1998/84/eng`` is available at:
-
-    ``http://indigo.code4sa.org/api/za/act/1998/eng.html``
-
-The raw XML is available at:
-
-    ``http://indigo.code4sa.org/api/za/act/1998/eng.xml``
+These endpoints list all works for a country or year.  To list the available works for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
 
 Acts at a Point in Time
 -----------------------

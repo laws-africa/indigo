@@ -256,7 +256,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         renderer.no_stub_content = getattr(view, 'no_stub_content', False)
         renderer.standalone = request.GET.get('standalone') == '1'
         renderer.resolver = request.GET.get('resolver')
-        renderer.media_url = request.GET.get('media_url', '')
+        renderer.media_url = request.GET.get('media-url', '')
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'

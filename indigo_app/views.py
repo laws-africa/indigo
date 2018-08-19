@@ -3,20 +3,21 @@ import json
 import io
 import re
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect
 from reversion import revisions as reversion
-
 from cobalt.act import FrbrUri
 from datetime import datetime
+from allauth.utils import get_request_param
 import requests
 import unicodecsv as csv
 
@@ -53,10 +54,19 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     # permissions
     raise_exception = True
     permission_required = ()
+    must_accept_terms = True
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+
+        if not self.has_permission():
+            return self.handle_no_permission()
+
+        if self.must_accept_terms and not request.user.editor.accepted_terms:
+            # user must accept terms
+            return redirect_to_login(self.request.get_full_path(), 'accept_terms', self.get_redirect_field_name())
+
         return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
 
 
@@ -507,3 +517,16 @@ class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
         # force a new one to be created
         request.user.editor.api_token()
         return self.get(request)
+
+
+class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
+    context_object_name = 'editor'
+    template_name = 'indigo_app/user_account/accept_terms.html'
+    fields = ('accepted_terms',)
+    must_accept_terms = False
+
+    def get_object(self):
+        return self.request.user.editor
+
+    def get_success_url(self):
+        return get_request_param(self.request, self.get_redirect_field_name(), settings.LOGIN_REDIRECT_URL)

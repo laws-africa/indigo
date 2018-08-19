@@ -29,6 +29,15 @@ class UserProfileForm(forms.ModelForm):
 
 class UserSignupForm(SignupForm):
     captcha = ReCaptchaField()
+    accepted_terms = forms.BooleanField(required=True, initial=False, error_messages={
+        'required': 'Please accept the Terms of Use.',
+    })
+
+    def save(self, request):
+        user = super(UserSignupForm, self).save(request)
+        user.editor.accepted_terms = True
+        user.editor.save()
+        return user
 
 
 class BatchCreateWorkForm(forms.Form):

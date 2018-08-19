@@ -5,7 +5,7 @@ from django.test import testcases, override_settings
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class LibraryTest(testcases.TestCase):
-    fixtures = ['user']
+    fixtures = ['user', 'editor']
 
     def setUp(self):
         os.environ['RECAPTCHA_TESTING'] = 'True'
@@ -28,6 +28,7 @@ class LibraryTest(testcases.TestCase):
             'email': 'new-user@example.com',
             'password1': 'password',
             'password2': 'password',
+            'accepted_terms': 'on',
             'g-recaptcha-response': 'PASSED'
         })
         self.assertEqual(response.status_code, 302)

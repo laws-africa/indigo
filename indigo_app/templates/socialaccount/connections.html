@@ -32,7 +32,7 @@
               <form method="post" action="{% url 'socialaccount_connections' %}">
                 {% csrf_token %}
                 <input type="hidden" name="account" value="{{ base_account.id }}">
-                <button class="btn btn-sm btn-outline-danger" type="submit">Disconnect</button>
+                <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm="Really remove this social account?">Disconnect</button>
               </form>
             </td>
           </tr>

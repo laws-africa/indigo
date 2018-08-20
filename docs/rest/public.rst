@@ -23,6 +23,36 @@ The API is a read-only API for listing and fetching published versions of legisl
 
    When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/eng``.
 
+.. _works_expressions:
+
+Works and Expressions
+---------------------
+
+Two important concepts that are an essential part of the API are **works** and **expressions**.
+
+* A **Work** is a piece of legislation, such as an act, regulation or by-law. A work may be amended over time and may even have its title changed. A work is uniquely identified by a *work FRBR URI* which never changes.
+* An **Expression** is a version of a Work in specific language at a particular point in time. A work can have many expressions, usually one for each official language and amendment. An expression is uniquely identified by its own *expression FRBR URI*, which is derived from the work's FRBR URI.
+
+An example of a work is the South African *Employment Equity Amendment Act,
+2013 (Act 55 of 1998)* with unique work FRBR URI ``/za/act/1998/55``. This act has
+been amended a number of times since it was first passed. Each amended version
+(also called a *point in time*) is a unique expression of the work.
+
+The English expression of the work, as it was amended on 17 January 2014, is
+uniquely identified by the expression FRBR URI ``/act/1998/55/eng@2014-01-17``.
+You can see that this is built from the work's URI, with a language code
+``eng`` and the expression date ``2014-01-17`` included.
+
+.. note::
+
+    When fetching details from the API, you are always fetching details for a particular
+    expression of the work. The expression will also include information related to the
+    expression's work, such as the work's FRBR URI and publication information.
+
+    Even if you don't specific a particular date for the expression, the API will return
+    the latest expression applicable for the date of the request.
+
+
 Location of the API
 -------------------
 
@@ -31,7 +61,9 @@ The API is available at the `/api/` URL of your Indigo installation.
 Authentication
 --------------
 
-You must authenticate all calls to the API by including your API authentication token in your request. Include in your request an HTTP header called ``Authorization`` with a value of ``Token <your-api-token>``. For example::
+You must authenticate all calls to the API by including your API authentication
+token in your request. Include in your request an HTTP header called
+``Authorization`` with a value of ``Token <your-api-token>``. For example::
 
     Authorization: Token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b
 
@@ -41,7 +73,8 @@ Pagination
 ----------
 
 API calls that return lists will be paginated and return a limited number
-of items per page. The response includes information on the total number of items and the URLs to use to fetch the next and previous pages of items.
+of items per page. The response includes information on the total number of
+items and the URLs to use to fetch the next and previous pages of items.
 
 Here's an example of the first page of a paginated response with 250 total items and two pages:
 
@@ -82,8 +115,8 @@ Fetching a Work
 
     GET /api/frbr-uri.json
 
-This returns the detail of a work as a JSON document. For example, this is the
-description of the English version of Act 55 of 1998.
+This returns the detail of an expression of a work as a JSON document. For example, this is the
+description of the English expression of Act 55 of 1998 as at 2014-01-07.
 
 .. code-block:: json
 
@@ -170,31 +203,59 @@ publication_number  Number of the publication in which the work was originally p
 repeal              Description of the repeal of this work, if it has been repealed.                    See below
 stub                Is this a stub work? Stub documents are generally empty.                            Boolean
 subtype             Subtype code of the work.                                                           String
-tags                List of string tags linked to the work. Optional.                                   Strings
 title               Short title of the work, in the appropriate language.                               String
 updated_at          Timestamp of when the work was last updated.                                        ISO8601
 url                 URL for fetching details of this work.                                              URL
 year                Year of the work.                                                                   String
 =================== =================================================================================== ==========
 
+Amendments
+..........
 
-Fetching the Akoma Ntoso of a Work
-..................................
+The fields of the ``amendments`` property of the response are described below.
+
+=================== =================================================================================== ==========
+Field               Description                                                                         Type
+=================== =================================================================================== ==========
+amending_title      Title of the amending work                                                          String
+amending_uri        Work FRBR URI of the amending work                                                  String
+date                Date on which the amendment takes place                                             ISO8601
+=================== =================================================================================== ==========
+
+Points in Time
+..............
+
+The fields of the ``points_in_time`` property of the response are described below.
+
+=================== =================================================================================== ==========
+Field               Description                                                                         Type
+=================== =================================================================================== ==========
+date                Date of the point-in-time for which expressions are available                       ISO8601
+expressions         A list of expressions for this work available at this point in time
+url                 The API URL to fetch information on the expression                                  URL
+language            Three-letter language code of the language of the expression                        String
+expression_frbr_uri Unique Expression FRBR URI for this expression                                      String
+expression_date     Date of this expression                                                             ISO8601
+title               Title of the work, appropriate for the expression in the expression's language)     String
+=================== =================================================================================== ==========
+
+Fetching the Akoma Ntoso for a Work
+-----------------------------------
 
 .. code:: http
 
     GET /api/frbr-uri.xml
 
-This returns the Akoma Ntoso XML of a work.
+This returns the Akoma Ntoso XML of an expression of a work.
 
-For example, fetch the English Akoma Ntoso version of ``/za/act/1998/84`` by calling:
+For example, fetch the most recent applicable English Akoma Ntoso expression of ``/za/act/1998/55`` by calling:
 
 .. code:: http
 
-    GET /api/za/act/1998/84/eng.xml
+    GET /api/za/act/1998/55/eng.xml
 
 Fetching a Work as HTML
-.......................
+-----------------------
 
 .. code:: http
 
@@ -207,37 +268,48 @@ Fetch the HTML version of a work by specify `.html` as the format extensions in 
 * Parameter ``resolver``: the fully-qualified URL to use when resolving absolute references to other Akoma Ntoso documents. Use 'no' or 'none' to disable. Default is to use the Indigo resolver.
 * Parameter ``media-url``: the fully-qualified URL prefix to use when generating links to media, such as images.
 
-For example, fetch the English HTML version of ``/za/act/1998/84`` by calling:
+For example, fetch the most recent applicable English HTML expression of ``/za/act/1998/55`` by calling:
 
 .. code:: http
 
-    GET /api/za/act/1998/84/eng.html
+    GET /api/za/act/1998/55/eng.html
 
-Listing Works
--------------
+Fetching Expressions of a Work
+------------------------------
+
+You can fetch specific expressions of a work by including expression-specific information in the requested FRBR URI.
+The API supports the language and date aspects defined in the
+`Akoma Ntoso naming convention standard <http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/akn-nc-v1.0.html>`_.
+
+For example, this request will fetch the HTML of the English expression of Act 55 of 1998, as amended on 2014-01-17:
 
 .. code:: http
 
-    GET /api/za/
-    GET /api/za/act/
-    GET /api/za/act/2007/
-  
-* Content types: JSON, PDF, EPUB, ZIP
+    GET /api/za/act/1998/55/eng@2014-01-17.html
 
-These endpoints list all works for a country or year.  To list the available works for a country you'll need the `two-letter country code <http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
+The available expressions of a work are listed in the ``points_in_time`` field
+of the JSON description of the work. Each point in time includes a date and a
+list of expressions available at that date, one for each available language.
 
-Acts at a Point in Time
------------------------
+You can use the following date formats to request different expressions of a work.
 
-A URI such as ``/za/act/1998/84/eng`` actually refers to the latest (current) version of the act.
+================ =================================================== ============================
+Date Format      Meaning                                             Example Expression FRBR URI
+================ =================================================== ============================
+``@``            Very first expression of a work.                    ``/za/act/1998/55/eng@``
+``@YYYY-MM-DD``  Expression at the specific date.                    ``/za/act/1998/55/eng@2014-01-17``
+``:YYYY-MM-DD``  Most recent expression at or before a date.         ``/za/act/1998/55/eng:2015-01-01``
+(none)           The most recent expression at or before today's     ``/za/act/1998/55/eng``
+                 date. Equivalent to using ``:`` with today's date.
+================ =================================================== ============================
 
-An act may be amended multiple times over its lifetime. You can retrieve the version of an act as it appeared after a dated amendment, if available, by specifyng the date in the URI in the format ``@YYYY-MM-dd``. For example, ``/za/act/1998/84/eng@2012-01-01`` is the version of Act 84 of 1998 after the amendment on date 2012-01-01 has been applied. If there was no amendment of that document on that exact date, a 404 will be returned.
+The ``.format`` part of the FRBR URI is placed after the ``@YYYY-MM-DD`` part.
 
-You can fetch the very first version of the act by using a ``@`` without a date: ``/za/act/1998/84/eng@``.
+.. note::
 
-If you don't know on which exact dates amendments were made, you can get the version of the act as it would have looked on a particular date (if available) by placing ``:YYYY-MM-DD`` at the end of the URI, for example: ``/za/act/1998/84/eng:2012-06-01``. Indigo will find the most recent amended version at or before that date.
-
-Components and formats are placed after the date portion, such as ``/za/act/1998/84/eng@2012-01-01.json``.
+    If you use ``@`` to specify a particular date and the API doesn't have a
+    version at exactly that date, it will return a 404 response. If you need
+    the expression of the work closest to a particular date, use ``:`` instead.
 
 Table of Contents
 -----------------
@@ -305,6 +377,23 @@ Using HTML Responses
 Indigo transforms Akoma Ntoso XML into HTML5 content that looks best when styled with
 `Indigo Web <https://github.com/Code4SA/indigo-web>`_ stylesheets. You can link
 to the stylesheets provided by that package, or you can pull them into your website.
+
+Listing Works
+-------------
+
+.. code:: http
+
+    GET /api/za/
+    GET /api/za/act/
+    GET /api/za/act/2007/
+  
+* Content types: JSON, PDF, EPUB, ZIP
+
+These endpoints list the works for a country or year.  To list the available
+works for a country you'll need the `two-letter country code
+<http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2>`_ for the country.
+
+The listings include the most recent applicable expressions of each work, in the country's default language.
 
 Search
 ------

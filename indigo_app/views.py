@@ -335,6 +335,10 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                 try:
                     work.full_clean()
                     work.save()
+
+                    # signals
+                    work_changed.send(sender=work.__class__, work=work, request=self.request)
+
                     info['status'] = 'success'
                     info['work'] = work
 

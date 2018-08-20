@@ -26,6 +26,7 @@ class Country(models.Model):
     """ The countries available in the UI. They aren't enforced by the API.
     """
     country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
+    primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
 
     class Meta:
         ordering = ['country__name']

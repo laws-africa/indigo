@@ -1,0 +1,49 @@
+[
+    {
+        "model": "countries_plus.country",
+        "pk": "ZA",
+        "fields": {
+            "iso3": "ZAF",
+            "iso_numeric": 710,
+            "fips": "SF",
+            "name": "South Africa",
+            "capital": "Pretoria",
+            "area": "1219912.00",
+            "population": 49000000,
+            "continent": "AF",
+            "tld": ".za",
+            "currency_code": "ZAR",
+            "currency_symbol": "R",
+            "currency_name": "Rand",
+            "phone": "27",
+            "postal_code_format": "####",
+            "postal_code_regex": "^(\\d{4})$",
+            "languages": "zu,xh,af,nso,en-ZA,tn,st,ts,ss,ve,nr",
+            "geonameid": 953987,
+            "neighbours": "ZW,SZ,MZ,BW,NA,LS",
+            "equivalent_fips_code": null
+        }
+    },
+    {
+        "model": "indigo_app.language",
+        "pk": 1,
+        "fields": {
+            "language": "en"
+        }
+    },
+    {
+        "model": "indigo_app.language",
+        "pk": 2,
+        "fields": {
+            "language": "af"
+        }
+    },
+    {
+        "model": "indigo_app.country",
+        "pk": 1,
+        "fields": {
+            "country": "ZA",
+            "primary_language": 1
+        }
+    }
+]

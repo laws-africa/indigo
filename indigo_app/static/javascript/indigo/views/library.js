@@ -356,26 +356,20 @@
 
         work = work.toJSON();
 
-        work.docs = _.map(docs[work.id] || [], function(d) { return d.toJSON(); });
-        // latest expression first
-        work.docs = _.sortBy(work.docs, 'expression_date');
-        work.docs.reverse();
+        var work_docs = docs[work.id] || [];
 
-        // current user's name -> you
-        work.docs.forEach(function(d, i) {
-          if (d.updated_by_user && d.updated_by_user.id == currentUserId) d.updated_by_user.display_name = 'you';
+        // distinct languages
+        work.languages = _.unique(_.map(work_docs, function(doc) {
+          return doc.get('language');
+        }));
 
-          // only show doc titles that are different to the work
-          if (i > 0 && d.title == work.title) d.title = '';
-        });
+        // count expression dates
+        work.expression_dates = (_.unique(_.map(work_docs, function(doc) {
+          return doc.get('expression_date');
+        }))).length;
 
-        if (work.docs.length > 0) {
-          var dates = _.compact(_.pluck(work.docs, 'updated_at'));
-          dates.sort();
-
-          // if we're sorting works by date later on, sort using the youngest/oldest, as appropriate
-          work.updated_at = sortDesc ? dates.slice(-1) : dates[0];
-        }
+        // docs for work (used to check for empty works)
+        work.work_docs = docs[work.id] || [];
 
         return work;
       });

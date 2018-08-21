@@ -37,63 +37,52 @@
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="title" data-sort="title">Frbr uri</th>
-      <th class="title" data-sort="title">Languages</th>
-      <th class="title" data-sort="title">Points in time</th>
-      <!--<th class="title" data-sort="title">Workflows</th>-->
-      <th class="title" data-sort="title">Number of drafts</th>
+      <th class="uri" data-sort="uri">Frbr uri</th>
+      <th class="langs" data-sort="langs">Languages</th>
+      <th class="psit" data-sort="psit">Points in time</th>
     </tr>
   </thead>
 
   <tbody>
     {{#each works}}
       <tr>
+
+        {{!-- Title --}}
         <td>
-          {{#if docs}}
+          {{#if work_docs}}
             <i class="fa fa-fw fa-circle published" title="published"></i>
           {{else}}
             <i class="fa fa-fw fa-circle" title="empty work"></i>
           {{/if}}
           <a href="/works{{ frbr_uri }}/">{{ title }}</a>
-          {{#if repealed}}
-            <span class="badge badge-info">repealed</span>
-          {{/if}}
         </td>
+
+        {{!-- Frbr uri --}}
         <td>
-          {{ frbr_uri }}
+          <a href="/works{{ frbr_uri }}/">{{ frbr_uri }}</a>
         </td>
+
+        {{!-- Languages --}}
         <td>
-          {{#if docs}}
-            {{#each docs}}
-              {{ language }}
+            {{#each languages}}
+            • {{this}}
             {{/each}}
-          {{/if}}
         </td>
+
+        {{!-- Points in time --}}
         <td>
-          {{#if docs}}
             <a href="/works{{ frbr_uri }}/amendments/">
-              {{#each docs}}
-                1
-              {{/each}}
+              {{expression_dates}}
             </a>
-          {{/if}}
         </td>
-        <td>
-          {{#if docs}}
-            {{#each docs}}
-              {{#if draft}}
-                1
-              {{/if}}
-            {{/each}}
-          {{/if}}
-        </td>
+
       </tr>
     {{/each}}
   </tbody>
 
   <tfoot>
     <tr>
-      <td class="active" colspan="5">{{ count }} works</td>
+      <td class="active" colspan="4">{{ count }} works</td>
     </tr>
   </tfoot>
 </table>

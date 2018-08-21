@@ -23,7 +23,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        # After this state operation, the Django DB state should match the 
+        # After this state operation, the Django DB state should match the
         # actual database structure.
         migrations.SeparateDatabaseAndState(state_operations=state_operations)
     ]

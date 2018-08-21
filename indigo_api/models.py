@@ -742,7 +742,7 @@ class Colophon(models.Model):
     the country of the document.
     """
     name = models.CharField(max_length=1024, help_text='Name of this colophon')
-    country = models.ForeignKey(MasterCountry, on_delete=models.SET_NULL, null=True, blank=True, help_text='Which country does this colophon apply to?')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=False, help_text='Which country does this colophon apply to?')
     body = models.TextField()
 
     def __unicode__(self):

@@ -37,7 +37,7 @@
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="uri" data-sort="uri">Frbr uri</th>
+      <th class="uri" data-sort="uri">FRBR URI</th>
       <th class="langs" data-sort="langs">Languages</th>
       <th class="psit" data-sort="psit">Points in time</th>
     </tr>
@@ -65,14 +65,18 @@
         {{!-- Languages --}}
         <td>
             {{#each languages}}
-            • {{this}}
+              {{#if @first}}
+                {{this}}
+              {{else}}
+                • {{this}}
+              {{/if}}
             {{/each}}
         </td>
 
         {{!-- Points in time --}}
         <td>
             <a href="/works{{ frbr_uri }}/amendments/">
-              {{expression_dates}}
+              {{n_expressions}}
             </a>
         </td>
 

@@ -364,12 +364,12 @@
         }));
 
         // count expression dates
-        work.expression_dates = (_.unique(_.map(work_docs, function(doc) {
+        work.n_expressions = _.unique(_.map(work_docs, function(doc) {
           return doc.get('expression_date');
-        }))).length;
+        })).length;
 
         // docs for work (used to check for empty works)
-        work.work_docs = docs[work.id] || [];
+        work.work_docs = work_docs
 
         return work;
       });

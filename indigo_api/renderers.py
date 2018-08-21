@@ -17,7 +17,7 @@ from languages_plus.models import Language
 from sass_processor.processor import SassProcessor
 
 from .serializers import NoopSerializer
-from .models import Document, Colophon, DEFAULT_LANGUAGE, Country
+from .models import Document, Colophon, Country
 
 log = logging.getLogger(__name__)
 
@@ -554,8 +554,8 @@ class EPUBRenderer(HTMLRenderer):
             html = '<div class="' + wrap + '">' + html + '</div>'
         return html
 
-    def language_for(self, lang=None):
-        lang = Language.objects.filter(iso_639_2T=lang or DEFAULT_LANGUAGE).first()
+    def language_for(self, lang):
+        lang = Language.objects.filter(iso_639_2T=lang).first()
         if lang:
             return lang.iso
 

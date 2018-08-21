@@ -226,7 +226,7 @@ class Work(models.Model):
             doc.content = template.content
 
         doc.draft = True
-        doc.language = DEFAULT_LANGUAGE
+        doc.language = Country.for_work(self).primary_language.code
         doc.expression_date = date
         doc.work = self
         doc.save()

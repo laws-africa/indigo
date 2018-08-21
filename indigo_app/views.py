@@ -1,24 +1,24 @@
 # coding=utf-8
 import json
+import io
+import re
 
+from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.shortcuts import redirect
 from reversion import revisions as reversion
-
 from cobalt.act import FrbrUri
-from django.core.exceptions import ValidationError
-from django.views.generic import FormView
 from datetime import datetime
+from allauth.utils import get_request_param
 import requests
 import unicodecsv as csv
-import io
-import re
 
 from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
@@ -26,8 +26,7 @@ from indigo_api.views.documents import DocumentViewSet
 from indigo_api.signals import work_changed
 from indigo_app.models import Language, Country
 from indigo_app.revisions import decorate_versions
-
-from .forms import DocumentForm, BatchCreateWorkForm
+from indigo_app.forms import DocumentForm, UserForm, BatchCreateWorkForm
 
 
 class IndigoJSViewMixin(object):
@@ -54,10 +53,19 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     # permissions
     raise_exception = True
     permission_required = ()
+    must_accept_terms = True
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+
+        if not self.has_permission():
+            return self.handle_no_permission()
+
+        if self.must_accept_terms and not request.user.editor.accepted_terms:
+            # user must accept terms
+            return redirect_to_login(self.request.get_full_path(), 'accept_terms', self.get_redirect_field_name())
+
         return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
 
 
@@ -253,6 +261,7 @@ class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
 
 class RestoreWorkVersionView(AbstractWorkView):
     http_method_names = ['post']
+    permission_required = ('indigo_api.change_work',)
 
     def post(self, request, frbr_uri, version_id):
         work = self.get_object()
@@ -274,7 +283,7 @@ class RestoreWorkVersionView(AbstractWorkView):
 
 
 class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
-    template_name = 'work/new_batch.html'
+    template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
@@ -411,7 +420,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
 
 class ImportDocumentView(AbstractWorkView):
-    template_name = 'work/import_document.html'
+    template_name = 'indigo_api/work_import_document.html'
     permission_required = ('indigo_api.view_work', 'indigo_api.add_document')
     js_view = 'ImportView'
 
@@ -473,5 +482,48 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
         context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
-
         return context
+
+
+class EditAccountView(AbstractAuthedIndigoView, FormView):
+    template_name = 'indigo_app/user_account/edit.html'
+    form_class = UserForm
+
+    def get_success_url(self):
+        return reverse('edit_account')
+
+    def get_form_kwargs(self):
+        kwargs = super(EditAccountView, self).get_form_kwargs()
+        kwargs['instance'] = self.request.user
+        return kwargs
+
+    def form_valid(self, form):
+        self.object = form.save()
+        return super(EditAccountView, self).form_valid(form)
+
+
+class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
+    context_object_name = 'user'
+    template_name = 'indigo_app/user_account/api.html'
+
+    def get_object(self):
+        return self.request.user
+
+    def post(self, request):
+        request.user.editor.api_token().delete()
+        # force a new one to be created
+        request.user.editor.api_token()
+        return self.get(request)
+
+
+class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
+    context_object_name = 'editor'
+    template_name = 'indigo_app/user_account/accept_terms.html'
+    fields = ('accepted_terms',)
+    must_accept_terms = False
+
+    def get_object(self):
+        return self.request.user.editor
+
+    def get_success_url(self):
+        return get_request_param(self.request, self.get_redirect_field_name(), settings.LOGIN_REDIRECT_URL)

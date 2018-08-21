@@ -1,0 +1,88 @@
+{% extends "indigo_app/user_account/layout.html" %}
+{% load i18n %}
+
+{% block title%}Emails {{ block.super }}{% endblock %}
+{% block account-sidebar %}
+  {% include 'indigo_app/user_account/_sidebar.html' with active='emails' %}
+{% endblock %}
+
+{% block account-content %}
+
+<div class="card mb-5">
+  <h5 class="card-header">Email Addresses</h5>
+  <div class="card-body">
+    {% with user.emailaddress_set.all as emails %}
+      {% if emails %}
+        <p>You can use any of these email addresses to log in.</p>
+
+        {% if form.non_field_errors %}
+          <div class="text-danger">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <table class="table table-sm mt-4 mb-4">
+        {% for emailaddress in emails %}
+          <tr>
+            <td class="{% if emailaddress.primary %}font-weight-bold{% endif %}">
+              {{ emailaddress.email }}
+            </td>
+            <td>
+              {% if emailaddress.verified %}
+                <i class="far fa-fw fa-check-circle text-success"></i>
+                verified
+              {% else %}
+                <i class="far fa-fw fa-question-circle text-danger"></i>
+                unverified
+              {% endif %}
+              {% if emailaddress.primary %}- primary{% endif %}
+            </td>
+            <td class="text-right">
+              <form action="{% url 'account_email' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="email" value="{{ emailaddress.email }}">
+
+                {% if not emailaddress.verified %}
+                  <button class="btn btn-sm btn-primary" type="submit" name="action_send">{% trans 'Re-send Verification' %}</button>
+                {% endif %}
+
+                {% if not emailaddress.primary %}
+                  <button class="btn btn-sm btn-outline-secondary" type="submit" name="action_primary">{% trans 'Make Primary' %}</button>
+                  <button class="btn btn-sm btn-outline-danger" type="submit" name="action_remove" data-confirm="Really remove this email?">{% trans 'Remove' %}</button>
+                {% endif %}
+              </form>
+            </td>
+          </tr>
+        {% endfor %}
+        </table>
+
+        <p><strong>Note:</strong> We only send email notifications to your <strong>primary</strong> email address.</p>
+
+      {% else %}
+        <p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>
+      {% endif %}
+    {% endwith %}
+
+    <h5 class="mt-5">Add an email address</h5>
+
+    <form method="post" action="{% url 'account_email' %}">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <input type="text" class="form-control col-sm-6" name="{{ form.email.name }}" value="{{ form.email.value|default:'' }}" placeholder="new-email@example.com">
+        {% if form.email.errors %}
+          <div class="text-danger">
+            {% for error in form.email.errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      
+      <button name="action_add" type="submit" class="btn btn-primary">Add email</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

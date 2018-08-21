@@ -43,6 +43,14 @@ INSTALLED_APPS = (
     'indigo_resolver',
     'indigo_slack',
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    # installations should include social account providers, such as
+    # allauth.socialaccount.providers.google
+    'captcha',
+
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -53,7 +61,6 @@ INSTALLED_APPS = (
     'pipeline',
     'rest_framework',
     'rest_framework.authtoken',
-    'rest_auth',
     'django_filters',
 
     # required by the Indigo API
@@ -98,11 +105,11 @@ DATABASES = {
     'default': db_config,
 }
 
+SITE_ID = 1
+
 # Internationalization
 # https://docs.djangoproject.com/en/1.7/topics/i18n/
-
 LANGUAGE_CODE = 'en-us'
-
 TIME_ZONE = 'UTC'
 
 USE_I18N = True
@@ -113,11 +120,6 @@ USE_TZ = True
 
 # CORS
 CORS_ORIGIN_ALLOW_ALL = True
-
-
-# Auth
-LOGIN_URL = 'login'
-LOGIN_REDIRECT_URL = '/library'
 
 
 # Templates
@@ -169,6 +171,7 @@ else:
             'LOCATION': '/var/tmp/django_cache',
         },
     }
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.7/howto/static-files/
@@ -262,25 +265,44 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 500,
 }
 
-# Django Rest Auth
-REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'indigo_app.serializers.UserDetailsSerializer',
-}
-
 
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')
+INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
+INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
+RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
-DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', SUPPORT_EMAIL)
+DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s %s' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))
 EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
 EMAIL_SUBJECT_PREFIX = '[Indigo] '
 
+# Auth
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+)
 
-INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
-INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
-RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
+# Django all-auth settings
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_SUBJECT_PREFIX = EMAIL_SUBJECT_PREFIX
+ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/accounts/email/'
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_FORMS = {
+    'signup': 'indigo_app.forms.UserSignupForm'
+}
+LOGIN_URL = 'account_login'
+LOGIN_REDIRECT_URL = '/accounts/profile/'
+
+# Google recaptcha
+RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')
+RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY', '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe')
+NOCAPTCHA = True
+
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10000
 

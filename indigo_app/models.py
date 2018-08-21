@@ -26,6 +26,7 @@ class Country(models.Model):
     """ The countries available in the UI. They aren't enforced by the API.
     """
     country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
+    primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
 
     class Meta:
         ordering = ['country__name']
@@ -85,6 +86,7 @@ class Editor(models.Model):
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     country = models.ForeignKey(Country, on_delete=models.SET_NULL, null=True)
+    accepted_terms = models.BooleanField(default=False)
 
     @property
     def country_code(self):
@@ -131,7 +133,7 @@ def set_user_email(sender, **kwargs):
 def create_editor(sender, **kwargs):
     # create editor for user objects
     user = kwargs["instance"]
-    if not hasattr(user, 'editor'):
+    if not hasattr(user, 'editor') and not kwargs.get('raw'):
         editor = Editor(user=user)
         # ensure there is a country
         editor.country = Country.objects.first()

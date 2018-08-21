@@ -9,7 +9,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class DocumentTestCase(TestCase):
-    fixtures = ['work', 'published']
+    fixtures = ['countries', 'work', 'published']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)

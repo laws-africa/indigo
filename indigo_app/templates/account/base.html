@@ -1,0 +1,27 @@
+{% extends "indigo_app/standalone.html" %}
+{% load staticfiles sass_tags %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block standalone-content %}
+
+  <div class="card allauth-box">
+    <div class="card-header text-right">
+      <img src="{% static 'images/logo.png' %}" class="logo" title="Indigo">
+    </div>
+    <div class="card-body">
+      {% block content %}{% endblock %}
+    </div>
+    <div class="card-footer">
+      <div class="float-right text-right">
+        <a href="{% url 'terms_of_use' %}">Terms of Use &amp; Privacy Policy</a>
+      </div>
+      {% if SUPPORT_EMAIL %}
+      <div class="float-left">
+        Need help? Please <a href="mailto:{{ SUPPORT_EMAIL }}">email us</a>.
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}

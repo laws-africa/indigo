@@ -1,0 +1,30 @@
+{% extends "account/base.html" %}
+{% load i18n %}
+
+{% block title %}Accept Terms{% endblock %}
+
+{% block content %}
+<h4>To continue, please accept the Terms of Use</h4>
+
+<form method="post">
+  {% csrf_token %}
+  <div class="form-group mt-4 mb-5">
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" id="{{ form.accepted_terms.id_for_label }}" required name="{{ form.accepted_terms.name }}">
+      <label class="form-check-label" for="{{ form.accepted_terms.id_for_label }}">
+        I have read and accept the <a href="{% url 'terms_of_use' %}" target="_blank">Terms of Use</a>.
+      </label>
+      {% if form.accepted_terms.errors %}
+        <div class="text-danger">
+          {% for error in form.accepted_terms.errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <button type="submit" class="btn btn-success btn-block">Continue</button>
+</form>
+
+{% endblock %}

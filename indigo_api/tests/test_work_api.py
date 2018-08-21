@@ -10,7 +10,7 @@ from indigo_api.tests.fixtures import *  # noqa
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class WorkAPITest(APITestCase):
-    fixtures = ['user', 'work', 'drafts', 'published']
+    fixtures = ['countries', 'user', 'editor', 'work', 'drafts', 'published']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')

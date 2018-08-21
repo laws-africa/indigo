@@ -1,0 +1,71 @@
+{% extends "indigo_app/user_account/layout.html" %}
+{% load i18n socialaccount %}
+
+{% block title%}Social Accounts {{ block.super }}{% endblock %}
+{% block account-sidebar %}
+  {% include 'indigo_app/user_account/_sidebar.html' with active='social' %}
+{% endblock %}
+
+{% block account-content %}
+<div class="card mb-5">
+  <h5 class="card-header">Social Accounts</h5>
+  <div class="card-body">
+    {% if form.accounts %}
+    <p>{% blocktrans %}You can sign in to your account using any of these third party accounts:{% endblocktrans %}</p>
+
+
+      {% if form.non_field_errors %}
+        <div class="text-danger">
+          {% for error in form.non_field_errors %}
+            <p>{{ error }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <table class="table table-sm mt-4 mb-4">
+        {% for base_account in form.accounts %}
+          {% with base_account.get_provider_account as account %}
+          <tr>
+            <td><i class="fab fa-fw fa-{{ account.get_brand.id }}"></i> {{ account.get_brand.name }}</td>
+            <td>{{ account }}</td>
+            <td class="text-right">
+              <form method="post" action="{% url 'socialaccount_connections' %}">
+                {% csrf_token %}
+                <input type="hidden" name="account" value="{{ base_account.id }}">
+                <button class="btn btn-sm btn-outline-danger" type="submit" data-confirm="Really remove this social account?">Disconnect</button>
+              </form>
+            </td>
+          </tr>
+          {% endwith %}
+        {% endfor %}
+      </table>
+    </form>
+
+    {% else %}
+      <p>{% trans 'You currently have no social network accounts connected to this account.' %}</p>
+    {% endif %}
+
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+      <h5 class="mt-4">Connect a social account</h5>
+
+      <p class="mb-4">Connecting to a social account allows you to use it to login to Indigo.</p>
+
+      <div class="row">
+        <div class="col-md-6">
+          <ul class="socialaccount_providers list-unstyled">
+            {% for provider in socialaccount_providers %}
+            <li>
+              <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='connect' %}">
+                <i class="fab fa-fw fa-{{ provider.id }}"></i> Connect to {{provider.name}}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

@@ -13,7 +13,6 @@ urlpatterns = [
     url(r'^accounts/profile/$', views.EditAccountView.as_view(), name='edit_account'),
     url(r'^accounts/profile/api/$', views.EditAccountAPIView.as_view(), name='edit_account_api'),
     url(r'^accounts/accept-terms$', views.AcceptTermsView.as_view(), name='accept_terms'),
-    url(r'^users/(?P<pk>\d+)/$', views.UserProfileView.as_view(), name='user_profile'),
 
     url(r'^terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
 

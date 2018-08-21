@@ -5,7 +5,6 @@ import re
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
-from django.contrib.auth.models import User
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
@@ -480,12 +479,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
         context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
         return context
-
-
-class UserProfileView(AbstractAuthedIndigoView, DetailView):
-    queryset = User.objects
-    context_object_name = 'user'
-    template_name = 'indigo_app/user_profile/user_detail.html'
 
 
 class EditAccountView(AbstractAuthedIndigoView, FormView):

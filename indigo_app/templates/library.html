@@ -40,6 +40,8 @@
       <th class="uri" data-sort="uri">FRBR URI</th>
       <th class="langs" data-sort="langs">Languages</th>
       <th class="psit" data-sort="psit">Points in time</th>
+      <th class="status" data-sort="status">Drafts / Total</th>
+      <!--<th class="status" data-sort="status">Status</th>-->
     </tr>
   </thead>
 
@@ -80,13 +82,21 @@
             </a>
         </td>
 
+        {{!-- Drafts / Total --}}
+        {{!-- replace with 'Status' once workflows, tasks etc more concrete --}}
+        <td>
+          {{#if work_docs}}
+            {{number_of_drafts}} / {{number_of_docs}}
+          {{/if}}
+        </td>
+
       </tr>
     {{/each}}
   </tbody>
 
   <tfoot>
     <tr>
-      <td class="active" colspan="4">{{ count }} works</td>
+      <td class="active" colspan="5">{{ count }} works</td>
     </tr>
   </tfoot>
 </table>

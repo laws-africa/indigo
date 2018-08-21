@@ -368,6 +368,17 @@
           return doc.get('expression_date');
         })).length;
 
+        // number of drafts -- needs input I think (hard to test)
+        work.number_of_drafts = _.map(work_docs, function(doc) {
+          var pub_url = doc.get('published_url');
+          if (pub_url === null) {
+            return 1
+          }
+        }).length
+
+        // total number of docs
+        work.number_of_docs = work_docs.length;
+
         // docs for work (used to check for empty works)
         work.work_docs = work_docs
 

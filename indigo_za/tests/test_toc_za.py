@@ -5,7 +5,7 @@ from rest_framework.test import APITestCase
 
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_za.toc import TOCBuilderZA
-from indigo_api.models import Document, Work
+from indigo_api.models import Document, Work, Language
 
 
 class TOCBuilderZATestCase(APITestCase):
@@ -44,6 +44,7 @@ class TOCBuilderZATestCase(APITestCase):
           </chapter>
         </body>
         """)
+        d.language = Language.objects.get(language__pk='en')
         toc = d.table_of_contents()
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
@@ -90,7 +91,7 @@ class TOCBuilderZATestCase(APITestCase):
           </chapter>
         </body>
         """)
-        d.language = 'afr'
+        d.language = Language.objects.get(language__pk='af')
 
         toc = d.table_of_contents()
         toc = [t.as_dict() for t in toc]
@@ -218,6 +219,7 @@ class TOCBuilderZATestCase(APITestCase):
   </components>
 </akomaNtoso>
         """
+        d.language = Language.objects.get(language__pk='en')
         toc = d.table_of_contents()
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
@@ -248,6 +250,7 @@ class TOCBuilderZATestCase(APITestCase):
             <content><p>hi></p></content>
         </conclusions>
         """)
+        d.language = Language.objects.get(language__pk='en')
 
         toc = d.table_of_contents()
         toc = [t.as_dict() for t in toc]

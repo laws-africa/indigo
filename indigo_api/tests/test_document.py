@@ -4,7 +4,7 @@ from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
 
-from indigo_api.models import Document, Work, Amendment
+from indigo_api.models import Document, Work, Amendment, Language
 from indigo_api.tests.fixtures import *  # noqa
 
 
@@ -13,13 +13,14 @@ class DocumentTestCase(TestCase):
 
     def setUp(self):
         self.work = Work.objects.get(id=1)
+        self.eng = Language.for_code('eng')
 
     def test_empty_document(self):
         d = Document()
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1))
+        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1), language=self.eng)
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))
@@ -52,7 +53,7 @@ class DocumentTestCase(TestCase):
 
     def test_inherit_from_work(self):
         w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document')
-        d = Document(work=w, expression_date='2011-02-01')
+        d = Document(work=w, expression_date='2011-02-01', language=self.eng)
         d.save()
 
         d = Document.objects.get(pk=d.id)
@@ -95,7 +96,7 @@ class DocumentTestCase(TestCase):
         assert_equal(events[0].date, d)
 
     def test_get_subcomponent(self):
-        d = Document(country='za')
+        d = Document(country='za', language=self.eng)
         d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://www.akomantoso.org/2.0">

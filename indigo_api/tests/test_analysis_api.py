@@ -23,6 +23,7 @@ class AnalysisTestCase(APITestCase):
         response = self.client.post('/api/analysis/link-terms', {
             'document': {
                 'expression_date': '2001-01-01',
+                'language': 'eng',
                 'content': document_fixture(xml=u"""
 <section id="section-1">
   <num>1.</num>

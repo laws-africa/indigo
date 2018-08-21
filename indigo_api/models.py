@@ -25,7 +25,6 @@ from languages_plus.models import Language as MasterLanguage
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
-from .utils import language3_to_2
 
 DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
@@ -49,6 +48,10 @@ class Language(models.Model):
 
     def __unicode__(self):
         return unicode(self.language)
+
+    @classmethod
+    def for_code(cls, code):
+        return cls.objects.get(language__iso_639_2B=code)
 
 
 class Country(models.Model):
@@ -226,7 +229,7 @@ class Work(models.Model):
             doc.content = template.content
 
         doc.draft = True
-        doc.language = Country.for_work(self).primary_language.code
+        doc.language = Country.for_work(self).primary_language
         doc.expression_date = date
         doc.work = self
         doc.save()
@@ -350,7 +353,7 @@ class DocumentQuerySet(models.QuerySet):
 
         # filter on language
         if frbr_uri.language:
-            query = query.filter(language=frbr_uri.language)
+            query = query.filter(language__language__iso_639_2B=frbr_uri.language)
 
         # filter on expression date
         expr_date = frbr_uri.expression_date
@@ -384,7 +387,7 @@ class DocumentQuerySet(models.QuerySet):
         if obj is None:
             raise ValueError("Document doesn't exist")
 
-        if obj and frbr_uri.language and obj.language != frbr_uri.language:
+        if obj and frbr_uri.language and obj.language.code != frbr_uri.language:
             raise ValueError("The document %s exists but is not available in the language '%s'"
                              % (frbr_uri.work_uri(), frbr_uri.language))
 
@@ -415,7 +418,7 @@ class Document(models.Model):
     country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
     """ The 3-letter ISO-639-2 language code of this document """
-    language = models.CharField(max_length=3, default=DEFAULT_LANGUAGE)
+    language = models.ForeignKey(Language, null=False, on_delete=models.PROTECT, help_text="Language this document is in.")
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
 
@@ -510,7 +513,7 @@ class Document(models.Model):
         """ The FRBR Expression URI as a :class:`FrbrUri` instance that uniquely identifies this expression universally. """
         if self._expression_uri is None:
             self._expression_uri = self.work_uri.clone()
-            self._expression_uri.language = self.language
+            self._expression_uri.language = self.language.code
             if self.expression_date:
                 self._expression_uri.expression_date = '@' + datestring(self.expression_date)
         return self._expression_uri
@@ -556,7 +559,7 @@ class Document(models.Model):
 
             self.doc.title = self.title
             self.doc.frbr_uri = self.frbr_uri
-            self.doc.language = self.language
+            self.doc.language = self.language.code
 
             self.doc.work_date = self.doc.publication_date
             self.doc.expression_date = self.expression_date or self.doc.publication_date or arrow.now()
@@ -568,7 +571,6 @@ class Document(models.Model):
 
         else:
             self.title = self.doc.title
-            self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
             # ensure these are refreshed
@@ -679,7 +681,7 @@ class Document(models.Model):
 
     @property
     def django_language(self):
-        return language3_to_2(self.language) or self.language
+        return self.language.language.iso_639_1
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
@@ -691,6 +693,7 @@ class Document(models.Model):
         frbr_uri = FrbrUri.parse(frbr_uri)
         kwargs['country'] = frbr_uri.country
         kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
+        kwargs['language'] = Country.for_frbr_uri(frbr_uri).primary_language
 
         doc = cls(frbr_uri=frbr_uri.work_uri(False), expression_date=frbr_uri.expression_date, **kwargs)
         doc.copy_attributes()

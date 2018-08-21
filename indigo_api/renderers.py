@@ -220,7 +220,7 @@ class HTMLRenderer(object):
         params = {
             'resolverUrl': self.resolver_url(),
             'mediaUrl': self.media_url or '',
-            'lang': document.language,
+            'lang': document.language.code,
         }
 
         return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))
@@ -397,7 +397,7 @@ class EPUBRenderer(HTMLRenderer):
 
         self.book.set_identifier(document.doc.frbr_uri.expression_uri())
         self.book.set_title(document.title)
-        self.book.set_language(self.language_for(document.language) or 'en')
+        self.book.set_language(document.language.language.iso)
         self.book.add_author(settings.INDIGO_ORGANISATION)
 
         self.add_colophon(document)
@@ -414,7 +414,7 @@ class EPUBRenderer(HTMLRenderer):
         self.book.set_title('%d documents' % len(documents))
 
         # language
-        langs = list(set(self.language_for(d.language) or 'en' for d in documents))
+        langs = list(set(d.language.language.iso for d in documents))
         self.book.set_language(langs[0])
         for lang in langs[1:]:
             self.book.add_metadata('DC', 'language', lang)

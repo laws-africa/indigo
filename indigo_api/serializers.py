@@ -14,8 +14,8 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from indigo.plugins import plugins
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language
 from indigo_api.signals import document_published, work_changed
 
 log = logging.getLogger(__name__)
@@ -233,6 +233,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ Options when importing a new document using the +file+ field. """
 
     draft = serializers.BooleanField(default=True)
+    language = serializers.CharField(source='language.code', required=True)
 
     # if a title isn't given, it's taken from the associated work
     title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
@@ -327,6 +328,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 request = self.context['request']
 
                 country = data.get('country') or request.user.editor.country_code
+                # TODO: pass the language to the lookup, as well as to import_from_upload
                 importer = plugins.for_locale('importer', country, None, None)
 
                 importer.section_number_position = posn
@@ -361,6 +363,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         Work.objects.get_for_frbr_uri(value)
 
         return value
+
+    def validate_language(self, value):
+        try:
+            return Language.for_code(value)
+        except Language.DoesNotExist:
+            raise ValidationError("Invalid language: %s" % value)
 
     def get_expression_frbr_uri(self, doc):
         return doc.expression_uri.expression_uri(False)
@@ -408,6 +416,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if validated_data is None:
             validated_data = self.validated_data
 
+        # work around DRF stashing the language as a nested field
+        if 'language' in validated_data:
+            # this is really a Language object
+            validated_data['language'] = validated_data['language']['code']
+
         # Document content must always come first so it can be overridden
         # by the other properties.
         content = validated_data.pop('content', None)
@@ -428,7 +441,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
 class ExpressionSerializer(serializers.Serializer):
     url = serializers.SerializerMethodField()
-    language = serializers.CharField()
+    language = serializers.CharField(source='language.code')
     expression_frbr_uri = serializers.SerializerMethodField()
     expression_date = serializers.DateField()
     title = serializers.CharField()

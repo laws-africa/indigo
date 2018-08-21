@@ -26,6 +26,7 @@ class RenderParseAPITest(APITestCase):
                 'publication_number': None,
                 'publication_date': None,
                 'expression_date': '2001-01-01',
+                'language': 'eng',
             },
         }, format='json')
         assert_equal(response.status_code, 200)
@@ -37,6 +38,7 @@ class RenderParseAPITest(APITestCase):
                 'publication_name': '',
                 'publication_number': '',
                 'expression_date': '2001-01-01',
+                'language': 'eng',
             },
         }, format='json')
         assert_equal(response.status_code, 200)
@@ -47,6 +49,7 @@ class RenderParseAPITest(APITestCase):
                 'frbr_uri': '/za/act/1998/2',
                 'content': document_fixture(text='hello'),
                 'expression_date': '2001-01-01',
+                'language': 'eng',
             },
         })
         assert_equal(response.status_code, 200)
@@ -73,6 +76,7 @@ class RenderParseAPITest(APITestCase):
                 'frbr_uri': '/za/act/1998/2',
                 'content': document_fixture(text=u'hello κόσμε'),
                 'expression_date': '2001-01-01',
+                'language': 'eng',
             },
         })
         assert_equal(response.status_code, 200)
@@ -92,6 +96,7 @@ class RenderParseAPITest(APITestCase):
             'fragment': 'chapter',
             'id_prefix': 'prefix',
             'frbr_uri': '/za/act/1998/2',
+              'language': 'eng',
         })
         assert_equal(response.status_code, 200)
         self.maxDiff = None

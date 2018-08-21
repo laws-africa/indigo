@@ -54,7 +54,7 @@ class WorkAPITest(APITestCase):
         assert_equal(response.status_code, 400)
 
     def test_update_publication_date(self):
-        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test'})
+        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -82,7 +82,7 @@ class WorkAPITest(APITestCase):
         })
 
     def test_update_null_repeal(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 

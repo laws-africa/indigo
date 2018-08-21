@@ -379,8 +379,16 @@
         // docs for work (used to check for empty works)
         work.work_docs = work_docs;
 
+        // get most recent update by sorting docs for each work by updated_at, most recent first -- need to get string instead of object Object
+        work.most_recent_update = work_docs.sort(function(a, b) {
+          var updated_dates = -a.get('updated_at').localeCompare(b.get('updated_at'));
+          return updated_dates;
+        })[0];
+
+
         return work;
       });
+
 
       works = _.sortBy(works, this.sortField);
       if (sortDesc) works.reverse();

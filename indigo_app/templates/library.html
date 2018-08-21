@@ -42,6 +42,7 @@
       <th class="psit" data-sort="psit">Points in time</th>
       <th class="status" data-sort="status">Drafts / Total</th>
       <!--<th class="status" data-sort="status">Status</th>-->
+      <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
 
@@ -90,13 +91,22 @@
           {{/if}}
         </td>
 
+        {{!-- Updated --}}
+        <td>
+          {{ most_recent_update }}
+          <span class="text-muted">
+            {{#if updated_by_user.display_name}}
+              – {{ updated_by_user.display_name }}
+            {{/if}}</span>
+        </td>
+
       </tr>
     {{/each}}
   </tbody>
 
   <tfoot>
     <tr>
-      <td class="active" colspan="5">{{ count }} works</td>
+      <td class="active" colspan="6">{{ count }} works</td>
     </tr>
   </tfoot>
 </table>

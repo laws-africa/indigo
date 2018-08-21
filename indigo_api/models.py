@@ -41,6 +41,12 @@ class Language(models.Model):
     class Meta:
         ordering = ['language__name_en']
 
+    @property
+    def code(self):
+        """ 3 letter language code.
+        """
+        return self.language.iso_639_2B
+
     def __unicode__(self):
         return unicode(self.language)
 
@@ -79,6 +85,10 @@ class Country(models.Model):
     @classmethod
     def for_work(cls, work):
         return cls.objects.select_related('country').filter(country__iso__iexact=work.country).first()
+
+    @classmethod
+    def for_frbr_uri(cls, frbr_uri):
+        return cls.objects.get(country__pk=frbr_uri.country.upper())
 
 
 class WorkQuerySet(models.QuerySet):

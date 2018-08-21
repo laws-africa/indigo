@@ -17,7 +17,7 @@
             <label for="document_language" class="required">Language</label>
             <select id="document_language" class="form-control">
               {% for opt in languages %}
-              <option value="{{ opt.language.iso_639_2B }}">{{ opt.language.name_en }}</option>
+              <option value="{{ opt.code }}">{{ opt.language.name_en }}</option>
               {% endfor %}
             </select>
           </div>

@@ -26,7 +26,6 @@ from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
 
-DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)

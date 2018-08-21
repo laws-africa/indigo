@@ -201,11 +201,11 @@ class Work(models.Model):
         return super(Work, self).save(*args, **kwargs)
 
     def can_delete(self):
-        return (not self.document_set.undeleted().exists()
-                and not self.child_works.exists()
-                and not self.repealed_works.exists()
-                and not self.commenced_works.exists()
-                and not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
+        return (not self.document_set.undeleted().exists() and
+                not self.child_works.exists() and
+                not self.repealed_works.exists() and
+                not self.commenced_works.exists() and
+                not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
     def create_expression_at(self, date):
         """ Create a new expression at a particular date.

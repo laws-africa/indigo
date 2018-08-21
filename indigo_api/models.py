@@ -20,6 +20,7 @@ import reversion.revisions
 import reversion.models
 
 from countries_plus.models import Country as MasterCountry
+from languages_plus.models import Language as MasterLanguage
 
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
@@ -30,6 +31,54 @@ DEFAULT_LANGUAGE = 'eng'
 DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)
+
+
+class Language(models.Model):
+    """ The languages available in the UI. They aren't enforced by the API.
+    """
+    language = models.OneToOneField(MasterLanguage, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['language__name_en']
+
+    def __unicode__(self):
+        return unicode(self.language)
+
+
+class Country(models.Model):
+    """ The countries available in the UI. They aren't enforced by the API.
+    """
+    country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
+    primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
+
+    class Meta:
+        ordering = ['country__name']
+        verbose_name_plural = 'Countries'
+
+    @property
+    def code(self):
+        return self.country.iso.lower()
+
+    @property
+    def name(self):
+        return self.country.name
+
+    def as_json(self):
+        return {
+            'name': self.name,
+            'localities': {loc.code: loc.name for loc in self.locality_set.all()},
+            'publications': [pub.name for pub in self.publication_set.all()],
+        }
+
+    def work_locality(self, work):
+        return self.locality_set.filter(code=work.locality).first()
+
+    def __unicode__(self):
+        return unicode(self.country.name)
+
+    @classmethod
+    def for_work(cls, work):
+        return cls.objects.select_related('country').filter(country__iso__iexact=work.country).first()
 
 
 class WorkQuerySet(models.QuerySet):

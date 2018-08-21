@@ -24,7 +24,7 @@ from indigo_api.models import Document, Subtype, Work, Amendment
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.signals import work_changed
-from indigo_app.models import Language, Country
+from indigo_api.models import Language, Country
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import DocumentForm, UserForm, BatchCreateWorkForm
 

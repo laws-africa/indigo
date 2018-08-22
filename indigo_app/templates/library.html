@@ -93,11 +93,14 @@
 
         {{!-- Updated --}}
         <td>
-          {{ most_recent_update }}
-          <span class="text-muted">
-            {{#if updated_by_user.display_name}}
-              – {{ updated_by_user.display_name }}
-            {{/if}}</span>
+          {{#if most_recent_doc}}
+            <span class="time-ago" data-timestamp="{{ most_recent_doc.updated_at }}">{{ most_recent_doc.updated_at }}</span>
+            <span class="text-muted">
+              {{#if most_recent_doc.updated_by_user.display_name}}
+                – {{ most_recent_doc.updated_by_user.display_name }}
+              {{/if}}
+            </span>
+          {{/if}}
         </td>
 
       </tr>

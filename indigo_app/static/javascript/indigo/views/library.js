@@ -356,40 +356,46 @@
 
         work = work.toJSON();
 
-        var work_docs = docs[work.id] || [];
+        var work_docs = _.map(docs[work.id] || [], function(doc) {
+          return doc.toJSON();
+        })
 
         // distinct languages
         work.languages = _.unique(_.map(work_docs, function(doc) {
-          return doc.get('language');
+          return doc.language;
         }));
 
         // count expression dates
         work.n_expressions = _.unique(_.map(work_docs, function(doc) {
-          return doc.get('expression_date');
+          return doc.expression_date;
         })).length;
 
         // number of drafts
         work.drafts_v_published = _.countBy(work_docs, function(doc) {
-          return doc.get('draft') ? 'drafts': 'published';
+          return doc.draft ? 'n_drafts': 'n_published';
         });
 
         // total number of docs
-        work.number_of_docs = work_docs.length;
+        work.n_docs = work_docs.length;
+
+        // add work to list of docs and order by recency
+        var work_and_docs = work_docs.concat([work]);
+
+        var most_recently_updated = work_and_docs.sort(function(a, b) {
+          return -a.updated_at.localeCompare(b.updated_at);
+        })[0];
+
+        work.most_recent_updated_at = most_recently_updated.updated_at;
+
+        // current user's name -> 'you'
+        if (most_recently_updated.updated_by_user && most_recently_updated.updated_by_user.id == currentUserId) {
+          most_recently_updated.updated_by_user.display_name = 'you';
+        }
+
+        work.most_recent_updated_by = most_recently_updated.updated_by_user;
 
         // docs for work (used to check for empty works)
         work.work_docs = work_docs;
-
-        // get most recent update by sorting docs for each work by updated_at, most recent first -- need to get string instead of object Object
-        work.most_recent_doc = work_docs.sort(function(a, b) {
-          var updated_dates = -a.get('updated_at').localeCompare(b.get('updated_at'));
-          return updated_dates;
-        })[0];
-
-        if (work.most_recent_doc) {
-          work.most_recent_doc = work.most_recent_doc.toJSON();
-        }
-
-
 
 
         return work;

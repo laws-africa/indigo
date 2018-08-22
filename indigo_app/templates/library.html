@@ -41,7 +41,6 @@
       <th class="langs" data-sort="langs">Languages</th>
       <th class="psit" data-sort="psit">Points in time</th>
       <th class="status" data-sort="status">Drafts / Total</th>
-      <!--<th class="status" data-sort="status">Status</th>-->
       <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
@@ -84,23 +83,20 @@
         </td>
 
         {{!-- Drafts / Total --}}
-        {{!-- replace with 'Status' once workflows, tasks etc more concrete --}}
         <td>
           {{#if work_docs}}
-            {{drafts_v_published.drafts}} / {{number_of_docs}}
+            {{drafts_v_published.n_drafts}} / {{n_docs}}
           {{/if}}
         </td>
 
         {{!-- Updated --}}
         <td>
-          {{#if most_recent_doc}}
-            <span class="time-ago" data-timestamp="{{ most_recent_doc.updated_at }}">{{ most_recent_doc.updated_at }}</span>
-            <span class="text-muted">
-              {{#if most_recent_doc.updated_by_user.display_name}}
-                – {{ most_recent_doc.updated_by_user.display_name }}
-              {{/if}}
-            </span>
-          {{/if}}
+          <span class="time-ago" data-timestamp="{{ most_recent_updated_at }}">{{ most_recent_updated_at }}</span>
+          <span class="text-muted">
+            {{#if most_recent_updated_by.display_name}}
+              – {{ most_recent_updated_by.display_name }}
+            {{/if}}
+          </span>
         </td>
 
       </tr>

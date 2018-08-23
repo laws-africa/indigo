@@ -329,7 +329,6 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                     work.publication_date = self.make_date(row['publication_date'])
                     work.commencement_date = self.make_date(row['commencement_date'])
                     work.assent_date = self.make_date(row['assent_date'])
-                    work.repealed_date = self.make_date(row['repealed_date'])
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
 

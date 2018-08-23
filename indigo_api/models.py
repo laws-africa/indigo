@@ -85,12 +85,12 @@ class Country(models.Model):
         return unicode(self.country.name)
 
     @classmethod
-    def for_work(cls, work):
-        return cls.objects.select_related('country').filter(country__iso__iexact=work.country).first()
+    def for_frbr_uri(cls, frbr_uri):
+        return cls.for_code(frbr_uri.country)
 
     @classmethod
-    def for_frbr_uri(cls, frbr_uri):
-        return cls.objects.get(country__pk=frbr_uri.country.upper())
+    def for_code(cls, code):
+        return cls.objects.get(country__pk=code.upper())
 
 
 class WorkQuerySet(models.QuerySet):
@@ -116,7 +116,7 @@ class Work(models.Model):
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
+    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
@@ -185,6 +185,8 @@ class Work(models.Model):
         return self._repeal
 
     def clean(self):
+        # force country code in frbr uri
+        self.frbr_uri = '/%s%s' % (self.country.code, self.frbr_uri[3:])
         # ensure the frbr uri is lowercased
         self.frbr_uri = self.frbr_uri.lower()
 
@@ -228,7 +230,7 @@ class Work(models.Model):
             doc.content = template.content
 
         doc.draft = True
-        doc.language = Country.for_work(self).primary_language
+        doc.language = self.country.primary_language
         doc.expression_date = date
         doc.work = self
         doc.save()
@@ -414,7 +416,6 @@ class Document(models.Model):
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=False)
-    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
     """ The 3-letter ISO-639-2 language code of this document """
     language = models.ForeignKey(Language, null=False, on_delete=models.PROTECT, help_text="Language this document is in.")
@@ -482,6 +483,10 @@ class Document(models.Model):
     @property
     def subtype(self):
         return self.work_uri.subtype
+
+    @property
+    def country(self):
+        return self.work_uri.country
 
     @property
     def locality(self):
@@ -582,7 +587,7 @@ class Document(models.Model):
         """ Copy various attributes from this document's Work onto this
         document.
         """
-        for attr in ['frbr_uri', 'country']:
+        for attr in ['frbr_uri']:
             setattr(self, attr, getattr(self.work, attr))
 
         # copy over amendments at or before this expression date
@@ -690,7 +695,6 @@ class Document(models.Model):
         """ Helper to return a new document with a random FRBR URI
         """
         frbr_uri = FrbrUri.parse(frbr_uri)
-        kwargs['country'] = frbr_uri.country
         kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
         kwargs['language'] = Country.for_frbr_uri(frbr_uri).primary_language
 

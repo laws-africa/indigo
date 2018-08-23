@@ -15,7 +15,7 @@ from cobalt.act import datestring
 import reversion
 
 from indigo.plugins import plugins
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country
 from indigo_api.signals import document_published, work_changed
 
 log = logging.getLogger(__name__)
@@ -275,7 +275,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'published_url', 'links',
         )
-        read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
+        read_only_fields = ('country', 'locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
     def get_published_url(self, doc):
         if doc.draft:
@@ -662,6 +662,7 @@ class WorkSerializer(serializers.ModelSerializer):
     repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    country = serializers.CharField(source='country.code', required=True)
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -685,27 +686,28 @@ class WorkSerializer(serializers.ModelSerializer):
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
     def create(self, validated_data):
+        work = Work()
         validated_data['created_by_user'] = self.context['request'].user
-        result = super(WorkSerializer, self).create(validated_data)
+        return self.update(work, validated_data)
 
-        # signals
-        work_changed.send(sender=result.__class__, work=result, request=self.context['request'])
-
-        return result
-
-    def update(self, instance, validated_data):
+    def update(self, work, validated_data):
         user = self.context['request'].user
         validated_data['updated_by_user'] = user
+
+        # work around DRF stashing the language as a nested field
+        if 'country' in validated_data:
+            # this is really a Country object
+            validated_data['country'] = validated_data['country']['code']
 
         # save as a revision
         with reversion.revisions.create_revision():
             reversion.revisions.set_user(user)
-            result = super(WorkSerializer, self).update(instance, validated_data)
+            work = super(WorkSerializer, self).update(work, validated_data)
 
         # signals
-        work_changed.send(sender=self.__class__, work=result, request=self.context['request'])
+        work_changed.send(sender=self.__class__, work=work, request=self.context['request'])
 
-        return result
+        return work
 
     def validate_frbr_uri(self, value):
         try:
@@ -713,6 +715,12 @@ class WorkSerializer(serializers.ModelSerializer):
         except ValueError:
             raise ValidationError("Invalid FRBR URI: %s" % value)
         return value
+
+    def validate_country(self, value):
+        try:
+            return Country.for_code(value)
+        except Country.DoesNotExist:
+            raise ValidationError("Invalid country: %s" % value)
 
     def get_amendments_url(self, work):
         if not work.pk:

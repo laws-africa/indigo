@@ -26,8 +26,7 @@ class Locality(models.Model):
     @classmethod
     def for_work(cls, work):
         if work.locality:
-            country = Country.for_work(work)
-            return country.work_locality(work)
+            return work.country.work_locality(work)
 
 
 class Editor(models.Model):

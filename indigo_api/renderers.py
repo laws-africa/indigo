@@ -17,7 +17,7 @@ from languages_plus.models import Language
 from sass_processor.processor import SassProcessor
 
 from .serializers import NoopSerializer
-from .models import Document, Colophon, Country
+from .models import Document, Colophon
 
 log = logging.getLogger(__name__)
 
@@ -179,8 +179,7 @@ class HTMLRenderer(object):
             return render_to_string(template_name, context)
 
     def find_colophon(self, document):
-        country = Country.for_work(document.work)
-        return Colophon.objects.filter(country=country).first()
+        return Colophon.objects.filter(country=document.work.country).first()
 
     def find_template(self, document):
         """ Return the filename of a template to use to render this document.

@@ -4,7 +4,7 @@ from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
 
-from indigo_api.models import Document, Work, Amendment, Language
+from indigo_api.models import Document, Work, Amendment, Language, Country
 from indigo_api.tests.fixtures import *  # noqa
 
 
@@ -30,6 +30,7 @@ class DocumentTestCase(TestCase):
 
     def test_set_content(self):
         d = Document()
+        d.work = self.work
         d.content = document_fixture(u'γνωρίζω')
 
         assert_equal(d.frbr_uri, '/za/act/1900/1')
@@ -52,7 +53,7 @@ class DocumentTestCase(TestCase):
         assert_equal(d.expression_date, None)
 
     def test_inherit_from_work(self):
-        w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document')
+        w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document', country=Country.for_code('za'))
         d = Document(work=w, expression_date='2011-02-01', language=self.eng)
         d.save()
 
@@ -96,7 +97,7 @@ class DocumentTestCase(TestCase):
         assert_equal(events[0].date, d)
 
     def test_get_subcomponent(self):
-        d = Document(country='za', language=self.eng)
+        d = Document(language=self.eng)
         d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://www.akomantoso.org/2.0">

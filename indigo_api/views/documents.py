@@ -35,7 +35,6 @@ log = logging.getLogger(__name__)
 # Default document fields that can be use to filter list views
 DOCUMENT_FILTER_FIELDS = {
     'frbr_uri': ['exact', 'startswith'],
-    'country': ['exact'],
     'language': ['exact'],
     'draft': ['exact'],
     'stub': ['exact'],

@@ -54,7 +54,7 @@ class WorkAPITest(APITestCase):
         assert_equal(response.status_code, 400)
 
     def test_update_publication_date(self):
-        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test', 'language': 'eng'})
+        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test', 'language': 'eng', 'country': 'za'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 

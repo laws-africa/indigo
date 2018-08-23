@@ -77,17 +77,18 @@ class LibraryView(AbstractAuthedIndigoView, TemplateView):
     def get(self, request, country=None, *args, **kwargs):
         if country is None:
             return HttpResponseRedirect(reverse('library', kwargs={'country': request.user.editor.country_code}))
-        return super(LibraryView, self).get(request, country=country, *args, **kwargs)
+        return super(LibraryView, self).get(request, country_code=country, *args, **kwargs)
 
-    def get_context_data(self, country, **kwargs):
+    def get_context_data(self, country_code, **kwargs):
         context = super(LibraryView, self).get_context_data(**kwargs)
 
-        context['country_code'] = country
+        country = Country.for_code(country_code)
+        context['country_code'] = country_code
         context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
         context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        docs = DocumentViewSet.queryset.filter(country=country)
+        docs = DocumentViewSet.queryset.filter(work__country=country)
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
@@ -115,7 +116,7 @@ class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
         is_new = not work.frbr_uri
 
         context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=work, context={'request': self.request}).data)
-        context['country'] = Country.for_work(work)
+        context['country'] = work.country
         context['locality'] = None if is_new else context['country'].work_locality(work)
 
         # TODO do this in a better place
@@ -133,7 +134,7 @@ class WorkDetailView(AbstractWorkView):
 class AddWorkView(WorkDetailView):
     def get_object(self, *args, **kwargs):
         work = Work()
-        work.country = self.request.user.editor.country_code
+        work.country = self.request.user.editor.country
         return work
 
 
@@ -457,7 +458,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['work'] = doc.work
         context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
-        context['country'] = Country.for_work(doc.work)
+        context['country'] = doc.work.country
         context['locality'] = context['country'].work_locality(doc.work)
 
         # TODO do this in a better place
@@ -467,7 +468,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         context['document_content_json'] = json.dumps(doc.document_xml)
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = Work.objects.filter(country=doc.country)
+        works = Work.objects.filter(country=doc.work.country)
         context['works_json'] = json.dumps(serializer.to_representation(works))
 
         context['amendments_json'] = json.dumps(

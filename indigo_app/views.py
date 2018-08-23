@@ -298,49 +298,50 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         ]
 
         for idx, row in enumerate(rows):
-            info = {
-                'row': idx + 2,
-            }
-            works.append(info)
-
-            try:
-                frbr_uri = self.get_frbr_uri(country, row)
-            except ValueError as e:
-                info['status'] = 'error'
-                info['error_message'] = e.message
-                continue
-
-            try:
-                work = Work.objects.get(frbr_uri=frbr_uri)
-                info['work'] = work
-                info['status'] = 'duplicate'
-
-            # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
-
-            except Work.DoesNotExist:
-                work = Work()
-
-                work.frbr_uri = frbr_uri
-                work.title = row['title']
-                work.country = country.code
-                work.publication_name = row['publication_name']
-                work.publication_number = row['publication_number']
-                work.publication_date = self.make_date(row['publication_date'])
-                work.commencement_date = self.make_date(row['commencement_date'])
-                work.assent_date = self.make_date(row['assent_date'])
-                work.repealed_date = self.make_date(row['repealed_date'])
-                work.created_by_user = self.request.user
-                work.updated_by_user = self.request.user
+            if not row['ignore']:
+                info = {
+                    'row': idx + 2,
+                }
+                works.append(info)
 
                 try:
-                    work.full_clean()
-                    work.save()
-                    info['status'] = 'success'
-                    info['work'] = work
-
-                except ValidationError as e:
+                    frbr_uri = self.get_frbr_uri(country, row)
+                except ValueError as e:
                     info['status'] = 'error'
-                    info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
+                    info['error_message'] = e.message
+                    continue
+
+                try:
+                    work = Work.objects.get(frbr_uri=frbr_uri)
+                    info['work'] = work
+                    info['status'] = 'duplicate'
+
+                # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
+
+                except Work.DoesNotExist:
+                    work = Work()
+
+                    work.frbr_uri = frbr_uri
+                    work.title = row['title']
+                    work.country = country.code
+                    work.publication_name = row['publication_name']
+                    work.publication_number = row['publication_number']
+                    work.publication_date = self.make_date(row['publication_date'])
+                    work.commencement_date = self.make_date(row['commencement_date'])
+                    work.assent_date = self.make_date(row['assent_date'])
+                    work.repealed_date = self.make_date(row['repealed_date'])
+                    work.created_by_user = self.request.user
+                    work.updated_by_user = self.request.user
+
+                    try:
+                        work.full_clean()
+                        work.save()
+                        info['status'] = 'success'
+                        info['work'] = work
+
+                    except ValidationError as e:
+                        info['status'] = 'error'
+                        info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
 
         return works
 

@@ -81,6 +81,9 @@
 }
 
 .sorted-table {
+
+  table-layout : auto;
+
   th {
     cursor: pointer;
   }

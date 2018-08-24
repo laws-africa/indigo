@@ -37,11 +37,11 @@
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="uri" data-sort="uri">FRBR URI</th>
-      <th class="langs" data-sort="langs">Languages</th>
-      <th class="psit" data-sort="psit">Points in time</th>
-      <th class="status" data-sort="status">Drafts / Total</th>
-      <th class="updated_at" data-sort="updated_at">Updated</th>
+      <th class="uri" data-sort="frbr_uri">FRBR URI</th>
+      <th class="languages" data-sort="n_languages" >Languages</th>
+      <th class="psit" data-sort="n_expressions">Points in time</th>
+      <th class="status" data-sort="pub_ratio">Drafts / Total</th>
+      <th class="updated" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
 
@@ -85,13 +85,13 @@
         {{!-- Drafts / Total --}}
         <td>
           {{#if work_docs}}
-            {{drafts_v_published.n_drafts}} / {{n_docs}}
+            {{n_drafts}} / {{n_docs}}
           {{/if}}
         </td>
 
         {{!-- Updated --}}
         <td>
-          <span class="time-ago" data-timestamp="{{ most_recent_updated_at }}">{{ most_recent_updated_at }}</span>
+          <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
           <span class="text-muted">
             {{#if most_recent_updated_by.display_name}}
               – {{ most_recent_updated_by.display_name }}

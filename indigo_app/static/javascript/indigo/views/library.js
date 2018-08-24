@@ -361,9 +361,17 @@
         })
 
         // distinct languages
-        work.languages = _.unique(_.map(work_docs, function(doc) {
+        var languages = _.unique(_.map(work_docs, function(doc) {
           return doc.language;
         }));
+
+        // alphabetise list of languages
+        work.languages = languages.sort(function(a, b) {
+          return a.localeCompare(b);
+        });
+
+        // number of distinct languages
+        work.n_languages = work.languages.length;
 
         // count expression dates
         work.n_expressions = _.unique(_.map(work_docs, function(doc) {
@@ -375,8 +383,21 @@
           return doc.draft ? 'n_drafts': 'n_published';
         });
 
+        if (work.drafts_v_published.n_drafts) {
+          work.n_drafts = work.drafts_v_published.n_drafts
+        } else {
+          work.n_drafts = 0
+        }
+
         // total number of docs
         work.n_docs = work_docs.length;
+
+        // get a ratio of drafts vs total docs for sorting
+        if (work.n_docs != 0) {
+          work.pub_ratio = 1 / (work.n_drafts / work.n_docs)
+        } else {
+          work.pub_ratio = 0
+        }
 
         // add work to list of docs and order by recency
         var work_and_docs = work_docs.concat([work]);
@@ -385,7 +406,7 @@
           return -a.updated_at.localeCompare(b.updated_at);
         })[0];
 
-        work.most_recent_updated_at = most_recently_updated.updated_at;
+        work.updated_at = most_recently_updated.updated_at;
 
         // current user's name -> 'you'
         if (most_recently_updated.updated_by_user && most_recently_updated.updated_by_user.id == currentUserId) {

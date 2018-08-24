@@ -65,6 +65,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('indigo_api', '0063_document_language_obj'),
+        ('reversion', '0002_auto_20141216_1509'),
     ]
 
     operations = [

@@ -1,9 +1,7 @@
 import os
 import logging
 import re
-import random
 import datetime
-import string
 
 from django.conf import settings
 from django.db import models
@@ -25,8 +23,6 @@ from languages_plus.models import Language as MasterLanguage
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
-
-DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)
 
@@ -764,16 +760,6 @@ class Colophon(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
-
-
-def random_frbr_uri(country=None):
-    today = datetime.datetime.now()
-    number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in xrange(5))
-    country = country or DEFAULT_COUNTRY
-    return FrbrUri(country=country.lower(), locality=None, doctype="act",
-                   subtype=None, actor=None, date=str(today.year),
-                   expression_date=today.strftime("%Y-%m-%d"),
-                   number=number.lower())
 
 
 class Annotation(models.Model):

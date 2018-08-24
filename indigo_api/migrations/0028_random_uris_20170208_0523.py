@@ -1,10 +1,23 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+import random
+import string
+import datetime
+
 from django.db import migrations
 
-from indigo_api.models import random_frbr_uri
-from cobalt.act import Act
+from cobalt.act import Act, FrbrUri
+
+
+def random_frbr_uri(country=None):
+    today = datetime.datetime.now()
+    number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in xrange(5))
+    country = country or 'za'
+    return FrbrUri(country=country.lower(), locality=None, doctype="act",
+                   subtype=None, actor=None, date=str(today.year),
+                   expression_date=today.strftime("%Y-%m-%d"),
+                   number=number.lower())
 
 
 def randomise_uris(apps, schema_editor):

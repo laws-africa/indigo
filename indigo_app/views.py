@@ -379,18 +379,16 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             number = re.sub(", [0-9]{2,}", "", number)
             number = number.replace(' ', '-').replace(',', '').replace('-Act', '').replace('Act-', '').lower().replace('relating-to-', '').replace('-and-', '-').replace('-to-', '-').replace('-of-', '-').replace('-for-', '-').replace('-on-', '-').replace('-the-', '-').replace('in-connection-with-', '').replace('by-law-', '').replace('-by-law', '')
 
-        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['year'], number=number, actor=None)
+        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=number, actor=None)
 
         # TODO: simplify this somehow?
 
         if country.code != row['country'].lower():
             raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
         if ' ' in frbr_uri.work_uri():
-            raise ValueError('Check for spaces in country, locality, doctype, subtype, year, number – none allowed')
+            raise ValueError('Check for spaces in country, locality, subtype, year, number – none allowed')
         elif not frbr_uri.country:
             raise ValueError('A country must be specified')
-        elif not frbr_uri.doctype:
-            raise ValueError('A doctype must be specified – use \'Act\' if unsure')
         elif not frbr_uri.date:
             raise ValueError('A year must be specified')
         elif not frbr_uri.number:

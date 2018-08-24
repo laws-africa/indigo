@@ -641,14 +641,15 @@ class Document(models.Model):
 
         return search_toc(self.table_of_contents())
 
-    def revisions(self):
-        """ Return a queryset of `reversion.models.Revision` objects for
-        revisions for this document, most recent first.
+    def versions(self):
+        """ Return a queryset of `reversion.models.Version` objects for
+        revisions for this work, most recent first.
         """
         content_type = ContentType.objects.get_for_model(self)
-        return reversion.models.Revision.objects\
-            .filter(version__content_type=content_type)\
-            .filter(version__object_id_int=self.id)\
+        return reversion.models.Version.objects\
+            .prefetch_related('revision')\
+            .filter(content_type=content_type)\
+            .filter(object_id_int=self.id)\
             .order_by('-id')
 
     def to_html(self, **kwargs):

@@ -3,6 +3,10 @@
 from __future__ import unicode_literals
 
 from django.db import migrations
+from django.contrib.contenttypes.models import ContentType
+from django.utils.encoding import force_text
+from reversion.models import Version
+import json
 
 
 def populate_language(apps, schema_editor):
@@ -18,6 +22,21 @@ def populate_language(apps, schema_editor):
         document.language_obj = languages[document.language]
         document.save(update_fields=['language_obj'])
 
+    # Now convert reversion versions for documents to store language as a foreign key,
+    # not as a string.
+    # We need to do this while Document.language is still a string, otherwise `version.object_version`
+    # breaks when it tries to handle "za" as a foreign key.
+    ct = ContentType.objects.get_for_model(Document)
+
+    for version in Version.objects.filter(content_type=ct.pk).using(db_alias).all():
+        data = json.loads(force_text(version.serialized_data.encode('utf8')))
+
+        # change language code to a foreign key
+        data[0]['fields']['language'] = languages[data[0]['fields']['language']].pk
+
+        version.serialized_data = json.dumps(data).decode('utf8')
+        version.save()
+
 
 def revert_language(apps, schema_editor):
     Document = apps.get_model("indigo_api", "Document")
@@ -26,6 +45,20 @@ def revert_language(apps, schema_editor):
     for document in Document.objects.using(db_alias).all():
         document.language = document.language_obj.language.iso_639_2B
         document.save(update_fields=['language'])
+
+    Language = apps.get_model("indigo_api", "Language")
+    languages = {c.id: c for c in Language.objects.using(db_alias).all()}
+
+    # Now revert document versions so that language is a string, not a foreign key relation.
+    ct = ContentType.objects.get_for_model(Document)
+    for version in Version.objects.filter(content_type=ct.pk).using(db_alias).all():
+        data = json.loads(force_text(version.serialized_data.encode('utf8')))
+
+        # change language foreign key object to a code
+        data[0]['fields']['language'] = languages[data[0]['fields']['language']].language.iso_639_2B
+
+        version.serialized_data = json.dumps(data).decode('utf8')
+        version.save()
 
 
 class Migration(migrations.Migration):

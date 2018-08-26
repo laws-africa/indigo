@@ -1,4 +1,4 @@
-{% extends "work/layout.html" %}
+{% extends "indigo_api/work_layout.html" %}
 
 {% block view-id %}work-related-view{% endblock %}
 {% block title %}Related Works - {{ block.super }}{% endblock %}
@@ -9,22 +9,22 @@
   {% endif %}
 
   {% if family %}
-    {% include 'work/_related_table.html' with items=family title="Parents and children" %}
+    {% include 'indigo_api/_work_related_table.html' with items=family title="Parents and children" %}
   {% endif %}
 
   {% if repeals %}
-    {% include 'work/_related_table.html' with items=repeals title="Repeals" %}
+    {% include 'indigo_api/_work_related_table.html' with items=repeals title="Repeals" %}
   {% endif %}
 
   {% if commencement %}
-    {% include 'work/_related_table.html' with items=commencement title="Commencement" %}
+    {% include 'indigo_api/_work_related_table.html' with items=commencement title="Commencement" %}
   {% endif %}
 
   {% if amended %}
-    {% include 'work/_related_table.html' with items=amended title="Works amended by this work" %}
+    {% include 'indigo_api/_work_related_table.html' with items=amended title="Works amended by this work" %}
   {% endif %}
 
   {% if amended_by %}
-    {% include 'work/_related_table.html' with items=amended_by title="Works amending this work"%}
+    {% include 'indigo_api/_work_related_table.html' with items=amended_by title="Works amending this work"%}
   {% endif %}
 {% endblock %}

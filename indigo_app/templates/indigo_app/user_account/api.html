@@ -1,0 +1,27 @@
+{% extends "indigo_app/user_account/layout.html" %}
+
+{% block title%}API Access {{ block.super }}{% endblock %}
+{% block account-sidebar %}
+  {% include 'indigo_app/user_account/_sidebar.html' with active='api' %}
+{% endblock %}
+
+{% block account-content %}
+<form method="POST">
+  {% csrf_token %}
+
+  <div class="card">
+    <h5 class="card-header">API Access</h5>
+    <div class="card-body">
+      <p>Use the API token below to authenticate your calls to the Indigo API.</p>
+
+      <div class="form-group">
+        <label for="api_token">API Token</label>
+        <input type="text" class="form-control" id="api_token" value="{{ request.user.editor.api_token.key }}" readonly>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button type="submit" class="btn btn-secondary">Generate new API token</button>
+    </div>
+  </div>
+</form>
+{% endblock %}

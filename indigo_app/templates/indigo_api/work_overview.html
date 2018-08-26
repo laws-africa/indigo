@@ -1,4 +1,4 @@
-{% extends "work/layout.html" %}
+{% extends "indigo_api/work_layout.html" %}
 
 {% block work-content %}
 
@@ -147,7 +147,7 @@
     <h4 class="mt-5">Recent changes</h4>
 
     {% for ver in versions %}
-      {% include 'work/_diff_card.html' with version=ver current=forloop.first %}
+      {% include 'indigo_api/_work_diff_card.html' with version=ver current=forloop.first %}
     {% endfor %}
 
     <div>

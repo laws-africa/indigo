@@ -14,8 +14,8 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from .models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment
 from indigo.plugins import plugins
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country
 from indigo_api.signals import document_published, work_changed
 
 log = logging.getLogger(__name__)
@@ -206,12 +206,13 @@ class UserSerializer(serializers.ModelSerializer):
         return name
 
 
-class RevisionSerializer(serializers.ModelSerializer):
-    date = serializers.DateTimeField(source='date_created')
-    user = UserSerializer()
+class VersionSerializer(serializers.ModelSerializer):
+    date = serializers.DateTimeField(source='revision.date_created')
+    comment = serializers.CharField(source='revision.comment')
+    user = UserSerializer(source='revision.user')
 
     class Meta:
-        model = reversion.models.Revision
+        model = reversion.models.Version
         fields = ('id', 'date', 'comment', 'user')
         read_only_fields = fields
 
@@ -233,6 +234,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     """ Options when importing a new document using the +file+ field. """
 
     draft = serializers.BooleanField(default=True)
+    language = serializers.CharField(source='language.code', required=True)
 
     # if a title isn't given, it's taken from the associated work
     title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
@@ -274,7 +276,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'published_url', 'links',
         )
-        read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
+        read_only_fields = ('country', 'locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
     def get_published_url(self, doc):
         if doc.draft:
@@ -327,6 +329,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 request = self.context['request']
 
                 country = data.get('country') or request.user.editor.country_code
+                # TODO: pass the language to the lookup, as well as to import_from_upload
                 importer = plugins.for_locale('importer', country, None, None)
 
                 importer.section_number_position = posn
@@ -361,6 +364,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         Work.objects.get_for_frbr_uri(value)
 
         return value
+
+    def validate_language(self, value):
+        try:
+            return Language.for_code(value)
+        except Language.DoesNotExist:
+            raise ValidationError("Invalid language: %s" % value)
 
     def get_expression_frbr_uri(self, doc):
         return doc.expression_uri.expression_uri(False)
@@ -408,6 +417,11 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if validated_data is None:
             validated_data = self.validated_data
 
+        # work around DRF stashing the language as a nested field
+        if 'language' in validated_data:
+            # this is really a Language object
+            validated_data['language'] = validated_data['language']['code']
+
         # Document content must always come first so it can be overridden
         # by the other properties.
         content = validated_data.pop('content', None)
@@ -428,7 +442,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
 class ExpressionSerializer(serializers.Serializer):
     url = serializers.SerializerMethodField()
-    language = serializers.CharField()
+    language = serializers.CharField(source='language.code')
     expression_frbr_uri = serializers.SerializerMethodField()
     expression_date = serializers.DateField()
     title = serializers.CharField()
@@ -649,6 +663,7 @@ class WorkSerializer(serializers.ModelSerializer):
     repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    country = serializers.CharField(source='country.code', required=True)
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -672,27 +687,28 @@ class WorkSerializer(serializers.ModelSerializer):
         read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
     def create(self, validated_data):
+        work = Work()
         validated_data['created_by_user'] = self.context['request'].user
-        result = super(WorkSerializer, self).create(validated_data)
+        return self.update(work, validated_data)
 
-        # signals
-        work_changed.send(sender=result.__class__, work=result, request=self.context['request'])
-
-        return result
-
-    def update(self, instance, validated_data):
+    def update(self, work, validated_data):
         user = self.context['request'].user
         validated_data['updated_by_user'] = user
+
+        # work around DRF stashing the language as a nested field
+        if 'country' in validated_data:
+            # this is really a Country object
+            validated_data['country'] = validated_data['country']['code']
 
         # save as a revision
         with reversion.revisions.create_revision():
             reversion.revisions.set_user(user)
-            result = super(WorkSerializer, self).update(instance, validated_data)
+            work = super(WorkSerializer, self).update(work, validated_data)
 
         # signals
-        work_changed.send(sender=self.__class__, work=result, request=self.context['request'])
+        work_changed.send(sender=self.__class__, work=work, request=self.context['request'])
 
-        return result
+        return work
 
     def validate_frbr_uri(self, value):
         try:
@@ -700,6 +716,12 @@ class WorkSerializer(serializers.ModelSerializer):
         except ValueError:
             raise ValidationError("Invalid FRBR URI: %s" % value)
         return value
+
+    def validate_country(self, value):
+        try:
+            return Country.for_code(value)
+        except Country.DoesNotExist:
+            raise ValidationError("Invalid country: %s" % value)
 
     def get_amendments_url(self, work):
         if not work.pk:

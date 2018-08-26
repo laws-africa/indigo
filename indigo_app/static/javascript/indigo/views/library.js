@@ -328,7 +328,6 @@
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
       this.filterView.trigger('change');
-      Indigo.userView.model.on('change', this.render, this);
     },
 
     changeSort: function(e) {
@@ -352,7 +351,7 @@
 
       // tie works and docs together
       works = _.map(works, function(work) {
-        var currentUserId = Indigo.userView.model.get('id');
+        var currentUserId = Indigo.user.get('id');
 
         work = work.toJSON();
 

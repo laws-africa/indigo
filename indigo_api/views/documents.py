@@ -24,7 +24,7 @@ from lxml.etree import LxmlError
 
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer, DocumentActivitySerializer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
@@ -35,7 +35,6 @@ log = logging.getLogger(__name__)
 # Default document fields that can be use to filter list views
 DOCUMENT_FILTER_FIELDS = {
     'frbr_uri': ['exact', 'startswith'],
-    'country': ['exact'],
     'language': ['exact'],
     'draft': ['exact'],
     'stub': ['exact'],
@@ -168,7 +167,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
-    serializer_class = RevisionSerializer
+    serializer_class = VersionSerializer
     permission_classes = (IsAuthenticated,)
 
     @detail_route(methods=['POST'])
@@ -177,18 +176,17 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         if not DocumentPermissions().has_object_permission(request, self, self.document):
             self.permission_denied(self.request)
 
-        revision = self.get_object()
+        version = self.get_object()
 
         # check permissions on the NEW object
-        version = revision.version_set.all()[0]
         document = version.object_version.object
         if not DocumentPermissions().has_object_permission(request, self, document):
             self.permission_denied(self.request)
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            reversion.set_comment("Restored revision %s" % revision.id)
-            revision.revert()
+            reversion.set_comment("Restored revision %s" % version.id)
+            version.revision.revert()
 
         return Response(status=200)
 
@@ -197,13 +195,10 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     def diff(self, request, *args, **kwargs):
         # this can be cached because the underlying data won't change (although
         # the formatting might)
-        revision = self.get_object()
-        version = revision.version_set.all()[0]
+        version = self.get_object()
 
         # most recent version just before this one
-        old_version = Version.objects\
-            .filter(content_type=version.content_type)\
-            .filter(object_id_int=version.object_id_int)\
+        old_version = self.document.versions()\
             .filter(id__lt=version.id)\
             .order_by('-id')\
             .first()
@@ -220,7 +215,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return Response({'content': diff})
 
     def get_queryset(self):
-        return self.document.revisions()
+        return self.document.versions()
 
 
 class DocumentActivityViewSet(DocumentResourceView,
@@ -417,11 +412,3 @@ class SearchView(DocumentViewMixin, ListAPIView):
             serializer.data[i]['_snippet'] = doc.snippet
 
         return serializer
-
-
-@api_view(['POST'])
-@permission_classes((IsAuthenticated,))
-def new_auth_token(request):
-    Token.objects.filter(user=request.user).delete()
-    token, _ = Token.objects.get_or_create(user=request.user)
-    return Response({'auth_token': token.key})

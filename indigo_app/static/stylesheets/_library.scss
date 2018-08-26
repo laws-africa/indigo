@@ -74,16 +74,30 @@
   #library {
     background-color: white;
 
-    & > table {
+    .library-work-table {
       margin-bottom: 0px;
     }
   }
 }
 
+.library-work-table {
+  table-layout: fixed;
+
+  th.title { width: 40%; }
+  th.frbr_uri { width: 25%; }
+  th.n_languages { width: 10%; }
+  th.psit { width: 3%; }
+  th.pub_ratio { width: 7%; }
+  th.updated_at { width: 15%; }
+
+  td, th {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+
 .sorted-table {
-
-  table-layout : auto;
-
   th {
     cursor: pointer;
   }

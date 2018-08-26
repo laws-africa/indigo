@@ -314,7 +314,7 @@
     el: '#library',
     template: '#search-results-template',
     events: {
-      'click .document-list-table th': 'changeSort',
+      'click .library-work-table th': 'changeSort',
     },
 
     initialize: function() {

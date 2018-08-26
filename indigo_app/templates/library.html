@@ -33,15 +33,15 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-sm table-hover document-list-table sorted-table">
+<table class="table table-sm table-hover library-work-table sorted-table">
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="uri" data-sort="frbr_uri">FRBR URI</th>
+      <th class="frbr_uri" data-sort="frbr_uri">FRBR URI</th>
       <th class="languages" data-sort="n_languages" >Languages</th>
-      <th class="psit" data-sort="n_expressions">Points in time</th>
+      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in Time"></i></th>
       <th class="status" data-sort="pub_ratio">Drafts / Total</th>
-      <th class="updated" data-sort="updated_at">Updated</th>
+      <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
 

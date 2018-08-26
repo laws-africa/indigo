@@ -372,7 +372,7 @@
 
         var work_docs = _.map(docs[work.id] || [], function(doc) {
           return doc.toJSON();
-        })
+        });
 
         // distinct languages
         var languages = _.unique(_.map(work_docs, function(doc) {

@@ -16,7 +16,7 @@ from ..atom import AtomRenderer, AtomFeed
 
 from .documents import DocumentViewMixin, DocumentResourceView
 from .attachments import view_attachment_by_filename, MediaAttachmentSerializer
-from ..models import Attachment
+from ..models import Attachment, Country
 
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -88,7 +88,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         # that document matches, otherwise we'll assume they're trying to
         # list documents with a prefix URI match.
         try:
-            self.frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
+            self.parse_frbr_uri(self.kwargs['frbr_uri'])
 
             # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
             if self.frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
@@ -291,3 +291,17 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
+
+    def parse_frbr_uri(self, frbr_uri):
+        FrbrUri.default_language = None
+        self.frbr_uri = FrbrUri.parse(frbr_uri)
+
+        # validate the country and set the default language
+        try:
+            country = Country.for_frbr_uri(self.frbr_uri)
+            self.frbr_uri.default_language = country.primary_language.code
+        except Country.DoesNotExist:
+            raise Http404("Country %s from FRBR URI not found" % self.frbr_uri.country)
+
+        if not self.frbr_uri.language:
+            self.frbr_uri.language = self.frbr_uri.default_language

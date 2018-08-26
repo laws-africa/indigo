@@ -25,21 +25,21 @@
         }
     },
     {
-        "model": "indigo_app.language",
+        "model": "indigo_api.language",
         "pk": 1,
         "fields": {
             "language": "en"
         }
     },
     {
-        "model": "indigo_app.language",
+        "model": "indigo_api.language",
         "pk": 2,
         "fields": {
             "language": "af"
         }
     },
     {
-        "model": "indigo_app.country",
+        "model": "indigo_api.country",
         "pk": 1,
         "fields": {
             "country": "ZA",

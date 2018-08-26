@@ -24,7 +24,7 @@
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
       'change .filter-locality': 'filterByLocality',
-      'change .filter-nature': 'filterByNature',
+      'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
     },
@@ -75,7 +75,7 @@
         country: this.filters.get('country'),
         locality: Indigo.queryParams.locality,
         status: Indigo.queryParams.status || 'all',
-        nature: Indigo.queryParams.nature,
+        subtype: Indigo.queryParams.subtype,
         tags: tags || [],
       });
     },
@@ -94,7 +94,7 @@
      *
      *  - country
      *  - locality
-     *  - nature
+     *  - subtype
      *  - status
      *  - tags
      *  - search
@@ -151,30 +151,30 @@
         works = _.filter(works, function(work) { return work.get('locality') == loc; });
       }
 
-      // count nature, sort alphabetically
-      this.summary.natures = _.sortBy(
+      // count subtype, sort alphabetically
+      this.summary.subtypes = _.sortBy(
         _.map(
-          _.countBy(works, function(d) { return d.get('nature'); }),
-          function(count, nature) {
+          _.countBy(works, function(d) { return d.get('subtype') || "-"; }),
+          function(count, subtype) {
             return {
-              nature: nature,
-              name: nature,
+              subtype: subtype,
+              name: subtype == '-' ? 'act' : subtype,
               count: count,
-              active: filters.nature === nature,
+              active: filters.subtype === subtype,
             };
           }
         ),
-        function(info) { return info.nature; });
-      this.summary.natures.unshift({
-        nature: null,
-        name: 'All natures',
+        function(info) { return info.subtype; });
+      this.summary.subtypes.unshift({
+        subtype: null,
+        name: 'All types',
         count: works.length,
-        active: !!filters.nature,
+        active: !!filters.subtype,
       });
 
-      // filter by nature
-      if (filters.nature) {
-        works = _.filter(works, function(work) { return work.get('nature') == filters.nature; });
+      // filter by subtype
+      if (filters.subtype) {
+        works = _.filter(works, function(work) { return work.get('subtype') == filters.subtype; });
       }
 
       // setup our collection of documents for each work
@@ -269,16 +269,16 @@
 
       this.filters.set({
         locality: $(e.currentTarget).val(),
-        nature: null,
+        subtype: null,
         tags: [],
       });
     },
 
-    filterByNature: function(e) {
+    filterBySubtype: function(e) {
       e.preventDefault();
 
       this.filters.set({
-        nature: $(e.currentTarget).val(),
+        subtype: $(e.currentTarget).val(),
         tags: [],
       });
     },

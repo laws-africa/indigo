@@ -128,10 +128,10 @@
 {{/if}}
 
 <section>
-  <label>Nature</label>
-  <select class="form-control filter-nature" name="nature-filter">
-    {{#each summary.natures}}
-      <option {{#if active}}selected{{/if}} value="{{nature}}">{{name}} ({{count}})</option>
+  <label>Type</label>
+  <select class="form-control filter-subtype" name="subtype-filter">
+    {{#each summary.subtypes}}
+      <option {{#if active}}selected{{/if}} value="{{subtype}}">{{name}} ({{count}})</option>
     {{/each}}
   </select>
 </section>

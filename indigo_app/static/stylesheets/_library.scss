@@ -95,6 +95,14 @@
     text-overflow: ellipsis;
     overflow: hidden;
   }
+
+  td.pad-left {
+    padding-left: 26px;
+  }
+
+  td.document {
+    padding-left: 52px;
+  }
 }
 
 .sorted-table {

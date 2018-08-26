@@ -50,8 +50,9 @@
       <tr>
 
         {{!-- Title --}}
-        <td>
+        <td class="{{#unless work_docs}}pad-left{{/unless}}">
           {{#if work_docs}}
+            <a href="#" class="toggle-docs text-muted" data-work="{{ frbr_uri }}"><i class="fas fa-fw fa-caret-right"></i></a>
             <i class="fa fa-fw fa-circle published" title="published"></i>
           {{else}}
             <i class="fa fa-fw fa-circle" title="empty work"></i>
@@ -100,6 +101,30 @@
         </td>
 
       </tr>
+
+      {{#each work_docs}}
+        <tr data-work="{{ ../frbr_uri }}" class="d-none">
+          <td class="document">
+            {{#if draft}}
+              <i class="fa fa-fw fa-circle published" title="published"></i>
+            {{else}}
+              <i class="fa fa-fw fa-circle draft" title="draft"></i>
+            {{/if}}
+            <a href="/documents/{{ id }}">{{ title }}</a>
+          </td>
+          <td>@ {{ expression_date }}</td>
+          <td>{{ language }}</td>
+          <td colspan="2">&nbsp;</td>
+          <td>
+            <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+            <span class="text-muted">
+              {{#if updated_by.display_name}}
+                – {{ updated_by.display_name }}
+              {{/if}}
+            </span>
+          </td>
+        </tr>
+      {{/each}}
     {{/each}}
   </tbody>
 

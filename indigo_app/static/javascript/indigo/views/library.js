@@ -315,6 +315,7 @@
     template: '#search-results-template',
     events: {
       'click .library-work-table th': 'changeSort',
+      'click .toggle-docs': 'toggleDocuments',
     },
 
     initialize: function() {
@@ -342,6 +343,20 @@
       }
 
       this.render();
+    },
+
+    toggleDocuments: function(e) {
+      e.preventDefault();
+      var $link = $(e.currentTarget),
+          work = $link.data('work'),
+          $i = $link.find('i'),
+          opened = $i.hasClass('fa-caret-down');
+
+      $i
+        .toggleClass('fa-caret-right', opened)
+        .toggleClass('fa-caret-down', !opened);
+
+      $('.library-work-table tr[data-work="' + work + '"]').toggleClass('d-none', opened);
     },
 
     render: function() {
@@ -383,19 +398,19 @@
         });
 
         if (work.drafts_v_published.n_drafts) {
-          work.n_drafts = work.drafts_v_published.n_drafts
+          work.n_drafts = work.drafts_v_published.n_drafts;
         } else {
-          work.n_drafts = 0
+          work.n_drafts = 0;
         }
 
         // total number of docs
         work.n_docs = work_docs.length;
 
         // get a ratio of drafts vs total docs for sorting
-        if (work.n_docs != 0) {
-          work.pub_ratio = 1 / (work.n_drafts / work.n_docs)
+        if (work.n_docs !== 0) {
+          work.pub_ratio = 1 / (work.n_drafts / work.n_docs);
         } else {
-          work.pub_ratio = 0
+          work.pub_ratio = 0;
         }
 
         // add work to list of docs and order by recency

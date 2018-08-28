@@ -15,7 +15,7 @@ from indigo_api.renderers import PDFRenderer
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['user', 'work', 'colophon']
+    fixtures = ['countries', 'user', 'editor', 'work', 'colophon']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
@@ -24,6 +24,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',
             'expression_date': '2001-01-01',
+            'language': 'eng',
         })
 
         assert_equal(response.status_code, 201)
@@ -59,6 +60,7 @@ class DocumentAPITest(APITestCase):
             'frbr_uri': '/za/act/1998/2',
             'tags': ['foo', 'bar'],
             'expression_date': '2001-01-01',
+            'language': 'eng',
         })
 
         assert_equal(response.status_code, 201)
@@ -74,6 +76,7 @@ class DocumentAPITest(APITestCase):
             'draft': True,
             'tags': ['a'],
             'expression_date': '2001-01-01',
+            'language': 'eng',
         })
         id = response.data['id']
 
@@ -86,7 +89,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
     def test_update(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -99,7 +102,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(sorted(response.data['tags']), ['bar', 'foo'])
 
     def test_update_tags(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -116,7 +119,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(sorted(response.data['tags']), ['bar', 'boom'])
 
     def test_update_expression_date(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -129,7 +132,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.data['expression_date'], '2015-01-01')
 
     def test_update_content(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -158,7 +161,7 @@ class DocumentAPITest(APITestCase):
         assert_in(u'<p>also γνωρίζω the body</p>', response.data['content'])
 
     def test_revert_a_revision(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there'), 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there'), 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -177,7 +180,7 @@ class DocumentAPITest(APITestCase):
         assert_in(u'<p>hello in there</p>', response.data['content'])
 
     def test_get_a_revision_diff(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there'), 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there'), 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -193,7 +196,7 @@ class DocumentAPITest(APITestCase):
 
     def test_update_content_and_properties(self):
         # ensure properties override content
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
         assert_equal(response.data['title'], 'Test Act')
@@ -212,7 +215,7 @@ class DocumentAPITest(APITestCase):
 
     def test_frbr_uri_lowercased(self):
         # ACT should be changed to act
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/ACT/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/ACT/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
 
@@ -221,6 +224,7 @@ class DocumentAPITest(APITestCase):
             'frbr_uri': '/za/act/1998/2',
             'content': document_fixture('in the body'),
             'expression_date': '2001-01-01',
+            'language': 'eng',
         })
         assert_equal(response.status_code, 201)
         id = response.data['id']
@@ -233,6 +237,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/za/act/1998/2',
             'content': 'not valid xml',
+            'language': 'eng',
         })
         assert_equal(response.status_code, 400)
         assert_equal(len(response.data['content']), 1)
@@ -241,12 +246,13 @@ class DocumentAPITest(APITestCase):
         response = self.client.post('/api/documents', {
             'frbr_uri': '/',
             'content': document_fixture('in the body'),
+            'language': 'eng',
         })
         assert_equal(response.status_code, 400)
         assert_equal(len(response.data['frbr_uri']), 1)
 
     def test_delete(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -257,7 +263,7 @@ class DocumentAPITest(APITestCase):
         # this user cannot delete
         self.client.login(username='non-deleter@example.com', password='password')
 
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -268,7 +274,7 @@ class DocumentAPITest(APITestCase):
         # this user cannot publish
         self.client.login(username='non-publisher@example.com', password='password')
 
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -278,7 +284,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 403)
 
     def test_cannot_unpublish(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False, 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False, 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
         response = self.client.get('/api/documents/%s' % id)
@@ -292,7 +298,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 403)
 
     def test_cannot_update_published(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False, 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'draft': False, 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -321,6 +327,7 @@ class DocumentAPITest(APITestCase):
             'frbr_uri': '/za/act/1998/2',
             'content': document_fixture(xml=xml),
             'expression_date': '2001-01-01',
+            'language': 'eng',
         })
         assert_equal(response.status_code, 201)
         id = response.data['id']
@@ -366,7 +373,7 @@ class DocumentAPITest(APITestCase):
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 
-        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'}, format='multipart')
+        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -394,7 +401,7 @@ class DocumentAPITest(APITestCase):
         fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
         f = open(fname, 'r')
 
-        response = self.client.post('/api/documents', {'file': f, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'}, format='multipart')
+        response = self.client.post('/api/documents', {'file': f, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -405,7 +412,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.data['title'], 'Test Act')
 
     def test_attachment_as_media(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -427,7 +434,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
     def test_attachment_as_media_anonymous(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -461,7 +468,7 @@ class DocumentAPITest(APITestCase):
         """)
         tmp_file.seek(0)
 
-        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'}, format='multipart')
+        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'}, format='multipart')
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -489,7 +496,7 @@ class DocumentAPITest(APITestCase):
 
     @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
     def test_document_pdf(self, mock):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -499,7 +506,7 @@ class DocumentAPITest(APITestCase):
         assert_in('pdf-content', response.content)
 
     def test_document_xml(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -510,7 +517,7 @@ class DocumentAPITest(APITestCase):
         assert_true(response.content.startswith('<akomaNtoso'))
 
     def test_document_epub(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -528,7 +535,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 404)
 
     def test_document_standalone_html(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -541,7 +548,7 @@ class DocumentAPITest(APITestCase):
         assert_in('class="toc"', response.content)
 
     def test_document_html(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 

@@ -24,7 +24,7 @@
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
       'change .filter-locality': 'filterByLocality',
-      'change .filter-nature': 'filterByNature',
+      'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
     },
@@ -75,7 +75,7 @@
         country: this.filters.get('country'),
         locality: Indigo.queryParams.locality,
         status: Indigo.queryParams.status || 'all',
-        nature: Indigo.queryParams.nature,
+        subtype: Indigo.queryParams.subtype,
         tags: tags || [],
       });
     },
@@ -94,7 +94,7 @@
      *
      *  - country
      *  - locality
-     *  - nature
+     *  - subtype
      *  - status
      *  - tags
      *  - search
@@ -151,30 +151,30 @@
         works = _.filter(works, function(work) { return work.get('locality') == loc; });
       }
 
-      // count nature, sort alphabetically
-      this.summary.natures = _.sortBy(
+      // count subtype, sort alphabetically
+      this.summary.subtypes = _.sortBy(
         _.map(
-          _.countBy(works, function(d) { return d.get('nature'); }),
-          function(count, nature) {
+          _.countBy(works, function(d) { return d.get('subtype') || "-"; }),
+          function(count, subtype) {
             return {
-              nature: nature,
-              name: nature,
+              subtype: subtype,
+              name: subtype == '-' ? 'act' : subtype,
               count: count,
-              active: filters.nature === nature,
+              active: filters.subtype === subtype,
             };
           }
         ),
-        function(info) { return info.nature; });
-      this.summary.natures.unshift({
-        nature: null,
-        name: 'All natures',
+        function(info) { return info.subtype; });
+      this.summary.subtypes.unshift({
+        subtype: null,
+        name: 'All types',
         count: works.length,
-        active: !!filters.nature,
+        active: !!filters.subtype,
       });
 
-      // filter by nature
-      if (filters.nature) {
-        works = _.filter(works, function(work) { return work.get('nature') == filters.nature; });
+      // filter by subtype
+      if (filters.subtype) {
+        works = _.filter(works, function(work) { return work.get('subtype') == filters.subtype; });
       }
 
       // setup our collection of documents for each work
@@ -269,16 +269,16 @@
 
       this.filters.set({
         locality: $(e.currentTarget).val(),
-        nature: null,
+        subtype: null,
         tags: [],
       });
     },
 
-    filterByNature: function(e) {
+    filterBySubtype: function(e) {
       e.preventDefault();
 
       this.filters.set({
-        nature: $(e.currentTarget).val(),
+        subtype: $(e.currentTarget).val(),
         tags: [],
       });
     },
@@ -314,7 +314,8 @@
     el: '#library',
     template: '#search-results-template',
     events: {
-      'click .document-list-table th': 'changeSort',
+      'click .library-work-table th': 'changeSort',
+      'click .toggle-docs': 'toggleDocuments',
     },
 
     initialize: function() {
@@ -328,7 +329,6 @@
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
       this.filterView.trigger('change');
-      Indigo.userView.model.on('change', this.render, this);
     },
 
     changeSort: function(e) {
@@ -345,6 +345,20 @@
       this.render();
     },
 
+    toggleDocuments: function(e) {
+      e.preventDefault();
+      var $link = $(e.currentTarget),
+          work = $link.data('work'),
+          $i = $link.find('i'),
+          opened = $i.hasClass('fa-caret-down');
+
+      $i
+        .toggleClass('fa-caret-right', opened)
+        .toggleClass('fa-caret-down', !opened);
+
+      $('.library-work-table tr[data-work="' + work + '"]').toggleClass('d-none', opened);
+    },
+
     render: function() {
       var works = this.filterView.filteredWorks,
           docs = this.filterView.filteredDocs,
@@ -352,13 +366,13 @@
 
       // tie works and docs together
       works = _.map(works, function(work) {
-        var currentUserId = Indigo.userView.model.get('id');
+        var currentUserId = Indigo.user.get('id');
 
         work = work.toJSON();
 
         var work_docs = _.map(docs[work.id] || [], function(doc) {
           return doc.toJSON();
-        })
+        });
 
         // distinct languages
         var languages = _.unique(_.map(work_docs, function(doc) {
@@ -384,19 +398,19 @@
         });
 
         if (work.drafts_v_published.n_drafts) {
-          work.n_drafts = work.drafts_v_published.n_drafts
+          work.n_drafts = work.drafts_v_published.n_drafts;
         } else {
-          work.n_drafts = 0
+          work.n_drafts = 0;
         }
 
         // total number of docs
         work.n_docs = work_docs.length;
 
         // get a ratio of drafts vs total docs for sorting
-        if (work.n_docs != 0) {
-          work.pub_ratio = 1 / (work.n_drafts / work.n_docs)
+        if (work.n_docs !== 0) {
+          work.pub_ratio = 1 / (work.n_drafts / work.n_docs);
         } else {
-          work.pub_ratio = 0
+          work.pub_ratio = 0;
         }
 
         // add work to list of docs and order by recency

@@ -33,15 +33,15 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-sm table-hover document-list-table sorted-table">
+<table class="table table-sm table-hover library-work-table sorted-table">
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="uri" data-sort="frbr_uri">FRBR URI</th>
+      <th class="frbr_uri" data-sort="frbr_uri">FRBR URI</th>
       <th class="languages" data-sort="n_languages" >Languages</th>
-      <th class="psit" data-sort="n_expressions">Points in time</th>
+      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in Time"></i></th>
       <th class="status" data-sort="pub_ratio">Drafts / Total</th>
-      <th class="updated" data-sort="updated_at">Updated</th>
+      <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
 
@@ -50,8 +50,9 @@
       <tr>
 
         {{!-- Title --}}
-        <td>
+        <td class="{{#unless work_docs}}pad-left{{/unless}}">
           {{#if work_docs}}
+            <a href="#" class="toggle-docs text-muted" data-work="{{ frbr_uri }}"><i class="fas fa-fw fa-caret-right"></i></a>
             <i class="fa fa-fw fa-circle published" title="published"></i>
           {{else}}
             <i class="fa fa-fw fa-circle" title="empty work"></i>
@@ -100,6 +101,30 @@
         </td>
 
       </tr>
+
+      {{#each work_docs}}
+        <tr data-work="{{ ../frbr_uri }}" class="d-none">
+          <td class="document">
+            {{#if draft}}
+              <i class="fa fa-fw fa-circle published" title="published"></i>
+            {{else}}
+              <i class="fa fa-fw fa-circle draft" title="draft"></i>
+            {{/if}}
+            <a href="/documents/{{ id }}">{{ title }}</a>
+          </td>
+          <td>@ {{ expression_date }}</td>
+          <td>{{ language }}</td>
+          <td colspan="2">&nbsp;</td>
+          <td>
+            <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+            <span class="text-muted">
+              {{#if updated_by.display_name}}
+                – {{ updated_by.display_name }}
+              {{/if}}
+            </span>
+          </td>
+        </tr>
+      {{/each}}
     {{/each}}
   </tbody>
 
@@ -128,10 +153,10 @@
 {{/if}}
 
 <section>
-  <label>Nature</label>
-  <select class="form-control filter-nature" name="nature-filter">
-    {{#each summary.natures}}
-      <option {{#if active}}selected{{/if}} value="{{nature}}">{{name}} ({{count}})</option>
+  <label>Type</label>
+  <select class="form-control filter-subtype" name="subtype-filter">
+    {{#each summary.subtypes}}
+      <option {{#if active}}selected{{/if}} value="{{subtype}}">{{name}} ({{count}})</option>
     {{/each}}
   </select>
 </section>

@@ -17,7 +17,7 @@ from languages_plus.models import Language
 from sass_processor.processor import SassProcessor
 
 from .serializers import NoopSerializer
-from .models import Document, Colophon, DEFAULT_LANGUAGE
+from .models import Document, Colophon
 
 log = logging.getLogger(__name__)
 
@@ -179,15 +179,7 @@ class HTMLRenderer(object):
             return render_to_string(template_name, context)
 
     def find_colophon(self, document):
-        colophon = None
-
-        if document.country:
-            colophon = Colophon.objects.filter(country__iso=document.country.upper()).first()
-
-        if not colophon:
-            colophon = Colophon.objects.filter(country=None).first()
-
-        return colophon
+        return Colophon.objects.filter(country=document.work.country).first()
 
     def find_template(self, document):
         """ Return the filename of a template to use to render this document.
@@ -227,7 +219,7 @@ class HTMLRenderer(object):
         params = {
             'resolverUrl': self.resolver_url(),
             'mediaUrl': self.media_url or '',
-            'lang': document.language,
+            'lang': document.language.code,
         }
 
         return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))
@@ -256,7 +248,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         renderer.no_stub_content = getattr(view, 'no_stub_content', False)
         renderer.standalone = request.GET.get('standalone') == '1'
         renderer.resolver = request.GET.get('resolver')
-        renderer.media_url = request.GET.get('media_url', '')
+        renderer.media_url = request.GET.get('media-url', '')
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
@@ -404,7 +396,7 @@ class EPUBRenderer(HTMLRenderer):
 
         self.book.set_identifier(document.doc.frbr_uri.expression_uri())
         self.book.set_title(document.title)
-        self.book.set_language(self.language_for(document.language) or 'en')
+        self.book.set_language(document.language.language.iso)
         self.book.add_author(settings.INDIGO_ORGANISATION)
 
         self.add_colophon(document)
@@ -421,7 +413,7 @@ class EPUBRenderer(HTMLRenderer):
         self.book.set_title('%d documents' % len(documents))
 
         # language
-        langs = list(set(self.language_for(d.language) or 'en' for d in documents))
+        langs = list(set(d.language.language.iso for d in documents))
         self.book.set_language(langs[0])
         for lang in langs[1:]:
             self.book.add_metadata('DC', 'language', lang)
@@ -561,8 +553,8 @@ class EPUBRenderer(HTMLRenderer):
             html = '<div class="' + wrap + '">' + html + '</div>'
         return html
 
-    def language_for(self, lang=None):
-        lang = Language.objects.filter(iso_639_2T=lang or DEFAULT_LANGUAGE).first()
+    def language_for(self, lang):
+        lang = Language.objects.filter(iso_639_2T=lang).first()
         if lang:
             return lang.iso
 

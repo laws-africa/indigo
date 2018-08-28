@@ -46,13 +46,14 @@ setup(
         'cobalt>=1.0.0',
         'django-ckeditor>=5.3.1',
         'dj-database-url>=0.3.0',
+        'django-allauth>=0.36.0',
         'django-compressor>=2.2',
         'django-cors-headers>1.3.1',
         'django-countries-plus==1.1',  # 1.2 breaks migrations
         'django-filter>=1.0,<2',
         'django-languages-plus==0.1.5',  # 1.x doesn't play with django-countries-plus < 1.2
         'django-pipeline>=1.6.11',
-        'django-rest-auth>=0.9.1',
+        'django-recaptcha>=1.4.0',
         'django-reversion>=1.10.2,<2',
         'django-sass-processor>=0.6',
         'django-storages>=1.6.6',

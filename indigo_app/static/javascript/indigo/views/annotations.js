@@ -31,9 +31,7 @@
       this.isNew = this.model.isNew();
       this.listenTo(this.model, 'sync', this.saved);
 
-      this.listenTo(Indigo.userView.model, 'change', this.setReadonly);
       this.setReadonly();
-
       this.render();
     },
 

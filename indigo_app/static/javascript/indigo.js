@@ -31,7 +31,7 @@ $(function() {
 
       } else if (xhr.status == 403) {
         // permission denied
-        if (Indigo.userView.model.authenticated()) {
+        if (Indigo.user.authenticated()) {
           Indigo.errorView.show("You aren't allowed to do that.");
         } else {
           Indigo.errorView.show("Please log in first.");
@@ -118,7 +118,6 @@ $(function() {
   Indigo.user = new Indigo.User(Indigo.Preloads.user || {
     permissions: [],
   });
-  Indigo.userView = new Indigo.UserView();
 
   // setup the document library
   Indigo.library = new Indigo.Library();

@@ -1,0 +1,38 @@
+[
+    {
+        "model": "indigo_app.editor",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "country": 1,
+            "accepted_terms": true
+        }
+    },
+    {
+        "model": "indigo_app.editor",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "country": 1,
+            "accepted_terms": true
+        }
+    },
+    {
+        "model": "indigo_app.editor",
+        "pk": 3,
+        "fields": {
+            "user": 3,
+            "country": 1,
+            "accepted_terms": true
+        }
+    },
+    {
+        "model": "indigo_app.editor",
+        "pk": 4,
+        "fields": {
+            "user": 4,
+            "country": 1,
+            "accepted_terms": true
+        }
+    }
+]

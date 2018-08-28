@@ -1,21 +1,20 @@
-from django.conf.urls import url
-from django.views.generic.base import RedirectView
-from django.contrib.auth import views as auth_views
+from django.conf.urls import url, include
+from django.views.generic.base import RedirectView, TemplateView
 
 from . import views
 
 
 urlpatterns = [
-    # auth
-    url('^user/login/$', auth_views.LoginView.as_view(redirect_authenticated_user=True), name='login'),
-    url('^user/password-reset/$', auth_views.PasswordResetView.as_view(), name='password_reset'),
-    url('^user/password-reset/sent/$', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
-    url('^user/password-reset/reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
-    url('^user/password-reset/complete/$', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
-
     # homepage
     url(r'^$', RedirectView.as_view(url='library', permanent=True)),
+
+    # auth and accounts
+    url(r'^accounts/', include('allauth.urls')),
+    url(r'^accounts/profile/$', views.EditAccountView.as_view(), name='edit_account'),
+    url(r'^accounts/profile/api/$', views.EditAccountAPIView.as_view(), name='edit_account_api'),
+    url(r'^accounts/accept-terms$', views.AcceptTermsView.as_view(), name='accept_terms'),
+
+    url(r'^terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
 
     url(r'^works/new/$', views.AddWorkView.as_view(), name='new_work'),
     url(r'^works/new-batch/$', views.BatchAddWorkView.as_view(), name='new_batch_work'),

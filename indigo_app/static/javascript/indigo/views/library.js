@@ -332,7 +332,7 @@
     },
 
     changeSort: function(e) {
-      var field = $(e.target).data('sort');
+      var field = $(e.currentTarget).data('sort');
 
       if (field == this.sortField) {
         // reverse

@@ -295,6 +295,7 @@ ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_FORMS = {
     'signup': 'indigo_app.forms.UserSignupForm'
 }
+ACCOUNT_SIGNUP_ENABLED = True
 LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
 

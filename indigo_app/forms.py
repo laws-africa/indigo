@@ -1,6 +1,7 @@
 from django import forms
 from django.core.validators import URLValidator
 from django.contrib.auth.models import User
+from django.conf import settings
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -32,6 +33,12 @@ class UserSignupForm(SignupForm):
     accepted_terms = forms.BooleanField(required=True, initial=False, error_messages={
         'required': 'Please accept the Terms of Use.',
     })
+    signup_enabled = settings.ACCOUNT_SIGNUP_ENABLED
+
+    def clean(self):
+        if not self.signup_enabled:
+            raise forms.ValidationError("Creating new accounts is not currently not allowed.")
+        return super(UserSignupForm, self).clean()
 
     def save(self, request):
         user = super(UserSignupForm, self).save(request)

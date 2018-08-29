@@ -120,3 +120,12 @@ class WorkAPITest(APITestCase):
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
         assert_not_in('tester', response.data['content'])
+
+    def test_filters(self):
+        response = self.client.get('/api/works?country=za')
+        assert_equal(response.status_code, 200)
+        assert_not_equal(len(response.data['results']), 0)
+
+        response = self.client.get('/api/works?country=xx')
+        assert_equal(response.status_code, 200)
+        assert_equal(len(response.data['results']), 0)

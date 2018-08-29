@@ -174,7 +174,8 @@
 
       // filter by subtype
       if (filters.subtype) {
-        works = _.filter(works, function(work) { return work.get('subtype') == filters.subtype; });
+        var st = filters.subtype == '-' ? null : filters.subtype;
+        works = _.filter(works, function(work) { return work.get('subtype') == st; });
       }
 
       // setup our collection of documents for each work

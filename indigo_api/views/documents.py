@@ -1,6 +1,5 @@
 import logging
 
-from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.postgres.search import SearchQuery
@@ -11,11 +10,9 @@ from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route, permission_classes, api_view
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated, AllowAny
-from rest_framework.authtoken.models import Token
 from reversion import revisions as reversion
-from reversion.models import Version
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import FrbrUri
 

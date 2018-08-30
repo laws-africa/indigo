@@ -4,7 +4,7 @@ from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
+from django_filters import rest_framework as filters
 import arrow
 
 from ..models import Work, Amendment
@@ -30,6 +30,19 @@ class WorkResourceView(object):
         return context
 
 
+class WorkFilterSet(filters.FilterSet):
+    country = filters.CharFilter(method='country_filter')
+
+    class Meta:
+        model = Work
+        fields = {
+            'frbr_uri': ['exact', 'startswith'],
+        }
+
+    def country_filter(self, queryset, name, value):
+        return queryset.filter(country__country__iso=value.upper())
+
+
 class WorkViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
@@ -38,11 +51,8 @@ class WorkViewSet(viewsets.ModelViewSet):
     serializer_class = WorkSerializer
     # TODO permissions on creating and publishing works
     permission_classes = (DjangoModelPermissions,)
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = {
-        'frbr_uri': ['exact', 'startswith'],
-        'country': ['exact'],
-    }
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = WorkFilterSet
 
     def perform_destroy(self, instance):
         if not instance.can_delete():

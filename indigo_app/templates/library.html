@@ -33,78 +33,104 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-sm table-hover document-list-table sorted-table">
+<table class="table table-sm table-hover library-work-table sorted-table">
   <thead>
     <tr>
       <th class="title" data-sort="title">Title</th>
-      <th class="year" data-sort="year">Year / Number</th>
+      <th class="frbr_uri" data-sort="frbr_uri">FRBR URI</th>
+      <th class="languages" data-sort="n_languages" >Languages</th>
+      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in Time"></i></th>
+      <th class="status" data-sort="pub_ratio">Drafts / Total</th>
       <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>
   </thead>
+
   <tbody>
     {{#each works}}
-      {{#unless docs}}
-        <tr>
-          <!-- work without any documents -->
-          <td>
+      <tr>
+
+        {{!-- Title --}}
+        <td class="{{#unless work_docs}}pad-left{{/unless}}">
+          {{#if work_docs}}
+            <a href="#" class="toggle-docs text-muted" data-work="{{ frbr_uri }}"><i class="fas fa-fw fa-caret-right"></i></a>
+            <i class="fa fa-fw fa-circle published" title="published"></i>
+          {{else}}
             <i class="fa fa-fw fa-circle" title="empty work"></i>
-            <a href="/works{{ frbr_uri }}/">{{ title }}</a>
-            {{#if repealed}}
-              <span class="badge badge-info">repealed</span>
+          {{/if}}
+          <a href="/works{{ frbr_uri }}/">{{ title }}</a>
+        </td>
+
+        {{!-- Frbr uri --}}
+        <td>
+          <a href="/works{{ frbr_uri }}/">{{ frbr_uri }}</a>
+        </td>
+
+        {{!-- Languages --}}
+        <td>
+            {{#each languages}}
+              {{#if @first}}
+                {{this}}
+              {{else}}
+                • {{this}}
+              {{/if}}
+            {{/each}}
+        </td>
+
+        {{!-- Points in time --}}
+        <td>
+            <a href="/works{{ frbr_uri }}/amendments/">
+              {{n_expressions}}
+            </a>
+        </td>
+
+        {{!-- Drafts / Total --}}
+        <td>
+          {{#if work_docs}}
+            {{n_drafts}} / {{n_docs}}
+          {{/if}}
+        </td>
+
+        {{!-- Updated --}}
+        <td>
+          <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+          <span class="text-muted">
+            {{#if most_recent_updated_by.display_name}}
+              – {{ most_recent_updated_by.display_name }}
             {{/if}}
+          </span>
+        </td>
+
+      </tr>
+
+      {{#each work_docs}}
+        <tr data-work="{{ ../frbr_uri }}" class="d-none">
+          <td class="document">
+            {{#if draft}}
+              <i class="fa fa-fw fa-circle published" title="published"></i>
+            {{else}}
+              <i class="fa fa-fw fa-circle draft" title="draft"></i>
+            {{/if}}
+            <a href="/documents/{{ id }}">{{ title }}</a>
           </td>
-          <td>{{ year }} / {{ number }}</td>
+          <td>@ {{ expression_date }}</td>
+          <td>{{ language }}</td>
+          <td colspan="2">&nbsp;</td>
           <td>
             <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-            <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
-          </td>
-        </tr>
-      {{/unless}}
-
-      {{#each docs}}
-        <tr {{#unless @first}}class="amended-version"{{/unless}}>
-          <td>
-            {{#if draft}}
-              <i class="fa fa-fw fa-circle draft" title="draft"></i>
-            {{else}}
-              <i class="fa fa-fw fa-circle published" title="published"></i>
-            {{/if}}
-
-            {{#if @first}}
-              <a href="/documents/{{ id }}/">{{ title }}</a>
-              <span class="text-muted">as at {{ expression_date }}</span>
-            {{else}}
-              <a href="/documents/{{ id }}/">{{ title }} as at {{ expression_date }}</a>
-            {{/if}}
-
-            {{#if ../repealed_date}}
-              <span class="badge badge-info">repealed</span>
-            {{/if}}
-
-            {{#if stub}}
-              <span class="badge badge-info">stub</span>
-            {{/if}}
-
-            {{#each tags}}
-              <span class="badge badge-secondary">{{this}}</span>
-            {{/each}}
-          </td>
-          <td>{{#if @first}}{{ year }} / {{ number }}{{/if}}</td>
-          <td>
-            {{#if @first}}
-              <span class="time-ago" data-timestamp="{{ ../updated_at }}">{{ ../updated_at }}</span>
-            {{else}}
-              <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-            {{/if}}
-            <span class="text-muted">{{#if updated_by_user.display_name}}- {{ updated_by_user.display_name }}{{/if}}</span>
+            <span class="text-muted">
+              {{#if updated_by_user.display_name}}
+                – {{ updated_by_user.display_name }}
+              {{/if}}
+            </span>
           </td>
         </tr>
       {{/each}}
     {{/each}}
   </tbody>
+
   <tfoot>
     <tr>
-      <td class="active" colspan="5">{{ count }} works</td>
+      <td class="active" colspan="6">{{ count }} works</td>
     </tr>
   </tfoot>
 </table>
@@ -127,10 +153,10 @@
 {{/if}}
 
 <section>
-  <label>Nature</label>
-  <select class="form-control filter-nature" name="nature-filter">
-    {{#each summary.natures}}
-      <option {{#if active}}selected{{/if}} value="{{nature}}">{{name}} ({{count}})</option>
+  <label>Type</label>
+  <select class="form-control filter-subtype" name="subtype-filter">
+    {{#each summary.subtypes}}
+      <option {{#if active}}selected{{/if}} value="{{subtype}}">{{name}} ({{count}})</option>
     {{/each}}
   </select>
 </section>

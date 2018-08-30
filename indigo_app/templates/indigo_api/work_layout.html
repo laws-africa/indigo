@@ -93,7 +93,7 @@
   {% if countries_json %}
   window.Indigo.countries = {{ countries_json|safe }};
   {% endif %}
-  window.Indigo.Preloads.country_code = '{{ user.editor.country_code }}';
+  window.Indigo.Preloads.country_code = '{{ work.country.code }}';
   window.Indigo.Preloads.work = {{ work_json|safe }};
   </script>
 

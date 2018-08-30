@@ -14,7 +14,7 @@ from ..serializers import PublishedDocumentSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..atom import AtomRenderer, AtomFeed
 
-from .documents import DocumentViewMixin, DocumentResourceView
+from .documents import DocumentViewMixin, DocumentResourceView, SearchView
 from .attachments import view_attachment_by_filename, MediaAttachmentSerializer
 from ..models import Attachment, Country
 
@@ -41,7 +41,13 @@ class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
         return queryset.filter(document=self.document).all()
 
 
+class PublicAPIMixin(object):
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+
+
 class PublishedDocumentDetailView(DocumentViewMixin,
+                                  PublicAPIMixin,
                                   mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
@@ -70,8 +76,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
-    permission_classes = (IsAuthenticated, PublishedDocumentPermission)
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
@@ -305,3 +309,20 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         if not self.frbr_uri.language:
             self.frbr_uri.language = self.frbr_uri.default_language
+
+
+class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
+    """ Search published documents.
+    """
+    filter_fields = None
+    serializer_class = PublishedDocumentSerializer
+    scope = 'works'
+
+    def get_queryset(self):
+        try:
+            country = Country.for_code(self.kwargs['country'])
+        except Country.DoesNotExist:
+            raise Http404
+
+        queryset = super(PublishedDocumentSearchView, self).get_queryset()
+        return queryset.published().filter(work__country=country)

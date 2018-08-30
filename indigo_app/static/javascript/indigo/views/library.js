@@ -430,11 +430,11 @@
 
         work.most_recent_updated_by = most_recently_updated.updated_by_user;
 
-        for (var work_doc of work_docs) {
+        work_docs.forEach(function(work_doc) {
           if (work_doc.updated_by_user && work_doc.updated_by_user.id === currentUserId) {
             work_doc.updated_by_user.display_name = 'you';
-          };
-        }
+          }
+        });
 
         // docs for work (used to check for empty works)
         work.work_docs = work_docs;

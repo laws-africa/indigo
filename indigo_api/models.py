@@ -97,14 +97,6 @@ class WorkQuerySet(models.QuerySet):
         return work
 
 
-class WorkManager(models.Manager):
-    def get_queryset(self):
-        # defer expensive or unnecessary fields
-        return super(WorkManager, self)\
-            .get_queryset()\
-            .prefetch_related('country', 'country__country')
-
-
 class Work(models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
     allows us to track works that we don't have documents for, and provides a
@@ -146,7 +138,7 @@ class Work(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
-    objects = WorkManager.from_queryset(WorkQuerySet)()
+    objects = WorkQuerySet.as_manager()
 
     _work_uri = None
     _repeal = None
@@ -328,7 +320,7 @@ class DocumentManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(DocumentManager, self)\
             .get_queryset()\
-            .prefetch_related('work', 'language__language')\
+            .prefetch_related('work')\
             .defer("search_text", "search_vector")
 
 

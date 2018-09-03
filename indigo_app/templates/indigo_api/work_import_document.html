@@ -17,6 +17,17 @@
           </h4>
 
           <section class="card numbered mb-3" data-num="1">
+            <h5 class="card-header">What language is the document in?</h5>
+            <div class="card-body">
+              <select name="language" class="form-control">
+                {% for opt in indigo_languages %}
+                  <option value="{{ opt.code }}" {% if language == opt.code %}selected{% endif %}>{{ opt}}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </section>
+
+          <section class="card numbered mb-3" data-num="2">
             <div class="card-body">
               <p class="alert alert-danger" style="display: none"></p>
 
@@ -41,7 +52,7 @@
       <div class="row">
         <div class="offset-md-2 col-md-8">
 
-          <section class="card numbered mb-3 mt-3" data-num="2">
+          <section class="card numbered mb-3 mt-3" data-num="3">
             <h5 class="card-header">What do section titles look like?</h5>
             <div class="card-body">
               <div class="row">
@@ -81,7 +92,7 @@
             </div>
           </section>
 
-          <section class="card numbered mb-3 mt-3" data-num="3">
+          <section class="card numbered mb-3 mt-3" data-num="4">
             <button type="button" class="btn btn-success import" disabled="disabled">Go for it!</button>
           </section>
         </div>

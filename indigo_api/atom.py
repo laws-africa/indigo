@@ -104,7 +104,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
             handler.addQuickElement("im:commencement-date", doc.commencement_date.isoformat())
 
         if doc.publication_date:
-            handler.addQuickElement("im:publication-date", doc.publication_date)
+            handler.addQuickElement("im:publication-date", doc.publication_date.isoformat())
         if doc.publication_name:
             handler.addQuickElement("im:publication-name", doc.publication_name)
         if doc.publication_number:

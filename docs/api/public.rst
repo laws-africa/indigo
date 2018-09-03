@@ -400,26 +400,16 @@ Search
 
 .. code:: http
 
-    GET /api/search/works?q=<search-term>
+    GET /api/search/<country>?q=<search-term>
 
+* Where `<country>` is a two-letter country code
 * Parameter ``q``: the search string
-* Filter parameters:
-
-  * ``country``
-  * ``draft``
-  * ``frbr_uri``, ``frbr_uri__startswith``
-  * ``language``
-  * ``stub``
-  * ``expression_date``, ``expression_date__lte``, ``expression_date__gte``
-
 * Content types: JSON
 
-This API searches through works (acts). It returns all works that match the
-search term, in search rank order. Each result also has a numeric ``_rank`` and
-an HTML ``_snippet`` with highlighted results.
-
-Use additional parameters to filter the search results.
+This API searches for works in a country. It returns all works that match the
+search term in either their title or their body.  Results are returned in
+search rank order.  Each result also has a numeric ``_rank`` and an HTML
+``_snippet`` with highlighted results.
 
 If more than one expression of a particular work matches the search, then only
-the most recent matching expression is returned. If you would like all
-matching documents, use the ``/api/search/documents`` search API.
+the most recent matching expression is returned.

@@ -481,9 +481,11 @@ class ImportDocumentView(AbstractWorkDetailView):
         context = super(ImportDocumentView, self).get_context_data(**kwargs)
 
         work = self.object
-        doc = Document(frbr_uri=work.frbr_uri or '/')
+        doc = Document(frbr_uri=work.frbr_uri, work=work)
+
         context['document'] = doc
         context['form'] = DocumentForm(instance=doc)
+        context['language'] = self.request.GET.get('language') or work.country.primary_language.code
 
         return context
 

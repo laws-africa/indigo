@@ -136,7 +136,6 @@
 
       // are we starting with an injected expression details?
       this.expression_date = Indigo.queryParams.expression_date;
-      this.language = Indigo.queryParams.language;
     },
 
     dragover: function(e) {
@@ -270,7 +269,7 @@
       formData.append('file_options..section_number_position',
                       this.$('[name="file_options.section_number_position"]:checked').val());
       formData.append('expression_date', this.expression_date);
-      formData.append('language', this.language);
+      formData.append('language', this.$('[name=language]').val());
       // cropbox info?
       if (this.scale) formData.append('file_options..cropbox', this.cropBoxView.calculateCropBox(this.scale));
 

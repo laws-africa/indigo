@@ -11,7 +11,7 @@ from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated, AllowAny
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import FrbrUri
@@ -357,26 +357,24 @@ class LinkReferencesView(APIView):
 
 
 class SearchView(DocumentViewMixin, ListAPIView):
-    """ Search!
+    """ Search and return either works, or documents, depending on `scope`.
+
+    This view drives in-app search and returns works.
     """
     serializer_class = DocumentSerializer
     pagination_class = SearchPagination
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
-    permission_classes = (AllowAny,)
+    permission_classes = (DjangoModelPermissions,)
 
     # Search scope, either 'documents' or 'works'.
-    scope = 'documents'
+    scope = 'works'
 
     def filter_queryset(self, queryset):
         query = SearchQuery(self.request.query_params.get('q'))
 
         queryset = super(SearchView, self).filter_queryset(queryset)
         queryset = queryset.filter(search_vector=query)
-
-        # anonymous users can't see drafts
-        if not self.request.user.is_authenticated:
-            queryset = queryset.filter(draft=False)
 
         if self.scope == 'works':
             # Search for distinct works, which means getting the latest
@@ -404,7 +402,6 @@ class SearchView(DocumentViewMixin, ListAPIView):
 
         # add _rank and _snippet to the serialized docs
         for i, doc in enumerate(queryset):
-            assert doc.id == serializer.data[i]['id']
             serializer.data[i]['_rank'] = doc.rank
             serializer.data[i]['_snippet'] = doc.snippet
 

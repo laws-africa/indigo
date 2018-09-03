@@ -30,6 +30,28 @@ class WorksTest(testcases.TestCase):
         response = self.client.get('/works/za/act/2010/1/amendments/')
         self.assertEqual(response.status_code, 200)
 
+    def test_create_edit_delete_amendment(self):
+        work = Work.objects.get(frbr_uri='/za/act/2010/1')
+
+        # create
+        response = self.client.post('/works/za/act/2010/1/amendments/new', {'amending_work': '2', 'date': '2015-01-01'})
+        self.assertEqual(response.status_code, 302)
+        amendment = work.amendments.all()[0]
+
+        self.assertEqual(amendment.amending_work.id, 2)
+        self.assertEqual(amendment.date.strftime("%Y-%m-%d"), '2015-01-01')
+
+        # edit
+        response = self.client.post('/works/za/act/2010/1/amendments/%s' % amendment.id, {'date': '2011-02-02'})
+        self.assertEqual(response.status_code, 302)
+        amendment = work.amendments.all()[0]
+        self.assertEqual(amendment.date.strftime("%Y-%m-%d"), '2011-02-02')
+
+        # delete
+        response = self.client.post('/works/za/act/2010/1/amendments/%s' % amendment.id, {'delete': ''})
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(len(work.amendments.all()), 0)
+
     def test_import_view(self):
         response = self.client.get('/works/za/act/2014/10/import/')
         self.assertEqual(response.status_code, 200)

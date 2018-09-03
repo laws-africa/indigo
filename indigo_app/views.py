@@ -317,6 +317,7 @@ class RestoreWorkVersionView(AbstractWorkDetailView):
     permission_required = ('indigo_api.change_work',)
 
     def post(self, request, frbr_uri, version_id):
+        self.object = self.get_object()
         version = self.work.versions().filter(pk=version_id).first()
         if not version:
             raise Http404()

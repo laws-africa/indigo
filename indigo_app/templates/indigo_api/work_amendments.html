@@ -58,13 +58,15 @@
               {% endif %}
 
               <div class="documents">
-                {% with amendment.expressions as documents %}
-                  {% if documents %}
-                    {% for document in documents %}
-                    <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
-                    {% endfor %}
-                  {% endif %}
-                {% endwith %}
+                {% block amendment-expressions %}
+                  {% with amendment.expressions as documents %}
+                    {% if documents %}
+                      {% for document in documents %}
+                      <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                {% endblock %}
               </div>
             </div>
 

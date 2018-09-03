@@ -11,12 +11,19 @@
           <li class="timeline-item card">
             <div class="card-body">
               <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+
+              <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
+                {% csrf_token %}
+
+                <input type="hidden" name="amending_work" value="">
+                <input type="hidden" name="date" value="">
+              </form>
             </div>
           </li>
         {% endif %}
 
         {% for amendment in work.amendments_with_initial %}
-          <li class="timeline-item card" data-date="{{ amendment.date|date:"c" }}" data-index="{{ forloop.index }}">
+          <li class="timeline-item card" data-date="{{ amendment.date|date:"c" }}" id="amendment-{{ amendment.id|default:'initial' }}">
             <h6 class="timeline-date">{{ amendment.date|date:"Y-m-d" }}</h6>
 
             <div class="card-body">
@@ -54,16 +61,14 @@
                 {% with amendment.expressions as documents %}
                   {% if documents %}
                     {% for document in documents %}
-                    <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language.code }}</div>
+                    <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
                     {% endfor %}
-                  {% else %}
-                    <span class="text-muted">No editable version at this date</span>
                   {% endif %}
                 {% endwith %}
               </div>
             </div>
 
-            <div class="card-footer text-right">
+            <div class="card-footer">
               <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil-alt"></i> Create amended version</button>
               <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ amendment.date|date:"Y-M-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
             </div>
@@ -82,15 +87,4 @@
   </div>
   {% endverbatim %}
   </script>
-{% endblock %}
-
-{% block js %}
-  {{ block.super }}
-
-  {# include the document as JSON #}
-  <script type="text/javascript">
-  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
-  window.Indigo.Preloads.documents = {{ documents_json|safe }};
-  </script>
-
 {% endblock %}

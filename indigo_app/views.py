@@ -8,7 +8,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView, UpdateView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
@@ -98,7 +98,7 @@ class LibraryView(AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
+class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
     model = Work
     context_object_name = 'work'
     # load work based on the frbr_uri
@@ -114,7 +114,7 @@ class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
         return self.object
 
     def get_context_data(self, **kwargs):
-        context = super(AbstractWorkView, self).get_context_data(**kwargs)
+        context = super(AbstractWorkDetailView, self).get_context_data(**kwargs)
 
         is_new = not self.work.frbr_uri
 
@@ -130,7 +130,7 @@ class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
         return context
 
 
-class WorkDetailView(AbstractWorkView):
+class WorkDetailView(AbstractWorkDetailView):
     js_view = 'WorkDetailView'
 
 
@@ -141,7 +141,7 @@ class AddWorkView(WorkDetailView):
         return work
 
 
-class WorkOverviewView(AbstractWorkView):
+class WorkOverviewView(AbstractWorkDetailView):
     js_view = ''
     template_name_suffix = '_overview'
 
@@ -153,32 +153,13 @@ class WorkOverviewView(AbstractWorkView):
         return context
 
 
-class WorkAmendmentsView(AbstractWorkView):
+class WorkAmendmentsView(AbstractWorkDetailView):
     template_name_suffix = '_amendments'
 
-    def get_context_data(self, **kwargs):
-        context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
 
-        docs = DocumentViewSet.queryset.filter(work=self.work).all()
-        serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        context['documents_json'] = json.dumps(serializer.to_representation(docs))
-
-        serializer = WorkAmendmentSerializer(context={'request': self.request}, many=True)
-        amendments = self.work.amendments.prefetch_related('created_by_user', 'updated_by_user', 'amending_work')
-        context['amendments_json'] = json.dumps(serializer.to_representation(amendments))
-
-        return context
-
-
-class WorkAmendmentDetailView(AbstractWorkView, UpdateView):
-    http_method_names = ['post', 'delete']
-    model = Amendment
-    pk_url_kwarg = 'amendment_id'
-    fields = ['date']
-
-    # permissions
-    permission_required = ('indigo_api.change_amendment',)
-
+class WorkDependentMixin(object):
+    """ Mixin for views that hang off a work URL, using the frbr_uri URL kwarg.
+    """
     _work = None
 
     @property
@@ -187,32 +168,64 @@ class WorkAmendmentDetailView(AbstractWorkView, UpdateView):
             self._work = get_object_or_404(Work, frbr_uri=self.kwargs['frbr_uri'])
         return self._work
 
-    def get_success_url(self):
-        return reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+
+class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, UpdateView):
+    """ View to update or delete an emendment.
+    """
+    http_method_names = ['post']
+    model = Amendment
+    pk_url_kwarg = 'amendment_id'
+    fields = ['date']
 
     def get_queryset(self):
         return self.work.amendments
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_amendment',)
+        return ('indigo_api.change_amendment',)
 
     def post(self, request, *args, **kwargs):
         if 'delete' in request.POST:
             return self.delete(request, *args, **kwargs)
         return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
 
-    def get_permission_required(self):
-        if 'delete' in self.request.POST:
-            return ('indigo_api.delete_amendment',)
-        return super(WorkAmendmentDetailView, self).get_permission_required()
-
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
-        success_url = self.get_success_url()
         if self.object.can_delete():
             self.object.delete()
+        return HttpResponseRedirect(self.get_success_url())
 
-        return HttpResponseRedirect(success_url)
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object.id:
+            url += "#amendment-%s" % self.object.id
+        return url
 
 
-class WorkRelatedView(AbstractWorkView):
+class AddWorkAmendmentView(AbstractAuthedIndigoView, WorkDependentMixin, CreateView):
+    """ View to add a new amendment.
+    """
+    model = Amendment
+    fields = ['date', 'amending_work']
+    permission_required = ('indigo_api.add_amendment',)
+
+    def get_form_kwargs(self):
+        kwargs = super(AddWorkAmendmentView, self).get_form_kwargs()
+        kwargs['instance'] = Amendment(amended_work=self.work)
+        return kwargs
+
+    def form_invalid(self, form):
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object:
+            url = url + "#amendment-%s" % self.object.id
+        return url
+
+
+class WorkRelatedView(AbstractWorkDetailView):
     js_view = ''
     template_name_suffix = '_related'
 
@@ -279,7 +292,7 @@ class WorkRelatedView(AbstractWorkView):
         return context
 
 
-class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
+class WorkVersionsView(AbstractWorkDetailView, MultipleObjectMixin):
     js_view = ''
     template_name_suffix = '_versions'
     object_list = None
@@ -299,7 +312,7 @@ class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
         return context
 
 
-class RestoreWorkVersionView(AbstractWorkView):
+class RestoreWorkVersionView(AbstractWorkDetailView):
     http_method_names = ['post']
     permission_required = ('indigo_api.change_work',)
 
@@ -458,7 +471,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         return date
 
 
-class ImportDocumentView(AbstractWorkView):
+class ImportDocumentView(AbstractWorkDetailView):
     template_name = 'indigo_api/work_import_document.html'
     permission_required = ('indigo_api.view_work', 'indigo_api.add_document')
     js_view = 'ImportView'

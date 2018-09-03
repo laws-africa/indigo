@@ -269,6 +269,19 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
+    def amendments_with_initial(self):
+        """ Return a list of Amendment objects, including a fake one at the end
+        that represents the initial point-in-time.
+        """
+        initial = Amendment(amended_work=self, date=self.publication_date)
+        initial.initial = True
+
+        amendments = list(self.amendments.all())
+        amendments.insert(0, initial)
+        amendments.reverse()
+
+        return amendments
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -305,6 +318,9 @@ class Amendment(models.Model):
         """ The amended work's documents (expressions) at this date.
         """
         return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
+
+    def can_delete(self):
+        return not self.expressions().exists()
 
 
 @receiver(signals.post_save, sender=Amendment)

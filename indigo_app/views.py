@@ -12,7 +12,7 @@ from django.views.generic import DetailView, TemplateView, FormView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, HttpResponseRedirect
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 from cobalt.act import FrbrUri
 from datetime import datetime
@@ -109,15 +109,18 @@ class AbstractWorkView(AbstractAuthedIndigoView, DetailView):
     # permissions
     permission_required = ('indigo_api.view_work',)
 
+    @property
+    def work(self):
+        return self.object
+
     def get_context_data(self, **kwargs):
         context = super(AbstractWorkView, self).get_context_data(**kwargs)
 
-        work = self.object
-        is_new = not work.frbr_uri
+        is_new = not self.work.frbr_uri
 
-        context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=work, context={'request': self.request}).data)
-        context['country'] = work.country
-        context['locality'] = None if is_new else context['country'].work_locality(work)
+        context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        context['country'] = self.work.country
+        context['locality'] = None if is_new else context['country'].work_locality(self.work)
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
@@ -145,8 +148,7 @@ class WorkOverviewView(AbstractWorkView):
     def get_context_data(self, **kwargs):
         context = super(WorkOverviewView, self).get_context_data(**kwargs)
 
-        work = self.object
-        context['versions'] = decorate_versions(work.versions()[:3])
+        context['versions'] = decorate_versions(self.work.versions()[:3])
 
         return context
 
@@ -157,17 +159,57 @@ class WorkAmendmentsView(AbstractWorkView):
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
 
-        work = self.object
-
-        docs = DocumentViewSet.queryset.filter(work=work).all()
+        docs = DocumentViewSet.queryset.filter(work=self.work).all()
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
         serializer = WorkAmendmentSerializer(context={'request': self.request}, many=True)
-        amendments = work.amendments.prefetch_related('created_by_user', 'updated_by_user', 'amending_work')
+        amendments = self.work.amendments.prefetch_related('created_by_user', 'updated_by_user', 'amending_work')
         context['amendments_json'] = json.dumps(serializer.to_representation(amendments))
 
         return context
+
+
+class WorkAmendmentDetailView(AbstractWorkView, UpdateView):
+    http_method_names = ['post', 'delete']
+    model = Amendment
+    pk_url_kwarg = 'amendment_id'
+    fields = ['date']
+
+    # permissions
+    permission_required = ('indigo_api.change_amendment',)
+
+    _work = None
+
+    @property
+    def work(self):
+        if not self._work:
+            self._work = get_object_or_404(Work, frbr_uri=self.kwargs['frbr_uri'])
+        return self._work
+
+    def get_success_url(self):
+        return reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+
+    def get_queryset(self):
+        return self.work.amendments
+
+    def post(self, request, *args, **kwargs):
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
+        return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_amendment',)
+        return super(WorkAmendmentDetailView, self).get_permission_required()
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        if self.object.can_delete():
+            self.object.delete()
+
+        return HttpResponseRedirect(success_url)
 
 
 class WorkRelatedView(AbstractWorkView):
@@ -177,23 +219,21 @@ class WorkRelatedView(AbstractWorkView):
     def get_context_data(self, **kwargs):
         context = super(WorkRelatedView, self).get_context_data(**kwargs)
 
-        work = self.object
-
         # parents and children
         family = []
-        if work.parent_work:
+        if self.work.parent_work:
             family.append({
                 'rel': 'child of',
-                'work': work.parent_work,
+                'work': self.work.parent_work,
             })
         family = family + [{
             'rel': 'parent of',
             'work': w,
-        } for w in work.child_works.all()]
+        } for w in self.work.child_works.all()]
         context['family'] = family
 
         # amended works
-        amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').order_by('amended_work__frbr_uri').all()
+        amended = Amendment.objects.filter(amending_work=self.work).prefetch_related('amended_work').order_by('amended_work__frbr_uri').all()
         amended = [{
             'rel': 'amends',
             'work': a.amended_work,
@@ -201,7 +241,7 @@ class WorkRelatedView(AbstractWorkView):
         context['amended'] = amended
 
         # amending works
-        amended_by = Amendment.objects.filter(amended_work=work).prefetch_related('amending_work').order_by('amending_work__frbr_uri').all()
+        amended_by = Amendment.objects.filter(amended_work=self.work).prefetch_related('amending_work').order_by('amending_work__frbr_uri').all()
         amended_by = [{
             'rel': 'amended by',
             'work': a.amending_work,
@@ -210,28 +250,28 @@ class WorkRelatedView(AbstractWorkView):
 
         # repeals
         repeals = []
-        if work.repealed_by:
+        if self.work.repealed_by:
             repeals.append({
                 'rel': 'repealed by',
-                'work': work.repealed_by,
+                'work': self.work.repealed_by,
             })
         repeals = repeals + [{
             'rel': 'repeals',
             'work': w,
-        } for w in work.repealed_works.all()]
+        } for w in self.work.repealed_works.all()]
         context['repeals'] = repeals
 
         # commencement
         commencement = []
-        if work.commencing_work:
+        if self.work.commencing_work:
             commencement.append({
                 'rel': 'commenced by',
-                'work': work.commencing_work,
+                'work': self.work.commencing_work,
             })
         commencement = commencement + [{
             'rel': 'commenced',
             'work': w,
-        } for w in work.commenced_works.all()]
+        } for w in self.work.commenced_works.all()]
         context['commencement'] = commencement
 
         context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)
@@ -247,9 +287,8 @@ class WorkVersionsView(AbstractWorkView, MultipleObjectMixin):
 
     def get_context_data(self, **kwargs):
         context = super(WorkVersionsView, self).get_context_data(**kwargs)
-        work = self.object
 
-        paginator, page, versions, is_paginated = self.paginate_queryset(work.versions(), self.page_size)
+        paginator, page, versions, is_paginated = self.paginate_queryset(self.work.versions(), self.page_size)
         context.update({
             'paginator': paginator,
             'page': page,
@@ -265,8 +304,7 @@ class RestoreWorkVersionView(AbstractWorkView):
     permission_required = ('indigo_api.change_work',)
 
     def post(self, request, frbr_uri, version_id):
-        work = self.get_object()
-        version = work.versions().filter(pk=version_id).first()
+        version = self.work.versions().filter(pk=version_id).first()
         if not version:
             raise Http404()
 
@@ -277,9 +315,9 @@ class RestoreWorkVersionView(AbstractWorkView):
         messages.success(request, 'Restored version %s' % version.id)
 
         # signals
-        work_changed.send(sender=work.__class__, work=work, request=request)
+        work_changed.send(sender=self.work.__class__, work=self.work, request=request)
 
-        url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': work.frbr_uri})
+        url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
         return redirect(url)
 
 

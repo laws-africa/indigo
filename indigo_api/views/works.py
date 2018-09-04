@@ -87,7 +87,7 @@ class WorkViewSet(viewsets.ModelViewSet):
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class WorkAmendmentViewSet(WorkResourceView, viewsets.ModelViewSet):
+class WorkAmendmentViewSet(WorkResourceView, viewsets.ReadOnlyModelViewSet):
     queryset = Amendment.objects.prefetch_related('amending_work', 'created_by_user', 'updated_by_user')
     serializer_class = WorkAmendmentSerializer
     permission_classes = (DjangoModelPermissions,)

@@ -92,7 +92,7 @@ class WorkDetailView(AbstractWorkDetailView):
 
 
 class AddWorkView(WorkDetailView):
-    def get_object(self, *args, **kwargs):
+    def get_object(self, queryset=None):
         work = Work()
         work.country = self.request.user.editor.country
         return work

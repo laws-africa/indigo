@@ -738,22 +738,13 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Amendment
         fields = (
-            # readonly, url is part of the rest framework
+            # url is part of the rest framework
             'id', 'url',
             'amending_work', 'date',
             'updated_by_user', 'created_by_user',
             'created_at', 'updated_at',
         )
-        read_only_fields = ('created_at', 'updated_at')
-
-    def create(self, validated_data):
-        validated_data['created_by_user'] = self.context['request'].user
-        validated_data['amended_work'] = self.context['work']
-        return super(WorkAmendmentSerializer, self).create(validated_data)
-
-    def update(self, instance, validated_data):
-        validated_data['updated_by_user'] = self.context['request'].user
-        return super(WorkAmendmentSerializer, self).update(instance, validated_data)
+        read_only_fields = fields
 
     def get_url(self, instance):
         if not instance.pk:

@@ -190,6 +190,12 @@ class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, Upda
             return self.delete(request, *args, **kwargs)
         return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
 
+    def form_valid(self, form):
+        result = super(WorkAmendmentDetailView, self).form_valid(form)
+        self.object.updated_by_user = self.request.user
+        self.object.save()
+        return result
+
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.can_delete():
@@ -213,6 +219,8 @@ class AddWorkAmendmentView(AbstractAuthedIndigoView, WorkDependentMixin, CreateV
     def get_form_kwargs(self):
         kwargs = super(AddWorkAmendmentView, self).get_form_kwargs()
         kwargs['instance'] = Amendment(amended_work=self.work)
+        kwargs['instance'].created_by_user = self.request.user
+        kwargs['instance'].updated_by_user = self.request.user
         return kwargs
 
     def form_invalid(self, form):

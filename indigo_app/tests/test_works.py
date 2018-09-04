@@ -37,6 +37,8 @@ class WorksTest(testcases.TestCase):
         response = self.client.post('/works/za/act/2010/1/amendments/new', {'amending_work': '2', 'date': '2015-01-01'})
         self.assertEqual(response.status_code, 302)
         amendment = work.amendments.all()[0]
+        self.assertIsNotNone(amendment.created_by_user)
+        self.assertIsNotNone(amendment.updated_by_user)
 
         self.assertEqual(amendment.amending_work.id, 2)
         self.assertEqual(amendment.date.strftime("%Y-%m-%d"), '2015-01-01')

@@ -28,7 +28,7 @@ class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
     context_object_name = 'user'
     template_name = 'indigo_app/user_account/api.html'
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         return self.request.user
 
     def post(self, request):
@@ -44,7 +44,7 @@ class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
     fields = ('accepted_terms',)
     must_accept_terms = False
 
-    def get_object(self):
+    def get_object(self, queryset=None):
         return self.request.user.editor
 
     def get_success_url(self):

@@ -3,7 +3,7 @@ import json
 from django.views.generic import DetailView
 from django.http import Http404
 
-from indigo_api.models import Document, Work, Language, Country, Subtype
+from indigo_api.models import Document, Work, Country, Subtype
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 
@@ -51,10 +51,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
             .to_representation(doc.work.amendments))
 
         context['form'] = DocumentForm(instance=doc)
-        context['countries'] = Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country').all()
-        context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
         context['subtypes'] = Subtype.objects.order_by('name').all()
-        context['languages'] = Language.objects.select_related('language').all()
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
         context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))

@@ -23,8 +23,7 @@ class RefsFinderENG(BaseRefsFinder):
 
     def make_href(self, match):
         if 'Constitution' in match.group(0):
-            # hardcoded uri for Constitution in English -- update once ready
-            return '/za/act/2017/ti2bp'
+            return '/za/act/1996/constitution'
         else:
             return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group(3), match.group(2))
 
@@ -47,7 +46,6 @@ class RefsFinderAFR(BaseRefsFinder):
 
     def make_href(self, match):
         if 'Grondwet' in match.group(0):
-            # hardcoded uri for Constitution in Afrikaans -- update once ready
-            return '/za/act/2017/a9h7s/'
+            return '/za/act/1996/constitution'
         else:
             return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group(3), match.group(2))

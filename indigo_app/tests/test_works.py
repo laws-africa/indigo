@@ -1,3 +1,5 @@
+import datetime
+
 from django.test import testcases, override_settings
 import reversion
 
@@ -6,7 +8,7 @@ from indigo_api.models import Work
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorksTest(testcases.TestCase):
-    fixtures = ['countries', 'work', 'editor', 'user']
+    fixtures = ['countries', 'work', 'editor', 'user', 'drafts']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
@@ -81,3 +83,27 @@ class WorksTest(testcases.TestCase):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
         response = self.client.post('/works/za/act/2014/10/revisions/%s/restore' % version.id)
         self.assertEqual(response.status_code, 302)
+
+    def test_create_new_pit_with_existing(self):
+        response = self.client.post('/works/za/act/2014/10/points-in-time/new', {
+            'expression_date': '2019-01-01',
+            'language': '1',
+        })
+        self.assertEqual(response.status_code, 302)
+
+        work = Work.objects.get(pk=1)
+        doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
+        self.assertEqual(doc.draft, True)
+        self.assertIn('tester', doc.content)
+
+    def test_create_pit_without_existing(self):
+        response = self.client.post('/works/za/act/2014/10/points-in-time/new', {
+            'expression_date': '2019-01-01',
+            'language': '2',
+        })
+        self.assertEqual(response.status_code, 302)
+
+        work = Work.objects.get(pk=1)
+        doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
+        self.assertEqual(doc.draft, True)
+        self.assertNotIn('tester', doc.content)

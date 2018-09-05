@@ -1,14 +1,11 @@
-from rest_framework.exceptions import MethodNotAllowed, ValidationError
-from rest_framework import viewsets, status
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.generics import get_object_or_404
-from rest_framework.decorators import detail_route
-from rest_framework.response import Response
 from django_filters import rest_framework as filters
-import arrow
 
 from ..models import Work, Amendment
-from ..serializers import WorkSerializer, WorkAmendmentSerializer, DocumentSerializer
+from ..serializers import WorkSerializer, WorkAmendmentSerializer
 from ..authz import DocumentPermissions
 
 
@@ -66,25 +63,6 @@ class WorkViewSet(viewsets.ModelViewSet):
             self.permission_denied(self.request)
 
         super(WorkViewSet, self).perform_update(serializer)
-
-    @detail_route(methods=['POST'])
-    def expressions_at(self, request, *args, **kwargs):
-        """ Create a new document at exactly this expression date.
-        """
-        date = request.GET.get('date')
-        if not date:
-            raise ValidationError({'date': 'A valid date parameter must be provided.'})
-        try:
-            date = arrow.get(date).date()
-        except arrow.parser.ParserError:
-            raise ValidationError({'date': 'A valid date parameter must be provided.'})
-
-        work = self.get_object()
-        doc = work.create_expression_at(date)
-
-        serializer = DocumentSerializer(context={'request': request}, instance=doc)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class WorkAmendmentViewSet(WorkResourceView, viewsets.ReadOnlyModelViewSet):

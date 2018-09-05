@@ -71,8 +71,29 @@
             </div>
 
             <div class="card-footer">
-              <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil-alt"></i> Create amended version</button>
-              <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ amendment.date|date:"Y-M-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
+              {% block amendment-buttons %}
+
+                <form action="{% url 'new_work_point_in_time' frbr_uri=work.frbr_uri %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="expression_date" value="{{ amendment.date|date:"Y-m-d" }}">
+
+                  <div class="btn-group">
+                    <div class="dropdown mr-3">
+                      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-pencil-alt"></i> Create amended version
+                      </button>
+                      <div class="dropdown-menu">
+                        {% for language in indigo_languages %}
+                          <button type="submit" name="language" value="{{ language.id }}" class="dropdown-item">In {{ language }}</button>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                    <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ amendment.date|date:"Y-M-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
+                  </div>
+                </form>
+
+              {% endblock %}
             </div>
           </li>
         {% endfor %}

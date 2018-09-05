@@ -11,7 +11,6 @@
     el: '#work-amendments-view',
     events: {
       'click .add-amendment': 'addAmendment',
-      'click .create-expression': 'createExpression',
     },
 
     initialize: function() {
@@ -33,25 +32,6 @@
           form.submit();
         }
       });
-    },
-
-    createExpression: function(e) {
-      e.preventDefault();
-
-      // create an amended version of this document at a particular date
-      var date = $(e.target).closest('.timeline-item').data('date');
-
-      if (confirm('Create a new amended versiot at ' + date + '? Unsaved changes will be lost!')) {
-        Indigo.progressView.peg();
-
-        $.post(this.model.url() + '/expressions_at?date=' + date)
-          .done(function(doc) {
-            document.location = '/documents/' + doc.id + '/';
-          })
-          .fail(function() {
-            Indigo.progressView.unpeg();
-          });
-      }
     },
   });
 })(window);

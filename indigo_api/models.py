@@ -333,8 +333,13 @@ class Amendment(models.Model):
 
 
 @receiver(signals.post_save, sender=Amendment)
+@receiver(signals.pre_delete, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):
-    if not kwargs['raw']:
+    """ When an amendment is saved, update the expressions of the amended
+    work to ensure the details of the amendment (ie. the date) are stashed
+    correctly in the document.
+    """
+    if not kwargs.get('raw'):
         for doc in instance.amended_work.document_set.all():
             # forces call to doc.copy_attributes()
             doc.save()

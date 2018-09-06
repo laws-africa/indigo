@@ -6,7 +6,11 @@
 
 {% block main-content %}
 <main id="main-content" class="container-fluid">
-  <form class="import-form mt-3" method="POST" id="import-document">
+  <form class="import-form mt-3" method="POST" id="import-document" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.expression_date.as_hidden }}
+    {{ form.options.as_hidden }}
+
     <div class="file-inputs">
       <div class="row">
         <div class="offset-md-2 col-md-8">
@@ -16,12 +20,24 @@
             <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="far fa-question-circle"></i></a>
           </h4>
 
+          {% if form.errors or form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for field, error in form.errors.iteritems %}
+              <p>{{ field }}: {{ error }}</p>
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+
           <section class="card numbered mb-3" data-num="1">
             <h5 class="card-header">What language is the document in?</h5>
             <div class="card-body">
               <select name="language" class="form-control">
                 {% for opt in indigo_languages %}
-                  <option value="{{ opt.code }}" {% if language == opt.code %}selected{% endif %}>{{ opt}}</option>
+                  <option value="{{ opt.id }}" {% if opt.id == form.language.value %}selected{% endif %}>{{ opt }}</option>
                 {% endfor %}
               </select>
             </div>

@@ -1,21 +1,22 @@
 # -*- coding: utf-8 -*-
 
 import tempfile
-import os.path
 from mock import patch
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
+from django.core.files.base import ContentFile
 
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_api.renderers import PDFRenderer
+from indigo_api.models import Work, Attachment
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'work', 'colophon']
+    fixtures = ['countries', 'user', 'editor', 'work', 'colophon', 'drafts']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
@@ -361,56 +362,6 @@ class DocumentAPITest(APITestCase):
             },
         ], response.data['toc'])
 
-    def test_create_from_file(self):
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("""
-        Chapter 2
-        The Beginning
-        1. First Verse
-        (1) In the beginning
-        (2) There was nothing
-        """)
-        tmp_file.seek(0)
-        fname = os.path.basename(tmp_file.name)
-
-        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'}, format='multipart')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        # check the doc
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.data['draft'], True)
-        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
-        assert_equal(response.data['title'], 'Test Act')
-
-        # check the attachment
-        response = self.client.get('/api/documents/%s/attachments' % id)
-        assert_equal(response.status_code, 200)
-        results = response.data['results']
-
-        assert_equal(results[0]['mime_type'], 'text/plain')
-        assert_equal(results[0]['filename'], fname)
-        assert_equal(results[0]['url'],
-                     'http://testserver/api/documents/%s/attachments/%s' % (id, results[0]['id']))
-
-        # test media view
-        response = self.client.get('/api/documents/%s/media/%s' % (id, fname))
-        assert_equal(response.status_code, 200)
-
-    def test_create_from_docx(self):
-        fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
-        f = open(fname, 'r')
-
-        response = self.client.post('/api/documents', {'file': f, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'}, format='multipart')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        # check the doc
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.data['draft'], True)
-        assert_equal(response.data['frbr_uri'], '/za/act/1998/2')
-        assert_equal(response.data['title'], 'Test Act')
-
     def test_attachment_as_media(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
@@ -457,23 +408,19 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 403)
 
     def test_update_attachment(self):
-        # create a doc with an attachment
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("""
-        Chapter 2
-        The Beginning
-        1. First Verse
-        (1) In the beginning
-        (2) There was nothing
-        """)
-        tmp_file.seek(0)
+        # create an attachment for a doc
+        work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
+        doc = work.expressions().first()
 
-        response = self.client.post('/api/documents', {'file': tmp_file, 'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'}, format='multipart')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
+        attachment = Attachment(document=doc)
+        attachment.filename = "foo.txt"
+        attachment.size = 100
+        attachment.mime_type = "text/plain"
+        attachment.file.save("foo.txt", ContentFile("foo"))
+        attachment.save()
 
         # check the attachment
-        response = self.client.get('/api/documents/%s/attachments' % id)
+        response = self.client.get('/api/documents/%s/attachments' % doc.id)
         assert_equal(response.status_code, 200)
         data = response.data['results'][0]
         assert_equal(data['mime_type'], 'text/plain')

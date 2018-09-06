@@ -6,10 +6,11 @@ import shutil
 import logging
 
 from django.conf import settings
+from django.core.files.base import ContentFile
 import mammoth
 from cobalt.act import Fragment
 
-from indigo_api.models import Document
+from indigo_api.models import Document, Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
 
 
@@ -74,8 +75,8 @@ class Importer(LocaleBasedMatcher):
 
         if upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
             # pre-process docx to HTML and then import html
-            html = self.docx_to_html(upload)
-            doc = self.import_from_text(html, frbr_uri, '.html')
+            # first, stash images
+            doc = self.import_from_docx(upload, frbr_uri)
         elif upload.content_type == 'application/pdf':
             doc = self.import_from_pdf(upload, frbr_uri)
         else:
@@ -185,6 +186,53 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
-    def docx_to_html(self, docx_file):
-        result = mammoth.convert_to_html(docx_file)
-        return result.value
+
+    def import_from_docx(self, docx_file, frbr_uri):
+        """ We can create a mammoth image handler that stashes the binary data of the image
+        and returns an appropriate img attribute to be put into the HTML (and eventually xml).
+        Once the document is created, we can then create attachments with the stashed image data,
+        and set appropriate filenames.
+        """
+        info = {}
+        info['counter'] = 0
+        files = []
+
+        def stash_image(image):
+            info['counter'] += 1
+            counter = info['counter']
+            with image.open() as img:
+                content = img.read()
+                image_type = image.content_type
+                file_ext = image_type.split('/')[1]
+                files.append({
+                    'src': 'img{counter}.{extension}'.format(counter=counter, extension=file_ext),
+                    'content': content,
+                    'mime_type': image_type
+                })
+            return {
+                'src': files[counter-1]['src']
+            }
+
+        result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(stash_image))
+        html = result.value
+
+        doc = self.import_from_text(html, frbr_uri, '.html')
+
+        doc.save()
+
+        for f in files:
+            print 'Hi it\'s me, a file!'
+            print f['src']
+            print f['mime_type']
+
+            att = Attachment()
+            att.document = doc
+            filename = f['src']
+            att.mime_type = f['mime_type']
+            cf = ContentFile(f['content'])
+            att.size = cf.size
+            att.file.save(filename, cf)
+            att.save()
+
+        return doc
+

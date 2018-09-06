@@ -193,24 +193,25 @@ class Importer(LocaleBasedMatcher):
         Once the document is created, we can then create attachments with the stashed image data,
         and set appropriate filenames.
         """
-        info = {}
-        info['counter'] = 0
-        files = []
+        self.attachments = []
 
         def stash_image(image):
-            info['counter'] += 1
-            counter = info['counter']
+            num = len(self.attachments)+1
             with image.open() as img:
                 content = img.read()
                 image_type = image.content_type
                 file_ext = image_type.split('/')[1]
-                files.append({
-                    'src': 'img{counter}.{extension}'.format(counter=counter, extension=file_ext),
-                    'content': content,
-                    'mime_type': image_type
-                })
+
+                att = Attachment()
+                att.filename = 'img{num}.{extension}'.format(num=num, extension=file_ext)
+                att.mime_type = image_type
+                cf = ContentFile(content)
+                att.size = cf.size
+                att.content = cf
+                self.attachments.append(att)
+
             return {
-                'src': files[counter-1]['src']
+                'src': 'media/' + att.filename
             }
 
         result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(stash_image))
@@ -218,18 +219,9 @@ class Importer(LocaleBasedMatcher):
 
         doc = self.import_from_text(html, frbr_uri, '.html')
 
-        doc.save()
-
-        for f in files:
-            att = Attachment()
+        for att in self.attachments:
             att.document = doc
-            filename = f['src']
-            att.filename = filename
-            att.mime_type = f['mime_type']
-            cf = ContentFile(f['content'])
-            att.size = cf.size
-            att.file.save(filename, cf)
-            att.save()
+            att.file.save(att.filename, att.content, save=False)
 
         return doc
 

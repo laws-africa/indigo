@@ -10,14 +10,16 @@
         {% if perms.indigo_api.add_amendment %}
           <li class="timeline-item card">
             <div class="card-body">
-              <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+              {% block new-amendment-card %}
+                <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
 
-              <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
-                {% csrf_token %}
+                <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
+                  {% csrf_token %}
 
-                <input type="hidden" name="amending_work" value="">
-                <input type="hidden" name="date" value="">
-              </form>
+                  <input type="hidden" name="amending_work" value="">
+                  <input type="hidden" name="date" value="">
+                </form>
+              {% endblock %}
             </div>
           </li>
         {% endif %}

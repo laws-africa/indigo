@@ -272,25 +272,13 @@ class ParseView(APIView):
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
 
-        upload = self.request.data.get('file')
-        if upload:
-            # we got a file
-            try:
-                document = importer.import_from_upload(upload, frbr_uri.work_uri(), self.request)
-            except ValueError as e:
-                log.error("Error during import: %s" % e.message, exc_info=e)
-                raise ValidationError({'file': e.message or "error during import"})
-        else:
-            # plain text
-            try:
-                text = serializer.validated_data.get('content')
-                document = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
-            except ValueError as e:
-                log.error("Error during import: %s" % e.message, exc_info=e)
-                raise ValidationError({'content': e.message or "error during import"})
-
-        if not document:
-            raise ValidationError("Nothing to parse! Either 'file' or 'content' must be provided.")
+        # plain text
+        try:
+            text = serializer.validated_data.get('content')
+            document = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
+        except ValueError as e:
+            log.error("Error during import: %s" % e.message, exc_info=e)
+            raise ValidationError({'content': e.message or "error during import"})
 
         # output
         if fragment:

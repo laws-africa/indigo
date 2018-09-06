@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     # the Indigo act resolver
     'indigo_resolver',
     'indigo_slack',
+    'indigo_social',
 
     'allauth',
     'allauth.account',

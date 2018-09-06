@@ -19,7 +19,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Country
+from indigo_api.models import Subtype, Work, Amendment, Country, Document
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.signals import work_changed
@@ -485,30 +485,29 @@ class ImportDocumentView(AbstractWorkDetailView, BaseFormView):
         upload = data['file']
         opts = data.get('options', {})
 
-        importer = plugins.for_locale(
-            'importer', country=self.work.country, locality=self.work.locality, language=data['language'])
+        document = Document()
+        document.work = self.work
+        document.expression_date = data['expression_date']
+        document.language = data['language']
+        document.save()
 
+        importer = plugins.for_document('importer', document)
         importer.section_number_position = opts.get('section_number_position', 'guess')
+
         cropbox = opts.get('cropbox', None)
         if cropbox:
             cropbox = cropbox.split(',')
         importer.cropbox = cropbox
 
         try:
-            document = importer.import_from_upload(upload, self.work.frbr_uri, self.request)
+            importer.create_from_upload(upload, document, self.request)
         except ValueError as e:
             log.error("Error during import: %s" % e.message, exc_info=e)
             raise ValidationError(e.message or "error during import")
 
-        document.expression_date = data['expression_date']
-        document.language = data['language']
         document.created_by_user = self.request.user
         document.updated_by_user = self.request.user
         document.save()
-
-        # HACK to get attachments from during the import
-        attachments = getattr(importer, 'attachments', None) or []
-        document.attachments.add(*attachments, bulk=False)
 
         # add source file as an attachment
         AttachmentSerializer(context={'document': document}).create({'file': upload})

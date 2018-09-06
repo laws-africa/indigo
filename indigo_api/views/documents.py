@@ -15,6 +15,7 @@ from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import FrbrUri
+from cobalt.act import Base
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -272,19 +273,18 @@ class ParseView(APIView):
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
 
-        # plain text
         try:
             text = serializer.validated_data.get('content')
-            document = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
+            xml = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
         except ValueError as e:
             log.error("Error during import: %s" % e.message, exc_info=e)
             raise ValidationError({'content': e.message or "error during import"})
 
+        # parse and re-serialize the XML to ensure it's clean, and sort out encodings
+        xml = Base(xml).to_xml()
+
         # output
-        if fragment:
-            return Response({'output': document.to_xml()})
-        else:
-            return Response({'output': document.document_xml})
+        return Response({'output': xml})
 
 
 class RenderView(APIView):

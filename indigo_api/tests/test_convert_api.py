@@ -96,7 +96,7 @@ class RenderParseAPITest(APITestCase):
             'fragment': 'chapter',
             'id_prefix': 'prefix',
             'frbr_uri': '/za/act/1998/2',
-              'language': 'eng',
+            'language': 'eng',
         })
         assert_equal(response.status_code, 200)
         self.maxDiff = None

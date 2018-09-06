@@ -91,7 +91,7 @@
                       </div>
                     </div>
 
-                    <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ amendment.date|date:"Y-M-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
+                    <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ amendment.date|date:"Y-m-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
                   </div>
                 </form>
 

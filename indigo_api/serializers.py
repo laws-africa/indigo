@@ -408,7 +408,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             AttachmentSerializer(context={'document': document}).create({'file': source_file})
 
         # HACK to link attachments from the import process (eg. images)
-        document.attachments.add(*attachments)
+        document.attachments.add(*attachments, bulk=False)
 
         # reload it to ensure tags are refreshed and we have an id for new documents
         document = Document.objects.get(pk=document.id)

@@ -1,3 +1,5 @@
+import json
+
 from django import forms
 from django.core.validators import URLValidator
 from django.contrib.auth.models import User
@@ -6,8 +8,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document
-from indigo_app.models import Country
+from indigo_api.models import Document, Country, Language
 
 
 class DocumentForm(forms.ModelForm):
@@ -55,3 +56,18 @@ class BatchCreateWorkForm(forms.Form):
             regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
+
+
+class ImportDocumentForm(forms.Form):
+    file = forms.FileField()
+    language = forms.ModelChoiceField(Language.objects)
+    expression_date = forms.DateField()
+    # options as JSON data
+    options = forms.CharField(required=False)
+
+    def clean_options(self):
+        val = self.cleaned_data['options']
+        try:
+            return json.loads(val)
+        except ValueError:
+            raise forms.ValidationError("Invalid json data")

@@ -335,6 +335,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 importer.section_number_position = posn
                 importer.cropbox = cropbox
                 document = importer.import_from_upload(upload, frbr_uri, request)
+                # HACK to get attachments from during the import
+                data['attachments'] = getattr(importer, 'attachments', None)
             except ValueError as e:
                 log.error("Error during import: %s" % e.message, exc_info=e)
                 raise ValidationError({'file': e.message or "error during import"})
@@ -383,6 +385,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         source_file = validated_data.pop('source_file', None)
         tags = validated_data.pop('tags', None)
         draft = document.draft
+        # HACK to link attachments from the import process (eg. images)
+        attachments = validated_data.pop('attachments', None) or []
 
         self.update_document(document, validated_data)
 
@@ -402,6 +406,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if source_file:
             # add the source file as an attachment
             AttachmentSerializer(context={'document': document}).create({'file': source_file})
+
+        # HACK to link attachments from the import process (eg. images)
+        document.attachments.add(*attachments)
 
         # reload it to ensure tags are refreshed and we have an id for new documents
         document = Document.objects.get(pk=document.id)

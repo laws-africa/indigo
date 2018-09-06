@@ -221,13 +221,10 @@ class Importer(LocaleBasedMatcher):
         doc.save()
 
         for f in files:
-            print 'Hi it\'s me, a file!'
-            print f['src']
-            print f['mime_type']
-
             att = Attachment()
             att.document = doc
             filename = f['src']
+            att.filename = filename
             att.mime_type = f['mime_type']
             cf = ContentFile(f['content'])
             att.size = cf.size

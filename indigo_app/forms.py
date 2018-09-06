@@ -68,6 +68,6 @@ class ImportDocumentForm(forms.Form):
     def clean_options(self):
         val = self.cleaned_data['options']
         try:
-            return json.loads(val)
+            return json.loads(val or '{}')
         except ValueError:
             raise forms.ValidationError("Invalid json data")

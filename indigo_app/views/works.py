@@ -14,7 +14,7 @@ from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 from cobalt.act import FrbrUri
-from datetime import datetime
+import datetime
 import requests
 import unicodecsv as csv
 
@@ -439,7 +439,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         if string == '':
             date = None
         else:
-            date = datetime.strptime(string, '%Y-%m-%d')
+            date = datetime.datetime.strptime(string, '%Y-%m-%d')
         return date
 
 
@@ -460,7 +460,7 @@ class ImportDocumentView(AbstractWorkDetailView, BaseFormView):
 
     def get_initial(self):
         try:
-            date = datetime.strptime(self.request.GET.get('expression_date'), '%Y-%m-%d').date
+            date = datetime.datetime.strptime(self.request.GET.get('expression_date', ''), '%Y-%m-%d').date
         except ValueError:
             date = None
 
@@ -500,15 +500,17 @@ class ImportDocumentView(AbstractWorkDetailView, BaseFormView):
             log.error("Error during import: %s" % e.message, exc_info=e)
             raise ValidationError(e.message or "error during import")
 
+        document.expression_date = data['expression_date']
+        document.language = data['language']
+        document.created_by_user = self.request.user
+        document.updated_by_user = self.request.user
+        document.save()
+
         # HACK to get attachments from during the import
         attachments = getattr(importer, 'attachments', None) or []
         document.attachments.add(*attachments, bulk=False)
 
         # add source file as an attachment
         AttachmentSerializer(context={'document': document}).create({'file': upload})
-
-        document.created_by_user = self.request.user
-        document.updated_by_user = self.request.user
-        document.save()
 
         return JsonResponse({'location': reverse('document', kwargs={'doc_id': document.id})})

@@ -558,7 +558,6 @@ class ParseSerializer(serializers.Serializer):
     """
     Helper to handle input elements for the /parse API
     """
-    file = serializers.FileField(write_only=True, required=False)
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)

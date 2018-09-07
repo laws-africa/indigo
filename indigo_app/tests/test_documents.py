@@ -65,6 +65,7 @@ class LibraryTest(testcases.TestCase):
         doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertEqual(doc.title, 'Test Act')
+        self.assertIn('In the beginning', doc.content)
 
         # check the attachment
         response = self.client.get('/api/documents/%s/attachments' % doc.id)

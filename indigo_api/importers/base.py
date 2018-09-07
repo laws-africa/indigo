@@ -85,8 +85,8 @@ class Importer(LocaleBasedMatcher):
 
     def create_from_file(self, upload, doc):
         with self.tempfile_for_upload(upload) as f:
-            doc.document_xml = self.import_from_file(f.name, doc.frbr_uri)
-            doc.copy_attributes()
+            xml = self.import_from_file(f.name, doc.frbr_uri)
+            doc.reset_xml(xml, from_model=True)
 
     def import_from_text(self, input, frbr_uri, suffix=''):
         """ Create a new Document by importing it from plain text.
@@ -106,8 +106,8 @@ class Importer(LocaleBasedMatcher):
             if self.reformat:
                 text = self.reformat_text(text)
 
-        doc.document_xml = self.import_from_text(text, doc.frbr_uri, '.txt')
-        doc.copy_attributes()
+        xml = self.import_from_text(text, doc.frbr_uri, '.txt')
+        doc.reset_xml(xml, from_model=True)
 
     def pdf_to_text(self, f):
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
@@ -213,5 +213,5 @@ class Importer(LocaleBasedMatcher):
         result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(stash_image))
         html = result.value
 
-        doc.document_xml = self.import_from_text(html, doc.frbr_uri, '.html')
-        doc.copy_attributes()
+        xml = self.import_from_text(html, doc.frbr_uri, '.html')
+        doc.reset_xml(xml, from_model=True)

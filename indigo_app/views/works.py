@@ -515,10 +515,7 @@ class ImportDocumentView(AbstractWorkDetailView, BaseFormView):
         importer = plugins.for_document('importer', document)
         importer.section_number_position = opts.get('section_number_position', 'guess')
 
-        cropbox = opts.get('cropbox', None)
-        if cropbox:
-            cropbox = cropbox.split(',')
-        importer.cropbox = cropbox
+        importer.cropbox = opts.get('cropbox', None)
 
         try:
             importer.create_from_upload(upload, document, self.request)

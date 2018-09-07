@@ -227,12 +227,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
 
-    file = serializers.FileField(write_only=True, required=False)
-    """ Allow uploading a file to convert and override the content of the document. """
-
-    file_options = serializers.DictField(write_only=True, required=False)
-    """ Options when importing a new document using the +file+ field. """
-
     draft = serializers.BooleanField(default=True)
     language = serializers.CharField(source='language.code', required=True)
 
@@ -263,7 +257,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'content', 'file', 'file_options', 'title', 'draft',
+            'content', 'title', 'draft',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components
@@ -309,41 +303,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             },
         ]
 
-    def validate(self, data):
-        """
-        We allow callers to pass in a file upload in the ``file`` attribute,
-        and overwrite the content XML with that value if we can.
-        """
-        upload = data.pop('file', None)
-        if upload:
-            frbr_uri = self.validate_frbr_uri(data.get('frbr_uri'))
-
-            # we got a file
-            try:
-                # import options
-                opts = data.get('file_options', {})
-                posn = opts.get('section_number_position', 'guess')
-                cropbox = opts.get('cropbox', None)
-                if cropbox:
-                    cropbox = cropbox.split(',')
-                request = self.context['request']
-
-                country = data.get('country') or request.user.editor.country_code
-                # TODO: pass the language to the lookup, as well as to import_from_upload
-                importer = plugins.for_locale('importer', country, None, None)
-
-                importer.section_number_position = posn
-                importer.cropbox = cropbox
-                document = importer.import_from_upload(upload, frbr_uri, request)
-            except ValueError as e:
-                log.error("Error during import: %s" % e.message, exc_info=e)
-                raise ValidationError({'file': e.message or "error during import"})
-            data['content'] = document.content
-            # add the document as an attachment
-            data['source_file'] = upload
-
-        return data
-
     def validate_content(self, value):
         try:
             Act(value)
@@ -380,7 +339,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     def update(self, document, validated_data):
         """ Update and save document. """
-        source_file = validated_data.pop('source_file', None)
         tags = validated_data.pop('tags', None)
         draft = document.draft
 
@@ -398,10 +356,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # these require that the document is saved
         if tags is not None:
             document.tags.set(*tags)
-
-        if source_file:
-            # add the source file as an attachment
-            AttachmentSerializer(context={'document': document}).create({'file': source_file})
 
         # reload it to ensure tags are refreshed and we have an id for new documents
         document = Document.objects.get(pk=document.id)
@@ -558,7 +512,6 @@ class ParseSerializer(serializers.Serializer):
     """
     Helper to handle input elements for the /parse API
     """
-    file = serializers.FileField(write_only=True, required=False)
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)

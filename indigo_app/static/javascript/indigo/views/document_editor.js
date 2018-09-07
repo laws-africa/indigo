@@ -327,7 +327,7 @@
       var self = this;
       this.htmlTransformReady.then(function() {
         self.htmlTransform.setParameter(null, 'defaultIdScope', self.getFragmentIdScope() || '');
-        self.htmlTransform.setParameter(null, 'mediaUrl', self.parent.model.manifestationUrl());
+        self.htmlTransform.setParameter(null, 'mediaUrl', self.parent.model.manifestationUrl() + '/');
         self.htmlTransform.setParameter(null, 'lang', self.parent.model.get('language'));
         var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
 

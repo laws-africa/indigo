@@ -93,34 +93,6 @@ class WorkAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['repeal'], None)
 
-    def test_create_new_expression_with_existing(self):
-        response = self.client.post('/api/works/1/expressions_at?date=2019-01-01')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['draft'], True)
-        assert_equal(response.data['expression_date'], '2019-01-01')
-
-        response = self.client.get('/api/documents/%s/content' % id)
-        assert_equal(response.status_code, 200)
-        assert_in('tester', response.data['content'])
-
-    def test_create_new_expression_without_existing(self):
-        response = self.client.post('/api/works/6/expressions_at?date=2019-01-01')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['draft'], True)
-        assert_equal(response.data['expression_date'], '2019-01-01')
-
-        response = self.client.get('/api/documents/%s/content' % id)
-        assert_equal(response.status_code, 200)
-        assert_not_in('tester', response.data['content'])
-
     def test_filters(self):
         response = self.client.get('/api/works?country=za')
         assert_equal(response.status_code, 200)

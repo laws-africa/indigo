@@ -215,17 +215,18 @@ class Work(models.Model):
                 not self.commenced_works.exists() and
                 not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
-    def create_expression_at(self, date):
+    def create_expression_at(self, date, language=None):
         """ Create a new expression at a particular date.
 
         This uses an existing document at or before this date as a template, if available.
         """
+        language = language or self.country.primary_language
         doc = Document()
 
         # most recent expression at or before this date
         template = self.document_set\
             .undeleted()\
-            .filter(expression_date__lte=date)\
+            .filter(expression_date__lte=date, language=language)\
             .order_by('-expression_date')\
             .first()
 
@@ -234,7 +235,7 @@ class Work(models.Model):
             doc.content = template.content
 
         doc.draft = True
-        doc.language = self.country.primary_language
+        doc.language = language
         doc.expression_date = date
         doc.work = self
         doc.save()
@@ -332,8 +333,13 @@ class Amendment(models.Model):
 
 
 @receiver(signals.post_save, sender=Amendment)
+@receiver(signals.pre_delete, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):
-    if not kwargs['raw']:
+    """ When an amendment is saved, update the expressions of the amended
+    work to ensure the details of the amendment (ie. the date) are stashed
+    correctly in the document.
+    """
+    if not kwargs.get('raw'):
         for doc in instance.amended_work.document_set.all():
             # forces call to doc.copy_attributes()
             doc.save()

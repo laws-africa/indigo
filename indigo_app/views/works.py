@@ -9,7 +9,7 @@ from django.contrib import messages
 from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView
 from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
-from django.http import Http404, HttpResponseRedirect, JsonResponse
+from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
@@ -39,7 +39,7 @@ class LibraryView(AbstractAuthedIndigoView, TemplateView):
 
     def get(self, request, country=None, *args, **kwargs):
         if country is None:
-            return HttpResponseRedirect(reverse('library', kwargs={'country': request.user.editor.country_code}))
+            return redirect('library', country=request.user.editor.country_code)
         return super(LibraryView, self).get(request, country_code=country, *args, **kwargs)
 
     def get_context_data(self, country_code, **kwargs):
@@ -163,7 +163,7 @@ class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, Upda
         self.object = self.get_object()
         if self.object.can_delete():
             self.object.delete()
-        return HttpResponseRedirect(self.get_success_url())
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
@@ -194,6 +194,27 @@ class AddWorkAmendmentView(AbstractAuthedIndigoView, WorkDependentMixin, CreateV
         if self.object:
             url = url + "#amendment-%s" % self.object.id
         return url
+
+
+class AddWorkPointInTimeView(AbstractAuthedIndigoView, WorkDependentMixin, CreateView):
+    """ View to get or create a new point-in-time for a work, at a particular date
+    and in a particular language.
+    """
+    model = Document
+    fields = ['expression_date', 'language']
+    permission_required = ('indigo_api.add_document',)
+
+    def form_valid(self, form):
+        date = form.cleaned_data['expression_date']
+        language = form.cleaned_data['language']
+
+        # does one already exist?
+        doc = self.work.expressions().filter(expression_date=date, language=language).first()
+        if not doc:
+            # create a new one
+            doc = self.work.create_expression_at(date, language)
+
+        return redirect('document', doc_id=doc.id)
 
 
 class WorkRelatedView(AbstractWorkDetailView):

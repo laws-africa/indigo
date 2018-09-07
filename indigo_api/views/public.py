@@ -314,7 +314,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
     """ Search published documents.
     """
-    filter_fields = None
+    filter_fields = {
+        'frbr_uri': ['exact', 'startswith'],
+    }
     serializer_class = PublishedDocumentSerializer
     scope = 'works'
 

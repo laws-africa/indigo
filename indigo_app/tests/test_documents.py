@@ -38,6 +38,7 @@ class LibraryTest(testcases.TestCase):
         # check the doc
         doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
         self.assertEqual(doc.draft, True)
+        self.assertIn('accreditation', doc.content, msg='"accreditation" missing')
         self.assertEqual(len(doc.attachments.all()), 1)
 
     def test_create_from_file(self):

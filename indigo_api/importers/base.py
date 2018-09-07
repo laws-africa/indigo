@@ -190,8 +190,10 @@ class Importer(LocaleBasedMatcher):
         if doc.id is None:
             doc.save()
 
+        self.counter = 0
+
         def stash_image(image):
-            num = len(self.attachments) + 1
+            self.counter += 1
             with image.open() as img:
                 content = img.read()
                 image_type = image.content_type
@@ -199,7 +201,7 @@ class Importer(LocaleBasedMatcher):
                 cf = ContentFile(content)
 
                 att = Attachment()
-                att.filename = 'img{num}.{extension}'.format(num=num, extension=file_ext)
+                att.filename = 'img{num}.{extension}'.format(num=self.counter, extension=file_ext)
                 att.mime_type = image_type
                 att.document = doc
                 att.size = cf.size

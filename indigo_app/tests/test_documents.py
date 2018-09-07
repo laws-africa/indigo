@@ -39,7 +39,7 @@ class LibraryTest(testcases.TestCase):
         doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertIn('accreditation', doc.content, msg='"accreditation" missing')
-        self.assertEqual(len(doc.attachments.all()), 1)
+        self.assertEqual(len(doc.attachments.all()), 2)
 
     def test_create_from_file(self):
         work = Work.objects.get_for_frbr_uri('/za/act/1998/2')

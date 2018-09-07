@@ -2,28 +2,34 @@
 import json
 import io
 import re
+import logging
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView
+from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 from cobalt.act import FrbrUri
-from datetime import datetime
+import datetime
 import requests
 import unicodecsv as csv
 
-from indigo_api.models import Document, Subtype, Work, Amendment, Country
-from indigo_api.serializers import WorkSerializer, DocumentSerializer
+from indigo.plugins import plugins
+from indigo_api.models import Subtype, Work, Amendment, Country, Document
+from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import DocumentForm, BatchCreateWorkForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
 
 from .base import AbstractAuthedIndigoView
+
+
+log = logging.getLogger(__name__)
 
 
 class LibraryView(AbstractAuthedIndigoView, TemplateView):
@@ -454,23 +460,74 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         if string == '':
             date = None
         else:
-            date = datetime.strptime(string, '%Y-%m-%d')
+            date = datetime.datetime.strptime(string, '%Y-%m-%d')
         return date
 
 
-class ImportDocumentView(AbstractWorkDetailView):
+class ImportDocumentView(AbstractWorkDetailView, BaseFormView):
+    """ View to import a document as an expression for a work.
+
+    This behaves a bit differently to normal form submission. The client
+    submits the form via AJAX. If it's a success, we send them the location
+    to go to. If not, we send them form errors.
+
+    This gives a better experience than submitting the form natively, because
+    it allows us to handle errors without refreshing the whole page.
+    """
     template_name = 'indigo_api/work_import_document.html'
     permission_required = ('indigo_api.view_work', 'indigo_api.add_document')
     js_view = 'ImportView'
+    form_class = ImportDocumentForm
+
+    def get_initial(self):
+        try:
+            date = datetime.datetime.strptime(self.request.GET.get('expression_date', ''), '%Y-%m-%d').date
+        except ValueError:
+            date = None
+
+        return {
+            'language': self.work.country.primary_language,
+            'expression_date': date or datetime.date.today(),
+        }
 
     def get_context_data(self, **kwargs):
-        context = super(ImportDocumentView, self).get_context_data(**kwargs)
+        kwargs = super(ImportDocumentView, self).get_context_data(**kwargs)
+        return kwargs
 
-        work = self.object
-        doc = Document(frbr_uri=work.frbr_uri, work=work)
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super(ImportDocumentView, self).post(request, *args, **kwargs)
 
-        context['document'] = doc
-        context['form'] = DocumentForm(instance=doc)
-        context['language'] = self.request.GET.get('language') or work.country.primary_language.code
+    def form_invalid(self, form):
+        return JsonResponse(form.errors, status=400)
 
-        return context
+    def form_valid(self, form):
+        data = form.cleaned_data
+        upload = data['file']
+        opts = data.get('options', {})
+
+        document = Document()
+        document.work = self.work
+        document.expression_date = data['expression_date']
+        document.language = data['language']
+        document.save()
+
+        importer = plugins.for_document('importer', document)
+        importer.section_number_position = opts.get('section_number_position', 'guess')
+
+        importer.cropbox = opts.get('cropbox', None)
+
+        try:
+            importer.create_from_upload(upload, document, self.request)
+        except ValueError as e:
+            log.error("Error during import: %s" % e.message, exc_info=e)
+            raise ValidationError(e.message or "error during import")
+
+        document.created_by_user = self.request.user
+        document.updated_by_user = self.request.user
+        document.save()
+
+        # add source file as an attachment
+        AttachmentSerializer(context={'document': document}).create({'file': upload})
+
+        return JsonResponse({'location': reverse('document', kwargs={'doc_id': document.id})})

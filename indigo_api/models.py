@@ -492,7 +492,7 @@ class Document(models.Model):
     def content(self, value):
         """ The correct way to update the raw XML of the document. This will re-parse the XML
         and other attributes -- such as the document title and FRBR URI based on the XML. """
-        self.reset_xml(value)
+        self.reset_xml(value, from_model=False)
 
     @property
     def year(self):
@@ -637,15 +637,15 @@ class Document(models.Model):
         log.debug("Refreshing document xml for %s" % self)
         self.document_xml = self.doc.to_xml()
 
-    def reset_xml(self, xml):
-        """ Completely reset the document XML to a new value, and refresh database attributes
-        from the new XML document. """
+    def reset_xml(self, xml, from_model=False):
+        """ Completely reset the document XML to a new value. If from_model is False,
+        also refresh database attributes from the new XML document. """
         # this validates it
         doc = self._make_act(xml)
 
         # now update ourselves
         self._doc = doc
-        self.copy_attributes(from_model=False)
+        self.copy_attributes(from_model)
 
     def table_of_contents(self):
         builder = plugins.for_document('toc', self)

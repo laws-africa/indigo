@@ -32,6 +32,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    # indigo social
+    'indigo_social',
+
     # local traditions
     'indigo_za',
 
@@ -42,7 +45,6 @@ INSTALLED_APPS = (
     # the Indigo act resolver
     'indigo_resolver',
     'indigo_slack',
-    'indigo_social',
 
     'allauth',
     'allauth.account',

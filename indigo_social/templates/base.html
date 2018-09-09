@@ -1,0 +1,59 @@
+{% load pipeline %}
+{% load sass_tags %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %} – Indigo</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    {% block head-css %}
+    <link rel="stylesheet" href="{% sass_src 'stylesheets/app.scss' %}">
+    {% endblock %}
+
+    {% block head-meta %}{% endblock %}
+
+  </head>
+  <body {% block body-attributes %}{% endblock %} class="{% block body-class %}
+    {% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}
+    {% endblock %}">
+    <div id="error-box" class="alert alert-danger" style="display: none">
+      <button type="button" class="close">&times;</button>
+      <p class="message"></p>
+      <div class="detail"></div>
+    </div>
+
+    {% block page-content %}{% endblock page-content %}
+
+    {% block js %}
+    {% javascript "js" %}
+
+    <script type="text/javascript">
+      if (!window.Indigo) window.Indigo = {};
+      if (!window.Indigo.Preloads) window.Indigo.Preloads = {};
+
+      window.Indigo.resolverUrl = '{{ RESOLVER_URL }}';
+      {% if user.is_authenticated %}
+      window.Indigo.Preloads.user = {{ USER_JSON|safe }};
+      {% endif %}
+    </script>
+
+
+    {% if GOOGLE_ANALYTICS_ID %}
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '{{ GOOGLE_ANALYTICS_ID }}', 'auto');
+      ga('send', 'pageview');
+    </script>
+    {% endif %}
+
+    {% endblock %}
+
+  </body>
+</html>

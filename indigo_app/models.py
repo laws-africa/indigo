@@ -59,7 +59,7 @@ class Publication(models.Model):
     """ The publications available in the UI. They aren't enforced by the API.
     """
     country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.CASCADE)
-    name = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Name of this publication")
+    name = models.CharField(max_length=512, null=False, blank=False, unique=False, help_text="Name of this publication")
 
     class Meta:
         ordering = ['name']

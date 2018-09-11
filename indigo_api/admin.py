@@ -18,8 +18,8 @@ class WorkAdmin(admin.ModelAdmin):
 @admin.register(Document)
 class DocumentAdmin(admin.ModelAdmin):
     exclude = ['document_xml', 'search_text']
-    list_display = ('__str__', 'frbr_uri', 'country', 'draft', 'deleted')
-    list_filter = ('draft', 'country', 'deleted',)
+    list_display = ('__str__', 'frbr_uri', 'draft', 'deleted')
+    list_filter = ('draft', 'deleted',)
     readonly_fields = ('created_by_user', 'updated_by_user')
 
 

@@ -10,7 +10,7 @@ from indigo_api.tests.fixtures import *  # noqa
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class WorkAPITest(APITestCase):
-    fixtures = ['user', 'work', 'drafts', 'published']
+    fixtures = ['countries', 'user', 'editor', 'work', 'drafts', 'published']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
@@ -54,7 +54,7 @@ class WorkAPITest(APITestCase):
         assert_equal(response.status_code, 400)
 
     def test_update_publication_date(self):
-        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test'})
+        response = self.client.post('/api/works', {'frbr_uri': '/za/act/2005/2', 'title': 'test', 'language': 'eng', 'country': 'za'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -82,7 +82,7 @@ class WorkAPITest(APITestCase):
         })
 
     def test_update_null_repeal(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
@@ -93,30 +93,11 @@ class WorkAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['repeal'], None)
 
-    def test_create_new_expression_with_existing(self):
-        response = self.client.post('/api/works/1/expressions_at?date=2019-01-01')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.get('/api/documents/%s' % id)
+    def test_filters(self):
+        response = self.client.get('/api/works?country=za')
         assert_equal(response.status_code, 200)
-        assert_equal(response.data['draft'], True)
-        assert_equal(response.data['expression_date'], '2019-01-01')
+        assert_not_equal(len(response.data['results']), 0)
 
-        response = self.client.get('/api/documents/%s/content' % id)
+        response = self.client.get('/api/works?country=xx')
         assert_equal(response.status_code, 200)
-        assert_in('tester', response.data['content'])
-
-    def test_create_new_expression_without_existing(self):
-        response = self.client.post('/api/works/6/expressions_at?date=2019-01-01')
-        assert_equal(response.status_code, 201)
-        id = response.data['id']
-
-        response = self.client.get('/api/documents/%s' % id)
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['draft'], True)
-        assert_equal(response.data['expression_date'], '2019-01-01')
-
-        response = self.client.get('/api/documents/%s/content' % id)
-        assert_equal(response.status_code, 200)
-        assert_not_in('tester', response.data['content'])
+        assert_equal(len(response.data['results']), 0)

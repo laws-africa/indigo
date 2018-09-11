@@ -1,6 +1,5 @@
 import logging
 
-from django.http import HttpResponse
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.postgres.search import SearchQuery
@@ -11,20 +10,19 @@ from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route, permission_classes, api_view
-from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated, AllowAny
-from rest_framework.authtoken.models import Token
+from rest_framework.decorators import detail_route
+from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
 from reversion import revisions as reversion
-from reversion.models import Version
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import FrbrUri
+from cobalt.act import Base
 
 import lxml.html.diff
 from lxml.etree import LxmlError
 
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, RevisionSerializer, AnnotationSerializer, DocumentActivitySerializer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
@@ -35,7 +33,6 @@ log = logging.getLogger(__name__)
 # Default document fields that can be use to filter list views
 DOCUMENT_FILTER_FIELDS = {
     'frbr_uri': ['exact', 'startswith'],
-    'country': ['exact'],
     'language': ['exact'],
     'draft': ['exact'],
     'stub': ['exact'],
@@ -48,6 +45,8 @@ class DocumentViewMixin(object):
         .undeleted()\
         .no_xml()\
         .prefetch_related('tags', 'created_by_user', 'updated_by_user',
+                          'language', 'language__language',
+                          'work', 'work__country',
                           'work__parent_work', 'work__commencing_work', 'work__repealed_by',
                           'work__amendments', 'work__amendments__amending_work', 'work__amendments__amended_work')
 
@@ -168,7 +167,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
-    serializer_class = RevisionSerializer
+    serializer_class = VersionSerializer
     permission_classes = (IsAuthenticated,)
 
     @detail_route(methods=['POST'])
@@ -177,18 +176,17 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         if not DocumentPermissions().has_object_permission(request, self, self.document):
             self.permission_denied(self.request)
 
-        revision = self.get_object()
+        version = self.get_object()
 
         # check permissions on the NEW object
-        version = revision.version_set.all()[0]
         document = version.object_version.object
         if not DocumentPermissions().has_object_permission(request, self, document):
             self.permission_denied(self.request)
 
         with reversion.create_revision():
             reversion.set_user(request.user)
-            reversion.set_comment("Restored revision %s" % revision.id)
-            revision.revert()
+            reversion.set_comment("Restored revision %s" % version.id)
+            version.revision.revert()
 
         return Response(status=200)
 
@@ -197,13 +195,10 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     def diff(self, request, *args, **kwargs):
         # this can be cached because the underlying data won't change (although
         # the formatting might)
-        revision = self.get_object()
-        version = revision.version_set.all()[0]
+        version = self.get_object()
 
         # most recent version just before this one
-        old_version = Version.objects\
-            .filter(content_type=version.content_type)\
-            .filter(object_id_int=version.object_id_int)\
+        old_version = self.document.versions()\
             .filter(id__lt=version.id)\
             .order_by('-id')\
             .first()
@@ -220,7 +215,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         return Response({'content': diff})
 
     def get_queryset(self):
-        return self.document.revisions()
+        return self.document.versions()
 
 
 class DocumentActivityViewSet(DocumentResourceView,
@@ -280,31 +275,18 @@ class ParseView(APIView):
         importer.fragment = fragment
         importer.fragment_id_prefix = serializer.validated_data.get('id_prefix')
 
-        upload = self.request.data.get('file')
-        if upload:
-            # we got a file
-            try:
-                document = importer.import_from_upload(upload, frbr_uri.work_uri(), self.request)
-            except ValueError as e:
-                log.error("Error during import: %s" % e.message, exc_info=e)
-                raise ValidationError({'file': e.message or "error during import"})
-        else:
-            # plain text
-            try:
-                text = serializer.validated_data.get('content')
-                document = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
-            except ValueError as e:
-                log.error("Error during import: %s" % e.message, exc_info=e)
-                raise ValidationError({'content': e.message or "error during import"})
+        try:
+            text = serializer.validated_data.get('content')
+            xml = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
+        except ValueError as e:
+            log.error("Error during import: %s" % e.message, exc_info=e)
+            raise ValidationError({'content': e.message or "error during import"})
 
-        if not document:
-            raise ValidationError("Nothing to parse! Either 'file' or 'content' must be provided.")
+        # parse and re-serialize the XML to ensure it's clean, and sort out encodings
+        xml = Base(xml).to_xml()
 
         # output
-        if fragment:
-            return Response({'output': document.to_xml()})
-        else:
-            return Response({'output': document.document_xml})
+        return Response({'output': xml})
 
 
 class RenderView(APIView):
@@ -365,26 +347,24 @@ class LinkReferencesView(APIView):
 
 
 class SearchView(DocumentViewMixin, ListAPIView):
-    """ Search!
+    """ Search and return either works, or documents, depending on `scope`.
+
+    This view drives in-app search and returns works.
     """
     serializer_class = DocumentSerializer
     pagination_class = SearchPagination
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
-    permission_classes = (AllowAny,)
+    permission_classes = (DjangoModelPermissions,)
 
     # Search scope, either 'documents' or 'works'.
-    scope = 'documents'
+    scope = 'works'
 
     def filter_queryset(self, queryset):
         query = SearchQuery(self.request.query_params.get('q'))
 
         queryset = super(SearchView, self).filter_queryset(queryset)
         queryset = queryset.filter(search_vector=query)
-
-        # anonymous users can't see drafts
-        if not self.request.user.is_authenticated:
-            queryset = queryset.filter(draft=False)
 
         if self.scope == 'works':
             # Search for distinct works, which means getting the latest
@@ -412,16 +392,7 @@ class SearchView(DocumentViewMixin, ListAPIView):
 
         # add _rank and _snippet to the serialized docs
         for i, doc in enumerate(queryset):
-            assert doc.id == serializer.data[i]['id']
             serializer.data[i]['_rank'] = doc.rank
             serializer.data[i]['_snippet'] = doc.snippet
 
         return serializer
-
-
-@api_view(['POST'])
-@permission_classes((IsAuthenticated,))
-def new_auth_token(request):
-    Token.objects.filter(user=request.user).delete()
-    token, _ = Token.objects.get_or_create(user=request.user)
-    return Response({'auth_token': token.key})

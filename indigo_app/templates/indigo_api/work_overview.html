@@ -1,9 +1,9 @@
-{% extends "work/layout.html" %}
+{% extends "indigo_api/work_layout.html" %}
 
 {% block work-content %}
 
   {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-    <div class="pull-right">
+    <div class="float-right">
       <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit Work</a>
     </div>
   {% endif %}
@@ -147,7 +147,7 @@
     <h4 class="mt-5">Recent changes</h4>
 
     {% for ver in versions %}
-      {% include 'work/_diff_card.html' with version=ver current=forloop.first %}
+      {% include 'indigo_api/_work_diff_card.html' with version=ver current=forloop.first %}
     {% endfor %}
 
     <div>

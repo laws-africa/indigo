@@ -17,7 +17,7 @@ SassProcessor.processor_enabled = True
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class PublishedAPITest(APITestCase):
-    fixtures = ['user', 'work', 'published', 'colophon']
+    fixtures = ['countries', 'user', 'editor', 'work', 'published', 'colophon']
 
     def setUp(self):
         self.client.login(username='api-user@example.com', password='password')
@@ -400,3 +400,15 @@ class PublishedAPITest(APITestCase):
         links = {link['rel']: link['href'] for link in response.data['links']}
         assert_equal(links['toc'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/toc.json')
         assert_equal(links['media'], 'http://testserver/api/za/act/2014/10/eng@2014-02-12/media.json')
+
+    def test_published_search_perms(self):
+        self.client.logout()
+        self.client.login(username='email@example.com', password='password')
+
+        response = self.client.get('/api/search/za?q=act')
+        assert_equal(response.status_code, 403)
+
+    def test_published_search(self):
+        response = self.client.get('/api/search/za?q=act')
+        assert_equal(response.status_code, 200)
+        assert_equal(len(response.data['results']), 3)

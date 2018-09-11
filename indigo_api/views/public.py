@@ -14,9 +14,9 @@ from ..serializers import PublishedDocumentSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..atom import AtomRenderer, AtomFeed
 
-from .documents import DocumentViewMixin, DocumentResourceView
+from .documents import DocumentViewMixin, DocumentResourceView, SearchView
 from .attachments import view_attachment_by_filename, MediaAttachmentSerializer
-from ..models import Attachment
+from ..models import Attachment, Country
 
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
@@ -41,7 +41,13 @@ class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
         return queryset.filter(document=self.document).all()
 
 
+class PublicAPIMixin(object):
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
+    permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+
+
 class PublishedDocumentDetailView(DocumentViewMixin,
+                                  PublicAPIMixin,
                                   mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
@@ -70,8 +76,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
-    permission_classes = (IsAuthenticated, PublishedDocumentPermission)
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
 
     def initial(self, request, **kwargs):
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
@@ -88,7 +92,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         # that document matches, otherwise we'll assume they're trying to
         # list documents with a prefix URI match.
         try:
-            self.frbr_uri = FrbrUri.parse(self.kwargs['frbr_uri'])
+            self.parse_frbr_uri(self.kwargs['frbr_uri'])
 
             # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
             if self.frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
@@ -291,3 +295,36 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
+
+    def parse_frbr_uri(self, frbr_uri):
+        FrbrUri.default_language = None
+        self.frbr_uri = FrbrUri.parse(frbr_uri)
+
+        # validate the country and set the default language
+        try:
+            country = Country.for_frbr_uri(self.frbr_uri)
+            self.frbr_uri.default_language = country.primary_language.code
+        except Country.DoesNotExist:
+            raise Http404("Country %s from FRBR URI not found" % self.frbr_uri.country)
+
+        if not self.frbr_uri.language:
+            self.frbr_uri.language = self.frbr_uri.default_language
+
+
+class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
+    """ Search published documents.
+    """
+    filter_fields = {
+        'frbr_uri': ['exact', 'startswith'],
+    }
+    serializer_class = PublishedDocumentSerializer
+    scope = 'works'
+
+    def get_queryset(self):
+        try:
+            country = Country.for_code(self.kwargs['country'])
+        except Country.DoesNotExist:
+            raise Http404
+
+        queryset = super(PublishedDocumentSearchView, self).get_queryset()
+        return queryset.published().filter(work__country=country)

@@ -6,14 +6,13 @@ import shutil
 import logging
 
 from django.conf import settings
+from django.core.files.base import ContentFile
 import mammoth
-from cobalt.act import Fragment
 
-from indigo_api.models import Document
+from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
 
 
-# TODO: move LocaleBasedAnalyzer into a better place
 @plugins.register('importer')
 class Importer(LocaleBasedMatcher):
     """
@@ -60,7 +59,7 @@ class Importer(LocaleBasedMatcher):
 
         return p.returncode, stdout, stderr
 
-    def import_from_upload(self, upload, frbr_uri, request):
+    def create_from_upload(self, upload, doc, request):
         """ Create a new Document by importing it from a
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
@@ -68,24 +67,26 @@ class Importer(LocaleBasedMatcher):
 
         if upload.content_type in ['text/xml', 'application/xml']:
             # just assume it's valid AKN xml
-            doc = Document.randomized(frbr_uri)
             doc.content = upload.read().decode('utf-8')
             return doc
 
         if upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
             # pre-process docx to HTML and then import html
-            html = self.docx_to_html(upload)
-            doc = self.import_from_text(html, frbr_uri, '.html')
+            self.create_from_docx(upload, doc)
+
         elif upload.content_type == 'application/pdf':
-            doc = self.import_from_pdf(upload, frbr_uri)
+            self.create_from_pdf(upload, doc)
+
         else:
             # slaw will do its best
-            with self.tempfile_for_upload(upload) as f:
-                doc = self.import_from_file(f.name, frbr_uri)
+            self.create_from_file(upload, doc)
 
         self.analyse_after_import(doc)
 
-        return doc
+    def create_from_file(self, upload, doc):
+        with self.tempfile_for_upload(upload) as f:
+            xml = self.import_from_file(f.name, doc.frbr_uri)
+            doc.reset_xml(xml, from_model=True)
 
     def import_from_text(self, input, frbr_uri, suffix=''):
         """ Create a new Document by importing it from plain text.
@@ -96,7 +97,7 @@ class Importer(LocaleBasedMatcher):
             f.seek(0)
             return self.import_from_file(f.name, frbr_uri)
 
-    def import_from_pdf(self, upload, frbr_uri):
+    def create_from_pdf(self, upload, doc):
         """ Import from a PDF upload.
         """
         with self.tempfile_for_upload(upload) as f:
@@ -105,7 +106,8 @@ class Importer(LocaleBasedMatcher):
             if self.reformat:
                 text = self.reformat_text(text)
 
-        return self.import_from_text(text, frbr_uri, '.txt')
+        xml = self.import_from_text(text, doc.frbr_uri, '.txt')
+        doc.reset_xml(xml, from_model=True)
 
     def pdf_to_text(self, f):
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
@@ -152,17 +154,10 @@ class Importer(LocaleBasedMatcher):
         if not stdout:
             raise ValueError("We couldn't get any useful text out of the file")
 
-        if self.fragment:
-            doc = Fragment(stdout.decode('utf-8'))
-        else:
-            doc = Document.randomized(frbr_uri)
-            doc.content = stdout.decode('utf-8')
-            doc.frbr_uri = frbr_uri  # reset it
-            doc.title = None
-            doc.copy_attributes()
-
+        xml = stdout.decode('utf-8')
         self.log.info("Successfully imported from %s" % fname)
-        return doc
+
+        return xml
 
     def tempfile_for_upload(self, upload):
         """ Uploaded files might not be on disk, ensure it is by creating a
@@ -185,6 +180,40 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
-    def docx_to_html(self, docx_file):
-        result = mammoth.convert_to_html(docx_file)
-        return result.value
+    def create_from_docx(self, docx_file, doc):
+        """ We can create a mammoth image handler that stashes the binary data of the image
+        and returns an appropriate img attribute to be put into the HTML (and eventually xml).
+        Once the document is created, we can then create attachments with the stashed image data,
+        and set appropriate filenames.
+        """
+        # we need an id to associate attachments
+        if doc.id is None:
+            doc.save()
+
+        self.counter = 0
+
+        def stash_image(image):
+            self.counter += 1
+            with image.open() as img:
+                content = img.read()
+                image_type = image.content_type
+                file_ext = image_type.split('/')[1]
+                cf = ContentFile(content)
+
+                att = Attachment()
+                att.filename = 'img{num}.{extension}'.format(num=self.counter, extension=file_ext)
+                att.mime_type = image_type
+                att.document = doc
+                att.size = cf.size
+                att.content = cf
+                att.file.save(att.filename, cf)
+
+            return {
+                'src': 'media/' + att.filename
+            }
+
+        result = mammoth.convert_to_html(docx_file, convert_image=mammoth.images.img_element(stash_image))
+        html = result.value
+
+        xml = self.import_from_text(html, doc.frbr_uri, '.html')
+        doc.reset_xml(xml, from_model=True)

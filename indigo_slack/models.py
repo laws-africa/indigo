@@ -32,7 +32,6 @@ def send_slack_message(message, url=None, **kwargs):
 @receiver(document_published)
 def doc_published(sender, document, request, **kwargs):
     from indigo_api.serializers import DocumentSerializer
-    from indigo_app.models import Country
 
     if request and request.user.is_authenticated():
         serializer = DocumentSerializer(context={'request': request})
@@ -40,7 +39,7 @@ def doc_published(sender, document, request, **kwargs):
 
         url = reverse('document', request=request, kwargs={'doc_id': document.id})
 
-        country = Country.for_work(document.work)
+        country = document.work.country
         fields = [{
             "title": "Country",
             "value": country.name,

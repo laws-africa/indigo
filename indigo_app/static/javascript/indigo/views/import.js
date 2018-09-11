@@ -130,12 +130,9 @@
     },
 
     initialize: function() {
-      this.$form = this.$el.find('form.import-form');
+      this.form = document.getElementById('import-document');
       this.cropBoxView = new Indigo.CropBoxView();
       this.work = new Indigo.Work(Indigo.Preloads.work);
-
-      // are we starting with an injected expression date?
-      this.expression_date = Indigo.queryParams.expression_date;
     },
 
     dragover: function(e) {
@@ -155,7 +152,10 @@
       e.preventDefault();
       this.$('.dropzone').removeClass('dragging incoming');
 
-      this.setFile(e.originalEvent.dataTransfer.files[0]);
+      var files = e.originalEvent.dataTransfer.files;
+
+      this.form.elements.file.files = files;
+      this.setFile(files[0]);
     },
 
     chooseFile: function(e) {
@@ -253,43 +253,32 @@
     },
 
     submitForm: function(e) {
-      e.preventDefault();
+      //e.preventDefault();
+      var self = this,
+          options = {},
+          formData;
 
-      // We use the FormData interface which is supported in all decent
-      // browsers and IE 10+.
-      //
-      // https://developer.mozilla.org/en-US/docs/Web/Guide/Using_FormData_Objects
-
-      var self = this;
-      var formData = new FormData();
-
-      formData.append('country', this.work.get('country'));
-      formData.append('frbr_uri', this.work.get('frbr_uri'));
-      formData.append('file', this.file);
-      formData.append('file_options..section_number_position',
-                      this.$('[name="file_options.section_number_position"]:checked').val());
-      if (this.expression_date) {
-        formData.append('expression_date', this.expression_date);
-      }
+      options.section_number_position = this.$('[name="file_options.section_number_position"]:checked').val();
       // cropbox info?
-      if (this.scale) formData.append('file_options..cropbox', this.cropBoxView.calculateCropBox(this.scale));
+      if (this.scale) options.cropbox = this.cropBoxView.calculateCropBox(this.scale);
+      this.form.elements.options.value = JSON.stringify(options);
+
+      formData = new FormData(this.form);
 
       this.$el.find('.file-inputs').hide();
       this.$el.find('.progress-box').show();
       this.$el.find('button.import').prop('disabled', true);
 
-      // convert to JSON
       $.ajax({
-        url: '/api/documents',
+        url: this.form.action,
         type: 'POST',
         data: formData,
         processData: false,
         contentType: false,
-
-      }).then(function(data) {
+      }).done(function(data) {
         // success, go edit it
         Indigo.progressView.peg();
-        window.location = '/documents/' + data.id;
+        window.location = data.location;
 
       }).fail(function(xhr, status, message) {
         var error = message || status;

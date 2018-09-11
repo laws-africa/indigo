@@ -1,74 +1,107 @@
-{% extends "work/layout.html" %}
+{% extends "indigo_api/work_layout.html" %}
 
 {% block view-id %}work-amendments-view{% endblock %}
 {% block title %}Points in Time - {{ block.super }}{% endblock %}
 
 {% block work-content %}
-  {% if perms.indigo_api.change_amendment %}
-    <div class="text-right mb-3">
-      <button class="btn btn-success save-work" type="button">Save</button>
-    </div>
-  {% endif %}
+  {% block amendment_list %}
+    <div class="work-amendments">
+      <ol class="timeline">
+        {% if perms.indigo_api.add_amendment %}
+          <li class="timeline-item card">
+            <div class="card-body">
+              {% block new-amendment-card %}
+                <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
 
-  <div class="work-amendments"></div>
+                <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
+                  {% csrf_token %}
 
-  <script id="work-amendments-template" type="text/x-handlebars-template">
-  {% verbatim %}
-
-  <ol class="timeline">
-    {{#if can_add}}
-    <li class="timeline-item card">
-      <div class="card-body">
-        <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
-      </div>
-    </li>
-    {{/if}}
-
-    {{#each amendments}}
-      <li class="timeline-item card" data-date="{{ date }}" data-index="{{ @index }}">
-        <h6 class="timeline-date">{{ date }}</h6>
-
-        <div class="card-body">
-          {{#if ../can_edit}}{{#unless initial}}
-          <div class="dropdown pull-right">
-            <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
-            <div class="dropdown-menu">
-              <a href="#" class="dropdown-item edit-amendment">Change date</a>
-              <a href="#" class="dropdown-item delete-amendment">Delete</a>
+                  <input type="hidden" name="amending_work" value="">
+                  <input type="hidden" name="date" value="">
+                </form>
+              {% endblock %}
             </div>
-          </div>
-          {{/unless}}{{/if}}
+          </li>
+        {% endif %}
 
-          {{#if initial}}
-            <h6>Initial publication</h6>
-          {{else}}
-            <h6 class="mb-0">Amended by <a href="/works{{ amending_work.frbr_uri }}/">{{ amending_work.title }}</a></h6>
-            <div class="text-muted mb-3">{{ amending_work.frbr_uri }}</div>
-          {{/if}}
+        {% for amendment in work.amendments_with_initial %}
+          <li class="timeline-item card" data-date="{{ amendment.date|date:"c" }}" id="amendment-{{ amendment.id|default:'initial' }}">
+            <h6 class="timeline-date">{{ amendment.date|date:"Y-m-d" }}</h6>
 
-          <div class="edit-wrapper mb-3"></div>
+            <div class="card-body">
+              {% if amendment.initial %}
+                <h6>Initial publication</h6>
 
-          <div class="documents">
-            {{#if documents}}
-              {{#each documents}}
-                <div><i class="fa fa-fw fa-circle {{#if draft}}draft{{else}}published{{/if}}"></i> <a href="/documents/{{ id }}">{{ title }}</a> · {{ language }}</div>
-              {{/each}}
-            {{else}}
-              <span class="text-muted">No editable version at this date</span>
-            {{/if}}
-          </div>
-        </div>
+              {% else %}
+                <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST">
+                  {% csrf_token %}
 
-        <div class="card-footer text-right">
-          <button class="btn btn-outline-secondary create-expression"><i class="fa fa-pencil-alt"></i> Create amended version</button>
-          <a class="btn btn-outline-secondary" href="/works{{ ../work.frbr_uri }}/import/?expression_date={{ date }}"><i class="fa fa-file-upload"></i> Import document</a>
-        </div>
-      </li>
-    {{/each}}
-  </ol>
+                  {% if perms.indigo.change_amendment %}
+                    <div class="dropdown float-right">
+                      <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+                      <div class="dropdown-menu">
+                        <a href="#amendment-form-{{ amendment.id }}" class="dropdown-item" data-toggle="collapse">Change date</a>
+                        {% if amendment.can_delete %}
+                        <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this amendment?">Delete</button>
+                        {% endif %}
+                      </div>
+                    </div>
+                  {% endif %}
 
-  {% endverbatim %}
-  </script>
+                  <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
+                  <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
+
+                  <div class="form-inline edit-wrapper mb-3 collapse" id="amendment-form-{{ amendment.id }}">
+                    <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
+                    <button class="btn btn-success" type="submit">Save</button>
+                    <a href="#amendment-form-{{ amendment.id }}" class="btn btn-link" data-toggle="collapse">Cancel</a>
+                  </div>
+                </form>
+              {% endif %}
+
+              <div class="documents">
+                {% block amendment-expressions %}
+                  {% with amendment.expressions as documents %}
+                    {% if documents %}
+                      {% for document in documents %}
+                      <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
+                      {% endfor %}
+                    {% endif %}
+                  {% endwith %}
+                {% endblock %}
+              </div>
+            </div>
+
+            <div class="card-footer">
+              {% block amendment-buttons %}
+
+                <form action="{% url 'new_work_point_in_time' frbr_uri=work.frbr_uri %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="expression_date" value="{{ amendment.date|date:"Y-m-d" }}">
+
+                  <div class="btn-group">
+                    <div class="dropdown mr-3">
+                      <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-pencil-alt"></i> Create amended version
+                      </button>
+                      <div class="dropdown-menu">
+                        {% for language in indigo_languages %}
+                          <button type="submit" name="language" value="{{ language.id }}" class="dropdown-item">In {{ language }}</button>
+                        {% endfor %}
+                      </div>
+                    </div>
+
+                    <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ amendment.date|date:"Y-m-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
+                  </div>
+                </form>
+
+              {% endblock %}
+            </div>
+          </li>
+        {% endfor %}
+      </ol>
+    </div>
+  {% endblock %}
 
   <script id="amendment-editor-template" type="text/x-handlebars-template">
   {% verbatim %}
@@ -79,15 +112,4 @@
   </div>
   {% endverbatim %}
   </script>
-{% endblock %}
-
-{% block js %}
-  {{ block.super }}
-
-  {# include the document as JSON #}
-  <script type="text/javascript">
-  window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
-  window.Indigo.Preloads.documents = {{ documents_json|safe }};
-  </script>
-
 {% endblock %}

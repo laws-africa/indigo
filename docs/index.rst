@@ -15,8 +15,7 @@ can contribute to the project.
 The Indigo platform is a Django python web application with three components:
 
 * a web application for managing and editing documents
-* an **application REST API** upon which the web application runs
-* a **public read-only REST API** for vending published legislative documents in HTML and XML
+* a **read-only REST API** for vending published legislative documents in HTML and XML
 
 The main REST API supports the creation, editing
 and management of a library of legislative documents. The public read-only API
@@ -29,11 +28,10 @@ Contents
    :maxdepth: 1
 
    running/index
+   running/configuration
    guide/index
    guide/law-intro
-   rest/general
-   rest/public
-   rest/app
+   api/public
    changelog
 
 Documents

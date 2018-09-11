@@ -142,3 +142,23 @@ label.required::after {
     overflow-y: auto;
   }
 }
+
+.allauth-box {
+  .logo {
+    width: 75px;
+  }
+}
+
+.btn.socialaccount_provider.google {
+  background-color: #4285F4;
+  color: white;
+}
+.btn.socialaccount_provider.facebook {
+  background-color: #4267b2;
+  color: white;
+}
+
+.legal-toc {
+  position: sticky;
+  top: 75px;
+}

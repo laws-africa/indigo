@@ -24,7 +24,7 @@
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
       'change .filter-locality': 'filterByLocality',
-      'change .filter-nature': 'filterByNature',
+      'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
     },
@@ -75,7 +75,7 @@
         country: this.filters.get('country'),
         locality: Indigo.queryParams.locality,
         status: Indigo.queryParams.status || 'all',
-        nature: Indigo.queryParams.nature,
+        subtype: Indigo.queryParams.subtype,
         tags: tags || [],
       });
     },
@@ -94,7 +94,7 @@
      *
      *  - country
      *  - locality
-     *  - nature
+     *  - subtype
      *  - status
      *  - tags
      *  - search
@@ -151,30 +151,31 @@
         works = _.filter(works, function(work) { return work.get('locality') == loc; });
       }
 
-      // count nature, sort alphabetically
-      this.summary.natures = _.sortBy(
+      // count subtype, sort alphabetically
+      this.summary.subtypes = _.sortBy(
         _.map(
-          _.countBy(works, function(d) { return d.get('nature'); }),
-          function(count, nature) {
+          _.countBy(works, function(d) { return d.get('subtype') || "-"; }),
+          function(count, subtype) {
             return {
-              nature: nature,
-              name: nature,
+              subtype: subtype,
+              name: subtype == '-' ? 'act' : subtype,
               count: count,
-              active: filters.nature === nature,
+              active: filters.subtype === subtype,
             };
           }
         ),
-        function(info) { return info.nature; });
-      this.summary.natures.unshift({
-        nature: null,
-        name: 'All natures',
+        function(info) { return info.subtype; });
+      this.summary.subtypes.unshift({
+        subtype: null,
+        name: 'All types',
         count: works.length,
-        active: !!filters.nature,
+        active: !!filters.subtype,
       });
 
-      // filter by nature
-      if (filters.nature) {
-        works = _.filter(works, function(work) { return work.get('nature') == filters.nature; });
+      // filter by subtype
+      if (filters.subtype) {
+        var st = filters.subtype == '-' ? null : filters.subtype;
+        works = _.filter(works, function(work) { return work.get('subtype') == st; });
       }
 
       // setup our collection of documents for each work
@@ -269,16 +270,16 @@
 
       this.filters.set({
         locality: $(e.currentTarget).val(),
-        nature: null,
+        subtype: null,
         tags: [],
       });
     },
 
-    filterByNature: function(e) {
+    filterBySubtype: function(e) {
       e.preventDefault();
 
       this.filters.set({
-        nature: $(e.currentTarget).val(),
+        subtype: $(e.currentTarget).val(),
         tags: [],
       });
     },
@@ -314,7 +315,8 @@
     el: '#library',
     template: '#search-results-template',
     events: {
-      'click .document-list-table th': 'changeSort',
+      'click .library-work-table th': 'changeSort',
+      'click .toggle-docs': 'toggleDocuments',
     },
 
     initialize: function() {
@@ -328,11 +330,10 @@
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
       this.filterView.trigger('change');
-      Indigo.userView.model.on('change', this.render, this);
     },
 
     changeSort: function(e) {
-      var field = $(e.target).data('sort');
+      var field = $(e.currentTarget).data('sort');
 
       if (field == this.sortField) {
         // reverse
@@ -345,6 +346,20 @@
       this.render();
     },
 
+    toggleDocuments: function(e) {
+      e.preventDefault();
+      var $link = $(e.currentTarget),
+          work = $link.data('work'),
+          $i = $link.find('i'),
+          opened = $i.hasClass('fa-caret-down');
+
+      $i
+        .toggleClass('fa-caret-right', opened)
+        .toggleClass('fa-caret-down', !opened);
+
+      $('.library-work-table tr[data-work="' + work + '"]').toggleClass('d-none', opened);
+    },
+
     render: function() {
       var works = this.filterView.filteredWorks,
           docs = this.filterView.filteredDocs,
@@ -352,33 +367,82 @@
 
       // tie works and docs together
       works = _.map(works, function(work) {
-        var currentUserId = Indigo.userView.model.get('id');
+        var currentUserId = Indigo.user.get('id');
 
         work = work.toJSON();
 
-        work.docs = _.map(docs[work.id] || [], function(d) { return d.toJSON(); });
-        // latest expression first
-        work.docs = _.sortBy(work.docs, 'expression_date');
-        work.docs.reverse();
-
-        // current user's name -> you
-        work.docs.forEach(function(d, i) {
-          if (d.updated_by_user && d.updated_by_user.id == currentUserId) d.updated_by_user.display_name = 'you';
-
-          // only show doc titles that are different to the work
-          if (i > 0 && d.title == work.title) d.title = '';
+        var work_docs = _.map(docs[work.id] || [], function(doc) {
+          return doc.toJSON();
         });
 
-        if (work.docs.length > 0) {
-          var dates = _.compact(_.pluck(work.docs, 'updated_at'));
-          dates.sort();
+        // distinct languages
+        var languages = _.unique(_.map(work_docs, function(doc) {
+          return doc.language;
+        }));
 
-          // if we're sorting works by date later on, sort using the youngest/oldest, as appropriate
-          work.updated_at = sortDesc ? dates.slice(-1) : dates[0];
+        // alphabetise list of languages
+        work.languages = languages.sort(function(a, b) {
+          return a.localeCompare(b);
+        });
+
+        // number of distinct languages
+        work.n_languages = work.languages.length;
+
+        // count expression dates
+        work.n_expressions = _.unique(_.map(work_docs, function(doc) {
+          return doc.expression_date;
+        })).length;
+
+        // number of drafts
+        work.drafts_v_published = _.countBy(work_docs, function(doc) {
+          return doc.draft ? 'n_drafts': 'n_published';
+        });
+
+        if (work.drafts_v_published.n_drafts) {
+          work.n_drafts = work.drafts_v_published.n_drafts;
+        } else {
+          work.n_drafts = 0;
         }
+
+        // total number of docs
+        work.n_docs = work_docs.length;
+
+        // get a ratio of drafts vs total docs for sorting
+        if (work.n_docs !== 0) {
+          work.pub_ratio = 1 / (work.n_drafts / work.n_docs);
+        } else {
+          work.pub_ratio = 0;
+        }
+
+        // add work to list of docs and order by recency
+        var work_and_docs = work_docs.concat([work]);
+
+        var most_recently_updated = work_and_docs.sort(function(a, b) {
+          return -a.updated_at.localeCompare(b.updated_at);
+        })[0];
+
+        work.updated_at = most_recently_updated.updated_at;
+
+        // current user's name -> 'you'
+        if (most_recently_updated.updated_by_user && most_recently_updated.updated_by_user.id == currentUserId) {
+          most_recently_updated.updated_by_user.display_name = 'you';
+        }
+
+        work.most_recent_updated_by = most_recently_updated.updated_by_user;
+
+        work_docs.forEach(function(work_doc) {
+          if (work_doc.updated_by_user && work_doc.updated_by_user.id === currentUserId) {
+            work_doc.updated_by_user.display_name = 'you';
+          }
+        });
+
+        // docs for this work
+        work.work_docs = _.sortBy(work_docs, 'expression_date');
+        work.work_docs.reverse();
 
         return work;
       });
+
 
       works = _.sortBy(works, this.sortField);
       if (sortDesc) works.reverse();

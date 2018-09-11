@@ -21,6 +21,7 @@ router.register(r'works', views.works.WorkViewSet, base_name='work')
 router.register(r'works/(?P<work_id>[0-9]+)/amendments', views.works.WorkAmendmentViewSet, base_name='work-amendments')
 
 urlpatterns = [
+    # --- public API ---
     # viewing a specific document identified by FRBR URI fragment,
     # this requires at least 4 components in the FRBR URI,
     # starting with the two-letter country code
@@ -29,9 +30,10 @@ urlpatterns = [
     url(r'^(?P<frbr_uri>[a-z]{2}[-/].*)$',
         views.public.PublishedDocumentDetailView.as_view({'get': 'get'}),
         name='published-document-detail'),
+    url(r'^search/(?P<country>[a-z]{2})$', views.public.PublishedDocumentSearchView.as_view(), name='public-search'),
+    # --- END public API ---
 
-    url(r'^search/documents$', views.documents.SearchView.as_view(scope='documents'), name='search'),
-    url(r'^search/works$', views.documents.SearchView.as_view(scope='works'), name='search'),
+    url(r'^search/documents$', views.documents.SearchView.as_view(), name='document-search'),
     url(r'^render$', views.documents.RenderView.as_view(), name='render'),
     url(r'^parse$', views.documents.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', views.documents.LinkTermsView.as_view(), name='link-terms'),
@@ -42,10 +44,6 @@ urlpatterns = [
     url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachments.attachment_media_view, name='document-media'),
     url(r'documents/(?P<document_id>[0-9]+)/activity', views.documents.DocumentActivityViewSet.as_view({
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
-
-    # rest-based auth
-    url(r'^auth/', include('rest_auth.urls')),
-    url(r'^auth/new-token/$', views.misc.new_auth_token),
 
     url(r'^', include(router.urls)),
 ]

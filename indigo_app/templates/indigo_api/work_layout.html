@@ -1,0 +1,100 @@
+{% extends "main.html" %}
+
+{% block title %}{% if work.pk %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
+{% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
+
+{% block sidebar %}
+  <div class="sidebar">
+    <nav class="sidebar-nav">
+      <ul class="nav">
+        {% block sidebar-nav %}
+          <li class="nav-item nav-heading">Work</li>
+
+          {% block work-sidebar-nav %}
+          {% if work.pk %}
+            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-book"></i> Work Overview</a></li>
+            <li class="nav-item dropright">
+              <a class="nav-link dropdown-toggle {% if view.template_name_suffix == '_amendments' %}active{% endif %}" href="#" data-toggle="dropdown" data-boundary="viewport">
+                <i class="far fa-fw fa-clock"></i> Points in Time
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">Manage Points in Time...</a>
+                {% with work.expressions as expressions %}
+                  {% if expressions %}
+                    <div class="dropdown-divider"></div>
+                    {% for doc in expressions reversed %}
+                      <a class="dropdown-item" href="{% url 'document' doc_id=doc.id %}">{{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language }}</a>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+              </div>
+            </li>
+            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
+            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}"><i class="fa fa-history"></i> Changes</a></li>
+          {% else %}
+            <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work Details</a></li>
+          {% endif %}
+          {% endblock %}
+
+          {% block document-sidebar-nav %}
+          {% if document %}
+          <li class="nav-item nav-heading">Document</li>
+          <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#properties-modal"><i class="fa fa-cog"></i> Properties</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#attachments-modal"><i class="fa fa-paperclip"></i> Attachments</a></li>
+          <li class="nav-item"><a class="nav-link show-preview" href="#"><i class="fa fa-fw fa-eye"></i> Preview</a></li>
+          {% endif %}
+          {% endblock %}
+        {% endblock %}
+      </ul>
+    </nav>
+    <button class="sidebar-minimizer btn btn-dark"><i class="fa"></i></button>
+  </div>
+{% endblock %}
+
+
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
+  {% if locality %}
+  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+  {% endif %}
+  {% if work.pk %}
+  <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
+  {% endif %}
+{% endblock %}
+
+
+{% block main-header-title %}
+<h5 class="main-header-title"><span class="work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</span> <span class="badge badge-info if-repealed">repealed</span></h5>
+{% endblock %}
+
+
+{% block content %}
+<div class="work-view">
+  <div class="main-content">
+    {% block main-content %}
+    <div class="container pt-3 pb-5">
+      {% block work-content %}{% endblock %}
+    </div>
+    {% endblock %}
+  </div>
+</div>
+
+{% include "indigo_api/_work_chooser_modal.html" %}
+
+{% endblock %}
+
+
+{% block js %}
+  {{ block.super }}
+
+  {# include the document as JSON #}
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  {% if countries_json %}
+  window.Indigo.countries = {{ countries_json|safe }};
+  {% endif %}
+  window.Indigo.Preloads.country_code = '{{ work.country.code }}';
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  </script>
+
+{% endblock %}

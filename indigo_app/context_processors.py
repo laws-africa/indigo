@@ -19,10 +19,10 @@ def general(request):
 def models(request):
     """ Add some useful models to templates
     """
-    from indigo_app.models import Country, Language
+    from indigo_api.models import Country, Language
 
     return {
-        'indigo_languages': Language.objects,
+        'indigo_languages': Language.objects.select_related('language').prefetch_related('language'),
         'indigo_countries': Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country'),
     }
 

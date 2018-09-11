@@ -1,9 +1,7 @@
 import os
 import logging
 import re
-import random
 import datetime
-import string
 
 from django.conf import settings
 from django.db import models
@@ -20,16 +18,75 @@ import reversion.revisions
 import reversion.models
 
 from countries_plus.models import Country as MasterCountry
+from languages_plus.models import Language as MasterLanguage
 
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
-from .utils import language3_to_2
-
-DEFAULT_LANGUAGE = 'eng'
-DEFAULT_COUNTRY = 'za'
 
 log = logging.getLogger(__name__)
+
+
+class Language(models.Model):
+    """ The languages available in the UI. They aren't enforced by the API.
+    """
+    language = models.OneToOneField(MasterLanguage, on_delete=models.CASCADE)
+
+    class Meta:
+        ordering = ['language__name_en']
+
+    @property
+    def code(self):
+        """ 3 letter language code.
+        """
+        return self.language.iso_639_2B
+
+    def __unicode__(self):
+        return unicode(self.language)
+
+    @classmethod
+    def for_code(cls, code):
+        return cls.objects.get(language__iso_639_2B=code)
+
+
+class Country(models.Model):
+    """ The countries available in the UI. They aren't enforced by the API.
+    """
+    country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
+    primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
+
+    class Meta:
+        ordering = ['country__name']
+        verbose_name_plural = 'Countries'
+
+    @property
+    def code(self):
+        return self.country.iso.lower()
+
+    @property
+    def name(self):
+        return self.country.name
+
+    def as_json(self):
+        return {
+            'name': self.name,
+            'localities': {loc.code: loc.name for loc in self.locality_set.all()},
+            'publications': [pub.name for pub in self.publication_set.all()],
+        }
+
+    def work_locality(self, work):
+        return self.locality_set.filter(code=work.locality).first()
+
+    def __unicode__(self):
+        return unicode(self.country.name)
+
+    @classmethod
+    def for_frbr_uri(cls, frbr_uri):
+        return cls.for_code(frbr_uri.country)
+
+    @classmethod
+    def for_code(cls, code):
+        return cls.objects.get(country__pk=code.upper())
 
 
 class WorkQuerySet(models.QuerySet):
@@ -38,6 +95,14 @@ class WorkQuerySet(models.QuerySet):
         if work is None:
             raise ValueError("Work for FRBR URI '%s' doesn't exist" % frbr_uri)
         return work
+
+
+class WorkManager(models.Manager):
+    def get_queryset(self):
+        # defer expensive or unnecessary fields
+        return super(WorkManager, self)\
+            .get_queryset()\
+            .prefetch_related('country', 'country__country')
 
 
 class Work(models.Model):
@@ -55,7 +120,7 @@ class Work(models.Model):
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
+    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
@@ -81,7 +146,7 @@ class Work(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
-    objects = WorkQuerySet.as_manager()
+    objects = WorkManager.from_queryset(WorkQuerySet)()
 
     _work_uri = None
     _repeal = None
@@ -124,6 +189,8 @@ class Work(models.Model):
         return self._repeal
 
     def clean(self):
+        # force country code in frbr uri
+        self.frbr_uri = '/%s%s' % (self.country.code, self.frbr_uri[3:])
         # ensure the frbr uri is lowercased
         self.frbr_uri = self.frbr_uri.lower()
 
@@ -142,23 +209,24 @@ class Work(models.Model):
         return super(Work, self).save(*args, **kwargs)
 
     def can_delete(self):
-        return (not self.document_set.undeleted().exists()
-                and not self.child_works.exists()
-                and not self.repealed_works.exists()
-                and not self.commenced_works.exists()
-                and not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
+        return (not self.document_set.undeleted().exists() and
+                not self.child_works.exists() and
+                not self.repealed_works.exists() and
+                not self.commenced_works.exists() and
+                not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
-    def create_expression_at(self, date):
+    def create_expression_at(self, date, language=None):
         """ Create a new expression at a particular date.
 
         This uses an existing document at or before this date as a template, if available.
         """
+        language = language or self.country.primary_language
         doc = Document()
 
         # most recent expression at or before this date
         template = self.document_set\
             .undeleted()\
-            .filter(expression_date__lte=date)\
+            .filter(expression_date__lte=date, language=language)\
             .order_by('-expression_date')\
             .first()
 
@@ -167,7 +235,7 @@ class Work(models.Model):
             doc.content = template.content
 
         doc.draft = True
-        doc.language = DEFAULT_LANGUAGE
+        doc.language = language
         doc.expression_date = date
         doc.work = self
         doc.save()
@@ -210,6 +278,19 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
+    def amendments_with_initial(self):
+        """ Return a list of Amendment objects, including a fake one at the end
+        that represents the initial point-in-time.
+        """
+        initial = Amendment(amended_work=self, date=self.publication_date)
+        initial.initial = True
+
+        amendments = list(self.amendments.all())
+        amendments.insert(0, initial)
+        amendments.reverse()
+
+        return amendments
+
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -247,10 +328,18 @@ class Amendment(models.Model):
         """
         return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
 
+    def can_delete(self):
+        return not self.expressions().exists()
+
 
 @receiver(signals.post_save, sender=Amendment)
+@receiver(signals.pre_delete, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):
-    if not kwargs['raw']:
+    """ When an amendment is saved, update the expressions of the amended
+    work to ensure the details of the amendment (ie. the date) are stashed
+    correctly in the document.
+    """
+    if not kwargs.get('raw'):
         for doc in instance.amended_work.document_set.all():
             # forces call to doc.copy_attributes()
             doc.save()
@@ -291,7 +380,7 @@ class DocumentQuerySet(models.QuerySet):
 
         # filter on language
         if frbr_uri.language:
-            query = query.filter(language=frbr_uri.language)
+            query = query.filter(language__language__iso_639_2B=frbr_uri.language)
 
         # filter on expression date
         expr_date = frbr_uri.expression_date
@@ -325,7 +414,7 @@ class DocumentQuerySet(models.QuerySet):
         if obj is None:
             raise ValueError("Document doesn't exist")
 
-        if obj and frbr_uri.language and obj.language != frbr_uri.language:
+        if obj and frbr_uri.language and obj.language.code != frbr_uri.language:
             raise ValueError("The document %s exists but is not available in the language '%s'"
                              % (frbr_uri.work_uri(), frbr_uri.language))
 
@@ -353,10 +442,9 @@ class Document(models.Model):
     """ The FRBR Work URI of this document that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=False)
-    country = models.CharField(max_length=2, default=DEFAULT_COUNTRY)
 
     """ The 3-letter ISO-639-2 language code of this document """
-    language = models.CharField(max_length=3, default=DEFAULT_LANGUAGE)
+    language = models.ForeignKey(Language, null=False, on_delete=models.PROTECT, help_text="Language this document is in.")
     draft = models.BooleanField(default=True, help_text="Drafts aren't available through the public API")
     """ Is this a draft? """
 
@@ -404,7 +492,7 @@ class Document(models.Model):
     def content(self, value):
         """ The correct way to update the raw XML of the document. This will re-parse the XML
         and other attributes -- such as the document title and FRBR URI based on the XML. """
-        self.reset_xml(value)
+        self.reset_xml(value, from_model=False)
 
     @property
     def year(self):
@@ -421,6 +509,10 @@ class Document(models.Model):
     @property
     def subtype(self):
         return self.work_uri.subtype
+
+    @property
+    def country(self):
+        return self.work_uri.country
 
     @property
     def locality(self):
@@ -451,7 +543,7 @@ class Document(models.Model):
         """ The FRBR Expression URI as a :class:`FrbrUri` instance that uniquely identifies this expression universally. """
         if self._expression_uri is None:
             self._expression_uri = self.work_uri.clone()
-            self._expression_uri.language = self.language
+            self._expression_uri.language = self.language.code
             if self.expression_date:
                 self._expression_uri.expression_date = '@' + datestring(self.expression_date)
         return self._expression_uri
@@ -497,7 +589,7 @@ class Document(models.Model):
 
             self.doc.title = self.title
             self.doc.frbr_uri = self.frbr_uri
-            self.doc.language = self.language
+            self.doc.language = self.language.code
 
             self.doc.work_date = self.doc.publication_date
             self.doc.expression_date = self.expression_date or self.doc.publication_date or arrow.now()
@@ -509,7 +601,6 @@ class Document(models.Model):
 
         else:
             self.title = self.doc.title
-            self.language = self.doc.language
             self.frbr_uri = self.doc.frbr_uri.work_uri()
             self.expression_date = self.doc.expression_date
             # ensure these are refreshed
@@ -522,7 +613,7 @@ class Document(models.Model):
         """ Copy various attributes from this document's Work onto this
         document.
         """
-        for attr in ['frbr_uri', 'country']:
+        for attr in ['frbr_uri']:
             setattr(self, attr, getattr(self.work, attr))
 
         # copy over amendments at or before this expression date
@@ -546,15 +637,15 @@ class Document(models.Model):
         log.debug("Refreshing document xml for %s" % self)
         self.document_xml = self.doc.to_xml()
 
-    def reset_xml(self, xml):
-        """ Completely reset the document XML to a new value, and refresh database attributes
-        from the new XML document. """
+    def reset_xml(self, xml, from_model=False):
+        """ Completely reset the document XML to a new value. If from_model is False,
+        also refresh database attributes from the new XML document. """
         # this validates it
         doc = self._make_act(xml)
 
         # now update ourselves
         self._doc = doc
-        self.copy_attributes(from_model=False)
+        self.copy_attributes(from_model)
 
     def table_of_contents(self):
         builder = plugins.for_document('toc', self)
@@ -576,14 +667,15 @@ class Document(models.Model):
 
         return search_toc(self.table_of_contents())
 
-    def revisions(self):
-        """ Return a queryset of `reversion.models.Revision` objects for
-        revisions for this document, most recent first.
+    def versions(self):
+        """ Return a queryset of `reversion.models.Version` objects for
+        revisions for this work, most recent first.
         """
         content_type = ContentType.objects.get_for_model(self)
-        return reversion.models.Revision.objects\
-            .filter(version__content_type=content_type)\
-            .filter(version__object_id_int=self.id)\
+        return reversion.models.Version.objects\
+            .prefetch_related('revision')\
+            .filter(content_type=content_type)\
+            .filter(object_id_int=self.id)\
             .order_by('-id')
 
     def to_html(self, **kwargs):
@@ -620,7 +712,7 @@ class Document(models.Model):
 
     @property
     def django_language(self):
-        return language3_to_2(self.language) or self.language
+        return self.language.language.iso_639_1
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
@@ -630,8 +722,8 @@ class Document(models.Model):
         """ Helper to return a new document with a random FRBR URI
         """
         frbr_uri = FrbrUri.parse(frbr_uri)
-        kwargs['country'] = frbr_uri.country
         kwargs['work'] = Work.objects.get_for_frbr_uri(frbr_uri.work_uri())
+        kwargs['language'] = Country.for_frbr_uri(frbr_uri).primary_language
 
         doc = cls(frbr_uri=frbr_uri.work_uri(False), expression_date=frbr_uri.expression_date, **kwargs)
         doc.copy_attributes()
@@ -693,21 +785,11 @@ class Colophon(models.Model):
     the country of the document.
     """
     name = models.CharField(max_length=1024, help_text='Name of this colophon')
-    country = models.ForeignKey(MasterCountry, on_delete=models.SET_NULL, null=True, blank=True, help_text='Which country does this colophon apply to?')
+    country = models.ForeignKey(Country, on_delete=models.CASCADE, null=False, help_text='Which country does this colophon apply to?')
     body = models.TextField()
 
     def __unicode__(self):
         return unicode(self.name)
-
-
-def random_frbr_uri(country=None):
-    today = datetime.datetime.now()
-    number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in xrange(5))
-    country = country or DEFAULT_COUNTRY
-    return FrbrUri(country=country.lower(), locality=None, doctype="act",
-                   subtype=None, actor=None, date=str(today.year),
-                   expression_date=today.strftime("%Y-%m-%d"),
-                   number=number.lower())
 
 
 class Annotation(models.Model):

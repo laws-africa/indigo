@@ -18,7 +18,7 @@ class LocaleBasedRegistry(object):
     def for_document(self, topic, document):
         """ Find an appropriate helper for this document.
         """
-        return self.for_locale(topic, country=document.country, locality=document.locality, language=document.language)
+        return self.for_locale(topic, country=document.country, locality=document.locality, language=document.language.code)
 
     def for_work(self, topic, work):
         return self.for_locale(topic, country=work.country, locality=work.locality, language=None)

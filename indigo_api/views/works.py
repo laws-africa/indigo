@@ -1,14 +1,11 @@
-from rest_framework.exceptions import MethodNotAllowed, ValidationError
-from rest_framework import viewsets, status
+from rest_framework.exceptions import MethodNotAllowed
+from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.generics import get_object_or_404
-from rest_framework.decorators import detail_route
-from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-import arrow
+from django_filters import rest_framework as filters
 
 from ..models import Work, Amendment
-from ..serializers import WorkSerializer, WorkAmendmentSerializer, DocumentSerializer
+from ..serializers import WorkSerializer, WorkAmendmentSerializer
 from ..authz import DocumentPermissions
 
 
@@ -30,6 +27,19 @@ class WorkResourceView(object):
         return context
 
 
+class WorkFilterSet(filters.FilterSet):
+    country = filters.CharFilter(method='country_filter')
+
+    class Meta:
+        model = Work
+        fields = {
+            'frbr_uri': ['exact', 'startswith'],
+        }
+
+    def country_filter(self, queryset, name, value):
+        return queryset.filter(country__country__iso=value.upper())
+
+
 class WorkViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
@@ -38,11 +48,8 @@ class WorkViewSet(viewsets.ModelViewSet):
     serializer_class = WorkSerializer
     # TODO permissions on creating and publishing works
     permission_classes = (DjangoModelPermissions,)
-    filter_backends = (DjangoFilterBackend,)
-    filter_fields = {
-        'frbr_uri': ['exact', 'startswith'],
-        'country': ['exact'],
-    }
+    filter_backends = (filters.DjangoFilterBackend,)
+    filter_class = WorkFilterSet
 
     def perform_destroy(self, instance):
         if not instance.can_delete():
@@ -57,27 +64,8 @@ class WorkViewSet(viewsets.ModelViewSet):
 
         super(WorkViewSet, self).perform_update(serializer)
 
-    @detail_route(methods=['POST'])
-    def expressions_at(self, request, *args, **kwargs):
-        """ Create a new document at exactly this expression date.
-        """
-        date = request.GET.get('date')
-        if not date:
-            raise ValidationError({'date': 'A valid date parameter must be provided.'})
-        try:
-            date = arrow.get(date).date()
-        except arrow.parser.ParserError:
-            raise ValidationError({'date': 'A valid date parameter must be provided.'})
 
-        work = self.get_object()
-        doc = work.create_expression_at(date)
-
-        serializer = DocumentSerializer(context={'request': request}, instance=doc)
-        headers = self.get_success_headers(serializer.data)
-        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-
-
-class WorkAmendmentViewSet(WorkResourceView, viewsets.ModelViewSet):
+class WorkAmendmentViewSet(WorkResourceView, viewsets.ReadOnlyModelViewSet):
     queryset = Amendment.objects.prefetch_related('amending_work', 'created_by_user', 'updated_by_user')
     serializer_class = WorkAmendmentSerializer
     permission_classes = (DjangoModelPermissions,)

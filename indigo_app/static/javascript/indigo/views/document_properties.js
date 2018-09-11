@@ -16,9 +16,6 @@
   // Handle the document properties form, and saving them back to the server.
   Indigo.DocumentPropertiesView = Backbone.View.extend({
     el: '.document-properties-view',
-    events: {
-      'click .btn-amendments': 'showAmendments',
-    },
     bindings: {
       '#document_title': 'title',
       '#document_tags': {
@@ -64,30 +61,10 @@
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl);
 
-      // update the choices of expression dates when necessary
-      this.listenTo(this.model, 'change:publication_date', this.matchPublicationExpressionDates);
-      this.listenTo(this.model, 'change:publication_date', this.updateExpressionDates);
-      this.listenTo(this.model, 'change:work', this.workChanged);
-      this.listenTo(this.amendments, 'change add remove reset', this.updateExpressionDates);
-
       this.updateExpressionDates();
       this.stickit();
 
       this.render();
-    },
-
-    matchPublicationExpressionDates: function(model, new_value) {
-      // if the publication date has changed and the expression date
-      // matches the old publication date, change the expression date, too
-      var old_pub_date = this.model.previous("publication_date");
-
-      if (this.model.get("expression_date") == old_pub_date) {
-        this.model.set("expression_date", new_value);
-      }
-
-      if (this.model.get("commencement_date") == old_pub_date) {
-        this.model.set("commencement_date", new_value);
-      }
     },
 
     updateExpressionDates: function() {
@@ -108,11 +85,6 @@
           label: date + ' - ' + (date == pubDate ? 'initial publication' : 'amendment'),
         };
       }), {merge: false});
-    },
-
-    showAmendments: function(e) {
-      e.preventDefault();
-      $('.document-sidebar a[href="#amendments-tab"]').click();
     },
 
     showPublishedUrl: function() {
@@ -156,13 +128,6 @@
       this.$('.document-work-title')
         .text(work.get('title'))
         .attr('href', '/works' + work.get('frbr_uri'));
-    },
-
-    workChanged: function() {
-      this.amendments.work = this.model.work;
-      this.amendments.fetch({reset: true});
-      this.$('a.manage-amendments').attr('href', '/works' + this.model.work.get('frbr_uri') + '/amendments/');
-      this.render();
     },
   });
 })(window);

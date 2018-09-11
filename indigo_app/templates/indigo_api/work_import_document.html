@@ -1,0 +1,152 @@
+{% extends "indigo_api/work_layout.html" %}
+{% load staticfiles %}
+
+{% block title %}Import{% endblock %}
+{% block body-class %}{{ block.super }} sidebar-minimized{% endblock %}
+
+{% block main-content %}
+<main id="main-content" class="container-fluid">
+  <form class="import-form mt-3" method="POST" id="import-document" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.expression_date.as_hidden }}
+    {{ form.options.as_hidden }}
+
+    <div class="file-inputs">
+      <div class="row">
+        <div class="offset-md-2 col-md-8">
+
+          <h4 class="mb-3">
+            Import a document
+            <a class="help" href="http://indigo.readthedocs.org/en/latest/guide/managing.html" target="_blank" title="Read the docs"><i class="far fa-question-circle"></i></a>
+          </h4>
+
+          {% if form.errors or form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for field, error in form.errors.iteritems %}
+              <p>{{ field }}: {{ error }}</p>
+            {% endfor %}
+
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          <section class="card numbered mb-3" data-num="1">
+            <h5 class="card-header">What language is the document in?</h5>
+            <div class="card-body">
+              <select name="language" class="form-control">
+                {% for opt in indigo_languages %}
+                  <option value="{{ opt.id }}" {% if opt.id == form.language.value %}selected{% endif %}>{{ opt }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </section>
+
+          <section class="card numbered mb-3" data-num="2">
+            <div class="card-body">
+              <p class="alert alert-danger" style="display: none"></p>
+
+              <div class="file-input-field"><input type="file" id="file" name="file"></div>
+
+              <div class="dropzone">
+                <h3>Drag and drop your file here</h3>
+                <h4>or</h4>
+                <p>
+                  <button class="btn btn-primary choose-file" type="button">Choose a file</button>
+                </p>
+                <div class="file-detail">You can import legislation from most document formats including PDF, Word, RTF and plain text.</div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <section class="pages"></section>
+
+      <div class="row">
+        <div class="offset-md-2 col-md-8">
+
+          <section class="card numbered mb-3 mt-3" data-num="3">
+            <h5 class="card-header">What do section titles look like?</h5>
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-4">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="file_options.section_number_position" value="guess" checked>
+                      Guess automatically (recommended)
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-sm-4">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="file_options.section_number_position" value="before-title">
+                      <div class="example">
+                        <h5>12. Section heading</h5>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi elementum...</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
+                <div class="col-sm-4">
+                  <div class="radio">
+                    <label>
+                      <input type="radio" name="file_options.section_number_position" value="after-title">
+                      <div class="example">
+                        <h5>Section heading</h5>
+                        <p><strong>12.</strong> Lorem ipsum dolor sit amet, consectetur adipiscing elit...</p>
+                      </div>
+                    </label>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="card numbered mb-3 mt-3" data-num="4">
+            <button type="button" class="btn btn-success import" disabled="disabled">Go for it!</button>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="offset-md-2 col-md-8">
+
+        <section class="progress-box" style="display: none">
+          <div>
+            <p>Importing, this may take a few minutes...</p>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </form>
+</main>
+
+{% include "indigo_api/_work_chooser_modal.html" %}
+
+{% endblock %}
+
+
+{% block js %}
+  <script src="{% static 'javascript/pdfjs/pdf.js' %}"></script>
+  <script>PDFJS.workerSrc = '{% static 'javascript/pdfjs/pdf.worker.js' %}';</script>
+  <script src="{% static 'javascript/svg.min.js' %}"></script>
+  {{ block.super }}
+
+  <script type="text/javascript">
+  // inject country code-to-name mappings into JS
+  window.Indigo.countries = {{ countries_json|safe }};
+  {% if work %}
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  {% endif %}
+  </script>
+{% endblock %}

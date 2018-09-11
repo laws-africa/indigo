@@ -80,6 +80,7 @@
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
+      this.originalFrbrUri = this.model.get('frbr_uri');
       this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
       this.listenTo(this.model, 'change:country change:locality', this.updateBreadcrumb);
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
@@ -149,10 +150,11 @@
 
     save: function() {
       var self = this,
-          isNew = this.model.isNew();
+          isNew = this.model.isNew(),
+          frbrUriChanged = this.model.get('frbr_uri') != this.originalFrbrUri;
 
       this.model.save().done(function() {
-        if (isNew) {
+        if (isNew || frbrUriChanged) {
           // redirect
           Indigo.progressView.peg();
           window.location = '/works' + self.model.get('frbr_uri') + '/edit/';

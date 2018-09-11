@@ -63,6 +63,7 @@ class Publication(models.Model):
 
     class Meta:
         ordering = ['name']
+        unique_together = (('country', 'name'),)
 
     def __unicode__(self):
         return unicode(self.name)

@@ -101,6 +101,11 @@
           <div class="alert alert-danger">You don't have permission to create works.</div>
         {% endif %}
       </div>
+    </div>
+
+    <p></p>
+
+    <div class="card">
 
       {% if not works %}
       <div class="card-body">
@@ -116,7 +121,7 @@
       </div>
       {% endif %}
 
-      <div class="row">
+      <div class="card-body">
        <div class="col-md-8 m-auto">
          <div class="embed-responsive embed-responsive-16by9">
            <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/tfNm_PtZ7JQ?rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -124,8 +129,8 @@
        </div>
       </div>
 
-
     </div>
+
   </form>
 </div>
 {% endblock %}

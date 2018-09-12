@@ -352,53 +352,54 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         ]
 
         for idx, row in enumerate(rows):
-            info = {
-                'row': idx + 2,
-            }
-            works.append(info)
-
-            try:
-                frbr_uri = self.get_frbr_uri(country, row)
-            except ValueError as e:
-                info['status'] = 'error'
-                info['error_message'] = e.message
-                continue
-
-            try:
-                work = Work.objects.get(frbr_uri=frbr_uri)
-                info['work'] = work
-                info['status'] = 'duplicate'
-
-            # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
-
-            except Work.DoesNotExist:
-                work = Work()
-
-                work.frbr_uri = frbr_uri
-                work.title = row['title']
-                work.country = country
-                work.publication_name = row['publication_name']
-                work.publication_number = row['publication_number']
-                work.publication_date = self.make_date(row['publication_date'])
-                work.commencement_date = self.make_date(row['commencement_date'])
-                work.assent_date = self.make_date(row['assent_date'])
-                work.repealed_date = self.make_date(row['repealed_date'])
-                work.created_by_user = self.request.user
-                work.updated_by_user = self.request.user
+            if not row['ignore']:
+                info = {
+                    'row': idx + 2,
+                }
+                works.append(info)
 
                 try:
-                    work.full_clean()
-                    work.save()
-
-                    # signals
-                    work_changed.send(sender=work.__class__, work=work, request=self.request)
-
-                    info['status'] = 'success'
-                    info['work'] = work
-
-                except ValidationError as e:
+                    frbr_uri = self.get_frbr_uri(country, row)
+                except ValueError as e:
                     info['status'] = 'error'
-                    info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
+                    info['error_message'] = e.message
+                    continue
+
+                try:
+                    work = Work.objects.get(frbr_uri=frbr_uri)
+                    info['work'] = work
+                    info['status'] = 'duplicate'
+
+                # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
+
+                except Work.DoesNotExist:
+                    work = Work()
+
+                    work.frbr_uri = frbr_uri
+                    work.title = row['title']
+                    work.country = country
+                    work.publication_name = row['publication_name']
+                    work.publication_number = row['publication_number']
+                    work.publication_date = self.make_date(row['publication_date'])
+                    work.commencement_date = self.make_date(row['commencement_date'])
+                    work.assent_date = self.make_date(row['assent_date'])
+                    work.repealed_date = self.make_date(row['repealed_date'])
+                    work.created_by_user = self.request.user
+                    work.updated_by_user = self.request.user
+
+                    try:
+                        work.full_clean()
+                        work.save()
+
+                        # signals
+                        work_changed.send(sender=work.__class__, work=work, request=self.request)
+
+                        info['status'] = 'success'
+                        info['work'] = work
+
+                    except ValidationError as e:
+                        info['status'] = 'error'
+                        info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
 
         return works
 
@@ -437,20 +438,18 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             number = re.sub(", [0-9]{2,}", "", number)
             number = number.replace(' ', '-').replace(',', '').replace('-Act', '').replace('Act-', '').lower().replace('relating-to-', '').replace('-and-', '-').replace('-to-', '-').replace('-of-', '-').replace('-for-', '-').replace('-on-', '-').replace('-the-', '-').replace('in-connection-with-', '').replace('by-law-', '').replace('-by-law', '')
 
-        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype=row['doctype'], subtype=row['subtype'], date=row['date'], number=number, actor=None)
+        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=number, actor=None)
 
         # TODO: simplify this somehow?
 
         if country.code != row['country'].lower():
             raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
         if ' ' in frbr_uri.work_uri():
-            raise ValueError('Check for spaces in grey columns – none allowed')
+            raise ValueError('Check for spaces in country, locality, subtype, year, number – none allowed')
         elif not frbr_uri.country:
             raise ValueError('A country must be specified')
-        elif not frbr_uri.doctype:
-            raise ValueError('A doctype must be specified – use \'Act\' if unsure')
         elif not frbr_uri.date:
-            raise ValueError('A date must be specified')
+            raise ValueError('A year must be specified')
         elif not frbr_uri.number:
             raise ValueError('A number must be specified')
 

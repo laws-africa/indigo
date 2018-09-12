@@ -37,7 +37,7 @@
                 <i class="far fa-fw fa-question-circle text-danger"></i>
                 unverified
               {% endif %}
-              {% if emailaddress.primary %}- primary{% endif %}
+              {% if emailaddress.primary %}– primary{% endif %}
             </td>
             <td class="text-right">
               <form action="{% url 'account_email' %}" method="post">

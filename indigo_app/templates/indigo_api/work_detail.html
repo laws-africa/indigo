@@ -1,7 +1,7 @@
 {% extends "indigo_api/work_layout.html" %}
 
 {% block view-id %}edit-work-view{% endblock %}
-{% block title %}Edit - {{ block.super }}{% endblock %}
+{% block title %}Edit – {{ block.super }}{% endblock %}
 
 {% block work-content %}
   {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}

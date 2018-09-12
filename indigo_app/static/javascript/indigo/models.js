@@ -402,7 +402,7 @@
       var params = _.clone(this.params || {});
 
       if (this.country) {
-        params.conutry = this.country;
+        params.country = this.country;
       }
 
       if (params) {
@@ -436,14 +436,33 @@
   Indigo.WorksCollection = Backbone.Collection.extend({
     model: Indigo.Work,
     country: null,
+    next_page: null,
+    base_url: '/api/works',
+    params: {},
 
     url: function() {
-      return '/api/works?country=' + encodeURIComponent(this.country);
+      var url = this.base_url;
+      var params = _.clone(this.params || {});
+
+      params.country = this.country;
+      url += '?' + _.map(params, function(val, key) {
+        return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+      }).join('&');
+
+      return url;
     },
 
-    parse: function(response) {
-      // TODO: handle actual pagination
-      return response.results;
+    parse: function(response, options) {
+      var items = response.results;
+      this.next_page = response.next;
+
+      if (options.incremental) {
+        // loading next page, add in previous models
+        items = _.map(options.previousModels, function(m) { return m.toJSON(); });
+        items = items.concat(response.results);
+      }
+
+      return items;
     },
 
     setCountry: function(country) {
@@ -453,6 +472,14 @@
       }
       return $.Deferred().resolve();
     },
+
+    hasNextPage: function() {
+      return !!this.next_page;
+    },
+
+    getNextPage: function() {
+      return this.fetch({url: this.next_page, incremental: true, reset: true});
+    }
   });
 
   Indigo.User = Backbone.Model.extend({

@@ -261,7 +261,7 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
-    'DEFAULT_PAGINATION_CLASS': 'indigo_api.views.base.PageNumberPagination',
+    'DEFAULT_PAGINATION_CLASS': 'indigo_api.utils.PageNumberPagination',
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 

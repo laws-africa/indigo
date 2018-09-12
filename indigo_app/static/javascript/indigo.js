@@ -127,11 +127,9 @@ $(function() {
 
   // setup the collection of works
   Indigo.works = new Indigo.WorksCollection();
+  Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country_code');
   if (Indigo.Preloads.works) {
-    Indigo.works.country = Indigo.Preloads.country_code || Indigo.user.get('country_code');
     Indigo.works.reset({results: Indigo.Preloads.works}, {parse: true});
-  } else {
-    Indigo.works.setCountry(Indigo.Preloads.country_code || Indigo.user.get('country_code'));
   }
 
   // what views must we load?

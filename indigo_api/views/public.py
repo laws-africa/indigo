@@ -5,7 +5,6 @@ from django.http import Http404
 from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from cobalt import FrbrUri
@@ -72,7 +71,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     queryset = DocumentViewMixin.queryset.published()
 
     serializer_class = PublishedDocumentSerializer
-    pagination_class = PageNumberPagination
     # these determine what content negotiation takes place
     renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)

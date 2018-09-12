@@ -376,7 +376,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                 work.frbr_uri = frbr_uri
                 work.title = row['title']
-                work.country = country.code
+                work.country = country
                 work.publication_name = row['publication_name']
                 work.publication_number = row['publication_number']
                 work.publication_date = self.make_date(row['publication_date'])

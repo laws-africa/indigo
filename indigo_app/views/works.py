@@ -22,6 +22,7 @@ from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Country, Document
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
+from indigo_api.views.works import WorkViewSet
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
@@ -55,7 +56,7 @@ class LibraryView(AbstractAuthedIndigoView, TemplateView):
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = Work.objects.filter(country=country)
+        works = WorkViewSet.queryset.filter(country=country)
         context['works_json'] = json.dumps(serializer.to_representation(works))
 
         return context

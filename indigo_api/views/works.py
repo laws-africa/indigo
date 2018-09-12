@@ -45,7 +45,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Work.objects.order_by('frbr_uri')
+    queryset = Work.objects.order_by('frbr_uri').prefetch_related('created_by_user', 'updated_by_user')
     serializer_class = WorkSerializer
     # TODO permissions on creating and publishing works
     permission_classes = (DjangoModelPermissions,)

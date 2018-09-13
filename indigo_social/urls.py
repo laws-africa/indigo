@@ -1,10 +1,11 @@
 from django.conf.urls import url
-from django.views.generic.base import RedirectView
 
-from .views import profile
+from . import views
 
+app_name = 'indigo_social'
 urlpatterns = [
-    # in theory: /social/
-    url(r'^$', RedirectView.as_view(url='profile', permanent=True)),
-    url(r'^profile/$', profile.ProfileView.as_view()),
+    # /social/
+    url(r'^$', views.ISocialHome.as_view(), name='isoc_home'),
+    # /social/my_profile
+    url(r'^my_profile$', views.ISocialProfile.as_view(), name='isoc_profile'),
 ]

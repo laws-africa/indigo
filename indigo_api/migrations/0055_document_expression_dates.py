@@ -7,14 +7,13 @@ from django.db import migrations
 
 
 def ensure_expression_dates(apps, schema_editor):
-    Work = apps.get_model("indigo_api", "Work")
     Document = apps.get_model("indigo_api", "Document")
     db_alias = schema_editor.connection.alias
 
     default_date = datetime.date(1980, 1, 1)
 
     for document in Document.objects.filter(expression_date=None).using(db_alias).all():
-        document.expression_date = document.work.publication_date or datetime
+        document.expression_date = document.work.publication_date or default_date
         document.save()
 
 

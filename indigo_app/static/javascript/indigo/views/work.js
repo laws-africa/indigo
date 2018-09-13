@@ -105,7 +105,7 @@
     },
 
     updatePageTitle: function() {
-      document.title = this.model.get('title') + ' - Indigo';
+      document.title = this.model.get('title') + ' – Indigo';
       if (!this.model.isNew()) $('.workspace-header h4, .work-title').text(this.model.get('title'));
       this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
     },
@@ -176,13 +176,12 @@
     },
 
     changeRepeal: function() {
-      var chooser = new Indigo.WorkChooserView({}),
+      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
           self = this;
 
       if (this.model.get('repealed_by')) {
         chooser.choose(Indigo.works.get(this.model.get('repealed_by')));
       }
-      chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           self.model.set('repealed_by', chosen);
@@ -212,13 +211,12 @@
     },
 
     changeCommencingWork: function() {
-      var chooser = new Indigo.WorkChooserView({}),
+      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
           self = this;
 
       if (this.model.get('commencing_work')) {
         chooser.choose(Indigo.works.get(this.model.get('commencing_work')));
       }
-      chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           self.model.set('commencing_work', chosen);
@@ -239,13 +237,12 @@
     },
 
     changeParent: function() {
-      var chooser = new Indigo.WorkChooserView({}),
+      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
           self = this;
 
       if (this.model.get('parent_work')) {
         chooser.choose(this.model.get('parent_work'));
       }
-      chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           self.model.set('parent_work', chosen);

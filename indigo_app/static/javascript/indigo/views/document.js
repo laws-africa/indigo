@@ -336,9 +336,8 @@
       if (!confirm("Are you sure you want to change the work this document is linked to?")) return;
 
       var document = this.document;
-      var chooser = new Indigo.WorkChooserView({});
+      var chooser = new Indigo.WorkChooserView({country: document.get('country')});
 
-      chooser.setFilters({country: document.get('country')});
       chooser.choose(document.work);
       chooser.showModal().done(function(chosen) {
         if (chosen) {

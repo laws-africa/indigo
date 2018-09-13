@@ -74,12 +74,14 @@
 
     <div class="card">
       <div class="card-body">
+
         <div class="form-group">
           {{ form.country }}
           {% for err in form.country.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
+
         <div class="form-group">
           <label for="{{ form.spreadsheet_url.id_for_label }}">URL of the Google Sheet to import works from:
           </label>
@@ -89,8 +91,6 @@
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
-
-        <p>The spreadsheet should be 'Published to the web' (look under 'File') and shared with 'Anyone with the link'</p>
 
       </div>
 
@@ -102,6 +102,35 @@
         {% endif %}
       </div>
     </div>
+
+    <p></p>
+
+    <div class="card">
+
+      {% if not works %}
+      <div class="card-body">
+        Instructions:
+        <ul>
+          <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1wbhRoiyYAAC7UotE7Dy4uolAULO4wDk05OGNu2eh43I">Work info template</a>: 'File' | 'Make a copy…'</li>
+          <li>Make it accessible: 'SHARE'  | 'Get shareable link' (top-right corner)</li>
+          <li>Watch <a href="https://www.youtube.com/watch?v=tfNm_PtZ7JQ&index=2&list=PL7MJ_sFHs953q_23TdDhnvQWqxAkrc672">this video</a> for instructions on how to populate the spreadsheet</li>
+          <li>Choose a country from the drop-down</li>
+          <li>Paste the url for your spreadsheet into the box below that</li>
+          <li>Click on 'Import works'!</li>
+        </ul>
+      </div>
+      {% endif %}
+
+      <div class="card-body">
+       <div class="col-md-8 m-auto">
+         <div class="embed-responsive embed-responsive-16by9">
+           <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/tfNm_PtZ7JQ?rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+         </div>
+       </div>
+      </div>
+
+    </div>
+
   </form>
 </div>
 {% endblock %}

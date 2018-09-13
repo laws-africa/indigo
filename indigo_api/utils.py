@@ -3,7 +3,7 @@ from django.contrib.postgres.search import Value, Func, SearchRank
 from django.db.models import TextField
 
 from languages_plus.models import Language
-from rest_framework.pagination import PageNumberPagination
+from rest_framework.pagination import PageNumberPagination as BasePageNumberPagination
 
 
 @lru_cache.lru_cache()
@@ -33,10 +33,16 @@ class Headline(Func):
         super(Headline, self).__init__(*expressions, **extra)
 
 
-class SearchPagination(PageNumberPagination):
-    page_size = 20
-
-
 class SearchRankCD(SearchRank):
     # this takes proximity into account
     function = 'ts_rank_cd'
+
+
+class PageNumberPagination(BasePageNumberPagination):
+    page_size = 500
+    page_size_query_param = 'page_size'
+    max_page_size = 500
+
+
+class SearchPagination(PageNumberPagination):
+    page_size = 20

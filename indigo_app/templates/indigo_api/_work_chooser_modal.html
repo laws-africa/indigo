@@ -61,6 +61,14 @@
         <td class="frbr_uri">{{ frbr_uri }}</td>
       </tr>
     {{/each}}
+
+    {{#if pagination.hasNextPage}}
+      <tr>
+        <td colspan="3" class="text-center">
+          <a href="#" class="get-next-page">Load more...</a>
+        </td>
+      </tr>
+    {{/if}}
   </tbody>
 </table>
 

@@ -20,11 +20,10 @@
     addAmendment: function(e) {
       e.preventDefault();
 
-      var chooser = new Indigo.WorkChooserView({}),
+      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
           form = document.getElementById('new-amendment-form'),
           self = this;
 
-      chooser.setFilters({country: this.model.get('country')});
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           form.elements.date.value = chosen.get('commencement_date') || chosen.get('publication_date');

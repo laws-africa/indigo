@@ -436,9 +436,9 @@
           }
         });
 
-        // docs for work (used to check for empty works)
-        work.work_docs = work_docs;
-
+        // docs for this work
+        work.work_docs = _.sortBy(work_docs, 'expression_date');
+        work.work_docs.reverse();
 
         return work;
       });

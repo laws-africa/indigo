@@ -2,6 +2,7 @@ from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.generics import get_object_or_404
+from rest_framework.filters import SearchFilter
 from django_filters import rest_framework as filters
 
 from ..models import Work, Amendment
@@ -44,12 +45,13 @@ class WorkViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
-    queryset = Work.objects
+    queryset = Work.objects.order_by('frbr_uri').prefetch_related('created_by_user', 'updated_by_user')
     serializer_class = WorkSerializer
     # TODO permissions on creating and publishing works
     permission_classes = (DjangoModelPermissions,)
-    filter_backends = (filters.DjangoFilterBackend,)
+    filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filter_class = WorkFilterSet
+    search_fields = ('title', 'frbr_uri')
 
     def perform_destroy(self, instance):
         if not instance.can_delete():

@@ -80,15 +80,10 @@
 
   {# include the document as JSON #}
   <script type="text/javascript">
-  // inject country code-to-name mappings into JS
-  window.Indigo.countries = {{ countries_json|safe }};
-
-  window.Indigo.Preloads.document_id = {{ document.id }};
+  window.Indigo.Preloads.document = {{ document_json|safe }};
   window.Indigo.Preloads.documentContent = {{ document_content_json|safe }};
-  window.Indigo.Preloads.works = {{ works_json|safe }};
   window.Indigo.Preloads.amendments = {{ amendments_json|safe }};
-
-  window.Indigo.Preloads.library = {{ documents_json|safe }};
+  window.Indigo.Preloads.expressions = {{ expressions_json|safe }};
 
   CKEDITOR_BASEPATH = '/static/ckeditor/';
   </script>

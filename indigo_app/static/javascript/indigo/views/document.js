@@ -11,10 +11,13 @@
 
     initialize: function() {
       this.breadcrumbTemplate = Handlebars.compile($(this.breadcrumbTemplate).html());
-      this.expressions = this.model.work.documents();
+      this.expressions = new Indigo.Library(Indigo.Preloads.expressions);
+      // ensure that this.model is in the expression list, not a duplicate
+      this.expressions.remove(this.expressions.get(this.model.get('id')));
+      this.expressions.add(this.model);
 
       this.listenTo(this.model, 'change:title change:expression_date change:draft sync change:frbr_uri', this.render);
-      this.listenTo(this.expressions, 'sync change', this.render);
+      this.listenTo(this.expressions, 'sync change reset', this.render);
     },
 
     getTitle: function() {
@@ -30,10 +33,11 @@
       // breadcrumb
       var country = Indigo.countries[this.model.get('country')],
           locality = this.model.get('locality'),
-          dates = this.model.work.expressionDates(),
+          dates = _.unique(this.expressions.pluck('expression_date')),
           docs = this.expressions,
           current_id = this.model.get('id');
       locality = locality ? country.localities[locality] : null;
+      dates.sort();
       dates.reverse();
 
       var expressions = _.map(dates, function(date) {
@@ -109,7 +113,7 @@
       $('.menu').on('click', '.disabled a', _.bind(this.stopMenuClick));
 
       // get it from the library
-      this.document = Indigo.library.get(Indigo.Preloads.document_id);
+      this.document = new Indigo.Document(Indigo.Preloads.document);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
 
       this.document.on('change', this.setDirty, this);

@@ -258,7 +258,7 @@ class Work(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision')\
+            .prefetch_related('revision', 'revision__user')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')

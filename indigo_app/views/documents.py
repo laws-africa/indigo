@@ -31,8 +31,16 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         doc = self.object
 
+        context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
         context['work'] = doc.work
         context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
+        context['document_json'] = json.dumps(DocumentSerializer(instance=doc, context={'request': self.request}).data)
+        # expressions
+        context['expressions_json'] = json.dumps(
+            DocumentSerializer(context={'request': self.request}, many=True)
+            .to_representation(
+                doc.work.expressions().all()
+            ))
         context['country'] = doc.work.country
         context['locality'] = context['country'].work_locality(doc.work)
 
@@ -42,10 +50,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['document_content_json'] = json.dumps(doc.document_xml)
 
-        serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = Work.objects.filter(country=doc.work.country)
-        context['works_json'] = json.dumps(serializer.to_representation(works))
-
         context['amendments_json'] = json.dumps(
             WorkAmendmentSerializer(context={'request': self.request}, many=True)
             .to_representation(doc.work.amendments))
@@ -53,6 +57,4 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         context['form'] = DocumentForm(instance=doc)
         context['subtypes'] = Subtype.objects.order_by('name').all()
 
-        serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        context['documents_json'] = json.dumps(serializer.to_representation(DocumentViewSet.queryset.all()))
         return context

@@ -7,5 +7,5 @@ urlpatterns = [
     # /social/
     url(r'^$', views.ISocialHome.as_view(), name='isoc_home'),
     # /social/my_profile
-    url(r'^my_profile$', views.ISocialProfile.as_view(), name='isoc_profile'),
+    url(r'^my_profile$', views.ISocialProfile.as_view(success_url='my_profile'), name='isoc_profile>'),
 ]

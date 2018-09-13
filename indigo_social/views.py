@@ -1,10 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-from django.contrib.auth.models import User
 from django.views.generic import TemplateView, UpdateView
 
-from .forms import UserProfileForm
 from .models import UserProfile
 
 
@@ -14,8 +12,11 @@ class ISocialHome(TemplateView):
 
 class ISocialProfile(UpdateView):
     model = UserProfile
+    fields = [
+        'bio',
+    ]
     template_name = 'indigo_social/isoc_profile.html'
-    form_class = UserProfileForm
 
+    # Generic detail view ISocialProfile must be called with either an object pk or a slug.
     def get_object(self, queryset=None):
-        return User(pk=self.request.user.pk)
+        return UserProfile.objects.get(user=self.request.user)

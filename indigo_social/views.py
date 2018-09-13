@@ -1,22 +1,40 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-from django.views.generic import TemplateView, UpdateView
+from django.views.generic import DetailView, ListView, UpdateView
 
 from .models import UserProfile
 
 
-class ISocialHome(TemplateView):
-    template_name = 'indigo_social/isoc_home.html'
+class SocialHomeView(ListView):
+    model = UserProfile
+    template_name = 'indigo_social/social_home.html'
+
+    def get_context_data(self, **kwargs):
+        context = {
+            'users': UserProfile.objects.all()
+        }
+        return context
 
 
-class ISocialProfile(UpdateView):
+class SocialProfileView(DetailView):
+    model = UserProfile
+    template_name = 'indigo_social/social_profile.html'
+
+
+class SocialProfileEditView(UpdateView):
     model = UserProfile
     fields = [
         'bio',
     ]
-    template_name = 'indigo_social/isoc_profile.html'
+    template_name = 'indigo_social/social_profile_edit.html'
 
-    # Generic detail view ISocialProfile must be called with either an object pk or a slug.
     def get_object(self, queryset=None):
         return UserProfile.objects.get(user=self.request.user)
+
+    def get_slug_field(self):
+        pass
+
+    def get_success_url(self):
+        return 'edit'
+

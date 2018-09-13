@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Indigo Social | Home</title>
+</head>
+<body>
+    <!-- should also include a link to each user's profile page (once urls are smarter) -->
+    {% if users %}
+        {% for user_profile in users %}
+            <p>{{ user_profile.user.first_name }}</p>
+            <p>{{ user_profile.bio }}</p>
+            <br/>
+        {% endfor %}
+    {% else %}
+        <p>No users?</p>
+    {% endif %}
+</body>
+</html>

@@ -4,26 +4,55 @@
 
 {% block view-id %}library-view{% endblock %}
 {% block main-header %}{% endblock %}
+
 {% block content %}
-<aside class="library-sidebar">
-  <section>
-    <label>Country</label>
+<div class="container mt-3 mb-5">
+  <div class="float-right">
     <select class="form-control filter-country" name="country-filter">
       {% for country in countries %}
         <option {% if country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
       {% endfor %}
     </select>
-  </section>
-
-  <div id="filters"></div>
-</aside>
-
-<div class="library-wrapper">
-  <div class="library-filter-box">
-    <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
   </div>
+  <h2>{{ country.country.name }}</h2>
 
-  <div id="library"></div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="form-row">
+
+        <div class="col-4">
+          <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
+        </div>
+
+        <div class="col-3">
+          <select class="form-control filter-locality" name="locality-filter"></select>
+        </div>
+
+        <div class="col-2">
+          <select class="form-control filter-subtype" name="subtype-filter"></select>
+        </div>
+
+        <div class="col-3">
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-sm filter-status-all btn-primary active">
+              <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
+            </label>
+            <label class="btn btn-sm filter-status-published">
+              <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
+            </label>
+            <label class="btn btn-sm filter-status-draft">
+              <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <div id="filter-tags" class="pt-3"></div>
+    </div>
+
+    <div id="library"></div>
+  </div>
 </div>
 {% endblock %}
 
@@ -138,48 +167,11 @@
 
 </script>
 
-<script id="filters-template" type="text/x-handlebars-template">
+<script id="filter-tags-template" type="text/x-handlebars-template">
 {% verbatim %}
-
-{{#if summary.localities}}
-<section>
-  <label>Locality</label>
-  <select class="form-control filter-locality" name="locality-filter">
-    {{#each summary.localities}}
-      <option {{#if active}}selected{{/if}} value="{{code}}">{{name}} ({{count}})</option>
-    {{/each}}
-  </select>
-</section>
-{{/if}}
-
-<section>
-  <label>Type</label>
-  <select class="form-control filter-subtype" name="subtype-filter">
-    {{#each summary.subtypes}}
-      <option {{#if active}}selected{{/if}} value="{{subtype}}">{{name}} ({{count}})</option>
-    {{/each}}
-  </select>
-</section>
-
-<section>
-  <div class="btn-group btn-group-toggle" data-toggle="buttons">
-    <label class="btn btn-sm {{#if filter_status.all}}btn-secondary active{{/if}}">
-      <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
-    </label>
-    <label class="btn btn-sm {{#if filter_status.published}}btn-info active{{else}}btn-default{{/if}}">
-      <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
-    </label>
-    <label class="btn btn-sm {{#if filter_status.draft}}btn-warning active{{else}}btn-default{{/if}}">
-      <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
-    </label>
-  </div>
-</section>
-
-<section class="tag-filters">
-  {{#each summary.tags}}
-  <a href="#" class="badge {{#if active}}badge-info{{else}}badge-secondary{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge badge-pill badge-light">{{this.count}}</span></a>
+  {{#each tags}}
+  <a href="#" class="badge {{#if active}}badge-primary{{else}}badge-secondary{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge badge-pill badge-light">{{this.count}}</span></a>
   {{/each}}
-</section>
 {% endverbatim %}
 </script>
 

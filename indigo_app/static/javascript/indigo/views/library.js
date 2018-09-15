@@ -19,7 +19,7 @@
    */
   Indigo.LibraryFilterView = Backbone.View.extend({
     el: '#library-view',
-    template: '#filters-template',
+    template: '#filter-tags-template',
     events: {
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
@@ -131,7 +131,7 @@
 
             return {
               code: code,
-              name: code == '-' ? '(none)' : (loc || code),
+              name: code == '-' ? '(none)' : (loc + ' · ' + code),
               count: count,
               active: filters.locality === code,
             };
@@ -299,14 +299,39 @@
     },
 
     render: function() {
-      var filter_status = {};
-      filter_status[this.filters.get('status')] = 1;
+      // localities
+      var select = this.$('.filter-locality').empty();
+      if (!this.summary.localities) {
+        select.hide();
+      } else {
+        select.show();
+        this.summary.localities.forEach(function(loc) {
+          var option = document.createElement('option');
+          option.value = loc.code || "";
+          option.text = loc.name + " (" + loc.count + ")";
+          option.selected = loc.active;
+          select[0].add(option);
+        });
+      }
 
-      $('#filters').html(this.template({
-        summary: this.summary,
-        count: this.works.length,
-        filters: this.filters.toJSON(),
-        filter_status: filter_status,
+      // subtypes
+      select = this.$('.filter-subtype').empty()[0];
+      this.summary.subtypes.forEach(function(type) {
+        var option = document.createElement('option');
+        option.value = type.subtype || "";
+        option.text = type.name + " (" + type.count + ")";
+        option.selected = type.active;
+        select.add(option);
+      });
+
+      // status
+      var status = this.filters.get('status');
+      this.$('.filter-status-all').toggleClass('active btn-primary', status == 'all');
+      this.$('.filter-status-published').toggleClass('active btn-info', status == 'published');
+      this.$('.filter-status-draft').toggleClass('active btn-warning', status == 'draft');
+
+      $('#filter-tags').html(this.template({
+        tags: this.summary.tags,
       }));
     },
   });

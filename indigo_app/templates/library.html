@@ -106,9 +106,9 @@
         <tr data-work="{{ ../frbr_uri }}" class="d-none">
           <td class="document">
             {{#if draft}}
-              <i class="fa fa-fw fa-circle published" title="published"></i>
-            {{else}}
               <i class="fa fa-fw fa-circle draft" title="draft"></i>
+            {{else}}
+              <i class="fa fa-fw fa-circle published" title="published"></i>
             {{/if}}
             <a href="/documents/{{ id }}">{{ title }}</a>
           </td>

@@ -38,9 +38,6 @@
       '#document_expression_date': {
         observe: 'expression_date',
         onSet: emptyIsNull,
-        selectOptions: {
-          collection: 'this.expressionDates',
-        }
       },
       '#document_language': 'language',
       '#document_stub': {
@@ -50,8 +47,6 @@
     },
 
     initialize: function() {
-      // the choices in the expression_date dropdown
-      this.expressionDates = new Backbone.Collection();
       this.amendments = new Indigo.WorkAmendmentCollection(Indigo.Preloads.amendments, {
         work: this.model,
       });
@@ -61,30 +56,9 @@
       this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change:draft change:frbr_uri change:language change:expression_date sync', this.showPublishedUrl);
 
-      this.updateExpressionDates();
       this.stickit();
 
       this.render();
-    },
-
-    updateExpressionDates: function() {
-      var dates = _.unique(this.amendments.pluck('date')),
-          pubDate = this.model.work.get('publication_date'),
-          expDate = this.model.get('expression_date');
-
-      if (pubDate && dates.indexOf(pubDate) == -1) dates.push(pubDate);
-      dates.sort();
-
-      if (dates.length > 0 && (!expDate || dates.indexOf(expDate) == -1)) {
-        this.model.set('expression_date', dates[0]);
-      }
-
-      this.expressionDates.set(_.map(dates, function(date) {
-        return {
-          value: date,
-          label: date + ' - ' + (date == pubDate ? 'initial publication' : 'amendment'),
-        };
-      }), {merge: false});
     },
 
     showPublishedUrl: function() {

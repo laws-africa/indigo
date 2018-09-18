@@ -28,7 +28,17 @@
 
           <div class="form-row">
             <div class="col-sm-8">
-              <select class="form-control" id="document_expression_date"></select>
+              <select class="form-control" id="document_expression_date">
+                {% for amendment in work.amendments_with_initial %}
+                <option value="{{ amendment.date|date:"Y-m-d" }}">
+                  {{ amendment.date|date:"Y-m-d"}} -
+                  {% if amendment.initial %}
+                  initial publication
+                  {% else %}
+                  amendment
+                  {% endif %}
+                {% endfor %}
+              </select>
               <p class="form-text text-muted">Date of this version of the document, either the publication date or an amendment date</p>
             </div>
             <div class="col">

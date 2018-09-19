@@ -1,13 +1,13 @@
 from django.conf.urls import url
 
-from . import views
+from .views import SocialHomeView, SocialProfileView, UserProfileEditView
 
 app_name = 'indigo_social'
 urlpatterns = [
     # /social
-    url(r'^$', views.SocialHomeView.as_view(), name='social_home'),
+    url(r'^$', SocialHomeView.as_view(), name='social_home'),
     # /social/{ user profile pk }
-    url(r'^/(?P<pk>[0-9]+)', views.SocialProfileView.as_view(), name='social_profile'),
+    url(r'^/(?P<pk>[0-9]+)', SocialProfileView.as_view(), name='social_profile'),
     # /social/my_profile/edit
-    url(r'^/my_profile/edit$', views.UserProfileEditView.as_view(), name='social_profile_edit'),
+    url(r'^accounts/profile/$', UserProfileEditView.as_view(), name='edit_account'),
 ]

@@ -1,7 +1,6 @@
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView, TemplateView
 
-from indigo_social.views import UserProfileEditView
 from .views import users, works, documents
 
 
@@ -12,7 +11,6 @@ urlpatterns = [
     # auth and accounts
     url(r'^accounts/', include('allauth.urls')),
     url(r'^accounts/profile/$', users.EditAccountView.as_view(), name='edit_account'),
-    url(r'^accounts/profile/$', UserProfileEditView.as_view(), name='edit_account'),
     url(r'^accounts/profile/api/$', users.EditAccountAPIView.as_view(), name='edit_account_api'),
     url(r'^accounts/accept-terms$', users.AcceptTermsView.as_view(), name='accept_terms'),
 

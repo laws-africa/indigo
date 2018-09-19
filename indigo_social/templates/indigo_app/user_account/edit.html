@@ -83,7 +83,7 @@
 
       <div class="form-group">
         <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
-        <input type="text" class="form-control" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}" value="{{ form.skills.value|default:'' }}">
+        <textarea class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
         {% if form.skills.errors %}
           <div class="text-danger">
             {% for error in form.skills.errors %}

@@ -10,20 +10,7 @@ from .models import UserProfile
 class ContributorsView(ListView):
     model = UserProfile
     template_name = 'indigo_social/contributors.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(ContributorsView, self).get_context_data(**kwargs)
-        context['profiles_plus_initials'] = [
-            {
-                'id': x.id,
-                'first_name': x.user.first_name,
-                'initial': x.user.last_name[0] + '.',
-                'organisations': x.organisations,
-                'bio': x.bio
-            }
-            for x in context['userprofile_list']
-        ]
-        return context
+    queryset = UserProfile.objects.prefetch_related('user')
 
 
 class UserProfileView(DetailView):

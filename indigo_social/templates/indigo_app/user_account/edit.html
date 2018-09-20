@@ -143,16 +143,16 @@
       <div class="row">
         <div class="col-6">
           <div class="form-group">
-            <label for="{{ form.twitter_profile.id_for_label }}">{{ form.twitter_profile.label }}</label>
+            <label for="{{ form.twitter_username.id_for_label }}">{{ form.twitter_username.label }}</label>
             <div class="input-group">
               <div class="input-group-prepend">
                 <span class="input-group-text">@</span>
               </div>
-              <input class="form-control" name="{{ form.twitter_profile.name }}" id="{{ form.twitter_profile.id_for_label }}" value="{{ form.twitter_profile.value|default:'' }}">
+              <input class="form-control" name="{{ form.twitter_username.name }}" id="{{ form.twitter_username.id_for_label }}" value="{{ form.twitter_username.value|default:'' }}">
             </div>
-            {% if form.twitter_profile.errors %}
+            {% if form.twitter_username.errors %}
               <div class="text-danger">
-                {% for error in form.twitter_profile.errors %}
+                {% for error in form.twitter_username.errors %}
                   <p>{{ error }}</p>
                 {% endfor %}
               </div>

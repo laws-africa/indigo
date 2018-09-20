@@ -21,9 +21,13 @@ class UserProfileForm(forms.ModelForm):
             'specialisations',
             'areas_of_law',
             # social
-            'twitter_profile',
+            'twitter_username',
             'linkedin_profile',
         )
+
+    def clean_twitter_username(self):
+        twitter_username = self.cleaned_data['twitter_username'].strip('@')
+        return twitter_username
 
     def save(self, commit=True):
         super(UserProfileForm, self).save()

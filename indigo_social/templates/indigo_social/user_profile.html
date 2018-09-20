@@ -16,13 +16,10 @@
 
   <div class="row">
     <div class="col-sm-3">
-        {% block account-sidebar %}
-          {% include 'indigo_app/user_account/_sidebar.html' with active='' %}
-        {% endblock %}
+      {% include 'indigo_app/user_account/_sidebar.html' with active='' %}
     </div>
 
     <div class="col-sm-9">
-      {% block account-content %}
         <div class="card mb-5">
           {% if userprofile.bio %}
           <h5 class="card-header">About</h5>
@@ -95,7 +92,6 @@
         </div>
         {% endif %}
 
-      {% endblock %}
     </div>
   </div>
 

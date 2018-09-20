@@ -70,8 +70,8 @@
     <div class="card-body">
 
       <div class="form-group">
-        <label for="{{ form.organisations.id_for_label }}">{{ form.organisations.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}">{{ form.organisations.value }}</textarea>
+        <label for="{{ form.organisations.id_for_label }}">Organisation(s)</label>
+        <input type="text" class="form-control" style="width:50%" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}" value="{{ form.organisations.value }}">
         {% if form.organisations.errors %}
           <div class="text-danger">
             {% for error in form.organisations.errors %}
@@ -83,7 +83,7 @@
 
       <div class="form-group">
         <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
+        <input type="text" class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}" value="{{ form.skills.value }}">
         {% if form.skills.errors %}
           <div class="text-danger">
             {% for error in form.skills.errors %}
@@ -95,7 +95,7 @@
 
       <div class="form-group">
         <label for="{{ form.qualifications.id_for_label }}">{{ form.qualifications.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
+        <input type="text" class="form-control" style="width:50%" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}" value="{{ form.qualifications.value }}">
         {% if form.qualifications.errors %}
           <div class="text-danger">
             {% for error in form.qualifications.errors %}
@@ -107,7 +107,7 @@
 
       <div class="form-group">
         <label for="{{ form.specialisations.id_for_label }}">{{ form.specialisations.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
+        <input type="text" class="form-control" style="width:50%" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}" value="{{ form.specialisations.value }}">
         {% if form.specialisations.errors %}
           <div class="text-danger">
             {% for error in form.specialisations.errors %}
@@ -119,7 +119,7 @@
 
       <div class="form-group">
         <label for="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.value }}</textarea>
+        <input type="text" class="form-control" style="width:50%" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value }}">
         {% if form.areas_of_law.errors %}
           <div class="text-danger">
             {% for error in form.areas_of_law.errors %}

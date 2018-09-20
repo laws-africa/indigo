@@ -1,32 +1,13 @@
 import logging
 
-from django.conf import settings
 from django.dispatch import receiver
 from rest_framework.reverse import reverse
-import requests
 
 from indigo_api.signals import document_published
+from indigo_slack.slack import send_slack_message
 
 
 log = logging.getLogger(__name__)
-
-
-def send_slack_message(message, url=None, **kwargs):
-    url = url or settings.SLACK_WEBHOOK_URL
-    if not url:
-        return
-
-    payload = {}
-    payload.update(kwargs)
-    if message:
-        payload['text'] = message
-
-    log.debug("Sending message to slack at %s: %s" % (url, payload))
-
-    try:
-        requests.post(url, json=payload, timeout=5)
-    except requests.exceptions.RequestException as e:
-        log.error("Error with slack call: %s" % e, exc_info=True)
 
 
 @receiver(document_published)

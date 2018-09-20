@@ -1,13 +1,16 @@
 {% extends "main.html" %}
 
-{% block title%}{{ userprofile.user.first_name }} {{ block.super }}{% endblock %}
+{% block title%}{{ userprofile.user.first_name }} {{ last_name_initial }} {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container">
 
   <div class="row">
     <div class="col-sm-10 offset-sm-3">
-      <h1 class="mb-3 mt-3">{{ userprofile.user.first_name }} {{ last_name_initial }}</h1>
+      <h1 class="mb-3 mt-3">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+      <div class="float-right">
+        <img src="" alt="profile photo" style="width:30px;height:30px;">
+      </div>
     </div>
   </div>
 
@@ -17,131 +20,80 @@
           {% include 'indigo_app/user_account/_sidebar.html' with active='' %}
         {% endblock %}
     </div>
+
     <div class="col-sm-9">
       {% block account-content %}
-
-        <img src="">
-
-      {{ userprofile }}
-
         <div class="card mb-5">
+          {% if userprofile.bio %}
           <h5 class="card-header">About</h5>
-          <h6 class="card-footer">Bio</h6>
           <div class="card-body">
             {{ userprofile.bio }}
           </div>
-
-            </div>
-
-        <h5 class="card-footer">Work etc</h5>
-        <div class="card-body">
-
-          <div class="form-group">
-            <label for="{{ form.organisations.id_for_label }}">{{ form.organisations.label }}</label>
-            <textarea class="form-control" style="width:50%" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}">{{ form.organisations.value }}</textarea>
-            {% if form.organisations.errors %}
-              <div class="text-danger">
-                {% for error in form.organisations.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
-            <textarea class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
-            {% if form.skills.errors %}
-              <div class="text-danger">
-                {% for error in form.skills.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.qualifications.id_for_label }}">{{ form.qualifications.label }}</label>
-            <textarea class="form-control" style="width:50%" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
-            {% if form.qualifications.errors %}
-              <div class="text-danger">
-                {% for error in form.qualifications.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.specialisations.id_for_label }}">{{ form.specialisations.label }}</label>
-            <textarea class="form-control" style="width:50%" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
-            {% if form.specialisations.errors %}
-              <div class="text-danger">
-                {% for error in form.specialisations.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.label }}</label>
-            <textarea class="form-control" style="width:50%" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.value }}</textarea>
-            {% if form.areas_of_law.errors %}
-              <div class="text-danger">
-                {% for error in form.areas_of_law.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
+          {% endif %}
         </div>
 
-        <h5 class="card-footer">Social</h5>
-        <div class="card-body">
+        {% if userprofile.organisations or userprofile.skills or userprofile.qualifications or userprofile.specialisations or userprofile.areas_of_law %}
+        <div class="card mb-5">
+          <h5 class="card-header">Work etc</h5>
 
-          <div class="form-group">
-            <label for="{{ form.twitter_profile.id_for_label }}">{{ form.twitter_profile.label }}</label>
-            <input type="url" class="form-control" style="width:50%" name="{{ form.twitter_profile.name }}" id="{{ form.twitter_profile.id_for_label }}" value="{{ form.twitter_profile.value|default:'' }}">
-            {% if form.twitter_profile.errors %}
-              <div class="text-danger">
-                {% for error in form.twitter_profile.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
+          {% if userprofile.organisations %}
+          <h6 class="card-footer">Organisation(s)</h6>
+          <div class="card-body">
+            {{ userprofile.organisations }}
           </div>
+          {% endif %}
 
-          <div class="form-group">
-            <label for="{{ form.linkedin_profile.id_for_label }}">{{ form.linkedin_profile.label }}</label>
-            <input type="url" class="form-control" style="width:50%" name="{{ form.linkedin_profile.name }}" id="{{ form.linkedin_profile.id_for_label }}" value="{{ form.linkedin_profile.value|default:'' }}">
-            {% if form.linkedin_profile.errors %}
-              <div class="text-danger">
-                {% for error in form.linkedin_profile.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
+          {% if userprofile.skills %}
+          <h6 class="card-footer">Skills</h6>
+          <div class="card-body">
+            {{ userprofile.skills }}
           </div>
+          {% endif %}
 
+          {% if userprofile.qualifications %}
+          <h6 class="card-footer">Qualifications</h6>
+          <div class="card-body">
+            {{ userprofile.qualifications }}
+          </div>
+          {% endif %}
+
+          {% if userprofile.specialisations %}
+          <h6 class="card-footer">Specialisations</h6>
+          <div class="card-body">
+            {{ userprofile.specialisations }}
+          </div>
+          {% endif %}
+
+          {% if userprofile.areas_of_law %}
+          <h6 class="card-footer">Areas of law</h6>
+          <div class="card-body">
+            {{ userprofile.areas_of_law }}
+          </div>
+          {% endif %}
 
         </div>
-        <div class="card-footer">
-          <button type="submit" class="btn btn-success">Save</button>
-          <a href=../../contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right" onclick="">View my profile</button></a>
+        {% endif %}
+
+        {% if userprofile.twitter_profile or userprofile.linkedin_profile %}
+        <div class="card mb-5">
+          <h5 class="card-header">Social</h5>
+
+          {% if userprofile.twitter_profile %}
+          <h6 class="card-footer">Twitter</h6>
+          <div class="card-body">
+            {{ userprofile.twitter_profile }}
+          </div>
+          {% endif %}
+
+          {% if userprofile.linkedin_profile %}
+          <h6 class="card-footer">Linkedin</h6>
+          <div class="card-body">
+            {{ userprofile.linkedin_profile }}
+          </div>
+          {% endif %}
+
         </div>
-      </div>
-
-
-
-
-
-
-
-
-
-
+        {% endif %}
 
       {% endblock %}
     </div>

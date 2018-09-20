@@ -24,7 +24,7 @@
           {% if userprofile.bio %}
           <h5 class="card-header">About</h5>
           <div class="card-body">
-            {{ userprofile.bio }}
+            {{ userprofile.bio | linebreaks }}
           </div>
           {% endif %}
         </div>
@@ -36,28 +36,28 @@
           {% if userprofile.organisations %}
           <h6 class="card-footer">Organisation(s)</h6>
           <div class="card-body">
-            {{ userprofile.organisations }}
+            {{ userprofile.organisations | linebreaks }}
           </div>
           {% endif %}
 
           {% if userprofile.skills %}
           <h6 class="card-footer">Skills</h6>
           <div class="card-body">
-            {{ userprofile.skills }}
+            {{ userprofile.skills | linebreaks }}
           </div>
           {% endif %}
 
           {% if userprofile.qualifications %}
           <h6 class="card-footer">Qualifications</h6>
           <div class="card-body">
-            {{ userprofile.qualifications }}
+            {{ userprofile.qualifications | linebreaks }}
           </div>
           {% endif %}
 
           {% if userprofile.specialisations %}
           <h6 class="card-footer">Specialisations</h6>
           <div class="card-body">
-            {{ userprofile.specialisations }}
+            {{ userprofile.specialisations | linebreaks }}
           </div>
           {% endif %}
 

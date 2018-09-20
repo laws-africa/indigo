@@ -71,7 +71,7 @@
 
       <div class="form-group">
         <label for="{{ form.organisations.id_for_label }}">Organisation(s)</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}" value="{{ form.organisations.value }}">
+        <textarea class="form-control" style="width:50%" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}">{{ form.organisations.value }}</textarea>
         {% if form.organisations.errors %}
           <div class="text-danger">
             {% for error in form.organisations.errors %}
@@ -83,7 +83,7 @@
 
       <div class="form-group">
         <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}" value="{{ form.skills.value }}">
+        <textarea class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
         {% if form.skills.errors %}
           <div class="text-danger">
             {% for error in form.skills.errors %}
@@ -95,7 +95,7 @@
 
       <div class="form-group">
         <label for="{{ form.qualifications.id_for_label }}">{{ form.qualifications.label }}</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}" value="{{ form.qualifications.value }}">
+        <textarea class="form-control" style="width:50%" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
         {% if form.qualifications.errors %}
           <div class="text-danger">
             {% for error in form.qualifications.errors %}
@@ -107,7 +107,7 @@
 
       <div class="form-group">
         <label for="{{ form.specialisations.id_for_label }}">{{ form.specialisations.label }}</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}" value="{{ form.specialisations.value }}">
+        <textarea class="form-control" style="width:50%" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
         {% if form.specialisations.errors %}
           <div class="text-danger">
             {% for error in form.specialisations.errors %}

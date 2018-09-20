@@ -31,11 +31,14 @@
             </div>
             {% if userprofile.organisations %}
               <h5>Organisation(s)</h5>
-              <p>{{ userprofile.organisations }}</p>
+              <p>{{ userprofile.organisations | linebreaks }}</p>
+            {% endif %}
+            {% if userprofile.organisations and userprofile.bio %}
+              <br>
             {% endif %}
             {% if userprofile.bio %}
               <h5>Bio</h5>
-              <p>{{ userprofile.bio }}</p>
+              <p>{{ userprofile.bio | linebreaks }}</p>
             {% endif %}
           </div>
           </a>

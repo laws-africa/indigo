@@ -11,157 +11,172 @@
 
   <div class="card mb-5">
     <div class="card-header">
-      <button type="submit" class="btn btn-success">Save</button>
       <a href=/contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right">View my profile</button></a>
     </div>
-    <h5 class="card-footer">About you</h5>
     <div class="card-body">
-      <div class="form-group">
-        <label for="{{ form.profile_photo.id_for_label }}">{{ form.profile_photo.label }}</label>
-        <input type="file" class="form-control" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" value="{{ form.profile_photo.value }}">
-        {% if form.profile_photo.errors %}
-          <div class="text-danger">
-            {% for error in form.profile_photo.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
+            <input type="text" class="form-control" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value }}" required>
+            {% if form.first_name.errors %}
+              <div class="text-danger">
+                {% for error in form.first_name.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
-        {% endif %}
+
+          <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
+            <input type="text" class="form-control" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" value="{{ form.last_name.value }}" required>
+            {% if form.last_name.errors %}
+              <div class="text-danger">
+                {% for error in form.last_name.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
+            <textarea class="form-control" name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}" placeholder="Tell us a bit about yourself">{{ form.bio.value }}</textarea>
+            {% if form.bio.errors %}
+              <div class="text-danger">
+                {% for error in form.bio.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+
+        <div class="col-6">
+          <div class="form-group">
+            <label for="{{ form.profile_photo.id_for_label }}">{{ form.profile_photo.label }}</label>
+            <input type="file" class="form-control" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" value="{{ form.profile_photo.value }}">
+            {% if form.profile_photo.errors %}
+              <div class="text-danger">
+                {% for error in form.profile_photo.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="{{ form.first_name.id_for_label }}">{{ form.first_name.label }}</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.first_name.name }}" id="{{ form.first_name.id_for_label }}" value="{{ form.first_name.value }}" required>
-        {% if form.first_name.errors %}
-          <div class="text-danger">
-            {% for error in form.first_name.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
+      <hr>
+
+      <h5 class="card-title">Professional Skills</h5>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="{{ form.organisations.id_for_label }}">Organisation(s)</label>
+            <textarea class="form-control" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}" placeholder="What organisations do you work for or with?">{{ form.organisations.value }}</textarea>
+            {% if form.organisations.errors %}
+              <div class="text-danger">
+                {% for error in form.organisations.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
           </div>
-        {% endif %}
+
+          <div class="form-group">
+            <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
+            <textarea class="form-control" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
+            {% if form.skills.errors %}
+              <div class="text-danger">
+                {% for error in form.skills.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.qualifications.id_for_label }}">{{ form.qualifications.label }}</label>
+            <textarea class="form-control" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
+            {% if form.qualifications.errors %}
+              <div class="text-danger">
+                {% for error in form.qualifications.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.specialisations.id_for_label }}">{{ form.specialisations.label }}</label>
+            <textarea class="form-control" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
+            {% if form.specialisations.errors %}
+              <div class="text-danger">
+                {% for error in form.specialisations.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
+            <label for="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.label }}</label>
+            <input type="text" class="form-control" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value }}">
+            {% if form.areas_of_law.errors %}
+              <div class="text-danger">
+                {% for error in form.areas_of_law.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
 
-      <div class="form-group">
-        <label for="{{ form.last_name.id_for_label }}">{{ form.last_name.label }}</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.last_name.name }}" id="{{ form.last_name.id_for_label }}" value="{{ form.last_name.value }}" required>
-        {% if form.last_name.errors %}
-          <div class="text-danger">
-            {% for error in form.last_name.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
+      <hr>
 
-      <div class="form-group">
-        <label for="{{ form.bio.id_for_label }}">{{ form.bio.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.bio.name }}" id="{{ form.bio.id_for_label }}">{{ form.bio.value }}</textarea>
-        {% if form.bio.errors %}
-          <div class="text-danger">
-            {% for error in form.bio.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
+      <h5 class="card-title">Social Media Profiles</h5>
+
+      <div class="row">
+        <div class="col-6">
+          <div class="form-group">
+            <label for="{{ form.twitter_profile.id_for_label }}">{{ form.twitter_profile.label }}</label>
+            <div class="input-group">
+              <div class="input-group-prepend">
+                <span class="input-group-text">@</span>
+              </div>
+              <input class="form-control" name="{{ form.twitter_profile.name }}" id="{{ form.twitter_profile.id_for_label }}" value="{{ form.twitter_profile.value|default:'' }}">
+              {% if form.twitter_profile.errors %}
+                <div class="text-danger">
+                  {% for error in form.twitter_profile.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
           </div>
-        {% endif %}
+
+          <div class="form-group">
+            <label for="{{ form.linkedin_profile.id_for_label }}">{{ form.linkedin_profile.label }}</label>
+            <input type="url" class="form-control" name="{{ form.linkedin_profile.name }}" id="{{ form.linkedin_profile.id_for_label }}" value="{{ form.linkedin_profile.value|default:'' }}">
+            {% if form.linkedin_profile.errors %}
+              <div class="text-danger">
+                {% for error in form.linkedin_profile.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
       </div>
 
     </div>
 
-    <h5 class="card-footer">Work etc</h5>
-    <div class="card-body">
-
-      <div class="form-group">
-        <label for="{{ form.organisations.id_for_label }}">Organisation(s)</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}">{{ form.organisations.value }}</textarea>
-        {% if form.organisations.errors %}
-          <div class="text-danger">
-            {% for error in form.organisations.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="form-group">
-        <label for="{{ form.skills.id_for_label }}">{{ form.skills.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.skills.name }}" id="{{ form.skills.id_for_label }}">{{ form.skills.value }}</textarea>
-        {% if form.skills.errors %}
-          <div class="text-danger">
-            {% for error in form.skills.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="form-group">
-        <label for="{{ form.qualifications.id_for_label }}">{{ form.qualifications.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.qualifications.name }}" id="{{ form.qualifications.id_for_label }}">{{ form.qualifications.value }}</textarea>
-        {% if form.qualifications.errors %}
-          <div class="text-danger">
-            {% for error in form.qualifications.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="form-group">
-        <label for="{{ form.specialisations.id_for_label }}">{{ form.specialisations.label }}</label>
-        <textarea class="form-control" style="width:50%" name="{{ form.specialisations.name }}" id="{{ form.specialisations.id_for_label }}">{{ form.specialisations.value }}</textarea>
-        {% if form.specialisations.errors %}
-          <div class="text-danger">
-            {% for error in form.specialisations.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="form-group">
-        <label for="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.label }}</label>
-        <input type="text" class="form-control" style="width:50%" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value }}">
-        {% if form.areas_of_law.errors %}
-          <div class="text-danger">
-            {% for error in form.areas_of_law.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-    </div>
-
-    <h5 class="card-footer">Social</h5>
-    <div class="card-body">
-
-      <div class="form-group">
-        <label for="{{ form.twitter_profile.id_for_label }}">{{ form.twitter_profile.label }}</label>
-        <input type="url" class="form-control" style="width:50%" name="{{ form.twitter_profile.name }}" id="{{ form.twitter_profile.id_for_label }}" value="{{ form.twitter_profile.value|default:'' }}">
-        {% if form.twitter_profile.errors %}
-          <div class="text-danger">
-            {% for error in form.twitter_profile.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-      <div class="form-group">
-        <label for="{{ form.linkedin_profile.id_for_label }}">{{ form.linkedin_profile.label }}</label>
-        <input type="url" class="form-control" style="width:50%" name="{{ form.linkedin_profile.name }}" id="{{ form.linkedin_profile.id_for_label }}" value="{{ form.linkedin_profile.value|default:'' }}">
-        {% if form.linkedin_profile.errors %}
-          <div class="text-danger">
-            {% for error in form.linkedin_profile.errors %}
-              <p>{{ error }}</p>
-            {% endfor %}
-          </div>
-        {% endif %}
-      </div>
-
-
-    </div>
     <div class="card-footer">
-      <button type="submit" class="btn btn-success">Save</button>
+      <button type="submit" class="btn btn-success">Save profile</button>
       <a href=/contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right">View my profile</button></a>
     </div>
   </div>

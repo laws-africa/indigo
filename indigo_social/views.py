@@ -7,20 +7,26 @@ from .forms import UserProfileForm
 from .models import UserProfile
 
 
-class SocialHomeView(ListView):
+class ContributorsView(ListView):
     model = UserProfile
     template_name = 'indigo_social/social_home.html'
 
-    def get_context_data(self, **kwargs):
-        context = {
-            'users': UserProfile.objects.all()
-        }
-        return context
+    # def get_context_data(self, **kwargs):
+    #     context = {
+    #         'users': UserProfile.objects.all()
+    #     }
+    #     return context
 
 
-class SocialProfileView(DetailView):
+class UserProfileView(DetailView):
     model = UserProfile
-    template_name = 'indigo_social/social_profile.html'
+    template_name = 'indigo_social/user_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileView, self).get_context_data(**kwargs)
+        user_profile = UserProfile.objects.get(pk=str(self.kwargs['pk']))
+        context['last_name_initial'] = user_profile.user.last_name[0] + '.'
+        return context
 
 
 class UserProfileEditView(UpdateView):

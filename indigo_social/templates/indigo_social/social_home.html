@@ -1,19 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Indigo Social | Home</title>
-</head>
-<body>
-    <!-- should also include a link to each user's profile page (once urls are smarter) -->
-    {% if users %}
-        {% for user_profile in users %}
-            <p>{{ user_profile.user.first_name }}</p>
-            <p>{{ user_profile.bio }}</p>
-            <br/>
+{% extends "main.html" %}
+
+{% block title%}Contributors {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-sm-10 offset-sm-3">
+      <h1 class="mb-3 mt-3">Contributors</h1>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-sm-3">
+        {% block account-sidebar %}
+          {% include 'indigo_app/user_account/_sidebar.html' with active='contributors' %}
+        {% endblock %}
+    </div>
+    <div class="col-sm-9">
+      {% block account-content %}
+        {% for userprofile in userprofiles %}
+          <p>Hi!</p>
         {% endfor %}
-    {% else %}
-        <p>Be the first to create a user profile!</p>
-    {% endif %}
-</body>
-</html>
+      {% endblock %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

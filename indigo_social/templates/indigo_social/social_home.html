@@ -12,18 +12,36 @@
   </div>
 
   <div class="row">
+
     <div class="col-sm-3">
-        {% block account-sidebar %}
-          {% include 'indigo_app/user_account/_sidebar.html' with active='contributors' %}
-        {% endblock %}
+      {% include 'indigo_app/user_account/_sidebar.html' with active='contributors' %}
     </div>
+
     <div class="col-sm-9">
-      {% block account-content %}
-        {% for userprofile in userprofiles %}
-          <p>Hi!</p>
-        {% endfor %}
-      {% endblock %}
+      {% for userprofile in userprofile_list %}
+
+        <div class="card mb-5"}>
+          <a href=../../contributors/{{ userprofile.id }}>
+          <h4 class="card-header">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h4>
+          <div class="card-body">
+            <div class="float-right">
+              <img src="" alt="profile photo">
+            </div>
+            {% if userprofile.organisations %}
+              <h5>Organisation(s)</h5>
+              <p>{{ userprofile.organisations }}</p>
+            {% endif %}
+            {% if userprofile.bio %}
+              <h5>Bio</h5>
+              <p>{{ userprofile.bio }}</p>
+            {% endif %}
+          </div>
+          </a>
+        </div>
+
+      {% endfor %}
     </div>
+
   </div>
 
 </div>

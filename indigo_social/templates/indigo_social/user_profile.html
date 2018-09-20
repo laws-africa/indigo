@@ -62,12 +62,10 @@
   <div class="card mb-5">
     <h5 class="card-header">Social</h5>
 
-    {% if userprofile.twitter_profile %}
+    {% if userprofile.twitter_username %}
     <h6 class="card-footer">Twitter</h6>
     <div class="card-body">
-      <a href="{{ userprofile.twitter_profile }}">
-        {{ userprofile.twitter_profile }}
-      </a>
+      <a href="https://twitter.com/@{{ userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ userprofile.twitter_username }}</a>
     </div>
     {% endif %}
 

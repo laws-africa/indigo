@@ -1,0 +1,86 @@
+{% extends "main.html" %}
+
+{% block title%}{{ userprofile.user.first_name }} {{ last_name_initial }} {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <h1 class="mb-3 mt-3">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+
+  <div class="card mb-5">
+    {% if userprofile.bio %}
+    <h5 class="card-header">About</h5>
+    <div class="card-body">
+      {{ userprofile.bio | linebreaks }}
+    </div>
+    {% endif %}
+  </div>
+
+  {% if userprofile.organisations or userprofile.skills or userprofile.qualifications or userprofile.specialisations or userprofile.areas_of_law %}
+  <div class="card mb-5">
+    <h5 class="card-header">Work etc</h5>
+
+    {% if userprofile.organisations %}
+    <h6 class="card-footer">Organisation(s)</h6>
+    <div class="card-body">
+      {{ userprofile.organisations | linebreaks }}
+    </div>
+    {% endif %}
+
+    {% if userprofile.skills %}
+    <h6 class="card-footer">Skills</h6>
+    <div class="card-body">
+      {{ userprofile.skills | linebreaks }}
+    </div>
+    {% endif %}
+
+    {% if userprofile.qualifications %}
+    <h6 class="card-footer">Qualifications</h6>
+    <div class="card-body">
+      {{ userprofile.qualifications | linebreaks }}
+    </div>
+    {% endif %}
+
+    {% if userprofile.specialisations %}
+    <h6 class="card-footer">Specialisations</h6>
+    <div class="card-body">
+      {{ userprofile.specialisations | linebreaks }}
+    </div>
+    {% endif %}
+
+    {% if userprofile.areas_of_law %}
+    <h6 class="card-footer">Areas of law</h6>
+    <div class="card-body">
+      {{ userprofile.areas_of_law }}
+    </div>
+    {% endif %}
+
+  </div>
+  {% endif %}
+
+  {% if userprofile.twitter_profile or userprofile.linkedin_profile %}
+  <div class="card mb-5">
+    <h5 class="card-header">Social</h5>
+
+    {% if userprofile.twitter_profile %}
+    <h6 class="card-footer">Twitter</h6>
+    <div class="card-body">
+      <a href="{{ userprofile.twitter_profile }}">
+        {{ userprofile.twitter_profile }}
+      </a>
+    </div>
+    {% endif %}
+
+    {% if userprofile.linkedin_profile %}
+    <h6 class="card-footer">Linkedin</h6>
+    <div class="card-body">
+      <a href="{{ userprofile.linkedin_profile }}">
+        {{ userprofile.linkedin_profile }}
+      </a>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

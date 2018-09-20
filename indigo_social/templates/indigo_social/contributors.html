@@ -1,0 +1,53 @@
+{% extends "main.html" %}
+
+{% block title%}Contributors {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="row">
+    <div class="col-sm-10 offset-sm-3">
+      <h1 class="mb-3 mt-3">Contributors</h1>
+    </div>
+  </div>
+
+  <div class="row">
+
+    <div class="col-sm-3">
+      {% include 'indigo_app/user_account/_sidebar.html' with active='contributors' %}
+    </div>
+
+    <div class="col-sm-9">
+      {% for userprofile in profiles_plus_initials %}
+
+        <div class="card mb-5"}>
+          <div class="card-header">
+            <a href=/contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right">Visit profile</button></a>
+            <h4>{{ userprofile.first_name }} {{ userprofile.initial }}</h4>
+          </div>
+          <div class="card-body">
+            <div class="float-right">
+              <img src="" alt="profile photo">
+            </div>
+            {% if userprofile.organisations %}
+              <h5>Organisation(s)</h5>
+              <p>{{ userprofile.organisations | linebreaks }}</p>
+            {% endif %}
+            {% if userprofile.organisations and userprofile.bio %}
+              <br>
+            {% endif %}
+            {% if userprofile.bio %}
+              <h5>Bio</h5>
+              <p>{{ userprofile.bio | linebreaks }}</p>
+            {% endif %}
+          </div>
+          </a>
+        </div>
+
+      {% endfor %}
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

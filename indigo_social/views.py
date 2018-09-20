@@ -9,13 +9,21 @@ from .models import UserProfile
 
 class ContributorsView(ListView):
     model = UserProfile
-    template_name = 'indigo_social/social_home.html'
+    template_name = 'indigo_social/contributors.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = {
-    #         'users': UserProfile.objects.all()
-    #     }
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(ContributorsView, self).get_context_data(**kwargs)
+        context['profiles_plus_initials'] = [
+            {
+                'id': x.id,
+                'first_name': x.user.first_name,
+                'initial': x.user.last_name[0] + '.',
+                'organisations': x.organisations,
+                'bio': x.bio
+            }
+            for x in context['userprofile_list']
+        ]
+        return context
 
 
 class UserProfileView(DetailView):
@@ -25,7 +33,8 @@ class UserProfileView(DetailView):
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
         user_profile = UserProfile.objects.get(pk=str(self.kwargs['pk']))
-        context['last_name_initial'] = user_profile.user.last_name[0] + '.'
+        if user_profile.user.last_name:
+            context['last_name_initial'] = user_profile.user.last_name[0] + '.'
         return context
 
 

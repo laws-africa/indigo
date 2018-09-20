@@ -9,7 +9,7 @@
     <div class="col-sm-10 offset-sm-3">
       <h1 class="mb-3 mt-3">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
       <div class="float-right">
-        <img src="" alt="profile photo" style="width:30px;height:30px;">
+        <img src="" alt="profile photo">
       </div>
     </div>
   </div>
@@ -78,14 +78,18 @@
           {% if userprofile.twitter_profile %}
           <h6 class="card-footer">Twitter</h6>
           <div class="card-body">
-            {{ userprofile.twitter_profile }}
+            <a href="{{ userprofile.twitter_profile }}">
+              {{ userprofile.twitter_profile }}
+            </a>
           </div>
           {% endif %}
 
           {% if userprofile.linkedin_profile %}
           <h6 class="card-footer">Linkedin</h6>
           <div class="card-body">
-            {{ userprofile.linkedin_profile }}
+            <a href="{{ userprofile.linkedin_profile }}">
+              {{ userprofile.linkedin_profile }}
+            </a>
           </div>
           {% endif %}
 

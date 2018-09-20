@@ -18,11 +18,13 @@
     </div>
 
     <div class="col-sm-9">
-      {% for userprofile in userprofile_list %}
+      {% for userprofile in profiles_plus_initials %}
 
         <div class="card mb-5"}>
-          <a href=../../contributors/{{ userprofile.id }}>
-          <h4 class="card-header">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h4>
+          <div class="card-header">
+            <a href=/contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right">Visit profile</button></a>
+            <h4>{{ userprofile.first_name }} {{ userprofile.initial }}</h4>
+          </div>
           <div class="card-body">
             <div class="float-right">
               <img src="" alt="profile photo">

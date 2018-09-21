@@ -26,8 +26,9 @@ class UserProfileForm(forms.ModelForm):
         )
 
     def clean_twitter_username(self):
-        twitter_username = self.cleaned_data['twitter_username'].strip('@')
-        return twitter_username
+        if self.cleaned_data['twitter_username']:
+            twitter_username = self.cleaned_data['twitter_username'].strip('@')
+            return twitter_username
 
     def save(self, commit=True):
         super(UserProfileForm, self).save()

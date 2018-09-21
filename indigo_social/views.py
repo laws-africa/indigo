@@ -17,7 +17,7 @@ class ContributorsView(ListView):
             {
                 'id': x.id,
                 'first_name': x.user.first_name,
-                'initial': x.user.last_name[0] + '.',
+                'initial': x.user.last_name[0] + '.' if x.user.last_name else '',
                 'organisations': x.organisations,
                 'bio': x.bio
             }

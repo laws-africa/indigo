@@ -13,6 +13,6 @@ class UserProfile(models.Model):
     organisations = models.TextField(blank=True, null=True, default='', help_text="Organisation(s)")
     specialisations = models.TextField(blank=True, null=True, default='', help_text="Specialisation(s)")
     areas_of_law = models.CharField(max_length=256, blank=True, null=True, default='', help_text="Area(s) of law")
-    profile_photo = models.ImageField(null=True)
+    profile_photo = models.ImageField(blank=True, null=True)
     twitter_username = models.CharField(max_length=256, blank=True, null=True, default='')
     linkedin_profile = models.URLField(blank=True, null=True, default='')

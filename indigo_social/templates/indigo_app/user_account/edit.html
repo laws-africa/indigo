@@ -10,9 +10,6 @@
   {% csrf_token %}
 
   <div class="card mb-5">
-    <div class="card-header">
-      <a href=/contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right">View my profile</button></a>
-    </div>
     <div class="card-body">
       <div class="row">
         <div class="col-6">
@@ -177,7 +174,7 @@
 
     <div class="card-footer">
       <button type="submit" class="btn btn-success">Save profile</button>
-      <a href=/contributors/{{ userprofile.id }}><button type="button" class="btn btn-success float-right">View my profile</button></a>
+      <a href="{% url 'indigo_social:user_profile' pk=userprofile.id %}" class="btn btn-primary float-right">View my profile</a>
     </div>
   </div>
 

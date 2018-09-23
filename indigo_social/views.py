@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.views.generic import DetailView, ListView, UpdateView
+from django.urls import reverse
 
 from .forms import UserProfileForm
 from .models import UserProfile
@@ -40,4 +41,4 @@ class UserProfileEditView(UpdateView):
         return UserProfile.objects.get(user=self.request.user)
 
     def get_success_url(self):
-        return ''
+        return reverse('edit_account')

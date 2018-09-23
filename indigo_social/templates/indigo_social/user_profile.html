@@ -2,83 +2,77 @@
 
 {% block title%}{{ userprofile.user.first_name }} {{ last_name_initial }} {{ block.super }}{% endblock %}
 
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
+{% endblock %}
+
 {% block content %}
 <div class="container">
 
-  <h1 class="mb-3 mt-3">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+  <div class="row">
+    <div class="col-md-8 m-auto">
+      <div class="card mt-3 mb-3">
+        <h1 class="card-header">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+        <div class="card-body">
+          {% if userprofile.bio %}
+          {{ userprofile.bio | linebreaks }}
+          {% endif %}
 
-  <div class="card mb-5">
-    {% if userprofile.bio %}
-    <h5 class="card-header">About</h5>
-    <div class="card-body">
-      {{ userprofile.bio | linebreaks }}
+          <hr>
+
+          {% if userprofile.organisations %}
+          <h6>Organisation(s)</h6>
+          {{ userprofile.organisations | linebreaks }}
+          {% endif %}
+
+          {% if userprofile.skills %}
+          <h6>Skills</h6>
+          {{ userprofile.skills | linebreaks }}
+          {% endif %}
+
+          {% if userprofile.qualifications %}
+          <h6>Qualifications</h6>
+          {{ userprofile.qualifications | linebreaks }}
+          {% endif %}
+
+          {% if userprofile.specialisations %}
+          <h6>Specialisations</h6>
+          {{ userprofile.specialisations | linebreaks }}
+          {% endif %}
+
+          {% if userprofile.areas_of_law %}
+          <h6>Areas of law</h6>
+          {{ userprofile.areas_of_law }}
+          {% endif %}
+
+          {% if userprofile.twitter_username or userprofile.linkedin_prolife %}
+          <hr>
+          <ul class="fa-ul">
+            {% if userprofile.twitter_username %}
+            <li>
+              <span class="fa-li"><i class="fab fa-twitter"></i></span> 
+              <a href="https://twitter.com/@{{ userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ userprofile.twitter_username }}</a>
+            </li>
+            {% endif %}
+
+            {% if userprofile.linkedin_profile %}
+            <li>
+              <span class="fa-li"><i class="fab fa-linkedin"></i></span> 
+              <a href="{{ userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ userprofile.linkedin_profile }}</a>
+            </li>
+            {% endif %}
+
+          </ul>
+          {% endif %}
+        </div>
+
+        {% if request.user == userprofile.user %}
+        <div class="card-footer">
+          <a class="btn btn-primary" href="{% url 'edit_account' %}">Edit profile</a>
+        </div>
+        {% endif %}
+      </div>
     </div>
-    {% endif %}
   </div>
-
-  {% if userprofile.organisations or userprofile.skills or userprofile.qualifications or userprofile.specialisations or userprofile.areas_of_law %}
-  <div class="card mb-5">
-    <h5 class="card-header">Work etc</h5>
-
-    {% if userprofile.organisations %}
-    <h6 class="card-footer">Organisation(s)</h6>
-    <div class="card-body">
-      {{ userprofile.organisations | linebreaks }}
-    </div>
-    {% endif %}
-
-    {% if userprofile.skills %}
-    <h6 class="card-footer">Skills</h6>
-    <div class="card-body">
-      {{ userprofile.skills | linebreaks }}
-    </div>
-    {% endif %}
-
-    {% if userprofile.qualifications %}
-    <h6 class="card-footer">Qualifications</h6>
-    <div class="card-body">
-      {{ userprofile.qualifications | linebreaks }}
-    </div>
-    {% endif %}
-
-    {% if userprofile.specialisations %}
-    <h6 class="card-footer">Specialisations</h6>
-    <div class="card-body">
-      {{ userprofile.specialisations | linebreaks }}
-    </div>
-    {% endif %}
-
-    {% if userprofile.areas_of_law %}
-    <h6 class="card-footer">Areas of law</h6>
-    <div class="card-body">
-      {{ userprofile.areas_of_law }}
-    </div>
-    {% endif %}
-
-  </div>
-  {% endif %}
-
-  {% if userprofile.twitter_username or userprofile.linkedin_profile %}
-  <div class="card mb-5">
-    <h5 class="card-header">Social</h5>
-
-    {% if userprofile.twitter_username %}
-    <h6 class="card-footer">Twitter</h6>
-    <div class="card-body">
-      <a href="https://twitter.com/@{{ userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ userprofile.twitter_username }}</a>
-    </div>
-    {% endif %}
-
-    {% if userprofile.linkedin_profile %}
-    <h6 class="card-footer">Linkedin</h6>
-    <div class="card-body">
-      <a href="{{ userprofile.linkedin_profile }}">
-        {{ userprofile.linkedin_profile }}
-      </a>
-    </div>
-    {% endif %}
-
-  </div>
-  {% endif %}
 </div>
 {% endblock %}

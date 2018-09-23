@@ -1,6 +1,9 @@
 {% extends "main.html" %}
 
 {% block title%}Contributors {{ block.super }}{% endblock %}
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
+{% endblock %}
 
 {% block content %}
 <div class="container">

@@ -34,6 +34,7 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = (
     # indigo social
     'indigo_social',
+    'pinax.badges',
 
     # local traditions
     'indigo_za',

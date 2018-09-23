@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load pinax_badges_tags %}
 
 {% block title%}{{ userprofile.user.first_name }} {{ last_name_initial }} {{ block.super }}{% endblock %}
 
@@ -7,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container mb-5">
 
   <div class="row">
     <div class="col-md-8 m-auto">
@@ -71,6 +72,17 @@
           <a class="btn btn-primary" href="{% url 'edit_account' %}">Edit profile</a>
         </div>
         {% endif %}
+      </div>
+
+      <div class="card">
+        <h4 class="card-header">Badges Awarded</h4>
+        <div class="card-body">
+          {% badges_for_user userprofile.user as badges %}
+          {% for badge in badges %}
+          <h6><i class="fas fa-award"></i> {{ badge.name }} <span class="text-muted font-weight-normal">{{ badge.awarded_at|timesince }} ago</span></h6>
+          <p>{{ badge.description }}</p>
+          {% endfor %}
+        </div>
       </div>
     </div>
   </div>

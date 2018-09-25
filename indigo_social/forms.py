@@ -1,6 +1,7 @@
 from django import forms
 
 from indigo_social.models import UserProfile
+from indigo_social.badges import badges
 
 
 class UserProfileForm(forms.ModelForm):
@@ -35,3 +36,15 @@ class UserProfileForm(forms.ModelForm):
         self.instance.user.first_name = self.cleaned_data['first_name']
         self.instance.user.last_name = self.cleaned_data['last_name']
         self.instance.user.save()
+
+
+def badge_choices():
+    return [(b.slug, '%s - %s' % (b.name, b.description)) for b in badges.registry.itervalues()]
+
+
+class AwardBadgeForm(forms.Form):
+    badge = forms.ChoiceField(choices=badge_choices)
+    next = forms.CharField(required=False)
+
+    def actual_badge(self):
+        return badges.registry.get(self.cleaned_data.get('badge'))

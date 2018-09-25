@@ -8,19 +8,23 @@
 {% endblock %}
 
 {% block content %}
-<div class="container mb-5">
+<div class="container mb-5 mt-3">
 
   <div class="row">
     <div class="col-md-8 m-auto">
-      <div class="card mt-3 mb-3">
-        <h1 class="card-header">{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+
+      {% if request.user == userprofile.user %}
+        <a class="btn btn-primary float-right" href="{% url 'edit_account' %}">Edit profile</a>
+      {% endif %}
+
+      <h1>{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+
+      {% if userprofile.bio %}
+        {{ userprofile.bio | linebreaks }}
+      {% endif %}
+
+      <div class="card mt-3">
         <div class="card-body">
-          {% if userprofile.bio %}
-          {{ userprofile.bio | linebreaks }}
-          {% endif %}
-
-          <hr>
-
           {% if userprofile.organisations %}
           <h6>Organisation(s)</h6>
           {{ userprofile.organisations | linebreaks }}
@@ -66,15 +70,9 @@
           </ul>
           {% endif %}
         </div>
-
-        {% if request.user == userprofile.user %}
-        <div class="card-footer">
-          <a class="btn btn-primary" href="{% url 'edit_account' %}">Edit profile</a>
-        </div>
-        {% endif %}
       </div>
 
-      <div class="card">
+      <div class="card mt-3">
         <h4 class="card-header">Badges Awarded</h4>
         <div class="card-body">
 
@@ -84,7 +82,7 @@
             <li class="media mb-3">
               <i class="fas fa-award fa-fw fa-3x mr-3"></i>
               <div class="media-body">
-                <h5 class="mt-0 mb-1"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
+                <h5 class="mt-0 mb-0"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
                 <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
                 {{ badge.description }}
               </div>
@@ -92,6 +90,22 @@
             {% endfor %}
           </ul>
 
+          {% if can_award %}
+            <hr>
+
+            <form method="post" action="{% url 'indigo_social:award_user_badge' pk=userprofile.id %}" class="form-inline">
+              {% csrf_token %}
+
+              <p>Award a new badge to this user:</p>
+              <select name="{{ award_form.badge.name }}" class="form-control">
+                {% for val, label in award_form.fields.badge.choices %}
+                <option value="{{ val }}">{{ label }}</option>
+                {% endfor %}
+              </select>
+
+              <button tyep="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badget to this user?">Award badge</button>
+            </form>
+          {% endif %}
         </div>
       </div>
     </div>

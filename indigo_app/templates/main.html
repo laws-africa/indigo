@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% load staticfiles %}
+{% load staticfiles account %}
 
 {% block body-attributes %}data-backbone-view="{% block backbone-view %}{{ js_view }}{% endblock %}"{% endblock %}
 
@@ -55,7 +55,7 @@
               <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
                 <i class="fa fa-user"></i>
                 <span class="username">
-                  {% if user.is_authenticated %}{{ user.first_name|default:user.email }}{% endif %}
+                  {% if user.is_authenticated %}{% user_display user %}{% endif %}
                 </span>
               </a>
               <div class="dropdown-menu dropdown-menu-right">

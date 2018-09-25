@@ -4,7 +4,6 @@ from collections import OrderedDict
 from lxml.etree import LxmlError
 from itertools import groupby
 
-from django.db.models import Manager
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -14,9 +13,9 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from indigo.plugins import plugins
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country
 from indigo_api.signals import document_published, work_changed
+from allauth.account.utils import user_display
 
 log = logging.getLogger(__name__)
 
@@ -25,6 +24,17 @@ def published_doc_url(doc, request):
     uri = doc.expression_uri.expression_uri()[1:]
     uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
     return uri.replace('%40', '@')
+
+
+def user_display_name(user):
+    if user.first_name:
+        name = user.first_name
+        if user.last_name:
+            name += ' %s.' % user.last_name[0]
+    else:
+        name = user.username
+
+    return name
 
 
 class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
@@ -196,14 +206,7 @@ class UserSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
     def get_display_name(self, user):
-        if user.first_name:
-            name = user.first_name
-            if user.last_name:
-                name += ' %s.' % user.last_name[0]
-        else:
-            name = user.username
-
-        return name
+        return user_display(user)
 
 
 class VersionSerializer(serializers.ModelSerializer):

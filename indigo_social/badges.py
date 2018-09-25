@@ -79,5 +79,7 @@ class SeniorDrafterBadge(PermissionBadge):
 badges.register(ContributorBadge)
 badges.register(DrafterBadge)
 badges.register(SeniorDrafterBadge)
+# monkey-patch the badge registry to make it easier to find badges
+badges.registry = badges._registry
 
 # TODO: trigger when user permissions change

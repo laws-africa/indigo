@@ -84,7 +84,7 @@
             <li class="media mb-3">
               <i class="fas fa-award fa-fw fa-3x mr-3"></i>
               <div class="media-body">
-                <h5 class="mt-0 mb-1">{{ badge.name }}</h5>
+                <h5 class="mt-0 mb-1"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
                 <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
                 {{ badge.description }}
               </div>

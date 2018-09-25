@@ -1,9 +1,12 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-from django.views.generic import DetailView, ListView, UpdateView
+from django.views.generic import DetailView, ListView, UpdateView, TemplateView
 from django.urls import reverse
+from django.http import Http404
 
+from pinax.badges.models import BadgeAward
+from pinax.badges.registry import badges
 from .forms import UserProfileForm
 from .models import UserProfile
 
@@ -42,3 +45,27 @@ class UserProfileEditView(UpdateView):
 
     def get_success_url(self):
         return reverse('edit_account')
+
+
+class BadgeListView(TemplateView):
+    template_name = 'indigo_social/badges.html'
+
+    def get_context_data(self, **context):
+        context['badges'] = sorted(badges.registry.values(), key=lambda b: b.name)
+        return context
+
+
+class BadgeDetailView(TemplateView):
+    template_name = 'indigo_social/badge_detail.html'
+
+    def dispatch(self, request, slug):
+        badge = badges.registry.get(slug)
+        if not badge:
+            raise Http404
+        self.badge = badge
+        return super(BadgeDetailView, self).dispatch(request, slug=slug)
+
+    def get_context_data(self, **context):
+        context['badge'] = self.badge
+        context['awards'] = BadgeAward.objects.filter(slug=self.badge.slug).order_by('-awarded_at')
+        return context

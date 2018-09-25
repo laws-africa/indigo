@@ -77,11 +77,21 @@
       <div class="card">
         <h4 class="card-header">Badges Awarded</h4>
         <div class="card-body">
+
           {% badges_for_user userprofile.user as badges %}
-          {% for badge in badges %}
-          <h6><i class="fas fa-award"></i> {{ badge.name }} <span class="text-muted font-weight-normal">{{ badge.awarded_at|timesince }} ago</span></h6>
-          <p>{{ badge.description }}</p>
-          {% endfor %}
+          <ul class="list-unstyled">
+            {% for badge in badges %}
+            <li class="media mb-3">
+              <i class="fas fa-award fa-fw fa-3x mr-3"></i>
+              <div class="media-body">
+                <h5 class="mt-0 mb-1">{{ badge.name }}</h5>
+                <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
+                {{ badge.description }}
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+
         </div>
       </div>
     </div>

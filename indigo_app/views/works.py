@@ -135,7 +135,7 @@ class WorkDependentMixin(object):
 
 
 class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, UpdateView):
-    """ View to update or delete an emendment.
+    """ View to update or delete amendment.
     """
     http_method_names = ['post']
     model = Amendment
@@ -156,9 +156,21 @@ class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, Upda
         return super(WorkAmendmentDetailView, self).post(request, *args, **kwargs)
 
     def form_valid(self, form):
+        # get old/existing/incorrect date
+        old_date = form.initial['date']
+        # do normal things to amend work
         result = super(WorkAmendmentDetailView, self).form_valid(form)
         self.object.updated_by_user = self.request.user
         self.object.save()
+        # get new date
+        new_date = self.object.date
+        # get all docs associated with old date
+        docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
+        # update each of those docs to have the new date as their expression date
+        for doc in docs:
+            doc.expression_date = new_date
+            doc.save()
+
         return result
 
     def delete(self, request, *args, **kwargs):

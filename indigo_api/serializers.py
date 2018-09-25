@@ -653,10 +653,25 @@ class WorkSerializer(serializers.ModelSerializer):
             # this is really a Country object
             validated_data['country'] = validated_data['country']['code']
 
+        # ensure any docs for this work at initial pub date move with
+        ## get old date
+        old_date = work.publication_date
+
+        ## get docs
+        docs = Document.objects.filter(work=self.instance, expression_date=old_date)
+
         # save as a revision
         with reversion.revisions.create_revision():
             reversion.revisions.set_user(user)
             work = super(WorkSerializer, self).update(work, validated_data)
+
+        ## get new date
+        new_date = work.publication_date
+
+        ## change and save docs once work has successfully updated
+        for doc in docs:
+            doc.expression_date = new_date
+            doc.save()
 
         # signals
         work_changed.send(sender=self.__class__, work=work, request=self.context['request'])

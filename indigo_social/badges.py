@@ -22,12 +22,14 @@ class PermissionBadge(Badge):
         self.levels = [BadgeDetail(name=self.name, description=self.description)]
         super(PermissionBadge, self).__init__()
 
+    def can_award(self, user):
+        return not user.badges_earned.filter(slug=self.slug).exists()
+
     def award(self, user, **state):
         """ Should this badge be awarded? This is part of the pinax-badges API
         and is called by `possibly_award`.
         """
-        awarded = user.badges_earned.filter(slug=self.slug).exists()
-        if not awarded:
+        if self.can_award(user):
             self.grant(user)
             return BadgeAwarded()
 

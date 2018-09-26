@@ -5,9 +5,11 @@ from django.views.generic import DetailView, ListView, UpdateView, TemplateView,
 from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import redirect
-
+from django.contrib import messages
+from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
+
 from indigo_app.views.base import AbstractAuthedIndigoView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
@@ -73,8 +75,14 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
 
     def form_valid(self, form):
         self.form = form
+        user = self.userprofile.user
         badge = form.actual_badge()
-        badge.possibly_award(user=self.userprofile.user)
+
+        if badge.can_award(user):
+            badge.possibly_award(user=self.userprofile.user)
+            messages.success(self.request, '%s badge awarded to %s' % (badge.name, user_display(user)))
+        else:
+            messages.warning(self.request, '%s badge couldn\'t be awarded to %s' % (badge.name, user_display(user)))
         return super(AwardBadgeView, self).form_valid(form)
 
     def form_invalid(self, form):

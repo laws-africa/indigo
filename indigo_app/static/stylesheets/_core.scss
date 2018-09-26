@@ -83,6 +83,10 @@ fieldset {
     .expressions {
       position: relative;
     }
+
+    &:empty {
+      display: none;
+    }
   }
 
   .main-header-title {

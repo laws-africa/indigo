@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
-from nose.tools import *  # noqa
+from nose.tools import assert_equal, assert_not_equal
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
 
-from indigo_api.tests.fixtures import *  # noqa
+from indigo_api.models import Work
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
@@ -101,3 +101,16 @@ class WorkAPITest(APITestCase):
         response = self.client.get('/api/works?country=xx')
         assert_equal(response.status_code, 200)
         assert_equal(len(response.data['results']), 0)
+
+    def test_publication_date_updates_documents(self):
+        work = Work.objects.get(frbr_uri='/za/act/1945/1')
+        initial = work.initial_expressions()
+        assert_equal(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-10-12")
+
+        response = self.client.patch('/api/works/%s' % work.id, {'publication_date': '1945-12-12'})
+        assert_equal(response.status_code, 200)
+
+        work = Work.objects.get(frbr_uri='/za/act/1945/1')
+        initial = list(work.initial_expressions().all())
+        assert_equal(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-12-12")
+        assert_equal(len(initial), 1)

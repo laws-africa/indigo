@@ -1,0 +1,36 @@
+{% extends "main.html" %}
+
+{% block title%}Badges {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:badges' %}">Badges</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5 mt-3">
+
+  <div class="row">
+    <div class="col-md-8 m-auto">
+      <div class="card">
+        <h4 class="card-header">Badges</h4>
+        <div class="card-body">
+          <p>Badges indicate expertise and are earned by completing tasks.</p>
+
+          <ul class="list-unstyled">
+            {% for badge in badges %}
+            <li class="media mb-3">
+              <i class="fas fa-award fa-fw fa-3x mr-3"></i>
+              <div class="media-body">
+                <h5 class="mt-0 mb-1"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
+                {{ badge.description }}
+              </div>
+            </li>
+            {% endfor %}
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

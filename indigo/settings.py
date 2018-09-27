@@ -32,6 +32,10 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    # indigo social
+    'indigo_social',
+    'pinax.badges',
+
     # local traditions
     'indigo_za',
 
@@ -292,6 +296,7 @@ ACCOUNT_LOGIN_ON_EMAIL_CONFIRMATION = True
 ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = '/accounts/email/'
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_USER_DISPLAY = 'indigo_api.serializers.user_display_name'
 ACCOUNT_FORMS = {
     'signup': 'indigo_app.forms.UserSignupForm'
 }

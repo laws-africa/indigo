@@ -70,6 +70,10 @@ setup(
         'psycopg2==2.7.3.2',  # 2.7.4 began using psycopg2-binary
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
+
+        # for indigo_social
+        'pillow>=5.2.0',
+        'pinax-badges>=2.0.0',
     ],
     extras_require={
         'dev': [

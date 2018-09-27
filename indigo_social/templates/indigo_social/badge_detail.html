@@ -1,0 +1,48 @@
+{% extends "main.html" %}
+{% load account %}
+
+{% block title%}{{ badge.name }} {{ block.super }}{% endblock %}
+
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:badges' %}">Badges</a></li>
+  <li class="breadcrumb-item">{{ badge.name }}</li>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5 mt-3">
+
+  <div class="row">
+    <div class="col-md-8 m-auto">
+      <h1><i class="fas fa-award"></i> {{ badge.name }}</h1>
+      <h5>{{ badge.description }}</h5>
+
+      <div class="card mt-4">
+        <h4 class="card-header">Awarded to</h4>
+        <div class="card-body">
+          {% if awards %}
+            <ul>
+            {% for award in awards %}
+              <li>
+                <a href="{% url 'indigo_social:user_profile' pk=award.user.userprofile.id %}">{% user_display award.user %}</a> - <span class="text-muted">{{ award.awarded_at|timesince }} ago</span>
+              </li>
+            {% endfor %}
+            </ul>
+          {% else %}
+            <p><em>No-one has been awarded this badge.</em></p>
+          {% endif %}
+        </div>
+      </div>
+
+      {% if request.user.is_superuser %}
+      <h4 class="mt-3">Permissions granted by this badge</h4>
+
+      <ul>
+        {% for perm in badge.permissions %}
+        <li>{{ perm }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

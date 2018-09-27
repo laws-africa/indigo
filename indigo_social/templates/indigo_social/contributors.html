@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+
+{% block title%}Contributors {{ block.super }}{% endblock %}
+{% block breadcrumbs %}
+  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <h1 class="mb-3 mt-3">Contributors</h1>
+
+  <div class="card-columns">
+    {% for userprofile in object_list %}
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            <a href="{% url 'indigo_social:user_profile' pk=userprofile.id %}">{{ userprofile.user.first_name|default:userprofile.user.username }}</a>
+          </h4>
+        </div>
+        <div class="card-body">
+          {% if userprofile.bio %}{{ userprofile.bio|default:'' | linebreaks }}{% endif %}
+          <div class="text-muted">Joined {{ userprofile.user.date_joined|date:'Y-m-d' }}</div>
+        </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}

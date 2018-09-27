@@ -1,4 +1,9 @@
+from itertools import chain
+
 from django.contrib.auth.models import Permission
+from django.db.models.signals import m2m_changed
+from django.dispatch import receiver
+from django.contrib.auth.models import User
 
 from pinax.badges.base import Badge, BadgeAwarded, BadgeDetail
 from pinax.badges.registry import badges
@@ -33,6 +38,13 @@ class PermissionBadge(Badge):
             self.grant(user)
             return BadgeAwarded()
 
+    def unaward(self, user):
+        """ Unaward all awards of this badge to a user.
+        """
+        n, _ = user.badges_earned.filter(slug=self.slug).delete()
+        if n > 0:
+            self.revoke(user)
+
     def grant(self, user):
         """ Grant this badge's permissions to a user.
         """
@@ -55,6 +67,57 @@ class PermissionBadge(Badge):
             self._perms = perms
 
         return self._perms
+
+    @classmethod
+    def permissions_changed(cls, user, perms, added):
+        """ User permissions have been added (or removed if added is False).
+        Award/unaward badges if necessary. If permissions have been removed,
+        it doesn't mean the user doesn't have them any more since they may
+        still be granted through groups.
+        """
+        perms = set('%s.%s' % (p.content_type.app_label, p.codename) for p in perms)
+
+        for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge)):
+            badge_perms = set(badge.permissions)
+
+            # is this badge linked to the adjusted perms?
+            if badge_perms & perms:
+                existing = user.get_all_permissions()
+
+                if existing & badge_perms == badge_perms:
+                    if added:
+                        badge.possibly_award(user=user)
+                elif not added:
+                    badge.unaward(user)
+
+
+@receiver(m2m_changed, sender=User.user_permissions.through)
+def permissions_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
+    """ When user permissions change, award or unaward any matching PermissionBadges
+    as necessary.
+    """
+    if reverse or action not in ["post_add", "post_remove"]:
+        return
+
+    user = instance
+    added = action == "post_add"
+    perms = model.objects.filter(pk__in=pk_set).prefetch_related('content_type').all()
+    PermissionBadge.permissions_changed(user, perms, added)
+
+
+@receiver(m2m_changed, sender=User.groups.through)
+def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
+    """ When user groups change, award or unaward any matching PermissionBadges
+    as necessary.
+    """
+    if reverse or action not in ["post_add", "post_remove"]:
+        return
+
+    user = instance
+    added = action == "post_add"
+    groups = model.objects.filter(pk__in=pk_set).prefetch_related('permissions', 'permissions__content_type').all()
+    perms = set(chain(*(g.permissions.all() for g in groups)))
+    PermissionBadge.permissions_changed(user, perms, added)
 
 
 class ContributorBadge(PermissionBadge):
@@ -83,5 +146,3 @@ badges.register(DrafterBadge)
 badges.register(SeniorDrafterBadge)
 # monkey-patch the badge registry to make it easier to find badges
 badges.registry = badges._registry
-
-# TODO: trigger when user permissions change

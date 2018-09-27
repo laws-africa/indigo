@@ -79,7 +79,6 @@ class PermissionBadge(Badge):
         it doesn't mean the user doesn't have them any more since they may
         still be granted through groups.
         """
-
         for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge)):
             badge_perms = set(badge.permissions)
 

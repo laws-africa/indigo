@@ -660,11 +660,9 @@ class WorkSerializer(serializers.ModelSerializer):
 
         # ensure any docs for this work at initial pub date move with it, if it changes
         if old_date != work.publication_date:
-            docs = Document.objects.filter(work=self.instance, expression_date=old_date)
-            for doc in docs:
-                if doc.expression_date == old_date:
-                    doc.expression_date = work.publication_date
-                    doc.save()
+            for doc in Document.objects.filter(work=self.instance, expression_date=old_date):
+                doc.expression_date = work.publication_date
+                doc.save()
 
         # signals
         work_changed.send(sender=self.__class__, work=work, request=self.context['request'])

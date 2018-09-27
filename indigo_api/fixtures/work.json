@@ -31,7 +31,8 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "commencement_date": "2010-06-01",
       "assent_date": "2010-04-01",
-      "frbr_uri": "/za/act/2010/1"
+      "frbr_uri": "/za/act/2010/1",
+      "publication_date": "2010-05-01"
     }
   },
   {
@@ -77,7 +78,8 @@
       "country": 1,
       "created_at": "2015-01-15T09:20:02.710Z",
       "updated_at": "2015-02-17T10:57:47.779Z",
-      "frbr_uri": "/za/act/1945/1"
+      "frbr_uri": "/za/act/1945/1",
+      "publication_date": "1945-10-12"
     }
   }
 ]

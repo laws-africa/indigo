@@ -158,17 +158,16 @@ class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, Upda
     def form_valid(self, form):
         # get old/existing/incorrect date
         old_date = form.initial['date']
+
         # do normal things to amend work
         result = super(WorkAmendmentDetailView, self).form_valid(form)
         self.object.updated_by_user = self.request.user
         self.object.save()
-        # get new date
-        new_date = self.object.date
-        # get all docs associated with old date
+
+        # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
-        # update each of those docs to have the new date as their expression date
         for doc in docs:
-            doc.expression_date = new_date
+            doc.expression_date = self.object.date
             doc.save()
 
         return result

@@ -4,7 +4,6 @@ from collections import OrderedDict
 from lxml.etree import LxmlError
 from itertools import groupby
 
-from django.db.models import Manager
 from django.contrib.auth.models import User
 from rest_framework import serializers
 from rest_framework.reverse import reverse
@@ -14,7 +13,6 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from indigo.plugins import plugins
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country
 from indigo_api.signals import document_published, work_changed
 
@@ -653,25 +651,20 @@ class WorkSerializer(serializers.ModelSerializer):
             # this is really a Country object
             validated_data['country'] = validated_data['country']['code']
 
-        # ensure any docs for this work at initial pub date move with
-        ## get old date
         old_date = work.publication_date
-
-        ## get docs
-        docs = Document.objects.filter(work=self.instance, expression_date=old_date)
 
         # save as a revision
         with reversion.revisions.create_revision():
             reversion.revisions.set_user(user)
             work = super(WorkSerializer, self).update(work, validated_data)
 
-        ## get new date
-        new_date = work.publication_date
-
-        ## change and save docs once work has successfully updated
-        for doc in docs:
-            doc.expression_date = new_date
-            doc.save()
+        # ensure any docs for this work at initial pub date move with it, if it changes
+        if old_date != work.publication_date:
+            docs = Document.objects.filter(work=self.instance, expression_date=old_date)
+            for doc in docs:
+                if doc.expression_date == old_date:
+                    doc.expression_date = work.publication_date
+                    doc.save()
 
         # signals
         work_changed.send(sender=self.__class__, work=work, request=self.context['request'])

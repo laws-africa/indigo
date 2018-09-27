@@ -38,6 +38,14 @@
           </div>
 
           <div class="form-group">
+            <label>Email</label>
+            <div class="form-static">
+              {{ request.user.email }}
+              — <a href="{% url 'account_email' %}">manage your email addresses</a>
+            </div>
+          </div>
+
+          <div class="form-group">
             <label for="{{ form.country.id_for_label }}">{{ form.country.label }}</label>
             <select class="form-control" name="{{ form.country.name }}" id="{{ form.country.id_for_label }}" required>
               {% for val, label in form.fields.country.choices %}

@@ -14,6 +14,7 @@
     {% with user.emailaddress_set.all as emails %}
       {% if emails %}
         <p>You can use any of these email addresses to log in.</p>
+        <p><strong>Note:</strong> We only send email notifications to your <strong>primary</strong> email address.</p>
 
         {% if form.non_field_errors %}
           <div class="text-danger">
@@ -24,6 +25,12 @@
         {% endif %}
 
         <table class="table table-sm mt-4 mb-4">
+          <thead class="thead-light">
+            <tr>
+              <th>Email address</th>
+              <th colspan="2">Status</th>
+            </tr>
+          </thead>
         {% for emailaddress in emails %}
           <tr>
             <td class="{% if emailaddress.primary %}font-weight-bold{% endif %}">
@@ -57,8 +64,6 @@
           </tr>
         {% endfor %}
         </table>
-
-        <p><strong>Note:</strong> We only send email notifications to your <strong>primary</strong> email address.</p>
 
       {% else %}
         <p><strong>{% trans 'Warning:'%}</strong> {% trans "You currently do not have any e-mail address set up. You should really add an e-mail address so you can receive notifications, reset your password, etc." %}</p>

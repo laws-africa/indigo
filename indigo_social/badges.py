@@ -9,6 +9,10 @@ from pinax.badges.base import Badge, BadgeAwarded, BadgeDetail
 from pinax.badges.registry import badges
 
 
+def perms_to_codes(perms):
+    return set('%s.%s' % (p.content_type.app_label, p.codename) for p in perms)
+
+
 class PermissionBadge(Badge):
     """ Description of a permissions-based badge, linked to a set of django permissions.
 
@@ -75,7 +79,6 @@ class PermissionBadge(Badge):
         it doesn't mean the user doesn't have them any more since they may
         still be granted through groups.
         """
-        perms = set('%s.%s' % (p.content_type.app_label, p.codename) for p in perms)
 
         for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge)):
             badge_perms = set(badge.permissions)
@@ -90,6 +93,20 @@ class PermissionBadge(Badge):
                 elif not added:
                     badge.unaward(user)
 
+    @classmethod
+    def synch(cls):
+        """ Ensure all users have appropriate permissions badges.
+
+        We do this by faking "adds" for all the perms each user has,
+        and "removes" for all the perms they don't.
+        """
+        all_perms = perms_to_codes(Permission.objects.prefetch_related('content_type').all())
+
+        for user in User.objects.all():
+            existing = user.get_all_permissions()
+            cls.permissions_changed(user, existing, added=True)
+            cls.permissions_changed(user, all_perms - existing, added=False)
+
 
 @receiver(m2m_changed, sender=User.user_permissions.through)
 def permissions_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
@@ -101,7 +118,7 @@ def permissions_changed(sender, instance, action, reverse, model, pk_set, **kwar
 
     user = instance
     added = action == "post_add"
-    perms = model.objects.filter(pk__in=pk_set).prefetch_related('content_type').all()
+    perms = perms_to_codes(model.objects.filter(pk__in=pk_set).prefetch_related('content_type').all())
     PermissionBadge.permissions_changed(user, perms, added)
 
 
@@ -116,7 +133,7 @@ def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
     user = instance
     added = action == "post_add"
     groups = model.objects.filter(pk__in=pk_set).prefetch_related('permissions', 'permissions__content_type').all()
-    perms = set(chain(*(g.permissions.all() for g in groups)))
+    perms = perms_to_codes(chain(*(g.permissions.all() for g in groups)))
     PermissionBadge.permissions_changed(user, perms, added)
 
 

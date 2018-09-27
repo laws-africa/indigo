@@ -23,6 +23,26 @@
         {{ userprofile.bio | linebreaks }}
       {% endif %}
 
+      <ul class="fa-ul">
+        <li>
+          <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span>
+          {{ request.user.editor.country.name }}
+        </li>
+        {% if userprofile.twitter_username %}
+        <li>
+          <span class="fa-li"><i class="fab fa-twitter"></i></span> 
+          <a href="https://twitter.com/@{{ userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ userprofile.twitter_username }}</a>
+        </li>
+        {% endif %}
+
+        {% if userprofile.linkedin_profile %}
+        <li>
+          <span class="fa-li"><i class="fab fa-linkedin"></i></span> 
+          <a href="{{ userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ userprofile.linkedin_profile }}</a>
+        </li>
+        {% endif %}
+      </ul>
+
       <div class="card mt-3">
         <div class="card-body">
           {% if userprofile.organisations %}
@@ -47,27 +67,7 @@
 
           {% if userprofile.areas_of_law %}
           <h6>Areas of law</h6>
-          {{ userprofile.areas_of_law }}
-          {% endif %}
-
-          {% if userprofile.twitter_username or userprofile.linkedin_prolife %}
-          <hr>
-          <ul class="fa-ul">
-            {% if userprofile.twitter_username %}
-            <li>
-              <span class="fa-li"><i class="fab fa-twitter"></i></span> 
-              <a href="https://twitter.com/@{{ userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ userprofile.twitter_username }}</a>
-            </li>
-            {% endif %}
-
-            {% if userprofile.linkedin_profile %}
-            <li>
-              <span class="fa-li"><i class="fab fa-linkedin"></i></span> 
-              <a href="{{ userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ userprofile.linkedin_profile }}</a>
-            </li>
-            {% endif %}
-
-          </ul>
+          {{ userprofile.areas_of_law|default:'' }}
           {% endif %}
         </div>
       </div>

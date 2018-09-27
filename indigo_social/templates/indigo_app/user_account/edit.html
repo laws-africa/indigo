@@ -139,7 +139,7 @@
 
           <div class="form-group">
             <label for="{{ form.areas_of_law.id_for_label }}">{{ form.areas_of_law.label }}</label>
-            <input type="text" class="form-control" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value }}">
+            <input type="text" class="form-control" name="{{ form.areas_of_law.name }}" id="{{ form.areas_of_law.id_for_label }}" value="{{ form.areas_of_law.value|default:'' }}">
             {% if form.areas_of_law.errors %}
               <div class="text-danger">
                 {% for error in form.areas_of_law.errors %}

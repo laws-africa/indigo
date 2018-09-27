@@ -73,6 +73,7 @@ setup(
 
         # for indigo_social
         'pillow>=5.2.0',
+        'pinax-badges>=2.0.0',
     ],
     extras_require={
         'dev': [

@@ -1,5 +1,6 @@
 from django import forms
 
+from indigo_api.models import Country
 from indigo_social.models import UserProfile
 from indigo_social.badges import badges
 
@@ -8,6 +9,7 @@ class UserProfileForm(forms.ModelForm):
 
     first_name = forms.CharField(label='First name')
     last_name = forms.CharField(label='Last name')
+    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
 
     class Meta:
         model = UserProfile
@@ -35,6 +37,8 @@ class UserProfileForm(forms.ModelForm):
         super(UserProfileForm, self).save()
         self.instance.user.first_name = self.cleaned_data['first_name']
         self.instance.user.last_name = self.cleaned_data['last_name']
+        self.instance.user.editor.country = self.cleaned_data['country']
+        self.instance.user.editor.save()
         self.instance.user.save()
 
 

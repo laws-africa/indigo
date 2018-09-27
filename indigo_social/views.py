@@ -10,6 +10,7 @@ from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
 
+from indigo_api.models import Country
 from indigo_app.views.base import AbstractAuthedIndigoView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
@@ -44,10 +45,16 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
     template_name = 'indigo_app/user_account/edit.html'
     form_class = UserProfileForm
 
+    def get_context_data(self, **kwargs):
+        context = super(UserProfileEditView, self).get_context_data(**kwargs)
+        context['countries'] = Country.objects.all()
+        return context
+
     def get_initial(self):
         initial = super(UserProfileEditView, self).get_initial()
         initial['first_name'] = self.request.user.first_name
         initial['last_name'] = self.request.user.last_name
+        initial['country'] = self.request.user.editor.country
         return initial
 
     def get_object(self, queryset=None):

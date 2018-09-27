@@ -174,6 +174,12 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def list(self, request):
         """ Return details on many documents.
         """
+        # determine the country, so we can determine the primary language
+        try:
+            self.country = Country.for_code(self.kwargs['frbr_uri'][1:3])
+        except Country.DoesNotExist:
+            raise Http404
+
         if self.request.accepted_renderer.format == 'atom':
             # feeds show most recently changed first
             self.queryset = self.queryset.order_by('-updated_at')
@@ -271,7 +277,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         """
         queryset = queryset\
             .latest_expression()\
-            .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])
+            .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])\
+            .filter(language__language__iso_639_2B=self.country.primary_language.code)
         if queryset.count() == 0:
             raise Http404
         return queryset

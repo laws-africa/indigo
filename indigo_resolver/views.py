@@ -6,14 +6,24 @@ from django.conf import settings
 
 from cobalt.uri import FrbrUri
 
+from indigo_api.models import Country
 from .models import AuthorityReference
 
 
 def resolve(request, frbr_uri):
     try:
+        FrbrUri.default_language = None
         frbr_uri = FrbrUri.parse(frbr_uri)
     except ValueError:
         return HttpResponseBadRequest("Invalid FRBR URI")
+
+    # language?
+    if not frbr_uri.language:
+        try:
+            country = Country.for_code(frbr_uri.country)
+            frbr_uri.language = country.primary_language.code
+        except Country.DoesNotExist:
+            frbr_uri.language = 'eng'
 
     # TODO: handle expression URIs and dates?
     references = list(

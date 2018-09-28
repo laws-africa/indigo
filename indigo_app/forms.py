@@ -30,6 +30,9 @@ class UserProfileForm(forms.ModelForm):
 
 
 class UserSignupForm(SignupForm):
+    first_name = forms.CharField(required=True, max_length=30, label='First name')
+    last_name = forms.CharField(required=True, max_length=30, label='Last name')
+    country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
     captcha = ReCaptchaField()
     accepted_terms = forms.BooleanField(required=True, initial=False, error_messages={
         'required': 'Please accept the Terms of Use.',
@@ -38,12 +41,13 @@ class UserSignupForm(SignupForm):
 
     def clean(self):
         if not self.signup_enabled:
-            raise forms.ValidationError("Creating new accounts is not currently not allowed.")
+            raise forms.ValidationError("Creating new accounts is currently not allowed.")
         return super(UserSignupForm, self).clean()
 
     def save(self, request):
         user = super(UserSignupForm, self).save(request)
         user.editor.accepted_terms = True
+        user.editor.country = self.cleaned_data['country']
         user.editor.save()
         return user
 

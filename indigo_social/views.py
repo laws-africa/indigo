@@ -54,6 +54,7 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
         initial = super(UserProfileEditView, self).get_initial()
         initial['first_name'] = self.request.user.first_name
         initial['last_name'] = self.request.user.last_name
+        initial['username'] = self.request.user.username
         initial['country'] = self.request.user.editor.country
         return initial
 

@@ -38,6 +38,18 @@
           </div>
 
           <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            <input type="text" class="form-control" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value }}" required>
+            {% if form.username.errors %}
+              <div class="text-danger">
+                {% for error in form.username.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
             <label>Email</label>
             <div class="form-static">
               {{ request.user.email }}

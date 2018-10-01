@@ -30,10 +30,6 @@ class UserProfileView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
-        user_profile = UserProfile.objects.get(pk=str(self.kwargs['pk']))
-
-        if user_profile.user.last_name:
-            context['last_name_initial'] = user_profile.user.last_name[0] + '.'
 
         context['can_award'] = self.request.user.has_perm('auth.change_user')
         if context['can_award']:

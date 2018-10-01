@@ -16,7 +16,7 @@
       <div class="card">
         <div class="card-header">
           <h4>
-            <a href="{% url 'indigo_social:user_profile' pk=userprofile.id %}">{% user_display userprofile.user %}</a>
+            <a href="{% url 'indigo_social:user_profile' username=userprofile.user.username %}">{% user_display userprofile.user %}</a>
           </h4>
         </div>
         <div class="card-body">

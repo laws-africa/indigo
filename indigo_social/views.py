@@ -10,7 +10,7 @@ from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
 
-from indigo_api.models import Country
+from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
@@ -24,6 +24,8 @@ class ContributorsView(ListView):
 
 class UserProfileView(DetailView):
     model = UserProfile
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_profile.html'
 
     def get_context_data(self, **kwargs):
@@ -38,6 +40,10 @@ class UserProfileView(DetailView):
             context['award_form'] = AwardBadgeForm()
 
         return context
+
+    def get_object(self, queryset=None):
+        self.kwargs['pk'] = UserProfile.objects.get(user=User.objects.get(username=self.kwargs['username'])).pk
+        return super(UserProfileView, self).get_object()
 
 
 class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
@@ -78,7 +84,7 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
         return super(AwardBadgeView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        url = reverse('indigo_social:user_profile', kwargs={'pk': self.userprofile.id})
+        url = reverse('indigo_social:user_profile', kwargs={'username': self.userprofile.user.username})
         return self.form.cleaned_data.get('next', url) or url
 
     def form_valid(self, form):
@@ -96,6 +102,10 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
     def form_invalid(self, form):
         self.form = form
         return redirect(self.get_success_url())
+
+    def get_object(self, queryset=None):
+        self.kwargs['pk'] = UserProfile.objects.get(user=User.objects.get(username=self.kwargs['username'])).pk
+        return super(AwardBadgeView, self).get_object()
 
 
 class BadgeListView(TemplateView):

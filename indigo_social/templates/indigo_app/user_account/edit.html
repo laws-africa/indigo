@@ -212,7 +212,7 @@
 
     <div class="card-footer">
       <button type="submit" class="btn btn-success">Save profile</button>
-      <a href="{% url 'indigo_social:user_profile' pk=userprofile.id %}" class="btn btn-primary float-right">View my profile</a>
+      <a href="{% url 'indigo_social:user_profile' username=userprofile.user.username %}" class="btn btn-primary float-right">View my profile</a>
     </div>
   </div>
 

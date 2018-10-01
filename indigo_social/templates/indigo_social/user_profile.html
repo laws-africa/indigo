@@ -93,7 +93,7 @@
           {% if can_award %}
             <hr>
 
-            <form method="post" action="{% url 'indigo_social:award_user_badge' pk=userprofile.id %}" class="form-inline">
+            <form method="post" action="{% url 'indigo_social:award_user_badge' username=userprofile.user.username %}" class="form-inline">
               {% csrf_token %}
 
               <p>Award a new badge to this user:</p>

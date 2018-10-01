@@ -13,7 +13,7 @@ class ModifiedAccountAdapter(adapter.DefaultAccountAdapter):
         last_name = user_field(user, 'last_name')
 
         # pass it the full name as the first item in 'txts' instead
-        first_name = first_name + last_name
+        user_name = first_name + last_name
 
         email = user_email(user)
         username = user_username(user)
@@ -21,6 +21,7 @@ class ModifiedAccountAdapter(adapter.DefaultAccountAdapter):
             user_username(
                 user,
                 username or self.generate_unique_username([
+                    user_name,
                     first_name,
                     last_name,
                     email,

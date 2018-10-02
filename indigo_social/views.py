@@ -23,7 +23,7 @@ class ContributorsView(ListView):
 
 
 class UserProfileView(DetailView):
-    model = UserProfile
+    model = User
     slug_field = 'username'
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_profile.html'
@@ -36,10 +36,6 @@ class UserProfileView(DetailView):
             context['award_form'] = AwardBadgeForm()
 
         return context
-
-    def get_object(self, queryset=None):
-        self.kwargs['pk'] = UserProfile.objects.get(user=User.objects.get(username=self.kwargs['username'])).pk
-        return super(UserProfileView, self).get_object()
 
 
 class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):

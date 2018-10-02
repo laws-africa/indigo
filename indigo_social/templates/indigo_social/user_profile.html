@@ -1,7 +1,7 @@
 {% extends "main.html" %}
 {% load pinax_badges_tags %}
 
-{% block title%}{{ userprofile.user.first_name }} {{ last_name_initial }} {{ block.super }}{% endblock %}
+{% block title%}{{ user.first_name }} {{ user.last_name }} {{ block.super }}{% endblock %}
 
 {% block breadcrumbs %}
   <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
@@ -13,61 +13,61 @@
   <div class="row">
     <div class="col-md-8 m-auto">
 
-      {% if request.user == userprofile.user %}
+      {% if request.user == user %}
         <a class="btn btn-primary float-right" href="{% url 'edit_account' %}">Edit profile</a>
       {% endif %}
 
-      <h1>{{ userprofile.user.first_name }} {{ userprofile.user.last_name }}</h1>
+      <h1>{{ user.first_name }} {{ user.last_name }}</h1>
 
-      {% if userprofile.bio %}
-        {{ userprofile.bio | linebreaks }}
+      {% if user.userprofile.bio %}
+        {{ user.userprofile.bio | linebreaks }}
       {% endif %}
 
       <ul class="fa-ul">
         <li>
           <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span>
-          {{ userprofile.user.editor.country.name }}
+          {{ user.editor.country.name }}
         </li>
-        {% if userprofile.twitter_username %}
+        {% if user.userprofile.twitter_username %}
         <li>
           <span class="fa-li"><i class="fab fa-twitter"></i></span> 
-          <a href="https://twitter.com/@{{ userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ userprofile.twitter_username }}</a>
+          <a href="https://twitter.com/@{{ user.userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ user.userprofile.twitter_username }}</a>
         </li>
         {% endif %}
 
-        {% if userprofile.linkedin_profile %}
+        {% if user.userprofile.linkedin_profile %}
         <li>
           <span class="fa-li"><i class="fab fa-linkedin"></i></span> 
-          <a href="{{ userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ userprofile.linkedin_profile }}</a>
+          <a href="{{ user.userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ user.userprofile.linkedin_profile }}</a>
         </li>
         {% endif %}
       </ul>
 
       <div class="card mt-3">
         <div class="card-body">
-          {% if userprofile.organisations %}
+          {% if user.userprofile.organisations %}
           <h6>Organisation(s)</h6>
-          {{ userprofile.organisations | linebreaks }}
+          {{ user.userprofile.organisations | linebreaks }}
           {% endif %}
 
-          {% if userprofile.skills %}
+          {% if user.userprofile.skills %}
           <h6>Skills</h6>
-          {{ userprofile.skills | linebreaks }}
+          {{ user.userprofile.skills | linebreaks }}
           {% endif %}
 
-          {% if userprofile.qualifications %}
+          {% if user.userprofile.qualifications %}
           <h6>Qualifications</h6>
-          {{ userprofile.qualifications | linebreaks }}
+          {{ user.userprofile.qualifications | linebreaks }}
           {% endif %}
 
-          {% if userprofile.specialisations %}
+          {% if user.userprofile.specialisations %}
           <h6>Specialisations</h6>
-          {{ userprofile.specialisations | linebreaks }}
+          {{ user.userprofile.specialisations | linebreaks }}
           {% endif %}
 
-          {% if userprofile.areas_of_law %}
+          {% if user.userprofile.areas_of_law %}
           <h6>Areas of law</h6>
-          {{ userprofile.areas_of_law|default:'' }}
+          {{ user.userprofile.areas_of_law|default:'' }}
           {% endif %}
         </div>
       </div>
@@ -76,7 +76,7 @@
         <h4 class="card-header">Badges Earned</h4>
         <div class="card-body">
 
-          {% badges_for_user userprofile.user as badges %}
+          {% badges_for_user user as badges %}
           <ul class="list-unstyled">
             {% for badge in badges %}
             <li class="media mb-3">
@@ -93,7 +93,7 @@
           {% if can_award %}
             <hr>
 
-            <form method="post" action="{% url 'indigo_social:award_user_badge' username=userprofile.user.username %}" class="form-inline">
+            <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}" class="form-inline">
               {% csrf_token %}
 
               <p>Award a new badge to this user:</p>

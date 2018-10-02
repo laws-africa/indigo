@@ -4,5 +4,5 @@ import indigo_resolver.views
 
 
 urlpatterns = [
-    url(r'^resolve(?P<frbr_uri>/.*)$', indigo_resolver.views.ResolveView.as_view(), name='resolver'),
+    url(r'^((?P<authority>[\w-]+)/)?resolve(?P<frbr_uri>/.*)$', indigo_resolver.views.ResolveView.as_view(), name='resolver'),
 ]

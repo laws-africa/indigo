@@ -37,10 +37,7 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_username(self):
         if self.cleaned_data['username']:
-            username = self.cleaned_data['username']
-            username = generate_unique_username([username])
-            return username
-
+            return generate_unique_username([self.cleaned_data['username']])
 
     def save(self, commit=True):
         super(UserProfileForm, self).save()

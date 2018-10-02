@@ -9,6 +9,7 @@ class Authority(models.Model):
     """
     name = models.CharField(max_length=255, unique=True, help_text="Descriptive name of this resolver")
     url = models.URLField(help_text="Website for this authority (optional)", blank=True, null=True)
+    slug = models.SlugField(null=False, blank=False)
 
     class Meta:
         verbose_name_plural = "Authorities"

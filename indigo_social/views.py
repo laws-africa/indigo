@@ -68,24 +68,26 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
     """
     http_method_names = ['post']
     form_class = AwardBadgeForm
-    model = UserProfile
+    model = User
     permission_required = ('auth.change_user',)
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
 
     def post(self, request, *args, **kwargs):
-        self.userprofile = self.object = self.get_object()
+        self.user = self.object = self.get_object()
         return super(AwardBadgeView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        url = reverse('indigo_social:user_profile', kwargs={'username': self.userprofile.user.username})
+        url = reverse('indigo_social:user_profile', kwargs={'username': self.user.username})
         return self.form.cleaned_data.get('next', url) or url
 
     def form_valid(self, form):
         self.form = form
-        user = self.userprofile.user
+        user = self.user
         badge = form.actual_badge()
 
         if badge.can_award(user):
-            badge.possibly_award(user=self.userprofile.user)
+            badge.possibly_award(user=self.user)
             messages.success(self.request, '%s badge awarded to %s' % (badge.name, user_display(user)))
         else:
             messages.warning(self.request, '%s badge couldn\'t be awarded to %s' % (badge.name, user_display(user)))
@@ -94,10 +96,6 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
     def form_invalid(self, form):
         self.form = form
         return redirect(self.get_success_url())
-
-    def get_object(self, queryset=None):
-        self.kwargs['pk'] = UserProfile.objects.get(user=User.objects.get(username=self.kwargs['username'])).pk
-        return super(AwardBadgeView, self).get_object()
 
 
 class BadgeListView(TemplateView):

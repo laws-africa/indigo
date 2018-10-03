@@ -23,7 +23,7 @@
             <ul>
             {% for award in awards %}
               <li>
-                <a href="{% url 'indigo_social:user_profile' pk=award.user.userprofile.id %}">{% user_display award.user %}</a> - <span class="text-muted">{{ award.awarded_at|timesince }} ago</span>
+                <a href="{% url 'indigo_social:user_profile' username=award.user.username %}">{% user_display award.user %}</a> – <span class="text-muted">{{ award.awarded_at|timesince }} ago</span>
               </li>
             {% endfor %}
             </ul>

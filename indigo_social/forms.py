@@ -1,4 +1,5 @@
 from django import forms
+from allauth.utils import generate_unique_username
 
 from indigo_api.models import Country
 from indigo_social.models import UserProfile
@@ -9,6 +10,7 @@ class UserProfileForm(forms.ModelForm):
 
     first_name = forms.CharField(label='First name')
     last_name = forms.CharField(label='Last name')
+    username = forms.CharField(label='Username')
     country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
 
     class Meta:
@@ -33,10 +35,15 @@ class UserProfileForm(forms.ModelForm):
             twitter_username = self.cleaned_data['twitter_username'].strip('@')
             return twitter_username
 
+    def clean_username(self):
+        if self.cleaned_data['username']:
+            return generate_unique_username([self.cleaned_data['username']])
+
     def save(self, commit=True):
         super(UserProfileForm, self).save()
         self.instance.user.first_name = self.cleaned_data['first_name']
         self.instance.user.last_name = self.cleaned_data['last_name']
+        self.instance.user.username = self.cleaned_data['username']
         self.instance.user.editor.country = self.cleaned_data['country']
         self.instance.user.editor.save()
         self.instance.user.save()

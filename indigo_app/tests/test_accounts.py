@@ -29,6 +29,9 @@ class LibraryTest(testcases.TestCase):
             'password1': 'password',
             'password2': 'password',
             'accepted_terms': 'on',
+            'first_name': 'First',
+            'last_name': 'Last',
+            'country': '1',
             'g-recaptcha-response': 'PASSED'
         })
         self.assertEqual(response.status_code, 302)

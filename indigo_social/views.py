@@ -10,7 +10,7 @@ from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
 
-from indigo_api.models import Country
+from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
@@ -23,15 +23,13 @@ class ContributorsView(ListView):
 
 
 class UserProfileView(DetailView):
-    model = UserProfile
+    model = User
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_profile.html'
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
-        user_profile = UserProfile.objects.get(pk=str(self.kwargs['pk']))
-
-        if user_profile.user.last_name:
-            context['last_name_initial'] = user_profile.user.last_name[0] + '.'
 
         context['can_award'] = self.request.user.has_perm('auth.change_user')
         if context['can_award']:
@@ -54,6 +52,7 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
         initial = super(UserProfileEditView, self).get_initial()
         initial['first_name'] = self.request.user.first_name
         initial['last_name'] = self.request.user.last_name
+        initial['username'] = self.request.user.username
         initial['country'] = self.request.user.editor.country
         return initial
 
@@ -69,24 +68,26 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
     """
     http_method_names = ['post']
     form_class = AwardBadgeForm
-    model = UserProfile
+    model = User
     permission_required = ('auth.change_user',)
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
 
     def post(self, request, *args, **kwargs):
-        self.userprofile = self.object = self.get_object()
+        self.user = self.object = self.get_object()
         return super(AwardBadgeView, self).post(request, *args, **kwargs)
 
     def get_success_url(self):
-        url = reverse('indigo_social:user_profile', kwargs={'pk': self.userprofile.id})
+        url = reverse('indigo_social:user_profile', kwargs={'username': self.user.username})
         return self.form.cleaned_data.get('next', url) or url
 
     def form_valid(self, form):
         self.form = form
-        user = self.userprofile.user
+        user = self.user
         badge = form.actual_badge()
 
         if badge.can_award(user):
-            badge.possibly_award(user=self.userprofile.user)
+            badge.possibly_award(user=self.user)
             messages.success(self.request, '%s badge awarded to %s' % (badge.name, user_display(user)))
         else:
             messages.warning(self.request, '%s badge couldn\'t be awarded to %s' % (badge.name, user_display(user)))

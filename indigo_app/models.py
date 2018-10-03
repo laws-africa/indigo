@@ -69,16 +69,6 @@ class Publication(models.Model):
         return unicode(self.name)
 
 
-@receiver(pre_save, sender=User)
-def set_user_email(sender, **kwargs):
-    # ensure the user's username and email match
-    user = kwargs["instance"]
-    if user.email:
-        user.username = user.email
-    else:
-        user.email = user.username
-
-
 @receiver(post_save, sender=User)
 def create_editor(sender, **kwargs):
     # create editor for user objects

@@ -38,6 +38,18 @@
           </div>
 
           <div class="form-group">
+            <label for="{{ form.username.id_for_label }}">{{ form.username.label }}</label>
+            <input type="text" class="form-control" name="{{ form.username.name }}" id="{{ form.username.id_for_label }}" value="{{ form.username.value }}" required>
+            {% if form.username.errors %}
+              <div class="text-danger">
+                {% for error in form.username.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="form-group">
             <label>Email</label>
             <div class="form-static">
               {{ request.user.email }}
@@ -200,7 +212,7 @@
 
     <div class="card-footer">
       <button type="submit" class="btn btn-success">Save profile</button>
-      <a href="{% url 'indigo_social:user_profile' pk=userprofile.id %}" class="btn btn-primary float-right">View my profile</a>
+      <a href="{% url 'indigo_social:user_profile' username=userprofile.user.username %}" class="btn btn-primary float-right">View my profile</a>
     </div>
   </div>
 

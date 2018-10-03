@@ -13,6 +13,8 @@ class ResolveView(TemplateView):
     template_name = 'resolve.html'
 
     def get_references(self):
+        return [self.authority.lookup(self.frbr_uri)]
+
         # TODO: handle expression URIs and dates?
         query = AuthorityReference.objects\
             .filter(frbr_uri__in=[self.frbr_uri.work_uri(), self.frbr_uri.expression_uri()])\
@@ -24,6 +26,8 @@ class ResolveView(TemplateView):
         return query.all()
 
     def get_authority(self, authority):
+        from .saflii import SafliiAuthority
+        return SafliiAuthority()
         return get_object_or_404(Authority, name=authority) if authority else None
 
     def get(self, request, frbr_uri, authority, **kwargs):

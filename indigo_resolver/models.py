@@ -14,6 +14,13 @@ class Authority(models.Model):
     class Meta:
         verbose_name_plural = "Authorities"
 
+    def get_references(self, frbr_uri):
+        # TODO: handle expression URIs and dates?
+        return self.references\
+            .filter(frbr_uri__in=[frbr_uri.work_uri(), frbr_uri.expression_uri()])\
+            .prefetch_related('authority')\
+            .all()
+
     @property
     def reference_count(self):
         return self.references.count

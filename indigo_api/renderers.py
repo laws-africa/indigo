@@ -147,7 +147,7 @@ class HTMLRenderer(object):
         self.standalone = standalone
         self.coverpage = coverpage
         self.no_stub_content = no_stub_content
-        self.resolver = resolver
+        self.resolver = resolver or settings.RESOLVER_URL
         self.media_url = ''
 
     def render(self, document, element=None):
@@ -581,10 +581,10 @@ class PDFResponseRenderer(BaseRenderer):
             return ''
 
         view = renderer_context['view']
-        request = renderer_context['request']
-
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        request = renderer_context['request']
+
         renderer = PDFRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
@@ -645,12 +645,13 @@ class EPUBResponseRenderer(PDFResponseRenderer):
             return ''
 
         view = renderer_context['view']
+        request = renderer_context['request']
 
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = EPUBRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
-        renderer.resolver = renderer_context['request'].GET.get('resolver')
+        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
         key = self.cache_key(data, view)

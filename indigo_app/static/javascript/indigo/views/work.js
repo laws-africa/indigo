@@ -105,7 +105,11 @@
     },
 
     updatePageTitle: function() {
-      document.title = this.model.get('title') + ' – Indigo';
+      if (this.model.get('title')) {
+        document.title = this.model.get('title') + ' – Indigo';
+      } else {
+        document.title = 'New Work – Indigo';
+      }
       if (!this.model.isNew()) $('.workspace-header h4, .work-title').text(this.model.get('title'));
       this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
     },

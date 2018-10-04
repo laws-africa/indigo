@@ -149,7 +149,11 @@
     },
 
     canSave: function() {
-      this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
+      if (this.model.isNew()) {
+        this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid() || !this.model.get('publication_date'));
+      } else {
+        this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
+      }
     },
 
     save: function() {

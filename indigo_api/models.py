@@ -70,12 +70,12 @@ class Country(models.Model):
     def as_json(self):
         return {
             'name': self.name,
-            'localities': {loc.code: loc.name for loc in self.locality_set.all()},
+            'localities': {loc.code: loc.name for loc in self.localities.all()},
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
     def work_locality(self, work):
-        return self.locality_set.filter(code=work.locality).first()
+        return self.localities.filter(code=work.locality).first()
 
     def __unicode__(self):
         return unicode(self.country.name)
@@ -92,7 +92,7 @@ class Country(models.Model):
 class Locality(models.Model):
     """ The localities available in the UI. They aren't enforced by the API.
     """
-    country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE)
+    country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE, related_name='localities')
     name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
     code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
 

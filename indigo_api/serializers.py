@@ -13,7 +13,7 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality
 from indigo_api.signals import document_published, work_changed
 from allauth.account.utils import user_display
 
@@ -717,3 +717,58 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
+
+
+class LocalitySerializer(serializers.ModelSerializer):
+    frbr_uri_code = serializers.SerializerMethodField()
+    links = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Locality
+        fields = (
+            'code',
+            'name',
+            'frbr_uri_code',
+            'links',
+        )
+        read_only_fields = fields
+
+    def get_frbr_uri_code(self, instance):
+        return '%s-%s' % (instance.country.code, instance.code)
+
+    def get_links(self, instance):
+        return [
+            {
+                "rel": "works",
+                "title": "Works",
+                "href": reverse(
+                    'published-document-detail',
+                    request=self.context['request'],
+                    kwargs={'frbr_uri': '%s-%s/' % (instance.country.code, instance.code)}),
+            },
+        ]
+
+
+class CountrySerializer(serializers.ModelSerializer):
+    localities = LocalitySerializer(many=True)
+    links = serializers.SerializerMethodField()
+    """ List of alternate links. """
+
+    class Meta:
+        model = Country
+        fields = (
+            'code',
+            'name',
+            'localities',
+            'links',
+        )
+        read_only_fields = fields
+
+    def get_links(self, instance):
+        return [
+            {
+                "rel": "works",
+                "title": "Works",
+                "href": reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': '%s/' % instance.code}),
+            },
+        ]

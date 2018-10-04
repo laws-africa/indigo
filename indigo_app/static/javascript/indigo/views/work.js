@@ -15,7 +15,7 @@
   Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
     events: {
-      'click .btn.save': 'save',
+      'submit #edit-work-form': 'onSubmit',
       'click .btn.delete': 'deleteWork',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
@@ -149,11 +149,12 @@
     },
 
     canSave: function() {
-      if (this.model.isNew()) {
-        this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid() || !this.model.get('publication_date'));
-      } else {
-        this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
-      }
+      this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
+    },
+
+    onSubmit: function(e) {
+      e.preventDefault();
+      this.save();
     },
 
     save: function() {

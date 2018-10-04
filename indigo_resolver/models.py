@@ -22,7 +22,7 @@ class Authority(models.Model):
     """
     name = models.CharField(max_length=255, unique=True, help_text="Descriptive name of this resolver")
     url = models.URLField(help_text="Website for this authority (optional)", blank=True, null=True)
-    slug = models.CharField(null=False, blank=False, validators=[validate_slug], max_length=50, db_index=True)
+    slug = models.CharField(null=False, blank=False, validators=[validate_slug], max_length=50, unique=True)
 
     class Meta:
         verbose_name_plural = "Authorities"

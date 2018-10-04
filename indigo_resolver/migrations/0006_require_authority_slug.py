@@ -17,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='authority',
             name='slug',
-            field=models.CharField(db_index=True, max_length=50, validators=[django.core.validators.RegexValidator(re.compile('^[-a-zA-Z0-9_.]+\\Z'), "Enter a valid 'slug' consisting of letters, numbers, underscores, dots or hyphens.", 'invalid')]),
+            field=models.CharField(unique=True, max_length=50, validators=[django.core.validators.RegexValidator(re.compile('^[-a-zA-Z0-9_.]+\\Z'), "Enter a valid 'slug' consisting of letters, numbers, underscores, dots or hyphens.", 'invalid')]),
         ),
     ]

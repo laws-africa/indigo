@@ -181,6 +181,7 @@ class HTMLRenderer(object):
             'content_html': content_html,
             'renderer': renderer,
             'coverpage': self.coverpage,
+            'resolver_url': self.resolver,
         }
 
         # Now render some boilerplate around it.
@@ -489,6 +490,7 @@ class EPUBRenderer(HTMLRenderer):
             'content_html': '',
             'renderer': self.renderer,
             'coverpage': True,
+            'resolver_url': self.resolver,
         }
         titlepage = render_to_string(template_name, context)
 

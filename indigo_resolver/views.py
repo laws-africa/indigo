@@ -45,6 +45,7 @@ class ResolveView(TemplateView):
             authorities = [a for a in authorities if a]
             if not authorities:
                 raise Http404()
+            return authorities
 
         return registry.all()
 

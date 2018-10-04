@@ -1,32 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
-from django.db.models.signals import post_save, pre_save
+from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 from rest_framework.authtoken.models import Token
 
 from indigo_api.models import Document, Country
-
-
-class Locality(models.Model):
-    """ The localities available in the UI. They aren't enforced by the API.
-    """
-    country = models.ForeignKey('indigo_api.Country', null=False, on_delete=models.CASCADE)
-    name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
-    code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
-
-    class Meta:
-        ordering = ['name']
-        verbose_name_plural = 'Localities'
-        unique_together = (('country', 'code'),)
-
-    def __unicode__(self):
-        return unicode(self.name)
-
-    @classmethod
-    def for_work(cls, work):
-        if work.locality:
-            return work.country.work_locality(work)
 
 
 class Editor(models.Model):

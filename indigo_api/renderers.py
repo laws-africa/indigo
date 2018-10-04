@@ -60,6 +60,19 @@ def file_candidates(document, prefix='', suffix=''):
     return [prefix + f + suffix for f in options]
 
 
+def resolver_url(request, resolver):
+    if resolver in ['no', 'none']:
+        return ''
+
+    if resolver:
+        if resolver.startswith('http'):
+            return resolver
+        else:
+            return request.build_absolute_uri('/resolver/%s/resolve' % resolver)
+
+    return settings.RESOLVER_URL
+
+
 class XSLTRenderer(object):
     """ Renders an Akoma Ntoso Act XML document using XSL transforms.
     """
@@ -134,7 +147,7 @@ class HTMLRenderer(object):
         self.standalone = standalone
         self.coverpage = coverpage
         self.no_stub_content = no_stub_content
-        self.resolver = resolver
+        self.resolver = resolver or settings.RESOLVER_URL
         self.media_url = ''
 
     def render(self, document, element=None):
@@ -168,6 +181,7 @@ class HTMLRenderer(object):
             'content_html': content_html,
             'renderer': renderer,
             'coverpage': self.coverpage,
+            'resolver_url': self.resolver,
         }
 
         # Now render some boilerplate around it.
@@ -217,21 +231,12 @@ class HTMLRenderer(object):
 
     def _xml_renderer(self, document):
         params = {
-            'resolverUrl': self.resolver_url(),
+            'resolverUrl': self.resolver,
             'mediaUrl': self.media_url or '',
             'lang': document.language.code,
         }
 
         return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))
-
-    def resolver_url(self):
-        if self.resolver in ['no', 'none']:
-            return ''
-
-        if self.resolver and self.resolver.startswith('http'):
-            return self.resolver
-
-        return settings.RESOLVER_URL
 
 
 class HTMLResponseRenderer(StaticHTMLRenderer):
@@ -247,7 +252,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         renderer = HTMLRenderer()
         renderer.no_stub_content = getattr(view, 'no_stub_content', False)
         renderer.standalone = request.GET.get('standalone') == '1'
-        renderer.resolver = request.GET.get('resolver')
+        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
         renderer.media_url = request.GET.get('media-url', '')
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
@@ -485,6 +490,7 @@ class EPUBRenderer(HTMLRenderer):
             'content_html': '',
             'renderer': self.renderer,
             'coverpage': True,
+            'resolver_url': self.resolver,
         }
         titlepage = render_to_string(template_name, context)
 
@@ -575,12 +581,13 @@ class PDFResponseRenderer(BaseRenderer):
             return ''
 
         view = renderer_context['view']
-
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        request = renderer_context['request']
+
         renderer = PDFRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
-        renderer.resolver = renderer_context['request'].GET.get('resolver')
+        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
         key = self.cache_key(data, view)
@@ -638,12 +645,13 @@ class EPUBResponseRenderer(PDFResponseRenderer):
             return ''
 
         view = renderer_context['view']
+        request = renderer_context['request']
 
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = EPUBRenderer()
         renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
-        renderer.resolver = renderer_context['request'].GET.get('resolver')
+        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
         key = self.cache_key(data, view)

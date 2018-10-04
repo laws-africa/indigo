@@ -13,3 +13,4 @@ class AuthorityReferenceInline(admin.TabularInline):
 class AuthorityAdmin(admin.ModelAdmin):
     list_display = ('name', 'url', 'reference_count')
     inlines = (AuthorityReferenceInline, )
+    prepopulated_fields = {"slug": ("name",)}

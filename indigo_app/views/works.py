@@ -396,7 +396,6 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                     work.publication_date = self.make_date(row['publication_date'])
                     work.commencement_date = self.make_date(row['commencement_date'])
                     work.assent_date = self.make_date(row['assent_date'])
-                    work.repealed_date = self.make_date(row['repealed_date'])
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
 
@@ -455,16 +454,25 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         # TODO: simplify this somehow?
 
+        # check country matches (and that it's all one country)
         if country.code != row['country'].lower():
             raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
+
+        # check all frbr uri fields have been filled in and that no spaces were accidentally included
         if ' ' in frbr_uri.work_uri():
             raise ValueError('Check for spaces in country, locality, subtype, year, number – none allowed')
         elif not frbr_uri.country:
-            raise ValueError('A country must be specified')
+            raise ValueError('A country must be given')
         elif not frbr_uri.date:
-            raise ValueError('A year must be specified')
+            raise ValueError('A year must be given')
         elif not frbr_uri.number:
-            raise ValueError('A number must be specified')
+            raise ValueError('A number must be given')
+
+        # check that necessary work fields have been filled in
+        elif not row['title']:
+            raise ValueError('A title must be given')
+        elif not row['publication_date']:
+            raise ValueError('A publication date must be given')
 
         return frbr_uri.work_uri().lower()
 

@@ -49,7 +49,7 @@
             {% if work.status == 'success' %}
             <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.title }}</a>
             {% elif work.status == 'duplicate' %}
-            Work with this Uri already exists
+            A work with this FRBR URI already exists
             {% elif work.status == 'error' %}
             {{ work.error_message }}
             {% endif %}

@@ -15,7 +15,7 @@
   Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
     events: {
-      'click .btn.save': 'save',
+      'submit #edit-work-form': 'onSubmit',
       'click .btn.delete': 'deleteWork',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
@@ -105,7 +105,11 @@
     },
 
     updatePageTitle: function() {
-      document.title = this.model.get('title') + ' – Indigo';
+      if (this.model.get('title')) {
+        document.title = this.model.get('title') + ' – Indigo';
+      } else {
+        document.title = 'New Work – Indigo';
+      }
       if (!this.model.isNew()) $('.workspace-header h4, .work-title').text(this.model.get('title'));
       this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
     },
@@ -146,6 +150,11 @@
 
     canSave: function() {
       this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
+    },
+
+    onSubmit: function(e) {
+      e.preventDefault();
+      this.save();
     },
 
     save: function() {

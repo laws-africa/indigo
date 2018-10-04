@@ -1,6 +1,19 @@
 from __future__ import unicode_literals
 
+import re
+
 from django.db import models
+from django.core.validators import RegexValidator
+from django.utils.translation import ugettext_lazy as _
+
+
+# our own slug validator that allows dots
+slug_re = re.compile(r'^[-a-zA-Z0-9_.]+\Z')
+validate_slug = RegexValidator(
+    slug_re,
+    _("Enter a valid 'slug' consisting of letters, numbers, underscores, dots or hyphens."),
+    'invalid'
+)
 
 
 class Authority(models.Model):
@@ -9,7 +22,7 @@ class Authority(models.Model):
     """
     name = models.CharField(max_length=255, unique=True, help_text="Descriptive name of this resolver")
     url = models.URLField(help_text="Website for this authority (optional)", blank=True, null=True)
-    slug = models.SlugField(null=False, blank=False)
+    slug = models.CharField(null=False, blank=False, validators=[validate_slug], max_length=50, db_index=True)
 
     class Meta:
         verbose_name_plural = "Authorities"

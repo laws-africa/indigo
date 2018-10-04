@@ -41,8 +41,7 @@ class ResolveView(TemplateView):
 
     def get_authorities(self, authorities):
         if authorities:
-            authorities = (authorities or '').split(',')
-            authorities = (registry.get(a) for a in authorities)
+            authorities = (registry.get(a) for a in authorities.split(','))
             authorities = [a for a in authorities if a]
             if not authorities:
                 raise Http404()

@@ -89,6 +89,27 @@ class Country(models.Model):
         return cls.objects.get(country__pk=code.upper())
 
 
+class Locality(models.Model):
+    """ The localities available in the UI. They aren't enforced by the API.
+    """
+    country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE)
+    name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
+    code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
+
+    class Meta:
+        ordering = ['name']
+        verbose_name_plural = 'Localities'
+        unique_together = (('country', 'code'),)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+    @classmethod
+    def for_work(cls, work):
+        if work.locality:
+            return work.country.work_locality(work)
+
+
 class WorkQuerySet(models.QuerySet):
     def get_for_frbr_uri(self, frbr_uri):
         work = self.filter(frbr_uri=frbr_uri).first()

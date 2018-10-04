@@ -2,8 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
-from .models import Locality, Editor, Publication
-from indigo_api.models import Language, Country
+from .models import Editor, Publication
+from indigo_api.models import Language, Country, Locality
 
 
 class EditorInline(admin.StackedInline):

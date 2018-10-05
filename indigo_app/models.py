@@ -57,17 +57,3 @@ def create_editor(sender, **kwargs):
         # ensure there is a country
         editor.country = Country.objects.first()
         editor.save()
-
-
-@receiver(post_save, sender=Document)
-def update_user_country(sender, **kwargs):
-    # default country for user
-    document = kwargs["instance"]
-    user = document.updated_by_user
-
-    if user and user.editor and not user.editor.country and document.country:
-        try:
-            user.editor.country_code = document.country
-            user.editor.save()
-        except Country.DoesNotExist:
-            pass

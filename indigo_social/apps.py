@@ -9,3 +9,6 @@ class IndigoSocialConfig(AppConfig):
 
     def ready(self):
         import indigo_social.badges  # noqa
+
+        # create country badges
+        indigo_social.badges.CountryBadge.create_all()

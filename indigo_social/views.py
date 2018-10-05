@@ -42,6 +42,7 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
     model = UserProfile
     template_name = 'indigo_app/user_account/edit.html'
     form_class = UserProfileForm
+    check_country_perms = False
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileEditView, self).get_context_data(**kwargs)
@@ -72,6 +73,7 @@ class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):
     permission_required = ('auth.change_user',)
     slug_field = 'username'
     slug_url_kwarg = 'username'
+    check_country_perms = False
 
     def post(self, request, *args, **kwargs):
         self.user = self.object = self.get_object()

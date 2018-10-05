@@ -31,7 +31,7 @@ class Editor(models.Model):
             self.country = Country.objects.get(country_id=value.upper())
 
     def has_country_permission(self, country):
-        return self.user.is_superuser() or country in self.permitted_countries.all()
+        return self.user.is_superuser or country in self.permitted_countries.all()
 
     def api_token(self):
         # TODO: handle many

@@ -7,7 +7,8 @@ from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import Document, Attachment
-from ..serializers import AttachmentSerializer, MediaAttachmentSerializer
+from ..serializers import AttachmentSerializer
+from ..authz import AttachmentPermissions
 from .documents import DocumentResourceView
 
 
@@ -37,7 +38,7 @@ def download_attachment(attachment):
 class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, AttachmentPermissions)
 
     @detail_route(methods=['GET'])
     def download(self, request, *args, **kwargs):

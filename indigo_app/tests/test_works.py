@@ -100,7 +100,7 @@ class WorksTest(testcases.TestCase):
         })
         self.assertEqual(response.status_code, 302)
 
-        work = Work.objects.get(pk=1)
+        work = Work.objects.get(frbr_uri='/za/act/2014/10')
         doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertIn('tester', doc.content)

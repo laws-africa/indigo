@@ -771,4 +771,9 @@ class CountrySerializer(serializers.ModelSerializer):
                 "title": "Works",
                 "href": reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': '%s/' % instance.code}),
             },
+            {
+                "rel": "search",
+                "title": "Search",
+                "href": reverse('public-search', request=self.context['request'], kwargs={'country': instance.code}),
+            },
         ]

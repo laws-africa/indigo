@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from rest_framework.authtoken.models import Token
 
-from indigo_api.models import Document, Country
+from indigo_api.models import Country
 
 
 class Editor(models.Model):
@@ -15,6 +15,7 @@ class Editor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True)
     accepted_terms = models.BooleanField(default=False)
+    permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text="Countries the user can work with.", blank=True)
 
     @property
     def country_code(self):

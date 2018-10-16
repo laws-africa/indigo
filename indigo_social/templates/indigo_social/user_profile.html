@@ -98,8 +98,8 @@
 
               <p>Award a new badge to this user:</p>
               <select name="{{ award_form.badge.name }}" class="form-control">
-                {% for val, label in award_form.fields.badge.choices %}
-                <option value="{{ val }}">{{ label }}</option>
+                {% for val, label, desc in award_form.fields.badge.choices %}
+                <option value="{{ val }}">{{ label }} – {{ desc }}</option>
                 {% endfor %}
               </select>
 

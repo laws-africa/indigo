@@ -46,27 +46,27 @@
       <div class="card mt-3">
         <div class="card-body">
           {% if user.userprofile.organisations %}
-          <h6>Organisation(s)</h6>
+          <h5>Organisations</h5>
           {{ user.userprofile.organisations | linebreaks }}
           {% endif %}
 
           {% if user.userprofile.skills %}
-          <h6>Skills</h6>
+          <h5>Skills</h5>
           {{ user.userprofile.skills | linebreaks }}
           {% endif %}
 
           {% if user.userprofile.qualifications %}
-          <h6>Qualifications</h6>
+          <h5>Qualifications</h5>
           {{ user.userprofile.qualifications | linebreaks }}
           {% endif %}
 
           {% if user.userprofile.specialisations %}
-          <h6>Specialisations</h6>
+          <h5>Specialisations</h5>
           {{ user.userprofile.specialisations | linebreaks }}
           {% endif %}
 
           {% if user.userprofile.areas_of_law %}
-          <h6>Areas of law</h6>
+          <h5>Areas of law</h5>
           {{ user.userprofile.areas_of_law|default:'' }}
           {% endif %}
         </div>

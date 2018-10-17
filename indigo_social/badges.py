@@ -140,7 +140,7 @@ class ContributorBadge(PermissionBadge):
     slug = 'contributor'
     name = 'Contributor'
     description = 'Can view work details'
-    permissions = ('indigo_api.view_work', 'indigo_workflow.view_bulklistimportworksprocess')
+    permissions = ('indigo_api.view_work',)
 
 
 class DrafterBadge(PermissionBadge):

@@ -14,6 +14,7 @@ Getting Started
 
 The API is a read-only API for listing and fetching published versions of legislative works. Using it, you can:
 
+* get a list of countries and localities
 * get a list of all works by country and year
 * get a JSON description of a work
 * get Akoma Ntoso XML for a work
@@ -107,6 +108,16 @@ In most cases the default response type is JSON.
 
    Not all responses support all formats, the documentation will be explicit
    about what is supported.
+
+Countries and Localities
+------------------------
+
+.. code:: http
+
+    GET /api/countries.json
+
+This returns a list of the countries and localities that Indigo knows about. It includes
+links to the APIs for listing works for each country and locality.
 
 Fetching a Work
 ---------------

@@ -45,5 +45,14 @@
             "country": "ZA",
             "primary_language": 1
         }
+    },
+    {
+        "model": "indigo_api.locality",
+        "pk": 1,
+        "fields": {
+            "country_id": 1,
+            "name": "Johannesburg",
+            "code": "jhb"
+        }
     }
 ]

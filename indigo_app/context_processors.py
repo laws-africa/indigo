@@ -23,7 +23,7 @@ def models(request):
 
     return {
         'indigo_languages': Language.objects.select_related('language').prefetch_related('language'),
-        'indigo_countries': Country.objects.select_related('country').prefetch_related('locality_set', 'publication_set', 'country'),
+        'indigo_countries': Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country'),
     }
 
 

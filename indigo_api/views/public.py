@@ -9,12 +9,12 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from cobalt import FrbrUri
 
-from ..serializers import PublishedDocumentSerializer
+from ..serializers import PublishedDocumentSerializer, MediaAttachmentSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..atom import AtomRenderer, AtomFeed
 
 from .documents import DocumentViewMixin, DocumentResourceView, SearchView
-from .attachments import view_attachment_by_filename, MediaAttachmentSerializer
+from .attachments import view_attachment_by_filename
 from ..models import Attachment, Country
 
 

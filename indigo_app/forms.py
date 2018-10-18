@@ -2,7 +2,6 @@ import json
 
 from django import forms
 from django.core.validators import URLValidator
-from django.contrib.auth.models import User
 from django.conf import settings
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
@@ -17,16 +16,19 @@ class DocumentForm(forms.ModelForm):
         exclude = ('document_xml', 'created_at', 'updated_at', 'created_by_user', 'updated_by_user',)
 
 
-class UserForm(forms.ModelForm):
-    class Meta:
-        model = User
-        fields = ('first_name', 'last_name')
+class UserEditorForm(forms.ModelForm):
+    first_name = forms.CharField(label='First name')
+    last_name = forms.CharField(label='Last name')
 
-
-class UserProfileForm(forms.ModelForm):
     class Meta:
         model = Editor
         fields = ('country',)
+
+    def save(self, commit=True):
+        super(UserEditorForm, self).save()
+        self.instance.user.first_name = self.cleaned_data['first_name']
+        self.instance.user.last_name = self.cleaned_data['last_name']
+        self.instance.user.save()
 
 
 class UserSignupForm(SignupForm):

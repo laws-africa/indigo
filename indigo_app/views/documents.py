@@ -3,9 +3,8 @@ import json
 from django.views.generic import DetailView
 from django.http import Http404
 
-from indigo_api.models import Document, Work, Country, Subtype
+from indigo_api.models import Document, Country, Subtype
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
-from indigo_api.views.documents import DocumentViewSet
 
 from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView

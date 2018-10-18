@@ -27,6 +27,7 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     raise_exception = True
     permission_required = ()
     must_accept_terms = True
+    check_country_perms = True
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
@@ -40,3 +41,19 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
             return redirect_to_login(self.request.get_full_path(), 'accept_terms', self.get_redirect_field_name())
 
         return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
+
+    def has_permission(self):
+        return super(AbstractAuthedIndigoView, self).has_permission() and self.has_country_permission()
+
+    def has_country_permission(self):
+        if not self.check_country_perms:
+            return True
+
+        if self.request.method not in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return True
+
+        country = self.get_country()
+        if not country:
+            raise Exception("This request will change state and country permissions are required, but get_country returned None.")
+
+        return self.request.user.editor.has_country_permission(country)

@@ -17,7 +17,7 @@
 
   </head>
   <body {% block body-attributes %}{% endblock %} class="{% block body-class %}
-    {% if user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}
+    {% if request.user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}
     {% endblock %}">
     <div id="error-box" class="alert alert-danger" style="display: none">
       <button type="button" class="close">&times;</button>

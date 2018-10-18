@@ -140,21 +140,21 @@ class ContributorBadge(PermissionBadge):
     slug = 'contributor'
     name = 'Contributor'
     description = 'Can view work details'
-    permissions = ('indigo_api.view_work',)
+    permissions = ('indigo_api.view_work', 'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation')
 
 
 class DrafterBadge(PermissionBadge):
     slug = 'drafter'
     name = 'Drafter'
     description = 'Can create new works and edit the details of existing works'
-    permissions = ('indigo_api.add_work', 'indigo_api.change_work')
+    permissions = ('indigo_api.add_work', 'indigo_api.change_work', 'indigo_api.add_document', 'indigo_api.change_document')
 
 
 class SeniorDrafterBadge(PermissionBadge):
     slug = 'senior-drafter'
     name = 'Senior Drafter'
     description = 'Can review work tasks and delete documents and works'
-    permissions = ('indigo_api.delete_work', 'indigo_api.review_work', 'indigo_api.delete_document')
+    permissions = ('indigo_api.delete_work', 'indigo_api.review_work', 'indigo_api.review_document', 'indigo_api.delete_document')
 
 
 badges.register(ContributorBadge)

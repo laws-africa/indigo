@@ -8,7 +8,7 @@ from indigo_api.models import Work
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorksTest(testcases.TestCase):
-    fixtures = ['countries', 'work', 'editor', 'user', 'drafts', 'published']
+    fixtures = ['countries', 'work', 'user', 'editor', 'drafts', 'published']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))

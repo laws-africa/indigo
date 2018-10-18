@@ -112,18 +112,34 @@ class PermissionBadge(BaseBadge):
                     badge.unaward(user)
 
     @classmethod
+    def synch_grants(cls, user):
+        """ Ensure users that have been awarded permissions badges, have all the
+        right permissions. This is useful when the permissions have been changed.
+        """
+        for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge)):
+            if user.badges_earned.filter(slug=badge.slug).exists():
+                badge.grant(user)
+
+    @classmethod
     def synch(cls):
         """ Ensure all users have appropriate permissions badges.
 
-        We do this by faking "adds" for all the perms each user has,
-        and "removes" for all the perms they don't.
-        """
-        all_perms = perms_to_codes(Permission.objects.prefetch_related('content_type').all())
+        We do this by:
+        1. ensuring users with badges are granted all the perms (this allows perms to be added)
+        2. faking "adds" for all the perms each user has, which ensures new badges are granted.
 
+        This means that if a user no longer has permissions granted by a badge, they don't lose
+        the badge. Instead, they are granted the permissions.
+
+        This allows us to add new perms to existing badges.
+        """
         for user in User.objects.all():
+            # ensure users badges are granted all the perms
+            cls.synch_grants(user)
+
+            # possibly grant new badges
             existing = user.get_all_permissions()
             cls.permissions_changed(user, existing, added=True)
-            cls.permissions_changed(user, all_perms - existing, added=False)
 
 
 @receiver(m2m_changed, sender=User.user_permissions.through)

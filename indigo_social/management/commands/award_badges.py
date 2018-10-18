@@ -8,4 +8,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         PermissionBadge.synch()
+
+        CountryBadge.create_all()
         CountryBadge.synch()

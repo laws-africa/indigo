@@ -5,6 +5,7 @@
         "fields": {
             "user": 1,
             "country": 1,
+            "permitted_countries": [1],
             "accepted_terms": true
         }
     },
@@ -14,6 +15,7 @@
         "fields": {
             "user": 2,
             "country": 1,
+            "permitted_countries": [1],
             "accepted_terms": true
         }
     },
@@ -23,6 +25,7 @@
         "fields": {
             "user": 3,
             "country": 1,
+            "permitted_countries": [1],
             "accepted_terms": true
         }
     },
@@ -32,6 +35,7 @@
         "fields": {
             "user": 4,
             "country": 1,
+            "permitted_countries": [1],
             "accepted_terms": true
         }
     }

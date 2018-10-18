@@ -11,6 +11,7 @@ class EditorInline(admin.StackedInline):
     can_delete = False
     verbose_name = 'Editor details'
     verbose_name_plural = 'editor'
+    filter_horizontal = ('permitted_countries',)
 
 
 class LocalityInline(admin.TabularInline):

@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from indigo_social.badges import PermissionBadge
+from indigo_social.badges import PermissionBadge, CountryBadge
 
 
 class Command(BaseCommand):
@@ -8,3 +8,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         PermissionBadge.synch()
+        CountryBadge.synch()

@@ -8,7 +8,7 @@ from indigo_api.models import Work
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorksTest(testcases.TestCase):
-    fixtures = ['countries', 'work', 'editor', 'user', 'drafts', 'published']
+    fixtures = ['countries', 'work', 'user', 'editor', 'drafts', 'published']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
@@ -100,7 +100,7 @@ class WorksTest(testcases.TestCase):
         })
         self.assertEqual(response.status_code, 302)
 
-        work = Work.objects.get(pk=1)
+        work = Work.objects.get(frbr_uri='/za/act/2014/10')
         doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertIn('tester', doc.content)

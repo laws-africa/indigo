@@ -7,7 +7,7 @@ from django_filters import rest_framework as filters
 
 from ..models import Work, Amendment
 from ..serializers import WorkSerializer, WorkAmendmentSerializer
-from ..authz import DocumentPermissions
+from ..authz import DocumentPermissions, WorkPermissions
 
 
 class WorkResourceView(object):
@@ -48,7 +48,7 @@ class WorkViewSet(viewsets.ModelViewSet):
     queryset = Work.objects.order_by('frbr_uri').prefetch_related('created_by_user', 'updated_by_user')
     serializer_class = WorkSerializer
     # TODO permissions on creating and publishing works
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = (DjangoModelPermissions, WorkPermissions)
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filter_class = WorkFilterSet
     search_fields = ('title', 'frbr_uri')
@@ -58,12 +58,14 @@ class WorkViewSet(viewsets.ModelViewSet):
             raise MethodNotAllowed('DELETE', 'DELETE not allowed for works with related works or documents, unlink documents and works first.')
         return super(WorkViewSet, self).perform_destroy(instance)
 
-    def perform_update(self, serializer):
-        # check permissions just before saving, to prevent users
-        # without publish permissions from setting draft = False
-        if not DocumentPermissions().update_allowed(self.request, serializer):
+    def perform_create(self, serializer):
+        if not WorkPermissions().create_allowed(self.request, serializer):
             self.permission_denied(self.request)
+        super(WorkViewSet, self).perform_create(serializer)
 
+    def perform_update(self, serializer):
+        if not WorkPermissions().update_allowed(self.request, serializer):
+            self.permission_denied(self.request)
         super(WorkViewSet, self).perform_update(serializer)
 
 

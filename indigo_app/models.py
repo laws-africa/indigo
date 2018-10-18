@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from rest_framework.authtoken.models import Token
 
-from indigo_api.models import Document, Country
+from indigo_api.models import Country
 
 
 class Editor(models.Model):
@@ -15,6 +15,7 @@ class Editor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True)
     accepted_terms = models.BooleanField(default=False)
+    permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text="Countries the user can work with.", blank=True)
 
     @property
     def country_code(self):
@@ -28,6 +29,9 @@ class Editor(models.Model):
             self.country = value
         else:
             self.country = Country.objects.get(country_id=value.upper())
+
+    def has_country_permission(self, country):
+        return self.user.is_superuser or country in self.permitted_countries.all()
 
     def api_token(self):
         # TODO: handle many
@@ -57,17 +61,3 @@ def create_editor(sender, **kwargs):
         # ensure there is a country
         editor.country = Country.objects.first()
         editor.save()
-
-
-@receiver(post_save, sender=Document)
-def update_user_country(sender, **kwargs):
-    # default country for user
-    document = kwargs["instance"]
-    user = document.updated_by_user
-
-    if user and user.editor and not user.editor.country and document.country:
-        try:
-            user.editor.country_code = document.country
-            user.editor.save()
-        except Country.DoesNotExist:
-            pass

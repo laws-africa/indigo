@@ -37,6 +37,7 @@ class LibraryView(AbstractAuthedIndigoView, TemplateView):
     template_name = 'library.html'
     # permissions
     permission_required = ('indigo_api.view_work',)
+    check_country_perms = False
 
     def get(self, request, country=None, *args, **kwargs):
         if country is None:
@@ -73,10 +74,14 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
 
     # permissions
     permission_required = ('indigo_api.view_work',)
+    check_country_perms = True
 
     @property
     def work(self):
         return self.object
+
+    def get_country(self):
+        return self.get_object().country
 
     def get_context_data(self, **kwargs):
         context = super(AbstractWorkDetailView, self).get_context_data(**kwargs)
@@ -126,12 +131,16 @@ class WorkDependentMixin(object):
     """ Mixin for views that hang off a work URL, using the frbr_uri URL kwarg.
     """
     _work = None
+    check_country_perms = True
 
     @property
     def work(self):
         if not self._work:
             self._work = get_object_or_404(Work, frbr_uri=self.kwargs['frbr_uri'])
         return self._work
+
+    def get_country(self):
+        return self.work.country
 
 
 class WorkAmendmentDetailView(AbstractAuthedIndigoView, WorkDependentMixin, UpdateView):
@@ -351,6 +360,13 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         table = self.get_table(form.cleaned_data['spreadsheet_url'])
         works = self.get_works(country, table)
         return self.render_to_response(self.get_context_data(works=works))
+
+    def get_country(self):
+        pk = self.request.POST.get('country')
+        if pk:
+            return get_object_or_404(Country, pk=pk)
+        else:
+            return self.request.user.editor.country
 
     def get_works(self, country, table):
         works = []

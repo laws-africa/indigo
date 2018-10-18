@@ -68,6 +68,7 @@ setup(
         'lxml>=3.4.1',
         'mammoth>=1.4.4',
         'psycopg2==2.7.3.2',  # 2.7.4 began using psycopg2-binary
+        'requests>=2',
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
 

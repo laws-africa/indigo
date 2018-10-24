@@ -12,6 +12,7 @@ class EditAccountView(AbstractAuthedIndigoView, UpdateView):
     model = Editor
     template_name = 'indigo_app/user_account/edit.html'
     form_class = UserEditorForm
+    check_country_perms = False
 
     def get_success_url(self):
         return reverse('edit_account')
@@ -34,6 +35,7 @@ class EditAccountView(AbstractAuthedIndigoView, UpdateView):
 class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
     context_object_name = 'user'
     template_name = 'indigo_app/user_account/api.html'
+    check_country_perms = False
 
     def get_object(self, queryset=None):
         return self.request.user
@@ -50,6 +52,9 @@ class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
     template_name = 'indigo_app/user_account/accept_terms.html'
     fields = ('accepted_terms',)
     must_accept_terms = False
+    check_country_perms = False
+
+    # TODO: check if terms accepted and redirect if so
 
     def get_object(self, queryset=None):
         return self.request.user.editor

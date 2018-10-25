@@ -44,7 +44,8 @@ class UserProfileForm(forms.ModelForm):
         super(UserProfileForm, self).save()
         self.instance.user.first_name = self.cleaned_data['first_name']
         self.instance.user.last_name = self.cleaned_data['last_name']
-        self.instance.user.username = self.cleaned_data['username']
+        if 'username' in self.changed_data:
+            self.instance.user.username = self.cleaned_data['username']
         self.instance.user.editor.country = self.cleaned_data['country']
         self.instance.user.editor.save()
         self.instance.user.save()

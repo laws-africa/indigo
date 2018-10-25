@@ -22,6 +22,10 @@ class IndigoJSViewMixin(object):
 
 class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     """ Abstract view for authenticated Indigo views.
+
+    For views that accept POST, PUT, PATCH or DELETE methods, this view can optionally
+    check if the user has appropriate country permissions. In that case, +check_country_perms+
+    must be True and +get_country()+ must be implemented.
     """
     # permissions
     raise_exception = True
@@ -52,8 +56,13 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
         if self.request.method not in ['POST', 'PUT', 'PATCH', 'DELETE']:
             return True
 
+        if not hasattr(self, 'get_country'):
+            raise Exception("This request will change state and country permissions are required, "
+                            "but the view (%s) doesn't support get_country()" % self)
+
         country = self.get_country()
         if not country:
-            raise Exception("This request will change state and country permissions are required, but get_country returned None.")
+            raise Exception("This request will change state and country permissions are required, "
+                            "but get_country returned None.")
 
         return self.request.user.editor.has_country_permission(country)

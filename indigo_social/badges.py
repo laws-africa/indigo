@@ -7,6 +7,7 @@ from django.contrib.auth.models import User
 
 from pinax.badges.base import Badge, BadgeAwarded, BadgeDetail
 from pinax.badges.registry import badges
+from allauth.account.signals import user_signed_up
 from indigo_api.models import Country
 from indigo_app.models import Editor
 
@@ -278,3 +279,9 @@ class SeniorDrafterBadge(PermissionBadge):
 badges.register(ContributorBadge)
 badges.register(DrafterBadge)
 badges.register(SeniorDrafterBadge)
+
+
+# when a user signs up, grant them the contributor badge immediately
+@receiver(user_signed_up, sender=User)
+def grant_contributor_new_user(sender, request, user, **kwargs):
+    badges.registry['contributor'].award(user=user)

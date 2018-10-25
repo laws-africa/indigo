@@ -2,7 +2,6 @@ from django.conf import settings
 from django.views.generic import DetailView, UpdateView
 from django.urls import reverse
 from allauth.utils import get_request_param
-from allauth.account.views import SignupView
 
 from indigo_app.forms import UserEditorForm
 from indigo_app.models import Editor
@@ -59,12 +58,6 @@ class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
 
     def get_object(self, queryset=None):
         return self.request.user.editor
-
-    def get_success_url(self):
-        return get_request_param(self.request, self.get_redirect_field_name(), settings.LOGIN_REDIRECT_URL)
-
-class SignupView(SignupView):
-    template_name = 'account/signup.html'
 
     def get_success_url(self):
         return get_request_param(self.request, self.get_redirect_field_name(), settings.LOGIN_REDIRECT_URL)

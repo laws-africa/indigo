@@ -19,7 +19,7 @@ from .models import UserProfile
 class ContributorsView(ListView):
     model = UserProfile
     template_name = 'indigo_social/contributors.html'
-    queryset = UserProfile.objects.prefetch_related('user')
+    queryset = UserProfile.objects.prefetch_related('user').order_by('-user__last_login')
 
 
 class UserProfileView(DetailView):

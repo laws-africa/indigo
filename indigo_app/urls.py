@@ -5,9 +5,6 @@ from .views import users, works, documents
 
 
 urlpatterns = [
-    # homepage
-    url(r'^$', RedirectView.as_view(url='library', permanent=True)),
-
     # auth and accounts
     url(r'^accounts/', include('allauth.urls')),
     url(r'^accounts/profile/$', users.EditAccountView.as_view(), name='edit_account'),

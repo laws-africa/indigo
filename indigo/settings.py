@@ -306,6 +306,7 @@ ACCOUNT_FORMS = {
 ACCOUNT_SIGNUP_ENABLED = True
 LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGOUT_REDIRECT_URL = '/accounts/login/'
 
 # Google recaptcha
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY', '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI')

@@ -457,18 +457,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
             return rows
 
     def get_frbr_uri(self, country, row):
-        # TODO: remove municipality name when by-law
-        try:
-            int(row['number'])
-            number = row['number']
-        except ValueError:
-            number = row['title']
-            number = re.sub(", [0-9]{2,}", "", number)
-            number = number.replace(' ', '-').replace(',', '').replace('-Act', '').replace('Act-', '').lower().replace('relating-to-', '').replace('-and-', '-').replace('-to-', '-').replace('-of-', '-').replace('-for-', '-').replace('-on-', '-').replace('-the-', '-').replace('in-connection-with-', '').replace('by-law-', '').replace('-by-law', '')
-
-        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=number, actor=None)
-
-        # TODO: simplify this somehow?
+        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
         # check country matches (and that it's all one country)
         if country.code != row['country'].lower():

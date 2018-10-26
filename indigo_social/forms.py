@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from allauth.utils import generate_unique_username
+from django.core.validators import validate_slug, _lazy_re_compile, RegexValidator
 
 from indigo_api.models import Country
 from indigo_social.models import UserProfile
@@ -9,9 +9,15 @@ from indigo_social.badges import badges
 
 class UserProfileForm(forms.ModelForm):
 
+    validate_username = RegexValidator(
+        _lazy_re_compile(r'^[-a-z0-9_]+\Z'),
+        "no spaces, punctuation or capital letters",
+        'invalid'
+    )
+
     first_name = forms.CharField(label='First name')
     last_name = forms.CharField(label='Last name')
-    username = forms.CharField(label='Username')
+    username = forms.CharField(label='Username', validators=[validate_username])
     country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
 
     class Meta:

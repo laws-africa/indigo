@@ -2,7 +2,7 @@
 from django import forms
 from django.core.validators import validate_slug, _lazy_re_compile, RegexValidator
 
-from indigo_api.models import Country
+from indigo_api.models import Country, User
 from indigo_social.models import UserProfile
 from indigo_social.badges import badges
 
@@ -43,15 +43,16 @@ class UserProfileForm(forms.ModelForm):
             return twitter_username
 
     def clean_username(self):
-        if self.cleaned_data['username']:
-            return generate_unique_username([self.cleaned_data['username']])
+        username = self.cleaned_data['username']
+        if username in [u.username for u in User.objects.all()]:
+            raise forms.ValidationError("already taken")
+        return username
 
     def save(self, commit=True):
         super(UserProfileForm, self).save()
         self.instance.user.first_name = self.cleaned_data['first_name']
         self.instance.user.last_name = self.cleaned_data['last_name']
-        if 'username' in self.changed_data:
-            self.instance.user.username = self.cleaned_data['username']
+        self.instance.user.username = self.cleaned_data['username']
         self.instance.user.editor.country = self.cleaned_data['country']
         self.instance.user.editor.save()
         self.instance.user.save()

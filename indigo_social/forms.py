@@ -1,17 +1,23 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from allauth.utils import generate_unique_username
+from django.core.validators import _lazy_re_compile, RegexValidator
 
-from indigo_api.models import Country
+from indigo_api.models import Country, User
 from indigo_social.models import UserProfile
 from indigo_social.badges import badges
 
 
 class UserProfileForm(forms.ModelForm):
 
+    validate_username = RegexValidator(
+        _lazy_re_compile(r'^[-a-z0-9_]+\Z'),
+        "Your username cannot include spaces, punctuation or capital letters.",
+        'invalid'
+    )
+
     first_name = forms.CharField(label='First name')
     last_name = forms.CharField(label='Last name')
-    username = forms.CharField(label='Username')
+    username = forms.CharField(label='Username', validators=[validate_username])
     country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
 
     class Meta:
@@ -37,8 +43,10 @@ class UserProfileForm(forms.ModelForm):
             return twitter_username
 
     def clean_username(self):
-        if self.cleaned_data['username']:
-            return generate_unique_username([self.cleaned_data['username']])
+        username = self.cleaned_data['username']
+        if User.objects.filter(username=username).exclude(pk=self.instance.user.pk).exists():
+            raise forms.ValidationError("This username is already taken.")
+        return username
 
     def save(self, commit=True):
         super(UserProfileForm, self).save()

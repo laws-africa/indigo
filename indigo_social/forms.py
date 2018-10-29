@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django import forms
-from django.core.validators import validate_slug, _lazy_re_compile, RegexValidator
+from django.core.validators import _lazy_re_compile, RegexValidator
 
 from indigo_api.models import Country, User
 from indigo_social.models import UserProfile
@@ -11,7 +11,7 @@ class UserProfileForm(forms.ModelForm):
 
     validate_username = RegexValidator(
         _lazy_re_compile(r'^[-a-z0-9_]+\Z'),
-        "no spaces, punctuation or capital letters",
+        "No spaces, punctuation or capital letters",
         'invalid'
     )
 
@@ -45,7 +45,7 @@ class UserProfileForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exclude(pk=self.instance.user.pk).exists():
-            raise forms.ValidationError("already taken")
+            raise forms.ValidationError("This username is already taken")
         return username
 
     def save(self, commit=True):

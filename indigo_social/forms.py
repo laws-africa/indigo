@@ -11,7 +11,7 @@ class UserProfileForm(forms.ModelForm):
 
     validate_username = RegexValidator(
         _lazy_re_compile(r'^[-a-z0-9_]+\Z'),
-        "No spaces, punctuation or capital letters",
+        "Your username cannot include spaces, punctuation or capital letters.",
         'invalid'
     )
 
@@ -45,7 +45,7 @@ class UserProfileForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exclude(pk=self.instance.user.pk).exists():
-            raise forms.ValidationError("This username is already taken")
+            raise forms.ValidationError("This username is already taken.")
         return username
 
     def save(self, commit=True):

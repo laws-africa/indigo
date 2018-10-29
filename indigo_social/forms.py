@@ -44,7 +44,7 @@ class UserProfileForm(forms.ModelForm):
 
     def clean_username(self):
         username = self.cleaned_data['username']
-        if username in [u.username for u in User.objects.all()]:
+        if User.objects.filter(username=username).exclude(pk=self.instance.user.pk).exists():
             raise forms.ValidationError("already taken")
         return username
 

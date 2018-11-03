@@ -354,6 +354,7 @@ class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
         return queryset.published().filter(work__country=country)
 
     def determine_country_locality(self):
+        # TODO: this view should support localities, too
         try:
             self.country = Country.for_code(self.kwargs['country'])
         except Country.DoesNotExist:

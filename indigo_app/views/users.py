@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.views.generic import DetailView, UpdateView
 from django.urls import reverse
+from django.shortcuts import redirect
 from allauth.utils import get_request_param
 
 from indigo_app.forms import UserEditorForm
@@ -44,7 +45,7 @@ class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
         request.user.editor.api_token().delete()
         # force a new one to be created
         request.user.editor.api_token()
-        return self.get(request)
+        return redirect('edit_account_api')
 
 
 class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):

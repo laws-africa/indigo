@@ -94,6 +94,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
         super(PublishedDocumentDetailView, self).initial(request, **kwargs)
 
+        self.frbr_uri = self.parse_frbr_uri(self.kwargs['frbr_uri'])
+
     def determine_country_locality(self):
         parts = self.kwargs['frbr_uri'].split('/', 2)[1].split('-', 2)
 
@@ -115,13 +117,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return super(PublishedDocumentDetailView, self).perform_content_negotiation(request, force=True)
 
     def get(self, request, **kwargs):
-        # try parse it as an FRBR URI, if that succeeds, we'll lookup the document
-        # that document matches, otherwise we'll assume they're trying to
-        # list documents with a prefix URI match.
-        try:
-            self.parse_frbr_uri(self.kwargs['frbr_uri'])
+        if self.frbr_uri:
             return self.retrieve(request)
-        except ValueError:
+        else:
             return self.list(request)
 
     def retrieve(self, request, *args, **kwargs):
@@ -308,15 +306,18 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     def parse_frbr_uri(self, frbr_uri):
         FrbrUri.default_language = None
-        self.frbr_uri = FrbrUri.parse(frbr_uri)
-
-        self.frbr_uri.default_language = self.country.primary_language.code
-        if not self.frbr_uri.language:
-            self.frbr_uri.language = self.frbr_uri.default_language
+        try:
+            frbr_uri = FrbrUri.parse(frbr_uri)
+        except ValueError:
+            return None
 
         # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
-        if self.frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
-            raise ValueError()
+        if frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
+            return None
+
+        frbr_uri.default_language = self.country.primary_language.code
+        if not frbr_uri.language:
+            frbr_uri.language = frbr_uri.default_language
 
         # in a URL like
         #
@@ -327,9 +328,11 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         #   /act/1980/1/eng/toc
         #
         # if eng is the default language.
-        if self.frbr_uri.language == 'toc':
-            self.frbr_uri.language = self.frbr_uri.default_language
-            self.frbr_uri.expression_component = 'toc'
+        if frbr_uri.language == 'toc':
+            frbr_uri.language = frbr_uri.default_language
+            frbr_uri.expression_component = 'toc'
+
+        return frbr_uri
 
 
 class PublishedDocumentSearchView(PublicAPIMixin, SearchView):

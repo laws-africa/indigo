@@ -12,11 +12,14 @@ class RefsFinderENG(BaseRefsFinder):
         Act no. 52 of 1998
         Constitution [of [the Republic of] South Africa] [Act][,] [1996]
 
+        If not in South Africa ('za'), should default to indigo/analysis/refs/global.py (doesn't include 'Constitution')
+
     """
 
     # country, language, locality
-    locale = (None, 'eng', None)
+    locale = ('za', 'eng', None)
 
+    # if Act part changes, update indigo/analysis/refs/global.py
     act_re = re.compile(r'\bAct,?\s+([nN]o\.?\s*)?(\d+)+\s+of\s+(\d{4})|\bConstitution\b(\s+of(\s+the\s+Republic\s+of)?\s+South\s+Africa)?((\s+Act)?,?\s+1996)?')
     candidate_xpath = ".//text()[(contains(., 'Act') or contains(., 'Constitution')) and not(ancestor::a:ref)]"
 

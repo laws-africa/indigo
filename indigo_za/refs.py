@@ -15,7 +15,7 @@ class RefsFinderENG(BaseRefsFinder):
     """
 
     # country, language, locality
-    locale = (None, 'eng', None)
+    locale = ('za', 'eng', None)
 
     act_re = re.compile(r'\bAct,?\s+([nN]o\.?\s*)?(\d+)+\s+of\s+(\d{4})|\bConstitution\b(\s+of(\s+the\s+Republic\s+of)?\s+South\s+Africa)?((\s+Act)?,?\s+1996)?')
     candidate_xpath = ".//text()[(contains(., 'Act') or contains(., 'Constitution')) and not(ancestor::a:ref)]"
@@ -41,7 +41,7 @@ class RefsFinderAFR(BaseRefsFinder):
     """
 
     # country, language, locality
-    locale = (None, 'afr', None)
+    locale = ('za', 'afr', None)
 
     act_re = re.compile(r'\bWet,?\s+([nN]o\.?\s*)?(\d+)+\s+van\s+(\d{4})|\bGrondwet\b(\s+van(\s+die\s+Republiek\s+van)?\s+Suid[- ]Afrika)?((\s+Wet)?,?\s+1996)?')
     candidate_xpath = ".//text()[(contains(., 'Wet') or contains(., 'Grondwet')) and not(ancestor::a:ref)]"

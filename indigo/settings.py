@@ -33,7 +33,8 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
     # Indigo local traditions
-    'indigo_za',
+    # 'indigo_za',
+    'indigo_refs',
 
     # Indigo social
     'indigo_social',

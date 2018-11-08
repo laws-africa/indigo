@@ -5,13 +5,13 @@ from rest_framework.test import APITestCase
 from lxml import etree
 
 from indigo_api.tests.fixtures import *  # noqa
-from indigo_za.refs import RefsFinderENG, RefsFinderAFR
+from indigo_za.refs import RefsFinderENGza, RefsFinderAFRza
 from indigo_api.models import Document
 
 
-class RefsFinderENGTestCase(APITestCase):
+class RefsFinderENGzaTestCase(APITestCase):
     def setUp(self):
-        self.finder = RefsFinderENG()
+        self.finder = RefsFinderENGza()
 
     def test_find_simple(self):
         doc = Document(content=document_fixture(xml=u"""
@@ -159,9 +159,9 @@ class RefsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True))
 
 
-class RefsFinderAFRTestCase(APITestCase):
+class RefsFinderAFRzaTestCase(APITestCase):
     def setUp(self):
-        self.finder = RefsFinderAFR()
+        self.finder = RefsFinderAFRza()
 
     def test_find_simple(self):
         doc = Document(content=document_fixture(xml=u"""

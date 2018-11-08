@@ -5,7 +5,7 @@ from indigo.plugins import plugins
 
 
 @plugins.register('refs')
-class RefsFinderENG(BaseRefsFinder):
+class RefsFinderENGza(BaseRefsFinder):
     """ Finds references to Acts in documents, of the form:
 
         Act 52 of 2001
@@ -34,7 +34,7 @@ class RefsFinderENG(BaseRefsFinder):
 
 
 @plugins.register('refs')
-class RefsFinderAFR(BaseRefsFinder):
+class RefsFinderAFRza(BaseRefsFinder):
     """ Finds references to Acts in documents, of the form:
 
         Wet 52 van 2001
@@ -44,7 +44,7 @@ class RefsFinderAFR(BaseRefsFinder):
     """
 
     # country, language, locality
-    locale = (None, 'afr', None)
+    locale = ('za', 'afr', None)
 
     act_re = re.compile(r'\bWet,?\s+([nN]o\.?\s*)?(\d+)+\s+van\s+(\d{4})|\bGrondwet\b(\s+van(\s+die\s+Republiek\s+van)?\s+Suid[- ]Afrika)?((\s+Wet)?,?\s+1996)?')
     candidate_xpath = ".//text()[(contains(., 'Wet') or contains(., 'Grondwet')) and not(ancestor::a:ref)]"

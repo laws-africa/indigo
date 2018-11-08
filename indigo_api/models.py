@@ -123,7 +123,7 @@ class WorkManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
             .get_queryset()\
-            .prefetch_related('country', 'country__country')
+            .prefetch_related('country', 'country__country', 'locality')
 
 
 class Work(models.Model):
@@ -142,6 +142,7 @@ class Work(models.Model):
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
+    locality = models.ForeignKey(Locality, null=True, on_delete=models.PROTECT)
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
@@ -195,9 +196,21 @@ class Work(models.Model):
     def subtype(self):
         return self.work_uri.subtype
 
+    # Helper to get/set locality using the locality_code, used by the WorkSerializer.
+
     @property
-    def locality(self):
+    def locality_code(self):
         return self.work_uri.locality
+
+    @locality_code.setter
+    def locality_code(self, value):
+        if value:
+            locality = self.country.localities.filter(code=value).first()
+            if not locality:
+                raise ValueError("No such locality for this country: %s" % value)
+            self.locality = locality
+        else:
+            self.locality = None
 
     @property
     def repeal(self):
@@ -210,8 +223,12 @@ class Work(models.Model):
         return self._repeal
 
     def clean(self):
-        # force country code in frbr uri
-        self.frbr_uri = '/%s%s' % (self.country.code, self.frbr_uri[3:])
+        # force country and locality codes in frbr uri
+        prefix = '/' + self.country.code
+        if self.locality:
+            prefix = prefix + '-' + self.locality.code
+        self.frbr_uri = '%s/%s' % (prefix, self.frbr_uri.split('/', 2)[2])
+
         # ensure the frbr uri is lowercased
         self.frbr_uri = self.frbr_uri.lower()
 

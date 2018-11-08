@@ -174,7 +174,7 @@
     },
 
     detectUnsupportedBrowsers: function() {
-      if (!('XSLTProcessorx' in window)) {
+      if (!('XSLTProcessor' in window)) {
         alert("Your browser is not supported by Indigo. Please use Chrome, Firefox, Safari or Edge instead.");
       }
     },

@@ -74,9 +74,6 @@ class Country(models.Model):
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
-    def work_locality(self, work):
-        return self.localities.filter(code=work.locality).first()
-
     def __unicode__(self):
         return unicode(self.country.name)
 
@@ -103,11 +100,6 @@ class Locality(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
-
-    @classmethod
-    def for_work(cls, work):
-        if work.locality:
-            return work.country.work_locality(work)
 
 
 class WorkQuerySet(models.QuerySet):

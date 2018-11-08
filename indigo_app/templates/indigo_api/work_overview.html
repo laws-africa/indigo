@@ -15,7 +15,7 @@
   <div class="mb-3">
     <p>
       {{ country.name }} · {{ country.code }}
-      {% if work.locality %} — {{ locality.name }} · {{ locality.code }}{% endif %}
+      {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
     </p>
   </div>
   {% endblock %}

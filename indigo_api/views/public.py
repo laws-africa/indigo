@@ -41,8 +41,22 @@ class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 
 class PublicAPIMixin(object):
+    """ A public API view. These views always require authentication
+    and to be bound to a country (and possibly also a locality).
+    """
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+
+    country = None
+    locality = None
+
+    def determine_country_locality(self):
+        raise NotImplementedError()
+
+    def check_permissions(self, request):
+        # ensure we have a country and locality before checking permissions
+        self.determine_country_locality()
+        super(PublicAPIMixin, self).check_permissions(request)
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,
@@ -76,9 +90,26 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                         ZIPResponseRenderer)
 
     def initial(self, request, **kwargs):
-        super(PublishedDocumentDetailView, self).initial(request, **kwargs)
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
+        super(PublishedDocumentDetailView, self).initial(request, **kwargs)
+
+        self.frbr_uri = self.parse_frbr_uri(self.kwargs['frbr_uri'])
+
+    def determine_country_locality(self):
+        parts = self.kwargs['frbr_uri'].split('/', 2)[1].split('-', 2)
+
+        # country
+        try:
+            self.country = Country.for_code(parts[0])
+        except Country.DoesNotExist:
+            raise Http404
+
+        # locality
+        if len(parts) > 1:
+            self.locality = self.country.localities.filter(code=parts[1]).first()
+            if not self.locality:
+                raise Http404
 
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format
@@ -86,31 +117,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return super(PublishedDocumentDetailView, self).perform_content_negotiation(request, force=True)
 
     def get(self, request, **kwargs):
-        # try parse it as an FRBR URI, if that succeeds, we'll lookup the document
-        # that document matches, otherwise we'll assume they're trying to
-        # list documents with a prefix URI match.
-        try:
-            self.parse_frbr_uri(self.kwargs['frbr_uri'])
-
-            # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
-            if self.frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
-                raise ValueError()
-
-            # in a URL like
-            #
-            #   /act/1980/1/toc
-            #
-            # don't mistake 'toc' for a language, it's really equivalent to
-            #
-            #   /act/1980/1/eng/toc
-            #
-            # if eng is the default language.
-            if self.frbr_uri.language == 'toc':
-                self.frbr_uri.language = self.frbr_uri.default_language
-                self.frbr_uri.expression_component = 'toc'
-
+        if self.frbr_uri:
             return self.retrieve(request)
-        except ValueError:
+        else:
             return self.list(request)
 
     def retrieve(self, request, *args, **kwargs):
@@ -174,12 +183,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def list(self, request):
         """ Return details on many documents.
         """
-        # determine the country, so we can determine the primary language
-        try:
-            self.country = Country.for_code(self.kwargs['frbr_uri'][1:3])
-        except Country.DoesNotExist:
-            raise Http404
-
         if self.request.accepted_renderer.format == 'atom':
             # feeds show most recently changed first
             self.queryset = self.queryset.order_by('-updated_at')
@@ -303,17 +306,33 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     def parse_frbr_uri(self, frbr_uri):
         FrbrUri.default_language = None
-        self.frbr_uri = FrbrUri.parse(frbr_uri)
-
-        # validate the country and set the default language
         try:
-            country = Country.for_frbr_uri(self.frbr_uri)
-            self.frbr_uri.default_language = country.primary_language.code
-        except Country.DoesNotExist:
-            raise Http404("Country %s from FRBR URI not found" % self.frbr_uri.country)
+            frbr_uri = FrbrUri.parse(frbr_uri)
+        except ValueError:
+            return None
 
-        if not self.frbr_uri.language:
-            self.frbr_uri.language = self.frbr_uri.default_language
+        # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
+        if frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
+            return None
+
+        frbr_uri.default_language = self.country.primary_language.code
+        if not frbr_uri.language:
+            frbr_uri.language = frbr_uri.default_language
+
+        # in a URL like
+        #
+        #   /act/1980/1/toc
+        #
+        # don't mistake 'toc' for a language, it's really equivalent to
+        #
+        #   /act/1980/1/eng/toc
+        #
+        # if eng is the default language.
+        if frbr_uri.language == 'toc':
+            frbr_uri.language = frbr_uri.default_language
+            frbr_uri.expression_component = 'toc'
+
+        return frbr_uri
 
 
 class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
@@ -333,3 +352,10 @@ class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
 
         queryset = super(PublishedDocumentSearchView, self).get_queryset()
         return queryset.published().filter(work__country=country)
+
+    def determine_country_locality(self):
+        # TODO: this view should support localities, too
+        try:
+            self.country = Country.for_code(self.kwargs['country'])
+        except Country.DoesNotExist:
+            raise Http404

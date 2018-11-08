@@ -1,5 +1,8 @@
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
+from django.http import Http404
+
+from indigo_api.models import Country
 
 
 class IndigoJSViewMixin(object):
@@ -66,3 +69,28 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
                             "but get_country returned None.")
 
         return self.request.user.editor.has_country_permission(country)
+
+
+class PlaceBasedView(object):
+    """ Views that are tied to a place, either a Country or a Locality.
+    """
+    country = None
+    locality = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.determine_place()
+        return super(PlaceBasedView, self).dispatch(request, *args, **kwargs)
+
+    def determine_place(self):
+        place_code = self.kwargs['place_code']
+        parts = place_code.split('-', 1)
+
+        try:
+            self.country = Country.for_code(parts[0])
+        except Country.NotFound:
+            raise Http404
+
+        if len(parts) > 1:
+            self.locality = self.country.localities.filter(code=parts[1]).first()
+            if not self.locality:
+                raise Http404

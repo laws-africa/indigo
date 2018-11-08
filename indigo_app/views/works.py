@@ -27,7 +27,7 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
 
-from .base import AbstractAuthedIndigoView
+from .base import AbstractAuthedIndigoView, PlaceBasedView
 
 
 log = logging.getLogger(__name__)
@@ -85,12 +85,17 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AbstractWorkDetailView, self).get_context_data(**kwargs)
-
-        is_new = not self.work.frbr_uri
-
-        context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
         context['country'] = self.work.country
-        context['locality'] = None if is_new else self.work.locality
+        context['locality'] = self.work.locality
+
+        if self.work.frbr_uri:
+            context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        else:
+            # new
+            context['work_json'] = json.dumps({
+                'country': self.work.country.code,
+                'locality': self.work.locality.code if self.work.locality else None,
+            })
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
@@ -104,10 +109,11 @@ class WorkDetailView(AbstractWorkDetailView):
     js_view = 'WorkDetailView'
 
 
-class AddWorkView(WorkDetailView):
+class AddWorkView(PlaceBasedView, WorkDetailView):
     def get_object(self, queryset=None):
         work = Work()
-        work.country = self.request.user.editor.country
+        work.country = self.country
+        work.locality = self.locality
         return work
 
 

@@ -81,6 +81,10 @@ class PlaceBasedView(object):
         self.determine_place()
         return super(PlaceBasedView, self).dispatch(request, *args, **kwargs)
 
+    def get_context_data(self, **kwargs):
+        return super(PlaceBasedView, self).get_context_data(
+            country=self.country, locality=self.locality, **kwargs)
+
     def determine_place(self):
         place_code = self.kwargs['place_code']
         parts = place_code.split('-', 1)

@@ -355,26 +355,22 @@ class RestoreWorkVersionView(AbstractWorkDetailView):
         return redirect(url)
 
 
-class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
+class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
-        country = form.cleaned_data['country']
         table = self.get_table(form.cleaned_data['spreadsheet_url'])
-        works = self.get_works(country, table)
+        works = self.get_works(table)
         return self.render_to_response(self.get_context_data(works=works))
 
     def get_country(self):
-        pk = self.request.POST.get('country')
-        if pk:
-            return get_object_or_404(Country, pk=pk)
-        else:
-            return self.request.user.editor.country
+        self.determine_place()
+        return self.country
 
-    def get_works(self, country, table):
+    def get_works(self, table):
         works = []
 
         # clean up headers
@@ -394,7 +390,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
                 works.append(info)
 
                 try:
-                    frbr_uri = self.get_frbr_uri(country, row)
+                    frbr_uri = self.get_frbr_uri(self.country, self.locality, row)
                 except ValueError as e:
                     info['status'] = 'error'
                     info['error_message'] = e.message
@@ -412,7 +408,8 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                     work.frbr_uri = frbr_uri
                     work.title = row['title']
-                    work.country = country
+                    work.country = self.country
+                    work.locality = self.locality
                     work.publication_name = row['publication_name']
                     work.publication_number = row['publication_number']
                     work.publication_date = self.make_date(row['publication_date'])
@@ -462,7 +459,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         else:
             return rows
 
-    def get_frbr_uri(self, country, row):
+    def get_frbr_uri(self, country, locality, row):
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
         # check country matches (and that it's all one country)

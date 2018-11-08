@@ -41,7 +41,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
                 doc.work.expressions().all()
             ))
         context['country'] = doc.work.country
-        context['locality'] = context['country'].work_locality(doc.work)
+        context['locality'] = doc.work.locality
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()

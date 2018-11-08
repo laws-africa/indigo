@@ -27,11 +27,10 @@ def doc_published(sender, document, request, **kwargs):
             "short": "true",
         }]
 
-        locality = country.work_locality(document.work)
-        if locality:
+        if document.work.locality:
             fields.append({
                 "title": "Locality",
-                "value": locality.name,
+                "value": document.work.locality.name,
                 "short": "true",
             })
 

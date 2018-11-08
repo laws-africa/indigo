@@ -12,15 +12,14 @@
   <div class="card">
     <h5 class="card-header">API Access</h5>
     <div class="card-body">
-      <p>Use the API token below to authenticate your calls to the Indigo API.</p>
+      <p>Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong></p>
 
-      <div class="form-group">
-        <label for="api_token">API Token</label>
-        <input type="text" class="form-control" id="api_token" value="{{ request.user.editor.api_token.key }}" readonly>
-      </div>
-    </div>
-    <div class="card-footer">
-      <button type="submit" class="btn btn-secondary">Generate new API token</button>
+      <input type="text" class="form-control" id="api_token" value="{{ request.user.editor.api_token.key }}" readonly>
+
+      <hr>
+      <p>Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong></p>
+
+      <button type="submit" class="btn btn-secondary" data-confirm="Are you sure? Your old token will stop working.">Generate new API token</button>
     </div>
   </div>
 </form>

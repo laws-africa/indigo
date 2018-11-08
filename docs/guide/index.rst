@@ -7,6 +7,10 @@ writing legislation documents and want to know how to use the Indigo Platform.
 
 .. note::
 
+    Indigo cannot be used with Internet Explorer. You must use Chrome, Firefox, Safari or Edge.
+
+.. note::
+
     Throughout this guide we refer to **documents**. These are generally legislative Acts but may also be related
     legislative documents such as regulations or by-laws.
 

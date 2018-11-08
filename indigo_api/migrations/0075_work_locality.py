@@ -26,7 +26,7 @@ def populate_locality_obj(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0073_renamed_localities_related'),
+        ('indigo_api', '0074_document_view_source_perm'),
     ]
 
     operations = [

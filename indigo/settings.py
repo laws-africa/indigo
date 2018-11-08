@@ -32,6 +32,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    # Globals
+    'indigo',
+
     # Indigo local traditions
     'indigo_za',
 

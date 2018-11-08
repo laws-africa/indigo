@@ -5,18 +5,21 @@ from indigo.plugins import plugins
 
 
 @plugins.register('refs')
-class RefsFinderENG(BaseRefsFinder):
+class RefsFinderENGza(BaseRefsFinder):
     """ Finds references to Acts in documents, of the form:
 
         Act 52 of 2001
         Act no. 52 of 1998
         Constitution [of [the Republic of] South Africa] [Act][,] [1996]
 
+        If not in South Africa ('za'), should default to indigo/analysis/refs/global.py (doesn't include 'Constitution')
+
     """
 
     # country, language, locality
-    locale = (None, 'eng', None)
+    locale = ('za', 'eng', None)
 
+    # if Act part changes, update indigo/analysis/refs/global.py
     act_re = re.compile(r'\bAct,?\s+([nN]o\.?\s*)?(\d+)+\s+of\s+(\d{4})|\bConstitution\b(\s+of(\s+the\s+Republic\s+of)?\s+South\s+Africa)?((\s+Act)?,?\s+1996)?')
     candidate_xpath = ".//text()[(contains(., 'Act') or contains(., 'Constitution')) and not(ancestor::a:ref)]"
 
@@ -31,7 +34,7 @@ class RefsFinderENG(BaseRefsFinder):
 
 
 @plugins.register('refs')
-class RefsFinderAFR(BaseRefsFinder):
+class RefsFinderAFRza(BaseRefsFinder):
     """ Finds references to Acts in documents, of the form:
 
         Wet 52 van 2001
@@ -41,7 +44,7 @@ class RefsFinderAFR(BaseRefsFinder):
     """
 
     # country, language, locality
-    locale = (None, 'afr', None)
+    locale = ('za', 'afr', None)
 
     act_re = re.compile(r'\bWet,?\s+([nN]o\.?\s*)?(\d+)+\s+van\s+(\d{4})|\bGrondwet\b(\s+van(\s+die\s+Republiek\s+van)?\s+Suid[- ]Afrika)?((\s+Wet)?,?\s+1996)?')
     candidate_xpath = ".//text()[(contains(., 'Wet') or contains(., 'Grondwet')) and not(ancestor::a:ref)]"

@@ -192,7 +192,7 @@ class Work(models.Model):
 
     @property
     def locality_code(self):
-        return self.work_uri.locality
+        return self.locality.code
 
     @locality_code.setter
     def locality_code(self, value):

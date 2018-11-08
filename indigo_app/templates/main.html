@@ -22,14 +22,6 @@
           {% if request.user.is_authenticated %}
           <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
           <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Works</a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="{% url 'new_work' %}">Create a New Work</a>
-              <a class="dropdown-item" href="{% url 'new_batch_work' %}">Create a New Batch of Works</a>
-            </div>
-          </li>
-
-          <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
             <div class="dropdown-menu">
               {% block navbar-help-menu %}

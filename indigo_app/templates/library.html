@@ -7,15 +7,30 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="float-right">
-    <select class="form-control filter-country" name="country-filter">
-      {% for country in countries %}
-        <option {% if country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <h2>{{ country.country.name }}</h2>
+  <header class="mb-2">
+    <div class="d-flex">
+      <div class="flex-grow-1">
+        <h2 class="mb-4">{{ country.country.name }}</h2>
+      </div>
+      <div>
+        <select class="form-control filter-country" name="country-filter">
+          {% for country in countries %}
+            <option {% if country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
 
+    <div class="text-right">
+      <div class="btn-group">
+        <a href="{% url 'new_work' place_code=country.code %}" class="btn btn-success">New Work</a>
+        <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'new_batch_work' place_code=country.code %}">New Work Batch</a>
+        </div>
+      </div>
+    </div>
+  </header>
 
   <div class="card">
     <div class="card-header">

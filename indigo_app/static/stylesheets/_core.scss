@@ -68,8 +68,14 @@ fieldset {
 
 /* breadcrumbs */
 .main-header {
-  background-color: $white;
-  border-bottom: 1px solid $gray-300;
+  padding: 10px 0px;
+
+  &.with-menubar {
+    background-color: $white;
+    border-bottom: 1px solid $gray-300;
+
+    padding: 0px;
+  }
 
   .breadcrumb {
     margin: 0px 0px 5px 0px;

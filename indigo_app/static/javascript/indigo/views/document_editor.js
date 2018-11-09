@@ -29,7 +29,7 @@
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
-      this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fa fa-pencil"></i></a></div>');
+      this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fas fa-pencil-alt"></i></a></div>');
 
       // setup renderer
       this.editorReady = $.Deferred();

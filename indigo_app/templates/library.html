@@ -1,7 +1,11 @@
 {% extends "main.html" %}
 
 {% block title %}Library{% endblock %}
-
+{% block head-css %}
+<meta charset="UTF-8">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
+{% endblock %}
 {% block view-id %}library-view{% endblock %}
 {% block main-header %}{% endblock %}
 
@@ -62,109 +66,89 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-sm table-hover library-work-table sorted-table">
-  <thead>
-    <tr>
-      <th class="title" data-sort="title">Title</th>
-      <th class="frbr_uri" data-sort="frbr_uri">FRBR URI</th>
-      <th class="languages" data-sort="n_languages" >Languages</th>
-      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in Time"></i></th>
-      <th class="status" data-sort="pub_ratio">Drafts / Total</th>
-      <th class="updated_at" data-sort="updated_at">Updated</th>
-    </tr>
-  </thead>
-
-  <tbody>
+  <div id="pf-list-simple-expansion" class="list-group list-view-pf list-view-pf-view">
+    <div>
+      {{ count }} works
+    </div>
     {{#each works}}
-      <tr>
 
-        {{!-- Title --}}
-        <td class="{{#unless work_docs}}pad-left{{/unless}}">
+
+    <div class="list-group-item">
+
+      <div class="list-group-item-header">
+
+        <div class="list-view-pf-expand">
+          <span class="fa fa-angle-right"></span>
+        </div>
+
+        <div class="list-view-pf-main-info">
+
+          <div class="list-view-pf-body">
+
+            <div class="list-view-pf-description">
+
+              <div class="list-group-item-heading">
+                {{ title }}
+              </div>
+
+              <div class="list-group-item-text">
+                <a href="/works{{ frbr_uri }}/">{{ frbr_uri }}</a>
+              </div>
+
+            </div>
+
+            <div class="list-view-pf-additional-info">
+
+              <div class="list-view-pf-additional-info-item">
+                <strong>{{n_expressions}}</strong> Points in time
+              </div>
+              <div class="list-view-pf-additional-info-item">
+                <strong>{{n_languages}}</strong> Languages
+              </div>
+              <div class="list-view-pf-additional-info-item">
+                Last updated&nbsp;
+                <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+                <span class="text-muted">
+                  {{#if most_recent_updated_by.display_name}}
+                  &nbsp;– {{ most_recent_updated_by.display_name }}
+                  {{/if}}
+                </span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div class="list-group-item-container container-fluid hidden">
           {{#if work_docs}}
-            <a href="#" class="toggle-docs text-muted" data-work="{{ frbr_uri }}"><i class="fas fa-fw fa-caret-right"></i></a>
-            <i class="fa fa-fw fa-circle published" title="published"></i>
-          {{else}}
-            <i class="fa fa-fw fa-circle" title="empty work"></i>
-          {{/if}}
-          <a href="/works{{ frbr_uri }}/">{{ title }}</a>
-        </td>
-
-        {{!-- Frbr uri --}}
-        <td>
-          <a href="/works{{ frbr_uri }}/">{{ frbr_uri }}</a>
-        </td>
-
-        {{!-- Languages --}}
-        <td>
-            {{#each languages}}
-              {{#if @first}}
-                {{this}}
-              {{else}}
-                • {{this}}
-              {{/if}}
-            {{/each}}
-        </td>
-
-        {{!-- Points in time --}}
-        <td>
-            <a href="/works{{ frbr_uri }}/amendments/">
-              {{n_expressions}}
-            </a>
-        </td>
-
-        {{!-- Drafts / Total --}}
-        <td>
-          {{#if work_docs}}
-            {{n_drafts}} / {{n_docs}}
-          {{/if}}
-        </td>
-
-        {{!-- Updated --}}
-        <td>
-          <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-          <span class="text-muted">
-            {{#if most_recent_updated_by.display_name}}
-              – {{ most_recent_updated_by.display_name }}
-            {{/if}}
-          </span>
-        </td>
-
-      </tr>
-
-      {{#each work_docs}}
-        <tr data-work="{{ ../frbr_uri }}" class="d-none">
-          <td class="document">
-            {{#if draft}}
-              <i class="fa fa-fw fa-circle draft" title="draft"></i>
-            {{else}}
-              <i class="fa fa-fw fa-circle published" title="published"></i>
-            {{/if}}
-            <a href="/documents/{{ id }}">{{ title }}</a>
-          </td>
-          <td>@ {{ expression_date }}</td>
-          <td>{{ language }}</td>
-          <td colspan="2">&nbsp;</td>
-          <td>
-            <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-            <span class="text-muted">
+            <h5>Points in time</h5>
+            {{#each work_docs}}
+            <p>
+              {{ expression_date }}:&nbsp;
+              <a href="/documents/{{ id }}">{{ title }}</a>
+              • {{ language }}
+              <br>
+              Comments: 0
+              <br>
+              Last updated <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+              <span class="text-muted">
               {{#if updated_by_user.display_name}}
                 – {{ updated_by_user.display_name }}
               {{/if}}
-            </span>
-          </td>
-        </tr>
-      {{/each}}
+              </span>
+            </p>
+            {{/each}}
+          {{/if}}
+        </div>
+
+      </div>
+    </div>
     {{/each}}
-  </tbody>
+  </div>
 
-  <tfoot>
-    <tr>
-      <td class="active" colspan="6">{{ count }} works</td>
-    </tr>
-  </tfoot>
-</table>
 {% endverbatim %}
-
 </script>
 
 <script id="filter-tags-template" type="text/x-handlebars-template">
@@ -184,4 +168,20 @@ window.Indigo.Preloads.country_code = '{{ country_code }}';
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>
-{% endblock %}}
+
+<script>
+  $(document).ready(function () {
+    // click the list-view heading then expand a row
+    $("#pf-list-simple-expansion .list-group-item-header").click(function(event){
+      if(!$(event.target).is("a, input")){
+        $(this).find(".fa-angle-right").toggleClass("fa-angle-down")
+          .end().parent().toggleClass("list-view-pf-expand-active")
+            .find(".list-group-item-container").toggleClass("hidden");
+      } else {
+      }
+    })
+
+  });
+</script>
+
+{% endblock %}

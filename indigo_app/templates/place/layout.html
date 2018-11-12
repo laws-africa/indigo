@@ -1,19 +1,10 @@
 {% extends "main.html" %}
 
-{% block main-header %}
-  <header class="main-header">
-    <div class="container">
-      <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
-
-      {% block main-header-title %}
-        <h4 class="text-muted">
-          <a href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a>
-          {% if locality %}
-            › <a href="{% url 'place' place=locality.place_code %}">{{ locality.name }} · {{ locality.code }}</a>
-          {% endif %}
-        </h4>
-      {% endblock %}
-
-    </div>
-  </header>
+{% block main-header-title %}
+  <h4 class="text-muted">
+    <a href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a>
+    {% if locality %}
+      › <a href="{% url 'place' place=locality.place_code %}">{{ locality.name }} · {{ locality.code }}</a>
+    {% endif %}
+  </h4>
 {% endblock %}

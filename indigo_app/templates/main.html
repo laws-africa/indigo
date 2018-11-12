@@ -82,10 +82,12 @@
 
     <main id="{% block view-id %}{% endblock %}" class="main-container">
       {% block main-header %}
-        <header class="main-header container-fluid">
-          <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
+        <header class="main-header">
+          <div class="container">
+            <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
 
-          {% block main-header-title %}{% endblock %}
+            {% block main-header-title %}{% endblock %}
+          </div>
         </header>
       {% endblock %}
 

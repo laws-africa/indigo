@@ -51,7 +51,7 @@ class LibraryView(RedirectView):
 
 
 class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
-    template_name = 'library.html'
+    template_name = 'place/detail.html'
     js_view = 'LibraryView'
     # permissions
     permission_required = ('indigo_api.view_work',)

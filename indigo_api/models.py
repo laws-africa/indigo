@@ -67,6 +67,10 @@ class Country(models.Model):
     def name(self):
         return self.country.name
 
+    @property
+    def place_code(self):
+        return self.code
+
     def as_json(self):
         return {
             'name': self.name,
@@ -97,6 +101,10 @@ class Locality(models.Model):
         ordering = ['name']
         verbose_name_plural = 'Localities'
         unique_together = (('country', 'code'),)
+
+    @property
+    def place_code(self):
+        return self.country.code + '-' + self.code
 
     def __unicode__(self):
         return unicode(self.name)

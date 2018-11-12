@@ -26,7 +26,7 @@
           <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Locality</button>
           <div class="dropdown-menu">
             {% for loc in locs %}
-            <a class="dropdown-item" href="{% url 'place' place=country.code|add:'-'|add:loc.code %}">{{ loc.name }} · {{ loc.code }}</a>
+            <a class="dropdown-item" href="{% url 'place' place=loc.place_code %}">{{ loc.name }} · {{ loc.code }}</a>
             {% endfor %}
           </div>
         </div>
@@ -67,10 +67,10 @@
         </div>
 
         <div class="btn-group">
-          <a href="{% url 'new_work' place=place %}" class="btn btn-success">New Work</a>
+          <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New Work</a>
           <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'new_batch_work' place=place %}">New Work Batch</a>
+            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New Work Batch</a>
           </div>
         </div>
 

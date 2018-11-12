@@ -76,6 +76,7 @@ class PlaceBasedView(object):
     """
     country = None
     locality = None
+    place = None
 
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()
@@ -84,7 +85,7 @@ class PlaceBasedView(object):
     def get_context_data(self, **kwargs):
         kwargs['locality'] = self.locality
         kwargs['country'] = self.country
-        kwargs['place'] = self.kwargs['place']
+        kwargs['place'] = self.place
         return super(PlaceBasedView, self).get_context_data(**kwargs)
 
     def determine_place(self):
@@ -101,3 +102,5 @@ class PlaceBasedView(object):
             self.locality = self.country.localities.filter(code=locality).first()
             if not self.locality:
                 raise Http404
+
+        self.place = self.locality or self.country

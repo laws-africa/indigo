@@ -9,7 +9,7 @@
         <h4 class="text-muted">
           <a href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a>
           {% if locality %}
-            › <a href="{% url 'place' place=country.code|add:'-'|add:locality.code %}">{{ locality.name }} · {{ locality.code }}</a>
+            › <a href="{% url 'place' place=locality.place_code %}">{{ locality.name }} · {{ locality.code }}</a>
           {% endif %}
         </h4>
       {% endblock %}

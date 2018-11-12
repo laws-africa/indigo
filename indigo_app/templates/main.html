@@ -7,7 +7,7 @@
   {% block navbar %}
     <nav class="navbar navbar-expand-md navbar-dark fixed-top">
       {% block navbar-brand %}
-      <a class="navbar-brand" href="{% if request.user.is_authenticated %}{% url 'library' country=request.user.editor.country_code %}{% else %}/{% endif %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+      <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
       {% endblock %}
       {% block navbar-toggle %}
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
@@ -20,7 +20,7 @@
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         {% block navbar-left %}
           {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
+          <li class="nav-item"><a class="nav-link" href="{% url 'place' place=request.user.editor.country_code %}">Home</a></li>
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
             <div class="dropdown-menu">

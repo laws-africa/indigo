@@ -5,14 +5,45 @@
     <div class="container">
       <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
 
-      {% block main-header-title %}
-      <h4 class="text-muted">
-        <a href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a>
-        {% if locality %}
-          / <a href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a>
-        {% endif %}
-      </h4>
-      {% endblock %}
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          {% block main-header-title %}
+          <h4 class="text-muted">
+            <a href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a>
+            {% if locality %}
+              / <a href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a>
+            {% endif %}
+          </h4>
+          {% endblock %}
+        </div>
+
+        <div>
+          <div class="btn-toolbar">
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Country</button>
+              <div class="dropdown-menu">
+                {% for ctry in indigo_countries %}
+                <a class="dropdown-item" href="{% url 'library' country=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% with country.localities.all as locs %}
+            {% if locs %}
+            <div class="dropdown ml-2">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Locality</button>
+              <div class="dropdown-menu">
+                {% for loc in locs %}
+                <a class="dropdown-item" href="{% url 'library' country=country.code %}?locality={{ loc.code }}">{{ loc.name }} · {{ loc.code }}</a>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+          </div>
+        </div>
+      </div>
     </div>
   </header>
 {% endblock %}

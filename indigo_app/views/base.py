@@ -82,19 +82,22 @@ class PlaceBasedView(object):
         return super(PlaceBasedView, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        return super(PlaceBasedView, self).get_context_data(
-            country=self.country, locality=self.locality, **kwargs)
+        kwargs['locality'] = self.locality
+        kwargs['country'] = self.country
+        kwargs['place'] = self.kwargs['place']
+        return super(PlaceBasedView, self).get_context_data(**kwargs)
 
     def determine_place(self):
-        place_code = self.kwargs['place_code']
-        parts = place_code.split('-', 1)
+        parts = self.kwargs['place'].split('-', 1)
+        country = parts[0]
+        locality = parts[1] if len(parts) > 1 else None
 
         try:
-            self.country = Country.for_code(parts[0])
+            self.country = Country.for_code(country)
         except Country.NotFound:
             raise Http404
 
-        if len(parts) > 1:
-            self.locality = self.country.localities.filter(code=parts[1]).first()
+        if locality:
+            self.locality = self.country.localities.filter(code=locality).first()
             if not self.locality:
                 raise Http404

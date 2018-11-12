@@ -9,9 +9,9 @@
         <div class="flex-grow-1">
           {% block main-header-title %}
           <h4 class="text-muted">
-            <a href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a>
+            <a href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a>
             {% if locality %}
-              / <a href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a>
+              / <a href="{% url 'place' place=country.code|add:'-'|add:locality.code %}">{{ locality.name }} · {{ locality.code }}</a>
             {% endif %}
           </h4>
           {% endblock %}
@@ -23,7 +23,7 @@
               <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Country</button>
               <div class="dropdown-menu">
                 {% for ctry in indigo_countries %}
-                <a class="dropdown-item" href="{% url 'library' country=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
+                <a class="dropdown-item" href="{% url 'place' place=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
                 {% endfor %}
               </div>
             </div>
@@ -34,7 +34,7 @@
               <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Locality</button>
               <div class="dropdown-menu">
                 {% for loc in locs %}
-                <a class="dropdown-item" href="{% url 'library' country=country.code %}?locality={{ loc.code }}">{{ loc.name }} · {{ loc.code }}</a>
+                <a class="dropdown-item" href="{% url 'place' place=country.code|add:'-'|add:loc.code %}">{{ loc.name }} · {{ loc.code }}</a>
                 {% endfor %}
               </div>
             </div>

@@ -6,7 +6,7 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView
 from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -33,32 +33,42 @@ from .base import AbstractAuthedIndigoView, PlaceBasedView
 log = logging.getLogger(__name__)
 
 
-class LibraryView(AbstractAuthedIndigoView, TemplateView):
+class LibraryView(RedirectView):
+    """ Redirect the old library view to the new place view.
+    """
+    permanent = True
+
+    def get_redirect_url(self, country=None):
+        place = country
+
+        if not place:
+            if self.request.user.is_authenticated():
+                place = self.request.user.editor.country.code
+            else:
+                place = Country.objects.all()[0].code
+
+        return reverse('place', kwargs={'place': place})
+
+
+class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
     template_name = 'library.html'
+    js_view = 'LibraryView'
     # permissions
     permission_required = ('indigo_api.view_work',)
     check_country_perms = False
 
-    def get(self, request, country=None, *args, **kwargs):
-        if country is None:
-            return redirect('library', country=request.user.editor.country_code)
-        return super(LibraryView, self).get(request, country_code=country, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(PlaceDetailView, self).get_context_data(**kwargs)
 
-    def get_context_data(self, country_code, **kwargs):
-        context = super(LibraryView, self).get_context_data(**kwargs)
-
-        country = Country.for_code(country_code)
-        context['country'] = country
-        context['country_code'] = country_code
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
         context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        docs = DocumentViewSet.queryset.filter(work__country=country)
+        docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = WorkViewSet.queryset.filter(country=country)
+        works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
 
         return context

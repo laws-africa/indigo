@@ -142,7 +142,7 @@ class Work(models.Model):
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
-    locality = models.ForeignKey(Locality, null=True, on_delete=models.PROTECT)
+    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT)
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")

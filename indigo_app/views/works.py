@@ -19,7 +19,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Country, Document
+from indigo_api.models import Subtype, Work, Amendment, Country, Document, Locality
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
@@ -472,9 +472,22 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     def get_frbr_uri(self, country, locality, row):
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
-        # check country matches (and that it's all one country)
-        if country.code != row['country'].lower():
-            raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
+        # check country matches, but ignore if no country given (model error raised)
+        if country.code != row['country'].lower() and row['country'] != "":
+            raise ValueError('The country in the spreadsheet (%s: %s) doesn\'t match the country you\'re working in (%s: %s)' % (Country.objects.get(country_id=row['country']), row['country'], country, country.code.upper()))
+
+        # if you're in a country but the spreadsheet gives a locality
+        if not locality and row['locality'] != "":
+            raise ValueError('The locality given in the spreadsheet is %s (%s), but you\'re working in %s' % (row['locality'], Locality.objects.get(code=row['locality'].lower()), country))
+
+        # if you're in a locality but the spreadsheet doesn't have one
+        if locality and row['locality'] == "":
+            raise ValueError('There\'s no locality given in the spreadsheet, but you\'re working in %s (%s)' % (locality, locality.code.upper()))
+
+        # don't raise an error if you're in a country but not a locality
+        # but do if you're in a locality that doesn't match
+        if locality and locality.code != row['locality'].lower():
+            raise ValueError('The locality in the spreadsheet (%s: %s) doesn\'t match the locality you\'re working in (%s: %s)' % (Locality.objects.get(code=row['locality'].lower()), row['locality'], locality, locality.code.upper()))
 
         # check all frbr uri fields have been filled in and that no spaces were accidentally included
         if ' ' in frbr_uri.work_uri():

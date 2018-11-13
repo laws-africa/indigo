@@ -80,22 +80,66 @@
   <div class="page-body">
     {% block sidebar %}{% endblock %}
 
-    <main id="{% block view-id %}{% endblock %}" class="main-container">
-      {% block main-header %}
-        <header class="main-header">
+    <div class="main-container-wrapper">
+      <main id="{% block view-id %}{% endblock %}" class="main-container">
+        {% block main-header %}
+          <header class="main-header">
+            <div class="container">
+              <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
+
+              {% block main-header-title %}{% endblock %}
+            </div>
+          </header>
+        {% endblock %}
+
+        {% block messages %}
+          {% include '_messages.html' %}
+        {% endblock %}
+
+        <div class="main-content">{% block content %}{% endblock %}</div>
+
+        {% block site-footer %}
+        <footer class="site-footer">
           <div class="container">
-            <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
+            <h5>Indigo</h5>
 
-            {% block main-header-title %}{% endblock %}
+            <div class="row">
+              <div class="col-md-4">
+                {% block site-footer-col-1 %}
+                <ul class="list-unstyled">
+                  <li><a href="/">Home</a></li>
+
+                  {% if request.user.is_authenticated %}
+                  <li><a href="{% url 'edit_account' %}">Your Account</a></li>
+                  <li><a href="{% url 'account_logout' %}">Log out</a></li>
+                  {% else %}
+                  <li><a href="{% url 'account_login' %}">Log in</a></li>
+                  {% endif %}
+                </ul>
+                {% endblock %}
+              </div>
+
+              <div class="col-md-4">
+                {% block site-footer-col-2 %}
+                <ul class="list-unstyled">
+                  <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Documentation</a></li>
+                  <li><a href="mailto:greg@openup.org.za" target="_blank">Feedback</a></li>
+                  <li><a href="https://github.com/OpenUpSA/indigo" target="_blank">Indigo on GitHub</a></li>
+                </ul>
+                {% endblock %}
+              </div>
+
+              <div class="col-md-4">
+                <ul class="list-unstyled">
+                  <li><a href="{% url 'terms_of_use' %}" target="_blank">Terms of Use &amp; Privacy Policy</a></li>
+                </ul>
+
+                <img src="{% static 'images/logo.png' %}" title="Indigo" class="logo">
+              </div>
           </div>
-        </header>
-      {% endblock %}
-
-      {% block messages %}
-        {% include '_messages.html' %}
-      {% endblock %}
-
-      {% block content %}{% endblock %}
-    </main>
+        </footer>
+        {% endblock %}
+      </main>
+    </div>
   </div>
 {% endblock page-content %}

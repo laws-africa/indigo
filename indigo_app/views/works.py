@@ -19,7 +19,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Country, Document, Locality
+from indigo_api.models import Subtype, Work, Amendment, Country, Document
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
@@ -394,7 +394,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
 
         for idx, row in enumerate(rows):
             # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if not row['ignore'] and [val for val in row.itervalues() if val != ""]:
+            if not row['ignore'] and [val for val in row.itervalues() if val]:
                 info = {
                     'row': idx + 2,
                 }
@@ -473,22 +473,23 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     def get_frbr_uri(self, country, locality, row):
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
-        # check country matches, but ignore if no country given (model error raised)
+        # if the country doesn't match
+        # (but ignore if no country given – dealt with separately)
         if row['country'] and country.code != row['country'].lower():
-            raise ValueError('The country in the spreadsheet (%s: %s) doesn\'t match the country you\'re working in (%s: %s)' % (Country.objects.get(country_id=row['country']), row['country'], country, country.code.upper()))
+            raise ValueError('The country given in the spreadsheet (%s: "%s") doesn\'t match the country you\'re working in (%s: "%s")' % (Country.objects.get(country_id=row['country']), row['country'], country, country.code.upper()))
 
-        # if you're in a country but the spreadsheet gives a locality
+        # if you're working on the country level but the spreadsheet gives a locality
         if not locality and row['locality']:
-            raise ValueError('The locality given in the spreadsheet is %s (%s), but you\'re working in %s' % (row['locality'], Locality.objects.get(code=row['locality'].lower()), country))
+            raise ValueError('You are working in a country (%s), but the spreadsheet gives a locality code ("%s")' % (country, row['locality']))
 
-        # if you're in a locality but the spreadsheet doesn't have one
+        # if you're working in a locality but the spreadsheet doesn't give one
         if locality and not row['locality']:
-            raise ValueError('There\'s no locality given in the spreadsheet, but you\'re working in %s (%s)' % (locality, locality.code.upper()))
+            raise ValueError('There\'s no locality code given in the spreadsheet, but you\'re working in %s ("%s")' % (locality, locality.code.upper()))
 
-        # don't raise an error if you're in a country but not a locality
-        # but do if you're in a locality that doesn't match
+        # if the locality doesn't match
+        # (only if you're in a locality)
         if locality and locality.code != row['locality'].lower():
-            raise ValueError('The locality in the spreadsheet (%s: %s) doesn\'t match the locality you\'re working in (%s: %s)' % (Locality.objects.get(code=row['locality'].lower()), row['locality'], locality, locality.code.upper()))
+            raise ValueError('The locality code given in the spreadsheet ("%s") doesn\'t match the code for the locality you\'re working in ("%s")' % (row['locality'], locality.code.upper()))
 
         # check all frbr uri fields have been filled in and that no spaces were accidentally included
         if ' ' in frbr_uri.work_uri():

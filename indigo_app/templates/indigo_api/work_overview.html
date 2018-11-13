@@ -1,5 +1,7 @@
 {% extends "indigo_api/work_layout.html" %}
 
+{% block main-header-title %}{% endblock %}
+
 {% block work-content %}
 
   {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}

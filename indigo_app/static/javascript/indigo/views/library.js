@@ -23,7 +23,6 @@
     events: {
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
-      'change .filter-locality': 'filterByLocality',
       'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
@@ -32,12 +31,11 @@
     initialize: function() {
       var self = this;
 
-      this.searchableFields = ['title', 'year', 'number', 'country', 'locality', 'subtype'];
+      this.searchableFields = ['title', 'year', 'number', 'subtype'];
       this.template = Handlebars.compile($(this.template).html());
       this.filtered = new Indigo.Library();
       this.filters = new Backbone.Model({
         country: Indigo.Preloads.country_code,
-        locality: null,
         tags: [],
         status: 'all',
         search: null,
@@ -73,7 +71,6 @@
 
       this.filters.set({
         country: this.filters.get('country'),
-        locality: Indigo.queryParams.locality,
         status: Indigo.queryParams.status || 'all',
         subtype: Indigo.queryParams.subtype,
         tags: tags || [],
@@ -93,7 +90,6 @@
      * been applied. The order is:
      *
      *  - country
-     *  - locality
      *  - subtype
      *  - status
      *  - tags
@@ -121,35 +117,6 @@
       // filter by country -- works is scoped to country, so this should be all the works
       works = this.works.where({'country': filters.country});
       var country = Indigo.countries[filters.country];
-
-      // count localities, sort alphabetically
-      this.summary.localities = _.sortBy(
-        _.map(
-          _.countBy(works, function(d) { return d.get('locality') || "-"; }),
-          function(count, code) {
-            var loc = country.localities[code];
-
-            return {
-              code: code,
-              name: code == '-' ? '(none)' : (loc + ' · ' + code),
-              count: count,
-              active: filters.locality === code,
-            };
-          }
-        ),
-        function(info) { return info.code == '-' ? '' : info.name.toLocaleLowerCase(); });
-      this.summary.localities.unshift({
-        code: null,
-        name: 'All localities',
-        count: works.length,
-        active: !!filters.locality,
-      });
-
-      // filter by locality
-      if (filters.locality) {
-        var loc = filters.locality == '-' ? null : filters.locality;
-        works = _.filter(works, function(work) { return work.get('locality') == loc; });
-      }
 
       // count subtype, sort alphabetically
       this.summary.subtypes = _.sortBy(
@@ -265,16 +232,6 @@
       window.location = '/library/' + country + '/';
     },
 
-    filterByLocality: function(e) {
-      e.preventDefault();
-
-      this.filters.set({
-        locality: $(e.currentTarget).val(),
-        subtype: null,
-        tags: [],
-      });
-    },
-
     filterBySubtype: function(e) {
       e.preventDefault();
 
@@ -299,23 +256,8 @@
     },
 
     render: function() {
-      // localities
-      var select = this.$('.filter-locality').empty();
-      if (!this.summary.localities) {
-        select.hide();
-      } else {
-        select.show();
-        this.summary.localities.forEach(function(loc) {
-          var option = document.createElement('option');
-          option.value = loc.code || "";
-          option.text = loc.name + " (" + loc.count + ")";
-          option.selected = loc.active;
-          select[0].add(option);
-        });
-      }
-
       // subtypes
-      select = this.$('.filter-subtype').empty()[0];
+      var select = this.$('.filter-subtype').empty()[0];
       this.summary.subtypes.forEach(function(type) {
         var option = document.createElement('option');
         option.value = type.subtype || "";

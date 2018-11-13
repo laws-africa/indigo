@@ -81,8 +81,6 @@
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.originalFrbrUri = this.model.get('frbr_uri');
-      this.listenTo(this.model, 'change:country', this.updatePublicationOptions);
-      this.listenTo(this.model, 'change:country change:locality', this.updateBreadcrumb);
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
 
@@ -91,12 +89,11 @@
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
-      this.listenTo(this.model, 'change:country change:publication_date change:publication_name change:publication_number',
+      this.listenTo(this.model, 'change:publication_date change:publication_name change:publication_number',
                     _.debounce(this.publicationChanged, 1000));
 
       this.model.updateFrbrUri();
       this.listenToOnce(Indigo.works, 'sync', this.parentChanged);
-      this.updatePublicationOptions();
       this.stickit();
       this.repealChanged();
       this.commencingWorkChanged();
@@ -122,30 +119,6 @@
     setClean: function() {
       this.dirty = false;
       this.canSave();
-    },
-
-    updatePublicationOptions: function() {
-      var country = Indigo.countries[this.model.get('country')],
-          pubs = (country ? country.publications : []).sort();
-
-      $("#publication_list").empty().append(_.map(pubs, function(pub) {
-        var opt = document.createElement("option");
-        opt.setAttribute("value", pub);
-        return opt;
-      }));
-    },
-
-    updateBreadcrumb: function() {
-      var country = Indigo.countries[this.model.get('country')],
-          locality = this.model.get('locality');
-
-      this.$('.work-country')
-        .attr('href', '/library/' + this.model.get('country') + '/')
-        .text(country.name + ' · ' + this.model.get('country'));
-
-      this.$('.work-locality')
-        .attr('href', '/library/' + this.model.get('country') + '/?locality=' + locality)
-        .text(locality ? country.localities[locality] + ' · ' + locality : '');
     },
 
     canSave: function() {

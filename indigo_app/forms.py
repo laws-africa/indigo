@@ -55,7 +55,6 @@ class UserSignupForm(SignupForm):
 
 
 class BatchCreateWorkForm(forms.Form):
-    country = forms.ModelChoiceField(required=True, queryset=Country.objects, empty_label="Choose a country")
     spreadsheet_url = forms.URLField(required=True, validators=[
         URLValidator(
             schemes=['https'],

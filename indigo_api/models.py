@@ -67,6 +67,10 @@ class Country(models.Model):
     def name(self):
         return self.country.name
 
+    @property
+    def place_code(self):
+        return self.code
+
     def as_json(self):
         return {
             'name': self.name,
@@ -97,6 +101,10 @@ class Locality(models.Model):
         ordering = ['name']
         verbose_name_plural = 'Localities'
         unique_together = (('country', 'code'),)
+
+    @property
+    def place_code(self):
+        return self.country.code + '-' + self.code
 
     def __unicode__(self):
         return unicode(self.name)
@@ -134,7 +142,7 @@ class Work(models.Model):
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
-    locality = models.ForeignKey(Locality, null=True, on_delete=models.PROTECT)
+    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT)
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")

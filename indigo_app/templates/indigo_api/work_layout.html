@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "place/layout.html" %}
 
 {% block title %}{% if work.pk %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
 {% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
@@ -53,9 +53,9 @@
 
 
 {% block breadcrumbs %}
-  <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
+  <li class="breadcrumb-item"><a class="work-country" href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
   {% if work.locality %}
-  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ work.locality.code }}">{{ work.locality.name }} · {{ work.locality.code }}</a></li>
+  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:work.locality.code %}">{{ work.locality.name }} · {{ work.locality.code }}</a></li>
   {% endif %}
   {% if work.pk %}
   <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>

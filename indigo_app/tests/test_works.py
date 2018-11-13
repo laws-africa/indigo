@@ -14,7 +14,7 @@ class WorksTest(testcases.TestCase):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
 
     def test_new_work(self):
-        response = self.client.get('/works/new/')
+        response = self.client.get('/places/za/works/new/')
         self.assertEqual(response.status_code, 200)
 
     def test_edit_page(self):

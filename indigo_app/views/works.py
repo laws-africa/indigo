@@ -6,7 +6,7 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView
 from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -27,38 +27,48 @@ from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
 
-from .base import AbstractAuthedIndigoView
+from .base import AbstractAuthedIndigoView, PlaceBasedView
 
 
 log = logging.getLogger(__name__)
 
 
-class LibraryView(AbstractAuthedIndigoView, TemplateView):
-    template_name = 'library.html'
+class LibraryView(RedirectView):
+    """ Redirect the old library view to the new place view.
+    """
+    permanent = True
+
+    def get_redirect_url(self, country=None):
+        place = country
+
+        if not place:
+            if self.request.user.is_authenticated():
+                place = self.request.user.editor.country.code
+            else:
+                place = Country.objects.all()[0].code
+
+        return reverse('place', kwargs={'place': place})
+
+
+class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
+    template_name = 'place/detail.html'
+    js_view = 'LibraryView'
     # permissions
     permission_required = ('indigo_api.view_work',)
     check_country_perms = False
 
-    def get(self, request, country=None, *args, **kwargs):
-        if country is None:
-            return redirect('library', country=request.user.editor.country_code)
-        return super(LibraryView, self).get(request, country_code=country, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(PlaceDetailView, self).get_context_data(**kwargs)
 
-    def get_context_data(self, country_code, **kwargs):
-        context = super(LibraryView, self).get_context_data(**kwargs)
-
-        country = Country.for_code(country_code)
-        context['country'] = country
-        context['country_code'] = country_code
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
         context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        docs = DocumentViewSet.queryset.filter(work__country=country)
+        docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = WorkViewSet.queryset.filter(country=country)
+        works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
 
         return context
@@ -85,12 +95,17 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(AbstractWorkDetailView, self).get_context_data(**kwargs)
-
-        is_new = not self.work.frbr_uri
-
-        context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
         context['country'] = self.work.country
-        context['locality'] = None if is_new else self.work.locality
+        context['locality'] = self.work.locality
+
+        if self.work.frbr_uri:
+            context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        else:
+            # new
+            context['work_json'] = json.dumps({
+                'country': self.work.country.code,
+                'locality': self.work.locality.code if self.work.locality else None,
+            })
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
@@ -104,10 +119,11 @@ class WorkDetailView(AbstractWorkDetailView):
     js_view = 'WorkDetailView'
 
 
-class AddWorkView(WorkDetailView):
+class AddWorkView(PlaceBasedView, WorkDetailView):
     def get_object(self, queryset=None):
         work = Work()
-        work.country = self.request.user.editor.country
+        work.country = self.country
+        work.locality = self.locality
         return work
 
 
@@ -349,26 +365,22 @@ class RestoreWorkVersionView(AbstractWorkDetailView):
         return redirect(url)
 
 
-class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
+class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
-        country = form.cleaned_data['country']
         table = self.get_table(form.cleaned_data['spreadsheet_url'])
-        works = self.get_works(country, table)
+        works = self.get_works(table)
         return self.render_to_response(self.get_context_data(works=works))
 
     def get_country(self):
-        pk = self.request.POST.get('country')
-        if pk:
-            return get_object_or_404(Country, pk=pk)
-        else:
-            return self.request.user.editor.country
+        self.determine_place()
+        return self.country
 
-    def get_works(self, country, table):
+    def get_works(self, table):
         works = []
 
         # clean up headers
@@ -381,14 +393,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         ]
 
         for idx, row in enumerate(rows):
-            if not row['ignore']:
+            # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
+            if not row['ignore'] and [val for val in row.itervalues() if val]:
                 info = {
                     'row': idx + 2,
                 }
                 works.append(info)
 
                 try:
-                    frbr_uri = self.get_frbr_uri(country, row)
+                    frbr_uri = self.get_frbr_uri(self.country, self.locality, row)
                 except ValueError as e:
                     info['status'] = 'error'
                     info['error_message'] = e.message
@@ -406,7 +419,8 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                     work.frbr_uri = frbr_uri
                     work.title = row['title']
-                    work.country = country
+                    work.country = self.country
+                    work.locality = self.locality
                     work.publication_name = row['publication_name']
                     work.publication_number = row['publication_number']
                     work.publication_date = self.make_date(row['publication_date'])
@@ -456,12 +470,26 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         else:
             return rows
 
-    def get_frbr_uri(self, country, row):
+    def get_frbr_uri(self, country, locality, row):
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
-        # check country matches (and that it's all one country)
-        if country.code != row['country'].lower():
-            raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
+        # if the country doesn't match
+        # (but ignore if no country given – dealt with separately)
+        if row['country'] and country.code != row['country'].lower():
+            raise ValueError('The country code given in the spreadsheet ("%s") doesn\'t match the code for the country you\'re working in ("%s")' % (row['country'], country.code.upper()))
+
+        # if you're working on the country level but the spreadsheet gives a locality
+        if not locality and row['locality']:
+            raise ValueError('You are working in a country (%s), but the spreadsheet gives a locality code ("%s")' % (country, row['locality']))
+
+        # if you're working in a locality but the spreadsheet doesn't give one
+        if locality and not row['locality']:
+            raise ValueError('There\'s no locality code given in the spreadsheet, but you\'re working in %s ("%s")' % (locality, locality.code.upper()))
+
+        # if the locality doesn't match
+        # (only if you're in a locality)
+        if locality and locality.code != row['locality'].lower():
+            raise ValueError('The locality code given in the spreadsheet ("%s") doesn\'t match the code for the locality you\'re working in ("%s")' % (row['locality'], locality.code.upper()))
 
         # check all frbr uri fields have been filled in and that no spaces were accidentally included
         if ' ' in frbr_uri.work_uri():

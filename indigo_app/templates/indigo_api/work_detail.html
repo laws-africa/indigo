@@ -2,6 +2,7 @@
 
 {% block view-id %}edit-work-view{% endblock %}
 {% block title %}Edit – {{ block.super }}{% endblock %}
+{% block body-class %}{{ block.super }} {% if not work.pk %}sidebar-minimized{% endif %}{% endblock %}
 
 {% block work-content %}
   {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
@@ -34,22 +35,6 @@
           <div class="form-group col-12">
             <label for="work_title" class="required">Short title</label>
             <input type="text" class="form-control" id="work_title" name="title" autofocus placeholder="Title" required>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="work_country" class="required">Country</label>
-            <select id="work_country" name="country" class="form-control">
-              {% for opt in countries %}
-              <option value="{{ opt.country.iso.lower }}">{{ opt.country.name }}</option>
-            {% endfor %}
-            </select>
-          </div>
-
-          <div class="form-group col-md-4 offset-md-2">
-            <label for="work_locality">Locality</label>
-            <select class="form-control" id="work_locality" name="locality"></select>
           </div>
         </div>
 
@@ -116,7 +101,11 @@
             <label for="work_publication_name">Publication name</label>
             <input type="text" class="form-control" id="work_publication_name" name="publication_name" list="publication_list">
             <p class="form-text text-muted">Original publication, eg. national gazette</p>
-            <datalist id="publication_list"></datalist>
+            <datalist id="publication_list">
+              {% for pub in work.country.publication_set.all %}
+                <option value="{{ pub.name }}">
+              {% endfor %}
+            </datalist>
           </div>
 
           <div class="form-group col">

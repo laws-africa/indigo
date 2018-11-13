@@ -21,7 +21,8 @@ class LocaleBasedRegistry(object):
         return self.for_locale(topic, country=document.country, locality=document.locality, language=document.language.code)
 
     def for_work(self, topic, work):
-        return self.for_locale(topic, country=work.country, locality=work.locality, language=None)
+        locality = work.locality.code if work.locality else None
+        return self.for_locale(topic, country=work.country.code, locality=locality, language=None)
 
     def for_locale(self, topic, country=None, language=None, locality=None):
         """ Find an appropriate importer for this locale description. Tightest match wins.

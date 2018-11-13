@@ -90,7 +90,7 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
         context['country'] = self.work.country
-        context['locality'] = None if is_new else context['country'].work_locality(self.work)
+        context['locality'] = None if is_new else self.work.locality
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()

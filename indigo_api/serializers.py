@@ -620,6 +620,7 @@ class WorkSerializer(serializers.ModelSerializer):
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     country = serializers.CharField(source='country.code', required=True)
+    locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -640,7 +641,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
         )
-        read_only_fields = ('locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
+        read_only_fields = ('nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
 
     def create(self, validated_data):
         work = Work()
@@ -651,7 +652,7 @@ class WorkSerializer(serializers.ModelSerializer):
         user = self.context['request'].user
         validated_data['updated_by_user'] = user
 
-        # work around DRF stashing the language as a nested field
+        # work around DRF stashing the country as a nested field
         if 'country' in validated_data:
             # this is really a Country object
             validated_data['country'] = validated_data['country']['code']
@@ -686,6 +687,16 @@ class WorkSerializer(serializers.ModelSerializer):
             return Country.for_code(value)
         except Country.DoesNotExist:
             raise ValidationError("Invalid country: %s" % value)
+
+    def validate(self, data):
+        # validate locality after country
+        if data.get('locality_code'):
+            # this is actually a Country object
+            country = data['country']['code']
+            if not country.localities.filter(code=data['locality_code']).first():
+                raise ValidationError("Invalid locality: %s" % data['locality_code'])
+
+        return data
 
     def get_amendments_url(self, work):
         if not work.pk:

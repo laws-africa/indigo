@@ -476,7 +476,7 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
         # if the country doesn't match
         # (but ignore if no country given – dealt with separately)
         if row['country'] and country.code != row['country'].lower():
-            raise ValueError('The country given in the spreadsheet (%s: "%s") doesn\'t match the country you\'re working in (%s: "%s")' % (Country.objects.get(country_id=row['country']), row['country'], country, country.code.upper()))
+            raise ValueError('The country code given in the spreadsheet ("%s") doesn\'t match the code for the country you\'re working in ("%s")' % (row['country'], country.code.upper()))
 
         # if you're working on the country level but the spreadsheet gives a locality
         if not locality and row['locality']:

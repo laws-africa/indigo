@@ -393,7 +393,8 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
         ]
 
         for idx, row in enumerate(rows):
-            if not row['ignore']:
+            # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
+            if not row['ignore'] and [val for val in row.itervalues() if val != ""]:
                 info = {
                     'row': idx + 2,
                 }
@@ -473,15 +474,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
         # check country matches, but ignore if no country given (model error raised)
-        if country.code != row['country'].lower() and row['country'] != "":
+        if row['country'] and country.code != row['country'].lower():
             raise ValueError('The country in the spreadsheet (%s: %s) doesn\'t match the country you\'re working in (%s: %s)' % (Country.objects.get(country_id=row['country']), row['country'], country, country.code.upper()))
 
         # if you're in a country but the spreadsheet gives a locality
-        if not locality and row['locality'] != "":
+        if not locality and row['locality']:
             raise ValueError('The locality given in the spreadsheet is %s (%s), but you\'re working in %s' % (row['locality'], Locality.objects.get(code=row['locality'].lower()), country))
 
         # if you're in a locality but the spreadsheet doesn't have one
-        if locality and row['locality'] == "":
+        if locality and not row['locality']:
             raise ValueError('There\'s no locality given in the spreadsheet, but you\'re working in %s (%s)' % (locality, locality.code.upper()))
 
         # don't raise an error if you're in a country but not a locality

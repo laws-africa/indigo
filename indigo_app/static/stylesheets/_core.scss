@@ -43,8 +43,36 @@ fieldset {
   flex-grow: 1;
 }
 
-.main-container {
+.main-container-wrapper {
   flex: 1;
+}
+
+.main-content {
+  min-height: 70vh;
+}
+
+.site-footer {
+  margin-top: 80px;
+  background-color: #d3d5d9;
+  padding: 40px 0px;
+
+  a {
+    color: inherit;
+  }
+
+  .logo {
+    width: 50px;
+  }
+}
+
+.no-site-footer {
+  .main-content {
+    min-height: initial;
+  }
+
+  .site-footer {
+    display: none;
+  }
 }
 
 /* navbar */

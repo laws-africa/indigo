@@ -372,9 +372,17 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
-        table = self.get_table(form.cleaned_data['spreadsheet_url'])
-        works = self.get_works(table)
-        return self.render_to_response(self.get_context_data(works=works))
+        error = None
+        works = None
+
+        try:
+            table = self.get_table(form.cleaned_data['spreadsheet_url'])
+            works = self.get_works(table)
+        except ValidationError as e:
+            error = e.message
+
+        context_data = self.get_context_data(works=works, error=error)
+        return self.render_to_response(context_data)
 
     def get_country(self):
         self.determine_place()
@@ -423,13 +431,13 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
                     work.locality = self.locality
                     work.publication_name = row['publication_name']
                     work.publication_number = row['publication_number']
-                    work.publication_date = self.make_date(row['publication_date'])
-                    work.commencement_date = self.make_date(row['commencement_date'])
-                    work.assent_date = self.make_date(row['assent_date'])
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
 
                     try:
+                        work.publication_date = self.make_date(row['publication_date'], 'publication_date')
+                        work.commencement_date = self.make_date(row['commencement_date'], 'commencement_date')
+                        work.assent_date = self.make_date(row['assent_date'], 'assent_date')
                         work.full_clean()
                         work.save()
 
@@ -441,13 +449,17 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
 
                     except ValidationError as e:
                         info['status'] = 'error'
-                        info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
+                        if hasattr(e, 'message_dict'):
+                            info['error_message'] = ' '.join(
+                                ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                            )
+                        else:
+                            info['error_message'] = e.message
 
         return works
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
-        # TODO: display the ValidationError strings within the form instead (as with URLValidator in .forms message)
 
         match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
 
@@ -509,11 +521,14 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
 
         return frbr_uri.work_uri().lower()
 
-    def make_date(self, string):
-        if string == '':
+    def make_date(self, string, field):
+        if not string:
             date = None
         else:
-            date = datetime.datetime.strptime(string, '%Y-%m-%d')
+            try:
+                date = datetime.datetime.strptime(string, '%Y-%m-%d')
+            except ValueError:
+                raise ValidationError('Check the format of %s; it should be e.g. "2012-12-31"' % field)
         return date
 
 

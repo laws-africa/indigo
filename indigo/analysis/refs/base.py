@@ -84,6 +84,7 @@ class RefsFinderENG(BaseRefsFinder):
 
         Act 52 of 2001
         Act no. 52 of 1998
+        Income Tax Act, 1962 (No 58 of 1962)
 
     """
 
@@ -91,8 +92,10 @@ class RefsFinderENG(BaseRefsFinder):
     locale = (None, 'eng', None)
 
     # if this changes, update indigo_za/refs.py
-    act_re = re.compile(r'\bAct,?\s+([nN]o\.?\s*)?(\d+)+\s+of\s+(\d{4})')
+    act_re = re.compile(r'\bAct,?\s+(\d{4}\s+)?(\()?([nN]o\.?\s*)?(\d+)\s+of\s+(\d{4})')
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
 
     def make_href(self, match):
-        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group(3), match.group(2))
+        year = match.group(4)
+        number = match.group(3)
+        return '/%s/act/%s/%s' % (self.frbr_uri.country, year, number)

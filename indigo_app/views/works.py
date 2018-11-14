@@ -449,7 +449,12 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
 
                     except ValidationError as e:
                         info['status'] = 'error'
-                        info['error_message'] = e.message
+                        if hasattr(e, 'message_dict'):
+                            info['error_message'] = ' '.join(
+                                ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                            )
+                        else:
+                            info['error_message'] = e.message
 
         return works
 

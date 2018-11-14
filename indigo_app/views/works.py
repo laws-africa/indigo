@@ -372,9 +372,17 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
-        table = self.get_table(form.cleaned_data['spreadsheet_url'])
-        works = self.get_works(table)
-        return self.render_to_response(self.get_context_data(works=works))
+        error = None
+        works = None
+
+        try:
+            table = self.get_table(form.cleaned_data['spreadsheet_url'])
+            works = self.get_works(table)
+        except ValidationError as e:
+            error = e.message
+
+        context_data = self.get_context_data(works=works, error=error)
+        return self.render_to_response(context_data)
 
     def get_country(self):
         self.determine_place()
@@ -447,7 +455,6 @@ class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
-        # TODO: display the ValidationError strings within the form instead (as with URLValidator in .forms message)
 
         match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
 

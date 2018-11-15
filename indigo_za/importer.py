@@ -30,7 +30,7 @@ class ImporterZA(Importer):
         r'^\s*page \d+( of \d+)?\s*\n',
         r'^\s*\d*\s*No\. \d+$',
         # get rid of lines with lots of ____ or ---- chars, they're usually pagebreaks
-        r'^\s*[_-]{10}\s*$',
+        r'^\s*[_-]{5}\s*$',
     ]), re.MULTILINE)
 
     def reformat_text(self, text):

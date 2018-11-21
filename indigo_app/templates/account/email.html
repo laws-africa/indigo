@@ -9,7 +9,7 @@
 {% block account-content %}
 
 <div class="card mb-5">
-  <h5 class="card-header">Email Addresses</h5>
+  <h5 class="card-header">Email addresses</h5>
   <div class="card-body">
     {% with user.emailaddress_set.all as emails %}
       {% if emails %}
@@ -52,11 +52,11 @@
                 <input type="hidden" name="email" value="{{ emailaddress.email }}">
 
                 {% if not emailaddress.verified %}
-                  <button class="btn btn-sm btn-primary" type="submit" name="action_send">{% trans 'Re-send Verification' %}</button>
+                  <button class="btn btn-sm btn-primary" type="submit" name="action_send">{% trans 'Re-send verification' %}</button>
                 {% endif %}
 
                 {% if not emailaddress.primary %}
-                  <button class="btn btn-sm btn-outline-secondary" type="submit" name="action_primary">{% trans 'Make Primary' %}</button>
+                  <button class="btn btn-sm btn-outline-secondary" type="submit" name="action_primary">{% trans 'Make primary' %}</button>
                   <button class="btn btn-sm btn-outline-danger" type="submit" name="action_remove" data-confirm="Really remove this email?">{% trans 'Remove' %}</button>
                 {% endif %}
               </form>

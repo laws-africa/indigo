@@ -12,7 +12,7 @@
     <div>
       <div class="btn-toolbar">
         <div class="dropdown">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Country</button>
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change country</button>
           <div class="dropdown-menu">
             {% for ctry in indigo_countries %}
             <a class="dropdown-item" href="{% url 'place' place=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
@@ -23,7 +23,7 @@
         {% with country.localities.all as locs %}
         {% if locs %}
         <div class="dropdown ml-2">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change Locality</button>
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if locality %}Change locality{% else %}Choose locality{% endif %}</button>
           <div class="dropdown-menu">
             {% for loc in locs %}
             <a class="dropdown-item" href="{% url 'place' place=loc.place_code %}">{{ loc.name }} · {{ loc.code }}</a>
@@ -67,10 +67,10 @@
         </div>
 
         <div class="btn-group">
-          <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New Work</a>
+          <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New work</a>
           <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
           <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New Work Batch</a>
+            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New work batch</a>
           </div>
         </div>
 
@@ -96,7 +96,7 @@
       <th class="title" data-sort="title">Title</th>
       <th class="frbr_uri" data-sort="frbr_uri">FRBR URI</th>
       <th class="languages" data-sort="n_languages" >Languages</th>
-      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in Time"></i></th>
+      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in time"></i></th>
       <th class="status" data-sort="pub_ratio">Drafts / Total</th>
       <th class="updated_at" data-sort="updated_at">Updated</th>
     </tr>

@@ -105,12 +105,12 @@
 
       <hr>
 
-      <h5 class="card-title">Professional Skills</h5>
+      <h5 class="card-title">Professional skills</h5>
 
       <div class="row">
         <div class="col-6">
           <div class="form-group">
-            <label for="{{ form.organisations.id_for_label }}">Organisation(s)</label>
+            <label for="{{ form.organisations.id_for_label }}">{{ form.organisations.label }}</label>
             <textarea class="form-control" name="{{ form.organisations.name }}" id="{{ form.organisations.id_for_label }}" placeholder="What organisations do you work for or with?">{{ form.organisations.value }}</textarea>
             {% if form.organisations.errors %}
               <div class="text-danger">
@@ -173,7 +173,7 @@
 
       <hr>
 
-      <h5 class="card-title">Social Media Profiles</h5>
+      <h5 class="card-title">Social media profiles</h5>
 
       <div class="row">
         <div class="col-6">

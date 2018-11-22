@@ -141,7 +141,7 @@
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
 
-      var $editable = this.$('.akoma-ntoso').children().first();
+      var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       // text from node in the actual XML document
       this.xmlToText(this.fragment).then(function(text) {
         // show the text editor
@@ -180,7 +180,7 @@
 
     saveTextEditor: function(e) {
       var self = this;
-      var $editable = this.$('.akoma-ntoso').children().first();
+      var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragment = this.$textEditor.data('fragment');
@@ -335,7 +335,7 @@
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
 
-        var $akn = self.$('.akoma-ntoso');
+        var $akn = self.$('.document-workspace-content .akoma-ntoso');
         // reset class name to ensure only one country class
         $akn[0].className = "akoma-ntoso country-" + self.parent.model.get('country');
         $akn.empty().append(html);

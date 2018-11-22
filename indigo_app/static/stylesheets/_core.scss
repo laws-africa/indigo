@@ -27,10 +27,6 @@ body.is-staff {
   height: 100%;
 }
 
-fieldset {
-  margin-bottom: 20px;
-}
-
 .table thead th {
   border-top: 0px;
 }
@@ -162,20 +158,6 @@ fieldset {
   left: 0px;
   height: 5px;
   z-index: 1030;
-}
-
-/* form validation */
-.form-control:invalid {
-  border: 1px solid $danger;
-
-  &:focus {
-    box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 6px $danger;
-  }
-}
-
-label.required::after {
-  content: " *";
-  color: $danger;
 }
 
 .modal {

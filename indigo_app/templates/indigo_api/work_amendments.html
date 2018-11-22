@@ -38,7 +38,7 @@
                 <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST">
                   {% csrf_token %}
 
-                  {% if perms.indigo.change_amendment %}
+                  {% if perms.indigo_api.change_amendment %}
                     <div class="dropdown float-right">
                       <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
                       <div class="dropdown-menu">

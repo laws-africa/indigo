@@ -66,21 +66,6 @@
     padding: 5px;
     background: $grey;
 
-    // spinner waiting for first page
-    &:empty::after {
-      content: " ";
-      position: relative;
-      display: block;
-      width: 30px;
-      height: 30px;
-      border: 3px solid $grey-darkest;
-      border-bottom-color: transparent;
-      border-radius: 50%;
-      left: 50%;
-      top: 50%;
-      animation: fa-spin 1s infinite steps(16);
-    }
-
     .page {
       position: absolute;
       box-sizing: content-box;

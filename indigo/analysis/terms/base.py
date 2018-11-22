@@ -17,14 +17,12 @@ class BaseTermsFinder(LocaleBasedMatcher):
     """
 
     heading_re = None  # subclasses must define this
-    term_re = None     # subclasses must define this
+    term_re = None     # subclasses must define this, the first (group) must be the matched term
     non_alphanum_re = re.compile(r'\W', re.UNICODE)
 
     ancestors = ['item', 'point', 'blockList', 'list', 'paragraph', 'subsection', 'section', 'chapter', 'part', 'p']
+    # elements which must not be checked for references to terms
     no_term_markup = ['term', 'ref', 'remark']
-
-    open_quote = '"'
-    close_quote = '"'
 
     ontology_template = u"/ontology/term/this.{language}.{term}"
 
@@ -57,9 +55,11 @@ class BaseTermsFinder(LocaleBasedMatcher):
         self.ancestors = ['{%s}%s' % (self.ns, x) for x in self.ancestors]
         self.def_tag = '{%s}def' % self.ns
         self.term_tag = '{%s}term' % self.ns
+        self.tlc_term_tag = "{%s}TLCTerm" % self.ns
         self.ref_tag = '{%s}ref' % self.ns
         self.no_term_markup = ['{%s}%s' % (self.ns, x) for x in self.no_term_markup]
 
+        self.basic_unit_xpath = etree.XPath('//a:section', namespaces=self.nsmap)
         self.heading_xpath = etree.XPath('a:heading', namespaces=self.nsmap)
         self.defn_containers_xpath = etree.XPath('.//a:p|.//a:listIntroduction', namespaces=self.nsmap)
         self.text_xpath = etree.XPath('//a:body//text()', namespaces=self.nsmap)
@@ -90,12 +90,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
         is both marked as defined, and the container element with the full
         definition of the term is identified.
         """
-        for section in doc.xpath('//a:section', namespaces=self.nsmap):
-            # sections with headings like Definitions
-            heading = self.heading_xpath(section)
-            if not heading or not self.heading_re.match(heading[0].text or ''):
-                continue
-
+        for section in self.definition_sections(doc):
             # find items like "foo" means blah...
             for container in self.defn_containers_xpath(section):
                 # only if we don't already have a definition here
@@ -107,29 +102,46 @@ class BaseTermsFinder(LocaleBasedMatcher):
 
                 match = self.term_re.search(container.text)
                 if match:
-                    term = match.group(1)
-                    term_id = 'term-' + self.non_alphanum_re.sub('_', term)
+                    self.mark_definition(container, match.group(1), match.start(1), match.end(1))
 
-                    # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
-                    defn = etree.Element(self.def_tag)
-                    defn.text = term
-                    defn.set('refersTo', '#' + term_id)
-                    # trailing text
-                    defn.tail = self.open_quote + container.text[match.end():]
+    def mark_definition(self, container, term, start_pos, end_pos):
+        """ Update the container node to wrap the given term in a definition tag.
+        """
+        term_id = 'term-' + self.non_alphanum_re.sub('_', term)
 
-                    # before definition
-                    container.text = container.text[0:match.start()] + self.close_quote
+        # <p>"<def refersTo="#term-affected_land">affected land</def>" means land in respect of which an application has been lodged in terms of section 17(1);</p>
+        defn = etree.Element(self.def_tag)
+        defn.text = container.text[start_pos:end_pos]
+        defn.set('refersTo', '#' + term_id)
+        # trailing text
+        defn.tail = container.text[end_pos:]
 
-                    # definition
-                    container.insert(0, defn)
+        # before definition
+        container.text = container.text[0:start_pos]
 
-                    # adjust the closest best ancestor's refersTo attribute
-                    for parent in chain([container], container.iterancestors(self.ancestors)):
-                        if parent.tag in self.ancestors:
-                            parent.set('refersTo', '#' + term_id)
-                            break
+        # definition
+        container.insert(0, defn)
+
+        # adjust the closest best ancestor's refersTo attribute
+        for parent in chain([container], container.iterancestors(self.ancestors)):
+            if parent.tag in self.ancestors:
+                parent.set('refersTo', '#' + term_id)
+                break
+
+    def definition_sections(self, doc):
+        """ Yield sections (or other basic units) that potentially contain definitions of terms.
+        """
+        for section in self.basic_unit_xpath(doc):
+            # sections with headings like Definitions
+            heading = self.heading_xpath(section)
+            if not heading or not self.heading_re.match(heading[0].text or ''):
+                continue
+
+            yield section
 
     def add_terms_to_references(self, doc, terms):
+        """ Add defined terms to the references section of the XML.
+        """
         refs = doc.xpath('//a:meta/a:references', namespaces=self.nsmap)
         if not refs:
             refs = etree.Element("{%s}references" % self.ns)
@@ -138,21 +150,23 @@ class BaseTermsFinder(LocaleBasedMatcher):
         else:
             refs = refs[0]
 
-        term_tag = "{%s}TLCTerm" % self.ns
-
         # nuke all existing term reference elements
-        for ref in refs.iterchildren(term_tag):
+        for ref in refs.iterchildren(self.tlc_term_tag):
             ref.getparent().remove(ref)
 
         for id, term in terms.iteritems():
-            # <TLCTerm id="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>
-            elem = etree.SubElement(refs, term_tag)
-            elem.set('id', id)
-            elem.set('showAs', term)
-            ref = id
-            if ref.startswith('term-'):
-                ref = ref[5:]
-            elem.set('href', self.ontology_template.format(language=self.language, term=ref))
+            self.build_tlc_term(refs, id, term)
+
+    def build_tlc_term(self, parent, id, term):
+        """ Build an element such as <TLCTerm id="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>
+        """
+        elem = etree.SubElement(parent, self.tlc_term_tag)
+        elem.set('id', id)
+        elem.set('showAs', term)
+        ref = id
+        if ref.startswith('term-'):
+            ref = ref[5:]
+        elem.set('href', self.ontology_template.format(language=self.language, term=ref))
 
     def find_term_references(self, doc, terms):
         """ Find and decorate references to terms in the document.

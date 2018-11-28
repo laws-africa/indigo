@@ -333,6 +333,23 @@ class Work(models.Model):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
+def publication_attachment_filename(instance, filename):
+    """ Make S3 attachment filenames relative to the work,
+    this may be modified to ensure it's unique by the storage system. """
+    """ I'm not sure what this means, am just copying from original Attachment model (which was on documents)"""
+    return 'attachments_publication/%s/%s' % (instance.work.id, os.path.basename(filename))
+
+
+class PublicationAttachment(models.Model):
+    work = models.OneToOneField(Work, related_name='publication_attachment', on_delete=models.CASCADE)
+    file = models.FileField(upload_to=publication_attachment_filename)
+    size = models.IntegerField()
+    filename = models.CharField(max_length=255)
+    mime_type = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+
 @receiver(signals.post_save, sender=Work)
 def post_save_work(sender, instance, **kwargs):
     """ Cascade (soft) deletes to linked documents

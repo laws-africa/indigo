@@ -44,16 +44,16 @@
             <label for="work_year" class="required">Year of introduction</label>
             <input type="text" class="form-control" id="work_year" required pattern="\d{4}" placeholder="yyyy">
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-6 offset-md-3">
             <label for="work_number" class="required">Number within year</label>
             <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
             <p class="form-text text-muted">Number or short name that uniquely identifies this legislation within the year of introduction</p>
           </div>
+        </div>
 
-          <div class="form-group col-md-6">
+        <div class="form-row">
+          <div class="form-group col-md-4">
             <label for="work_subtype">Work subtype</label>
             <select id="work_subtype" class="form-control">
               <option value="">(none)</option>
@@ -62,17 +62,8 @@
               {% endfor %}
             </select>
           </div>
-        </div>
 
-        <div class="form-row">
-          <div class="form-group col-md-6">
-            <label for="work_frbr_uri">FRBR URI</label>
-            <div id="work_frbr_uri" class="form-text"></div>
-            <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
-            <p class="form-text text-muted">Uniquely identifies this work globally</p>
-          </div>
-
-          <div class="form-group col-md-6">
+          <div class="form-group col-md-6 offset-md-2">
             <button class="btn btn-outline-primary choose-parent float-right" type="button">Choose parent work</button>
             <label>Parent work</label>
             <p class="form-text text-muted">The parent work for regulations and notices is the primary Act</p>
@@ -85,6 +76,13 @@
               <a href="#" class="delete-parent">remove</a>
             </div>
           </div>
+        </div>
+
+        <div class="form-group">
+          <label for="work_frbr_uri">FRBR URI</label>
+          <div id="work_frbr_uri" class="form-text"></div>
+          <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
+          <p class="form-text text-muted">Uniquely identifies this work globally</p>
         </div>
       </div>
     </div>

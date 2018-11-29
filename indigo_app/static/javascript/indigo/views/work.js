@@ -9,8 +9,16 @@
     return (!val || val.trim() === "") ? null : val;
   }
 
+  function idOrNull(val) {
+    return val ? val.get('id') : null;
+  }
+
   /**
    * A view that lets a user create or edit a Work.
+   *
+   * This view supplements the actual HTML form on the work page
+   * by filling in some fields (such as the frbr_uri) based on other
+   * form widgets.
    */
   Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
@@ -27,6 +35,45 @@
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
     bindings: {
+      // these are handled directly by the HTML form
+      '#id_work-title': 'title',
+      '#id_work-publication_date': {
+        observe: 'publication_date',
+        onSet: emptyIsNull,
+      },
+      '#id_work-publication_name': 'publication_name',
+      '#id_work-publication_number': 'publication_number',
+      '#id_work-commencement_date': {
+        observe: 'commencement_date',
+        onSet: emptyIsNull,
+      },
+      '#id_work-assent_date': {
+        observe: 'assent_date',
+        onSet: emptyIsNull,
+      },
+      '#id_work-repealed_date': {
+        observe: 'repealed_date',
+        onSet: emptyIsNull,
+      },
+      '#id_work-parent_work': {
+        observe: 'parent_work',
+        onGet: idOrNull,
+      },
+      '#id_work-commencing_work': {
+        observe: 'commencing_work',
+        onGet: idOrNull,
+      },
+      '#id_work-repealing_by': {
+        observe: 'repealing_by',
+        onGet: idOrNull,
+      },
+
+      // actual frbr_uri
+      '#id_work-frbr_uri': 'frbr_uri',
+      // shows the FRBR uri as text
+      '#work_frbr_uri': 'frbr_uri',
+
+      // These are special and help backbone build up the frbr_uri
       '#work_country': {
         observe: 'country',
         onSet: function(val) {
@@ -47,34 +94,14 @@
           defaultOption: {label: "(none)", value: null},
         }
       },
-      '#work_nature': 'nature',
       '#work_subtype': 'subtype',
       '#work_year': 'year',
       '#work_number': 'number',
-      '#work_frbr_uri': 'frbr_uri',
-      '#work_title': 'title',
-      '#work_publication_date': {
-        observe: 'publication_date',
-        onSet: emptyIsNull,
-      },
-      '#work_publication_name': 'publication_name',
-      '#work_publication_number': 'publication_number',
-      '#work_commencement_date': {
-        observe: 'commencement_date',
-        onSet: emptyIsNull,
-      },
-      '#work_assent_date': {
-        observe: 'assent_date',
-        onSet: emptyIsNull,
-      },
-      '#work_repealed_date': {
-        observe: 'repealed_date',
-        onSet: emptyIsNull,
-      },
     },
 
     initialize: function(options) {
       this.dirty = false;
+      this.saving = false;
 
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
@@ -84,7 +111,6 @@
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
 
-      this.listenTo(this.model, 'sync', this.setClean);
       this.listenTo(this.model, 'change', this.canSave);
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
@@ -93,10 +119,10 @@
                     _.debounce(this.publicationChanged, 1000));
 
       this.model.updateFrbrUri();
-      this.listenToOnce(Indigo.works, 'sync', this.parentChanged);
       this.stickit();
       this.repealChanged();
       this.commencingWorkChanged();
+      this.parentChanged();
       this.publicationChanged();
       this.canSave();
     },
@@ -125,23 +151,8 @@
       this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
     },
 
-    onSubmit: function(e) {
-      e.preventDefault();
-      this.save();
-    },
-
-    save: function() {
-      var self = this,
-          isNew = this.model.isNew(),
-          frbrUriChanged = this.model.get('frbr_uri') != this.originalFrbrUri;
-
-      this.model.save().done(function() {
-        if (isNew || frbrUriChanged) {
-          // redirect
-          Indigo.progressView.peg();
-          window.location = '/works' + self.model.get('frbr_uri') + '/edit/';
-        }
-      });
+    onSubmit: function() {
+      this.saving = true;
     },
 
     deleteWork: function() {
@@ -181,9 +192,11 @@
         this.$('.work-repeal-view').html(this.workRepealTemplate({
           repealed_by: repealed_by.toJSON(),
         }));
+        this.$('#id_work-repealed_date').attr('required', 'required');
       } else {
         this.$el.removeClass('is-repealed');
         this.$('.work-repeal-view').html(this.workRepealTemplate({}));
+        this.$('#id_work-repealed_date').removeAttr('required');
       }
     },
 
@@ -288,7 +301,7 @@
     },
 
     isDirty: function() {
-      return this.dirty;
+      return !this.saving && this.dirty;
     },
   });
 })(window);

@@ -10,7 +10,8 @@
     <div class="alert alert-danger">You don't have permission to create or change a work.</div>
   {% endif %}
 
-  <form id="edit-work-form" method="POST" action="">
+  <form id="edit-work-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
 
     <div class="row mb-3">
       <div class="col">
@@ -33,28 +34,28 @@
 
         <div class="form-row">
           <div class="form-group col-12">
-            <label for="work_title" class="required">Short title</label>
-            <input type="text" class="form-control" id="work_title" name="title" autofocus placeholder="Title" required>
+            <label for="{{ form.title.id_for_label }}" class="required">Short title</label>
+            <input type="text" class="form-control" id="{{ form.title.id_for_label }}" name="{{ form.title.html_name }}" autofocus placeholder="Title" required value="{{ form.title.value|default:'' }}">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-3">
             <label for="work_year" class="required">Year of introduction</label>
-            <input type="text" class="form-control" id="work_year" name="year" required pattern="\d{4}" placeholder="yyyy">
+            <input type="text" class="form-control" id="work_year" required pattern="\d{4}" placeholder="yyyy">
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-6">
             <label for="work_number" class="required">Number within year</label>
-            <input type="text" class="form-control" id="work_number" required pattern="[^\s]+" name="number">
+            <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
             <p class="form-text text-muted">Number or short name that uniquely identifies this legislation within the year of introduction</p>
           </div>
 
           <div class="form-group col-md-6">
             <label for="work_subtype">Work subtype</label>
-            <select id="work_subtype" class="form-control" name="subtype">
+            <select id="work_subtype" class="form-control">
               <option value="">(none)</option>
               {% for subtype in subtypes %}
               <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
@@ -67,6 +68,7 @@
           <div class="form-group col-md-6">
             <label for="work_frbr_uri">FRBR URI</label>
             <div id="work_frbr_uri" class="form-text"></div>
+            <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
             <p class="form-text text-muted">Uniquely identifies this work globally</p>
           </div>
 
@@ -74,6 +76,7 @@
             <button class="btn btn-outline-primary choose-parent float-right" type="button">Choose parent work</button>
             <label>Parent work</label>
             <p class="form-text text-muted">The parent work for regulations and notices is the primary Act</p>
+            <input type="hidden" id="{{ form.parent_work.id_for_label }}" name="{{ form.parent_work.html_name }}" value="{{ form.parent_work.value|default:'' }}">
             <div id="work_parent_work" class="form-text" style="display: none">
               <a class="work_parent_title"></a>
               <br>
@@ -92,25 +95,25 @@
 
         <div class="form-row">
           <div class="form-group col">
-            <label for="work_publication_date" class="required">Publication date</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="work_publication_date" placeholder="yyyy-mm-dd" {% if not work.pk %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="publication_date">
+            <label for="{{ form.publication_date.id_for_label }}" class="required">Publication date</label>
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.publication_date.id_for_label }}" placeholder="yyyy-mm-dd" {% if not work.pk %}required{% endif %} pattern="\d{4}-\d\d-\d\d" name="{{ form.publication_date.html_name }}" value="{{ form.publication_date.value|date:"Y-m-d"|default:'' }}">
             <p class="form-text text-muted">Date when first published</p>
           </div>
 
           <div class="form-group col">
-            <label for="work_publication_name">Publication name</label>
-            <input type="text" class="form-control" id="work_publication_name" name="publication_name" list="publication_list">
+            <label for="{{ form.publication_name.id_for_label }}">Publication name</label>
+            <input type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list">
             <p class="form-text text-muted">Original publication, eg. national gazette</p>
             <datalist id="publication_list">
               {% for pub in work.country.publication_set.all %}
-                <option value="{{ pub.name }}">
+                <option value="{{ pub.html_name }}">
               {% endfor %}
             </datalist>
           </div>
 
           <div class="form-group col">
-            <label for="work_publication_number">Publication number</label>
-            <input type="text" class="form-control" id="work_publication_number" name="publication_number">
+            <label for="{{ form.publication_number.id_for_label }}">Publication number</label>
+            <input type="text" class="form-control" id="{{ form.publication_number.id_for_label }}" name="{{ form.publication_number.html_name }}" value="{{ form.publication_number.value|default:'' }}">
             <p class="form-text text-muted">Publication's sequence number, eg. gazette number</p>
           </div>
         </div>
@@ -156,8 +159,8 @@
 
         <div class="form-row">
           <div class="form-group col-md-4">
-            <label for="work_commencement_date">Commencement date</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="work_commencement_date" name="commencement_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+            <label for="{{ form.commencement_date.id_for_label }}">Commencement date</label>
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.commencement_date.id_for_label }}" name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
             <p class="form-text text-muted">Date when most of the work comes into force<br>(only leave blank if not yet commenced)</p>
           </div>
 
@@ -165,42 +168,44 @@
             <button class="btn btn-outline-primary float-right change-commencing-work" type="button">Choose commencing work</button>
             <label>Commenced by</label>
             <div class="work-commencing-work form-control-static"></div>
+            <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
             <p class="form-text text-muted">Work which indicated the commencement date</p>
           </div>
         </div>
 
         <div class="form-row">
           <div class="form-group col-md-4">
-            <label for="work_assent_date">Assent date</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="work_assent_date" name="assent_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d">
+            <label for="{{ form.assent_date.id_for_label }}">Assent date</label>
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.assent_date.id_for_label }}" name="{{ form.assent_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
             <p class="form-text text-muted">Date when approved by the responsible authority</p>
           </div>
         </div>
 
       </div>
     </div>
-  </form>
 
-  <div class="card mb-3" id="repeal">
-    <h5 class="card-header">Repeal</h5>
-    <div class="card-body">
+    <div class="card mb-3" id="repeal">
+      <h5 class="card-header">Repeal</h5>
+      <div class="card-body">
 
-      <div class="form-row">
-        <div class="form-group col-md-6">
-          <label>Repealed by</label>
-          <button class="btn btn-outline-primary change-repeal float-right">Choose repealing work</button>
-          <div class="work-repeal-view form-text"></div>
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <label>Repealed by</label>
+            <button class="btn btn-outline-primary change-repeal float-right" type="button">Choose repealing work</button>
+            <div class="work-repeal-view form-text"></div>
+            <input type="hidden" id="{{ form.repealed_by.id_for_label }}" name="{{ form.repealed_by.html_name }}" value="{{ form.repealed_by.value|default:'' }}">
+          </div>
         </div>
-      </div>
 
-      <div class="form-row">
-        <div class="form-group col-md-4 if-repealed">
-          <label class="required">Repeal date</label>
-          <input type="text" class="form-control" data-provide="datepicker" id="work_repealed_date" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required>
+        <div class="form-row">
+          <div class="form-group col-md-4 if-repealed">
+            <label class="required">Repeal date</label>
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
+          </div>
         </div>
       </div>
     </div>
-  </div>
+  </form>
 
   {% if work.pk %}
     {% if not work.can_delete %}

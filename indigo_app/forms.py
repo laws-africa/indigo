@@ -7,7 +7,18 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language
+from indigo_api.models import Document, Country, Language, Work
+
+
+class WorkForm(forms.ModelForm):
+    class Meta:
+        model = Work
+        fields = (
+            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
+            'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
+        )
+
+    #publication_document_file = forms.FileField()
 
 
 class DocumentForm(forms.ModelForm):

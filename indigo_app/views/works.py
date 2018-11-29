@@ -25,7 +25,7 @@ from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
@@ -115,8 +115,14 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
         return context
 
 
-class WorkDetailView(AbstractWorkDetailView):
+class WorkDetailView(AbstractWorkDetailView, UpdateView):
     js_view = 'WorkDetailView'
+    form_class = WorkForm
+    prefix = 'work'
+    template_name_suffix = '_detail'
+
+    def get_success_url(self):
+        return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
 class AddWorkView(PlaceBasedView, WorkDetailView):

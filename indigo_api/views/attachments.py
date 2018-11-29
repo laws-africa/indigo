@@ -6,7 +6,7 @@ from rest_framework.generics import get_object_or_404
 from rest_framework.decorators import detail_route, permission_classes, api_view
 from rest_framework.permissions import IsAuthenticated
 
-from ..models import Document, Attachment, Work, PublicationAttachment
+from ..models import Document, Attachment, Work, PublicationDocument
 from ..serializers import AttachmentSerializer
 from ..authz import AttachmentPermissions
 from .documents import DocumentResourceView
@@ -70,5 +70,5 @@ def pub_attachment_media_view(request, *args, **kwargs):
     frbr_uri = kwargs['frbr_uri']
     filename = kwargs['filename']
     work = Work.objects.get(frbr_uri=frbr_uri)
-    attachment = get_object_or_404(PublicationAttachment.objects, work=work, filename=filename)
+    attachment = get_object_or_404(PublicationDocument.objects, work=work, filename=filename)
     return view_attachment(attachment)

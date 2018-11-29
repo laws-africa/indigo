@@ -333,13 +333,13 @@ class Work(models.Model):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
-def publication_attachment_filename(instance, filename):
-    return 'attachments_publication/%s/%s' % (instance.work.id, os.path.basename(filename))
+def publication_document_filename(instance, filename):
+    return 'work-attachments/%s/publication-document' % (instance.work.id,)
 
 
-class PublicationAttachment(models.Model):
-    work = models.OneToOneField(Work, related_name='publication_attachment', null=False, on_delete=models.CASCADE)
-    file = models.FileField(upload_to=publication_attachment_filename)
+class PublicationDocument(models.Model):
+    work = models.OneToOneField(Work, related_name='publication_document', null=False, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=publication_document_filename)
     size = models.IntegerField()
     filename = models.CharField(max_length=255)
     mime_type = models.CharField(max_length=255)

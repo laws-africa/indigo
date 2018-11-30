@@ -13,7 +13,7 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality, PublicationDocument
 from indigo_api.signals import document_published, work_changed
 from allauth.account.utils import user_display
 
@@ -195,6 +195,17 @@ class MediaAttachmentSerializer(AttachmentSerializer):
     def get_url(self, instance):
         uri = published_doc_url(instance.document, self.context['request'])
         return uri + '/media/' + instance.filename
+
+
+class PublicationDocumentSerializer(serializers.Serializer):
+    class Meta:
+        model = PublicationDocument
+        fields = ('url', 'filename', 'mime_type', 'size')
+        read_only_fields = fields
+
+    def get_url(self, instance):
+        uri = published_doc_url(instance.document, self.context['request'])
+        return uri + '/publication/' + instance.filename
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -621,6 +632,7 @@ class WorkSerializer(serializers.ModelSerializer):
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
+    publication_document = PublicationDocumentSerializer(read_only=True)
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -630,7 +642,7 @@ class WorkSerializer(serializers.ModelSerializer):
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'title', 'publication_name', 'publication_number', 'publication_date',
+            'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
             'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'commencing_work', 'amendments_url',

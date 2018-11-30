@@ -19,8 +19,8 @@ class WorkForm(forms.ModelForm):
         )
 
     publication_document_file = forms.FileField(required=False)
+    delete_publication_document = forms.BooleanField(required=False)
 
-    # also check for hidden field to delete
     def save(self, commit=True):
         self.save_publication_document()
         work = super(WorkForm, self).save(commit)
@@ -40,6 +40,9 @@ class WorkForm(forms.ModelForm):
             pub_doc.mime_type = pub_doc_file.content_type
 
             pub_doc.save()
+
+        if self.cleaned_data['delete_publication_document']:
+            self.instance.publication_document.delete()
 
 
 class DocumentForm(forms.ModelForm):

@@ -118,6 +118,7 @@
 
         <label for="work_publication_document" class="mb-0">Official publication document</label>
         <p class="form-text text-muted mt-0">A copy of the official publication document, such as the gazette.</p>
+        <p>{{ form.delete_publication_document }} Delete</p>
 
         <input type="file" id="{{ form.publication_document_file.id_for_label }}" name="{{ form.publication_document_file.html_name }}" accept=".pdf">
 

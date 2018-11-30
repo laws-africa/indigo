@@ -36,13 +36,17 @@ class WorkForm(forms.ModelForm):
 
             pub_doc.file = pub_doc_file
             pub_doc.size = pub_doc_file.size
-            pub_doc.filename = pub_doc_file.name
+            # we force a particular filename
+            pub_doc.filename = 'publication-document.pdf'
             pub_doc.mime_type = pub_doc_file.content_type
 
             pub_doc.save()
 
         if self.cleaned_data['delete_publication_document']:
-            self.instance.publication_document.delete()
+            try:
+                self.instance.publication_document.delete()
+            except PublicationDocument.DoesNotExist:
+                pass
 
 
 class DocumentForm(forms.ModelForm):

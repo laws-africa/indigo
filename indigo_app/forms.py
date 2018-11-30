@@ -3,11 +3,12 @@ import json
 from django import forms
 from django.core.validators import URLValidator
 from django.conf import settings
+from django.db import IntegrityError
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument
 
 
 class WorkForm(forms.ModelForm):
@@ -19,6 +20,29 @@ class WorkForm(forms.ModelForm):
         )
 
     publication_document_file = forms.FileField(required=False)
+
+    # not as simple as this
+    # if there's currently nothing there, upload
+    # if there is, replace
+    # also check for hidden field to delete
+    def save(self, commit=True):
+        work = super(WorkForm, self).save()
+        self.save_publication_document()
+        return work
+
+    def save_publication_document(self):
+        pub_doc_file = self.cleaned_data['publication_document_file']
+        if pub_doc_file:
+
+            pub_doc = PublicationDocument(work=self.instance, file=pub_doc_file,
+                                          size=pub_doc_file.size, filename=pub_doc_file.name,
+                                          mime_type="application/pdf")
+            try:
+                pub_doc.save()
+
+            except IntegrityError:
+                # confirm replacing old with new, replace
+                pass
 
 
 class DocumentForm(forms.ModelForm):

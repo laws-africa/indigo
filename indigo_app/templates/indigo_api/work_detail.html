@@ -195,7 +195,10 @@
       and <a href="{% url 'work_related' work.frbr_uri %}">related works</a> exist.
     </p>
     {% elif perms.indigo_api.delete_work %}
-      <button class="btn btn-danger delete pull-left" type="button">Delete this work</button>
+      <form method="POST" action="{% url 'work_delete' frbr_uri=work.frbr_uri %}">
+        {% csrf_token %}
+        <button class="btn btn-danger delete pull-left" type="submit" data-confirm="Are you sure you want to delete this work?">Delete this work</button>
+      </form>
     {% endif %}
   {% endif %}
 

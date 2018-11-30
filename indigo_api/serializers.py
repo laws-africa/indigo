@@ -14,7 +14,7 @@ from cobalt.act import datestring
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality, PublicationDocument
-from indigo_api.signals import document_published, work_changed
+from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
 log = logging.getLogger(__name__)
@@ -660,38 +660,6 @@ class WorkSerializer(serializers.ModelSerializer):
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
         )
         read_only_fields = ('nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
-
-    def create(self, validated_data):
-        work = Work()
-        validated_data['created_by_user'] = self.context['request'].user
-        return self.update(work, validated_data)
-
-    def update(self, work, validated_data):
-        user = self.context['request'].user
-        validated_data['updated_by_user'] = user
-
-        # work around DRF stashing the country as a nested field
-        if 'country' in validated_data:
-            # this is really a Country object
-            validated_data['country'] = validated_data['country']['code']
-
-        old_date = work.publication_date
-
-        # save as a revision
-        with reversion.revisions.create_revision():
-            reversion.revisions.set_user(user)
-            work = super(WorkSerializer, self).update(work, validated_data)
-
-        # ensure any docs for this work at initial pub date move with it, if it changes
-        if old_date != work.publication_date:
-            for doc in Document.objects.filter(work=self.instance, expression_date=old_date):
-                doc.expression_date = work.publication_date
-                doc.save()
-
-        # signals
-        work_changed.send(sender=self.__class__, work=work, request=self.context['request'])
-
-        return work
 
     def validate_frbr_uri(self, value):
         try:

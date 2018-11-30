@@ -95,7 +95,7 @@ class PlaceBasedView(object):
 
         try:
             self.country = Country.for_code(country)
-        except Country.NotFound:
+        except Country.DoesNotExist:
             raise Http404
 
         if locality:

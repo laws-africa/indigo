@@ -128,6 +128,29 @@ class WorkDetailView(AbstractWorkDetailView, UpdateView):
     template_name_suffix = '_detail'
     permission_required = ('indigo_api.change_work',)
 
+    def form_valid(self, form):
+        # save as a revision
+        self.work.updated_by_user = self.request.user
+
+        with reversion.create_revision():
+            reversion.set_user(self.request.user)
+            resp = super(WorkDetailView, self).form_valid(form)
+
+        # ensure any docs for this work at initial pub date move with it, if it changes
+        if 'publication_date' in form.changed_data:
+            old_date = form.initial['publication_date']
+
+            if old_date and self.work.publication_date:
+                for doc in Document.objects.filter(work=self.work, expression_date=old_date):
+                    doc.expression_date = self.work.publication_date
+                    doc.save()
+
+        if form.has_changed():
+            # signals
+            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+
+        return resp
+
     def get_success_url(self):
         return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
 
@@ -140,6 +163,14 @@ class AddWorkView(WorkDetailView):
         work.country = self.country
         work.locality = self.locality
         return work
+
+    def form_valid(self, form):
+        self.work.updated_by_user = self.request.user
+        self.work.created_by_user = self.request.user
+
+        with reversion.create_revision():
+            reversion.set_user(self.request.user)
+            return super(AddWorkView, self).form_valid(form)
 
 
 class DeleteWorkView(AbstractWorkDetailView, DeleteView):

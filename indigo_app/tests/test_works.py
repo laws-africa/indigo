@@ -1,6 +1,11 @@
+# -*- coding: utf-8 -*-
+
 import datetime
 
 from django.test import testcases, override_settings
+from django_webtest import WebTest
+from django.contrib.auth.models import User
+
 import reversion
 
 from indigo_api.models import Work
@@ -116,3 +121,32 @@ class WorksTest(testcases.TestCase):
         doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertNotIn('tester', doc.content)
+
+
+@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+class WorksWebTest(WebTest):
+    """ Test that uses https://github.com/django-webtest/django-webtest to help us
+    fill and submit forms.
+    """
+    fixtures = ['countries', 'work', 'user', 'editor', 'drafts', 'published']
+
+    def setUp(self):
+        self.app.set_user(User.objects.get(username='email@example.com'))
+
+    def test_publication_date_updates_documents(self):
+        """ Changing the work's publication date should also updated documents
+        that are linked to the initial publication date.
+        """
+        work = Work.objects.get(frbr_uri='/za/act/1945/1')
+        initial = work.initial_expressions()
+        self.assertEqual(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-10-12")
+
+        form = self.app.get('/works%s/edit/' % work.frbr_uri).forms['edit-work-form']
+        form['work-publication_date'] = '1945-12-12'
+        response = form.submit()
+        self.assertRedirects(response, '/works%s/edit/' % work.frbr_uri, fetch_redirect_response=False)
+
+        work = Work.objects.get(frbr_uri='/za/act/1945/1')
+        initial = list(work.initial_expressions().all())
+        self.assertEqual(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-12-12")
+        self.assertEqual(len(initial), 1)

@@ -89,6 +89,7 @@ setup(
             'django-nose>=1.4.4',
             'mock>=1.3.0',
             'coveralls',
+            'django-webtest>=1.9.4',
         ],
     },
 )

@@ -11,6 +11,7 @@ from indigo_api.models import Document
 
 class RefsFinderENGzaTestCase(APITestCase):
     def setUp(self):
+        self.maxDiff = None
         self.finder = RefsFinderENGza()
 
     def test_find_simple(self):
@@ -158,9 +159,38 @@ class RefsFinderENGzaTestCase(APITestCase):
 </body>
 ''', etree.tostring(doc.doc.body, pretty_print=True))
 
+    def test_find_without_act_in_parens(self):
+        doc = Document(content=document_fixture(xml=u"""
+<section id="section-1">
+  <num>1.</num>
+  <heading>Tester</heading>
+  <paragraph id="section-1.paragraph-0">
+    <content>
+      <p>Something to do with Income Tax Act, 1962 (No 58 of 1962).</p>
+    </content>
+  </paragraph>
+</section>
+        """))
+
+        self.finder.find_references_in_document(doc)
+        self.maxDiff = None
+        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <section id="section-1">
+    <num>1.</num>
+    <heading>Tester</heading>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p>Something to do with Income Tax Act, 1962 (<ref href="/za/act/1962/58">No 58 of 1962</ref>).</p>
+      </content>
+    </paragraph>
+  </section>
+</body>
+''', etree.tostring(doc.doc.body, pretty_print=True))
+
 
 class RefsFinderAFRzaTestCase(APITestCase):
     def setUp(self):
+        self.maxDiff = None
         self.finder = RefsFinderAFRza()
 
     def test_find_simple(self):

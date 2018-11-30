@@ -18,7 +18,7 @@ class WorkForm(forms.ModelForm):
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
         )
 
-    #publication_document_file = forms.FileField()
+    publication_document_file = forms.FileField(required=False)
 
 
 class DocumentForm(forms.ModelForm):

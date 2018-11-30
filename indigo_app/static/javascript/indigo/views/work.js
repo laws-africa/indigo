@@ -318,7 +318,7 @@
         pub_doc.prettySize = Indigo.formatting.prettyFileSize(pub_doc.size);
         wrapper.append(this.publicationDocumentTemplate(pub_doc));
         this.$('#id_work-publication_document_file').hide();
-        this.$('#id_work-delete_publication_document').prop('checked', false);
+        this.$('#id_work-delete_publication_document').val('');
       } else {
         this.$('#id_work-publication_document_file').show();
       }
@@ -328,7 +328,7 @@
       e.preventDefault();
 
       this.$('#id_work-publication_document_file')[0].value = '';
-      this.$('#id_work-delete_publication_document').prop('checked', true);
+      this.$('#id_work-delete_publication_document').val('on');
       this.model.set('publication_document', null);
     },
 

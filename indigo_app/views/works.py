@@ -6,7 +6,7 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView, DeleteView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView, DeleteView, View
 from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -23,6 +23,7 @@ from indigo_api.models import Subtype, Work, Amendment, Country, Document
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
+from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
@@ -395,6 +396,14 @@ class RestoreWorkVersionView(AbstractWorkDetailView):
 
         url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
         return redirect(url)
+
+
+class WorkPublicationDocumentView(AbstractAuthedIndigoView, WorkDependentMixin, View):
+    def get(self, request, filename, *args, **kwargs):
+        if self.work.publication_document and self.work.publication_document.filename == filename:
+            return view_attachment(self.work.publication_document)
+        else:
+            return Http404()
 
 
 class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):

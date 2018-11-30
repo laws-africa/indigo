@@ -204,8 +204,13 @@ class PublicationDocumentSerializer(serializers.Serializer):
         read_only_fields = fields
 
     def get_url(self, instance):
+        return reverse('work_publication_document', kwargs={'frbr_uri': instance.work.frbr_uri, 'filename': instance.filename})
+
+
+class PublishedPublicationDocumentSerializer(PublicationDocumentSerializer):
+    def get_url(self, instance):
         uri = published_doc_url(instance.document, self.context['request'])
-        return uri + '/publication/' + instance.filename
+        return uri + '/media/' + instance.filename
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -433,7 +438,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     """
     url = serializers.SerializerMethodField()
     points_in_time = serializers.SerializerMethodField()
-    publication_document = PublicationDocumentSerializer(read_only=True, source='work.publication_document')
+    publication_document = PublishedPublicationDocumentSerializer(read_only=True, source='work.publication_document')
 
     class Meta:
         model = Document

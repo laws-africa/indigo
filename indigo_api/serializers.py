@@ -659,30 +659,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
         )
-        read_only_fields = ('nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
-
-    def validate_frbr_uri(self, value):
-        try:
-            value = FrbrUri.parse(value.lower()).work_uri()
-        except ValueError:
-            raise ValidationError("Invalid FRBR URI: %s" % value)
-        return value
-
-    def validate_country(self, value):
-        try:
-            return Country.for_code(value)
-        except Country.DoesNotExist:
-            raise ValidationError("Invalid country: %s" % value)
-
-    def validate(self, data):
-        # validate locality after country
-        if data.get('locality_code'):
-            # this is actually a Country object
-            country = data['country']['code']
-            if not country.localities.filter(code=data['locality_code']).first():
-                raise ValidationError("Invalid locality: %s" % data['locality_code'])
-
-        return data
+        read_only_fields = fields
 
     def get_amendments_url(self, work):
         if not work.pk:

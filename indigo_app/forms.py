@@ -3,7 +3,6 @@ import json
 from django import forms
 from django.core.validators import URLValidator
 from django.conf import settings
-from django.db import IntegrityError
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -21,28 +20,30 @@ class WorkForm(forms.ModelForm):
 
     publication_document_file = forms.FileField(required=False)
 
-    # not as simple as this
-    # if there's currently nothing there, upload
-    # if there is, replace
     # also check for hidden field to delete
     def save(self, commit=True):
-        work = super(WorkForm, self).save()
         self.save_publication_document()
+        work = super(WorkForm, self).save(commit)
         return work
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
         if pub_doc_file:
+            # if one already exists for this work, update it
+            if hasattr(self.instance, 'publication_document'):
+                PublicationDocument.objects.filter(work=self.instance).update(
+                    file=pub_doc_file,
+                    size=pub_doc_file.size,
+                    filename=pub_doc_file.name,
+                    mime_type=pub_doc_file.content_type
+                )
 
-            pub_doc = PublicationDocument(work=self.instance, file=pub_doc_file,
-                                          size=pub_doc_file.size, filename=pub_doc_file.name,
-                                          mime_type="application/pdf")
-            try:
+            # otherwise create a new one
+            else:
+                pub_doc = PublicationDocument(work=self.instance, file=pub_doc_file,
+                                              size=pub_doc_file.size, filename=pub_doc_file.name,
+                                              mime_type=pub_doc_file.content_type)
                 pub_doc.save()
-
-            except IntegrityError:
-                # confirm replacing old with new, replace
-                pass
 
 
 class DocumentForm(forms.ModelForm):

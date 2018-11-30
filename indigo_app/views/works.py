@@ -121,7 +121,7 @@ class AbstractWorkDetailView(PlaceBasedView, AbstractAuthedIndigoView, DetailVie
         return context
 
 
-class WorkDetailView(AbstractWorkDetailView, UpdateView):
+class EditWorkView(AbstractWorkDetailView, UpdateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
@@ -134,7 +134,7 @@ class WorkDetailView(AbstractWorkDetailView, UpdateView):
 
         with reversion.create_revision():
             reversion.set_user(self.request.user)
-            resp = super(WorkDetailView, self).form_valid(form)
+            resp = super(EditWorkView, self).form_valid(form)
 
         # ensure any docs for this work at initial pub date move with it, if it changes
         if 'publication_date' in form.changed_data:
@@ -155,7 +155,7 @@ class WorkDetailView(AbstractWorkDetailView, UpdateView):
         return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(WorkDetailView):
+class AddWorkView(EditWorkView):
     permission_required = ('indigo_api.add_work',)
 
     def get_object(self, queryset=None):

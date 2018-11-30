@@ -84,7 +84,7 @@
       if (this.filter) models = models.filter(this.filter);
 
       _.each(models, function(m) {
-        m.prettySize = self.prettySize(m.size);
+        m.prettySize = Indigo.formatting.prettyFileSize(m.size);
         m.isImage = m.mime_type.startsWith('image/');
         m.icon = self.ICONS[m.mime_type] || 'fa-file-o';
         m.selected = self.selectedItem && self.selectedItem.get('id') == m.id;
@@ -151,18 +151,6 @@
         mime_type: file.type,
         file: file,
       }).save();
-    },
-
-    prettySize: function(bytes) {
-      var i = -1;
-      var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB', 'EB', 'ZB', 'YB'];
-
-      do {
-        bytes = bytes / 1024;
-        i++;
-      } while (bytes > 1024);
-
-      return Math.max(bytes, 0.1).toFixed(0) + byteUnits[i];
     },
 
     attachmentClicked: function(e) {

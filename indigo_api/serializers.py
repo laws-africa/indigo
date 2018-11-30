@@ -433,6 +433,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     """
     url = serializers.SerializerMethodField()
     points_in_time = serializers.SerializerMethodField()
+    publication_document = PublicationDocumentSerializer(read_only=True, source='work.publication_document')
 
     class Meta:
         model = Document
@@ -443,7 +444,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
 
-            'publication_date', 'publication_name', 'publication_number',
+            'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commencement_date', 'assent_date',
             'language', 'stub', 'repeal', 'amendments', 'points_in_time',
 

@@ -31,9 +31,12 @@
       'click .delete-parent': 'deleteParent',
       'click .change-commencing-work': 'changeCommencingWork',
       'click .delete-commencing-work': 'deleteCommencingWork',
+      'click .delete-publication-document': 'deletePublicationDocument',
+      'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
+    publicationDocumentTemplate: '#publication-document-template',
     bindings: {
       // these are handled directly by the HTML form
       '#id_work-title': 'title',
@@ -105,6 +108,7 @@
 
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
+      this.publicationDocumentTemplate = Handlebars.compile($(this.publicationDocumentTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.originalFrbrUri = this.model.get('frbr_uri');
@@ -115,6 +119,7 @@
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
+      this.listenTo(this.model, 'change:publication_document', this.publicationDocumentChanged);
       this.listenTo(this.model, 'change:publication_date change:publication_name change:publication_number',
                     _.debounce(this.publicationChanged, 1000));
 
@@ -124,6 +129,7 @@
       this.commencingWorkChanged();
       this.parentChanged();
       this.publicationChanged();
+      this.publicationDocumentChanged();
       this.canSave();
     },
 
@@ -298,6 +304,39 @@
             });
           });
       }
+    },
+
+    publicationDocumentFileChanged: function(e) {
+      var files = e.originalEvent.target.files,
+          file = files.length > 0 ? files[0] : null;
+
+      if (file) {
+        this.model.set('publication_document', {
+          size: file.size,
+          mime_type: file.type,
+          filename: file.name,
+        });
+      }
+    },
+
+    publicationDocumentChanged: function() {
+      var pub_doc = this.model.get('publication_document'),
+          wrapper = this.$('.publication-document-wrapper').empty();
+
+      if (pub_doc) {
+        pub_doc.prettySize = Indigo.formatting.prettyFileSize(pub_doc.size);
+        wrapper.append(this.publicationDocumentTemplate(pub_doc));
+        this.$('#id_work-publication_document_file').hide();
+      } else {
+        this.$('#id_work-publication_document_file').show();
+      }
+    },
+
+    deletePublicationDocument: function(e) {
+      e.preventDefault();
+
+      this.$('#id_work-publication_document_file')[0].value = '';
+      this.model.set('publication_document', null);
     },
 
     isDirty: function() {

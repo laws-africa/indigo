@@ -29,21 +29,17 @@ class WorkForm(forms.ModelForm):
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
         if pub_doc_file:
-            # if one already exists for this work, update it
-            if hasattr(self.instance, 'publication_document'):
-                PublicationDocument.objects.filter(work=self.instance).update(
-                    file=pub_doc_file,
-                    size=pub_doc_file.size,
-                    filename=pub_doc_file.name,
-                    mime_type=pub_doc_file.content_type
-                )
+            try:
+                pub_doc = self.instance.publication_document
+            except PublicationDocument.DoesNotExist:
+                pub_doc = PublicationDocument(work=self.instance)
 
-            # otherwise create a new one
-            else:
-                pub_doc = PublicationDocument(work=self.instance, file=pub_doc_file,
-                                              size=pub_doc_file.size, filename=pub_doc_file.name,
-                                              mime_type=pub_doc_file.content_type)
-                pub_doc.save()
+            pub_doc.file = pub_doc_file
+            pub_doc.size = pub_doc_file.size
+            pub_doc.filename = pub_doc_file.name
+            pub_doc.mime_type = pub_doc_file.content_type
+
+            pub_doc.save()
 
 
 class DocumentForm(forms.ModelForm):

@@ -266,7 +266,8 @@ class DrafterBadge(PermissionBadge):
     slug = 'drafter'
     name = 'Drafter'
     description = 'Can create new works and edit the details of existing works'
-    permissions = ('indigo_api.add_work', 'indigo_api.change_work', 'indigo_api.add_document', 'indigo_api.change_document')
+    permissions = ('indigo_api.add_work', 'indigo_api.change_work', 'indigo_api.add_document', 'indigo_api.change_document',
+                   'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',)
 
 
 class SeniorDrafterBadge(PermissionBadge):

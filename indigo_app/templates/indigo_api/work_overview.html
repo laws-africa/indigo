@@ -6,7 +6,7 @@
 
   {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
     <div class="float-right">
-      <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit Work</a>
+      <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit work</a>
     </div>
   {% endif %}
 
@@ -45,7 +45,7 @@
               {% endif %}
 
               {% if work.commencing_work %}
-              Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+              <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
               {% endif %}
             </dd>
           </dl>
@@ -91,10 +91,10 @@
   {% block points_in_time %}
   <div class="row mb-3 mt-5">
     <div class="col">
-      <h4>Points in Time</h4>
+      <h4>Points in time</h4>
     </div>
     <div class="col text-right">
-      <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">Manage Points in Time</a>
+      <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">Manage points in time</a>
     </div>
   </div>
 
@@ -153,7 +153,7 @@
     {% endfor %}
 
     <div>
-      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All Changes</a>
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All changes</a>
     </div>
 
   {% endif %}

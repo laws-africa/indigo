@@ -719,12 +719,16 @@ class Document(models.Model):
 
     def to_html(self, **kwargs):
         from .renderers import HTMLRenderer
-        return HTMLRenderer().render(self, **kwargs)
+        renderer = HTMLRenderer()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return renderer.render(self, **kwargs)
 
     def element_to_html(self, element):
         """ Render a child element of this document into HTML. """
         from .renderers import HTMLRenderer
-        return HTMLRenderer().render(self, element=element)
+        renderer = HTMLRenderer()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return renderer.render(self, element=element)
 
     def to_pdf(self, **kwargs):
         from .renderers import PDFRenderer

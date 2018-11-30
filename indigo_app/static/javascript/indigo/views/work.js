@@ -105,7 +105,7 @@
       if (this.model.get('title')) {
         document.title = this.model.get('title') + ' – Indigo';
       } else {
-        document.title = 'New Work – Indigo';
+        document.title = 'New work – Indigo';
       }
       if (!this.model.isNew()) $('.workspace-header h4, .work-title').text(this.model.get('title'));
       this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));

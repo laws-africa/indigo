@@ -5,28 +5,28 @@
       <div class="dropdown-menu">
         <a class="dropdown-item save" href="#">Save</a>
         <a class="dropdown-item delete-document" href="#">Delete</a>
-        <a class="dropdown-item clone-document" href="#">Make a Copy</a>
+        <a class="dropdown-item clone-document" href="#">Make a copy</a>
         <div role="separator" class="divider"></div>
-        <a class="dropdown-item revisions" href="#">Recent Changes</a>
+        <a class="dropdown-item revisions" href="#">Recent changes</a>
         <div class="dropdown-submenu">
-          <a href="#" class="dropdown-item">Download As</a>
+          <a href="#" class="dropdown-item">Download as</a>
           <div class="dropdown-menu">
             <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='epub' %}" target="_blank"><i class="fas fa-book"></i> ePUB</a>
             <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='pdf' %}" target="_blank"><i class="far fa-file-pdf"></i> PDF</a>
             <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='html' %}?standalone=1" target="_blank"><i class="far fa-file-alt"></i> Standalone HTML</a>
             <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='xml' %}" target="_blank"><i class="far fa-file-code"></i> Akoma Ntoso XML</a>
-            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="far fa-file-archive"></i> ZIP Archive</a>
+            <a class="dropdown-item" href="{% url 'document-detail' pk=document.id format='zip' %}" target="_blank"><i class="far fa-file-archive"></i> ZIP archive</a>
           </div>
         </div>
         <div role="separator" class="dropdown-divider"></div>
-        <a class="dropdown-item change-document-work" href="#">Change Linked Work...</a>
+        <a class="dropdown-item change-document-work" href="#">Change linked work...</a>
       </div>
     </div>
 
     <div class="btn-group">
       <button type="button" class="btn btn-link" data-toggle="dropdown">Analysis</button>
       <div class="dropdown-menu">
-        <a class="dropdown-item" href="#defined-terms-modal" data-toggle="modal">Defined Terms...</a>
+        <a class="dropdown-item" href="#defined-terms-modal" data-toggle="modal">Defined terms...</a>
         <a class="dropdown-item" href="#references-modal" data-toggle="modal">References to Acts...</a>
       </div>
     </div>

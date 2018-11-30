@@ -449,6 +449,12 @@ button.btn-link.help {
 .document-preview-view {
   background-color: $body-bg-color;
 
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+
   .preview-main {
     position: relative;
     height: calc(100vh - 50px);

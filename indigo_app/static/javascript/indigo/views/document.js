@@ -284,9 +284,7 @@
       if (this.previewDirty) {
         var self = this,
             data = this.document.toJSON(),
-            $container = $('.preview-container .akoma-ntoso').empty();
-
-        $container[0].className = 'preview-container akoma-ntoso country-' + data.country;
+            container = $('.preview-container').empty()[0];
 
         data.content = this.documentContent.toXml();
         data = JSON.stringify({'document': data});
@@ -298,7 +296,11 @@
           contentType: "application/json; charset=utf-8",
           dataType: "json"})
           .then(function(response) {
-            $container.html(response.output);
+            var wrapper = document.createElement('div');
+            wrapper.className = 'akoma-ntoso country-' + data.country;
+            $(wrapper).html(response.output);
+            container.appendChild(wrapper);
+
             self.previewDirty = false;
           });
       }

@@ -12,21 +12,21 @@
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Edit</button>
         <div class="dropdown-menu with-shortcuts">
           <a class="dropdown-item edit-find" href="#">Find... <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a>
-          <a class="dropdown-item edit-find-next" href="#">Find Next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
-          <a class="dropdown-item edit-find-previous" href="#">Find Previous<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a>
-          <a class="dropdown-item edit-find-replace" href="#">Find and Replace...<span class="shortcut win">Ctrl-H</span><span class="shortcut osx">⌘-⌥-F</span></a>
+          <a class="dropdown-item edit-find-next" href="#">Find next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
+          <a class="dropdown-item edit-find-previous" href="#">Find previous<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a>
+          <a class="dropdown-item edit-find-replace" href="#">Find and replace...<span class="shortcut win">Ctrl-H</span><span class="shortcut osx">⌘-⌥-F</span></a>
         </div>
       </div>
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle mr-2" data-toggle="dropdown">Insert</button>
         <div class="dropdown-menu">
-          <a class="dropdown-item insert-image" href="#">Insert Image...</a>
-          <a class="dropdown-item insert-table" href="#">Insert Table</a>
+          <a class="dropdown-item insert-image" href="#">Insert image...</a>
+          <a class="dropdown-item insert-table" href="#">Insert table</a>
         </div>
       </div>
       <button class="btn btn-success save"><i class="fa fa-check"></i> Update</button>
       <button class="btn btn-secondary mr-2 cancel" title="Cancel"><i class="fa fa-times"></i> Cancel</button>
-      <button class="btn btn-outline-secondary" data-target="#cheatsheet-modal" data-toggle="modal"><i class="fa fa-question-circle fa-fw"></i> Editor Cheatsheet</button>
+      <button class="btn btn-outline-secondary" data-target="#cheatsheet-modal" data-toggle="modal"><i class="fa fa-question-circle fa-fw"></i> Editor cheatsheet</button>
     </div>
 
     <!-- table editor buttons -->
@@ -88,11 +88,11 @@
 
 <div class="document-workspace-buttons">
   <div class="btn-group">
-    <button class="btn btn-success save" disabled><span class="if-published">Save &amp; Publish</span><span class="if-draft">Save Draft</span></button>
+    <button class="btn btn-success save" disabled><span class="if-published">Save &amp; publish</span><span class="if-draft">Save draft</span></button>
     <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
     <div class="dropdown-menu">
-      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; Publish</a>
-      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; Save</a>
+      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; publish</a>
+      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
     </div>
   </div>
 

@@ -55,7 +55,7 @@
 
                 {% if request.user.is_staff %}
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site Settings</a>
+                <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site settings</a>
                 {% endif %}
 
                 <div class="dropdown-divider"></div>
@@ -110,7 +110,7 @@
                   <li><a href="/">Home</a></li>
 
                   {% if request.user.is_authenticated %}
-                  <li><a href="{% url 'edit_account' %}">Your Account</a></li>
+                  <li><a href="{% url 'edit_account' %}">Your account</a></li>
                   <li><a href="{% url 'account_logout' %}">Log out</a></li>
                   {% else %}
                   <li><a href="{% url 'account_login' %}">Log in</a></li>
@@ -136,6 +136,7 @@
 
                 <img src="{% static 'images/logo.png' %}" title="Indigo" class="logo">
               </div>
+            </div>
           </div>
         </footer>
         {% endblock %}

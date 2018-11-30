@@ -70,7 +70,8 @@
 
     refresh: function() {
       var locality = this.filters.get('locality'),
-          country = this.filters.get('country');
+          country = this.filters.get('country'),
+          create_work_url = '/places/' + country + (locality ? ('-' + locality) : '') + '/works/new/';
 
       this.collection.params.search = this.filters.get('search') || '';
 
@@ -83,6 +84,8 @@
       }
 
       this.collection.fetch({reset: true});
+
+      this.$('.btn.create-work').attr('href', create_work_url);
     },
 
     filterBySearch: function(e) {

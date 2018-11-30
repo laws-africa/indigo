@@ -24,7 +24,6 @@
     el: '#edit-work-view',
     events: {
       'submit #edit-work-form': 'onSubmit',
-      'click .btn.delete': 'deleteWork',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
       'click .choose-parent': 'changeParent',
@@ -159,14 +158,6 @@
 
     onSubmit: function() {
       this.saving = true;
-    },
-
-    deleteWork: function() {
-      if (confirm("Are you sure you want to delete this work?")) {
-        this.model.destroy().done(function() {
-          window.location = '/';
-        });
-      }
     },
 
     deleteRepeal: function(e) {

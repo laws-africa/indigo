@@ -48,7 +48,4 @@ urlpatterns = [
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
 
     url(r'^', include(router.urls)),
-
-    url(r'works(?P<frbr_uri>)/media/publication/(?P<filename>)$', views.attachments.attachment_media_view,
-        name='work-publication-attachment'),
 ]

@@ -113,8 +113,17 @@ class RefsFinderENG(BaseRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)
 
-    # if this changes, update indigo_za/refs.py
-    act_re = re.compile(r'\bAct,?\s+(?:\d{4}\s+)?(?:\()?(([nN]o\.?\s*)?(\d+)\s+of\s+(\d{4}))')
+    act_re = re.compile(
+        r'''\bAct,?\s+
+            (?:\d{4}\s+)?
+            (?:\()?
+            (
+             ([nN]o\.?\s*)?
+             (\d+)\s+
+             of\s+
+             (\d{4})
+            )
+        ''', re.X)
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
 
     def make_href(self, match):

@@ -23,8 +23,18 @@ class RefsFinderENGza(BaseRefsFinder):
 
     # if Act part changes, update indigo/analysis/refs/global.py
     act_re = re.compile(
-        r'\b(Act,?\s+(\d{4}\s+)?\(?(([nN]o\.?\s*)?(\d+)\s+of\s+(\d{4})))|\bConstitution\b(\s+of(\s+the\s+Republic\s+of)?\s+South\s+Africa)?((\s+Act)?,?\s+1996)?'
-    )
+        r'''\b
+            (
+             Act,?\s+(\d{4}\s+)?                    # Act   or   Act, 1998
+              \(?                                   # Tax Act, 1962 (No 58 of 1962)
+              (
+               ([nN]o\.?\s*)?(\d+)\s+of\s+(\d{4})   # no. NN of NNNN
+                                                    #     NN of NNNN
+              )
+            )
+            |
+            \bConstitution\b(\s+of(\s+the\s+Republic\s+of)?\s+South\s+Africa)?((\s+Act)?,?\s+1996)?
+        ''', re.X)
     candidate_xpath = ".//text()[(contains(., 'Act') or contains(., 'Constitution')) and not(ancestor::a:ref)]"
 
     def make_href(self, match):

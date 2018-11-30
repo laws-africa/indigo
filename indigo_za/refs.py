@@ -21,14 +21,14 @@ class RefsFinderENGza(BaseRefsFinder):
     # country, language, locality
     locale = ('za', 'eng', None)
 
-    # if Act part changes, update indigo/analysis/refs/global.py
+    # if Act part changes, you may also want to update indigo/analysis/refs/global.py
     act_re = re.compile(
         r'''\b
             (
              Act,?\s+(\d{4}\s+)?                    # Act   or   Act, 1998
               \(?                                   # Tax Act, 1962 (No 58 of 1962)
-              (
-               ([nN]o\.?\s*)?(\d+)\s+of\s+(\d{4})   # no. NN of NNNN
+              (?P<ref>
+               ([nN]o\.?\s*)?(?P<num>\d+)\s+of\s+(?P<year>\d{4})   # no. NN of NNNN
                                                     #     NN of NNNN
               )
             )
@@ -37,10 +37,12 @@ class RefsFinderENGza(BaseRefsFinder):
         ''', re.X)
     candidate_xpath = ".//text()[(contains(., 'Act') or contains(., 'Constitution')) and not(ancestor::a:ref)]"
 
+    constitution = 'Constitution'
+
     def make_href(self, match):
-        year = match.group(6)
-        number = match.group(5)
-        if 'Constitution' in match.group(0):
+        year = match.group('year')
+        number = match.group('num')
+        if self.constitution in match.group(0):
             return '/za/act/1996/constitution'
         elif self.frbr_uri.country == 'za' and year == '1996' and number == '108':
             # the Constitution was originally Act 108 of 1996
@@ -49,7 +51,7 @@ class RefsFinderENGza(BaseRefsFinder):
             return '/%s/act/%s/%s' % (self.frbr_uri.country, year, number)
 
     def make_ref(self, match):
-        if 'Constitution' in match.group(0):
+        if self.constitution in match.group(0):
             group = 0
         elif match.group(2):
             group = 3
@@ -63,7 +65,7 @@ class RefsFinderENGza(BaseRefsFinder):
 
 
 @plugins.register('refs')
-class RefsFinderAFRza(BaseRefsFinder):
+class RefsFinderAFRza(RefsFinderENGza):
     """ Finds references to Acts in documents, of the form:
 
         Wet 52 van 2001
@@ -75,14 +77,28 @@ class RefsFinderAFRza(BaseRefsFinder):
     # country, language, locality
     locale = ('za', 'afr', None)
 
-    act_re = re.compile(r'\bWet,?\s+([nN]o\.?\s*)?(\d+)+\s+van\s+(\d{4})|\bGrondwet\b(\s+van(\s+die\s+Republiek\s+van)?\s+Suid[- ]Afrika)?((\s+Wet)?,?\s+1996)?')
+    act_re = re.compile(
+        r'''\b
+            (?P<ref>
+             Wet,?\s+([nN]o\.?\s*)?
+             (
+              (?P<num>\d+)+\s+van\s+(?P<year>\d{4})
+             )
+            )
+            |
+            \bGrondwet\b(\s+van(\s+die\s+Republiek\s+van)?\s+Suid[- ]Afrika)?((\s+Wet)?,?\s+1996)?
+    ''', re.X)
     candidate_xpath = ".//text()[(contains(., 'Wet') or contains(., 'Grondwet')) and not(ancestor::a:ref)]"
 
-    def make_href(self, match):
-        if 'Grondwet' in match.group(0):
-            return '/za/act/1996/constitution'
-        elif self.frbr_uri.country == 'za' and match.group(3) == '1996' and match.group(2) == '108':
-            # Act 108 of 1996 was originally the constitution
-            return '/za/act/1996/constitution'
+    constitution = 'Grondwet'
+
+    def make_ref(self, match):
+        if self.constitution in match.group(0):
+            group = 0
         else:
-            return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group(3), match.group(2))
+            group = 'ref'
+
+        ref = etree.Element(self.ref_tag)
+        ref.text = match.group(group)
+        ref.set('href', self.make_href(match))
+        return (ref, match.start(group), match.end(group))

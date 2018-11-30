@@ -13,8 +13,7 @@ class BaseRefsFinder(LocaleBasedMatcher):
 
     act_re = None
     """ This must be defined by a subclass. It should be a compiled regular
-    expression. The first numbered group in the regex is the text that will be
-    wrapped in a ref tag.
+    expression, with named captures for `ref`, `number` and `year`.
     """
     candidate_xpath = None  # this must be defined by a subclass
 
@@ -43,7 +42,7 @@ class BaseRefsFinder(LocaleBasedMatcher):
     def make_href(self, match):
         """ Turn this match into a full FRBR URI href
         """
-        raise NotImplementedError("Subclass must implement based on act_re")
+        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group('year'), match.group('number'))
 
     def find_references(self, root):
         for root in self.ancestor_nodes(root):
@@ -87,9 +86,9 @@ class BaseRefsFinder(LocaleBasedMatcher):
         By default, the first group in the `act_re` is substituted with the ref.
         """
         ref = etree.Element(self.ref_tag)
-        ref.text = match.group(1)
+        ref.text = match.group('ref')
         ref.set('href', self.make_href(match))
-        return (ref, match.start(1), match.end(1))
+        return (ref, match.start('ref'), match.end('ref'))
 
     def ancestor_nodes(self, root):
         for x in self.ancestor_xpath(root):
@@ -115,18 +114,13 @@ class RefsFinderENG(BaseRefsFinder):
 
     act_re = re.compile(
         r'''\bAct,?\s+
-            (?:\d{4}\s+)?
-            (?:\()?
-            (
+            (\d{4}\s+)?
+            \(?
+            (?P<ref>
              ([nN]o\.?\s*)?
-             (\d+)\s+
+             (?P<num>\d+)\s+
              of\s+
-             (\d{4})
+             (?P<year>\d{4})
             )
         ''', re.X)
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
-
-    def make_href(self, match):
-        year = match.group(4)
-        number = match.group(3)
-        return '/%s/act/%s/%s' % (self.frbr_uri.country, year, number)

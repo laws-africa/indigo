@@ -11,6 +11,7 @@ from indigo_api.models import Document
 
 class RefsFinderENGzaTestCase(APITestCase):
     def setUp(self):
+        self.maxDiff = None
         self.finder = RefsFinderENGza()
 
     def test_find_simple(self):
@@ -189,6 +190,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 
 class RefsFinderAFRzaTestCase(APITestCase):
     def setUp(self):
+        self.maxDiff = None
         self.finder = RefsFinderAFRza()
 
     def test_find_simple(self):

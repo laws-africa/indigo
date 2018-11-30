@@ -197,7 +197,9 @@ class MediaAttachmentSerializer(AttachmentSerializer):
         return uri + '/media/' + instance.filename
 
 
-class PublicationDocumentSerializer(serializers.Serializer):
+class PublicationDocumentSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
     class Meta:
         model = PublicationDocument
         fields = ('url', 'filename', 'mime_type', 'size')

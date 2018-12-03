@@ -34,7 +34,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = (
     # Globals
     'indigo',
-    'indigo_tasks',
 
     # Indigo local traditions
     'indigo_za',

@@ -26,6 +26,7 @@ from indigo_api.views.works import WorkViewSet
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
+from indigo_app.models import Task
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
@@ -70,6 +71,9 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
         serializer = WorkSerializer(context={'request': self.request}, many=True)
         works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
+
+        context['place'] = self.place
+        context['tasks'] = Task.objects.filter(country=self.country, locality=self.locality)
 
         return context
 

@@ -26,7 +26,6 @@ from indigo_api.views.works import WorkViewSet
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
-from indigo_app.models import Task
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
@@ -71,33 +70,6 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
         serializer = WorkSerializer(context={'request': self.request}, many=True)
         works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
-
-        return context
-
-
-class PlaceTasksView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView, MultipleObjectMixin):
-    template_name = 'place/tasks.html'
-    js_view = ''
-    # permissions
-    permission_required = ('indigo_api.view_work',)
-    check_country_perms = False
-    object_list = None
-    page_size = 16
-
-    def get_context_data(self, **kwargs):
-        context = super(PlaceTasksView, self).get_context_data(**kwargs)
-
-        context['place'] = self.place
-
-        tasks = Task.objects.filter(country=self.country, locality=self.locality)
-
-        paginator, page, tasks, is_paginated = self.paginate_queryset(tasks, self.page_size)
-        context.update({
-            'paginator': paginator,
-            'page': page,
-            'tasks': tasks,
-            'is_paginated': is_paginated,
-        })
 
         return context
 

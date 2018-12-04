@@ -72,8 +72,32 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
         works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
 
+        return context
+
+
+class PlaceTasksView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView, MultipleObjectMixin):
+    template_name = 'place/tasks.html'
+    js_view = ''
+    # permissions
+    permission_required = ('indigo_api.view_work',)
+    check_country_perms = False
+    object_list = None
+    page_size = 16
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceTasksView, self).get_context_data(**kwargs)
+
         context['place'] = self.place
-        context['tasks'] = Task.objects.filter(country=self.country, locality=self.locality)
+
+        tasks = Task.objects.filter(country=self.country, locality=self.locality)
+
+        paginator, page, tasks, is_paginated = self.paginate_queryset(tasks, self.page_size)
+        context.update({
+            'paginator': paginator,
+            'page': page,
+            'tasks': tasks,
+            'is_paginated': is_paginated,
+        })
 
         return context
 

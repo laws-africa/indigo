@@ -366,6 +366,7 @@
 
         // total number of docs
         work.n_docs = work_docs.length;
+        work.n_docs_singular = work_docs.length == 1;
 
         // get a ratio of drafts vs total docs for sorting
         if (work.n_docs !== 0) {

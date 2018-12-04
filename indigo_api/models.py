@@ -880,3 +880,39 @@ class DocumentActivity(models.Model):
     def vacuum(cls, document):
         threshold = timezone.now() - datetime.timedelta(seconds=cls.DEAD_SECS)
         cls.objects.filter(document=document, updated_at__lte=threshold).delete()
+
+
+class Task(models.Model):
+    title = models.CharField(max_length=256, null=False, blank=False)
+    content = models.TextField(null=True, blank=True)
+
+    country = models.ForeignKey(Country, related_name='tasks', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    work = models.ForeignKey(Work, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+
+    # cf indigo_api.models.Annotation
+    anchor_id = models.CharField(max_length=128, null=True, blank=True)
+
+    state = models.CharField(max_length=128, null=False, blank=False, choices=(
+        ('open', 'open'), ('cancelled', 'cancelled'), ('pending', 'pending review'), ('closed', 'done')
+    ), default='open')
+
+    assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+
+    created_by = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def place_code(self):
+        return self.country.code + '-' + self.locality.code if self.locality else self.country.code
+
+
+class Workflow(models.Model):
+    title = models.CharField(max_length=256, null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
+
+    tasks = models.ManyToManyField(Task, related_name='workflows')

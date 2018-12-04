@@ -41,8 +41,8 @@
         status: 'all',
         search: null,
       });
-      this.sortField = 'title';
-      this.sortDesc = false;
+      this.sortField = 'updated_at';
+      this.sortDesc = true;
       this.listenTo(this.filters, 'change', function() { this.trigger('change'); });
       this.listenTo(this.filters, 'change', this.saveState);
       this.loadState();
@@ -113,8 +113,7 @@
     filterAndSummarize: function() {
       var filters = this.filters.attributes,
           works,
-          docs = {},
-          sortField = this.sortField;
+          docs = {};
 
       this.summary = {};
 
@@ -219,9 +218,7 @@
         }, true); // true to also test the work, not just its docs
       }
 
-      this.filteredWorks = _.sortBy(works, function(w) { return w.get(sortField); });
-      if (this.sortDesc) this.filteredWorks.reverse();
-
+      this.filteredWorks = works;
       this.filteredDocs = docs;
     },
 
@@ -409,6 +406,9 @@
         return work;
       });
 
+      works = _.sortBy(works, this.filterView.sortField);
+      if (this.filterView.sortDesc) works.reverse();
+
       this.$el.html(this.template({
         count: works.length,
         works: works,
@@ -418,8 +418,6 @@
         container: 'body',
         placement: 'auto top'
       });
-
-      this.$el.find('th[data-sort=' + this.sortField + ']').addClass(this.sortDesc ? 'sort-up' : 'sort-down');
 
       Indigo.relativeTimestamps();
     }

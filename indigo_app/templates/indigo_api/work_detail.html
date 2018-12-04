@@ -3,6 +3,7 @@
 {% block view-id %}edit-work-view{% endblock %}
 {% block title %}Edit – {{ block.super }}{% endblock %}
 {% block body-class %}{{ block.super }} {% if not work.pk %}sidebar-minimized{% endif %}{% endblock %}
+{% block main-header-title %}{% endblock %}
 
 {% block work-content %}
   {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
@@ -13,19 +14,23 @@
   <form id="edit-work-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
-    <div class="row mb-3">
-      <div class="col">
+    <div class="mb-3">
+      <div class="float-right">
         {% if work.pk %}
-        <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">← Back to overview</a>
+          <a class="btn btn-link" href="{% url 'work' frbr_uri=work.frbr_uri %}">Cancel</a>
         {% endif %}
-      </div>
-      <div class="col">
+
         {% if work.pk and perms.indigo_api.change_work or not work.pk and perms.indigo_api.add_work %}
-          <div class="text-right">
-            <button class="btn btn-success save" type="submit">{% if work.pk %}Save{% else %}Create{% endif %}</button>
-          </div>
+          <button class="btn btn-success save" type="submit">{% if work.pk %}Save{% else %}Create{% endif %}</button>
         {% endif %}
       </div>
+
+      <h3 class="work-title">{{ work.title }}</h3>
+      <h4 class="text-muted work-frbr-uri">{{ work.frbr_uri }}</h4>
+      <p>
+        {{ country.name }} · {{ country.code }}
+        {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
+      </p>
     </div>
 
     <div class="card mb-3">
@@ -78,12 +83,6 @@
           </div>
         </div>
 
-        <div class="form-group">
-          <label for="work_frbr_uri">FRBR URI</label>
-          <div id="work_frbr_uri" class="form-text"></div>
-          <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
-          <p class="form-text text-muted">Uniquely identifies this work globally</p>
-        </div>
       </div>
     </div>
 

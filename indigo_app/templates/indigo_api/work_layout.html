@@ -58,7 +58,7 @@
   <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:work.locality.code %}">{{ work.locality.name }} · {{ work.locality.code }}</a></li>
   {% endif %}
   {% if work.pk %}
-  <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
+  <li class="breadcrumb-item"><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.frbr_uri }}</a></li>
   {% endif %}
 {% endblock %}
 

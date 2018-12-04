@@ -34,6 +34,7 @@
               Published in {{ work.publication_name|default:"(unknown)" }}
               {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
               {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+              {% if work.publication_document %}<br><a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}">Publication attachment</a>{% endif %}
             </dd>
 
             <dt>Commencement</dt>

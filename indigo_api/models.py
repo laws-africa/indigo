@@ -6,6 +6,7 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.db.models import signals, Q
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
@@ -223,14 +224,18 @@ class Work(models.Model):
         return self._repeal
 
     def clean(self):
+        # validate and clean the frbr_uri
+        try:
+            frbr_uri = FrbrUri.parse(self.frbr_uri).work_uri(work_component=False)
+        except ValueError:
+            raise ValidationError("Invalid FRBR URI")
+
         # force country and locality codes in frbr uri
         prefix = '/' + self.country.code
         if self.locality:
             prefix = prefix + '-' + self.locality.code
-        self.frbr_uri = '%s/%s' % (prefix, self.frbr_uri.split('/', 2)[2])
 
-        # ensure the frbr uri is lowercased
-        self.frbr_uri = self.frbr_uri.lower()
+        self.frbr_uri = ('%s/%s' % (prefix, frbr_uri.split('/', 2)[2])).lower()
 
     def save(self, *args, **kwargs):
         # prevent circular references
@@ -331,6 +336,20 @@ class Work(models.Model):
 
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
+
+
+def publication_document_filename(instance, filename):
+    return 'work-attachments/%s/publication-document' % (instance.work.id,)
+
+
+class PublicationDocument(models.Model):
+    work = models.OneToOneField(Work, related_name='publication_document', null=False, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=publication_document_filename)
+    size = models.IntegerField()
+    filename = models.CharField(max_length=255)
+    mime_type = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 @receiver(signals.post_save, sender=Work)

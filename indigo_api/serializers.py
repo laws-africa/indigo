@@ -13,8 +13,8 @@ from cobalt import Act, FrbrUri
 from cobalt.act import datestring
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality
-from indigo_api.signals import document_published, work_changed
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality, PublicationDocument
+from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
 log = logging.getLogger(__name__)
@@ -192,6 +192,24 @@ class MediaAttachmentSerializer(AttachmentSerializer):
         fields = ('url', 'filename', 'mime_type', 'size')
         read_only_fields = fields
 
+    def get_url(self, instance):
+        uri = published_doc_url(instance.document, self.context['request'])
+        return uri + '/media/' + instance.filename
+
+
+class PublicationDocumentSerializer(serializers.ModelSerializer):
+    url = serializers.SerializerMethodField()
+
+    class Meta:
+        model = PublicationDocument
+        fields = ('url', 'filename', 'mime_type', 'size')
+        read_only_fields = fields
+
+    def get_url(self, instance):
+        return reverse('work_publication_document', kwargs={'frbr_uri': instance.work.frbr_uri, 'filename': instance.filename})
+
+
+class PublishedPublicationDocumentSerializer(PublicationDocumentSerializer):
     def get_url(self, instance):
         uri = published_doc_url(instance.document, self.context['request'])
         return uri + '/media/' + instance.filename
@@ -422,6 +440,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     """
     url = serializers.SerializerMethodField()
     points_in_time = serializers.SerializerMethodField()
+    publication_document = PublishedPublicationDocumentSerializer(read_only=True, source='work.publication_document')
 
     class Meta:
         model = Document
@@ -432,7 +451,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
 
-            'publication_date', 'publication_name', 'publication_number',
+            'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commencement_date', 'assent_date',
             'language', 'stub', 'repeal', 'amendments', 'points_in_time',
 
@@ -621,6 +640,7 @@ class WorkSerializer(serializers.ModelSerializer):
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
+    publication_document = PublicationDocumentSerializer(read_only=True)
 
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
@@ -630,7 +650,7 @@ class WorkSerializer(serializers.ModelSerializer):
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'title', 'publication_name', 'publication_number', 'publication_date',
+            'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
             'commencement_date', 'assent_date',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'commencing_work', 'amendments_url',
@@ -641,62 +661,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
         )
-        read_only_fields = ('nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
-
-    def create(self, validated_data):
-        work = Work()
-        validated_data['created_by_user'] = self.context['request'].user
-        return self.update(work, validated_data)
-
-    def update(self, work, validated_data):
-        user = self.context['request'].user
-        validated_data['updated_by_user'] = user
-
-        # work around DRF stashing the country as a nested field
-        if 'country' in validated_data:
-            # this is really a Country object
-            validated_data['country'] = validated_data['country']['code']
-
-        old_date = work.publication_date
-
-        # save as a revision
-        with reversion.revisions.create_revision():
-            reversion.revisions.set_user(user)
-            work = super(WorkSerializer, self).update(work, validated_data)
-
-        # ensure any docs for this work at initial pub date move with it, if it changes
-        if old_date != work.publication_date:
-            for doc in Document.objects.filter(work=self.instance, expression_date=old_date):
-                doc.expression_date = work.publication_date
-                doc.save()
-
-        # signals
-        work_changed.send(sender=self.__class__, work=work, request=self.context['request'])
-
-        return work
-
-    def validate_frbr_uri(self, value):
-        try:
-            value = FrbrUri.parse(value.lower()).work_uri()
-        except ValueError:
-            raise ValidationError("Invalid FRBR URI: %s" % value)
-        return value
-
-    def validate_country(self, value):
-        try:
-            return Country.for_code(value)
-        except Country.DoesNotExist:
-            raise ValidationError("Invalid country: %s" % value)
-
-    def validate(self, data):
-        # validate locality after country
-        if data.get('locality_code'):
-            # this is actually a Country object
-            country = data['country']['code']
-            if not country.localities.filter(code=data['locality_code']).first():
-                raise ValidationError("Invalid locality: %s" % data['locality_code'])
-
-        return data
+        read_only_fields = fields
 
     def get_amendments_url(self, work):
         if not work.pk:

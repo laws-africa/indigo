@@ -182,20 +182,4 @@ window.Indigo.Preloads.locality_code = '{{ locality.code }}';
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>
-
-<script>
-  $(document).ready(function () {
-    // click the list-view heading then expand a row
-    $("#pf-list-simple-expansion .list-group-item-header").click(function(event){
-      if(!$(event.target).is("a, input")){
-        $(this).find(".fa-angle-right").toggleClass("fa-angle-down")
-          .end().parent().toggleClass("list-view-pf-expand-active")
-            .find(".list-group-item-container").toggleClass("hidden");
-      } else {
-      }
-    })
-
-  });
-</script>
-
 {% endblock %}

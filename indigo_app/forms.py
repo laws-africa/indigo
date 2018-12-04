@@ -7,7 +7,46 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument
+
+
+class WorkForm(forms.ModelForm):
+    class Meta:
+        model = Work
+        fields = (
+            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
+            'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
+        )
+
+    publication_document_file = forms.FileField(required=False)
+    delete_publication_document = forms.BooleanField(required=False)
+
+    def save(self, commit=True):
+        self.save_publication_document()
+        work = super(WorkForm, self).save(commit)
+        return work
+
+    def save_publication_document(self):
+        pub_doc_file = self.cleaned_data['publication_document_file']
+        if pub_doc_file:
+            try:
+                pub_doc = self.instance.publication_document
+            except PublicationDocument.DoesNotExist:
+                pub_doc = PublicationDocument(work=self.instance)
+
+            pub_doc.file = pub_doc_file
+            pub_doc.size = pub_doc_file.size
+            # we force a particular filename
+            pub_doc.filename = 'publication-document.pdf'
+            pub_doc.mime_type = pub_doc_file.content_type
+
+            pub_doc.save()
+
+        if self.cleaned_data['delete_publication_document']:
+            try:
+                self.instance.publication_document.delete()
+            except PublicationDocument.DoesNotExist:
+                pass
 
 
 class DocumentForm(forms.ModelForm):
@@ -55,7 +94,6 @@ class UserSignupForm(SignupForm):
 
 
 class BatchCreateWorkForm(forms.Form):
-    country = forms.ModelChoiceField(required=True, queryset=Country.objects, empty_label="Choose a country")
     spreadsheet_url = forms.URLField(required=True, validators=[
         URLValidator(
             schemes=['https'],

@@ -1,9 +1,11 @@
 {% extends "indigo_api/work_layout.html" %}
 
 {% block view-id %}work-related-view{% endblock %}
-{% block title %}Related Works – {{ block.super }}{% endblock %}
+{% block title %}Related works – {{ block.super }}{% endblock %}
 
 {% block work-content %}
+  <h4>Related works</h4>
+
   {% if no_related %}
   <div class="alert alert-primary">No related works.</div>
   {% endif %}

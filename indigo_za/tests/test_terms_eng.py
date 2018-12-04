@@ -174,3 +174,31 @@ class TermsFinderENGTestCase(APITestCase):
   </section>
 </body>
 ''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8'))
+
+    def test_fancy_quotes(self):
+        doc = Document(content=document_fixture(xml=u"""
+<section id="section-1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <paragraph id="section-1.paragraph-0">
+    <content>
+      <p>“Act“ means the National Road Traffic Act, 1996 (<ref href="/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+    </content>
+  </paragraph>
+</section>
+        """))
+
+        self.maxDiff = None
+        self.finder.find_terms_in_document(doc)
+        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <section id="section-1">
+    <num>1.</num>
+    <heading>Definitions</heading>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p refersTo="#term-Act">“<def refersTo="#term-Act">Act</def>“ means the National Road Traffic Act, 1996 (<ref href="/za/act/1996/93">Act No. 93 of 1996</ref>);</p>
+      </content>
+    </paragraph>
+  </section>
+</body>
+''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8'))

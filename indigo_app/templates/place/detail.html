@@ -1,55 +1,85 @@
-{% extends "main.html" %}
+{% extends "place/layout.html" %}
 
-{% block title %}Library{% endblock %}
 {% block head-css %}
 <meta charset="UTF-8">
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly.min.css">
 <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/patternfly/3.24.0/css/patternfly-additions.min.css">
 {% endblock %}
+
+{% block title %}{{ locality.name|default:country.name }}{% endblock %}
 {% block view-id %}library-view{% endblock %}
-{% block main-header %}{% endblock %}
+
+{% block main-header-title %}
+  <div class="d-flex">
+    <div class="flex-grow-1">
+      {{ block.super }}
+    </div>
+
+    <div>
+      <div class="btn-toolbar">
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change country</button>
+          <div class="dropdown-menu">
+            {% for ctry in indigo_countries %}
+            <a class="dropdown-item" href="{% url 'place' place=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
+            {% endfor %}
+          </div>
+        </div>
+
+        {% with country.localities.all as locs %}
+        {% if locs %}
+        <div class="dropdown ml-2">
+          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if locality %}Change locality{% else %}Choose locality{% endif %}</button>
+          <div class="dropdown-menu">
+            {% for loc in locs %}
+            <a class="dropdown-item" href="{% url 'place' place=loc.place_code %}">{{ loc.name }} · {{ loc.code }}</a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
+        {% endwith %}
+
+      </div>
+    </div>
+  </div>
+{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="float-right">
-    <select class="form-control filter-country" name="country-filter">
-      {% for country in countries %}
-        <option {% if country_code == country.code %}selected{% endif %} value="{{country.code}}">{{country.name}}</option>
-      {% endfor %}
-    </select>
-  </div>
-  <h2>{{ country.country.name }}</h2>
-
-
   <div class="card">
     <div class="card-header">
-      <div class="form-row">
+      <div class="d-flex">
 
-        <div class="col-4">
+        <div class="flex-grow-1 mr-2">
           <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
         </div>
 
-        <div class="col-3">
-          <select class="form-control filter-locality" name="locality-filter"></select>
-        </div>
-
-        <div class="col-2">
+        <div class="mr-2">
           <select class="form-control filter-subtype" name="subtype-filter"></select>
         </div>
 
-        <div class="col-3">
+        <div class="mr-5">
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn btn-sm filter-status-all btn-primary active">
+            <label class="btn filter-status-all btn-primary active">
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
             </label>
-            <label class="btn btn-sm filter-status-published">
+            <label class="btn filter-status-published">
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
             </label>
-            <label class="btn btn-sm filter-status-draft">
+            <label class="btn filter-status-draft">
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
             </label>
           </div>
         </div>
+
+        <div class="btn-group">
+          <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New work</a>
+          <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New work batch</a>
+          </div>
+        </div>
+
       </div>
 
       <div id="filter-tags" class="pt-3"></div>
@@ -66,6 +96,7 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
+<<<<<<< HEAD:indigo_app/templates/library.html
   <div id="pf-list-simple-expansion" class="list-group list-view-pf list-view-pf-view">
     <div>
       {{ count }} works
@@ -164,7 +195,10 @@
 window.Indigo.countries = {{ countries_json|safe }};
 
 // include the documents as JSON
-window.Indigo.Preloads.country_code = '{{ country_code }}';
+window.Indigo.Preloads.country_code = '{{ country.code }}';
+{% if locality %}
+window.Indigo.Preloads.locality_code = '{{ locality.code }}';
+{% endif %}
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>

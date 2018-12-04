@@ -1,9 +1,11 @@
 {% extends "indigo_api/work_layout.html" %}
 
 {% block view-id %}work-amendments-view{% endblock %}
-{% block title %}Points in Time – {{ block.super }}{% endblock %}
+{% block title %}Points in time – {{ block.super }}{% endblock %}
 
 {% block work-content %}
+  <h4>Points in time</h4>
+
   {% block amendment_list %}
     <div class="work-amendments">
       <ol class="timeline">
@@ -36,7 +38,7 @@
                 <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST">
                   {% csrf_token %}
 
-                  {% if perms.indigo.change_amendment %}
+                  {% if perms.indigo_api.change_amendment %}
                     <div class="dropdown float-right">
                       <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
                       <div class="dropdown-menu">
@@ -82,7 +84,7 @@
                   <div class="btn-group">
                     <div class="dropdown mr-3">
                       <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fa fa-pencil-alt"></i> Create amended version
+                        <i class="fas fa-pencil-alt"></i>Create amended version
                       </button>
                       <div class="dropdown-menu">
                         {% for language in indigo_languages %}

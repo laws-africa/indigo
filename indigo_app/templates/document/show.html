@@ -3,28 +3,32 @@
 {% load static %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} sidebar-minimized
+{% block body-class %}{{ block.super }} no-site-footer sidebar-minimized
   {% if document.draft %}is-draft{% else %}is-published{% endif %}
   {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}
 
-{% block breadcrumbs %}
-  {# this will be filled in by the view #}
-  <li class="breadcrumb-item">&nbsp;</li>
-{% endblock %}
+{% block main-header %}
+  <header class="main-header with-menubar">
+    <div class="container-fluid">
+      <ul class="breadcrumb text-muted">
+        {# this will be filled in by the view #}
+        <li class="breadcrumb-item">&nbsp;</li>
+      </ul>
 
-{% block main-header-title %}
-  <h5 class="main-header-title">
-    <span class="document-title">{{ document.title }}</span>
-    <span class="badge badge-info if-published">published</span>
-    <span class="badge badge-warning if-draft">draft</span>
-    <span class="badge badge-info if-repealed">repealed</span>
-  </h5>
+      <h5 class="main-header-title">
+        <span class="document-title">{{ document.title }}</span>
+        <span class="badge badge-info if-published">published</span>
+        <span class="badge badge-warning if-draft">draft</span>
+        <span class="badge badge-info if-repealed">repealed</span>
+      </h5>
 
-  <div class="document-toolbar-wrapper">
-    {% include 'document/_menu.html' %}
-    {% include 'document/_toolbar.html' %}
-  </div>
+      <div class="document-toolbar-wrapper">
+        {% include 'document/_menu.html' %}
+        {% include 'document/_toolbar.html' %}
+      </div>
+    </div>
+  </header>
 {% endblock %}
 
 {% block main-content %}
@@ -35,9 +39,9 @@
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">
   {% verbatim %}
-    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
+    <li class="breadcrumb-item"><a href="/places/{{ document.country }}/" class="work-country">{{ country.name }} · {{ document.country }}</a></li>
     {{#if locality}}
-    <li class="breadcrumb-item"><a href="/library/{{ document.country }}/?locality={{ document.locality }}" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
+    <li class="breadcrumb-item"><a href="/places/{{ document.country }}-{{ document.locality }}/" class="work-locality">{{ locality }} · {{ document.locality }}</a></li>
     {{/if}}
     <li class="breadcrumb-item"><a href="/works{{ work.frbr_uri }}/" class="work-frbr-uri">{{ document.frbr_uri }}</a></li>
     <li class="breadcrumb-item expressions">

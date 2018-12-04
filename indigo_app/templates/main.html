@@ -7,7 +7,7 @@
   {% block navbar %}
     <nav class="navbar navbar-expand-md navbar-dark fixed-top">
       {% block navbar-brand %}
-      <a class="navbar-brand" href="{% if request.user.is_authenticated %}{% url 'library' country=request.user.editor.country_code %}{% else %}/{% endif %}"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+      <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
       {% endblock %}
       {% block navbar-toggle %}
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
@@ -20,15 +20,7 @@
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         {% block navbar-left %}
           {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'library' country=request.user.editor.country_code %}">Library</a></li>
-          <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Works</a>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="{% url 'new_work' %}">Create a New Work</a>
-              <a class="dropdown-item" href="{% url 'new_batch_work' %}">Create a New Batch of Works</a>
-            </div>
-          </li>
-
+          <li class="nav-item"><a class="nav-link" href="{% url 'place' place=request.user.editor.country_code %}">Home</a></li>
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
             <div class="dropdown-menu">
@@ -63,7 +55,7 @@
 
                 {% if request.user.is_staff %}
                 <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site Settings</a>
+                <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site settings</a>
                 {% endif %}
 
                 <div class="dropdown-divider"></div>
@@ -88,20 +80,67 @@
   <div class="page-body">
     {% block sidebar %}{% endblock %}
 
-    <main id="{% block view-id %}{% endblock %}" class="main-container">
-      {% block main-header %}
-        <header class="main-header container-fluid">
-          <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
+    <div class="main-container-wrapper">
+      <main id="{% block view-id %}{% endblock %}" class="main-container">
+        {% block main-header %}
+          <header class="main-header">
+            <div class="container">
+              <ul class="breadcrumb text-muted">{% block breadcrumbs %}{% endblock %}</ul>
 
-          {% block main-header-title %}{% endblock %}
-        </header>
-      {% endblock %}
+              {% block main-header-title %}{% endblock %}
+            </div>
+          </header>
+        {% endblock %}
 
-      {% block messages %}
-        {% include '_messages.html' %}
-      {% endblock %}
+        {% block messages %}
+          {% include '_messages.html' %}
+        {% endblock %}
 
-      {% block content %}{% endblock %}
-    </main>
+        <div class="main-content">{% block content %}{% endblock %}</div>
+
+        {% block site-footer %}
+        <footer class="site-footer">
+          <div class="container">
+            <h5>Indigo</h5>
+
+            <div class="row">
+              <div class="col-md-4">
+                {% block site-footer-col-1 %}
+                <ul class="list-unstyled">
+                  <li><a href="/">Home</a></li>
+
+                  {% if request.user.is_authenticated %}
+                  <li><a href="{% url 'edit_account' %}">Your account</a></li>
+                  <li><a href="{% url 'account_logout' %}">Log out</a></li>
+                  {% else %}
+                  <li><a href="{% url 'account_login' %}">Log in</a></li>
+                  {% endif %}
+                </ul>
+                {% endblock %}
+              </div>
+
+              <div class="col-md-4">
+                {% block site-footer-col-2 %}
+                <ul class="list-unstyled">
+                  <li><a href="http://indigo.readthedocs.org/en/latest/" target="_blank">Documentation</a></li>
+                  <li><a href="mailto:greg@openup.org.za" target="_blank">Feedback</a></li>
+                  <li><a href="https://github.com/OpenUpSA/indigo" target="_blank">Indigo on GitHub</a></li>
+                </ul>
+                {% endblock %}
+              </div>
+
+              <div class="col-md-4">
+                <ul class="list-unstyled">
+                  <li><a href="{% url 'terms_of_use' %}" target="_blank">Terms of Use &amp; Privacy Policy</a></li>
+                </ul>
+
+                <img src="{% static 'images/logo.png' %}" title="Indigo" class="logo">
+              </div>
+            </div>
+          </div>
+        </footer>
+        {% endblock %}
+      </main>
+    </div>
   </div>
 {% endblock page-content %}

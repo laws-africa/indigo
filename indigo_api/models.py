@@ -6,6 +6,7 @@ import datetime
 from django.conf import settings
 from django.db import models
 from django.db.models import signals, Q
+from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
@@ -67,15 +68,16 @@ class Country(models.Model):
     def name(self):
         return self.country.name
 
+    @property
+    def place_code(self):
+        return self.code
+
     def as_json(self):
         return {
             'name': self.name,
             'localities': {loc.code: loc.name for loc in self.localities.all()},
             'publications': [pub.name for pub in self.publication_set.all()],
         }
-
-    def work_locality(self, work):
-        return self.localities.filter(code=work.locality).first()
 
     def __unicode__(self):
         return unicode(self.country.name)
@@ -101,13 +103,12 @@ class Locality(models.Model):
         verbose_name_plural = 'Localities'
         unique_together = (('country', 'code'),)
 
+    @property
+    def place_code(self):
+        return self.country.code + '-' + self.code
+
     def __unicode__(self):
         return unicode(self.name)
-
-    @classmethod
-    def for_work(cls, work):
-        if work.locality:
-            return work.country.work_locality(work)
 
 
 class WorkQuerySet(models.QuerySet):
@@ -123,7 +124,7 @@ class WorkManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
             .get_queryset()\
-            .prefetch_related('country', 'country__country')
+            .prefetch_related('country', 'country__country', 'locality')
 
 
 class Work(models.Model):
@@ -142,6 +143,7 @@ class Work(models.Model):
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
     country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
+    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT)
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
@@ -195,9 +197,21 @@ class Work(models.Model):
     def subtype(self):
         return self.work_uri.subtype
 
+    # Helper to get/set locality using the locality_code, used by the WorkSerializer.
+
     @property
-    def locality(self):
-        return self.work_uri.locality
+    def locality_code(self):
+        return self.locality.code
+
+    @locality_code.setter
+    def locality_code(self, value):
+        if value:
+            locality = self.country.localities.filter(code=value).first()
+            if not locality:
+                raise ValueError("No such locality for this country: %s" % value)
+            self.locality = locality
+        else:
+            self.locality = None
 
     @property
     def repeal(self):
@@ -210,10 +224,18 @@ class Work(models.Model):
         return self._repeal
 
     def clean(self):
-        # force country code in frbr uri
-        self.frbr_uri = '/%s%s' % (self.country.code, self.frbr_uri[3:])
-        # ensure the frbr uri is lowercased
-        self.frbr_uri = self.frbr_uri.lower()
+        # validate and clean the frbr_uri
+        try:
+            frbr_uri = FrbrUri.parse(self.frbr_uri).work_uri(work_component=False)
+        except ValueError:
+            raise ValidationError("Invalid FRBR URI")
+
+        # force country and locality codes in frbr uri
+        prefix = '/' + self.country.code
+        if self.locality:
+            prefix = prefix + '-' + self.locality.code
+
+        self.frbr_uri = ('%s/%s' % (prefix, frbr_uri.split('/', 2)[2])).lower()
 
     def save(self, *args, **kwargs):
         # prevent circular references
@@ -314,6 +336,20 @@ class Work(models.Model):
 
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
+
+
+def publication_document_filename(instance, filename):
+    return 'work-attachments/%s/publication-document' % (instance.work.id,)
+
+
+class PublicationDocument(models.Model):
+    work = models.OneToOneField(Work, related_name='publication_document', null=False, on_delete=models.CASCADE)
+    file = models.FileField(upload_to=publication_document_filename)
+    size = models.IntegerField()
+    filename = models.CharField(max_length=255)
+    mime_type = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 
 @receiver(signals.post_save, sender=Work)
@@ -702,12 +738,16 @@ class Document(models.Model):
 
     def to_html(self, **kwargs):
         from .renderers import HTMLRenderer
-        return HTMLRenderer().render(self, **kwargs)
+        renderer = HTMLRenderer()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return renderer.render(self, **kwargs)
 
     def element_to_html(self, element):
         """ Render a child element of this document into HTML. """
         from .renderers import HTMLRenderer
-        return HTMLRenderer().render(self, element=element)
+        renderer = HTMLRenderer()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return renderer.render(self, element=element)
 
     def to_pdf(self, **kwargs):
         from .renderers import PDFRenderer

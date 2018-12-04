@@ -1,4 +1,4 @@
-{% extends "main.html" %}
+{% extends "place/layout.html" %}
 
 {% block title %}{% if work.pk %}{{ work.title }}{% else %}Work{% endif %}{% endblock %}
 {% block body-class%}{{ block.super }} sidebar-fixed{% endblock %}
@@ -12,13 +12,13 @@
 
           {% block work-sidebar-nav %}
           {% if work.pk %}
-            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-book"></i> Work Overview</a></li>
+            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}"><i class="fa fa-book"></i> Work overview</a></li>
             <li class="nav-item dropright">
               <a class="nav-link dropdown-toggle {% if view.template_name_suffix == '_amendments' %}active{% endif %}" href="#" data-toggle="dropdown" data-boundary="viewport">
-                <i class="far fa-fw fa-clock"></i> Points in Time
+                <i class="far fa-fw fa-clock"></i> Points in time
               </a>
               <div class="dropdown-menu">
-                <a class="dropdown-item" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">Manage Points in Time...</a>
+                <a class="dropdown-item" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">Manage points in time...</a>
                 {% with work.expressions as expressions %}
                   {% if expressions %}
                     <div class="dropdown-divider"></div>
@@ -29,10 +29,10 @@
                 {% endwith %}
               </div>
             </li>
-            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related Works</a></li>
+            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fa fa-sitemap"></i> Related works</a></li>
             <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}"><i class="fa fa-history"></i> Changes</a></li>
           {% else %}
-            <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work Details</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#"><i class="fa fa-cog"></i> Work details</a></li>
           {% endif %}
           {% endblock %}
 
@@ -53,12 +53,12 @@
 
 
 {% block breadcrumbs %}
-  <li class="breadcrumb-item"><a class="work-country" href="{% url 'library' country=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
-  {% if locality %}
-  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'library' country=country.code %}?locality={{ locality.code }}">{{ locality.name }} · {{ locality.code }}</a></li>
+  <li class="breadcrumb-item"><a class="work-country" href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
+  {% if work.locality %}
+  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:work.locality.code %}">{{ work.locality.name }} · {{ work.locality.code }}</a></li>
   {% endif %}
   {% if work.pk %}
-  <li class="breadcrumb-item work-frbr-uri">{{ work.frbr_uri }}</li>
+  <li class="breadcrumb-item"><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.frbr_uri }}</a></li>
   {% endif %}
 {% endblock %}
 

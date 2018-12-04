@@ -1,10 +1,12 @@
 {% extends "indigo_api/work_layout.html" %}
 
+{% block main-header-title %}{% endblock %}
+
 {% block work-content %}
 
   {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
     <div class="float-right">
-      <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit Work</a>
+      <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit work</a>
     </div>
   {% endif %}
 
@@ -15,7 +17,7 @@
   <div class="mb-3">
     <p>
       {{ country.name }} · {{ country.code }}
-      {% if work.locality %} — {{ locality.name }} · {{ locality.code }}{% endif %}
+      {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
     </p>
   </div>
   {% endblock %}
@@ -29,9 +31,16 @@
           <dl>
             <dt>Promulgation</dt>
             <dd>
-              Published in {{ work.publication_name|default:"(unknown)" }}
-              {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
-              {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+              <div>
+                Published in {{ work.publication_name|default:"(unknown)" }}
+                {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
+                {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+              </div>
+              {% if work.publication_document %}
+              <div>
+                <i class="fa fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+              </div>
+              {% endif %}
             </dd>
 
             <dt>Commencement</dt>
@@ -43,7 +52,7 @@
               {% endif %}
 
               {% if work.commencing_work %}
-              Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+              <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
               {% endif %}
             </dd>
           </dl>
@@ -89,10 +98,10 @@
   {% block points_in_time %}
   <div class="row mb-3 mt-5">
     <div class="col">
-      <h4>Points in Time</h4>
+      <h4>Points in time</h4>
     </div>
     <div class="col text-right">
-      <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">Manage Points in Time</a>
+      <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">Manage points in time</a>
     </div>
   </div>
 
@@ -151,7 +160,7 @@
     {% endfor %}
 
     <div>
-      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All Changes</a>
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All changes</a>
     </div>
 
   {% endif %}

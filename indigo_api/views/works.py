@@ -1,4 +1,3 @@
-from rest_framework.exceptions import MethodNotAllowed
 from rest_framework import viewsets
 from rest_framework.permissions import DjangoModelPermissions
 from rest_framework.generics import get_object_or_404
@@ -7,7 +6,6 @@ from django_filters import rest_framework as filters
 
 from ..models import Work, Amendment
 from ..serializers import WorkSerializer, WorkAmendmentSerializer
-from ..authz import DocumentPermissions, WorkPermissions
 
 
 class WorkResourceView(object):
@@ -41,32 +39,15 @@ class WorkFilterSet(filters.FilterSet):
         return queryset.filter(country__country__iso=value.upper())
 
 
-class WorkViewSet(viewsets.ModelViewSet):
+class WorkViewSet(viewsets.ReadOnlyModelViewSet):
     """
     API endpoint that allows Documents to be viewed or edited.
     """
     queryset = Work.objects.order_by('frbr_uri').prefetch_related('created_by_user', 'updated_by_user')
     serializer_class = WorkSerializer
-    # TODO permissions on creating and publishing works
-    permission_classes = (DjangoModelPermissions, WorkPermissions)
     filter_backends = (filters.DjangoFilterBackend, SearchFilter)
     filter_class = WorkFilterSet
     search_fields = ('title', 'frbr_uri')
-
-    def perform_destroy(self, instance):
-        if not instance.can_delete():
-            raise MethodNotAllowed('DELETE', 'DELETE not allowed for works with related works or documents, unlink documents and works first.')
-        return super(WorkViewSet, self).perform_destroy(instance)
-
-    def perform_create(self, serializer):
-        if not WorkPermissions().create_allowed(self.request, serializer):
-            self.permission_denied(self.request)
-        super(WorkViewSet, self).perform_create(serializer)
-
-    def perform_update(self, serializer):
-        if not WorkPermissions().update_allowed(self.request, serializer):
-            self.permission_denied(self.request)
-        super(WorkViewSet, self).perform_update(serializer)
 
 
 class WorkAmendmentViewSet(WorkResourceView, viewsets.ReadOnlyModelViewSet):

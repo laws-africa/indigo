@@ -6,7 +6,7 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView, DeleteView, View
 from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -23,48 +23,59 @@ from indigo_api.models import Subtype, Work, Amendment, Country, Document
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
+from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
 
-from .base import AbstractAuthedIndigoView
+from .base import AbstractAuthedIndigoView, PlaceBasedView
 
 
 log = logging.getLogger(__name__)
 
 
-class LibraryView(AbstractAuthedIndigoView, TemplateView):
-    template_name = 'library.html'
+class LibraryView(RedirectView):
+    """ Redirect the old library view to the new place view.
+    """
+    permanent = True
+
+    def get_redirect_url(self, country=None):
+        place = country
+
+        if not place:
+            if self.request.user.is_authenticated():
+                place = self.request.user.editor.country.code
+            else:
+                place = Country.objects.all()[0].code
+
+        return reverse('place', kwargs={'place': place})
+
+
+class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
+    template_name = 'place/detail.html'
+    js_view = 'LibraryView'
     # permissions
     permission_required = ('indigo_api.view_work',)
     check_country_perms = False
 
-    def get(self, request, country=None, *args, **kwargs):
-        if country is None:
-            return redirect('library', country=request.user.editor.country_code)
-        return super(LibraryView, self).get(request, country_code=country, *args, **kwargs)
+    def get_context_data(self, **kwargs):
+        context = super(PlaceDetailView, self).get_context_data(**kwargs)
 
-    def get_context_data(self, country_code, **kwargs):
-        context = super(LibraryView, self).get_context_data(**kwargs)
-
-        country = Country.for_code(country_code)
-        context['country'] = country
-        context['country_code'] = country_code
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
         context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        docs = DocumentViewSet.queryset.filter(work__country=country)
+        docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = WorkViewSet.queryset.filter(country=country)
+        works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
 
         return context
 
 
-class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
+class AbstractWorkDetailView(PlaceBasedView, AbstractAuthedIndigoView, DetailView):
     model = Work
     context_object_name = 'work'
     # load work based on the frbr_uri
@@ -80,17 +91,27 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
     def work(self):
         return self.object
 
+    def determine_place(self):
+        if 'place' not in self.kwargs:
+            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/', 2)[1]
+        return super(AbstractWorkDetailView, self).determine_place()
+
     def get_country(self):
-        return self.get_object().country
+        return self.country
 
     def get_context_data(self, **kwargs):
         context = super(AbstractWorkDetailView, self).get_context_data(**kwargs)
-
-        is_new = not self.work.frbr_uri
-
-        context['work_json'] = {} if is_new else json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
         context['country'] = self.work.country
-        context['locality'] = None if is_new else context['country'].work_locality(self.work)
+        context['locality'] = self.work.locality
+
+        if self.work.frbr_uri:
+            context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        else:
+            # new
+            context['work_json'] = json.dumps({
+                'country': self.work.country.code,
+                'locality': self.work.locality.code if self.work.locality else None,
+            })
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
@@ -100,15 +121,74 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
         return context
 
 
-class WorkDetailView(AbstractWorkDetailView):
+class EditWorkView(AbstractWorkDetailView, UpdateView):
     js_view = 'WorkDetailView'
+    form_class = WorkForm
+    prefix = 'work'
+    template_name_suffix = '_detail'
+    permission_required = ('indigo_api.change_work',)
+
+    def form_valid(self, form):
+        # save as a revision
+        self.work.updated_by_user = self.request.user
+
+        with reversion.create_revision():
+            reversion.set_user(self.request.user)
+            resp = super(EditWorkView, self).form_valid(form)
+
+        # ensure any docs for this work at initial pub date move with it, if it changes
+        if 'publication_date' in form.changed_data:
+            old_date = form.initial['publication_date']
+
+            if old_date and self.work.publication_date:
+                for doc in Document.objects.filter(work=self.work, expression_date=old_date):
+                    doc.expression_date = self.work.publication_date
+                    doc.save()
+
+        if form.has_changed():
+            # signals
+            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+
+        return resp
+
+    def get_success_url(self):
+        return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(WorkDetailView):
+class AddWorkView(EditWorkView):
+    permission_required = ('indigo_api.add_work',)
+
     def get_object(self, queryset=None):
         work = Work()
-        work.country = self.request.user.editor.country
+        work.country = self.country
+        work.locality = self.locality
         return work
+
+    def form_valid(self, form):
+        self.work.updated_by_user = self.request.user
+        self.work.created_by_user = self.request.user
+
+        with reversion.create_revision():
+            reversion.set_user(self.request.user)
+            return super(AddWorkView, self).form_valid(form)
+
+
+class DeleteWorkView(AbstractWorkDetailView, DeleteView):
+    permission_required = ('indigo_api.delete_work',)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if self.work.can_delete():
+            self.work.delete()
+            messages.success(request, u'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            return redirect(self.get_success_url())
+        else:
+            messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
+            return redirect('work_edit', frbr_uri=self.work.frbr_uri)
+
+    def get_success_url(self):
+        return reverse('place', kwargs={'place': self.kwargs['place']})
 
 
 class WorkOverviewView(AbstractWorkDetailView):
@@ -349,26 +429,38 @@ class RestoreWorkVersionView(AbstractWorkDetailView):
         return redirect(url)
 
 
-class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
+class WorkPublicationDocumentView(AbstractAuthedIndigoView, WorkDependentMixin, View):
+    def get(self, request, filename, *args, **kwargs):
+        if self.work.publication_document and self.work.publication_document.filename == filename:
+            return view_attachment(self.work.publication_document)
+        else:
+            return Http404()
+
+
+class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):
     template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
 
     def form_valid(self, form):
-        country = form.cleaned_data['country']
-        table = self.get_table(form.cleaned_data['spreadsheet_url'])
-        works = self.get_works(country, table)
-        return self.render_to_response(self.get_context_data(works=works))
+        error = None
+        works = None
+
+        try:
+            table = self.get_table(form.cleaned_data['spreadsheet_url'])
+            works = self.get_works(table)
+        except ValidationError as e:
+            error = e.message
+
+        context_data = self.get_context_data(works=works, error=error)
+        return self.render_to_response(context_data)
 
     def get_country(self):
-        pk = self.request.POST.get('country')
-        if pk:
-            return get_object_or_404(Country, pk=pk)
-        else:
-            return self.request.user.editor.country
+        self.determine_place()
+        return self.country
 
-    def get_works(self, country, table):
+    def get_works(self, table):
         works = []
 
         # clean up headers
@@ -381,14 +473,15 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         ]
 
         for idx, row in enumerate(rows):
-            if not row['ignore']:
+            # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
+            if not row['ignore'] and [val for val in row.itervalues() if val]:
                 info = {
                     'row': idx + 2,
                 }
                 works.append(info)
 
                 try:
-                    frbr_uri = self.get_frbr_uri(country, row)
+                    frbr_uri = self.get_frbr_uri(self.country, self.locality, row)
                 except ValueError as e:
                     info['status'] = 'error'
                     info['error_message'] = e.message
@@ -406,16 +499,17 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                     work.frbr_uri = frbr_uri
                     work.title = row['title']
-                    work.country = country
+                    work.country = self.country
+                    work.locality = self.locality
                     work.publication_name = row['publication_name']
                     work.publication_number = row['publication_number']
-                    work.publication_date = self.make_date(row['publication_date'])
-                    work.commencement_date = self.make_date(row['commencement_date'])
-                    work.assent_date = self.make_date(row['assent_date'])
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
 
                     try:
+                        work.publication_date = self.make_date(row['publication_date'], 'publication_date')
+                        work.commencement_date = self.make_date(row['commencement_date'], 'commencement_date')
+                        work.assent_date = self.make_date(row['assent_date'], 'assent_date')
                         work.full_clean()
                         work.save()
 
@@ -427,13 +521,17 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
                     except ValidationError as e:
                         info['status'] = 'error'
-                        info['error_message'] = ' '.join(['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()])
+                        if hasattr(e, 'message_dict'):
+                            info['error_message'] = ' '.join(
+                                ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                            )
+                        else:
+                            info['error_message'] = e.message
 
         return works
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
-        # TODO: display the ValidationError strings within the form instead (as with URLValidator in .forms message)
 
         match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
 
@@ -456,12 +554,26 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
         else:
             return rows
 
-    def get_frbr_uri(self, country, row):
+    def get_frbr_uri(self, country, locality, row):
         frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
 
-        # check country matches (and that it's all one country)
-        if country.code != row['country'].lower():
-            raise ValueError('The country in the spreadsheet (%s) doesn\'t match the country selected previously (%s)' % (row['country'], country))
+        # if the country doesn't match
+        # (but ignore if no country given – dealt with separately)
+        if row['country'] and country.code != row['country'].lower():
+            raise ValueError('The country code given in the spreadsheet ("%s") doesn\'t match the code for the country you\'re working in ("%s")' % (row['country'], country.code.upper()))
+
+        # if you're working on the country level but the spreadsheet gives a locality
+        if not locality and row['locality']:
+            raise ValueError('You are working in a country (%s), but the spreadsheet gives a locality code ("%s")' % (country, row['locality']))
+
+        # if you're working in a locality but the spreadsheet doesn't give one
+        if locality and not row['locality']:
+            raise ValueError('There\'s no locality code given in the spreadsheet, but you\'re working in %s ("%s")' % (locality, locality.code.upper()))
+
+        # if the locality doesn't match
+        # (only if you're in a locality)
+        if locality and locality.code != row['locality'].lower():
+            raise ValueError('The locality code given in the spreadsheet ("%s") doesn\'t match the code for the locality you\'re working in ("%s")' % (row['locality'], locality.code.upper()))
 
         # check all frbr uri fields have been filled in and that no spaces were accidentally included
         if ' ' in frbr_uri.work_uri():
@@ -481,11 +593,14 @@ class BatchAddWorkView(AbstractAuthedIndigoView, FormView):
 
         return frbr_uri.work_uri().lower()
 
-    def make_date(self, string):
-        if string == '':
+    def make_date(self, string, field):
+        if not string:
             date = None
         else:
-            date = datetime.datetime.strptime(string, '%Y-%m-%d')
+            try:
+                date = datetime.datetime.strptime(string, '%Y-%m-%d')
+            except ValueError:
+                raise ValidationError('Check the format of %s; it should be e.g. "2012-12-31"' % field)
         return date
 
 

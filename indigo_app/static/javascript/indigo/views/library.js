@@ -299,6 +299,8 @@
     events: {
       'click .toggle-docs': 'toggleDocuments',
       'click .list-group-item a': 'linkClicked',
+      'shown.bs.collapse .work-extra-detail': 'workDetailToggled',
+      'hidden.bs.collapse .work-extra-detail': 'workDetailToggled',
     },
 
     initialize: function() {
@@ -316,18 +318,13 @@
       e.stopPropagation();
     },
 
-    toggleDocuments: function(e) {
-      e.preventDefault();
-      var $link = $(e.currentTarget),
-          work = $link.data('work'),
-          $i = $link.find('i'),
-          opened = $i.hasClass('fa-caret-down');
+    workDetailToggled: function(e) {
+      var row = e.target.parentNode,
+          $icon = $(row).find('.collapse-indicator'),
+          opened = $(e.target).hasClass('show');
 
-      $i
-        .toggleClass('fa-caret-right', opened)
-        .toggleClass('fa-caret-down', !opened);
-
-      $('.library-work-table tr[data-work="' + work + '"]').toggleClass('d-none', opened);
+      $icon.toggleClass('fa-caret-right', !opened)
+           .toggleClass('fa-caret-down', opened);
     },
 
     render: function() {

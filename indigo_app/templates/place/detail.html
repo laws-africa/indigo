@@ -105,7 +105,7 @@
     <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ id }}">
       <div class="d-flex">
         <div class="float-left">
-          <span class="fa fa-angle-right"></span>
+          <span class="text-muted fa fa-fw fa-caret-right collapse-indicator"></span>
         </div>
 
         <div class="float-left col-8">
@@ -133,7 +133,7 @@
       </div>
 
       {{#if work_docs}}
-      <div class="collapse work-extra-detail pl-3 mt-1" id="work-detail-{{ id }}">
+      <div class="collapse work-extra-detail pl-4 mt-1" id="work-detail-{{ id }}">
         {{#each work_docs}}
           <div class="d-flex">
             <div class="float-left col-2">

@@ -14,6 +14,8 @@
   <form id="edit-work-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 
+    <input type="hidden" id="{{ form.frbr_uri.id_for_label }}" value="{{ form.frbr_uri.value|default:'' }}" name="{{ form.frbr_uri.html_name }}">
+
     <div class="mb-3">
       <div class="float-right">
         {% if work.pk %}

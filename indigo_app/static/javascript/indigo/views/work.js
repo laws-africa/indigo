@@ -138,7 +138,7 @@
       } else {
         document.title = 'New work – Indigo';
       }
-      if (!this.model.isNew()) $('.workspace-header h4, .work-title').text(this.model.get('title'));
+      this.$('.work-title').text(this.model.get('title') || '(untitled work)');
       this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
     },
 

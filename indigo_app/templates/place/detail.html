@@ -53,16 +53,6 @@
         </div>
 
         <div class="mr-2">
-          <select class="form-control sortby" name="sort">
-            <option value="title">Title (A-Z)</option>
-            <option value="-title">Title (Z-A)</option>
-            <option value="modified">Most recently modified</option>
-            <option value="-modified">Least recently modified</option>
-            <option value="frbr_uri">FRBR URI</option>
-          </select>
-        </div>
-
-        <div class="mr-5">
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn filter-status-all btn-primary active">
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
@@ -74,6 +64,16 @@
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
             </label>
           </div>
+        </div>
+
+        <div class="mr-3 pr-3 border-right">
+          <select class="form-control sortby" name="sort">
+            <option value="title">Title (A-Z)</option>
+            <option value="-title">Title (Z-A)</option>
+            <option value="modified">Most recently modified</option>
+            <option value="-modified">Least recently modified</option>
+            <option value="frbr_uri">FRBR URI</option>
+          </select>
         </div>
 
         <div class="btn-group">

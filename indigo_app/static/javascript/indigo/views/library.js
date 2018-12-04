@@ -284,6 +284,7 @@
     events: {
       'click .library-work-table th': 'changeSort',
       'click .toggle-docs': 'toggleDocuments',
+      'click .list-group-item a': 'linkClicked',
     },
 
     initialize: function() {
@@ -297,6 +298,11 @@
       this.filterView = new Indigo.LibraryFilterView();
       this.filterView.on('change', this.render, this);
       this.filterView.trigger('change');
+    },
+
+    linkClicked: function(e) {
+      // don't bubble to avoid collapsing the container unnecessarily
+      e.stopPropagation();
     },
 
     changeSort: function(e) {
@@ -365,18 +371,12 @@
           return doc.draft ? 'n_drafts': 'n_published';
         });
 
-        if (work.drafts_v_published.n_drafts) {
-          work.n_drafts = work.drafts_v_published.n_drafts;
-        } else {
-          work.n_drafts = 0;
-        }
-
         // total number of docs
         work.n_docs = work_docs.length;
 
         // get a ratio of drafts vs total docs for sorting
         if (work.n_docs !== 0) {
-          work.pub_ratio = 1 / (work.n_drafts / work.n_docs);
+          work.pub_ratio = 100 * (work.drafts_v_published.n_published / work.n_docs);
         } else {
           work.pub_ratio = 0;
         }

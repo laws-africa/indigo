@@ -8,28 +8,14 @@ from .base import AbstractAuthedIndigoView, PlaceBasedView
 from indigo_api.models import Task
 
 
-class PlaceTasksView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
-    model = Task
-    js_view = ''
-    page_size = 16
-
+class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
     # permissions
     permission_required = ('indigo_api.view_work',)
     check_country_perms = False
 
-    def get_context_data(self, **kwargs):
-        context = super(PlaceTasksView, self).get_context_data(**kwargs)
+    context_object_name = 'tasks'
+    paginate_by = 16
+    paginate_orphans = 4
 
-        context['place'] = self.place
-
-        paginator, page, tasks, is_paginated = self.paginate_queryset(
-          Task.objects.filter(country=self.country, locality=self.locality), self.page_size
-        )
-        context.update({
-            'paginator': paginator,
-            'page': page,
-            'tasks': tasks,
-            'is_paginated': is_paginated,
-        })
-
-        return context
+    def get_queryset(self):
+        return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')

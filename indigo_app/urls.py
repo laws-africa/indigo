@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
 
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', works.PlaceDetailView.as_view(), name='place'),
-    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.PlaceTasksView.as_view(), name='tasks'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.TaskListView.as_view(), name='tasks'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new/$', works.AddWorkView.as_view(), name='new_work'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new-batch/$', works.BatchAddWorkView.as_view(), name='new_batch_work'),
 

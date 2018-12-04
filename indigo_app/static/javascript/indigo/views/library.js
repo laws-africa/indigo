@@ -26,6 +26,7 @@
       'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
+      'change .sortby': 'changeSort',
     },
 
     initialize: function() {
@@ -40,6 +41,8 @@
         status: 'all',
         search: null,
       });
+      this.sortField = 'title';
+      this.sortDesc = false;
       this.listenTo(this.filters, 'change', function() { this.trigger('change'); });
       this.listenTo(this.filters, 'change', this.saveState);
       this.loadState();
@@ -77,6 +80,18 @@
       });
     },
 
+    changeSort: function(e) {
+      var field = e.target.value,
+          desc = field[0] == '-';
+
+      if (desc) field = field.substr(1);
+
+      this.sortField = field;
+      this.sortDesc = desc;
+
+      this.trigger('change');
+    },
+
     summarizeAndRender: function() {
       this.filterAndSummarize();
       this.render();
@@ -98,7 +113,8 @@
     filterAndSummarize: function() {
       var filters = this.filters.attributes,
           works,
-          docs = {};
+          docs = {},
+          sortField = this.sortField;
 
       this.summary = {};
 
@@ -203,7 +219,9 @@
         }, true); // true to also test the work, not just its docs
       }
 
-      this.filteredWorks = works;
+      this.filteredWorks = _.sortBy(works, function(w) { return w.get(sortField); });
+      if (this.sortDesc) this.filteredWorks.reverse();
+
       this.filteredDocs = docs;
     },
 
@@ -282,16 +300,12 @@
     el: '#library',
     template: '#search-results-template',
     events: {
-      'click .library-work-table th': 'changeSort',
       'click .toggle-docs': 'toggleDocuments',
       'click .list-group-item a': 'linkClicked',
     },
 
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
-
-      this.sortField = 'updated_at';
-      this.sortDesc = true;
 
       // the filter view does all the hard work of actually fetching and
       // filtering the documents
@@ -303,20 +317,6 @@
     linkClicked: function(e) {
       // don't bubble to avoid collapsing the container unnecessarily
       e.stopPropagation();
-    },
-
-    changeSort: function(e) {
-      var field = $(e.currentTarget).data('sort');
-
-      if (field == this.sortField) {
-        // reverse
-        this.sortDesc = !this.sortDesc;
-      } else {
-        this.sortField = field;
-        this.sortDesc = false;
-      }
-
-      this.render();
     },
 
     toggleDocuments: function(e) {
@@ -335,8 +335,7 @@
 
     render: function() {
       var works = this.filterView.filteredWorks,
-          docs = this.filterView.filteredDocs,
-          sortDesc = this.sortDesc;
+          docs = this.filterView.filteredDocs;
 
       // tie works and docs together
       works = _.map(works, function(work) {
@@ -410,15 +409,9 @@
         return work;
       });
 
-
-      works = _.sortBy(works, this.sortField);
-      if (sortDesc) works.reverse();
-
       this.$el.html(this.template({
         count: works.length,
         works: works,
-        sortField: this.sortField,
-        sortDesc: this.sortDesc,
       }));
 
       this.$el.find('[title]').tooltip({

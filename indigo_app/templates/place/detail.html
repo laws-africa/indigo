@@ -81,20 +81,6 @@
 
     <div id="library"></div>
   </div>
-  {% if tasks %}
-  <div class="card">
-    <div class="card-header">
-      <h4>Tasks for {{ place }}</h4>
-    </div>
-    <div class="card-body">
-    {% for task in tasks %}
-      {{ task.title }}
-      {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
-      {% if task.content %}<p class="text-muted">{{ task.content }}{% endif %}</p>
-    {% endfor %}
-    </div>
-  </div>
-  {% endif %}
 </div>
 
 {% endblock %}

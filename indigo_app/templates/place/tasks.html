@@ -1,0 +1,46 @@
+{% extends "place/layout.html" %}
+
+{% block title %}{{ locality.name|default:country.name }}{% endblock %}
+
+{% block main-header-title %}
+  <div class="d-flex">
+    {{ block.super }}<h4 class="text-muted">&nbsp;›</h4><h4>&nbsp;Tasks</h4>
+  </div>
+{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  <div class="card">
+    <div class="card-body">
+    {% if tasks %}
+      {% for task in tasks %}
+        {{ task.title }}
+        {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
+        {% if task.content %}<p class="text-muted">{{ task.content }}{% endif %}</p>
+      {% endfor %}
+
+      {% if is_paginated %}
+        <nav>
+          <ul class="pagination justify-content-center">
+            {% if page.has_previous %}
+              <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
+            {% endif %}
+
+            {% for num in paginator.page_range %}
+            <li class="page-item {% if num == page.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+            {% endfor %}
+
+            {% if page.has_next %}
+              <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      {% endif %}
+
+    {% else %}
+      <p class="alert alert-info">There are no tasks for {{ place }}.</p>
+    {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

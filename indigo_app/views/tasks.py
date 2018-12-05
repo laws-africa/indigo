@@ -19,6 +19,8 @@ class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
     paginate_by = 16
     paginate_orphans = 4
 
+    tab = 'tasks'
+
     def get_queryset(self):
         return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
 
@@ -30,6 +32,7 @@ class TaskDetailView(AbstractAuthedIndigoView, PlaceBasedView, DetailView):
 
     context_object_name = 'task'
     model = Task
+    tab = 'tasks'
 
 
 class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
@@ -38,8 +41,10 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
     check_country_perms = False
 
     context_object_name = 'task'
-    fields = ['title', 'work', 'document', 'description', 'assigned_to']
+    fields = ['title', 'work', 'description']
     model = Task
+
+    tab = 'tasks'
 
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
@@ -65,6 +70,7 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
     context_object_name = 'task'
     fields = ['title', 'work', 'document', 'description', 'assigned_to']
     model = Task
+    tab = 'tasks'
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})

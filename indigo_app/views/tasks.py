@@ -1,9 +1,12 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+from django.shortcuts import redirect
 from django.urls import reverse
 
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.views.generic.base import View
+from django.views.generic.detail import SingleObjectMixin
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
@@ -74,3 +77,28 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class TaskChangeStateView(AbstractAuthedIndigoView, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.add_work',)
+    check_country_perms = False
+
+    change = None
+    http_method_names = [u'post']
+    model = Task
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        task.updated_by = self.request.user
+        if self.change == 'cancel':
+            task.state = 'cancelled'
+        if self.change == 'reopen':
+            task.state = 'open'
+        if self.change == 'submit':
+            task.state = 'pending'
+        if self.change == 'done':
+            task.state = 'closed'
+        task.save()
+
+        return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])

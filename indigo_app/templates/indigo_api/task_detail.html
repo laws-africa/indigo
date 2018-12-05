@@ -5,21 +5,50 @@
 {% block content %}
 <div class="container mt-3 mb-5">
   <div class="card">
-    <h5 class="card-header">{{ task.title }}</h5>{% if task.work %}<p>&nbsp;– <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a></p>{% endif %}
+    <h5 class="card-header">{{ task.title }}</h5>
+    {% if task.work %}<p><a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a></p>{% endif %}
+    <p class="card-header">State: {{ task.state }}</p>
     <div class="card-body">
 
       {% if task.description %}
       <p>{{ task.description }}</p>
       {% endif %}
 
-
       <p>etc</p>
 
-      <p><a href="edit">edit button</a></p>
-      <p><a href="reopen">reopen button</a></p>
-      <p><a href="cancel">cancel button</a></p>
-      <p><a href="done">mark as pending review</a></p>
-      <p><a href="close">close button</a></p>
+      <a href="edit"><button>Edit task</button></a>
+
+      {% if not task.state == 'cancelled' %}
+      <p></p>
+      <form method="POST" action="{% url 'task_cancel' place=place.place_code pk=task.pk %}">
+        {% csrf_token %}
+        <button class="btn" type="submit" data-confirm="Are you sure you want to cancel this task?">Cancel</button>
+      </form>
+      {% endif %}
+
+      {% if not task.state == 'open' %}
+      <p></p>
+      <form method="POST" action="{% url 'task_reopen' place=place.place_code pk=task.pk %}">
+        {% csrf_token %}
+        <button class="btn" type="submit" data-confirm="Are you sure you want to reopen this task?">Reopen</button>
+      </form>
+      {% endif %}
+
+      {% if not task.state == 'pending' %}
+      <p></p>
+      <form method="POST" action="{% url 'task_submit' place=place.place_code pk=task.pk %}">
+        {% csrf_token %}
+        <button class="btn" type="submit" data-confirm="Are you sure you want to submit this task for review?">Submit</button>
+      </form>
+      {% endif %}
+
+      {% if not task.state == 'closed' %}
+      <p></p>
+      <form method="POST" action="{% url 'task_done' place=place.place_code pk=task.pk %}">
+        {% csrf_token %}
+        <button class="btn" type="submit" data-confirm="Are you sure you want to close this task?">All done</button>
+      </form>
+      {% endif %}
 
     </div>
   </div>

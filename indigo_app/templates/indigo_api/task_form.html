@@ -31,7 +31,7 @@
 
           <div class="form-group">
             <label for="{{ form.title.id_for_label }}">{{ form.title.label }}</label>
-            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus>
+            <input type="text" class="form-control" name="{{ form.title.name }}" id="{{ form.title.id_for_label }}" value="{{ form.title.value|default:'' }}" required autofocus placeholder="A short description of this task">
             {% if form.title.errors %}
               <div class="text-danger">
                 {% for error in form.title.errors %}
@@ -42,20 +42,8 @@
           </div>
 
           <div class="form-group">
-            <label for="{{ form.work.id_for_label }}">{{ form.work.label }}</label>
-            <input type="text" class="form-control" name="{{ form.work.name }}" id="{{ form.work.id_for_label }}" value="{{ form.work.value|default:'' }}">
-            {% if form.work.errors %}
-              <div class="text-danger">
-                {% for error in form.work.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
             <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-            <input type="text" class="form-control" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" value="{{ form.description.value|default:'' }}">
+            <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" required>{{ form.description.value|default:'' }}</textarea>
             {% if form.description.errors %}
               <div class="text-danger">
                 {% for error in form.description.errors %}
@@ -64,33 +52,10 @@
               </div>
             {% endif %}
           </div>
+        </div>
 
-          <div class="form-group">
-            <label for="{{ form.document.id_for_label }}">{{ form.document.label }}</label>
-            <input type="text" class="form-control" name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" value="{{ form.document.value|default:'' }}">
-            {% if form.document.errors %}
-              <div class="text-danger">
-                {% for error in form.document.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.assigned_to.id_for_label }}">{{ form.assigned_to.label }}</label>
-            <input type="text" class="form-control" name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.id_for_label }}" value="{{ form.assigned_to.value|default:'' }}">
-            {% if form.assigned_to.errors %}
-              <div class="text-danger">
-                {% for error in form.assigned_to.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-          </div>
-
-          <button class="btn btn-success btn-block mb-3" type="submit">Create task</button>
-
+        <div class="card-footer text-right">
+          <button class="btn btn-success" type="submit">Create task</button>
         </div>
       </div>
     </div>

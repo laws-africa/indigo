@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+from django.contrib import messages
 from django.shortcuts import redirect
 from django.urls import reverse
 
@@ -93,12 +94,16 @@ class TaskChangeStateView(AbstractAuthedIndigoView, View, SingleObjectMixin):
         task.updated_by = self.request.user
         if self.change == 'cancel':
             task.state = 'cancelled'
+            messages.success(request, u"Task '%s' has been cancelled" % task.title)
         if self.change == 'reopen':
             task.state = 'open'
+            messages.success(request, u"Task '%s' has been reopened" % task.title)
         if self.change == 'submit':
             task.state = 'pending'
+            messages.success(request, u"Task '%s' has been submitted for review" % task.title)
         if self.change == 'done':
             task.state = 'closed'
+            messages.success(request, u"Task '%s' has been closed" % task.title)
         task.save()
 
         return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])

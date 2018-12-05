@@ -14,9 +14,9 @@
     <div class="card-body">
     {% if tasks %}
       {% for task in tasks %}
-        {{ task.title }}
+        <a href="/tasks/{{ task.pk }}/">{{ task.title }}</a>
         {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
-        {% if task.content %}<p class="text-muted">{{ task.content }}{% endif %}</p>
+        {% if task.description %}<p class="text-muted">{{ task.description }}{% endif %}</p>
       {% endfor %}
 
       {% if is_paginated %}

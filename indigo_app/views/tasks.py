@@ -29,7 +29,7 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
     check_country_perms = False
 
     context_object_name = 'task'
-    fields = ['title', 'work', 'content', 'document', 'assigned_to']
+    fields = ['title', 'work', 'description', 'document', 'assigned_to']
     model = Task
 
     def get_form_kwargs(self):

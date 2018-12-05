@@ -884,7 +884,7 @@ class DocumentActivity(models.Model):
 
 class Task(models.Model):
     title = models.CharField(max_length=256, null=False, blank=False)
-    content = models.TextField(null=True, blank=True)
+    description = models.TextField(null=True, blank=True)
 
     country = models.ForeignKey(Country, related_name='tasks', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)

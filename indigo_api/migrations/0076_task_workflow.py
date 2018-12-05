@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=256)),
-                ('content', models.TextField(blank=True, null=True)),
+                ('description', models.TextField(blank=True, null=True)),
                 ('anchor_id', models.CharField(blank=True, max_length=128, null=True)),
                 ('state', models.CharField(choices=[(b'open', b'open'), (b'cancelled', b'cancelled'), (b'pending', b'pending review'), (b'closed', b'done')], default=b'open', max_length=128)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),

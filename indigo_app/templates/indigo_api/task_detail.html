@@ -1,0 +1,27 @@
+{% extends "place/tabbed_layout.html" %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  <div class="card">
+    <h5 class="card-header">{{ task.title }}</h5>{% if task.work %}<p>&nbsp;– <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a></p>{% endif %}
+    <div class="card-body">
+
+      {% if task.description %}
+      <p>{{ task.description }}</p>
+      {% endif %}
+
+
+      <p>etc</p>
+
+      <p><a href="edit">edit button</a></p>
+      <p><a href="reopen">reopen button</a></p>
+      <p><a href="cancel">cancel button</a></p>
+      <p><a href="done">mark as pending review</a></p>
+      <p><a href="close">close button</a></p>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

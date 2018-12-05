@@ -1,6 +1,6 @@
 {% extends "place/tabbed_layout.html" %}
 
-{% block title %}New task – {{ locality.name|default:country.name }}{% endblock %}
+{% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} – {{ locality.name|default:country.name }}{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}
@@ -49,7 +49,7 @@
         </div>
 
         <div class="card-footer text-right">
-          <button class="btn btn-success" type="submit">Create task</button>
+          <button class="btn btn-success" type="submit">{% if task.pk %}Save task{% else %}Create task{% endif %}</button>
         </div>
       </div>
     </div>

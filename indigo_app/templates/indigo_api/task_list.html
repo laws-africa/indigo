@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load humanize account %}
 
-{% block title %}{{ locality.name|default:country.name }}{% endblock %}
+{% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3">
@@ -15,7 +15,7 @@
         {% for task in tasks %}
           <div class="list-group-item p-2">
             <div>
-              {{ task.title }}
+              <a href="{{ task.pk }}/">{{ task.title }}</a>
               {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
             </div>
             <div>

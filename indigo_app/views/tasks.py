@@ -3,7 +3,7 @@ from __future__ import unicode_literals
 
 from django.urls import reverse
 
-from django.views.generic import ListView, CreateView
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
@@ -23,6 +23,16 @@ class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
 
     def get_queryset(self):
         return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
+
+
+class TaskDetailView(AbstractAuthedIndigoView, PlaceBasedView, DetailView):
+    # permissions
+    permission_required = ('indigo_api.view_work',)
+    check_country_perms = False
+
+    context_object_name = 'task'
+    model = Task
+    tab = 'tasks'
 
 
 class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
@@ -50,3 +60,17 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
 
     def get_success_url(self):
         return reverse('tasks', kwargs={'place': self.kwargs['place']})
+
+
+class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
+    # permissions
+    permission_required = ('indigo_api.add_work',)
+    check_country_perms = False
+
+    context_object_name = 'task'
+    fields = ['title', 'work', 'document', 'description', 'assigned_to']
+    model = Task
+    tab = 'tasks'
+
+    def get_success_url(self):
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})

@@ -1,10 +1,10 @@
 {% extends "place/layout.html" %}
 
-{% block title %}New task – {{ locality.name|default:country.name }}{% endblock %}
+{% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} – {{ locality.name|default:country.name }}{% endblock %}
 
 {% block main-header-title %}
   <div class="d-flex">
-    {{ block.super }}<h4 class="text-muted">&nbsp;›</h4><h4>&nbsp;New task</h4>
+    {{ block.super }}<h4 class="text-muted">&nbsp;›</h4><h4>&nbsp;{% if task.pk %}{{ task.title }}{% else %}New task{% endif %}</h4>
   </div>
 {% endblock %}
 
@@ -54,11 +54,11 @@
           </div>
 
           <div class="form-group">
-            <label for="{{ form.content.id_for_label }}">{{ form.content.label }}</label>
-            <input type="text" class="form-control" name="{{ form.content.name }}" id="{{ form.content.id_for_label }}" value="{{ form.content.value|default:'' }}">
-            {% if form.content.errors %}
+            <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+            <input type="text" class="form-control" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" value="{{ form.description.value|default:'' }}">
+            {% if form.description.errors %}
               <div class="text-danger">
-                {% for error in form.content.errors %}
+                {% for error in form.description.errors %}
                   <p>{{ error }}</p>
                 {% endfor %}
               </div>
@@ -89,7 +89,7 @@
             {% endif %}
           </div>
 
-          <button class="btn btn-success btn-block mb-3" type="submit">Create task</button>
+          <button class="btn btn-success btn-block mb-3" type="submit">{% if task.pk %}Save task{% else %}Create task{% endif %}</button>
 
         </div>
       </div>

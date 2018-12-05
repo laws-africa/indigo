@@ -1,6 +1,6 @@
 {% extends "place/layout.html" %}
 
-{% block title %}{{ locality.name|default:country.name }}{% endblock %}
+{% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
 
 {% block main-header-title %}
   <div class="d-flex">
@@ -10,37 +10,45 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
+{% if tasks %}
+  {% for task in tasks %}
   <div class="card">
+    <h5 class="card-header"><a href="{{ task.pk }}/">{{ task.title }}</a></h5>{% if task.work %}<p>&nbsp;– <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a></p>{% endif %}
     <div class="card-body">
-    {% if tasks %}
-      {% for task in tasks %}
-        <a href="/tasks/{{ task.pk }}/">{{ task.title }}</a>
-        {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
-        {% if task.description %}<p class="text-muted">{{ task.description }}{% endif %}</p>
-      {% endfor %}
-
-      {% if is_paginated %}
-        <nav>
-          <ul class="pagination justify-content-center">
-            {% if page_obj.has_previous %}
-              <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
-            {% endif %}
-
-            {% for num in paginator.page_range %}
-            <li class="page-item {% if num == page_obj.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-            {% endfor %}
-
-            {% if page_obj.has_next %}
-              <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
-            {% endif %}
-          </ul>
-        </nav>
-      {% endif %}
-
-    {% else %}
-      <p class="alert alert-info">There are no tasks for {{ place }}.</p>
-    {% endif %}
+      {% if task.description %}<p class="text-muted">{{ task.description }}{% endif %}</p>
+      <p>etc</p>
+      <p><a href="edit">edit button</a></p>
+      <p><a href="reopen">reopen button</a></p>
+      <p><a href="cancel">cancel button</a></p>
+      <p><a href="done">mark as pending review</a></p>
+      <p><a href="close">close button</a></p>
     </div>
   </div>
+  <p></p>
+  {% endfor %}
+
+{% if is_paginated %}
+  <nav>
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+      {% endif %}
+
+      {% for num in paginator.page_range %}
+      <li class="page-item {% if num == page_obj.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+      {% endfor %}
+
+      {% if page_obj.has_next %}
+        <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+{% endif %}
+
+{% else %}
+  <div class="card">
+    <p class="alert alert-info">There are no tasks for {{ place }}.</p>
+  </div>
+{% endif %}
 </div>
 {% endblock %}

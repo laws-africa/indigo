@@ -124,7 +124,7 @@ class WorkManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
             .get_queryset()\
-            .prefetch_related('country', 'country__country', 'locality')
+            .prefetch_related('country', 'country__country', 'locality', 'publication_document')
 
 
 class Work(models.Model):

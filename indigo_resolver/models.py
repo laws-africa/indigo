@@ -22,6 +22,7 @@ class Authority(models.Model):
     """
     name = models.CharField(max_length=255, unique=True, help_text="Descriptive name of this resolver")
     url = models.URLField(help_text="Website for this authority (optional)", blank=True, null=True)
+    not_found_url = models.URLField(help_text="URL of a 404 page (optional)", null=True, blank=True)
     slug = models.CharField(null=False, blank=False, validators=[validate_slug], max_length=50, unique=True)
 
     class Meta:

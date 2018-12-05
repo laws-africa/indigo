@@ -2,6 +2,13 @@ from indigo_api.views.public import PublishedDocumentDetailView
 from indigo_resolver.models import AuthorityReference, Authority
 
 
+class BaseAuthority(object):
+    not_found_url = None
+
+    def get_references(self, frbr_uri):
+        raise NotImplementedError()
+
+
 class Authorities(object):
     registry = {}
 
@@ -28,9 +35,10 @@ authorities = Authorities()
 
 
 @authorities.register('saflii.org')
-class SafliiAuthority(object):
+class SafliiAuthority(BaseAuthority):
     queryset = PublishedDocumentDetailView.queryset
     name = 'SAFLII'
+    not_found_url = "http://www.saflii.org/content/error.html"
 
     def get_references(self, frbr_uri):
         try:

@@ -37,6 +37,14 @@ class ResolveView(TemplateView):
         if self.references and (len(self.references) == 1 or authorities):
             return redirect(self.references[0].url)
 
+        # custom 404?
+        if not self.references and authorities:
+            try:
+                not_found_url = next(a.not_found_url for a in self.authorities if a.not_found_url)
+                return redirect(not_found_url)
+            except StopIteration:
+                pass
+
         return super(ResolveView, self).get(self, frbr_uri=frbr_uri, authorities=authorities, *args, **kwargs)
 
     def get_authorities(self, authorities):

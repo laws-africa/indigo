@@ -4,10 +4,16 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="card">
-    <h5 class="card-header">{{ task.title }}</h5>
-    {% if task.work %}<p><a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a></p>{% endif %}
-    <p class="card-header">State: {{ task.state }}</p>
+  <div class="float-right">
+    <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
+  </div>
+
+  <h5>
+    {{ task.title }}
+    <span class="badge badge-secondary">{{ task.state }}</span>
+  </h5>
+
+  <div class="card mt-4">
     <div class="card-body">
 
       {% if task.description %}
@@ -15,40 +21,28 @@
       {% endif %}
 
       <p>etc</p>
+    </div>
 
-      <a href="edit"><button>Edit task</button></a>
-
-      {% if not task.state == 'cancelled' %}
-      <p></p>
-      <form method="POST" action="{% url 'task_cancel' place=place.place_code pk=task.pk %}">
+    <div class="card-footer text-right">
+      <form method="POST" action="">
         {% csrf_token %}
-        <button class="btn" type="submit" data-confirm="Are you sure you want to cancel this task?">Cancel</button>
-      </form>
-      {% endif %}
 
-      {% if not task.state == 'open' %}
-      <p></p>
-      <form method="POST" action="{% url 'task_reopen' place=place.place_code pk=task.pk %}">
-        {% csrf_token %}
-        <button class="btn" type="submit" data-confirm="Are you sure you want to reopen this task?">Reopen</button>
-      </form>
-      {% endif %}
+        {% if not task.state == 'cancelled' %}
+          <button class="btn btn-danger" type="submit" data-confirm="Are you sure you want to cancel this task?" action="{% url 'task_cancel' place=place.place_code pk=task.pk %}">Cancel task</button>
+        {% endif %}
 
-      {% if not task.state == 'pending' %}
-      <p></p>
-      <form method="POST" action="{% url 'task_submit' place=place.place_code pk=task.pk %}">
-        {% csrf_token %}
-        <button class="btn" type="submit" data-confirm="Are you sure you want to submit this task for review?">Submit</button>
-      </form>
-      {% endif %}
+        {% if not task.state == 'open' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" action="{% url 'task_reopen' place=place.place_code pk=task.pk %}">Reopen</button>
+        {% endif %}
 
-      {% if not task.state == 'closed' %}
-      <p></p>
-      <form method="POST" action="{% url 'task_done' place=place.place_code pk=task.pk %}">
-        {% csrf_token %}
-        <button class="btn" type="submit" data-confirm="Are you sure you want to close this task?">All done</button>
+        {% if not task.state == 'pending' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" action="{% url 'task_submit' place=place.place_code pk=task.pk %}">Submit for review</button>
+        {% endif %}
+
+        {% if not task.state == 'closed' %}
+          <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" action="{% url 'task_done' place=place.place_code pk=task.pk %}">All done</button>
+        {% endif %}
       </form>
-      {% endif %}
 
     </div>
   </div>

@@ -1,0 +1,49 @@
+{% extends "place/layout.html" %}
+
+{% block main-header %}
+<header class="main-header tabbed-header">
+  <div class="container">
+    {% block main-header-title %}
+      <div class="d-flex mb-3">
+        <div class="flex-grow-1">
+          {{ block.super }}
+        </div>
+
+        <div>
+          <div class="btn-toolbar">
+            <div class="dropdown">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change country</button>
+              <div class="dropdown-menu">
+                {% for ctry in indigo_countries %}
+                <a class="dropdown-item" href="{% url 'place' place=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
+                {% endfor %}
+              </div>
+            </div>
+
+            {% with country.localities.all as locs %}
+            {% if locs %}
+            <div class="dropdown ml-2">
+              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if locality %}Change locality{% else %}Choose locality{% endif %}</button>
+              <div class="dropdown-menu">
+                {% for loc in locs %}
+                <a class="dropdown-item" href="{% url 'place' place=loc.place_code %}">{{ loc.name }} · {{ loc.code }}</a>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+            {% endwith %}
+
+          </div>
+        </div>
+      </div>
+    {% endblock %}
+
+    {% block main-header-tabs %}
+    <nav class="nav nav-tabs">
+      <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">Works</a>
+      <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">Tasks</a>
+    </nav>
+    {% endblock %}
+  </div>
+</header>
+{% endblock %}

@@ -19,6 +19,8 @@ class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
     paginate_by = 16
     paginate_orphans = 4
 
+    tab = 'tasks'
+
     def get_queryset(self):
         return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
 
@@ -31,6 +33,8 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
     context_object_name = 'task'
     fields = ['title', 'work', 'description']
     model = Task
+
+    tab = 'tasks'
 
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()

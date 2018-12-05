@@ -56,6 +56,7 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
     # permissions
     permission_required = ('indigo_api.view_work',)
     check_country_perms = False
+    tab = 'works'
 
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)

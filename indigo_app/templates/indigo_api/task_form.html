@@ -1,12 +1,6 @@
-{% extends "place/layout.html" %}
+{% extends "place/tabbed_layout.html" %}
 
 {% block title %}New task – {{ locality.name|default:country.name }}{% endblock %}
-
-{% block main-header-title %}
-  <div class="d-flex">
-    {{ block.super }}<h4 class="text-muted">&nbsp;›</h4><h4>&nbsp;New task</h4>
-  </div>
-{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}

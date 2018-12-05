@@ -1,13 +1,7 @@
-{% extends "place/layout.html" %}
+{% extends "place/tabbed_layout.html" %}
 {% load humanize account %}
 
 {% block title %}{{ locality.name|default:country.name }}{% endblock %}
-
-{% block main-header-title %}
-  <div class="d-flex">
-    {{ block.super }}<h4 class="text-muted">&nbsp;›</h4><h4>&nbsp;Tasks</h4>
-  </div>
-{% endblock %}
 
 {% block content %}
 <div class="container mt-3">

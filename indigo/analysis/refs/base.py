@@ -11,7 +11,10 @@ class BaseRefsFinder(LocaleBasedMatcher):
     Subclasses must implement `find_references_in_document`.
     """
 
-    act_re = None  # this must be defined by a subclass
+    act_re = None
+    """ This must be defined by a subclass. It should be a compiled regular
+    expression, with named captures for `ref`, `number` and `year`.
+    """
     candidate_xpath = None  # this must be defined by a subclass
 
     # the ancestor elements that can contain references
@@ -39,43 +42,61 @@ class BaseRefsFinder(LocaleBasedMatcher):
     def make_href(self, match):
         """ Turn this match into a full FRBR URI href
         """
-        raise NotImplementedError("Subclass must implement based on act_re")
+        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group('year'), match.group('number'))
 
     def find_references(self, root):
-        def make_ref(match):
-            ref = etree.Element(self.ref_tag)
-            ref.text = match.group()
-            ref.set('href', self.make_href(match))
-            return ref
-
-        for root in self.ancestor_xpath(root):
-            for candidate in self.candidate_xpath(root):
+        for root in self.ancestor_nodes(root):
+            for candidate in self.candidate_nodes(root):
                 node = candidate.getparent()
 
                 if not candidate.is_tail:
                     # text directly inside a node
                     match = self.act_re.search(node.text)
                     if match:
-                        ref = make_ref(match)
-                        node.text = match.string[:match.start()]
-                        node.insert(0, ref)
-                        ref.tail = match.string[match.end():]
-
-                        # now continue to check the new tail
-                        node = ref
+                        # mark the reference and continue to check the new tail
+                        node = self.mark_reference(node, match, in_tail=False)
 
                 while node is not None and node.tail:
                     match = self.act_re.search(node.tail)
                     if not match:
                         break
 
-                    ref = make_ref(match)
-                    node.addnext(ref)
-                    node.tail = match.string[:match.start()]
-                    ref.tail = match.string[match.end():]
+                    # mark the reference and continue to check the new tail
+                    node = self.mark_reference(node, match, in_tail=True)
 
-                    # now continue to check the new tail
-                    node = ref
+    def mark_reference(self, node, match, in_tail):
+        ref, start_pos, end_pos = self.make_ref(match)
+
+        if in_tail:
+            node.addnext(ref)
+            node.tail = match.string[:start_pos]
+            ref.tail = match.string[end_pos:]
+        else:
+            node.text = match.string[:start_pos]
+            node.insert(0, ref)
+            ref.tail = match.string[end_pos:]
+
+        return ref
+
+    def make_ref(self, match):
+        """ Make a reference out of this match, returning a (ref, start, end) tuple
+        which is the new ref node, and the start and end position of what text
+        in the parent element it should be replacing.
+
+        By default, the first group in the `act_re` is substituted with the ref.
+        """
+        ref = etree.Element(self.ref_tag)
+        ref.text = match.group('ref')
+        ref.set('href', self.make_href(match))
+        return (ref, match.start('ref'), match.end('ref'))
+
+    def ancestor_nodes(self, root):
+        for x in self.ancestor_xpath(root):
+            yield x
+
+    def candidate_nodes(self, root):
+        for x in self.candidate_xpath(root):
+            yield x
 
 
 @plugins.register('refs')
@@ -84,15 +105,22 @@ class RefsFinderENG(BaseRefsFinder):
 
         Act 52 of 2001
         Act no. 52 of 1998
+        Income Tax Act, 1962 (No 58 of 1962)
 
     """
 
     # country, language, locality
     locale = (None, 'eng', None)
 
-    # if this changes, update indigo_za/refs.py
-    act_re = re.compile(r'\bAct,?\s+([nN]o\.?\s*)?(\d+)+\s+of\s+(\d{4})')
+    act_re = re.compile(
+        r'''\bAct,?\s+
+            (\d{4}\s+)?
+            \(?
+            (?P<ref>
+             ([nN]o\.?\s*)?
+             (?P<num>\d+)\s+
+             of\s+
+             (?P<year>\d{4})
+            )
+        ''', re.X)
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
-
-    def make_href(self, match):
-        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group(3), match.group(2))

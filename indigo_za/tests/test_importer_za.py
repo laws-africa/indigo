@@ -26,6 +26,22 @@ more text
         reformatted = self.importer.reformat_text(text)
         assert_equal(reformatted, "text\n\n\n\n\n\nmore text\n")
 
+    def test_dont_remove_blanks(self):
+            text = """We're in a form:
+
+Person________(id number)
+
+Person _________ (id number)
+
+Person _________(id number)
+
+Person_________ (id number)
+
+more text
+"""
+            reformatted = self.importer.reformat_text(text)
+            assert_equal(reformatted, "We're in a form:\n\nPerson________(id number)\n\nPerson _________ (id number)\n\nPerson _________(id number)\n\nPerson_________ (id number)\n\nmore text\n")
+
     def test_break_nested_lists(self):
         assert_equal(self.importer.break_lines(
             'stored, if known; (b) the number of trolleys'),

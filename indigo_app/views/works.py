@@ -6,7 +6,7 @@ import logging
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView
+from django.views.generic import DetailView, TemplateView, FormView, UpdateView, CreateView, RedirectView, DeleteView, View
 from django.views.generic.edit import BaseFormView
 from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
@@ -23,9 +23,10 @@ from indigo_api.models import Subtype, Work, Amendment, Country, Document
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
+from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
@@ -75,7 +76,7 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
         return context
 
 
-class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
+class AbstractWorkDetailView(PlaceBasedView, AbstractAuthedIndigoView, DetailView):
     model = Work
     context_object_name = 'work'
     # load work based on the frbr_uri
@@ -91,8 +92,13 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
     def work(self):
         return self.object
 
+    def determine_place(self):
+        if 'place' not in self.kwargs:
+            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/', 2)[1]
+        return super(AbstractWorkDetailView, self).determine_place()
+
     def get_country(self):
-        return self.get_object().country
+        return self.country
 
     def get_context_data(self, **kwargs):
         context = super(AbstractWorkDetailView, self).get_context_data(**kwargs)
@@ -116,16 +122,74 @@ class AbstractWorkDetailView(AbstractAuthedIndigoView, DetailView):
         return context
 
 
-class WorkDetailView(AbstractWorkDetailView):
+class EditWorkView(AbstractWorkDetailView, UpdateView):
     js_view = 'WorkDetailView'
+    form_class = WorkForm
+    prefix = 'work'
+    template_name_suffix = '_detail'
+    permission_required = ('indigo_api.change_work',)
+
+    def form_valid(self, form):
+        # save as a revision
+        self.work.updated_by_user = self.request.user
+
+        with reversion.create_revision():
+            reversion.set_user(self.request.user)
+            resp = super(EditWorkView, self).form_valid(form)
+
+        # ensure any docs for this work at initial pub date move with it, if it changes
+        if 'publication_date' in form.changed_data:
+            old_date = form.initial['publication_date']
+
+            if old_date and self.work.publication_date:
+                for doc in Document.objects.filter(work=self.work, expression_date=old_date):
+                    doc.expression_date = self.work.publication_date
+                    doc.save()
+
+        if form.has_changed():
+            # signals
+            work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+
+        return resp
+
+    def get_success_url(self):
+        return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(PlaceBasedView, WorkDetailView):
+class AddWorkView(EditWorkView):
+    permission_required = ('indigo_api.add_work',)
+
     def get_object(self, queryset=None):
         work = Work()
         work.country = self.country
         work.locality = self.locality
         return work
+
+    def form_valid(self, form):
+        self.work.updated_by_user = self.request.user
+        self.work.created_by_user = self.request.user
+
+        with reversion.create_revision():
+            reversion.set_user(self.request.user)
+            return super(AddWorkView, self).form_valid(form)
+
+
+class DeleteWorkView(AbstractWorkDetailView, DeleteView):
+    permission_required = ('indigo_api.delete_work',)
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        if self.work.can_delete():
+            self.work.delete()
+            messages.success(request, u'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            return redirect(self.get_success_url())
+        else:
+            messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
+            return redirect('work_edit', frbr_uri=self.work.frbr_uri)
+
+    def get_success_url(self):
+        return reverse('place', kwargs={'place': self.kwargs['place']})
 
 
 class WorkOverviewView(AbstractWorkDetailView):
@@ -364,6 +428,14 @@ class RestoreWorkVersionView(AbstractWorkDetailView):
 
         url = request.GET.get('next') or reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
         return redirect(url)
+
+
+class WorkPublicationDocumentView(AbstractAuthedIndigoView, WorkDependentMixin, View):
+    def get(self, request, filename, *args, **kwargs):
+        if self.work.publication_document and self.work.publication_document.filename == filename:
+            return view_attachment(self.work.publication_document)
+        else:
+            return Http404()
 
 
 class BatchAddWorkView(AbstractAuthedIndigoView, PlaceBasedView, FormView):

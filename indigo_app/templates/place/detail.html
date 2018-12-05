@@ -17,7 +17,7 @@
           <select class="form-control filter-subtype" name="subtype-filter"></select>
         </div>
 
-        <div class="mr-5">
+        <div class="mr-2">
           <div class="btn-group btn-group-toggle" data-toggle="buttons">
             <label class="btn filter-status-all btn-primary active">
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
@@ -29,6 +29,16 @@
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
             </label>
           </div>
+        </div>
+
+        <div class="mr-3 pr-3 border-right">
+          <select class="form-control sortby" name="sort">
+            <option value="-updated_at" selected>Most recently updated</option>
+            <option value="updated_at">Least recently updated</option>
+            <option value="title">Title (A-Z)</option>
+            <option value="-title">Title (Z-A)</option>
+            <option value="frbr_uri">FRBR URI</option>
+          </select>
         </div>
 
         <div class="btn-group">
@@ -56,109 +66,66 @@
 <script id="search-results-template" type="text/x-handlebars-template">
 {% verbatim %}
 
-<table class="table table-sm table-hover library-work-table sorted-table">
-  <thead>
-    <tr>
-      <th class="title" data-sort="title">Title</th>
-      <th class="frbr_uri" data-sort="frbr_uri">FRBR URI</th>
-      <th class="languages" data-sort="n_languages" >Languages</th>
-      <th class="psit" data-sort="n_expressions"><i class="far fa-clock" title="Points in time"></i></th>
-      <th class="status" data-sort="pub_ratio">Drafts / Total</th>
-      <th class="updated_at" data-sort="updated_at">Updated</th>
-    </tr>
-  </thead>
-
-  <tbody>
+  <div class="list-group list-group-flush">
     {{#each works}}
-      <tr>
+    <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ id }}">
+      <div class="d-flex">
+        <div class="float-left">
+          <span class="text-muted fa fa-fw fa-caret-right collapse-indicator"></span>
+        </div>
 
-        {{!-- Title --}}
-        <td class="{{#unless work_docs}}pad-left{{/unless}}">
-          {{#if work_docs}}
-            <a href="#" class="toggle-docs text-muted" data-work="{{ frbr_uri }}"><i class="fas fa-fw fa-caret-right"></i></a>
-            <i class="fa fa-fw fa-circle published" title="published"></i>
-          {{else}}
-            <i class="fa fa-fw fa-circle" title="empty work"></i>
+        <div class="float-left col-8">
+          <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
+          <span class="text-muted">{{ frbr_uri }}</span>
+        </div>
+
+        <div class="float-left col-2">
+          {{#if n_docs}}
+          <i class="far fa-clock"></i> <strong>{{ n_docs }}</strong> Point{{#unless n_docs_singular}}s{{/unless}} in time<br>
+          <div class="progress mt-1 w-75 pub-drafts-progress">
+            <div class="progress-bar" style="width: {{ pub_ratio }}%"></div>
+          </div>
           {{/if}}
-          <a href="/works{{ frbr_uri }}/">{{ title }}</a>
-        </td>
+        </div>
 
-        {{!-- Frbr uri --}}
-        <td>
-          <a href="/works{{ frbr_uri }}/">{{ frbr_uri }}</a>
-        </td>
-
-        {{!-- Languages --}}
-        <td>
-            {{#each languages}}
-              {{#if @first}}
-                {{this}}
-              {{else}}
-                • {{this}}
-              {{/if}}
-            {{/each}}
-        </td>
-
-        {{!-- Points in time --}}
-        <td>
-            <a href="/works{{ frbr_uri }}/amendments/">
-              {{n_expressions}}
-            </a>
-        </td>
-
-        {{!-- Drafts / Total --}}
-        <td>
-          {{#if work_docs}}
-            {{n_drafts}} / {{n_docs}}
-          {{/if}}
-        </td>
-
-        {{!-- Updated --}}
-        <td>
+        <div class="float-right col-2">
           <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
           <span class="text-muted">
             {{#if most_recent_updated_by.display_name}}
-              – {{ most_recent_updated_by.display_name }}
+            – {{ most_recent_updated_by.display_name }}
             {{/if}}
           </span>
-        </td>
+        </div>
+      </div>
 
-      </tr>
-
-      {{#each work_docs}}
-        <tr data-work="{{ ../frbr_uri }}" class="d-none">
-          <td class="document">
-            {{#if draft}}
-              <i class="fa fa-fw fa-circle draft" title="draft"></i>
-            {{else}}
-              <i class="fa fa-fw fa-circle published" title="published"></i>
-            {{/if}}
-            <a href="/documents/{{ id }}">{{ title }}</a>
-          </td>
-          <td>@ {{ expression_date }}</td>
-          <td>{{ language }}</td>
-          <td colspan="2">&nbsp;</td>
-          <td>
-            <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-            <span class="text-muted">
-              {{#if updated_by_user.display_name}}
-                – {{ updated_by_user.display_name }}
+      {{#if work_docs}}
+      <div class="collapse work-extra-detail pl-4 mt-1" id="work-detail-{{ id }}">
+        {{#each work_docs}}
+          <div class="d-flex">
+            <div class="float-left col-2">
+              <a href="/documents/{{ id }}">@ {{ expression_date }} · {{ language }}</a>
+            </div>
+            <div class="float-left col-8">
+              {{#if draft}}
+                <i class="fa fa-fw fa-circle draft" title="draft"></i>
+              {{else}}
+                <i class="fa fa-fw fa-circle published" title="published"></i>
               {{/if}}
-            </span>
-          </td>
-        </tr>
-      {{/each}}
+              {{ title }}
+            </div>
+            <div class="float-right col-2">
+              <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
+              {{#if updated_by_user.display_name}}– {{ updated_by_user.display_name }}{{/if}}
+            </div>
+          </div>
+        {{/each}}
+      </div>
+      {{/if}}
+    </div>
     {{/each}}
-  </tbody>
+  </div>
 
-  <tfoot>
-    <tr>
-      <td class="active" colspan="6">{{ count }} works</td>
-    </tr>
-  </tfoot>
-</table>
 {% endverbatim %}
-
 </script>
 
 <script id="filter-tags-template" type="text/x-handlebars-template">
@@ -181,4 +148,4 @@ window.Indigo.Preloads.locality_code = '{{ locality.code }}';
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>
-{% endblock %}}
+{% endblock %}

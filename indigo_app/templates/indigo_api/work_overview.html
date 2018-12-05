@@ -31,9 +31,16 @@
           <dl>
             <dt>Promulgation</dt>
             <dd>
-              Published in {{ work.publication_name|default:"(unknown)" }}
-              {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
-              {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+              <div>
+                Published in {{ work.publication_name|default:"(unknown)" }}
+                {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
+                {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+              </div>
+              {% if work.publication_document %}
+              <div>
+                <i class="fa fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+              </div>
+              {% endif %}
             </dd>
 
             <dt>Commencement</dt>

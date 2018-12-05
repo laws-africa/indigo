@@ -2,6 +2,7 @@
 
 import tempfile
 from mock import patch
+import datetime
 
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
@@ -16,7 +17,7 @@ from indigo_api.models import Work, Attachment
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class DocumentAPITest(APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'work', 'colophon', 'drafts']
+    fixtures = ['countries', 'user', 'editor', 'work', 'colophon', 'drafts', 'published']
 
     def setUp(self):
         self.client.login(username='email@example.com', password='password')
@@ -526,3 +527,16 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/%s.zip' % id)
         assert_equal(response.accepted_media_type, 'application/zip')
+
+    def test_update_work_repeal(self):
+        work = Work.objects.get(pk=1)
+        work.repealed_by = Work.objects.get(pk=2)
+        work.repealed_date = datetime.date(2010, 1, 1)
+        work.save()
+
+        response = self.client.get('/api/documents/1')
+        self.assertEqual(response.data['repeal'], {
+            'date': '2010-01-01',
+            'repealing_title': 'Test Act',
+            'repealing_uri': '/za/act/1998/2',
+        })

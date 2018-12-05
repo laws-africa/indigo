@@ -26,6 +26,7 @@
       'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
+      'change .sortby': 'changeSort',
     },
 
     initialize: function() {
@@ -40,6 +41,8 @@
         status: 'all',
         search: null,
       });
+      this.sortField = 'updated_at';
+      this.sortDesc = true;
       this.listenTo(this.filters, 'change', function() { this.trigger('change'); });
       this.listenTo(this.filters, 'change', this.saveState);
       this.loadState();
@@ -75,6 +78,18 @@
         subtype: Indigo.queryParams.subtype,
         tags: tags || [],
       });
+    },
+
+    changeSort: function(e) {
+      var field = e.target.value,
+          desc = field[0] == '-';
+
+      if (desc) field = field.substr(1);
+
+      this.sortField = field;
+      this.sortDesc = desc;
+
+      this.trigger('change');
     },
 
     summarizeAndRender: function() {
@@ -282,15 +297,14 @@
     el: '#library',
     template: '#search-results-template',
     events: {
-      'click .library-work-table th': 'changeSort',
       'click .toggle-docs': 'toggleDocuments',
+      'click .list-group-item a': 'linkClicked',
+      'shown.bs.collapse .work-extra-detail': 'workDetailToggled',
+      'hidden.bs.collapse .work-extra-detail': 'workDetailToggled',
     },
 
     initialize: function() {
       this.template = Handlebars.compile($(this.template).html());
-
-      this.sortField = 'updated_at';
-      this.sortDesc = true;
 
       // the filter view does all the hard work of actually fetching and
       // filtering the documents
@@ -299,38 +313,23 @@
       this.filterView.trigger('change');
     },
 
-    changeSort: function(e) {
-      var field = $(e.currentTarget).data('sort');
-
-      if (field == this.sortField) {
-        // reverse
-        this.sortDesc = !this.sortDesc;
-      } else {
-        this.sortField = field;
-        this.sortDesc = false;
-      }
-
-      this.render();
+    linkClicked: function(e) {
+      // don't bubble to avoid collapsing the container unnecessarily
+      e.stopPropagation();
     },
 
-    toggleDocuments: function(e) {
-      e.preventDefault();
-      var $link = $(e.currentTarget),
-          work = $link.data('work'),
-          $i = $link.find('i'),
-          opened = $i.hasClass('fa-caret-down');
+    workDetailToggled: function(e) {
+      var row = e.target.parentNode,
+          $icon = $(row).find('.collapse-indicator'),
+          opened = $(e.target).hasClass('show');
 
-      $i
-        .toggleClass('fa-caret-right', opened)
-        .toggleClass('fa-caret-down', !opened);
-
-      $('.library-work-table tr[data-work="' + work + '"]').toggleClass('d-none', opened);
+      $icon.toggleClass('fa-caret-right', !opened)
+           .toggleClass('fa-caret-down', opened);
     },
 
     render: function() {
       var works = this.filterView.filteredWorks,
-          docs = this.filterView.filteredDocs,
-          sortDesc = this.sortDesc;
+          docs = this.filterView.filteredDocs;
 
       // tie works and docs together
       works = _.map(works, function(work) {
@@ -365,18 +364,13 @@
           return doc.draft ? 'n_drafts': 'n_published';
         });
 
-        if (work.drafts_v_published.n_drafts) {
-          work.n_drafts = work.drafts_v_published.n_drafts;
-        } else {
-          work.n_drafts = 0;
-        }
-
         // total number of docs
         work.n_docs = work_docs.length;
+        work.n_docs_singular = work_docs.length == 1;
 
         // get a ratio of drafts vs total docs for sorting
         if (work.n_docs !== 0) {
-          work.pub_ratio = 1 / (work.n_drafts / work.n_docs);
+          work.pub_ratio = 100 * (work.drafts_v_published.n_published / work.n_docs);
         } else {
           work.pub_ratio = 0;
         }
@@ -410,23 +404,18 @@
         return work;
       });
 
-
-      works = _.sortBy(works, this.sortField);
-      if (sortDesc) works.reverse();
+      works = _.sortBy(works, this.filterView.sortField);
+      if (this.filterView.sortDesc) works.reverse();
 
       this.$el.html(this.template({
         count: works.length,
         works: works,
-        sortField: this.sortField,
-        sortDesc: this.sortDesc,
       }));
 
       this.$el.find('[title]').tooltip({
         container: 'body',
         placement: 'auto top'
       });
-
-      this.$el.find('th[data-sort=' + this.sortField + ']').addClass(this.sortDesc ? 'sort-up' : 'sort-down');
 
       Indigo.relativeTimestamps();
     }

@@ -1,5 +1,5 @@
 {% extends "main.html" %}
-{% load account %}
+{% load indigo_app %}
 
 {% block title%}{{ badge.name }} {{ block.super }}{% endblock %}
 
@@ -23,7 +23,7 @@
             <ul>
             {% for award in awards %}
               <li>
-                <a href="{% url 'indigo_social:user_profile' username=award.user.username %}">{% user_display award.user %}</a> – <span class="text-muted">{{ award.awarded_at|timesince }} ago</span>
+                {% user_profile award.user %} – <span class="text-muted">{{ award.awarded_at|timesince }} ago</span>
               </li>
             {% endfor %}
             </ul>

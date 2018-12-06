@@ -1,6 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 
 {% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} – {{ locality.name|default:country.name }}{% endblock %}
+{% block view-id %}edit-task-view{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}
@@ -35,6 +36,41 @@
             {% endif %}
           </div>
 
+          <div class="form-group form-row">
+            <div class="col-md-6">
+              <label for="{{ form.work.id_for_label }}">Work</label>
+              <input type="hidden" name="{{ form.work.name }}" id="{{ form.work.id_for_label }}" value="{{ form.work.value|default:'' }}">
+              <div class="work-details"></div>
+
+              <script id="task-work-template" type="text/x-handlebars-template">
+              {% verbatim %}
+                {{#if work}}
+                  <div class="float-right ml-2">
+                    <button type="button" class="btn btn-outline-danger delete-work">Remove</button>
+                    <button type="button" class="btn btn-outline-primary change-work">Change</button>
+                  </div>
+                  <a href="/works{{ work.frbr_uri }}">{{ work.title }}</a><br>
+                  <span class="text-muted">{{ work.frbr_uri }}</span>
+                {{else}}
+                  <button type="button" class="btn btn-outline-primary change-work">Choose work</button>
+                {{/if}}
+              {% endverbatim %}
+              </script>
+            </div>
+
+            <div class="col-md-6">
+              <label for="{{ form.document.id_for_label }}">Point in time</label>
+              <input type="hidden" name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" value="{{ form.document.value|default:'' }}">
+              <div class="document-details"></div>
+
+              <script id="task-document-template" type="text/x-handlebars-template">
+              {% verbatim %}
+              ?
+              {% endverbatim %}
+              </script>
+            </div>
+          </div>
+
           <div class="form-group">
             <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
             <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" required>{{ form.description.value|default:'' }}</textarea>
@@ -49,6 +85,9 @@
         </div>
 
         <div class="card-footer text-right">
+          {% if task.pk %}
+          <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="btn btn-link">Cancel</a>
+          {% endif %}
           <button class="btn btn-success" type="submit">{% if task.pk %}Save task{% else %}Create task{% endif %}</button>
         </div>
       </div>
@@ -67,5 +106,11 @@
 
   <script type="text/javascript">
   window.Indigo.countries = {{ indigo_countries_json|safe }};
+  {% if work_json %}
+  window.Indigo.Preloads.work = {{ work_json|safe }};
+  {% endif %}
+  {% if document_json %}
+  window.Indigo.Preloads.document = {{ document_json|safe }};
+  {% endif %}
   </script>
 {% endblock %}

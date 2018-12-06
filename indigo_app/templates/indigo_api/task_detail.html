@@ -20,12 +20,14 @@
 
   <div class="card mt-3">
     <div class="card-body">
-
-      {% if task.description %}
-      <p>{{ task.description }}</p>
+      {% if task.work %}
+      <div class="mb-2">
+        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+        <span class="text-muted">{{ task.work.frbr_uri }}</span>
+      </div>
       {% endif %}
 
-      <p>etc</p>
+      <p>{{ task.description }}</p>
     </div>
 
     <div class="card-footer text-right">

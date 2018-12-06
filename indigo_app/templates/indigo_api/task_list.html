@@ -16,7 +16,12 @@
           <div class="list-group-item p-3">
             <div>
               <a href="{{ task.pk }}/">{{ task.title }}</a>
-              {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
+              {% if task.work %}
+                <div>
+                  <a href="/works{{ task.work.frbr_uri }}/" class="text-muted">{{ task.work.title }}</a><br>
+                  <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                </div>
+              {% endif %}
             </div>
             <div class="text-muted">
               <span class="badge badge-secondary mr-1">{{ task.state }}</span>

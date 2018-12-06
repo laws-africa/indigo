@@ -1,0 +1,26 @@
+.task-badge {
+  font-size: 100%;
+  color: $white;
+  padding: 0.4em;
+}
+
+.task-badge-open {
+  background-color: $primary;
+}
+
+.task-badge-done {
+  background-color: $success;
+}
+
+.task-badge-pending_review {
+  background-color: $orange;
+}
+
+.task-badge-cancelled {
+  background-color: $grey;
+}
+
+.task-icon-open:before { content: "\f08d"; }
+.task-icon-done:before { content: "\f00c"; }
+.task-icon-pending_review:before { content: "\f128"; }
+.task-icon-cancelled:before { content: "\f00d"; }

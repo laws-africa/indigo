@@ -58,16 +58,15 @@
               </script>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6 document-details">
               <label for="{{ form.document.id_for_label }}">Point in time</label>
-              <input type="hidden" name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" value="{{ form.document.value|default:'' }}">
-              <div class="document-details"></div>
 
-              <script id="task-document-template" type="text/x-handlebars-template">
-              {% verbatim %}
-              ?
-              {% endverbatim %}
-              </script>
+              <select name="{{ form.document.name }}" id="{{ form.document.id_for_label }}" class="form-control">
+                <option>(none)</option>
+                {% if form.document.value %}
+                  <option selected value="{{ form.document.value }}">{{ form.document.expression_date|date:'Y-m-d' }}</option>
+                {% endif %}
+              </select>
             </div>
           </div>
 

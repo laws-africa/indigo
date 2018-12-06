@@ -21,7 +21,6 @@
       'click .delete-work': 'deleteWork',
     },
     workTemplate: '#task-work-template',
-    documentTemplate: '#task-document-template',
     bindings: {
       '#id_work': {
         observe: 'work',
@@ -45,13 +44,33 @@
         document: document,
       });
       this.workTemplate = Handlebars.compile($(this.workTemplate).html());
-      this.documentTemplate = Handlebars.compile($(this.documentTemplate).html());
       this.country = Indigo.Preloads.country_code;
       this.locality = Indigo.Preloads.locality_code;
+
+      this.documents = new Indigo.Library({
+        comparator: function(a, b) {
+          // most recent expression first
+          return -(a.get('expression_date') || '').localeCompare(b.get('expression_date'));
+        },
+      });
+      this.documents.params.country = this.country;
+      this.documents.params.locality = this.locality;
+
+      this.listenTo(this.model, 'change:work', this.workChanged);
       this.listenTo(this.model, 'change', this.render);
+      this.listenTo(this.documents, 'reset', this.render);
 
       this.stickit();
+      this.workChanged();
       this.render();
+    },
+
+    workChanged: function() {
+      if (this.model.get('work')) {
+        this.documents.setParams({frbr_uri: this.model.get('work').get('frbr_uri')});
+      } else {
+        this.documents.reset([]);
+      }
     },
 
     deleteWork: function(e) {
@@ -84,9 +103,28 @@
       var model = this.model.toJSON();
       model.work = model.work ? model.work.toJSON() : null;
       model.document = model.document ? model.document.toJSON() : null;
-
       this.$('.work-details').html(this.workTemplate(model));
-      this.$('.document-details').html(this.documentTemplate(model));
+
+      if (this.documents.length > 0) {
+        this.$('.document-details').show();
+      } else {
+        this.$('.document-details').hide();
+      }
+
+      var $select = $('#id_document').empty();
+      var opt = document.createElement('option');
+      opt.innerText = '(none)';
+      opt.setAttribute('value', '');
+      opt.selected = !model.document;
+      $select.append(opt);
+
+      this.documents.each(function(doc) {
+        var opt = document.createElement('option');
+        opt.setAttribute('value', doc.get('id'));
+        opt.innerText = '@ ' + doc.get('expression_date') + ' · ' + doc.get('language');
+        opt.selected = doc.get('id') == (model.document ? model.document.id : null);
+        $select.append(opt);
+      });
     },
   });
 })(window);

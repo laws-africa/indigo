@@ -931,7 +931,7 @@ class Task(models.Model):
 
     def clean(self):
         # enforce that any work and/or document are for the correct place
-        if self.document and (self.document.country != self.country or self.document.locality != self.locality):
+        if self.document and self.document.work != self.work:
             self.document = None
 
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):

@@ -20,11 +20,16 @@
 
   <div class="card mt-3">
     <div class="card-body">
-      {% if task.work %}
-      <div class="mb-2">
-        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
-        <span class="text-muted">{{ task.work.frbr_uri }}</span>
-      </div>
+      {% if task.document %}
+        <div class="mb-2">
+          <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+          <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+        </div>
+      {% elif task.work %}
+        <div class="mb-2">
+          <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+          <span class="text-muted">{{ task.work.frbr_uri }}</span>
+        </div>
       {% endif %}
 
       <p>{{ task.description }}</p>

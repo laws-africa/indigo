@@ -16,9 +16,14 @@
           <div class="list-group-item p-3">
             <div>
               <a href="{{ task.pk }}/">{{ task.title }}</a>
-              {% if task.work %}
+              {% if task.document %}
                 <div>
-                  <a href="/works{{ task.work.frbr_uri }}/" class="text-muted">{{ task.work.title }}</a><br>
+                  <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+                  <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+                </div>
+              {% elif task.work %}
+                <div>
+                  <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted">{{ task.work.title }}</a><br>
                   <span class="text-muted">{{ task.work.frbr_uri }}</span>
                 </div>
               {% endif %}

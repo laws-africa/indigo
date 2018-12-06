@@ -48,7 +48,7 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    fields = ['title', 'work', 'description']
+    fields = ['title', 'description', 'work', 'document']
     model = Task
 
     tab = 'tasks'
@@ -75,7 +75,7 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
     check_country_perms = False
 
     context_object_name = 'task'
-    fields = ['title', 'description', 'work']
+    fields = ['title', 'description', 'work', 'document']
     model = Task
     tab = 'tasks'
 
@@ -89,6 +89,11 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
         if self.object.work:
             work = json.dumps(WorkSerializer(instance=self.object.work, context={'request': self.request}).data)
         context['work_json'] = work
+
+        document = None
+        if self.object.document:
+            document = json.dumps(DocumentSerializer(instance=self.object.document, context={'request': self.request}).data)
+        context['document_json'] = document
 
         return context
 

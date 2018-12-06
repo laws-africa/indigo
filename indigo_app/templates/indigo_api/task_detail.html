@@ -5,9 +5,11 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
+  {% if not task.state == 'done' and not task.state == 'cancelled' %}
   <div class="float-right">
     <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
   </div>
+  {% endif %}
 
   <div class="d-flex">
     <div class="float-left mr-3 text-center">
@@ -42,20 +44,28 @@
       <form method="POST">
         {% csrf_token %}
 
-        {% if not task.state == 'cancelled' %}
-          <button class="btn btn-danger" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'task_cancel' place=place.place_code pk=task.pk %}">Cancel task</button>
+        {% if task.state == 'open' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
         {% endif %}
 
-        {% if not task.state == 'open' %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'task_reopen' place=place.place_code pk=task.pk %}">Reopen</button>
+        {% if task.state == 'open' or task.state == 'pending_review' %}
+          <button class="btn btn-danger" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
         {% endif %}
 
-        {% if not task.state == 'pending' %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'task_submit' place=place.place_code pk=task.pk %}">Submit for review</button>
+        {% if task.state == 'cancelled' or task.state == 'done' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
         {% endif %}
 
-        {% if not task.state == 'closed' %}
-          <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'task_done' place=place.place_code pk=task.pk %}">All done</button>
+        {% if task.state == 'pending_review' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
+        {% endif %}
+
+        {% if task.state == 'cancelled' or task.state == 'done' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to move this task back to being reviewed?" formaction="{% url 'resubmit_task' place=place.place_code pk=task.pk %}">Resubmit for review</button>
+        {% endif %}
+
+        {% if task.state == 'pending_review' %}
+          <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
         {% endif %}
       </form>
 

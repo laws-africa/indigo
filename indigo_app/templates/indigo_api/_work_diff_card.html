@@ -1,11 +1,11 @@
-{% load account %}
+{% load indigo_app %}
 
 <div class="card mb-3">
   <div class="card-body">
     <a href="#changes-{{ version.id }}" data-toggle="collapse" class="float-right">{{ version.changes|length }} change{{ version.changes|length|pluralize}}</a>
     <div>
       <span class="time-ago" data-timestamp="{{ version.revision.date_created|date:'c' }}">{{ version.revision.date_created|date:"Y-m-d H:i" }}</span>
-      by {% user_display version.revision.user %}
+      by {% user_profile version.revision.user %}
       {% if version.revision.comment %}
         <span class="text-muted">· {{ version.revision.comment }}</span>
       {% endif %}

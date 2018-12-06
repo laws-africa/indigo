@@ -13,29 +13,35 @@
     <div class="card">
       <div class="list-group list-group-flush">
         {% for task in tasks %}
-          <div class="list-group-item p-3">
-            <div>
-              <a href="{{ task.pk }}/">{{ task.title }}</a>
-              {% if task.document %}
-                <div>
-                  <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-                  <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
-                </div>
-              {% elif task.work %}
-                <div>
-                  <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted">{{ task.work.title }}</a><br>
-                  <span class="text-muted">{{ task.work.frbr_uri }}</span>
-                </div>
-              {% endif %}
+          <div class="list-group-item p-3 d-flex align-items-center">
+            <div class="col text-center">
+              <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+              <span class="text-muted">#{{ task.pk }}</span>
             </div>
-            <div class="text-muted">
-              <span class="badge badge-secondary mr-1">{{ task.state }}</span>
-              <small>
-                #{{ task.id }} created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
-                {% if task.created_by %}
-                by {% user_display task.created_by %}
+
+            <div class="col flex-fill">
+              <div>
+                <a href="{{ task.pk }}/">{{ task.title }}</a>
+                {% if task.document %}
+                  <div>
+                    <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+                    <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+                  </div>
+                {% elif task.work %}
+                  <div>
+                    <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted">{{ task.work.title }}</a><br>
+                    <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                  </div>
                 {% endif %}
-              </small>
+              </div>
+              <div class="text-muted">
+                <small>
+                  Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+                  {% if task.created_by %}
+                  by {% user_display task.created_by %}
+                  {% endif %}
+                </small>
+              </div>
             </div>
           </div>
         {% endfor %}

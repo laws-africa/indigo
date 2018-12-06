@@ -5,7 +5,7 @@ from django.dispatch import receiver
 
 from rest_framework.authtoken.models import Token
 
-from indigo_api.models import Country, Locality, Work, Document
+from indigo_api.models import Country
 
 
 class Editor(models.Model):

@@ -1,4 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
+{% load humanize account %}
 
 {% block title %}{{ task.title }}{% endblock %}
 
@@ -10,10 +11,14 @@
 
   <h5>
     {{ task.title }}
-    <span class="badge badge-secondary">{{ task.state }}</span>
+    <span class="text-muted">#{{ task.id }}</span>
   </h5>
+  <div>
+    <span class="h4 mr-2"><span class="badge badge-secondary">{{ task.state }}</span></span>
+    {% user_display task.created_by %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+  </div>
 
-  <div class="card mt-4">
+  <div class="card mt-3">
     <div class="card-body">
 
       {% if task.description %}

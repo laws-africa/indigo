@@ -13,14 +13,15 @@
     <div class="card">
       <div class="list-group list-group-flush">
         {% for task in tasks %}
-          <div class="list-group-item p-2">
+          <div class="list-group-item p-3">
             <div>
               <a href="{{ task.pk }}/">{{ task.title }}</a>
               {% if task.work %} – <a href="/works{{ task.work.frbr_uri }}/">{{ task.work.title }}</a>{% endif %}
             </div>
-            <div>
-              <small class="text-muted">
-                Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+            <div class="text-muted">
+              <span class="badge badge-secondary mr-1">{{ task.state }}</span>
+              <small>
+                #{{ task.id }} created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
                 {% if task.created_by %}
                 by {% user_display task.created_by %}
                 {% endif %}

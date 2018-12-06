@@ -11,13 +11,16 @@
   </div>
   {% endif %}
 
-  <h5>
-    {{ task.title }}
-    <span class="text-muted">#{{ task.id }}</span>
-  </h5>
-  <div>
-    <span class="h4 mr-2"><span class="badge badge-secondary">{{ task.state }}</span></span>
-    {% user_display task.created_by %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+  <div class="d-flex">
+    <div class="float-left mr-3 text-center">
+      <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+      <span class="text-muted">#{{ task.pk }}</span>
+    </div>
+
+    <div class="float-left">
+      <h5>{{ task.title }}</h5>
+      {% user_display task.created_by %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+    </div>
   </div>
 
   <div class="card mt-3">

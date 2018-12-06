@@ -278,6 +278,7 @@ REST_FRAMEWORK = {
 SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')
 INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
 INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
+INDIGO_USER_PROFILE_URL = 'indigo_social:user_profile'
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s %s' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))

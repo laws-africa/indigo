@@ -1,5 +1,5 @@
 {% extends "main.html" %}
-{% load account %}
+{% load indigo_app %}
 
 {% block title%}Contributors {{ block.super }}{% endblock %}
 {% block breadcrumbs %}
@@ -15,9 +15,7 @@
     {% for userprofile in object_list %}
       <div class="card">
         <div class="card-header">
-          <h4>
-            <a href="{% url 'indigo_social:user_profile' username=userprofile.user.username %}">{% user_display userprofile.user %}</a>
-          </h4>
+          <h4>{% user_profile userprofile.user %}</h4>
         </div>
         <div class="card-body">
           {% if userprofile.bio %}{{ userprofile.bio|default:'' | linebreaks }}{% endif %}

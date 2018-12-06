@@ -57,4 +57,15 @@
 
   </form>
 
+{% include 'indigo_api/_work_chooser_modal.html' %}
+
+{% endblock %}
+
+
+{% block js %}
+  {{ block.super }}
+
+  <script type="text/javascript">
+  window.Indigo.countries = {{ indigo_countries_json|safe }};
+  </script>
 {% endblock %}

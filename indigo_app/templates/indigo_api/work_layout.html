@@ -87,14 +87,8 @@
 {% block js %}
   {{ block.super }}
 
-  {# include the document as JSON #}
   <script type="text/javascript">
-  // inject country code-to-name mappings into JS
-  {% if countries_json %}
-  window.Indigo.countries = {{ countries_json|safe }};
-  {% endif %}
-  window.Indigo.Preloads.country_code = '{{ work.country.code }}';
+  window.Indigo.countries = {{ indigo_countries_json|safe }};
   window.Indigo.Preloads.work = {{ work_json|safe }};
   </script>
-
 {% endblock %}

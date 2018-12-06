@@ -929,6 +929,14 @@ class Task(models.Model):
     def place_code(self):
         return self.country.code + '-' + self.locality.code if self.locality else self.country.code
 
+    def clean(self):
+        # enforce that any work and/or document are for the correct place
+        if self.document and (self.document.country != self.country or self.document.locality != self.locality):
+            self.document = None
+
+        if self.work and (self.work.country != self.country or self.work.locality != self.locality):
+            self.work = None
+
 
 class Workflow(models.Model):
     title = models.CharField(max_length=256, null=False, blank=False)

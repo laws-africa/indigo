@@ -64,6 +64,10 @@
 
 
 {% block main-header-title %}
+<div class="float-right">
+  <a href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}" class="btn btn-success">Create task</a>
+</div>
+
 <h5 class="main-header-title"><span class="work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</span> <span class="badge badge-info if-repealed">repealed</span></h5>
 {% endblock %}
 
@@ -87,14 +91,8 @@
 {% block js %}
   {{ block.super }}
 
-  {# include the document as JSON #}
   <script type="text/javascript">
-  // inject country code-to-name mappings into JS
-  {% if countries_json %}
-  window.Indigo.countries = {{ countries_json|safe }};
-  {% endif %}
-  window.Indigo.Preloads.country_code = '{{ work.country.code }}';
+  window.Indigo.countries = {{ indigo_countries_json|safe }};
   window.Indigo.Preloads.work = {{ work_json|safe }};
   </script>
-
 {% endblock %}

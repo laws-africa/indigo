@@ -1,42 +1,7 @@
-{% extends "place/layout.html" %}
+{% extends "place/tabbed_layout.html" %}
 
 {% block title %}{{ locality.name|default:country.name }}{% endblock %}
 {% block view-id %}library-view{% endblock %}
-
-{% block main-header-title %}
-  <div class="d-flex">
-    <div class="flex-grow-1">
-      {{ block.super }}
-    </div>
-
-    <div>
-      <div class="btn-toolbar">
-        <div class="dropdown">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change country</button>
-          <div class="dropdown-menu">
-            {% for ctry in indigo_countries %}
-            <a class="dropdown-item" href="{% url 'place' place=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
-            {% endfor %}
-          </div>
-        </div>
-
-        {% with country.localities.all as locs %}
-        {% if locs %}
-        <div class="dropdown ml-2">
-          <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{% if locality %}Change locality{% else %}Choose locality{% endif %}</button>
-          <div class="dropdown-menu">
-            {% for loc in locs %}
-            <a class="dropdown-item" href="{% url 'place' place=loc.place_code %}">{{ loc.name }} · {{ loc.code }}</a>
-            {% endfor %}
-          </div>
-        </div>
-        {% endif %}
-        {% endwith %}
-
-      </div>
-    </div>
-  </div>
-{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">
@@ -92,6 +57,7 @@
     <div id="library"></div>
   </div>
 </div>
+
 {% endblock %}
 
 {% block js %}
@@ -171,14 +137,7 @@
 </script>
 
 <script type="text/javascript">
-// inject country code-to-name mappings into JS
-window.Indigo.countries = {{ countries_json|safe }};
-
-// include the documents as JSON
-window.Indigo.Preloads.country_code = '{{ country.code }}';
-{% if locality %}
-window.Indigo.Preloads.locality_code = '{{ locality.code }}';
-{% endif %}
+window.Indigo.countries = {{ indigo_countries_json|safe }};
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 </script>

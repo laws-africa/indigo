@@ -1,24 +1,31 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load indigo_app humanize %}
 
 {% block main-header-title %}{% endblock %}
 
 {% block work-content %}
 
-  {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-    <div class="float-right">
+  <div class="float-right">
+    {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
+      <a class="btn btn-success" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">Create task</a>
       <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit work</a>
-    </div>
-  {% endif %}
+    {% endif %}
+  </div>
 
   <h3>{{ work.title }}</h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
   {% block country %}
   <div class="mb-3">
-    <p>
+    <div class="float-right">
+      {% if work.updated_by_user %}{% user_profile work.updated_by_user %} u{% else %}U{% endif %}pdated {{ work.updated_at|naturaltime }} 
+      ·
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">recent changes</a>
+    </div>
+    <div>
       {{ country.name }} · {{ country.code }}
       {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
-    </p>
+    </div>
   </div>
   {% endblock %}
 
@@ -150,20 +157,4 @@
     </li>
   </ol>
   {% endblock %}
-
-  {% block versions %}
-  {% if versions %}
-    <h4 class="mt-5">Recent changes</h4>
-
-    {% for ver in versions %}
-      {% include 'indigo_api/_work_diff_card.html' with version=ver current=forloop.first %}
-    {% endfor %}
-
-    <div>
-      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All changes</a>
-    </div>
-
-  {% endif %}
-  {% endblock %}
-
 {% endblock %}

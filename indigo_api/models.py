@@ -1,3 +1,4 @@
+# coding=utf-8
 import os
 import logging
 import re
@@ -13,6 +14,9 @@ from django.contrib.postgres.search import SearchVectorField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
+
+from django_fsm import FSMField, transition, signals as fsm_signals
+
 import arrow
 from taggit.managers import TaggableManager
 import reversion.revisions
@@ -899,3 +903,97 @@ class DocumentActivity(models.Model):
     def vacuum(cls, document):
         threshold = timezone.now() - datetime.timedelta(seconds=cls.DEAD_SECS)
         cls.objects.filter(document=document, updated_at__lte=threshold).delete()
+
+
+class Task(models.Model):
+
+    class Meta:
+        permissions = (
+            ('submit_task', 'Can submit an open task for review'),
+            ('cancel_task', 'Can cancel a task that is open or has been submitted for review'),
+            ('reopen_task', 'Can reopen a task that is closed or cancelled'),
+            ('unsubmit_task', 'Can reopen a task that has been submitted for review'),
+            ('close_task', 'Can close a task that has been submitted for review'),
+        )
+
+    title = models.CharField(max_length=256, null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
+
+    country = models.ForeignKey(Country, related_name='tasks', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    work = models.ForeignKey(Work, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+    document = models.ForeignKey(Document, related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
+
+    # cf indigo_api.models.Annotation
+    anchor_id = models.CharField(max_length=128, null=True, blank=True)
+
+    state = FSMField(default='open')
+
+    assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+
+    created_by = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def place_code(self):
+        return self.country.code + '-' + self.locality.code if self.locality else self.country.code
+
+
+    def clean(self):
+        # enforce that any work and/or document are for the correct place
+        if self.document and self.document.work != self.work:
+            self.document = None
+
+        if self.work and (self.work.country != self.country or self.work.locality != self.locality):
+            self.work = None
+
+    # submit for review
+    def may_submit(self, view):
+        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.submit_task')
+
+    @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
+    def submit(self):
+        pass
+
+    # cancel
+    def may_cancel(self, view):
+        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.cancel_task')
+
+    @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
+    def cancel(self):
+        pass
+
+    # reopen – moves back to 'open'
+    def may_reopen(self, view):
+        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
+
+    @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
+    def reopen(self):
+        pass
+
+    # unsubmit – moves back to 'open'
+    def may_unsubmit(self, view):
+        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.unsubmit_task')
+
+    @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
+    def unsubmit(self):
+        pass
+
+    # close
+    def may_close(self, view):
+        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.close_task')
+
+    @transition(field=state, source=['pending_review'], target='done', permission=may_close)
+    def close(self):
+        pass
+
+
+
+class Workflow(models.Model):
+    title = models.CharField(max_length=256, null=False, blank=False)
+    description = models.TextField(null=True, blank=True)
+
+    tasks = models.ManyToManyField(Task, related_name='workflows')

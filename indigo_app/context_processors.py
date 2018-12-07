@@ -21,9 +21,12 @@ def models(request):
     """
     from indigo_api.models import Country, Language
 
+    countries = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country')
+
     return {
         'indigo_languages': Language.objects.select_related('language').prefetch_related('language'),
-        'indigo_countries': Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country'),
+        'indigo_countries': countries,
+        'indigo_countries_json': json.dumps({c.code: c.as_json() for c in countries}),
     }
 
 

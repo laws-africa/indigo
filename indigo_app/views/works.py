@@ -57,12 +57,12 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
     # permissions
     permission_required = ('indigo_api.view_work',)
     check_country_perms = False
+    tab = 'works'
 
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)
 
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
-        context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
 
         serializer = DocumentSerializer(context={'request': self.request}, many=True)
         docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
@@ -115,7 +115,6 @@ class AbstractWorkDetailView(PlaceBasedView, AbstractAuthedIndigoView, DetailVie
 
         # TODO do this in a better place
         context['countries'] = Country.objects.select_related('country').prefetch_related('localities', 'publication_set', 'country').all()
-        context['countries_json'] = json.dumps({c.code: c.as_json() for c in context['countries']})
         context['subtypes'] = Subtype.objects.order_by('name').all()
 
         return context
@@ -194,13 +193,6 @@ class DeleteWorkView(AbstractWorkDetailView, DeleteView):
 class WorkOverviewView(AbstractWorkDetailView):
     js_view = ''
     template_name_suffix = '_overview'
-
-    def get_context_data(self, **kwargs):
-        context = super(WorkOverviewView, self).get_context_data(**kwargs)
-
-        context['versions'] = decorate_versions(self.work.versions()[:3])
-
-        return context
 
 
 class WorkAmendmentsView(AbstractWorkDetailView):

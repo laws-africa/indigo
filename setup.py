@@ -51,6 +51,7 @@ setup(
         'django-cors-headers>1.3.1',
         'django-countries-plus==1.1',  # 1.2 breaks migrations
         'django-filter>=1.0,<2',
+        'django-fsm>=2.6.0',
         'django-languages-plus==0.1.5',  # 1.x doesn't play with django-countries-plus < 1.2
         'django-pipeline>=1.6.11',
         'django-recaptcha>=1.4.0',

@@ -259,22 +259,28 @@ class ContributorBadge(PermissionBadge):
     slug = 'contributor'
     name = 'Contributor'
     description = 'Can view work details'
-    permissions = ('indigo_api.view_work', 'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation')
+    permissions = ('indigo_api.view_work',
+                   'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
+                   'indigo_api.add_task')
 
 
 class DrafterBadge(PermissionBadge):
     slug = 'drafter'
     name = 'Drafter'
     description = 'Can create new works and edit the details of existing works'
-    permissions = ('indigo_api.add_work', 'indigo_api.change_work', 'indigo_api.add_document', 'indigo_api.change_document',
-                   'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',)
+    permissions = ('indigo_api.add_work', 'indigo_api.change_work',
+                   'indigo_api.add_document', 'indigo_api.change_document',
+                   'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
+                   'indigo_api.submit_task', 'indigo_api.reopen_task')
 
 
 class SeniorDrafterBadge(PermissionBadge):
     slug = 'senior-drafter'
     name = 'Senior Drafter'
     description = 'Can review work tasks and delete documents and works'
-    permissions = ('indigo_api.delete_work', 'indigo_api.review_work', 'indigo_api.review_document', 'indigo_api.delete_document')
+    permissions = ('indigo_api.delete_work', 'indigo_api.review_work',
+                   'indigo_api.review_document', 'indigo_api.delete_document',
+                   'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task')
 
 
 badges.register(ContributorBadge)

@@ -186,3 +186,27 @@ body.is-staff {
   position: sticky;
   top: 75px;
 }
+
+.tabbed-header {
+  padding-bottom: 0px;
+  background-color: $gray-100;
+  border-bottom: 1px solid $gray-300;
+
+  .nav-tabs {
+    border-bottom: 0px;
+
+    .nav-link:hover {
+      border-color: transparent transparent $gray-300 transparent;
+    }
+
+    .nav-link.active {
+      background-color: $body-bg-color;
+      border-bottom-color: $body-bg-color;
+
+      &:hover {
+        border-color: $gray-300;
+        border-color: $gray-300 $gray-300 $body-bg-color $gray-300;
+      }
+    }
+  }
+}

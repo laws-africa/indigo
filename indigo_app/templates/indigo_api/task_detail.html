@@ -1,0 +1,71 @@
+{% extends "place/tabbed_layout.html" %}
+{% load humanize indigo_app %}
+
+{% block title %}{{ task.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  {% if not task.state == 'done' and not task.state == 'cancelled' %}
+  <div class="float-right">
+    <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
+  </div>
+  {% endif %}
+
+  <div class="d-flex">
+    <div class="float-left mr-3 text-center">
+      <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+      <span class="text-muted">#{{ task.pk }}</span>
+    </div>
+
+    <div class="float-left">
+      <h5>{{ task.title }}</h5>
+      {% user_profile task.created_by %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-body">
+      {% if task.document %}
+        <div class="mb-2">
+          <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+          <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+        </div>
+      {% elif task.work %}
+        <div class="mb-2">
+          <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+          <span class="text-muted">{{ task.work.frbr_uri }}</span>
+        </div>
+      {% endif %}
+
+      <p>{{ task.description }}</p>
+    </div>
+
+    <div class="card-footer text-right">
+      <form method="POST">
+        {% csrf_token %}
+
+        {% if task.state == 'open' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
+        {% endif %}
+
+        {% if task.state == 'open' or task.state == 'pending_review' %}
+          <button class="btn btn-danger" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
+        {% endif %}
+
+        {% if task.state == 'cancelled' or task.state == 'done' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
+        {% endif %}
+
+        {% if task.state == 'pending_review' %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
+        {% endif %}
+
+        {% if task.state == 'pending_review' %}
+          <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
+        {% endif %}
+      </form>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

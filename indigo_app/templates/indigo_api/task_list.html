@@ -1,0 +1,74 @@
+{% extends "place/tabbed_layout.html" %}
+{% load humanize indigo_app %}
+
+{% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  <div class="d-flex justify-content-end mb-3">
+    <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
+  </div>
+
+  {% if tasks %}
+    <div class="card">
+      <div class="list-group list-group-flush">
+        {% for task in tasks %}
+          <div class="list-group-item p-3 d-flex align-items-center">
+            <div class="col text-center">
+              <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+              <span class="text-muted">#{{ task.pk }}</span>
+            </div>
+
+            <div class="col flex-fill">
+              <div>
+                <a href="{{ task.pk }}/">{{ task.title }}</a>
+                {% if task.document %}
+                  <div>
+                    <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+                    <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+                  </div>
+                {% elif task.work %}
+                  <div>
+                    <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted">{{ task.work.title }}</a><br>
+                    <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                  </div>
+                {% endif %}
+              </div>
+              <div class="text-muted">
+                <small>
+                  Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+                  {% if task.created_by %}
+                  by {% user_profile task.created_by %}
+                  {% endif %}
+                </small>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  {% endif %}
+
+  {% if is_paginated %}
+    <nav class="mt-3">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+
+        {% for num in paginator.page_range %}
+        <li class="page-item {% if num == page_obj.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+
+  {% if not tasks %}
+    <p class="alert alert-info">There are no tasks for {{ place }}.</p>
+  {% endif %}
+</div>
+{% endblock %}

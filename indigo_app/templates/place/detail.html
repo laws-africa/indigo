@@ -74,7 +74,7 @@
           <span class="text-muted fa fa-fw fa-caret-right collapse-indicator"></span>
         </div>
 
-        <div class="float-left col-8">
+        <div class="float-left col-7">
           <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
           <span class="text-muted">{{ frbr_uri }}</span>
         </div>
@@ -88,6 +88,12 @@
           {{/if}}
         </div>
 
+        <div class="float-left col-1">
+          {{#if n_annotations}}
+          <i class="far fa-comments"></i> {{ n_annotations }}
+          {{/if}}
+        </div>
+ 
         <div class="float-right col-2">
           <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
           <span class="text-muted">
@@ -105,7 +111,8 @@
             <div class="float-left col-2">
               <a href="/documents/{{ id }}">@ {{ expression_date }} · {{ language }}</a>
             </div>
-            <div class="float-left col-8">
+
+            <div class="float-left col-7">
               {{#if draft}}
                 <i class="fa fa-fw fa-circle draft" title="draft"></i>
               {{else}}
@@ -113,6 +120,13 @@
               {{/if}}
               {{ title }}
             </div>
+
+            <div class="float-left col-1">
+              {{#if n_annotations}}
+              <i class="far fa-comments"></i> {{ n_annotations }}
+              {{/if}}
+            </div>
+
             <div class="float-right col-2">
               <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
               {{#if updated_by_user.display_name}}– {{ updated_by_user.display_name }}{{/if}}
@@ -140,5 +154,6 @@
 window.Indigo.countries = {{ indigo_countries_json|safe }};
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
+window.Indigo.Preloads.document_annotations = {{ annotations_json|safe }};
 </script>
 {% endblock %}

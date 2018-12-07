@@ -19,7 +19,7 @@
 
     <div class="float-left">
       <h5>{{ task.title }}</h5>
-      {% user_profile task.created_by %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+      {% user_profile task.created_by_user %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
     </div>
   </div>
 

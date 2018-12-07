@@ -37,8 +37,8 @@
               <div class="text-muted">
                 <small>
                   Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
-                  {% if task.created_by %}
-                  by {% user_profile task.created_by %}
+                  {% if task.created_by_user %}
+                  by {% user_profile task.created_by_user %}
                   {% endif %}
                 </small>
               </div>

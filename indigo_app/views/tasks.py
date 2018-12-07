@@ -62,7 +62,7 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
         task = Task()
         task.country = self.country
         task.locality = self.locality
-        task.created_by = self.request.user
+        task.created_by_user = self.request.user
 
         if self.request.GET.get('frbr_uri'):
             # pre-load a work
@@ -137,7 +137,7 @@ class TaskChangeStateView(AbstractAuthedIndigoView, PlaceBasedView, View, Single
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()
-        task.updated_by = self.request.user
+        task.updated_by_user = self.request.user
 
         if self.change == 'submit':
             if not has_transition_perm(task.submit, self):

@@ -1,5 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
-{% load humanize account %}
+{% load humanize indigo_app %}
 
 {% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
 
@@ -38,7 +38,7 @@
                 <small>
                   Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
                   {% if task.created_by %}
-                  by {% user_display task.created_by %}
+                  by {% user_profile task.created_by %}
                   {% endif %}
                 </small>
               </div>

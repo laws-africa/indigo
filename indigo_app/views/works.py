@@ -12,6 +12,7 @@ from django.views.generic.list import MultipleObjectMixin
 from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
+from django.db.models import Count
 from reversion import revisions as reversion
 from cobalt.act import FrbrUri
 import datetime
@@ -19,7 +20,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Country, Document
+from indigo_api.models import Subtype, Work, Amendment, Country, Document, Annotation
 from indigo_api.serializers import WorkSerializer, DocumentSerializer, AttachmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 from indigo_api.views.works import WorkViewSet
@@ -71,6 +72,18 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
         serializer = WorkSerializer(context={'request': self.request}, many=True)
         works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
         context['works_json'] = json.dumps(serializer.to_representation(works))
+
+        # map from document id to count of open annotations
+        annotations = Annotation.objects.values('document_id')\
+            .filter(closed=False)\
+            .filter(document__deleted=False)\
+            .annotate(n_annotations=Count('document_id'))\
+            .filter(document__work__country=self.country)
+        if self.locality:
+            annotations = annotations.filter(document__work__locality=self.locality)
+
+        annotations = {x['document_id']: {'n_annotations': x['n_annotations']} for x in annotations}
+        context['annotations_json'] = json.dumps(annotations)
 
         return context
 

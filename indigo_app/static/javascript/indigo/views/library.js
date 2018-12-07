@@ -336,6 +336,7 @@
         var currentUserId = Indigo.user.get('id');
 
         work = work.toJSON();
+        work.n_annotations = 0;
 
         var work_docs = _.map(docs[work.id] || [], function(doc) {
           return doc.toJSON();
@@ -395,6 +396,9 @@
           if (work_doc.updated_by_user && work_doc.updated_by_user.id === currentUserId) {
             work_doc.updated_by_user.display_name = 'you';
           }
+
+          work_doc.n_annotations = (Indigo.Preloads.document_annotations[work_doc.id] || {}).n_annotations || 0;
+          work.n_annotations += work_doc.n_annotations;
         });
 
         // docs for this work

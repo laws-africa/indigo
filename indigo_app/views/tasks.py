@@ -25,7 +25,7 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 
 class TaskListView(TaskViewBase, ListView):
     # permissions
-    permission_required = ('indigo_api.view_work',)
+    permission_required = ('indigo_api.add_task',)
 
     context_object_name = 'tasks'
     paginate_by = 20
@@ -37,7 +37,7 @@ class TaskListView(TaskViewBase, ListView):
 
 class TaskDetailView(TaskViewBase, DetailView):
     # permissions
-    permission_required = ('indigo_api.view_work',)
+    permission_required = ('indigo_api.add_task',)
 
     context_object_name = 'task'
     model = Task
@@ -45,7 +45,8 @@ class TaskDetailView(TaskViewBase, DetailView):
 
 class TaskCreateView(TaskViewBase, CreateView):
     # permissions
-    permission_required = ('indigo_api.add_work',)
+    permission_required = ('indigo_api.add_task',)
+
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
@@ -58,7 +59,7 @@ class TaskCreateView(TaskViewBase, CreateView):
         task = Task()
         task.country = self.country
         task.locality = self.locality
-        task.created_by = self.request.user
+        task.created_by_user = self.request.user
 
         if self.request.GET.get('frbr_uri'):
             # pre-load a work
@@ -95,7 +96,7 @@ class TaskCreateView(TaskViewBase, CreateView):
 
 class TaskEditView(TaskViewBase, UpdateView):
     # permissions
-    permission_required = ('indigo_api.add_work',)
+    permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
     fields = ['title', 'description', 'work', 'document']
@@ -122,7 +123,7 @@ class TaskEditView(TaskViewBase, UpdateView):
 
 class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
     # permissions
-    permission_required = ('indigo_api.add_work',)
+    permission_required = ('indigo_api.change_task',)
 
     change = None
     http_method_names = [u'post']
@@ -130,7 +131,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()
-        task.updated_by = self.request.user
+        task.updated_by_user = self.request.user
 
         if self.change == 'submit':
             if not has_transition_perm(task.submit, self):

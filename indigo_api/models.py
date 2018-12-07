@@ -931,8 +931,8 @@ class Task(models.Model):
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
 
-    created_by = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    updated_by = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -940,7 +940,6 @@ class Task(models.Model):
     @property
     def place_code(self):
         return self.country.code + '-' + self.locality.code if self.locality else self.country.code
-
 
     def clean(self):
         # enforce that any work and/or document are for the correct place
@@ -989,7 +988,6 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self):
         pass
-
 
 
 class Workflow(models.Model):

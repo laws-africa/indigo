@@ -96,7 +96,7 @@ class TaskCreateView(TaskViewBase, CreateView):
 
 class TaskEditView(TaskViewBase, UpdateView):
     # permissions
-    permission_required = ('indigo_api.add_task',)
+    permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
     fields = ['title', 'description', 'work', 'document']
@@ -123,7 +123,7 @@ class TaskEditView(TaskViewBase, UpdateView):
 
 class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
     # permissions
-    permission_required = ('indigo_api.add_task',)
+    permission_required = ('indigo_api.change_task',)
 
     change = None
     http_method_names = [u'post']

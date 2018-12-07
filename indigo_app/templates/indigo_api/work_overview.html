@@ -5,11 +5,12 @@
 
 {% block work-content %}
 
-  {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
-    <div class="float-right">
+  <div class="float-right">
+    {% if perms.indigo_api.change_work or not work and perms.indigo_api.add_work %}
+      <a class="btn btn-success" href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}">Create task</a>
       <a class="btn btn-primary" href="{% url 'work_edit' frbr_uri=work.frbr_uri %}">Edit work</a>
-    </div>
-  {% endif %}
+    {% endif %}
+  </div>
 
   <h3>{{ work.title }}</h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>

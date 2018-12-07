@@ -94,7 +94,7 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
         return context
 
     def get_success_url(self):
-        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
 
 class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
@@ -108,7 +108,7 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
     tab = 'tasks'
 
     def get_success_url(self):
-        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
     def get_context_data(self, **kwargs):
         context = super(TaskEditView, self).get_context_data(**kwargs)

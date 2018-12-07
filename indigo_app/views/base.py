@@ -88,6 +88,11 @@ class PlaceBasedView(object):
         kwargs['place'] = self.place
         return super(PlaceBasedView, self).get_context_data(**kwargs)
 
+    def get_country(self):
+        place = self.kwargs['place']
+        country_code = place.split('-')[0]
+        return Country.objects.get(country_id=country_code.upper())
+
     def determine_place(self):
         parts = self.kwargs['place'].split('-', 1)
         country = parts[0]

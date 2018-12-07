@@ -194,13 +194,6 @@ class WorkOverviewView(AbstractWorkDetailView):
     js_view = ''
     template_name_suffix = '_overview'
 
-    def get_context_data(self, **kwargs):
-        context = super(WorkOverviewView, self).get_context_data(**kwargs)
-
-        context['versions'] = decorate_versions(self.work.versions()[:3])
-
-        return context
-
 
 class WorkAmendmentsView(AbstractWorkDetailView):
     template_name_suffix = '_amendments'

@@ -1,4 +1,5 @@
 {% extends "indigo_api/work_layout.html" %}
+{% load indigo_app humanize %}
 
 {% block main-header-title %}{% endblock %}
 
@@ -15,10 +16,15 @@
 
   {% block country %}
   <div class="mb-3">
-    <p>
+    <div class="float-right">
+      {% if work.updated_by_user %}{% user_profile work.updated_by_user %} u{% else %}U{% endif %}pdated {{ work.updated_at|naturaltime }} 
+      ·
+      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">recent changes</a>
+    </div>
+    <div>
       {{ country.name }} · {{ country.code }}
       {% if work.locality %} — {{ work.locality.name }} · {{ work.locality.code }}{% endif %}
-    </p>
+    </div>
   </div>
   {% endblock %}
 
@@ -150,20 +156,4 @@
     </li>
   </ol>
   {% endblock %}
-
-  {% block versions %}
-  {% if versions %}
-    <h4 class="mt-5">Recent changes</h4>
-
-    {% for ver in versions %}
-      {% include 'indigo_api/_work_diff_card.html' with version=ver current=forloop.first %}
-    {% endfor %}
-
-    <div>
-      <a href="{% url 'work_versions' frbr_uri=work.frbr_uri %}" class="btn btn-primary">All changes</a>
-    </div>
-
-  {% endif %}
-  {% endblock %}
-
 {% endblock %}

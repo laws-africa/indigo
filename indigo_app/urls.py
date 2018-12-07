@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView, TemplateView
 
-from .views import users, works, documents, tasks
+from .views import users, works, documents, tasks, places
 
 
 urlpatterns = [
@@ -16,7 +16,7 @@ urlpatterns = [
 
     url(r'^terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
 
-    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', works.PlaceDetailView.as_view(), name='place'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', places.PlaceDetailView.as_view(), name='place'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.TaskListView.as_view(), name='tasks'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/new$', tasks.TaskCreateView.as_view(), name='create_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/$', tasks.TaskDetailView.as_view(), name='task_detail'),
@@ -44,6 +44,6 @@ urlpatterns = [
 
     url(r'^documents/(?P<doc_id>\d+)/$', documents.DocumentDetailView.as_view(), name='document'),
 
-    url(r'^library/$', works.LibraryView.as_view()),
-    url(r'^library/(?P<country>[^\s/-]+)/$', works.LibraryView.as_view(), name='library'),
+    url(r'^library/$', places.LibraryView.as_view()),
+    url(r'^library/(?P<country>[^\s/-]+)/$', places.LibraryView.as_view(), name='library'),
 ]

@@ -34,14 +34,10 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
     raise_exception = True
     permission_required = ()
     must_accept_terms = True
-    check_country_perms = True
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated:
             return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
-
-        if not self.has_permission():
-            return self.handle_no_permission()
 
         if self.must_accept_terms and not request.user.editor.accepted_terms:
             # user must accept terms
@@ -49,30 +45,13 @@ class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
 
         return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
 
-    def has_permission(self):
-        return super(AbstractAuthedIndigoView, self).has_permission() and self.has_country_permission()
 
-    def has_country_permission(self):
-        if not self.check_country_perms:
-            return True
-
-        if self.request.method not in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            return True
-
-        if not hasattr(self, 'get_country'):
-            raise Exception("This request will change state and country permissions are required, "
-                            "but the view (%s) doesn't support get_country()" % self)
-
-        country = self.get_country()
-        if not country:
-            raise Exception("This request will change state and country permissions are required, "
-                            "but get_country returned None.")
-
-        return self.request.user.editor.has_country_permission(country)
-
-
-class PlaceBasedView(object):
+class PlaceViewBase(object):
     """ Views that are tied to a place, either a Country or a Locality.
+    This should be the first parent class for views with multiple parents.
+
+    The place is determined and set on the view right at the start of dispatch,
+    and `country`, `locality` and `place` set accordingly.
     """
     country = None
     locality = None
@@ -80,13 +59,13 @@ class PlaceBasedView(object):
 
     def dispatch(self, request, *args, **kwargs):
         self.determine_place()
-        return super(PlaceBasedView, self).dispatch(request, *args, **kwargs)
+        return super(PlaceViewBase, self).dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         kwargs['locality'] = self.locality
         kwargs['country'] = self.country
         kwargs['place'] = self.place
-        return super(PlaceBasedView, self).get_context_data(**kwargs)
+        return super(PlaceViewBase, self).get_context_data(**kwargs)
 
     def determine_place(self):
         parts = self.kwargs['place'].split('-', 1)
@@ -104,3 +83,16 @@ class PlaceBasedView(object):
                 raise Http404
 
         self.place = self.locality or self.country
+
+    def has_permission(self):
+        return super(PlaceViewBase, self).has_permission() and self.has_country_permission()
+
+    def has_country_permission(self):
+        if self.request.method not in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return True
+
+        if not self.country:
+            raise Exception("This request will change state and country permissions are required, "
+                            "but self.country is None.")
+
+        return self.request.user.editor.has_country_permission(self.country)

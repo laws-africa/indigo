@@ -13,48 +13,44 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from .base import AbstractAuthedIndigoView, PlaceBasedView
+from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_api.models import Task, Work
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 
-class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
+class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
+    tab = 'tasks'
+
+
+class TaskListView(TaskViewBase, ListView):
     # permissions
     permission_required = ('indigo_api.view_work',)
-    check_country_perms = False
 
     context_object_name = 'tasks'
     paginate_by = 20
     paginate_orphans = 4
 
-    tab = 'tasks'
-
     def get_queryset(self):
         return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
 
 
-class TaskDetailView(AbstractAuthedIndigoView, PlaceBasedView, DetailView):
+class TaskDetailView(TaskViewBase, DetailView):
     # permissions
     permission_required = ('indigo_api.view_work',)
-    check_country_perms = False
 
     context_object_name = 'task'
     model = Task
-    tab = 'tasks'
 
 
-class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
+class TaskCreateView(TaskViewBase, CreateView):
     # permissions
     permission_required = ('indigo_api.add_work',)
-    check_country_perms = False
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
     fields = ['title', 'description', 'work', 'document']
     model = Task
-
-    tab = 'tasks'
 
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
@@ -97,15 +93,13 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 
 
-class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
+class TaskEditView(TaskViewBase, UpdateView):
     # permissions
     permission_required = ('indigo_api.add_work',)
-    check_country_perms = False
 
     context_object_name = 'task'
     fields = ['title', 'description', 'work', 'document']
     model = Task
-    tab = 'tasks'
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
@@ -126,10 +120,9 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
         return context
 
 
-class TaskChangeStateView(AbstractAuthedIndigoView, PlaceBasedView, View, SingleObjectMixin):
+class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.add_work',)
-    check_country_perms = False
 
     change = None
     http_method_names = [u'post']

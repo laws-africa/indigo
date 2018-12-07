@@ -60,10 +60,6 @@
           <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
         {% endif %}
 
-        {% if task.state == 'cancelled' or task.state == 'done' %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to move this task back to being reviewed?" formaction="{% url 'resubmit_task' place=place.place_code pk=task.pk %}">Resubmit for review</button>
-        {% endif %}
-
         {% if task.state == 'pending_review' %}
           <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
         {% endif %}

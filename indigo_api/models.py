@@ -913,7 +913,6 @@ class Task(models.Model):
             ('cancel_task', 'Can cancel a task that is open or has been submitted for review'),
             ('reopen_task', 'Can reopen a task that is closed or cancelled'),
             ('unsubmit_task', 'Can reopen a task that has been submitted for review'),
-            ('resubmit_task', 'Can resubmit a task for review that has been cancelled or closed'),
             ('close_task', 'Can close a task that has been submitted for review'),
         )
 
@@ -981,14 +980,6 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self):
-        pass
-
-    # resubmit – moves back to 'pending_review'
-    def may_resubmit(self, view):
-        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.resubmit_task')
-
-    @transition(field=state, source=['cancelled', 'done'], target='pending_review', permission=may_resubmit)
-    def resubmit(self):
         pass
 
     # close

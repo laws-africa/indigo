@@ -159,11 +159,6 @@ class TaskChangeStateView(AbstractAuthedIndigoView, PlaceBasedView, View, Single
                 raise PermissionDenied
             task.unsubmit()
             messages.success(request, u"Task '%s' has been reopened" % task.title)
-        if self.change == 'resubmit':
-            if not has_transition_perm(task.resubmit, self):
-                raise PermissionDenied
-            task.resubmit()
-            messages.success(request, u"Task '%s' has been moved back to being reviewed" % task.title)
         if self.change == 'close':
             if not has_transition_perm(task.close, self):
                 raise PermissionDenied

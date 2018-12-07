@@ -397,6 +397,10 @@
     model: Indigo.Document,
     country: null,
 
+    initialize: function(options) {
+      this.params = (options || {}).params || {};
+    },
+
     url: function() {
       var url = '/api/documents';
       var params = _.clone(this.params || {});
@@ -407,7 +411,7 @@
 
       if (params) {
         url += '?' + _.map(params, function(val, key) {
-          return encodeURIComponent(key) + '=' + encodeURIComponent(val);
+          return encodeURIComponent(key) + '=' + encodeURIComponent(val === null ? '' : val);
         }).join('&');
       }
 

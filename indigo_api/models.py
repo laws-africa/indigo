@@ -942,6 +942,15 @@ class Task(models.Model):
     def place_code(self):
         return self.country.code + '-' + self.locality.code if self.locality else self.country.code
 
+
+    def clean(self):
+        # enforce that any work and/or document are for the correct place
+        if self.document and self.document.work != self.work:
+            self.document = None
+
+        if self.work and (self.work.country != self.country or self.work.locality != self.locality):
+            self.work = None
+
     # submit for review
     def may_submit(self, view):
         return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.submit_task')
@@ -989,6 +998,7 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self):
         pass
+
 
 
 class Workflow(models.Model):

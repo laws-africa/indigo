@@ -25,6 +25,30 @@
         }
     },
     {
+        "model": "countries_plus.country",
+        "pk": "NA",
+        "fields": {"iso3": "NAM",
+            "iso_numeric": 516,
+            "fips": "WA",
+            "name": "Namibia",
+            "capital": "Windhoek",
+            "area": "825418.00",
+            "population": 2128471,
+            "continent": "AF",
+            "tld": ".na",
+            "currency_code": "NAD",
+            "currency_symbol": "$",
+            "currency_name": "Dollar",
+            "phone": "264",
+            "postal_code_format": null,
+            "postal_code_regex": null,
+            "languages": "en-NA,af,de,hz,naq",
+            "geonameid": 3355338,
+            "neighbours": "ZA,BW,ZM,AO",
+            "equivalent_fips_code": null
+        }
+    },
+    {
         "model": "indigo_api.language",
         "pk": 1,
         "fields": {
@@ -53,6 +77,23 @@
             "country_id": 1,
             "name": "Johannesburg",
             "code": "jhb"
+        }
+    },
+    {
+        "model": "indigo_api.locality",
+        "pk": 2,
+        "fields": {
+            "country_id": 1,
+            "name": "Cape Town",
+            "code": "cpt"
+        }
+    },
+    {
+        "model": "indigo_api.country",
+        "pk": 2,
+        "fields": {
+            "country": "NA",
+            "primary_language": 1
         }
     }
 ]

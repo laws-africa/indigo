@@ -1,5 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
+import json
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -15,6 +16,7 @@ from django_fsm import has_transition_perm, get_available_user_FIELD_transitions
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
 from indigo_api.models import Task
+from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 
 class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
@@ -46,9 +48,10 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
     # permissions
     permission_required = ('indigo_api.add_work',)
     check_country_perms = False
+    js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    fields = ['title', 'work', 'description']
+    fields = ['title', 'description', 'work', 'document']
     model = Task
 
     tab = 'tasks'
@@ -75,12 +78,27 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
     check_country_perms = False
 
     context_object_name = 'task'
-    fields = ['title', 'work', 'document', 'description', 'assigned_to']
+    fields = ['title', 'description', 'work', 'document']
     model = Task
     tab = 'tasks'
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        context = super(TaskEditView, self).get_context_data(**kwargs)
+
+        work = None
+        if self.object.work:
+            work = json.dumps(WorkSerializer(instance=self.object.work, context={'request': self.request}).data)
+        context['work_json'] = work
+
+        document = None
+        if self.object.document:
+            document = json.dumps(DocumentSerializer(instance=self.object.document, context={'request': self.request}).data)
+        context['document_json'] = document
+
+        return context
 
 
 class TaskChangeStateView(AbstractAuthedIndigoView, PlaceBasedView, View, SingleObjectMixin):

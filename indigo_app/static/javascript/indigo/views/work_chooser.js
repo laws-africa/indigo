@@ -26,7 +26,10 @@
       this.searchableFields = ['title', 'year', 'number'];
 
       this.chosen = null;
-      this.filters = new Backbone.Model({country: options.country});
+      this.filters = new Backbone.Model({
+        country: options.country,
+        locality: options.locality,
+      });
 
       this.$el.on('keyup', '.work-chooser-search', _.debounce(_.bind(this.filterBySearch, this), 300));
 
@@ -37,6 +40,9 @@
       this.listenTo(this.filters, 'change', this.refresh);
 
       this.$el.find('.modal-title').text(options.title);
+
+      this.$el.find('.work-chooser-country').prop('disabled', options.disable_country);
+      this.$el.find('.work-chooser-locality').prop('disabled', options.disable_locality);
 
       this.refresh();
       this.updateLocalities();
@@ -106,6 +112,7 @@
 
     updateLocalities: function() {
       var country = this.filters.get('country'),
+          locality = this.filters.get('locality'),
           localities = _.clone(Indigo.countries[country].localities);
       var $select = this.$('select.work-chooser-locality')
         .empty()
@@ -131,6 +138,7 @@
         var opt = document.createElement('option');
         opt.setAttribute('value', loc.code);
         opt.innerText = loc.name;
+        opt.selected = loc.code == locality;
         $select.append(opt);
       });
     },

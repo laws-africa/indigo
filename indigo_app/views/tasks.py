@@ -21,7 +21,7 @@ from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
     # permissions
-    permission_required = ('indigo_api.view_work',)
+    permission_required = ('indigo_api.add_task',)
     check_country_perms = False
 
     context_object_name = 'tasks'
@@ -36,7 +36,7 @@ class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
 
 class TaskDetailView(AbstractAuthedIndigoView, PlaceBasedView, DetailView):
     # permissions
-    permission_required = ('indigo_api.view_work',)
+    permission_required = ('indigo_api.add_task',)
     check_country_perms = False
 
     context_object_name = 'task'
@@ -46,8 +46,7 @@ class TaskDetailView(AbstractAuthedIndigoView, PlaceBasedView, DetailView):
 
 class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
     # permissions
-    permission_required = ('indigo_api.add_work',)
-    check_country_perms = False
+    permission_required = ('indigo_api.add_task',)
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
@@ -99,8 +98,7 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
 
 class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
     # permissions
-    permission_required = ('indigo_api.add_work',)
-    check_country_perms = False
+    permission_required = ('indigo_api.add_task',)
 
     context_object_name = 'task'
     fields = ['title', 'description', 'work', 'document']
@@ -128,8 +126,7 @@ class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):
 
 class TaskChangeStateView(AbstractAuthedIndigoView, PlaceBasedView, View, SingleObjectMixin):
     # permissions
-    permission_required = ('indigo_api.add_work',)
-    check_country_perms = False
+    permission_required = ('indigo_api.add_task',)
 
     change = None
     http_method_names = [u'post']

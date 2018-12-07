@@ -941,7 +941,6 @@ class Task(models.Model):
     def place_code(self):
         return self.country.code + '-' + self.locality.code if self.locality else self.country.code
 
-
     def clean(self):
         # enforce that any work and/or document are for the correct place
         if self.document and self.document.work != self.work:

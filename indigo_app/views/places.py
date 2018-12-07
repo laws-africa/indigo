@@ -37,7 +37,7 @@ class LibraryView(RedirectView):
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
     js_view = 'LibraryView'
-    # permissions
+    tab = 'works'
 
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)

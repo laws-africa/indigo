@@ -25,7 +25,7 @@ class TaskListView(AbstractAuthedIndigoView, PlaceBasedView, ListView):
     check_country_perms = False
 
     context_object_name = 'tasks'
-    paginate_by = 16
+    paginate_by = 20
     paginate_orphans = 4
 
     tab = 'tasks'

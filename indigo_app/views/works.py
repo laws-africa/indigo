@@ -76,7 +76,12 @@ class PlaceDetailView(AbstractAuthedIndigoView, PlaceBasedView, TemplateView):
         # map from document id to count of open annotations
         annotations = Annotation.objects.values('document_id')\
             .filter(closed=False)\
-            .annotate(n_annotations=Count('document_id'))
+            .filter(document__deleted=False)\
+            .annotate(n_annotations=Count('document_id'))\
+            .filter(document__work__country=self.country)
+        if self.locality:
+            annotations = annotations.filter(document__work__locality=self.locality)
+
         annotations = {x['document_id']: {'n_annotations': x['n_annotations']} for x in annotations}
         context['annotations_json'] = json.dumps(annotations)
 

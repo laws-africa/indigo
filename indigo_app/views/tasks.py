@@ -11,11 +11,11 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
 
-from django_fsm import has_transition_perm, get_available_user_FIELD_transitions
+from django_fsm import has_transition_perm
 
 from .base import AbstractAuthedIndigoView, PlaceBasedView
 
-from indigo_api.models import Task
+from indigo_api.models import Task, Work
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 
@@ -64,12 +64,37 @@ class TaskCreateView(AbstractAuthedIndigoView, PlaceBasedView, CreateView):
         task.locality = self.locality
         task.created_by = self.request.user
 
+        if self.request.GET.get('frbr_uri'):
+            # pre-load a work
+            try:
+                work = Work.objects.get(frbr_uri=self.request.GET['frbr_uri'])
+                if task.country == work.country and task.locality == work.locality:
+                    task.work = work
+            except Work.DoesNotExist:
+                pass
+
         kwargs['instance'] = task
 
         return kwargs
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(TaskCreateView, self).get_context_data(**kwargs)
+        task = context['form'].instance
+
+        work = None
+        if task.work:
+            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
+        context['work_json'] = work
+
+        document = None
+        if task.document:
+            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
+        context['document_json'] = document
+
+        return context
+
     def get_success_url(self):
-        return reverse('tasks', kwargs={'place': self.kwargs['place']})
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
 class TaskEditView(AbstractAuthedIndigoView, PlaceBasedView, UpdateView):

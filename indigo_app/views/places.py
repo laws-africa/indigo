@@ -6,7 +6,7 @@ from django.views.generic import TemplateView, RedirectView
 from django.urls import reverse
 from django.db.models import Count
 
-from indigo_api.models import Country, Annotation
+from indigo_api.models import Country, Annotation, Task
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 from indigo_api.views.works import WorkViewSet
 from indigo_api.views.documents import DocumentViewSet
@@ -61,5 +61,27 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         annotations = {x['document_id']: {'n_annotations': x['n_annotations']} for x in annotations}
         context['annotations_json'] = json.dumps(annotations)
+
+        # open / pending_review tasks per work
+        work_open_tasks = Task.objects.values('work_id')\
+            .filter(state=('open' or 'pending_review'))\
+            .annotate(n_open_tasks=Count('work_id'))\
+            .filter(country=self.country)
+        if self.locality:
+            work_open_tasks = work_open_tasks.filter(locality=self.locality)
+
+        work_open_tasks = {x['work_id']: {'n_open_tasks': x['n_open_tasks']} for x in work_open_tasks}
+        context['work_open_tasks_json'] = json.dumps(work_open_tasks)
+
+        # open / pending_review tasks per document
+        document_open_tasks = Task.objects.values('document_id')\
+            .filter(state=('open' or 'pending_review'))\
+            .annotate(n_open_tasks=Count('document_id'))\
+            .filter(document__work__country=self.country)
+        if self.locality:
+            document_open_tasks = document_open_tasks.filter(document__work__locality=self.locality)
+
+        document_open_tasks = {x['document_id']: {'n_open_tasks': x['n_open_tasks']} for x in document_open_tasks}
+        context['document_open_tasks_json'] = json.dumps(document_open_tasks)
 
         return context

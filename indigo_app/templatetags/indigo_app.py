@@ -11,6 +11,9 @@ register = template.Library()
 def user_profile(user):
     """ Formatted link to a user's profile, using their display name.
     """
+    if not user:
+        return ''
+
     username = user_display(user)
     profile_url = settings.INDIGO_USER_PROFILE_URL
     if profile_url:

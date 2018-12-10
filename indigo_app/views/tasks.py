@@ -55,6 +55,24 @@ class TaskDetailView(TaskViewBase, DetailView):
                  'at': task.last_unsubmitted_at}
             ]
 
+        if self.request.user.has_perm('indigo_api.change_task'):
+            context['change_task_permission'] = True
+
+        if has_transition_perm(task.submit, self):
+            context['submit_task_permission'] = True
+
+        if has_transition_perm(task.cancel, self):
+            context['cancel_task_permission'] = True
+
+        if has_transition_perm(task.reopen, self):
+            context['reopen_task_permission'] = True
+
+        if has_transition_perm(task.unsubmit, self):
+            context['unsubmit_task_permission'] = True
+
+        if has_transition_perm(task.close, self):
+            context['close_task_permission'] = True
+
         return context
 
 

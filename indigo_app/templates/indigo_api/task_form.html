@@ -6,7 +6,7 @@
 {% block content %}
   {% if perms.indigo_api.add_work %}
   {% else %}
-    <div class="alert alert-danger">You don't have permission to create a work, so you can't create a task either.</div>
+    <div class="alert alert-danger">You don't have permission to create a task.</div>
   {% endif %}
 
   <form method="POST" action="">

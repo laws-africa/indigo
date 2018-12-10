@@ -105,7 +105,7 @@
             <div class="float-right col-2">
               <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
               {{#if most_recent_updated_by.display_name}}
-                <div class="text-muted">by {{ most_recent_updated_by.display_name }}</div>
+              <div class="text-muted">by <a href="/contributors/{{most_recent_updated_by.username}}">{{ most_recent_updated_by.display_name }}</a></div>
               {{/if}}
             </div>
           </div>
@@ -141,7 +141,9 @@
 
                 <div class="float-right col-2">
                   <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-                  {{#if updated_by_user.display_name}}<div class="text-muted">by {{ updated_by_user.display_name }}</div>{{/if}}
+                  {{#if updated_by_user.display_name}}
+                  <div class="text-muted">by <a href="/contributors/{{updated_by_user.username}}">{{ updated_by_user.display_name }}</a></div>
+                  {{/if}}
                 </div>
               </div>
             {{/each}}

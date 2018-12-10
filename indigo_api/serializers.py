@@ -220,7 +220,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'display_name')
+        fields = ('id', 'display_name', 'username')
         read_only_fields = fields
 
     def get_display_name(self, user):

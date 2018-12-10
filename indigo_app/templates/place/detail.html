@@ -141,7 +141,7 @@
 
                 <div class="float-right col-2">
                   <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-                  {{#if updated_by_user.display_name}}– {{ updated_by_user.display_name }}{{/if}}
+                  {{#if updated_by_user.display_name}}<div class="text-muted">by {{ updated_by_user.display_name }}</div>{{/if}}
                 </div>
               </div>
             {{/each}}

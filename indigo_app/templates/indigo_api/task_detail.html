@@ -38,12 +38,7 @@
       <p>
       {% for change in reopened_and_unsubmitted|dictsort:'at' reversed %}
         {% if forloop.first %}
-          {% user_profile change.user %} {{ change.change }} this task
-          {% if change.change == 'reopened' %}
-            <span class="time-ago" data-timestamp="{{ task.last_reopened_at|date:'c' }}">{{ task.last_reopened_at|naturaltime }}</span>
-          {% else %}
-            <span class="time-ago" data-timestamp="{{ task.last_unsubmitted_at|date:'c' }}">{{ task.last_unsubmitted_at|naturaltime }}</span>
-          {% endif %}
+          {% user_profile change.user %} {{ change.change }} this task <span class="time-ago" data-timestamp="{{ change.at|date:'c' }}">{{ change.at|naturaltime }}</span>
         {% endif %}
       {% endfor %}
       </p>

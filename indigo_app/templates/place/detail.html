@@ -74,7 +74,7 @@
           <span class="text-muted fa fa-fw fa-caret-right collapse-indicator"></span>
         </div>
 
-        <div class="float-left col-7">
+        <div class="float-left col-6">
           <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
           <span class="text-muted">{{ frbr_uri }}</span>
         </div>
@@ -94,13 +94,19 @@
           {{/if}}
         </div>
  
+        <div class="float-left col-1">
+          {{#if n_work_open_tasks}}
+          <i class="fas fa-thumbtack"></i> {{ n_work_open_tasks }}
+          {{/if}}
+        </div>
+
         <div class="float-right col-2">
           <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-          <span class="text-muted">
+          <div class="text-muted">
             {{#if most_recent_updated_by.display_name}}
             – {{ most_recent_updated_by.display_name }}
             {{/if}}
-          </span>
+          </div>
         </div>
       </div>
 
@@ -108,11 +114,11 @@
       <div class="collapse work-extra-detail pl-4 mt-1" id="work-detail-{{ id }}">
         {{#each work_docs}}
           <div class="d-flex">
-            <div class="float-left col-2">
+            <div class="float-left col-3">
               <a href="/documents/{{ id }}">@ {{ expression_date }} · {{ language }}</a>
             </div>
 
-            <div class="float-left col-7">
+            <div class="float-left col-5">
               {{#if draft}}
                 <i class="fa fa-fw fa-circle draft" title="draft"></i>
               {{else}}
@@ -124,6 +130,12 @@
             <div class="float-left col-1">
               {{#if n_annotations}}
               <i class="far fa-comments"></i> {{ n_annotations }}
+              {{/if}}
+            </div>
+
+            <div class="float-left col-1">
+              {{#if n_doc_open_tasks}}
+              <i class="fas fa-thumbtack"></i> {{ n_doc_open_tasks }}
               {{/if}}
             </div>
 
@@ -155,5 +167,7 @@ window.Indigo.countries = {{ indigo_countries_json|safe }};
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 window.Indigo.Preloads.document_annotations = {{ annotations_json|safe }};
+window.Indigo.Preloads.document_open_tasks = {{ document_open_tasks_json|safe }};
+window.Indigo.Preloads.work_open_tasks = {{ work_open_tasks_json|safe }};
 </script>
 {% endblock %}

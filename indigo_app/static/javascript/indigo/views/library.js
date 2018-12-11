@@ -400,6 +400,8 @@
           work.pub_ratio = 0;
         }
 
+        work.full_up = work.pub_ratio === 100;
+
         // add work to list of docs and order by recency
         var work_and_docs = work_docs.concat([work]);
 

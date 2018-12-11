@@ -426,7 +426,7 @@
 
       this.$el.find('[title]').tooltip({
         container: 'body',
-        placement: 'auto top'
+        placement: 'auto'
       });
 
       Indigo.relativeTimestamps();

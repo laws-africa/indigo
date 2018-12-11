@@ -76,18 +76,21 @@
 
         <div class="float-left flex-fill">
           <div class="d-flex">
-            <div class="col-6">
+            <div class="col-5">
               <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
               <span class="text-muted">{{ frbr_uri }}</span>
             </div>
 
-            <div class="col-2">
-              {{#if n_docs}}
+            <div class="col-3">
+              {{#unless stub}}
               <i class="far fa-clock"></i> <strong>{{ n_docs }}</strong> Point{{#unless n_docs_singular}}s{{/unless}} in time<br>
               <div class="progress mt-1 w-75 pub-drafts-progress">
                 <div class="progress-bar" style="width: {{ pub_ratio }}%"></div>
               </div>
-              {{/if}}
+              <div>{{ n_published }}&nbsp;published,
+                {{ n_drafts }}&nbsp;draft{{#unless n_docs_drafts_singular }}s{{/unless}}<br>
+                ({{ n_expected_docs }}&nbsp;expected)</div>
+              {{/unless}}
             </div>
      
             <div class="col-1">
@@ -174,5 +177,6 @@ window.Indigo.Preloads.library = {{ documents_json|safe }};
 window.Indigo.Preloads.document_annotations = {{ annotations_json|safe }};
 window.Indigo.Preloads.document_open_tasks = {{ document_open_tasks_json|safe }};
 window.Indigo.Preloads.work_open_tasks = {{ work_open_tasks_json|safe }};
+window.Indigo.Preloads.work_n_amendments = {{ work_n_amendments|safe }};
 </script>
 {% endblock %}

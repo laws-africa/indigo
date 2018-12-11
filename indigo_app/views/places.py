@@ -84,4 +84,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         document_open_tasks = {x['document_id']: {'n_open_tasks': x['n_open_tasks']} for x in document_open_tasks}
         context['document_open_tasks_json'] = json.dumps(document_open_tasks)
 
+        work_n_amendments = {x.id: {'n_amendments': x.amendments.count()} for x in works}
+        context['work_n_amendments'] = json.dumps(work_n_amendments)
+
         return context

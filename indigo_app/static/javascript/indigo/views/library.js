@@ -369,9 +369,33 @@
         work.n_docs = work_docs.length;
         work.n_docs_singular = work_docs.length == 1;
 
+        if (work.drafts_v_published.n_published) {
+          work.n_published = work.drafts_v_published.n_published
+        } else {
+          work.n_published = 0
+        }
+
+        if (work.drafts_v_published.n_drafts) {
+          work.n_drafts = work.drafts_v_published.n_drafts
+        } else {
+          work.n_drafts = 0
+        }
+
+        work.n_docs_drafts_singular = work.n_drafts === 1;
+
+        work.n_amendments = (Indigo.Preloads.work_n_amendments[work.id] || {}).n_amendments || 0;
+
+        work.stub = work.n_docs === 0 && work.n_amendments === 0;
+
+        if (work.n_languages === 0) {
+          work.n_expected_docs = (1 + work.n_amendments)
+        } else {
+          work.n_expected_docs = (1 + work.n_amendments) * work.n_languages
+        }
+
         // get a ratio of drafts vs total docs for sorting
         if (work.n_docs !== 0) {
-          work.pub_ratio = 100 * (work.drafts_v_published.n_published / work.n_docs);
+          work.pub_ratio = 100 * (work.drafts_v_published.n_published / work.n_expected_docs);
         } else {
           work.pub_ratio = 0;
         }

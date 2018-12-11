@@ -87,11 +87,11 @@
               <div class="progress mt-1 w-75 pub-drafts-progress">
                 <div class="progress-bar" style="width: {{ pub_ratio }}%"></div>
               </div>
-              {{#unless full_up}}
-              <div>{{ n_published }}&nbsp;published,
-                {{ n_drafts }}&nbsp;draft{{#unless n_docs_drafts_singular }}s{{/unless}}<br>
-                ({{ n_expected_docs }}&nbsp;expected)</div>
-              {{/unless}}
+                {{#unless full_up}}
+                <div>{{ n_published }}&nbsp;published,
+                  {{ n_drafts }}&nbsp;draft{{#unless n_docs_drafts_singular }}s{{/unless}}<br>
+                  ({{ n_expected_docs }}&nbsp;expected)</div>
+                {{/unless}}
               {{/unless}}
             </div>
      

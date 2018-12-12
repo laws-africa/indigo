@@ -94,20 +94,15 @@
                 <div class="progress-bar bg-warning" style="width: {{ drafts_ratio }}%" title="drafts"></div>
               </div>
               {{/unless}}
-              {{#if n_work_total_tasks}}
+              {{#if n_active_tasks}}
               <br>
-              {{#if tasks_all_done}}
-              <div class="progress mt-1 pub-drafts-progress">
-                <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
-              </div>
-              {{else}}
               <div>
-                <i class="fas fa-thumbtack"></i> {{ n_work_open_tasks }}
+                <i class="fas fa-thumbtack" title="active tasks"></i> {{ n_active_tasks }}
               </div>
               <div class="progress mt-1 pub-drafts-progress">
-                <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
+                <div class="progress-bar bg-primary" style="width: {{ pending_task_ratio }}%" title="pending review"></div>
+                <div class="progress-bar bg-warning" style="width: {{ open_task_ratio }}%" title="open"></div>
               </div>
-              {{/if}}
               {{/if}}
             </div>
 
@@ -147,19 +142,14 @@
                 </div>
 
                 <div class="col-3">
-                {{#if n_doc_total_tasks}}
-                  {{#if tasks_all_done}}
-                  <div class="progress mt-1 pub-drafts-progress">
-                    <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
-                  </div>
-                  {{else}}
+                {{#if n_active_tasks}}
                   <div>
-                    <i class="fas fa-thumbtack"></i> {{ n_doc_open_tasks }}
+                    <i class="fas fa-thumbtack" title="active tasks"></i> {{ n_active_tasks }}
                   </div>
                   <div class="progress mt-1 pub-drafts-progress">
-                    <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
+                    <div class="progress-bar bg-primary" style="width: {{ pending_task_ratio }}%" title="pending review"></div>
+                    <div class="progress-bar bg-warning" style="width: {{ open_task_ratio }}%" title="open"></div>
                   </div>
-                  {{/if}}
                 {{/if}}
                 </div>
 

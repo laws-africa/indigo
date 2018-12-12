@@ -65,55 +65,53 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         # tasks for place
         tasks = Task.objects.filter(work__country=self.country, work__locality=self.locality)
 
-        # tasks per work: 'total' (ignoring cancelled), open/pending_review, and done
-        work_total_tasks = tasks.values('work_id')\
-            .exclude(state='cancelled')\
-            .annotate(n_total_tasks=Count('work_id'))
+        # tasks per work: open and pending_review
+        work_tasks = tasks.values('work_id')\
+            .annotate(n_tasks=Count('work_id'))
 
         work_open_tasks = tasks.values('work_id')\
-            .filter(state=('open' or 'pending_review'))\
+            .filter(state='open')\
             .annotate(n_open_tasks=Count('work_id'))
 
-        work_done_tasks = tasks.values('work_id')\
-            .filter(state='done')\
-            .annotate(n_done_tasks=Count('work_id'))
+        work_pending_review_tasks = tasks.values('work_id')\
+            .filter(state='pending_review')\
+            .annotate(n_pending_review_tasks=Count('work_id'))
 
         work_tasks = {x['work_id']:
-                      {'n_total_tasks': x['n_total_tasks']}
-                      for x in work_total_tasks
+                      {'n_tasks': x['n_tasks']}
+                      for x in work_tasks
                       }
 
         for x in work_open_tasks:
             work_tasks[x['work_id']]['n_open_tasks'] = x['n_open_tasks']
 
-        for x in work_done_tasks:
-            work_tasks[x['work_id']]['n_done_tasks'] = x['n_done_tasks']
+        for x in work_pending_review_tasks:
+            work_tasks[x['work_id']]['n_pending_review_tasks'] = x['n_pending_review_tasks']
 
         context['work_tasks_json'] = json.dumps(work_tasks)
 
-        # tasks per document: 'total' (ignoring cancelled), open/pending_review, and done
-        document_total_tasks = tasks.values('document_id')\
-            .exclude(state='cancelled')\
-            .annotate(n_total_tasks=Count('document_id'))
+        # tasks per document: open and pending_review
+        document_tasks = tasks.values('document_id')\
+            .annotate(n_tasks=Count('document_id'))
 
         document_open_tasks = tasks.values('document_id')\
-            .filter(state=('open' or 'pending_review'))\
+            .filter(state='open')\
             .annotate(n_open_tasks=Count('document_id'))
 
-        document_done_tasks = tasks.values('document_id')\
-            .filter(state='done')\
-            .annotate(n_done_tasks=Count('document_id'))
+        document_pending_review_tasks = tasks.values('document_id')\
+            .filter(state='pending_review')\
+            .annotate(n_pending_review_tasks=Count('document_id'))
 
         document_tasks = {x['document_id']:
-                          {'n_total_tasks': x['n_total_tasks']}
-                          for x in document_total_tasks
+                          {'n_tasks': x['n_tasks']}
+                          for x in document_tasks
                           }
 
         for x in document_open_tasks:
             document_tasks[x['document_id']]['n_open_tasks'] = x['n_open_tasks']
 
-        for x in document_done_tasks:
-            document_tasks[x['document_id']]['n_done_tasks'] = x['n_done_tasks']
+        for x in document_pending_review_tasks:
+            document_tasks[x['document_id']]['n_pending_review_tasks'] = x['n_pending_review_tasks']
 
         context['document_tasks_json'] = json.dumps(document_tasks)
 

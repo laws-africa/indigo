@@ -912,7 +912,7 @@ class Task(models.Model):
             ('submit_task', 'Can submit an open task for review'),
             ('cancel_task', 'Can cancel a task that is open or has been submitted for review'),
             ('reopen_task', 'Can reopen a task that is closed or cancelled'),
-            ('unsubmit_task', 'Can reopen a task that has been submitted for review'),
+            ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
             ('close_task', 'Can close a task that has been submitted for review'),
         )
 
@@ -937,6 +937,21 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    last_submitted_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    last_submitted_at = models.DateTimeField(null=True)
+
+    last_cancelled_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    last_cancelled_at = models.DateTimeField(null=True)
+
+    last_reopened_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    last_reopened_at = models.DateTimeField(null=True)
+
+    last_unsubmitted_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    last_unsubmitted_at = models.DateTimeField(null=True)
+
+    last_closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    last_closed_at = models.DateTimeField(null=True)
+
     @property
     def place_code(self):
         return self.country.code + '-' + self.locality.code if self.locality else self.country.code
@@ -954,40 +969,45 @@ class Task(models.Model):
         return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
-    def submit(self):
-        pass
+    def submit(self, user):
+        self.last_submitted_by_user = user
+        self.last_submitted_at = datetime.datetime.now()
 
     # cancel
     def may_cancel(self, view):
         return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.cancel_task')
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
-    def cancel(self):
-        pass
+    def cancel(self, user):
+        self.last_cancelled_by_user = user
+        self.last_cancelled_at = datetime.datetime.now()
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
         return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
-    def reopen(self):
-        pass
+    def reopen(self, user):
+        self.last_reopened_by_user = user
+        self.last_reopened_at = datetime.datetime.now()
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
         return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.unsubmit_task')
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
-    def unsubmit(self):
-        pass
+    def unsubmit(self, user):
+        self.last_unsubmitted_by_user = user
+        self.last_unsubmitted_at = datetime.datetime.now()
 
     # close
     def may_close(self, view):
         return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.close_task')
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
-    def close(self):
-        pass
+    def close(self, user):
+        self.last_closed_by_user = user
+        self.last_closed_at = datetime.datetime.now()
 
 
 class Workflow(models.Model):

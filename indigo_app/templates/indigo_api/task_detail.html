@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  {% if not task.state == 'done' and not task.state == 'cancelled' %}
+  {% if not task.state == 'done' and not task.state == 'cancelled' and change_task_permission%}
   <div class="float-right">
     <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
   </div>
@@ -20,6 +20,37 @@
     <div class="float-left">
       <h5>{{ task.title }}</h5>
       {% user_profile task.created_by_user %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
+
+      {% if not task.state == 'open' %}
+
+        {% if task.state == 'pending_review' %}
+        <p>{% user_profile task.last_submitted_by_user %} submitted this task <span class="time-ago" data-timestamp="{{ task.last_submitted_at|date:'c' }}">{{ task.last_submitted_at|naturaltime }}</span>
+</p>
+        {% elif task.state == 'cancelled' %}
+        <p>{% user_profile task.last_cancelled_by_user %} cancelled this task <span class="time-ago" data-timestamp="{{ task.last_cancelled_at|date:'c' }}">{{ task.last_cancelled_at|naturaltime }}</span>
+</p>
+        {% elif task.state == 'done' %}
+        <p>{% user_profile task.last_closed_by_user %} closed this task <span class="time-ago" data-timestamp="{{ task.last_closed_at|date:'c' }}">{{ task.last_closed_at|naturaltime }}</span>
+</p>
+        {% endif %}
+
+      {% elif reopened_and_unsubmitted %}
+      <p>
+      {% for change in reopened_and_unsubmitted|dictsort:'at' reversed %}
+        {% if forloop.first %}
+          {% user_profile change.user %} {{ change.change }} this task <span class="time-ago" data-timestamp="{{ change.at|date:'c' }}">{{ change.at|naturaltime }}</span>
+        {% endif %}
+      {% endfor %}
+      </p>
+
+      {% elif task.last_reopened_by_user %}
+      <p>{% user_profile task.last_reopened_by_user %} reopened this task <span class="time-ago" data-timestamp="{{ task.last_reopened_at|date:'c' }}">{{ task.last_reopened_at|naturaltime }}</span>
+</p>
+      {% elif task.last_unsubmitted_by_user %}
+      <p>{% user_profile task.last_unsubmitted_by_user %} unsubmitted this task <span class="time-ago" data-timestamp="{{ task.last_unsubmitted_at|date:'c' }}">{{ task.last_unsubmitted_at|naturaltime }}</span>
+</p>
+      {% endif %}
+
     </div>
   </div>
 
@@ -44,23 +75,27 @@
       <form method="POST">
         {% csrf_token %}
 
-        {% if task.state == 'open' %}
+        {% if task.state == 'open' and submit_task_permission %}
           <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
         {% endif %}
 
         {% if task.state == 'open' or task.state == 'pending_review' %}
+          {% if cancel_task_permission %}
           <button class="btn btn-danger" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
+          {% endif %}
         {% endif %}
 
         {% if task.state == 'cancelled' or task.state == 'done' %}
+          {% if reopen_task_permission %}
           <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
+          {% endif %}
         {% endif %}
 
-        {% if task.state == 'pending_review' %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
+        {% if task.state == 'pending_review' and unsubmit_task_permission %}
+          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to unsubmit this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
         {% endif %}
 
-        {% if task.state == 'pending_review' %}
+        {% if task.state == 'pending_review' and close_task_permission %}
           <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
         {% endif %}
       </form>

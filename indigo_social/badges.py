@@ -271,7 +271,7 @@ class DrafterBadge(PermissionBadge):
     permissions = ('indigo_api.add_work', 'indigo_api.change_work',
                    'indigo_api.add_document', 'indigo_api.change_document',
                    'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
-                   'indigo_api.submit_task', 'indigo_api.reopen_task')
+                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
 
 
 class SeniorDrafterBadge(PermissionBadge):

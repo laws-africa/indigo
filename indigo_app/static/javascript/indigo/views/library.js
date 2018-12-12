@@ -402,12 +402,34 @@
           work_doc.n_annotations = (Indigo.Preloads.document_annotations[work_doc.id] || {}).n_annotations || 0;
           work.n_annotations += work_doc.n_annotations;
 
-          // number of open tasks on each doc
-          work_doc.n_doc_open_tasks = (Indigo.Preloads.document_open_tasks[work_doc.id] || {}).n_open_tasks || 0;
+          // total number of tasks on each doc
+          work_doc.n_doc_total_tasks = (Indigo.Preloads.document_tasks[work_doc.id] || {}).n_total_tasks || 0;
+
+          // number of 'open' tasks on each doc
+          work_doc.n_doc_open_tasks = (Indigo.Preloads.document_tasks[work_doc.id] || {}).n_open_tasks || 0;
+
+          // number of done tasks on each doc
+          work_doc.n_doc_done_tasks = (Indigo.Preloads.document_tasks[work_doc.id] || {}).n_done_tasks || 0;
+
+          // done / total tasks on each doc
+          work_doc.task_ratio = 100 * (work_doc.n_doc_done_tasks / work_doc.n_doc_total_tasks) || 0;
+
+          work_doc.tasks_all_done = work_doc.task_ratio === 100;
         });
 
-        // number of open tasks on each work
-        work.n_work_open_tasks = (Indigo.Preloads.work_open_tasks[work.id] || {}).n_open_tasks || 0;
+        // total number of tasks on each work
+        work.n_work_total_tasks = (Indigo.Preloads.work_tasks[work.id] || {}).n_total_tasks || 0;
+
+        // number of 'open' tasks on each work
+        work.n_work_open_tasks = (Indigo.Preloads.work_tasks[work.id] || {}).n_open_tasks || 0;
+
+        // number of done tasks on each work
+        work.n_work_done_tasks = (Indigo.Preloads.work_tasks[work.id] || {}).n_done_tasks || 0;
+
+        // done / total tasks on each work
+        work.task_ratio = 100 * (work.n_work_done_tasks / work.n_work_total_tasks) || 0;
+
+        work.tasks_all_done = work.task_ratio === 100;
 
         // docs for this work
         work.work_docs = _.sortBy(work_docs, 'expression_date');

@@ -76,34 +76,42 @@
 
         <div class="float-left flex-fill">
           <div class="d-flex">
-            <div class="col-5">
+            <div class="col-6">
               <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
               <span class="text-muted">{{ frbr_uri }}</span>
+              {{#if n_annotations}}
+              <div>
+                <i class="far fa-comments"></i> {{ n_annotations }}
+              </div>
+              {{/if}}
             </div>
 
             <div class="col-3">
               {{#unless stub}}
               <i class="far fa-clock"></i> <strong>{{ n_docs }}</strong> Point{{#unless n_docs_singular}}s{{/unless}} in time<br>
-              <div class="progress mt-1 w-75 pub-drafts-progress">
+              <div class="progress mt-1 pub-drafts-progress">
                 <div class="progress-bar bg-primary" style="width: {{ pub_ratio }}%" title="published"></div>
                 <div class="progress-bar bg-warning" style="width: {{ drafts_ratio }}%" title="drafts"></div>
               </div>
               {{/unless}}
-            </div>
-     
-            <div class="col-1">
-              {{#if n_work_open_tasks}}
-              <i class="fas fa-thumbtack"></i> {{ n_work_open_tasks }}
+              {{#if n_work_total_tasks}}
+              <br>
+              {{#if tasks_all_done}}
+              <div class="progress mt-1 pub-drafts-progress">
+                <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
+              </div>
+              {{else}}
+              <div>
+                <i class="fas fa-thumbtack"></i> {{ n_work_open_tasks }}
+              </div>
+              <div class="progress mt-1 pub-drafts-progress">
+                <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
+              </div>
+              {{/if}}
               {{/if}}
             </div>
 
-            <div class="col-1">
-              {{#if n_annotations}}
-              <i class="far fa-comments"></i> {{ n_annotations }}
-              {{/if}}
-            </div>
-
-            <div class="float-right col-2">
+            <div class="float-right col-3">
               <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
               {{#if most_recent_updated_by.display_name}}
               <div class="text-muted">by <a href="/contributors/{{most_recent_updated_by.username}}">{{ most_recent_updated_by.display_name }}</a></div>
@@ -115,11 +123,21 @@
           <div class="collapse work-extra-detail mt-1" id="work-detail-{{ id }}">
             {{#each work_docs}}
               <div class="d-flex">
+                <div class="col-12">
+                  <br>
+                </div>
+              </div>
+              <div class="d-flex">
                 <div class="col-3">
                   <a href="/documents/{{ id }}">@ {{ expression_date }} · {{ language }}</a>
+                  {{#if n_annotations}}
+                  <div>
+                    <i class="far fa-comments"></i> {{ n_annotations }}
+                  </div>
+                  {{/if}}
                 </div>
 
-                <div class="col-5">
+                <div class="col-3">
                   {{#if draft}}
                     <i class="fa fa-fw fa-circle draft" title="draft"></i>
                   {{else}}
@@ -128,19 +146,24 @@
                   {{ title }}
                 </div>
 
-                <div class="col-1">
-                  {{#if n_doc_open_tasks}}
-                  <i class="fas fa-thumbtack"></i> {{ n_doc_open_tasks }}
+                <div class="col-3">
+                {{#if n_doc_total_tasks}}
+                  {{#if tasks_all_done}}
+                  <div class="progress mt-1 pub-drafts-progress">
+                    <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
+                  </div>
+                  {{else}}
+                  <div>
+                    <i class="fas fa-thumbtack"></i> {{ n_doc_open_tasks }}
+                  </div>
+                  <div class="progress mt-1 pub-drafts-progress">
+                    <div class="progress-bar bg-success" style="width: {{ task_ratio }}%" title="done"></div>
+                  </div>
                   {{/if}}
+                {{/if}}
                 </div>
 
-                <div class="col-1">
-                  {{#if n_annotations}}
-                  <i class="far fa-comments"></i> {{ n_annotations }}
-                  {{/if}}
-                </div>
-
-                <div class="float-right col-2">
+                <div class="float-right col-3">
                   <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
                   {{#if updated_by_user.display_name}}
                   <div class="text-muted">by <a href="/contributors/{{updated_by_user.username}}">{{ updated_by_user.display_name }}</a></div>
@@ -173,8 +196,8 @@ window.Indigo.countries = {{ indigo_countries_json|safe }};
 window.Indigo.Preloads.works = {{ works_json|safe }};
 window.Indigo.Preloads.library = {{ documents_json|safe }};
 window.Indigo.Preloads.document_annotations = {{ annotations_json|safe }};
-window.Indigo.Preloads.document_open_tasks = {{ document_open_tasks_json|safe }};
-window.Indigo.Preloads.work_open_tasks = {{ work_open_tasks_json|safe }};
+window.Indigo.Preloads.document_tasks = {{ document_tasks_json|safe }};
+window.Indigo.Preloads.work_tasks = {{ work_tasks_json|safe }};
 window.Indigo.Preloads.work_n_amendments = {{ work_n_amendments_json|safe }};
 </script>
 {% endblock %}

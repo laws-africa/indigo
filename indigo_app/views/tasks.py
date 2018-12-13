@@ -32,12 +32,13 @@ class TaskListView(TaskViewBase, ListView):
     paginate_by = 20
     paginate_orphans = 4
 
-    def get_queryset(self):
-        frbr_uri = self.request.GET.get('frbr_uri')
-        tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
-        if frbr_uri:
-            tasks = tasks.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
-        return tasks
+    model = Task
+
+    def get_context_data(self, **kwargs):
+        context = super(TaskListView, self).get_context_data(**kwargs)
+        context['frbr_uri'] = self.request.GET.get('frbr_uri')
+
+        return context
 
 
 class TaskDetailView(TaskViewBase, DetailView):

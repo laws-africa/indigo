@@ -168,7 +168,9 @@
     </div>
   </div>
 
-  <div>tasks</div>
+  {% task_list place=place work=work active=True as active_tasks %}
+  {% include 'indigo_api/_task_list.html' with tasks=active_tasks %}
+
   {% endblock %}
 
 {% endblock %}

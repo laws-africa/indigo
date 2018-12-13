@@ -9,7 +9,7 @@
     <div class="alert alert-danger">You don't have permission to create a task.</div>
   {% endif %}
 
-  <form method="POST" action="">
+  <form method="POST" action="" id="task-form">
     {% csrf_token %}
 
     {% if form.non_field_errors %}
@@ -34,6 +34,32 @@
                 {% endfor %}
               </div>
             {% endif %}
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-sm-8">
+              <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
+              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" required>{{ form.description.value|default:'' }}</textarea>
+              {% if form.description.errors %}
+                <div class="text-danger">
+                  {% for error in form.description.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="form-group col-sm-4">
+              <label for="{{ form.labels.id_for_label }}">{{ form.labels.label }}</label>
+              {% for label in task_labels %}
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="{{ form.labels.name }}" value="{{ label.id }}" {% if label.id in form.labels.value %}checked{% endif %}>
+                    <span class="h5"><span class="badge badge-secondary">{{ label.title }}</span></span> – <span class="font-weight-normal">{{ label.description }}</span>
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
           </div>
 
           <div class="form-group form-row">
@@ -68,18 +94,6 @@
                 {% endif %}
               </select>
             </div>
-          </div>
-
-          <div class="form-group">
-            <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-            <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" required>{{ form.description.value|default:'' }}</textarea>
-            {% if form.description.errors %}
-              <div class="text-danger">
-                {% for error in form.description.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
           </div>
         </div>
 

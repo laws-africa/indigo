@@ -6,6 +6,7 @@ from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.datastructures import MultiValueDictKeyError
 
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
@@ -32,20 +33,25 @@ class TaskListView(TaskViewBase, ListView):
     paginate_orphans = 4
 
     def get_queryset(self):
-        return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
+        try:
+            frbr_uri = self.request.GET['frbr_uri']
+        except MultiValueDictKeyError:
+            frbr_uri = None
+        if frbr_uri:
+            return Task.objects.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
+        else:
+            return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
 
-
-class TaskListFilteredView(TaskViewBase, ListView):
-    # permissions
-    permission_required = ('indigo_api.add_task',)
-
-    context_object_name = 'tasks'
-    paginate_by = 20
-    paginate_orphans = 4
-
-    def get_queryset(self):
-        frbr_uri = self.kwargs['frbr_uri']
-        return Task.objects.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
+    def get_context_data(self, **kwargs):
+        context = super(TaskListView, self).get_context_data(**kwargs)
+        try:
+            frbr_uri = self.request.GET['frbr_uri']
+        except MultiValueDictKeyError:
+            frbr_uri = None
+        if frbr_uri:
+            context['frbr_uri'] = frbr_uri
+            context['title'] = Work.objects.get(frbr_uri=frbr_uri).title
+        return context
 
 
 class TaskDetailView(TaskViewBase, DetailView):

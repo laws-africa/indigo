@@ -68,7 +68,13 @@
   {% endif %}
 
   {% if not tasks %}
-    <p class="alert alert-info">There are no tasks for {{ place }}.</p>
+    <p class="alert alert-info">There are no tasks for
+      {% if frbr_uri %}
+        <a href="{% url 'work' frbr_uri=frbr_uri %}">{{ title }}</a>.
+      {% else %}
+        {{ place }}.
+      {% endif %}
+    </p>
   {% endif %}
 </div>
 {% endblock %}

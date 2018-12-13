@@ -9,7 +9,7 @@
     <div class="alert alert-danger">You don't have permission to create a task.</div>
   {% endif %}
 
-  <form method="POST" action="">
+  <form method="POST" action="" id="task-form">
     {% csrf_token %}
 
     {% if form.non_field_errors %}

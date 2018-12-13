@@ -39,14 +39,6 @@ class TaskListView(TaskViewBase, ListView):
             tasks = tasks.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
         return tasks
 
-    def get_context_data(self, **kwargs):
-        context = super(TaskListView, self).get_context_data(**kwargs)
-        frbr_uri = self.request.GET.get('frbr_uri')
-        if frbr_uri:
-            context['frbr_uri'] = frbr_uri
-            context['title'] = Work.objects.get(frbr_uri=frbr_uri).title
-        return context
-
 
 class TaskDetailView(TaskViewBase, DetailView):
     # permissions

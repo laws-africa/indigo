@@ -47,6 +47,8 @@
         {% endfor %}
       </div>
     </div>
+  {% else %}
+    <p class="alert alert-info">No tasks found</p>
   {% endif %}
 
   {% if is_paginated %}
@@ -67,14 +69,5 @@
     </nav>
   {% endif %}
 
-  {% if not tasks %}
-    <p class="alert alert-info">There are no tasks for
-      {% if frbr_uri %}
-        <a href="{% url 'work' frbr_uri=frbr_uri %}">{{ title }}</a>.
-      {% else %}
-        {{ place }}.
-      {% endif %}
-    </p>
-  {% endif %}
 </div>
 {% endblock %}

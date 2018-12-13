@@ -33,21 +33,15 @@ class TaskListView(TaskViewBase, ListView):
     paginate_orphans = 4
 
     def get_queryset(self):
-        try:
-            frbr_uri = self.request.GET['frbr_uri']
-        except MultiValueDictKeyError:
-            frbr_uri = None
+        frbr_uri = self.request.GET.get('frbr_uri')
+        tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
         if frbr_uri:
-            return Task.objects.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
-        else:
-            return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
+            tasks = tasks.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
+        return tasks
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
-        try:
-            frbr_uri = self.request.GET['frbr_uri']
-        except MultiValueDictKeyError:
-            frbr_uri = None
+        frbr_uri = self.request.GET.get('frbr_uri')
         if frbr_uri:
             context['frbr_uri'] = frbr_uri
             context['title'] = Work.objects.get(frbr_uri=frbr_uri).title

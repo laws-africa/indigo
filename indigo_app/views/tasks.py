@@ -14,10 +14,11 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from .base import AbstractAuthedIndigoView, PlaceViewBase
-
-from indigo_api.models import Task, Work
+from indigo_api.models import Task, Work, TaskLabel
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
+
+from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
+from indigo_app.forms import TaskForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -89,7 +90,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    fields = ['title', 'description', 'work', 'document']
+    form_class = TaskForm
     model = Task
 
     def get_form_kwargs(self):
@@ -127,6 +128,8 @@ class TaskCreateView(TaskViewBase, CreateView):
             document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
         context['document_json'] = document
 
+        context['task_labels'] = TaskLabel.objects.all()
+
         return context
 
     def get_success_url(self):
@@ -138,7 +141,7 @@ class TaskEditView(TaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
-    fields = ['title', 'description', 'work', 'document']
+    form_class = TaskForm
     model = Task
 
     def get_success_url(self):
@@ -156,6 +159,8 @@ class TaskEditView(TaskViewBase, UpdateView):
         if self.object.document:
             document = json.dumps(DocumentSerializer(instance=self.object.document, context={'request': self.request}).data)
         context['document_json'] = document
+
+        context['task_labels'] = TaskLabel.objects.all()
 
         return context
 

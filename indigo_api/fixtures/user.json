@@ -25,7 +25,10 @@
                 ["delete_amendment", "indigo_api", "amendment"],
                 ["add_annotation", "indigo_api", "annotation"],
                 ["change_annotation", "indigo_api", "annotation"],
-                ["delete_annotation", "indigo_api", "annotation"]
+                ["delete_annotation", "indigo_api", "annotation"],
+                ["add_task", "indigo_api", "task"],
+                ["change_task", "indigo_api", "task"],
+                ["delete_task", "indigo_api", "task"]
             ],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "email": "email@example.com",

@@ -2,9 +2,8 @@ from django import forms
 from django.contrib import admin
 from ckeditor.widgets import CKEditorWidget
 
-from .models import Document, Subtype, Colophon, Work
+from .models import Document, Subtype, Colophon, Work, TaskLabel
 
-# Register your models here.
 admin.site.register(Subtype)
 
 
@@ -34,3 +33,9 @@ class ColophonAdminForm(forms.ModelForm):
 @admin.register(Colophon)
 class ColophonAdmin(admin.ModelAdmin):
     form = ColophonAdminForm
+
+
+@admin.register(TaskLabel)
+class TaskLabelAdmin(admin.ModelAdmin):
+    list_display = ('title', 'description',)
+    prepopulated_fields = {"slug": ("title",)}

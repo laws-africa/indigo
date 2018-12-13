@@ -19,6 +19,7 @@
 
     <div class="float-left">
       <h5>{{ task.title }}</h5>
+
       {% user_profile task.created_by_user %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
 
       {% if not task.state == 'open' %}
@@ -69,6 +70,12 @@
       {% endif %}
 
       <p>{{ task.description }}</p>
+
+      <div class="h5">
+        {% for label in task.labels.all %}
+          <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+        {% endfor %}
+      </div>
     </div>
 
     <div class="card-footer text-right">

@@ -905,6 +905,11 @@ class DocumentActivity(models.Model):
         cls.objects.filter(document=document, updated_at__lte=threshold).delete()
 
 
+class TaskManager(models.Manager):
+    def get_queryset(self):
+        return super(TaskManager, self).get_queryset().prefetch_related('labels')
+
+
 class Task(models.Model):
     STATES = ('open', 'pending_review', 'cancelled', 'done')
 
@@ -916,6 +921,8 @@ class Task(models.Model):
             ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
             ('close_task', 'Can close a task that has been submitted for review'),
         )
+
+    objects = TaskManager()
 
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
@@ -952,6 +959,8 @@ class Task(models.Model):
 
     last_closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     last_closed_at = models.DateTimeField(null=True)
+
+    labels = models.ManyToManyField('TaskLabel', related_name='+')
 
     @property
     def place_code(self):
@@ -1016,3 +1025,15 @@ class Workflow(models.Model):
     description = models.TextField(null=True, blank=True)
 
     tasks = models.ManyToManyField(Task, related_name='workflows')
+
+
+class TaskLabel(models.Model):
+    title = models.CharField(max_length=30, null=False, unique=True, blank=False)
+    slug = models.SlugField(null=False, unique=True, blank=False)
+    description = models.CharField(max_length=256, null=True, blank=True)
+
+    class Meta:
+        ordering = ['title']
+
+    def __str__(self):
+        return self.slug

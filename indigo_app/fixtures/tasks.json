@@ -1,0 +1,20 @@
+[
+  {
+    "model": "indigo_api.tasklabel",
+    "pk": 1,
+    "fields": {
+      "title": "Label 1",
+      "slug": "label-1",
+      "description": "First label"
+    }
+  },
+  {
+    "model": "indigo_api.tasklabel",
+    "pk": 2,
+    "fields": {
+      "title": "Label 2",
+      "slug": "label-2",
+      "description": "Second label"
+    }
+  }
+]

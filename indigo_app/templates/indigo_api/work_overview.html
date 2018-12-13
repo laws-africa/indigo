@@ -157,4 +157,18 @@
     </li>
   </ol>
   {% endblock %}
+
+  {% block active_tasks %}
+  <div class="row mb-3 mt-5">
+    <div class="col">
+      <h4>Active tasks</h4>
+    </div>
+    <div class="col text-right">
+      <a href="{% url 'work_tasks' place=place_code frbr_uri=work.frbr_uri %}" class="btn btn-primary">View all tasks</a>
+    </div>
+  </div>
+
+  <div>tasks</div>
+  {% endblock %}
+
 {% endblock %}

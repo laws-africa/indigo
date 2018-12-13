@@ -35,6 +35,19 @@ class TaskListView(TaskViewBase, ListView):
         return Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
 
 
+class TaskListFilteredView(TaskViewBase, ListView):
+    # permissions
+    permission_required = ('indigo_api.add_task',)
+
+    context_object_name = 'tasks'
+    paginate_by = 20
+    paginate_orphans = 4
+
+    def get_queryset(self):
+        frbr_uri = self.kwargs['frbr_uri']
+        return Task.objects.filter(work__frbr_uri=frbr_uri).order_by('-created_at')
+
+
 class TaskDetailView(TaskViewBase, DetailView):
     # permissions
     permission_required = ('indigo_api.add_task',)

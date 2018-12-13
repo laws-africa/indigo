@@ -402,36 +402,17 @@
           work_doc.n_annotations = (Indigo.Preloads.document_annotations[work_doc.id] || {}).n_annotations || 0;
           work.n_annotations += work_doc.n_annotations;
 
-          // number of open tasks on each doc
-          work_doc.n_open_tasks = (Indigo.Preloads.document_tasks[work_doc.id] || {}).n_open_tasks || 0;
-
-          // number of pending_review tasks on each doc
-          work_doc.n_pending_review_tasks = (Indigo.Preloads.document_tasks[work_doc.id] || {}).n_pending_review_tasks || 0;
-
-          // number of active tasks on each doc
-          work_doc.n_active_tasks = work_doc.n_open_tasks + work_doc.n_pending_review_tasks;
-
-          // pending / active tasks (shown on left)
-          work_doc.pending_task_ratio = 100 * (work_doc.n_pending_review_tasks / work_doc.n_active_tasks) || 0;
-
-          // open / active tasks (shown on right)
-          work_doc.open_task_ratio = 100 * (work_doc.n_open_tasks / work_doc.n_active_tasks) || 0;
+          // task stats
+          work_doc.task_stats = Indigo.Preloads.document_tasks[work_doc.id] || {};
+          work_doc.task_stats.n_active_tasks = (work_doc.task_stats.n_open_tasks || 0) + (work_doc.task_stats.n_pending_review_tasks || 0);
+          work_doc.task_stats.pending_task_ratio = 100 * ((work_doc.task_stats.n_pending_review_tasks || 0) / work_doc.task_stats.n_active_tasks) || 0;
+          work_doc.task_stats.open_task_ratio = 100 * ((work_doc.task_stats.n_open_tasks || 0) / work_doc.task_stats.n_active_tasks) || 0;
         });
 
-        // number of open tasks on each work
-        work.n_open_tasks = (Indigo.Preloads.work_tasks[work.id] || {}).n_open_tasks || 0;
-
-        // number of pending_review tasks on each work
-        work.n_pending_review_tasks = (Indigo.Preloads.work_tasks[work.id] || {}).n_pending_review_tasks || 0;
-
-        // number of active tasks on each work
-        work.n_active_tasks = work.n_open_tasks + work.n_pending_review_tasks;
-
-        // pending / active tasks (shown on left)
-        work.pending_task_ratio = 100 * (work.n_pending_review_tasks / work.n_active_tasks) || 0;
-
-        // open / active tasks (shown on right)
-        work.open_task_ratio = 100 * (work.n_open_tasks / work.n_active_tasks) || 0;
+        work.task_stats = Indigo.Preloads.work_tasks[work.id] || {};
+        work.task_stats.n_active_tasks = (work.task_stats.n_open_tasks || 0) + (work.task_stats.n_pending_review_tasks || 0);
+        work.task_stats.pending_task_ratio = 100 * ((work.task_stats.n_pending_review_tasks || 0) / work.task_stats.n_active_tasks) || 0;
+        work.task_stats.open_task_ratio = 100 * ((work.task_stats.n_open_tasks || 0) / work.task_stats.n_active_tasks) || 0;
 
         // docs for this work
         work.work_docs = _.sortBy(work_docs, 'expression_date');

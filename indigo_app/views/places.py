@@ -1,6 +1,7 @@
 # coding=utf-8
 import logging
 import json
+from collections import defaultdict
 
 from django.views.generic import TemplateView, RedirectView
 from django.urls import reverse
@@ -65,54 +66,30 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         # tasks for place
         tasks = Task.objects.filter(work__country=self.country, work__locality=self.locality)
 
-        # tasks per work: open and pending_review
-        work_tasks = tasks.values('work_id')\
-            .annotate(n_tasks=Count('work_id'))
+        # tasks counts per state and per work
+        work_tasks = tasks.values('work_id', 'state').annotate(n_tasks=Count('work_id'))
+        task_states = defaultdict(dict)
+        for row in work_tasks:
+            task_states[row['work_id']][row['state']] = row['n_tasks']
 
-        work_open_tasks = tasks.values('work_id')\
-            .filter(state='open')\
-            .annotate(n_open_tasks=Count('work_id'))
-
-        work_pending_review_tasks = tasks.values('work_id')\
-            .filter(state='pending_review')\
-            .annotate(n_pending_review_tasks=Count('work_id'))
-
-        work_tasks = {x['work_id']:
-                      {'n_tasks': x['n_tasks']}
-                      for x in work_tasks
-                      }
-
-        for x in work_open_tasks:
-            work_tasks[x['work_id']]['n_open_tasks'] = x['n_open_tasks']
-
-        for x in work_pending_review_tasks:
-            work_tasks[x['work_id']]['n_pending_review_tasks'] = x['n_pending_review_tasks']
-
+        # summarise task counts per work
+        work_tasks = {}
+        for work_id, states in task_states.iteritems():
+            work_tasks[work_id] = {'n_%s_tasks' % s: states.get(s, 0) for s in Task.STATES}
+            work_tasks[work_id]['n_tasks'] = sum(states.itervalues())
         context['work_tasks_json'] = json.dumps(work_tasks)
 
-        # tasks per document: open and pending_review
-        document_tasks = tasks.values('document_id')\
-            .annotate(n_tasks=Count('document_id'))
+        # tasks counts per state and per document
+        doc_tasks = tasks.values('document_id', 'state').annotate(n_tasks=Count('document_id'))
+        task_states = defaultdict(dict)
+        for row in doc_tasks:
+            task_states[row['document_id']][row['state']] = row['n_tasks']
 
-        document_open_tasks = tasks.values('document_id')\
-            .filter(state='open')\
-            .annotate(n_open_tasks=Count('document_id'))
-
-        document_pending_review_tasks = tasks.values('document_id')\
-            .filter(state='pending_review')\
-            .annotate(n_pending_review_tasks=Count('document_id'))
-
-        document_tasks = {x['document_id']:
-                          {'n_tasks': x['n_tasks']}
-                          for x in document_tasks
-                          }
-
-        for x in document_open_tasks:
-            document_tasks[x['document_id']]['n_open_tasks'] = x['n_open_tasks']
-
-        for x in document_pending_review_tasks:
-            document_tasks[x['document_id']]['n_pending_review_tasks'] = x['n_pending_review_tasks']
-
+        # summarise task counts per document
+        document_tasks = {}
+        for doc_id, states in task_states.iteritems():
+            document_tasks[doc_id] = {'n_%s_tasks' % s: states.get(s, 0) for s in Task.STATES}
+            document_tasks[doc_id]['n_tasks'] = sum(states.itervalues())
         context['document_tasks_json'] = json.dumps(document_tasks)
 
         work_n_amendments = {x.id: {'n_amendments': x.amendments.count()} for x in works}

@@ -82,11 +82,11 @@
             </div>
 
             <div class="col-2">
-              {{#if n_active_tasks}}
-              <div><i class="fas fa-thumbtack"></i> <strong>{{ n_active_tasks }}</strong> Active tasks</div>
+              {{#if task_stats.n_active_tasks}}
+              <div><i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks</div>
               <div class="progress mt-1 progress-thin">
-                <div class="progress-bar task-badge-open" style="width: {{ open_task_ratio }}%" title="open"></div>
-                <div class="progress-bar task-badge-pending_review" style="width: {{ pending_task_ratio }}%" title="pending review"></div>
+                <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
+                <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
               </div>
               {{/if}}
             </div>
@@ -132,13 +132,13 @@
                 </div>
 
                 <div class="col-2">
-                  {{#if n_active_tasks}}
+                  {{#if task_stats.n_active_tasks}}
                     <div>
-                      <i class="fas fa-thumbtack"></i> <strong>{{ n_active_tasks }}/<strong> Active tasks
+                      <i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks
                     </div>
                     <div class="progress mt-1 progress-thin">
-                      <div class="progress-bar task-badge-open" style="width: {{ open_task_ratio }}%" title="open"></div>
-                      <div class="progress-bar task-badge-pending_review" style="width: {{ pending_task_ratio }}%" title="pending review"></div>
+                      <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
+                      <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
                     </div>
                   {{/if}}
                 </div>

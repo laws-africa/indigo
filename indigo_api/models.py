@@ -15,7 +15,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 
-from django_fsm import FSMField, transition, signals as fsm_signals
+from django_fsm import FSMField, transition
 
 import arrow
 from taggit.managers import TaggableManager
@@ -906,6 +906,7 @@ class DocumentActivity(models.Model):
 
 
 class Task(models.Model):
+    STATES = ('open', 'pending_review', 'cancelled', 'done')
 
     class Meta:
         permissions = (

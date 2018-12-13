@@ -35,7 +35,6 @@
 
       this.collection = new Indigo.WorksCollection();
       this.collection.params.page_size = 100;
-      this.collection.setCountry(options.country);
       this.listenTo(this.collection, 'change reset add', this.render);
       this.listenTo(this.filters, 'change', this.refresh);
 
@@ -79,6 +78,7 @@
           country = this.filters.get('country'),
           create_work_url = '/places/' + country + (locality ? ('-' + locality) : '') + '/works/new/';
 
+      this.collection.country = country;
       this.collection.params.search = this.filters.get('search') || '';
 
       if (!locality) {

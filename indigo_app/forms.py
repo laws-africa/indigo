@@ -7,7 +7,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel
 
 
 class WorkForm(forms.ModelForm):
@@ -115,3 +115,11 @@ class ImportDocumentForm(forms.Form):
             return json.loads(val or '{}')
         except ValueError:
             raise forms.ValidationError("Invalid json data")
+
+
+class TaskForm(forms.ModelForm):
+    class Meta:
+        model = Task
+        fields = ('title', 'description', 'work', 'document', 'labels')
+
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple)

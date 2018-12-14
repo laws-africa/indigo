@@ -48,7 +48,7 @@ class TaskListView(TaskViewBase, ListView):
 
     def get_queryset(self):
         tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
-        return self.form.filter_queryset(tasks)
+        return self.form.filter_queryset(tasks, frbr_uri=self.request.GET.get('frbr_uri'))
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)

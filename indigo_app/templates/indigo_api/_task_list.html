@@ -13,6 +13,10 @@
           <div class="col flex-fill">
             <div>
               <a href="{{ task.pk }}/">{{ task.title }}</a>
+              {% for label in task.labels.all %}
+                <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+              {% endfor %}
+
               {% if task.document %}
                 <div>
                   <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>

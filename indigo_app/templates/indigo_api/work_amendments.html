@@ -33,8 +33,9 @@
             <div class="card-body">
               {% if amendment.initial %}
                 <h6>Initial publication</h6>
+              {% endif %}
 
-              {% else %}
+              {% if amendment.pk %}
                 <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST">
                   {% csrf_token %}
 
@@ -84,7 +85,7 @@
                   <div class="btn-group">
                     <div class="dropdown mr-3">
                       <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="fas fa-pencil-alt"></i>Create amended version
+                        <i class="fas fa-pencil-alt"></i> Create amended version
                       </button>
                       <div class="dropdown-menu">
                         {% for language in indigo_languages %}

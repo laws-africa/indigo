@@ -118,6 +118,7 @@
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
+      this.listenTo(this.model, 'change:number', this.numberChanged);
       this.listenTo(this.model, 'change:publication_document', this.publicationDocumentChanged);
       this.listenTo(this.model, 'change:publication_date change:publication_name change:publication_number',
                     _.debounce(this.publicationChanged, 1000));
@@ -140,6 +141,10 @@
       }
       this.$('.work-title').text(this.model.get('title') || '(untitled work)');
       this.$('.work-frbr-uri').text(this.model.get('frbr_uri'));
+    },
+
+    numberChanged: function(model, value, options) {
+      model.set('number', value.replace(/[^a-z\d-]+/gi, '-').replace(/--+/g, '-'));
     },
 
     setDirty: function() {

@@ -4,54 +4,40 @@
 {% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
 
 {% block content %}
+
 <div class="container mt-3">
-  <div class="d-flex justify-content-end mb-3">
-    <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
-  </div>
-
-  {% if tasks %}
-    <div class="card">
-      <div class="list-group list-group-flush">
-        {% for task in tasks %}
-          <div class="list-group-item p-3 d-flex align-items-center">
-            <div class="col text-center">
-              <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
-              <span class="text-muted">#{{ task.pk }}</span>
-            </div>
-
-            <div class="col flex-fill">
-              <div>
-                <a href="{{ task.pk }}/">{{ task.title }}</a>
-                {% for label in task.labels.all %}
-                  <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
-                {% endfor %}
-
-                {% if task.document %}
-                  <div>
-                    <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-                    <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
-                  </div>
-                {% elif task.work %}
-                  <div>
-                    <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted">{{ task.work.title }}</a><br>
-                    <span class="text-muted">{{ task.work.frbr_uri }}</span>
-                  </div>
-                {% endif %}
-              </div>
-              <div class="text-muted">
-                <small>
-                  Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
-                  {% if task.created_by_user %}
-                  by {% user_profile task.created_by_user %}
-                  {% endif %}
-                </small>
-              </div>
-            </div>
+  <div class="card">
+    <div class="card-header">
+      <form method="GET" id="task-filter-form">
+        <div class="d-flex">
+          <div class="mr-2">
+            <select class="selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}">
+              <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
+              <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
+              <option data-divider="true"></option>
+              <option value="done" {% if 'done' in form.state.value %}selected{% endif %}>Done</option>
+              <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>
+            </select>
           </div>
-        {% endfor %}
-      </div>
+
+          <div class="mr-2">
+            <select class="selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}">
+              {% for label in task_labels %}
+              <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="ml-auto pl-3 border-left">
+            <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
+          </div>
+        </div>
+      </form>
     </div>
-  {% endif %}
+
+    {% include 'indigo_api/_task_list.html' with tasks=tasks %}
+
+  </div>
 
   {% if is_paginated %}
     <nav class="mt-3">
@@ -71,8 +57,5 @@
     </nav>
   {% endif %}
 
-  {% if not tasks %}
-    <p class="alert alert-info">There are no tasks for {{ place }}.</p>
-  {% endif %}
 </div>
 {% endblock %}

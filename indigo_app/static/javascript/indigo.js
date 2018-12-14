@@ -77,7 +77,7 @@ $(function() {
   $.fn.datepicker.defaults.autoclose = true;
 
   // tooltips
-  $('[title]').tooltip({
+  $('[title]:not(.notooltip)').tooltip({
     container: 'body',
     placement: 'auto',
   });

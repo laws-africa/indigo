@@ -5,8 +5,8 @@ import json
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
+from django.http import QueryDict
 from django.urls import reverse
-
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
@@ -34,12 +34,15 @@ class TaskListView(TaskViewBase, ListView):
     model = Task
 
     def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(request.GET)
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(request.GET)
 
         # initial state
-        if not self.form.data.get('state'):
-            self.form.data['state'] = ['open', 'pending_review']
+        if not params.get('state'):
+            params.setlist('state', ['open', 'pending_review'])
 
+        self.form = TaskFilterForm(params)
         self.form.is_valid()
         return super(TaskListView, self).get(request, *args, **kwargs)
 

@@ -31,6 +31,7 @@ class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
     paginate_by = 20
     paginate_orphans = 4
+    model = Task
 
     def get(self, request, *args, **kwargs):
         self.form = TaskFilterForm(request.GET)
@@ -50,6 +51,7 @@ class TaskListView(TaskViewBase, ListView):
         context = super(TaskListView, self).get_context_data(**kwargs)
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
+        context['frbr_uri'] = self.request.GET.get('frbr_uri')
         return context
 
 

@@ -33,15 +33,18 @@ class TaskListView(TaskViewBase, ListView):
     paginate_orphans = 4
 
     def get(self, request, *args, **kwargs):
-        self.form = TaskFilterForm(self.request.GET)
+        self.form = TaskFilterForm(request.GET)
+
+        # initial state
+        if not self.form.data.get('state'):
+            self.form.data['state'] = ['open', 'pending_review']
+
         self.form.is_valid()
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
         tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
-        if self.form.cleaned_data.get('labels'):
-            tasks = tasks.filter(labels__in=self.form.cleaned_data['labels'])
-        return tasks
+        return self.form.filter_queryset(tasks)
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)

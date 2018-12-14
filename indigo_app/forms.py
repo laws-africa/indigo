@@ -127,3 +127,13 @@ class TaskForm(forms.ModelForm):
 
 class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
+    state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES))
+
+    def filter_queryset(self, queryset):
+        if self.cleaned_data.get('labels'):
+            queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
+
+        if self.cleaned_data.get('state'):
+            queryset = queryset.filter(state__in=self.cleaned_data['state'])
+
+        return queryset

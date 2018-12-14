@@ -7,8 +7,18 @@
 
 <div class="container mt-3">
   <form method="GET" id="task-filter-form">
-    <div class="d-flex justify-content-between mb-3">
-      <div class="">
+    <div class="d-flex mb-3">
+      <div class="mr-2">
+        <select class="selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}">
+          <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
+          <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
+          <option data-divider="true"></option>
+          <option value="closed" {% if 'closed' in form.state.value %}selected{% endif %}>Closed</option>
+          <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>
+        </select>
+      </div>
+
+      <div class="mr-2">
         <select class="selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}">
           {% for label in task_labels %}
           <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
@@ -16,7 +26,7 @@
         </select>
       </div>
 
-      <div class="tex-right">
+      <div class="ml-auto pl-3 border-left">
         <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
       </div>
     </div>

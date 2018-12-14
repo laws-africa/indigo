@@ -194,8 +194,6 @@ class WorkOverviewView(WorkViewBase, DetailView):
         return context
 
 
-
-
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
 

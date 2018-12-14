@@ -113,34 +113,48 @@
   </div>
 
   <ol class="timeline">
-    {% for amendment in work.amendments_with_initial %}
+    {% for amendment in work.amendments.all reversed %}
       <li class="timeline-item card">
         <h6 class="timeline-date">{{ amendment.date|date:"Y-m-d" }}</h6>
 
         <div class="card-body">
-          {% if amendment.initial %}
-            <h6>Initial publication</h6>
-          {% endif %}
+          <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
+          <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
 
-          {% if amendment.pk %}
-            <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
-            <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
-
-            <div class="documents">
-              {% with amendment.expressions as docs %}
-              {% if docs %}
-                {% for doc in docs %}
-                <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a> · {{ doc.language }}</div>
-                {% endfor %}
-              {% else %}
-                <span class="text-muted">No editable version at this date</span>
-              {% endif %}
-              {% endwith %}
-            </div>
-          {% endif %}
+          <div class="documents">
+            {% with amendment.expressions as docs %}
+            {% if docs %}
+              {% for doc in docs %}
+              <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a> · {{ doc.language }}</div>
+              {% endfor %}
+            {% else %}
+              <span class="text-muted">No editable version at this date</span>
+            {% endif %}
+            {% endwith %}
+          </div>
         </div>
       </li>
     {% endfor %}
+
+    <li class="timeline-item card">
+      <h6 class="timeline-date">{{ work.publication_date|date:"Y-m-d" }}</h6>
+
+      <div class="card-body">
+        <h6>Initial publication</h6>
+
+        <div class="documents">
+          {% with work.initial_expressions.all as docs %}
+          {% if docs %}
+            {% for doc in docs %}
+            <div><i class="fa fa-fw fa-circle {% if doc.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=doc.id %}">{{ doc.title }}</a> · {{ doc.language }}</div>
+            {% endfor %}
+          {% else %}
+            <span class="text-muted">No editable version at this date</span>
+          {% endif %}
+          {% endwith %}
+        </div>
+      </div>
+    </li>
   </ol>
   {% endblock %}
 {% endblock %}

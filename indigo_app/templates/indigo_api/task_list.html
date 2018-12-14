@@ -4,10 +4,23 @@
 {% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
 
 {% block content %}
+
 <div class="container mt-3">
-  <div class="d-flex justify-content-end mb-3">
-    <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
-  </div>
+  <form method="GET" id="task-filter-form">
+    <div class="d-flex justify-content-between mb-3">
+      <div class="">
+        <select class="selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}">
+          {% for label in task_labels %}
+          <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %}>{{ label.title }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="tex-right">
+        <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
+      </div>
+    </div>
+  </form>
 
   {% if tasks %}
     <div class="card">

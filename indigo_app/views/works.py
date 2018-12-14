@@ -19,7 +19,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document
+from indigo_api.models import Subtype, Work, Amendment, Document, Task
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -181,6 +181,19 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 class WorkOverviewView(WorkViewBase, DetailView):
     js_view = ''
     template_name_suffix = '_overview'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkOverviewView, self).get_context_data(**kwargs)
+
+        context['active_tasks'] = Task.objects\
+            .filter(work=self.work)\
+            .exclude(state='done')\
+            .exclude(state='cancelled')\
+            .order_by('-created_at')
+
+        return context
+
+
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):

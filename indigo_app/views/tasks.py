@@ -5,9 +5,8 @@ import json
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
+from django.http import QueryDict
 from django.urls import reverse
-from django.utils.datastructures import MultiValueDictKeyError
-
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
@@ -18,7 +17,7 @@ from indigo_api.models import Task, Work, TaskLabel
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm
+from indigo_app.forms import TaskForm, TaskFilterForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -32,13 +31,30 @@ class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
     paginate_by = 20
     paginate_orphans = 4
-
     model = Task
+
+    def get(self, request, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(request.GET)
+
+        # initial state
+        if not params.get('state'):
+            params.setlist('state', ['open', 'pending_review'])
+
+        self.form = TaskFilterForm(params)
+        self.form.is_valid()
+        return super(TaskListView, self).get(request, *args, **kwargs)
+
+    def get_queryset(self):
+        tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
+        return self.form.filter_queryset(tasks)
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
+        context['task_labels'] = TaskLabel.objects.all()
+        context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
-
         return context
 
 

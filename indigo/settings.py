@@ -48,6 +48,8 @@ INSTALLED_APPS = (
 
     # the Indigo editor application
     'indigo_app',
+    # the Indigo published content API
+    'indigo_content_api',
     # the Indigo API
     'indigo_api',
 

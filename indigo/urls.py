@@ -14,6 +14,7 @@ admin.site.site_header = 'Indigo Admin'
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api/', include('indigo_content_api.urls')),
     url(r'^api/', include('indigo_api.urls')),
     url(r'^resolver/', include('indigo_resolver.urls')),
     url(r'^', include('indigo_social.urls')),

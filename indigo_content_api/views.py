@@ -22,6 +22,9 @@ FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
 
 class CountryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    """ List of countries that the content API supports.
+    """
+    authentication_classes = (SessionAuthentication, TokenAuthentication)
     queryset = Country.objects.prefetch_related('localities', 'country')
     serializer_class = CountrySerializer
 

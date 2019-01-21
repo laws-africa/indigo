@@ -11,17 +11,11 @@ from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, Country, Locality, PublicationDocument
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, PublicationDocument
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
 log = logging.getLogger(__name__)
-
-
-def published_doc_url(doc, request):
-    uri = doc.expression_uri.expression_uri()[1:]
-    uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
-    return uri.replace('%40', '@')
 
 
 def user_display_name(user):
@@ -223,9 +217,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
-    published_url = serializers.SerializerMethodField()
-    """ Public URL of a published document. """
-
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
 
@@ -270,14 +261,9 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'language', 'stub', 'tags', 'amendments',
             'repeal',
 
-            'published_url', 'links',
+            'links',
         )
         read_only_fields = ('country', 'locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
-
-    def get_published_url(self, doc):
-        if doc.draft:
-            return None
-        return published_doc_url(doc, self.context['request'])
 
     def get_links(self, doc):
         return [

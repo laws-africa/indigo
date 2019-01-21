@@ -5,7 +5,13 @@ from rest_framework.reverse import reverse
 from cobalt.act import datestring
 
 from indigo_api.models import Document, Attachment, Country, Locality
-from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer, AttachmentSerializer, published_doc_url
+from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer, AttachmentSerializer
+
+
+def published_doc_url(doc, request):
+    uri = doc.expression_uri.expression_uri()[1:]
+    uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
+    return uri.replace('%40', '@')
 
 
 class PublishedPublicationDocumentSerializer(PublicationDocumentSerializer):
@@ -82,7 +88,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         return result
 
     def get_url(self, doc):
-        return self.context.get('url', self.get_published_url(doc))
+        return self.context.get('url', published_doc_url(doc, self.context['request']))
 
     def get_links(self, doc):
         if not doc.draft:

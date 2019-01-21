@@ -2,8 +2,10 @@ from django.utils import feedgenerator
 from rest_framework.reverse import reverse
 from rest_framework_xml.renderers import XMLRenderer
 
-from indigo_api.serializers import NoopSerializer, DocumentSerializer
+from indigo_api.serializers import NoopSerializer
 from indigo_api.renderers import HTMLRenderer
+
+from .serializers import PublishedDocumentSerializer
 
 
 class AtomFeed(feedgenerator.Atom1Feed):
@@ -133,7 +135,7 @@ class AtomRenderer(XMLRenderer):
     serializer_class = NoopSerializer
 
     def render(self, data, media_type=None, renderer_context=None):
-        self.serializer = DocumentSerializer(context=renderer_context)
+        self.serializer = PublishedDocumentSerializer(context=renderer_context)
         frbr_uri = renderer_context['kwargs']['frbr_uri']
 
         feed_type = renderer_context['kwargs']['feed']
@@ -159,7 +161,7 @@ class AtomRenderer(XMLRenderer):
         return feed.writeString('utf-8')
 
     def add_item(self, feed, doc):
-        url = self.serializer.get_published_url(doc)
+        url = self.serializer.get_url(doc)
         feed.add_item(
             unique_id=url,
             pubdate=doc.created_at,

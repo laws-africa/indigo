@@ -2,8 +2,8 @@ from django.utils import feedgenerator
 from rest_framework.reverse import reverse
 from rest_framework_xml.renderers import XMLRenderer
 
-from .serializers import NoopSerializer, DocumentSerializer
-from .renderers import HTMLRenderer
+from indigo_api.serializers import NoopSerializer, DocumentSerializer
+from indigo_api.renderers import HTMLRenderer
 
 
 class AtomFeed(feedgenerator.Atom1Feed):

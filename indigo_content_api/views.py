@@ -9,18 +9,21 @@ from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from cobalt import FrbrUri
 
-from indigo_api.serializers import PublishedDocumentSerializer, MediaAttachmentSerializer
-# TODO: move into content api
 from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
-# TODO: move into content api
-from indigo_api.atom import AtomRenderer, AtomFeed
-
 from indigo_api.views.documents import DocumentViewMixin, DocumentResourceView, SearchView
 from indigo_api.views.attachments import view_attachment_by_filename
 from indigo_api.models import Attachment, Country
 
+from .serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
+from .atom import AtomRenderer, AtomFeed
+
 
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+
+
+class CountryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Country.objects.prefetch_related('localities', 'country')
+    serializer_class = CountrySerializer
 
 
 class PublishedDocumentPermission(BasePermission):

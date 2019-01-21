@@ -3,7 +3,6 @@ from django.views.decorators.cache import cache_page
 from rest_framework.routers import DefaultRouter
 
 import views.attachments
-import views.countries
 import views.documents
 import views.misc
 import views.publications
@@ -19,7 +18,6 @@ router.register(r'documents/(?P<document_id>[0-9]+)/revisions', views.documents.
 router.register(r'documents/(?P<document_id>[0-9]+)/annotations', views.documents.AnnotationViewSet, base_name='document-annotations')
 router.register(r'works', views.works.WorkViewSet, base_name='work')
 router.register(r'works/(?P<work_id>[0-9]+)/amendments', views.works.WorkAmendmentViewSet, base_name='work-amendments')
-router.register(r'countries', views.countries.CountryViewSet, base_name='country')
 
 urlpatterns = [
     url(r'^search/documents$', views.documents.SearchView.as_view(), name='document-search'),

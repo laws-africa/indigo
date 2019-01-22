@@ -12,6 +12,7 @@ Changelog
 * Edit menu with Find, Replace, Insert Table, Insert Image, etc.
 * Presence indicators for other users editing the same document
 * The LIME editor has been removed
+* BREAKING: content API for published documents is now versioned under /v1/
 
 2.0 (6 April 2017)
 ------------------

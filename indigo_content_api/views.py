@@ -7,6 +7,7 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.versioning import NamespaceVersioning
 from cobalt import FrbrUri
 
 from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
@@ -27,6 +28,7 @@ class CountryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     queryset = Country.objects.prefetch_related('localities', 'country')
     serializer_class = CountrySerializer
+    versioning_class = NamespaceVersioning
 
 
 class PublishedDocumentPermission(BasePermission):
@@ -43,6 +45,7 @@ class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
     serializer_class = MediaAttachmentSerializer
     # TODO: perms
     permission_classes = (IsAuthenticated,)
+    versioning_class = NamespaceVersioning
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
@@ -54,6 +57,7 @@ class PublicAPIMixin(object):
     """
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
+    versioning_class = NamespaceVersioning
 
     country = None
     locality = None

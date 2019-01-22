@@ -346,6 +346,30 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         return frbr_uri
 
+    def table_of_contents(self, document, uri=None):
+        toc = super(PublishedDocumentDetailView, self).table_of_contents(document, uri)
+
+        # this updates the TOC entries by adding a 'url' component
+        # based on the document's URI and the path of the TOC subcomponent
+        uri = uri or document.doc.frbr_uri
+
+        def add_url(item):
+            uri.expression_component = item['component']
+            uri.expression_subcomponent = item.get('subcomponent')
+
+            item['url'] = reverse(
+                'published-document-detail',
+                request=self.request,
+                kwargs={'frbr_uri': uri.expression_uri()[1:]})
+
+            for kid in item.get('children', []):
+                add_url(kid)
+
+        for item in toc:
+            add_url(item)
+
+        return toc
+
 
 class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
     """ Search published documents.

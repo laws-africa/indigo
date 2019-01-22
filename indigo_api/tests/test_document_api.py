@@ -347,7 +347,6 @@ class DocumentAPITest(APITestCase):
                 'component': 'main',
                 'title': 'Chapter 2 - Administrative provisions',
                 'subcomponent': 'chapter/2',
-                'url': 'http://testserver/api/za/act/1998/2/eng@2001-01-01/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
@@ -357,7 +356,6 @@ class DocumentAPITest(APITestCase):
                         'title': '3. Consent required for interment',
                         'component': 'main',
                         'subcomponent': 'section/3',
-                        'url': 'http://testserver/api/za/act/1998/2/eng@2001-01-01/main/section/3',
                     },
                 ],
             },

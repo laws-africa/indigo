@@ -42,6 +42,9 @@ INSTALLED_APPS = (
     'indigo_social',
     'pinax.badges',
 
+    # Activity stream
+    'actstream',
+
     # the Indigo act resolver
     'indigo_resolver',
     'indigo_slack',

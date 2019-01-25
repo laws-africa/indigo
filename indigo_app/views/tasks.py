@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 import json
 
+from actstream import action
+
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import redirect
@@ -220,5 +222,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
             messages.success(request, u"Task '%s' has been closed" % task.title)
 
         task.save()
+
+        action.send(task, verb='was updated')
 
         return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])

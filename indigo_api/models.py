@@ -945,21 +945,6 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    last_submitted_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_submitted_at = models.DateTimeField(null=True)
-
-    last_cancelled_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_cancelled_at = models.DateTimeField(null=True)
-
-    last_reopened_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_reopened_at = models.DateTimeField(null=True)
-
-    last_unsubmitted_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_unsubmitted_at = models.DateTimeField(null=True)
-
-    last_closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_closed_at = models.DateTimeField(null=True)
-
     labels = models.ManyToManyField('TaskLabel', related_name='+')
 
     @property
@@ -980,8 +965,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        self.last_submitted_by_user = user
-        self.last_submitted_at = datetime.datetime.now()
+        pass
 
     # cancel
     def may_cancel(self, view):
@@ -989,8 +973,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        self.last_cancelled_by_user = user
-        self.last_cancelled_at = datetime.datetime.now()
+        pass
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -998,8 +981,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        self.last_reopened_by_user = user
-        self.last_reopened_at = datetime.datetime.now()
+        pass
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1007,8 +989,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        self.last_unsubmitted_by_user = user
-        self.last_unsubmitted_at = datetime.datetime.now()
+        pass
 
     # close
     def may_close(self, view):
@@ -1016,8 +997,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        self.last_closed_by_user = user
-        self.last_closed_at = datetime.datetime.now()
+        pass
 
 
 class Workflow(models.Model):

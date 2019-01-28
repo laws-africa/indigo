@@ -70,15 +70,6 @@ class TaskDetailView(TaskViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(TaskDetailView, self).get_context_data(**kwargs)
         task = self.object
-        if task.last_reopened_by_user and task.last_unsubmitted_by_user:
-            context['reopened_and_unsubmitted'] = [
-                {'change': 'reopened',
-                 'user': task.last_reopened_by_user,
-                 'at': task.last_reopened_at},
-                {'change': 'unsubmitted',
-                 'user': task.last_unsubmitted_by_user,
-                 'at': task.last_unsubmitted_at}
-            ]
 
         if self.request.user.has_perm('indigo_api.change_task'):
             context['change_task_permission'] = True

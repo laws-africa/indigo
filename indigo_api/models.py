@@ -4,6 +4,8 @@ import logging
 import re
 import datetime
 
+from actstream import action
+
 from django.conf import settings
 from django.db import models
 from django.db.models import signals, Q
@@ -965,7 +967,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        pass
+        action.send(user, verb='submitted', action_object=self)
 
     # cancel
     def may_cancel(self, view):
@@ -973,7 +975,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        pass
+        action.send(user, verb='cancelled', action_object=self)
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -981,7 +983,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        pass
+        action.send(user, verb='reopened', action_object=self)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -989,7 +991,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        pass
+        action.send(user, verb='unsubmitted', action_object=self)
 
     # close
     def may_close(self, view):
@@ -997,7 +999,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        pass
+        action.send(user, verb='closed', action_object=self)
 
 
 class Workflow(models.Model):

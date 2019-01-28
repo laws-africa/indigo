@@ -2,8 +2,6 @@
 from __future__ import unicode_literals
 import json
 
-from actstream import action
-
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
@@ -199,7 +197,6 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
-                action.send(user, verb=verb, action_object=task)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()

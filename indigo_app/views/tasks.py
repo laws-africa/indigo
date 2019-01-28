@@ -6,8 +6,8 @@ from actstream import action
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import redirect
 from django.http import QueryDict
+from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
@@ -194,35 +194,22 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
     def post(self, request, *args, **kwargs):
         task = self.get_object()
         user = self.request.user
+        potential_changes = {
+            'submit': 'submitted',
+            'cancel': 'cancelled',
+            'reopen': 'reopened',
+            'unsubmit': 'unsubmitted',
+            'close': 'closed',
+        }
 
-        if self.change == 'submit':
-            if not has_transition_perm(task.submit, self):
-                raise PermissionDenied
-            task.submit(user)
-            messages.success(request, u"Task '%s' has been submitted for review" % task.title)
-        if self.change == 'cancel':
-            if not has_transition_perm(task.cancel, self):
-                raise PermissionDenied
-            task.cancel(user)
-            messages.success(request, u"Task '%s' has been cancelled" % task.title)
-        if self.change == 'reopen':
-            if not has_transition_perm(task.reopen, self):
-                raise PermissionDenied
-            task.reopen(user)
-            messages.success(request, u"Task '%s' has been reopened" % task.title)
-        if self.change == 'unsubmit':
-            if not has_transition_perm(task.unsubmit, self):
-                raise PermissionDenied
-            task.unsubmit(user)
-            messages.success(request, u"Task '%s' has been unsubmitted" % task.title)
-        if self.change == 'close':
-            if not has_transition_perm(task.close, self):
-                raise PermissionDenied
-            task.close(user)
-            messages.success(request, u"Task '%s' has been closed" % task.title)
+        for change_made, verb in potential_changes.items():
+            if self.change == change_made:
+                if not has_transition_perm(task.__getattribute__(change_made), self):
+                    raise PermissionDenied
+                task.__getattribute__(change_made)(user)
+                action.send(user, verb=verb, action_object=task)
+                messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()
-
-        action.send(task, verb='was updated')
 
         return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])

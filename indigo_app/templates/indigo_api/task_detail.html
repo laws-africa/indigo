@@ -20,16 +20,6 @@
 
     <div class="float-left">
       <h5>{{ task.title }}</h5>
-
-      {% user_profile task.created_by_user %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
-
-      {% activity_stream 'action_object' task as='taskstream' %}
-      {% with taskstream|first as action %}
-      <p>
-        {% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}
-      </p>
-      {% endwith %}
-
     </div>
   </div>
 
@@ -90,10 +80,10 @@
   <div class="card mt-3">
     <div class="card-header"><h5>Task history</h5></div>
     <div class="card-body">
-      {% for action in taskstream %}
-      <p>
-        {% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}
-      </p>
+      <p>{% user_profile task.created_by_user %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span></p>
+      {% activity_stream 'action_object' task as='taskstream' %}
+      {% for action in taskstream reversed %}
+      <p>{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</p>
       {% endfor %}
     </div>
   </div>

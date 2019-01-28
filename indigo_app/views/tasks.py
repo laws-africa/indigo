@@ -193,11 +193,12 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
             'close': 'closed',
         }
 
-        for change_made, verb in potential_changes.items():
-            if self.change == change_made:
-                if not has_transition_perm(task.__getattribute__(change_made), self):
+        for change, verb in potential_changes.items():
+            if self.change == change:
+                state_change = getattr(task, change)
+                if not has_transition_perm(state_change, self):
                     raise PermissionDenied
-                task.__getattribute__(change_made)(user)
+                state_change(user)
                 action.send(user, verb=verb, action_object=task)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 

@@ -1,4 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
+{% load activity_tags %}
 {% load humanize indigo_app %}
 
 {% block title %}{{ task.title }}{% endblock %}
@@ -22,35 +23,12 @@
 
       {% user_profile task.created_by_user %} created this task <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
 
-      {% if not task.state == 'open' %}
-
-        {% if task.state == 'pending_review' %}
-        <p>{% user_profile task.last_submitted_by_user %} submitted this task <span class="time-ago" data-timestamp="{{ task.last_submitted_at|date:'c' }}">{{ task.last_submitted_at|naturaltime }}</span>
-</p>
-        {% elif task.state == 'cancelled' %}
-        <p>{% user_profile task.last_cancelled_by_user %} cancelled this task <span class="time-ago" data-timestamp="{{ task.last_cancelled_at|date:'c' }}">{{ task.last_cancelled_at|naturaltime }}</span>
-</p>
-        {% elif task.state == 'done' %}
-        <p>{% user_profile task.last_closed_by_user %} closed this task <span class="time-ago" data-timestamp="{{ task.last_closed_at|date:'c' }}">{{ task.last_closed_at|naturaltime }}</span>
-</p>
-        {% endif %}
-
-      {% elif reopened_and_unsubmitted %}
+      {% activity_stream 'action_object' task as='taskstream' %}
+      {% with taskstream|first as action %}
       <p>
-      {% for change in reopened_and_unsubmitted|dictsort:'at' reversed %}
-        {% if forloop.first %}
-          {% user_profile change.user %} {{ change.change }} this task <span class="time-ago" data-timestamp="{{ change.at|date:'c' }}">{{ change.at|naturaltime }}</span>
-        {% endif %}
-      {% endfor %}
+        {% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}
       </p>
-
-      {% elif task.last_reopened_by_user %}
-      <p>{% user_profile task.last_reopened_by_user %} reopened this task <span class="time-ago" data-timestamp="{{ task.last_reopened_at|date:'c' }}">{{ task.last_reopened_at|naturaltime }}</span>
-</p>
-      {% elif task.last_unsubmitted_by_user %}
-      <p>{% user_profile task.last_unsubmitted_by_user %} unsubmitted this task <span class="time-ago" data-timestamp="{{ task.last_unsubmitted_at|date:'c' }}">{{ task.last_unsubmitted_at|naturaltime }}</span>
-</p>
-      {% endif %}
+      {% endwith %}
 
     </div>
   </div>
@@ -107,6 +85,16 @@
         {% endif %}
       </form>
 
+    </div>
+  </div>
+  <div class="card mt-3">
+    <div class="card-header"><h5>Task history</h5></div>
+    <div class="card-body">
+      {% for action in taskstream %}
+      <p>
+        {% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}
+      </p>
+      {% endfor %}
     </div>
   </div>
 </div>

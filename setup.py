@@ -54,7 +54,7 @@ setup(
         'django-fsm>=2.6.0',
         'django-languages-plus==0.1.5',  # 1.x doesn't play with django-countries-plus < 1.2
         'django-pipeline>=1.6.11',
-        'django-recaptcha>=1.4.0',
+        'django-recaptcha>=1.4.0,<2.0.0',
         'django-reversion>=1.10.2,<2',
         'django-sass-processor>=0.6',
         'django-storages>=1.6.6',

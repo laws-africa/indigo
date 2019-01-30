@@ -1,7 +1,7 @@
 Indigo
 ======
 
-[![Build Status](https://travis-ci.org/OpenUpSA/indigo.svg)](http://travis-ci.org/OpenUpSA/indigo) [![Coverage Status](https://coveralls.io/repos/github/OpenUpSA/indigo/badge.svg?branch=master)](https://coveralls.io/github/OpenUpSA/indigo?branch=master)
+[![Build Status](https://travis-ci.org/laws-africa/indigo.svg)](http://travis-ci.org/laws-africa/indigo) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=master)](https://coveralls.io/github/laws-africa/indigo?branch=master)
 
 ![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
 
@@ -25,7 +25,7 @@ Local development
 Clone the repo:
 
 ```bash
-git clone https://github.com/OpenUpSA/indigo.git
+git clone https://github.com/laws-africa/indigo.git
 cd indigo
 ```
 

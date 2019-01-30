@@ -224,9 +224,8 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         old_date = form.initial['date']
 
         # do normal things to amend work
-        result = super(WorkAmendmentDetailView, self).form_valid(form)
         self.object.updated_by_user = self.request.user
-        self.object.save()
+        result = super(WorkAmendmentDetailView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)

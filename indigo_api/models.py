@@ -407,19 +407,17 @@ class Amendment(models.Model):
 
 
 @receiver(signals.post_save, sender=Amendment)
-@receiver(signals.pre_delete, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):
-    """ When an amendment is saved, update the expressions of the amended
-    work to ensure the details of the amendment (ie. the date) are stashed
-    correctly in the document.
+    """ When an amendment is created, save any documents already at that date
+    to ensure the details of the amendment are stashed correctly in each document.
     """
-    if not kwargs.get('raw'):
-        for doc in instance.amended_work.document_set.all():
+    if kwargs['created']:
+        for doc in instance.amended_work.document_set.filter(expression_date=instance.date):
             # forces call to doc.copy_attributes()
+            doc.updated_by_user = instance.created_by_user
             doc.save()
 
-    # Send action to activity stream, as 'created' if a new amendment
-    if kwargs['created']:
+        # Send action to activity stream, as 'created' if a new amendment
         action.send(instance.created_by_user, verb='created', action_object=instance)
     else:
         action.send(instance.updated_by_user, verb='updated', action_object=instance)

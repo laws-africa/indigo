@@ -288,8 +288,8 @@ class AddWorkPointInTimeView(WorkDependentView, CreateView):
         # does one already exist?
         doc = self.work.expressions().filter(expression_date=date, language=language).first()
         if not doc:
-            # create a new one
-            doc = self.work.create_expression_at(date, language)
+            # create a new one with the current user as `created_by_user`
+            doc = self.work.create_expression_at(self.request.user, date, language)
 
         return redirect('document', doc_id=doc.id)
 

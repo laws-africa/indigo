@@ -268,7 +268,7 @@ class Work(models.Model):
                 not self.commenced_works.exists() and
                 not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
-    def create_expression_at(self, date, language=None):
+    def create_expression_at(self, user, date, language=None):
         """ Create a new expression at a particular date.
 
         This uses an existing document at or before this date as a template, if available.
@@ -291,6 +291,7 @@ class Work(models.Model):
         doc.language = language
         doc.expression_date = date
         doc.work = self
+        doc.created_by_user = user
         doc.save()
 
         return doc

@@ -229,6 +229,10 @@ class Work(models.Model):
                 self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
         return self._repeal
 
+    @property
+    def place(self):
+        return self.locality if self.locality else self.country
+
     def clean(self):
         # validate and clean the frbr_uri
         try:
@@ -970,6 +974,10 @@ class Task(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     labels = models.ManyToManyField('TaskLabel', related_name='+')
+
+    @property
+    def place(self):
+        return self.locality if self.locality else self.country
 
     @property
     def place_code(self):

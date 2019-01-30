@@ -151,6 +151,10 @@ class TaskEditView(TaskViewBase, UpdateView):
     form_class = TaskForm
     model = Task
 
+    def form_valid(self, form):
+        self.object.updated_by_user = self.request.user
+        return super(TaskEditView, self).form_valid(form)
+
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
 

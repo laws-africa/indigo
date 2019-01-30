@@ -22,15 +22,6 @@ from .atom import AtomRenderer, AtomFeed
 FORMAT_RE = re.compile('\.([a-z0-9]+)$')
 
 
-class CountryViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ List of countries that the content API supports.
-    """
-    authentication_classes = (SessionAuthentication, TokenAuthentication)
-    queryset = Country.objects.prefetch_related('localities', 'country')
-    serializer_class = CountrySerializer
-    versioning_class = NamespaceVersioning
-
-
 class PublishedDocumentPermission(BasePermission):
     """ Published document permissions.
     """
@@ -38,41 +29,49 @@ class PublishedDocumentPermission(BasePermission):
         return request.user.has_perm('indigo_api.view_published_document')
 
 
-class MediaViewSet(DocumentResourceView, viewsets.ModelViewSet):
-    """ Attachment view for published documents, under frbr-uri/media.json
-    """
-    queryset = Attachment.objects
-    serializer_class = MediaAttachmentSerializer
-    # TODO: perms
-    permission_classes = (IsAuthenticated,)
-    versioning_class = NamespaceVersioning
-
-    def filter_queryset(self, queryset):
-        return queryset.filter(document=self.document).all()
-
-
-class PublicAPIMixin(object):
-    """ A public API view. These views always require authentication
-    and to be bound to a country (and possibly also a locality).
+class ContentAPIBase(object):
+    """ Base class for Content API views, with common settings.
     """
     authentication_classes = (SessionAuthentication, TokenAuthentication)
     permission_classes = (IsAuthenticated, PublishedDocumentPermission)
     versioning_class = NamespaceVersioning
 
+
+class PlaceAPIBase(ContentAPIBase):
+    """ A place-based API view. Allows for place-based permissions checks.
+    """
     country = None
     locality = None
+    place = None
 
-    def determine_country_locality(self):
-        raise NotImplementedError()
+    def determine_place(self):
+        self.place = self.locality or self.country
 
     def check_permissions(self, request):
         # ensure we have a country and locality before checking permissions
-        self.determine_country_locality()
-        super(PublicAPIMixin, self).check_permissions(request)
+        self.determine_place()
+        super(PlaceAPIBase, self).check_permissions(request)
+
+
+class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
+    """ List of countries that the content API supports.
+    """
+    queryset = Country.objects.prefetch_related('localities', 'country')
+    serializer_class = CountrySerializer
+
+
+class MediaViewSet(ContentAPIBase, DocumentResourceView, viewsets.ModelViewSet):
+    """ Attachment view for published documents, under frbr-uri/media.json
+    """
+    queryset = Attachment.objects
+    serializer_class = MediaAttachmentSerializer
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.document).all()
 
 
 class PublishedDocumentDetailView(DocumentViewMixin,
-                                  PublicAPIMixin,
+                                  PlaceAPIBase,
                                   mixins.RetrieveModelMixin,
                                   mixins.ListModelMixin,
                                   viewsets.GenericViewSet):
@@ -108,7 +107,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         self.frbr_uri = self.parse_frbr_uri(self.kwargs['frbr_uri'])
 
-    def determine_country_locality(self):
+    def determine_place(self):
         parts = self.kwargs['frbr_uri'].split('/', 2)[1].split('-', 2)
 
         # country
@@ -122,6 +121,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             self.locality = self.country.localities.filter(code=parts[1]).first()
             if not self.locality:
                 raise Http404
+
+        super(PublishedDocumentDetailView, self).determine_place()
 
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format
@@ -371,7 +372,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return toc
 
 
-class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
+class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
     """ Search published documents.
     """
     filter_fields = {
@@ -389,9 +390,11 @@ class PublishedDocumentSearchView(PublicAPIMixin, SearchView):
         queryset = super(PublishedDocumentSearchView, self).get_queryset()
         return queryset.published().filter(work__country=country)
 
-    def determine_country_locality(self):
+    def determine_place(self):
         # TODO: this view should support localities, too
         try:
             self.country = Country.for_code(self.kwargs['country'])
         except Country.DoesNotExist:
             raise Http404
+
+        super(PublishedDocumentSearchView, self).determine_place()

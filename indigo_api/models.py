@@ -355,8 +355,7 @@ def post_save_work(sender, instance, **kwargs):
             # forces call to doc.copy_attributes()
             doc.save()
 
-    """ Send action to activity stream, as 'created' if a new work
-    """
+    # Send action to activity stream, as 'created' if a new work
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance)
     else:
@@ -413,8 +412,8 @@ def post_save_amendment(sender, instance, **kwargs):
         for doc in instance.amended_work.document_set.all():
             # forces call to doc.copy_attributes()
             doc.save()
-    """ Send action to activity stream, as 'created' if a new amendment
-    """
+
+    # Send action to activity stream, as 'created' if a new amendment
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance)
     else:

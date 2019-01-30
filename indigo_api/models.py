@@ -344,6 +344,25 @@ class Work(models.Model):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
+@receiver(signals.post_save, sender=Work)
+def post_save_work(sender, instance, **kwargs):
+    """ Cascade (soft) deletes to linked documents
+    """
+    if not kwargs['raw'] and not kwargs['created']:
+        # cascade updates to ensure documents
+        # pick up changes to inherited attributes
+        for doc in instance.document_set.all():
+            # forces call to doc.copy_attributes()
+            doc.save()
+
+    """ Send action to activity stream, as 'created' if a new work
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+
+
 def publication_document_filename(instance, filename):
     return 'work-attachments/%s/publication-document' % (instance.work.id,)
 
@@ -356,18 +375,6 @@ class PublicationDocument(models.Model):
     mime_type = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-@receiver(signals.post_save, sender=Work)
-def post_save_work(sender, instance, **kwargs):
-    """ Cascade (soft) deletes to linked documents
-    """
-    if not kwargs['raw'] and not kwargs['created']:
-        # cascade updates to ensure documents
-        # pick up changes to inherited attributes
-        for doc in instance.document_set.all():
-            # forces call to doc.copy_attributes()
-            doc.save()
 
 
 class Amendment(models.Model):
@@ -406,6 +413,12 @@ def post_save_amendment(sender, instance, **kwargs):
         for doc in instance.amended_work.document_set.all():
             # forces call to doc.copy_attributes()
             doc.save()
+    """ Send action to activity stream, as 'created' if a new amendment
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 
 class DocumentManager(models.Manager):
@@ -804,6 +817,16 @@ reversion.revisions.register(Document)
 reversion.revisions.register(Work)
 
 
+@receiver(signals.post_save, sender=Document)
+def post_save_document(sender, instance, **kwargs):
+    """ Send action to activity stream, as 'created' if a new document
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+
+
 def attachment_filename(instance, filename):
     """ Make S3 attachment filenames relative to the document,
     this may be modified to ensure it's unique by the storage system. """
@@ -1000,6 +1023,16 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
         action.send(user, verb='closed', action_object=self)
+
+
+@receiver(signals.post_save, sender=Task)
+def post_save_task(sender, instance, **kwargs):
+    """ Send action to activity stream, as 'created' if a new task
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 
 class Workflow(models.Model):

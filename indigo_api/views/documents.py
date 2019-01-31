@@ -11,7 +11,7 @@ from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
 from rest_framework.decorators import detail_route
-from rest_framework.permissions import DjangoModelPermissions, IsAuthenticated
+from rest_framework.permissions import DjangoModelPermissions, DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
 from cobalt import FrbrUri
@@ -26,6 +26,7 @@ from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer,
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
+from .misc import DEFAULT_PERMS
 
 log = logging.getLogger(__name__)
 
@@ -88,7 +89,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     API endpoint that allows Documents to be viewed or edited.
     """
     serializer_class = DocumentSerializer
-    permission_classes = (DjangoModelPermissions, DocumentPermissions)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
     renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
                         HTMLResponseRenderer, AkomaNtosoRenderer, ZIPResponseRenderer,
                         renderers.BrowsableAPIRenderer)
@@ -160,7 +161,7 @@ class DocumentResourceView(object):
 class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Annotation.objects
     serializer_class = AnnotationSerializer
-    permission_classes = (IsAuthenticated, DjangoModelPermissions, AnnotationPermissions)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
@@ -168,7 +169,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     serializer_class = VersionSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
 
     @detail_route(methods=['POST'])
     def restore(self, request, *args, **kwargs):
@@ -225,7 +226,7 @@ class DocumentActivityViewSet(DocumentResourceView,
     """ API endpoint to see who's working in a document.
     """
     serializer_class = DocumentActivitySerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
 
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()
@@ -292,7 +293,7 @@ class ParseView(APIView):
 class RenderView(APIView):
     """ Support for rendering a document on the server.
     """
-    permission_classes = (IsAuthenticated,)
+    permission_classes = DEFAULT_PERMS
 
     def post(self, request, format=None):
         serializer = RenderSerializer(data=request.data)
@@ -355,7 +356,7 @@ class SearchView(DocumentViewMixin, ListAPIView):
     pagination_class = SearchPagination
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
-    permission_classes = (DjangoModelPermissions,)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
 
     # Search scope, either 'documents' or 'works'.
     scope = 'works'

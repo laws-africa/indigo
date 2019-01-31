@@ -10,6 +10,7 @@ from ..models import Document, Attachment, Work, PublicationDocument
 from ..serializers import AttachmentSerializer
 from ..authz import AttachmentPermissions
 from .documents import DocumentResourceView
+from .misc import DEFAULT_PERMS
 
 
 def view_attachment(attachment):
@@ -38,7 +39,7 @@ def download_attachment(attachment):
 class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     queryset = Attachment.objects
     serializer_class = AttachmentSerializer
-    permission_classes = (IsAuthenticated, AttachmentPermissions)
+    permission_classes = DEFAULT_PERMS + (AttachmentPermissions,)
 
     @detail_route(methods=['GET'])
     def download(self, request, *args, **kwargs):
@@ -63,6 +64,7 @@ def attachment_media_view(request, *args, **kwargs):
     doc_id = kwargs['document_id']
     filename = kwargs['filename']
     return view_attachment_by_filename(doc_id, filename)
+
 
 def pub_attachment_media_view(request, *args, **kwargs):
     """ copied from attachment_media_view()

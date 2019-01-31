@@ -11,15 +11,6 @@
 
         <div>
           <div class="btn-toolbar">
-            <div class="dropdown">
-              <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Change country</button>
-              <div class="dropdown-menu">
-                {% for ctry in indigo_countries %}
-                <a class="dropdown-item" href="{% url 'place' place=ctry.code %}">{{ ctry.name }} · {{ ctry.code }}</a>
-                {% endfor %}
-              </div>
-            </div>
-
             {% with country.localities.all as locs %}
             {% if locs %}
             <div class="dropdown ml-2">

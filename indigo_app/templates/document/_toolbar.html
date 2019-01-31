@@ -1,7 +1,9 @@
 <div class="document-toolbar">
   <div class="btn-toolbar">
     <div class="btn-group btn-group-sm mr-2 general-buttons">
+      {% if request.user.is_authenticated %}
       <button type="button" class="btn btn-primary edit-text mr-2" title="Edit text"><i class="fas fa-pencil-alt"></i> Edit</button>
+      {% endif %}
       {% if perms.indigo_api.view_document_xml %}
       <button type="button" class="btn btn-outline-secondary show-xml-editor" data-toggle="buttons" title="Show XML"><i class="fa fa-code"></i> Show source</button>
       {% endif %}

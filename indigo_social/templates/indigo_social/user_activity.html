@@ -1,105 +1,29 @@
-{% extends "main.html" %}
-{% load activity_tags %}
-{% load humanize indigo_app %}
-{% load pinax_badges_tags %}
+{% extends "indigo_social/user_layout.html" %}
+{% load indigo_app %}
 
-{% block title%}{{ user.first_name }} {{ user.last_name }} {{ block.super }}{% endblock %}
+{% block user_profile_content %}
+<div class="card">
+  <h4 class="card-header">Activity</h4>
+  <div class="card-body">
+    {% include 'indigo_app/actions/_activity_list.html' with actions=page.object_list %}
 
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
-{% endblock %}
-
-{% block content %}
-<div class="container mb-5 mt-3">
-
-  <div class="row">
-    <div class="col-md-8 m-auto">
-
-      {% if request.user == user %}
-        <a class="btn btn-primary float-right" href="{% url 'edit_account' %}">Edit profile</a>
-      {% endif %}
-
-      <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-
-      {% if user.userprofile.bio %}
-        {{ user.userprofile.bio | linebreaks }}
-      {% endif %}
-
-      <div class="card mt-3">
-        <h4 class="card-header">Activity</h4>
-        <div class="card-body">
-          {% if page.object_list %}
-          <ul class="activity-list">
-            {% for action in page.object_list %}
-              {% with action.action_object.action_object_actions.content_type.model as model %}
-              <li class="activity-item">
-                {{ action.verb|capfirst }}
-
-                {% if model == 'work' %}
-                  {% with action.action_object as work %}
-                    the work <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-                    in <a href="{% url 'place' place=work.place.place_code %}">{{ work.place }}</a>
-                  {% endwith %}
-
-                {% elif model == 'amendment' %}
-                  {% with action.action_object as amendment %}
-                    an amendment on the work <a href="{% url 'work' frbr_uri=amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
-                    by the work <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
-                    in <a href="{% url 'place' place=amendment.amended_work.place.place_code %}">{{ amendment.amended_work.place }}</a>
-                  {% endwith %}
-
-                {% elif model == 'document' %}
-                  {% with action.action_object as document %}
-                    {% if document.deleted %}
-                      a document on the work <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}">{{ document.work.title }}</a> @ {{ document.expression_date }}
-                    {% else %}
-                      the document <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
-                    {% endif %}
-                    in <a href="{% url 'place' place=document.work.place.place_code %}">{{ document.work.place }}</a>
-                  {% endwith %}
-
-                {% elif model == 'task' %}
-                  {% with action.action_object as task %}
-                    the task <a href="{% url 'task_detail' place=task.place_code pk=task.pk %}">{{ task.title }}</a>
-                    {% if task.work %}
-                      on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-                      {% if task.document %}
-                        @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
-                      {% endif %}
-                    {% endif %}
-                    in <a href="{% url 'place' place=task.place_code %}">{{ task.place }}</a>
-                 {% endwith %}
-                {% endif %}
-
-                {{ action.timestamp|naturaltime }}
-              </li>
-              {% endwith %}
-            {% endfor %}
-
-            {% if is_paginated %}
-              <nav class="mt-4">
-                <ul class="pagination justify-content-center">
-                  {% if page.has_previous %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
-                  {% endif %}
-
-                  {% for num in paginator.page_range %}
-                  <li class="page-item {% if num == page.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-                  {% endfor %}
-
-                  {% if page.has_next %}
-                    <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
-                  {% endif %}
-                </ul>
-              </nav>
-            {% endif %}
-          {% else %}
-            <p>No activity found :(</p>
+    {% if is_paginated %}
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
           {% endif %}
-        </div>
-      </div>
 
-    </div>
+          {% for num in paginator.page_range %}
+          <li class="page-item {% if num == page.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+          {% endfor %}
+
+          {% if page.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
   </div>
 </div>
 {% endblock %}

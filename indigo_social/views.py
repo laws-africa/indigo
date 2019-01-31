@@ -82,6 +82,7 @@ class UserActivityView(MultipleObjectMixin, DetailView):
             'paginator': paginator,
             'page': page,
             'is_paginated': is_paginated,
+            'user': self.object,
         })
 
         return context

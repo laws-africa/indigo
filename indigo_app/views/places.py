@@ -7,7 +7,7 @@ from django.views.generic import TemplateView
 from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
 
-from indigo_api.models import Country, Annotation, Task
+from indigo_api.models import Country, Annotation, Task, Amendment
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 from indigo_api.views.works import WorkViewSet
 from indigo_api.views.documents import DocumentViewSet
@@ -103,7 +103,14 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             document_tasks[doc_id]['n_tasks'] = sum(states.itervalues())
         context['document_tasks_json'] = json.dumps(document_tasks)
 
-        work_n_amendments = {x.id: {'n_amendments': x.amendments.count()} for x in works}
-        context['work_n_amendments_json'] = json.dumps(work_n_amendments)
+        # summarise amendments per work
+        amendments = Amendment.objects.values('amended_work_id')\
+            .filter(amended_work_id__in=[w.id for w in works])\
+            .annotate(n_amendments=Count('pk'))\
+            .order_by()\
+            .all()
+
+        amendments = {a['amended_work_id']: {'n_amendments': a['n_amendments']} for a in amendments}
+        context['work_n_amendments_json'] = json.dumps(amendments)
 
         return context

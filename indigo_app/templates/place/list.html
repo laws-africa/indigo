@@ -1,0 +1,22 @@
+{% extends "main.html" %}
+
+{% block title %}Places {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  <div class="row">
+    {% for country in countries %}
+      <div class="col-md-3">
+        <a href="{% url 'place' place=country.place_code %}" class="text-body text-no-underline-ever">
+          <div class="card mb-3">
+            <div class="card-body">
+              <h5 class="card-title">{{ country.name }}</h5>
+              <span class="text-muted">{{ country.n_works }} works</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

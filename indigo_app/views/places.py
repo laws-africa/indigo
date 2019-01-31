@@ -3,9 +3,9 @@ import logging
 import json
 from collections import defaultdict
 
-from django.views.generic import TemplateView, RedirectView
-from django.urls import reverse
+from django.views.generic import TemplateView
 from django.db.models import Count
+from django.shortcuts import redirect
 
 from indigo_api.models import Country, Annotation, Task
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
@@ -18,21 +18,25 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 log = logging.getLogger(__name__)
 
 
-class LibraryView(RedirectView):
-    """ Redirect the old library view to the new place view.
-    """
-    permanent = True
+class PlaceListView(AbstractAuthedIndigoView, TemplateView):
+    template_name = 'place/list.html'
+    js_view = ''
 
-    def get_redirect_url(self, country=None):
-        place = country
+    def dispatch(self, request, **kwargs):
+        if Country.objects.count == 1:
+            return redirect('place', place=Country.objects.all()[0].place_code)
 
-        if not place:
-            if self.request.user.is_authenticated():
-                place = self.request.user.editor.country.code
-            else:
-                place = Country.objects.all()[0].code
+        return super(PlaceListView, self).dispatch(request, **kwargs)
 
-        return reverse('place', kwargs={'place': place})
+    def get_context_data(self, **kwargs):
+        context = super(PlaceListView, self).get_context_data(**kwargs)
+
+        context['countries'] = Country.objects\
+            .prefetch_related('country')\
+            .annotate(n_works=Count('works'))\
+            .all()
+
+        return context
 
 
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):

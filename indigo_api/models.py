@@ -146,8 +146,8 @@ class Work(models.Model):
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
-    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT)
+    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT, related_name='works')
+    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")

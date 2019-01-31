@@ -615,6 +615,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         document.work = self.work
         document.expression_date = data['expression_date']
         document.language = data['language']
+        document.created_by_user = self.request.user
         document.save()
 
         importer = plugins.for_document('importer', document)
@@ -628,7 +629,6 @@ class ImportDocumentView(WorkViewBase, FormView):
             log.error("Error during import: %s" % e.message, exc_info=e)
             raise ValidationError(e.message or "error during import")
 
-        document.created_by_user = self.request.user
         document.updated_by_user = self.request.user
         document.save()
 

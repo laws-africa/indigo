@@ -25,9 +25,6 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 
 
 class TaskListView(TaskViewBase, ListView):
-    # permissions
-    permission_required = ('indigo_api.add_task',)
-
     context_object_name = 'tasks'
     paginate_by = 20
     paginate_orphans = 4
@@ -59,9 +56,6 @@ class TaskListView(TaskViewBase, ListView):
 
 
 class TaskDetailView(TaskViewBase, DetailView):
-    # permissions
-    permission_required = ('indigo_api.add_task',)
-
     context_object_name = 'task'
     model = Task
 

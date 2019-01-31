@@ -46,9 +46,6 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
     slug_url_kwarg = 'frbr_uri'
     slug_field = 'frbr_uri'
 
-    # permissions
-    permission_required = ('indigo_api.view_work',)
-
     def determine_place(self):
         if 'place' not in self.kwargs:
             self.kwargs['place'] = self.kwargs['frbr_uri'].split('/', 2)[1]
@@ -588,7 +585,7 @@ class ImportDocumentView(WorkViewBase, FormView):
     it allows us to handle errors without refreshing the whole page.
     """
     template_name = 'indigo_api/work_import_document.html'
-    permission_required = ('indigo_api.view_work', 'indigo_api.add_document')
+    permission_required = ('indigo_api.add_document')
     js_view = 'ImportView'
     form_class = ImportDocumentForm
 

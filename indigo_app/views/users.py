@@ -10,6 +10,7 @@ from .base import AbstractAuthedIndigoView
 
 
 class EditAccountView(AbstractAuthedIndigoView, UpdateView):
+    authentication_required = True
     model = Editor
     template_name = 'indigo_app/user_account/edit.html'
     form_class = UserEditorForm
@@ -34,6 +35,7 @@ class EditAccountView(AbstractAuthedIndigoView, UpdateView):
 
 
 class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
+    authentication_required = True
     context_object_name = 'user'
     template_name = 'indigo_app/user_account/api.html'
     check_country_perms = False
@@ -49,6 +51,7 @@ class EditAccountAPIView(AbstractAuthedIndigoView, DetailView):
 
 
 class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
+    authentication_required = True
     context_object_name = 'editor'
     template_name = 'indigo_app/user_account/accept_terms.html'
     fields = ('accepted_terms',)

@@ -16,9 +16,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
     pk_url_kwarg = 'doc_id'
     template_name = 'document/show.html'
 
-    # permissions
-    permission_required = ('indigo_api.view_work',)
-
     def get_object(self, queryset=None):
         doc = super(DocumentDetailView, self).get_object(queryset)
         if doc.deleted:

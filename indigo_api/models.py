@@ -141,7 +141,6 @@ class Work(models.Model):
     class Meta:
         permissions = (
             ('review_work', 'Can review work details'),
-            ('view_work', 'Can list and view work details'),
         )
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")
@@ -994,7 +993,8 @@ class Task(models.Model):
 
     # submit for review
     def may_submit(self, view):
-        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.submit_task')
+        return view.request.user.is_authenticated and \
+            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
@@ -1002,7 +1002,8 @@ class Task(models.Model):
 
     # cancel
     def may_cancel(self, view):
-        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.cancel_task')
+        return view.request.user.is_authenticated and \
+            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.cancel_task')
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
@@ -1010,7 +1011,8 @@ class Task(models.Model):
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
-        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
+        return view.request.user.is_authenticated and \
+            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
@@ -1018,7 +1020,8 @@ class Task(models.Model):
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
-        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.unsubmit_task')
+        return view.request.user.is_authenticated and \
+            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.unsubmit_task')
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
@@ -1026,7 +1029,8 @@ class Task(models.Model):
 
     # close
     def may_close(self, view):
-        return view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.close_task')
+        return view.request.user.is_authenticated and \
+            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.close_task')
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):

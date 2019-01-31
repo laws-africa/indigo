@@ -259,8 +259,7 @@ class ContributorBadge(PermissionBadge):
     slug = 'contributor'
     name = 'Contributor'
     description = 'Can view work details'
-    permissions = ('indigo_api.view_work',
-                   'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
+    permissions = ('indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
                    'indigo_api.add_task')
 
 

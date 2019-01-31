@@ -130,7 +130,7 @@
     defaults: function() {
       return {
         nature: 'act',
-        country: Indigo.user.get('country_code').toLowerCase(),
+        country: Indigo.user.id ? Indigo.user.get('country_code').toLowerCase() : null,
       };
     },
 

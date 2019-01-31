@@ -358,6 +358,7 @@ def post_save_work(sender, instance, **kwargs):
         # pick up changes to inherited attributes
         for doc in instance.document_set.all():
             # forces call to doc.copy_attributes()
+            doc.updated_by_user = instance.updated_by_user
             doc.save()
 
     # Send action to activity stream, as 'created' if a new work

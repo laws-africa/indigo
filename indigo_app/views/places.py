@@ -4,7 +4,7 @@ import json
 from collections import defaultdict
 
 from django.views.generic import TemplateView
-from django.db.models import Count
+from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
 
 from indigo_api.models import Country, Annotation, Task
@@ -34,6 +34,13 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         context['countries'] = Country.objects\
             .prefetch_related('country')\
             .annotate(n_works=Count('works'))\
+            .annotate(n_open_tasks=Subquery(
+                Task.objects.filter(state__in=Task.OPEN_STATES, country=OuterRef('pk'))
+                .values('country')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+                output_field=IntegerField()
+            ))\
             .all()
 
         return context

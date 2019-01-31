@@ -11,7 +11,11 @@
           <div class="card mb-3">
             <div class="card-body">
               <h5 class="card-title">{{ country.name }}</h5>
-              <span class="text-muted">{{ country.n_works }} works</span>
+
+              {% if country.n_open_tasks %}
+              <div class="text-muted float-right">{{ country.n_open_tasks }} tasks</div>
+              {% endif %}
+              <div class="text-muted">{{ country.n_works }} works</div>
             </div>
           </div>
         </a>

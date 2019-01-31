@@ -32,7 +32,9 @@
     {% block main-header-tabs %}
     <nav class="nav nav-tabs">
       <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">Works</a>
-      <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">Tasks</a>
+      <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">
+        Tasks <span class="badge badge-light">{{ place.tasks.unclosed.count }}</span>
+      </a>
     </nav>
     {% endblock %}
   </div>

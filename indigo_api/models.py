@@ -905,6 +905,14 @@ class DocumentActivity(models.Model):
         cls.objects.filter(document=document, updated_at__lte=threshold).delete()
 
 
+class TaskQuerySet(models.QuerySet):
+    def unclosed(self):
+        return self.filter(state__in=Task.OPEN_STATES)
+
+    def closed(self):
+        return self.filter(state__in=Task.CLOSED_STATES)
+
+
 class TaskManager(models.Manager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset().prefetch_related('labels')
@@ -912,6 +920,9 @@ class TaskManager(models.Manager):
 
 class Task(models.Model):
     STATES = ('open', 'pending_review', 'cancelled', 'done')
+
+    CLOSED_STATES = ('cancelled', 'done')
+    OPEN_STATES = ('open', 'pending_review')
 
     class Meta:
         permissions = (
@@ -922,7 +933,7 @@ class Task(models.Model):
             ('close_task', 'Can close a task that has been submitted for review'),
         )
 
-    objects = TaskManager()
+    objects = TaskManager.from_queryset(TaskQuerySet)()
 
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)

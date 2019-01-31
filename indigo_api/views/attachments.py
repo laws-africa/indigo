@@ -2,9 +2,9 @@ from django.http import HttpResponse
 from django.shortcuts import get_list_or_404
 
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
-from rest_framework.decorators import detail_route, permission_classes, api_view
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import detail_route
 
 from ..models import Document, Attachment, Work, PublicationDocument
 from ..serializers import AttachmentSerializer
@@ -55,15 +55,14 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
         return queryset.filter(document=self.document).all()
 
 
-@permission_classes((IsAuthenticated,))
-@api_view()
-def attachment_media_view(request, *args, **kwargs):
+class AttachmentMediaView(DocumentResourceView, APIView):
     """ This is a helper view to serve up a named attachment file via
     a document's "media/file.ext" url, which is part of the AKN standard.
     """
-    doc_id = kwargs['document_id']
-    filename = kwargs['filename']
-    return view_attachment_by_filename(doc_id, filename)
+    permission_classes = DEFAULT_PERMS + (AttachmentPermissions,)
+
+    def get(self, request, document_id, filename):
+        return view_attachment_by_filename(document_id, filename)
 
 
 def pub_attachment_media_view(request, *args, **kwargs):

@@ -1,33 +1,16 @@
 {% extends "account/base.html" %}
-{% load account socialaccount %}
+{% load account socialaccount staticfiles %}
 
 {% block title %}Log In{% endblock %}
+{% block head-css %}
+{{ block.super }}
+<link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+{% endblock %}
 
 {% block content %}
 <h1 class="mb-3">Log In</h1>
 
-{% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-  <ul class="socialaccount_providers list-unstyled">
-    {% for provider in socialaccount_providers %}
-    <li>
-      <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='login' %}">
-        <i class="fab fa-fw fa-{{ provider.id }}"></i> Log in with {{provider.name}}
-      </a>
-    </li>
-    {% endfor %}
-
-    <li>
-      <a class="btn btn-block btn-primary" data-toggle="collapse" href="#email-login"><i class="fa fa-fw fa-at"></i> Log in with email</a>
-    </li>
-  </ul>
-{% endif %}
-
-<form method="POST" action="{% url 'account_login' %}" id="email-login" class="{% if socialaccount_providers %}collapse{% endif %}">
-  {% if socialaccount_providers %}
-  <hr>
-  {% endif %}
-
+<form method="POST" action="{% url 'account_login' %}" id="email-login">
   {% csrf_token %}
   {% if redirect_field_value %}
     <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">
@@ -66,11 +49,38 @@
     {% endif %}
   </div>
 
-  <button class="btn btn-success btn-block mb-3" type="submit">Log in</button>
+  <div class="row">
+    <div class="col-md-6">
+      <button class="btn btn-success btn-block mb-3" type="submit">Log in</button>
+    </div>
 
-  <div class="text-center">
-    <a href="{{ signup_url }}">Sign up</a>
+    <div class="col-md-6">
+      <a class="btn btn-outline-primary btn-block mb-3" href="{{ signup_url }}">Sign up</a>
+    </div>
   </div>
 </form>
+
+{% get_providers as socialaccount_providers %}
+{% if socialaccount_providers %}
+<hr class="my-4">
+{% endif %}
+
+<div class="row">
+  <div class="col-lg-7 mx-auto">
+    {% for provider in socialaccount_providers %}
+      <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='login' %}">
+        {% if provider.name == "Google" %}
+          <img src="{% static 'images/google-logo.png' %}" style="height: 20px; margin-right: 5px">
+        {% else %}
+          <i class="fab fa-fw fa-{{ provider.id }}"></i>
+        {% endif %}
+
+        Log in with {{provider.name}}
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="mt-3 text-muted text-center">By logging in you agree to our <a href="{% url 'terms_of_use' %}">Terms of Use &amp; Privacy Policy</a>.</div>
 
 {% endblock %}

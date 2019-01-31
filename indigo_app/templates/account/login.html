@@ -7,23 +7,17 @@
 <h1 class="mb-3">Log In</h1>
 
 {% get_providers as socialaccount_providers %}
-{% if socialaccount_providers %}
-  <ul class="socialaccount_providers list-unstyled">
-    {% for provider in socialaccount_providers %}
-    <li>
-      <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='login' %}">
-        <i class="fab fa-fw fa-{{ provider.id }}"></i> Log in with {{provider.name}}
-      </a>
-    </li>
-    {% endfor %}
+<ul class="socialaccount_providers list-unstyled">
+  {% for provider in socialaccount_providers %}
+  <li>
+    <a class="btn btn-block btn-outline-primary mb-3 socialaccount_provider {{provider.id}}" href="{% provider_login_url provider.id process='login' %}">
+      <i class="fab fa-fw fa-{{ provider.id }}"></i> Log in with {{provider.name}}
+    </a>
+  </li>
+  {% endfor %}
+</ul>
 
-    <li>
-      <a class="btn btn-block btn-primary" data-toggle="collapse" href="#email-login"><i class="fa fa-fw fa-at"></i> Log in with email</a>
-    </li>
-  </ul>
-{% endif %}
-
-<form method="POST" action="{% url 'account_login' %}" id="email-login" class="{% if socialaccount_providers %}collapse{% endif %}">
+<form method="POST" action="{% url 'account_login' %}" id="email-login">
   {% if socialaccount_providers %}
   <hr>
   {% endif %}

@@ -11,16 +11,16 @@
 <div class="container mb-5 mt-3">
 
   <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-4 col-lg-3">
       <div class="card">
         <div class="card-body">
-          <h1>
+          <h4>
             {% if not user.first_name %}
               {{ user.username }}
             {% else %}
               {{ user.first_name }} {{ user.last_name }}
             {% endif %}
-          </h1>
+          </h4>
 
           {% if user.userprofile.bio %}
             {{ user.userprofile.bio | linebreaks }}
@@ -81,7 +81,7 @@
       {% endif %}
     </div>
 
-    <div class="col-md-9">
+    <div class="col-md-8 col-lg-9">
       <ul class="nav nav-tabs mb-3">
         <li class="nav-item">
           <a class="nav-link {% if view.template_name == 'indigo_social/user_profile.html' %}active{% endif %}" href="{% url 'indigo_social:user_profile' username=user.username %}">Overview</a>

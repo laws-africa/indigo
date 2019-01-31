@@ -32,14 +32,14 @@
 
         {% elif model == 'task' %}
           {% with action.action_object as task %}
-            the task <a href="{% url 'task_detail' place=task.place_code pk=task.pk %}">{{ task.title }}</a>
+            the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
             {% if task.work %}
               on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
               {% if task.document %}
                 @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
               {% endif %}
             {% endif %}
-            in <a href="{% url 'place' place=task.place_code %}">{{ task.place }}</a>
+            in <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
          {% endwith %}
         {% endif %}
 

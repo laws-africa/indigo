@@ -231,7 +231,7 @@ class Work(models.Model):
 
     @property
     def place(self):
-        return self.locality if self.locality else self.country
+        return self.locality or self.country
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -979,11 +979,7 @@ class Task(models.Model):
 
     @property
     def place(self):
-        return self.locality if self.locality else self.country
-
-    @property
-    def place_code(self):
-        return self.country.code + '-' + self.locality.code if self.locality else self.country.code
+        return self.locality or self.country
 
     def clean(self):
         # enforce that any work and/or document are for the correct place

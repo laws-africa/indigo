@@ -55,15 +55,9 @@
         {% endfor %}
 
         <div class="documents">
-          {% block amendment-expressions %}
-            {% with pit.expressions as documents %}
-              {% if documents %}
-                {% for document in documents %}
-                <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
-                {% endfor %}
-              {% endif %}
-            {% endwith %}
-          {% endblock %}
+          {% for document in pit.expressions %}
+          <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
+          {% endfor %}
         </div>
       </div>
 

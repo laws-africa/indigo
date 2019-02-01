@@ -28,7 +28,7 @@ urlpatterns = [
     url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$',
         cache_page(PUBLICATION_CACHE_SECS)(views.publications.FindPublicationsView.as_view()), name='find-publications'),
 
-    url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachments.attachment_media_view, name='document-media'),
+    url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', views.attachments.AttachmentMediaView.as_view(), name='document-media'),
     url(r'documents/(?P<document_id>[0-9]+)/activity', views.documents.DocumentActivityViewSet.as_view({
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
 

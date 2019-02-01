@@ -6,7 +6,7 @@ from .views import users, works, documents, tasks, places
 
 urlpatterns = [
     # homepage
-    url(r'^$', RedirectView.as_view(url='library', permanent=True)),
+    url(r'^$', RedirectView.as_view(url='/places/', permanent=False)),
 
     # auth and accounts
     url(r'^accounts/', include('allauth.urls')),
@@ -16,6 +16,7 @@ urlpatterns = [
 
     url(r'^terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
 
+    url(r'^places/$', places.PlaceListView.as_view(), name='places'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', places.PlaceDetailView.as_view(), name='place'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.TaskListView.as_view(), name='tasks'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/new$', tasks.TaskCreateView.as_view(), name='create_task'),
@@ -43,7 +44,4 @@ urlpatterns = [
     url(r'^works(?P<frbr_uri>/\S+?)/$', works.WorkOverviewView.as_view(), name='work'),
 
     url(r'^documents/(?P<doc_id>\d+)/$', documents.DocumentDetailView.as_view(), name='document'),
-
-    url(r'^library/$', places.LibraryView.as_view()),
-    url(r'^library/(?P<country>[^\s/-]+)/$', places.LibraryView.as_view(), name='library'),
 ]

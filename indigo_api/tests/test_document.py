@@ -4,12 +4,12 @@ from nose.tools import *  # noqa
 from django.test import TestCase
 from datetime import date
 
-from indigo_api.models import Document, Work, Amendment, Language, Country
+from indigo_api.models import Document, Work, Amendment, Language, Country, User
 from indigo_api.tests.fixtures import *  # noqa
 
 
 class DocumentTestCase(TestCase):
-    fixtures = ['countries', 'work', 'published']
+    fixtures = ['countries', 'user', 'work', 'published']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)
@@ -20,7 +20,8 @@ class DocumentTestCase(TestCase):
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1), language=self.eng)
+        user = User.objects.get(pk=1)
+        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1), language=self.eng, created_by_user=user, updated_by_user=user)
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))
@@ -53,8 +54,9 @@ class DocumentTestCase(TestCase):
         assert_equal(d.expression_date, None)
 
     def test_inherit_from_work(self):
-        w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document', country=Country.for_code('za'))
-        d = Document(work=w, expression_date='2011-02-01', language=self.eng)
+        user = User.objects.get(pk=1)
+        w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document', country=Country.for_code('za'), created_by_user=user)
+        d = Document(work=w, expression_date='2011-02-01', language=self.eng, created_by_user=user)
         d.save()
 
         d = Document.objects.get(pk=d.id)
@@ -83,7 +85,8 @@ class DocumentTestCase(TestCase):
         d = date(2011, 12, 10)
 
         # this will impact only work 2
-        a = Amendment(amending_work=amending, amended_work=amended, date=d)
+        user = User.objects.get(pk=1)
+        a = Amendment(amending_work=amending, amended_work=amended, date=d, created_by_user=user)
         a.save()
 
         doc = Document.objects.get(id=2)

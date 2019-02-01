@@ -9,6 +9,7 @@ urlpatterns = [
     # /contributors/{ username }
     url(r'^contributors/(?P<username>[\w@.-]+)$', views.UserProfileView.as_view(), name='user_profile'),
     url(r'^contributors/(?P<username>[\w@.-]+)/badges$', views.AwardBadgeView.as_view(), name='award_user_badge'),
+    url(r'^contributors/(?P<username>[\w@.-]+)/activity/$', views.UserActivityView.as_view(), name='user_activity'),
 
     # /accounts/profile/
     url(r'^accounts/profile/$', views.UserProfileEditView.as_view(), name='edit_account'),

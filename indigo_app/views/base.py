@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
@@ -24,26 +25,33 @@ class IndigoJSViewMixin(object):
 
 
 class AbstractAuthedIndigoView(PermissionRequiredMixin, IndigoJSViewMixin):
-    """ Abstract view for authenticated Indigo views.
+    """ Abstract view for (potentially) authenticated Indigo views.
 
-    For views that accept POST, PUT, PATCH or DELETE methods, this view can optionally
-    check if the user has appropriate country permissions. In that case, +check_country_perms+
-    must be True and +get_country()+ must be implemented.
+    Any Indigo view that may need authentication, must inherit from this view.
+    Authentication is required if:
+
+    * `authentication_required` is True
+    * `permission_required` is not empty
+    * INDIGO_AUTH_REQUIRED setting is True
     """
-    # permissions
     raise_exception = True
+    authentication_required = settings.INDIGO_AUTH_REQUIRED
     permission_required = ()
     must_accept_terms = True
 
     def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
+        if self.requires_authentication():
+            if not request.user.is_authenticated:
+                return redirect_to_login(self.request.get_full_path(), self.get_login_url(), self.get_redirect_field_name())
 
-        if self.must_accept_terms and not request.user.editor.accepted_terms:
+        if request.user.is_authenticated and self.must_accept_terms and not request.user.editor.accepted_terms:
             # user must accept terms
             return redirect_to_login(self.request.get_full_path(), 'accept_terms', self.get_redirect_field_name())
 
         return super(AbstractAuthedIndigoView, self).dispatch(request, *args, **kwargs)
+
+    def requires_authentication(self):
+        return self.authentication_required or self.permission_required
 
 
 class PlaceViewBase(object):

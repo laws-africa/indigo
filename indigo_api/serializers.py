@@ -1,5 +1,7 @@
 import logging
 import os.path
+
+from actstream.signals import action
 from collections import OrderedDict
 from lxml.etree import LxmlError
 
@@ -350,7 +352,10 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
         # signals
         if draft and not document.draft:
+            action.send(user, verb='published', action_object=document)
             document_published.send(sender=self.__class__, document=document, request=self.context['request'])
+        elif not draft and document.draft:
+            action.send(user, verb='unpublished', action_object=document)
 
         return document
 

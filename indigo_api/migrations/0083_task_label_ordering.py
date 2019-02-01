@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0081_task_labels'),
+        ('indigo_api', '0082_task_fields_removed'),
     ]
 
     operations = [

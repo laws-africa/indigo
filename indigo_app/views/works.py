@@ -224,9 +224,8 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         old_date = form.initial['date']
 
         # do normal things to amend work
-        result = super(WorkAmendmentDetailView, self).form_valid(form)
         self.object.updated_by_user = self.request.user
-        self.object.save()
+        result = super(WorkAmendmentDetailView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
@@ -288,8 +287,8 @@ class AddWorkPointInTimeView(WorkDependentView, CreateView):
         # does one already exist?
         doc = self.work.expressions().filter(expression_date=date, language=language).first()
         if not doc:
-            # create a new one
-            doc = self.work.create_expression_at(date, language)
+            # create a new one with the current user as `created_by_user`
+            doc = self.work.create_expression_at(self.request.user, date, language)
 
         return redirect('document', doc_id=doc.id)
 
@@ -616,6 +615,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         document.work = self.work
         document.expression_date = data['expression_date']
         document.language = data['language']
+        document.created_by_user = self.request.user
         document.save()
 
         importer = plugins.for_document('importer', document)
@@ -629,7 +629,6 @@ class ImportDocumentView(WorkViewBase, FormView):
             log.error("Error during import: %s" % e.message, exc_info=e)
             raise ValidationError(e.message or "error during import")
 
-        document.created_by_user = self.request.user
         document.updated_by_user = self.request.user
         document.save()
 

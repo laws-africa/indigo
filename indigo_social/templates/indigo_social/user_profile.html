@@ -1,113 +1,60 @@
-{% extends "main.html" %}
-{% load pinax_badges_tags %}
+{% extends "indigo_social/user_layout.html" %}
+{% load activity_tags pinax_badges_tags %}
 
-{% block title%}{{ user.first_name }} {{ user.last_name }} {{ block.super }}{% endblock %}
+{% block user_profile_content %}
+<div class="card">
+  <h4 class="card-header">Badges earned</h4>
+  <div class="card-body">
 
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a href="{% url 'indigo_social:contributors' %}">Contributors</a></li>
-{% endblock %}
-
-{% block content %}
-<div class="container mb-5 mt-3">
-
-  <div class="row">
-    <div class="col-md-8 m-auto">
-
-      {% if request.user == user %}
-        <a class="btn btn-primary float-right" href="{% url 'edit_account' %}">Edit profile</a>
-      {% endif %}
-
-      <h1>{{ user.first_name }} {{ user.last_name }}</h1>
-
-      {% if user.userprofile.bio %}
-        {{ user.userprofile.bio | linebreaks }}
-      {% endif %}
-
-      <ul class="fa-ul">
-        <li>
-          <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span>
-          {{ user.editor.country.name }}
-        </li>
-        {% if user.userprofile.twitter_username %}
-        <li>
-          <span class="fa-li"><i class="fab fa-twitter"></i></span> 
-          <a href="https://twitter.com/@{{ user.userprofile.twitter_username }}" target="_blank" rel="noopener noreferrer">@{{ user.userprofile.twitter_username }}</a>
-        </li>
-        {% endif %}
-
-        {% if user.userprofile.linkedin_profile %}
-        <li>
-          <span class="fa-li"><i class="fab fa-linkedin"></i></span> 
-          <a href="{{ user.userprofile.linkedin_profile }}" target="_blank" rel="noopener noreferrer">{{ user.userprofile.linkedin_profile }}</a>
-        </li>
-        {% endif %}
-      </ul>
-
-      <div class="card mt-3">
-        <div class="card-body">
-          {% if user.userprofile.organisations %}
-          <h5>Organisations</h5>
-          {{ user.userprofile.organisations | linebreaks }}
-          {% endif %}
-
-          {% if user.userprofile.skills %}
-          <h5>Skills</h5>
-          {{ user.userprofile.skills | linebreaks }}
-          {% endif %}
-
-          {% if user.userprofile.qualifications %}
-          <h5>Qualifications</h5>
-          {{ user.userprofile.qualifications | linebreaks }}
-          {% endif %}
-
-          {% if user.userprofile.specialisations %}
-          <h5>Specialisations</h5>
-          {{ user.userprofile.specialisations | linebreaks }}
-          {% endif %}
-
-          {% if user.userprofile.areas_of_law %}
-          <h5>Areas of law</h5>
-          {{ user.userprofile.areas_of_law|default:'' }}
-          {% endif %}
+    {% badges_for_user user as badges %}
+    <div class="row">
+      {% for badge in badges %}
+      <div class="col-md-6">
+        <div class="media mb-3">
+          <i class="fas fa-award fa-fw fa-3x mr-3"></i>
+          <div class="media-body">
+            <h5 class="mt-0 mb-0"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
+            <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
+            {{ badge.description }}
+          </div>
         </div>
       </div>
+      {% endfor %}
+    </div>
 
-      <div class="card mt-3">
-        <h4 class="card-header">Badges earned</h4>
-        <div class="card-body">
+    {% if not badges %}
+      <p>No badges earned yet :(</p>
+    {% endif %}
 
-          {% badges_for_user user as badges %}
-          <ul class="list-unstyled">
-            {% for badge in badges %}
-            <li class="media mb-3">
-              <i class="fas fa-award fa-fw fa-3x mr-3"></i>
-              <div class="media-body">
-                <h5 class="mt-0 mb-0"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
-                <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
-                {{ badge.description }}
-              </div>
-            </li>
+    {% if can_award %}
+      <hr>
+
+      <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}">
+        {% csrf_token %}
+
+        <p>Award a new badge to this user:</p>
+        <div class="form-inline">
+          <select name="{{ award_form.badge.name }}" class="form-control">
+            {% for val, label in award_form.fields.badge.choices %}
+            <option value="{{ val }}">{{ label }}</option>
             {% endfor %}
-          </ul>
+          </select>
 
-          {% if can_award %}
-            <hr>
-
-            <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}" class="form-inline">
-              {% csrf_token %}
-
-              <p>Award a new badge to this user:</p>
-              <select name="{{ award_form.badge.name }}" class="form-control">
-                {% for val, label in award_form.fields.badge.choices %}
-                <option value="{{ val }}">{{ label }}</option>
-                {% endfor %}
-              </select>
-
-              <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
-            </form>
-          {% endif %}
+          <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
         </div>
-      </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<div class="card mt-3">
+  <h4 class="card-header">Recent activity</h4>
+  <div class="card-body">
+    {% activity_stream 'actor' user %}
+    {% include 'indigo_app/actions/_activity_list.html' with actions=stream %}
+
+    <div class="text-center">
+      <a href="{% url 'indigo_social:user_activity' username=user.username %}" class="btn btn-primary">More activities</a>
     </div>
   </div>
 </div>

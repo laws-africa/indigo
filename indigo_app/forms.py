@@ -122,7 +122,7 @@ class TaskForm(forms.ModelForm):
         model = Task
         fields = ('title', 'description', 'work', 'document', 'labels')
 
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple)
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple, required=False)
 
 
 class TaskFilterForm(forms.Form):

@@ -147,8 +147,8 @@ class Work(models.Model):
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
-    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT)
+    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT, related_name='works')
+    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
@@ -230,7 +230,7 @@ class Work(models.Model):
 
     @property
     def place(self):
-        return self.locality if self.locality else self.country
+        return self.locality or self.country
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -357,6 +357,7 @@ def post_save_work(sender, instance, **kwargs):
         # pick up changes to inherited attributes
         for doc in instance.document_set.all():
             # forces call to doc.copy_attributes()
+            doc.updated_by_user = instance.updated_by_user
             doc.save()
 
     # Send action to activity stream, as 'created' if a new work
@@ -933,6 +934,14 @@ class DocumentActivity(models.Model):
         cls.objects.filter(document=document, updated_at__lte=threshold).delete()
 
 
+class TaskQuerySet(models.QuerySet):
+    def unclosed(self):
+        return self.filter(state__in=Task.OPEN_STATES)
+
+    def closed(self):
+        return self.filter(state__in=Task.CLOSED_STATES)
+
+
 class TaskManager(models.Manager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset().prefetch_related('labels')
@@ -940,6 +949,9 @@ class TaskManager(models.Manager):
 
 class Task(models.Model):
     STATES = ('open', 'pending_review', 'cancelled', 'done')
+
+    CLOSED_STATES = ('cancelled', 'done')
+    OPEN_STATES = ('open', 'pending_review')
 
     class Meta:
         permissions = (
@@ -950,7 +962,7 @@ class Task(models.Model):
             ('close_task', 'Can close a task that has been submitted for review'),
         )
 
-    objects = TaskManager()
+    objects = TaskManager.from_queryset(TaskQuerySet)()
 
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
@@ -977,11 +989,7 @@ class Task(models.Model):
 
     @property
     def place(self):
-        return self.locality if self.locality else self.country
-
-    @property
-    def place_code(self):
-        return self.country.code + '-' + self.locality.code if self.locality else self.country.code
+        return self.locality or self.country
 
     def clean(self):
         # enforce that any work and/or document are for the correct place

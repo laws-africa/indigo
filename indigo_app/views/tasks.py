@@ -181,6 +181,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
     def post(self, request, *args, **kwargs):
         task = self.get_object()
         user = self.request.user
+        task.updated_by_user = user
+
         potential_changes = {
             'submit': 'submitted',
             'cancel': 'cancelled',

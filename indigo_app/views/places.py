@@ -3,11 +3,11 @@ import logging
 import json
 from collections import defaultdict
 
-from django.views.generic import TemplateView, RedirectView
-from django.urls import reverse
-from django.db.models import Count
+from django.views.generic import TemplateView
+from django.db.models import Count, Subquery, IntegerField, OuterRef
+from django.shortcuts import redirect
 
-from indigo_api.models import Country, Annotation, Task
+from indigo_api.models import Country, Annotation, Task, Amendment
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 from indigo_api.views.works import WorkViewSet
 from indigo_api.views.documents import DocumentViewSet
@@ -18,21 +18,32 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 log = logging.getLogger(__name__)
 
 
-class LibraryView(RedirectView):
-    """ Redirect the old library view to the new place view.
-    """
-    permanent = True
+class PlaceListView(AbstractAuthedIndigoView, TemplateView):
+    template_name = 'place/list.html'
+    js_view = ''
 
-    def get_redirect_url(self, country=None):
-        place = country
+    def dispatch(self, request, **kwargs):
+        if Country.objects.count == 1:
+            return redirect('place', place=Country.objects.all()[0].place_code)
 
-        if not place:
-            if self.request.user.is_authenticated():
-                place = self.request.user.editor.country.code
-            else:
-                place = Country.objects.all()[0].code
+        return super(PlaceListView, self).dispatch(request, **kwargs)
 
-        return reverse('place', kwargs={'place': place})
+    def get_context_data(self, **kwargs):
+        context = super(PlaceListView, self).get_context_data(**kwargs)
+
+        context['countries'] = Country.objects\
+            .prefetch_related('country')\
+            .annotate(n_works=Count('works'))\
+            .annotate(n_open_tasks=Subquery(
+                Task.objects.filter(state__in=Task.OPEN_STATES, country=OuterRef('pk'))
+                .values('country')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+                output_field=IntegerField()
+            ))\
+            .all()
+
+        return context
 
 
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
@@ -92,7 +103,14 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             document_tasks[doc_id]['n_tasks'] = sum(states.itervalues())
         context['document_tasks_json'] = json.dumps(document_tasks)
 
-        work_n_amendments = {x.id: {'n_amendments': x.amendments.count()} for x in works}
-        context['work_n_amendments_json'] = json.dumps(work_n_amendments)
+        # summarise amendments per work
+        amendments = Amendment.objects.values('amended_work_id')\
+            .filter(amended_work_id__in=[w.id for w in works])\
+            .annotate(n_amendments=Count('pk'))\
+            .order_by()\
+            .all()
+
+        amendments = {a['amended_work_id']: {'n_amendments': a['n_amendments']} for a in amendments}
+        context['work_n_amendments_json'] = json.dumps(amendments)
 
         return context

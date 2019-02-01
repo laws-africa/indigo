@@ -2,6 +2,7 @@
 from __future__ import unicode_literals
 
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
+from django.views.generic.list import MultipleObjectMixin
 from django.urls import reverse
 from django.http import Http404
 from django.shortcuts import redirect
@@ -63,6 +64,29 @@ class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
 
     def get_success_url(self):
         return reverse('edit_account')
+
+
+class UserActivityView(MultipleObjectMixin, DetailView):
+    model = User
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    template_name = 'indigo_social/user_activity.html'
+    object_list = None
+    page_size = 20
+    js_view = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(UserActivityView, self).get_context_data(**kwargs)
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(self.object.actor_actions.all(), self.page_size)
+        context.update({
+            'paginator': paginator,
+            'page': page,
+            'is_paginated': is_paginated,
+            'user': self.object,
+        })
+
+        return context
 
 
 class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):

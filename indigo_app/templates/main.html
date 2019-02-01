@@ -20,7 +20,7 @@
         <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
         {% block navbar-left %}
           {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="{% url 'place' place=request.user.editor.country_code %}">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
           <li class="nav-item dropdown">
             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
             <div class="dropdown-menu">

@@ -1,0 +1,29 @@
+{% extends "indigo_social/user_layout.html" %}
+{% load indigo_app %}
+
+{% block user_profile_content %}
+<div class="card">
+  <h4 class="card-header">Activity</h4>
+  <div class="card-body">
+    {% include 'indigo_app/actions/_activity_list.html' with actions=page.object_list %}
+
+    {% if is_paginated %}
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if page.has_previous %}
+            <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Previous</a></li>
+          {% endif %}
+
+          {% for num in paginator.page_range %}
+          <li class="page-item {% if num == page.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+          {% endfor %}
+
+          {% if page.has_next %}
+            <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

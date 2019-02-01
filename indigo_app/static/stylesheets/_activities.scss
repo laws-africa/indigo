@@ -1,0 +1,36 @@
+/* activity lists */
+
+.activity-list {
+  list-style: none;
+  position: relative;
+  padding-top: 1rem;
+
+  // activity timeline bar
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: 7px;
+    left: 20px;
+    top: 0;
+    width: 2px;
+    z-index: 0;
+    background-color: $grey;
+  }
+
+  .activity-item {
+    position: relative;
+    margin-bottom: 7px;
+
+    &::before {
+      content: "";
+      display: block;
+      position: absolute;
+      left: -23px;
+      top: 7px;
+      border: 4px solid $grey-darker;
+      border-radius: 50%;
+      z-index: 1;
+    }
+  }
+}

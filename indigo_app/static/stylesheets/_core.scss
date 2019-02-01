@@ -23,6 +23,13 @@ body.is-staff {
   .requires-staff { display: block; }
 }
 
+.text-no-underline-ever {
+  &,
+  &:hover {
+    text-decoration: none !important;
+  }
+}
+
 .high {
   height: 100%;
 }
@@ -174,8 +181,10 @@ body.is-staff {
 }
 
 .btn.socialaccount_provider.google {
-  background-color: #4285F4;
-  color: white;
+  font-family: "Roboto", $font-family-sans-serif;
+  background-color: white;
+  color: #757575;
+  font-weight: bold;
 }
 .btn.socialaccount_provider.facebook {
   background-color: #4267b2;

@@ -4,6 +4,8 @@ import logging
 import re
 import datetime
 
+from actstream import action
+
 from django.conf import settings
 from django.db import models
 from django.db.models import signals, Q
@@ -146,8 +148,8 @@ class Work(models.Model):
     """ The FRBR Work URI of this work that uniquely identifies it globally """
 
     title = models.CharField(max_length=1024, null=True, default='(untitled)')
-    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT)
-    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT)
+    country = models.ForeignKey(Country, null=False, on_delete=models.PROTECT, related_name='works')
+    locality = models.ForeignKey(Locality, null=True, blank=True, on_delete=models.PROTECT, related_name='works')
 
     # publication details
     publication_name = models.CharField(null=True, blank=True, max_length=255, help_text="Original publication, eg. government gazette")
@@ -227,6 +229,10 @@ class Work(models.Model):
                 self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
         return self._repeal
 
+    @property
+    def place(self):
+        return self.locality or self.country
+
     def clean(self):
         # validate and clean the frbr_uri
         try:
@@ -262,7 +268,7 @@ class Work(models.Model):
                 not self.commenced_works.exists() and
                 not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
-    def create_expression_at(self, date, language=None):
+    def create_expression_at(self, user, date, language=None):
         """ Create a new expression at a particular date.
 
         This uses an existing document at or before this date as a template, if available.
@@ -285,6 +291,7 @@ class Work(models.Model):
         doc.language = language
         doc.expression_date = date
         doc.work = self
+        doc.created_by_user = user
         doc.save()
 
         return doc
@@ -346,6 +353,25 @@ class Work(models.Model):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
+@receiver(signals.post_save, sender=Work)
+def post_save_work(sender, instance, **kwargs):
+    """ Cascade (soft) deletes to linked documents
+    """
+    if not kwargs['raw'] and not kwargs['created']:
+        # cascade updates to ensure documents
+        # pick up changes to inherited attributes
+        for doc in instance.document_set.all():
+            # forces call to doc.copy_attributes()
+            doc.updated_by_user = instance.updated_by_user
+            doc.save()
+
+    # Send action to activity stream, as 'created' if a new work
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+
+
 def publication_document_filename(instance, filename):
     return 'work-attachments/%s/publication-document' % (instance.work.id,)
 
@@ -358,18 +384,6 @@ class PublicationDocument(models.Model):
     mime_type = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-
-
-@receiver(signals.post_save, sender=Work)
-def post_save_work(sender, instance, **kwargs):
-    """ Cascade (soft) deletes to linked documents
-    """
-    if not kwargs['raw'] and not kwargs['created']:
-        # cascade updates to ensure documents
-        # pick up changes to inherited attributes
-        for doc in instance.document_set.all():
-            # forces call to doc.copy_attributes()
-            doc.save()
 
 
 class Amendment(models.Model):
@@ -398,16 +412,20 @@ class Amendment(models.Model):
 
 
 @receiver(signals.post_save, sender=Amendment)
-@receiver(signals.pre_delete, sender=Amendment)
 def post_save_amendment(sender, instance, **kwargs):
-    """ When an amendment is saved, update the expressions of the amended
-    work to ensure the details of the amendment (ie. the date) are stashed
-    correctly in the document.
+    """ When an amendment is created, save any documents already at that date
+    to ensure the details of the amendment are stashed correctly in each document.
     """
-    if not kwargs.get('raw'):
-        for doc in instance.amended_work.document_set.all():
+    if kwargs['created']:
+        for doc in instance.amended_work.document_set.filter(expression_date=instance.date):
             # forces call to doc.copy_attributes()
+            doc.updated_by_user = instance.created_by_user
             doc.save()
+
+        # Send action to activity stream, as 'created' if a new amendment
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 
 class DocumentManager(models.Manager):
@@ -806,6 +824,18 @@ reversion.revisions.register(Document)
 reversion.revisions.register(Work)
 
 
+@receiver(signals.post_save, sender=Document)
+def post_save_document(sender, instance, **kwargs):
+    """ Send action to activity stream, as 'created' if a new document
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    elif instance.deleted:
+        action.send(instance.updated_by_user, verb='deleted', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+
+
 def attachment_filename(instance, filename):
     """ Make S3 attachment filenames relative to the document,
     this may be modified to ensure it's unique by the storage system. """
@@ -909,6 +939,14 @@ class DocumentActivity(models.Model):
         cls.objects.filter(document=document, updated_at__lte=threshold).delete()
 
 
+class TaskQuerySet(models.QuerySet):
+    def unclosed(self):
+        return self.filter(state__in=Task.OPEN_STATES)
+
+    def closed(self):
+        return self.filter(state__in=Task.CLOSED_STATES)
+
+
 class TaskManager(models.Manager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset().prefetch_related('labels')
@@ -916,6 +954,9 @@ class TaskManager(models.Manager):
 
 class Task(models.Model):
     STATES = ('open', 'pending_review', 'cancelled', 'done')
+
+    CLOSED_STATES = ('cancelled', 'done')
+    OPEN_STATES = ('open', 'pending_review')
 
     class Meta:
         permissions = (
@@ -926,7 +967,7 @@ class Task(models.Model):
             ('close_task', 'Can close a task that has been submitted for review'),
         )
 
-    objects = TaskManager()
+    objects = TaskManager.from_queryset(TaskQuerySet)()
 
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
@@ -949,26 +990,11 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    last_submitted_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_submitted_at = models.DateTimeField(null=True)
-
-    last_cancelled_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_cancelled_at = models.DateTimeField(null=True)
-
-    last_reopened_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_reopened_at = models.DateTimeField(null=True)
-
-    last_unsubmitted_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_unsubmitted_at = models.DateTimeField(null=True)
-
-    last_closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
-    last_closed_at = models.DateTimeField(null=True)
-
     labels = models.ManyToManyField('TaskLabel', related_name='+')
 
     @property
-    def place_code(self):
-        return self.country.code + '-' + self.locality.code if self.locality else self.country.code
+    def place(self):
+        return self.locality or self.country
 
     def clean(self):
         # enforce that any work and/or document are for the correct place
@@ -984,8 +1010,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        self.last_submitted_by_user = user
-        self.last_submitted_at = datetime.datetime.now()
+        action.send(user, verb='submitted', action_object=self)
 
     # cancel
     def may_cancel(self, view):
@@ -993,8 +1018,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        self.last_cancelled_by_user = user
-        self.last_cancelled_at = datetime.datetime.now()
+        action.send(user, verb='cancelled', action_object=self)
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1002,8 +1026,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        self.last_reopened_by_user = user
-        self.last_reopened_at = datetime.datetime.now()
+        action.send(user, verb='reopened', action_object=self)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1011,8 +1034,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        self.last_unsubmitted_by_user = user
-        self.last_unsubmitted_at = datetime.datetime.now()
+        action.send(user, verb='unsubmitted', action_object=self)
 
     # close
     def may_close(self, view):
@@ -1020,8 +1042,17 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        self.last_closed_by_user = user
-        self.last_closed_at = datetime.datetime.now()
+        action.send(user, verb='closed', action_object=self)
+
+
+@receiver(signals.post_save, sender=Task)
+def post_save_task(sender, instance, **kwargs):
+    """ Send action to activity stream, as 'created' if a new task
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 
 class Workflow(models.Model):

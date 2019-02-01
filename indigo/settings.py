@@ -42,6 +42,9 @@ INSTALLED_APPS = (
     'indigo_social',
     'pinax.badges',
 
+    # Activity stream
+    'actstream',
+
     # the Indigo act resolver
     'indigo_resolver',
     'indigo_slack',
@@ -161,6 +164,7 @@ if not DEBUG:
     AWS_SECRET_ACCESS_KEY = os.environ.get('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.environ.get('AWS_S3_BUCKET')
     AWS_S3_REGION_NAME = 'eu-west-1'
+    AWS_DEFAULT_ACL = None
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400',
     }
@@ -218,6 +222,7 @@ PIPELINE = {
                 'bower_components/backbone/backbone.js',
                 'bower_components/backbone.stickit/backbone.stickit.js',
                 'lib/bootstrap-4.1.3/js/bootstrap.bundle.min.js',
+                'lib/bootstrap-select-1.13.5/js/bootstrap-select.min.js',
                 'bower_components/handlebars/handlebars.min.js',
                 'bower_components/moment/min/moment.min.js',
                 'bower_components/moment/locale/en-gb.js',
@@ -281,7 +286,7 @@ INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
 INDIGO_USER_PROFILE_URL = 'indigo_social:user_profile'
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
-DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s %s' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))
+DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))
 EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')

@@ -1,4 +1,7 @@
+# -*- coding: utf-8 -*-
+
 from __future__ import absolute_import
+from __future__ import unicode_literals
 
 import subprocess
 import tempfile
@@ -130,7 +133,7 @@ class Importer(LocaleBasedMatcher):
     def reformat_text(self, text):
         """ Clean up extracted text before giving it to Slaw.
         """
-        return text
+        return self.expand_ligatures(text)
 
     def import_from_file(self, fname, frbr_uri):
         cmd = ['bundle', 'exec', 'slaw', 'parse']
@@ -217,3 +220,13 @@ class Importer(LocaleBasedMatcher):
 
         xml = self.import_from_text(html, doc.frbr_uri, '.html')
         doc.reset_xml(xml, from_model=True)
+
+    def expand_ligatures(self, text):
+        """ Replace ligatures with separate characters, eg. ﬁ -> fi.
+        """
+        return text\
+            .replace('ﬁ', 'fi')\
+            .replace('ﬀ', 'ff')\
+            .replace('ﬃ', 'ffi')\
+            .replace('ﬄ', 'ffl')\
+            .replace('ﬆ', 'st')

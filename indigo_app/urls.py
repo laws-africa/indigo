@@ -6,7 +6,7 @@ from .views import users, works, documents, tasks, places
 
 urlpatterns = [
     # homepage
-    url(r'^$', RedirectView.as_view(url='places', permanent=False)),
+    url(r'^$', RedirectView.as_view(url='/places/', permanent=False)),
 
     # auth and accounts
     url(r'^accounts/', include('allauth.urls')),

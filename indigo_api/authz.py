@@ -62,6 +62,8 @@ class AnnotationPermissions(BasePermission):
 
 
 class AttachmentPermissions(BasePermission):
+    """ Delegates permission checks to the associated document.
+    """
     def has_permission(self, request, view):
         return DocumentPermissions().has_object_permission(request, view, view.document)
 

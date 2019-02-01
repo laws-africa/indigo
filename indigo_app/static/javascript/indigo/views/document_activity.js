@@ -42,6 +42,8 @@
     markActive: function() {
       var self = this;
 
+      if (!Indigo.user.id) return;
+
       if (!this.nonce) {
         var min = 1000,
             max = 1000000;
@@ -72,6 +74,8 @@
     },
 
     windowUnloaded: function() {
+      if (!Indigo.user.id) return;
+
       $.ajax({
         type: 'delete',
         url: this.document.url() + '/activity',

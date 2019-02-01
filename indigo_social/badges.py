@@ -259,8 +259,7 @@ class ContributorBadge(PermissionBadge):
     slug = 'contributor'
     name = 'Contributor'
     description = 'Can view work details'
-    permissions = ('indigo_api.view_work',
-                   'indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
+    permissions = ('indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
                    'indigo_api.add_task')
 
 
@@ -271,6 +270,8 @@ class DrafterBadge(PermissionBadge):
     permissions = ('indigo_api.add_work', 'indigo_api.change_work',
                    'indigo_api.add_document', 'indigo_api.change_document',
                    'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
+                   # required when restoring a document version
+                   'reversion.change_version',
                    'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
 
 

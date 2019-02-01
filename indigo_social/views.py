@@ -40,6 +40,7 @@ class UserProfileView(DetailView):
 
 
 class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
+    authentication_required = True
     model = UserProfile
     template_name = 'indigo_app/user_account/edit.html'
     form_class = UserProfileForm

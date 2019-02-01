@@ -3,6 +3,7 @@ import os
 import logging
 import re
 import datetime
+from itertools import chain, groupby
 
 from actstream import action
 
@@ -334,7 +335,8 @@ class Work(models.Model):
 
     def amendments_with_initial(self):
         """ Return a list of Amendment objects, including a fake one at the end
-        that represents the initial point-in-time.
+        that represents the initial point-in-time. This will include multiple
+        objects at the same date, if there were multiple amendments at the same date.
         """
         initial = Amendment(amended_work=self, date=self.publication_date)
         initial.initial = True
@@ -348,6 +350,24 @@ class Work(models.Model):
 
         amendments.reverse()
         return amendments
+
+    def points_in_time(self):
+        """ Return a list of dicts describing a point in time, one entry for each date,
+        in descending date order.
+        """
+        amendments = self.amendments_with_initial()
+        pits = []
+
+        for date, group in groupby(amendments, key=lambda x: x.date):
+            group = list(group)
+            pits.append({
+                'date': date,
+                'initial': any(getattr(a, 'initial', False) for a in group),
+                'amendments': group,
+                'expressions': set(chain(*(a.expressions().all() for a in group))),
+            })
+
+        return pits
 
     def __unicode__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

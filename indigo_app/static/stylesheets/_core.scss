@@ -23,6 +23,13 @@ body.is-staff {
   .requires-staff { display: block; }
 }
 
+.text-no-underline-ever {
+  &,
+  &:hover {
+    text-decoration: none !important;
+  }
+}
+
 .high {
   height: 100%;
 }

@@ -1,5 +1,7 @@
 import logging
 
+from actstream import action
+
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.postgres.search import SearchQuery
@@ -100,6 +102,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         if not instance.draft:
             raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
         instance.deleted = True
+        action.send(instance.updated_by_user, verb='deleted', action_object=instance)
         instance.save()
 
     def perform_update(self, serializer):

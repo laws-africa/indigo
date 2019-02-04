@@ -8,10 +8,16 @@ from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
 from django.core.files.base import ContentFile
+from sass_processor.processor import SassProcessor
 
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_api.renderers import PDFRenderer
 from indigo_api.models import Work, Attachment
+
+
+# Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
+# but during testing we haven't compiled assets
+SassProcessor.processor_enabled = True
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
@@ -347,7 +353,6 @@ class DocumentAPITest(APITestCase):
                 'component': 'main',
                 'title': 'Chapter 2 - Administrative provisions',
                 'subcomponent': 'chapter/2',
-                'url': 'http://testserver/api/za/act/1998/2/eng@2001-01-01/main/chapter/2',
                 'children': [
                     {
                         'type': 'section',
@@ -357,7 +362,6 @@ class DocumentAPITest(APITestCase):
                         'title': '3. Consent required for interment',
                         'component': 'main',
                         'subcomponent': 'section/3',
-                        'url': 'http://testserver/api/za/act/1998/2/eng@2001-01-01/main/section/3',
                     },
                 ],
             },

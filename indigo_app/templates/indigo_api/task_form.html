@@ -39,7 +39,7 @@
           <div class="form-row">
             <div class="form-group col-sm-8">
               <label for="{{ form.description.id_for_label }}">{{ form.description.label }}</label>
-              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}" required>{{ form.description.value|default:'' }}</textarea>
+              <textarea class="form-control" rows="4" name="{{ form.description.name }}" id="{{ form.description.id_for_label }}">{{ form.description.value|default:'' }}</textarea>
               {% if form.description.errors %}
                 <div class="text-danger">
                   {% for error in form.description.errors %}

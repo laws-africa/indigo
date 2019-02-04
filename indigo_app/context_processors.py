@@ -12,6 +12,7 @@ def general(request):
         'SUPPORT_EMAIL': settings.SUPPORT_EMAIL,
         'GOOGLE_ANALYTICS_ID': settings.GOOGLE_ANALYTICS_ID,
         'RESOLVER_URL': settings.RESOLVER_URL,
+        'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         'USER_JSON': serialise_user(request),
     }
 

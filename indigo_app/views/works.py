@@ -228,6 +228,7 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
         docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
         for doc in docs:
             doc.expression_date = self.object.date
+            doc.updated_by_user = self.request.user
             doc.save()
 
         return result

@@ -825,9 +825,7 @@ def post_save_document(sender, instance, **kwargs):
     """
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance)
-    elif instance.deleted:
-        action.send(instance.updated_by_user, verb='deleted', action_object=instance)
-    else:
+    elif not instance.deleted:
         action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 

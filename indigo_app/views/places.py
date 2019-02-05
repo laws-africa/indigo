@@ -3,9 +3,10 @@ import logging
 import json
 from collections import defaultdict
 
-from django.views.generic import TemplateView
 from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
+from django.views.generic import TemplateView
+from django.views.generic.list import MultipleObjectMixin
 
 from indigo_api.models import Country, Annotation, Task, Amendment
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
@@ -112,5 +113,22 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         amendments = {a['amended_work_id']: {'n_amendments': a['n_amendments']} for a in amendments}
         context['work_n_amendments_json'] = json.dumps(amendments)
+
+        return context
+
+
+class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
+    model = None
+    slug_field = 'place'
+    slug_url_kwarg = 'place'
+    template_name = 'place/activities.html'
+    tab = 'activities'
+
+    object_list = None
+    page_size = 20
+    js_view = ''
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceActivityView, self).get_context_data(**kwargs)
 
         return context

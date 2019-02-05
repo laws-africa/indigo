@@ -374,7 +374,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
         decorate_versions([e for e in entries if hasattr(e, 'revision')])
 
-        paginator, page, versions, is_paginated = self.paginate_queryset(entries, self.page_size)
+        paginator, page, entries, is_paginated = self.paginate_queryset(entries, self.page_size)
         context.update({
             'paginator': paginator,
             'page': page,

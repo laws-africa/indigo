@@ -22,8 +22,8 @@ class WorkForm(forms.ModelForm):
     delete_publication_document = forms.BooleanField(required=False)
 
     def save(self, commit=True):
-        self.save_publication_document()
         work = super(WorkForm, self).save(commit)
+        self.save_publication_document()
         return work
 
     def save_publication_document(self):

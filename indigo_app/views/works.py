@@ -3,6 +3,7 @@ import json
 import io
 import re
 import logging
+from itertools import chain
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
@@ -367,12 +368,17 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkVersionsView, self).get_context_data(**kwargs)
 
-        paginator, page, versions, is_paginated = self.paginate_queryset(self.work.versions(), self.page_size)
+        actions = self.work.action_object_actions.all()
+        versions = self.work.versions().all()
+        entries = sorted(chain(actions, versions), key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp)
+
+        decorate_versions([e for e in entries if hasattr(e, 'revision')])
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(entries, self.page_size)
         context.update({
             'paginator': paginator,
             'page': page,
             'is_paginated': is_paginated,
-            'versions': decorate_versions(versions),
         })
 
         return context

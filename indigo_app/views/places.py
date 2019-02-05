@@ -3,6 +3,8 @@ import logging
 import json
 from collections import defaultdict
 
+from actstream.models import Action
+
 from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
@@ -130,5 +132,16 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PlaceActivityView, self).get_context_data(**kwargs)
+
+        all_activities = Action.objects.all()
+        activities = [act for act in all_activities if act.data and act.data['place_code'] == self.place.code]
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(activities, self.page_size)
+        context.update({
+            'paginator': paginator,
+            'page': page,
+            'is_paginated': is_paginated,
+            'place': self.place,
+        })
 
         return context

@@ -5,6 +5,7 @@ import datetime
 from django.test import testcases, override_settings
 from django_webtest import WebTest
 from django.contrib.auth.models import User
+from webtest import Upload
 
 import reversion
 
@@ -132,6 +133,15 @@ class WorksWebTest(WebTest):
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))
+
+    def test_create_work_with_publication(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Title"
+        form['work-frbr_uri'] = '/za/act/2019/5'
+        form['work-publication_date'] = '2019-02-01'
+        form['work-publication_document_file'] = Upload('pub.pdf', b'data', 'application/pdf')
+        response = form.submit()
+        self.assertRedirects(response, '/works/za/act/2019/5/edit/', fetch_redirect_response=False)
 
     def test_publication_date_updates_documents(self):
         """ Changing the work's publication date should also updated documents

@@ -24,3 +24,14 @@
 .task-icon-done:before { content: "\f00c"; }
 .task-icon-pending_review:before { content: "\f128"; }
 .task-icon-cancelled:before { content: "\f00d"; }
+
+.task-list-column {
+  .task-list-card {
+    border: 0px;
+    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.25);
+
+    &> .card-body {
+      padding: 0.75rem;
+    }
+  }
+}

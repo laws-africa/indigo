@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import json
+from itertools import groupby
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -38,9 +39,14 @@ class TaskListView(TaskViewBase, ListView):
         # initial state
         if not params.get('state'):
             params.setlist('state', ['open', 'pending_review'])
+        params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(params)
         self.form.is_valid()
+
+        if self.form.cleaned_data['format'] == 'columns':
+            self.paginate_by = 40
+
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -52,6 +58,41 @@ class TaskListView(TaskViewBase, ListView):
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
+
+        def grouper(task):
+            if task.state == 'open':
+                if task.assigned_to:
+                    return 'assigned'
+                else:
+                    return 'todo'
+            return task.state
+
+        tasks = sorted(context['tasks'], key=grouper)
+        tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
+
+        # base columns on the requested task states
+        groups = {}
+        if 'open' in self.form.cleaned_data['state']:
+            groups['todo'] = {
+                'title': 'To Do',
+                'badge': 'open',
+            }
+            groups['assigned'] = {
+                'title': 'Assigned',
+                'badge': 'open',
+            }
+
+        for key, group in tasks.iteritems():
+            if key not in groups:
+                groups[key] = {
+                    'title': key.replace('_', ' ').title(),
+                    'badge': key,
+                }
+            groups[key]['tasks'] = group
+
+        context['task_groups'] = [groups.get(g) for g in ['todo', 'assigned', 'pending_review', 'done', 'cancelled']
+                                  if g in groups]
+
         return context
 
 

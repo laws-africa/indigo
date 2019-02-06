@@ -431,6 +431,7 @@ class TaskSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     country = serializers.CharField(source='country.code')
     locality = serializers.CharField(source='locality.code')
+    work = serializers.CharField(source='work.frbr_uri')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
     anchor = AnnotationAnchorSerializer()

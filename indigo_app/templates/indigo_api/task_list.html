@@ -31,6 +31,10 @@
           <div class="ml-auto pl-3 border-left">
             <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
           </div>
+
+          <div class="pl-3">
+            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
+          </div>
         </div>
       </form>
     </div>

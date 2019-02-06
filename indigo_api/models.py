@@ -1083,6 +1083,34 @@ class Workflow(models.Model):
 
     tasks = models.ManyToManyField(Task, related_name='workflows')
 
+    country = models.ForeignKey(Country, related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
+
+    created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def place(self):
+        return self.locality or self.country
+
+    def save(self, force_insert=False, force_update=False, using=None,
+             update_fields=None):
+        okay = super(Workflow, self).save()
+        return okay
+
+
+@receiver(signals.post_save, sender=Task)
+def post_save_workflow(sender, instance, **kwargs):
+    """ Send action to activity stream, as 'created' if a new workflow
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+
 
 class TaskLabel(models.Model):
     title = models.CharField(max_length=30, null=False, unique=True, blank=False)

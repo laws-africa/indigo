@@ -7,7 +7,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, Workflow
 
 
 class WorkForm(forms.ModelForm):
@@ -140,3 +140,11 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(work__frbr_uri=frbr_uri)
 
         return queryset
+
+
+class WorkflowForm(forms.ModelForm):
+    class Meta:
+        model = Workflow
+        fields = ('title', 'description', 'tasks')
+
+    tasks = forms.ModelMultipleChoiceField(queryset=Task.objects, widget=forms.CheckboxSelectMultiple, required=True)

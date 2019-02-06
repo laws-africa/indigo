@@ -1035,7 +1035,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        action.send(user, verb='submitted', action_object=self, place_code=self.place.place_code)
+        pass
 
 
     # cancel
@@ -1045,7 +1045,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        action.send(user, verb='cancelled', action_object=self, place_code=self.place.place_code)
+        pass
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1054,7 +1054,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        action.send(user, verb='reopened', action_object=self, place_code=self.place.place_code)
+        pass
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1063,7 +1063,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        action.send(user, verb='unsubmitted', action_object=self, place_code=self.place.place_code)
+        pass
 
     # close
     def may_close(self, view):
@@ -1072,20 +1072,12 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        action.send(user, verb='closed', action_object=self, place_code=self.place.place_code)
-
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None, **kwargs):
-        # send `update` signal if the change isn't a state change and if it's not being created
-        if 'state_change' not in kwargs and self.created_at:
-            action.send(self.updated_by_user, verb='updated', action_object=self,
-                        place_code=self.place.place_code)
-        super(Task, self).save()
+        pass
 
 
 @receiver(signals.post_save, sender=Task)
 def post_save_task(sender, instance, **kwargs):
-    """ Send action to activity stream, as 'created' if a new task
+    """ Send 'created' action to activity stream if new task
     """
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance)

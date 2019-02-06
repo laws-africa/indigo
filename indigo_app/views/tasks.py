@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 import json
 
+from actstream import action
+
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
@@ -146,7 +148,10 @@ class TaskEditView(TaskViewBase, UpdateView):
     model = Task
 
     def form_valid(self, form):
-        self.object.updated_by_user = self.request.user
+        task = self.object
+        task.updated_by_user = self.request.user
+        action.send(self.request.user, verb='updated', action_object=task,
+                    place_code=task.place.place_code)
         return super(TaskEditView, self).form_valid(form)
 
     def get_success_url(self):
@@ -197,8 +202,9 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
+                action.send(user, verb=verb, action_object=task, place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
-        task.save(state_change=True)
+        task.save()
 
         return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])

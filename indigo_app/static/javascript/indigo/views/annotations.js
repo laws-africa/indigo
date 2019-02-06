@@ -17,10 +17,11 @@
     events: {
       'click .delete-anntn': 'delete',
       'click .edit-anntn': 'edit',
-      'click .close-annotation': 'close',
+      'click .close-anntn': 'close',
       'click .btn.save': 'save',
       'click .btn.cancel': 'cancel',
       'click .btn.unedit': 'unedit',
+      'click .create-anntn-task': 'createTask',
     },
 
     initialize: function(options) {
@@ -30,6 +31,10 @@
       // is this view dealing with starting a new annotation thread?
       this.isNew = this.model.isNew();
       this.listenTo(this.model, 'sync', this.saved);
+
+      if (!this.isNew) {
+        this.listenTo(this.model, 'change', this.render);
+      }
 
       this.setReadonly();
       this.render();
@@ -63,6 +68,14 @@
             json = this.model.toJSON();
 
         json.html = html;
+        if (json.task) {
+          json.task.view_url =
+            "/places/" +
+            Indigo.view.document.work.get('country') +
+            (Indigo.view.document.work.get('locality') ? ('-' + Indigo.view.document.work.get('locality')) : '') +
+            "/tasks/" +
+            json.task.id;
+        }
         json.created_at_text = moment(json.created_at).fromNow();
         this.$el.append(this.template(json));
         this.setReadonly();
@@ -114,8 +127,15 @@
     },
 
     close: function(e) {
-      this.model.set('closed', true);
-      this.model.save();
+      if (confirm('Are you sure you want to close this annotation?')) {
+        this.model.set('closed', true);
+        this.model.save();
+      }
+    },
+
+    createTask: function(e) {
+      // create a task based on this annotation
+      this.model.createTask();
     },
   });
 

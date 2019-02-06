@@ -37,7 +37,7 @@
         </div>
       {% endif %}
 
-      <p>{{ task.description }}</p>
+      <p>{{ task.description|default:'' }}</p>
 
       <div class="h5">
         {% for label in task.labels.all %}

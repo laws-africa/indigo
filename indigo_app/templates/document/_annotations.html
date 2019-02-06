@@ -1,10 +1,15 @@
 <script id="annotation-template" type="text/x-handlebars-template">
 {% verbatim %}
 <div class="buttons float-right">
-  <button class="btn btn-outline-secondary btn-sm close-annotation" title="Mark as done"><i class="fa fa-check"></i></button>
-
   <a href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
   <div class="dropdown-menu">
+    {{#unless in_reply_to}}
+      {{#unless task}}
+      <a href="#" class="dropdown-item create-anntn-task">Create task</a>
+      <a href="#" class="dropdown-item close-anntn">Mark as done</a>
+      <div class="dropdown-divider"></div>
+      {{/unless}}
+    {{/unless}}
     <a href="#" class="dropdown-item edit-anntn">Edit</a>
     <a href="#" class="dropdown-item delete-anntn">Delete</a>
   </div>
@@ -13,6 +18,9 @@
 <div class="author">{{ created_by_user.display_name }}</div>
 <div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
 <div class="content">{{{ html }}}</div>
+{{#if task}}
+<a href="{{ task.view_url }}" class="btn btn-sm btn-block btn-outline-primary">Task #{{ task.id }}</a>
+{{/if}}
 {% endverbatim %}
 </script>
 

@@ -918,9 +918,35 @@ class Annotation(models.Model):
     closed = models.BooleanField(default=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
 
     def anchor(self):
         return {'id': self.anchor_id}
+
+    def create_task(self, user):
+        """ Create a new task for this annotation.
+        """
+        if self.in_reply_to:
+            raise Exception("Cannot create tasks for reply annotations.")
+
+        if not self.task:
+            task = Task()
+            task.country = self.document.work.country
+            task.locality = self.document.work.locality
+            task.work = self.document.work
+            task.document = self.document
+            task.created_by_user = user
+            task.updated_by_user = user
+
+            # TODO: strip markdown?
+            task.title = u'Created from comment: ' + self.text
+            task.description = u'This task was created from a comment on this document.\n\n' + self.text
+
+            task.save()
+            self.task = task
+            self.save()
+
+        return self.task
 
 
 class DocumentActivity(models.Model):

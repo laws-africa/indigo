@@ -153,7 +153,6 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     def task(self, request, *args, **kwargs):
         """ Get or create a task for this annotation.
         """
-        # TODO: permissions
         annotation = self.get_object()
         status = None
 

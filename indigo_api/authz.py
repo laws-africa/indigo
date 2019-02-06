@@ -57,6 +57,10 @@ class AnnotationPermissions(BasePermission):
         if obj.id is None:
             return True
 
+        if view.action == 'task':
+            # can this user create a task for this annotation?
+            return request.user.has_perm('indigo_api.add_task',)
+
         return request.user.is_authenticated and (
             obj.created_by_user == request.user or request.user.is_staff)
 

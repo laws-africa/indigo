@@ -19,10 +19,12 @@
 <div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
 <div class="content">{{{ html }}}</div>
 {{#if task}}
-  <a href="{{ task.view_url }}" class="btn btn-sm btn-block btn-outline-primary mt-2">
-    <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span>
-    Task #{{ task.id }}
-  </a>
+  <div class="task">
+    <a href="{{ task.view_url }}" class="btn btn-sm btn-block btn-outline-primary mt-2">
+      <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span>
+      Task #{{ task.id }}
+    </a>
+  </div>
 {{/if}}
 {% endverbatim %}
 </script>

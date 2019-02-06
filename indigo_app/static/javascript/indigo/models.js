@@ -610,6 +610,11 @@
       return showdownConverter.makeHtml(this.get('text'));
     },
 
+    parse: function(json) {
+      if (json.task) json.task = new Backbone.Model(json.task);
+      return json;
+    },
+
     createTask: function() {
       var self = this;
       $.post(this.url() + '/task')

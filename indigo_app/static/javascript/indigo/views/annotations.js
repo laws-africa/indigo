@@ -31,10 +31,7 @@
       // is this view dealing with starting a new annotation thread?
       this.isNew = this.model.isNew();
       this.listenTo(this.model, 'sync', this.saved);
-
-      if (!this.isNew) {
-        this.listenTo(this.model, 'change', this.render);
-      }
+      this.listenTo(this.model, 'change', this.render);
 
       this.setReadonly();
       this.render();
@@ -69,6 +66,8 @@
 
         json.html = html;
         if (json.task) {
+          json.task = json.task.toJSON();
+
           json.task.view_url =
             "/places/" +
             Indigo.view.document.work.get('country') +
@@ -115,6 +114,7 @@
       this.$el
         .append('<button class="btn btn-primary btn-sm save">Save</button>')
         .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
+        .find('.task').remove().end()
         .find('.content')
         .replaceWith($textarea);
 

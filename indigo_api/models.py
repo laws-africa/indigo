@@ -1081,7 +1081,7 @@ class Workflow(models.Model):
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
-    tasks = models.ManyToManyField(Task, related_name='workflows')
+    tasks = models.ManyToManyField(Task, related_name='workflows', null=False, blank=False)
 
     country = models.ForeignKey(Country, related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
@@ -1096,13 +1096,8 @@ class Workflow(models.Model):
     def place(self):
         return self.locality or self.country
 
-    def save(self, force_insert=False, force_update=False, using=None,
-             update_fields=None):
-        okay = super(Workflow, self).save()
-        return okay
 
-
-@receiver(signals.post_save, sender=Task)
+@receiver(signals.post_save, sender=Workflow)
 def post_save_workflow(sender, instance, **kwargs):
     """ Send action to activity stream, as 'created' if a new workflow
     """

@@ -147,4 +147,3 @@ class WorkflowForm(forms.ModelForm):
         model = Workflow
         fields = ('title', 'description', 'tasks')
 
-    tasks = forms.ModelMultipleChoiceField(queryset=Task.objects, widget=forms.CheckboxSelectMultiple, required=True)

@@ -214,17 +214,14 @@ class WorkflowCreateView(TaskViewBase, CreateView):
     form_class = WorkflowForm
     model = Workflow
 
-    def form_invalid(self, form):
-        is_it = super(WorkflowCreateView, self).form_invalid(form)
-        return is_it
+    def get_context_data(self, *args, **kwargs):
+        context = super(WorkflowCreateView, self).get_context_data(**kwargs)
+        if self.locality:
+            context['place_tasks'] = Task.objects.filter(locality=self.place)
+        else:
+            context['place_tasks'] = Task.objects.filter(country=self.place)
 
-    def form_valid(self, form):
-        is_it = super(WorkflowCreateView, self).form_valid(form)
-        return is_it
-
-    def get_form(self, form_class=None):
-        form = super(WorkflowCreateView, self).get_form(form_class)
-        return form
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(WorkflowCreateView, self).get_form_kwargs()
@@ -234,13 +231,9 @@ class WorkflowCreateView(TaskViewBase, CreateView):
         workflow.locality = self.locality
         workflow.created_by_user = self.request.user
 
-        return kwargs
+        kwargs['instance'] = workflow
 
-    # def get_context_data(self, *args, **kwargs):
-    #     context = super(WorkflowCreateView, self).get_context_data(**kwargs)
-    #     workflow = context['form'].instance
-    #
-    #     return context
+        return kwargs
 
     def get_success_url(self):
         return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
@@ -253,32 +246,24 @@ class WorkflowDetailView(TaskViewBase, DetailView):
 
 class WorkflowEditView(TaskViewBase, UpdateView):
     # permissions
-    permission_required = ('indigo_api.change_task',)
+    permission_required = ('indigo_api.change_workflow',)
 
     context_object_name = 'workflow'
+    form_class = WorkflowForm
     model = Workflow
-    fields = "__all__"
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
         return super(WorkflowEditView, self).form_valid(form)
 
-    def get_success_url(self):
-        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
-
-    def get_context_data(self, **kwargs):
-        context = super(TaskEditView, self).get_context_data(**kwargs)
-
-        work = None
-        if self.object.work:
-            work = json.dumps(WorkSerializer(instance=self.object.work, context={'request': self.request}).data)
-        context['work_json'] = work
-
-        document = None
-        if self.object.document:
-            document = json.dumps(DocumentSerializer(instance=self.object.document, context={'request': self.request}).data)
-        context['document_json'] = document
-
-        context['task_labels'] = TaskLabel.objects.all()
+    def get_context_data(self, *args, **kwargs):
+        context = super(WorkflowEditView, self).get_context_data(**kwargs)
+        if self.locality:
+            context['place_tasks'] = Task.objects.filter(locality=self.place)
+        else:
+            context['place_tasks'] = Task.objects.filter(country=self.place)
 
         return context
+
+    def get_success_url(self):
+        return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})

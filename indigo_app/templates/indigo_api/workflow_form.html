@@ -48,6 +48,28 @@
               {% endif %}
             </div>
           </div>
+          <div class="form-row">
+            <div class="form-group col-sm-12">
+              <label for="{{ form.tasks.id_for_label }}">{{ form.tasks.label }}</label>
+              {% for task in place_tasks %}
+                <div class="form-check">
+                  <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="{{ form.tasks.name }}" value="{{ task.id }}" {% if task.id in form.tasks.value %}checked{% endif %}>
+                    <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
+                    {% if task.work %}– <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+                    {% if task.document %}– <a href="{% url 'document' doc_id=task.document.pk %}">@ {{ task.document.expression_date }}</a>{% endif %}{% endif %}
+                    {% if task.description %}– <span class="font-weight-normal">{{ task.description }}</span>{% endif %}
+                  </label>
+                </div>
+              {% endfor %}
+                <div class="text-danger">
+                  {% for error in form.tasks.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+            </div>
+
+          </div>
 
         </div>
 

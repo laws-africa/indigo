@@ -123,8 +123,8 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     model = None
     slug_field = 'place'
     slug_url_kwarg = 'place'
-    template_name = 'place/activities.html'
-    tab = 'activities'
+    template_name = 'place/activity.html'
+    tab = 'activity'
 
     object_list = None
     page_size = 20
@@ -133,9 +133,9 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PlaceActivityView, self).get_context_data(**kwargs)
 
-        activities = Action.objects.filter(data__place_code=self.place.place_code)
+        activity = Action.objects.filter(data__place_code=self.place.place_code)
 
-        paginator, page, versions, is_paginated = self.paginate_queryset(activities, self.page_size)
+        paginator, page, versions, is_paginated = self.paginate_queryset(activity, self.page_size)
         context.update({
             'paginator': paginator,
             'page': page,

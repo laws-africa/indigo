@@ -20,11 +20,7 @@
 
     <div class="float-left">
       <h5>{{ task.title }}</h5>
-    </div>
-  </div>
 
-  <div class="card mt-3">
-    <div class="card-body">
       {% if task.document %}
         <div class="mb-2">
           <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
@@ -36,6 +32,11 @@
           <span class="text-muted">{{ task.work.frbr_uri }}</span>
         </div>
       {% endif %}
+    </div>
+  </div>
+
+  <div class="card mt-3">
+    <div class="card-body">
 
       <p>{{ task.description }}</p>
 

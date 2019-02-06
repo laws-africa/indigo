@@ -153,7 +153,10 @@
         self.tocView.selectItem(0, true);
       });
 
-      this.annotationsView = new Indigo.DocumentAnnotationsView({model: this.document});
+      this.annotationsView = new Indigo.DocumentAnnotationsView({
+        model: this.document,
+        prefocus: parseInt(Indigo.queryParams.anntn),
+      });
       this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});

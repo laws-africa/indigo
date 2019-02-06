@@ -310,10 +310,11 @@
       'click #new-annotation-floater': 'newAnnotation',
     },
 
-    initialize: function() {
+    initialize: function(options) {
       var self = this;
 
       this.threadViews = [];
+      this.prefocus = options.prefocus;
 
       this.$newButton = $("#new-annotation-floater");
       this.$el.on('mouseover', ANNOTATABLE, _.bind(this.enterSection, this));
@@ -355,7 +356,14 @@
     },
 
     renderAnnotations: function() {
-      this.threadViews.forEach(function(v) { v.display(); });
+      var prefocus = this.prefocus;
+
+      this.threadViews.forEach(function(v) {
+        v.display();
+        if (v.model.at(0).get('id').toString() == prefocus) {
+          v.$el.click();
+        }
+      });
     },
 
     enterSection: function(e) {

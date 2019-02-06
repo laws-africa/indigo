@@ -12,12 +12,7 @@ log = logging.getLogger(__name__)
 
 @receiver(document_published)
 def doc_published(sender, document, request, **kwargs):
-    from indigo_api.serializers import DocumentSerializer
-
     if request and request.user.is_authenticated():
-        serializer = DocumentSerializer(context={'request': request})
-        pub_url = serializer.get_published_url(document) + ".html?standalone=1"
-
         url = reverse('document', request=request, kwargs={'doc_id': document.id})
 
         country = document.work.country
@@ -41,13 +36,13 @@ def doc_published(sender, document, request, **kwargs):
         })
 
         send_slack_message(
-            u"{user} published <{pub_url}|{title}>".format(user=request.user.first_name, title=document.title, url=url, pub_url=pub_url),
+            u"{user} published <{url}|{title}>".format(user=request.user.first_name, title=document.title, url=url),
             attachments=[{
                 "text": document.work.frbr_uri,
                 "fallback": document.work.frbr_uri,
                 "author_name": "%s %s" % (request.user.first_name, request.user.last_name),
                 "title": document.title,
-                "title_link": pub_url,
+                "title_link": url,
                 "color": "good",
                 "fields": fields,
             }]

@@ -22,7 +22,7 @@ The API is a read-only API for listing and fetching published versions of legisl
 
 .. note::
 
-   When we use a URL such as ``/api/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/eng``.
+   When we use a URL such as ``/api/v1/frbr-uri/`` in this guide, the ``frbr-uri`` part is a full FRBR URI, such as ``/za/act/1998/84/eng``.
 
 .. _works_expressions:
 
@@ -57,7 +57,7 @@ You can see that this is built from the work's URI, with a language code
 Location of the API
 -------------------
 
-The API is available at the `/api/` URL of your Indigo installation.
+The API is available at the `/api/v1/` URL of your Indigo installation.
 
 Authentication
 --------------
@@ -83,7 +83,7 @@ Here's an example of the first page of a paginated response with 250 total items
 
     {
       "count": 250,
-      "next": "https://indigo.example.com/api/za.json?page=2",
+      "next": "https://indigo.example.com/api/v1/za.json?page=2",
       "previous": null,
       "results": [ "..." ]
     }
@@ -114,7 +114,7 @@ Countries and Localities
 
 .. code:: http
 
-    GET /api/countries.json
+    GET /api/v1/countries.json
 
 This returns a list of the countries and localities that Indigo knows about. It includes
 links to the APIs for listing works for each country and locality.
@@ -124,7 +124,7 @@ Fetching a Work
 
 .. code:: http
 
-    GET /api/frbr-uri.json
+    GET /api/v1/frbr-uri.json
 
 This returns the detail of an expression of a work as a JSON document. For example, this is the
 description of the English expression of Act 55 of 1998 as at 2014-01-07.
@@ -132,7 +132,7 @@ description of the English expression of Act 55 of 1998 as at 2014-01-07.
 .. code-block:: json
 
     {
-      "url": "https://indigo.example.com/api/za/act/1998/55/eng.json",
+      "url": "https://indigo.example.com/api/v1/za/act/1998/55/eng.json",
       "title": "Employment Equity Act, 1998",
       "created_at": "2017-12-23T10:05:55.105543Z",
       "updated_at": "2018-06-07T08:07:51.170250Z",
@@ -165,7 +165,7 @@ description of the English expression of Act 55 of 1998 as at 2014-01-07.
           "date": "2014-01-17",
           "expressions": [
             {
-              "url": "https://indigo.example.com/api/act/1998/55/eng@2014-01-17",
+              "url": "https://indigo.example.com/api/v1/act/1998/55/eng@2014-01-17",
               "language": "eng",
               "expression_frbr_uri": "/act/1998/55/eng@2014-01-17",
               "expression_date": "2014-01-17",
@@ -176,7 +176,7 @@ description of the English expression of Act 55 of 1998 as at 2014-01-07.
       ],
       "links": [
         {
-          "href": "https://indigo.openbylaws.org.za/api/za-wc033/act/by-law/2005/beaches/eng.html",
+          "href": "https://indigo.example.com/api/v1/za-wc033/act/by-law/2005/beaches/eng.html",
           "title": "HTML",
           "rel": "alternate",
           "mediaType": "text/html"
@@ -255,7 +255,7 @@ Fetching the Akoma Ntoso for a Work
 
 .. code:: http
 
-    GET /api/frbr-uri.xml
+    GET /api/v1/frbr-uri.xml
 
 This returns the Akoma Ntoso XML of an expression of a work.
 
@@ -263,14 +263,14 @@ For example, fetch the most recent applicable English Akoma Ntoso expression of 
 
 .. code:: http
 
-    GET /api/za/act/1998/55/eng.xml
+    GET /api/v1/za/act/1998/55/eng.xml
 
 Fetching a Work as HTML
 -----------------------
 
 .. code:: http
 
-    GET /api/frbr-uri.html
+    GET /api/v1/frbr-uri.html
 
 Fetch the HTML version of a work by specify `.html` as the format extensions in the URL.
 
@@ -283,7 +283,7 @@ For example, fetch the most recent applicable English HTML expression of ``/za/a
 
 .. code:: http
 
-    GET /api/za/act/1998/55/eng.html
+    GET /api/v1/za/act/1998/55/eng.html
 
 Fetching Expressions of a Work
 ------------------------------
@@ -296,7 +296,7 @@ For example, this request will fetch the HTML of the English expression of Act 5
 
 .. code:: http
 
-    GET /api/za/act/1998/55/eng@2014-01-17.html
+    GET /api/v1/za/act/1998/55/eng@2014-01-17.html
 
 The available expressions of a work are listed in the ``points_in_time`` field
 of the JSON description of the work. Each point in time includes a date and a
@@ -327,7 +327,7 @@ Table of Contents
 
 .. code:: http
 
-    GET /api/frbr-uri/toc.json
+    GET /api/v1/frbr-uri/toc.json
 
 * Content types: JSON
 
@@ -346,7 +346,7 @@ Each item in the table of contents has this structure:
       "title": "Chapter 1 - Interpretation",
       "component": "main",
       "subcomponent": "chapter/1",
-      "url": "http://indigo.code4sa.org/api/za/act/1998/10/eng/main/chapter/1",
+      "url": "http://indigo.example.com/api/v1/za/act/1998/10/eng/main/chapter/1",
       "children": [ "..." ]
     }
 
@@ -378,7 +378,7 @@ in various forms.
 
 .. code:: http
 
-    GET /api/frbr-uri/toc-item-uri.format
+    GET /api/v1/frbr-uri/toc-item-uri.format
 
 * Content types: XML, HTML, PDF, ePUB, ZIP
 
@@ -394,9 +394,9 @@ Listing Works
 
 .. code:: http
 
-    GET /api/za/
-    GET /api/za/act/
-    GET /api/za/act/2007/
+    GET /api/v1/za/
+    GET /api/v1/za/act/
+    GET /api/v1/za/act/2007/
   
 * Content types: JSON, PDF, EPUB, ZIP
 
@@ -411,7 +411,7 @@ Search
 
 .. code:: http
 
-    GET /api/search/<country>?q=<search-term>
+    GET /api/v1/search/<country>?q=<search-term>
 
 * Where `<country>` is a two-letter country code
 * Parameter ``q``: the search string

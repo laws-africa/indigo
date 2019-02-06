@@ -3,10 +3,8 @@ from django.views.decorators.cache import cache_page
 from rest_framework.routers import DefaultRouter
 
 import views.attachments
-import views.countries
 import views.documents
 import views.misc
-import views.public
 import views.publications
 import views.works
 
@@ -20,21 +18,8 @@ router.register(r'documents/(?P<document_id>[0-9]+)/revisions', views.documents.
 router.register(r'documents/(?P<document_id>[0-9]+)/annotations', views.documents.AnnotationViewSet, base_name='document-annotations')
 router.register(r'works', views.works.WorkViewSet, base_name='work')
 router.register(r'works/(?P<work_id>[0-9]+)/amendments', views.works.WorkAmendmentViewSet, base_name='work-amendments')
-router.register(r'countries', views.countries.CountryViewSet, base_name='country')
 
 urlpatterns = [
-    # --- public API ---
-    # viewing a specific document identified by FRBR URI fragment,
-    # this requires at least 4 components in the FRBR URI,
-    # starting with the two-letter country code
-    #
-    # eg. /za/act/2007/98
-    url(r'^(?P<frbr_uri>[a-z]{2}[-/].*)$',
-        views.public.PublishedDocumentDetailView.as_view({'get': 'get'}),
-        name='published-document-detail'),
-    url(r'^search/(?P<country>[a-z]{2})$', views.public.PublishedDocumentSearchView.as_view(), name='public-search'),
-    # --- END public API ---
-
     url(r'^search/documents$', views.documents.SearchView.as_view(), name='document-search'),
     url(r'^render$', views.documents.RenderView.as_view(), name='render'),
     url(r'^parse$', views.documents.ParseView.as_view(), name='parse'),

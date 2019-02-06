@@ -51,6 +51,8 @@ INSTALLED_APPS = (
 
     # the Indigo editor application
     'indigo_app',
+    # the Indigo published content API
+    'indigo_content_api',
     # the Indigo API
     'indigo_api',
 
@@ -284,6 +286,7 @@ SUPPORT_EMAIL = os.environ.get('SUPPORT_EMAIL')
 INDIGO_ORGANISATION = os.environ.get('INDIGO_ORGANISATION', 'Indigo Platform')
 INDIGO_URL = os.environ.get('INDIGO_URL', 'http://localhost:8000')
 INDIGO_USER_PROFILE_URL = 'indigo_social:user_profile'
+INDIGO_CONTENT_API_VERSIONED = True
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))
@@ -291,7 +294,7 @@ EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.environ.get('DJANGO_EMAIL_HOST_PASSWORD')
 EMAIL_PORT = int(os.environ.get('DJANGO_EMAIL_PORT', 25))
-EMAIL_SUBJECT_PREFIX = '[Indigo] '
+EMAIL_SUBJECT_PREFIX = '[%s] ' % INDIGO_ORGANISATION
 
 # Auth
 AUTHENTICATION_BACKENDS = (
@@ -315,7 +318,7 @@ ACCOUNT_FORMS = {
 }
 ACCOUNT_SIGNUP_ENABLED = True
 LOGIN_URL = 'account_login'
-LOGIN_REDIRECT_URL = '/accounts/profile/'
+LOGIN_REDIRECT_URL = '/places/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
 # is authentication always required to use Indigo?
 INDIGO_AUTH_REQUIRED = True

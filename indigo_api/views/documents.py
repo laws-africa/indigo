@@ -1,12 +1,13 @@
 import logging
 
+from actstream import action
+
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.postgres.search import SearchQuery
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
-from rest_framework.reverse import reverse
 from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
@@ -60,27 +61,7 @@ class DocumentViewMixin(object):
             self.serializer_class = self.request.accepted_renderer.serializer_class
 
     def table_of_contents(self, document, uri=None):
-        # this updates the TOC entries by adding a 'url' component
-        # based on the document's URI and the path of the TOC subcomponent
-        uri = uri or document.doc.frbr_uri
-        toc = [t.as_dict() for t in document.table_of_contents()]
-
-        def add_url(item):
-            uri.expression_component = item['component']
-            uri.expression_subcomponent = item.get('subcomponent')
-
-            item['url'] = reverse(
-                'published-document-detail',
-                request=self.request,
-                kwargs={'frbr_uri': uri.expression_uri()[1:]})
-
-            for kid in item.get('children', []):
-                add_url(kid)
-
-        for item in toc:
-            add_url(item)
-
-        return toc
+        return [t.as_dict() for t in document.table_of_contents()]
 
 
 # Read/write REST API
@@ -100,6 +81,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         if not instance.draft:
             raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
         instance.deleted = True
+        action.send(instance.updated_by_user, verb='deleted', action_object=instance)
         instance.save()
 
     def perform_update(self, serializer):

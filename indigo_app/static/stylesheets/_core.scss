@@ -39,8 +39,6 @@ body.is-staff {
 }
 
 .page-body {
-  padding-top: $navbar-height;
-
   display: flex;
   flex-direction: row;
   flex-grow: 1;
@@ -59,12 +57,8 @@ body.is-staff {
   background-color: #d3d5d9;
   padding: 40px 0px;
 
-  a {
-    color: inherit;
-  }
-
   .logo {
-    width: 50px;
+    height: 40px;
   }
 }
 
@@ -89,7 +83,6 @@ body.is-staff {
     height: 40px;
   }
 
-  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.2);
   background-color: $indigo;
 
   .nav-item {
@@ -160,7 +153,7 @@ body.is-staff {
 
 #progress-bar {
   position: fixed;
-  top: $navbar-height;
+  top: 0px;
   right: 0px;
   left: 0px;
   height: 5px;

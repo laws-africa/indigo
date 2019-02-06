@@ -4,10 +4,13 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>{% block title %}{% endblock %} – Indigo</title>
+    <title>{% block title %}{% endblock %} – {{ INDIGO_ORGANISATION }}</title>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+
+    {% block head-meta %}
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="">
-    <meta name="csrf-token" content="{{ csrf_token }}">
+    {% endblock %}
 
     {% if GOOGLE_ANALYTICS_ID %}
       <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -24,9 +27,6 @@
     {% block head-css %}
     <link rel="stylesheet" href="{% sass_src 'stylesheets/app.scss' %}">
     {% endblock %}
-
-    {% block head-meta %}{% endblock %}
-
   </head>
   <body {% block body-attributes %}{% endblock %} class="{% block body-class %}
     {% if request.user.is_authenticated %}authenticated{% else %}unauthenticated{% endif %}

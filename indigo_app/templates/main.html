@@ -4,75 +4,6 @@
 {% block body-attributes %}data-backbone-view="{% block backbone-view %}{{ js_view }}{% endblock %}"{% endblock %}
 
 {% block page-content %}
-  {% block navbar %}
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top">
-      {% block navbar-brand %}
-      <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
-      {% endblock %}
-      {% block navbar-toggle %}
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      {% endblock %}
-
-      {% block navbar-content %}
-      <div class="collapse navbar-collapse" id="navbar-collapse">
-        <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-        {% block navbar-left %}
-          {% if request.user.is_authenticated %}
-          <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
-          <li class="nav-item dropdown">
-            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
-            <div class="dropdown-menu">
-              {% block navbar-help-menu %}
-              <a class="dropdown-item" href="http://indigo.readthedocs.org/en/latest/" target="_blank"><i class="fa fa-question fa-fw"></i> Documentation</a>
-              <a class="dropdown-item" href="mailto:greg@openup.org.za" target="_blank"><i class="fa fa-envelope fa-fw"></i> Feedback</a>
-
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="https://github.com/OpenUpSA/indigo" target="_blank"><i class="fab fa-github fa-fw"></i> Indigo on GitHub</a>
-
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="{% url 'terms_of_use' %}" target="_blank">Terms of Use &amp; Privacy Policy</a>
-              {% endblock %}
-            </div>
-          </li>
-          {% endif %}
-        {% endblock %}
-        </ul>
-
-        <ul class="navbar-nav" id="user-buttons">
-        {% block navbar-user %}
-          {% if request.user.is_authenticated %}
-            <li class="nav-item dropdown">
-              <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
-                <i class="fa fa-user"></i>
-                <span class="username">
-                  {% if request.user.is_authenticated %}{% user_display request.user %}{% endif %}
-                </span>
-              </a>
-              <div class="dropdown-menu dropdown-menu-right">
-                <a class="dropdown-item" href="{% url 'edit_account' %}"><i class="fa fa-cog fa-fw"></i> Account</a>
-
-                {% if request.user.is_staff %}
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site settings</a>
-                {% endif %}
-
-                <div class="dropdown-divider"></div>
-                <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fa fa-sign-out-alt fa-fw"></i> Log out</a>
-              </div>
-            </li>
-          {% else %}
-            <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}" class="nav-link"><i class="fa fa-sign-in-alt"></i> Log in</a></li>
-          {% endif %}
-        {% endblock %}
-        </ul>
-
-      </div>
-      {% endblock %}
-    </nav>
-  {% endblock %}
-
   <div id="progress-bar" style="display: none">
     <div class="progress-bar progress-bar-striped progress-bar-info progress-bar-animated" role="progressbar" style="width: 100%; height: 5px;"></div>
   </div>
@@ -82,6 +13,75 @@
 
     <div class="main-container-wrapper">
       <main id="{% block view-id %}{% endblock %}" class="main-container">
+        {% block navbar %}
+          <nav class="navbar navbar-expand-md navbar-dark">
+            {% block navbar-brand %}
+            <a class="navbar-brand" href="/"><img src="{% static 'images/logo-inverse.png' %}" title="Indigo"></a>
+            {% endblock %}
+            {% block navbar-toggle %}
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar-collapse">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            {% endblock %}
+
+            {% block navbar-content %}
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+              <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+              {% block navbar-left %}
+                {% if request.user.is_authenticated %}
+                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                <li class="nav-item dropdown">
+                  <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Help</a>
+                  <div class="dropdown-menu">
+                    {% block navbar-help-menu %}
+                    <a class="dropdown-item" href="http://indigo.readthedocs.org/en/latest/" target="_blank"><i class="fa fa-question fa-fw"></i> Documentation</a>
+                    <a class="dropdown-item" href="mailto:greg@openup.org.za" target="_blank"><i class="fa fa-envelope fa-fw"></i> Feedback</a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="https://github.com/OpenUpSA/indigo" target="_blank"><i class="fab fa-github fa-fw"></i> Indigo on GitHub</a>
+
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="{% url 'terms_of_use' %}" target="_blank">Terms of Use &amp; Privacy Policy</a>
+                    {% endblock %}
+                  </div>
+                </li>
+                {% endif %}
+              {% endblock %}
+              </ul>
+
+              <ul class="navbar-nav" id="user-buttons">
+              {% block navbar-user %}
+                {% if request.user.is_authenticated %}
+                  <li class="nav-item dropdown">
+                    <a href="#" class="nav-link dropdown-toggle logged-in" data-toggle="dropdown">
+                      <i class="fa fa-user"></i>
+                      <span class="username">
+                        {% if request.user.is_authenticated %}{% user_display request.user %}{% endif %}
+                      </span>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item" href="{% url 'edit_account' %}"><i class="fa fa-cog fa-fw"></i> Account</a>
+
+                      {% if request.user.is_staff %}
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="/admin/" target="_blank"><i class="fas fa-cog fa-fw"></i> Site settings</a>
+                      {% endif %}
+
+                      <div class="dropdown-divider"></div>
+                      <a class="dropdown-item" href="{% url 'account_logout' %}"><i class="fa fa-sign-out-alt fa-fw"></i> Log out</a>
+                    </div>
+                  </li>
+                {% else %}
+                  <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}" class="nav-link"><i class="fa fa-sign-in-alt"></i> Log in</a></li>
+                {% endif %}
+              {% endblock %}
+              </ul>
+
+            </div>
+            {% endblock %}
+          </nav>
+        {% endblock %}
+
         {% block main-header %}
           <header class="main-header">
             <div class="container">

@@ -386,9 +386,11 @@ def post_save_work(sender, instance, **kwargs):
 
     # Send action to activity stream, as 'created' if a new work
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.place.place_code)
     else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.place.place_code)
 
 
 def publication_document_filename(instance, filename):
@@ -442,9 +444,11 @@ def post_save_amendment(sender, instance, **kwargs):
             doc.save()
 
         # Send action to activity stream, as 'created' if a new amendment
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.amended_work.place.place_code)
     else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.amended_work.place.place_code)
 
 
 class DocumentManager(models.Manager):
@@ -845,12 +849,15 @@ reversion.revisions.register(Work)
 
 @receiver(signals.post_save, sender=Document)
 def post_save_document(sender, instance, **kwargs):
-    """ Send action to activity stream, as 'created' if a new document
+    """ Send action to activity stream, as 'created' if a new document.
+        Update documents that have been deleted but don't send action to activity stream.
     """
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.work.place.place_code)
     elif not instance.deleted:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.work.place.place_code)
 
 
 def attachment_filename(instance, filename):
@@ -1028,7 +1035,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        action.send(user, verb='submitted', action_object=self)
+        pass
+
 
     # cancel
     def may_cancel(self, view):
@@ -1037,7 +1045,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        action.send(user, verb='cancelled', action_object=self)
+        pass
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1046,7 +1054,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        action.send(user, verb='reopened', action_object=self)
+        pass
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1055,7 +1063,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        action.send(user, verb='unsubmitted', action_object=self)
+        pass
 
     # close
     def may_close(self, view):
@@ -1064,17 +1072,15 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        action.send(user, verb='closed', action_object=self)
+        pass
 
 
 @receiver(signals.post_save, sender=Task)
 def post_save_task(sender, instance, **kwargs):
-    """ Send action to activity stream, as 'created' if a new task
+    """ Send 'created' action to activity stream if new task
     """
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance)
-    else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 
 class Workflow(models.Model):

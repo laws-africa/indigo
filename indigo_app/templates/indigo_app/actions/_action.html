@@ -1,0 +1,45 @@
+{% load humanize indigo_app %}
+{% with action.action_object.action_object_actions.content_type.model as model %}
+
+{% user_profile action.actor %}
+
+{{ action.verb }}
+
+{% if model == 'work' %}
+  {% with action.action_object as work %}
+    the work <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+    in <a href="{% url 'place' place=work.place.place_code %}">{{ work.place }}</a>
+  {% endwith %}
+
+{% elif model == 'amendment' %}
+  {% with action.action_object as amendment %}
+    an amendment on the work <a href="{% url 'work' frbr_uri=amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
+    by the work <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
+    in <a href="{% url 'place' place=amendment.amended_work.place.place_code %}">{{ amendment.amended_work.place }}</a>
+  {% endwith %}
+
+{% elif model == 'document' %}
+  {% with action.action_object as document %}
+    {% if document.deleted %}
+      a document on the work <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}">{{ document.work.title }}</a> @ {{ document.expression_date }}
+    {% else %}
+      the document <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
+    {% endif %}
+    in <a href="{% url 'place' place=document.work.place.place_code %}">{{ document.work.place }}</a>
+  {% endwith %}
+
+{% elif model == 'task' %}
+  {% with action.action_object as task %}
+    the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+    {% if task.work %}
+      on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+      {% if task.document %}
+        @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+      {% endif %}
+    {% endif %}
+    in <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
+ {% endwith %}
+{% endif %}
+
+{{ action.timestamp|naturaltime }}
+{% endwith %}

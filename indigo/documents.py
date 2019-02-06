@@ -15,12 +15,18 @@ class ResolvedAnchor(object):
         self.resolve()
 
     def resolve(self):
-        anchor_id = self.anchor['id']
+        anchor_id = self.anchor['id'].replace("'", "\'")
         root = self.document.doc.root
 
-        elems = root.xpath("//*[@id='%s']" % anchor_id.replace("'", "\'"))
+        elems = root.xpath("//*[@id='%s']" % anchor_id)
         if elems:
             self.resolve_element(elems[0])
+        elif anchor_id in ['preface', 'preamble']:
+            # HACK HACK HACK
+            # We sometimes use 'preamble' and 'preface' even though they aren't IDs
+            elems = root.xpath("//a:%s" % anchor_id, namespaces={'a': self.document.doc.namespace})
+            if elems:
+                self.resolve_element(elems[0])
 
     def resolve_element(self, element):
         self.element = element

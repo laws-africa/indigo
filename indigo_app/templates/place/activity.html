@@ -7,7 +7,7 @@
   <div class="card">
   <h4 class="card-header">Activity</h4>
   <div class="card-body">
-    {% include 'place/_activity_list.html' with actions=page.object_list %}
+    {% include 'indigo_app/actions/_activity_list.html' with actions=page.object_list %}
 
     {% if is_paginated %}
       <nav class="mt-4">

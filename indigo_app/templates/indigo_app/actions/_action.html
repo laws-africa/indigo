@@ -41,5 +41,5 @@
  {% endwith %}
 {% endif %}
 
-{{ action.timestamp|naturaltime }}
+<span class="time-ago" data-timestamp="{{ action.timestamp|date:'c' }}">{{ action.timestamp|date:"Y-m-d H:i" }}</span>
 {% endwith %}

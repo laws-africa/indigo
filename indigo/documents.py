@@ -1,8 +1,11 @@
+from indigo.plugins import plugins
+
+
 class ResolvedAnchor(object):
     """ An anchor that has been resolved into a point in a document.
     """
     element = None
-    title = None
+    toc_entry = None
 
     def __init__(self, anchor, document):
         self.anchor = anchor
@@ -16,11 +19,15 @@ class ResolvedAnchor(object):
 
         elems = root.xpath("//*[@id='%s']" % anchor_id.replace("'", "\'"))
         if elems:
-            self.element = elems[0]
-            # TODO: find closest parent item in the table of contents, and stash that along with
-            # its title
-        else:
-            self.element = None
+            self.resolve_element(elems[0])
+
+    def resolve_element(self, element):
+        self.element = element
+
+        # lookup TOC information
+        builder = plugins.for_document('toc', self.document)
+        if builder:
+            self.toc_entry = builder.table_of_contents_entry_for_element(self.document, self.element)
 
     def element_html(self):
         if not self.element:

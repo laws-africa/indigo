@@ -331,6 +331,8 @@
 
         var template = self.annotationTemplate = Handlebars.compile($("#annotation-template").html());
         threads.forEach(_.bind(self.makeView, self));
+
+        self.renderAnnotations();
       });
     },
 

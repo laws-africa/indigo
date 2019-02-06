@@ -133,8 +133,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PlaceActivityView, self).get_context_data(**kwargs)
 
-        all_activities = Action.objects.all()
-        activities = [act for act in all_activities if act.data and act.data['place_code'] == self.place.code]
+        activities = Action.objects.filter(data__place_code=self.place.place_code)
 
         paginator, page, versions, is_paginated = self.paginate_queryset(activities, self.page_size)
         context.update({

@@ -18,12 +18,11 @@
 <div class="author">{{ created_by_user.display_name }}</div>
 <div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
 <div class="content">{{{ html }}}</div>
+<div class="button-container"></div>
 {{#if task}}
-  <div class="task">
-    <a href="{{ task.view_url }}" class="btn btn-sm btn-block btn-outline-primary mt-2">
-      <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span>
-      Task #{{ task.id }}
-    </a>
+  <div class="task mt-2">
+    <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span>
+    <a href="{{ task.view_url }}">Task #{{ task.id }}</a>
   </div>
 {{/if}}
 {% endverbatim %}

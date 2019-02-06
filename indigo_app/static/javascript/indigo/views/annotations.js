@@ -112,9 +112,10 @@
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
+        .find('.button-container')
         .append('<button class="btn btn-primary btn-sm save">Save</button>')
         .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
-        .find('.task').remove().end()
+        .end()
         .find('.content')
         .replaceWith($textarea);
 

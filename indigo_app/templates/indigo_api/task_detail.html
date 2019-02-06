@@ -84,7 +84,7 @@
     <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</li>
     {% endfor %}
 
-    {% if task.anchor %}
+    {% if task.anchor_id %}
       <li class="activity-item">
         {% with task.resolve_anchor as anchor %}
           {% if anchor.element %}

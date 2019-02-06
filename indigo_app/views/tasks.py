@@ -199,6 +199,6 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 state_change(user)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
-        task.save()
+        task.save(state_change=True)
 
         return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])

@@ -381,7 +381,9 @@ LOGGING = {
     }
 }
 
+# Activity stream
 ACTSTREAM_SETTINGS = {
     'USE_JSONFIELD': True,
-    'USE_NATIVE_JSONFIELD': True
 }
+
+USE_NATIVE_JSONFIELD = True

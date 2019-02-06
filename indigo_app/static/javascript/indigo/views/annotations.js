@@ -356,6 +356,10 @@
     },
 
     renderAnnotations: function() {
+      // TODO: this gets called every time a new TOC entry is selected,
+      // so it will always attempt to prefocus an annotation. It just so happens
+      // that the click events prevent anything after the initial prefocus from
+      // working. It's dirty, we should only prefocus on the first render.
       var prefocus = this.prefocus;
 
       this.threadViews.forEach(function(v) {

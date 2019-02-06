@@ -88,10 +88,10 @@
       <li class="activity-item">
         {% with task.resolve_anchor as anchor %}
           {% if anchor.element %}
-            Current content at <b>{{ anchor.toc_entry.title }}</b>:
-            <div class="sheet-outer">
+            Here is <b>{{ anchor.toc_entry.title }}</b> as it appears currently:
+            <div class="sheet-outer" {% if not anchor.is_toc_element %}data-highlight="{{ task.anchor.id }}"{% endif %}>
               <div class="sheet-inner is-fragment">
-                <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.element_html|safe }}</div>
+                <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
               </div>
             </div>
           {% else %}

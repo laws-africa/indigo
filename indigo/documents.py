@@ -6,6 +6,7 @@ class ResolvedAnchor(object):
     """
     element = None
     toc_entry = None
+    is_toc_element = False
 
     def __init__(self, anchor, document):
         self.anchor = anchor
@@ -28,9 +29,16 @@ class ResolvedAnchor(object):
         builder = plugins.for_document('toc', self.document)
         if builder:
             self.toc_entry = builder.table_of_contents_entry_for_element(self.document, self.element)
+            self.is_toc_element = self.toc_entry.element == self.element
 
     def element_html(self):
         if not self.element:
             return None
 
         return self.document.element_to_html(self.element)
+
+    def toc_element_html(self):
+        if not self.toc_entry:
+            return None
+
+        return self.document.element_to_html(self.toc_entry.element)

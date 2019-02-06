@@ -83,6 +83,23 @@
     {% for action in stream reversed %}
     <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</li>
     {% endfor %}
+
+    {% if task.anchor %}
+      <li class="activity-item">
+        {% with task.resolve_anchor as anchor %}
+          {% if anchor.element %}
+            Current content at {{ task.anchor.id }}:
+            <div class="sheet-outer">
+              <div class="sheet-inner is-fragment">
+                <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.element_html|safe }}</div>
+              </div>
+            </div>
+          {% else %}
+            The content at {{ task.anchor.id }} is not available and may have been removed.
+          {% endif %}
+        {% endwith %}
+      </li>
+    {% endif %}
   </ul>
 </div>
 {% endblock %}

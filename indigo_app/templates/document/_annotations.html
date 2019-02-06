@@ -5,10 +5,10 @@
   <div class="dropdown-menu">
     {{#unless in_reply_to}}
       {{#unless task}}
-      <a href="#" class="dropdown-item create-anntn-task">Create task</a>
-      <a href="#" class="dropdown-item close-anntn">Mark as done</a>
-      <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item create-anntn-task">Create task</a>
       {{/unless}}
+      <a href="#" class="dropdown-item close-anntn">Resolve</a>
+      <div class="dropdown-divider"></div>
     {{/unless}}
     <a href="#" class="dropdown-item edit-anntn">Edit</a>
     <a href="#" class="dropdown-item delete-anntn">Delete</a>
@@ -19,7 +19,10 @@
 <div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
 <div class="content">{{{ html }}}</div>
 {{#if task}}
-<a href="{{ task.view_url }}" class="btn btn-sm btn-block btn-outline-primary">Task #{{ task.id }}</a>
+  <a href="{{ task.view_url }}" class="btn btn-sm btn-block btn-outline-primary mt-2">
+    <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span>
+    Task #{{ task.id }}
+  </a>
 {{/if}}
 {% endverbatim %}
 </script>

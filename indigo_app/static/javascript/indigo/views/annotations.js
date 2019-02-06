@@ -127,7 +127,7 @@
     },
 
     close: function(e) {
-      if (confirm('Are you sure you want to close this annotation?')) {
+      if (confirm('Are you sure you want to resolve this?')) {
         this.model.set('closed', true);
         this.model.save();
       }

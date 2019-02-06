@@ -422,6 +422,10 @@ class NoopSerializer(object):
         self.data = instance
 
 
+class AnnotationAnchorSerializer(serializers.Serializer):
+    id = serializers.CharField()
+
+
 class TaskSerializer(serializers.ModelSerializer):
     created_by_user = UserSerializer(read_only=True)
     updated_by_user = UserSerializer(read_only=True)
@@ -429,6 +433,7 @@ class TaskSerializer(serializers.ModelSerializer):
     locality = serializers.CharField(source='locality.code')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
+    anchor = AnnotationAnchorSerializer()
 
     class Meta:
         model = Task
@@ -444,13 +449,10 @@ class TaskSerializer(serializers.ModelSerializer):
             'labels',
             'assigned_to',
             'annotation',
+            'anchor',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
         )
         read_only_fields = fields
-
-
-class AnnotationAnchorSerializer(serializers.Serializer):
-    id = serializers.CharField()
 
 
 class AnnotationSerializer(serializers.ModelSerializer):

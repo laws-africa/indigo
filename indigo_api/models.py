@@ -31,6 +31,7 @@ from languages_plus.models import Language as MasterLanguage
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
+from indigo.documents import ResolvedAnchor
 
 log = logging.getLogger(__name__)
 
@@ -935,16 +936,18 @@ class Annotation(models.Model):
             task.locality = self.document.work.locality
             task.work = self.document.work
             task.document = self.document
+            task.anchor_id = self.anchor_id
             task.created_by_user = user
             task.updated_by_user = user
 
             # TODO: strip markdown?
             task.title = u'Created from comment: ' + self.text
-            task.description = u'This task was created from a comment on this document.\n\n' + self.text
+            task.description = u'This task was created from a comment on this document:\n\n' + self.text
 
             task.save()
             self.task = task
             self.save()
+            self.task.refresh_from_db()
 
         return self.task
 
@@ -1091,6 +1094,15 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
         action.send(user, verb='closed', action_object=self)
+
+    def anchor(self):
+        return {'id': self.anchor_id}
+
+    def resolve_anchor(self):
+        if not self.anchor_id or not self.document:
+            return None
+
+        return ResolvedAnchor(anchor=self.anchor(), document=self.document)
 
 
 @receiver(signals.post_save, sender=Task)

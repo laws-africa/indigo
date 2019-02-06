@@ -111,3 +111,5 @@ class AnnotationAPITest(APITestCase):
         response = self.client.post('/api/documents/10/annotations/%s/task' % note_id)
         assert_equal(response.status_code, 201)
         assert_equal(response.data['title'], 'Created from comment: hello')
+        assert_equal(response.data['state'], 'open')
+        assert_equal(response.data['anchor'], {'id': 'section.1'})

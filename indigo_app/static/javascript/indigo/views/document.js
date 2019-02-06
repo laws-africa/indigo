@@ -146,7 +146,10 @@
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
       this.bodyEditorView.editorReady.then(function() {
-        // select the first element in the toc
+        // select the appropriate element in the toc
+        if (Indigo.queryParams.toc && self.tocView.selectItemById(Indigo.queryParams.toc)) {
+          return;
+        }
         self.tocView.selectItem(0, true);
       });
 

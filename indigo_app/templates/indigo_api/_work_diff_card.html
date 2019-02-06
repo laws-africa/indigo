@@ -3,11 +3,11 @@
 <div>
   {% user_profile version.revision.user %} made
   {{ version.changes|length }} change{{ version.changes|length|pluralize}} 
-  (<a href="#changes-{{ version.id }}" data-toggle="collapse">show changes</a>)
   <span class="time-ago" data-timestamp="{{ version.revision.date_created|date:'c' }}">{{ version.revision.date_created|date:"Y-m-d H:i" }}</span>
   {% if version.revision.comment %}
     <span class="text-muted">· {{ version.revision.comment }}</span>
   {% endif %}
+  · <a href="#changes-{{ version.id }}" data-toggle="collapse">Show changes</a>
 </div>
 
 <div class="card mt-3 collapse" id="changes-{{ version.id }}">

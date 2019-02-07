@@ -216,10 +216,8 @@ class WorkflowCreateView(TaskViewBase, CreateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowCreateView, self).get_context_data(**kwargs)
-        if self.locality:
-            context['place_tasks'] = Task.objects.filter(locality=self.place)
-        else:
-            context['place_tasks'] = Task.objects.filter(country=self.place)
+
+        context['place_open_tasks'] = self.place.tasks.filter(state__in=Task.OPEN_STATES)
 
         return context
 
@@ -258,10 +256,8 @@ class WorkflowEditView(TaskViewBase, UpdateView):
 
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowEditView, self).get_context_data(**kwargs)
-        if self.locality:
-            context['place_tasks'] = Task.objects.filter(locality=self.place)
-        else:
-            context['place_tasks'] = Task.objects.filter(country=self.place)
+
+        context['place_open_tasks'] = self.place.tasks.filter(state__in=Task.OPEN_STATES)
 
         return context
 

@@ -51,7 +51,7 @@
           <div class="form-row">
             <div class="form-group col-sm-12">
               <label for="{{ form.tasks.id_for_label }}">{{ form.tasks.label }}</label>
-              {% for task in place_tasks %}
+              {% for task in place_open_tasks %}
                 <div class="form-check">
                   <label class="form-check-label">
                     <input class="form-check-input" type="checkbox" name="{{ form.tasks.name }}" value="{{ task.id }}" {% if task.id in form.tasks.value %}checked{% endif %}>

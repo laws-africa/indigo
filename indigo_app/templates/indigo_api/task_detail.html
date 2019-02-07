@@ -38,7 +38,7 @@
   <div class="card mt-3">
     <div class="card-body">
 
-      <p>{{ task.description|default:'' }}</p>
+      <p>{{ task.description|linebreaks|default:'' }}</p>
 
       <div class="h5">
         {% for label in task.labels.all %}
@@ -81,9 +81,9 @@
 
   <ul class="activity-list">
     {% activity_stream 'action_object' task %}
-    {% for action in stream reversed %}
-    <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</li>
-    {% endfor %}
+      {% for action in stream reversed %}
+        <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</li>
+      {% endfor %}
 
     {% if task.anchor_id %}
       <li class="activity-item">

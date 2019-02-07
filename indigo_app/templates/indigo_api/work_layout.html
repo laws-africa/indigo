@@ -8,7 +8,7 @@
     <nav class="sidebar-nav">
       <ul class="nav">
         {% block sidebar-nav %}
-          <li class="nav-item nav-heading">Work</li>
+          <li class="nav-heading">Work</li>
 
           {% block work-sidebar-nav %}
           {% if work.pk %}
@@ -38,7 +38,7 @@
 
           {% block document-sidebar-nav %}
           {% if document %}
-          <li class="nav-item nav-heading">Document</li>
+          <li class="nav-heading"><span class="when-minimized">P. I. T.</span><span class="when-expanded">Point in Time</span></li>
           <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#properties-modal"><i class="fa fa-cog"></i> Properties</a></li>
           <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#attachments-modal"><i class="fa fa-paperclip"></i> Attachments</a></li>
           <li class="nav-item"><a class="nav-link show-preview" href="#"><i class="fa fa-fw fa-eye"></i> Preview</a></li>

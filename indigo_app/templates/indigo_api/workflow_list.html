@@ -1,0 +1,78 @@
+{% extends "place/tabbed_layout.html" %}
+{% load humanize indigo_app %}
+
+{% block title %}Workflows – {{ place.name }}{% endblock %}
+
+{% block content %}
+
+<div class="container mt-3">
+  <div class="card">
+    <div class="card-header">
+      <div class="float-right">
+        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
+      </div>
+    </div>
+
+    {% if workflows %}
+
+      {% for workflow in workflows %}
+        <div class="list-group-item p-3 d-flex align-items-center">
+
+          <div class="col flex-fill">
+
+            <div>
+
+              {% with workflow.tasks.all as tasks %}
+                <div class="float-right">
+                  {%for task in tasks %}
+                    <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
+                  {% endfor %}
+                </div>
+              {% endwith %}
+
+              <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+              {{ workflow.description|linebreaks }}
+
+            </div>
+
+            <div class="text-muted">
+              <small>
+                Created <span class="time-ago" data-timestamp="{{ workflow.created_at|date:'c' }}">{{ workflow.created_at|naturaltime }}</span>
+                {% if workflow.created_by_user %}
+                by {% user_profile workflow.created_by_user %}
+                {% endif %}
+              </small>
+            </div>
+
+          </div>
+        </div>
+      {% endfor %}
+
+    {% else %}
+      <div class="card-body">
+        <p class="text-center"><em>No workflows found.</em></p>
+      </div>
+    {% endif %}
+
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-3">
+      <ul class="pagination justify-content-center">
+        {% if page_obj.has_previous %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.previous_page_number }}">Previous</a></li>
+        {% endif %}
+
+        {% for num in paginator.page_range %}
+        <li class="page-item {% if num == page_obj.number %}active{% endif %}"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <li class="page-item"><a class="page-link" href="?page={{ page_obj.next_page_number }}">Next</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  {% endif %}
+
+</div>
+{% endblock %}

@@ -76,4 +76,11 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
 
 
 class WorkflowListView(WorkflowViewBase, ListView):
-    pass
+    context_object_name = 'workflows'
+    paginate_by = 20
+    paginate_orphans = 4
+    model = Workflow
+
+    def get_queryset(self):
+        workflows = self.place.workflows.all()
+        return workflows

@@ -21,12 +21,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/OpenUpSA/indigo.git"
+    "url": "git+https://github.com/laws-africa/indigo.git"
   },
-  "author": "Greg Kempe (greg@openup.org.za)",
+  "author": "Greg Kempe (greg@laws.africa)",
   "license": "LGPL-3.0",
   "bugs": {
-    "url": "https://github.com/OpenUpSA/indigo/issues"
+    "url": "https://github.com/laws-africa/indigo/issues"
   },
-  "homepage": "https://github.com/OpenUpSA/indigo#readme"
+  "homepage": "https://github.com/laws-africa/indigo#readme"
 }

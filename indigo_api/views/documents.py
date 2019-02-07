@@ -6,6 +6,7 @@ from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.postgres.search import SearchQuery
 from django.http import Http404
+from django.urls import reverse
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -25,7 +26,7 @@ from lxml.etree import LxmlError
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
-from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
+from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer, HTMLRenderer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
 from .misc import DEFAULT_PERMS
@@ -296,6 +297,7 @@ class RenderView(APIView):
     """ Support for rendering a document on the server.
     """
     permission_classes = DEFAULT_PERMS
+    coverpage_only = True
 
     def post(self, request, format=None):
         serializer = RenderSerializer(data=request.data)
@@ -304,7 +306,14 @@ class RenderView(APIView):
         document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
         # the serializer ignores the id field, but we need it for rendering
         document.id = serializer.initial_data['document'].get('id')
-        return Response({'output': document.to_html()})
+
+        if self.coverpage_only:
+            renderer = HTMLRenderer()
+            renderer.media_url = reverse('document-detail', kwargs={'pk': document.id}) + '/'
+            html = renderer.render_coverpage(self, document)
+            return Response({'output': html})
+        else:
+            return Response({'output': document.to_html()})
 
 
 class LinkTermsView(APIView):

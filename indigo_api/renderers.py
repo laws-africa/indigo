@@ -192,6 +192,14 @@ class HTMLRenderer(object):
         else:
             return render_to_string(template_name, context)
 
+    def render_coverpage(self, document):
+        template_name = self.template_name or self.find_template(document)
+        context = {
+            'document': document,
+            'resolver_url': self.resolver,
+        }
+        return render_to_string(template_name, context)
+
     def find_colophon(self, document):
         return Colophon.objects.filter(country=document.work.country).first()
 

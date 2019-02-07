@@ -22,6 +22,7 @@ router.register(r'works/(?P<work_id>[0-9]+)/amendments', views.works.WorkAmendme
 urlpatterns = [
     url(r'^search/documents$', views.documents.SearchView.as_view(), name='document-search'),
     url(r'^render$', views.documents.RenderView.as_view(), name='render'),
+    url(r'^render/coverpage$', views.documents.RenderView.as_view(coverpage_only=True), name='render'),
     url(r'^parse$', views.documents.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', views.documents.LinkTermsView.as_view(), name='link-terms'),
     url(r'^analysis/link-references$', views.documents.LinkReferencesView.as_view(), name='link-references'),

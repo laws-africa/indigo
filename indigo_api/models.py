@@ -80,6 +80,9 @@ class Country(models.Model):
     def place_code(self):
         return self.code
 
+    def place_tasks(self):
+        return self.tasks.filter(locality=None)
+
     def as_json(self):
         return {
             'name': self.name,
@@ -114,6 +117,9 @@ class Locality(models.Model):
     @property
     def place_code(self):
         return self.country.code + '-' + self.code
+
+    def place_tasks(self):
+        return self.tasks
 
     def __unicode__(self):
         return unicode(self.name)

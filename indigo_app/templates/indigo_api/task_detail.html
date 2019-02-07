@@ -38,7 +38,7 @@
   <div class="card mt-3">
     <div class="card-body">
 
-      <p>{{ task.description|default:'' }}</p>
+      <p>{{ task.description|default:''|urlize|linebreaksbr }}</p>
 
       <div class="h5">
         {% for label in task.labels.all %}

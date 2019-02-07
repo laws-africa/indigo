@@ -951,7 +951,7 @@ class Annotation(models.Model):
             ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
 
             # TODO: strip markdown?
-            task.title = u'%s: %s' % (ref, self.text)
+            task.title = u'"%s": %s' % (ref, self.text)
             task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
@@ -1068,7 +1068,6 @@ class Task(models.Model):
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
         pass
-
 
     # cancel
     def may_cancel(self, view):

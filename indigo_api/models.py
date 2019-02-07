@@ -17,7 +17,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
-
+from allauth.account.utils import user_display
 from django_fsm import FSMField, transition
 
 import arrow
@@ -940,9 +940,12 @@ class Annotation(models.Model):
             task.created_by_user = user
             task.updated_by_user = user
 
+            anchor = ResolvedAnchor(self.anchor(), self.document)
+            ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor.id
+
             # TODO: strip markdown?
-            task.title = u'Created from comment: ' + self.text
-            task.description = u'This task was created from a comment on this document:\n\n' + self.text
+            task.title = u'%s: %s' % (ref, self.text)
+            task.description = u'%s commented on "%s": %s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
             self.task = task

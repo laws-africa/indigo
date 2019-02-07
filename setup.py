@@ -18,11 +18,11 @@ setup(
     description='A Django framework for publishing legislation using Akoma Ntoso',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/OpenUpSA/indigo',
+    url='https://github.com/laws-africa/indigo',
 
     # Author details
-    author='OpenUp',
-    author_email='greg@openup.org.za',
+    author='Laws.Africa',
+    author_email='greg@laws.africa',
 
     # See https://pypi.org/classifiers/
     classifiers=[

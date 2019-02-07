@@ -98,3 +98,18 @@ class AnnotationAPITest(APITestCase):
             'text': 'goodbye',
         })
         assert_equal(response.status_code, 403)
+
+    def test_create_annotation_task(self):
+        response = self.client.post('/api/documents/10/annotations', {
+            'text': 'hello',
+            'anchor': {'id': 'section.1'},
+        })
+
+        assert_equal(response.status_code, 201)
+        note_id = response.data['id']
+
+        response = self.client.post('/api/documents/10/annotations/%s/task' % note_id)
+        assert_equal(response.status_code, 201)
+        assert_equal(response.data['title'], 'section.1: hello')
+        assert_equal(response.data['state'], 'open')
+        assert_equal(response.data['anchor'], {'id': 'section.1'})

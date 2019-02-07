@@ -17,7 +17,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
-
+from allauth.account.utils import user_display
 from django_fsm import FSMField, transition
 
 import arrow
@@ -31,6 +31,7 @@ from languages_plus.models import Language as MasterLanguage
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
+from indigo.documents import ResolvedAnchor
 
 log = logging.getLogger(__name__)
 
@@ -925,9 +926,40 @@ class Annotation(models.Model):
     closed = models.BooleanField(default=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
 
     def anchor(self):
         return {'id': self.anchor_id}
+
+    def create_task(self, user):
+        """ Create a new task for this annotation.
+        """
+        if self.in_reply_to:
+            raise Exception("Cannot create tasks for reply annotations.")
+
+        if not self.task:
+            task = Task()
+            task.country = self.document.work.country
+            task.locality = self.document.work.locality
+            task.work = self.document.work
+            task.document = self.document
+            task.anchor_id = self.anchor_id
+            task.created_by_user = user
+            task.updated_by_user = user
+
+            anchor = ResolvedAnchor(self.anchor(), self.document)
+            ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
+
+            # TODO: strip markdown?
+            task.title = u'%s: %s' % (ref, self.text)
+            task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
+
+            task.save()
+            self.task = task
+            self.save()
+            self.task.refresh_from_db()
+
+        return self.task
 
 
 class DocumentActivity(models.Model):
@@ -1073,6 +1105,15 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
         pass
+
+    def anchor(self):
+        return {'id': self.anchor_id}
+
+    def resolve_anchor(self):
+        if not self.anchor_id or not self.document:
+            return None
+
+        return ResolvedAnchor(anchor=self.anchor(), document=self.document)
 
 
 @receiver(signals.post_save, sender=Task)

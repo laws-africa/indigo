@@ -10,6 +10,10 @@
   }
 }
 
+.highlight {
+  background: rgba(255, 255, 0, 0.25);
+}
+
 /* document workspace */
 .document-workspace {
   display: flex;
@@ -85,7 +89,6 @@ button.btn-link.help {
   margin: 0px;
 
   .sheet-inner {
-    padding: 30px;
     // work around a Chrome rendering bug with sections that
     // are very short
     min-height: 100%;
@@ -170,6 +173,7 @@ button.btn-link.help {
     box-shadow: 0 0 10px #888;
     background: white;
     position: relative;
+    padding: 30px;
 
     &.is-fragment::before {
       content: ' ';

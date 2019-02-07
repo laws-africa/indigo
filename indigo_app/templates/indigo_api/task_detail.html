@@ -38,7 +38,7 @@
   <div class="card mt-3">
     <div class="card-body">
 
-      <p>{{ task.description }}</p>
+      <p>{{ task.description|default:'' }}</p>
 
       <div class="h5">
         {% for label in task.labels.all %}
@@ -84,6 +84,23 @@
     {% for action in stream reversed %}
     <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</li>
     {% endfor %}
+
+    {% if task.anchor_id %}
+      <li class="activity-item">
+        {% with task.resolve_anchor as anchor %}
+          {% if anchor.element %}
+            Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a> as it appears currently:
+            <div class="sheet-outer" {% if not anchor.is_toc_element %}data-highlight="{{ task.anchor.id }}"{% endif %}>
+              <div class="sheet-inner is-fragment">
+                <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
+              </div>
+            </div>
+          {% else %}
+            The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been removed.
+          {% endif %}
+        {% endwith %}
+      </li>
+    {% endif %}
   </ul>
 </div>
 {% endblock %}

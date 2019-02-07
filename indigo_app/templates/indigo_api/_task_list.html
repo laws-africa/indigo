@@ -11,7 +11,7 @@
 
         <div class="col flex-fill">
           <div>
-            <a href="{{ task.pk }}/">{{ task.title }}</a>
+            <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
             {% for label in task.labels.all %}
               <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
             {% endfor %}

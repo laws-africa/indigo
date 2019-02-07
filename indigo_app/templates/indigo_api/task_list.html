@@ -11,7 +11,7 @@
       <form method="GET" id="task-filter-form">
         <div class="d-flex">
           <div class="mr-2">
-            <select class="selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}">
+            <select class="selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}" data-style="btn-outline-secondary">
               <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
               <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
               <option data-divider="true"></option>
@@ -21,21 +21,46 @@
           </div>
 
           <div class="mr-2">
-            <select class="selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}">
+            <select class="selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}" data-style="btn-outline-secondary">
               {% for label in task_labels %}
               <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
               {% endfor %}
             </select>
           </div>
 
-          <div class="ml-auto pl-3 border-left">
+          <div class="ml-auto pr-3">
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-outline-secondary {% if form.format.value == 'columns' %}active{% endif %}">
+                <input type="radio" name="{{ form.format.name }}" autocomplete="off" value="columns" {% if form.format.value == 'columns' %}checked {% endif %}><i class="fas fa-columns" title="Show tasks in columns"></i>
+              </label>
+              <label class="btn btn-outline-secondary {% if form.format.value == 'list' %}active{% endif %}">
+                <input type="radio" name="{{ form.format.name }}" autocomplete="off" value="list" {% if form.format.value == 'list' %}checked {% endif %}><i class="fas fa-th-list" title="Show tasks in a list"></i>
+              </label>
+            </div>
+          </div>
+
+          <div class="pl-3 border-left">
             <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
           </div>
         </div>
       </form>
     </div>
 
-    {% include 'indigo_api/_task_list.html' with tasks=tasks %}
+    {% if tasks %}
+
+      {% if form.format.value == 'list' %}
+        {% include 'indigo_api/_task_list.html' with tasks=tasks %}
+      {% else %}
+        <div class="bg-light p-3">
+          {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
+        </div>
+      {% endif %}
+
+    {% else %}
+      <div class="card-body">
+        <p class="text-center"><em>No tasks found.</em></p>
+      </div>
+    {% endif %}
 
   </div>
 

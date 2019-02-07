@@ -1,6 +1,7 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import json
+from itertools import groupby
 
 from actstream import action
 
@@ -40,9 +41,14 @@ class TaskListView(TaskViewBase, ListView):
         # initial state
         if not params.get('state'):
             params.setlist('state', ['open', 'pending_review'])
+        params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(params)
         self.form.is_valid()
+
+        if self.form.cleaned_data['format'] == 'columns':
+            self.paginate_by = 40
+
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -54,6 +60,28 @@ class TaskListView(TaskViewBase, ListView):
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
+
+        def grouper(task):
+            return task.state
+
+        tasks = sorted(context['tasks'], key=grouper)
+        tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
+
+        # base columns on the requested task states
+        groups = {}
+        for state in self.form.cleaned_data['state']:
+            groups[state] = {
+                'title': state.replace('_', ' ').title(),
+                'badge': state,
+            }
+
+        for key, group in tasks.iteritems():
+            groups[key]['tasks'] = group
+
+        # enforce column ordering
+        context['task_groups'] = [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled']
+                                  if g in groups]
+
         return context
 
 

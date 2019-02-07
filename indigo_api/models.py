@@ -941,11 +941,11 @@ class Annotation(models.Model):
             task.updated_by_user = user
 
             anchor = ResolvedAnchor(self.anchor(), self.document)
-            ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor.id
+            ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor().id
 
             # TODO: strip markdown?
             task.title = u'%s: %s' % (ref, self.text)
-            task.description = u'%s commented on "%s": %s' % (user_display(self.created_by_user), ref, self.text)
+            task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
             self.task = task

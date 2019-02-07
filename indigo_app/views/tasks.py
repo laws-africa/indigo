@@ -250,7 +250,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
-                action.send(user, verb=verb, action_object=task, place_code=task.place.place_code)
+                action.send(user, verb=verb, action_object=task,
+                            place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()

@@ -1121,7 +1121,8 @@ def post_save_task(sender, instance, **kwargs):
     """ Send 'created' action to activity stream if new task
     """
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.place.place_code)
 
 
 class Workflow(models.Model):
@@ -1149,9 +1150,11 @@ def post_save_workflow(sender, instance, **kwargs):
     """ Send action to activity stream, as 'created' if a new workflow
     """
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.place.place_code)
     else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.place.place_code)
 
 
 class TaskLabel(models.Model):

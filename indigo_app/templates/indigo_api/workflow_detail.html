@@ -23,7 +23,7 @@
   <div class="card mt-3">
     <div class="card-body">
 
-      <p>{{ workflow.description }}</p>
+      <p>{{ workflow.description|linebreaks }}</p>
 
       {% for task in workflow.tasks.all %}
       <div>

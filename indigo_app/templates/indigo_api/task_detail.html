@@ -44,16 +44,16 @@
         {% endfor %}
       </div>
 
-      {% if task.workflows %}
       {% with task.workflows.all as workflows %}
+      {% if workflows %}
       <h5>Workflow{{ workflows|length|pluralize}}:</h5>
       <ul>
         {% for workflow in workflows %}
           <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a><br></li>
         {% endfor %}
       </ul>
-      {% endwith %}
       {% endif %}
+      {% endwith %}
 
       <p>{{ task.description|linebreaks|default:'' }}</p>
 

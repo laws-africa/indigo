@@ -31,6 +31,15 @@ class WorkflowCreateView(WorkflowViewBase, CreateView):
 
         return context
 
+    def get_form(self, form_class=None):
+        form = super(WorkflowCreateView, self).get_form(form_class)
+
+        task_id = self.request.GET.get('task_id')
+        if task_id:
+            form.initial['task_id'] = int(task_id)
+
+        return form
+
     def get_form_kwargs(self):
         kwargs = super(WorkflowCreateView, self).get_form_kwargs()
 

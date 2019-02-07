@@ -61,8 +61,8 @@
                 </div>
               {% endfor %}
 
-              {% if place_workflows %}
               <br><label for="{{ form.workflows.id_for_label }}">{{ form.workflows.label }}</label>
+              {% if place_workflows %}
                 {% for workflow in place_workflows %}
                   <div class="form-check">
                     <label class="form-check-label">
@@ -71,6 +71,17 @@
                     </label>
                   </div>
                 {% endfor %}
+
+              {% else %}
+                <span class="text-muted"> – none yet</span>
+              {% endif %}
+              <br>
+              {% if task.pk %}
+                <a href="{% url 'workflow_create' place=place.place_code %}?task_id={{ task.pk }}" target="_blank"
+                   class="btn btn-primary">Create a workflow</a>
+              {% else %}
+                <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank"
+                   class="btn btn-primary">Create a workflow</a>
               {% endif %}
 
             </div>

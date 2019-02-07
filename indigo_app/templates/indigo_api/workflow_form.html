@@ -54,7 +54,10 @@
               {% for task in place_open_tasks %}
                 <div class="form-check">
                   <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" name="{{ form.tasks.name }}" value="{{ task.id }}" {% if task.id in form.tasks.value %}checked{% endif %}>
+                    <input class="form-check-input" type="checkbox" name="{{ form.tasks.name }}" value="{{ task.id }}"
+                           {% if task.id in form.task.values %}checked
+                           {% elif task.id == form.initial.task_id %}checked{% endif %}
+                    >
                     <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
                     {% if task.work %}– <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
                     {% if task.document %}– <a href="{% url 'document' doc_id=task.document.pk %}">@ {{ task.document.expression_date }}</a>{% endif %}{% endif %}

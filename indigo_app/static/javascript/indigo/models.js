@@ -609,6 +609,19 @@
     toHtml: function() {
       return showdownConverter.makeHtml(this.get('text'));
     },
+
+    parse: function(json) {
+      if (json.task) json.task = new Backbone.Model(json.task);
+      return json;
+    },
+
+    createTask: function() {
+      var self = this;
+      $.post(this.url() + '/task')
+        .then(function(task) {
+          self.set('task', new Backbone.Model(task));
+        });
+    },
   });
 
   Indigo.AnnotationList = Backbone.Collection.extend({

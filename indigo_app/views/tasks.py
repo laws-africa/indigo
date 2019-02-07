@@ -1,6 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import json
+from itertools import groupby
+
+from actstream import action
 
 from django.contrib import messages
 from django.core.exceptions import PermissionDenied
@@ -38,9 +41,14 @@ class TaskListView(TaskViewBase, ListView):
         # initial state
         if not params.get('state'):
             params.setlist('state', ['open', 'pending_review'])
+        params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(params)
         self.form.is_valid()
+
+        if self.form.cleaned_data['format'] == 'columns':
+            self.paginate_by = 40
+
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
@@ -52,6 +60,28 @@ class TaskListView(TaskViewBase, ListView):
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
+
+        def grouper(task):
+            return task.state
+
+        tasks = sorted(context['tasks'], key=grouper)
+        tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
+
+        # base columns on the requested task states
+        groups = {}
+        for state in self.form.cleaned_data['state']:
+            groups[state] = {
+                'title': state.replace('_', ' ').title(),
+                'badge': state,
+            }
+
+        for key, group in tasks.iteritems():
+            groups[key]['tasks'] = group
+
+        # enforce column ordering
+        context['task_groups'] = [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled']
+                                  if g in groups]
+
         return context
 
 
@@ -146,7 +176,10 @@ class TaskEditView(TaskViewBase, UpdateView):
     model = Task
 
     def form_valid(self, form):
-        self.object.updated_by_user = self.request.user
+        task = self.object
+        task.updated_by_user = self.request.user
+        action.send(self.request.user, verb='updated', action_object=task,
+                    place_code=task.place.place_code)
         return super(TaskEditView, self).form_valid(form)
 
     def get_success_url(self):
@@ -197,6 +230,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
+                action.send(user, verb=verb, action_object=task, place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()

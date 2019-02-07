@@ -18,11 +18,11 @@ setup(
     description='A Django framework for publishing legislation using Akoma Ntoso',
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/OpenUpSA/indigo',
+    url='https://github.com/laws-africa/indigo',
 
     # Author details
-    author='OpenUp',
-    author_email='greg@openup.org.za',
+    author='Laws.Africa',
+    author_email='greg@laws.africa',
 
     # See https://pypi.org/classifiers/
     classifiers=[
@@ -51,6 +51,8 @@ setup(
         'django-compressor>=2.2',
         'django-cors-headers>1.3.1',
         'django-countries-plus==1.1',  # 1.2 breaks migrations
+        'django-jsonfield>=1.0.1',
+        'django-jsonfield-compat>=0.4.4',
         'django-filter>=1.0,<2',
         'django-fsm>=2.6.0',
         'django-languages-plus==0.1.5',  # 1.x doesn't play with django-countries-plus < 1.2

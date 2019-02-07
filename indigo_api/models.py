@@ -17,7 +17,7 @@ from django.contrib.postgres.search import SearchVectorField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
-
+from allauth.account.utils import user_display
 from django_fsm import FSMField, transition
 
 import arrow
@@ -31,6 +31,7 @@ from languages_plus.models import Language as MasterLanguage
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
+from indigo.documents import ResolvedAnchor
 
 log = logging.getLogger(__name__)
 
@@ -386,9 +387,11 @@ def post_save_work(sender, instance, **kwargs):
 
     # Send action to activity stream, as 'created' if a new work
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.place.place_code)
     else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.place.place_code)
 
 
 def publication_document_filename(instance, filename):
@@ -442,9 +445,11 @@ def post_save_amendment(sender, instance, **kwargs):
             doc.save()
 
         # Send action to activity stream, as 'created' if a new amendment
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.amended_work.place.place_code)
     else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.amended_work.place.place_code)
 
 
 class DocumentManager(models.Manager):
@@ -845,12 +850,15 @@ reversion.revisions.register(Work)
 
 @receiver(signals.post_save, sender=Document)
 def post_save_document(sender, instance, **kwargs):
-    """ Send action to activity stream, as 'created' if a new document
+    """ Send action to activity stream, as 'created' if a new document.
+        Update documents that have been deleted but don't send action to activity stream.
     """
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.work.place.place_code)
     elif not instance.deleted:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.work.place.place_code)
 
 
 def attachment_filename(instance, filename):
@@ -918,9 +926,40 @@ class Annotation(models.Model):
     closed = models.BooleanField(default=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
 
     def anchor(self):
         return {'id': self.anchor_id}
+
+    def create_task(self, user):
+        """ Create a new task for this annotation.
+        """
+        if self.in_reply_to:
+            raise Exception("Cannot create tasks for reply annotations.")
+
+        if not self.task:
+            task = Task()
+            task.country = self.document.work.country
+            task.locality = self.document.work.locality
+            task.work = self.document.work
+            task.document = self.document
+            task.anchor_id = self.anchor_id
+            task.created_by_user = user
+            task.updated_by_user = user
+
+            anchor = ResolvedAnchor(self.anchor(), self.document)
+            ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
+
+            # TODO: strip markdown?
+            task.title = u'%s: %s' % (ref, self.text)
+            task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
+
+            task.save()
+            self.task = task
+            self.save()
+            self.task.refresh_from_db()
+
+        return self.task
 
 
 class DocumentActivity(models.Model):
@@ -1028,7 +1067,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        action.send(user, verb='submitted', action_object=self)
+        pass
+
 
     # cancel
     def may_cancel(self, view):
@@ -1037,7 +1077,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        action.send(user, verb='cancelled', action_object=self)
+        pass
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1046,7 +1086,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        action.send(user, verb='reopened', action_object=self)
+        pass
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1055,7 +1095,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        action.send(user, verb='unsubmitted', action_object=self)
+        pass
 
     # close
     def may_close(self, view):
@@ -1064,17 +1104,24 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        action.send(user, verb='closed', action_object=self)
+        pass
+
+    def anchor(self):
+        return {'id': self.anchor_id}
+
+    def resolve_anchor(self):
+        if not self.anchor_id or not self.document:
+            return None
+
+        return ResolvedAnchor(anchor=self.anchor(), document=self.document)
 
 
 @receiver(signals.post_save, sender=Task)
 def post_save_task(sender, instance, **kwargs):
-    """ Send action to activity stream, as 'created' if a new task
+    """ Send 'created' action to activity stream if new task
     """
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance)
-    else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance)
 
 
 class Workflow(models.Model):

@@ -148,6 +148,17 @@
       }
     },
 
+    selectItemById: function(itemId) {
+      for (var i = 0; i < this.toc.length; i++) {
+        if (this.toc[i].id == itemId) {
+          this.selectItem(i, true);
+          return true;
+        }
+      }
+
+      return false;
+    },
+
     click: function(e) {
       e.preventDefault();
       this.selectItem($(e.target).data('index'), true);

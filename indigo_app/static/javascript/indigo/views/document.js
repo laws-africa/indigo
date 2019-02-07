@@ -146,11 +146,17 @@
       this.bodyEditorView.on('dirty', this.setDirty, this);
       this.bodyEditorView.on('clean', this.setClean, this);
       this.bodyEditorView.editorReady.then(function() {
-        // select the first element in the toc
+        // select the appropriate element in the toc
+        if (Indigo.queryParams.toc && self.tocView.selectItemById(Indigo.queryParams.toc)) {
+          return;
+        }
         self.tocView.selectItem(0, true);
       });
 
-      this.annotationsView = new Indigo.DocumentAnnotationsView({model: this.document});
+      this.annotationsView = new Indigo.DocumentAnnotationsView({
+        model: this.document,
+        prefocus: parseInt(Indigo.queryParams.anntn),
+      });
       this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});

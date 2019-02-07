@@ -3,6 +3,8 @@ import json
 import io
 import re
 import logging
+from itertools import chain
+from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
@@ -363,19 +365,44 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
     template_name_suffix = '_versions'
     object_list = None
     page_size = 20
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(WorkVersionsView, self).get_context_data(**kwargs)
 
-        paginator, page, versions, is_paginated = self.paginate_queryset(self.work.versions(), self.page_size)
+        actions = self.work.action_object_actions.all()
+        versions = self.work.versions().all()
+        entries = sorted(chain(actions, versions), key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp, reverse=True)
+        entries = self.coalesce_entries(entries)
+
+        decorate_versions([e for e in entries if hasattr(e, 'revision')])
+
+        paginator, page, entries, is_paginated = self.paginate_queryset(entries, self.page_size)
         context.update({
             'paginator': paginator,
             'page': page,
             'is_paginated': is_paginated,
-            'versions': decorate_versions(versions),
         })
 
         return context
+
+    def coalesce_entries(self, items):
+        """ If we have a "work updated" activity and a work revision within a few seconds of each other,
+        don't show the "work updated" activity. The work revision is created first.
+
+        Returns a new list of items. The items list must be in descending date order.
+        """
+        entries = []
+        for i, entry in enumerate(items):
+            # is this a revision?
+            if i > 0 and getattr(entry, 'verb', None) == 'updated':
+                prev = items[i - 1]
+                if getattr(prev, 'revision') and prev.revision.date_created - entry.timestamp < self.threshold:
+                    continue
+
+            entries.append(entry)
+
+        return entries
 
 
 class RestoreWorkVersionView(WorkViewBase, DetailView):

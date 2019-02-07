@@ -13,7 +13,7 @@ from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, PublicationDocument
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, PublicationDocument, Task
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -426,11 +426,42 @@ class AnnotationAnchorSerializer(serializers.Serializer):
     id = serializers.CharField()
 
 
+class TaskSerializer(serializers.ModelSerializer):
+    created_by_user = UserSerializer(read_only=True)
+    updated_by_user = UserSerializer(read_only=True)
+    country = serializers.CharField(source='country.code')
+    locality = serializers.CharField(source='locality.code')
+    work = serializers.CharField(source='work.frbr_uri')
+    annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
+    assigned_to = UserSerializer(read_only=True)
+    anchor = AnnotationAnchorSerializer()
+
+    class Meta:
+        model = Task
+        fields = (
+            'id',
+            'title',
+            'description',
+            'country',
+            'locality',
+            'work',
+            'document',
+            'state',
+            'labels',
+            'assigned_to',
+            'annotation',
+            'anchor',
+            'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
+        )
+        read_only_fields = fields
+
+
 class AnnotationSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     created_by_user = UserSerializer(read_only=True)
     anchor = AnnotationAnchorSerializer()
     in_reply_to = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, allow_null=True, required=False)
+    task = TaskSerializer(read_only=True)
 
     class Meta:
         model = Annotation
@@ -441,11 +472,10 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'anchor',
             'in_reply_to',
             'closed',
-            'created_by_user',
-            'created_at',
-            'updated_at',
+            'task',
+            'created_by_user', 'created_at', 'updated_at',
         )
-        read_only_fields = ('id', 'created_by_user', 'in_reply_to', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'created_by_user', 'in_reply_to', 'created_at', 'updated_at', 'task')
 
     def create(self, validated_data):
         validated_data['created_by_user'] = self.context['request'].user

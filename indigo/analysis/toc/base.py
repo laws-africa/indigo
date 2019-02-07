@@ -1,5 +1,7 @@
 import re
+from itertools import chain
 from lxml.html import _collect_string_content
+
 from django.utils.translation import override, ugettext as _
 
 from indigo.plugins import plugins, LocaleBasedMatcher
@@ -63,19 +65,46 @@ class TOCBuilderBase(LocaleBasedMatcher):
     component_id_re = re.compile('([^0-9]+)([0-9]+)')
 
     def table_of_contents_for_document(self, document):
+        """ Build the table of contents for a document.
+        """
         return self.table_of_contents(document.doc, document.django_language)
 
-    def setup(self):
+    def table_of_contents_entry_for_element(self, document, element):
+        """ Build the table of contents entry for an element from a document.
+        """
+        self.setup(document.doc, document.django_language)
+
+        with override(self.language):
+            component = self.determine_component(element)[0]
+            try:
+                # find the first node at or above element, that is a valid TOC element
+                element = next(c for c in chain([element], element.iterancestors()) if self.is_toc_element(c))
+                return self.make_toc_entry(element, component)
+            except StopIteration:
+                pass
+
+    def setup(self, act, language):
+        self.act = act
+        self.language = language
         self._toc_elements_ns = set('{%s}%s' % (self.act.namespace, s) for s in self.toc_elements)
+
+    def determine_component(self, element):
+        """ Determine the component element which contains +element+.
+        """
+        ancestors = [element] + list(element.iterancestors())
+
+        for component, comp_element in self.act.components().iteritems():
+            if comp_element in ancestors:
+                return (component, comp_element)
+
+        return (None, None)
 
     def is_toc_element(self, element):
         return element.tag in self._toc_elements_ns
 
     def table_of_contents(self, act, language):
         """ Get the table of contents of ``act`` as a list of :class:`TOCElement` instances. """
-        self.act = act
-        self.language = language
-        self.setup()
+        self.setup(act, language)
 
         with override(language):
             return self.build_table_of_contents()

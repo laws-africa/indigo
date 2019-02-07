@@ -3,10 +3,17 @@
   color: rgba(255, 255, 255, 0.8);
   background: #284255;
   flex: 0 0 $sidebar-width;
-  transition: width 0.2s;
 
   display: flex;
   flex-direction: column;
+
+  .when-minimized {
+    display: none;
+  }
+
+  .when-expanded {
+    display: inherit;
+  }
 }
 
 .sidebar-minimizer i::before {
@@ -60,6 +67,13 @@
     font-weight: 600;
     color: rgba(255, 255, 255, 0.5);
     text-transform: uppercase;
+
+    overflow: hidden;
+    white-space: nowrap;
+
+    &:not(:first-child) {
+      margin-top: 1rem;
+    }
   }
 }
 
@@ -91,7 +105,16 @@
       }
 
       .nav-heading {
-        visibility: hidden;
+        padding: 0.75rem 0.5rem;
+        text-align: center;
+      }
+
+      .when-minimized {
+        display: inherit;
+      }
+
+      .when-expanded {
+        display: none;
       }
     }
 

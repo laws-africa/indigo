@@ -5,6 +5,7 @@ from actstream import action
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.postgres.search import SearchQuery
+from django.http import Http404
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -23,7 +24,7 @@ from lxml.etree import LxmlError
 
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from ..authz import DocumentPermissions, AnnotationPermissions
 from ..utils import Headline, SearchPagination, SearchRankCD
@@ -147,6 +148,25 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         return queryset.filter(document=self.document).all()
+
+    @detail_route(methods=['GET', 'POST'])
+    def task(self, request, *args, **kwargs):
+        """ Get or create a task for this annotation.
+        """
+        annotation = self.get_object()
+        status = None
+
+        if request.method == 'POST':
+            if annotation.in_reply_to:
+                raise MethodNotAllowed('POST', 'Cannot create a task for a reply annotation.')
+            annotation.create_task(user=request.user)
+            status = 201
+
+        elif not annotation.task:
+            raise Http404()
+
+        data = TaskSerializer(instance=annotation.task, context={'request': request}).data
+        return Response(data, status=status)
 
 
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):

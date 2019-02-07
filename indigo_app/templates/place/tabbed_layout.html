@@ -35,6 +35,7 @@
       <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">
         Tasks <span class="badge badge-light">{{ place.tasks.unclosed.count }}</span>
       </a>
+      <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">Activity</a>
     </nav>
     {% endblock %}
   </div>

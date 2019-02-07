@@ -17,10 +17,11 @@
     events: {
       'click .delete-anntn': 'delete',
       'click .edit-anntn': 'edit',
-      'click .close-annotation': 'close',
+      'click .close-anntn': 'close',
       'click .btn.save': 'save',
       'click .btn.cancel': 'cancel',
       'click .btn.unedit': 'unedit',
+      'click .create-anntn-task': 'createTask',
     },
 
     initialize: function(options) {
@@ -30,6 +31,7 @@
       // is this view dealing with starting a new annotation thread?
       this.isNew = this.model.isNew();
       this.listenTo(this.model, 'sync', this.saved);
+      this.listenTo(this.model, 'change', this.render);
 
       this.setReadonly();
       this.render();
@@ -63,6 +65,16 @@
             json = this.model.toJSON();
 
         json.html = html;
+        if (json.task) {
+          json.task = json.task.toJSON();
+
+          json.task.view_url =
+            "/places/" +
+            Indigo.view.document.work.get('country') +
+            (Indigo.view.document.work.get('locality') ? ('-' + Indigo.view.document.work.get('locality')) : '') +
+            "/tasks/" +
+            json.task.id;
+        }
         json.created_at_text = moment(json.created_at).fromNow();
         this.$el.append(this.template(json));
         this.setReadonly();
@@ -100,8 +112,10 @@
       $textarea.addClass('form-control').val(this.model.get('text'));
 
       this.$el
+        .find('.button-container')
         .append('<button class="btn btn-primary btn-sm save">Save</button>')
         .append('<button class="btn btn-outline-secondary btn-sm unedit float-right">Cancel</button>')
+        .end()
         .find('.content')
         .replaceWith($textarea);
 
@@ -114,8 +128,15 @@
     },
 
     close: function(e) {
-      this.model.set('closed', true);
-      this.model.save();
+      if (confirm('Are you sure you want to resolve this?')) {
+        this.model.set('closed', true);
+        this.model.save();
+      }
+    },
+
+    createTask: function(e) {
+      // create a task based on this annotation
+      this.model.createTask();
     },
   });
 
@@ -289,10 +310,11 @@
       'click #new-annotation-floater': 'newAnnotation',
     },
 
-    initialize: function() {
+    initialize: function(options) {
       var self = this;
 
       this.threadViews = [];
+      this.prefocus = options.prefocus;
 
       this.$newButton = $("#new-annotation-floater");
       this.$el.on('mouseover', ANNOTATABLE, _.bind(this.enterSection, this));
@@ -311,6 +333,8 @@
 
         var template = self.annotationTemplate = Handlebars.compile($("#annotation-template").html());
         threads.forEach(_.bind(self.makeView, self));
+
+        self.renderAnnotations();
       });
     },
 
@@ -332,7 +356,18 @@
     },
 
     renderAnnotations: function() {
-      this.threadViews.forEach(function(v) { v.display(); });
+      // TODO: this gets called every time a new TOC entry is selected,
+      // so it will always attempt to prefocus an annotation. It just so happens
+      // that the click events prevent anything after the initial prefocus from
+      // working. It's dirty, we should only prefocus on the first render.
+      var prefocus = this.prefocus;
+
+      this.threadViews.forEach(function(v) {
+        v.display();
+        if (v.model.at(0).get('id').toString() == prefocus) {
+          v.$el.click();
+        }
+      });
     },
 
     enterSection: function(e) {

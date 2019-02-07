@@ -16,11 +16,11 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, Work, Workflow
+from indigo_api.models import Task, TaskLabel, Work
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm, WorkflowForm
+from indigo_app.forms import TaskForm, TaskFilterForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -124,6 +124,12 @@ class TaskCreateView(TaskViewBase, CreateView):
     form_class = TaskForm
     model = Task
 
+    def form_valid(self, form):
+        response_object = super(TaskCreateView, self).form_valid(form)
+        task = self.object
+        task.workflows = form.cleaned_data.get('workflows')
+        return response_object
+
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
 
@@ -161,6 +167,8 @@ class TaskCreateView(TaskViewBase, CreateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
+        context['place_workflows'] = self.place.workflows.all()
+
         return context
 
     def get_success_url(self):
@@ -180,7 +188,17 @@ class TaskEditView(TaskViewBase, UpdateView):
         task.updated_by_user = self.request.user
         action.send(self.request.user, verb='updated', action_object=task,
                     place_code=task.place.place_code)
+        task.workflows = form.cleaned_data.get('workflows')
+
+        # TODO: send action signal saying 'User added|removed Task to|from Workflow,
+        #  and don't send  generic 'updated' signal if this was the only change
+
         return super(TaskEditView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        form = super(TaskEditView, self).get_form(form_class)
+        form.initial['workflows'] = self.object.workflows.all()
+        return form
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
@@ -199,6 +217,8 @@ class TaskEditView(TaskViewBase, UpdateView):
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
+
+        context['place_workflows'] = self.place.workflows.all()
 
         return context
 

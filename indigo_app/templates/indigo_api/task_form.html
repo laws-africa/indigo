@@ -50,6 +50,7 @@
             </div>
 
             <div class="form-group col-sm-4">
+
               <label for="{{ form.labels.id_for_label }}">{{ form.labels.label }}</label>
               {% for label in task_labels %}
                 <div class="form-check">
@@ -59,6 +60,19 @@
                   </label>
                 </div>
               {% endfor %}
+
+              {% if place_workflows %}
+              <br><label for="{{ form.workflows.id_for_label }}">{{ form.workflows.label }}</label>
+                {% for workflow in place_workflows %}
+                  <div class="form-check">
+                    <label class="form-check-label">
+                      <input class="form-check-input" type="checkbox" name="{{ form.workflows.name }}" value="{{ workflow.id }}" {% if workflow in form.initial.workflows %}checked{% endif %}>
+                      {{ workflow.title }}
+                    </label>
+                  </div>
+                {% endfor %}
+              {% endif %}
+
             </div>
           </div>
 

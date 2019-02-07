@@ -120,9 +120,10 @@ class ImportDocumentForm(forms.Form):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('title', 'description', 'work', 'document', 'labels')
+        fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
 
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple, required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple, required=False)
 
 
 class TaskFilterForm(forms.Form):

@@ -64,6 +64,11 @@
       {% csrf_token %}
       <button type="submit" class="btn btn-success mt-2" formaction="{% url 'workflow_close' place=place.code pk=workflow.pk %}" data-confirm="Are you sure you want to close this workflow?">Close workflow</button>
     </form>
+  {% elif may_reopen and perms.indigo_api.close_workflow %}
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary mt-2" formaction="{% url 'workflow_reopen' place=place.code pk=workflow.pk %}" data-confirm="Are you sure you want to reopen this workflow?">Reopen workflow</button>
+    </form>
   {% endif %}
 </div>
 

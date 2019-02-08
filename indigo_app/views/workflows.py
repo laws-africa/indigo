@@ -60,6 +60,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
 
         context['may_close'] = self.object.n_tasks == self.object.n_done
+        context['may_reopen'] = self.object.closed
 
         return context
 
@@ -132,6 +133,23 @@ class WorkflowCloseView(WorkflowViewBase, DetailView):
         messages.success(self.request, u"Workflow \"%s\" closed." % workflow.title)
 
         return redirect('workflows', place=self.kwargs['place'])
+
+
+class WorkflowReopenView(WorkflowViewBase, DetailView):
+    permission_required = ('indigo_api.close_workflow',)
+    http_method_names = ['post']
+    model = Workflow
+
+    def post(self, request, *args, **kwargs):
+        workflow = self.get_object()
+
+        workflow.closed = False
+        workflow.updated_by_user = self.request.user
+        workflow.save()
+
+        messages.success(self.request, u"Workflow \"%s\" reopened." % workflow.title)
+
+        return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
 
 class WorkflowListView(WorkflowViewBase, ListView):

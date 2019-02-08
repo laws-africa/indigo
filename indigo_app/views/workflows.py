@@ -67,6 +67,10 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         # TODO: load from API? filter? exclude closed tasks?
         context['possible_tasks'] = self.country.tasks.exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 
+        n_tasks = self.object.tasks.all().count()
+        n_closed = self.object.tasks.filter(state__in=Task.CLOSED_STATES).count()
+        context['may_close'] = n_tasks == n_closed
+
         return context
 
 
@@ -122,6 +126,24 @@ class WorkflowRemoveTaskView(WorkflowViewBase, DetailView):
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
 
+class WorkflowCloseView(WorkflowViewBase, DetailView):
+    permission_required = ('indigo_api.close_workflow',)
+    http_method_names = ['post']
+    model = Workflow
+
+    def post(self, request, *args, **kwargs):
+        workflow = self.get_object()
+
+        workflow.closed = True
+        workflow.updated_by_user = self.request.user
+        workflow.closed_by_user = self.request.user
+        workflow.save()
+
+        messages.success(self.request, u"Workflow \"%s\" closed." % workflow.title)
+
+        return redirect('workflows', place=self.kwargs['place'])
+
+
 class WorkflowListView(WorkflowViewBase, ListView):
     context_object_name = 'workflows'
     paginate_by = 20
@@ -129,5 +151,5 @@ class WorkflowListView(WorkflowViewBase, ListView):
     model = Workflow
 
     def get_queryset(self):
-        workflows = self.place.workflows.all()
+        workflows = self.place.workflows.filter(closed=False)
         return workflows

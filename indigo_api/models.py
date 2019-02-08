@@ -1011,7 +1011,8 @@ class TaskQuerySet(models.QuerySet):
 
 class TaskManager(models.Manager):
     def get_queryset(self):
-        return super(TaskManager, self).get_queryset().prefetch_related('labels')
+        return super(TaskManager, self).get_queryset()\
+            .prefetch_related('labels', 'work', 'document', 'created_by_user')
 
 
 class Task(models.Model):
@@ -1119,6 +1120,33 @@ class Task(models.Model):
             return None
 
         return ResolvedAnchor(anchor=self.anchor(), document=self.document)
+
+    @classmethod
+    def task_columns(cls, required_groups, tasks):
+        def grouper(task):
+            return task.state
+
+        tasks = sorted(tasks, key=grouper)
+        tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
+
+        # base columns on the requested task states
+        groups = {}
+        for key in required_groups:
+            groups[key] = {
+                'title': key.replace('_', ' ').title(),
+                'badge': key,
+            }
+
+        for key, group in tasks.iteritems():
+            if key not in groups:
+                groups[key] = {
+                    'title': key.replace('_', ' ').title(),
+                    'badge': key,
+                }
+            groups[key]['tasks'] = group
+
+        # enforce column ordering
+        return [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled'] if g in groups]
 
 
 @receiver(signals.post_save, sender=Task)

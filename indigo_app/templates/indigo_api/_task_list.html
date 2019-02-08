@@ -3,7 +3,12 @@
 {% if tasks %}
   <div class="list-group list-group-flush">
     {% for task in tasks %}
-      <div class="list-group-item p-3 d-flex align-items-center">
+      <div class="list-group-item p-3 d-flex align-items-center {% if selectable %}selectable-task{% endif %}">
+        {% if selectable %}
+          <div class="col">
+            <input type="checkbox" name="tasks" value="{{ task.id }}" id="selected_tasks_{{ task.id }}">
+          </div>
+        {% endif %}
         <div class="col text-center">
           <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
           <span class="text-muted">#{{ task.pk }}</span>

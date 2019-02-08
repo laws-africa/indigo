@@ -1,7 +1,8 @@
 # coding=utf-8
-from __future__ import unicode_literals
+from __future__ import unicode_literals, division
 
 from django.contrib import messages
+from django.db.models import Count
 from django.http import QueryDict
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
@@ -51,11 +52,14 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         tasks = self.object.tasks.all()
         context['has_tasks'] = bool(tasks)
         context['task_groups'] = Task.task_columns(['open', 'pending_review'], tasks)
-        context['possible_tasks'] = self.country.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
+        context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 
-        n_tasks = self.object.tasks.all().count()
-        n_closed = self.object.tasks.filter(state__in=Task.CLOSED_STATES).count()
-        context['may_close'] = n_tasks == n_closed
+        # stats
+        self.object.n_tasks = self.object.tasks.count()
+        self.object.n_done = self.object.tasks.closed().count()
+        self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
+
+        context['may_close'] = self.object.n_tasks == self.object.n_done
 
         return context
 
@@ -155,6 +159,23 @@ class WorkflowListView(WorkflowViewBase, ListView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkflowListView, self).get_context_data(**kwargs)
+
         context['form'] = self.form
+
+        workflows = context['workflows']
+
+        # count tasks by state
+        task_stats = Workflow.objects\
+            .values('id', 'tasks__state')\
+            .annotate(n_tasks=Count('tasks__id'))\
+            .filter(id__in=[w.id for w in workflows])
+
+        for w in workflows:
+            w.task_counts = {s['tasks__state']: s['n_tasks'] for s in task_stats if s['id'] == w.id}
+            w.task_counts['total'] = sum(x for x in w.task_counts.itervalues())
+            w.task_counts['complete'] = w.task_counts.get('cancelled', 0) + w.task_counts.get('done', 0)
+            w.pct_complete = w.task_counts['complete'] / (w.task_counts['total'] or 1) * 100.0
+
+            w.task_charts = [(s, w.task_counts.get(s, 0)) for s in ['open', 'pending_review', 'cancelled']]
 
         return context

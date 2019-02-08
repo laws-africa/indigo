@@ -59,7 +59,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         self.object.n_done = self.object.tasks.closed().count()
         self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
 
-        context['may_close'] = self.object.n_tasks == self.object.n_done
+        context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done
         context['may_reopen'] = self.object.closed
 
         return context

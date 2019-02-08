@@ -35,7 +35,7 @@
       {% for workflow in workflows %}
         <div class="list-group-item p-3 d-flex align-items-center">
           <div class="col text-center">
-            <span class="badge workflow-badge"><i class="fas fa-fw fa-tasks"></i></span><br>
+            <span class="badge workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"><i class="fas fa-fw fa-tasks"></i></span><br>
             <span class="text-muted">#{{ workflow.pk }}</span>
           </div>
 

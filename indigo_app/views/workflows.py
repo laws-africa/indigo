@@ -2,7 +2,9 @@
 from __future__ import unicode_literals
 
 from django.urls import reverse
+from django.shortcuts import redirect
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.contrib import messages
 
 from indigo_api.models import Task, Workflow
 
@@ -60,6 +62,16 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
     context_object_name = 'workflow'
     model = Workflow
 
+    def get_context_data(self, *args, **kwargs):
+        context = super(WorkflowDetailView, self).get_context_data(**kwargs)
+
+        context['task_groups'] = Task.task_columns(['open', 'pending_review'], self.object.tasks.all())
+
+        # TODO: load from API? filter? exclude closed tasks?
+        context['possible_tasks'] = self.country.tasks.exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
+
+        return context
+
 
 class WorkflowEditView(WorkflowViewBase, UpdateView):
     # permissions
@@ -79,6 +91,25 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
         context['place_open_tasks'] = self.place.tasks.filter(state__in=Task.OPEN_STATES)
 
         return context
+
+    def get_success_url(self):
+        return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
+
+
+class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
+    """ A POST-only view that adds tasks to a workflow.
+    """
+    model = Workflow
+    fields = ('tasks',)
+
+    def form_valid(self, form):
+        self.object.updated_by_user = self.request.user
+        self.object.tasks.add(*(form.cleaned_data['tasks']))
+        messages.success(self.request, u"Added %d tasks to this workflow." % len(form.cleaned_data['tasks']))
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        return redirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})

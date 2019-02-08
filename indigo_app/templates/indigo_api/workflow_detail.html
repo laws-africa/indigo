@@ -7,6 +7,7 @@
 {% block content %}
 <div class="container mt-3 mb-5">
   <div class="float-right">
+    <button class="btn btn-success mr-2 workflow-add-tasks" data-toggle="modal" data-target="#workflow-add-tasks-modal">Add tasks</button>
     <a href="{% url 'workflow_edit' place=place.place_code pk=workflow.pk %}" class="btn btn-primary">Edit workflow</a>
   </div>
 
@@ -22,20 +23,11 @@
 
   <div class="card mt-3">
     <div class="card-body">
-
       <p>{{ workflow.description|linebreaks }}</p>
-
-      {% for task in workflow.tasks.all %}
-      <div>
-        <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
-        {% if task.work %}– <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-        {% if task.document %}– <a href="{% url 'document' doc_id=task.document.pk %}">@ {{ task.document.expression_date }}</a>{% endif %}{% endif %}
-        {% if task.description %}– <span class="font-weight-normal">{{ task.description }}</span>{% endif %}
-      </div>
-      {% endfor %}
     </div>
-
   </div>
+
+  {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
 
   <ul class="activity-list">
     {% activity_stream 'action_object' workflow %}
@@ -43,5 +35,31 @@
     <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this workflow {{ action.timestamp|naturaltime }}</li>
     {% endfor %}
   </ul>
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="workflow-add-tasks-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Choose tasks to add to this workflow</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form action="{% url 'workflow_add_tasks' place=place.place_code pk=workflow.pk %}" method="POST">
+        {% csrf_token %}
+
+        <div class="scrollable">
+          {% include 'indigo_api/_task_list.html' with tasks=possible_tasks selectable=True %}
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary workflow-add-tasks-save">Add tasks</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>
 {% endblock %}

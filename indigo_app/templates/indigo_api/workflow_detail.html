@@ -29,16 +29,18 @@
         <div class="col-7">
           {{ workflow.description|linebreaksbr }}
         </div>
-        <div class="col-5">
-          <div class="row mt-2">
-            <div class="col-8">
-              <div class="progress bg-light">
-                <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_done }}%"></div>
+        {% if workflow.n_tasks %}
+          <div class="col-5">
+            <div class="row mt-2">
+              <div class="col-8">
+                <div class="progress bg-light">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_done }}%"></div>
+                </div>
               </div>
+              <div class="col text-muted">{{ workflow.n_done }} of {{ workflow.n_tasks }} task{{ workflow.n_tasks|pluralize }}</div>
             </div>
-            <div class="col text-muted">{{ workflow.n_done }} of {{ workflow.n_tasks }} task{{ workflow.n_tasks|pluralize }}</div>
           </div>
-        </div>
+        {% endif %}
       </div>
     </div>
 

@@ -22,7 +22,7 @@
             <span class="text-muted">#{{ workflow.pk }}</span>
           </div>
 
-          <div class="col flex-fill">
+          <div class="col-6">
             <div>
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
               <br>
@@ -39,12 +39,33 @@
             </div>
 
           </div>
+
+          <div class="col-6">
+            <div class="row">
+              <div class="col-8">
+                <div class="progress">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
+                </div>
+              </div>
+              <div class="col-4 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
+            </div>
+
+            {% for state, count in workflow.task_charts %}
+              {% if count %}
+                <div class="mt-2">
+                  <span class="badge task-badge task-badge-{{ state }} mr-2" title="{{ state }}"><i class="fas fa-sm fa-fw task-icon-{{ state }}"></i></span>
+                  <span class="text-muted">{{ count }} task{{ count|pluralize }}</span>
+                </div>
+              {% endif %}
+            {% endfor %}
+          </div>
         </div>
       {% endfor %}
 
     {% else %}
-      <div class="card-body">
-        <p class="text-center"><em>No workflows found.</em></p>
+      <div class="card-body text-center">
+        <p>Create workflows to group and track related tasks.</em></p>
+        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
       </div>
     {% endif %}
 

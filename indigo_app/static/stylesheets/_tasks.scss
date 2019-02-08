@@ -39,3 +39,9 @@
     }
   }
 }
+
+.task-list-item {
+  &.selectable-task:hover {
+    cursor: pointer;
+  }
+}

@@ -152,6 +152,21 @@ class WorkflowReopenView(WorkflowViewBase, DetailView):
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
 
+class WorkflowDeleteView(WorkflowViewBase, DetailView):
+    permission_required = ('indigo_api.delete_workflow',)
+    http_method_names = ['post']
+    model = Workflow
+
+    def post(self, request, *args, **kwargs):
+        workflow = self.get_object()
+
+        workflow.delete()
+
+        messages.success(self.request, u"Workflow \"%s\" deleted." % workflow.title)
+
+        return redirect('workflows', place=self.kwargs['place'])
+
+
 class WorkflowListView(WorkflowViewBase, ListView):
     context_object_name = 'workflows'
     paginate_by = 20

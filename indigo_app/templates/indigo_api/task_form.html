@@ -61,29 +61,6 @@
                 </div>
               {% endfor %}
 
-              <br><label for="{{ form.workflows.id_for_label }}">{{ form.workflows.label }}</label>
-              {% if place_workflows %}
-                {% for workflow in place_workflows %}
-                  <div class="form-check">
-                    <label class="form-check-label">
-                      <input class="form-check-input" type="checkbox" name="{{ form.workflows.name }}" value="{{ workflow.id }}" {% if workflow in form.initial.workflows %}checked{% endif %}>
-                      {{ workflow.title }}
-                    </label>
-                  </div>
-                {% endfor %}
-
-              {% else %}
-                <span class="text-muted"> – none yet</span>
-              {% endif %}
-              <br>
-              {% if task.pk %}
-                <a href="{% url 'workflow_create' place=place.place_code %}?task_id={{ task.pk }}" target="_blank"
-                   class="btn btn-primary">Create a workflow</a>
-              {% else %}
-                <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank"
-                   class="btn btn-primary">Create a workflow</a>
-              {% endif %}
-
             </div>
           </div>
 
@@ -120,6 +97,22 @@
               </select>
             </div>
           </div>
+
+          {% if place_workflows %}
+            <div class="form-group">
+              <label for="{{ form.workflows.id_for_label }}">Workflows this task belongs to</label>
+
+              <div class="row">
+                <div class="col-md-6">
+                  <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}">
+                    {% for workflow in place_workflows %}
+                      <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+          {% endif %}
         </div>
 
         <div class="card-footer text-right">

@@ -23,22 +23,6 @@ class WorkflowCreateView(WorkflowViewBase, CreateView):
     model = Workflow
     fields = ('title', 'description')
 
-    def get_context_data(self, *args, **kwargs):
-        context = super(WorkflowCreateView, self).get_context_data(**kwargs)
-
-        context['place_open_tasks'] = self.place.tasks.filter(state__in=Task.OPEN_STATES)
-
-        return context
-
-    def get_form(self, form_class=None):
-        form = super(WorkflowCreateView, self).get_form(form_class)
-
-        task_id = self.request.GET.get('task_id')
-        if task_id:
-            form.initial['task_id'] = int(task_id)
-
-        return form
-
     def get_form_kwargs(self):
         kwargs = super(WorkflowCreateView, self).get_form_kwargs()
 
@@ -62,10 +46,10 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowDetailView, self).get_context_data(**kwargs)
 
-        context['task_groups'] = Task.task_columns(['open', 'pending_review'], self.object.tasks.all())
-
-        # TODO: load from API? filter? exclude closed tasks?
-        context['possible_tasks'] = self.country.tasks.exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
+        tasks = self.object.tasks.all()
+        context['has_tasks'] = bool(tasks)
+        context['task_groups'] = Task.task_columns(['open', 'pending_review'], tasks)
+        context['possible_tasks'] = self.country.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 
         n_tasks = self.object.tasks.all().count()
         n_closed = self.object.tasks.filter(state__in=Task.CLOSED_STATES).count()

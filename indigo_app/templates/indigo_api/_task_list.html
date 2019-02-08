@@ -1,9 +1,9 @@
 {% load humanize indigo_app %}
 
 {% if tasks %}
-  <div class="list-group list-group-flush">
+  <div class="list-group list-group-flush task-list">
     {% for task in tasks %}
-      <div class="list-group-item p-3 d-flex align-items-center {% if selectable %}selectable-task{% endif %}">
+      <div class="list-group-item task-list-item p-3 d-flex align-items-center {% if selectable %}selectable-task{% endif %}">
         {% if selectable %}
           <div class="col">
             <input type="checkbox" name="tasks" value="{{ task.id }}" id="selected_tasks_{{ task.id }}">

@@ -142,10 +142,3 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(work__frbr_uri=frbr_uri)
 
         return queryset
-
-
-class WorkflowForm(forms.ModelForm):
-    class Meta:
-        model = Workflow
-        fields = ('title', 'description', 'tasks')
-

@@ -9,7 +9,6 @@ from django.contrib import messages
 from indigo_api.models import Task, Workflow
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import WorkflowForm
 
 
 class WorkflowViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -23,8 +22,8 @@ class WorkflowCreateView(WorkflowViewBase, CreateView):
     js_view = ''
 
     context_object_name = 'workflow'
-    form_class = WorkflowForm
     model = Workflow
+    fields = ('title', 'description')
 
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowCreateView, self).get_context_data(**kwargs)
@@ -78,19 +77,12 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
     permission_required = ('indigo_api.change_workflow',)
 
     context_object_name = 'workflow'
-    form_class = WorkflowForm
     model = Workflow
+    fields = ('title', 'description')
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
         return super(WorkflowEditView, self).form_valid(form)
-
-    def get_context_data(self, *args, **kwargs):
-        context = super(WorkflowEditView, self).get_context_data(**kwargs)
-
-        context['place_open_tasks'] = self.place.tasks.filter(state__in=Task.OPEN_STATES)
-
-        return context
 
     def get_success_url(self):
         return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})

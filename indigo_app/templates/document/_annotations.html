@@ -1,19 +1,28 @@
 <script id="annotation-template" type="text/x-handlebars-template">
 {% verbatim %}
-<div class="buttons float-right">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
-  <div class="dropdown-menu">
-    {{#unless in_reply_to}}
-      {{#unless task}}
-        <a href="#" class="dropdown-item create-anntn-task">Create task</a>
+{{#unless permissions.readonly }}
+  <div class="float-right">
+    <a href="#" class="dropdown-toggle" data-toggle="dropdown"></a>
+    <div class="dropdown-menu">
+      {{#unless in_reply_to}}
+        {{#unless task}}
+          {{#if permissions.can_create_task}}
+            <a href="#" class="dropdown-item create-anntn-task">Create task</a>
+          {{/if}}
+        {{/unless}}
+        {{#if permissions.can_change }}
+          <a href="#" class="dropdown-item close-anntn">Resolve</a>
+          <div class="dropdown-divider"></div>
+        {{/if}}
       {{/unless}}
-      <a href="#" class="dropdown-item close-anntn">Resolve</a>
-      <div class="dropdown-divider"></div>
-    {{/unless}}
-    <a href="#" class="dropdown-item edit-anntn">Edit</a>
-    <a href="#" class="dropdown-item delete-anntn">Delete</a>
+
+      {{#if permissions.can_change }}
+        <a href="#" class="dropdown-item edit-anntn">Edit</a>
+        <a href="#" class="dropdown-item delete-anntn">Delete</a>
+      {{/if}}
+    </div>
   </div>
-</div>
+{{/unless}}
 
 <div class="author">{{ created_by_user.display_name }}</div>
 <div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>

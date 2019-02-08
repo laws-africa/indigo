@@ -38,6 +38,8 @@
   <div class="card mt-3">
     <div class="card-body">
 
+      <p>{{ task.description|default:''|urlize|linebreaks }}</p>
+
       <div class="h5">
         {% for label in task.labels.all %}
           <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
@@ -46,16 +48,16 @@
 
       {% with task.workflows.all as workflows %}
       {% if workflows %}
-      <h5>Workflow{{ workflows|length|pluralize}}:</h5>
-      <ul>
-        {% for workflow in workflows %}
-          <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a><br></li>
-        {% endfor %}
-      </ul>
+        <div class="float-right">
+          <h6>In workflow{{ workflows|length|pluralize}}:</h6>
+          <ul>
+            {% for workflow in workflows %}
+              <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a><br></li>
+            {% endfor %}
+          </ul>
+        </div>
       {% endif %}
       {% endwith %}
-
-      <p>{{ task.description|linebreaks|default:'' }}</p>
 
     </div>
 

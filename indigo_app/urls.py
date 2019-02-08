@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/$', workflows.WorkflowDetailView.as_view(), name='workflow_detail'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/edit$', workflows.WorkflowEditView.as_view(), name='workflow_edit'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/tasks$', workflows.WorkflowAddTasksView.as_view(), name='workflow_add_tasks'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/close$', workflows.WorkflowCloseView.as_view(), name='workflow_close'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/tasks/(?P<task_pk>\d+)/remove$', workflows.WorkflowRemoveTaskView.as_view(), name='workflow_remove_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new/$', works.AddWorkView.as_view(), name='new_work'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new-batch/$', works.BatchAddWorkView.as_view(), name='new_batch_work'),

@@ -57,6 +57,8 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         self.object.n_done = self.object.tasks.closed().count()
         self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
 
+        context['may_close'] = self.object.n_tasks == self.object.n_done
+
         return context
 
 
@@ -112,6 +114,24 @@ class WorkflowRemoveTaskView(WorkflowViewBase, DetailView):
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
 
+class WorkflowCloseView(WorkflowViewBase, DetailView):
+    permission_required = ('indigo_api.close_workflow',)
+    http_method_names = ['post']
+    model = Workflow
+
+    def post(self, request, *args, **kwargs):
+        workflow = self.get_object()
+
+        workflow.closed = True
+        workflow.updated_by_user = self.request.user
+        workflow.closed_by_user = self.request.user
+        workflow.save()
+
+        messages.success(self.request, u"Workflow \"%s\" closed." % workflow.title)
+
+        return redirect('workflows', place=self.kwargs['place'])
+
+
 class WorkflowListView(WorkflowViewBase, ListView):
     context_object_name = 'workflows'
     paginate_by = 20
@@ -119,7 +139,7 @@ class WorkflowListView(WorkflowViewBase, ListView):
     model = Workflow
 
     def get_queryset(self):
-        return self.place.workflows.all()
+        return self.place.workflows.filter(closed=False)
 
     def get_context_data(self, **kwargs):
         context = super(WorkflowListView, self).get_context_data(**kwargs)

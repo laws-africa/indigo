@@ -83,6 +83,9 @@ class Country(models.Model):
     def place_tasks(self):
         return self.tasks.filter(locality=None)
 
+    def place_workflows(self):
+        return self.workflows.filter(locality=None)
+
     def as_json(self):
         return {
             'name': self.name,
@@ -120,6 +123,9 @@ class Locality(models.Model):
 
     def place_tasks(self):
         return self.tasks
+
+    def place_workflows(self):
+        return self.workflows
 
     def __unicode__(self):
         return unicode(self.name)
@@ -1158,17 +1164,41 @@ def post_save_task(sender, instance, **kwargs):
                     place_code=instance.place.place_code)
 
 
+class WorkflowQuerySet(models.QuerySet):
+    def unclosed(self):
+        return self.filter(closed=False)
+
+    def closed(self):
+        return self.filter(closed=True)
+
+
+class WorkflowManager(models.Manager):
+    def get_queryset(self):
+        return super(WorkflowManager, self).get_queryset()\
+            .prefetch_related('tasks', 'created_by_user')
+
+
 class Workflow(models.Model):
+    class Meta:
+        permissions = (
+            ('close_workflow', 'Can close a workflow'),
+        )
+
+    objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
+
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
     tasks = models.ManyToManyField(Task, related_name='workflows', null=False, blank=False)
+
+    closed = models.BooleanField(default=False)
 
     country = models.ForeignKey(Country, related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
 
     created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

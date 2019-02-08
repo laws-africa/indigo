@@ -13,12 +13,12 @@
   {% endif %}
 
   <div class="d-flex">
-    <div class="float-left mr-3 text-center">
+    <div class="mr-3 text-center">
       <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
       <span class="text-muted">#{{ task.pk }}</span>
     </div>
 
-    <div class="float-left">
+    <div>
       <h5>{{ task.title }}</h5>
 
       {% if task.document %}

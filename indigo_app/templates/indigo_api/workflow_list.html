@@ -17,22 +17,16 @@
 
       {% for workflow in workflows %}
         <div class="list-group-item p-3 d-flex align-items-center">
+          <div class="col text-center">
+            <span class="badge workflow-badge"><i class="fas fa-fw fa-tasks"></i></span><br>
+            <span class="text-muted">#{{ workflow.pk }}</span>
+          </div>
 
           <div class="col flex-fill">
-
             <div>
-
-              {% with workflow.tasks.all as tasks %}
-                <div class="float-right">
-                  {%for task in tasks %}
-                    <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
-                  {% endfor %}
-                </div>
-              {% endwith %}
-
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
-              {{ workflow.description|linebreaks }}
-
+              <br>
+              {{ workflow.description|linebreaksbr }}
             </div>
 
             <div class="text-muted">

@@ -45,3 +45,10 @@
     cursor: pointer;
   }
 }
+
+.workflow-badge {
+  font-size: 100%;
+  padding: 0.4em;
+  color: $white;
+  background-color: theme-color('primary');
+}

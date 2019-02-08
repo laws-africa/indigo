@@ -196,7 +196,6 @@ class TaskEditView(TaskViewBase, UpdateView):
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
-
         context['place_workflows'] = self.place.workflows.all()
 
         return context

@@ -142,3 +142,16 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(work__frbr_uri=frbr_uri)
 
         return queryset
+
+
+class WorkflowFilterForm(forms.Form):
+    state = forms.MultipleChoiceField(choices=(('open', 'open'), ('closed', 'closed')))
+
+    def filter_queryset(self, queryset):
+        clean_dat = self.cleaned_data
+        if self.cleaned_data.get('state') == 'open':
+            queryset = queryset.filter(closed=False)
+        elif self.cleaned_data.get('state') == 'closed':
+            queryset = queryset.filter(closed=True)
+
+        return queryset

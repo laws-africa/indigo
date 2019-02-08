@@ -8,9 +8,24 @@
 <div class="container mt-3">
   <div class="card">
     <div class="card-header">
-      <div class="float-right">
-        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
-      </div>
+
+      <form method="GET" id="workflow-filter-form">
+        <div class="d-flex">
+
+          <div class="mr-2">
+            <select class="selectpicker notooltip" multiple name="{{ form.state.name }}" data-style="btn-outline-secondary">
+              <option value="open" {% if form.state.value == 'open' %}selected{% endif %}>Open</option>
+              <option value="closed" {% if form.state.value == 'closed' %}selected{% endif %}>Closed</option>
+            </select>
+          </div>
+
+          <div class="ml-auto float-right">
+            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
+          </div>
+
+        </div>
+      </form>
+
     </div>
 
     {% if workflows %}

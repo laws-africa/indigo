@@ -1,13 +1,15 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
-from django.urls import reverse
-from django.shortcuts import redirect, get_object_or_404
-from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.contrib import messages
+from django.http import QueryDict
+from django.shortcuts import redirect, get_object_or_404
+from django.urls import reverse
+from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 from indigo_api.models import Task, Workflow
 
+from indigo_app.forms import WorkflowFilterForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 
 
@@ -134,6 +136,25 @@ class WorkflowListView(WorkflowViewBase, ListView):
     paginate_orphans = 4
     model = Workflow
 
+    def get(self, request, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+
+        # initial state
+        params.setdefault('state', 'open')
+
+        self.form = WorkflowFilterForm(params)
+        self.form.is_valid()
+
+        return super(WorkflowListView, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
-        workflows = self.place.workflows.filter(closed=False)
-        return workflows
+        workflows = self.place.workflows.all()
+        open_closed = self.form.filter_queryset(workflows)
+        return open_closed
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkflowListView, self).get_context_data(**kwargs)
+        context['form'] = self.form
+
+        return context

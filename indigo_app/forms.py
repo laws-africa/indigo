@@ -148,10 +148,9 @@ class WorkflowFilterForm(forms.Form):
     state = forms.MultipleChoiceField(choices=(('open', 'open'), ('closed', 'closed')))
 
     def filter_queryset(self, queryset):
-        clean_dat = self.cleaned_data
-        if self.cleaned_data.get('state') == 'open':
+        if 'open' in self.cleaned_data.get('state'):
             queryset = queryset.filter(closed=False)
-        elif self.cleaned_data.get('state') == 'closed':
+        elif 'closed' in self.cleaned_data.get('state'):
             queryset = queryset.filter(closed=True)
 
         return queryset

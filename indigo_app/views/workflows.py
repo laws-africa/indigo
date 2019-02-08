@@ -143,6 +143,7 @@ class WorkflowListView(WorkflowViewBase, ListView):
     def get(self, request, *args, **kwargs):
         # allows us to set defaults on the form
         params = QueryDict(mutable=True)
+        params.update(request.GET)
 
         # initial state
         params.setdefault('state', 'open')
@@ -153,9 +154,8 @@ class WorkflowListView(WorkflowViewBase, ListView):
         return super(WorkflowListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        workflows = self.place.workflows.all()
-        open_closed = self.form.filter_queryset(workflows)
-        return open_closed
+        workflows = self.place.workflows.filter()
+        return self.form.filter_queryset(workflows)
 
     def get_context_data(self, **kwargs):
         context = super(WorkflowListView, self).get_context_data(**kwargs)

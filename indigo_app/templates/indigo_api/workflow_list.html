@@ -14,8 +14,8 @@
 
           <div class="mr-2">
             <select class="selectpicker notooltip" multiple name="{{ form.state.name }}" data-style="btn-outline-secondary">
-              <option value="open" {% if form.state.value == 'open' %}selected{% endif %}>Open</option>
-              <option value="closed" {% if form.state.value == 'closed' %}selected{% endif %}>Closed</option>
+              <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
+              <option value="closed" {% if 'closed' in form.state.value %}selected{% endif %}>Closed</option>
             </select>
           </div>
 

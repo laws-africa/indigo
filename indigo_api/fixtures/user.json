@@ -19,7 +19,6 @@
                 ["add_work", "indigo_api", "work"],
                 ["change_work", "indigo_api", "work"],
                 ["delete_work", "indigo_api", "work"],
-                ["view_work", "indigo_api", "work"],
                 ["add_amendment", "indigo_api", "amendment"],
                 ["change_amendment", "indigo_api", "amendment"],
                 ["delete_amendment", "indigo_api", "amendment"],

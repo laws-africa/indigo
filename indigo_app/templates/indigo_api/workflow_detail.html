@@ -19,21 +19,29 @@
 
     <div class="flex-fill">
       <h5>{{ workflow.title }}</h5>
-
-      {{ workflow.description|linebreaksbr }}
-
-      <div class="row mt-2">
-        <div class="col-6">
-          <div class="progress bg-light">
-            <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_done }}%"></div>
-          </div>
-        </div>
-        <div class="col text-muted">{{ workflow.n_done }} of {{ workflow.n_tasks }} task{{ workflow.n_tasks|pluralize }}</div>
-      </div>
     </div>
   </div>
 
   <div class="card">
+    <div class="card-body border-bottom">
+
+      <div class="row">
+        <div class="col-7">
+          {{ workflow.description|linebreaksbr }}
+        </div>
+        <div class="col-5">
+          <div class="row mt-2">
+            <div class="col-8">
+              <div class="progress bg-light">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_done }}%"></div>
+              </div>
+            </div>
+            <div class="col text-muted">{{ workflow.n_done }} of {{ workflow.n_tasks }} task{{ workflow.n_tasks|pluralize }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     {% if has_tasks %}
       {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True %}
     {% else %}

@@ -21,6 +21,15 @@
 
     <div class="flex-fill">
       <h5>{{ workflow.title }}</h5>
+
+      {% if workflow.due_date %}
+        <div class="text-muted">
+          Due {{ workflow.due_date|date:"Y-m-d" }}
+          {% if workflow.overdue %}
+            <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+          {% endif %}
+        </div>
+      {% endif %}
     </div>
   </div>
 

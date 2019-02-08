@@ -24,7 +24,7 @@ class WorkflowCreateView(WorkflowViewBase, CreateView):
 
     context_object_name = 'workflow'
     model = Workflow
-    fields = ('title', 'description')
+    fields = ('title', 'description', 'due_date')
 
     def get_form_kwargs(self):
         kwargs = super(WorkflowCreateView, self).get_form_kwargs()
@@ -71,7 +71,7 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
 
     context_object_name = 'workflow'
     model = Workflow
-    fields = ('title', 'description')
+    fields = ('title', 'description', 'due_date')
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user

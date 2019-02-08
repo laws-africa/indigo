@@ -1192,6 +1192,7 @@ class Workflow(models.Model):
     tasks = models.ManyToManyField(Task, related_name='workflows', null=False, blank=False)
 
     closed = models.BooleanField(default=False)
+    due_date = models.DateField(null=True, blank=True)
 
     country = models.ForeignKey(Country, related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
@@ -1206,6 +1207,11 @@ class Workflow(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @property
+    def overdue(self):
+        return self.due_date and self.due_date < datetime.date.today()
+
 
 
 @receiver(signals.post_save, sender=Workflow)

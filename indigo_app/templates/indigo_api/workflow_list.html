@@ -47,6 +47,15 @@
             </div>
 
             <div class="text-muted">
+              {% if workflow.due_date %}
+                <div class="text-muted">
+                  Due {{ workflow.due_date|date:"Y-m-d" }}
+                  {% if workflow.overdue %}
+                    <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+                  {% endif %}
+                </div>
+              {% endif %}
+
               <small>
                 Created <span class="time-ago" data-timestamp="{{ workflow.created_at|date:'c' }}">{{ workflow.created_at|naturaltime }}</span>
                 {% if workflow.created_by_user %}

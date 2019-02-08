@@ -1172,11 +1172,19 @@ class WorkflowQuerySet(models.QuerySet):
         return self.filter(closed=True)
 
 
+class WorkflowManager(models.Manager):
+    def get_queryset(self):
+        return super(WorkflowManager, self).get_queryset()\
+            .prefetch_related('tasks', 'created_by_user')
+
+
 class Workflow(models.Model):
     class Meta:
         permissions = (
             ('close_workflow', 'Can close a workflow'),
         )
+
+    objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
 
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)

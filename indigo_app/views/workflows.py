@@ -90,6 +90,10 @@ class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
     http_method_names = ['post']
 
     def form_valid(self, form):
+        if self.object.closed:
+            messages.error(self.request, u"You can't add tasks to a closed workflow.")
+            return redirect(self.get_success_url())
+
         self.object.updated_by_user = self.request.user
         self.object.tasks.add(*(form.cleaned_data['tasks']))
         messages.success(self.request, u"Added %d tasks to this workflow." % len(form.cleaned_data['tasks']))

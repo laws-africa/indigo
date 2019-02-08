@@ -64,7 +64,7 @@
                   <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
                 </div>
               </div>
-              <div class="col-4 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
+              <div class="col-3 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
             </div>
 
             {% for state, count in workflow.task_charts %}

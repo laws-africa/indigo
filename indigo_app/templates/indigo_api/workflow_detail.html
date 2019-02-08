@@ -27,12 +27,12 @@
     </div>
   </div>
 
-  {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
+  {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True %}
 
   <ul class="activity-list">
     {% activity_stream 'action_object' workflow %}
     {% for action in stream reversed %}
-    <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this workflow {{ action.timestamp|naturaltime }}</li>
+      <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this workflow {{ action.timestamp|naturaltime }}.</li>
     {% endfor %}
   </ul>
 </div>

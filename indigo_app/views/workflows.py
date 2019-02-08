@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 
 from django.urls import reverse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.contrib import messages
 
@@ -18,8 +18,6 @@ class WorkflowViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 class WorkflowCreateView(WorkflowViewBase, CreateView):
     # permissions
     permission_required = ('indigo_api.add_workflow',)
-
-    js_view = ''
 
     context_object_name = 'workflow'
     model = Workflow
@@ -91,8 +89,10 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
 class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
     """ A POST-only view that adds tasks to a workflow.
     """
+    permission_required = ('indigo_api.change_workflow',)
     model = Workflow
     fields = ('tasks',)
+    http_method_names = ['post']
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
@@ -105,6 +105,21 @@ class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
 
     def get_success_url(self):
         return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
+
+
+class WorkflowRemoveTaskView(WorkflowViewBase, DetailView):
+    permission_required = ('indigo_api.change_workflow',)
+    http_method_names = ['post']
+    model = Workflow
+
+    def post(self, request, task_pk, *args, **kwargs):
+        workflow = self.get_object()
+        task = get_object_or_404(Task, pk=task_pk)
+
+        workflow.tasks.remove(task)
+        messages.success(self.request, u"Removed %s from this workflow." % task.title)
+
+        return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
 
 class WorkflowListView(WorkflowViewBase, ListView):

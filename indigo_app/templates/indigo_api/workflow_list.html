@@ -65,32 +65,36 @@
             </div>
 
           </div>
-
-          <div class="col-6">
-            <div class="row">
-              <div class="col-8">
-                <div class="progress">
-                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
+          {% if workflow.tasks.count %}
+            <div class="col-6">
+              <div class="row">
+                <div class="col-8">
+                  <div class="progress">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
+                  </div>
                 </div>
+                <div class="col-3 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
               </div>
-              <div class="col-3 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
-            </div>
 
-            {% for state, count in workflow.task_charts %}
-              {% if count %}
-                <div class="mt-2">
-                  <span class="badge task-badge task-badge-{{ state }} mr-2" title="{{ state }}"><i class="fas fa-sm fa-fw task-icon-{{ state }}"></i></span>
-                  <span class="text-muted">{{ count }} task{{ count|pluralize }}</span>
-                </div>
-              {% endif %}
-            {% endfor %}
-          </div>
+              {% for state, count in workflow.task_charts %}
+                {% if count %}
+                  <div class="mt-2">
+                    <span class="badge task-badge task-badge-{{ state }} mr-2" title="{{ state }}"><i class="fas fa-sm fa-fw task-icon-{{ state }}"></i></span>
+                    <span class="text-muted">{{ count }} task{{ count|pluralize }}</span>
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          {% else %}
+            <div class="col-6">
+            </div>
+          {% endif %}
         </div>
       {% endfor %}
 
     {% else %}
       <div class="card-body text-center">
-        <p>Create workflows to group and track related tasks.</em></p>
+        <p>Create workflows to group and track related tasks.</p>
         <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
       </div>
     {% endif %}

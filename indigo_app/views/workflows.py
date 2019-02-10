@@ -1,8 +1,10 @@
 # coding=utf-8
 from __future__ import unicode_literals, division
 
+from datetime import timedelta
+
 from actstream import action
-from actstream.models import any_stream
+from actstream.models import Action, any_stream
 from django.contrib import messages
 from django.db.models import Count
 from django.http import QueryDict
@@ -47,6 +49,7 @@ class WorkflowCreateView(WorkflowViewBase, CreateView):
 class WorkflowDetailView(WorkflowViewBase, DetailView):
     context_object_name = 'workflow'
     model = Workflow
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowDetailView, self).get_context_data(**kwargs)
@@ -63,9 +66,51 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
 
         context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done
         context['may_reopen'] = self.object.closed
-        context['activity_stream'] = any_stream(self.object)
+        stream = any_stream(self.object)
+        context['activity_stream'] = self.coalesce_entries(stream)
 
         return context
+
+    def coalesce_entries(self, stream):
+        """ If more than 1 task were added to the workflow at once, rather display something like
+        '<User> added <n> tasks to this workflow at <time>'
+        """
+        activity_stream = []
+        added_stash = []
+        for i, action in enumerate(stream):
+            # is the action an addition? (stash if yes)
+            if getattr(action, 'verb', None) == 'added':
+                added_stash.append(action)
+                if stream[i + 1]:
+                    next = stream[i + 1]
+                    # is the next action also an addition?
+                    if getattr(next, 'verb', None) == 'added':
+                        # if so, did the two actions happen close together?
+                        if action.timestamp - next.timestamp < self.threshold:
+                            # if yes, the next action should be added to the stash
+                            continue
+                    # if not, the next action should be added to a new stash (if an addition) and
+                    # the current stash should be made into one action, added to the stream and deleted
+                    # but only if it contains more than one action
+                    if len(added_stash) > 1:
+                        current = self.combine(added_stash)
+                        activity_stream.append(current)
+                    else:
+                        activity_stream.append(added_stash[0])
+                    added_stash = []
+                continue
+
+            # if the action isn't an addition, just add it to the stream
+            activity_stream.append(action)
+
+        return activity_stream
+
+    def combine(self, stash):
+        first = stash[0]
+        workflow = self.get_object()
+        action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
+        action.timestamp = first.timestamp
+        return action
 
 
 class WorkflowEditView(WorkflowViewBase, UpdateView):

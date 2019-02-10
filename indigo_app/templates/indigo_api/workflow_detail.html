@@ -57,6 +57,10 @@
 
     {% if has_tasks %}
       {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True %}
+    {% elif workflow.closed %}
+      <div class="card-body text-center">
+        <p>This workflow is closed; reopen it to add tasks.</p>
+      </div>
     {% else %}
       <div class="card-body text-center">
         <p>Add some tasks to this workflow to get going.</p>

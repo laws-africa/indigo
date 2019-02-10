@@ -84,11 +84,10 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
                 if stream[i + 1]:
                     next = stream[i + 1]
                     # is the next action also an addition?
-                    if getattr(next, 'verb', None) == 'added':
-                        # if so, did the two actions happen close together?
-                        if action.timestamp - next.timestamp < self.threshold:
-                            # if yes, the next action should be added to the stash
-                            continue
+                    # if so, did the two actions happen close together?
+                    # if yes, the next action should be added to the stash
+                    if getattr(next, 'verb', None) == 'added' and action.timestamp - next.timestamp < self.threshold:
+                        continue
                     # if not, the next action should be added to a new stash (if an addition) and
                     # the current stash should be made into one action, added to the stream and deleted
                     # but only if it contains more than one action

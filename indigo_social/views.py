@@ -1,6 +1,9 @@
 # coding=utf-8
 from __future__ import unicode_literals
 
+from datetime import timedelta
+
+from actstream.models import Action
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
 from django.views.generic.list import MultipleObjectMixin
 from django.urls import reverse
@@ -28,6 +31,7 @@ class UserProfileView(DetailView):
     slug_field = 'username'
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_profile.html'
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
@@ -36,7 +40,53 @@ class UserProfileView(DetailView):
         if context['can_award']:
             context['award_form'] = AwardBadgeForm()
 
+        activity = self.object.actor_actions.all()
+        context['activity_stream'] = self.coalesce_entries(activity)
+
         return context
+
+    def coalesce_entries(self, stream):
+        """ If more than 1 task were added to a workflow at once, rather display something like
+        '<User> added <n> tasks to <workflow> at <time>'
+        """
+        activity_stream = []
+        added_stash = []
+        for i, action in enumerate(stream):
+            # is the action an addition? (stash if yes)
+            if getattr(action, 'verb', None) == 'added':
+                added_stash.append(action)
+                if stream[i + 1]:
+                    next = stream[i + 1]
+                    # is the next action also an addition?
+                    # if so, did the two actions happen close together?
+                    # if yes, check if it was on the same workflow
+                    # if yes, the next action should be added to the stash
+                    if getattr(next, 'verb', None) == 'added' \
+                            and action.timestamp - next.timestamp < self.threshold \
+                            and action.target_object_id == next.target_object_id:
+                            continue
+                    # if not, the next action should be added to a new stash (if an addition) and
+                    # the current stash should be made into one action, added to the stream and deleted
+                    # but only if it contains more than one action
+                    if len(added_stash) > 1:
+                        current = self.combine(added_stash)
+                        activity_stream.append(current)
+                    else:
+                        activity_stream.append(added_stash[0])
+                    added_stash = []
+                continue
+
+            # if the action isn't an addition, just add it to the stream
+            activity_stream.append(action)
+
+        return activity_stream
+
+    def combine(self, stash):
+        first = stash[0]
+        workflow = first.target
+        action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
+        action.timestamp = first.timestamp
+        return action
 
 
 class UserProfileEditView(AbstractAuthedIndigoView, UpdateView):
@@ -74,11 +124,15 @@ class UserActivityView(MultipleObjectMixin, DetailView):
     object_list = None
     page_size = 20
     js_view = ''
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(UserActivityView, self).get_context_data(**kwargs)
 
-        paginator, page, versions, is_paginated = self.paginate_queryset(self.object.actor_actions.all(), self.page_size)
+        activity = self.object.actor_actions.all()
+        activity = self.coalesce_entries(activity)
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(activity, self.page_size)
         context.update({
             'paginator': paginator,
             'page': page,
@@ -87,6 +141,49 @@ class UserActivityView(MultipleObjectMixin, DetailView):
         })
 
         return context
+
+    def coalesce_entries(self, stream):
+        """ If more than 1 task were added to a workflow at once, rather display something like
+        '<User> added <n> tasks to <workflow> at <time>'
+        """
+        activity_stream = []
+        added_stash = []
+        for i, action in enumerate(stream):
+            # is the action an addition? (stash if yes)
+            if getattr(action, 'verb', None) == 'added':
+                added_stash.append(action)
+                if stream[i + 1]:
+                    next = stream[i + 1]
+                    # is the next action also an addition?
+                    # if so, did the two actions happen close together?
+                    # if yes, check if it was on the same workflow
+                    # if yes, the next action should be added to the stash
+                    if getattr(next, 'verb', None) == 'added' \
+                            and action.timestamp - next.timestamp < self.threshold \
+                            and action.target_object_id == next.target_object_id:
+                            continue
+                    # if not, the next action should be added to a new stash (if an addition) and
+                    # the current stash should be made into one action, added to the stream and deleted
+                    # but only if it contains more than one action
+                    if len(added_stash) > 1:
+                        current = self.combine(added_stash)
+                        activity_stream.append(current)
+                    else:
+                        activity_stream.append(added_stash[0])
+                    added_stash = []
+                continue
+
+            # if the action isn't an addition, just add it to the stream
+            activity_stream.append(action)
+
+        return activity_stream
+
+    def combine(self, stash):
+        first = stash[0]
+        workflow = first.target
+        action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
+        action.timestamp = first.timestamp
+        return action
 
 
 class AwardBadgeView(AbstractAuthedIndigoView, DetailView, FormView):

@@ -41,17 +41,22 @@
 
 {% elif model == 'task' %}
   {% with action.action_object as task %}
-    the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+    {% if this_task %}
+      this task
+    {% else %}
+      the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
 
-    {% if not action.target %}
-      {% if task.work %}
-        on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-        {% if task.document %}
-          @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+      {% if not action.target %}
+        {% if task.work %}
+          on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+          {% if task.document %}
+            @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+          {% endif %}
         {% endif %}
       {% endif %}
+    {% endif %}
 
-    {% elif action.target.target_actions.content_type.model == 'workflow' %}
+    {% if action.target.target_actions.content_type.model == 'workflow' %}
       {% with action.target as workflow %}
         {% if action.verb == 'added' %}
           to

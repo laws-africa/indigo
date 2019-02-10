@@ -149,6 +149,8 @@ class WorkflowCloseView(WorkflowViewBase, DetailView):
         workflow.closed = True
         workflow.updated_by_user = self.request.user
         workflow.save()
+        action.send(workflow.updated_by_user, verb='closed', action_object=workflow,
+                    place_code=workflow.place.place_code)
 
         messages.success(self.request, u"Workflow \"%s\" closed." % workflow.title)
 

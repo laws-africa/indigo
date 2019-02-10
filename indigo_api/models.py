@@ -1215,7 +1215,7 @@ class Workflow(models.Model):
 
 @receiver(signals.post_save, sender=Workflow)
 def post_save_workflow(sender, instance, **kwargs):
-    """ Send action to activity stream, as 'created' if a new workflow
+    """ Send 'created' action to activity stream if new workflow
     """
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance,

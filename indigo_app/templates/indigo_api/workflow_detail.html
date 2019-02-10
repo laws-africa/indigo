@@ -69,12 +69,7 @@
     {% endif %}
   </div>
 
-  <ul class="activity-list">
-    {% activity_stream 'action_object' workflow %}
-    {% for action in stream reversed %}
-      <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this workflow {{ action.timestamp|naturaltime }}.</li>
-    {% endfor %}
-  </ul>
+  {% include 'indigo_app/actions/_activity_list.html' with actions=activity_stream this_workflow=True ignore_place=True reverse_order=True %}
 
   {% if may_close and perms.indigo_api.close_workflow %}
     <form method="POST">

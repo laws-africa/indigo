@@ -42,11 +42,28 @@
 {% elif model == 'task' %}
   {% with action.action_object as task %}
     the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
-    {% if task.work %}
-      on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-      {% if task.document %}
-        @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+
+    {% if not action.target %}
+      {% if task.work %}
+        on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+        {% if task.document %}
+          @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+        {% endif %}
       {% endif %}
+
+    {% elif action.target.target_actions.content_type.model == 'workflow' %}
+      {% with action.target as workflow %}
+        {% if action.verb == 'added' %}
+          to
+        {% elif action.verb == 'removed' %}
+          from
+        {% endif %}
+        {% if this_workflow %}
+          this workflow
+        {% else %}
+          the workflow <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+        {% endif %}
+      {% endwith %}
     {% endif %}
 
     {% if not ignore_place %}
@@ -56,12 +73,16 @@
 
 {% elif model == 'workflow' %}
   {% with action.action_object as workflow %}
-    the workflow <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+    {% if this_workflow %}
+      this workflow
+    {% else %}
+      the workflow <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+    {% endif %}
 
     {% if not ignore_place %}
       in <a href="{% url 'place' place=workflow.place.place_code %}">{{ workflow.place }}</a>
     {% endif %}
- {% endwith %}
+  {% endwith %}
 {% endif %}
 
 <span class="time-ago" data-timestamp="{{ action.timestamp|date:'c' }}">{{ action.timestamp|date:"Y-m-d H:i" }}</span>.

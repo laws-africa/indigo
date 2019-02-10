@@ -154,7 +154,7 @@ class WorkflowCloseView(WorkflowViewBase, DetailView):
 
         messages.success(self.request, u"Workflow \"%s\" closed." % workflow.title)
 
-        return redirect('workflows', place=self.kwargs['place'])
+        return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
 
 class WorkflowReopenView(WorkflowViewBase, DetailView):

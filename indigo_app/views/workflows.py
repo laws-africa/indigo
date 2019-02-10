@@ -1,8 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, division
 
-
 from actstream import action
+from actstream.models import any_stream
 from django.contrib import messages
 from django.db.models import Count
 from django.http import QueryDict
@@ -63,6 +63,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
 
         context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done
         context['may_reopen'] = self.object.closed
+        context['activity_stream'] = any_stream(self.object)
 
         return context
 

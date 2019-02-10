@@ -1220,9 +1220,6 @@ def post_save_workflow(sender, instance, **kwargs):
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance,
                     place_code=instance.place.place_code)
-    else:
-        action.send(instance.updated_by_user, verb='updated', action_object=instance,
-                    place_code=instance.place.place_code)
 
 
 class TaskLabel(models.Model):

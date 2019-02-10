@@ -1,6 +1,8 @@
 # coding=utf-8
 from __future__ import unicode_literals, division
 
+
+from actstream import action
 from django.contrib import messages
 from django.db.models import Count
 from django.http import QueryDict
@@ -74,8 +76,13 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
     fields = ('title', 'description', 'due_date')
 
     def form_valid(self, form):
-        self.object.updated_by_user = self.request.user
-        return super(WorkflowEditView, self).form_valid(form)
+        form_valid = super(WorkflowEditView, self).form_valid(form)
+        if form_valid:
+            workflow = self.object
+            workflow.updated_by_user = self.request.user
+            action.send(workflow.updated_by_user, verb='updated', action_object=workflow,
+                        place_code=workflow.place.place_code)
+        return form_valid
 
     def get_success_url(self):
         return reverse('workflow_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
@@ -90,13 +97,20 @@ class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
     http_method_names = ['post']
 
     def form_valid(self, form):
-        if self.object.closed:
+        workflow = self.object
+        if workflow.closed:
             messages.error(self.request, u"You can't add tasks to a closed workflow.")
             return redirect(self.get_success_url())
 
-        self.object.updated_by_user = self.request.user
-        self.object.tasks.add(*(form.cleaned_data['tasks']))
+        workflow.updated_by_user = self.request.user
+        workflow.tasks.add(*(form.cleaned_data['tasks']))
+
+        for task in form.cleaned_data['tasks']:
+            action.send(workflow.updated_by_user, verb='added', action_object=task, target=workflow,
+                        place_code=workflow.place.place_code)
+
         messages.success(self.request, u"Added %d tasks to this workflow." % len(form.cleaned_data['tasks']))
+
         return redirect(self.get_success_url())
 
     def form_invalid(self, form):
@@ -116,6 +130,9 @@ class WorkflowRemoveTaskView(WorkflowViewBase, DetailView):
         task = get_object_or_404(Task, pk=task_pk)
 
         workflow.tasks.remove(task)
+        workflow.updated_by_user = self.request.user
+        action.send(workflow.updated_by_user, verb='removed', action_object=task, target=workflow,
+                    place_code=workflow.place.place_code)
         messages.success(self.request, u"Removed %s from this workflow." % task.title)
 
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
@@ -149,6 +166,8 @@ class WorkflowReopenView(WorkflowViewBase, DetailView):
         workflow.closed = False
         workflow.updated_by_user = self.request.user
         workflow.save()
+        action.send(workflow.updated_by_user, verb='reopened', action_object=workflow,
+                    place_code=workflow.place.place_code)
 
         messages.success(self.request, u"Workflow \"%s\" reopened." % workflow.title)
 

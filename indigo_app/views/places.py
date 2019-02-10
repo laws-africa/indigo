@@ -2,9 +2,9 @@
 import logging
 import json
 from collections import defaultdict
+from datetime import timedelta
 
 from actstream.models import Action
-
 from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
@@ -129,11 +129,13 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     object_list = None
     page_size = 20
     js_view = ''
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(PlaceActivityView, self).get_context_data(**kwargs)
 
         activity = Action.objects.filter(data__place_code=self.place.place_code)
+        activity = self.coalesce_entries(activity)
 
         paginator, page, versions, is_paginated = self.paginate_queryset(activity, self.page_size)
         context.update({
@@ -144,3 +146,46 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
         })
 
         return context
+
+    def coalesce_entries(self, stream):
+        """ If more than 1 task were added to a workflow at once, rather display something like
+        '<User> added <n> tasks to <workflow> at <time>'
+        """
+        activity_stream = []
+        added_stash = []
+        for i, action in enumerate(stream):
+            # is the action an addition? (stash if yes)
+            if getattr(action, 'verb', None) == 'added':
+                added_stash.append(action)
+                if stream[i + 1]:
+                    next = stream[i + 1]
+                    # is the next action also an addition?
+                    # if so, did the two actions happen close together?
+                    # if yes, check if it was on the same workflow
+                    # if yes, the next action should be added to the stash
+                    if getattr(next, 'verb', None) == 'added' \
+                            and action.timestamp - next.timestamp < self.threshold \
+                            and action.target_object_id == next.target_object_id:
+                            continue
+                    # if not, the next action should be added to a new stash (if an addition) and
+                    # the current stash should be made into one action, added to the stream and deleted
+                    # but only if it contains more than one action
+                    if len(added_stash) > 1:
+                        current = self.combine(added_stash)
+                        activity_stream.append(current)
+                    else:
+                        activity_stream.append(added_stash[0])
+                    added_stash = []
+                continue
+
+            # if the action isn't an addition, just add it to the stream
+            activity_stream.append(action)
+
+        return activity_stream
+
+    def combine(self, stash):
+        first = stash[0]
+        workflow = first.target
+        action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
+        action.timestamp = first.timestamp
+        return action

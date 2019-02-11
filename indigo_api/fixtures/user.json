@@ -19,7 +19,6 @@
                 ["add_work", "indigo_api", "work"],
                 ["change_work", "indigo_api", "work"],
                 ["delete_work", "indigo_api", "work"],
-                ["view_work", "indigo_api", "work"],
                 ["add_amendment", "indigo_api", "amendment"],
                 ["change_amendment", "indigo_api", "amendment"],
                 ["delete_amendment", "indigo_api", "amendment"],
@@ -29,7 +28,11 @@
                 ["add_task", "indigo_api", "task"],
                 ["change_task", "indigo_api", "task"],
                 ["delete_task", "indigo_api", "task"],
-                ["add_version", "reversion", "version"]
+                ["add_version", "reversion", "version"],
+                ["add_workflow", "indigo_api", "workflow"],
+                ["change_workflow", "indigo_api", "workflow"],
+                ["delete_workflow", "indigo_api", "workflow"],
+                ["close_workflow", "indigo_api", "workflow"]
             ],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "email": "email@example.com",

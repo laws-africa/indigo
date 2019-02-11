@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load humanize indigo_app %}
 
-{% block title %}Tasks – {{ locality.name|default:country.name }}{% endblock %}
+{% block title %}Tasks – {{ place.name }}{% endblock %}
 
 {% block content %}
 
@@ -51,9 +51,7 @@
       {% if form.format.value == 'list' %}
         {% include 'indigo_api/_task_list.html' with tasks=tasks %}
       {% else %}
-        <div class="bg-light p-3">
-          {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
-        </div>
+        {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
       {% endif %}
 
     {% else %}

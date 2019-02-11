@@ -1,7 +1,6 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import json
-from itertools import groupby
 
 from actstream import action
 
@@ -16,7 +15,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, Work, TaskLabel
+from indigo_api.models import Task, TaskLabel, Work
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -60,27 +59,7 @@ class TaskListView(TaskViewBase, ListView):
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
-
-        def grouper(task):
-            return task.state
-
-        tasks = sorted(context['tasks'], key=grouper)
-        tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
-
-        # base columns on the requested task states
-        groups = {}
-        for state in self.form.cleaned_data['state']:
-            groups[state] = {
-                'title': state.replace('_', ' ').title(),
-                'badge': state,
-            }
-
-        for key, group in tasks.iteritems():
-            groups[key]['tasks'] = group
-
-        # enforce column ordering
-        context['task_groups'] = [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled']
-                                  if g in groups]
+        context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
         return context
 
@@ -124,6 +103,12 @@ class TaskCreateView(TaskViewBase, CreateView):
     form_class = TaskForm
     model = Task
 
+    def form_valid(self, form):
+        response_object = super(TaskCreateView, self).form_valid(form)
+        task = self.object
+        task.workflows = form.cleaned_data.get('workflows')
+        return response_object
+
     def get_form_kwargs(self):
         kwargs = super(TaskCreateView, self).get_form_kwargs()
 
@@ -161,6 +146,8 @@ class TaskCreateView(TaskViewBase, CreateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
+        context['place_workflows'] = self.place.workflows.all()
+
         return context
 
     def get_success_url(self):
@@ -180,7 +167,17 @@ class TaskEditView(TaskViewBase, UpdateView):
         task.updated_by_user = self.request.user
         action.send(self.request.user, verb='updated', action_object=task,
                     place_code=task.place.place_code)
+        task.workflows = form.cleaned_data.get('workflows')
+
+        # TODO: send action signal saying 'User added|removed Task to|from Workflow,
+        #  and don't send  generic 'updated' signal if this was the only change
+
         return super(TaskEditView, self).form_valid(form)
+
+    def get_form(self, form_class=None):
+        form = super(TaskEditView, self).get_form(form_class)
+        form.initial['workflows'] = self.object.workflows.all()
+        return form
 
     def get_success_url(self):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.object.pk})
@@ -199,6 +196,7 @@ class TaskEditView(TaskViewBase, UpdateView):
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
+        context['place_workflows'] = self.place.workflows.all()
 
         return context
 
@@ -230,7 +228,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
-                action.send(user, verb=verb, action_object=task, place_code=task.place.place_code)
+                action.send(user, verb=verb, action_object=task,
+                            place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()

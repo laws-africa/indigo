@@ -83,6 +83,9 @@ class Country(models.Model):
     def place_tasks(self):
         return self.tasks.filter(locality=None)
 
+    def place_workflows(self):
+        return self.workflows.filter(locality=None)
+
     def as_json(self):
         return {
             'name': self.name,
@@ -120,6 +123,9 @@ class Locality(models.Model):
 
     def place_tasks(self):
         return self.tasks
+
+    def place_workflows(self):
+        return self.workflows
 
     def __unicode__(self):
         return unicode(self.name)
@@ -1011,7 +1017,8 @@ class TaskQuerySet(models.QuerySet):
 
 class TaskManager(models.Manager):
     def get_queryset(self):
-        return super(TaskManager, self).get_queryset().prefetch_related('labels')
+        return super(TaskManager, self).get_queryset()\
+            .prefetch_related('labels', 'work', 'document', 'created_by_user')
 
 
 class Task(models.Model):
@@ -1120,20 +1127,99 @@ class Task(models.Model):
 
         return ResolvedAnchor(anchor=self.anchor(), document=self.document)
 
+    @classmethod
+    def task_columns(cls, required_groups, tasks):
+        def grouper(task):
+            return task.state
+
+        tasks = sorted(tasks, key=grouper)
+        tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
+
+        # base columns on the requested task states
+        groups = {}
+        for key in required_groups:
+            groups[key] = {
+                'title': key.replace('_', ' ').title(),
+                'badge': key,
+            }
+
+        for key, group in tasks.iteritems():
+            if key not in groups:
+                groups[key] = {
+                    'title': key.replace('_', ' ').title(),
+                    'badge': key,
+                }
+            groups[key]['tasks'] = group
+
+        # enforce column ordering
+        return [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled'] if g in groups]
+
 
 @receiver(signals.post_save, sender=Task)
 def post_save_task(sender, instance, **kwargs):
     """ Send 'created' action to activity stream if new task
     """
     if kwargs['created']:
-        action.send(instance.created_by_user, verb='created', action_object=instance)
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.place.place_code)
+
+
+class WorkflowQuerySet(models.QuerySet):
+    def unclosed(self):
+        return self.filter(closed=False)
+
+    def closed(self):
+        return self.filter(closed=True)
+
+
+class WorkflowManager(models.Manager):
+    def get_queryset(self):
+        return super(WorkflowManager, self).get_queryset()\
+            .prefetch_related('tasks', 'created_by_user')
 
 
 class Workflow(models.Model):
+    class Meta:
+        permissions = (
+            ('close_workflow', 'Can close a workflow'),
+        )
+
+    objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
+
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
-    tasks = models.ManyToManyField(Task, related_name='workflows')
+    tasks = models.ManyToManyField(Task, related_name='workflows', null=False, blank=False)
+
+    closed = models.BooleanField(default=False)
+    due_date = models.DateField(null=True, blank=True)
+
+    country = models.ForeignKey(Country, related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
+
+    created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    @property
+    def place(self):
+        return self.locality or self.country
+
+    @property
+    def overdue(self):
+        return self.due_date and self.due_date < datetime.date.today()
+
+
+
+@receiver(signals.post_save, sender=Workflow)
+def post_save_workflow(sender, instance, **kwargs):
+    """ Send 'created' action to activity stream if new workflow
+    """
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.place.place_code)
 
 
 class TaskLabel(models.Model):

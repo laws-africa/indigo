@@ -7,7 +7,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, Workflow
 
 
 class WorkForm(forms.ModelForm):
@@ -120,9 +120,10 @@ class ImportDocumentForm(forms.Form):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('title', 'description', 'work', 'document', 'labels')
+        fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
 
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple, required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple, required=False)
 
 
 class TaskFilterForm(forms.Form):
@@ -139,5 +140,17 @@ class TaskFilterForm(forms.Form):
 
         if frbr_uri:
             queryset = queryset.filter(work__frbr_uri=frbr_uri)
+
+        return queryset
+
+
+class WorkflowFilterForm(forms.Form):
+    state = forms.ChoiceField(choices=[('open', 'open'), ('closed', 'closed')])
+
+    def filter_queryset(self, queryset):
+        if self.cleaned_data.get('state') == 'open':
+            queryset = queryset.filter(closed=False)
+        elif self.cleaned_data.get('state') == 'closed':
+            queryset = queryset.filter(closed=True)
 
         return queryset

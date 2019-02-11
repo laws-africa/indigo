@@ -70,7 +70,7 @@
           {% if workflow.pk and perms.indigo_api.delete_workflow %}
             <form method="POST">
               {% csrf_token %}
-              <button type="submit" class="btn btn-danger" formaction="{% url 'workflow_delete' place=place.code pk=workflow.pk %}" data-confirm="Are you sure you want to permanently delete this workflow? You can also close it from the overview. This action cannot be undone. (Any related tasks will not be affected.)">Delete workflow</button>
+              <button type="submit" class="btn btn-danger" formaction="{% url 'workflow_delete' place=place.place_code pk=workflow.pk %}" data-confirm="Are you sure you want to permanently delete this workflow? You can also close it from the overview. This action cannot be undone. (Any related tasks will not be affected.)">Delete workflow</button>
             </form>
           {% endif %}
 

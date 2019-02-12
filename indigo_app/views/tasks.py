@@ -15,7 +15,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, Work
+from indigo_api.models import Task, TaskLabel, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -107,6 +107,9 @@ class TaskCreateView(TaskViewBase, CreateView):
         response_object = super(TaskCreateView, self).form_valid(form)
         task = self.object
         task.workflows = form.cleaned_data.get('workflows')
+        for workflow in task.workflows.all():
+            action.send(self.request.user, verb='added', action_object=task, target=workflow,
+                        place_code=task.place.place_code)
         return response_object
 
     def get_form_kwargs(self):
@@ -164,13 +167,27 @@ class TaskEditView(TaskViewBase, UpdateView):
 
     def form_valid(self, form):
         task = self.object
+        old_workflows = [wf.id for wf in task.workflows.all()]
         task.updated_by_user = self.request.user
-        action.send(self.request.user, verb='updated', action_object=task,
-                    place_code=task.place.place_code)
         task.workflows = form.cleaned_data.get('workflows')
 
-        # TODO: send action signal saying 'User added|removed Task to|from Workflow,
-        #  and don't send  generic 'updated' signal if this was the only change
+        # action signals
+        # first, was something changed other than workflows?
+        if form.changed_data:
+            action.send(self.request.user, verb='updated', action_object=task,
+                        place_code=task.place.place_code)
+        # then, was the task added to / removed from any workflows?
+        new_workflows = [wf.id for wf in task.workflows.all()]
+        removed_workflows = set(old_workflows) - set(new_workflows)
+        added_workflows = set(new_workflows) - set(old_workflows)
+        for workflow in removed_workflows:
+            action.send(self.request.user, verb='removed', action_object=task,
+                        target=Workflow.objects.get(id=workflow),
+                        place_code=task.place.place_code)
+        for workflow in added_workflows:
+            action.send(self.request.user, verb='added', action_object=task,
+                        target=Workflow.objects.get(id=workflow),
+                        place_code=task.place.place_code)
 
         return super(TaskEditView, self).form_valid(form)
 

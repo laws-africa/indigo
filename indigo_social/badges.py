@@ -272,7 +272,8 @@ class DrafterBadge(PermissionBadge):
                    'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
                    # required when restoring a document version
                    'reversion.change_version',
-                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
+                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task',
+                   'indigo_api.add_workflow', 'indigo_api.change_workflow')
 
 
 class SeniorDrafterBadge(PermissionBadge):
@@ -281,7 +282,8 @@ class SeniorDrafterBadge(PermissionBadge):
     description = 'Can review work tasks and delete documents and works'
     permissions = ('indigo_api.delete_work', 'indigo_api.review_work',
                    'indigo_api.review_document', 'indigo_api.delete_document',
-                   'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task')
+                   'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task',
+                   'indigo_api.close_workflow', 'indigo_api.delete_workflow')
 
 
 badges.register(ContributorBadge)

@@ -1,37 +1,53 @@
-<div class="row">
-  {% for col in task_groups  %}
-    <div class="col task-list-column">
-      <h6 class="text-center mb-4">
-        <span class="badge task-badge task-badge-{{ col.badge }}"><i class="fas fa-sm fa-fw task-icon-{{ col.badge }}"></i></span>
-        {{ col.title }}
-      </h6>
+<div class="bg-light p-3">
+  <div class="row">
+    {% for col in task_groups  %}
+      <div class="col task-list-column">
+        <h6 class="text-center mb-4">
+          <span class="badge task-badge task-badge-{{ col.badge }}"><i class="fas fa-sm fa-fw task-icon-{{ col.badge }}"></i></span>
+          {{ col.title }}
+        </h6>
 
-      {% for task in col.tasks %}
-        <div class="card mb-3 task-list-card">
-          <div class="card-body">
-            <div><small class="text-muted">#{{ task.id }}</small></div>
-            <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
+        {% for task in col.tasks %}
+          <div class="card mb-3 task-list-card">
+            <div class="card-body">
 
-            {% if task.document %}
+              {% if workflow_controls %}
+                <form method="POST">
+                  {% csrf_token %}
+
+                  <div class="dropdown float-right">
+                    <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"></button>
+                    <div class="dropdown-menu">
+                      <button type="submit" class="dropdown-item" formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}" data-confirm="Are you sure you want to remove this task?">Remove from workflow</button>
+                    </div>
+                  </div>
+                </form>
+              {% endif %}
+
+              <div><small class="text-muted">#{{ task.id }}</small></div>
+              <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
+
+              {% if task.document %}
+                <div>
+                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
+                  <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+                </div>
+              {% elif task.work %}
+                <div>
+                  <span class="text-muted">{{ task.work.title }}</span><br>
+                  <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                </div>
+              {% endif %}
+
               <div>
-                <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
-                <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+                {% for label in task.labels.all %}
+                  <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+                {% endfor %}
               </div>
-            {% elif task.work %}
-              <div>
-                <span class="text-muted">{{ task.work.title }}</span><br>
-                <span class="text-muted">{{ task.work.frbr_uri }}</span>
-              </div>
-            {% endif %}
-
-            <div>
-              {% for label in task.labels.all %}
-                <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
-              {% endfor %}
             </div>
           </div>
-        </div>
-      {% endfor %}
-    </div>
-  {% endfor %}
+        {% endfor %}
+      </div>
+    {% endfor %}
+  </div>
 </div>

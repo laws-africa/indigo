@@ -33,19 +33,7 @@
       this.listenTo(this.model, 'sync', this.saved);
       this.listenTo(this.model, 'change', this.render);
 
-      this.setReadonly();
       this.render();
-    },
-
-    readonly: function() {
-      return (!Indigo.user.authenticated() ||
-              !Indigo.user.hasPerm('indigo_api.change_annotation') ||
-              !this.model.get('created_by_user') ||
-              Indigo.user.get('id') != this.model.get('created_by_user').id);
-    },
-
-    setReadonly: function() {
-      this.$el.toggleClass('readonly', this.readonly());
     },
 
     render: function() {
@@ -76,8 +64,16 @@
             json.task.id;
         }
         json.created_at_text = moment(json.created_at).fromNow();
+
+        json.permissions = {
+          'can_change': (Indigo.user.hasPerm('indigo_api.change_annotation') &&
+                          (Indigo.user.get('is_staff') ||
+                            json.created_by_user && json.created_by_user.id == Indigo.user.get('id'))),
+          'can_create_task': !json.task && Indigo.user.hasPerm('indigo_api.add_task'),
+        };
+        json.permissions.readonly = !(json.permissions.can_change || json.permissions.can_create_task);
+
         this.$el.append(this.template(json));
-        this.setReadonly();
       }
     },
     

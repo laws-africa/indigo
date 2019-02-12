@@ -12,13 +12,13 @@
   </div>
   {% endif %}
 
-  <div class="d-flex">
-    <div class="float-left mr-3 text-center">
+  <div class="d-flex mb-3">
+    <div class="mr-3 text-center">
       <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
       <span class="text-muted">#{{ task.pk }}</span>
     </div>
 
-    <div class="float-left">
+    <div>
       <h5>{{ task.title }}</h5>
 
       {% if task.document %}
@@ -35,72 +35,99 @@
     </div>
   </div>
 
-  <div class="card mt-3">
-    <div class="card-body">
+  <div class="row">
+    <div class="col-10">
+      <div class="card">
+        <div class="card-body">
+          {{ task.description|default:''|urlize|linebreaksbr }}
+        </div>
+      </div>
 
-      <p>{{ task.description|default:'' }}</p>
-
-      <div class="h5">
-        {% for label in task.labels.all %}
-          <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+      <ul class="activity-list">
+        {% activity_stream 'action_object' task %}
+        {% for action in stream reversed %}
+          <li class="activity-item">
+            {% include 'indigo_app/actions/_action.html' with action=action this_task=True ignore_place=True %}
+          </li>
         {% endfor %}
+
+        {% if task.anchor_id %}
+          <li class="activity-item">
+            {% with task.resolve_anchor as anchor %}
+              {% if anchor.element %}
+                Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a> as it appears currently:
+                <div class="sheet-outer" {% if not anchor.is_toc_element %}data-highlight="{{ task.anchor.id }}"{% endif %}>
+                  <div class="sheet-inner is-fragment">
+                    <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
+                  </div>
+                </div>
+              {% else %}
+                The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been removed.
+              {% endif %}
+            {% endwith %}
+          </li>
+        {% endif %}
+      </ul>
+
+      <div class="mt-3">
+        <form method="POST">
+          {% csrf_token %}
+
+          {% if task.state == 'open' and submit_task_permission %}
+            <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
+          {% endif %}
+
+          {% if task.state == 'open' or task.state == 'pending_review' %}
+            {% if cancel_task_permission %}
+            <button class="btn btn-danger float-right" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
+            {% endif %}
+          {% endif %}
+
+          {% if task.state == 'cancelled' or task.state == 'done' %}
+            {% if reopen_task_permission %}
+            <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
+            {% endif %}
+          {% endif %}
+
+          {% if task.state == 'pending_review' and unsubmit_task_permission %}
+            <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to unsubmit this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
+          {% endif %}
+
+          {% if task.state == 'pending_review' and close_task_permission %}
+            <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
+          {% endif %}
+        </form>
+
       </div>
     </div>
 
-    <div class="card-footer text-right">
-      <form method="POST">
-        {% csrf_token %}
-
-        {% if task.state == 'open' and submit_task_permission %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
+    <div class="col-2">
+      <h6>Labels</h6>
+      <ul class="list-unstyled">
+        {% with task.labels.all as labels %}
+        {% if labels %}
+          {% for label in labels %}
+            <li><span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span></li>
+          {% endfor %}
+        {% else %}
+          <li><em>None</em></li>
         {% endif %}
+        {% endwith %}
+      </ul>
 
-        {% if task.state == 'open' or task.state == 'pending_review' %}
-          {% if cancel_task_permission %}
-          <button class="btn btn-danger" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
-          {% endif %}
+      <h6>Workflows</h6>
+      <ul class="list-unstyled">
+        {% with task.workflows.all as workflows %}
+        {% if workflows %}
+          {% for workflow in workflows %}
+            <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a></li>
+          {% endfor %}
+        {% else %}
+          <li><em>None</em></li>
         {% endif %}
-
-        {% if task.state == 'cancelled' or task.state == 'done' %}
-          {% if reopen_task_permission %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
-          {% endif %}
-        {% endif %}
-
-        {% if task.state == 'pending_review' and unsubmit_task_permission %}
-          <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to unsubmit this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
-        {% endif %}
-
-        {% if task.state == 'pending_review' and close_task_permission %}
-          <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
-        {% endif %}
-      </form>
-
+        {% endwith %}
+      </ul>
     </div>
   </div>
-
-  <ul class="activity-list">
-    {% activity_stream 'action_object' task %}
-    {% for action in stream reversed %}
-    <li class="activity-item">{% user_profile action.actor %} {{ action.verb }} this task {{ action.timestamp|naturaltime }}</li>
-    {% endfor %}
-
-    {% if task.anchor_id %}
-      <li class="activity-item">
-        {% with task.resolve_anchor as anchor %}
-          {% if anchor.element %}
-            Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a> as it appears currently:
-            <div class="sheet-outer" {% if not anchor.is_toc_element %}data-highlight="{{ task.anchor.id }}"{% endif %}>
-              <div class="sheet-inner is-fragment">
-                <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
-              </div>
-            </div>
-          {% else %}
-            The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been removed.
-          {% endif %}
-        {% endwith %}
-      </li>
-    {% endif %}
-  </ul>
 </div>
 {% endblock %}

@@ -1,0 +1,112 @@
+{% extends "place/tabbed_layout.html" %}
+{% load activity_tags %}
+{% load humanize indigo_app %}
+
+{% block title %}{{ workflow.title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  <div class="float-right">
+    {% if not workflow.closed %}
+      <button class="btn btn-success mr-2" data-toggle="modal" data-target="#workflow-add-tasks-modal">Add tasks</button>
+    {% endif %}
+    <a href="{% url 'workflow_edit' place=place.place_code pk=workflow.pk %}" class="btn btn-primary">Edit workflow</a>
+  </div>
+
+  <div class="d-flex mb-3">
+    <div class="mr-3 text-center">
+      <span class="badge workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"><i class="fas fa-fw fa-tasks"></i></span><br>
+      <span class="text-muted">#{{ workflow.pk }}</span>
+    </div>
+
+    <div class="flex-fill">
+      <h5>{{ workflow.title }}</h5>
+
+      {% if workflow.due_date %}
+        <div class="text-muted">
+          Due {{ workflow.due_date|date:"Y-m-d" }}
+          {% if workflow.overdue %}
+            <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-body border-bottom">
+
+      <div class="row">
+        <div class="col-7">
+          {{ workflow.description|linebreaksbr }}
+        </div>
+        {% if workflow.n_tasks %}
+          <div class="col-5">
+            <div class="row mt-2">
+              <div class="col-8">
+                <div class="progress bg-light">
+                  <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_done }}%"></div>
+                </div>
+              </div>
+              <div class="col text-muted">{{ workflow.n_done }} of {{ workflow.n_tasks }} task{{ workflow.n_tasks|pluralize }}</div>
+            </div>
+          </div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if has_tasks %}
+      {% include 'indigo_api/_task_cards.html' with task_groups=task_groups workflow_controls=True %}
+    {% elif workflow.closed %}
+      <div class="card-body text-center">
+        <p>This workflow is closed; reopen it to add tasks.</p>
+      </div>
+    {% else %}
+      <div class="card-body text-center">
+        <p>Add some tasks to this workflow to get going.</p>
+        <button class="btn btn-success" data-toggle="modal" data-target="#workflow-add-tasks-modal">Add tasks</button>
+      </div>
+    {% endif %}
+  </div>
+
+  {% include 'indigo_app/actions/_activity_list.html' with actions=activity_stream this_workflow=True ignore_place=True reverse_order=True %}
+
+  {% if may_close and perms.indigo_api.close_workflow %}
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-success mt-2" formaction="{% url 'workflow_close' place=place.place_code pk=workflow.pk %}" data-confirm="Are you sure you want to close this workflow?">Close workflow</button>
+    </form>
+  {% elif may_reopen and perms.indigo_api.close_workflow %}
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary mt-2" formaction="{% url 'workflow_reopen' place=place.place_code pk=workflow.pk %}" data-confirm="Are you sure you want to reopen this workflow?">Reopen workflow</button>
+    </form>
+  {% endif %}
+</div>
+
+<div class="modal" tabindex="-1" role="dialog" id="workflow-add-tasks-modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Choose tasks to add to this workflow</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+
+      <form action="{% url 'workflow_add_tasks' place=place.place_code pk=workflow.pk %}" method="POST">
+        {% csrf_token %}
+
+        <div class="scrollable">
+          {% include 'indigo_api/_task_list.html' with tasks=possible_tasks selectable=True %}
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary workflow-add-tasks-save">Add tasks</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -50,8 +50,7 @@
 <div class="card mt-3">
   <h4 class="card-header">Recent activity</h4>
   <div class="card-body">
-    {% activity_stream 'actor' user %}
-    {% include 'indigo_app/actions/_activity_list.html' with actions=stream %}
+    {% include 'indigo_app/actions/_activity_list.html' with actions=activity_stream ignore_actor=True %}
 
     <div class="text-center">
       <a href="{% url 'indigo_social:user_activity' username=user.username %}" class="btn btn-primary">More activity</a>

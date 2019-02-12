@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView, TemplateView
 
-from .views import users, works, documents, tasks, places
+from .views import users, works, documents, tasks, places, workflows
 
 
 urlpatterns = [
@@ -21,6 +21,7 @@ urlpatterns = [
     url(r'^places/$', places.PlaceListView.as_view(), name='places'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', places.PlaceDetailView.as_view(), name='place'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/activity$', places.PlaceActivityView.as_view(), name='place_activity'),
+
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.TaskListView.as_view(), name='tasks'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/new$', tasks.TaskCreateView.as_view(), name='create_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/$', tasks.TaskDetailView.as_view(), name='task_detail'),
@@ -30,6 +31,16 @@ urlpatterns = [
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/reopen', tasks.TaskChangeStateView.as_view(change='reopen'), name='reopen_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/unsubmit', tasks.TaskChangeStateView.as_view(change='unsubmit'), name='unsubmit_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/close', tasks.TaskChangeStateView.as_view(change='close'), name='close_task'),
+
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/$', workflows.WorkflowListView.as_view(), name='workflows'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/new$', workflows.WorkflowCreateView.as_view(), name='workflow_create'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/$', workflows.WorkflowDetailView.as_view(), name='workflow_detail'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/edit$', workflows.WorkflowEditView.as_view(), name='workflow_edit'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/tasks$', workflows.WorkflowAddTasksView.as_view(), name='workflow_add_tasks'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/close$', workflows.WorkflowCloseView.as_view(), name='workflow_close'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/reopen$', workflows.WorkflowReopenView.as_view(), name='workflow_reopen'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/delete$', workflows.WorkflowDeleteView.as_view(), name='workflow_delete'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/tasks/(?P<task_pk>\d+)/remove$', workflows.WorkflowRemoveTaskView.as_view(), name='workflow_remove_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new/$', works.AddWorkView.as_view(), name='new_work'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new-batch/$', works.BatchAddWorkView.as_view(), name='new_batch_work'),
 

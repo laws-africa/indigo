@@ -83,7 +83,8 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
         if not instance.draft:
             raise MethodNotAllowed('DELETE', 'DELETE not allowed for published documents, mark as draft first.')
         instance.deleted = True
-        action.send(instance.updated_by_user, verb='deleted', action_object=instance)
+        action.send(instance.updated_by_user, verb='deleted', action_object=instance,
+                    place_code=instance.work.place.place_code)
         instance.save()
 
     def perform_update(self, serializer):

@@ -1,13 +1,13 @@
 {% extends "place/tabbed_layout.html" %}
 
-{% block title %}{{ place.name }}{% endblock %}
+{% block title %}Activity – {{ place.name }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">
   <div class="card">
   <h4 class="card-header">Activity</h4>
   <div class="card-body">
-    {% include 'indigo_app/actions/_activity_list.html' with actions=page.object_list %}
+    {% include 'indigo_app/actions/_activity_list.html' with actions=page.object_list ignore_place=True %}
 
     {% if is_paginated %}
       <nav class="mt-4">

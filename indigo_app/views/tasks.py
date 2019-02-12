@@ -15,7 +15,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, Work
+from indigo_api.models import Task, TaskLabel, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -107,6 +107,10 @@ class TaskCreateView(TaskViewBase, CreateView):
         response_object = super(TaskCreateView, self).form_valid(form)
         task = self.object
         task.workflows = form.cleaned_data.get('workflows')
+        if task.workflows.all():
+            for workflow in task.workflows.all():
+                action.send(self.request.user, verb='added', action_object=task, target=workflow,
+                            place_code=task.place.place_code)
         return response_object
 
     def get_form_kwargs(self):
@@ -164,13 +168,33 @@ class TaskEditView(TaskViewBase, UpdateView):
 
     def form_valid(self, form):
         task = self.object
+        old_workflows = [wf.id for wf in task.workflows.all()]
         task.updated_by_user = self.request.user
-        action.send(self.request.user, verb='updated', action_object=task,
-                    place_code=task.place.place_code)
         task.workflows = form.cleaned_data.get('workflows')
 
-        # TODO: send action signal saying 'User added|removed Task to|from Workflow,
-        #  and don't send  generic 'updated' signal if this was the only change
+        # action signals
+        # first, was something changed other than workflows?
+        if form.changed_data:
+            action.send(self.request.user, verb='updated', action_object=task,
+                        place_code=task.place.place_code)
+        # then, was the task added to / removed from any workflows?
+        new_workflows = [wf.id for wf in task.workflows.all()]
+        if set(old_workflows) != set(new_workflows):
+            # first eliminate any that didn't change
+            common_to_both = [n for n in old_workflows if n in new_workflows]
+            for n in common_to_both:
+                old_workflows.pop(old_workflows.index(n))
+                new_workflows.pop(new_workflows.index(n))
+            # any left in `old_workflows` have been removed
+            for workflow in old_workflows:
+                action.send(self.request.user, verb='removed', action_object=task,
+                            target=Workflow.objects.get(id=workflow),
+                            place_code=task.place.place_code)
+            # any left in `new_workflows` have been added
+            for workflow in new_workflows:
+                action.send(self.request.user, verb='added', action_object=task,
+                            target=Workflow.objects.get(id=workflow),
+                            place_code=task.place.place_code)
 
         return super(TaskEditView, self).form_valid(form)
 

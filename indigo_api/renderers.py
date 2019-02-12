@@ -174,7 +174,6 @@ class HTMLRenderer(object):
 
         # find the template to use
         template_name = self.template_name or self.find_template(document)
-        coverpage_template = self.find_template(document, prefix='coverpage_')
 
         context = {
             'document': document,
@@ -183,19 +182,22 @@ class HTMLRenderer(object):
             'renderer': renderer,
             'coverpage': self.coverpage,
             'resolver_url': self.resolver,
-            'coverpage_template': coverpage_template,
+            'coverpage_template': self.coverpage_template(document),
         }
 
         # Now render some boilerplate around it.
         if self.standalone:
             context['template_name'] = template_name
             context['colophon'] = self.find_colophon(document)
-            return render_to_string('export/standalone.html', context)
+            return render_to_string('indigo_api/akn/export/standalone.html', context)
         else:
             return render_to_string(template_name, context)
 
+    def coverpage_template(self, document):
+        return self.find_template(document, prefix='coverpage_')
+
     def render_coverpage(self, document):
-        template_name = self.template_name or self.find_template(document, prefix='coverpage_')
+        template_name = self.coverpage_template(document)
         context = {
             'document': document,
             'resolver_url': self.resolver,
@@ -211,7 +213,7 @@ class HTMLRenderer(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = file_candidates(document, prefix=prefix, suffix=suffix)
+        candidates = file_candidates(document, prefix='indigo_api/akn/' + prefix, suffix=suffix)
         for option in candidates:
             try:
                 log.debug("Looking for %s" % option)
@@ -285,7 +287,7 @@ class PDFRenderer(HTMLRenderer):
         html = super(PDFRenderer, self).render(document, element=element)
 
         # embed the HTML into the PDF container
-        html = render_to_string('export/pdf.html', {
+        html = render_to_string('indigo_api/akn/export/pdf.html', {
             'documents': [(document, html)],
         })
         return self.to_pdf(html, document=document)
@@ -339,7 +341,7 @@ class PDFRenderer(HTMLRenderer):
         colophon = self.find_colophon(document or documents[0])
         if colophon:
             # find the wrapper template
-            html = render_to_string('export/pdf_colophon.html', {
+            html = render_to_string('indigo_api/akn/export/pdf_colophon.html', {
                 'colophon': colophon,
             })
             return make_absolute_paths(html)
@@ -370,7 +372,7 @@ class PDFRenderer(HTMLRenderer):
         margin_bottom = 36.3 - footer_spacing
         margin_left = 25.6
 
-        toc_xsl = get_template('export/pdf_toc.xsl').origin.name
+        toc_xsl = get_template('indigo_api/akn/export/pdf_toc.xsl').origin.name
 
         options = {
             'page-size': 'A4',

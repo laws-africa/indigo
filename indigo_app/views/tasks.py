@@ -107,10 +107,9 @@ class TaskCreateView(TaskViewBase, CreateView):
         response_object = super(TaskCreateView, self).form_valid(form)
         task = self.object
         task.workflows = form.cleaned_data.get('workflows')
-        if task.workflows.all():
-            for workflow in task.workflows.all():
-                action.send(self.request.user, verb='added', action_object=task, target=workflow,
-                            place_code=task.place.place_code)
+        for workflow in task.workflows.all():
+            action.send(self.request.user, verb='added', action_object=task, target=workflow,
+                        place_code=task.place.place_code)
         return response_object
 
     def get_form_kwargs(self):
@@ -179,22 +178,16 @@ class TaskEditView(TaskViewBase, UpdateView):
                         place_code=task.place.place_code)
         # then, was the task added to / removed from any workflows?
         new_workflows = [wf.id for wf in task.workflows.all()]
-        if set(old_workflows) != set(new_workflows):
-            # first eliminate any that didn't change
-            common_to_both = [n for n in old_workflows if n in new_workflows]
-            for n in common_to_both:
-                old_workflows.pop(old_workflows.index(n))
-                new_workflows.pop(new_workflows.index(n))
-            # any left in `old_workflows` have been removed
-            for workflow in old_workflows:
-                action.send(self.request.user, verb='removed', action_object=task,
-                            target=Workflow.objects.get(id=workflow),
-                            place_code=task.place.place_code)
-            # any left in `new_workflows` have been added
-            for workflow in new_workflows:
-                action.send(self.request.user, verb='added', action_object=task,
-                            target=Workflow.objects.get(id=workflow),
-                            place_code=task.place.place_code)
+        removed_workflows = set(old_workflows) - set(new_workflows)
+        added_workflows = set(new_workflows) - set(old_workflows)
+        for workflow in removed_workflows:
+            action.send(self.request.user, verb='removed', action_object=task,
+                        target=Workflow.objects.get(id=workflow),
+                        place_code=task.place.place_code)
+        for workflow in added_workflows:
+            action.send(self.request.user, verb='added', action_object=task,
+                        target=Workflow.objects.get(id=workflow),
+                        place_code=task.place.place_code)
 
         return super(TaskEditView, self).form_valid(form)
 

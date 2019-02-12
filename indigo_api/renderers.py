@@ -299,7 +299,7 @@ class PDFRenderer(HTMLRenderer):
             html.append(super(PDFRenderer, self).render(doc, **kwargs))
 
         # embed the HTML into the PDF container
-        html = render_to_string('export/pdf.html', {
+        html = render_to_string('indigo_api/akn/export/pdf.html', {
             'documents': zip(documents, html),
         })
         return self.to_pdf(html, documents=documents)

@@ -174,6 +174,7 @@ class HTMLRenderer(object):
 
         # find the template to use
         template_name = self.template_name or self.find_template(document)
+        coverpage_template = self.find_template(document, prefix='coverpage_')
 
         context = {
             'document': document,
@@ -182,6 +183,7 @@ class HTMLRenderer(object):
             'renderer': renderer,
             'coverpage': self.coverpage,
             'resolver_url': self.resolver,
+            'coverpage_template': coverpage_template,
         }
 
         # Now render some boilerplate around it.
@@ -193,7 +195,7 @@ class HTMLRenderer(object):
             return render_to_string(template_name, context)
 
     def render_coverpage(self, document):
-        template_name = self.template_name or self.find_template(document)
+        template_name = self.template_name or self.find_template(document, prefix='coverpage_')
         context = {
             'document': document,
             'resolver_url': self.resolver,
@@ -203,13 +205,13 @@ class HTMLRenderer(object):
     def find_colophon(self, document):
         return Colophon.objects.filter(country=document.work.country).first()
 
-    def find_template(self, document):
+    def find_template(self, document, prefix='', suffix='.html'):
         """ Return the filename of a template to use to render this document.
 
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = file_candidates(document, suffix='.html')
+        candidates = file_candidates(document, prefix=prefix, suffix=suffix)
         for option in candidates:
             try:
                 log.debug("Looking for %s" % option)

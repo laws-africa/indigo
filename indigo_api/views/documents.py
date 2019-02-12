@@ -298,7 +298,7 @@ class RenderView(APIView):
     """ Support for rendering a document on the server.
     """
     permission_classes = DEFAULT_PERMS
-    coverpage_only = True
+    coverpage_only = False
 
     def post(self, request, format=None):
         serializer = RenderSerializer(data=request.data)
@@ -311,7 +311,7 @@ class RenderView(APIView):
         if self.coverpage_only:
             renderer = HTMLRenderer()
             renderer.media_url = reverse('document-detail', kwargs={'pk': document.id}) + '/'
-            html = renderer.render_coverpage(self, document)
+            html = renderer.render_coverpage(document)
             return Response({'output': html})
         else:
             return Response({'output': document.to_html()})

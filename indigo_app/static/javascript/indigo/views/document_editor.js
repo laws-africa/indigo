@@ -33,8 +33,6 @@
 
       // setup renderer
       this.editorReady = $.Deferred();
-      this.listenTo(this.parent.model, 'change:country', this.countryChanged);
-      this.listenTo(this.parent.model, 'change:country change:language', this.render);
       this.listenTo(this.parent.model, 'change', this.documentChanged);
 
       // setup xml editor
@@ -61,10 +59,6 @@
 
       this.$toolbar = $('.document-toolbar');
 
-      this.countryChanged();
-    },
-
-    countryChanged: function() {
       this.loadXSL();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
     },

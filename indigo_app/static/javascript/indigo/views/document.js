@@ -16,7 +16,7 @@
       this.expressions.remove(this.expressions.get(this.model.get('id')));
       this.expressions.add(this.model);
 
-      this.listenTo(this.model, 'change:title change:expression_date change:draft sync change:frbr_uri', this.render);
+      this.listenTo(this.model, 'change:title change:expression_date change:draft sync', this.render);
       this.listenTo(this.expressions, 'sync change reset', this.render);
     },
 
@@ -96,7 +96,6 @@
       'click .document-toolbar-menu .save': 'save',
       'click .document-toolbar-menu .delete-document': 'delete',
       'click .document-toolbar-menu .clone-document': 'clone',
-      'click .document-toolbar-menu .change-document-work': 'changeWork',
       'click .sidebar-nav .show-preview': 'showPreview',
     },
 
@@ -350,20 +349,6 @@
           document.location = '/documents/' + doc.id + '/';
         });
       }
-    },
-
-    changeWork: function(e) {
-      if (!confirm("Are you sure you want to change the work this document is linked to?")) return;
-
-      var document = this.document;
-      var chooser = new Indigo.WorkChooserView({country: document.get('country')});
-
-      chooser.choose(document.work);
-      chooser.showModal().done(function(chosen) {
-        if (chosen) {
-          document.setWork(chosen);
-        }
-      });
     },
 
     stopMenuClick: function(e) {

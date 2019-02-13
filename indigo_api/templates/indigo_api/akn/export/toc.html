@@ -5,7 +5,7 @@
       <a href="#{{ item.id }}">{{ item.title }}</a>
 
       {% if item.children %}
-        {% include 'export/toc.html' with items=item.children %}
+        {% include 'indigo_api/akn/export/toc.html' with items=item.children %}
       {% endif %}
     </li>
     {% endif %}

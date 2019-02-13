@@ -1,4 +1,4 @@
-{% extends "export/base.html" %}
+{% extends "indigo_api/akn/export/base.html" %}
 {% load i18n %}
 
 {% block body-class %}standalone{% endblock %}
@@ -18,7 +18,7 @@
       <h3>{{ document.title }}</h3>
 
       {% if not document.stub %}
-      {% include 'export/toc.html' with items=document.table_of_contents %}
+      {% include 'indigo_api/akn/export/toc.html' with items=document.table_of_contents %}
       {% endif %}
     </div>
   {% endif %}

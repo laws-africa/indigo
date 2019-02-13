@@ -1,0 +1,14 @@
+{% load i18n %}
+
+{% block coverpage %}
+{% if coverpage %}
+  {% include coverpage_template %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{{ content_html | safe }}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}

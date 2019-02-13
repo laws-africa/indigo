@@ -35,6 +35,7 @@
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change:country', this.countryChanged);
       this.listenTo(this.parent.model, 'change:country change:language', this.render);
+      this.listenTo(this.parent.model, 'change', this.documentChanged);
 
       // setup xml editor
       this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
@@ -66,6 +67,11 @@
     countryChanged: function() {
       this.loadXSL();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+    },
+
+    documentChanged: function() {
+      this.coverpageCache = null;
+      this.render();
     },
 
     loadXSL: function() {
@@ -324,7 +330,24 @@
     render: function() {
       if (!this.parent.fragment) return;
 
-      var self = this;
+      var self = this,
+          renderCoverpage = this.parent.fragment.parentElement === null,
+          $akn = this.$('.document-workspace-content .akoma-ntoso'),
+          coverpage;
+
+      // reset class name to ensure only one country class
+      $akn[0].className = "akoma-ntoso spinner-when-empty country-" + this.parent.model.get('country');
+      $akn.empty();
+
+      if (renderCoverpage) {
+        coverpage = document.createElement('div');
+        coverpage.className = 'spinner-when-empty';
+        $akn.append(coverpage);
+        this.renderCoverpage().then(function(node) {
+          $(coverpage).append(node);
+        });
+      }
+
       this.htmlTransformReady.then(function() {
         self.htmlTransform.setParameter(null, 'defaultIdScope', self.getFragmentIdScope() || '');
         self.htmlTransform.setParameter(null, 'mediaUrl', self.parent.model.url() + '/');
@@ -334,14 +357,36 @@
         self.makeLinksExternal(html);
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
-
-        var $akn = self.$('.document-workspace-content .akoma-ntoso');
-        // reset class name to ensure only one country class
-        $akn[0].className = "akoma-ntoso country-" + self.parent.model.get('country');
-        $akn.empty().append(html);
-
+        $akn.append(html);
+        
         self.trigger('rendered');
       });
+    },
+
+    renderCoverpage: function() {
+      // Render a coverpage and return it via a deferred.
+      // Uses a cached coverpage, if available.
+      var deferred = $.Deferred(),
+          self = this;
+
+      if (this.coverpageCache) {
+        deferred.resolve(this.coverpageCache);
+      } else {
+        var data = JSON.stringify({'document': self.parent.model.toJSON()});
+        $.ajax({
+          url: '/api/render/coverpage',
+          type: "POST",
+          data: data,
+          contentType: "application/json; charset=utf-8",
+          dataType: "json"})
+          .then(function(response) {
+            var html = $.parseHTML(response.output);
+            self.coverpageCache = html;
+            deferred.resolve(html);
+          });
+      }
+
+      return deferred;
     },
 
     getFragmentIdScope: function() {

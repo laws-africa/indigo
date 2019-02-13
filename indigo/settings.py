@@ -47,7 +47,6 @@ INSTALLED_APPS = (
 
     # the Indigo act resolver
     'indigo_resolver',
-    'indigo_slack',
 
     # the Indigo editor application
     'indigo_app',
@@ -336,9 +335,6 @@ GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # disable email in development
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# slack integration
-SLACK_WEBHOOK_URL = os.environ.get('SLACK_WEBHOOK_URL')
 
 
 # Messages

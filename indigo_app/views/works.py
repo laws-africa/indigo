@@ -446,7 +446,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         works = None
 
         try:
-            table = self.get_table(form.cleaned_data['spreadsheet_url'])
+            table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
             works = self.get_works(table)
         except ValidationError as e:
             error = e.message
@@ -472,7 +472,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
         for idx, row in enumerate(rows):
             # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if not row['ignore'] and [val for val in row.itervalues() if val]:
+            if not row.get('ignore') and [val for val in row.itervalues() if val]:
                 info = {
                     'row': idx + 2,
                 }
@@ -496,18 +496,18 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work = Work()
 
                     work.frbr_uri = frbr_uri
-                    work.title = row['title']
+                    work.title = row.get('title')
                     work.country = self.country
                     work.locality = self.locality
-                    work.publication_name = row['publication_name']
-                    work.publication_number = row['publication_number']
+                    work.publication_name = row.get('publication_name')
+                    work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
 
                     try:
-                        work.publication_date = self.make_date(row['publication_date'], 'publication_date')
-                        work.commencement_date = self.make_date(row['commencement_date'], 'commencement_date')
-                        work.assent_date = self.make_date(row['assent_date'], 'assent_date')
+                        work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
+                        work.commencement_date = self.make_date(row.get('commencement_date'), 'commencement_date')
+                        work.assent_date = self.make_date(row.get('assent_date'), 'assent_date')
                         work.full_clean()
                         work.save()
 
@@ -553,25 +553,48 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             return rows
 
     def get_frbr_uri(self, country, locality, row):
-        frbr_uri = FrbrUri(country=row['country'], locality=row['locality'], doctype='act', subtype=row['subtype'], date=row['year'], number=row['number'], actor=None)
+        row_country = row.get('country')
+        row_locality = row.get('locality')
+        row_subtype = row.get('subtype')
+        row_year = row.get('year')
+        row_number = row.get('number')
+        frbr_uri = FrbrUri(country=row_country, locality=row_locality,
+                           doctype='act', subtype=row_subtype,
+                           date=row_year, number=row_number, actor=None)
 
         # if the country doesn't match
         # (but ignore if no country given – dealt with separately)
-        if row['country'] and country.code != row['country'].lower():
-            raise ValueError('The country code given in the spreadsheet ("%s") doesn\'t match the code for the country you\'re working in ("%s")' % (row['country'], country.code.upper()))
+        if row_country and country.code != row_country.lower():
+            raise ValueError(
+                'The country code given in the spreadsheet ("%s") '
+                'doesn\'t match the code for the country you\'re working in ("%s")'
+                % (row.get('country'), country.code.upper())
+            )
 
         # if you're working on the country level but the spreadsheet gives a locality
-        if not locality and row['locality']:
-            raise ValueError('You are working in a country (%s), but the spreadsheet gives a locality code ("%s")' % (country, row['locality']))
+        if not locality and row_locality:
+            raise ValueError(
+                'You are working in a country (%s), '
+                'but the spreadsheet gives a locality code ("%s")'
+                % (country, row_locality)
+            )
 
         # if you're working in a locality but the spreadsheet doesn't give one
-        if locality and not row['locality']:
-            raise ValueError('There\'s no locality code given in the spreadsheet, but you\'re working in %s ("%s")' % (locality, locality.code.upper()))
+        if locality and not row_locality:
+            raise ValueError(
+                'There\'s no locality code given in the spreadsheet, '
+                'but you\'re working in %s ("%s")'
+                % (locality, locality.code.upper())
+            )
 
         # if the locality doesn't match
         # (only if you're in a locality)
-        if locality and locality.code != row['locality'].lower():
-            raise ValueError('The locality code given in the spreadsheet ("%s") doesn\'t match the code for the locality you\'re working in ("%s")' % (row['locality'], locality.code.upper()))
+        if locality and locality.code != row_locality.lower():
+            raise ValueError(
+                'The locality code given in the spreadsheet ("%s") '
+                'doesn\'t match the code for the locality you\'re working in ("%s")'
+                % (row_locality, locality.code.upper())
+            )
 
         # check all frbr uri fields have been filled in and that no spaces were accidentally included
         if ' ' in frbr_uri.work_uri():
@@ -584,9 +607,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             raise ValueError('A number must be given')
 
         # check that necessary work fields have been filled in
-        elif not row['title']:
+        elif not row.get('title'):
             raise ValueError('A title must be given')
-        elif not row['publication_date']:
+        elif not row.get('publication_date'):
             raise ValueError('A publication date must be given')
 
         return frbr_uri.work_uri().lower()

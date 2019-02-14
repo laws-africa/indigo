@@ -13,7 +13,7 @@ class BaseRefsFinder(LocaleBasedMatcher):
 
     act_re = None
     """ This must be defined by a subclass. It should be a compiled regular
-    expression, with named captures for `ref`, `number` and `year`.
+    expression, with named captures for `ref`, `num` and `year`.
     """
     candidate_xpath = None  # this must be defined by a subclass
 
@@ -42,7 +42,7 @@ class BaseRefsFinder(LocaleBasedMatcher):
     def make_href(self, match):
         """ Turn this match into a full FRBR URI href
         """
-        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group('year'), match.group('number'))
+        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group('year'), match.group('num'))
 
     def find_references(self, root):
         for root in self.ancestor_nodes(root):

@@ -30,6 +30,10 @@ body.is-staff {
   }
 }
 
+:target {
+  animation: fadeout 2s;
+}
+
 .high {
   height: 100%;
 }

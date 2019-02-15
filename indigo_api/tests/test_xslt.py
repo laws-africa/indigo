@@ -31,3 +31,9 @@ class XSLTTestCase(TestCase):
         self.check_xslt_to_txt('../static/xsl/act_text.xsl',
                                'act_text-general-input.xml',
                                'act_text-general-output.txt')
+
+    def test_act_text_escaping(self):
+        # escaping
+        self.check_xslt_to_txt('../static/xsl/act_text.xsl',
+                               'act_text-escaping-input.xml',
+                               'act_text-escaping-output.txt')

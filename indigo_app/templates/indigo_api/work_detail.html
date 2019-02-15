@@ -105,7 +105,7 @@
             <p class="form-text text-muted">Original publication, eg. national gazette</p>
             <datalist id="publication_list">
               {% for pub in work.country.publication_set.all %}
-                <option value="{{ pub.html_name }}">
+                <option value="{{ pub.name }}">
               {% endfor %}
             </datalist>
           </div>

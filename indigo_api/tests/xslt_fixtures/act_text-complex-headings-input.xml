@@ -62,23 +62,60 @@
       </references>
     </meta>
     <body>
-      <section id="section-1">
-        <num>1.</num>
-        <heading>Definitions</heading>
-        <paragraph id="section-1.paragraph-0" refersTo="#term-venue_owner">
-          <content>
-            <p>3. this line should be escaped</p>
-            <p>3 this line should be escaped</p>
-            <p>Part this line should be escaped</p>
-            <p>Chapter this line should be escaped</p>
-            <p>(3) this line should be escaped</p>
-            <p>BODY</p>
-            <p>PREAMBLE</p>
-            <p>PREFACE</p>
-            <p>SCHEDULE this line should be escaped</p>
-          </content>
-        </paragraph>
-      </section>
+      <chapter id="chapter-1">
+        <num>1</num>
+        <heading>Definitions and application <remark status="editorial">[Remark <ref href="/za/act/1998/117">Act No. 117 of 1998</ref>]</remark></heading>
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Definitions <remark status="editorial">[Remark <ref href="/za/act/1998/117">Act No. 117 of 1998</ref>]</remark></heading>
+          <paragraph id="section-1.paragraph-0" refersTo="#term-venue_owner">
+            <content>
+              <p>In this By-law, unless the context otherwise indicates —</p>
+            </content>
+          </paragraph>
+        </section>
+      </chapter>
     </body>
   </act>
+  <components>
+    <component id="component-schedule3">
+      <doc name="schedule3">
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/za-cpt/act/by-law/2009/events/schedule3"/>
+              <FRBRuri value="/za-cpt/act/by-law/2009/events"/>
+              <FRBRalias value="Schedule 3"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/za-cpt/act/by-law/2009/events/eng@2016-08-19/schedule3"/>
+              <FRBRuri value="/za-cpt/act/by-law/2009/events/eng@2016-08-19"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/za-cpt/act/by-law/2009/events/eng@2016-08-19/schedule3"/>
+              <FRBRuri value="/za-cpt/act/by-law/2009/events/eng@2016-08-19"/>
+              <FRBRdate date="2017-02-25" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
+        <mainBody>
+          <article id="schedule3">
+            <heading>Schedule of fines</heading>
+            <paragraph id="schedule3.paragraph-0">
+              <content>
+                <p><remark status="editorial">[Schedule 3 repealed by amendment on 2009-08-19]</remark>.</p>
+              </content>
+            </paragraph>
+          </article>
+        </mainBody>
+      </doc>
+    </component>
+  </components>
 </akomaNtoso>

@@ -2,6 +2,8 @@
 
 \3. this line should be escaped
 
+\3 this line should be escaped
+
 \Part this line should be escaped
 
 \Chapter this line should be escaped

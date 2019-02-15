@@ -7,6 +7,8 @@ from django.core.exceptions import ValidationError
 
 
 class XSLTTestCase(TestCase):
+    maxDiff = None
+
     def setUp(self):
         self.thisdir = os.path.dirname(os.path.realpath(__file__))
 
@@ -37,3 +39,9 @@ class XSLTTestCase(TestCase):
         self.check_xslt_to_txt('../static/xsl/act_text.xsl',
                                'act_text-escaping-input.xml',
                                'act_text-escaping-output.txt')
+
+    def test_act_text_xsl_headings(self):
+        # stuff in headings
+        self.check_xslt_to_txt('../static/xsl/act_text.xsl',
+                               'act_text-complex-headings-input.xml',
+                               'act_text-complex-headings-output.txt')

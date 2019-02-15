@@ -11,7 +11,8 @@
     <xsl:param name="value"/>
 
     <xsl:variable name="prefix" select="translate(substring($value, 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
-    <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', 'NNNNNNNNNN')" />
+    <!-- '(' is considered special, so translate numbers into '(' so we can find and escape them -->
+    <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', '((((((((((')" />
 
     <!-- p tags must escape initial content that looks like a block element marker -->
     <xsl:if test="$prefix = 'BODY' or
@@ -21,8 +22,7 @@
                   starts-with($prefix, 'PART ') or
                   starts-with($prefix, 'SCHEDULE ') or
                   starts-with($prefix, '{|') or
-                  starts-with($numprefix, '(') or
-                  starts-with($numprefix, 'N.')">
+                  starts-with($numprefix, '(')">
       <xsl:text>\</xsl:text>
     </xsl:if>
     <xsl:value-of select="$value"/>
@@ -54,35 +54,24 @@
 
   <xsl:template match="a:part">
     <xsl:text>Part </xsl:text>
-    <xsl:value-of select="./a:num" />
+    <xsl:value-of select="a:num" />
     <xsl:text> - </xsl:text>
-    <xsl:value-of select="./a:heading" />
-    <xsl:text>
-
-</xsl:text>
+    <xsl:apply-templates select="a:heading" />
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
   <xsl:template match="a:chapter">
     <xsl:text>Chapter </xsl:text>
-    <xsl:value-of select="./a:num" />
+    <xsl:value-of select="a:num" />
     <xsl:text> - </xsl:text>
-    <xsl:value-of select="./a:heading" />
-    <xsl:text>
-
-</xsl:text>
+    <xsl:apply-templates select="a:heading" />
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
   <xsl:template match="a:section">
     <xsl:value-of select="a:num" />
     <xsl:text> </xsl:text>
-    <xsl:if test="a:heading != ''">
-      <xsl:value-of select="a:heading" />
-    </xsl:if>
-    <xsl:text>
-
-</xsl:text>
+    <xsl:apply-templates select="a:heading" />
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
   
@@ -121,14 +110,14 @@
   </xsl:template>
 
   <xsl:template match="a:item">
-    <xsl:value-of select="./a:num" />
+    <xsl:value-of select="a:num" />
     <xsl:text> </xsl:text>
     <xsl:apply-templates select="./*[not(self::a:num)]" />
   </xsl:template>
 
   <xsl:template match="a:list">
     <xsl:if test="a:intro != ''">
-      <xsl:value-of select="a:intro" />
+      <xsl:apply-templates select="a:intro" />
       <xsl:text>
 
 </xsl:text>
@@ -147,21 +136,16 @@
   <xsl:template match="a:doc">
     <xsl:text>Schedule - </xsl:text>
     <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
+    <xsl:text>
+</xsl:text>
 
-    <xsl:if test="a:mainBody/a:article/a:heading">
+    <xsl:if test="not(a:mainBody/a:article/a:heading)">
+      <!-- ensure an extra blank line if there is no heading -->
       <xsl:text>
 </xsl:text>
-      <xsl:value-of select="a:mainBody/a:article/a:heading" />
     </xsl:if>
 
-    <xsl:text>
-
-</xsl:text>
     <xsl:apply-templates select="a:mainBody" />
-  </xsl:template>
-
-  <xsl:template match="a:mainBody/a:article/a:heading">
-    <!-- no-op, this is handled by the schedules template above -->
   </xsl:template>
 
   <!-- tables -->

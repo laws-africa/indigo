@@ -116,7 +116,7 @@ class EditWorkView(WorkViewBase, UpdateView):
         return resp
 
     def get_success_url(self):
-        return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
+        return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
 class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):

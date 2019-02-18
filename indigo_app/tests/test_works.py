@@ -154,7 +154,7 @@ class WorksWebTest(WebTest):
         form = self.app.get('/works%s/edit/' % work.frbr_uri).forms['edit-work-form']
         form['work-publication_date'] = '1945-12-12'
         response = form.submit()
-        self.assertRedirects(response, '/works%s/edit/' % work.frbr_uri, fetch_redirect_response=False)
+        self.assertRedirects(response, '/works%s/' % work.frbr_uri, fetch_redirect_response=False)
 
         work = Work.objects.get(frbr_uri='/za/act/1945/1')
         initial = list(work.initial_expressions().all())

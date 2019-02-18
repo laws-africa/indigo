@@ -113,11 +113,12 @@ class EditWorkView(WorkViewBase, UpdateView):
         if form.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+            messages.success(self.request, u"Work updated.")
 
         return resp
 
     def get_success_url(self):
-        return reverse('work_edit', kwargs={'frbr_uri': self.work.frbr_uri})
+        return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
 class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):

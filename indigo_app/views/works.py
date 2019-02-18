@@ -54,7 +54,9 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         return super(WorkViewBase, self).determine_place()
 
     def get_context_data(self, **kwargs):
-        return super(WorkViewBase, self).get_context_data(work=self.work, **kwargs)
+        context = super(WorkViewBase, self).get_context_data(work=self.work, **kwargs)
+        context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        return context
 
     @property
     def work(self):
@@ -87,7 +89,6 @@ class EditWorkView(WorkViewBase, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
-        context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
         context['subtypes'] = Subtype.objects.order_by('name').all()
 
         return context

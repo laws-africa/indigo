@@ -112,6 +112,7 @@ class EditWorkView(WorkViewBase, UpdateView):
         if form.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
+            messages.success(self.request, u"Work updated.")
 
         return resp
 

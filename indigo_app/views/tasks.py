@@ -247,7 +247,10 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 state_change(user)
                 action.send(user, verb=verb, action_object=task,
                             place_code=task.place.place_code)
-                messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+                if verb == 'submitted':
+                    messages.success(request, u"Task '%s' has been submitted for review" % task.title)
+                else:
+                    messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()
 

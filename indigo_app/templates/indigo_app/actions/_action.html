@@ -71,6 +71,10 @@
       {% endwith %}
     {% endif %}
 
+    {% if action.verb == 'submitted' %}
+      for review
+    {% endif %}
+
     {% if not ignore_place %}
       in <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
     {% endif %}

@@ -431,7 +431,9 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 class WorkPublicationDocumentView(WorkViewBase, View):
     def get(self, request, filename, *args, **kwargs):
         if self.work.publication_document and self.work.publication_document.filename == filename:
-            return view_attachment(self.work.publication_document)
+            # generate a download-friendly filename, since these filenames are always 'publication-document.pdf'
+            filename = "%s-publication-document.pdf" % self.work.frbr_uri[1:].replace('/', '-')
+            return view_attachment(self.work.publication_document, filename=filename)
         else:
             return Http404()
 

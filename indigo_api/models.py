@@ -387,7 +387,7 @@ class Work(models.Model):
 
 @receiver(signals.post_save, sender=Work)
 def post_save_work(sender, instance, **kwargs):
-    """ Cascade (soft) deletes to linked documents
+    """ Cascade changes to linked documents
     """
     if not kwargs['raw'] and not kwargs['created']:
         # cascade updates to ensure documents
@@ -418,6 +418,25 @@ class PublicationDocument(models.Model):
     mime_type = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def build_filename(self):
+        return u'{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
+
+    def save(self, *args, **kwargs):
+        self.filename = self.build_filename()
+        return super(PublicationDocument, self).save(*args, **kwargs)
+
+
+@receiver(signals.post_save, sender=Work)
+def publication_document_tracks_work_frbr_uri(sender, instance, **kwargs):
+    """ Ensure that the publication document filename tracks the work's frbr uri
+    """
+    if not kwargs['raw']:
+        try:
+            if instance.publication_document.filename != instance.publication_document.build_filename():
+                instance.publication_document.save()
+        except PublicationDocument.DoesNotExist:
+            pass
 
 
 class Amendment(models.Model):
@@ -1210,7 +1229,6 @@ class Workflow(models.Model):
     @property
     def overdue(self):
         return self.due_date and self.due_date < datetime.date.today()
-
 
 
 @receiver(signals.post_save, sender=Workflow)

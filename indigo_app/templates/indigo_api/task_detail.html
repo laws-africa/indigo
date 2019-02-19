@@ -102,6 +102,15 @@
     </div>
 
     <div class="col-2">
+      <h6>Assigned to</h6>
+      <ul class="list-unstyled">
+        {% if task.assigned_to %}
+          <li>{% user_profile task.assigned_to %}</li>
+        {% else %}
+          <li><em>Unassigned</em></li>
+        {% endif %}
+      </ul>
+
       <h6>Labels</h6>
       <ul class="list-unstyled">
         {% with task.labels.all as labels %}

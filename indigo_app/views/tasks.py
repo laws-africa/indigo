@@ -15,7 +15,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, Work, Workflow
+from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -214,6 +214,7 @@ class TaskEditView(TaskViewBase, UpdateView):
 
         context['task_labels'] = TaskLabel.objects.all()
         context['place_workflows'] = self.place.workflows.all()
+        context['potential_assignees'] = User.objects.filter(editor__permitted_countries=self.country)
 
         return context
 

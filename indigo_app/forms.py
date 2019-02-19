@@ -7,7 +7,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, Workflow
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow
 
 
 class WorkForm(forms.ModelForm):
@@ -120,10 +120,13 @@ class ImportDocumentForm(forms.Form):
 class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
-        fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
+        fields = ('title', 'description', 'work', 'document', 'labels', 'workflows', 'assigned_to')
 
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple, required=False)
-    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple, required=False)
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple,
+                                            required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
+                                               required=False)
+    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
 
 
 class TaskFilterForm(forms.Form):

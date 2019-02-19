@@ -16,16 +16,46 @@
     </li>
   {% endif %}
 
-  {% for pit in work.points_in_time %}
+  {% for event in work_timeline %}
     <li class="timeline-item card">
-      <h6 class="timeline-date">{{ pit.date|date:"Y-m-d" }}</h6>
+      <h6 class="timeline-date">{{ event.date|date:"Y-m-d" }}</h6>
 
       <div class="card-body">
-        {% if pit.initial %}
-          <h6>Initial publication</h6>
+
+        {% if event.assent_date %}
+          <h6>Assented to</h6>
         {% endif %}
 
-        {% for amendment in pit.amendments %}
+        {% if event.initial %}
+          <h6>
+            Initial publication
+            {% if event.commencement_date %}
+              <span class="text-muted"> – Commenced on publication
+                {% if event.commencing_work %}
+                  by <a href="{% url 'work' frbr_uri=event.commencing_work.frbr_uri %}">{{ event.commencing_work.title }}</a>
+                {% endif %}
+              </span>
+            {% endif %}
+          </h6>
+
+        {% elif event.commencement_date %}
+          <h6>
+            Commenced
+            {% if event.commencing_work %}
+              by <a href="{% url 'work' frbr_uri=event.commencing_work.frbr_uri %}">{{ event.commencing_work.title }}</a>
+            {% endif %}
+          </h6>
+        {% endif %}
+
+        {% if event.repealed_date %}
+          <h6>Repealed
+            {% if event.repealed_by %}
+              by <a href="{% url 'work' frbr_uri=event.repealed_by.frbr_uri %}">{{ event.repealed_by.title }}</a>
+            {% endif %}
+          </h6>
+        {% endif %}
+
+        {% for amendment in event.amendments %}
           {% if amendment.pk %}
             <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST" id="amendment-{{ amendment.id|default:'initial' }}">
               {% csrf_token %}
@@ -55,7 +85,7 @@
         {% endfor %}
 
         <div class="documents">
-          {% for document in pit.expressions %}
+          {% for document in event.expressions %}
           <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
           {% endfor %}
         </div>
@@ -67,7 +97,7 @@
 
             <form action="{% url 'new_work_point_in_time' frbr_uri=work.frbr_uri %}" method="POST">
               {% csrf_token %}
-              <input type="hidden" name="expression_date" value="{{ pit.date|date:"Y-m-d" }}">
+              <input type="hidden" name="expression_date" value="{{ event.date|date:"Y-m-d" }}">
 
               <div class="btn-group">
                 <div class="dropdown mr-3">
@@ -81,7 +111,7 @@
                   </div>
                 </div>
 
-                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ pit.date|date:"Y-m-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
+                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:"Y-m-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
               </div>
             </form>
 

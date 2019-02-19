@@ -427,18 +427,6 @@ class PublicationDocument(models.Model):
         return super(PublicationDocument, self).save(*args, **kwargs)
 
 
-@receiver(signals.post_save, sender=Work)
-def publication_document_tracks_work_frbr_uri(sender, instance, **kwargs):
-    """ Ensure that the publication document filename tracks the work's frbr uri
-    """
-    if not kwargs['raw']:
-        try:
-            if instance.publication_document.filename != instance.publication_document.build_filename():
-                instance.publication_document.save()
-        except PublicationDocument.DoesNotExist:
-            pass
-
-
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """

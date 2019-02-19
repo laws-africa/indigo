@@ -37,7 +37,9 @@ class WorkForm(forms.ModelForm):
             pub_doc.file = pub_doc_file
             pub_doc.size = pub_doc_file.size
             # we force a particular filename
-            pub_doc.filename = 'publication-document.pdf'
+            pub_doc.filename = \
+                '%s-publication-document.pdf' \
+                % self.instance.frbr_uri[1:].replace('/', '-')
             pub_doc.mime_type = pub_doc_file.content_type
 
             pub_doc.save()

@@ -110,6 +110,12 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.expression_date = self.work.publication_date
                     doc.save()
 
+        # rename publication-document if frbr_uri has changed
+        if 'frbr_uri' in form.changed_data:
+            self.work.publication_document.filename = \
+                '%s-publication-document.pdf' \
+                % self.work.frbr_uri[1:].replace('/', '-')
+
         if form.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)

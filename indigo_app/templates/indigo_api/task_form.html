@@ -107,7 +107,7 @@
                 <div class="col-md-6">
                   <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}">
                     {% for workflow in place_workflows %}
-                      <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}
+                      <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
                     {% endfor %}
                   </select>
                 </div>
@@ -122,8 +122,9 @@
               <div class="row">
                 <div class="col-md-6">
                   <select class="selectpicker form-control" name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.id_for_label }}">
-                    {% for potential_assignee in potential_assignees %}
-                      <option value="{{ potential_assignee.id }}" {% if form.assigned_to.value == potential_assignee.id %}selected{% endif %}>{% user_profile potential_assignee %}
+                    <option value="" {% if not form.assigned_to.value %}selected{% endif %}>Unassigned
+                    {% for potential_assignee in potential_assignees %}</option>
+                    <option value="{{ potential_assignee.id }}" {% if form.assigned_to.value == potential_assignee.id %}selected{% endif %}>{% user_profile potential_assignee %}</option>
                     {% endfor %}
                   </select>
                 </div>

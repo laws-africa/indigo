@@ -1,5 +1,4 @@
-Indigo
-======
+# Indigo
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/495add45b788408284b48c0e045ca408)](https://app.codacy.com/app/longhotsummer/indigo?utm_source=github.com&utm_medium=referral&utm_content=laws-africa/indigo&utm_campaign=Badge_Grade_Dashboard)
 [![Build Status](https://travis-ci.org/laws-africa/indigo.svg)](http://travis-ci.org/laws-africa/indigo) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=master)](https://coveralls.io/github/laws-africa/indigo?branch=master)
@@ -20,8 +19,7 @@ It is a Django python web application using:
 
 Read the [full documentation at indigo.readthedocs.io](http://indigo.readthedocs.io/en/latest/index.html).
 
-Local development
------------------
+## Local development
 
 Clone the repo:
 
@@ -87,8 +85,7 @@ Now login at [http://localhost:8000](http://localhost:8000) and create a country
 
 Now give yourself all the permissions to work in that country by clicking on your name in the top right corner and choosing Profile. In the Badges Earned section, award yourself all the badges in the dropdown list.
 
-Ruby dependencies
-.................
+### Ruby and other non-Python dependencies
 
 You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library.
 We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby version manager. You'll
@@ -108,9 +105,10 @@ $ slaw --version
 slaw 1.0.0
 ```
 
+You will also need `pdftotext` to import PDF files. On Mac, you can use Homebrew and run `brew install poppler`.
 
-Testing
--------
+
+## Testing
 
 To run the tests use:
 
@@ -118,13 +116,11 @@ To run the tests use:
 python manage.py test
 ```
 
-Production deployment
----------------------
+## Production deployment
 
 Read the [documentation for details on deploying Indigo](http://indigo.readthedocs.org/en/latest/running/index.html).
 
-License and Copyright
----------------------
+## License and Copyright
 
 The project is licensed under a [GNU GPL 3 license](LICENSE).
 

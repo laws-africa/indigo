@@ -214,7 +214,6 @@ class TaskEditView(TaskViewBase, UpdateView):
 
         context['task_labels'] = TaskLabel.objects.all()
         context['place_workflows'] = self.place.workflows.all()
-        context['potential_assignees'] = User.objects.filter(editor__permitted_countries=self.country)
 
         return context
 
@@ -252,6 +251,28 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                     messages.success(request, u"Task '%s' has been submitted for review" % task.title)
                 else:
                     messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+
+        task.save()
+
+        return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])
+
+
+class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.change_task',)
+
+    unassign = False
+    http_method_names = [u'post']
+    model = Task
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        user = self.request.user
+        task.updated_by_user = user
+        if self.unassign:
+            task.assigned_to = None
+        else:
+            task.assigned_to = User.objects.get(id=kwargs['user_id'])
 
         task.save()
 

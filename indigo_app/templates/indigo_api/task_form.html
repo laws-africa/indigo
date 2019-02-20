@@ -115,30 +115,6 @@
             </div>
           {% endif %}
 
-          {% if potential_assignees %}
-            <div class="form-group">
-              <label for="{{ form.assigned_to.id_for_label }}">{{ form.assigned_to.label }}</label>
-
-              <div class="row">
-                <div class="col-md-6">
-                  <select class="selectpicker form-control" name="{{ form.assigned_to.name }}" id="{{ form.assigned_to.id_for_label }}">
-                    <option value="" {% if not form.assigned_to.value %}selected{% endif %}>Unassigned
-                    {% for potential_assignee in potential_assignees %}</option>
-                    <option value="{{ potential_assignee.id }}" {% if form.assigned_to.value == potential_assignee.id %}selected{% endif %}>{% user_profile potential_assignee %}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-              {% if form.assigned_to.errors %}
-                <div class="text-danger">
-                  {% for error in form.assigned_to.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
-            </div>
-          {% endif %}
-
         </div>
 
         <div class="card-footer text-right">

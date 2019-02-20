@@ -1189,7 +1189,7 @@ class Workflow(models.Model):
     title = models.CharField(max_length=256, null=False, blank=False)
     description = models.TextField(null=True, blank=True)
 
-    tasks = models.ManyToManyField(Task, related_name='workflows', null=False, blank=False)
+    tasks = models.ManyToManyField(Task, related_name='workflows')
 
     closed = models.BooleanField(default=False)
     due_date = models.DateField(null=True, blank=True)

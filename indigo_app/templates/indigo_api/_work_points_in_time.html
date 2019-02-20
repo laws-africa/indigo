@@ -31,8 +31,8 @@
             Initial publication
             {% if event.commencement_date %}
               <span class="text-muted"> – Commenced on publication
-                {% if event.commencing_work %}
-                  by <a href="{% url 'work' frbr_uri=event.commencing_work.frbr_uri %}">{{ event.commencing_work.title }}</a>
+                {% if work.commencing_work %}
+                  by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
                 {% endif %}
               </span>
             {% endif %}
@@ -41,16 +41,16 @@
         {% elif event.commencement_date %}
           <h6>
             Commenced
-            {% if event.commencing_work %}
-              by <a href="{% url 'work' frbr_uri=event.commencing_work.frbr_uri %}">{{ event.commencing_work.title }}</a>
+            {% if work.commencing_work %}
+              by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
             {% endif %}
           </h6>
         {% endif %}
 
         {% if event.repealed_date %}
           <h6>Repealed
-            {% if event.repealed_by %}
-              by <a href="{% url 'work' frbr_uri=event.repealed_by.frbr_uri %}">{{ event.repealed_by.title }}</a>
+            {% if work.repealed_by %}
+              by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
             {% endif %}
           </h6>
         {% endif %}

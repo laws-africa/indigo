@@ -64,39 +64,19 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
             ('commencement_date', self.work.commencement_date),
             ('repealed_date', self.work.repealed_date)
         ]
-        # add to existing dates (e.g. if publication and commencement dates are the same)
+        # add to existing events (e.g. if publication and commencement dates are the same)
         for entry in work_timeline:
             for name, date in other_dates:
                 if entry['date'] == date:
-                    if name == 'commencement_date' and self.work.commencing_work:
-                        entry['commencement_date'] = True
-                        entry['commencing_work'] = self.work.commencing_work
-                    elif name == 'repealed_date' and self.work.repealed_by:
-                        entry['repealed_date'] = True
-                        entry['repealed_by'] = self.work.repealed_by
-                    else:
-                        entry[name] = True
-        # add new dates (e.g. if assent is before any of the other dates)
+                    entry[name] = True
+        # add new events (e.g. if assent is before any of the other events)
         existing_dates = [entry['date'] for entry in work_timeline]
         for name, date in other_dates:
             if date and date not in existing_dates:
-                if name == 'commencement_date' and self.work.commencing_work:
-                    work_timeline.append({
-                        'date': date,
-                        'commencement_date': True,
-                        'commencing_work': self.work.commencing_work,
-                    })
-                elif name == 'repealed_date' and self.work.repealed_by:
-                    work_timeline.append({
-                        'date': date,
-                        'repealed_date': True,
-                        'repealed_by': self.work.repealed_by,
-                    })
-                else:
-                    work_timeline.append({
-                        'date': date,
-                        name: True,
-                    })
+                work_timeline.append({
+                    'date': date,
+                    name: True,
+                })
         context['work_timeline'] = sorted(work_timeline, key=lambda k: k['date'], reverse=True)
 
         return context

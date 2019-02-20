@@ -21,7 +21,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -137,6 +137,13 @@ class EditWorkView(WorkViewBase, UpdateView):
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
             messages.success(self.request, u"Work updated.")
+
+            # rename publication-document if frbr_uri has changed
+            if 'frbr_uri' in form.changed_data:
+                try:
+                    self.work.publication_document.save()
+                except PublicationDocument.DoesNotExist:
+                    pass
 
         return resp
 
@@ -556,7 +563,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
 
-        match = re.match('^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
+        match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
 
         # not sure this is doing anything? URLValidator picking this type of issue up already?
         if not match:

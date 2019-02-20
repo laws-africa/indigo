@@ -23,10 +23,10 @@
               <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
             </label>
             <label class="btn filter-status-published">
-              <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fa fa-fw fa-circle published"></i>Published
+              <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fas fa-circle fa-fw published"></i>Published
             </label>
             <label class="btn filter-status-draft">
-              <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fa fa-fw fa-circle draft"></i>Draft
+              <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fas fa-circle fa-fw draft"></i>Draft
             </label>
           </div>
         </div>
@@ -71,7 +71,7 @@
     <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ id }}">
       <div class="d-flex">
         <div class="float-left">
-          <span class="text-muted fa fa-fw fa-caret-right collapse-indicator"></span>
+          <span class="text-muted fas fa-caret-right fa-fw collapse-indicator"></span>
         </div>
 
         <div class="float-left flex-fill">
@@ -124,9 +124,9 @@
 
                 <div class="col-4">
                   {{#if draft}}
-                    <i class="fa fa-fw fa-circle draft" title="draft"></i>
+                    <i class="fas fa-fw fa-circle draft" title="draft"></i>
                   {{else}}
-                    <i class="fa fa-fw fa-circle published" title="published"></i>
+                    <i class="fas fa-fw fa-circle published" title="published"></i>
                   {{/if}}
                   {{ title }}
                 </div>

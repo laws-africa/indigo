@@ -57,9 +57,9 @@
     },
 
     ICONS: {
-      'application/pdf': 'fa-file-pdf-o',
-      'application/msword': 'fa-file-word-o',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'fa-file-word-o',
+      'application/pdf': 'fa-file-pdf',
+      'application/msword': 'fa-file-word',
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'fa-file-word',
     },
 
     initialize: function(options) {

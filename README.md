@@ -77,11 +77,18 @@ Then create the superuser:
 python manage.py createsuperuser
 ```
 
-Finally, run the server:
+Now, run the server:
 
 ```
 python manage.py runserver
 ```
+
+Now login at [http://localhost:8000](http://localhost:8000) and create a country by going to [http://localhost:8000/admin](http://localhost:8000/admin), choosing *Countries* under *Indigo API* and clicking *Add Country*.
+
+Now give yourself all the permissions to work in that country by clicking on your name in the top right corner and choosing Profile. In the Badges Earned section, award yourself all the badges in the dropdown list.
+
+Ruby dependencies
+.................
 
 You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library.
 We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby version manager. You'll

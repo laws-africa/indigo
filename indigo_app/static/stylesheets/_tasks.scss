@@ -2,6 +2,7 @@
   font-size: 100%;
   color: $white;
   padding: 0.4em;
+  margin-top: 5px;
 }
 
 .task-badge-open {
@@ -51,6 +52,7 @@
   padding: 0.4em;
   color: $white;
   background-color: theme-color('primary');
+  margin-top: 5px;
 
   &.workflow-closed {
     background-color: $grey;

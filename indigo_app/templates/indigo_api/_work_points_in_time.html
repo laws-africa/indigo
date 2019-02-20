@@ -3,7 +3,7 @@
     <li class="timeline-item card">
       <div class="card-body">
         {% block new-amendment-card %}
-          <button class="btn btn-primary add-amendment"><i class="fa fa-plus"></i> Add amendment</button>
+          <button class="btn btn-primary add-amendment"><i class="fas fa-plus"></i> Add amendment</button>
 
           <form action="{% url 'new_work_amendment' frbr_uri=work.frbr_uri %}" method="POST" id="new-amendment-form">
             {% csrf_token %}
@@ -56,7 +56,7 @@
 
         <div class="documents">
           {% for document in pit.expressions %}
-          <div><i class="fa fa-fw fa-circle {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
+          <div><i class="fas fa-circle fa-fw {% if document.draft %}draft{% else %}published{% endif %}"></i> <a href="{% url 'document' doc_id=document.id %}">{{ document.title }}</a> · {{ document.language }}</div>
           {% endfor %}
         </div>
       </div>
@@ -81,7 +81,7 @@
                   </div>
                 </div>
 
-                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ pit.date|date:"Y-m-d" }}"><i class="fa fa-file-upload"></i> Import document</a>
+                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ pit.date|date:"Y-m-d" }}"><i class="fas fa-file-upload"></i> Import document</a>
               </div>
             </form>
 

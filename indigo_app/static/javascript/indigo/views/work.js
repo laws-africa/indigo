@@ -65,8 +65,8 @@
         observe: 'commencing_work',
         onGet: idOrNull,
       },
-      '#id_work-repealing_by': {
-        observe: 'repealing_by',
+      '#id_work-repealed_by': {
+        observe: 'repealed_by',
         onGet: idOrNull,
       },
 

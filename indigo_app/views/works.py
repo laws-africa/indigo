@@ -56,6 +56,29 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
     def get_context_data(self, **kwargs):
         context = super(WorkViewBase, self).get_context_data(work=self.work, **kwargs)
         context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+
+        # add other dates to timeline
+        work_timeline = self.work.points_in_time()
+        other_dates = [
+            ('assent_date', self.work.assent_date),
+            ('commencement_date', self.work.commencement_date),
+            ('repealed_date', self.work.repealed_date)
+        ]
+        # add to existing events (e.g. if publication and commencement dates are the same)
+        for entry in work_timeline:
+            for name, date in other_dates:
+                if entry['date'] == date:
+                    entry[name] = True
+        # add new events (e.g. if assent is before any of the other events)
+        existing_dates = [entry['date'] for entry in work_timeline]
+        for name, date in other_dates:
+            if date and date not in existing_dates:
+                work_timeline.append({
+                    'date': date,
+                    name: True,
+                })
+        context['work_timeline'] = sorted(work_timeline, key=lambda k: k['date'], reverse=True)
+
         return context
 
     @property

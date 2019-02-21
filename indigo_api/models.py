@@ -1145,7 +1145,10 @@ class Task(models.Model):
     @classmethod
     def task_columns(cls, required_groups, tasks):
         def grouper(task):
-            return task.state
+            if task.state == 'open' and task.assigned_to:
+                return 'assigned'
+            else:
+                return task.state
 
         tasks = sorted(tasks, key=grouper)
         tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
@@ -1167,7 +1170,7 @@ class Task(models.Model):
             groups[key]['tasks'] = group
 
         # enforce column ordering
-        return [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled'] if g in groups]
+        return [groups.get(g) for g in ['open', 'assigned', 'pending_review', 'done', 'cancelled'] if g in groups]
 
 
 @receiver(signals.post_save, sender=Task)

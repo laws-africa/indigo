@@ -39,7 +39,7 @@ class TaskListView(TaskViewBase, ListView):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'pending_review'])
+            params.setlist('state', ['open', 'assigned', 'pending_review'])
         params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(params)

@@ -77,12 +77,6 @@
             <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
           {% endif %}
 
-          {% if task.state == 'open' or task.state == 'pending_review' %}
-            {% if cancel_task_permission %}
-            <button class="btn btn-danger float-right" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
-            {% endif %}
-          {% endif %}
-
           {% if task.state == 'cancelled' or task.state == 'done' %}
             {% if reopen_task_permission %}
             <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>

@@ -78,9 +78,6 @@ class TaskDetailView(TaskViewBase, DetailView):
         if has_transition_perm(task.submit, self):
             context['submit_task_permission'] = True
 
-        if has_transition_perm(task.cancel, self):
-            context['cancel_task_permission'] = True
-
         if has_transition_perm(task.reopen, self):
             context['reopen_task_permission'] = True
 
@@ -203,17 +200,21 @@ class TaskEditView(TaskViewBase, UpdateView):
         context = super(TaskEditView, self).get_context_data(**kwargs)
 
         work = None
-        if self.object.work:
-            work = json.dumps(WorkSerializer(instance=self.object.work, context={'request': self.request}).data)
+        task = self.object
+        if task.work:
+            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
         context['work_json'] = work
 
         document = None
-        if self.object.document:
-            document = json.dumps(DocumentSerializer(instance=self.object.document, context={'request': self.request}).data)
+        if task.document:
+            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
         context['place_workflows'] = self.place.workflows.all()
+
+        if has_transition_perm(task.cancel, self):
+            context['cancel_task_permission'] = True
 
         return context
 

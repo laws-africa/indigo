@@ -1081,8 +1081,11 @@ class Task(models.Model):
             self.work = None
 
     def potential_assignees(self):
-        potential_assignees = User.objects.filter(editor__permitted_countries=self.country)
-        # TODO: remove self.assigned to from potential_assignees
+        potential_assignees = User.objects.filter(
+            editor__permitted_countries=self.country
+        ).exclude(
+            id=self.assigned_to.id
+        )
         return potential_assignees
 
     # submit for review

@@ -29,7 +29,7 @@
 
               {% if task.document %}
                 <div>
-                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
+                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</span><br>
                   <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
                 </div>
               {% elif task.work %}

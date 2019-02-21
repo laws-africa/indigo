@@ -4,7 +4,7 @@
   padding: 0.4em;
 }
 
-.task-badge-open {
+.task-badge-open, .task-badge-assigned {
   background-color: $primary;
 }
 
@@ -24,6 +24,7 @@
 .task-icon-done:before { content: "\f00c"; }
 .task-icon-pending_review:before { content: "\f128"; }
 .task-icon-cancelled:before { content: "\f00d"; }
+.task-icon-assigned:before { content: "\f4fc"; }
 
 .task-list-column {
   &:not(:last-child) {

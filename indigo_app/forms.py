@@ -131,9 +131,7 @@ class TaskForm(forms.ModelForm):
 
 class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
-    state_choices = [(x, x) for x in Task.STATES]
-    state_choices.append(('assigned', 'assigned'))
-    state = forms.MultipleChoiceField(choices=state_choices)
+    state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
 
     def filter_queryset(self, queryset, frbr_uri=None):
@@ -141,9 +139,12 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
         if self.cleaned_data.get('state'):
-            queryset = queryset.filter(state__in=self.cleaned_data['state'])
-            if 'assigned' not in self.cleaned_data['state']:
-                queryset = queryset.filter(assigned_to=None)
+            if 'assigned' in self.cleaned_data['state']:
+                queryset = queryset.filter(state__in=self.cleaned_data['state']+['open'])
+                if 'open' not in self.cleaned_data['state']:
+                    queryset = queryset.exclude(state='open', assigned_to=None)
+            else:
+                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
 
         if frbr_uri:
             queryset = queryset.filter(work__frbr_uri=frbr_uri)

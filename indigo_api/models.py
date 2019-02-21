@@ -1059,6 +1059,7 @@ class Task(models.Model):
     state = FSMField(default='open')
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
 
     created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)

@@ -1155,14 +1155,14 @@ class Task(models.Model):
         groups = {}
         for key in required_groups:
             groups[key] = {
-                'title': key.replace('_', ' ').title(),
+                'title': key.replace('_', ' ').capitalize(),
                 'badge': key,
             }
 
         for key, group in tasks.iteritems():
             if key not in groups:
                 groups[key] = {
-                    'title': key.replace('_', ' ').title(),
+                    'title': key.replace('_', ' ').capitalize(),
                     'badge': key,
                 }
             groups[key]['tasks'] = group

@@ -112,16 +112,23 @@
       </ul>
 
       {% if task.potential_assignees %}
-          <form method="POST">
-            {% csrf_token %}
-            {% if task.assigned_to %}
-              <button class="btn mb-3" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
-            {% endif %}
-            <h6>Assign to</h6>
-            {% for potential_assignee in task.potential_assignees %}
-              <button class="btn mb-3" type="submit" formaction="{% url 'assign_task' place=place.place_code pk=task.pk user_id=potential_assignee.id %}">{% user_profile potential_assignee %}</button>
-            {% endfor %}
-          </form>
+        <form method="POST">
+          {% csrf_token %}
+          {% if task.assigned_to %}
+            <button class="btn btn-outline-danger mb-3" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
+          {% endif %}
+          <h6>Assign to</h6>
+          <div class="dropdown">
+            <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Select
+            </button>
+            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+              {% for potential_assignee in task.potential_assignees %}
+                <button class="dropdown-item mb-1" type="submit" formaction="{% url 'assign_task' place=place.place_code pk=task.pk user_id=potential_assignee.id %}">{{ potential_assignee }}</button>
+              {% endfor %}
+            </div>
+          </div>
+        </form>
       {% endif %}
 
       <h6>Labels</h6>

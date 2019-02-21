@@ -142,6 +142,8 @@ class TaskFilterForm(forms.Form):
 
         if self.cleaned_data.get('state'):
             queryset = queryset.filter(state__in=self.cleaned_data['state'])
+            if 'assigned' not in self.cleaned_data['state']:
+                queryset = queryset.filter(assigned_to=None)
 
         if frbr_uri:
             queryset = queryset.filter(work__frbr_uri=frbr_uri)

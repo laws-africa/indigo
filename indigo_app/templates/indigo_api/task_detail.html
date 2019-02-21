@@ -117,10 +117,9 @@
           {% if task.assigned_to %}
             <button class="btn btn-outline-danger mb-3" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
           {% endif %}
-          <h6>Assign to</h6>
           <div class="dropdown">
             <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Select
+              Assign to
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               {% for potential_assignee in task.potential_assignees %}

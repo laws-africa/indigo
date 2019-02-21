@@ -56,6 +56,10 @@
       {% endif %}
     {% endif %}
 
+    {% if action.target.target_actions.content_type.model == 'user' %}
+      to {% user_profile action.target %}
+    {% endif %}
+
     {% if action.target.target_actions.content_type.model == 'workflow' %}
       {% with action.target as workflow %}
         {% if action.verb == 'added' %}

@@ -26,7 +26,7 @@ urlpatterns = [
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/new$', tasks.TaskCreateView.as_view(), name='create_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/$', tasks.TaskDetailView.as_view(), name='task_detail'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/edit$', tasks.TaskEditView.as_view(), name='task_edit'),
-    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/assign-(?P<user_id>\d+)',
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/assign',
         tasks.TaskAssignView.as_view(), name='assign_task'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/(?P<pk>\d+)/unassign',
         tasks.TaskAssignView.as_view(unassign=True), name='unassign_task'),

@@ -276,7 +276,7 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
                         place_code=task.place.place_code)
             messages.success(request, u"Task '%s' has been unassigned" % task.title)
         else:
-            assignee = User.objects.get(id=kwargs['user_id'])
+            assignee = User.objects.get(id=self.request.POST.get('user_id'))
             task.assigned_to = assignee
             if user.id == assignee.id:
                 action.send(user, verb='picked up', action_object=task,

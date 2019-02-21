@@ -123,7 +123,7 @@
             </button>
             <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
               {% for potential_assignee in task.potential_assignees %}
-                <button class="dropdown-item mb-1" type="submit" formaction="{% url 'assign_task' place=place.place_code pk=task.pk user_id=potential_assignee.id %}">{% user_profile potential_assignee %}</button>
+                <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_profile potential_assignee %}</button>
               {% endfor %}
             </div>
           </div>

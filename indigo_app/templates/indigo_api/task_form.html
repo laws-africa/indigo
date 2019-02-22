@@ -118,10 +118,10 @@
         <div class="card-footer text-right">
           {% if task.state == 'open' or task.state == 'pending_review' %}
             <form method="POST">
-              {% csrf_token %}
-                {% if cancel_task_permission %}
-                  <button class="btn btn-danger float-left" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
-                {% endif %}
+            {% csrf_token %}
+              {% if cancel_task_permission %}
+                <button class="btn btn-danger float-left" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
+              {% endif %}
             </form>
           {% endif %}
           {% if task.pk %}

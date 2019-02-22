@@ -60,8 +60,8 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 
         # stats
-        self.object.n_tasks = self.object.tasks.count() - self.object.tasks.filter(state='cancelled').count()
-        self.object.n_done = self.object.tasks.filter(state='done').count()
+        self.object.n_tasks = self.object.tasks.count()
+        self.object.n_done = self.object.tasks.closed().count()
         self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
 
         context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done
@@ -291,13 +291,13 @@ class WorkflowListView(WorkflowViewBase, ListView):
 
         for w in workflows:
             w.task_counts = {s['tasks__state']: s['n_tasks'] for s in task_stats if s['id'] == w.id}
-            w.task_counts['total'] = sum(x for x in w.task_counts.itervalues()) - \
-                                     w.task_counts.get('cancelled', 0)
+            w.task_counts['total'] = sum(x for x in w.task_counts.itervalues())
+            w.task_counts['complete'] = w.task_counts.get('cancelled', 0) + w.task_counts.get('done', 0)
             w.task_counts['assigned'] = w.tasks.exclude(assigned_to=None).count()
             if w.task_counts['assigned'] > 0:
                 w.task_counts['open'] -= w.task_counts['assigned']
-            w.pct_complete = w.task_counts.get('done', 0) / (w.task_counts['total'] or 1) * 100.0
+            w.pct_complete = w.task_counts['complete'] / (w.task_counts['total'] or 1) * 100.0
 
-            w.task_charts = [(s, w.task_counts.get(s, 0)) for s in ['open', 'assigned', 'pending_review']]
+            w.task_charts = [(s, w.task_counts.get(s, 0)) for s in ['open', 'assigned', 'pending_review', 'cancelled']]
 
         return context

@@ -245,12 +245,28 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
-                action.send(user, verb=verb, action_object=task,
-                            place_code=task.place.place_code)
                 if verb == 'submitted':
+                    task.last_assigned_to = task.assigned_to
                     task.assigned_to = None
+                    action.send(user, verb=verb, action_object=task,
+                                place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been submitted for review" % task.title)
+                elif verb == 'unsubmitted':
+                    assignee = task.last_assigned_to
+                    task.assigned_to = assignee
+                    if user.id == assignee.id:
+                        action.send(user, verb='unsubmitted and picked up', action_object=task,
+                                    place_code=task.place.place_code)
+                        messages.success(request, u"You have reopened and picked up the task '%s'" % task.title)
+                    else:
+                        action.send(user, verb='unsubmitted and reassigned', action_object=task,
+                                    target=assignee,
+                                    place_code=task.place.place_code)
+                        messages.success(request, u"Task '%s' has been reopened and reassigned" % task.title)
+
                 else:
+                    action.send(user, verb=verb, action_object=task,
+                                place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()

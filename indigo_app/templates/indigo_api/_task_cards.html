@@ -4,7 +4,7 @@
       <div class="col task-list-column">
         <h6 class="text-center mb-4">
           <span class="badge task-badge task-badge-{{ col.badge }}"><i class="fas fa-sm fa-fw task-icon-{{ col.badge }}"></i></span>
-          {{ col.title }}
+          {{ col.title }} <span class="text-muted">({{ col.tasks|length }})</span>
         </h6>
 
         {% for task in col.tasks %}
@@ -29,7 +29,7 @@
 
               {% if task.document %}
                 <div>
-                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
+                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</span><br>
                   <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
                 </div>
               {% elif task.work %}

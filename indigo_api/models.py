@@ -1059,6 +1059,7 @@ class Task(models.Model):
     state = FSMField(default='open')
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
 
     created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
@@ -1079,6 +1080,12 @@ class Task(models.Model):
 
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):
             self.work = None
+
+    def potential_assignees(self):
+        potential_assignees = User.objects.filter(editor__permitted_countries=self.country)
+        if self.assigned_to:
+            potential_assignees = potential_assignees.exclude(id=self.assigned_to.id)
+        return potential_assignees
 
     # submit for review
     def may_submit(self, view):
@@ -1137,7 +1144,10 @@ class Task(models.Model):
     @classmethod
     def task_columns(cls, required_groups, tasks):
         def grouper(task):
-            return task.state
+            if task.state == 'open' and task.assigned_to:
+                return 'assigned'
+            else:
+                return task.state
 
         tasks = sorted(tasks, key=grouper)
         tasks = {state: list(group) for state, group in groupby(tasks, key=grouper)}
@@ -1146,20 +1156,20 @@ class Task(models.Model):
         groups = {}
         for key in required_groups:
             groups[key] = {
-                'title': key.replace('_', ' ').title(),
+                'title': key.replace('_', ' ').capitalize(),
                 'badge': key,
             }
 
         for key, group in tasks.iteritems():
             if key not in groups:
                 groups[key] = {
-                    'title': key.replace('_', ' ').title(),
+                    'title': key.replace('_', ' ').capitalize(),
                     'badge': key,
                 }
             groups[key]['tasks'] = group
 
         # enforce column ordering
-        return [groups.get(g) for g in ['open', 'pending_review', 'done', 'cancelled'] if g in groups]
+        return [groups.get(g) for g in ['open', 'assigned', 'pending_review', 'done', 'cancelled'] if g in groups]
 
 
 @receiver(signals.post_save, sender=Task)

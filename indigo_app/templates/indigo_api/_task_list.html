@@ -10,7 +10,11 @@
           </div>
         {% endif %}
         <div class="col text-center">
-          <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+          {% if task.assigned_to and task.state != 'pending_review' %}
+            <span class="badge task-badge task-badge-assigned" title="assigned"><i class="fas fa-fw task-icon-assigned"></i></span><br>
+          {% else %}
+            <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+          {% endif %}
           <span class="text-muted">#{{ task.pk }}</span>
         </div>
 

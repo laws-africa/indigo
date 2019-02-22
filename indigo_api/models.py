@@ -412,7 +412,9 @@ def publication_document_filename(instance, filename):
 
 class PublicationDocument(models.Model):
     work = models.OneToOneField(Work, related_name='publication_document', null=False, on_delete=models.CASCADE)
+    # either file or trusted_url should be provided
     file = models.FileField(upload_to=publication_document_filename)
+    #trusted_url = models.URLField(null=True, blank=True)
     size = models.IntegerField()
     filename = models.CharField(max_length=255)
     mime_type = models.CharField(max_length=255)

@@ -32,10 +32,12 @@
       'click .delete-commencing-work': 'deleteCommencingWork',
       'click .delete-publication-document': 'deletePublicationDocument',
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
+      'click .attach-publication-url': 'attachPublicationUrl',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
     publicationDocumentTemplate: '#publication-document-template',
+    publicationUrlTemplate: '#publication-document-url-template',
     bindings: {
       // these are handled directly by the HTML form
       '#id_work-title': 'title',
@@ -108,6 +110,7 @@
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
       this.publicationDocumentTemplate = Handlebars.compile($(this.publicationDocumentTemplate).html());
+      this.publicationUrlTemplate = Handlebars.compile($(this.publicationUrlTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.originalFrbrUri = this.model.get('frbr_uri');
@@ -272,32 +275,23 @@
     publicationChanged: function() {
       var date = this.model.get('publication_date'),
           number = this.model.get('publication_number'),
-          name = this.model.get('publication_name'),
+          publication = this.model.get('publication_name'),
           country = this.model.get('country'),
-          $ul = this.$('.work-publication-links');
+          $container = this.$('.work-publication-links'),
+          template = this.publicationUrlTemplate;
 
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
                   '?date=' + encodeURIComponent(date) + 
-                  '&name=' + encodeURIComponent(name) +
+                  '&publication=' + encodeURIComponent(name) +
                   '&number=' + encodeURIComponent(number);
 
-        $ul.empty();
+        // TODO: if there is no publication attached yet, and we get one match, use it
 
         $.getJSON(url)
           .done(function(response) {
-            response.publications.forEach(function(pub) {
-              var li = document.createElement('li'),
-                  a = document.createElement('a');
-
-              a.innerText = pub.title || pub.url;
-              a.setAttribute('href', pub.url);
-              a.setAttribute('target', '_blank');
-              a.setAttribute('rel', 'noreferrer');
-
-              li.appendChild(a);
-              $ul.append(li);
-            });
+            $container.find('.publication-url').remove();
+            $container.prepend(template(response));
           });
       }
     },
@@ -313,6 +307,17 @@
           filename: file.name,
         });
       }
+    },
+
+    attachPublicationUrl: function(e) {
+      var elem = e.currentTarget.parentElement;
+
+      this.model.set('publication_document', {
+        size: parseInt(elem.getAttribute('data-size')),
+        mime_type: elem.getAttribute('data-mime-type'),
+        trusted_url: elem.getAttribute('data-url'),
+        filename: elem.getAttribute('data-url'),
+      });
     },
 
     publicationDocumentChanged: function() {

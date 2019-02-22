@@ -293,6 +293,8 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
             messages.success(request, u"Task '%s' has been unassigned" % task.title)
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
+            if task.country not in assignee.editor.permitted_countries.all():
+                raise PermissionDenied
             task.assigned_to = assignee
             if user.id == assignee.id:
                 action.send(user, verb='picked up', action_object=task,

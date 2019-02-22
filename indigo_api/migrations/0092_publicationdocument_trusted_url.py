@@ -8,7 +8,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0090_publication_doc_filename'),
+        ('indigo_api', '0091_task_last_assigned_to'),
     ]
 
     operations = [

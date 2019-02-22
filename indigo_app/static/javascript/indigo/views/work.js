@@ -278,7 +278,8 @@
           publication = this.model.get('publication_name'),
           country = this.model.get('country'),
           $container = this.$('.work-publication-links'),
-          template = this.publicationUrlTemplate;
+          template = this.publicationUrlTemplate,
+          model = this.model;
 
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
@@ -286,11 +287,9 @@
                   '&publication=' + encodeURIComponent(name) +
                   '&number=' + encodeURIComponent(number);
 
-        // TODO: if there is no publication attached yet, and we get one match, use it
-
         $.getJSON(url)
           .done(function(response) {
-            $container.find('.publication-url').remove();
+            $container.find('.publication-url, .h6').remove();
             $container.prepend(template(response));
           });
       }
@@ -317,6 +316,7 @@
         mime_type: elem.getAttribute('data-mime-type'),
         trusted_url: elem.getAttribute('data-url'),
         filename: elem.getAttribute('data-url'),
+        url: elem.getAttribute('data-url'),
       });
     },
 
@@ -327,10 +327,15 @@
       if (pub_doc) {
         pub_doc.prettySize = Indigo.formatting.prettyFileSize(pub_doc.size);
         wrapper.append(this.publicationDocumentTemplate(pub_doc));
-        this.$('#id_work-publication_document_file').hide();
-        this.$('#id_work-delete_publication_document').val('');
+        this.$('.publication-document-file').hide();
+        this.$('#id_work-delete_publication_document').val(pub_doc.trusted_url ? 'on' : '');
+
+        // from the trusted url, will be ignored if we've attached a file
+        this.$('#id_work-publication_document_trusted_url').val(pub_doc.trusted_url);
+        this.$('#id_work-publication_document_mime_type').val(pub_doc.mime_type);
+        this.$('#id_work-publication_document_size').val(pub_doc.size);
       } else {
-        this.$('#id_work-publication_document_file').show();
+        this.$('.publication-document-file').show();
       }
     },
 

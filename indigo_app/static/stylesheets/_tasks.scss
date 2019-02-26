@@ -27,6 +27,10 @@
 .task-icon-cancelled:before { content: "\f00d"; }
 .task-icon-assigned:before { content: "\f4fc"; }
 
+.task-icon-assignee {
+  color: $primary;
+}
+
 .task-list-column {
   &:not(:last-child) {
     border-right: 1px solid $grey;

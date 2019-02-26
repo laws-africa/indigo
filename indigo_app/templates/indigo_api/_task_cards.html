@@ -1,3 +1,5 @@
+{% load humanize indigo_app %}
+
 <div class="bg-light p-3">
   <div class="row">
     {% for col in task_groups  %}
@@ -36,6 +38,18 @@
                 <div>
                   <span class="text-muted">{{ task.work.title }}</span><br>
                   <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                </div>
+              {% endif %}
+
+              {% if task.assigned_to %}
+                <div>
+                  <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
+                  <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
+                </div>
+              {% else %}
+                <div>
+                  <span class="badge task-badge" title="assignee"><i class="fas fa-user-times fa-xs task-icon-assignee"></i></span>
+                  <small class="text-muted">This task has not been assigned</small>
                 </div>
               {% endif %}
 

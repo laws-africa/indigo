@@ -18,7 +18,7 @@
               <li class="page-item"><a class="page-link disabled">Prev</a></li>
             {% endif %}
 
-            {% if page.number|add:'-5' > 1 %}
+            {% if page.number|add:'-5' > 0 %}
               <li class="page-item"><a class="page-link" href="?page={{ page.number|add:'-5' }}">&hellip;</a></li>
             {% endif %}
 
@@ -30,7 +30,7 @@
               {% endif %}
             {% endfor %}
 
-            {% if page.paginator.num_pages > page.number|add:'5' %}
+            {% if page.paginator.num_pages > page.number|add:'4' %}
               <li class="page-item"><a class="page-link" href="?page={{ page.number|add:'5' }}">&hellip;</a></li>
             {% endif %}
 

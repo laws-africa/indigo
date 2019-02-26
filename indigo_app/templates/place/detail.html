@@ -76,28 +76,21 @@
 
         <div class="float-left flex-fill">
           <div class="d-flex">
-            <div class="col-4">
-              <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
+            <div class="col-6">
+              <a href="/works{{ frbr_uri }}/"
+                 data-toggle="popover"
+                 data-trigger="hover"
+                 data-html="true"
+                 data-content="
+                        <h6>{{ title }}</h6>
+                        <p class='text-muted mb-1'>{{ frbr_uri }}</p>
+                        <p class='mb-1'>Published {{#if publication_name }} in {{ publication_name }} {{/if}} on {{ publication_date }}</p>
+                        {{#if assent_date }}<p class='mb-1'>Assented to on {{ assent_date }}</p>{{/if}}
+                        {{#if commencement_date }}<p class='mb-1'>Commenced on {{ commencement_date }} {{#if commencing_work }} by <a href='/works{{ commencing_work.frbr_uri }}'>{{ commencing_work.title }}</a>{{/if}}</p>{{/if}}
+                        {{#if repealed_date }}<p class='mb-1'>Repealed on {{ repealed_date }} by <a href='/works{{ repealed_by.frbr_uri }}'>{{ repealed_by.title }}</a></p>{{/if}}
+                         "
+              >{{ title }}</a><br>
               <span class="text-muted">{{ frbr_uri }}</span>
-            </div>
-
-            <div class="col-2">
-              <!-- Popover example -->
-              <button type="button"
-                      class="btn btn-warning"
-                      data-toggle="popover"
-                      data-html="true"
-                      title="<h6>{{ title }}</h6>
-                             <p class='text-muted mb-1'>{{ frbr_uri }}</p>"
-                      data-content="
-                        <h6>Promulgation date</h6><p class='mb-1'>2016-02-15</p>
-                        <h6>Assent</h6><p class='mb-1'>Assented to on 2019-02-27</p>
-                        <h6>Commencement</h6><p class='mb-1'>Commences on 2019-04-11</p><p class='mb-1'>Commenced by Work 1</p>
-                        <h6>Repeal</h6><p class='mb-1'>Repealed on 2020-03-05 by <a href='#'>Amendment for testing purposes</a></p>
-                                   "
-              >
-                View details
-              </button>
             </div>
 
             <div class="col-2">

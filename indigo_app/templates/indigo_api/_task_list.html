@@ -50,11 +50,6 @@
             <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
             <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
           </div>
-          {% else %}
-          <div>
-            <span class="badge task-badge" title="assignee"><i class="fas fa-user-times fa-xs task-icon-assignee"></i></span>
-            <small class="text-muted">This task has not been assigned</small>
-          </div>
           {% endif %}
         </div>
       </div>

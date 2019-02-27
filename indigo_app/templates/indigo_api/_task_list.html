@@ -45,6 +45,12 @@
               {% endif %}
             </small>
           </div>
+          {% if task.assigned_to %}
+          <div>
+            <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
+            <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
+          </div>
+          {% endif %}
         </div>
       </div>
     {% endfor %}

@@ -297,7 +297,7 @@ class ParseView(APIView):
 class RenderView(APIView):
     """ Support for rendering a document on the server.
     """
-    permission_classes = DEFAULT_PERMS
+    permission_classes = ()
     coverpage_only = False
 
     def post(self, request, format=None):

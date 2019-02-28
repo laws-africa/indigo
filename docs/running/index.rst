@@ -32,7 +32,7 @@ languages. It takes care of all this for you and we highly recommend using them.
 Installing Indigo Locally
 -------------------------
 
-1. Ensure you have Python 2.7 and `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ installed3
+1. Ensure you have Python 2.7 and `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ installed
 2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python, Ruby and Java described in it::
 
     $ git clone https://github.com/laws-africa/example-indigo
@@ -57,17 +57,17 @@ Installing Indigo Locally
     $ python manage.py migrate
     $ python manage.py update_countries_plus
 
-6. Then create the superuser::
+7. Then create the superuser::
 
     $ python manage.py createsuperuser
 
-7. Finally, run the server::
+8. Finally, run the server::
 
     $ python manage.py runserver
 
-8. Visit the website to login: http://localhost:8000/
+9. Visit the website to login: http://localhost:8000/
 
-9. You can visit the admin interface to add your own country details and create new users: http://localhost:8000/admin
+10. You can visit the admin interface to add your own country details and create new users: http://localhost:8000/admin
 
 Ruby dependencies
 .................

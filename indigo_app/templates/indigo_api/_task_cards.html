@@ -1,4 +1,5 @@
 {% load humanize indigo_app %}
+{% load account %}
 
 <div class="bg-light p-3">
   <div class="row">
@@ -46,11 +47,23 @@
                   <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
                   <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
                 </div>
+              {% elif task.state == 'open' or task.state == 'pending_review' %}
+                <form method="POST">
+                  {% csrf_token %}
+                  {% if task.potential_assignees %}
+                  <div class="dropdown">
+                    <button class="btn btn-outline-primary mt-2 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      Assign to
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                      {% for potential_assignee in task.potential_assignees %}
+                      <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=workflow.pk %}">{% user_display potential_assignee %}</button>
+                      {% endfor %}
+                    </div>
+                  </div>
+                  {% endif %}
+                </form>
               {% endif %}
-
-              <div class="mt-2">
-                <button class="btn btn-outline-primary btn-sm">Assign</button>
-              </div>
 
               <div>
                 {% for label in task.labels.all %}

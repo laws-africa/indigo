@@ -48,7 +48,7 @@
                   <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
                 </div>
               {% elif task.state == 'open' or task.state == 'pending_review' %}
-                <form method="POST">
+                <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
                   {% csrf_token %}
                   {% if task.potential_assignees %}
                   <div class="dropdown">
@@ -57,7 +57,7 @@
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                       {% for potential_assignee in task.potential_assignees %}
-                      <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=workflow.pk %}">{% user_display potential_assignee %}</button>
+                      <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" >{% user_display potential_assignee %}</button>
                       {% endfor %}
                     </div>
                   </div>

@@ -137,9 +137,9 @@ Dokku uses Docker to emulate a Heroku-like environment on your own servers (or c
     out.
 
 Installation on Heroku and Dokku are similar and only really differ in the commands that are run.
-We describe using Dokku below, and assume that you have already have dokku installed.
+We describe using Dokku below, and assume that you have already have `Dokku installed <http://dokku.viewdocs.io/dokku/getting-started/installation/>`_.
 
-1. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password `indigo`, and create a corresponding database called `indigo`. For example::
+1. Ensure you have PostgreSQL installed and running. Create a postgresql user with username `indigo`, and create a corresponding database called `indigo`. For example::
 
     $ sudo su - postgres -c 'createuser -d -P indigo'
     $ sudo su - postgres -c 'createdb indigo'
@@ -150,10 +150,10 @@ We describe using Dokku below, and assume that you have already have dokku insta
 
 3. (optional) Create a new AWS S3 account and bucket for storing attachments. You'll need the AWS Access Key Id and AWS Secret Access Key in the next step. You can safely skip this step if you don't care about saving attachments just yet.
 
-4. Set config options::
+4. Set config options as follows (ensure you enter your correct database and AWS settings)::
 
     $ dokku config:set indigo \
-        DATABASE_URL=postgres://indigo:DATABASE-PASSWORD@DATABASE-HOST/indigo
+        DATABASE_URL=postgres://indigo:DATABASE-PASSWORD@DATABASE-HOST/indigo \
         DISABLE_COLLECTSTATIC=1 \
         DJANGO_DEBUG=false \
         DJANGO_SECRET_KEY=some random characters \

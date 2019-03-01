@@ -52,40 +52,42 @@
                 <div>
                   <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
                   <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
-                  <form method="POST">
-                    {% csrf_token %}
 
-                    {% if task.potential_assignees %}
+                  {% if perms.indigo_api.change_task %}
+                    <form method="POST">
+                      {% csrf_token %}
+
+                      <div class="dropdown">
+                        <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="uniasssignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Reassign
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="uniasssignDropdownMenuButton">
+                          <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
+                          {% for potential_assignee in task.potential_assignees %}
+                          <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </form>
+                  {% endif %}
+
+                </div>
+              {% elif task.state == 'open' or task.state == 'pending_review' %}
+                {% if perms.indigo_api.change_task and task.potential_assignees %}
+                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
+                    {% csrf_token %}
                     <div class="dropdown">
-                      <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="uniasssignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Reassign
+                      <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Assign to
                       </button>
-                      <div class="dropdown-menu" aria-labelledby="uniasssignDropdownMenuButton">
-                        <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         {% for potential_assignee in task.potential_assignees %}
-                        <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
+                        <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" >{% user_display potential_assignee %}</button>
                         {% endfor %}
                       </div>
                     </div>
-                    {% endif %}
                   </form>
-                </div>
-              {% elif task.state == 'open' or task.state == 'pending_review' %}
-                <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
-                  {% csrf_token %}
-                  {% if task.potential_assignees %}
-                  <div class="dropdown">
-                    <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                      Assign to
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                      {% for potential_assignee in task.potential_assignees %}
-                      <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" >{% user_display potential_assignee %}</button>
-                      {% endfor %}
-                    </div>
-                  </div>
-                  {% endif %}
-                </form>
+                {% endif %}
               {% endif %}
             </div>
           </div>

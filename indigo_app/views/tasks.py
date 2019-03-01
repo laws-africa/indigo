@@ -314,4 +314,4 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
     def get_redirect_url(self):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
-        return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})

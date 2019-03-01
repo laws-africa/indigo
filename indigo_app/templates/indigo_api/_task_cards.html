@@ -42,6 +42,12 @@
                 </div>
               {% endif %}
 
+              <div>
+                {% for label in task.labels.all %}
+                  <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+                {% endfor %}
+              </div>
+
               {% if task.assigned_to %}
                 <div>
                   <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
@@ -51,7 +57,7 @@
 
                     {% if task.potential_assignees %}
                     <div class="dropdown">
-                      <button class="btn btn-outline-danger mt-2 dropdown-toggle" type="button" id="uniasssignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="uniasssignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         Reassign
                       </button>
                       <div class="dropdown-menu" aria-labelledby="uniasssignDropdownMenuButton">
@@ -69,7 +75,7 @@
                   {% csrf_token %}
                   {% if task.potential_assignees %}
                   <div class="dropdown">
-                    <button class="btn btn-outline-primary mt-2 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                       Assign to
                     </button>
                     <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -81,11 +87,6 @@
                   {% endif %}
                 </form>
               {% endif %}
-              <div>
-                {% for label in task.labels.all %}
-                  <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
-                {% endfor %}
-              </div>
             </div>
           </div>
         {% endfor %}

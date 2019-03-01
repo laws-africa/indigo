@@ -62,9 +62,9 @@
                           Reassign
                         </button>
                         <div class="dropdown-menu" aria-labelledby="uniasssignDropdownMenuButton">
-                          <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
+                          <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}">Unassign</button>
                           {% for potential_assignee in task.potential_assignees %}
-                          <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
+                          <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}">{% user_display potential_assignee %}</button>
                           {% endfor %}
                         </div>
                       </div>
@@ -74,7 +74,7 @@
                 </div>
               {% elif task.state == 'open' or task.state == 'pending_review' %}
                 {% if perms.indigo_api.change_task and task.potential_assignees %}
-                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}">
+                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}">
                     {% csrf_token %}
                     <div class="dropdown">
                       <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

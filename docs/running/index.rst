@@ -67,7 +67,14 @@ Installing Indigo Locally
 
 9. Visit the website to login: http://localhost:8000/
 
-10. You can visit the admin interface to add your own country details and create new users: http://localhost:8000/admin
+10. Configure a country:
+
+   * Visit http://localhost:8000/admin
+   * Under **Indigo API** click Countries, then click Add Country in the top right corner
+   * Choose a country and primary language from the dropdown lists
+   * Click Save
+
+11. Now go back to http://localhost:8000/ and your country will be included in the list.
 
 Ruby dependencies
 .................

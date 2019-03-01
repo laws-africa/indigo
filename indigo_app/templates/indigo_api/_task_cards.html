@@ -52,7 +52,7 @@
                     {% if task.potential_assignees %}
                     <div class="dropdown">
                       <button class="btn btn-outline-danger mt-2 dropdown-toggle" type="button" id="uniasssignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Update assignee
+                        Reassign
                       </button>
                       <div class="dropdown-menu" aria-labelledby="uniasssignDropdownMenuButton">
                         <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>

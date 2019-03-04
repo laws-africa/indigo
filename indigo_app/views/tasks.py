@@ -266,6 +266,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                         messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
 
                 else:
+                    if verb == 'closed':
+                        task.assigned_to = None
                     action.send(user, verb=verb, action_object=task,
                                 place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been %s" % (task.title, verb))

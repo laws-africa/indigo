@@ -252,18 +252,18 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                     action.send(user, verb=verb, action_object=task,
                                 place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been submitted for review" % task.title)
-                elif verb == 'unsubmitted':
+                elif verb == 'unsubmitted' and task.last_assigned_to:
                     assignee = task.last_assigned_to
                     task.assigned_to = assignee
                     if user.id == assignee.id:
                         action.send(user, verb='unsubmitted and picked up', action_object=task,
                                     place_code=task.place.place_code)
-                        messages.success(request, u"You have reopened and picked up the task '%s'" % task.title)
+                        messages.success(request, u"You have unsubmitted and picked up the task '%s'" % task.title)
                     else:
                         action.send(user, verb='unsubmitted and reassigned', action_object=task,
                                     target=assignee,
                                     place_code=task.place.place_code)
-                        messages.success(request, u"Task '%s' has been reopened and reassigned" % task.title)
+                        messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
 
                 else:
                     action.send(user, verb=verb, action_object=task,

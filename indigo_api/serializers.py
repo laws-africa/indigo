@@ -185,10 +185,12 @@ class PublicationDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PublicationDocument
-        fields = ('url', 'filename', 'mime_type', 'size')
+        fields = ('url', 'filename', 'mime_type', 'size', 'trusted_url')
         read_only_fields = fields
 
     def get_url(self, instance):
+        if instance.trusted_url:
+            return instance.trusted_url
         return reverse('work_publication_document', kwargs={'frbr_uri': instance.work.frbr_uri, 'filename': instance.filename})
 
 

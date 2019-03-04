@@ -16,10 +16,18 @@ class WorkForm(forms.ModelForm):
         fields = (
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
+            'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
         )
 
+    # The user can provide either a file attachment, or a trusted
+    # remote URL with supporting data. The form sorts out which fields
+    # are applicable in each case.
     publication_document_file = forms.FileField(required=False)
     delete_publication_document = forms.BooleanField(required=False)
+
+    publication_document_trusted_url = forms.URLField(required=False)
+    publication_document_size = forms.IntegerField(required=False)
+    publication_document_mime_type = forms.CharField(required=False)
 
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)
@@ -28,25 +36,34 @@ class WorkForm(forms.ModelForm):
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
-        if pub_doc_file:
-            try:
-                pub_doc = self.instance.publication_document
-            except PublicationDocument.DoesNotExist:
-                pub_doc = PublicationDocument(work=self.instance)
+        pub_doc_url = self.cleaned_data['publication_document_trusted_url']
 
+        try:
+            pub_doc = self.instance.publication_document
+        except PublicationDocument.DoesNotExist:
+            pub_doc = None
+
+        if pub_doc_file:
+            if not pub_doc:
+                pub_doc = PublicationDocument(work=self.instance)
+            pub_doc.trusted_url = None
             pub_doc.file = pub_doc_file
             pub_doc.size = pub_doc_file.size
-            # we force a particular filename
-            pub_doc.filename = 'publication-document.pdf'
             pub_doc.mime_type = pub_doc_file.content_type
-
             pub_doc.save()
 
-        if self.cleaned_data['delete_publication_document']:
-            try:
-                self.instance.publication_document.delete()
-            except PublicationDocument.DoesNotExist:
-                pass
+        elif pub_doc_url:
+            if not pub_doc:
+                pub_doc = PublicationDocument(work=self.instance)
+            pub_doc.file = None
+            pub_doc.trusted_url = pub_doc_url
+            pub_doc.size = self.cleaned_data['publication_document_size']
+            pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
+            pub_doc.save()
+
+        elif self.cleaned_data['delete_publication_document']:
+            if pub_doc:
+                pub_doc.delete()
 
 
 class DocumentForm(forms.ModelForm):

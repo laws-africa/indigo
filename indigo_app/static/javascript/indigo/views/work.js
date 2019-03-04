@@ -32,10 +32,12 @@
       'click .delete-commencing-work': 'deleteCommencingWork',
       'click .delete-publication-document': 'deletePublicationDocument',
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
+      'click .attach-publication-url': 'attachPublicationUrl',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
     publicationDocumentTemplate: '#publication-document-template',
+    publicationUrlTemplate: '#publication-document-url-template',
     bindings: {
       // these are handled directly by the HTML form
       '#id_work-title': 'title',
@@ -108,6 +110,7 @@
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
       this.publicationDocumentTemplate = Handlebars.compile($(this.publicationDocumentTemplate).html());
+      this.publicationUrlTemplate = Handlebars.compile($(this.publicationUrlTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.originalFrbrUri = this.model.get('frbr_uri');
@@ -272,32 +275,22 @@
     publicationChanged: function() {
       var date = this.model.get('publication_date'),
           number = this.model.get('publication_number'),
-          name = this.model.get('publication_name'),
+          publication = this.model.get('publication_name'),
           country = this.model.get('country'),
-          $ul = this.$('.work-publication-links');
+          $container = this.$('.work-publication-links'),
+          template = this.publicationUrlTemplate,
+          model = this.model;
 
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
                   '?date=' + encodeURIComponent(date) + 
-                  '&name=' + encodeURIComponent(name) +
+                  '&publication=' + encodeURIComponent(name) +
                   '&number=' + encodeURIComponent(number);
-
-        $ul.empty();
 
         $.getJSON(url)
           .done(function(response) {
-            response.publications.forEach(function(pub) {
-              var li = document.createElement('li'),
-                  a = document.createElement('a');
-
-              a.innerText = pub.title || pub.url;
-              a.setAttribute('href', pub.url);
-              a.setAttribute('target', '_blank');
-              a.setAttribute('rel', 'noreferrer');
-
-              li.appendChild(a);
-              $ul.append(li);
-            });
+            $container.find('.publication-url, .h6').remove();
+            $container.prepend(template(response));
           });
       }
     },
@@ -315,6 +308,18 @@
       }
     },
 
+    attachPublicationUrl: function(e) {
+      var elem = e.currentTarget.parentElement;
+
+      this.model.set('publication_document', {
+        size: parseInt(elem.getAttribute('data-size')),
+        mime_type: elem.getAttribute('data-mime-type'),
+        trusted_url: elem.getAttribute('data-url'),
+        filename: elem.getAttribute('data-url'),
+        url: elem.getAttribute('data-url'),
+      });
+    },
+
     publicationDocumentChanged: function() {
       var pub_doc = this.model.get('publication_document'),
           wrapper = this.$('.publication-document-wrapper').empty();
@@ -322,10 +327,15 @@
       if (pub_doc) {
         pub_doc.prettySize = Indigo.formatting.prettyFileSize(pub_doc.size);
         wrapper.append(this.publicationDocumentTemplate(pub_doc));
-        this.$('#id_work-publication_document_file').hide();
-        this.$('#id_work-delete_publication_document').val('');
+        this.$('.publication-document-file').hide();
+        this.$('#id_work-delete_publication_document').val(pub_doc.trusted_url ? 'on' : '');
+
+        // from the trusted url, will be ignored if we've attached a file
+        this.$('#id_work-publication_document_trusted_url').val(pub_doc.trusted_url);
+        this.$('#id_work-publication_document_mime_type').val(pub_doc.mime_type);
+        this.$('#id_work-publication_document_size').val(pub_doc.size);
       } else {
-        this.$('#id_work-publication_document_file').show();
+        this.$('.publication-document-file').show();
       }
     },
 

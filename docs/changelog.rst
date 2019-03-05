@@ -16,10 +16,11 @@ This is the first major release of Indigo with over a year of active development
 * FEATURE: Assignable tasks and workflows.
 * FEATURE: Social/oauth login supported.
 * FEATURE: Localisation support for different languages and legal traditions.
-* BREAKING: Templates for localised rendering have moved to `templates/indigo_api/akn/`
+* FEATURE: badge-based permissions system
+* BREAKING: Templates for localised rendering have moved to ``templates/indigo_api/akn/``
 * BREAKING: The LIME editor has been removed.
 * BREAKING: content API for published documents is now a separate module and versioned under /v1/
-* BREAKING: some models have moved from `indigo_app` to `indigo_api`, you may need to updated your references appropriately.
+* BREAKING: some models have moved from ``indigo_app`` to ``indigo_api``, you may need to updated your references appropriately.
 
 2.0 (6 April 2017)
 ------------------

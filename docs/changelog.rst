@@ -4,15 +4,22 @@ Changelog
 3.0 (?)
 -------
 
+This is the first major release of Indigo with over a year of active development. Upgrade to this version by installing updated dependencies and running migrations.
+
 * FEATURE: support images in documents
 * FEATURE: download as XML
 * FEATURE: annotations/comments on documents
 * FEATURE: download documents as ZIP archives
-* You can now highlight lines of text in the editor and transform them into a table, using the Edit > Insert Table menu item.
-* Edit menu with Find, Replace, Insert Table, Insert Image, etc.
-* Presence indicators for other users editing the same document
-* The LIME editor has been removed
-* BREAKING: content API for published documents is now versioned under /v1/
+* FEATURE: You can now highlight lines of text in the editor and transform them into a table, using the Edit > Insert Table menu item.
+* FEATURE: Edit menu with Find, Replace, Insert Table, Insert Image, etc.
+* FEATURE: Presence indicators for other users editing the same document.
+* FEATURE: Assignable tasks and workflows.
+* FEATURE: Social/oauth login supported.
+* FEATURE: Localisation support for different languages and legal traditions.
+* BREAKING: Templates for localised rendering have moved to `templates/indigo_api/akn/`
+* BREAKING: The LIME editor has been removed.
+* BREAKING: content API for published documents is now a separate module and versioned under /v1/
+* BREAKING: some models have moved from `indigo_app` to `indigo_api`, you may need to updated your references appropriately.
 
 2.0 (6 April 2017)
 ------------------

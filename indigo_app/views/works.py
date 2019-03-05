@@ -716,3 +716,8 @@ class ImportDocumentView(WorkViewBase, FormView):
         AttachmentSerializer(context={'document': document}).create({'file': upload})
 
         return JsonResponse({'location': reverse('document', kwargs={'doc_id': document.id})})
+
+
+class WorkPopupView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/work_popup.html'
+

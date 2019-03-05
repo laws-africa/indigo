@@ -66,6 +66,7 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
+      "stub": true,
       "frbr_uri": "/za/act/2010/2"
     }
   },

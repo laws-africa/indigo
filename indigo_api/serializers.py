@@ -262,7 +262,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'tags', 'amendments',
+            'language', 'tags', 'amendments',
             'repeal',
 
             'links',

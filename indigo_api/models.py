@@ -586,9 +586,6 @@ class Document(models.Model):
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
     expression_date = models.DateField(null=False, blank=False, help_text="Date of publication or latest amendment")
 
-    stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
-    """ Is this a stub without full content? """
-
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
 
     # freeform tags via django-taggit

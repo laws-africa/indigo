@@ -107,7 +107,6 @@ class EditWorkView(WorkViewBase, UpdateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
-    template_name_suffix = '_detail'
     permission_required = ('indigo_api.change_work',)
 
     def get_context_data(self, **kwargs):

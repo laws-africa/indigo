@@ -161,11 +161,11 @@
 
       // filter by stub
       if (filters.stub) {
-        var st = {
+        var stub = {
           excl: false,
           only: true,
         }[filters.stub];
-        works = _.filter(works, function(work) { return work.get('stub') == st; });
+        works = _.filter(works, function(work) { return work.get('stub') == stub; });
       }
 
       // filter by subtype

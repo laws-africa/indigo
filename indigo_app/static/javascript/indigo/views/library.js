@@ -26,6 +26,7 @@
       'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
+      'change .filter-stub': 'filterByStub',
       'change .sortby': 'changeSort',
     },
 
@@ -38,8 +39,9 @@
       this.filters = new Backbone.Model({
         country: Indigo.Preloads.country_code,
         tags: [],
-        status: 'all',
+        status: ['draft', 'published'],
         search: null,
+        stub: 'excl',
       });
       this.sortField = 'updated_at';
       this.sortDesc = true;
@@ -66,18 +68,21 @@
     },
 
     loadState: function() {
-      var 
-          tags = Indigo.queryParams.tags;
+      var tags = Indigo.queryParams.tags;
       if (tags) {
         tags = tags.split(',');
       }
 
       this.filters.set({
         country: this.filters.get('country'),
-        status: Indigo.queryParams.status || 'all',
+        status: (Indigo.queryParams.status || 'draft,published').split(','),
         subtype: Indigo.queryParams.subtype,
         tags: tags || [],
+        stub: Indigo.queryParams.stub || 'excl',
       });
+
+      this.$('.filter-stub').selectpicker('val', this.filters.get('stub'));
+      this.$('.filter-status').selectpicker('val', this.filters.get('status'));
     },
 
     changeSort: function(e) {
@@ -154,6 +159,15 @@
         active: !!filters.subtype,
       });
 
+      // filter by stub
+      if (filters.stub) {
+        var st = {
+          excl: false,
+          only: true,
+        }[filters.stub];
+        works = _.filter(works, function(work) { return work.get('stub') == st; });
+      }
+
       // filter by subtype
       if (filters.subtype) {
         var st = filters.subtype == '-' ? null : filters.subtype;
@@ -165,11 +179,14 @@
         docs[work.get('id')] = work.documents().models;
       });
 
-      if (filters.status !== 'all') {
+      if (filters.status) {
+        var draft = _.contains(filters.status, 'draft'),
+            published = _.contains(filters.status, 'published');
+
         // filter documents by status
         works = filterWorksByDocs(function(doc) {
-          return (filters.status === "draft" && doc.get('draft') ||
-                  filters.status === "published" && !doc.get('draft'));
+          return (draft && doc.get('draft') ||
+                  published && !doc.get('draft'));
         });
       }
 
@@ -258,7 +275,14 @@
 
     filterByStatus: function(e) {
       this.filters.set({
-        status: $(e.currentTarget).val(),
+        status: $(e.target).val() || ['draft', 'published'],
+        tags: [],
+      });
+    },
+
+    filterByStub: function(e) {
+      this.filters.set({
+        stub: $(e.target).val(),
         tags: [],
       });
     },
@@ -280,12 +304,6 @@
         option.selected = type.active;
         select.add(option);
       });
-
-      // status
-      var status = this.filters.get('status');
-      this.$('.filter-status-all').toggleClass('active btn-primary', status == 'all');
-      this.$('.filter-status-published').toggleClass('active btn-info', status == 'published');
-      this.$('.filter-status-draft').toggleClass('active btn-warning', status == 'draft');
 
       $('#filter-tags').html(this.template({
         tags: this.summary.tags,

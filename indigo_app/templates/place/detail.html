@@ -18,17 +18,17 @@
         </div>
 
         <div class="mr-2">
-          <div class="btn-group btn-group-toggle" data-toggle="buttons">
-            <label class="btn filter-status-all btn-primary active">
-              <input type="radio" name="options" autocomplete="off" class="filter-status" value="all" checked>All
-            </label>
-            <label class="btn filter-status-published">
-              <input type="radio" name="options" autocomplete="off" class="filter-status" value="published"><i class="fas fa-circle fa-fw published"></i>Published
-            </label>
-            <label class="btn filter-status-draft">
-              <input type="radio" name="options" autocomplete="off" class="filter-status" value="draft"><i class="fas fa-circle fa-fw draft"></i>Draft
-            </label>
-          </div>
+          <select class="selectpicker filter-stub" data-style="btn-outline-secondary" data-width="auto">
+            <option value="excl">Exclude stubs</option>
+            <option value="only">Only stubs</option>
+          </select>
+        </div>
+
+        <div class="mr-2">
+          <select class="selectpicker filter-status" multiple data-style="btn-outline-secondary" data-width="auto">
+            <option value="published" selected data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
+            <option value="draft" selected data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
+          </select>
         </div>
 
         <div class="mr-3 pr-3 border-right">

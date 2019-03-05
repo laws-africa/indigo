@@ -77,7 +77,11 @@
         <div class="float-left flex-fill">
           <div class="d-flex">
             <div class="col-6">
-              <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
+              <a href="/works{{ frbr_uri }}/">{{ title }}</a>
+              {{#if stub}}
+              <span class="badge badge-info">stub</span>
+              <br>
+              {{/if}}
               <span class="text-muted">{{ frbr_uri }}</span>
             </div>
 
@@ -92,7 +96,7 @@
             </div>
 
             <div class="col-2">
-              {{#unless stub}}
+              {{#unless no_children}}
               <div>
                 <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ n_docs }}</strong></span>
                 {{#if n_annotations}}

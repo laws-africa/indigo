@@ -12,7 +12,10 @@
     {% endif %}
   </div>
 
-  <h3>{{ work.title }}</h3>
+  <h3>
+    {{ work.title }}
+    {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
+  </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
   {% block country %}

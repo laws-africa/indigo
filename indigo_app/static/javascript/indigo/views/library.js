@@ -123,18 +123,18 @@
       this.summary = {};
 
       // Helper to choose works by applying a predicate to each work's documents.
-      var filterWorksByDocs = function(predicate, testWork, testStubs) {
+      var filterWorksByDocs = function(predicate, testWork, returnStubs) {
         return _.filter(works, function(work) {
+          var id = work.get('id');
+          var isStub = work.get('stub') || !docs[id] || docs[id].length === 0;
+
           if (testWork && predicate(work)) return true;
 
+          if (returnStubs && isStub) return true;
+
           // test the documents
-          if (!work.get('stub') || testStubs) {
-            var id = work.get('id');
-            docs[id] = _.filter(docs[id], predicate);
-            return docs[id].length > 0;
-          } else {
-            return true;
-          }
+          docs[id] = _.filter(docs[id], predicate);
+          return docs[id].length > 0;
         });
       };
 
@@ -192,7 +192,7 @@
         works = filterWorksByDocs(function(doc) {
           return (draft && doc.get('draft') ||
                   published && !doc.get('draft'));
-        }, false, false);
+        }, false, true);
       }
 
       // count tags, sort in descending order
@@ -224,7 +224,7 @@
         // filter documents by tags
         works = filterWorksByDocs(function(doc) {
           return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
-        }, false, true);
+        }, false, false);
       }
 
       // do search on both works and docs
@@ -237,7 +237,7 @@
             var val = x.get(field);
             return val && val.toLowerCase().indexOf(needle) > -1;
           });
-        }, true, true); // true to also test the work, not just its docs
+        }, true, false); // true to also test the work, not just its docs
       }
 
       this.filteredWorks = works;

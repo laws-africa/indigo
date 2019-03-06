@@ -14,7 +14,7 @@
     {% for item in items %}
       <tr>
         <td><strong>{{ item.rel|capfirst }}</strong></td>
-        <td id="testing"><a href="{% url 'work' frbr_uri=item.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=item.work.frbr_uri %}">{{ item.work.title }}</a></td>
+        <td><a href="{% url 'work' frbr_uri=item.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=item.work.frbr_uri %}">{{ item.work.title }}</a></td>
         <td>{{ item.work.frbr_uri }}</td>
         <td>{{ item.work.year }}</td>
         <td>{{ item.work.number }}</td>

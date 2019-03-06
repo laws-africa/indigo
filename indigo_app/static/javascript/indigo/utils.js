@@ -32,6 +32,7 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
   if (_popupCache[url]) {
     popup(_popupCache[url]);
   } else {
+    console.log(url);
     $.get(url).then(function(html) {
       _popupCache[url] = html;
       popup(html);

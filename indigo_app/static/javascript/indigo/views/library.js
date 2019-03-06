@@ -123,14 +123,18 @@
       this.summary = {};
 
       // Helper to choose works by applying a predicate to each work's documents.
-      var filterWorksByDocs = function(predicate, testWork) {
+      var filterWorksByDocs = function(predicate, testWork, testStubs) {
         return _.filter(works, function(work) {
           if (testWork && predicate(work)) return true;
 
           // test the documents
-          var id = work.get('id');
-          docs[id] = _.filter(docs[id], predicate);
-          return docs[id].length > 0;
+          if (!work.get('stub') || testStubs) {
+            var id = work.get('id');
+            docs[id] = _.filter(docs[id], predicate);
+            return docs[id].length > 0;
+          } else {
+            return true;
+          }
         });
       };
 
@@ -165,7 +169,7 @@
           excl: false,
           only: true,
         }[filters.stub];
-        if (stub != null) works = _.filter(works, function(work) { return work.get('stub') == stub; });
+        if (stub !== undefined) works = _.filter(works, function(work) { return work.get('stub') == stub; });
       }
 
       // filter by subtype
@@ -188,7 +192,7 @@
         works = filterWorksByDocs(function(doc) {
           return (draft && doc.get('draft') ||
                   published && !doc.get('draft'));
-        });
+        }, false, false);
       }
 
       // count tags, sort in descending order
@@ -220,7 +224,7 @@
         // filter documents by tags
         works = filterWorksByDocs(function(doc) {
           return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
-        });
+        }, false, true);
       }
 
       // do search on both works and docs
@@ -233,7 +237,7 @@
             var val = x.get(field);
             return val && val.toLowerCase().indexOf(needle) > -1;
           });
-        }, true); // true to also test the work, not just its docs
+        }, true, true); // true to also test the work, not just its docs
       }
 
       this.filteredWorks = works;

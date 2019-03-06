@@ -20,10 +20,7 @@ $(function() {
 $('body').on('mouseenter', 'a[href^="/works/"]:not(.btn)', function() {
   var _this = this;
   $.get(this.href + 'popup').then(function(html) {
-    var content = $(html).text();
-    console.log(content)
-    // we probably want to cache html somewhere, for this work on this page
-    $(_this).popover({content: content}).popover('show');
+    $(_this).popover({content: html, html: true}).popover('show');
   });
   $('.popover').mouseleave(function () {
     $(_this).popover('hide');

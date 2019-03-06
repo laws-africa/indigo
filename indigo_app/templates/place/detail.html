@@ -77,19 +77,7 @@
         <div class="float-left flex-fill">
           <div class="d-flex">
             <div class="col-6">
-              <a href="/works{{ frbr_uri }}/"
-                 data-toggle="popover"
-                 data-trigger="manual"
-                 data-html="true"
-                 data-content="
-                        <h6>{{ title }}</h6>
-                        <p class='text-muted mb-1'>{{ frbr_uri }}</p>
-                        <p class='mb-1'>Published {{#if publication_name }} in {{ publication_name }} {{/if}} on {{ publication_date }}</p>
-                        {{#if assent_date }}<p class='mb-1'>Assented to on {{ assent_date }}</p>{{/if}}
-                        {{#if commencement_date }}<p class='mb-1'>Commenced on {{ commencement_date }} {{#if commencing_work }} by <a href='/works{{ commencing_work.frbr_uri }}'>{{ commencing_work.title }}</a>{{/if}}</p>{{/if}}
-                        {{#if repealed_date }}<p class='mb-1'>Repealed on {{ repealed_date }} by <a href='/works{{ repealed_by.frbr_uri }}'>{{ repealed_by.title }}</a></p>{{/if}}
-                         "
-              >{{ title }}</a><br>
+              <a href="/works{{ frbr_uri }}/">{{ title }}</a><br>
               <span class="text-muted">{{ frbr_uri }}</span>
             </div>
 

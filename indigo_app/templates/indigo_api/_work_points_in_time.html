@@ -113,7 +113,7 @@
                     {% endfor %}
                   </div>
                 </div>
-                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ pit.date|date:'Y-m-d' }}"><i class="fas fa-file-upload"></i> Import document</a>
+                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:'Y-m-d' }}"><i class="fas fa-file-upload"></i> Import document</a>
               </div>
             </form>
 

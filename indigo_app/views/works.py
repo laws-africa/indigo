@@ -481,6 +481,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
             works = self.get_works(table)
+            tasks = self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
 
@@ -560,6 +561,23 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['error_message'] = e.message
 
         return works
+
+    def get_tasks(self, works, form):
+        tasks = []
+        if form.cleaned_data.get('tasks'):
+            for work in works:
+                task = Task()
+                task.country = self.country
+                task.created_by_user = self.request.user
+                task.save()
+                task.title = "Test title"
+                task.description = "Test description"
+                task.locality = self.locality
+                task.work = work.get('work')
+                task.save()
+                tasks.append(task)
+
+        return tasks
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet

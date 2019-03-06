@@ -118,6 +118,10 @@ class BatchCreateWorkForm(forms.Form):
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
 
+    tasks = forms.MultipleChoiceField(choices=[
+        ('import', 'import'), ('upload', 'upload')
+    ], required=False)
+
 
 class ImportDocumentForm(forms.Form):
     file = forms.FileField()

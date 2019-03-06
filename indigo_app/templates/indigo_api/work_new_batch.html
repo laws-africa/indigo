@@ -75,6 +75,18 @@
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
+        <div class="form-group">
+          <label for="{{ form.tasks.id_for_label }}">{{ form.tasks.label }}</label>
+            <div class="form-check">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="{{ form.tasks.name }}" value="upload" {% if "upload" in form.tasks.value %}checked{% endif %}>
+                &nbsp;Upload publication document
+              </label>
+            </div>
+        </div>
+        {% for err in form.tasks.errors %}
+          <div class="form-text text-danger">{{ err }}</div>
+        {% endfor %}
       </div>
 
       <div class="card-footer">
@@ -85,10 +97,10 @@
         {% endif %}
       </div>
     </div>
+  </form>
 
-    <p></p>
 
-    <div class="card">
+    <div class="card mt-3">
 
       {% if not works %}
       <div class="card-body">
@@ -102,7 +114,6 @@
           <li>Click on 'Import works'!</li>
         </ul>
       </div>
-      {% endif %}
 
       <div class="card-body">
        <div class="col-md-8 m-auto">
@@ -111,9 +122,9 @@
          </div>
        </div>
       </div>
+      {% endif %}
 
     </div>
 
-  </form>
 </div>
 {% endblock %}

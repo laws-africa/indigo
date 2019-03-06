@@ -17,7 +17,7 @@ $(function() {
 });
 
 // Show popover when hovering on selected links
-$('body').on('mouseenter', 'a[href^="/works/"]:not(.btn)', function() {
+$('body').on('mouseenter', 'a[data-popup-url]', function() {
   var _this = this;
   $.get(this.href + 'popup').then(function(html) {
     $(_this).popover({content: html, html: true}).popover('show');

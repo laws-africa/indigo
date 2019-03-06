@@ -165,7 +165,7 @@
           excl: false,
           only: true,
         }[filters.stub];
-        works = _.filter(works, function(work) { return work.get('stub') == stub; });
+        if (stub != null) works = _.filter(works, function(work) { return work.get('stub') == stub; });
       }
 
       // filter by subtype

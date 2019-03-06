@@ -17,7 +17,7 @@ $(function() {
 });
 
 /* Show popover when hovering on selected links.
- * Links should have a 'data-popover-url' attribute.
+ * Links should have a 'data-popup-url' attribute.
  */
 var _popupCache = {};
 

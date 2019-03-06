@@ -17,12 +17,25 @@ $(function() {
 });
 
 // Show popover when hovering on selected links
+var _popupCache = {};
+
 $('body').on('mouseenter', 'a[data-popup-url]', function() {
   var _this = this;
   var url = $(this).data('popup-url');
-  $.get(url).then(function(html) {
+
+  function popup(html) {
     $(_this).popover({content: html, html: true}).popover('show');
-  });
+  }
+
+  if (_popupCache[url]) {
+    popup(_popupCache[url]);
+  } else {
+    $.get(url).then(function(html) {
+      _popupCache[url] = html;
+      popup(html);
+    });
+  }
+
   $('.popover').mouseleave(function () {
     $(_this).popover('hide');
   });
@@ -34,3 +47,5 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
     }
   }, 300);
 });
+
+

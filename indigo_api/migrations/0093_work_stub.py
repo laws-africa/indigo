@@ -7,11 +7,17 @@ from django.db import migrations, models
 
 def populate_stub(apps, schema_editor):
     Document = apps.get_model("indigo_api", "Document")
+    Work = apps.get_model("indigo_api", "Work")
     db_alias = schema_editor.connection.alias
 
     for doc in Document.objects.using(db_alias).filter(stub=True).all():
         doc.work.stub = True
         doc.work.save()
+
+    for work in Work.objects.using(db_alias).all():
+        if not work.amendments.exists() and not work.document_set.exists():
+            work.stub = True
+            work.save()
 
 
 class Migration(migrations.Migration):

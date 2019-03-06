@@ -16,7 +16,9 @@ $(function() {
   $('body').on('click', 'a[data-confirm], button[data-confirm]', handleConfirm);
 });
 
-// Show popover when hovering on selected links
+/* Show popover when hovering on selected links.
+ * Links should have a 'data-popover-url' attribute.
+ */
 var _popupCache = {};
 
 $('body').on('mouseenter', 'a[data-popup-url]', function() {

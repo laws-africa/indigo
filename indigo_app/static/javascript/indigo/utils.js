@@ -19,9 +19,8 @@ $(function() {
 // Show popover when hovering on selected links
 $('body').on('mouseenter', 'a[data-popup-url]', function() {
   var _this = this;
-  var popupUrl = $('a[data-popup-url]').attr('data-popup-url');
-
-  $.get(popupUrl).then(function(html) {
+  var url = $(this).data('popup-url');
+  $.get(url).then(function(html) {
     $(_this).popover({content: html, html: true}).popover('show');
   });
   $('.popover').mouseleave(function () {

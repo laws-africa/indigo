@@ -15,3 +15,24 @@ $(function() {
 
   $('body').on('click', 'a[data-confirm], button[data-confirm]', handleConfirm);
 });
+
+// Show popover when hovering on selected links
+$('body').on('mouseenter', 'a[href^="/works/"]:not(.btn)', function() {
+  var _this = this;
+  $.get(this.href + 'popup').then(function(html) {
+    var content = $(html).text();
+    console.log(content)
+    // we probably want to cache html somewhere, for this work on this page
+    $(_this).popover({content: content}).popover('show');
+  });
+  $('.popover').mouseleave(function () {
+    $(_this).popover('hide');
+  });
+}).on('mouseleave','a[href^="/works/"]:not(.btn)', function(){
+  var _this = this;
+  setTimeout(function () {
+    if (!$('.popover:hover').length) {
+      $(_this).popover('hide');
+    }
+  }, 300);
+});

@@ -197,23 +197,6 @@ window.Indigo.Preloads.document_annotations = {{ annotations_json|safe }};
 window.Indigo.Preloads.document_tasks = {{ document_tasks_json|safe }};
 window.Indigo.Preloads.work_tasks = {{ work_tasks_json|safe }};
 window.Indigo.Preloads.work_n_amendments = {{ work_n_amendments_json|safe }};
-
-$(function () {
-  $('[data-toggle="popover"]').mouseenter(function () {
-    var _this = this;
-    $(_this).popover('show');
-    $('.popover').mouseleave(function () {
-      $(_this).popover('hide');
-    });
-  }).mouseleave(function(){
-    var _this = this;
-    setTimeout(function () {
-      if (!$('.popover:hover').length) {
-        $(_this).popover('hide');
-      }
-    }, 300);
-  })
-})
-
 </script>
+
 {% endblock %}

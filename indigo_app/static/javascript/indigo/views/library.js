@@ -179,7 +179,8 @@
         docs[work.get('id')] = work.documents().models;
       });
 
-      if (filters.status) {
+      // stub works don't have any docs to filter on
+      if (filters.status && filters.stub != 'only') {
         var draft = _.contains(filters.status, 'draft'),
             published = _.contains(filters.status, 'published');
 

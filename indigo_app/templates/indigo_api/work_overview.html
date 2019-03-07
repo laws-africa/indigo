@@ -112,7 +112,7 @@
     </div>
   </div>
 
-  {% if work.stub and work.amendments.exists %}
+  {% if work.stub and work.document_set.exists %}
     <p class="alert alert-warning">
       <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub.
     </p>

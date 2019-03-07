@@ -472,6 +472,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
 
+    def get_context_data(self, **kwargs):
+        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+
+        context['batch_tasks'] = ['upload', 'import']
+
+        return context
+
     def form_valid(self, form):
         error = None
         works = None
@@ -564,16 +571,26 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         tasks = []
         if form.cleaned_data.get('tasks'):
             for work in works:
-                task = Task()
-                task.country = self.country
-                task.created_by_user = self.request.user
-                task.save()
-                task.title = "Test title"
-                task.description = "Test description"
-                task.locality = self.locality
-                task.work = work.get('work')
-                task.save()
-                tasks.append(task)
+                if work['status'] == 'success':
+                    for chosen_task in form.cleaned_data.get('tasks'):
+                        task = Task()
+                        task.country = self.country
+                        task.locality = self.locality
+                        task.created_by_user = self.request.user
+                        if chosen_task == 'import':
+                            task.title = 'import document'
+                            task.description = '''Import a point in time for this work; either the initial publication or a later consolidation.
+                            Make sure the document's expression date correctly reflects this.'''
+                        elif chosen_task == 'upload':
+                            task.title = 'upload publication document'
+                            task.description = '''Upload the publication document for this work.
+                            This will often be a pdf of the government gazette.'''
+
+                        # need to save before assigning work because of M2M relation
+                        task.save()
+                        task.work = work.get('work')
+                        task.save()
+                        tasks.append(task)
 
         return tasks
 

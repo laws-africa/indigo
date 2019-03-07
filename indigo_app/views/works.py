@@ -570,11 +570,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         task.country = self.country
                         task.locality = self.locality
                         task.created_by_user = self.request.user
-                        if chosen_task == 'import':
-                            task.title = 'import document'
+                        if chosen_task == 'import content':
+                            task.title = 'import content'
                             task.description = '''Import a point in time for this work; either the initial publication or a later consolidation.
                             Make sure the document's expression date correctly reflects this.'''
-                        elif chosen_task == 'upload':
+                        elif chosen_task == 'upload publication document':
                             task.title = 'upload publication document'
                             task.description = '''Upload the publication document for this work.
                             This will often be a pdf of the government gazette.'''

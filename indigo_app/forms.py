@@ -120,7 +120,7 @@ class BatchCreateWorkForm(forms.Form):
     ])
 
     tasks = forms.MultipleChoiceField(choices=[
-        ('import', 'import'), ('upload', 'upload')
+        ('import content', 'import'), ('upload publication document', 'upload')
     ], required=False)
 
 

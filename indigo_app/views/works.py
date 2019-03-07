@@ -563,7 +563,17 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         return works
 
     def get_tasks(self, works, form):
+        fake_tasks = {
+            'import content':
+                '''Import a point in time for this work; either the initial publication or a later consolidation.
+                            Make sure the document's expression date correctly reflects this.''',
+            'upload publication document':
+                '''Upload the publication document for this work.
+                            This will often be a pdf of the government gazette.'''
+        }
         tasks = []
+
+        # bulk create tasks on primary works
         if form.cleaned_data.get('primary_tasks'):
             for work in works:
                 if work['status'] == 'success' and not work['work'].stub:
@@ -572,14 +582,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         task.country = self.country
                         task.locality = self.locality
                         task.created_by_user = self.request.user
-                        if chosen_task == 'import content':
-                            task.title = 'import content'
-                            task.description = '''Import a point in time for this work; either the initial publication or a later consolidation.
-                            Make sure the document's expression date correctly reflects this.'''
-                        elif chosen_task == 'upload publication document':
-                            task.title = 'upload publication document'
-                            task.description = '''Upload the publication document for this work.
-                            This will often be a pdf of the government gazette.'''
+                        task.title = chosen_task
+                        for fake_task, description in fake_tasks.items():
+                            if chosen_task == fake_task:
+                                task.description = description
 
                         # need to save before assigning work because of M2M relation
                         task.save()
@@ -587,6 +593,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         task.save()
                         tasks.append(task)
 
+        # bulk create tasks on all works
         if form.cleaned_data.get('all_tasks'):
             for work in works:
                 if work['status'] == 'success':
@@ -595,14 +602,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         task.country = self.country
                         task.locality = self.locality
                         task.created_by_user = self.request.user
-                        if chosen_task == 'import content':
-                            task.title = 'import content'
-                            task.description = '''Import a point in time for this work; either the initial publication or a later consolidation.
-                            Make sure the document's expression date correctly reflects this.'''
-                        elif chosen_task == 'upload publication document':
-                            task.title = 'upload publication document'
-                            task.description = '''Upload the publication document for this work.
-                            This will often be a pdf of the government gazette.'''
+                        task.title = chosen_task
+                        for fake_task, description in fake_tasks.items():
+                            if chosen_task == fake_task:
+                                task.description = description
 
                         # need to save before assigning work because of M2M relation
                         task.save()

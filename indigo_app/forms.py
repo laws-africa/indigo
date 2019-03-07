@@ -17,6 +17,7 @@ class WorkForm(forms.ModelForm):
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
+            'stub',
         )
 
     # The user can provide either a file attachment, or a trusted
@@ -157,7 +158,7 @@ class TaskFilterForm(forms.Form):
 
         if self.cleaned_data.get('state'):
             if 'assigned' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']+['open'])
+                queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
                 if 'open' not in self.cleaned_data['state']:
                     queryset = queryset.exclude(state='open', assigned_to=None)
             else:

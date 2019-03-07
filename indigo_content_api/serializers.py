@@ -69,7 +69,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'repeal', 'amendments', 'points_in_time',
+            'language', 'repeal', 'amendments', 'points_in_time',
 
             'links',
         )

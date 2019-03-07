@@ -151,7 +151,6 @@ description of the English expression of Act 55 of 1998 as at 2014-01-07.
       "commencement_date": "1999-05-14",
       "assent_date": "1998-10-12",
       "language": "eng",
-      "stub": false,
       "repeal": null,
       "amendments": [
         {
@@ -212,7 +211,6 @@ publication_date    Date of original publication of the work.                   
 publication_name    Name of the publication in which the work was originally published.                 String
 publication_number  Number of the publication in which the work was originally published.               String
 repeal              Description of the repeal of this work, if it has been repealed.                    See below
-stub                Is this a stub work? Stub documents are generally empty.                            Boolean
 subtype             Subtype code of the work.                                                           String
 title               Short title of the work, in the appropriate language.                               String
 updated_at          Timestamp of when the work was last updated.                                        ISO8601

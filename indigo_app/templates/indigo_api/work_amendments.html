@@ -6,6 +6,13 @@
 {% block work-content %}
   <h4>Points in time</h4>
 
+  {% if work.stub %}
+    <p class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time.
+      {% if work.document_set.exists %}Either remove these points in time or don't mark this work as a stub.{% endif %}
+    </p>
+  {% endif %}
+
   {% block amendment_list %}
     <div class="work-amendments">
       {% include 'indigo_api/_work_points_in_time.html' with work=work editable=True %}

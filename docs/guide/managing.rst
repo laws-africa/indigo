@@ -81,9 +81,6 @@ Basic Details
 
 **Tags** is a free-form collection of tags for this document. Use tags to manage your documents during editing and even after publication. To add a new tag, click in the box, type a new tag and press enter or comma. You can add as many tabs as you like. To delete a tag, either backspace or click the **x** next to the tag's name.
 
-**Stub document** indicates that the document doesn't have all its content yet. This is useful when other documents reference this one but no source is available
-or the source has not been fully checked.
-
 .. note::
 
     Administrators can add new countries, languages and document subtypes through the Admin interface. Click on your name in the top-right corner and choose **Site Settings**.

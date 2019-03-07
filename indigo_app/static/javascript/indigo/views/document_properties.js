@@ -40,10 +40,6 @@
         onSet: emptyIsNull,
       },
       '#document_language': 'language',
-      '#document_stub': {
-        observe: 'stub',
-        onSet: bool,
-      },
     },
 
     initialize: function() {

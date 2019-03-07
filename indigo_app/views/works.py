@@ -107,7 +107,6 @@ class EditWorkView(WorkViewBase, UpdateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
-    template_name_suffix = '_detail'
     permission_required = ('indigo_api.change_work',)
 
     def get_context_data(self, **kwargs):
@@ -156,7 +155,6 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
-    template_name_suffix = '_detail'
     permission_required = ('indigo_api.add_work',)
 
     def get_form_kwargs(self):

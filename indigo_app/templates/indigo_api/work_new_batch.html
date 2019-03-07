@@ -81,8 +81,8 @@
           {% for task, _ in form.fields.primary_tasks.choices %}
             <div class="form-check">
               <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="{{ form.primary_tasks.name }}" id="{{ form.primary_tasks.id_for_label }}" value="{{ task }}" {% if task == 'import content' %}checked{% endif %}>
-                &nbsp;{{ task }}
+                <input class="form-check-input" type="checkbox" name="{{ form.primary_tasks.name }}" id="{{ form.primary_tasks.id_for_label }}" value="{{ task }}" {% if task == 'import content' or task == 'link commencement / amendments / repeal' %}checked{% endif %}>
+                &nbsp;{{ task|capfirst }}
               </label>
               <br>
             </div>
@@ -98,7 +98,7 @@
             <div class="form-check">
               <label class="form-check-label">
                 <input class="form-check-input" type="checkbox" name="{{ form.all_tasks.name }}" id="{{ form.all_tasks.id_for_label }}" value="{{ task }}" {% if task == 'upload publication document' %}checked{% endif %}>
-                &nbsp;{{ task }}
+                &nbsp;{{ task|capfirst }}
               </label>
               <br>
             </div>

@@ -563,10 +563,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         return works
 
     def get_tasks(self, works, form):
-        fake_tasks = {
+        possible_tasks = {
             'import content':
                 '''Import a point in time for this work; either the initial publication or a later consolidation.
                             Make sure the document's expression date correctly reflects this.''',
+            'link commencement / amendments / repeal':
+                '''Link the commencement and/or amendments and/or repeal works for this work.
+                            Go to 'Edit work' and/or 'Manage point in time' and use the spreadsheet for reference.''',
             'upload publication document':
                 '''Upload the publication document for this work.
                             This will often be a pdf of the government gazette.'''
@@ -578,9 +581,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             task.country = self.country
             task.locality = self.locality
             task.created_by_user = self.request.user
-            task.title = chosen_task
-            for fake_task, description in fake_tasks.items():
-                if chosen_task == fake_task:
+            task.title = chosen_task.capitalize()
+            for possible_task, description in possible_tasks.items():
+                if chosen_task == possible_task:
                     task.description = description
 
             # need to save before assigning work because of M2M relation

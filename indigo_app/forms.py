@@ -120,6 +120,7 @@ class BatchCreateWorkForm(forms.Form):
     ])
 
     possible_tasks = [
+        'link commencement / amendments / repeal',
         'import content',
         'upload publication document',
     ]

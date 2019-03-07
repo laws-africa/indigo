@@ -126,7 +126,7 @@ class BatchCreateWorkForm(forms.Form):
     ]
     primary_tasks = forms.MultipleChoiceField(choices=((x, x) for x in possible_tasks), required=False)
     all_tasks = forms.MultipleChoiceField(choices=((x, x) for x in possible_tasks), required=False)
-    add_to_workflow = forms.BooleanField()
+    add_to_workflow = forms.BooleanField(required=False)
 
 
 class ImportDocumentForm(forms.Form):

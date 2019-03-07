@@ -45,7 +45,7 @@
               </div>
               {% if work.publication_document %}
               <div>
-                <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+                <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
               </div>
               {% endif %}
             </dd>

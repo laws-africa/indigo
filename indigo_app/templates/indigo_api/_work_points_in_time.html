@@ -32,7 +32,7 @@
             {% if event.commencement_date %}
               <span class="text-muted"> – Commenced on publication
                 {% if work.commencing_work %}
-                  by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+                  by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
                 {% endif %}
               </span>
             {% endif %}
@@ -42,7 +42,7 @@
           <h6>
             Commenced
             {% if work.commencing_work %}
-              by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+              by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
             {% endif %}
           </h6>
         {% endif %}
@@ -50,7 +50,7 @@
         {% if event.repealed_date %}
           <h6>Repealed
             {% if work.repealed_by %}
-              by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+              by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
             {% endif %}
           </h6>
         {% endif %}
@@ -72,7 +72,7 @@
                 </div>
               {% endif %}
 
-              <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
+              <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
               <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
 
               <div class="form-inline edit-wrapper mb-3 collapse" id="amendment-form-{{ amendment.id }}">

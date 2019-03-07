@@ -45,6 +45,7 @@ urlpatterns = [
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/reopen$', workflows.WorkflowReopenView.as_view(), name='workflow_reopen'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/delete$', workflows.WorkflowDeleteView.as_view(), name='workflow_delete'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/workflows/(?P<pk>\d+)/tasks/(?P<task_pk>\d+)/remove$', workflows.WorkflowRemoveTaskView.as_view(), name='workflow_remove_task'),
+
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new/$', works.AddWorkView.as_view(), name='new_work'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/works/new-batch/$', works.BatchAddWorkView.as_view(), name='new_batch_work'),
 
@@ -52,6 +53,7 @@ urlpatterns = [
     url(r'^works(?P<frbr_uri>/\S+?)/amendments/new$', works.AddWorkAmendmentView.as_view(), name='new_work_amendment'),
     url(r'^works(?P<frbr_uri>/\S+?)/amendments/(?P<amendment_id>\d+)$', works.WorkAmendmentDetailView.as_view(), name='work_amendment_detail'),
     url(r'^works(?P<frbr_uri>/\S+?)/points-in-time/new$', works.AddWorkPointInTimeView.as_view(), name='new_work_point_in_time'),
+    url(r'^works(?P<frbr_uri>/\S+?)/popup$', works.WorkPopupView.as_view(), name='work_popup'),
     url(r'^works(?P<frbr_uri>/\S+?)/related/$', works.WorkRelatedView.as_view(), name='work_related'),
     url(r'^works(?P<frbr_uri>/\S+?)/import/$', works.ImportDocumentView.as_view(), name='import_document'),
     url(r'^works(?P<frbr_uri>/\S+?)/edit/$', works.EditWorkView.as_view(), name='work_edit'),

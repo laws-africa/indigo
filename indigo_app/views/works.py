@@ -535,6 +535,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
+                    if not row.get('primary'):
+                        work.stub = True
 
                     try:
                         work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
@@ -562,10 +564,33 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def get_tasks(self, works, form):
         tasks = []
-        if form.cleaned_data.get('tasks'):
+        if form.cleaned_data.get('primary_tasks'):
+            for work in works:
+                if work['status'] == 'success' and not work['work'].stub:
+                    for chosen_task in form.cleaned_data.get('primary_tasks'):
+                        task = Task()
+                        task.country = self.country
+                        task.locality = self.locality
+                        task.created_by_user = self.request.user
+                        if chosen_task == 'import content':
+                            task.title = 'import content'
+                            task.description = '''Import a point in time for this work; either the initial publication or a later consolidation.
+                            Make sure the document's expression date correctly reflects this.'''
+                        elif chosen_task == 'upload publication document':
+                            task.title = 'upload publication document'
+                            task.description = '''Upload the publication document for this work.
+                            This will often be a pdf of the government gazette.'''
+
+                        # need to save before assigning work because of M2M relation
+                        task.save()
+                        task.work = work.get('work')
+                        task.save()
+                        tasks.append(task)
+
+        if form.cleaned_data.get('all_tasks'):
             for work in works:
                 if work['status'] == 'success':
-                    for chosen_task in form.cleaned_data.get('tasks'):
+                    for chosen_task in form.cleaned_data.get('all_tasks'):
                         task = Task()
                         task.country = self.country
                         task.locality = self.locality

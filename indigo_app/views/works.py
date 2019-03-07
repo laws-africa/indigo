@@ -573,45 +573,35 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         }
         tasks = []
 
+        def make_task():
+            task = Task()
+            task.country = self.country
+            task.locality = self.locality
+            task.created_by_user = self.request.user
+            task.title = chosen_task
+            for fake_task, description in fake_tasks.items():
+                if chosen_task == fake_task:
+                    task.description = description
+
+            # need to save before assigning work because of M2M relation
+            task.save()
+            task.work = work.get('work')
+            task.save()
+            tasks.append(task)
+
         # bulk create tasks on primary works
         if form.cleaned_data.get('primary_tasks'):
             for work in works:
                 if work['status'] == 'success' and not work['work'].stub:
                     for chosen_task in form.cleaned_data.get('primary_tasks'):
-                        task = Task()
-                        task.country = self.country
-                        task.locality = self.locality
-                        task.created_by_user = self.request.user
-                        task.title = chosen_task
-                        for fake_task, description in fake_tasks.items():
-                            if chosen_task == fake_task:
-                                task.description = description
-
-                        # need to save before assigning work because of M2M relation
-                        task.save()
-                        task.work = work.get('work')
-                        task.save()
-                        tasks.append(task)
+                        make_task()
 
         # bulk create tasks on all works
         if form.cleaned_data.get('all_tasks'):
             for work in works:
                 if work['status'] == 'success':
                     for chosen_task in form.cleaned_data.get('all_tasks'):
-                        task = Task()
-                        task.country = self.country
-                        task.locality = self.locality
-                        task.created_by_user = self.request.user
-                        task.title = chosen_task
-                        for fake_task, description in fake_tasks.items():
-                            if chosen_task == fake_task:
-                                task.description = description
-
-                        # need to save before assigning work because of M2M relation
-                        task.save()
-                        task.work = work.get('work')
-                        task.save()
-                        tasks.append(task)
+                        make_task()
 
         return tasks
 

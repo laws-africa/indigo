@@ -120,9 +120,8 @@
   </form>
 
 
+  {% if not works %}
     <div class="card mt-3">
-
-      {% if not works %}
       <div class="card-body">
         Instructions:
         <ul>
@@ -142,9 +141,9 @@
          </div>
        </div>
       </div>
-      {% endif %}
-
     </div>
+  {% endif %}
+
 
 </div>
 {% endblock %}

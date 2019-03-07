@@ -59,7 +59,7 @@
               {% endif %}
 
               {% if work.commencing_work %}
-              <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+              <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
               {% endif %}
             </dd>
           </dl>
@@ -70,7 +70,7 @@
             {% if work.parent_work %}
             <dt>Parent</dt>
             <dd>
-              <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.parent_work.title }}</a>
+              <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
             </dd>
             {% endif %}
 

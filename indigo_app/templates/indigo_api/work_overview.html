@@ -12,7 +12,10 @@
     {% endif %}
   </div>
 
-  <h3>{{ work.title }}</h3>
+  <h3>
+    {{ work.title }}
+    {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
+  </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
   {% block country %}
@@ -108,6 +111,12 @@
       <a href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}" class="btn btn-primary">Manage points in time</a>
     </div>
   </div>
+
+  {% if work.stub and work.document_set.exists %}
+    <p class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub.
+    </p>
+  {% endif %}
 
   {% include 'indigo_api/_work_points_in_time.html' with work=work editable=False %}
   {% endblock %}

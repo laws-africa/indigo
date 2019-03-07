@@ -262,7 +262,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'tags', 'amendments',
+            'language', 'tags', 'amendments',
             'repeal',
 
             'links',
@@ -549,7 +549,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commencement_date', 'assent_date',
+            'commencement_date', 'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'commencing_work', 'amendments_url',
 

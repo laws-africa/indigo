@@ -57,7 +57,12 @@
     {{#each works}}
       <tr data-id="{{ id }}" class="{{#if chosen }}table-primary chosen{{/if}}">
         <td>{{ year }}</td>
-        <td>{{ title }}</td>
+        <td>
+          {{ title }}
+          {{#if stub}}
+          <span class="badge badge-info">stub</span>
+          {{/if}}
+        </td>
         <td class="frbr_uri">{{ frbr_uri }}</td>
       </tr>
     {{/each}}

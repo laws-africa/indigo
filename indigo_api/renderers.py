@@ -142,11 +142,10 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, no_stub_content=False, resolver=None):
+    def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None):
         self.template_name = template_name
         self.standalone = standalone
         self.coverpage = coverpage
-        self.no_stub_content = no_stub_content
         self.resolver = resolver or settings.RESOLVER_URL
         self.media_url = ''
 
@@ -165,9 +164,6 @@ class HTMLRenderer(object):
             if not self.standalone:
                 # we're done
                 return content_html
-        elif self.no_stub_content and document.stub:
-            # Stub
-            content_html = ''
         else:
             # the entire document
             content_html = renderer.render_xml(document.document_xml)
@@ -262,7 +258,6 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         request = renderer_context['request']
 
         renderer = HTMLRenderer()
-        renderer.no_stub_content = getattr(view, 'no_stub_content', False)
         renderer.standalone = request.GET.get('standalone') == '1'
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
         renderer.media_url = request.GET.get('media-url', '')
@@ -598,7 +593,6 @@ class PDFResponseRenderer(BaseRenderer):
         request = renderer_context['request']
 
         renderer = PDFRenderer()
-        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
@@ -662,7 +656,6 @@ class EPUBResponseRenderer(PDFResponseRenderer):
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = EPUBRenderer()
-        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache

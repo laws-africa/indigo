@@ -47,6 +47,7 @@
       },
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
+      '#id_work-stub': 'stub',
       '#id_work-commencement_date': {
         observe: 'commencement_date',
         onSet: emptyIsNull,

@@ -182,6 +182,8 @@ class Work(models.Model):
     # optional work that determined the commencement date of this work
     commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
+    stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
+
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -583,9 +585,6 @@ class Document(models.Model):
     # Date from the FRBRExpression element. This is either the publication date or the date of the last
     # amendment. This is used to identify this particular version of this work, so is stored in the DB.
     expression_date = models.DateField(null=False, blank=False, help_text="Date of publication or latest amendment")
-
-    stub = models.BooleanField(default=False, help_text="Is this a placeholder document without full content?")
-    """ Is this a stub without full content? """
 
     deleted = models.BooleanField(default=False, help_text="Has this document been deleted?")
 

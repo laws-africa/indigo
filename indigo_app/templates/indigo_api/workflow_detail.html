@@ -38,7 +38,9 @@
 
       <div class="row">
         <div class="col-7">
-          {{ workflow.description|linebreaksbr }}
+          {% if workflow.description %}
+            {{ workflow.description|linebreaksbr }}
+          {% endif %}
         </div>
         {% if workflow.n_tasks %}
           <div class="col-5">

@@ -107,6 +107,17 @@
         {% for err in form.all_tasks.errors %}
           <div class="form-text text-danger">{{ err }}</div>
         {% endfor %}
+
+        <div class="form-group">
+          <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="{{ form.add_to_workflow.id_for_label }}" name="{{ form.add_to_workflow.name }}" value="on" checked>
+            <label for="{{ form.add_to_workflow.id_for_label }}">Create a workflow and include the above tasks</label>
+          </div>
+        </div>
+        {% for err in form.add_to_workflow.errors %}
+          <div class="form-text text-danger">{{ err }}</div>
+        {% endfor %}
+
       </div>
 
       <div class="card-footer">

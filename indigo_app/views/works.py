@@ -21,7 +21,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, Workflow
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -605,6 +605,19 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 if work['status'] == 'success':
                     for chosen_task in form.cleaned_data.get('all_tasks'):
                         make_task()
+
+        # create a workflow and add all the tasks to it
+        if form.cleaned_data.get('add_to_workflow'):
+            workflow = Workflow()
+            workflow.title = str(datetime.datetime.today())
+            workflow.country = self.country
+            workflow.locality = self.locality
+            workflow.created_by_user = self.request.user
+
+            # need to save before assigning tasks because of M2M relation
+            workflow.save()
+            workflow.tasks = tasks
+            workflow.save()
 
         return tasks
 

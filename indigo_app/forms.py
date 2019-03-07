@@ -7,7 +7,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, Workflow
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow
 
 
 class WorkForm(forms.ModelForm):
@@ -16,10 +16,18 @@ class WorkForm(forms.ModelForm):
         fields = (
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
+            'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
         )
 
+    # The user can provide either a file attachment, or a trusted
+    # remote URL with supporting data. The form sorts out which fields
+    # are applicable in each case.
     publication_document_file = forms.FileField(required=False)
     delete_publication_document = forms.BooleanField(required=False)
+
+    publication_document_trusted_url = forms.URLField(required=False)
+    publication_document_size = forms.IntegerField(required=False)
+    publication_document_mime_type = forms.CharField(required=False)
 
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)
@@ -28,25 +36,34 @@ class WorkForm(forms.ModelForm):
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
-        if pub_doc_file:
-            try:
-                pub_doc = self.instance.publication_document
-            except PublicationDocument.DoesNotExist:
-                pub_doc = PublicationDocument(work=self.instance)
+        pub_doc_url = self.cleaned_data['publication_document_trusted_url']
 
+        try:
+            pub_doc = self.instance.publication_document
+        except PublicationDocument.DoesNotExist:
+            pub_doc = None
+
+        if pub_doc_file:
+            if not pub_doc:
+                pub_doc = PublicationDocument(work=self.instance)
+            pub_doc.trusted_url = None
             pub_doc.file = pub_doc_file
             pub_doc.size = pub_doc_file.size
-            # we force a particular filename
-            pub_doc.filename = 'publication-document.pdf'
             pub_doc.mime_type = pub_doc_file.content_type
-
             pub_doc.save()
 
-        if self.cleaned_data['delete_publication_document']:
-            try:
-                self.instance.publication_document.delete()
-            except PublicationDocument.DoesNotExist:
-                pass
+        elif pub_doc_url:
+            if not pub_doc:
+                pub_doc = PublicationDocument(work=self.instance)
+            pub_doc.file = None
+            pub_doc.trusted_url = pub_doc_url
+            pub_doc.size = self.cleaned_data['publication_document_size']
+            pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
+            pub_doc.save()
+
+        elif self.cleaned_data['delete_publication_document']:
+            if pub_doc:
+                pub_doc.delete()
 
 
 class DocumentForm(forms.ModelForm):
@@ -122,13 +139,16 @@ class TaskForm(forms.ModelForm):
         model = Task
         fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
 
-    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple, required=False)
-    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple, required=False)
+    labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple,
+                                            required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
+                                               required=False)
+    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
 
 
 class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
-    state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES))
+    state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
 
     def filter_queryset(self, queryset, frbr_uri=None):
@@ -136,7 +156,12 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
         if self.cleaned_data.get('state'):
-            queryset = queryset.filter(state__in=self.cleaned_data['state'])
+            if 'assigned' in self.cleaned_data['state']:
+                queryset = queryset.filter(state__in=self.cleaned_data['state']+['open'])
+                if 'open' not in self.cleaned_data['state']:
+                    queryset = queryset.exclude(state='open', assigned_to=None)
+            else:
+                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
 
         if frbr_uri:
             queryset = queryset.filter(work__frbr_uri=frbr_uri)

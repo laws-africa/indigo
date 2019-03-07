@@ -1,4 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
+{% load humanize indigo_app %}
 
 {% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} – {{ locality.name|default:country.name }}{% endblock %}
 {% block view-id %}edit-task-view{% endblock %}
@@ -65,11 +66,11 @@
           </div>
 
           <div class="form-group form-row">
+
             <div class="col-md-6">
               <label for="{{ form.work.id_for_label }}">Work</label>
               <input type="hidden" name="{{ form.work.name }}" id="{{ form.work.id_for_label }}" value="{{ form.work.value|default:'' }}">
               <div class="work-details"></div>
-
               <script id="task-work-template" type="text/x-handlebars-template">
               {% verbatim %}
                 {{#if work}}
@@ -96,35 +97,45 @@
                 {% endif %}
               </select>
             </div>
+
           </div>
 
           {% if place_workflows %}
             <div class="form-group">
               <label for="{{ form.workflows.id_for_label }}">Workflows this task belongs to</label>
-
               <div class="row">
                 <div class="col-md-6">
-                  <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}">
+                  <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
                     {% for workflow in place_workflows %}
-                      <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}
+                      <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
                     {% endfor %}
                   </select>
                 </div>
               </div>
             </div>
           {% endif %}
+
         </div>
 
         <div class="card-footer text-right">
-          {% if task.pk %}
-          <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="btn btn-link">Cancel</a>
+          {% if task.state == 'open' or task.state == 'pending_review' %}
+            <form method="POST">
+            {% csrf_token %}
+              {% if cancel_task_permission %}
+                <button class="btn btn-danger float-left" type="submit" data-confirm="Are you sure you want to cancel this task?" formaction="{% url 'cancel_task' place=place.place_code pk=task.pk %}">Cancel task</button>
+              {% endif %}
+            </form>
           {% endif %}
-          <button class="btn btn-success" type="submit">{% if task.pk %}Save task{% else %}Create task{% endif %}</button>
+          {% if task.pk %}
+            <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="btn btn-link">Cancel edit</a>
+          {% else %}
+            <a href="{% url 'tasks' place=place.place_code %}" class="btn btn-link">Cancel</a>
+          {% endif %}
+            <button class="btn btn-success" type="submit">{% if task.pk %}Save task{% else %}Create task{% endif %}</button>
         </div>
+
       </div>
     </div>
-
-
   </form>
 
 {% include 'indigo_api/_work_chooser_modal.html' %}

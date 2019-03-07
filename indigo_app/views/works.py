@@ -462,9 +462,10 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 class WorkPublicationDocumentView(WorkViewBase, View):
     def get(self, request, filename, *args, **kwargs):
         if self.work.publication_document and self.work.publication_document.filename == filename:
+            if self.work.publication_document.trusted_url:
+                return redirect(self.work.publication_document.trusted_url)
             return view_attachment(self.work.publication_document)
-        else:
-            return Http404()
+        return Http404()
 
 
 class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):

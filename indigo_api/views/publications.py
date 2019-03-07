@@ -21,7 +21,14 @@ class FindPublicationsView(APIView):
 
         if finder:
             try:
-                publications = finder.find_publications(request.GET)
+                params = {
+                    'date': request.GET.get('date'),
+                    'number': request.GET.get('number'),
+                    'publication': request.GET.get('publication'),
+                    'country': country,
+                    'locality': locality,
+                }
+                publications = finder.find_publications(params)
             except ValueError as e:
                 raise ValidationError({'message': e.message})
 

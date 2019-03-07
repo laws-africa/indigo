@@ -104,6 +104,7 @@ ROOT_URLCONF = 'indigo.urls'
 WSGI_APPLICATION = 'indigo.wsgi.application'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_SECURE = not DEBUG
 
 # where does the pdftotext binary live?
 INDIGO_PDFTOTEXT = 'pdftotext'
@@ -372,7 +373,7 @@ LOGGING = {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
         'django': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': 'INFO',
         },
         'django.template': {
             'level': 'INFO',

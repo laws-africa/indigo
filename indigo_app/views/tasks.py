@@ -15,7 +15,7 @@ from django.views.generic.detail import SingleObjectMixin
 
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, Work, Workflow
+from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -39,7 +39,7 @@ class TaskListView(TaskViewBase, ListView):
 
         # initial state
         if not params.get('state'):
-            params.setlist('state', ['open', 'pending_review'])
+            params.setlist('state', ['open', 'assigned', 'pending_review'])
         params.setdefault('format', 'columns')
 
         self.form = TaskFilterForm(params)
@@ -51,7 +51,7 @@ class TaskListView(TaskViewBase, ListView):
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-created_at')
+        tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-updated_at')
         return self.form.filter_queryset(tasks, frbr_uri=self.request.GET.get('frbr_uri'))
 
     def get_context_data(self, **kwargs):
@@ -77,9 +77,6 @@ class TaskDetailView(TaskViewBase, DetailView):
 
         if has_transition_perm(task.submit, self):
             context['submit_task_permission'] = True
-
-        if has_transition_perm(task.cancel, self):
-            context['cancel_task_permission'] = True
 
         if has_transition_perm(task.reopen, self):
             context['reopen_task_permission'] = True
@@ -203,17 +200,21 @@ class TaskEditView(TaskViewBase, UpdateView):
         context = super(TaskEditView, self).get_context_data(**kwargs)
 
         work = None
-        if self.object.work:
-            work = json.dumps(WorkSerializer(instance=self.object.work, context={'request': self.request}).data)
+        task = self.object
+        if task.work:
+            work = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
         context['work_json'] = work
 
         document = None
-        if self.object.document:
-            document = json.dumps(DocumentSerializer(instance=self.object.document, context={'request': self.request}).data)
+        if task.document:
+            document = json.dumps(DocumentSerializer(instance=task.document, context={'request': self.request}).data)
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
         context['place_workflows'] = self.place.workflows.all()
+
+        if has_transition_perm(task.cancel, self):
+            context['cancel_task_permission'] = True
 
         return context
 
@@ -245,13 +246,74 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
-                action.send(user, verb=verb, action_object=task,
-                            place_code=task.place.place_code)
                 if verb == 'submitted':
+                    task.last_assigned_to = task.assigned_to
+                    task.assigned_to = None
+                    action.send(user, verb=verb, action_object=task,
+                                place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been submitted for review" % task.title)
+                elif verb == 'unsubmitted' and task.last_assigned_to:
+                    assignee = task.last_assigned_to
+                    task.assigned_to = assignee
+                    if user.id == assignee.id:
+                        action.send(user, verb='unsubmitted and picked up', action_object=task,
+                                    place_code=task.place.place_code)
+                        messages.success(request, u"You have unsubmitted and picked up the task '%s'" % task.title)
+                    else:
+                        action.send(user, verb='unsubmitted and reassigned', action_object=task,
+                                    target=assignee,
+                                    place_code=task.place.place_code)
+                        messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
+
                 else:
+                    if verb == 'closed':
+                        task.assigned_to = None
+                    action.send(user, verb=verb, action_object=task,
+                                place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()
 
         return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])
+
+
+class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.change_task',)
+
+    unassign = False
+    http_method_names = [u'post']
+    model = Task
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        user = self.request.user
+        task.updated_by_user = user
+        if self.unassign:
+            task.assigned_to = None
+            action.send(user, verb='unassigned', action_object=task,
+                        place_code=task.place.place_code)
+            messages.success(request, u"Task '%s' has been unassigned" % task.title)
+        else:
+            assignee = User.objects.get(id=self.request.POST.get('user_id'))
+            if task.country not in assignee.editor.permitted_countries.all():
+                raise PermissionDenied
+            task.assigned_to = assignee
+            if user.id == assignee.id:
+                action.send(user, verb='picked up', action_object=task,
+                            place_code=task.place.place_code)
+                messages.success(request, u"You have picked up the task '%s'" % task.title)
+            else:
+                action.send(user, verb='assigned', action_object=task,
+                            target=assignee,
+                            place_code=task.place.place_code)
+                messages.success(request, u"Task '%s' has been assigned" % task.title)
+
+        task.save()
+
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})

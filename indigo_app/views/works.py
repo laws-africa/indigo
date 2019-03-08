@@ -544,8 +544,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
-                    if not row.get('primary'):
-                        work.stub = True
+                    work.stub = not row.get('primary')
 
                     try:
                         work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
@@ -574,19 +573,20 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def get_tasks(self, works, form):
         tasks = []
 
-        def make_task():
+        def make_task(chosen_task):
             task = Task()
             task.country = self.country
             task.locality = self.locality
             task.created_by_user = self.request.user
-            task.title = chosen_task.capitalize()
             for possible_task in form.possible_tasks:
                 if chosen_task == possible_task['key']:
+                    task.title = possible_task['label']
                     task.description = possible_task['description']
 
-            # need to save before assigning work because of M2M relation
+            # need to save before assigning work, workflow/s because of M2M relations
             task.save()
             task.work = work.get('work')
+            task.workflows = form.cleaned_data.get('workflows').all()
             task.save()
             tasks.append(task)
 
@@ -595,20 +595,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             for work in works:
                 if work['status'] == 'success' and not work['work'].stub:
                     for chosen_task in form.cleaned_data.get('primary_tasks'):
-                        make_task()
+                        make_task(chosen_task)
 
         # bulk create tasks on all works
         if form.cleaned_data.get('all_tasks'):
             for work in works:
                 if work['status'] == 'success':
                     for chosen_task in form.cleaned_data.get('all_tasks'):
-                        make_task()
-
-        # add all the tasks to the workflows selected
-        if form.cleaned_data.get('workflows'):
-            for workflow in form.cleaned_data.get('workflows'):
-                workflow.tasks = tasks
-                workflow.save()
+                        make_task(chosen_task)
 
         return tasks
 

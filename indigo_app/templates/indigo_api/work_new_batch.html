@@ -110,9 +110,10 @@
 
         </div>
 
+        <label for="{{ form.workflows.id_for_label }}" class="h5">Add the tasks to the following workflows</label>
+
         {% if place_workflows %}
           <div class="form-group">
-            <label for="{{ form.workflows.id_for_label }}" class="h5">Add the above tasks to the following workflows</label>
             <div class="row">
               <div class="col-md-6">
                 <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
@@ -126,7 +127,14 @@
           {% for err in form.workflows.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
+        {% else %}
+        <div class="text-danger">No workflows</div>
         {% endif %}
+
+        <div>
+          <p>If there are no workflows or you need a new one, create a new workflow then return to this tab, refresh the page and select it from the dropdown:</p>
+          <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success" target="_blank">Create workflow</a>
+        </div>
 
       </div>
 

@@ -603,7 +603,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         # add all the tasks to the workflows selected
         if form.cleaned_data.get('workflows'):
             for workflow in form.cleaned_data.get('workflows'):
-                workflow = Workflow.objects.get(id=workflow)
                 workflow.tasks = tasks
                 workflow.save()
 

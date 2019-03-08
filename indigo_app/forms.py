@@ -120,13 +120,28 @@ class BatchCreateWorkForm(forms.Form):
     ])
 
     possible_tasks = [
-        'link commencement / amendments / repeal',
-        'import content',
-        'upload publication document',
+        {
+            'key': 'link',
+            'label': 'Link commencement / amendments / repeal',
+            'description': '''Link the commencement and/or amendments and/or repeal works for this work.
+Go to 'Edit work' and/or 'Manage points in time' and use the spreadsheet for reference.''',
+        },
+        {
+            'key': 'import',
+            'label': 'Import content',
+            'description': '''Import a point in time for this work; \
+            either the initial publication or a later consolidation.
+Make sure the document's expression date correctly reflects this.''',
+        },
+        {
+            'key': 'upload',
+            'label': 'Upload publication document',
+            'description': '''Upload the publication document for this work.
+This will often be a pdf of the government gazette.''',
+        },
     ]
-    primary_tasks = forms.MultipleChoiceField(choices=((x, x) for x in possible_tasks), required=False)
-    all_tasks = forms.MultipleChoiceField(choices=((x, x) for x in possible_tasks), required=False)
-    add_to_workflow = forms.BooleanField(required=False)
+    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
 
 
 class ImportDocumentForm(forms.Form):

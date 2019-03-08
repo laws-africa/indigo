@@ -76,47 +76,40 @@
           {% endfor %}
         </div>
 
-        <div class="form-group">
-          <label for="{{ form.primary_tasks.id_for_label }}">Tasks for primary works</label>
-          {% for task, _ in form.fields.primary_tasks.choices %}
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="{{ form.primary_tasks.name }}" id="{{ form.primary_tasks.id_for_label }}" value="{{ task }}" {% if task == 'import content' or task == 'link commencement / amendments / repeal' %}checked{% endif %}>
-                &nbsp;{{ task|capfirst }}
-              </label>
-              <br>
-            </div>
-          {% endfor %}
-        </div>
-        {% for err in form.primary_tasks.errors %}
-          <div class="form-text text-danger">{{ err }}</div>
-        {% endfor %}
+        <div class="form-row">
 
-        <div class="form-group">
-          <label for="{{ form.all_tasks.id_for_label }}">Tasks for all works</label>
-          {% for task, _ in form.fields.all_tasks.choices %}
-            <div class="form-check">
-              <label class="form-check-label">
-                <input class="form-check-input" type="checkbox" name="{{ form.all_tasks.name }}" id="{{ form.all_tasks.id_for_label }}" value="{{ task }}" {% if task == 'upload publication document' %}checked{% endif %}>
-                &nbsp;{{ task|capfirst }}
-              </label>
-              <br>
-            </div>
-          {% endfor %}
-        </div>
-        {% for err in form.all_tasks.errors %}
-          <div class="form-text text-danger">{{ err }}</div>
-        {% endfor %}
-
-        <div class="form-group">
-          <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="{{ form.add_to_workflow.id_for_label }}" name="{{ form.add_to_workflow.name }}" value="on" checked>
-            <label for="{{ form.add_to_workflow.id_for_label }}">Create a workflow and include the above tasks</label>
+          <div class="form-group col-6">
+            <h5>Tasks for primary works</h5>
+            {% for p_task in form.primary_tasks %}
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="{{ p_task.id_for_label }}" name="{{ form.primary_tasks.html_name }}" value="{{ p_task.data.value }}" {% if p_task.data.value == 'import' or p_task.data.value == 'link' %}checked{% endif %}>
+                <label for="{{ p_task.id_for_label }}" class="form-check-label ml-1 mt-2">
+                  {{ p_task.data.label }}
+                </label>
+              </div>
+            {% endfor %}
           </div>
+          {% for err in form.primary_tasks.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+
+          <div class="form-group col-6">
+            <h5>Tasks for all works</h5>
+            {% for task in form.all_tasks %}
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="{{ task.id_for_label }}" name="{{ form.all_tasks.html_name }}" value="{{ task.data.value }}" {% if task.data.value == 'upload' %}checked{% endif %}>
+                <label for="{{ task.id_for_label }}" class="form-check-label ml-1 mt-2">
+                  {{ task.data.label }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+          {% for err in form.all_tasks.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
         </div>
-        {% for err in form.add_to_workflow.errors %}
-          <div class="form-text text-danger">{{ err }}</div>
-        {% endfor %}
+
+          </div>
 
       </div>
 

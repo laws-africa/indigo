@@ -563,17 +563,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         return works
 
     def get_tasks(self, works, form):
-        possible_tasks = {
-            'import content':
-                '''Import a point in time for this work; either the initial publication or a later consolidation.
-                            Make sure the document's expression date correctly reflects this.''',
-            'link commencement / amendments / repeal':
-                '''Link the commencement and/or amendments and/or repeal works for this work.
-                            Go to 'Edit work' and/or 'Manage point in time' and use the spreadsheet for reference.''',
-            'upload publication document':
-                '''Upload the publication document for this work.
-                            This will often be a pdf of the government gazette.'''
-        }
         tasks = []
 
         def make_task():
@@ -582,9 +571,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             task.locality = self.locality
             task.created_by_user = self.request.user
             task.title = chosen_task.capitalize()
-            for possible_task, description in possible_tasks.items():
-                if chosen_task == possible_task:
-                    task.description = description
+            for possible_task in form.possible_tasks:
+                if chosen_task == possible_task['key']:
+                    task.description = possible_task['description']
 
             # need to save before assigning work because of M2M relation
             task.save()
@@ -606,18 +595,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     for chosen_task in form.cleaned_data.get('all_tasks'):
                         make_task()
 
-        # create a workflow and add all the tasks to it
-        if form.cleaned_data.get('add_to_workflow'):
-            workflow = Workflow()
-            workflow.title = str(datetime.datetime.today())
-            workflow.country = self.country
-            workflow.locality = self.locality
-            workflow.created_by_user = self.request.user
-
-            # need to save before assigning tasks because of M2M relation
-            workflow.save()
-            workflow.tasks = tasks
-            workflow.save()
 
         return tasks
 

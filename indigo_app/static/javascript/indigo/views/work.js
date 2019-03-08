@@ -285,7 +285,7 @@
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
                   '?date=' + encodeURIComponent(date) + 
-                  '&publication=' + encodeURIComponent(name) +
+                  '&publication=' + encodeURIComponent(publication) +
                   '&number=' + encodeURIComponent(number);
 
         $.getJSON(url)

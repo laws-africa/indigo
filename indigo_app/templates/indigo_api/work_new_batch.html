@@ -107,9 +107,26 @@
           {% for err in form.all_tasks.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
+
         </div>
 
+        {% if place_workflows %}
+          <div class="form-group">
+            <label for="{{ form.workflows.id_for_label }}" class="h5">Add the above tasks to the following workflows</label>
+            <div class="row">
+              <div class="col-md-6">
+                <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
+                  {% for workflow in place_workflows %}
+                    <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
           </div>
+          {% for err in form.workflows.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+        {% endif %}
 
       </div>
 

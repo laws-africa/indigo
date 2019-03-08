@@ -472,6 +472,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
 
+    def get_context_data(self, **kwargs):
+        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+        context['place_workflows'] = self.place.workflows.all()
+        return context
+
     def form_valid(self, form):
         error = None
         works = None
@@ -595,6 +600,12 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     for chosen_task in form.cleaned_data.get('all_tasks'):
                         make_task()
 
+        # add all the tasks to the workflows selected
+        if form.cleaned_data.get('workflows'):
+            for workflow in form.cleaned_data.get('workflows'):
+                workflow = Workflow.objects.get(id=workflow)
+                workflow.tasks = tasks
+                workflow.save()
 
         return tasks
 

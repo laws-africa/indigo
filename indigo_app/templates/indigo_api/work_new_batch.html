@@ -116,7 +116,7 @@
           <div class="form-group">
             <div class="row">
               <div class="col-md-6">
-                <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
+                <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}" data-live-search="true">
                   {% for workflow in place_workflows %}
                     <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
                   {% endfor %}
@@ -132,15 +132,16 @@
         {% endif %}
 
         <div>
-          <p>If there are no workflows or you need a new one, create a new workflow then return to this tab, refresh the page and select it from the dropdown:</p>
-          <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success" target="_blank">Create workflow</a>
+          <p>If there are no workflows or you need a new one, create a new workflow then return to this tab, refresh the page and select it from the dropdown –
+            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
+          </p>
         </div>
 
       </div>
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
-          <button type="submit" class="btn btn-primary">Import works</button>
+          <button type="submit" class="btn btn-success">Import works</button>
         {% else %}
           <div class="alert alert-danger">You don't have permission to create works.</div>
         {% endif %}

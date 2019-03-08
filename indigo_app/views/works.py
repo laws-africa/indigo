@@ -471,6 +471,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
+    initial = {
+        'primary_tasks': ['link', 'import'],
+        'all_tasks': ['upload'],
+    }
 
     def get_context_data(self, **kwargs):
         context = super(BatchAddWorkView, self).get_context_data(**kwargs)

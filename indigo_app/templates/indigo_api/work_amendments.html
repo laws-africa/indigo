@@ -9,7 +9,7 @@
   {% if work.stub %}
     <p class="alert alert-warning">
       <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time.
-      {% if work.document_set.exists %}Either remove these points in time or don't mark this work as a stub.{% endif %}
+      {% if work.document_set.undeleted.exists %}Either remove these points in time or don't mark this work as a stub.{% endif %}
     </p>
   {% endif %}
 

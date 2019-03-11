@@ -186,7 +186,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # the item we're interested in
             self.element = document.doc.components().get(self.component)
 
-        if self.element is not None and format in ['xml', 'html', 'pdf', 'epub', 'zip']:
+        formats = [r.format for r in self.renderer_classes]
+        if self.element is not None and format in formats:
             return Response(document)
 
         raise Http404

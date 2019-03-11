@@ -186,7 +186,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
             return super(AddWorkView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('work_edit', kwargs={'frbr_uri': self.object.frbr_uri})
+        return reverse('work', kwargs={'frbr_uri': self.object.frbr_uri})
 
 
 class DeleteWorkView(WorkViewBase, DeleteView):

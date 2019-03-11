@@ -141,7 +141,7 @@ class WorksWebTest(WebTest):
         form['work-publication_date'] = '2019-02-01'
         form['work-publication_document_file'] = Upload('pub.pdf', b'data', 'application/pdf')
         response = form.submit()
-        self.assertRedirects(response, '/works/za/act/2019/5/edit/', fetch_redirect_response=False)
+        self.assertRedirects(response, '/works/za/act/2019/5/', fetch_redirect_response=False)
 
     def test_publication_date_updates_documents(self):
         """ Changing the work's publication date should also updated documents

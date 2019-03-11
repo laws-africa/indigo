@@ -119,6 +119,32 @@ class BatchCreateWorkForm(forms.Form):
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
 
+    possible_tasks = [
+        {
+            'key': 'link',
+            'label': 'Link commencement / amendments / repeal',
+            'description': '''Link the commencement and/or amendments and/or repeal works for this work.
+Go to 'Edit work' and/or 'Manage points in time' and use the spreadsheet for reference.''',
+        },
+        {
+            'key': 'import',
+            'label': 'Import content',
+            'description': '''Import a point in time for this work; \
+            either the initial publication or a later consolidation.
+Make sure the document's expression date correctly reflects this.''',
+        },
+        {
+            'key': 'upload',
+            'label': 'Upload publication document',
+            'description': '''Upload the publication document for this work.
+This will often be a pdf of the government gazette.''',
+        },
+    ]
+    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
+                                               required=False)
+
 
 class ImportDocumentForm(forms.Form):
     file = forms.FileField()

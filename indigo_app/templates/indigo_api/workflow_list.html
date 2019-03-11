@@ -43,7 +43,9 @@
             <div>
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
               <br>
-              {{ workflow.description|linebreaksbr }}
+              {% if workflow.description %}
+                {{ workflow.description|linebreaksbr }}
+              {% endif %}
             </div>
 
             <div class="text-muted">

@@ -52,11 +52,11 @@
 
             <div class="form-group col-sm-4">
 
-              <label for="{{ form.labels.id_for_label }}">{{ form.labels.label }}</label>
+              <label>{{ form.labels.label }}</label>
               {% for label in task_labels %}
                 <div class="form-check">
-                  <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" name="{{ form.labels.name }}" value="{{ label.id }}" {% if label.id in form.labels.value %}checked{% endif %}>
+                  <input class="form-check-input" type="checkbox" id="{{ label.id_for_label }}" name="{{ form.labels.name }}" value="{{ label.id }}" {% if label.id in form.labels.value %}checked{% endif %}>
+                  <label for="{{ label.id_for_label }}" class="form-check-label ml-1 mt-1">
                     <span class="h5"><span class="badge badge-secondary">{{ label.title }}</span></span> – <span class="font-weight-normal">{{ label.description }}</span>
                   </label>
                 </div>

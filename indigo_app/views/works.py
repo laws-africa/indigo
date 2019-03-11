@@ -21,7 +21,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, Workflow
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -471,6 +471,15 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
+    initial = {
+        'primary_tasks': ['link', 'import'],
+        'all_tasks': ['upload'],
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+        context['place_workflows'] = self.place.workflows.all()
+        return context
 
     def form_valid(self, form):
         error = None
@@ -479,6 +488,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
             works = self.get_works(table)
+            tasks = self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
 
@@ -534,6 +544,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
+                    work.stub = not row.get('primary')
 
                     try:
                         work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
@@ -558,6 +569,42 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['error_message'] = e.message
 
         return works
+
+    def get_tasks(self, works, form):
+        tasks = []
+
+        def make_task(chosen_task):
+            task = Task()
+            task.country = self.country
+            task.locality = self.locality
+            task.created_by_user = self.request.user
+            for possible_task in form.possible_tasks:
+                if chosen_task == possible_task['key']:
+                    task.title = possible_task['label']
+                    task.description = possible_task['description']
+
+            # need to save before assigning work, workflow/s because of M2M relations
+            task.save()
+            task.work = work.get('work')
+            task.workflows = form.cleaned_data.get('workflows').all()
+            task.save()
+            tasks.append(task)
+
+        # bulk create tasks on primary works
+        if form.cleaned_data.get('primary_tasks'):
+            for work in works:
+                if work['status'] == 'success' and not work['work'].stub:
+                    for chosen_task in form.cleaned_data.get('primary_tasks'):
+                        make_task(chosen_task)
+
+        # bulk create tasks on all works
+        if form.cleaned_data.get('all_tasks'):
+            for work in works:
+                if work['status'] == 'success':
+                    for chosen_task in form.cleaned_data.get('all_tasks'):
+                        make_task(chosen_task)
+
+        return tasks
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet

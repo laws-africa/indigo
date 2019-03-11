@@ -40,7 +40,7 @@ class UserProfileView(DetailView):
         if context['can_award']:
             context['award_form'] = AwardBadgeForm()
 
-        activity = self.object.actor_actions.all()
+        activity = self.object.actor_actions.all()[:20]
         context['activity_stream'] = self.coalesce_entries(activity)
 
         return context

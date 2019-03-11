@@ -417,7 +417,7 @@ class PublicationDocument(models.Model):
     # either file or trusted_url should be provided
     file = models.FileField(upload_to=publication_document_filename)
     trusted_url = models.URLField(null=True, blank=True)
-    size = models.IntegerField()
+    size = models.IntegerField(null=True)
     filename = models.CharField(max_length=255)
     mime_type = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)

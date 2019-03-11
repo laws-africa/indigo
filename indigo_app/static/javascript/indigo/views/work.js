@@ -285,7 +285,7 @@
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
                   '?date=' + encodeURIComponent(date) + 
-                  '&publication=' + encodeURIComponent(name) +
+                  '&publication=' + encodeURIComponent(publication) +
                   '&number=' + encodeURIComponent(number);
 
         $.getJSON(url)
@@ -313,7 +313,7 @@
       var elem = e.currentTarget.parentElement;
 
       this.model.set('publication_document', {
-        size: parseInt(elem.getAttribute('data-size')),
+        size: parseInt(elem.getAttribute('data-size')) || null,
         mime_type: elem.getAttribute('data-mime-type'),
         trusted_url: elem.getAttribute('data-url'),
         filename: elem.getAttribute('data-url'),

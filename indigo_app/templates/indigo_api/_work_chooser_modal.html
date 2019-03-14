@@ -79,3 +79,10 @@
 
 {% endverbatim %}
 </script>
+
+<script id="work-chooser-summary-template" type="text/x-handlebars-template">
+{% verbatim %}
+<a href="/works{{ frbr_uri }}/" data-popup-url="/works{{ frbr_uri }}/popup">{{ title }}</a><br>
+<span class="text-muted">{{ frbr_uri }}</span>
+{% endverbatim %}
+</script>

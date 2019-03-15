@@ -18,7 +18,6 @@ Indigo requires:
 * Python 2.7
 * PostgreSQL 9.3+
 * Ruby 2.1.6+ for `Slaw <https://github.com/longhotsummer/slaw>`_
-* Java 1.8 for `Apache Tika <https://tika.apache.org/>`_
 * An AWS S3 account and bucket for storing attachments
 
 Optional but useful:
@@ -33,7 +32,7 @@ Installing Indigo Locally
 -------------------------
 
 1. Ensure you have Python 2.7 and `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ installed
-2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python, Ruby and Java described in it::
+2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python and Ruby described in it::
 
     $ git clone https://github.com/laws-africa/example-indigo
     $ cd indigo

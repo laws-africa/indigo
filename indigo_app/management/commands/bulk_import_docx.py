@@ -1,4 +1,4 @@
-import os
+import csv, os
 from datetime import datetime
 
 from django.contrib.auth.models import User
@@ -54,14 +54,8 @@ class Command(BaseCommand):
         csv_file_name = str(options.get('csv_file'))
         path = options.get('path')
         with open(csv_file_name) as csv_file:
-            content = csv_file.readlines()
-            content = [r.strip() for r in content]
-            headers = [h for h in content[0].split(',')]
-            rows = [
-                {header: row[i] for i, header in enumerate(headers) if header}
-                for row in [r.split(',') for r in content[1:]]
-            ]
-            for row in rows:
+            content = csv.DictReader(csv_file)
+            for i, row in enumerate(content):
                 with transaction.atomic():
                     filename = row.get('filename')
                     path_to_filename = os.path.join(path, filename)
@@ -73,14 +67,17 @@ class Command(BaseCommand):
 
                         # document already exists in this language at this date
                         if work.document_set.undeleted().filter(expression_date=date, language=language):
-                            print('\nA document already exists for {} at {} in {}; delete it before reimporting.'
+                            print('\nERROR at row {}:'.format(i + 2))
+                            print('A document already exists for {} at {} in {}; delete it before reimporting.\n'
                                   .format(work.title, date, str(language)))
                             continue
 
                         # no point in time at this date for this work
                         elif date not in [pit['date'] for pit in work.points_in_time()]:
-                            print('\nNo point in time exists for {} at {}; create it before reimporting.'
+                            print('\nERROR at row {}:'.format(i + 2))
+                            print('No point in time exists for {} at {}; create it before reimporting.\n'
                                   .format(work, date))
+                            continue
 
                         document = Document()
                         document.work = work

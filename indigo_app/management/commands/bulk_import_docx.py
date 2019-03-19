@@ -49,62 +49,68 @@ class Command(BaseCommand):
         except IOError as e:
             print('\nFile error: ' + str(e))
 
+    def import_rows(self, user, csv_file, path):
+        content = csv.DictReader(csv_file)
+        for i, row in enumerate(content):
+            with transaction.atomic():
+                filename = row.get('filename')
+                path_to_filename = os.path.join(path, filename)
+                docx_file = self.get_file(i, path_to_filename)
+                if docx_file:
+                    work = Work.objects.get(frbr_uri=row.get('frbr_uri'))
+                    date = datetime.strptime(row.get('date'), '%Y-%m-%d').date()
+                    language = Language.objects.get(language__iso_639_3=row.get('language'))
+
+                    # document already exists in this language at this date
+                    if work.document_set.undeleted().filter(expression_date=date, language=language):
+                        print('\nERROR at row {}:'.format(i + 2))
+                        print('A document already exists for {} at {} in {}; delete it before reimporting.\n'
+                              .format(work.title, date, str(language)))
+                        continue
+
+                    # no point in time at this date for this work
+                    elif date not in [pit['date'] for pit in work.points_in_time()]:
+                        print('\nERROR at row {}:'.format(i + 2))
+                        print('No point in time exists for {} at {}; create it before reimporting.\n'
+                              .format(work, date))
+                        continue
+
+                    self.import_docx_file(user, work, date, language, docx_file)
+
+    def import_docx_file(self, user, work, date, language, docx_file):
+        document = Document()
+        document.work = work
+        document.expression_date = date
+        document.language = language
+        document.created_by_user = user
+
+        importer = plugins.for_document('importer', document)
+
+        # hard-coded for Namibian docxes
+        importer.section_number_position = 'after-title'
+
+        try:
+            importer.create_from_docx(docx_file, document)
+        except ValueError as e:
+            print("Error during import: %s" % e.message)
+            raise ValidationError(e.message or "error during import")
+
+        # TODO: get rid of `updated_by_user` as this isn't what's happening here
+        #  (will have to happen on works.ImportDocumentView as well)
+        document.updated_by_user = user
+        document.save()
+
+        # TODO: create review task on document
+
+        # TODO: add source file as an attachment
+        #  (will this fix images too?)
+        # this doesn't work because `doc_file` doesn't have a `size`
+        # (or likely another reason -- it expected `upload`)
+        # AttachmentSerializer(context={'document': document}).create({'file': docx_file})
+
     def handle(self, *args, **options):
         user = self.get_user()
         csv_file_name = str(options.get('csv_file'))
         path = options.get('path')
         with open(csv_file_name) as csv_file:
-            content = csv.DictReader(csv_file)
-            for i, row in enumerate(content):
-                with transaction.atomic():
-                    filename = row.get('filename')
-                    path_to_filename = os.path.join(path, filename)
-                    docx_file = self.get_file(path_to_filename)
-                    if docx_file:
-                        work = Work.objects.get(frbr_uri=row.get('frbr_uri'))
-                        date = datetime.strptime(row.get('date'), '%Y-%m-%d').date()
-                        language = Language.objects.get(language__iso_639_3=row.get('language'))
-
-                        # document already exists in this language at this date
-                        if work.document_set.undeleted().filter(expression_date=date, language=language):
-                            print('\nERROR at row {}:'.format(i + 2))
-                            print('A document already exists for {} at {} in {}; delete it before reimporting.\n'
-                                  .format(work.title, date, str(language)))
-                            continue
-
-                        # no point in time at this date for this work
-                        elif date not in [pit['date'] for pit in work.points_in_time()]:
-                            print('\nERROR at row {}:'.format(i + 2))
-                            print('No point in time exists for {} at {}; create it before reimporting.\n'
-                                  .format(work, date))
-                            continue
-
-                        document = Document()
-                        document.work = work
-                        document.expression_date = date
-                        document.language = language
-                        document.created_by_user = user
-
-                        importer = plugins.for_document('importer', document)
-
-                        # hard-coded for Namibian docxes
-                        importer.section_number_position = 'after-title'
-
-                        try:
-                            importer.create_from_docx(docx_file, document)
-                        except ValueError as e:
-                            print("Error during import: %s" % e.message)
-                            raise ValidationError(e.message or "error during import")
-
-                        # TODO: get rid of `updated_by_user` as this isn't what's happening here
-                        #  (will have to happen on works.ImportDocumentView as well)
-                        document.updated_by_user = user
-                        document.save()
-
-                        # TODO: create review task on document
-
-                        # TODO: add source file as an attachment
-                        #  (will this fix images too?)
-                        # this doesn't work because `doc_file` doesn't have a `size`
-                        # (or likely another reason -- it expected `upload`)
-                        # AttachmentSerializer(context={'document': document}).create({'file': docx_file})
+            self.import_rows(user, csv_file, path)

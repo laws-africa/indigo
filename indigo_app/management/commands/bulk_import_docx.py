@@ -31,15 +31,16 @@ class Command(BaseCommand):
                             )
 
     def get_user(self):
-        waiting = True
-        while waiting:
+        for user in User.objects.all().order_by('id'):
+            print('{}: {} {}'.format(user.id, user.first_name, user.last_name))
+        while True:
             try:
                 result = int(input('Which user are you? Select the number from the list above: '))
                 user = User.objects.get(id=result)
             except:
-                print('Something went wrong; try again (you must type a number from the list above)')
+                print('\nSomething went wrong; try again (you must type a number from the list above)\n\n')
             else:
-                waiting = False
+                print('\nUser selected: {} {}.\n\n'.format(user.first_name, user.last_name))
                 return user
 
     def get_file(self, path_to_filename):
@@ -49,8 +50,6 @@ class Command(BaseCommand):
             print('\nFile error: ' + str(e))
 
     def handle(self, *args, **options):
-        for user in User.objects.all().order_by('id'):
-            print('{}: {} {}'.format(user.id, user.first_name, user.last_name))
         user = self.get_user()
         csv_file_name = str(options.get('csv_file'))
         path = options.get('path')

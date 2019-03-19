@@ -43,11 +43,12 @@ class Command(BaseCommand):
                 print('\nUser selected: {} {}.\n\n'.format(user.first_name, user.last_name))
                 return user
 
-    def get_file(self, path_to_filename):
+    def get_file(self, i, path_to_filename):
         try:
             return open(path_to_filename)
         except IOError as e:
-            print('\nFile error: ' + str(e))
+            print('\nERROR at row {}:'.format(i + 2))
+            print('File error: ' + str(e) + '\n')
 
     def import_rows(self, user, csv_file, path):
         content = csv.DictReader(csv_file)

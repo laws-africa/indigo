@@ -22,8 +22,8 @@ class Command(BaseCommand):
                                  '- frbr_uri (of existing work) '
                                  '- date (format: 1985-10-17): this is the expression date of the doc '
                                  '  and should be an existing PiT '
-                                 '- language: 2-letter code, e.g. `en` for English '
-                                 '- filename: the name of the file to be imported from the directory.'
+                                 '- language: 3-letter code, e.g. `eng` for English '
+                                 '- filename: the name of the docx file to be imported from the directory.'
                             )
         parser.add_argument('path', type=str,
                             help='a path to a directory that contains the docx files '
@@ -70,7 +70,7 @@ class Command(BaseCommand):
                     if docx_file:
                         work = Work.objects.get(frbr_uri=row.get('frbr_uri'))
                         date = datetime.strptime(row.get('date'), '%Y-%m-%d').date()
-                        language = Language.objects.get(language_id=row.get('language'))
+                        language = Language.objects.get(language__iso_639_3=row.get('language'))
 
                         # document already exists in this language at this date
                         if work.document_set.undeleted().filter(expression_date=date, language=language):

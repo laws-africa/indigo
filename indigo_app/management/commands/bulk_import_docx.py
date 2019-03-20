@@ -1,14 +1,15 @@
-import csv, os
+import csv
+import os
 from datetime import datetime
 
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
+from django.core.files.uploadedfile import UploadedFile
 from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from indigo.plugins import plugins
 from indigo_api.models import Document, Language, Work
-from indigo_api.serializers import AttachmentSerializer
 
 
 class Command(BaseCommand):
@@ -76,9 +77,11 @@ class Command(BaseCommand):
                               .format(work, date))
                         continue
 
-                    self.import_docx_file(user, work, date, language, docx_file)
+                    filesize = os.path.getsize(path_to_filename)
 
-    def import_docx_file(self, user, work, date, language, docx_file):
+                    self.import_docx_file(user, work, date, language, docx_file, filesize)
+
+    def import_docx_file(self, user, work, date, language, docx_file, filesize):
         document = Document()
         document.work = work
         document.expression_date = date
@@ -89,25 +92,18 @@ class Command(BaseCommand):
 
         # hard-coded for Namibian docxes
         importer.section_number_position = 'after-title'
+        upload = UploadedFile(file=docx_file,
+                              content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                              size=filesize)
 
         try:
-            importer.create_from_docx(docx_file, document)
+            importer.create_from_upload(upload, document, None)
         except ValueError as e:
             print("Error during import: %s" % e.message)
             raise ValidationError(e.message or "error during import")
 
-        # TODO: get rid of `updated_by_user` as this isn't what's happening here
-        #  (will have to happen on works.ImportDocumentView as well)
-        document.updated_by_user = user
-        document.save()
-
         # TODO: create review task on document
-
-        # TODO: add source file as an attachment
-        #  (will this fix images too?)
-        # this doesn't work because `doc_file` doesn't have a `size`
-        # (or likely another reason -- it expected `upload`)
-        # AttachmentSerializer(context={'document': document}).create({'file': docx_file})
+        # TODO: fix action signal to be `created` rather than `updated`
 
     def handle(self, *args, **options):
         user = self.get_user()

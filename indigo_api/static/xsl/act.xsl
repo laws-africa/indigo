@@ -82,9 +82,9 @@
           <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
           <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
         </xsl:choose>
-        <xsl:value-of select="./a:num" />
+        <xsl:value-of select="a:num" />
         <xsl:text> - </xsl:text>
-        <xsl:value-of select="./a:heading" />
+        <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
@@ -108,9 +108,9 @@
           <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
           <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
         </xsl:choose>
-        <xsl:value-of select="./a:num" />
+        <xsl:value-of select="a:num" />
         <br/>
-        <xsl:value-of select="./a:heading" />
+        <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
@@ -121,9 +121,9 @@
     <section class="akn-section">
       <xsl:apply-templates select="@*" />
       <h3>
-        <xsl:value-of select="./a:num" />
+        <xsl:value-of select="a:num" />
         <xsl:text> </xsl:text>
-        <xsl:value-of select="./a:heading" />
+        <xsl:apply-templates select="a:heading" mode="inline" />
       </h3>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
@@ -236,6 +236,14 @@
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </span>
+  </xsl:template>
+
+  <!-- Special inline mode which doesn't include the akn-foo marker.
+       This is used mostly by blocks that format their own headings, and
+       don't want akn-heading to be applied to heading elements. -->
+  <xsl:template match="*" mode="inline">
+    <xsl:apply-templates select="@*" />
+    <xsl:apply-templates />
   </xsl:template>
   
   <!-- For HTML table elements, copy them over then apply normal AN

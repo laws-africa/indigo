@@ -488,7 +488,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
             works = self.get_works(table)
-            self.link_works(works)
+            self.link_works(works, form)
             self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
@@ -581,14 +581,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
         return works
 
-    def link_works(self, works):
+    def link_works(self, works, form):
         for work in works:
             if work['status'] == 'success':
-                self.link_commencement(work)
-                self.link_amendment(work)
-                self.link_repeal(work)
+                self.link_commencement(work, form)
+                self.link_amendment(work, form)
+                self.link_repeal(work, form)
 
-    def link_commencement(self, work):
+    def link_commencement(self, work, form):
         # if the work is `commenced_by` something, try linking it
         # make a task if this fails
         if work.get('commenced_by'):
@@ -596,9 +596,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 work['work'].commencing_work = Work.objects.get(title=work.get('commenced_by'))
                 work['work'].save()
             except Work.DoesNotExist:
-                self.create_task(work, task_type='commencement')
+                self.create_task(work, form, task_type='commencement')
 
-    def link_amendment(self, work):
+    def link_amendment(self, work, form):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
@@ -615,9 +615,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 work['work'].save()
 
             except Work.DoesNotExist:
-                self.create_task(work, task_type='amendment')
+                self.create_task(work, form, task_type='amendment')
 
-    def link_repeal(self, work):
+    def link_repeal(self, work, form):
         # if the work is `repealed_by` something, try linking it
         # make a task if this fails
         if work.get('repealed_by'):
@@ -630,9 +630,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work['work'].repealed_date = repealing_work.commencement_date
                 work['work'].save()
             except Work.DoesNotExist:
-                self.create_task(work, task_type='repeal')
+                self.create_task(work, form, task_type='repeal')
 
-    def create_task(self, work, task_type):
+    def create_task(self, work, form, task_type):
         task = Task()
         if task_type == 'commencement':
             task.title = 'Link commencement'
@@ -655,6 +655,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         task.locality = work['work'].locality
         task.work = work['work']
         task.created_by_user = self.request.user
+        task.save()
+        task.workflows = form.cleaned_data.get('workflows').all()
         task.save()
 
     def get_tasks(self, works, form):

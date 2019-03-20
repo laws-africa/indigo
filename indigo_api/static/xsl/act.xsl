@@ -139,21 +139,32 @@
 
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <!-- a:doc doesn't an id, so add one -->
+    <!-- a:doc doesn't have an id, so add one -->
     <article class="akn-doc" id="{@name}">
-      <xsl:apply-templates select="@*" />
-      <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-        <h2>
-          <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-        </h2>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="a:mainBody/a:hcontainer[@name='schedule']">
+          <!-- new style schedule -->
+          <xsl:apply-templates select="a:mainBody/a:hcontainer[@name='schedule']" />
+        </xsl:when>
 
-      <xsl:apply-templates select="a:coverPage" />
-      <xsl:apply-templates select="a:preface" />
-      <xsl:apply-templates select="a:preamble" />
-      <xsl:apply-templates select="a:mainBody" />
-      <xsl:apply-templates select="a:conclusions" />
+        <xsl:otherwise>
+          <!-- old style schedule -->
+          <xsl:apply-templates select="@*" />
+          <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
+            <h2>
+              <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
+            </h2>
+          </xsl:if>
+          <xsl:apply-templates select="a:mainBody" />
+        </xsl:otherwise>
+      </xsl:choose>
     </article>
+  </xsl:template>
+
+  <xsl:template match="a:hcontainer[@name='schedule']/a:heading | a:hcontainer[@name='schedule']/a:subheading">
+    <h2>
+      <xsl:apply-templates />
+    </h2>
   </xsl:template>
 
   <!-- for block elements, generate a span element with a class matching

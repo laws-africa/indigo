@@ -132,10 +132,32 @@
     </xsl:call-template>
   </xsl:template>
 
+
   <!-- components/schedules -->
-  <xsl:template match="a:doc">
+  <!-- new-style schedules, "article" elements -->
+  <xsl:template match="a:hcontainer[@name='schedule']">
     <xsl:text>Schedule - </xsl:text>
-    <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
+    <xsl:apply-templates select="a:heading" mode="nonewline" />
+    <xsl:text>
+</xsl:text>
+
+    <xsl:if test="a:subheading">
+      <xsl:apply-templates select="a:subheading" />
+      <xsl:text>
+</xsl:text>
+    </xsl:if>
+
+    <xsl:text>
+
+</xsl:text>
+    <xsl:apply-templates select="./*[not(self::a:heading) and not(self::a:subheading)]" />
+  </xsl:template>
+
+
+  <!-- old-style schedules, "article" elements -->
+  <xsl:template match="a:doc/a:mainBody/a:article">
+    <xsl:text>Schedule - </xsl:text>
+    <xsl:value-of select="../../a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
     <xsl:text>
 </xsl:text>
 
@@ -147,6 +169,7 @@
 
     <xsl:apply-templates select="a:mainBody" />
   </xsl:template>
+
 
   <!-- tables -->
   <xsl:template match="a:table">

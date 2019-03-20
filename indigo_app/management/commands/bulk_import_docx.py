@@ -81,19 +81,18 @@ class Command(BaseCommand):
 
                     self.import_docx_file(user, work, date, language, docx_file, filesize)
 
-    def create_review_task(self, document, user):
+    def create_review_task(self, document, user, filename):
         task = Task()
         task.title = 'Review batch-imported document'
         task.description = '''
-        This document was imported as part of a batch.
-        - Clean up any import errors 
+        This document was imported as part of a batch from the file '{}'.
         - Double-check that the content is on the right work and at the right point in time.
-        '''
+        - Clean up any import errors as with a normal import.
+        '''.format(filename)
         task.country = document.work.country
         task.locality = document.work.locality
         task.work = document.work
         task.document = document
-        task.state = 'pending_review'
         task.created_by_user = user
         task.save()
 
@@ -131,7 +130,7 @@ class Command(BaseCommand):
 
         document.updated_by_user = user
         document.save()
-        self.create_review_task(document, user)
+        self.create_review_task(document, user, filename)
 
         # TODO: fix action signal to be `created` rather than `updated`
 

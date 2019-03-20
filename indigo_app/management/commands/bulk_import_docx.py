@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from indigo.plugins import plugins
-from indigo_api.models import Document, Language, Task, Work
+from indigo_api.models import Attachment, Document, Language, Task, Work
 
 
 class Command(BaseCommand):
@@ -103,6 +103,7 @@ class Command(BaseCommand):
         document.expression_date = date
         document.language = language
         document.created_by_user = user
+        document.save()
 
         importer = plugins.for_document('importer', document)
 
@@ -118,6 +119,18 @@ class Command(BaseCommand):
             print("Error during import: %s" % e.message)
             raise ValidationError(e.message or "error during import")
 
+        docx_file.seek(0)
+        filename = os.path.split(docx_file.name)[1]
+
+        att = Attachment()
+        att.filename = filename
+        att.mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        att.document = document
+        att.size = filesize
+        att.file.save(att.filename, docx_file)
+
+        document.updated_by_user = user
+        document.save()
         self.create_review_task(document, user)
 
         # TODO: fix action signal to be `created` rather than `updated`

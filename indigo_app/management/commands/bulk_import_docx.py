@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 
 from indigo.plugins import plugins
-from indigo_api.models import Document, Language, Work
+from indigo_api.models import Document, Language, Task, Work
 
 
 class Command(BaseCommand):
@@ -81,6 +81,22 @@ class Command(BaseCommand):
 
                     self.import_docx_file(user, work, date, language, docx_file, filesize)
 
+    def create_review_task(self, document, user):
+        task = Task()
+        task.title = 'Review batch-imported document'
+        task.description = '''
+        This document was imported as part of a batch.
+        - Clean up any import errors 
+        - Double-check that the content is on the right work and at the right point in time.
+        '''
+        task.country = document.work.country
+        task.locality = document.work.locality
+        task.work = document.work
+        task.document = document
+        task.state = 'pending_review'
+        task.created_by_user = user
+        task.save()
+
     def import_docx_file(self, user, work, date, language, docx_file, filesize):
         document = Document()
         document.work = work
@@ -102,7 +118,8 @@ class Command(BaseCommand):
             print("Error during import: %s" % e.message)
             raise ValidationError(e.message or "error during import")
 
-        # TODO: create review task on document
+        self.create_review_task(document, user)
+
         # TODO: fix action signal to be `created` rather than `updated`
 
     def handle(self, *args, **options):

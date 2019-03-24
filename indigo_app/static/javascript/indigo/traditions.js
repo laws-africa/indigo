@@ -63,10 +63,16 @@
       titles: {
         default     : function(i) { return i.num + " " + i.heading; },
         akomaNtoso  : function(i) { return "Entire document"; },
-        chapter     : function(i) { return "Ch. " + i.num + " " + i.heading; },
+        chapter     : function(i) { return "Ch. " + i.num + " – " + i.heading; },
         conclusions : function(i) { return "Conclusions"; },
         coverpage   : function(i) { return "Coverpage"; },
-        part        : function(i) { return "Part " + i.num + " " + i.heading; },
+        part        : function(i) {
+                                    if (i.heading) {
+                                      return "Part " + i.num + " – " + i.heading;
+                                    } else {
+                                      return "Part " + i.num;
+                                    }
+        },
         preamble    : function(i) { return "Preamble"; },
         preface     : function(i) { return "Preface"; },
         components  : function(i) { return "Schedules"; },

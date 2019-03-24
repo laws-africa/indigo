@@ -83,8 +83,12 @@
           <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
         </xsl:choose>
         <xsl:value-of select="./a:num" />
-        <xsl:text> - </xsl:text>
-        <xsl:value-of select="./a:heading" />
+        <xsl:choose>
+          <xsl:when test="./a:heading">
+            <xsl:text> – </xsl:text>
+            <xsl:value-of select="./a:heading" />
+          </xsl:when>
+        </xsl:choose>
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />

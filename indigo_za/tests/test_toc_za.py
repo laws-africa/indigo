@@ -52,9 +52,9 @@ class TOCBuilderZATestCase(APITestCase):
             {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo',
                 'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo'},
             {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
-                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Chapter 1. - The Chapter', 'children': [
+                'component': 'main', 'subcomponent': 'chapter/1', 'title': u'Chapter 1. – The Chapter', 'children': [
                     {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
-                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Part A - The Part', 'children': [
+                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': u'Part A – The Part', 'children': [
                          {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
                           'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other'},
                      ]
@@ -100,9 +100,9 @@ class TOCBuilderZATestCase(APITestCase):
             {'id': 'section-1', 'num': '1.', 'type': 'section', 'heading': 'Foo',
                 'component': 'main', 'subcomponent': 'section/1', 'title': '1. Foo'},
             {'id': 'chapter-1', 'num': '1.', 'type': 'chapter', 'heading': 'The Chapter',
-                'component': 'main', 'subcomponent': 'chapter/1', 'title': 'Hoofstuk 1. - The Chapter', 'children': [
+                'component': 'main', 'subcomponent': 'chapter/1', 'title': u'Hoofstuk 1. – The Chapter', 'children': [
                     {'id': 'part-A', 'num': 'A', 'type': 'part', 'heading': 'The Part',
-                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': 'Deel A - The Part', 'children': [
+                     'component': 'main', 'subcomponent': 'chapter/1/part/A', 'title': u'Deel A – The Part', 'children': [
                          {'id': 'section-2', 'num': '2.', 'type': 'section', 'heading': 'Other',
                           'component': 'main', 'subcomponent': 'section/2', 'title': '2. Other'},
                      ]

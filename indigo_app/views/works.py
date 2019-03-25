@@ -537,7 +537,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work = Work()
 
                     work.frbr_uri = frbr_uri
-                    work.title = row.get('title')
+                    work.title = self.strip_title_string(row.get('title'))
                     work.country = self.country
                     work.locality = self.locality
                     work.publication_name = row.get('publication_name')
@@ -701,6 +701,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             except ValueError:
                 raise ValidationError('Check the format of %s; it should be e.g. "2012-12-31"' % field)
         return date
+
+    def strip_title_string(self, title_string):
+        return re.sub(u'[\u2028 ]+', ' ', title_string)
 
 
 class ImportDocumentView(WorkViewBase, FormView):

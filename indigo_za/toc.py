@@ -25,7 +25,7 @@ class TOCBuilderZA(TOCBuilderBase):
     toc_non_unique_components = ['chapter', 'part']
 
     titles = {
-        'chapter': lambda t: _('Chapter') + ' %s' % t.num + (' – %s' % t.heading if t.heading else '').decode('utf-8'),
-        'part': lambda t: _('Part') + ' %s' % t.num + (' – %s' % t.heading if t.heading else '').decode('utf-8'),
+        'chapter': lambda t: _('Chapter') + ' %s' % t.num + (u' – %s' % t.heading if t.heading else ''),
+        'part': lambda t: _('Part') + ' %s' % t.num + (u' – %s' % t.heading if t.heading else ''),
         'section': section_title,
     }

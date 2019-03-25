@@ -86,6 +86,11 @@
               {{/if}}
               <br>
               <span class="text-muted">{{ frbr_uri }}</span>
+              {{#if parent_work}}
+              <p>
+                Parent work: <a href="/works{{ parent_work.frbr_uri }}/" data-popup-url="/works{{ parent_work.frbr_uri }}/popup">{{ parent_work.title }}</a>
+              </p>
+              {{/if}}
             </div>
 
             <div class="col-2">

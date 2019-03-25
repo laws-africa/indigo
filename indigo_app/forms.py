@@ -121,12 +121,6 @@ class BatchCreateWorkForm(forms.Form):
 
     possible_tasks = [
         {
-            'key': 'link',
-            'label': 'Link commencement / amendments / repeal',
-            'description': '''Link the commencement and/or amendments and/or repeal works for this work.
-Go to 'Edit work' and/or 'Manage points in time' and use the spreadsheet for reference.''',
-        },
-        {
             'key': 'import',
             'label': 'Import content',
             'description': '''Import a point in time for this work; \

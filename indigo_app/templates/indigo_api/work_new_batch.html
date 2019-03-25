@@ -69,17 +69,45 @@
     <div class="card">
       <div class="card-body">
         <div class="form-group">
-          <label for="{{ form.spreadsheet_url.id_for_label }}">URL of the Google Sheet to import works from:</label>
-          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="Enter Google Sheets URL" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
+          <label for="{{ form.spreadsheet_url.id_for_label }}" class="h5">Google Sheets URL</label>
+          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
 
+        <label for="{{ form.workflows.id_for_label }}" class="h5">Workflows</label>
+        <p>
+          Choose one or more workflow/s to link any tasks created during this import to, even if no tasks are selected below – some tasks may be created automatically.<br>
+          If there are no workflows or you need a new one, create a new workflow then return to this tab, refresh the page and select it from the dropdown.
+        </p>
+        <div class="float-right">
+          <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
+        </div>
+
+        {% if place_workflows %}
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-6">
+                <select class="selectpicker form-control" required multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}" data-live-search="true">
+                  {% for workflow in place_workflows %}
+                    <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          {% for err in form.workflows.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+        {% else %}
+        <div class="text-danger">No workflows</div>
+        {% endif %}
+
         <div class="form-row">
 
           <div class="form-group col-6">
-            <h5>Tasks for primary works</h5>
+            <h5>Tasks for primary works only</h5>
             {% for p_task in form.primary_tasks %}
               <div class="form-check">
                 <input type="checkbox" class="form-check-input" id="{{ p_task.id_for_label }}" name="{{ form.primary_tasks.html_name }}" value="{{ p_task.data.value }}" {% if p_task.data.selected %}checked{% endif %}>
@@ -108,32 +136,6 @@
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
 
-        </div>
-
-        <label for="{{ form.workflows.id_for_label }}" class="h5">Add the tasks to the following workflows</label>
-        {% if place_workflows %}
-          <div class="form-group">
-            <div class="row">
-              <div class="col-md-6">
-                <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}" data-live-search="true">
-                  {% for workflow in place_workflows %}
-                    <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-          {% for err in form.workflows.errors %}
-            <div class="form-text text-danger">{{ err }}</div>
-          {% endfor %}
-        {% else %}
-        <div class="text-danger">No workflows</div>
-        {% endif %}
-
-        <div>
-          <p>If there are no workflows or you need a new one, create a new workflow then return to this tab, refresh the page and select it from the dropdown –
-            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
-          </p>
         </div>
 
       </div>

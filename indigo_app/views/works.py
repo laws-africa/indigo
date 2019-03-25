@@ -561,13 +561,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         info['work'] = work
 
                         # TODO: neaten this up
-                        if not row.get('commenced_by') == u"":
+                        if row.get('commenced_by'):
                             info['commenced_by'] = row.get('commenced_by')
-                        if not row.get('amends') == u"":
+                        if row.get('amends'):
                             info['amends'] = row.get('amends')
-                        if not row.get('repealed_by') == u"":
+                        if row.get('repealed_by'):
                             info['repealed_by'] = row.get('repealed_by')
-                        if not row.get('with_effect_from') == u"":
+                        if row.get('with_effect_from'):
                             info['with_effect_from'] = row.get('with_effect_from')
 
                     except ValidationError as e:
@@ -593,7 +593,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         # make a task if this fails
         if work.get('commenced_by'):
             try:
-                work['work'].commencing_work = Work.objects.get(title=work.get('commenced_by'))
+                work['work'].commencing_work = self.find_work_by_title(work.get('commenced_by'))
                 work['work'].save()
             except Work.DoesNotExist:
                 self.create_task(work, form, task_type='commencement')
@@ -604,7 +604,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         # make a task if this fails
         if work.get('amends'):
             try:
-                amended_work = Work.objects.get(title=work.get('amends'))
+                amended_work = self.find_work_by_title(work.get('amends'))
 
                 amendment = Amendment()
                 amendment.amended_work = amended_work
@@ -622,7 +622,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         # make a task if this fails
         if work.get('repealed_by'):
             try:
-                repealing_work = Work.objects.get(title=work.get('repealed_by'))
+                repealing_work = self.find_work_by_title(work.get('repealed_by'))
                 work['work'].repealed_by = repealing_work
                 if work.get('with_effect_from'):
                     work['work'].repealed_date = work.get('with_effect_from')
@@ -631,6 +631,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 work['work'].save()
             except Work.DoesNotExist:
                 self.create_task(work, form, task_type='repeal')
+
+    def find_work_by_title(self, title):
+        return Work.objects.get(title=title, country=self.country, locality=self.locality)
 
     def create_task(self, work, form, task_type):
         task = Task()

@@ -82,9 +82,13 @@
           <xsl:when test="$lang = 'zul'"><xsl:text>Ingxenye </xsl:text></xsl:when>
           <xsl:otherwise><xsl:text>Part </xsl:text></xsl:otherwise>
         </xsl:choose>
-        <xsl:value-of select="./a:num" />
-        <xsl:text> - </xsl:text>
-        <xsl:value-of select="./a:heading" />
+        <xsl:value-of select="a:num" />
+        <xsl:choose>
+          <xsl:when test="./a:heading">
+            <xsl:text> – </xsl:text>
+            <xsl:apply-templates select="a:heading" mode="inline" />
+          </xsl:when>
+        </xsl:choose>
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
@@ -108,9 +112,9 @@
           <xsl:when test="$lang = 'zul'"><xsl:text>Isahluko </xsl:text></xsl:when>
           <xsl:otherwise><xsl:text>Chapter </xsl:text></xsl:otherwise>
         </xsl:choose>
-        <xsl:value-of select="./a:num" />
+        <xsl:value-of select="a:num" />
         <br/>
-        <xsl:value-of select="./a:heading" />
+        <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
@@ -121,9 +125,9 @@
     <section class="akn-section">
       <xsl:apply-templates select="@*" />
       <h3>
-        <xsl:value-of select="./a:num" />
+        <xsl:value-of select="a:num" />
         <xsl:text> </xsl:text>
-        <xsl:value-of select="./a:heading" />
+        <xsl:apply-templates select="a:heading" mode="inline" />
       </h3>
       
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
@@ -139,21 +143,32 @@
 
   <!-- components/schedules -->
   <xsl:template match="a:doc">
-    <!-- a:doc doesn't an id, so add one -->
+    <!-- a:doc doesn't have an id, so add one -->
     <article class="akn-doc" id="{@name}">
-      <xsl:apply-templates select="@*" />
-      <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-        <h2>
-          <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-        </h2>
-      </xsl:if>
+      <xsl:choose>
+        <xsl:when test="a:mainBody/a:hcontainer[@name='schedule']">
+          <!-- new style schedule -->
+          <xsl:apply-templates select="a:mainBody/a:hcontainer[@name='schedule']" />
+        </xsl:when>
 
-      <xsl:apply-templates select="a:coverPage" />
-      <xsl:apply-templates select="a:preface" />
-      <xsl:apply-templates select="a:preamble" />
-      <xsl:apply-templates select="a:mainBody" />
-      <xsl:apply-templates select="a:conclusions" />
+        <xsl:otherwise>
+          <!-- old style schedule -->
+          <xsl:apply-templates select="@*" />
+          <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
+            <h2>
+              <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
+            </h2>
+          </xsl:if>
+          <xsl:apply-templates select="a:mainBody" />
+        </xsl:otherwise>
+      </xsl:choose>
     </article>
+  </xsl:template>
+
+  <xsl:template match="a:hcontainer[@name='schedule']/a:heading | a:hcontainer[@name='schedule']/a:subheading">
+    <h2>
+      <xsl:apply-templates />
+    </h2>
   </xsl:template>
 
   <!-- for block elements, generate a span element with a class matching
@@ -225,6 +240,14 @@
       <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </span>
+  </xsl:template>
+
+  <!-- Special inline mode which doesn't include the akn-foo marker.
+       This is used mostly by blocks that format their own headings, and
+       don't want akn-heading to be applied to heading elements. -->
+  <xsl:template match="*" mode="inline">
+    <xsl:apply-templates select="@*" />
+    <xsl:apply-templates />
   </xsl:template>
   
   <!-- For HTML table elements, copy them over then apply normal AN

@@ -351,7 +351,7 @@ class DocumentAPITest(APITestCase):
                 'heading': 'Administrative provisions',
                 'id': 'chapter-2',
                 'component': 'main',
-                'title': 'Chapter 2 - Administrative provisions',
+                'title': u'Chapter 2 – Administrative provisions',
                 'subcomponent': 'chapter/2',
                 'children': [
                     {

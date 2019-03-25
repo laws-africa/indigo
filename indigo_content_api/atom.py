@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.utils import feedgenerator
 from rest_framework.reverse import reverse
 from rest_framework_xml.renderers import XMLRenderer
@@ -145,7 +146,7 @@ class AtomRenderer(XMLRenderer):
                       kwargs={'frbr_uri': frbr_uri[1:]})
 
         feed = AtomFeed(
-            title="%s - %s" % (title, frbr_uri),
+            title=u"%s – %s" % (title, frbr_uri),
             feed_url=renderer_context['request'].build_absolute_uri(),
             link=url,
             description="Indigo documents under the %s FRBR URI" % frbr_uri,

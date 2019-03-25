@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 
 import re
@@ -69,4 +70,4 @@ class AuthorityReference(models.Model):
         return domain
 
     def __str__(self):
-        return u'%s - "%s"' % (self.frbr_uri, self.title)
+        return u'%s – "%s"' % (self.frbr_uri, self.title)

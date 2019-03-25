@@ -703,8 +703,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         return date
 
     def strip_title_string(self, title_string):
-        no_line_separator = re.sub(u'\u2028', ' ', title_string)
-        return re.sub('  ', ' ', no_line_separator)
+        return re.sub(u'[\u2028 ]+', ' ', title_string)
 
 
 class ImportDocumentView(WorkViewBase, FormView):

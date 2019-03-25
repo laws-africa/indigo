@@ -38,17 +38,15 @@
 
   <xsl:template match="a:preface">
     <xsl:text>PREFACE</xsl:text>
-    <xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
 
-</xsl:text>
     <xsl:apply-templates />
   </xsl:template>
 
   <xsl:template match="a:preamble">
     <xsl:text>PREAMBLE</xsl:text>
-    <xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
 
-</xsl:text>
     <xsl:apply-templates />
   </xsl:template>
 
@@ -57,6 +55,8 @@
     <xsl:value-of select="a:num" />
     <xsl:text> - </xsl:text>
     <xsl:apply-templates select="a:heading" />
+    <xsl:text>&#10;&#10;</xsl:text>
+
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
@@ -65,6 +65,8 @@
     <xsl:value-of select="a:num" />
     <xsl:text> - </xsl:text>
     <xsl:apply-templates select="a:heading" />
+    <xsl:text>&#10;&#10;</xsl:text>
+
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
@@ -72,6 +74,8 @@
     <xsl:value-of select="a:num" />
     <xsl:text> </xsl:text>
     <xsl:apply-templates select="a:heading" />
+    <xsl:text>&#10;&#10;</xsl:text>
+
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
   
@@ -80,31 +84,20 @@
       <xsl:value-of select="a:num" />
       <xsl:text> </xsl:text>
     </xsl:if>
+
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
   </xsl:template>
 
-  <!-- these are block elements and have a newline at the end -->
-  <xsl:template match="a:heading">
-    <xsl:apply-templates />
-    <xsl:text>
-
-</xsl:text>
-  </xsl:template>
-
+  <!-- p tags must end with a blank line -->
   <xsl:template match="a:p">
     <xsl:apply-templates/>
-    <!-- p tags must end with a newline -->
-    <xsl:text>
-
-</xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:blockList">
     <xsl:if test="a:listIntroduction != ''">
       <xsl:apply-templates select="a:listIntroduction" />
-      <xsl:text>
-
-</xsl:text>
+      <xsl:text>&#10;&#10;</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="./*[not(self::a:listIntroduction)]" />
   </xsl:template>
@@ -118,9 +111,7 @@
   <xsl:template match="a:list">
     <xsl:if test="a:intro != ''">
       <xsl:apply-templates select="a:intro" />
-      <xsl:text>
-
-</xsl:text>
+      <xsl:text>&#10;&#10;</xsl:text>
     </xsl:if>
     <xsl:apply-templates select="./*[not(self::a:intro)]" />
   </xsl:template>
@@ -132,21 +123,39 @@
     </xsl:call-template>
   </xsl:template>
 
-  <!-- components/schedules -->
-  <xsl:template match="a:doc">
-    <xsl:text>Schedule - </xsl:text>
-    <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-    <xsl:text>
-</xsl:text>
 
-    <xsl:if test="not(a:mainBody/a:article/a:heading)">
-      <!-- ensure an extra blank line if there is no heading -->
-      <xsl:text>
-</xsl:text>
+  <!-- components/schedules -->
+  <!-- new-style schedules, "article" elements -->
+  <xsl:template match="a:hcontainer[@name='schedule']">
+    <xsl:text>SCHEDULE - </xsl:text>
+    <xsl:apply-templates select="a:heading" />
+    <xsl:text>&#10;</xsl:text>
+
+    <xsl:if test="a:subheading">
+      <xsl:apply-templates select="a:subheading" />
+      <xsl:text>&#10;</xsl:text>
     </xsl:if>
 
-    <xsl:apply-templates select="a:mainBody" />
+    <xsl:text>&#10;&#10;</xsl:text>
+    <xsl:apply-templates select="./*[not(self::a:heading) and not(self::a:subheading)]" />
   </xsl:template>
+
+
+  <!-- old-style schedules, "article" elements -->
+  <xsl:template match="a:doc/a:mainBody/a:article">
+    <xsl:text>SCHEDULE - </xsl:text>
+    <xsl:value-of select="../../a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
+    <xsl:text>&#10;</xsl:text>
+
+    <xsl:if test="a:heading">
+      <xsl:apply-templates select="a:heading" />
+      <xsl:text>&#10;</xsl:text>
+    </xsl:if>
+
+    <xsl:text>&#10;</xsl:text>
+    <xsl:apply-templates select="./*[not(self::a:heading)]"/>
+  </xsl:template>
+
 
   <!-- tables -->
   <xsl:template match="a:table">
@@ -231,8 +240,7 @@
   </xsl:template>
 
   <xsl:template match="a:eol">
-    <xsl:text>
-</xsl:text>
+    <xsl:text>&#10;</xsl:text>
   </xsl:template>
 
 

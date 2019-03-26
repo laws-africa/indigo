@@ -571,6 +571,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['repealed_by'] = row.get('repealed_by')
                         if row.get('with_effect_from'):
                             info['with_effect_from'] = row.get('with_effect_from')
+                        if row.get('parent_work'):
+                            info['parent_work'] = row.get('parent_work')
 
                     except ValidationError as e:
                         info['status'] = 'error'
@@ -588,6 +590,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             if info['status'] == 'success':
                 self.link_commencement(info, form)
                 self.link_repeal(info, form)
+                self.link_parent_work(info, form)
 
             if info['status'] == 'success' or info['status'] == 'duplicate':
                 self.link_amendment(info, form)
@@ -660,6 +663,16 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def find_work_by_title(self, title):
         return Work.objects.get(title=title, country=self.country, locality=self.locality)
 
+    def link_parent_work(self, info, form):
+        # if the work has a `parent_work`, try linking it
+        # make a task if this fails
+        if info.get('parent_work'):
+            try:
+                info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
+                info['work'].save()
+            except Work.DoesNotExist:
+                self.create_task(info, form, task_type='parent_work')
+
     def create_task(self, info, form, task_type):
         task = Task()
         if task_type == 'commencement':
@@ -676,6 +689,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         elif task_type == 'repeal':
             task.title = 'Link repeal'
             task.description = '''This work's repealing work could not be linked automatically.
+            There may have been a typo in the spreadsheet, or the work may not exist yet.
+            Check the spreadsheet for reference and link it manually.'''
+        elif task_type == 'parent_work':
+            task.title = 'Link parent work'
+            task.description = '''This work's parent work could not be linked automatically.
             There may have been a typo in the spreadsheet, or the work may not exist yet.
             Check the spreadsheet for reference and link it manually.'''
 

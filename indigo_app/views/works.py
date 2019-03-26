@@ -531,8 +531,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work = Work.objects.get(frbr_uri=frbr_uri)
                     info['work'] = work
                     info['status'] = 'duplicate'
-
-                # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
+                    if row.get('amends'):
+                        info['amends'] = row.get('amends')
+                    if row.get('commencement_date'):
+                        info['commencement_date'] = row.get('commencement_date')
 
                 except Work.DoesNotExist:
                     work = Work()
@@ -585,8 +587,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         for work in works:
             if work['status'] == 'success':
                 self.link_commencement(work, form)
-                self.link_amendment(work, form)
                 self.link_repeal(work, form)
+
+            if work['status'] == 'success' or work['status'] == 'duplicate':
+                self.link_amendment(work, form)
 
     def link_commencement(self, work, form):
         # if the work is `commenced_by` something, try linking it
@@ -606,13 +610,34 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             try:
                 amended_work = self.find_work_by_title(work.get('amends'))
 
-                amendment = Amendment()
-                amendment.amended_work = amended_work
-                amendment.amending_work = work['work']
-                amendment.date = work['work'].commencement_date
-                amendment.created_by_user = self.request.user
-                amendment.save()
-                work['work'].save()
+                try:
+                    if work.get('commencement_date'):
+                        Amendment.objects.get(
+                            amended_work=amended_work,
+                            amending_work=work['work'],
+                            date=work.get('commencement_date')
+                        )
+                    else:
+                        Amendment.objects.get(
+                            amended_work=amended_work,
+                            amending_work=work['work'],
+                            date=work['work'].commencement_date
+                        )
+
+                except Amendment.DoesNotExist:
+                    amendment = Amendment()
+                    amendment.amended_work = amended_work
+                    amendment.amending_work = work['work']
+                    amendment.created_by_user = self.request.user
+
+                    if work.get('commencement_date'):
+                        amendment.date = work.get('commencement_date')
+
+                    else:
+                        amendment.date = work['work'].commencement_date
+
+                    amendment.save()
+                    work['work'].save()
 
             except Work.DoesNotExist:
                 self.create_task(work, form, task_type='amendment')

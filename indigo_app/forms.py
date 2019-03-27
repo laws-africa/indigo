@@ -44,7 +44,11 @@ class WorkForm(forms.ModelForm):
         except PublicationDocument.DoesNotExist:
             pub_doc = None
 
-        if pub_doc_file:
+        if self.cleaned_data['delete_publication_document']:
+            if pub_doc:
+                pub_doc.delete()
+
+        elif pub_doc_file:
             if not pub_doc:
                 pub_doc = PublicationDocument(work=self.instance)
             pub_doc.trusted_url = None
@@ -61,10 +65,6 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
-
-        elif self.cleaned_data['delete_publication_document']:
-            if pub_doc:
-                pub_doc.delete()
 
 
 class DocumentForm(forms.ModelForm):

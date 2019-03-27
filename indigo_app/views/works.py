@@ -554,6 +554,16 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.full_clean()
                         work.save()
 
+                        # link publication document
+                        params = {
+                            'date': row.get('publication_date'),
+                            'number': work.publication_number,
+                            'publication': work.publication_name,
+                            'country': self.country.place_code,
+                            'locality': self.locality.code if self.locality else None,
+                        }
+                        self.get_publication_document(params, work)
+
                         # signals
                         work_changed.send(sender=work.__class__, work=work, request=self.request)
 
@@ -796,6 +806,25 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def strip_title_string(self, title_string):
         return re.sub(u'[\u2028 ]+', ' ', title_string)
+
+    def get_publication_document(self, params, work):
+        finder = plugins.for_locale('publications', self.country, None, self.locality)
+
+        if finder:
+            try:
+                publications = finder.find_publications(params)
+
+                if len(publications) == 1:
+                    pub_doc_details = publications[0]
+                    pub_doc = PublicationDocument()
+                    pub_doc.work = work
+                    pub_doc.file = None
+                    pub_doc.trusted_url = pub_doc_details.get('url')
+                    pub_doc.size = pub_doc_details.get('size')
+                    pub_doc.save()
+
+            except ValueError as e:
+                raise ValidationError({'message': e.message})
 
 
 class ImportDocumentView(WorkViewBase, FormView):

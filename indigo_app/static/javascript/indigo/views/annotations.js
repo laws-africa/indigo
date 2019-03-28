@@ -4,10 +4,6 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  var ANNOTATABLE = ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
-                    ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
-                    ".akn-subheading, .akn-item, table";
-
   /** This view handles a single annotation in a thread.
    */
   Indigo.AnnotationView = Backbone.View.extend({
@@ -311,9 +307,10 @@
 
       this.threadViews = [];
       this.prefocus = options.prefocus;
+      this.annotatable = this.model.tradition().settings.annotatable;
 
       this.$newButton = $("#new-annotation-floater");
-      this.$el.on('mouseover', ANNOTATABLE, _.bind(this.enterSection, this));
+      this.$el.on('mouseover', this.annotatable, _.bind(this.enterSection, this));
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
 
@@ -373,7 +370,7 @@
       var target = e.currentTarget,
           $target = $(target);
 
-      if (!$target.is(ANNOTATABLE)) return;
+      if (!$target.is(this.annotatable)) return;
 
       if ($target.children(".annotation-thread").length === 0) {
         this.showAnnotationButton(target);
@@ -391,7 +388,7 @@
 
     // setup a new annotation thread
     newAnnotation: function(e) {
-      var anchor = this.$newButton.closest(ANNOTATABLE).attr('id'),
+      var anchor = this.$newButton.closest(this.annotatable).attr('id'),
           root = new Indigo.Annotation({
             anchor: {
               id: anchor,

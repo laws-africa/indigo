@@ -47,6 +47,10 @@
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
       aceMode: 'ace/mode/indigo',
     },
+    // CSS selector for elements that can hold annotations
+    annotatable: ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
+                 ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
+                 ".akn-article, .akn-paragraph, .akn-subheading, .akn-item, table",
     toc: {
       elements: {
         akomaNtoso: 1,
@@ -105,6 +109,7 @@
   Indigo.traditions.za = new Indigo.Tradition({
     country: 'za',
     grammar: Indigo.traditions.default.settings.grammar,
+    annotatable: Indigo.traditions.default.settings.annotatable,
     toc: {
       elements: Indigo.traditions.default.settings.toc.elements,
       titles: {
@@ -130,6 +135,7 @@
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-division, .akn-subdivision, .akn-article, .akn-component, .akn-components',
       aceMode: 'ace/mode/indigo_pl',
     },
+    annotatable: Indigo.traditions.default.settings.annotatable,
     toc: {
       elements: {
         akomaNtoso: 1,

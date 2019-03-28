@@ -2,18 +2,20 @@
   margin-right: 170px;
 
   /* annotatable elements */
-  .akn-coverPage,
-  .akn-preface,
-  .akn-preamble,
-  .akn-conclusions,
-  .akn-chapter,
-  .akn-part,
-  .akn-section,
-  .akn-subsection,
+  .akn-article,
   .akn-blockList,
+  .akn-chapter,
+  .akn-conclusions,
+  .akn-coverPage,
   .akn-heading,
-  .akn-subheading,
   .akn-item,
+  .akn-paragraph,
+  .akn-part,
+  .akn-preamble,
+  .akn-preface,
+  .akn-section,
+  .akn-subheading,
+  .akn-subsection,
   table {
     position: relative;
   }

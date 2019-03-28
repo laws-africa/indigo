@@ -531,8 +531,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work = Work.objects.get(frbr_uri=frbr_uri)
                     info['work'] = work
                     info['status'] = 'duplicate'
-
-                # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
+                    if row.get('amends'):
+                        info['amends'] = row.get('amends')
+                    if row.get('commencement_date'):
+                        info['commencement_date'] = row.get('commencement_date')
 
                 except Work.DoesNotExist:
                     work = Work()
@@ -579,6 +581,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['repealed_by'] = row.get('repealed_by')
                         if row.get('with_effect_from'):
                             info['with_effect_from'] = row.get('with_effect_from')
+                        if row.get('parent_work'):
+                            info['parent_work'] = row.get('parent_work')
 
                     except ValidationError as e:
                         info['status'] = 'error'
@@ -592,60 +596,94 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         return works
 
     def link_works(self, works, form):
-        for work in works:
-            if work['status'] == 'success':
-                self.link_commencement(work, form)
-                self.link_amendment(work, form)
-                self.link_repeal(work, form)
+        for info in works:
+            if info['status'] == 'success':
+                self.link_commencement(info, form)
+                self.link_repeal(info, form)
+                self.link_parent_work(info, form)
 
-    def link_commencement(self, work, form):
+            if info['status'] == 'success' or info['status'] == 'duplicate':
+                self.link_amendment(info, form)
+
+    def link_commencement(self, info, form):
         # if the work is `commenced_by` something, try linking it
         # make a task if this fails
-        if work.get('commenced_by'):
+        if info.get('commenced_by'):
             try:
-                work['work'].commencing_work = self.find_work_by_title(work.get('commenced_by'))
-                work['work'].save()
+                info['work'].commencing_work = self.find_work_by_title(info.get('commenced_by'))
+                info['work'].save()
             except Work.DoesNotExist:
-                self.create_task(work, form, task_type='commencement')
+                self.create_task(info, form, task_type='commencement')
 
-    def link_amendment(self, work, form):
+    def link_amendment(self, info, form):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        if work.get('amends'):
+        if info.get('amends'):
             try:
-                amended_work = self.find_work_by_title(work.get('amends'))
+                amended_work = self.find_work_by_title(info.get('amends'))
 
-                amendment = Amendment()
-                amendment.amended_work = amended_work
-                amendment.amending_work = work['work']
-                amendment.date = work['work'].commencement_date
-                amendment.created_by_user = self.request.user
-                amendment.save()
-                work['work'].save()
+                try:
+                    if info.get('commencement_date'):
+                        Amendment.objects.get(
+                            amended_work=amended_work,
+                            amending_work=info['work'],
+                            date=info.get('commencement_date')
+                        )
+                    else:
+                        Amendment.objects.get(
+                            amended_work=amended_work,
+                            amending_work=info['work'],
+                            date=info['work'].commencement_date
+                        )
+
+                except Amendment.DoesNotExist:
+                    amendment = Amendment()
+                    amendment.amended_work = amended_work
+                    amendment.amending_work = info['work']
+                    amendment.created_by_user = self.request.user
+
+                    if info.get('commencement_date'):
+                        amendment.date = info.get('commencement_date')
+
+                    else:
+                        amendment.date = info['work'].commencement_date
+
+                    amendment.save()
+                    info['work'].save()
 
             except Work.DoesNotExist:
-                self.create_task(work, form, task_type='amendment')
+                self.create_task(info, form, task_type='amendment')
 
-    def link_repeal(self, work, form):
+    def link_repeal(self, info, form):
         # if the work is `repealed_by` something, try linking it
         # make a task if this fails
-        if work.get('repealed_by'):
+        if info.get('repealed_by'):
             try:
-                repealing_work = self.find_work_by_title(work.get('repealed_by'))
-                work['work'].repealed_by = repealing_work
-                if work.get('with_effect_from'):
-                    work['work'].repealed_date = work.get('with_effect_from')
+                repealing_work = self.find_work_by_title(info.get('repealed_by'))
+                info['work'].repealed_by = repealing_work
+                if info.get('with_effect_from'):
+                    info['work'].repealed_date = info.get('with_effect_from')
                 else:
-                    work['work'].repealed_date = repealing_work.commencement_date
-                work['work'].save()
+                    info['work'].repealed_date = repealing_work.commencement_date
+                info['work'].save()
             except Work.DoesNotExist:
-                self.create_task(work, form, task_type='repeal')
+                self.create_task(info, form, task_type='repeal')
 
     def find_work_by_title(self, title):
         return Work.objects.get(title=title, country=self.country, locality=self.locality)
 
-    def create_task(self, work, form, task_type):
+    def link_parent_work(self, info, form):
+        # if the work has a `parent_work`, try linking it
+        # make a task if this fails
+        if info.get('parent_work'):
+            try:
+                info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
+                info['work'].save()
+            except Work.DoesNotExist:
+                self.create_task(info, form, task_type='parent_work')
+
+    def create_task(self, info, form, task_type):
         task = Task()
         if task_type == 'commencement':
             task.title = 'Link commencement'
@@ -663,10 +701,15 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             task.description = '''This work's repealing work could not be linked automatically.
             There may have been a typo in the spreadsheet, or the work may not exist yet.
             Check the spreadsheet for reference and link it manually.'''
+        elif task_type == 'parent_work':
+            task.title = 'Link parent work'
+            task.description = '''This work's parent work could not be linked automatically.
+            There may have been a typo in the spreadsheet, or the work may not exist yet.
+            Check the spreadsheet for reference and link it manually.'''
 
-        task.country = work['work'].country
-        task.locality = work['work'].locality
-        task.work = work['work']
+        task.country = info['work'].country
+        task.locality = info['work'].locality
+        task.work = info['work']
         task.created_by_user = self.request.user
         task.save()
         task.workflows = form.cleaned_data.get('workflows').all()
@@ -710,22 +753,22 @@ Double-check that it's the right one.'''
 
             # need to save before assigning work, workflow/s because of M2M relations
             task.save()
-            task.work = work.get('work')
+            task.work = info.get('work')
             task.workflows = form.cleaned_data.get('workflows').all()
             task.save()
             tasks.append(task)
 
         # bulk create tasks on primary works
         if form.cleaned_data.get('primary_tasks'):
-            for work in works:
-                if work['status'] == 'success' and not work['work'].stub:
+            for info in works:
+                if info['status'] == 'success' and not info['work'].stub:
                     for chosen_task in form.cleaned_data.get('primary_tasks'):
                         make_task(chosen_task)
 
         # bulk create tasks on all works
         if form.cleaned_data.get('all_tasks'):
-            for work in works:
-                if work['status'] == 'success':
+            for info in works:
+                if info['status'] == 'success':
                     for chosen_task in form.cleaned_data.get('all_tasks'):
                         make_task(chosen_task)
 

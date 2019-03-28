@@ -487,7 +487,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
-            works = self.get_works(table)
+            works = self.get_works(table, form)
             self.link_works(works, form)
             self.get_tasks(works, form)
         except ValidationError as e:
@@ -500,7 +500,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         self.determine_place()
         return self.country
 
-    def get_works(self, table):
+    def get_works(self, table, form):
         works = []
 
         # clean up headers
@@ -553,6 +553,16 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.assent_date = self.make_date(row.get('assent_date'), 'assent_date')
                         work.full_clean()
                         work.save()
+
+                        # link publication document
+                        params = {
+                            'date': row.get('publication_date'),
+                            'number': work.publication_number,
+                            'publication': work.publication_name,
+                            'country': self.country.place_code,
+                            'locality': self.locality.code if self.locality else None,
+                        }
+                        self.get_publication_document(params, work, form)
 
                         # signals
                         work_changed.send(sender=work.__class__, work=work, request=self.request)
@@ -657,6 +667,29 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         task.country = work['work'].country
         task.locality = work['work'].locality
         task.work = work['work']
+        task.created_by_user = self.request.user
+        task.save()
+        task.workflows = form.cleaned_data.get('workflows').all()
+        task.save()
+
+    def pub_doc_task(self, work, form, task_type):
+        task = Task()
+
+        if task_type == 'link':
+            task.title = 'Link publication document'
+            task.description = '''This work's publication document could not be linked automatically.
+There may be more than one candidate, or it may be unavailable.
+First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
+Otherwise, find it and upload it manually.'''
+
+        elif task_type == 'check':
+            task.title = 'Check publication document'
+            task.description = '''This work's publication document was linked automatically.
+Double-check that it's the right one.'''
+
+        task.country = work.country
+        task.locality = work.locality
+        task.work = work
         task.created_by_user = self.request.user
         task.save()
         task.workflows = form.cleaned_data.get('workflows').all()
@@ -796,6 +829,32 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def strip_title_string(self, title_string):
         return re.sub(u'[\u2028 ]+', ' ', title_string)
+
+    def get_publication_document(self, params, work, form):
+        finder = plugins.for_locale('publications', self.country, None, self.locality)
+
+        if finder:
+            try:
+                publications = finder.find_publications(params)
+
+                if len(publications) == 1:
+                    pub_doc_details = publications[0]
+                    pub_doc = PublicationDocument()
+                    pub_doc.work = work
+                    pub_doc.file = None
+                    pub_doc.trusted_url = pub_doc_details.get('url')
+                    pub_doc.size = pub_doc_details.get('size')
+                    pub_doc.save()
+                    self.pub_doc_task(work, form, task_type='check')
+
+                else:
+                    self.pub_doc_task(work, form, task_type='link')
+
+            except ValueError as e:
+                raise ValidationError({'message': e.message})
+
+        else:
+            self.pub_doc_task(work, form, task_type='link')
 
 
 class ImportDocumentView(WorkViewBase, FormView):

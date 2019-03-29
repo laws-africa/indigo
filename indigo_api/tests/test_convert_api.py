@@ -107,7 +107,7 @@ class RenderParseAPITest(APITestCase):
     <section id="section-1">
       <num>1.</num>
       <heading>First Verse</heading>
-      <paragraph id="section-1.paragraph-0">
+      <paragraph id="section-1.paragraph0">
         <content>
           <p>κόσμε</p>
         </content>

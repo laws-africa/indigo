@@ -51,6 +51,11 @@ class Importer(LocaleBasedMatcher):
     """ Slaw grammar to use
     """
 
+    use_ascii = True
+    """ Should we parse --ascii to slaw? This can have significant performance benefits
+    for large files. See https://github.com/cjheath/treetop/issues/31
+    """
+
     def shell(self, cmd):
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -149,6 +154,8 @@ class Importer(LocaleBasedMatcher):
 
         cmd.extend(['--grammar', self.slaw_grammar])
         cmd.extend(['--input', inputtype])
+        if self.use_ascii:
+            cmd.extend(['--ascii'])
         cmd.append(fname)
 
         code, stdout, stderr = self.shell(cmd)

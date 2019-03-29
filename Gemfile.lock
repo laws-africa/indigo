@@ -2,18 +2,18 @@ GEM
   remote: https://rubygems.org/
   specs:
     log4r (1.1.10)
-    mimemagic (0.2.1)
-    mini_portile2 (2.3.0)
-    nokogiri (1.8.5)
-      mini_portile2 (~> 2.3.0)
+    mimemagic (0.3.3)
+    mini_portile2 (2.4.0)
+    nokogiri (1.10.2)
+      mini_portile2 (~> 2.4.0)
     polyglot (0.3.5)
-    slaw (2.2.0)
-      log4r (~> 1.1.10)
-      mimemagic (~> 0.2.1)
-      nokogiri (~> 1.8.5)
-      thor (~> 0.19.1)
+    slaw (3.1.0)
+      log4r (~> 1.1)
+      mimemagic (~> 0.2)
+      nokogiri (~> 1.8)
+      thor (~> 0.20)
       treetop (~> 1.5)
-    thor (0.19.4)
+    thor (0.20.3)
     treetop (1.6.10)
       polyglot (~> 0.3)
 
@@ -21,10 +21,10 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  slaw (~> 2.2)
+  slaw (~> 3.1)
 
 RUBY VERSION
-   ruby 2.3.3p222
+   ruby 2.6.2p47
 
 BUNDLED WITH
-   1.17.1
+   1.17.2

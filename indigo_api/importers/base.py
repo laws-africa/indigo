@@ -98,7 +98,8 @@ class Importer(LocaleBasedMatcher):
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
-            return self.import_from_file(f.name, frbr_uri)
+            inputtype = 'html' if suffix == '.html' else 'text'
+            return self.import_from_file(f.name, frbr_uri, inputtype)
 
     def create_from_pdf(self, upload, doc):
         """ Import from a PDF upload.
@@ -135,7 +136,7 @@ class Importer(LocaleBasedMatcher):
         """
         return self.expand_ligatures(text)
 
-    def import_from_file(self, fname, frbr_uri):
+    def import_from_file(self, fname, frbr_uri, inputtype='text'):
         cmd = ['bundle', 'exec', 'slaw', 'parse']
 
         if self.fragment:
@@ -147,6 +148,7 @@ class Importer(LocaleBasedMatcher):
             cmd.extend(['--section-number-position', self.section_number_position])
 
         cmd.extend(['--grammar', self.slaw_grammar])
+        cmd.extend(['--input', inputtype])
         cmd.append(fname)
 
         code, stdout, stderr = self.shell(cmd)

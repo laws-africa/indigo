@@ -233,6 +233,14 @@
     </img>
   </xsl:template>
 
+  <!-- indented elements without numbers should not be indented -->
+  <xsl:template match="a:paragraph[not(a:num)] | a:subsection[not(a:num)]">
+    <section class="akn-paragraph akn--no-indent">
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates />
+    </section>
+  </xsl:template>
+
   <!-- for all nodes, generate a SPAN element with a class matching
        the AN name of the node and copy over the attributes -->
   <xsl:template match="*" name="generic-elem">

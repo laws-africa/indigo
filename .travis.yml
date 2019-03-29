@@ -6,8 +6,8 @@ addons:
 env:
   - DATABASE_URL=postgres://postgres:@localhost:5432/indigo_test
 before_install:
-  - "rvm install ruby-2.3.3"
-  - "rvm use ruby-2.3.3"
+  - "rvm install ruby-2.6.2"
+  - "rvm use ruby-2.6.2"
 install: 
   - "pip install .[test]"
   - "bundle install"

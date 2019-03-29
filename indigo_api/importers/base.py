@@ -52,7 +52,7 @@ class Importer(LocaleBasedMatcher):
     """
 
     use_ascii = True
-    """ Should we parse --ascii to slaw? This can have significant performance benefits
+    """ Should we pass --ascii to slaw? This can have significant performance benefits
     for large files. See https://github.com/cjheath/treetop/issues/31
     """
 

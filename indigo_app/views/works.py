@@ -477,7 +477,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def get_context_data(self, **kwargs):
         context = super(BatchAddWorkView, self).get_context_data(**kwargs)
-        context['place_workflows'] = self.place.workflows.all()
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
         return context
 
     def form_valid(self, form):

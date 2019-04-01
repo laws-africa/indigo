@@ -18,12 +18,12 @@ class Command(BaseCommand):
         return Country.objects.get(country_id=country_code.upper())
 
     def get_works(self, country):
-        return Work.objects.get(country=country)
+        return Work.objects.filter(country=country)
 
     def get_params(self, work):
         params = {
-            # TODO: make pub_date into a literal?
-            'date': work.publication_date,
+            # TODO: Python 3 doesn't have `unicode()`
+            'date': unicode(work.publication_date),
             'number': work.publication_number,
             'publication': work.publication_name,
             'country': work.country.place_code,

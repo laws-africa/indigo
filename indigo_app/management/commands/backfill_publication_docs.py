@@ -46,45 +46,45 @@ class Command(BaseCommand):
         return params
 
     def pub_doc_task(self, work, user, task_type):
-            task = Task()
+        task = Task()
 
-            if task_type == 'link':
-                task.title = 'Link publication document'
-                task.description = '''This work's publication document could not be linked automatically.
-    There may be more than one candidate, or it may be unavailable.
-    First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
-    Otherwise, find it and upload it manually.'''
+        if task_type == 'link':
+            task.title = 'Link publication document'
+            task.description = '''This work's publication document could not be linked automatically.
+There may be more than one candidate, or it may be unavailable.
+First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
+Otherwise, find it and upload it manually.'''
 
-            elif task_type == 'check':
-                task.title = 'Check publication document'
-                task.description = '''This work's publication document was linked automatically.
-    Double-check that it's the right one.'''
-                task.state = 'pending_review'
+        elif task_type == 'check':
+            task.title = 'Check publication document'
+            task.description = '''This work's publication document was linked automatically.
+Double-check that it's the right one.'''
+            task.state = 'pending_review'
 
-            task.country = work.country
-            task.locality = work.locality
-            task.work = work
-            task.created_by_user = user
-            task.save()
+        task.country = work.country
+        task.locality = work.locality
+        task.work = work
+        task.created_by_user = user
+        task.save()
 
-            workflow_review_title = 'Review automatically linked publication documents'
-            try:
-                workflow = Workflow.objects.get(title=workflow_review_title)
+        workflow_review_title = 'Review automatically linked publication documents'
+        try:
+            workflow = Workflow.objects.get(title=workflow_review_title)
 
-            except Workflow.DoesNotExist:
-                workflow = Workflow()
-                workflow.title = workflow_review_title
-                workflow.description = '''These publication documents were automatically linked.
+        except Workflow.DoesNotExist:
+            workflow = Workflow()
+            workflow.title = workflow_review_title
+            workflow.description = '''These publication documents were automatically linked.
 Some may have been unsuccessful, and need to be done manually.
 The rest need to be checked for accuracy.'''
-                workflow.country = task.country
-                workflow.locality = task.locality
-                workflow.created_by_user = user
-                workflow.save()
-
-            workflow.tasks.add(task)
-            workflow.updated_by_user = user
+            workflow.country = task.country
+            workflow.locality = task.locality
+            workflow.created_by_user = user
             workflow.save()
+
+        workflow.tasks.add(task)
+        workflow.updated_by_user = user
+        workflow.save()
 
     def get_publication_document(self, params, work, user):
         finder = plugins.for_locale('publications', work.country, None, work.locality)

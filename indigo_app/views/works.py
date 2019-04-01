@@ -649,7 +649,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         amendment.date = info['work'].commencement_date
 
                     amendment.save()
-                    info['work'].save()
 
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='amendment')

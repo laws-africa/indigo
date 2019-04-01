@@ -32,12 +32,14 @@
 
               {% if task.document %}
                 <div>
-                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</span><br>
+                  <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">
+                    {{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
+                  </a>
                   <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
                 </div>
               {% elif task.work %}
                 <div>
-                  <span class="text-muted">{{ task.work.title }}</span><br>
+                  <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
                   <span class="text-muted">{{ task.work.frbr_uri }}</span>
                 </div>
               {% endif %}

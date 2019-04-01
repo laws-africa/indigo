@@ -728,6 +728,7 @@ Otherwise, find it and upload it manually.'''
             task.title = 'Check publication document'
             task.description = '''This work's publication document was linked automatically.
 Double-check that it's the right one.'''
+            task.state = 'pending_review'
 
         task.country = work.country
         task.locality = work.locality

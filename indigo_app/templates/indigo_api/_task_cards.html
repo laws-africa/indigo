@@ -27,7 +27,7 @@
                 </form>
               {% endif %}
 
-              <div><small class="text-muted">#{{ task.id }}</small></div>
+              <div class="small text-muted" id="task-{{ task.id }}">#{{ task.id }}</div>
               <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
 
               {% if task.document %}

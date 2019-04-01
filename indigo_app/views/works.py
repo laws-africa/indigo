@@ -687,24 +687,24 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if task_type == 'commencement':
             task.title = 'Link commencement'
             task.description = '''This work's commencement work could not be linked automatically.
-            There may have been a typo in the spreadsheet, or the work may not exist yet.
-            Check the spreadsheet for reference and link it manually.'''
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
         elif task_type == 'amendment':
             task.title = 'Link amendment(s)'
             task.description = '''This work's amended work(s) could not be linked automatically.
-            There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
-            or the amended work may not exist yet.
-            Check the spreadsheet for reference and link it/them manually.'''
+There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
+or the amended work may not exist yet.
+Check the spreadsheet for reference and link it/them manually.'''
         elif task_type == 'repeal':
             task.title = 'Link repeal'
             task.description = '''This work's repealing work could not be linked automatically.
-            There may have been a typo in the spreadsheet, or the work may not exist yet.
-            Check the spreadsheet for reference and link it manually.'''
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
         elif task_type == 'parent_work':
             task.title = 'Link parent work'
             task.description = '''This work's parent work could not be linked automatically.
-            There may have been a typo in the spreadsheet, or the work may not exist yet.
-            Check the spreadsheet for reference and link it manually.'''
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
 
         task.country = info['work'].country
         task.locality = info['work'].locality

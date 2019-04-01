@@ -37,7 +37,7 @@
                 </div>
               {% elif task.work %}
                 <div>
-                  <span class="text-muted">{{ task.work.title }}</span><br>
+                  <a class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
                   <span class="text-muted">{{ task.work.frbr_uri }}</span>
                 </div>
               {% endif %}

@@ -1,6 +1,9 @@
 <h6>{{ work.title }}</h6>
 <p class='text-muted mb-1'>{{ work.frbr_uri }}</p>
 
+{% if work.assent_date %}
+  <p class='mb-1'>Assented to on {{ work.assent_date|date:"Y-m-d" }}</p>
+{% endif %}
 <p class='mb-1'>Published
   on {{ work.publication_date|date:"Y-m-d" }}
   {% if work.publication_name %}<br>in {{ work.publication_name }}{% endif %}
@@ -9,9 +12,6 @@
     <br><i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a>
   {% endif %}
 </p>
-{% if work.assent_date %}
-  <p class='mb-1'>Assented to on {{ work.assent_date|date:"Y-m-d" }}</p>
-{% endif %}
 {% if work.commencement_date %}
   <p class='mb-1'>Commenced on {{ work.commencement_date|date:"Y-m-d" }}
     {% if work.commencing_work %}

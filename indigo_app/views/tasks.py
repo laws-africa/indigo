@@ -146,7 +146,7 @@ class TaskCreateView(TaskViewBase, CreateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
-        context['place_workflows'] = self.place.workflows.all()
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
 
         return context
 
@@ -211,7 +211,7 @@ class TaskEditView(TaskViewBase, UpdateView):
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
-        context['place_workflows'] = self.place.workflows.all()
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
 
         if has_transition_perm(task.cancel, self):
             context['cancel_task_permission'] = True
@@ -266,7 +266,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                         messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
 
                 else:
-                    if verb == 'closed':
+                    if verb == 'closed' or verb == 'cancelled':
                         task.assigned_to = None
                     action.send(user, verb=verb, action_object=task,
                                 place_code=task.place.place_code)

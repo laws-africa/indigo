@@ -473,12 +473,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     form_class = BatchCreateWorkForm
     initial = {
         'primary_tasks': ['import'],
-        'all_tasks': ['upload'],
     }
 
     def get_context_data(self, **kwargs):
         context = super(BatchAddWorkView, self).get_context_data(**kwargs)
-        context['place_workflows'] = self.place.workflows.all()
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
         return context
 
     def form_valid(self, form):
@@ -650,7 +649,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         amendment.date = info['work'].commencement_date
 
                     amendment.save()
-                    info['work'].save()
 
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='amendment')
@@ -688,24 +686,24 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if task_type == 'commencement':
             task.title = 'Link commencement'
             task.description = '''This work's commencement work could not be linked automatically.
-            There may have been a typo in the spreadsheet, or the work may not exist yet.
-            Check the spreadsheet for reference and link it manually.'''
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
         elif task_type == 'amendment':
             task.title = 'Link amendment(s)'
             task.description = '''This work's amended work(s) could not be linked automatically.
-            There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
-            or the amended work may not exist yet.
-            Check the spreadsheet for reference and link it/them manually.'''
+There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
+or the amended work may not exist yet.
+Check the spreadsheet for reference and link it/them manually.'''
         elif task_type == 'repeal':
             task.title = 'Link repeal'
             task.description = '''This work's repealing work could not be linked automatically.
-            There may have been a typo in the spreadsheet, or the work may not exist yet.
-            Check the spreadsheet for reference and link it manually.'''
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
         elif task_type == 'parent_work':
             task.title = 'Link parent work'
             task.description = '''This work's parent work could not be linked automatically.
-            There may have been a typo in the spreadsheet, or the work may not exist yet.
-            Check the spreadsheet for reference and link it manually.'''
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
 
         task.country = info['work'].country
         task.locality = info['work'].locality
@@ -729,6 +727,7 @@ Otherwise, find it and upload it manually.'''
             task.title = 'Check publication document'
             task.description = '''This work's publication document was linked automatically.
 Double-check that it's the right one.'''
+            task.state = 'pending_review'
 
         task.country = work.country
         task.locality = work.locality

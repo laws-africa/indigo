@@ -127,12 +127,6 @@ class BatchCreateWorkForm(forms.Form):
             either the initial publication or a later consolidation.
 Make sure the document's expression date correctly reflects this.''',
         },
-        {
-            'key': 'upload',
-            'label': 'Upload publication document',
-            'description': '''Upload the publication document for this work.
-This will often be a pdf of the government gazette.''',
-        },
     ]
     primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)

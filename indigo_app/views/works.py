@@ -473,7 +473,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     form_class = BatchCreateWorkForm
     initial = {
         'primary_tasks': ['import'],
-        'all_tasks': ['upload'],
     }
 
     def get_context_data(self, **kwargs):

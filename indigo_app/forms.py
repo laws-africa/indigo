@@ -40,17 +40,20 @@ class WorkForm(forms.ModelForm):
         pub_doc_url = self.cleaned_data['publication_document_trusted_url']
 
         try:
-            pub_doc = self.instance.publication_document
+            existing = self.instance.publication_document
         except PublicationDocument.DoesNotExist:
-            pub_doc = None
+            existing = None
 
         if self.cleaned_data['delete_publication_document']:
-            if pub_doc:
-                pub_doc.delete()
+            if existing:
+                existing.delete()
 
         elif pub_doc_file:
-            if not pub_doc:
-                pub_doc = PublicationDocument(work=self.instance)
+            if existing:
+                # ensure any previously uploaded file is deleted
+                existing.delete()
+
+            pub_doc = PublicationDocument(work=self.instance)
             pub_doc.trusted_url = None
             pub_doc.file = pub_doc_file
             pub_doc.size = pub_doc_file.size
@@ -58,8 +61,11 @@ class WorkForm(forms.ModelForm):
             pub_doc.save()
 
         elif pub_doc_url:
-            if not pub_doc:
-                pub_doc = PublicationDocument(work=self.instance)
+            if existing:
+                # ensure any previously uploaded file is deleted
+                existing.delete()
+
+            pub_doc = PublicationDocument(work=self.instance)
             pub_doc.file = None
             pub_doc.trusted_url = pub_doc_url
             pub_doc.size = self.cleaned_data['publication_document_size']

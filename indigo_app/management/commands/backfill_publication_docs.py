@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
@@ -9,16 +10,16 @@ from indigo_api.models import Country, PublicationDocument, Task, Work, Workflow
 
 
 class Command(BaseCommand):
-    help = 'links publication documents if they\'re available through Gazette Machine per country' \
+    help = 'links publication documents if they’re available through Gazette Machine per country' \
            'Example: `python manage.py backfill_publication_docs na'
 
     def add_arguments(self, parser):
-        parser.add_argument('country_code', type=str, help='A two-letter country code, e.g. \'na\' for Namibia')
+        parser.add_argument('country_code', type=str, help='A two-letter country code, e.g. ‘na’ for Namibia')
         parser.add_argument('--dry-run', action='store_true')
 
     def get_user(self):
         for user in User.objects.all().order_by('id'):
-            print('{}: {} - {} {}'.format(user.id, user.username, user.first_name, user.last_name))
+            print('{}: {} – {} {}'.format(user.id, user.username, user.first_name, user.last_name))
         while True:
             try:
                 result = int(input('Which user are you? Select the number from the list above: '))
@@ -46,23 +47,16 @@ class Command(BaseCommand):
         }
         return params
 
-    def pub_doc_task(self, work, user, task_type):
+    def pub_doc_task(self, work, user):
         task = Task()
 
-        self.stdout.write(self.style.NOTICE("Creating {} task for {}".format(task_type, work)))
+        self.stdout.write(self.style.NOTICE("Creating ‘Link publication document’ task for {}".format(work)))
 
-        if task_type == 'link':
-            task.title = 'Link publication document'
-            task.description = '''This work's publication document could not be linked automatically.
+        task.title = 'Link publication document'
+        task.description = '''This work’s publication document could not be linked automatically.
 There may be more than one candidate, or it may be unavailable.
-First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
+First check under ‘Edit work’ for multiple candidates. If there are, choose the correct one.
 Otherwise, find it and upload it manually.'''
-
-        elif task_type == 'check':
-            task.title = 'Check publication document'
-            task.description = '''This work's publication document was linked automatically.
-Double-check that it's the right one.'''
-            task.state = 'pending_review'
 
         task.country = work.country
         task.locality = work.locality
@@ -80,9 +74,7 @@ Double-check that it's the right one.'''
 
             workflow = Workflow()
             workflow.title = workflow_review_title
-            workflow.description = '''These publication documents were automatically linked.
-Some may have been unsuccessful, and need to be done manually.
-The rest need to be checked for accuracy.'''
+            workflow.description = 'These works’ publication documents could not be automatically linked.'
             workflow.country = task.country
             workflow.locality = task.locality
             workflow.created_by_user = user
@@ -113,21 +105,19 @@ The rest need to be checked for accuracy.'''
                     if not self.dry_run:
                         pub_doc.save()
 
-                    self.pub_doc_task(work, user, task_type='check')
-
                 else:
-                    self.pub_doc_task(work, user, task_type='link')
+                    self.pub_doc_task(work, user)
 
             except ValueError as e:
                 raise ValidationError({'message': e.message})
 
         else:
-            self.pub_doc_task(work, user, task_type='link')
+            self.pub_doc_task(work, user)
 
     def handle(self, *args, **options):
         self.dry_run = options['dry_run']
         if self.dry_run:
-            self.stdout.write(self.style.NOTICE('Dry-run, won\'t actually make changes'))
+            self.stdout.write(self.style.NOTICE('Dry-run, won’t actually make changes'))
 
         user = self.get_user()
         country = self.get_country(options.get('country_code'))

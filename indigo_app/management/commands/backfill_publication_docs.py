@@ -73,7 +73,7 @@ Double-check that it's the right one.'''
 
         workflow_review_title = 'Review automatically linked publication documents'
         try:
-            workflow = Workflow.objects.get(title=workflow_review_title)
+            workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
 
         except Workflow.DoesNotExist:
             self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))

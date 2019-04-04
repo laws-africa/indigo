@@ -61,6 +61,12 @@ class TaskListView(TaskViewBase, ListView):
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
+        # potential assignees for tasks. better to batch this here than load it for every task.
+        permitted_users = User.objects.filter(editor__permitted_countries=self.country).all()
+        for task in context['tasks']:
+            # this overwrites the task's potential_assignees method
+            task.potential_assignees = [u for u in permitted_users if task.assigned_to_id != u.id]
+
         return context
 
 

@@ -10,11 +10,11 @@ from indigo_api.models import Country, PublicationDocument, Task, Work, Workflow
 
 
 class Command(BaseCommand):
-    help = 'links publication documents if they’re available through Gazette Machine per country' \
+    help = 'links publication documents if they\'re available through Gazette Machine per country' \
            'Example: `python manage.py backfill_publication_docs na'
 
     def add_arguments(self, parser):
-        parser.add_argument('country_code', type=str, help='A two-letter country code, e.g. ‘na’ for Namibia')
+        parser.add_argument('country_code', type=str, help='A two-letter country code, e.g. \'na\' for Namibia')
         parser.add_argument('--dry-run', action='store_true')
 
     def get_user(self):
@@ -56,13 +56,13 @@ class Command(BaseCommand):
         except Task.DoesNotExist:
             task = Task()
 
-            self.stdout.write(self.style.NOTICE("Creating ‘Link publication document’ task for {}".format(work)))
+            self.stdout.write(self.style.NOTICE("Creating 'Link publication document' task for {}".format(work)))
 
             task.title = task_title
-            task.description = '''This work’s publication document could not be linked automatically.
-    There may be more than one candidate, or it may be unavailable.
-    First check under ‘Edit work’ for multiple candidates. If there are, choose the correct one.
-    Otherwise, find it and upload it manually.'''
+            task.description = '''This work's publication document could not be linked automatically.
+There may be more than one candidate, or it may be unavailable.
+First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
+Otherwise, find it and upload it manually.'''
 
             task.country = work.country
             task.locality = work.locality
@@ -80,7 +80,7 @@ class Command(BaseCommand):
 
                 workflow = Workflow()
                 workflow.title = workflow_review_title
-                workflow.description = 'These works’ publication documents could not be automatically linked.'
+                workflow.description = 'These works\' publication documents could not be automatically linked.'
                 workflow.country = task.country
                 workflow.locality = task.locality
                 workflow.created_by_user = user
@@ -123,7 +123,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         self.dry_run = options['dry_run']
         if self.dry_run:
-            self.stdout.write(self.style.NOTICE('Dry-run, won’t actually make changes'))
+            self.stdout.write(self.style.NOTICE('Dry-run, won\'t actually make changes'))
 
         user = self.get_user()
         country = self.get_country(options.get('country_code'))

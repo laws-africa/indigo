@@ -329,13 +329,14 @@
         pub_doc.prettySize = Indigo.formatting.prettyFileSize(pub_doc.size);
         wrapper.append(this.publicationDocumentTemplate(pub_doc));
         this.$('.publication-document-file').hide();
-        this.$('#id_work-delete_publication_document').val(pub_doc.trusted_url ? 'on' : '');
+        this.$('#id_work-delete_publication_document').val('');
 
         // from the trusted url, will be ignored if we've attached a file
         this.$('#id_work-publication_document_trusted_url').val(pub_doc.trusted_url);
         this.$('#id_work-publication_document_mime_type').val(pub_doc.mime_type);
         this.$('#id_work-publication_document_size').val(pub_doc.size);
       } else {
+        this.$('#id_work-delete_publication_document').val('on');
         this.$('.publication-document-file').show();
       }
     },
@@ -344,7 +345,6 @@
       e.preventDefault();
 
       this.$('#id_work-publication_document_file')[0].value = '';
-      this.$('#id_work-delete_publication_document').val('on');
       this.model.set('publication_document', null);
     },
 

@@ -354,13 +354,14 @@ class Work(models.Model):
         """
         initial = Amendment(amended_work=self, date=self.publication_date)
         initial.initial = True
-
         amendments = list(self.amendments.all())
-        if not amendments or amendments[0].date != initial.date:
-            amendments.insert(0, initial)
 
-        if amendments[0].date == initial.date:
-            amendments[0].initial = True
+        if initial.date:
+            if not amendments or amendments[0].date != initial.date:
+                amendments.insert(0, initial)
+
+            if amendments[0].date == initial.date:
+                amendments[0].initial = True
 
         amendments.reverse()
         return amendments

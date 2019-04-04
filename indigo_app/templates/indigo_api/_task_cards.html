@@ -56,17 +56,17 @@
                   <small class="text-muted">{% user_profile task.assigned_to %}</small>
 
                   {% if perms.indigo_api.change_task %}
-                    <form method="POST">
+                    <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
                       {% csrf_token %}
 
                       <div class="dropdown">
-                        <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="uniasssignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="unassignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           Reassign
                         </button>
-                        <div class="dropdown-menu" aria-labelledby="uniasssignDropdownMenuButton">
-                          <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}">Unassign</button>
+                        <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
+                          <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">Unassign</button>
                           {% for potential_assignee in task.potential_assignees %}
-                          <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}">{% user_display potential_assignee %}</button>
+                          <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}">{% user_display potential_assignee %}</button>
                           {% endfor %}
                         </div>
                       </div>
@@ -76,7 +76,7 @@
                 </div>
               {% elif task.state == 'open' or task.state == 'pending_review' %}
                 {% if perms.indigo_api.change_task and task.potential_assignees %}
-                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}">
+                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
                     {% csrf_token %}
                     <div class="dropdown">
                       <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

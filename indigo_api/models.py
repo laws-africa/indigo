@@ -1026,7 +1026,7 @@ class TaskQuerySet(models.QuerySet):
 class TaskManager(models.Manager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()\
-            .prefetch_related('labels', 'work', 'document', 'created_by_user')
+            .prefetch_related('labels', 'work', 'document', 'created_by_user', 'assigned_to')
 
 
 class Task(models.Model):

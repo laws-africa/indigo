@@ -71,7 +71,7 @@ Otherwise, find it and upload it manually.'''
             if not self.dry_run:
                 task.save()
 
-            workflow_review_title = 'Review automatically linked publication documents'
+            workflow_review_title = 'Link publication documents'
             try:
                 workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
 

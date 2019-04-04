@@ -11,6 +11,7 @@ from django.http import QueryDict
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
+from django.contrib.auth.models import User
 
 from indigo_api.models import Task, Workflow
 
@@ -58,6 +59,12 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['has_tasks'] = bool(tasks)
         context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
+
+        # potential assignees for tasks. better to batch this here than load it for every task.
+        permitted_users = User.objects.filter(editor__permitted_countries=self.country).all()
+        for task in tasks:
+            # this overwrites the task's potential_assignees method
+            task.potential_assignees = [u for u in permitted_users if task.assigned_to_id != u.id]
 
         # stats
         self.object.n_tasks = self.object.tasks.count()
@@ -273,7 +280,7 @@ class WorkflowListView(WorkflowViewBase, ListView):
         return super(WorkflowListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        workflows = self.place.workflows.filter()
+        workflows = self.place.workflows
         return self.form.filter_queryset(workflows)
 
     def get_context_data(self, **kwargs):

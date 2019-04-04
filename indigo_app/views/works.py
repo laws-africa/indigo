@@ -56,7 +56,9 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
     def get_context_data(self, **kwargs):
         context = super(WorkViewBase, self).get_context_data(work=self.work, **kwargs)
         context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        return context
 
+    def get_work_timeline(self):
         # add other dates to timeline
         work_timeline = self.work.points_in_time()
         other_dates = [
@@ -77,9 +79,7 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
                     'date': date,
                     name: True,
                 })
-        context['work_timeline'] = sorted(work_timeline, key=lambda k: k['date'], reverse=True)
-
-        return context
+        return sorted(work_timeline, key=lambda k: k['date'], reverse=True)
 
     @property
     def work(self):
@@ -219,12 +219,18 @@ class WorkOverviewView(WorkViewBase, DetailView):
             .exclude(state='done')\
             .exclude(state='cancelled')\
             .order_by('-created_at')
+        context['work_timeline'] = self.get_work_timeline()
 
         return context
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
+        context['work_timeline'] = self.get_work_timeline()
+        return context
 
 
 class WorkAmendmentDetailView(WorkDependentView, UpdateView):

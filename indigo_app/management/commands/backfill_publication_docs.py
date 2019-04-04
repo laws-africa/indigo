@@ -51,7 +51,7 @@ class Command(BaseCommand):
         task_title = 'Link publication document'
 
         try:
-            Task.objects.get(title=task_title, work=work)
+            Task.objects.get(title=task_title, work=work, state__in=Task.OPEN_STATES + ('cancelled',))
 
         except Task.DoesNotExist:
             task = Task()

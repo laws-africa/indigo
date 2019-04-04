@@ -48,43 +48,49 @@ class Command(BaseCommand):
         return params
 
     def pub_doc_task(self, work, user):
-        task = Task()
+        task_title = 'Link publication document'
 
-        self.stdout.write(self.style.NOTICE("Creating ‘Link publication document’ task for {}".format(work)))
-
-        task.title = 'Link publication document'
-        task.description = '''This work’s publication document could not be linked automatically.
-There may be more than one candidate, or it may be unavailable.
-First check under ‘Edit work’ for multiple candidates. If there are, choose the correct one.
-Otherwise, find it and upload it manually.'''
-
-        task.country = work.country
-        task.locality = work.locality
-        task.work = work
-        task.created_by_user = user
-        if not self.dry_run:
-            task.save()
-
-        workflow_review_title = 'Review automatically linked publication documents'
         try:
-            workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
+            Task.objects.get(title=task_title, work=work)
 
-        except Workflow.DoesNotExist:
-            self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))
+        except Task.DoesNotExist:
+            task = Task()
 
-            workflow = Workflow()
-            workflow.title = workflow_review_title
-            workflow.description = 'These works’ publication documents could not be automatically linked.'
-            workflow.country = task.country
-            workflow.locality = task.locality
-            workflow.created_by_user = user
+            self.stdout.write(self.style.NOTICE("Creating ‘Link publication document’ task for {}".format(work)))
+
+            task.title = task_title
+            task.description = '''This work’s publication document could not be linked automatically.
+    There may be more than one candidate, or it may be unavailable.
+    First check under ‘Edit work’ for multiple candidates. If there are, choose the correct one.
+    Otherwise, find it and upload it manually.'''
+
+            task.country = work.country
+            task.locality = work.locality
+            task.work = work
+            task.created_by_user = user
             if not self.dry_run:
-                workflow.save()
+                task.save()
 
-        if not self.dry_run:
-            workflow.tasks.add(task)
-            workflow.updated_by_user = user
-            workflow.save()
+            workflow_review_title = 'Review automatically linked publication documents'
+            try:
+                workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
+
+            except Workflow.DoesNotExist:
+                self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))
+
+                workflow = Workflow()
+                workflow.title = workflow_review_title
+                workflow.description = 'These works’ publication documents could not be automatically linked.'
+                workflow.country = task.country
+                workflow.locality = task.locality
+                workflow.created_by_user = user
+                if not self.dry_run:
+                    workflow.save()
+
+            if not self.dry_run:
+                workflow.tasks.add(task)
+                workflow.updated_by_user = user
+                workflow.save()
 
     def get_publication_document(self, params, work, user):
         finder = plugins.for_work('publications', work)

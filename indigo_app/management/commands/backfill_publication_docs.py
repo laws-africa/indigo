@@ -14,10 +14,11 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('country_code', type=str, help='A two-letter country code, e.g. \'na\' for Namibia')
+        parser.add_argument('--dry-run', action='store_true')
 
     def get_user(self):
         for user in User.objects.all().order_by('id'):
-            print('{}: {} {}'.format(user.id, user.first_name, user.last_name))
+            print('{}: {} - {} {}'.format(user.id, user.username, user.first_name, user.last_name))
         while True:
             try:
                 result = int(input('Which user are you? Select the number from the list above: '))
@@ -48,6 +49,8 @@ class Command(BaseCommand):
     def pub_doc_task(self, work, user, task_type):
         task = Task()
 
+        self.stdout.write(self.style.NOTICE("Creating {} task for {}".format(task_type, work)))
+
         if task_type == 'link':
             task.title = 'Link publication document'
             task.description = '''This work's publication document could not be linked automatically.
@@ -65,13 +68,16 @@ Double-check that it's the right one.'''
         task.locality = work.locality
         task.work = work
         task.created_by_user = user
-        task.save()
+        if not self.dry_run:
+            task.save()
 
         workflow_review_title = 'Review automatically linked publication documents'
         try:
             workflow = Workflow.objects.get(title=workflow_review_title)
 
         except Workflow.DoesNotExist:
+            self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))
+
             workflow = Workflow()
             workflow.title = workflow_review_title
             workflow.description = '''These publication documents were automatically linked.
@@ -80,14 +86,16 @@ The rest need to be checked for accuracy.'''
             workflow.country = task.country
             workflow.locality = task.locality
             workflow.created_by_user = user
+            if not self.dry_run:
+                workflow.save()
+
+        if not self.dry_run:
+            workflow.tasks.add(task)
+            workflow.updated_by_user = user
             workflow.save()
 
-        workflow.tasks.add(task)
-        workflow.updated_by_user = user
-        workflow.save()
-
     def get_publication_document(self, params, work, user):
-        finder = plugins.for_locale('publications', work.country, None, work.locality)
+        finder = plugins.for_work('publications', work)
 
         if finder:
             try:
@@ -95,12 +103,16 @@ The rest need to be checked for accuracy.'''
 
                 if len(publications) == 1:
                     pub_doc_details = publications[0]
+                    self.stdout.write(self.style.NOTICE("Linking publication document {} to {}".format(pub_doc_details.get('url'), work)))
+
                     pub_doc = PublicationDocument()
                     pub_doc.work = work
                     pub_doc.file = None
                     pub_doc.trusted_url = pub_doc_details.get('url')
                     pub_doc.size = pub_doc_details.get('size')
-                    pub_doc.save()
+                    if not self.dry_run:
+                        pub_doc.save()
+
                     self.pub_doc_task(work, user, task_type='check')
 
                 else:
@@ -113,9 +125,14 @@ The rest need to be checked for accuracy.'''
             self.pub_doc_task(work, user, task_type='link')
 
     def handle(self, *args, **options):
+        self.dry_run = options['dry_run']
+        if self.dry_run:
+            self.stdout.write(self.style.NOTICE('Dry-run, won\'t actually make changes'))
+
         user = self.get_user()
         country = self.get_country(options.get('country_code'))
         works_without_pubdocs = self.get_works(country)
+
         for work in works_without_pubdocs:
             params = self.get_params(work)
             self.get_publication_document(params, work, user)

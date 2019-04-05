@@ -1,3 +1,4 @@
+# coding=utf-8
 from __future__ import unicode_literals
 
 from django.contrib.auth.models import User
@@ -18,7 +19,7 @@ class Command(BaseCommand):
 
     def get_user(self):
         for user in User.objects.all().order_by('id'):
-            print('{}: {} - {} {}'.format(user.id, user.username, user.first_name, user.last_name))
+            print('{}: {} – {} {}'.format(user.id, user.username, user.first_name, user.last_name))
         while True:
             try:
                 result = int(input('Which user are you? Select the number from the list above: '))
@@ -46,53 +47,50 @@ class Command(BaseCommand):
         }
         return params
 
-    def pub_doc_task(self, work, user, task_type):
-        task = Task()
+    def pub_doc_task(self, work, user):
+        task_title = 'Link publication document'
 
-        self.stdout.write(self.style.NOTICE("Creating {} task for {}".format(task_type, work)))
+        try:
+            Task.objects.get(title=task_title, work=work, state__in=Task.OPEN_STATES + ('cancelled',))
 
-        if task_type == 'link':
-            task.title = 'Link publication document'
+        except Task.DoesNotExist:
+            task = Task()
+
+            self.stdout.write(self.style.NOTICE("Creating 'Link publication document' task for {}".format(work)))
+
+            task.title = task_title
             task.description = '''This work's publication document could not be linked automatically.
 There may be more than one candidate, or it may be unavailable.
 First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
 Otherwise, find it and upload it manually.'''
 
-        elif task_type == 'check':
-            task.title = 'Check publication document'
-            task.description = '''This work's publication document was linked automatically.
-Double-check that it's the right one.'''
-            task.state = 'pending_review'
-
-        task.country = work.country
-        task.locality = work.locality
-        task.work = work
-        task.created_by_user = user
-        if not self.dry_run:
-            task.save()
-
-        workflow_review_title = 'Review automatically linked publication documents'
-        try:
-            workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
-
-        except Workflow.DoesNotExist:
-            self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))
-
-            workflow = Workflow()
-            workflow.title = workflow_review_title
-            workflow.description = '''These publication documents were automatically linked.
-Some may have been unsuccessful, and need to be done manually.
-The rest need to be checked for accuracy.'''
-            workflow.country = task.country
-            workflow.locality = task.locality
-            workflow.created_by_user = user
+            task.country = work.country
+            task.locality = work.locality
+            task.work = work
+            task.created_by_user = user
             if not self.dry_run:
-                workflow.save()
+                task.save()
 
-        if not self.dry_run:
-            workflow.tasks.add(task)
-            workflow.updated_by_user = user
-            workflow.save()
+            workflow_review_title = 'Link publication documents'
+            try:
+                workflow = work.place.workflows.get(title=workflow_review_title, closed=False)
+
+            except Workflow.DoesNotExist:
+                self.stdout.write(self.style.NOTICE("Creating workflow for {}".format(work)))
+
+                workflow = Workflow()
+                workflow.title = workflow_review_title
+                workflow.description = 'These works\' publication documents could not be automatically linked.'
+                workflow.country = task.country
+                workflow.locality = task.locality
+                workflow.created_by_user = user
+                if not self.dry_run:
+                    workflow.save()
+
+            if not self.dry_run:
+                workflow.tasks.add(task)
+                workflow.updated_by_user = user
+                workflow.save()
 
     def get_publication_document(self, params, work, user):
         finder = plugins.for_work('publications', work)
@@ -113,16 +111,14 @@ The rest need to be checked for accuracy.'''
                     if not self.dry_run:
                         pub_doc.save()
 
-                    self.pub_doc_task(work, user, task_type='check')
-
                 else:
-                    self.pub_doc_task(work, user, task_type='link')
+                    self.pub_doc_task(work, user)
 
             except ValueError as e:
                 raise ValidationError({'message': e.message})
 
         else:
-            self.pub_doc_task(work, user, task_type='link')
+            self.pub_doc_task(work, user)
 
     def handle(self, *args, **options):
         self.dry_run = options['dry_run']

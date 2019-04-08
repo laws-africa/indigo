@@ -124,6 +124,9 @@ class AkomaNtosoRenderer(XMLRenderer):
     """ Django Rest Framework Akoma Ntoso Renderer.
     """
     serializer_class = NoopSerializer
+    # these are used by the document download menu
+    icon = 'far fa-file-code'
+    title = 'Akoma Ntoso XML'
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, Document):
@@ -249,6 +252,11 @@ class HTMLRenderer(object):
 
 class HTMLResponseRenderer(StaticHTMLRenderer):
     serializer_class = NoopSerializer
+
+    # these are used by the document download menu
+    icon = 'far fa-file-alt'
+    title = 'Standalone HTML'
+    suffix = '?standalone=1'
 
     def render(self, document, media_type=None, renderer_context=None):
         if not isinstance(document, Document):
@@ -578,6 +586,9 @@ class PDFResponseRenderer(BaseRenderer):
     media_type = 'application/pdf'
     format = 'pdf'
     serializer_class = NoopSerializer
+    # these are used by the document download menu
+    icon = 'far fa-file-pdf'
+    title = 'PDF'
 
     def __init__(self, *args, **kwargs):
         super(PDFResponseRenderer, self).__init__(*args, **kwargs)
@@ -645,6 +656,9 @@ class EPUBResponseRenderer(PDFResponseRenderer):
     """
     media_type = 'application/epub+zip'
     format = 'epub'
+    # these are used by the document download menu
+    icon = 'fas fa-book'
+    title = 'ePUB'
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):
@@ -692,6 +706,9 @@ class ZIPResponseRenderer(BaseRenderer):
     media_type = 'application/zip'
     format = 'zip'
     serializer_class = NoopSerializer
+    # these are used by the document download menu
+    icon = 'far fa-file-archive'
+    title = 'ZIP Archive'
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):

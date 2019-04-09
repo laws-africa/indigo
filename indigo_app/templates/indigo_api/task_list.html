@@ -1,7 +1,20 @@
 {% extends "place/tabbed_layout.html" %}
 {% load humanize indigo_app %}
 
-{% block title %}Tasks – {{ place.name }}{% endblock %}
+{% block title %}Tasks –
+{% if work %}{{ work.title }}{% else %}{{ place.name }}{% endif %}
+{% endblock %}
+
+{% block main-header-title %}
+  {{ block.super }}
+  {% if work %}
+  <div class="mb-5">
+    <a class="h4 text-muted" href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+    <p class="h5 text-muted mt-2">{{ work.frbr_uri }}</p>
+  </div>
+  {% endif %}
+{% endblock %}
+
 
 {% block content %}
 

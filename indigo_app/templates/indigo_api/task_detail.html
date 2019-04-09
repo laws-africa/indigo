@@ -145,7 +145,7 @@
       <ul class="list-unstyled mb-2">
         {% with task.workflows.all as workflows %}
         {% if workflows %}
-          {% for workflow in workflows %}
+          {% for workflow in workflows|dictsort:'title' %}
             <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }} - {{ workflow.title }}</a></li>
           {% endfor %}
         {% else %}
@@ -159,7 +159,7 @@
           {% csrf_token %}
 
           <select class="selectpicker form-control" multiple name="workflows" onchange="$(this.form).trigger('submit')" data-dropdown-align-right="true" data-none-selected-text="Change workflows" data-selected-text-format="static">
-            {% for workflow in possible_workflows %}
+            {% for workflow in possible_workflows|dictsort:'title' %}
               <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>{{ workflow.title }}</option>
             {% endfor %}
           </select>

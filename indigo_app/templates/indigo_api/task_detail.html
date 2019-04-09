@@ -37,7 +37,7 @@
   </div>
 
   <div class="row">
-    <div class="col-10">
+    <div class="col-9">
       <div class="card">
         <div class="card-body">
           {{ task.description|default:''|urlize|linebreaksbr }}
@@ -96,37 +96,35 @@
       </div>
     </div>
 
-    <div class="col-2">
+    <div class="col-3">
       <h6>Assigned to</h6>
-      <ul class="list-unstyled">
+      <div class="mb-2">
         {% if task.assigned_to %}
-          <li>{% user_profile task.assigned_to %}</li>
+          {% user_profile task.assigned_to %}
         {% else %}
-          <li><em>Unassigned</em></li>
+          <em>Unassigned</em>
         {% endif %}
-      </ul>
+      </div>
 
+      <form method="POST">
+        {% csrf_token %}
+        {% if task.assigned_to %}
+          <button class="btn btn-outline-danger mb-3" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
+        {% endif %}
 
-        <form method="POST">
-          {% csrf_token %}
-          {% if task.assigned_to %}
-            <button class="btn btn-outline-danger mb-3" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign</button>
-          {% endif %}
-
-          {% if task.potential_assignees %}
-          <div class="dropdown">
-            <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Assign to
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              {% for potential_assignee in task.potential_assignees %}
-                <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
-              {% endfor %}
-            </div>
+        {% if task.potential_assignees %}
+        <div class="dropdown">
+          <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Assign to
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            {% for potential_assignee in task.potential_assignees %}
+              <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
+            {% endfor %}
           </div>
-          {% endif %}
-        </form>
-
+        </div>
+        {% endif %}
+      </form>
 
       <h6>Labels</h6>
       <ul class="list-unstyled">
@@ -142,7 +140,7 @@
       </ul>
 
       <h6>Workflows</h6>
-      <ul class="list-unstyled">
+      <ul class="list-unstyled mb-2">
         {% with task.workflows.all as workflows %}
         {% if workflows %}
           {% for workflow in workflows %}
@@ -153,6 +151,16 @@
         {% endif %}
         {% endwith %}
       </ul>
+
+      <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST">
+        {% csrf_token %}
+
+        <select class="selectpicker form-control" multiple name="workflows" onchange="this.form.submit()" data-dropdown-align-right="true" data-none-selected-text="Change workflows" data-selected-text-format="static">
+          {% for workflow in possible_workflows %}
+            <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>{{ workflow.title }}</option>
+          {% endfor %}
+        </select>
+      </form>
     </div>
   </div>
 </div>

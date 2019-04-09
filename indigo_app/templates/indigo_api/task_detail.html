@@ -141,7 +141,20 @@
         {% endwith %}
       </ul>
 
-      <h6>Workflows</h6>
+
+      <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST" data-submit="ajax">
+        {% csrf_token %}
+
+        <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
+            data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+            {% if not perms.indigo_api.change_task %}disabled{% endif %}
+            data-none-selected-text="Workflows" data-selected-text-format="static">
+
+          {% for workflow in possible_workflows|dictsort:'title' %}
+            <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>{{ workflow.title }}</option>
+          {% endfor %}
+        </select>
+      </form>
       <ul class="list-unstyled mb-2">
         {% with task.workflows.all as workflows %}
         {% if workflows %}
@@ -154,17 +167,6 @@
         {% endwith %}
       </ul>
 
-      {% if perms.indigo_api.change_task %}
-        <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST" data-submit="ajax">
-          {% csrf_token %}
-
-          <select class="selectpicker form-control" multiple name="workflows" onchange="$(this.form).trigger('submit')" data-dropdown-align-right="true" data-none-selected-text="Change workflows" data-selected-text-format="static">
-            {% for workflow in possible_workflows|dictsort:'title' %}
-              <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>{{ workflow.title }}</option>
-            {% endfor %}
-          </select>
-        </form>
-      {% endif %}
     </div>
   </div>
 </div>

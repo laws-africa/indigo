@@ -55,13 +55,15 @@ class TaskListView(TaskViewBase, ListView):
 
     def get_queryset(self):
         tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-updated_at')
-        return self.form.filter_queryset(tasks, frbr_uri=self.request.GET.get('frbr_uri'))
+        return self.form.filter_queryset(tasks, frbr_uri=self.kwargs.get('frbr_uri'))
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
         context['task_labels'] = TaskLabel.objects.all()
         context['form'] = self.form
-        context['frbr_uri'] = self.request.GET.get('frbr_uri')
+        context['frbr_uri'] = self.kwargs.get('frbr_uri')
+        if self.kwargs.get('frbr_uri'):
+            context['work'] = Work.objects.get(frbr_uri=self.kwargs.get('frbr_uri'))
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
         # potential assignees for tasks. better to batch this here than load it for every task.

@@ -38,7 +38,10 @@ class TaskListView(TaskViewBase, ListView):
         params.update(request.GET)
 
         # initial state
-        if not params.get('state'):
+        if self.kwargs.get('frbr_uri') and not params.get('state'):
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'done', 'cancelled'])
+
+        elif not params.get('state'):
             params.setlist('state', ['open', 'assigned', 'pending_review'])
         params.setdefault('format', 'columns')
 

@@ -127,12 +127,12 @@
       <h4>Active tasks</h4>
     </div>
     <div class="col text-right">
-      <a href="{% url 'tasks' place=place.place_code %}?frbr_uri={{ work.frbr_uri }}" class="btn btn-primary">View all tasks</a>
+      <a href="{% url 'tasks_on_work' place=place.place_code frbr_uri=work.frbr_uri %}" class="btn btn-primary">View all tasks</a>
     </div>
   </div>
   <div class="card">
   {% include 'indigo_api/_task_list.html' with tasks=active_tasks %}
   </div>
- {% endblock %}
+  {% endblock %}
 
 {% endblock %}

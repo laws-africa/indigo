@@ -60,7 +60,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['has_tasks'] = bool(tasks)
         context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
-        context['potential_assignees'] = Task.decorate_potential_assignees(context['tasks'], self.country)
+        context['potential_assignees'] = Task.decorate_potential_assignees(tasks, self.country)
 
         # stats
         self.object.n_tasks = self.object.tasks.count()

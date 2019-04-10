@@ -8,6 +8,7 @@ from itertools import chain, groupby
 from actstream import action
 
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.db import models
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
@@ -1084,7 +1085,14 @@ class Task(models.Model):
             self.work = None
 
     def potential_assignees(self):
-        potential_assignees = User.objects.filter(editor__permitted_countries=self.country)
+        submit_task_pk = Permission.objects.get(codename='submit_task').pk
+        close_task_pk = Permission.objects.get(codename='close_task').pk
+
+        potential_assignees = User.objects.filter(editor__permitted_countries=self.country, user_permissions=submit_task_pk)
+
+        if self.state == 'pending_review':
+            potential_assignees = potential_assignees.filter(user_permissions=close_task_pk)
+
         if self.assigned_to:
             potential_assignees = potential_assignees.exclude(id=self.assigned_to.id)
         return potential_assignees

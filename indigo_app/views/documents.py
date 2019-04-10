@@ -2,9 +2,11 @@ import json
 
 from django.views.generic import DetailView
 from django.http import Http404
+from django.urls import reverse
 
 from indigo_api.models import Document, Country, Subtype
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
+from indigo_api.views.documents import DocumentViewSet
 
 from indigo_app.forms import DocumentForm
 from .base import AbstractAuthedIndigoView
@@ -51,5 +53,12 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['form'] = DocumentForm(instance=doc)
         context['subtypes'] = Subtype.objects.order_by('name').all()
+
+        context['download_formats'] = [{
+            'url': reverse('document-detail', kwargs={'pk': doc.id, 'format': r.format}) + getattr(r, 'suffix', ''),
+            'icon': r.icon,
+            'title': r.title
+        } for r in DocumentViewSet.renderer_classes if hasattr(r, 'icon')]
+        context['download_formats'].sort(key=lambda f: f['title'])
 
         return context

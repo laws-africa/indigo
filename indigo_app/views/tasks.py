@@ -25,6 +25,20 @@ from indigo_app.forms import TaskForm, TaskFilterForm
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
     tab = 'tasks'
 
+    def record_workflow_actions(self, task, new_workflows):
+        old_workflows = task.workflows.all()
+
+        removed_workflows = set(old_workflows) - set(new_workflows)
+        added_workflows = set(new_workflows) - set(old_workflows)
+
+        for workflow in removed_workflows:
+            action.send(self.request.user, verb='removed', action_object=task,
+                        target=workflow, place_code=task.place.place_code)
+
+        for workflow in added_workflows:
+            action.send(self.request.user, verb='added', action_object=task,
+                        target=workflow, place_code=task.place.place_code)
+
 
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
@@ -92,6 +106,8 @@ class TaskDetailView(TaskViewBase, DetailView):
 
         if has_transition_perm(task.close, self):
             context['close_task_permission'] = True
+
+        context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
         return context
 
@@ -170,27 +186,18 @@ class TaskEditView(TaskViewBase, UpdateView):
 
     def form_valid(self, form):
         task = self.object
-        old_workflows = [wf.id for wf in task.workflows.all()]
         task.updated_by_user = self.request.user
-        task.workflows = form.cleaned_data.get('workflows')
+
 
         # action signals
         # first, was something changed other than workflows?
         if form.changed_data:
             action.send(self.request.user, verb='updated', action_object=task,
                         place_code=task.place.place_code)
-        # then, was the task added to / removed from any workflows?
-        new_workflows = [wf.id for wf in task.workflows.all()]
-        removed_workflows = set(old_workflows) - set(new_workflows)
-        added_workflows = set(new_workflows) - set(old_workflows)
-        for workflow in removed_workflows:
-            action.send(self.request.user, verb='removed', action_object=task,
-                        target=Workflow.objects.get(id=workflow),
-                        place_code=task.place.place_code)
-        for workflow in added_workflows:
-            action.send(self.request.user, verb='added', action_object=task,
-                        target=Workflow.objects.get(id=workflow),
-                        place_code=task.place.place_code)
+
+        new_workflows = form.cleaned_data.get('workflows')
+        self.record_workflow_actions(task, new_workflows)
+        task.workflows = new_workflows
 
         return super(TaskEditView, self).form_valid(form)
 
@@ -316,6 +323,35 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
                 messages.success(request, u"Task '%s' has been assigned" % task.title)
 
         task.save()
+
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.change_task',)
+
+    http_method_names = [u'post']
+    model = Task
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        user = self.request.user
+        task.updated_by_user = user
+        ids = self.request.POST.getlist('workflows')
+
+        if ids:
+            workflows = Workflow.objects.filter(country=task.country, locality=task.locality, id__in=ids).all()
+        else:
+            workflows = []
+
+        self.record_workflow_actions(task, workflows)
+        task.workflows = workflows
 
         return redirect(self.get_redirect_url())
 

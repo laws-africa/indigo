@@ -336,6 +336,7 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
 
     def post(self, request, *args, **kwargs):
         task = self.get_object()
+        old_workflows = [wf.id for wf in task.workflows.all()]
         user = self.request.user
         task.updated_by_user = user
         ids = self.request.POST.getlist('workflows')
@@ -347,7 +348,20 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
 
         task.workflows.set(workflows)
 
-        # TODO: timeline?
+        # action signals
+        new_workflows = [int(wf_id) for wf_id in ids] or []
+        removed_workflows = set(old_workflows) - set(new_workflows)
+        added_workflows = set(new_workflows) - set(old_workflows)
+
+        for workflow in removed_workflows:
+            action.send(user, verb='removed', action_object=task,
+                        target=Workflow.objects.get(id=workflow),
+                        place_code=task.place.place_code)
+
+        for workflow in added_workflows:
+            action.send(user, verb='added', action_object=task,
+                        target=Workflow.objects.get(id=workflow),
+                        place_code=task.place.place_code)
 
         return redirect(self.get_redirect_url())
 

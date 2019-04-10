@@ -159,7 +159,7 @@
         {% with task.workflows.all as workflows %}
         {% if workflows %}
           {% for workflow in workflows|dictsort:'title' %}
-            <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }} - {{ workflow.title }}</a></li>
+            <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }} – {{ workflow.title }}</a></li>
           {% endfor %}
         {% else %}
           <li><em>None</em></li>

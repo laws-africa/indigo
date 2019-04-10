@@ -25,6 +25,20 @@ from indigo_app.forms import TaskForm, TaskFilterForm
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
     tab = 'tasks'
 
+    def record_workflow_actions(self, task, new_workflows):
+        old_workflows = task.workflows.all()
+
+        removed_workflows = set(old_workflows) - set(new_workflows)
+        added_workflows = set(new_workflows) - set(old_workflows)
+
+        for workflow in removed_workflows:
+            action.send(self.request.user, verb='removed', action_object=task,
+                        target=workflow, place_code=task.place.place_code)
+
+        for workflow in added_workflows:
+            action.send(self.request.user, verb='added', action_object=task,
+                        target=workflow, place_code=task.place.place_code)
+
 
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
@@ -172,27 +186,18 @@ class TaskEditView(TaskViewBase, UpdateView):
 
     def form_valid(self, form):
         task = self.object
-        old_workflows = [wf.id for wf in task.workflows.all()]
         task.updated_by_user = self.request.user
-        task.workflows = form.cleaned_data.get('workflows')
+
 
         # action signals
         # first, was something changed other than workflows?
         if form.changed_data:
             action.send(self.request.user, verb='updated', action_object=task,
                         place_code=task.place.place_code)
-        # then, was the task added to / removed from any workflows?
-        new_workflows = [wf.id for wf in task.workflows.all()]
-        removed_workflows = set(old_workflows) - set(new_workflows)
-        added_workflows = set(new_workflows) - set(old_workflows)
-        for workflow in removed_workflows:
-            action.send(self.request.user, verb='removed', action_object=task,
-                        target=Workflow.objects.get(id=workflow),
-                        place_code=task.place.place_code)
-        for workflow in added_workflows:
-            action.send(self.request.user, verb='added', action_object=task,
-                        target=Workflow.objects.get(id=workflow),
-                        place_code=task.place.place_code)
+
+        new_workflows = form.cleaned_data.get('workflows')
+        self.record_workflow_actions(task, new_workflows)
+        task.workflows = new_workflows
 
         return super(TaskEditView, self).form_valid(form)
 
@@ -345,9 +350,8 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
         else:
             workflows = []
 
-        task.workflows.set(workflows)
-
-        # TODO: timeline?
+        self.record_workflow_actions(task, workflows)
+        task.workflows = workflows
 
         return redirect(self.get_redirect_url())
 

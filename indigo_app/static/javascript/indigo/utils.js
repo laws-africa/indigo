@@ -14,6 +14,14 @@ $(function() {
   }
 
   $('body').on('click', 'a[data-confirm], button[data-confirm]', handleConfirm);
+
+  /* Handle forms submitted via ajax */
+  function submitFormAjax(e) {
+    var form = e.target;
+    $.post(form.action, $(form).serialize());
+    e.preventDefault();
+  }
+  $('body').on('submit', 'form[data-submit=ajax]', submitFormAjax);
 });
 
 /* Show popover when hovering on selected links.

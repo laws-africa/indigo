@@ -5,14 +5,12 @@ from datetime import timedelta
 
 from actstream import action
 from actstream.models import Action, any_stream
-from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.db.models import Count
 from django.http import QueryDict
 from django.shortcuts import redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
-from django.contrib.auth.models import User
 
 from indigo_api.models import Task, Workflow
 

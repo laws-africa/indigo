@@ -5,7 +5,6 @@ import json
 from actstream import action
 
 from django.contrib import messages
-from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
 from django.shortcuts import redirect

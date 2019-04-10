@@ -5,6 +5,7 @@ import json
 from actstream import action
 
 from django.contrib import messages
+from django.contrib.auth.models import Permission
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -62,10 +63,16 @@ class TaskListView(TaskViewBase, ListView):
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
         # potential assignees for tasks. better to batch this here than load it for every task.
-        permitted_users = User.objects.filter(editor__permitted_countries=self.country).all()
+        submit_task_pk = Permission.objects.get(codename='submit_task').pk
+        close_task_pk = Permission.objects.get(codename='close_task').pk
+        potential_assignees = User.objects.filter(editor__permitted_countries=self.country,
+                                                             user_permissions=submit_task_pk)
+        potential_reviewers = potential_assignees.filter(user_permissions=close_task_pk)
+
         for task in context['tasks']:
             # this overwrites the task's potential_assignees method
-            task.potential_assignees = [u for u in permitted_users if task.assigned_to_id != u.id]
+            task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
+            task.potential_reviewers = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id]
 
         return context
 

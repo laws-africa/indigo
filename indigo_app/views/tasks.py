@@ -72,7 +72,7 @@ class TaskListView(TaskViewBase, ListView):
         for task in context['tasks']:
             # this overwrites the task's potential_assignees method
             task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
-            task.potential_reviewers = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id]
+            task.potential_reviewers = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
 
         return context
 

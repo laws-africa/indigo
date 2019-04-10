@@ -1091,7 +1091,7 @@ class Task(models.Model):
         potential_assignees = User.objects.filter(editor__permitted_countries=self.country, user_permissions=submit_task_pk)
 
         if self.state == 'pending_review':
-            potential_assignees = potential_assignees.filter(user_permissions=close_task_pk)
+            potential_assignees = potential_assignees.filter(user_permissions=close_task_pk).exclude(id=self.last_assigned_to_id)
 
         if self.assigned_to:
             potential_assignees = potential_assignees.exclude(id=self.assigned_to.id)

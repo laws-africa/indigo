@@ -60,7 +60,7 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
-        context['potential_assignees'] = Task.decorate_potential_assignees(context['tasks'], self.country)
+        Task.decorate_potential_assignees(context['tasks'], self.country)
 
         return context
 
@@ -88,7 +88,7 @@ class TaskDetailView(TaskViewBase, DetailView):
         if has_transition_perm(task.close, self):
             context['close_task_permission'] = True
 
-        context['potential_assignees'] = Task.decorate_potential_assignees([task], self.country)
+        Task.decorate_potential_assignees([task], self.country)
 
         return context
 

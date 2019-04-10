@@ -151,7 +151,7 @@
             data-none-selected-text="Workflows" data-selected-text-format="static">
 
           {% for workflow in possible_workflows|dictsort:'title' %}
-            <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>{{ workflow.title }}</option>
+            <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>#{{ workflow.pk }} – {{ workflow.title }}</option>
           {% endfor %}
         </select>
       </form>

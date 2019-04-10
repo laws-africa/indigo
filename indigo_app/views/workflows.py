@@ -5,6 +5,7 @@ from datetime import timedelta
 
 from actstream import action
 from actstream.models import Action, any_stream
+from django.contrib.auth.models import Permission
 from django.contrib import messages
 from django.db.models import Count
 from django.http import QueryDict
@@ -61,10 +62,16 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 
         # potential assignees for tasks. better to batch this here than load it for every task.
-        permitted_users = User.objects.filter(editor__permitted_countries=self.country).all()
+        submit_task_pk = Permission.objects.get(codename='submit_task').pk
+        close_task_pk = Permission.objects.get(codename='close_task').pk
+        potential_assignees = User.objects.filter(editor__permitted_countries=self.country,
+                                                             user_permissions=submit_task_pk)
+        potential_reviewers = potential_assignees.filter(user_permissions=close_task_pk)
+
         for task in tasks:
             # this overwrites the task's potential_assignees method
-            task.potential_assignees = [u for u in permitted_users if task.assigned_to_id != u.id]
+            task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
+            task.potential_reviewers = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id]
 
         # stats
         self.object.n_tasks = self.object.tasks.count()

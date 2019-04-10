@@ -60,18 +60,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['has_tasks'] = bool(tasks)
         context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
-
-        # potential assignees for tasks. better to batch this here than load it for every task.
-        submit_task_pk = Permission.objects.get(codename='submit_task').pk
-        close_task_pk = Permission.objects.get(codename='close_task').pk
-        potential_assignees = User.objects.filter(editor__permitted_countries=self.country,
-                                                             user_permissions=submit_task_pk)
-        potential_reviewers = potential_assignees.filter(user_permissions=close_task_pk)
-
-        for task in tasks:
-            # this overwrites the task's potential_assignees method
-            task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
-            task.potential_reviewers = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+        context['potential_assignees'] = Task.decorate_potential_assignees(context['tasks'], self.country)
 
         # stats
         self.object.n_tasks = self.object.tasks.count()

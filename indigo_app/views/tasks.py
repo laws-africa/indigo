@@ -74,12 +74,7 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
-
-        # potential assignees for tasks. better to batch this here than load it for every task.
-        permitted_users = User.objects.filter(editor__permitted_countries=self.country).all()
-        for task in context['tasks']:
-            # this overwrites the task's potential_assignees method
-            task.potential_assignees = [u for u in permitted_users if task.assigned_to_id != u.id]
+        Task.decorate_potential_assignees(context['tasks'], self.country)
 
         return context
 
@@ -107,6 +102,7 @@ class TaskDetailView(TaskViewBase, DetailView):
         if has_transition_perm(task.close, self):
             context['close_task_permission'] = True
 
+        Task.decorate_potential_assignees([task], self.country)
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
         return context

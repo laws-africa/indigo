@@ -8,6 +8,7 @@ from itertools import chain, groupby
 from actstream import action
 
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.db import models
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
@@ -1083,11 +1084,21 @@ class Task(models.Model):
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):
             self.work = None
 
-    def potential_assignees(self):
-        potential_assignees = User.objects.filter(editor__permitted_countries=self.country)
-        if self.assigned_to:
-            potential_assignees = potential_assignees.exclude(id=self.assigned_to.id)
-        return potential_assignees
+    @classmethod
+    def decorate_potential_assignees(cls, tasks, country):
+        submit_task_permission = Permission.objects.get(codename='submit_task')
+        close_task_permission = Permission.objects.get(codename='close_task')
+
+        potential_assignees = User.objects.filter(editor__permitted_countries=country, user_permissions=submit_task_permission)
+        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission)
+
+        for task in tasks:
+            if task.state == 'open':
+                task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
+            elif task.state == 'pending_review':
+                task.potential_assignees = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+
+        return tasks
 
     # submit for review
     def may_submit(self, view):

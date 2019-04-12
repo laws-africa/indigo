@@ -441,6 +441,22 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         return entries
 
 
+class WorkTasksView(WorkViewBase, DetailView):
+    template_name_suffix = '_tasks'
+    paginate_by = 20
+    paginate_orphans = 4
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkTasksView, self).get_context_data(**kwargs)
+        context['tasks'] = context['work'].tasks.all()
+        context['task_groups'] = Task.task_columns(
+            ['open', 'assigned', 'pending_review', 'done', 'cancelled'],
+            context['tasks']
+        )
+
+        return context
+
+
 class RestoreWorkVersionView(WorkViewBase, DetailView):
     http_method_names = ['post']
     permission_required = ('indigo_api.change_work',)

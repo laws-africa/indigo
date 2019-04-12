@@ -454,6 +454,8 @@ class WorkTasksView(WorkViewBase, DetailView):
             context['tasks']
         )
 
+        Task.decorate_potential_assignees(context['tasks'], self.country)
+
         return context
 
 

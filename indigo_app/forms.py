@@ -172,7 +172,7 @@ class TaskFilterForm(forms.Form):
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
 
-    def filter_queryset(self, queryset, frbr_uri=None):
+    def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
@@ -183,9 +183,6 @@ class TaskFilterForm(forms.Form):
                     queryset = queryset.exclude(state='open', assigned_to=None)
             else:
                 queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
-
-        if frbr_uri:
-            queryset = queryset.filter(work__frbr_uri=frbr_uri)
 
         return queryset
 

@@ -74,6 +74,7 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
+
         Task.decorate_potential_assignees(context['tasks'], self.country)
 
         return context

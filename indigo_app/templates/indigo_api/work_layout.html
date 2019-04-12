@@ -31,6 +31,7 @@
             </li>
             <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}"><i class="fas fa-sitemap"></i> Related works</a></li>
             <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}"><i class="fas fa-history"></i> Changes</a></li>
+            <li class="nav-item"><a class="nav-link {% if view.template_name_suffix == '_tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack"></i> Tasks</a></li>
           {% else %}
             <li class="nav-item"><a class="nav-link active" href="#"><i class="fas fa-cog"></i> Work details</a></li>
           {% endif %}

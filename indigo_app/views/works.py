@@ -21,7 +21,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, Workflow
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -439,6 +439,24 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
             entries.append(entry)
 
         return entries
+
+
+class WorkTasksView(WorkViewBase, DetailView):
+    template_name_suffix = '_tasks'
+    paginate_by = 20
+    paginate_orphans = 4
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkTasksView, self).get_context_data(**kwargs)
+        context['tasks'] = context['work'].tasks.all()
+        context['task_groups'] = Task.task_columns(
+            ['open', 'assigned', 'pending_review', 'done', 'cancelled'],
+            context['tasks']
+        )
+
+        Task.decorate_potential_assignees(context['tasks'], self.country)
+
+        return context
 
 
 class RestoreWorkVersionView(WorkViewBase, DetailView):

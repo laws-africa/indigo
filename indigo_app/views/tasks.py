@@ -102,8 +102,9 @@ class TaskDetailView(TaskViewBase, DetailView):
         if has_transition_perm(task.close, self):
             context['close_task_permission'] = True
 
-        Task.decorate_potential_assignees([task], self.country)
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
+
+        Task.decorate_potential_assignees([task], self.country)
 
         return context
 

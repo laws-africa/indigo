@@ -3,7 +3,6 @@
 {% block title %}Tasks – {{block.super }}{% endblock %}
 
 {% block work-content %}
-  <div class="container mt-3">
     <div class="card">
       {% if tasks %}
         {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
@@ -33,5 +32,4 @@
       </nav>
     {% endif %}
 
-  </div>
 {% endblock %}

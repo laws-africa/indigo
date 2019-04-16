@@ -14,7 +14,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 from indigo_api.models import Task, Workflow
 
-from indigo_app.forms import WorkflowFilterForm
+from indigo_app.forms import WorkflowFilterForm, TaskFilterForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 
 
@@ -51,10 +51,27 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
     model = Workflow
     threshold = timedelta(seconds=3)
 
+    def get(self, request, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(request.GET)
+
+        # initial state
+        if not params.get('state'):
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'done', 'cancelled'])
+        params.setdefault('format', 'columns')
+
+        self.form = TaskFilterForm(self.country, params)
+        self.form.is_valid()
+
+        return super(WorkflowDetailView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowDetailView, self).get_context_data(**kwargs)
 
-        tasks = self.object.tasks.all()
+        context['form'] = self.form
+        tasks = self.form.filter_queryset(self.object.tasks).all()
+
         context['has_tasks'] = bool(tasks)
         context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()

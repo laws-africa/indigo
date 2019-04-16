@@ -178,7 +178,7 @@ class TaskFilterForm(forms.Form):
         super(TaskFilterForm, self).__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
 
-    def filter_queryset(self, queryset, frbr_uri=None):
+    def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
@@ -192,9 +192,6 @@ class TaskFilterForm(forms.Form):
 
         if self.cleaned_data.get('assigned_to'):
             queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
-
-        if frbr_uri:
-            queryset = queryset.filter(work__frbr_uri=frbr_uri)
 
         return queryset
 

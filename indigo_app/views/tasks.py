@@ -66,7 +66,7 @@ class TaskListView(TaskViewBase, ListView):
 
     def get_queryset(self):
         tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-updated_at')
-        return self.form.filter_queryset(tasks, frbr_uri=self.request.GET.get('frbr_uri'))
+        return self.form.filter_queryset(tasks)
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
@@ -74,6 +74,7 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
+
         Task.decorate_potential_assignees(context['tasks'], self.country)
 
         return context
@@ -102,8 +103,9 @@ class TaskDetailView(TaskViewBase, DetailView):
         if has_transition_perm(task.close, self):
             context['close_task_permission'] = True
 
-        Task.decorate_potential_assignees([task], self.country)
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
+
+        Task.decorate_potential_assignees([task], self.country)
 
         return context
 

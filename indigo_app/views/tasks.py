@@ -56,7 +56,7 @@ class TaskListView(TaskViewBase, ListView):
             params.setlist('state', ['open', 'assigned', 'pending_review'])
         params.setdefault('format', 'columns')
 
-        self.form = TaskFilterForm(params)
+        self.form = TaskFilterForm(self.country, params)
         self.form.is_valid()
 
         if self.form.cleaned_data['format'] == 'columns':

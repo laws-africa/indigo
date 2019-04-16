@@ -1,5 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
-{% load humanize indigo_app %}
+{% load humanize indigo_app account %}
 
 {% block title %}Tasks – {{ place.name }}{% endblock %}
 
@@ -18,6 +18,20 @@
               <option data-divider="true"></option>
               <option value="done" {% if 'done' in form.state.value %}selected{% endif %}>Done</option>
               <option value="cancelled" {% if 'cancelled' in form.state.value %}selected{% endif %}>Cancelled</option>
+            </select>
+          </div>
+
+          <div class="mr-2">
+            <select class="selectpicker notooltip" multiple title="Assigned to" name="{{ form.assigned_to.name }}" data-style="btn-outline-secondary" data-header="Assigned to">
+              {% if user.is_authenticated and user in form.fields.assigned_to.queryset %}
+                <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>Me</option>
+              {% endif %}
+
+              {% for usr in form.fields.assigned_to.queryset %}
+                {% if usr != user %}
+                  <option value="{{ usr.pk }}" {% if usr.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>{% user_display usr %}</option>
+                {% endif %}
+              {% endfor %}
             </select>
           </div>
 

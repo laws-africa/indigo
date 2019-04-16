@@ -1089,7 +1089,9 @@ class Task(models.Model):
         submit_task_permission = Permission.objects.get(codename='submit_task')
         close_task_permission = Permission.objects.get(codename='close_task')
 
-        potential_assignees = User.objects.filter(editor__permitted_countries=country, user_permissions=submit_task_permission)
+        potential_assignees = User.objects\
+            .filter(editor__permitted_countries=country, user_permissions=submit_task_permission)\
+            .order_by('first_name', 'last_name')
         potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission)
 
         for task in tasks:

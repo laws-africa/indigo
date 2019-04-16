@@ -10,7 +10,7 @@
   <xsl:template name="escape">
     <xsl:param name="value"/>
 
-    <xsl:variable name="prefix" select="translate(substring($value, 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
+    <xsl:variable name="prefix" select="translate(substring($value, 1, 13), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
     <!-- '(' is considered special, so translate numbers into '(' so we can find and escape them -->
     <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', '((((((((((')" />
 
@@ -21,6 +21,8 @@
                   starts-with($prefix, 'CHAPTER ') or
                   starts-with($prefix, 'PART ') or
                   starts-with($prefix, 'SCHEDULE ') or
+                  starts-with($prefix, 'LONGTITLE ') or
+                  starts-with($prefix, 'CROSSHEADING ') or
                   starts-with($prefix, '{|') or
                   starts-with($numprefix, '(')">
       <xsl:text>\</xsl:text>

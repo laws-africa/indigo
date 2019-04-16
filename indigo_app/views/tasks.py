@@ -42,8 +42,6 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
-    paginate_by = 20
-    paginate_orphans = 4
     model = Task
 
     def get(self, request, *args, **kwargs):

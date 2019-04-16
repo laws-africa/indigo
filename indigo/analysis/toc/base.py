@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 from itertools import chain
 from lxml.html import _collect_string_content
@@ -235,6 +237,7 @@ class TOCElement(object):
         self.children = children
         self.subcomponent = subcomponent
         self.title = None
+        self.qualified_id = id_ if component == 'main' else "{}/{}".format(component, id_)
 
     def as_dict(self):
         info = {

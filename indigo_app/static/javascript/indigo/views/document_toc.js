@@ -81,12 +81,19 @@
 
       function generate_toc(node) {
         var $node = $(node);
+        var $component = $node.parent().closest('doc');
+        var qualified_id = node.id;
+
+        if ($component.length > 0) {
+          qualified_id = $component.attr('name') + '/' + qualified_id;
+        }
+
         var item = {
           'num': $node.children('num').text(),
           'heading': $node.children('heading').text(),
           'element': node,
           'type': node.localName,
-          'id': node.id,
+          'id': qualified_id,
         };
         item.title = tradition.toc_element_title(item);
         return item;

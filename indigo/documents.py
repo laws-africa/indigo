@@ -15,16 +15,25 @@ class ResolvedAnchor(object):
         self.resolve()
 
     def resolve(self):
-        anchor_id = self.anchor['id'].replace("'", "\'")
-        root = self.document.doc.root
+        anchor_id = self.anchor['id']
 
-        elems = root.xpath("//*[@id='%s']" % anchor_id)
+        if '/' in anchor_id:
+            component, anchor_id = anchor_id.split('/', 1)
+        else:
+            component = 'main'
+
+        component = self.document.doc.components().get(component)
+        if component is None:
+            return
+
+        anchor_id = anchor_id.replace("'", "\'")
+        elems = component.xpath("//*[@id='%s']" % anchor_id)
         if elems:
             self.resolve_element(elems[0])
         elif anchor_id in ['preface', 'preamble']:
             # HACK HACK HACK
             # We sometimes use 'preamble' and 'preface' even though they aren't IDs
-            elems = root.xpath("//a:%s" % anchor_id, namespaces={'a': self.document.doc.namespace})
+            elems = component.xpath("//a:%s" % anchor_id, namespaces={'a': self.document.doc.namespace})
             if elems:
                 self.resolve_element(elems[0])
 
@@ -35,7 +44,7 @@ class ResolvedAnchor(object):
         builder = plugins.for_document('toc', self.document)
         if builder:
             self.toc_entry = builder.table_of_contents_entry_for_element(self.document, self.element)
-            self.is_toc_element = self.toc_entry.element == self.element
+            self.is_toc_element = self.toc_entry and self.toc_entry.element == self.element
 
     def element_html(self):
         if not self.element:

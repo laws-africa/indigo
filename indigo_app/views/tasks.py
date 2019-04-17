@@ -42,8 +42,6 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
-    paginate_by = 20
-    paginate_orphans = 4
     model = Task
 
     def get(self, request, *args, **kwargs):
@@ -56,7 +54,7 @@ class TaskListView(TaskViewBase, ListView):
             params.setlist('state', ['open', 'assigned', 'pending_review'])
         params.setdefault('format', 'columns')
 
-        self.form = TaskFilterForm(params)
+        self.form = TaskFilterForm(self.country, params)
         self.form.is_valid()
 
         if self.form.cleaned_data['format'] == 'columns':

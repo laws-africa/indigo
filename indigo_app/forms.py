@@ -171,6 +171,12 @@ class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
+    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
+
+    def __init__(self, country, *args, **kwargs):
+        self.country = country
+        super(TaskFilterForm, self).__init__(*args, **kwargs)
+        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):
@@ -183,6 +189,9 @@ class TaskFilterForm(forms.Form):
                     queryset = queryset.exclude(state='open', assigned_to=None)
             else:
                 queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
+
+        if self.cleaned_data.get('assigned_to'):
+            queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
 
         return queryset
 

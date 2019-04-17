@@ -680,16 +680,26 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def link_repeal(self, info, form):
         # if the work is `repealed_by` something, try linking it
         # make a task if this fails
+        # (either because the work isn't found or because the repeal date isn't right,
+        # which could be because it doesn't exist or because it's in the wrong format)
         if info.get('repealed_by'):
             try:
                 repealing_work = self.find_work_by_title(info.get('repealed_by'))
-                info['work'].repealed_by = repealing_work
-                if info.get('with_effect_from'):
-                    info['work'].repealed_date = info.get('with_effect_from')
-                else:
-                    info['work'].repealed_date = repealing_work.commencement_date
-                info['work'].save()
             except Work.DoesNotExist:
+                return self.create_task(info, form, task_type='repeal')
+
+            repeal_date = repealing_work.commencement_date
+            repeal_date = info.get('with_effect_from') or repeal_date
+
+            if not repeal_date:
+                return self.create_task(info, form, task_type='repeal')
+
+            info['work'].repealed_by = repealing_work
+            info['work'].repealed_date = repeal_date
+
+            try:
+                info['work'].save()
+            except ValidationError:
                 self.create_task(info, form, task_type='repeal')
 
     def find_work_by_title(self, title):
@@ -720,9 +730,11 @@ or the amended work may not exist yet.
 Check the spreadsheet for reference and link it/them manually.'''
         elif task_type == 'repeal':
             task.title = 'Link repeal'
-            task.description = '''This work's repealing work could not be linked automatically.
+            task.description = '''According to the spreadsheet this work was repealed by the '{}', \
+            but the repeal could not be linked automatically.
 There may have been a typo in the spreadsheet, or the work may not exist yet.
-Check the spreadsheet for reference and link it manually.'''
+Otherwise, the 'with effect from' date could be in the wrong format, or the repealing work might not have commenced yet.
+Check the spreadsheet for reference and link it manually, or add the 'Pending commencement' label to this task.'''.format(info.get('repealed_by'))
         elif task_type == 'parent_work':
             task.title = 'Link parent work'
             task.description = '''This work's parent work could not be linked automatically.

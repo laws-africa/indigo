@@ -114,13 +114,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def build_table_of_contents(self):
         toc = []
         for component, element in self.act.components().iteritems():
-            if component != "main":
-                # non-main components are items in their own right
-                item = self.make_toc_entry(element, component)
-                item.children = self.process_elements(component, [element])
-                toc += [item]
-            else:
-                toc += self.process_elements(component, [element])
+            toc += self.process_elements(component, [element])
 
         return toc
 

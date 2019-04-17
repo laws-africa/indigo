@@ -1,4 +1,4 @@
-ace.define("ace/mode/indigo_highlight_rules", ["require", "exports", "module", "ace/lib/oop", "ace/mode/text_highlight_rules"], function(require, exports, module) {
+ace.define("ace/mode/indigo", ["require", "exports", "module", "ace/lib/oop", "ace/mode/text_highlight_rules"], function(require, exports, module) {
 "use strict";
 
 var oop = require("../lib/oop");
@@ -11,12 +11,15 @@ var IndigoHighlightRules = function() {
     this.$rules = {
         "start": [
             {
-                token: ["constant.numeric", "entity.name.tag"],
-                regex: /^([0-9][0-9a-z]*\.\s+)(.*)/
+                token: ["constant.numeric"],
+                regex: /^([0-9][0-9a-z]*\.\s+)/
             }, {
                 token: "constant.language",
                 regex: /^(body|preamble|preface)\s*$/,
                 caseInsensitive: true,
+            }, {
+                token: ["constant.language", "entity.name.tag"],
+                regex: /^(LONGTITLE|CROSSHEADING)(\s+.+)$/,
             }, {
                 token: "constant.numeric",
                 regex: /^\([0-9][0-9a-z]*\)/
@@ -25,7 +28,7 @@ var IndigoHighlightRules = function() {
                 regex: /^\([a-z][0-9a-z]*\)/
             }, {
                 token: ["constant.language", "constant.numeric", "entity.name.tag"],
-                regex: /^(chapter|part)(\s+[a-zA-Z0-9]+\s*)(-.*)?$/,
+                regex: /^(chapter|part)(\s+[a-zA-Z0-9]+\s*)(.*)?$/,
                 caseInsensitive: true,
             }, {
                 token: ["constant.language", "constant.numeric", "entity.name.tag"],
@@ -82,16 +85,7 @@ var IndigoHighlightRules = function() {
 
 oop.inherits(IndigoHighlightRules, TextHighlightRules);
 
-exports.IndigoHighlightRules = IndigoHighlightRules;
-});
-
-ace.define("ace/mode/indigo", ["require", "exports", "module", "ace/lib/oop", "ace/mode/text", "ace/mode/indigo_highlight_rules"], function(require, exports, module) {
-"use strict";
-
-var oop = require("../lib/oop");
 var TextMode = require("./text").Mode;
-var IndigoHighlightRules = require("./indigo_highlight_rules").IndigoHighlightRules;
-
 var Mode = function() {
     this.HighlightRules = IndigoHighlightRules;
 };

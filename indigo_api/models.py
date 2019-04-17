@@ -145,7 +145,7 @@ class WorkManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
             .get_queryset()\
-            .prefetch_related('country', 'country__country', 'locality', 'publication_document')
+            .select_related('country', 'country__country', 'locality', 'publication_document')
 
 
 class Work(models.Model):
@@ -328,7 +328,7 @@ class Work(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision', 'revision__user')\
+            .select_related('revision', 'revision__user')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
@@ -482,7 +482,7 @@ class DocumentManager(models.Manager):
         # defer expensive or unnecessary fields
         return super(DocumentManager, self)\
             .get_queryset()\
-            .prefetch_related('work')\
+            .select_related('work')\
             .defer("search_text", "search_vector")
 
 
@@ -803,7 +803,7 @@ class Document(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision')\
+            .select_related('revision')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
@@ -1028,7 +1028,9 @@ class TaskQuerySet(models.QuerySet):
 class TaskManager(models.Manager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()\
-            .prefetch_related('labels', 'work', 'document', 'created_by_user', 'assigned_to')
+            .select_related('work', 'document', 'created_by_user', 'assigned_to', 'document__language', 'document__language__language')\
+            .defer('document__document_xml', 'document__search_vector', 'document__search_text')\
+            .prefetch_related('labels')
 
 
 class Task(models.Model):
@@ -1219,7 +1221,7 @@ class WorkflowQuerySet(models.QuerySet):
 class WorkflowManager(models.Manager):
     def get_queryset(self):
         return super(WorkflowManager, self).get_queryset()\
-            .prefetch_related('tasks', 'created_by_user')
+            .select_related('created_by_user')
 
 
 class Workflow(models.Model):

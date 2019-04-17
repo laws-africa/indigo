@@ -75,15 +75,18 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
 
         context['form'] = self.form
-        tasks = self.form.filter_queryset(Task.objects.filter(workflows=self.object)).all()
+        tasks = self.form.filter_queryset(Task.objects.filter(workflows=self.object)) \
+            .select_related('document__language', 'document__language__language')\
+            .all()
 
         context['tasks'] = tasks
         context['has_tasks'] = self.object.n_tasks > 0
         context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
         context['possible_tasks'] = Task.objects\
-            .filter(country=self.country, locality=self.locality)\
+            .filter(country=self.country, locality=self.locality) \
             .unclosed()\
-            .exclude(workflows=self.object)\
+            .exclude(workflows=self.object) \
+            .select_related('document__language', 'document__language__language')\
             .all()
 
         Task.decorate_potential_assignees(tasks, self.country)

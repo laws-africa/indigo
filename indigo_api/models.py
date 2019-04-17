@@ -10,7 +10,7 @@ from actstream import action
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.db import models
-from django.db.models import signals, Q
+from django.db.models import signals, Q, Prefetch
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -315,7 +315,7 @@ class Work(models.Model):
     def expressions(self):
         """ A queryset of expressions of this work, in ascending expression date order.
         """
-        return self.document_set.undeleted().order_by('expression_date')
+        return Document.objects.undeleted().filter(work=self).order_by('expression_date')
 
     def initial_expressions(self):
         """ Queryset of expressions at initial publication date.
@@ -452,7 +452,7 @@ class Amendment(models.Model):
     def expressions(self):
         """ The amended work's documents (expressions) at this date.
         """
-        return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
+        return self.amended_work.expressions().filter(expression_date=self.date)
 
     def can_delete(self):
         return not self.expressions().exists()
@@ -1028,8 +1028,9 @@ class TaskQuerySet(models.QuerySet):
 class TaskManager(models.Manager):
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()\
-            .select_related('work', 'document', 'created_by_user', 'assigned_to', 'document__language', 'document__language__language')\
-            .defer('document__document_xml', 'document__search_vector', 'document__search_text')\
+            .select_related('created_by_user', 'assigned_to')\
+            .prefetch_related(Prefetch('work', queryset=Work.objects.filter()))\
+            .prefetch_related(Prefetch('document', queryset=Document.objects.no_xml()))\
             .prefetch_related('labels')
 
 

@@ -72,7 +72,8 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['form'] = self.form
         tasks = self.form.filter_queryset(self.object.tasks).all()
 
-        context['has_tasks'] = bool(tasks)
+        context['has_tasks'] = self.object.tasks.count() > 1
+        context['tasks'] = tasks
         context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
         context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 

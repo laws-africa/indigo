@@ -1091,14 +1091,15 @@ class Task(models.Model):
 
         potential_assignees = User.objects\
             .filter(editor__permitted_countries=country, user_permissions=submit_task_permission)\
-            .order_by('first_name', 'last_name')
-        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission)
+            .order_by('first_name', 'last_name')\
+            .all()
+        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission).all()
 
         for task in tasks:
             if task.state == 'open':
-                task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
-                task.potential_assignees = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
 
         return tasks
 

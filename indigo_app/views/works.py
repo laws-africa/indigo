@@ -689,7 +689,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 return self.create_task(info, form, task_type='repeal')
 
             repeal_date = repealing_work.commencement_date
-            repeal_date = info.get('with_effect_from') if info.get('with_effect_from') else repeal_date
+            repeal_date = info.get('with_effect_from') or repeal_date
 
             if not repeal_date:
                 return self.create_task(info, form, task_type='repeal')

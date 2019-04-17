@@ -44,7 +44,7 @@ class ResolvedAnchor(object):
         builder = plugins.for_document('toc', self.document)
         if builder:
             self.toc_entry = builder.table_of_contents_entry_for_element(self.document, self.element)
-            self.is_toc_element = self.toc_entry.element == self.element
+            self.is_toc_element = self.toc_entry and self.toc_entry.element == self.element
 
     def element_html(self):
         if not self.element:

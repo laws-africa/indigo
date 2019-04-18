@@ -141,6 +141,8 @@ class WorkQuerySet(models.QuerySet):
 
 
 class WorkManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
@@ -1026,6 +1028,8 @@ class TaskQuerySet(models.QuerySet):
 
 
 class TaskManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()\
             .select_related('created_by_user', 'assigned_to')\
@@ -1220,6 +1224,8 @@ class WorkflowQuerySet(models.QuerySet):
 
 
 class WorkflowManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return super(WorkflowManager, self).get_queryset()\
             .select_related('created_by_user')

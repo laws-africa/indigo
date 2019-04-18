@@ -65,7 +65,8 @@ class TaskListView(TaskViewBase, ListView):
     def get_queryset(self):
         tasks = Task.objects\
             .filter(country=self.country, locality=self.locality)\
-            .select_related('document__language', 'document__language__language')\
+            .select_related('document__language', 'document__language__language') \
+            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
             .order_by('-updated_at')
         return self.form.filter_queryset(tasks)
 

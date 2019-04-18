@@ -29,7 +29,7 @@
       {% if task.document %}
         <div class="mb-2">
           <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-          <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+          <span class="text-muted">{{ task.work.frbr_uri }}</span>
         </div>
       {% elif task.work %}
         <div class="mb-2">
@@ -145,31 +145,30 @@
         {% endwith %}
       </ul>
 
+      {% with task.workflows.all as workflows %}
+        <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST" data-submit="ajax">
+          {% csrf_token %}
 
-      <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST" data-submit="ajax">
-        {% csrf_token %}
+          <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
+              data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+              {% if not perms.indigo_api.change_task %}disabled{% endif %}
+              data-none-selected-text="Workflows" data-selected-text-format="static">
 
-        <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
-            data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
-            {% if not perms.indigo_api.change_task %}disabled{% endif %}
-            data-none-selected-text="Workflows" data-selected-text-format="static">
-
-          {% for workflow in possible_workflows|dictsort:'title' %}
-            <option value="{{ workflow.id }}" {% if workflow in task.workflows.all %}selected{% endif %}>#{{ workflow.pk }} – {{ workflow.title }}</option>
-          {% endfor %}
-        </select>
-      </form>
-      <ul class="list-unstyled mb-2">
-        {% with task.workflows.all as workflows %}
-        {% if workflows %}
-          {% for workflow in workflows|dictsort:'title' %}
-            <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }} – {{ workflow.title }}</a></li>
-          {% endfor %}
-        {% else %}
-          <li><em>None</em></li>
-        {% endif %}
-        {% endwith %}
-      </ul>
+            {% for workflow in possible_workflows|dictsort:'title' %}
+              <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>#{{ workflow.pk }} – {{ workflow.title }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <ul class="list-unstyled mb-2">
+          {% if workflows %}
+            {% for workflow in workflows|dictsort:'title' %}
+              <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }} – {{ workflow.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><em>None</em></li>
+          {% endif %}
+        </ul>
+      {% endwith %}
 
     </div>
   </div>

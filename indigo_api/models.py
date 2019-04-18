@@ -10,7 +10,7 @@ from actstream import action
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.db import models
-from django.db.models import signals, Q
+from django.db.models import signals, Q, Prefetch
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -141,11 +141,13 @@ class WorkQuerySet(models.QuerySet):
 
 
 class WorkManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
             .get_queryset()\
-            .prefetch_related('country', 'country__country', 'locality', 'publication_document')
+            .select_related('country', 'country__country', 'locality', 'publication_document')
 
 
 class Work(models.Model):
@@ -315,7 +317,7 @@ class Work(models.Model):
     def expressions(self):
         """ A queryset of expressions of this work, in ascending expression date order.
         """
-        return self.document_set.undeleted().order_by('expression_date')
+        return Document.objects.undeleted().filter(work=self).order_by('expression_date')
 
     def initial_expressions(self):
         """ Queryset of expressions at initial publication date.
@@ -328,7 +330,7 @@ class Work(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision', 'revision__user')\
+            .select_related('revision', 'revision__user')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
@@ -452,7 +454,7 @@ class Amendment(models.Model):
     def expressions(self):
         """ The amended work's documents (expressions) at this date.
         """
-        return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
+        return self.amended_work.expressions().filter(expression_date=self.date)
 
     def can_delete(self):
         return not self.expressions().exists()
@@ -803,7 +805,7 @@ class Document(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision')\
+            .select_related('revision')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
@@ -1026,9 +1028,14 @@ class TaskQuerySet(models.QuerySet):
 
 
 class TaskManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()\
-            .prefetch_related('labels', 'work', 'document', 'created_by_user', 'assigned_to')
+            .select_related('created_by_user', 'assigned_to')\
+            .prefetch_related(Prefetch('work', queryset=Work.objects.filter()))\
+            .prefetch_related(Prefetch('document', queryset=Document.objects.no_xml()))\
+            .prefetch_related('labels')
 
 
 class Task(models.Model):
@@ -1091,14 +1098,15 @@ class Task(models.Model):
 
         potential_assignees = User.objects\
             .filter(editor__permitted_countries=country, user_permissions=submit_task_permission)\
-            .order_by('first_name', 'last_name')
-        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission)
+            .order_by('first_name', 'last_name')\
+            .all()
+        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission).all()
 
         for task in tasks:
             if task.state == 'open':
-                task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
-                task.potential_assignees = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
 
         return tasks
 
@@ -1216,9 +1224,11 @@ class WorkflowQuerySet(models.QuerySet):
 
 
 class WorkflowManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return super(WorkflowManager, self).get_queryset()\
-            .prefetch_related('tasks', 'created_by_user')
+            .select_related('created_by_user')
 
 
 class Workflow(models.Model):

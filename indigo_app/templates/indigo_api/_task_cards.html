@@ -35,7 +35,7 @@
                   <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted d-block mb-1">
                     {{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}
                   </a>
-                  <span class="text-muted wb-all">{{ task.document.work.frbr_uri }}</span>
+                  <span class="text-muted wb-all">{{ task.work.frbr_uri }}</span>
                 </div>
               {% elif task.work %}
                 <div>

@@ -103,9 +103,9 @@
       return xml;
     },
 
-    discardChanges: function(e) {
+    discardChanges: function(e, force) {
       if (!this.editing) return;
-      if (!confirm("You'll lose you changes, are you sure?")) return;
+      if (!force && !confirm("You'll lose you changes, are you sure?")) return;
 
       var table = this.editor.table,
           initialTable = this.initialTable;
@@ -132,7 +132,7 @@
       if (table) {
         // cancel existing edit
         if (this.editor.table) {
-          this.discardChanges();
+          this.discardChanges(null, true);
         }
 
         this.initialTable = table.cloneNode(true);

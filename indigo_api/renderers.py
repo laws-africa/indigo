@@ -369,7 +369,7 @@ class PDFRenderer(HTMLRenderer):
         # the margin slightly
 
         footer_font = 'Georgia, "Times New Roman", serif'
-        footer_font_size = '10'
+        footer_font_size = '8'
         footer_spacing = 5
         margin_top = 36.3 - footer_spacing
         margin_bottom = 36.3 - footer_spacing

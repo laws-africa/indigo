@@ -168,7 +168,9 @@
 
     click: function(e) {
       e.preventDefault();
-      this.selectItem($(e.target).data('index'), true);
+      if (Indigo.view.bodyEditorView.canCancelEdits()) {
+        this.selectItem($(e.target).data('index'), true);
+      }
     },
   });
 })(window);

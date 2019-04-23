@@ -279,7 +279,7 @@
 
     editFragment: function(node) {
       // edit node, a node in the XML document
-      this.tableEditor.discardChanges();
+      this.tableEditor.discardChanges(null, true);
       this.closeTextEditor();
       this.render();
       this.$('.document-sheet-container').scrollTop(0);
@@ -316,7 +316,7 @@
 
     // Discard the content of the editor, returns a Deferred
     discardChanges: function() {
-      this.tableEditor.discardChanges();
+      this.tableEditor.discardChanges(null, true);
       this.closeTextEditor();
       return $.Deferred().resolve();
     },
@@ -653,6 +653,10 @@
 
     isDirty: function() {
       return this.dirty || this.sourceEditor.editing;
+    },
+
+    canCancelEdits: function() {
+      return (!this.sourceEditor.editing || confirm("You will lose your changes, are you sure?"));
     },
 
     // Save the content of the editor, returns a Deferred

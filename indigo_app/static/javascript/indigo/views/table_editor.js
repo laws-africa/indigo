@@ -105,7 +105,7 @@
 
     discardChanges: function(e, force) {
       if (!this.editing) return;
-      if (!force && !confirm("You'll lose you changes, are you sure?")) return;
+      if (!force && !confirm("You'll lose your changes, are you sure?")) return;
 
       var table = this.editor.table,
           initialTable = this.initialTable;

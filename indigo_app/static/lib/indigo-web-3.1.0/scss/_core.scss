@@ -163,7 +163,9 @@
   }
 
   .akn-longTitle {
+    display: block;
     font-weight: bold;
+    margin-bottom: $akn-para-spacing;
   }
 
   .akn-remark {

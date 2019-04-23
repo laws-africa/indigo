@@ -57,9 +57,6 @@ class TaskListView(TaskViewBase, ListView):
         self.form = TaskFilterForm(self.country, params)
         self.form.is_valid()
 
-        if self.form.cleaned_data['format'] == 'columns':
-            self.paginate_by = 40
-
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):

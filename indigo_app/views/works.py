@@ -443,8 +443,6 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
 class WorkTasksView(WorkViewBase, DetailView):
     template_name_suffix = '_tasks'
-    paginate_by = 20
-    paginate_orphans = 4
 
     def get_context_data(self, **kwargs):
         context = super(WorkTasksView, self).get_context_data(**kwargs)

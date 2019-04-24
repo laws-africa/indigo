@@ -220,6 +220,50 @@
         </div>
       </div>
     </div>
+
+    <div class="card mb-3">
+      <h5 class="card-header">Additional Properties</h5>
+      <div class="card-body">
+        {{ properties_formset.management_form }}
+
+        <div class="form-row">
+          <div class="col-sm-3">
+            <b>Property</b>
+          </div>
+          <div class="col-sm-9">
+            <b>Value</b>
+          </div>
+        </div>
+
+        {% for subform in properties_formset %}
+          {% if subform.id.value %}
+            {{ subform.id }}
+          {% endif %}
+          <div class="form-row mt-2" {% if forloop.last %}data-template-row="true"{% endif %}>
+            <div class="col-sm-3">
+              <input type="text" class="form-control" placeholder="(add new property)" value="{{ subform.key.value|default:'' }}" name="{{ subform.key.html_name }}" maxlength="1024">
+              {% if subform.key.errors %}
+                <div class="text-danger">
+                  {% for error in subform.key.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+            <div class="col-sm-9">
+              <input type="text" class="form-control" value="{{ subform.value.value|default:'' }}" name="{{ subform.value.html_name }}" maxlength="1024">
+              {% if subform.value.errors %}
+                <div class="text-danger">
+                  {% for error in subform.value.errors %}
+                    <p>{{ error }}</p>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
   </form>
 
   {% if work.pk %}

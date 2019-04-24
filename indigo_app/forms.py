@@ -7,7 +7,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow, WorkProperty
 
 
 class WorkForm(forms.ModelForm):
@@ -71,6 +71,18 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
+
+
+class WorkPropertyForm(forms.ModelForm):
+    key = forms.CharField(required=False)
+    value = forms.CharField(required=False)
+
+    class Meta:
+        model = WorkProperty
+        fields = ('key', 'value')
+
+
+WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm)
 
 
 class DocumentForm(forms.ModelForm):

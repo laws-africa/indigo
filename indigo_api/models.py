@@ -198,6 +198,7 @@ class Work(models.Model):
 
     _work_uri = None
     _repeal = None
+    _properties = None
 
     @property
     def work_uri(self):
@@ -222,10 +223,9 @@ class Work(models.Model):
     def subtype(self):
         return self.work_uri.subtype
 
-    # Helper to get/set locality using the locality_code, used by the WorkSerializer.
-
     @property
     def locality_code(self):
+        # Helper to get/set locality using the locality_code, used by the WorkSerializer.
         return self.locality.code
 
     @locality_code.setter
@@ -251,6 +251,12 @@ class Work(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @property
+    def properties(self):
+        if self._properties is None:
+            self._properties = {p.key: p.value for p in self.properties.all()}
+        return self._properties
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -434,6 +440,15 @@ class PublicationDocument(models.Model):
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
         return super(PublicationDocument, self).save(*args, **kwargs)
+
+
+class WorkProperty(models.Model):
+    work = models.ForeignKey(Work, null=False, related_name='raw_properties')
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True)
+    value = models.CharField(max_length=1024, null=False, blank=False)
+
+    class Meta:
+        unique_together = ('work', 'key')
 
 
 class Amendment(models.Model):

@@ -26,7 +26,7 @@ from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, WorkPropertyFormSet
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -109,10 +109,29 @@ class EditWorkView(WorkViewBase, UpdateView):
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
 
+    def get_form(self, form_class=None):
+        kwargs = {'queryset': self.object.raw_properties.filter()}
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'data': self.request.POST,
+                'files': self.request.FILES,
+            })
+        self.properties_formset = WorkPropertyFormSet(**kwargs)
+
+        return super(EditWorkView, self).get_form(form_class)
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = self.get_form()
+        if form.is_valid() and self.properties_formset.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
-
+        context['properties_formset'] = self.properties_formset
         return context
 
     def form_valid(self, form):
@@ -121,6 +140,19 @@ class EditWorkView(WorkViewBase, UpdateView):
 
         with reversion.create_revision():
             reversion.set_user(self.request.user)
+
+            # TODO: remove blank entries
+            if self.properties_formset.is_valid():
+                self.properties_formset.save(commit=False)
+                for subform in self.properties_formset.saved_forms:
+                    if not subform.instance.key or not subform.instance.value:
+                        # delete it?
+                        if subform.instance.pk:
+                            subform.instance.delete()
+                    else:
+                        subform.instance.work = self.object
+                        subform.instance.save()
+
             resp = super(EditWorkView, self).form_valid(form)
 
         # ensure any docs for this work at initial pub date move with it, if it changes
@@ -132,7 +164,7 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.expression_date = self.work.publication_date
                     doc.save()
 
-        if form.has_changed():
+        if form.has_changed() or self.properties_formset.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
             messages.success(self.request, u"Work updated.")

@@ -2,7 +2,9 @@ import json
 
 from django import forms
 from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.forms import BaseModelFormSet
 from django.forms.formsets import DELETION_FIELD_NAME
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
@@ -82,6 +84,12 @@ class WorkPropertyForm(forms.ModelForm):
         model = WorkProperty
         fields = ('key', 'value')
 
+    def clean_key(self):
+        # lowercase key
+        if self.cleaned_data['key']:
+            self.cleaned_data['key'] = self.cleaned_data['key'].lower()
+        return self.cleaned_data['key']
+
     def clean(self):
         super(WorkPropertyForm, self).clean()
         if not self.cleaned_data['key'] or not self.cleaned_data['value']:
@@ -89,7 +97,19 @@ class WorkPropertyForm(forms.ModelForm):
         return self.cleaned_data
 
 
-WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, can_delete=True)
+class BaseWorkPropertyFormSet(BaseModelFormSet):
+    def clean(self):
+        keys = set()
+        for form in self.forms:
+            key = form.cleaned_data.get('key')
+            if key:
+                if key in keys:
+                    form.add_error(None, ValidationError("Property '{}' is specified more than once.".format(key)))
+                else:
+                    keys.add(key)
+
+
+WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, formset=BaseWorkPropertyFormSet, can_delete=True)
 
 
 class DocumentForm(forms.ModelForm):

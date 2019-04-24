@@ -117,6 +117,10 @@ class EditWorkView(WorkViewBase, UpdateView):
                 'files': self.request.FILES,
             })
         self.properties_formset = WorkPropertyFormSet(**kwargs)
+        if self.request.method in ('POST', 'PUT'):
+            # ensure that all instances are forced to use this work
+            for form in self.properties_formset.forms:
+                form.instance.work = self.object
 
         return super(EditWorkView, self).get_form(form_class)
 
@@ -140,12 +144,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
         with reversion.create_revision():
             reversion.set_user(self.request.user)
-
-            if self.properties_formset.is_valid():
-                for subform in self.properties_formset.extra_forms:
-                    subform.instance.work = self.object
-                self.properties_formset.save()
-
+            self.properties_formset.save()
             resp = super(EditWorkView, self).form_valid(form)
 
         # ensure any docs for this work at initial pub date move with it, if it changes

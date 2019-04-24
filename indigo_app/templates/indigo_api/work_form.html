@@ -242,25 +242,19 @@
           <div class="form-row mt-2" {% if forloop.last %}data-template-row="true"{% endif %}>
             <div class="col-sm-3">
               <input type="text" class="form-control" placeholder="(add new property)" value="{{ subform.key.value|default:'' }}" name="{{ subform.key.html_name }}" maxlength="1024">
-              {% if subform.key.errors %}
-                <div class="text-danger">
-                  {% for error in subform.key.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
             <div class="col-sm-9">
               <input type="text" class="form-control" value="{{ subform.value.value|default:'' }}" name="{{ subform.value.html_name }}" maxlength="1024">
-              {% if subform.value.errors %}
-                <div class="text-danger">
-                  {% for error in subform.value.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
             </div>
           </div>
+
+          {% if subform.non_field_errors %}
+            <div class="form-row mt-2 mb-4">
+            {% for error in subform.non_field_errors %}
+              <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+            </div>
+          {% endif %}
         {% endfor %}
       </div>
     </div>

@@ -356,8 +356,17 @@
     bumpPropertyRow: function(e) {
       if (e.currentTarget.value != '') {
         var $row = $(e.currentTarget).closest('[data-template-row]');
-        $row.clone().insertAfter($row).find('input').val('');
+        $row.clone().insertAfter($row).find('input').each(function(i, input) {
+          // increment number
+          var parts = input.name.split("-");
+          parts[1] = parseInt(parts[1]) + 1;
+          input.name = parts.join('-');
+          input.value = '';
+        });
         $row.removeAttr('data-template-row');
+
+        var counter = e.currentTarget.form.querySelector('[name="form-TOTAL_FORMS"]');
+        counter.value = parseInt(counter.value) + 1;
       }
     }
   });

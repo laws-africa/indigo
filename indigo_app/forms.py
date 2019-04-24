@@ -3,6 +3,7 @@ import json
 from django import forms
 from django.core.validators import URLValidator
 from django.conf import settings
+from django.forms.formsets import DELETION_FIELD_NAME
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -81,8 +82,14 @@ class WorkPropertyForm(forms.ModelForm):
         model = WorkProperty
         fields = ('key', 'value')
 
+    def clean(self):
+        super(WorkPropertyForm, self).clean()
+        if not self.cleaned_data['key'] or not self.cleaned_data['value']:
+            self.cleaned_data[DELETION_FIELD_NAME] = True
+        return self.cleaned_data
 
-WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm)
+
+WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, can_delete=True)
 
 
 class DocumentForm(forms.ModelForm):

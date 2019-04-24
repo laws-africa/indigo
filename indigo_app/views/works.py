@@ -141,17 +141,10 @@ class EditWorkView(WorkViewBase, UpdateView):
         with reversion.create_revision():
             reversion.set_user(self.request.user)
 
-            # TODO: remove blank entries
             if self.properties_formset.is_valid():
-                self.properties_formset.save(commit=False)
-                for subform in self.properties_formset.saved_forms:
-                    if not subform.instance.key or not subform.instance.value:
-                        # delete it?
-                        if subform.instance.pk:
-                            subform.instance.delete()
-                    else:
-                        subform.instance.work = self.object
-                        subform.instance.save()
+                for subform in self.properties_formset.extra_forms:
+                    subform.instance.work = self.object
+                self.properties_formset.save()
 
             resp = super(EditWorkView, self).form_valid(form)
 

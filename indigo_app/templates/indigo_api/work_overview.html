@@ -38,7 +38,7 @@
 
       <div class="row">
         <div class="col-sm-6">
-          <dl>
+          <dl class="mb-0">
             <dt>Promulgation</dt>
             <dd>
               <div>
@@ -69,7 +69,7 @@
         </div>
 
         <div class="col-sm-6">
-          <dl>
+          <dl class="mb-0">
             {% if work.parent_work %}
             <dt>Parent</dt>
             <dd>
@@ -99,8 +99,18 @@
             </dd>
           </dl>
         </div>
-
       </div>
+
+      {% if work.properties %}
+        <div class="row">
+          {% for key, val in work.properties.iteritems %}
+            <dl class="col-sm-6 mb-0">
+              <dt>{{ key }}</dt>
+              <dd>{{ val }}</dd>
+            </dl>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   </div>
   {% endblock %}

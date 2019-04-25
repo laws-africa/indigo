@@ -255,7 +255,7 @@ class Work(models.Model):
     @property
     def properties(self):
         if self._properties is None:
-            self._properties = {p.key: p.value for p in self.properties.all()}
+            self._properties = {p.key: p.value for p in self.raw_properties.all()}
         return self._properties
 
     def clean(self):

@@ -23,6 +23,7 @@
   Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
     events: {
+      'change #edit-work-form': 'setDirty',
       'submit #edit-work-form': 'onSubmit',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
@@ -119,7 +120,6 @@
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
 
-      this.listenTo(this.model, 'change', this.canSave);
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
@@ -135,7 +135,6 @@
       this.parentChanged();
       this.publicationChanged();
       this.publicationDocumentChanged();
-      this.canSave();
     },
 
     updatePageTitle: function() {
@@ -154,16 +153,10 @@
 
     setDirty: function() {
       this.dirty = true;
-      this.canSave();
     },
 
     setClean: function() {
       this.dirty = false;
-      this.canSave();
-    },
-
-    canSave: function() {
-      this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
     },
 
     onSubmit: function() {

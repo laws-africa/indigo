@@ -21,7 +21,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -103,39 +103,57 @@ class WorkDependentView(WorkViewBase):
         return self._work
 
 
-class EditWorkView(WorkViewBase, UpdateView):
-    js_view = 'WorkDetailView'
-    form_class = WorkForm
-    prefix = 'work'
-    permission_required = ('indigo_api.change_work',)
+class WorkFormMixin(object):
+    """ Mixin to help the Create and Edit work views handle multiple forms.
+    """
+    is_create = False
 
     def get_form(self, form_class=None):
-        kwargs = {'queryset': self.object.raw_properties.filter()}
+        kwargs = {'queryset': WorkProperty.objects.none()}
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
                 'files': self.request.FILES,
             })
         self.properties_formset = WorkPropertyFormSet(**kwargs)
-        if self.request.method in ('POST', 'PUT'):
-            # ensure that all instances are forced to use this work
-            for form in self.properties_formset.forms:
-                form.instance.work = self.object
-
-        return super(EditWorkView, self).get_form(form_class)
+        return super(WorkFormMixin, self).get_form(form_class)
 
     def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
+        self.object = None if self.is_create else self.get_object()
         form = self.get_form()
         if form.is_valid() and self.properties_formset.is_valid():
             return self.form_valid(form)
         else:
             return self.form_invalid(form)
 
+    def form_valid(self, form):
+        resp = super(WorkFormMixin, self).form_valid(form)
+        # ensure that all instances are forced to use this work
+        for form in self.properties_formset.forms:
+            form.instance.work = self.object
+        self.properties_formset.save()
+        return resp
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkFormMixin, self).get_context_data(**kwargs)
+        context['properties_formset'] = self.properties_formset
+        return context
+
+
+class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
+    js_view = 'WorkDetailView'
+    form_class = WorkForm
+    prefix = 'work'
+    permission_required = ('indigo_api.change_work',)
+
+    def get_form(self, form_class=None):
+        form = super(EditWorkView, self).get_form(form_class)
+        self.properties_formset.queryset = self.object.raw_properties.filter()
+        return form
+
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
-        context['properties_formset'] = self.properties_formset
         return context
 
     def form_valid(self, form):
@@ -144,7 +162,6 @@ class EditWorkView(WorkViewBase, UpdateView):
 
         with reversion.create_revision():
             reversion.set_user(self.request.user)
-            self.properties_formset.save()
             resp = super(EditWorkView, self).form_valid(form)
 
         # ensure any docs for this work at initial pub date move with it, if it changes
@@ -174,12 +191,13 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
+class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, CreateView):
     model = Work
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
+    is_create = True
 
     def get_form_kwargs(self):
         kwargs = super(AddWorkView, self).get_form_kwargs()

@@ -1,4 +1,4 @@
-@import 'lib/indigo-web-3.0.0/scss/akoma-ntoso';
+@import 'lib/indigo-web-3.1.0/scss/akoma-ntoso';
 
 body.standalone {
   margin: 2em;
@@ -8,6 +8,7 @@ body.pdf {
   font-family: $akn-font-family;
   font-size: 12pt;
   color: black;
+  width: 200mm;
 
   .document,
   .akn-doc {

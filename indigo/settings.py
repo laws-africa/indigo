@@ -197,7 +197,7 @@ ASSETS_URL_EXPIRE = False
 # for each Django app
 
 # where the compiled assets go
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = os.path.join(os.getcwd(), 'staticfiles')
 # the URL for assets
 STATIC_URL = '/static/'
 

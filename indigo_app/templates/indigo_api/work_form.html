@@ -241,7 +241,17 @@
           {% endif %}
           <div class="form-row mt-2" {% if forloop.last %}data-template-row="true"{% endif %}>
             <div class="col-sm-3">
-              <input type="text" class="form-control" placeholder="(add new property)" value="{{ subform.key.value|default:'' }}" name="{{ subform.key.html_name }}" maxlength="1024">
+              <select class="form-control" name="{{ subform.key.html_name }}">
+                {% if subform.instance.pk %}
+                  <option value="">(Remove this property)</option>
+                {% else %}
+                  <option value="" selected>(Add new property)</option>
+                {% endif %}
+
+                {% for choice in subform.key %}
+                  {{ choice }}
+                {% endfor %}
+              </select>
             </div>
             <div class="col-sm-9">
               <input type="text" class="form-control" value="{{ subform.value.value|default:'' }}" name="{{ subform.value.html_name }}" maxlength="1024">

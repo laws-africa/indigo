@@ -443,8 +443,10 @@ class PublicationDocument(models.Model):
 
 
 class WorkProperty(models.Model):
+    KEYS = (('cap', 'Chapter (cap)'),)
+
     work = models.ForeignKey(Work, null=False, related_name='raw_properties')
-    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True)
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=KEYS)
     value = models.CharField(max_length=1024, null=False, blank=False)
 
     class Meta:

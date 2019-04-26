@@ -35,6 +35,7 @@
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
       'click .attach-publication-url': 'attachPublicationUrl',
       'keyup [data-template-row] input': 'bumpPropertyRow',
+      'change [data-template-row] select': 'bumpPropertyRow',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
@@ -349,7 +350,7 @@
     bumpPropertyRow: function(e) {
       if (e.currentTarget.value != '') {
         var $row = $(e.currentTarget).closest('[data-template-row]');
-        $row.clone().insertAfter($row).find('input').each(function(i, input) {
+        $row.clone().insertAfter($row).find('[name]').each(function(i, input) {
           // increment number
           var parts = input.name.split("-");
           parts[1] = parseInt(parts[1]) + 1;

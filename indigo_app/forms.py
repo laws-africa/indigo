@@ -77,7 +77,7 @@ class WorkForm(forms.ModelForm):
 
 
 class WorkPropertyForm(forms.ModelForm):
-    key = forms.CharField(required=False)
+    key = forms.ChoiceField(required=False, choices=WorkProperty.KEYS)
     value = forms.CharField(required=False)
 
     class Meta:
@@ -92,7 +92,7 @@ class WorkPropertyForm(forms.ModelForm):
 
     def clean(self):
         super(WorkPropertyForm, self).clean()
-        if not self.cleaned_data['key'] or not self.cleaned_data['value']:
+        if not self.cleaned_data.get('key') or not self.cleaned_data.get('value'):
             self.cleaned_data[DELETION_FIELD_NAME] = True
         return self.cleaned_data
 

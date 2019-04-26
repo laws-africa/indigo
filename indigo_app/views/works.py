@@ -659,18 +659,21 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         )
 
                 except Amendment.DoesNotExist:
-                    amendment = Amendment()
-                    amendment.amended_work = amended_work
-                    amendment.amending_work = info['work']
-                    amendment.created_by_user = self.request.user
+                    if info.get('commencement_date') or info['work'].commencement_date:
+                        amendment = Amendment()
+                        amendment.amended_work = amended_work
+                        amendment.amending_work = info['work']
+                        amendment.created_by_user = self.request.user
 
-                    if info.get('commencement_date'):
-                        amendment.date = info.get('commencement_date')
+                        if info.get('commencement_date'):
+                            amendment.date = info.get('commencement_date')
 
+                        else:
+                            amendment.date = info['work'].commencement_date
+
+                        amendment.save()
                     else:
-                        amendment.date = info['work'].commencement_date
-
-                    amendment.save()
+                        self.create_task(info, form, task_type='amendment')
 
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='amendment')
@@ -724,8 +727,8 @@ Check the spreadsheet for reference and link it manually.'''
             task.title = 'Link amendment(s)'
             task.description = '''This work's amended work(s) could not be linked automatically.
 There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
-or the amended work may not exist yet.
-Check the spreadsheet for reference and link it/them manually.'''
+there may not be a date for the amendment, or the amended work may not exist yet.
+Check the spreadsheet for reference and link it/them manually, or add the 'Pending commencement' label to this task.'''
         elif task_type == 'repeal':
             task.title = 'Link repeal'
             task.description = '''According to the spreadsheet this work was repealed by the '{}', \

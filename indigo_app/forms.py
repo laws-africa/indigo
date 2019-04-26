@@ -84,12 +84,6 @@ class WorkPropertyForm(forms.ModelForm):
         model = WorkProperty
         fields = ('key', 'value')
 
-    def clean_key(self):
-        # lowercase key
-        if self.cleaned_data['key']:
-            self.cleaned_data['key'] = self.cleaned_data['key'].lower()
-        return self.cleaned_data['key']
-
     def clean(self):
         super(WorkPropertyForm, self).clean()
         if not self.cleaned_data.get('key') or not self.cleaned_data.get('value'):

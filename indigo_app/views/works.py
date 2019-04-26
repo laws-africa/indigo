@@ -644,33 +644,22 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             try:
                 amended_work = self.find_work_by_title(info.get('amends'))
 
+                date = info.get('commencement_date') or info['work'].commencement_date
+
                 try:
-                    if info.get('commencement_date'):
-                        Amendment.objects.get(
-                            amended_work=amended_work,
-                            amending_work=info['work'],
-                            date=info.get('commencement_date')
-                        )
-                    else:
-                        Amendment.objects.get(
-                            amended_work=amended_work,
-                            amending_work=info['work'],
-                            date=info['work'].commencement_date
-                        )
+                    Amendment.objects.get(
+                        amended_work=amended_work,
+                        amending_work=info['work'],
+                        date=date
+                    )
 
                 except Amendment.DoesNotExist:
-                    if info.get('commencement_date') or info['work'].commencement_date:
+                    if date:
                         amendment = Amendment()
                         amendment.amended_work = amended_work
                         amendment.amending_work = info['work']
                         amendment.created_by_user = self.request.user
-
-                        if info.get('commencement_date'):
-                            amendment.date = info.get('commencement_date')
-
-                        else:
-                            amendment.date = info['work'].commencement_date
-
+                        amendment.date = date
                         amendment.save()
                     else:
                         self.create_task(info, form, task_type='amendment')

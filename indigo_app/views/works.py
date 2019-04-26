@@ -433,7 +433,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
             # is this a revision?
             if i > 0 and getattr(entry, 'verb', None) == 'updated':
                 prev = items[i - 1]
-                if getattr(prev, 'revision') and prev.revision.date_created - entry.timestamp < self.threshold:
+                if getattr(prev, 'revision', None) and prev.revision.date_created - entry.timestamp < self.threshold:
                     continue
 
             entries.append(entry)

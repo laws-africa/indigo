@@ -108,14 +108,18 @@ class WorkFormMixin(object):
     """
     is_create = False
 
-    def get_form(self, form_class=None):
+    def get_properties_formset(self):
         kwargs = {'queryset': WorkProperty.objects.none()}
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
                 'files': self.request.FILES,
             })
-        self.properties_formset = WorkPropertyFormSet(**kwargs)
+        return WorkPropertyFormSet(**kwargs)
+
+    def get_form(self, form_class=None):
+        self.properties_formset = self.get_properties_formset()
+        self.properties_formset.setup_extras()
         return super(WorkFormMixin, self).get_form(form_class)
 
     def post(self, request, *args, **kwargs):
@@ -146,10 +150,10 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
 
-    def get_form(self, form_class=None):
-        form = super(EditWorkView, self).get_form(form_class)
-        self.properties_formset.queryset = self.object.raw_properties.filter()
-        return form
+    def get_properties_formset(self):
+        formset = super(EditWorkView, self).get_properties_formset()
+        formset.queryset = self.object.raw_properties.filter()
+        return formset
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)

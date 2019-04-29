@@ -77,7 +77,7 @@ class WorkForm(forms.ModelForm):
 
 
 class WorkPropertyForm(forms.ModelForm):
-    key = forms.ChoiceField(required=False, choices=WorkProperty.KEYS)
+    key = forms.ChoiceField(required=False, choices=WorkProperty.CHOICES)
     value = forms.CharField(required=False)
 
     class Meta:
@@ -92,6 +92,22 @@ class WorkPropertyForm(forms.ModelForm):
 
 
 class BaseWorkPropertyFormSet(BaseModelFormSet):
+    def setup_extras(self):
+        # add extra forms for the properties we don't have yet
+        existing = set([p.key for p in self.queryset.all()])
+        missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
+        self.initial_extra = [{'key': key} for key in missing]
+
+    def keys_and_forms(self):
+        # (value, label) pairs sorted by label
+        keys = sorted(WorkProperty.CHOICES, key=lambda x: x[1])
+        forms_by_key = {f['key'].value(): f for f in self.forms}
+        return [{
+            'key': val,
+            'label': label,
+            'form': forms_by_key[val],
+        } for val, label in keys]
+
     def clean(self):
         keys = set()
         for form in self.forms:

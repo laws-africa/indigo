@@ -258,6 +258,13 @@ class Work(models.Model):
             self._properties = {p.key: p.value for p in self.raw_properties.all()}
         return self._properties
 
+    def labeled_properties(self):
+        return sorted([{
+            'label': WorkProperty.KEYS[key],
+            'key': key,
+            'value': val,
+        } for key, val in self.properties.iteritems()], key=lambda x: x['label'])
+
     def clean(self):
         # validate and clean the frbr_uri
         try:
@@ -443,10 +450,13 @@ class PublicationDocument(models.Model):
 
 
 class WorkProperty(models.Model):
-    KEYS = (('cap', 'Chapter (cap)'),)
+    KEYS = {
+        'cap': 'Chapter (cap)',
+    }
+    CHOICES = KEYS.items()
 
     work = models.ForeignKey(Work, null=False, related_name='raw_properties')
-    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=KEYS)
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=CHOICES)
     value = models.CharField(max_length=1024, null=False, blank=False)
 
     class Meta:

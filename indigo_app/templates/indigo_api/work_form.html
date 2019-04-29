@@ -95,6 +95,30 @@
           </div>
         </div>
 
+        <!-- additional properties -->
+        {{ properties_formset.management_form }}
+
+        <div class="form-row">
+          {% for info in properties_formset.keys_and_forms %}
+            <div class="form-group col-md-6">
+              {% if info.form.id.value %}
+                {{ info.form.id }}
+              {% endif %}
+              <input type="hidden" name="{{ info.form.key.html_name }}" value="{{ info.key }}">
+              <label for="{{ info.form.value.id_for_label }}">{{ info.label }}</label>
+              <input type="text" class="form-control" value="{{ info.form.value.value|default:'' }}" name="{{ info.form.value.html_name }}" maxlength="1024">
+
+              {% if info.subform.non_field_errors %}
+                <div class="form-row mt-2 mb-4">
+                  {% for error in info.subform.non_field_errors %}
+                    <div class="text-danger">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
       </div>
     </div>
 
@@ -218,54 +242,6 @@
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.repealed_date.id_for_label }}" name="{{ form.repealed_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.repealed_date.value|date:"Y-m-d"|default:'' }}">
           </div>
         </div>
-      </div>
-    </div>
-
-    <div class="card mb-3">
-      <h5 class="card-header">Additional Properties</h5>
-      <div class="card-body">
-        {{ properties_formset.management_form }}
-
-        <div class="form-row">
-          <div class="col-sm-3">
-            <b>Property</b>
-          </div>
-          <div class="col-sm-9">
-            <b>Value</b>
-          </div>
-        </div>
-
-        {% for subform in properties_formset %}
-          {% if subform.id.value %}
-            {{ subform.id }}
-          {% endif %}
-          <div class="form-row mt-2" {% if forloop.last %}data-template-row="true"{% endif %}>
-            <div class="col-sm-3">
-              <select class="form-control" name="{{ subform.key.html_name }}">
-                {% if subform.instance.pk %}
-                  <option value="">(Remove this property)</option>
-                {% else %}
-                  <option value="" selected>(Add new property)</option>
-                {% endif %}
-
-                {% for choice in subform.key %}
-                  {{ choice }}
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-sm-9">
-              <input type="text" class="form-control" value="{{ subform.value.value|default:'' }}" name="{{ subform.value.html_name }}" maxlength="1024">
-            </div>
-          </div>
-
-          {% if subform.non_field_errors %}
-            <div class="form-row mt-2 mb-4">
-            {% for error in subform.non_field_errors %}
-              <div class="text-danger">{{ error }}</div>
-            {% endfor %}
-            </div>
-          {% endif %}
-        {% endfor %}
       </div>
     </div>
   </form>

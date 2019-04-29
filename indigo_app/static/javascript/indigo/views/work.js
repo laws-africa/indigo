@@ -34,8 +34,6 @@
       'click .delete-publication-document': 'deletePublicationDocument',
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
       'click .attach-publication-url': 'attachPublicationUrl',
-      'keyup [data-template-row] input': 'bumpPropertyRow',
-      'change [data-template-row] select': 'bumpPropertyRow',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
@@ -346,22 +344,5 @@
     isDirty: function() {
       return !this.saving && this.dirty;
     },
-
-    bumpPropertyRow: function(e) {
-      if (e.currentTarget.value != '') {
-        var $row = $(e.currentTarget).closest('[data-template-row]');
-        $row.clone().insertAfter($row).find('[name]').each(function(i, input) {
-          // increment number
-          var parts = input.name.split("-");
-          parts[1] = parseInt(parts[1]) + 1;
-          input.name = parts.join('-');
-          input.value = '';
-        });
-        $row.removeAttr('data-template-row');
-
-        var counter = e.currentTarget.form.querySelector('[name="form-TOTAL_FORMS"]');
-        counter.value = parseInt(counter.value) + 1;
-      }
-    }
   });
 })(window);

@@ -103,10 +103,10 @@
 
       {% if work.properties %}
         <div class="row">
-          {% for key, val in work.properties.iteritems %}
+          {% for prop in work.labeled_properties %}
             <dl class="col-sm-6 mb-0">
-              <dt>{{ key }}</dt>
-              <dd>{{ val }}</dd>
+              <dt>{{ prop.label }}</dt>
+              <dd>{{ prop.value }}</dd>
             </dl>
           {% endfor %}
         </div>

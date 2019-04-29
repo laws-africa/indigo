@@ -450,9 +450,8 @@ class PublicationDocument(models.Model):
 
 
 class WorkProperty(models.Model):
-    KEYS = {
-        'cap': 'Chapter (cap)',
-    }
+    # these are injected by other installations
+    KEYS = {}
     CHOICES = KEYS.items()
 
     work = models.ForeignKey(Work, null=False, related_name='raw_properties')

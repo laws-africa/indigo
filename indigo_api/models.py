@@ -263,7 +263,7 @@ class Work(models.Model):
             'label': WorkProperty.KEYS[key],
             'key': key,
             'value': val,
-        } for key, val in self.properties.iteritems()], key=lambda x: x['label'])
+        } for key, val in self.properties.iteritems() if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri

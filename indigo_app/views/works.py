@@ -152,7 +152,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
 
     def get_properties_formset(self):
         formset = super(EditWorkView, self).get_properties_formset()
-        formset.queryset = self.object.raw_properties.filter()
+        formset.queryset = self.object.raw_properties.filter(key__in=WorkProperty.KEYS.keys())
         return formset
 
     def get_context_data(self, **kwargs):

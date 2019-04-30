@@ -95,6 +95,30 @@
           </div>
         </div>
 
+        <!-- additional properties -->
+        {{ properties_formset.management_form }}
+
+        <div class="form-row">
+          {% for info in properties_formset.keys_and_forms %}
+            <div class="form-group col-md-6">
+              {% if info.form.id.value %}
+                {{ info.form.id }}
+              {% endif %}
+              <input type="hidden" name="{{ info.form.key.html_name }}" value="{{ info.key }}">
+              <label for="{{ info.form.value.id_for_label }}">{{ info.label }}</label>
+              <input type="text" class="form-control" value="{{ info.form.value.value|default:'' }}" name="{{ info.form.value.html_name }}" maxlength="1024">
+
+              {% if info.subform.non_field_errors %}
+                <div class="form-row mt-2 mb-4">
+                  {% for error in info.subform.non_field_errors %}
+                    <div class="text-danger">{{ error }}</div>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
       </div>
     </div>
 

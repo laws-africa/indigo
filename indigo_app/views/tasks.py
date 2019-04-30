@@ -7,10 +7,12 @@ from actstream import action
 
 from django.contrib import messages
 from django.conf import settings
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
 from django.shortcuts import redirect
+from django.template import Context
+from django.template.loader import get_template
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
@@ -309,10 +311,17 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
             task.assigned_to = None
             action.send(user, verb='unassigned', action_object=task,
                         place_code=task.place.place_code)
-            messages.success(request, u"Task '%s' has been unassigned" % task.title)
-            message = "Task '%s' has been unassigned" % task.title
-            subject = "Task '%s' has been unassigned" % task.title
-            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [request.user.email])
+            send_message = "Task '%s' has been unassigned" % task.title
+            messages.success(request, send_message)
+            subject, from_email, to = send_message, settings.DEFAULT_FROM_EMAIL, request.user.email
+            plaintext = get_template('email/unassigned.txt')
+            html = get_template('email/unassigned.html')
+            mail_data = Context({'title': task.title, 'username': request.user.username})
+            text_context = plaintext.render(mail_data)
+            html_context = html.render(mail_data)
+            msg = EmailMultiAlternatives(subject, text_context, from_email, [to])
+            msg.attach_alternative(html_context, "text/html")
+            msg.send()
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
             if task.country not in assignee.editor.permitted_countries.all():

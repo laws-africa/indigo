@@ -1,0 +1,3 @@
+Dear {{ username }},
+
+Task {{ title }} has been unassigned

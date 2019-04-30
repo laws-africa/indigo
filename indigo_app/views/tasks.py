@@ -1,10 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import json
+from time import sleep
 
 from actstream import action
 
 from django.contrib import messages
+from django.conf import settings
+from django.core.mail import send_mail
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -299,11 +302,17 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
         task = self.get_object()
         user = self.request.user
         task.updated_by_user = user
+        # TODO: implement a sleep method so users dont get spammed by assinging / unassigning tasks in error
+        sleep_time = request.POST.get('sleep_time', 60)
+
         if self.unassign:
             task.assigned_to = None
             action.send(user, verb='unassigned', action_object=task,
                         place_code=task.place.place_code)
             messages.success(request, u"Task '%s' has been unassigned" % task.title)
+            message = "Task '%s' has been unassigned" % task.title
+            subject = "Task '%s' has been unassigned" % task.title
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [request.user.email])
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
             if task.country not in assignee.editor.permitted_countries.all():
@@ -313,11 +322,17 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
                 action.send(user, verb='picked up', action_object=task,
                             place_code=task.place.place_code)
                 messages.success(request, u"You have picked up the task '%s'" % task.title)
+                subject = "You have picked up the task '%s'" % task.title
+                message = "Dear %s, \n\n You have picked up the task '%s'" % (request.user.username, task.title)
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [request.user.email])
             else:
                 action.send(user, verb='assigned', action_object=task,
                             target=assignee,
                             place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been assigned" % task.title)
+                subject = "Task '%s' has been assigned" % task.title
+                message = "Dear %s, \n\n Task '%s' has been assigned" % (request.user.username, task.title)
+                send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [request.user.email])
 
         task.save()
 

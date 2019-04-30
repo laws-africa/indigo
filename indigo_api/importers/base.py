@@ -78,7 +78,8 @@ class Importer(LocaleBasedMatcher):
             doc.content = upload.read().decode('utf-8')
             return doc
 
-        if upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        if (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
             self.create_from_docx(upload, doc)
 

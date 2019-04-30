@@ -72,22 +72,27 @@ class Importer(LocaleBasedMatcher):
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
         self.reformat = True
+        self.log.info("Processing upload: filename='%s', content type=%s" % (upload.name, upload.content_type))
 
         if upload.content_type in ['text/xml', 'application/xml']:
             # just assume it's valid AKN xml
+            self.log.info("Processing upload as an AKN XML file")
             doc.content = upload.read().decode('utf-8')
             return doc
 
         if (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
+            self.log.info("Processing upload as a docx file")
             self.create_from_docx(upload, doc)
 
         elif upload.content_type == 'application/pdf':
+            self.log.info("Processing upload as a PDF file")
             self.create_from_pdf(upload, doc)
 
         else:
             # slaw will do its best
+            self.log.info("Processing upload as an unknown file")
             self.create_from_file(upload, doc)
 
         self.analyse_after_import(doc)

@@ -167,8 +167,6 @@
         var text = self.textTransform
           .transformToFragment(element, document)
           .firstChild.textContent
-          // cleanup inline whitespace
-          .replace(/([^ ]) +/g, '$1 ')
           // remove multiple consecutive blank lines
           .replace(/^( *\n){2,}/gm, "\n");
 

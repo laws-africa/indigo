@@ -110,11 +110,10 @@
     }
   }
 
-  .akn-content {
-    > .akn-p {
-      display: block;
-      margin-bottom: $akn-para-spacing;
-    }
+  .akn-listIntroduction,
+  .akn-p {
+    display: block;
+    margin-bottom: $akn-para-spacing;
   }
 
   /* lists (mostly used in definitions) */
@@ -139,11 +138,6 @@
 
   /* blocklists */
   .akn-blockList {
-    .akn-listIntroduction {
-      display: block;
-      margin-bottom: $akn-para-spacing;
-    }
-
     &> .akn-item {
       display: block;
       margin-left: $akn-para-indent;

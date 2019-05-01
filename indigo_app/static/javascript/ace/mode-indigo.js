@@ -6,38 +6,35 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 
 var IndigoHighlightRules = function() {
 
-    // regexp must not have capturing parentheses. Use (?:) instead.
+    // matching groups MUST cover the entire matched string.
     // regexps are ordered -> the first match is used
     this.$rules = {
         "start": [
             {
-                token: ["constant.numeric"],
-                regex: /^([0-9][0-9a-z]*\.\s+)/
+                token: ["constant.numeric", "entity.name.tag"],
+                regex: /^(\s*[0-9][0-9a-z]*\.)(\s.*)?$/
             }, {
                 token: "constant.language",
-                regex: /^(body|preamble|preface)\s*$/,
-                caseInsensitive: true,
+                regex: /^\s*(?:BODY|PREAMBLE|PREFACE)\s*$/,
             }, {
                 token: ["constant.language", "entity.name.tag"],
-                regex: /^(LONGTITLE|CROSSHEADING)(\s+.+)$/,
+                regex: /^(\s*LONGTITLE|CROSSHEADING)(\s+.+)$/,
             }, {
                 token: "constant.numeric",
-                regex: /^\([0-9][0-9a-z]*\)/
+                regex: /^\s*\([0-9][0-9a-z]*\)/
             }, {
                 token: "constant.numeric",
-                regex: /^\([a-z][0-9a-z]*\)/
+                regex: /^\s*\([a-z][0-9a-z]*\)/
             }, {
                 token: ["constant.language", "constant.numeric", "entity.name.tag"],
-                regex: /^(chapter|part)(\s+[a-zA-Z0-9]+\s*)(.*)?$/,
+                regex: /^(\s*(?:chapter|part))(\s+[a-zA-Z0-9]+\s*)(.*)?$/,
                 caseInsensitive: true,
             }, {
                 token: ["constant.language", "constant.numeric", "entity.name.tag"],
-                regex: /^(schedule)(\s+[a-zA-Z0-9]*\s*)(-.*)?$/,
-                caseInsensitive: true,
+                regex: /^(\s*SCHEDULE)(\s+[a-zA-Z0-9]*\s*)(-.*)?$/,
             }, {
                 token: "constant.language",
-                regex: /^schedule\s*$/,
-                caseInsensitive: true,
+                regex: /^\s*SCHEDULE\s*$/,
             }, {
                 token: "comment.line.remark",
                 regex: /\[\[/,
@@ -50,7 +47,7 @@ var IndigoHighlightRules = function() {
                 regex: /!\[[^\]]*\]\([^\)]*\)/,
             }, {
                 token: "constant.language.table",
-                regex: /^{\|/,
+                regex: /^\s*{\|/,
                 next: "table",
             }
         ],
@@ -72,12 +69,12 @@ var IndigoHighlightRules = function() {
         "table": [
             {
                 token: "constant.language.table",
-                regex: /^\|}/,
+                regex: /^\s*\|}\s*$/,
                 next: "start"
             },
             {
                 token: "constant.language.table",
-                regex: /^!|(\|-?)/,
+                regex: /^\s*!|(\|-?)/,
             }
         ]
     };

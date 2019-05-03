@@ -47,7 +47,7 @@ class ResolvedAnchor(object):
                     self.resolve_element(elems[0])
                     break
 
-            # no match
+            # no match, try further up the anchor id chain
             if not exact and '.' in anchor_id:
                 self.exact_match = False
                 anchor_id = anchor_id.rsplit('.', 1)[0]

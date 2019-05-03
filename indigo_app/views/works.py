@@ -760,10 +760,16 @@ There may have been a typo in the spreadsheet, or the work may not exist yet.
 Check the spreadsheet for reference and link it manually.'''
         elif task_type == 'amendment':
             task.title = 'Link amendment(s)'
-            task.description = '''This work's amended work(s) could not be linked automatically.
+            amended_title = info.get('amends')
+            if len(amended_title) > 256:
+                amended_title = "".join(amended_title[:256] + ', etc')
+            task.description = '''On the spreadsheet, it says that this work amends '{}' – see row {}.
+This amendment could not be linked automatically.
 There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
 there may not be a date for the amendment, or the amended work may not exist yet.
-Check the spreadsheet for reference and link it/them manually, or add the 'Pending commencement' label to this task.'''
+Check the spreadsheet for reference and link it/them manually, \
+or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info.get('row'))
+
         elif task_type == 'repeal':
             task.title = 'Link repeal'
             task.description = '''According to the spreadsheet this work was repealed by the '{}', \

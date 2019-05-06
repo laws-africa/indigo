@@ -7,14 +7,19 @@ class ResolvedAnchor(object):
     element = None
     toc_entry = None
     is_toc_element = False
+    exact_match = False
 
-    def __init__(self, anchor, document):
+    def __init__(self, anchor, document, exact=False):
+        """ Try to resolve an anchor in a document. If exact is False (the default),
+        then if the exact anchor can't be resolved, try to resolve as close as possible.
+        The exact_match attribute will be set accordingly.
+        """
         self.anchor = anchor
         self.document = document
 
-        self.resolve()
+        self.resolve(exact)
 
-    def resolve(self):
+    def resolve(self, exact):
         anchor_id = self.anchor['id']
 
         if '/' in anchor_id:
@@ -26,16 +31,29 @@ class ResolvedAnchor(object):
         if component is None:
             return
 
-        anchor_id = anchor_id.replace("'", "\'")
-        elems = component.xpath("//*[@id='%s']" % anchor_id)
-        if elems:
-            self.resolve_element(elems[0])
-        elif anchor_id in ['preface', 'preamble']:
-            # HACK HACK HACK
-            # We sometimes use 'preamble' and 'preface' even though they aren't IDs
-            elems = component.xpath("//a:%s" % anchor_id, namespaces={'a': self.document.doc.namespace})
+        self.exact_match = True
+
+        while anchor_id:
+            escaped = anchor_id.replace("'", "\'")
+            elems = component.xpath("//*[@id='%s']" % escaped)
             if elems:
                 self.resolve_element(elems[0])
+                break
+            elif anchor_id in ['preface', 'preamble']:
+                # HACK HACK HACK
+                # We sometimes use 'preamble' and 'preface' even though they aren't IDs
+                elems = component.xpath("//a:%s" % escaped, namespaces={'a': self.document.doc.namespace})
+                if elems:
+                    self.resolve_element(elems[0])
+                    break
+
+            # no match, try further up the anchor id chain
+            if not exact and '.' in anchor_id:
+                self.exact_match = False
+                anchor_id = anchor_id.rsplit('.', 1)[0]
+            else:
+                # give up
+                anchor_id = None
 
     def resolve_element(self, element):
         self.element = element

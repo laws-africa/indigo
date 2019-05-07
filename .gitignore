@@ -1,4 +1,6 @@
 env
+venv
+.idea/
 *.pyc
 .webassets-cache
 attachments/
@@ -8,3 +10,5 @@ docs/_build
 node_modules/
 .coverage
 *.egg-info
+Gemfile
+.ruby-version

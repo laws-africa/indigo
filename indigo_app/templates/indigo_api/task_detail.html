@@ -1,8 +1,9 @@
 {% extends "place/tabbed_layout.html" %}
-{% load comments %}
+
 {% load activity_tags %}
 {% load humanize indigo_app %}
 {% load account %}
+{% load comments %}
 
 {% block title %}{{ task.title }}{% endblock %}
 
@@ -14,7 +15,6 @@
   </div>
   {% endif %}
 
-        {% render_comment_form for task %}
   <div class="d-flex mb-3">
     <div class="mr-3 text-center">
       {% if task.state == 'open' and task.assigned_to %}
@@ -57,7 +57,17 @@
             {% include 'indigo_app/actions/_action.html' with action=action this_task=True ignore_place=True %}
           </li>
         {% endfor %}
-
+        {% get_comment_list for task as comment_list %}
+        {% for comment in comment_list %}
+            <li class="activity-item card">
+              <div class="card-header">
+                {{ comment.user.first_name }} {{ comment.user.last_name }} commented <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>
+              </div>
+              <div class="card-body">
+                {{ comment.comment }}
+              </div>
+            </li>
+        {% endfor %}
         {% if task.anchor_id %}
           <li class="activity-item">
             {% with task.resolve_anchor as anchor %}
@@ -77,7 +87,31 @@
           </li>
         {% endif %}
       </ul>
-
+      {% get_comment_form for task as form %}
+        <table>
+          <form action="{% comment_form_target %}" method="post">
+            {% csrf_token %}
+            <textarea
+                    id="id_comment"
+                    name="comment"
+                    class="form-control"
+                    required=""
+                    maxlength="3000"
+                    rows="3"
+                    placeholder="Add comment"></textarea>
+            {{ form.honeypot }}
+            {{ form.content_type }}
+            {{ form.object_pk }}
+            {{ form.timestamp }}
+            {{ form.security_hash }}
+            <input type="hidden" name="next" value="{% url 'task_detail' place=place.place_code pk=task.pk %}" />
+            <tr>
+              <td colspan="2">
+                <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" />
+              </td>
+            </tr>
+          </form>
+        </table>
       <div class="mt-3">
         <form method="POST">
           {% csrf_token %}

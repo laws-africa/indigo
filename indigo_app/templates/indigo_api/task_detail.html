@@ -1,4 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
+{% load comments %}
 {% load activity_tags %}
 {% load humanize indigo_app %}
 {% load account %}
@@ -13,6 +14,7 @@
   </div>
   {% endif %}
 
+        {% render_comment_form for task %}
   <div class="d-flex mb-3">
     <div class="mr-3 text-center">
       {% if task.state == 'open' and task.assigned_to %}

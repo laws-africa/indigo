@@ -7,7 +7,7 @@ This guide is for developers who want to use the API to fetch legislative works.
 
 .. note:: 
 
-   The API relies heavily on Akoma Ntoso FRBR URIs, which are described in the `Akoma Ntoso naming convention standard <http://docs.oasis-open.org/legaldocml/akn-nc/v2.0/akn-nc-v1.0.html>`_.
+   The API relies heavily on Akoma Ntoso FRBR URIs, which are described in the `Akoma Ntoso naming convention standard <http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/akn-nc-v1.0.html>`_.
 
 Getting Started
 ---------------
@@ -290,7 +290,7 @@ Fetching Expressions of a Work
 
 You can fetch specific expressions of a work by including expression-specific information in the requested FRBR URI.
 The API supports the language and date aspects defined in the
-`Akoma Ntoso naming convention standard <http://docs.oasis-open.org/legaldocml/akn-nc/v2.0/akn-nc-v1.0.html>`_.
+`Akoma Ntoso naming convention standard <http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/akn-nc-v1.0.html>`_.
 
 For example, this request will fetch the HTML of the English expression of Act 55 of 1998, as amended on 2014-01-17:
 

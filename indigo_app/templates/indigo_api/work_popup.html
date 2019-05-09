@@ -1,0 +1,22 @@
+<h6>{{ work.title }}</h6>
+<p class='text-muted mb-1'>{{ work.frbr_uri }}</p>
+
+<p class='mb-1'>Published
+  {% if publication_name %} in {{ work.publication_name }} {% endif %}
+  on {{ work.publication_date|date:"Y-m-d" }}
+</p>
+{% if work.assent_date %}
+  <p class='mb-1'>Assented to on {{ work.assent_date|date:"Y-m-d" }}</p>
+{% endif %}
+{% if work.commencement_date %}
+  <p class='mb-1'>Commenced on {{ work.commencement_date|date:"Y-m-d" }}
+    {% if work.commencing_work %}
+    by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+    {% endif %}
+  </p>
+{% endif %}
+{% if work.repealed_date %}
+  <p class='mb-1'>Repealed on {{ work.repealed_date|date:"Y-m-d" }}
+    by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+  </p>
+{% endif %}

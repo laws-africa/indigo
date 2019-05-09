@@ -61,7 +61,7 @@
         {% for comment in comment_list %}
             <li class="activity-item card">
               <div class="card-header">
-                {{ comment.user.first_name }} {{ comment.user.last_name }} commented <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>
+                {% user_profile task.created_by_user %} commented <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>
               </div>
               <div class="card-body">
                 {{ comment.comment }}
@@ -87,24 +87,26 @@
           </li>
         {% endif %}
       </ul>
-      {% get_comment_form for task as form %}
-        <table>
-          <form action="{% comment_form_target %}" method="post">
-            {% csrf_token %}
-            <textarea id="id_comment" name="comment" class="form-control" maxlength="3000" rows="3" placeholder="Add comment" required></textarea>
-            {{ form.honeypot }}
-            {{ form.content_type }}
-            {{ form.object_pk }}
-            {{ form.timestamp }}
-            {{ form.security_hash }}
-            <input type="hidden" name="next" value="{% url 'task_detail' place=place.place_code pk=task.pk %}" />
-            <tr>
-              <td colspan="2">
-                <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" />
-              </td>
-            </tr>
-          </form>
-        </table>
+      {% if user.is_authenticated %}
+        {% get_comment_form for task as form %}
+              <form action="{% comment_form_target %}" method="post">
+                {% csrf_token %}
+                 <textarea id="id_comment" name="comment" class="form-control" maxlength="3000" rows="3" placeholder="Add comment" required></textarea>
+                 <input type="hidden" name="honeypot" id="id_honeypot">
+                {{ form.content_type }}
+                {{ form.object_pk }}
+                {{ form.timestamp }}
+                {{ form.security_hash }}
+                 <div class="form-group">
+                    <input type="hidden" name="next" value="{% url 'task_detail' place=place.place_code pk=task.pk %}" />
+                 </div>
+                 <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" />
+
+
+              </form>
+        {% else %}
+            <p>Please <a href="{{ login_url }}">log in</a> to leave a comment.</p>
+        {% endif %}
       <div class="mt-3">
         <form method="POST">
           {% csrf_token %}

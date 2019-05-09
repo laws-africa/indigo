@@ -148,16 +148,13 @@ class PublishedAPIV2Test(APITestCase):
 
     def test_published_atom(self):
         response = self.client.get('/api/v2/akn/za/summary.atom')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/atom+xml')
+        assert_equal(response.status_code, 404)
 
         response = self.client.get('/api/v2/akn/za/full.atom')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/atom+xml')
+        assert_equal(response.status_code, 404)
 
         response = self.client.get('/api/v2/akn/za/act/2014/full.atom')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.accepted_media_type, 'application/atom+xml')
+        assert_equal(response.status_code, 404)
 
     def test_published_atom_404(self):
         response = self.client.get('/api/v2/uk/summary.atom')

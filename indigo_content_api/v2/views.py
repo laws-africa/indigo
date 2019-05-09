@@ -2,10 +2,17 @@ from __future__ import unicode_literals
 
 import re
 
+from rest_framework import renderers
+
+from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from indigo_content_api.v1.views import PublishedDocumentDetailView
 
 
 class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
+    # Note that the V2 API doesn't support Atom
+    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
+                        ZIPResponseRenderer)
+
     non_akn_href_re = re.compile(r'^/[a-z]{2}[/-].*')
 
     def finalize_response(self, request, response, *args, **kwargs):

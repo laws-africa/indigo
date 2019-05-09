@@ -1,4 +1,4 @@
-from indigo_content_api.views import PublishedDocumentDetailView
+from indigo_content_api.v1.views import PublishedDocumentDetailView
 from indigo_resolver.models import AuthorityReference, Authority
 
 

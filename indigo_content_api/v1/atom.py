@@ -6,7 +6,7 @@ from rest_framework_xml.renderers import XMLRenderer
 from indigo_api.serializers import NoopSerializer
 from indigo_api.renderers import HTMLRenderer
 
-from .serializers import PublishedDocumentSerializer
+from indigo_content_api.v1.serializers import PublishedDocumentSerializer
 
 
 class AtomFeed(feedgenerator.Atom1Feed):

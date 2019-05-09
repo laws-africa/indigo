@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 
 from django.http import Http404
@@ -397,3 +399,48 @@ class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
             raise Http404
 
         super(PublishedDocumentSearchView, self).determine_place()
+
+
+class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
+    non_akn_href_re = re.compile(r'^/[a-z]{2}[-/]')
+
+    def finalize_response(self, request, response, *args, **kwargs):
+        response = super(PublishedDocumentDetailViewV2, self).finalize_response(request, response, *args, **kwargs)
+
+        if response.accepted_media_type == 'application/json' and isinstance(response.data, dict):
+            self.rewrite_frbr_uris(response.data)
+
+        elif response.accepted_renderer and response.accepted_renderer.media_type == 'application/xml':
+            self.rewrite_akn_xml(response.data)
+
+        return response
+
+    def rewrite_frbr_uris(self, data):
+        """ Recursively rewrite entries in data that are FRBR URIs, to ensure they
+        start with /akn/
+        """
+        if isinstance(data, dict):
+            for key, val in data.iteritems():
+                if key.endswith('frbr_uri') or key == 'amending_uri':
+                    if val and not val.startswith('/akn'):
+                        data[key] = '/akn' + val
+
+                if isinstance(val, dict):
+                    self.rewrite_frbr_uris(val)
+
+                elif isinstance(val, list):
+                    for x in val:
+                        self.rewrite_frbr_uris(x)
+
+    def rewrite_akn_xml(self, document):
+        for elem in document.doc.root.xpath('//a:FRBRuri | //a:FRBRthis', namespaces={'a': document.doc.namespace}):
+            v = elem.get('value') or ''
+            if v and not v.startswith('/akn'):
+                elem.set('value', '/akn' + v)
+
+        for ref in document.doc.root.xpath('//a:ref[@href]', namespaces={'a': document.doc.namespace}):
+            v = ref.get('href') or ''
+            if v and self.non_akn_href_re.match(v):
+                ref.set('href', '/akn' + v)
+
+        document.refresh_xml()

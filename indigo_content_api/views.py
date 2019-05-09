@@ -19,7 +19,7 @@ from .serializers import PublishedDocumentSerializer, CountrySerializer, MediaAt
 from .atom import AtomRenderer, AtomFeed
 
 
-FORMAT_RE = re.compile('\.([a-z0-9]+)$')
+FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
 
 
 class PublishedDocumentPermission(BasePermission):
@@ -142,8 +142,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         self.component = self.frbr_uri.expression_component or 'main'
         self.subcomponent = self.frbr_uri.expression_subcomponent
         format = self.request.accepted_renderer.format
-        # Tell the renderer that published documents shouldn't include stub content
-        self.no_stub_content = True
 
         # get the document
         document = self.get_object()
@@ -188,7 +186,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # the item we're interested in
             self.element = document.doc.components().get(self.component)
 
-        if self.element is not None and format in ['xml', 'html', 'pdf', 'epub', 'zip']:
+        formats = [r.format for r in self.renderer_classes]
+        if self.element is not None and format in formats:
             return Response(document)
 
         raise Http404

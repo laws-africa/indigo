@@ -69,32 +69,94 @@
     <div class="card">
       <div class="card-body">
         <div class="form-group">
-          <label for="{{ form.spreadsheet_url.id_for_label }}">URL of the Google Sheet to import works from:</label>
-          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="Enter Google Sheets URL" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
+          <label for="{{ form.spreadsheet_url.id_for_label }}" class="h5">Google Sheets URL</label>
+          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
+
+        <label for="{{ form.workflows.id_for_label }}" class="h5">Workflows</label>
+        <p>
+          Choose one or more workflow/s to link any tasks created during this import to, even if nothing is selected below – some tasks may be created automatically.<br>
+          If there are no workflows or you need a new one, create a new workflow then return to this tab, refresh the page and select it from the dropdown.
+        </p>
+        <div class="float-right">
+          <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
+        </div>
+
+        {% if place_workflows %}
+          <div class="form-group">
+            <div class="row">
+              <div class="col-md-6">
+                <select class="selectpicker form-control" required multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}" data-live-search="true">
+                  {% for workflow in place_workflows %}
+                    <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          {% for err in form.workflows.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+        {% else %}
+        <div class="text-danger">No workflows</div>
+        {% endif %}
+
+        <div class="form-row">
+
+          <div class="form-group col-6">
+            <h5>Tasks for primary works only</h5>
+            {% for p_task in form.primary_tasks %}
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="{{ p_task.id_for_label }}" name="{{ form.primary_tasks.html_name }}" value="{{ p_task.data.value }}" {% if p_task.data.selected %}checked{% endif %}>
+                <label for="{{ p_task.id_for_label }}" class="form-check-label ml-1 mt-2">
+                  {{ p_task.data.label }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+          {% for err in form.primary_tasks.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+
+          <div class="form-group col-6">
+            <h5>Tasks for all works</h5>
+            {% for task in form.all_tasks %}
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="{{ task.id_for_label }}" name="{{ form.all_tasks.html_name }}" value="{{ task.data.value }}" {% if task.data.selected %}checked{% endif %}>
+                <label for="{{ task.id_for_label }}" class="form-check-label ml-1 mt-2">
+                  {{ task.data.label }}
+                </label>
+              </div>
+            {% endfor %}
+          </div>
+          {% for err in form.all_tasks.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+
+        </div>
+
       </div>
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
-          <button type="submit" class="btn btn-primary">Import works</button>
+          <button type="submit" class="btn btn-success">Import works</button>
         {% else %}
           <div class="alert alert-danger">You don't have permission to create works.</div>
         {% endif %}
       </div>
     </div>
+  </form>
 
-    <p></p>
 
-    <div class="card">
-
-      {% if not works %}
+  {% if not works %}
+    <div class="card mt-3">
       <div class="card-body">
         Instructions:
         <ul>
-          <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1wbhRoiyYAAC7UotE7Dy4uolAULO4wDk05OGNu2eh43I">Work info template</a>: 'File' | 'Make a copy…'</li>
+          <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc">Work info template</a>: 'File' | 'Make a copy…'</li>
           <li>Make it accessible: 'SHARE'  | 'Get shareable link' (top-right corner)</li>
           <li>Watch <a href="https://www.youtube.com/watch?v=tfNm_PtZ7JQ&index=2&list=PL7MJ_sFHs953q_23TdDhnvQWqxAkrc672">this video</a> for instructions on how to populate the spreadsheet</li>
           <li>Choose a country from the drop-down</li>
@@ -102,7 +164,6 @@
           <li>Click on 'Import works'!</li>
         </ul>
       </div>
-      {% endif %}
 
       <div class="card-body">
        <div class="col-md-8 m-auto">
@@ -111,9 +172,9 @@
          </div>
        </div>
       </div>
-
     </div>
+  {% endif %}
 
-  </form>
+
 </div>
 {% endblock %}

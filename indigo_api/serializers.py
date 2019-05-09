@@ -185,10 +185,12 @@ class PublicationDocumentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = PublicationDocument
-        fields = ('url', 'filename', 'mime_type', 'size')
+        fields = ('url', 'filename', 'mime_type', 'size', 'trusted_url')
         read_only_fields = fields
 
     def get_url(self, instance):
+        if instance.trusted_url:
+            return instance.trusted_url
         return reverse('work_publication_document', kwargs={'frbr_uri': instance.work.frbr_uri, 'filename': instance.filename})
 
 
@@ -260,7 +262,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'stub', 'tags', 'amendments',
+            'language', 'tags', 'amendments',
             'repeal',
 
             'links',
@@ -547,7 +549,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commencement_date', 'assent_date',
+            'commencement_date', 'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'commencing_work', 'amendments_url',
 

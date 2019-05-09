@@ -10,26 +10,14 @@ Indigo is a Django web application that can be run as a standalone project, or
 as part of an existing Django project. This guide will explain how to run Indigo as
 a standalone project.
 
-Indigo requires some non-python dependencies. This guide explains how to deploy
-Indigo and these dependencies on `Heroku <https://heroku.com/>`_ or `Dokku <http://progrium.viewdocs.io/dokku/>`_.
-Dokku emulates a Heroku-like environment on your own servers (or cloud).
-
-.. note::
-
-    We recommend using Dokku for production because some Indigo functionality
-    -- such as parsing new documents -- can take longer than the 30 seconds
-    Heroku allows for web API calls. However, Heroku is great for quickly trying Indigo
-    out.
-
 Requirements
 ------------
 
 Indigo requires:
 
 * Python 2.7
-* Postgresql 9.3+
+* PostgreSQL 9.3+
 * Ruby 2.1.6+ for `Slaw <https://github.com/longhotsummer/slaw>`_
-* Java 1.8 for `Apache Tika <https://tika.apache.org/>`_
 * An AWS S3 account and bucket for storing attachments
 
 Optional but useful:
@@ -40,48 +28,57 @@ Using Heroku/Dokku means that we're using well-document and widely understood
 mechanisms for specifying dependencies and configuration across multiple
 languages. It takes care of all this for you and we highly recommend using them.
 
-Local Installation
-------------------
+Installing Indigo Locally
+-------------------------
 
-Installation on Heroku and Dokku are similar and only really differ in the commands that are run.
-We describe using Heroku below.
+1. Ensure you have Python 2.7 and `virtualenv <https://virtualenv.pypa.io/en/stable/>`_ installed
+2. Clone the `github.com/laws-africa/example-indigo <https://github.com/laws-africa/example-indigo>`_ repository. It has all Indigo's dependencies for Python and Ruby described in it::
 
-1. Install pipenv according to the instructions: `pipenv <https://docs.pipenv.org/>`_
-2. Clone the `github.com/OpenUpSA/example-indigo <https://github.com/OpenUpSA/example-indigo>`_ repository. It has all Indigo's dependencies for Python, Ruby and Java described in it::
-
-    $ git clone https://github.com/OpenUpSA/example-indigo
+    $ git clone https://github.com/laws-africa/example-indigo
     $ cd indigo
 
-3. Activate the virtual environment and install python dependencies::
+3. Setup and activate the virtual environment::
 
-    $ pipenv install
+    $ virtualenv --no-site-packages --python=python2 env
+    $ source env/bin/activate
 
-4. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password indigo, and create a corresponding database called indigo::
+4. Install Python dependencies::
+
+    $ pip install -r requirements.txt
+
+5. Ensure you have PostgreSQL installed and running. Create a postgresql user with username and password `indigo`, and create a corresponding database called `indigo`::
 
     $ sudo su - postgres -c 'createuser -d -P indigo'
     $ sudo su - postgres -c 'createdb indigo'
 
-5. Run the migrations to setup the initial database::
+6. Run the Django database migrations to setup the initial database::
 
-    $ pipenv run python manage.py migrate
-    $ pipenv run python manage.py update_countries_plus
+    $ python manage.py migrate
+    $ python manage.py update_countries_plus
 
-6. Then create the superuser::
+7. Then create the superuser::
 
-    $ pipenv run python manage.py createsuperuser
+    $ python manage.py createsuperuser
 
-7. Finally, run the server::
+8. Finally, run the server::
 
-    pipenv run python manage.py runserver
+    $ python manage.py runserver
 
-8. And visit the website to login: http://localhost:8000/
+9. Visit the website to login: http://localhost:8000/
 
-9. You can visit the admin interface to add your own country details and create new users: http://localhost:8000/admin
+10. Configure a country:
+
+   * Visit http://localhost:8000/admin
+   * Under **Indigo API** click Countries, then click Add Country in the top right corner
+   * Choose a country and primary language from the dropdown lists
+   * Click Save
+
+11. Now go back to http://localhost:8000/ and your country will be included in the list.
 
 Ruby dependencies
 .................
 
-You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need Ruby version 2.3.
+You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need at least Ruby version 2.3.
 
 Once you've install Ruby, install Bundler and the Indigo dependencies::
 
@@ -91,7 +88,7 @@ Once you've install Ruby, install Bundler and the Indigo dependencies::
 You can test that Slaw is installed with slaw --version::
 
     $ slaw --version
-    slaw 1.0.1
+    slaw 1.0.4
 
 Django Customisation
 ....................
@@ -129,24 +126,40 @@ You can now easily change Django settings, add your own modules, change URLs, et
 
         execute_from_command_line(sys.argv)
 
-4. Run your updated app with ``pipenv run python manage.py runserver``
+4. Run your updated app with ``python manage.py runserver``
 
 Production Installation
 -----------------------
 
-3. Create a new Heroku application::
+Indigo requires some non-Python dependencies. This guide explains how to deploy
+Indigo and these dependencies on `Heroku <https://heroku.com/>`_ or `Dokku <http://progrium.viewdocs.io/dokku/>`_.
+Dokku uses Docker to emulate a Heroku-like environment on your own servers (or cloud).
 
-    $ heroku apps:create indigo
+.. note::
 
-4. Create a Postgres database::
+    We don't recommend using Heroku for production because some Indigo functionality
+    -- such as parsing new documents -- can take longer than the 30 seconds
+    Heroku allows for web API calls. However, Heroku is great for quickly trying Indigo
+    out.
 
-    $ heroku addons:create heroku-postgresql
+Installation on Heroku and Dokku are similar and only really differ in the commands that are run.
+We describe using Dokku below, and assume that you have already have `Dokku installed <http://dokku.viewdocs.io/dokku/getting-started/installation/>`_.
 
-5. (optional) Create a new AWS S3 account and bucket for storing attachments. You'll need the AWS Access Key Id and AWS Secret Access Key in the next step. You can safely skip this step if you don't care about saving attachments just yet.
+1. Ensure you have PostgreSQL installed and running. Create a postgresql user with username `indigo`, and create a corresponding database called `indigo`. For example::
 
-5. Set config options::
+    $ sudo su - postgres -c 'createuser -d -P indigo'
+    $ sudo su - postgres -c 'createdb indigo'
 
-    $ heroku config:set indigo \
+2. Create a new Dokku application::
+
+    $ dokku apps:create indigo
+
+3. (optional) Create a new AWS S3 account and bucket for storing attachments. You'll need the AWS Access Key Id and AWS Secret Access Key in the next step. You can safely skip this step if you don't care about saving attachments just yet.
+
+4. Set config options as follows (ensure you enter your correct database and AWS settings)::
+
+    $ dokku config:set indigo \
+        DATABASE_URL=postgres://indigo:DATABASE-PASSWORD@DATABASE-HOST/indigo \
         DISABLE_COLLECTSTATIC=1 \
         DJANGO_DEBUG=false \
         DJANGO_SECRET_KEY=some random characters \
@@ -154,25 +167,23 @@ Production Installation
         AWS_SECRET_ACCESS_KEY=aws secret access key \
         AWS_S3_BUCKET=your-bucket-name
 
-7. Deploy::
+5. Deploying requires using `git push` to push to dokku. So you'll need to add `dokku` as a git remote on your local host. If you have cloned the `example-indigo` repo from above, you can do this::
 
-    $ git push heroku
+    $ git remote add dokku dokku@DOKKU-HOSTNAME:indigo
 
-8. Setup the Indigo database::
+6. Now deploy to dokku using `git push dokku`. This is how you deploy any and all updates::
 
-    $ heroku run python manage.py migrate
+    $ git push dokku
 
-9. Create the admin user::
+7. Create the an admin user by running this command **on the Dokku server**::
 
-    $ heroku run python manage.py createsuperuser
+    $ dokku run indigo python manage.py createsuperuser
 
-10. Visit your new Indigo app in your browser!
+8. Visit your new Indigo app in your browser at https://your-dokku-host.example.com
 
-11. You can configure new users and other things at `/admin`.
+9. Configure a country:
 
-12. You'll need to set some :ref:`permissions` for users.
-
-
-TODO:
-
-* document configuring country details
+   * Visit `https://your-dokku-host.example.com/admin`
+   * Under **Indigo API** click Countries, then click Add Country in the top right corner
+   * Choose a country and primary language from the dropdown lists
+   * Click Save

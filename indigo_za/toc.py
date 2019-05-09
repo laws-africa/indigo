@@ -1,3 +1,6 @@
+# coding=utf-8
+from __future__ import unicode_literals
+
 from django.utils.translation import ugettext as _
 
 from indigo.analysis.toc.base import TOCBuilderBase
@@ -20,11 +23,11 @@ def section_title(item):
 class TOCBuilderZA(TOCBuilderBase):
     locale = ('za', None, None)
 
-    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions']
+    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'doc']
     toc_non_unique_components = ['chapter', 'part']
 
     titles = {
-        'chapter': lambda t: _('Chapter') + ' %s' % t.num + (' - %s' % t.heading if t.heading else ''),
-        'part': lambda t: _('Part') + ' %s' % t.num + (' - %s' % t.heading if t.heading else ''),
+        'chapter': lambda t: _('Chapter') + ' %s' % t.num + (' – %s' % t.heading if t.heading else ''),
+        'part': lambda t: _('Part') + ' %s' % t.num + (' – %s' % t.heading if t.heading else ''),
         'section': section_title,
     }

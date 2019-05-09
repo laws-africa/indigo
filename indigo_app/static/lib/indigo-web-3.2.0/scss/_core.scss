@@ -61,6 +61,7 @@
   .akn-division,
   .akn-heading,
   .akn-list,
+  .akn-paragraph,
   .akn-part,
   .akn-point,
   .akn-preamble,
@@ -91,9 +92,16 @@
     margin-bottom: $akn-section-spacing;
   }
 
-  .akn-subsection { 
+  /* Indent list-like containers that have margin numbers.
+     For the exception where these are not numbered, .akn--no-indent is applied to override the indent. */
+  .akn-subsection,
+  .akn-paragraph {
     margin-left: $akn-para-indent;
     margin-bottom: $akn-para-spacing;
+
+    &.akn--no-indent {
+      margin-left: 0px;
+    }
 
     &> .akn-num {
       display: block;
@@ -102,11 +110,10 @@
     }
   }
 
-  .akn-content {
-    > .akn-p {
-      display: block;
-      margin-bottom: $akn-para-spacing;
-    }
+  .akn-listIntroduction,
+  .akn-p {
+    display: block;
+    margin-bottom: $akn-para-spacing;
   }
 
   /* lists (mostly used in definitions) */
@@ -131,11 +138,6 @@
 
   /* blocklists */
   .akn-blockList {
-    .akn-listIntroduction {
-      display: block;
-      margin-bottom: $akn-para-spacing;
-    }
-
     &> .akn-item {
       display: block;
       margin-left: $akn-para-indent;
@@ -152,6 +154,12 @@
   /* inline elements */
   .akn-def {
     font-weight: bold;
+  }
+
+  .akn-longTitle {
+    display: block;
+    font-weight: bold;
+    margin-bottom: $akn-para-spacing;
   }
 
   .akn-remark {

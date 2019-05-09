@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 from itertools import chain
 from lxml.html import _collect_string_content
@@ -44,7 +46,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ The locale this TOC builder is suited for, as ``(country, language, locality)``.
     """
 
-    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions']
+    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'doc']
     """ Elements we include in the table of contents, without their XML namespace. Subclasses must
     provide this.
     """
@@ -112,13 +114,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def build_table_of_contents(self):
         toc = []
         for component, element in self.act.components().iteritems():
-            if component != "main":
-                # non-main components are items in their own right
-                item = self.make_toc_entry(element, component)
-                item.children = self.process_elements(component, [element])
-                toc += [item]
-            else:
-                toc += self.process_elements(component, [element])
+            toc += self.process_elements(component, [element])
 
         return toc
 
@@ -235,6 +231,7 @@ class TOCElement(object):
         self.children = children
         self.subcomponent = subcomponent
         self.title = None
+        self.qualified_id = id_ if component == 'main' else "{}/{}".format(component, id_)
 
     def as_dict(self):
         info = {

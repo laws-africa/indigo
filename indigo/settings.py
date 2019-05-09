@@ -104,6 +104,7 @@ ROOT_URLCONF = 'indigo.urls'
 WSGI_APPLICATION = 'indigo.wsgi.application'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
+SESSION_COOKIE_SECURE = not DEBUG
 
 # where does the pdftotext binary live?
 INDIGO_PDFTOTEXT = 'pdftotext'
@@ -196,7 +197,7 @@ ASSETS_URL_EXPIRE = False
 # for each Django app
 
 # where the compiled assets go
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = os.path.join(os.getcwd(), 'staticfiles')
 # the URL for assets
 STATIC_URL = '/static/'
 
@@ -372,7 +373,7 @@ LOGGING = {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
         'django': {
-            'level': 'DEBUG' if DEBUG else 'INFO',
+            'level': 'INFO',
         },
         'django.template': {
             'level': 'INFO',

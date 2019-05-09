@@ -26,6 +26,7 @@
       'change .filter-subtype': 'filterBySubtype',
       'keyup .filter-search': 'filterBySearch',
       'change .filter-status': 'filterByStatus',
+      'change .filter-stub': 'filterByStub',
       'change .sortby': 'changeSort',
     },
 
@@ -38,8 +39,9 @@
       this.filters = new Backbone.Model({
         country: Indigo.Preloads.country_code,
         tags: [],
-        status: 'all',
+        status: ['draft', 'published'],
         search: null,
+        stub: 'excl',
       });
       this.sortField = 'updated_at';
       this.sortDesc = true;
@@ -66,18 +68,21 @@
     },
 
     loadState: function() {
-      var 
-          tags = Indigo.queryParams.tags;
+      var tags = Indigo.queryParams.tags;
       if (tags) {
         tags = tags.split(',');
       }
 
       this.filters.set({
         country: this.filters.get('country'),
-        status: Indigo.queryParams.status || 'all',
+        status: (Indigo.queryParams.status || 'draft,published').split(','),
         subtype: Indigo.queryParams.subtype,
         tags: tags || [],
+        stub: Indigo.queryParams.stub || 'excl',
       });
+
+      this.$('.filter-stub').selectpicker('val', this.filters.get('stub'));
+      this.$('.filter-status').selectpicker('val', this.filters.get('status'));
     },
 
     changeSort: function(e) {
@@ -118,12 +123,16 @@
       this.summary = {};
 
       // Helper to choose works by applying a predicate to each work's documents.
-      var filterWorksByDocs = function(predicate, testWork) {
+      var filterWorksByDocs = function(predicate, testWork, returnStubs) {
         return _.filter(works, function(work) {
+          var id = work.get('id');
+          var isStub = work.get('stub') || !docs[id] || docs[id].length === 0;
+
           if (testWork && predicate(work)) return true;
 
+          if (returnStubs && isStub) return true;
+
           // test the documents
-          var id = work.get('id');
           docs[id] = _.filter(docs[id], predicate);
           return docs[id].length > 0;
         });
@@ -154,6 +163,15 @@
         active: !!filters.subtype,
       });
 
+      // filter by stub
+      if (filters.stub) {
+        var stub = {
+          excl: false,
+          only: true,
+        }[filters.stub];
+        if (stub !== undefined) works = _.filter(works, function(work) { return work.get('stub') == stub; });
+      }
+
       // filter by subtype
       if (filters.subtype) {
         var st = filters.subtype == '-' ? null : filters.subtype;
@@ -165,12 +183,16 @@
         docs[work.get('id')] = work.documents().models;
       });
 
-      if (filters.status !== 'all') {
+      // stub works don't have any docs to filter on
+      if (filters.status && filters.stub != 'only') {
+        var draft = _.contains(filters.status, 'draft'),
+            published = _.contains(filters.status, 'published');
+
         // filter documents by status
         works = filterWorksByDocs(function(doc) {
-          return (filters.status === "draft" && doc.get('draft') ||
-                  filters.status === "published" && !doc.get('draft'));
-        });
+          return (draft && doc.get('draft') ||
+                  published && !doc.get('draft'));
+        }, false, true);
       }
 
       // count tags, sort in descending order
@@ -202,7 +224,7 @@
         // filter documents by tags
         works = filterWorksByDocs(function(doc) {
           return _.all(filters.tags, function(tag) { return (doc.get('tags') || []).indexOf(tag) > -1; });
-        });
+        }, false, false);
       }
 
       // do search on both works and docs
@@ -215,7 +237,7 @@
             var val = x.get(field);
             return val && val.toLowerCase().indexOf(needle) > -1;
           });
-        }, true); // true to also test the work, not just its docs
+        }, true, false); // true to also test the work, not just its docs
       }
 
       this.filteredWorks = works;
@@ -258,7 +280,14 @@
 
     filterByStatus: function(e) {
       this.filters.set({
-        status: $(e.currentTarget).val(),
+        status: $(e.target).val() || ['draft', 'published'],
+        tags: [],
+      });
+    },
+
+    filterByStub: function(e) {
+      this.filters.set({
+        stub: $(e.target).val(),
         tags: [],
       });
     },
@@ -280,12 +309,6 @@
         option.selected = type.active;
         select.add(option);
       });
-
-      // status
-      var status = this.filters.get('status');
-      this.$('.filter-status-all').toggleClass('active btn-primary', status == 'all');
-      this.$('.filter-status-published').toggleClass('active btn-info', status == 'published');
-      this.$('.filter-status-draft').toggleClass('active btn-warning', status == 'draft');
 
       $('#filter-tags').html(this.template({
         tags: this.summary.tags,
@@ -365,7 +388,7 @@
         work.n_drafts = work.drafts_v_published.n_drafts || 0;
         work.n_docs_drafts_singular = work.n_drafts === 1;
         work.n_amendments = (Indigo.Preloads.work_n_amendments[work.id] || {}).n_amendments || 0;
-        work.stub = work.n_docs === 0 && work.n_amendments === 0;
+        work.no_children = work.n_docs === 0 && work.n_amendments === 0;
         work.n_expected_docs = (1 + work.n_amendments) * (work.n_languages || 1);
 
         // get a ratio of drafts vs total docs for sorting

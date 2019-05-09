@@ -1,4 +1,5 @@
 {% load humanize indigo_app %}
+{% load account %}
 
 <div class="bg-light p-3">
   <div class="row">
@@ -10,7 +11,7 @@
         </h6>
 
         {% for task in col.tasks %}
-          <div class="card mb-3 task-list-card">
+          <div class="card mb-3 task-list-card" id="task-{{ task.id }}">
             <div class="card-body">
 
               {% if workflow_controls %}
@@ -26,25 +27,20 @@
                 </form>
               {% endif %}
 
-              <div><small class="text-muted">#{{ task.id }}</small></div>
-              <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
+              <div class="small text-muted mb-1">#{{ task.id }}</div>
+              <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="d-block mb-1">{{ task.title }}</a>
 
               {% if task.document %}
                 <div>
-                  <span class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</span><br>
-                  <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+                  <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted d-block mb-1">
+                    {{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}
+                  </a>
+                  <span class="text-muted wb-all">{{ task.work.frbr_uri }}</span>
                 </div>
               {% elif task.work %}
                 <div>
-                  <span class="text-muted">{{ task.work.title }}</span><br>
-                  <span class="text-muted">{{ task.work.frbr_uri }}</span>
-                </div>
-              {% endif %}
-
-              {% if task.assigned_to %}
-                <div>
-                  <span class="badge task-badge" title="assignee"><i class="fas fa-user-tag fa-xs task-icon-assignee"></i></span>
-                  <small class="text-muted">Assigned to {% user_profile task.assigned_to %}</small>
+                  <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted d-block mb-1" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+                  <span class="text-muted wb-all">{{ task.work.frbr_uri }}</span>
                 </div>
               {% endif %}
 
@@ -53,6 +49,48 @@
                   <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
                 {% endfor %}
               </div>
+
+              {% if task.assigned_to %}
+                <div>
+                  <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Assigned to"></i>
+                  <small class="text-muted">{% user_profile task.assigned_to %}</small>
+
+                  {% if perms.indigo_api.change_task %}
+                    <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                      {% csrf_token %}
+
+                      <div class="dropdown">
+                        <button class="btn btn-outline-danger btn-sm mt-2 dropdown-toggle" type="button" id="unassignDropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          Reassign
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
+                          <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">Unassign</button>
+                          {% for potential_assignee in task.potential_assignees %}
+                          <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}">{% user_display potential_assignee %}</button>
+                          {% endfor %}
+                        </div>
+                      </div>
+                    </form>
+                  {% endif %}
+
+                </div>
+              {% elif task.state == 'open' or task.state == 'pending_review' %}
+                {% if perms.indigo_api.change_task and task.potential_assignees %}
+                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                    {% csrf_token %}
+                    <div class="dropdown">
+                      <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Assign to
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        {% for potential_assignee in task.potential_assignees %}
+                        <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}" >{% user_display potential_assignee %}</button>
+                        {% endfor %}
+                      </div>
+                    </div>
+                  </form>
+                {% endif %}
+              {% endif %}
             </div>
           </div>
         {% endfor %}

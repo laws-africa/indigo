@@ -7,6 +7,7 @@ from django.test.utils import override_settings
 from sass_processor.processor import SassProcessor
 
 from indigo_api.renderers import PDFRenderer
+from indigo_api.models import PublicationDocument, Work
 
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
@@ -400,6 +401,26 @@ class PublishedAPITest(APITestCase):
         links = {link['rel']: link['href'] for link in response.data['links']}
         assert_equal(links['toc'], 'http://testserver/api/v1/za/act/2014/10/eng@2014-02-12/toc.json')
         assert_equal(links['media'], 'http://testserver/api/v1/za/act/2014/10/eng@2014-02-12/media.json')
+
+    def test_published_publication_document_trusted_url(self):
+        work = Work.objects.get(frbr_uri='/za/act/2014/10')
+        pub_doc = PublicationDocument(work=work, trusted_url='https://example.com/foo.pdf')
+        pub_doc.save()
+
+        response = self.client.get('/api/v1/za/act/2014/10/eng@2014-02-12.json')
+        assert_equal(response.status_code, 200)
+
+        assert_equal(response.data['publication_document']['url'], 'https://example.com/foo.pdf')
+
+    def test_published_publication_document(self):
+        work = Work.objects.get(frbr_uri='/za/act/2014/10')
+        pub_doc = PublicationDocument(work=work, mime_type="application/pdf")
+        pub_doc.save()
+
+        response = self.client.get('/api/v1/za/act/2014/10/eng@2014-02-12.json')
+        assert_equal(response.status_code, 200)
+
+        assert_equal(response.data['publication_document']['url'], 'http://testserver/api/v1/za/act/2014/10/eng@2014-02-12/media/za-act-2014-10-publication-document.pdf')
 
     def test_published_search_perms(self):
         self.client.logout()

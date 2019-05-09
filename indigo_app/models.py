@@ -8,6 +8,12 @@ from rest_framework.authtoken.models import Token
 from indigo_api.models import Country
 
 
+class EditorManager(models.Manager):
+    def get_queryset(self):
+        return super(EditorManager, self).get_queryset()\
+            .prefetch_related('country')
+
+
 class Editor(models.Model):
     """ A complement to Django's User model that adds extra
     properties that we need, like a default country.
@@ -16,6 +22,8 @@ class Editor(models.Model):
     country = models.ForeignKey('indigo_api.Country', on_delete=models.SET_NULL, null=True)
     accepted_terms = models.BooleanField(default=False)
     permitted_countries = models.ManyToManyField(Country, related_name='editors', help_text="Countries the user can work with.", blank=True)
+
+    objects = EditorManager
 
     @property
     def country_code(self):

@@ -21,12 +21,12 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, WorkPropertyFormSet
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -56,7 +56,9 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
     def get_context_data(self, **kwargs):
         context = super(WorkViewBase, self).get_context_data(work=self.work, **kwargs)
         context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
+        return context
 
+    def get_work_timeline(self):
         # add other dates to timeline
         work_timeline = self.work.points_in_time()
         other_dates = [
@@ -77,9 +79,7 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
                     'date': date,
                     name: True,
                 })
-        context['work_timeline'] = sorted(work_timeline, key=lambda k: k['date'], reverse=True)
-
-        return context
+        return sorted(work_timeline, key=lambda k: k['date'], reverse=True)
 
     @property
     def work(self):
@@ -103,17 +103,61 @@ class WorkDependentView(WorkViewBase):
         return self._work
 
 
-class EditWorkView(WorkViewBase, UpdateView):
+class WorkFormMixin(object):
+    """ Mixin to help the Create and Edit work views handle multiple forms.
+    """
+    is_create = False
+
+    def get_properties_formset(self):
+        kwargs = {'queryset': WorkProperty.objects.none()}
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'data': self.request.POST,
+                'files': self.request.FILES,
+            })
+        return WorkPropertyFormSet(**kwargs)
+
+    def get_form(self, form_class=None):
+        self.properties_formset = self.get_properties_formset()
+        self.properties_formset.setup_extras()
+        return super(WorkFormMixin, self).get_form(form_class)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None if self.is_create else self.get_object()
+        form = self.get_form()
+        if form.is_valid() and self.properties_formset.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        resp = super(WorkFormMixin, self).form_valid(form)
+        # ensure that all instances are forced to use this work
+        for form in self.properties_formset.forms:
+            form.instance.work = self.object
+        self.properties_formset.save()
+        return resp
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkFormMixin, self).get_context_data(**kwargs)
+        context['properties_formset'] = self.properties_formset
+        return context
+
+
+class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
-    template_name_suffix = '_detail'
     permission_required = ('indigo_api.change_work',)
+
+    def get_properties_formset(self):
+        formset = super(EditWorkView, self).get_properties_formset()
+        formset.queryset = self.object.raw_properties.filter(key__in=WorkProperty.KEYS.keys())
+        return formset
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
-
         return context
 
     def form_valid(self, form):
@@ -133,7 +177,7 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.expression_date = self.work.publication_date
                     doc.save()
 
-        if form.has_changed():
+        if form.has_changed() or self.properties_formset.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
             messages.success(self.request, u"Work updated.")
@@ -151,13 +195,13 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
+class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, CreateView):
     model = Work
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
-    template_name_suffix = '_detail'
     permission_required = ('indigo_api.add_work',)
+    is_create = True
 
     def get_form_kwargs(self):
         kwargs = super(AddWorkView, self).get_form_kwargs()
@@ -188,7 +232,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
             return super(AddWorkView, self).form_valid(form)
 
     def get_success_url(self):
-        return reverse('work_edit', kwargs={'frbr_uri': self.object.frbr_uri})
+        return reverse('work', kwargs={'frbr_uri': self.object.frbr_uri})
 
 
 class DeleteWorkView(WorkViewBase, DeleteView):
@@ -221,12 +265,18 @@ class WorkOverviewView(WorkViewBase, DetailView):
             .exclude(state='done')\
             .exclude(state='cancelled')\
             .order_by('-created_at')
+        context['work_timeline'] = self.get_work_timeline()
 
         return context
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
+        context['work_timeline'] = self.get_work_timeline()
+        return context
 
 
 class WorkAmendmentDetailView(WorkDependentView, UpdateView):
@@ -429,12 +479,28 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
             # is this a revision?
             if i > 0 and getattr(entry, 'verb', None) == 'updated':
                 prev = items[i - 1]
-                if getattr(prev, 'revision') and prev.revision.date_created - entry.timestamp < self.threshold:
+                if getattr(prev, 'revision', None) and prev.revision.date_created - entry.timestamp < self.threshold:
                     continue
 
             entries.append(entry)
 
         return entries
+
+
+class WorkTasksView(WorkViewBase, DetailView):
+    template_name_suffix = '_tasks'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkTasksView, self).get_context_data(**kwargs)
+        context['tasks'] = context['work'].tasks.all()
+        context['task_groups'] = Task.task_columns(
+            ['open', 'assigned', 'pending_review', 'done', 'cancelled'],
+            context['tasks']
+        )
+
+        Task.decorate_potential_assignees(context['tasks'], self.country)
+
+        return context
 
 
 class RestoreWorkVersionView(WorkViewBase, DetailView):
@@ -462,9 +528,10 @@ class RestoreWorkVersionView(WorkViewBase, DetailView):
 class WorkPublicationDocumentView(WorkViewBase, View):
     def get(self, request, filename, *args, **kwargs):
         if self.work.publication_document and self.work.publication_document.filename == filename:
+            if self.work.publication_document.trusted_url:
+                return redirect(self.work.publication_document.trusted_url)
             return view_attachment(self.work.publication_document)
-        else:
-            return Http404()
+        return Http404()
 
 
 class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
@@ -472,6 +539,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     # permissions
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
+    initial = {
+        'primary_tasks': ['import'],
+    }
+
+    def get_context_data(self, **kwargs):
+        context = super(BatchAddWorkView, self).get_context_data(**kwargs)
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
+        return context
 
     def form_valid(self, form):
         error = None
@@ -479,7 +554,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
-            works = self.get_works(table)
+            works = self.get_works(table, form)
+            self.link_works(works, form)
+            self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
 
@@ -490,7 +567,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         self.determine_place()
         return self.country
 
-    def get_works(self, table):
+    def get_works(self, table, form):
         works = []
 
         # clean up headers
@@ -521,20 +598,23 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work = Work.objects.get(frbr_uri=frbr_uri)
                     info['work'] = work
                     info['status'] = 'duplicate'
-
-                # TODO one day: also mark first work as duplicate if user is trying to import two of the same (currently only the second one will be)
+                    if row.get('amends'):
+                        info['amends'] = row.get('amends')
+                    if row.get('commencement_date'):
+                        info['commencement_date'] = row.get('commencement_date')
 
                 except Work.DoesNotExist:
                     work = Work()
 
                     work.frbr_uri = frbr_uri
-                    work.title = row.get('title')
+                    work.title = self.strip_title_string(row.get('title'))
                     work.country = self.country
                     work.locality = self.locality
                     work.publication_name = row.get('publication_name')
                     work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
+                    work.stub = not row.get('primary')
 
                     try:
                         work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
@@ -543,11 +623,33 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.full_clean()
                         work.save()
 
+                        # link publication document
+                        params = {
+                            'date': row.get('publication_date'),
+                            'number': work.publication_number,
+                            'publication': work.publication_name,
+                            'country': self.country.place_code,
+                            'locality': self.locality.code if self.locality else None,
+                        }
+                        self.get_publication_document(params, work, form)
+
                         # signals
                         work_changed.send(sender=work.__class__, work=work, request=self.request)
 
                         info['status'] = 'success'
                         info['work'] = work
+
+                        # TODO: neaten this up
+                        if row.get('commenced_by'):
+                            info['commenced_by'] = row.get('commenced_by')
+                        if row.get('amends'):
+                            info['amends'] = row.get('amends')
+                        if row.get('repealed_by'):
+                            info['repealed_by'] = row.get('repealed_by')
+                        if row.get('with_effect_from'):
+                            info['with_effect_from'] = row.get('with_effect_from')
+                        if row.get('parent_work'):
+                            info['parent_work'] = row.get('parent_work')
 
                     except ValidationError as e:
                         info['status'] = 'error'
@@ -559,6 +661,195 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['error_message'] = e.message
 
         return works
+
+    def link_works(self, works, form):
+        for info in works:
+            if info['status'] == 'success':
+                self.link_commencement(info, form)
+                self.link_repeal(info, form)
+                self.link_parent_work(info, form)
+
+            if info['status'] == 'success' or info['status'] == 'duplicate':
+                self.link_amendment(info, form)
+
+    def link_commencement(self, info, form):
+        # if the work is `commenced_by` something, try linking it
+        # make a task if this fails
+        if info.get('commenced_by'):
+            try:
+                info['work'].commencing_work = self.find_work_by_title(info.get('commenced_by'))
+                info['work'].save()
+            except Work.DoesNotExist:
+                self.create_task(info, form, task_type='commencement')
+
+    def link_amendment(self, info, form):
+        # if the work `amends` something, try linking it
+        # (this will only work if there's only one amendment listed)
+        # make a task if this fails
+        if info.get('amends'):
+            try:
+                amended_work = self.find_work_by_title(info.get('amends'))
+
+                date = info.get('commencement_date') or info['work'].commencement_date
+
+                try:
+                    Amendment.objects.get(
+                        amended_work=amended_work,
+                        amending_work=info['work'],
+                        date=date
+                    )
+
+                except Amendment.DoesNotExist:
+                    if date:
+                        amendment = Amendment()
+                        amendment.amended_work = amended_work
+                        amendment.amending_work = info['work']
+                        amendment.created_by_user = self.request.user
+                        amendment.date = date
+                        amendment.save()
+                    else:
+                        self.create_task(info, form, task_type='amendment')
+
+            except Work.DoesNotExist:
+                self.create_task(info, form, task_type='amendment')
+
+    def link_repeal(self, info, form):
+        # if the work is `repealed_by` something, try linking it
+        # make a task if this fails
+        # (either because the work isn't found or because the repeal date isn't right,
+        # which could be because it doesn't exist or because it's in the wrong format)
+        if info.get('repealed_by'):
+            try:
+                repealing_work = self.find_work_by_title(info.get('repealed_by'))
+            except Work.DoesNotExist:
+                return self.create_task(info, form, task_type='repeal')
+
+            repeal_date = repealing_work.commencement_date
+            repeal_date = info.get('with_effect_from') or repeal_date
+
+            if not repeal_date:
+                return self.create_task(info, form, task_type='repeal')
+
+            info['work'].repealed_by = repealing_work
+            info['work'].repealed_date = repeal_date
+
+            try:
+                info['work'].save()
+            except ValidationError:
+                self.create_task(info, form, task_type='repeal')
+
+    def find_work_by_title(self, title):
+        return Work.objects.get(title=title, country=self.country, locality=self.locality)
+
+    def link_parent_work(self, info, form):
+        # if the work has a `parent_work`, try linking it
+        # make a task if this fails
+        if info.get('parent_work'):
+            try:
+                info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
+                info['work'].save()
+            except Work.DoesNotExist:
+                self.create_task(info, form, task_type='parent_work')
+
+    def create_task(self, info, form, task_type):
+        task = Task()
+        if task_type == 'commencement':
+            task.title = 'Link commencement'
+            task.description = '''This work's commencement work could not be linked automatically.
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
+        elif task_type == 'amendment':
+            task.title = 'Link amendment(s)'
+            amended_title = info.get('amends')
+            if len(amended_title) > 256:
+                amended_title = "".join(amended_title[:256] + ', etc')
+            task.description = '''On the spreadsheet, it says that this work amends '{}' – see row {}.
+This amendment could not be linked automatically.
+There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
+there may not be a date for the amendment, or the amended work may not exist yet.
+Check the spreadsheet for reference and link it/them manually, \
+or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info.get('row'))
+
+        elif task_type == 'repeal':
+            task.title = 'Link repeal'
+            task.description = '''According to the spreadsheet this work was repealed by the '{}', \
+            but the repeal could not be linked automatically.
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Otherwise, the 'with effect from' date could be in the wrong format, or the repealing work might not have commenced yet.
+Check the spreadsheet for reference and link it manually, or add the 'Pending commencement' label to this task.'''.format(info.get('repealed_by'))
+        elif task_type == 'parent_work':
+            task.title = 'Link parent work'
+            task.description = '''This work's parent work could not be linked automatically.
+There may have been a typo in the spreadsheet, or the work may not exist yet.
+Check the spreadsheet for reference and link it manually.'''
+
+        task.country = info['work'].country
+        task.locality = info['work'].locality
+        task.work = info['work']
+        task.created_by_user = self.request.user
+        task.save()
+        task.workflows = form.cleaned_data.get('workflows').all()
+        task.save()
+
+    def pub_doc_task(self, work, form, task_type):
+        task = Task()
+
+        if task_type == 'link':
+            task.title = 'Link publication document'
+            task.description = '''This work's publication document could not be linked automatically.
+There may be more than one candidate, or it may be unavailable.
+First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
+Otherwise, find it and upload it manually.'''
+
+        elif task_type == 'check':
+            task.title = 'Check publication document'
+            task.description = '''This work's publication document was linked automatically.
+Double-check that it's the right one.'''
+            task.state = 'pending_review'
+
+        task.country = work.country
+        task.locality = work.locality
+        task.work = work
+        task.created_by_user = self.request.user
+        task.save()
+        task.workflows = form.cleaned_data.get('workflows').all()
+        task.save()
+
+    def get_tasks(self, works, form):
+        tasks = []
+
+        def make_task(chosen_task):
+            task = Task()
+            task.country = self.country
+            task.locality = self.locality
+            task.created_by_user = self.request.user
+            for possible_task in form.possible_tasks:
+                if chosen_task == possible_task['key']:
+                    task.title = possible_task['label']
+                    task.description = possible_task['description']
+
+            # need to save before assigning work, workflow/s because of M2M relations
+            task.save()
+            task.work = info.get('work')
+            task.workflows = form.cleaned_data.get('workflows').all()
+            task.save()
+            tasks.append(task)
+
+        # bulk create tasks on primary works
+        if form.cleaned_data.get('primary_tasks'):
+            for info in works:
+                if info['status'] == 'success' and not info['work'].stub:
+                    for chosen_task in form.cleaned_data.get('primary_tasks'):
+                        make_task(chosen_task)
+
+        # bulk create tasks on all works
+        if form.cleaned_data.get('all_tasks'):
+            for info in works:
+                if info['status'] == 'success':
+                    for chosen_task in form.cleaned_data.get('all_tasks'):
+                        make_task(chosen_task)
+
+        return tasks
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
@@ -656,6 +947,35 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 raise ValidationError('Check the format of %s; it should be e.g. "2012-12-31"' % field)
         return date
 
+    def strip_title_string(self, title_string):
+        return re.sub(u'[\u2028 ]+', ' ', title_string)
+
+    def get_publication_document(self, params, work, form):
+        finder = plugins.for_locale('publications', self.country, None, self.locality)
+
+        if finder:
+            try:
+                publications = finder.find_publications(params)
+
+                if len(publications) == 1:
+                    pub_doc_details = publications[0]
+                    pub_doc = PublicationDocument()
+                    pub_doc.work = work
+                    pub_doc.file = None
+                    pub_doc.trusted_url = pub_doc_details.get('url')
+                    pub_doc.size = pub_doc_details.get('size')
+                    pub_doc.save()
+                    self.pub_doc_task(work, form, task_type='check')
+
+                else:
+                    self.pub_doc_task(work, form, task_type='link')
+
+            except ValueError as e:
+                raise ValidationError({'message': e.message})
+
+        else:
+            self.pub_doc_task(work, form, task_type='link')
+
 
 class ImportDocumentView(WorkViewBase, FormView):
     """ View to import a document as an expression for a work.
@@ -716,3 +1036,8 @@ class ImportDocumentView(WorkViewBase, FormView):
         AttachmentSerializer(context={'document': document}).create({'file': upload})
 
         return JsonResponse({'location': reverse('document', kwargs={'doc_id': document.id})})
+
+
+class WorkPopupView(WorkViewBase, DetailView):
+    template_name = 'indigo_api/work_popup.html'
+

@@ -195,4 +195,26 @@
       this.$el.modal('hide');
     },
   });
+
+  // logic to hook up work chooser to buttons and inputs
+  var summaryTemplate = $('#work-chooser-summary-template');
+  if (summaryTemplate.length > 0) {
+    summaryTemplate = Handlebars.compile(summaryTemplate.html());
+    $('body').on('click', '.show-work-chooser', function(e) {
+      var btn = e.target,
+          country = btn.getAttribute('data-country'),
+          input = document.querySelector(btn.getAttribute('data-input')),
+          display = document.querySelector(btn.getAttribute('data-display')),
+          chosen = input.value,
+          chooser = new Indigo.WorkChooserView({country: country});
+
+      chooser.showModal().done(function(chosen) {
+        input.value = chosen.get('id');
+
+        if (display) {
+          display.innerHTML = summaryTemplate(chosen.toJSON());
+        }
+      });
+    });
+  }
 })(window);

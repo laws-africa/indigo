@@ -51,6 +51,11 @@ class Importer(LocaleBasedMatcher):
     """ Slaw grammar to use
     """
 
+    use_ascii = True
+    """ Should we pass --ascii to slaw? This can have significant performance benefits
+    for large files. See https://github.com/cjheath/treetop/issues/31
+    """
+
     def shell(self, cmd):
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -67,21 +72,27 @@ class Importer(LocaleBasedMatcher):
         :class:`django.core.files.uploadedfile.UploadedFile` instance.
         """
         self.reformat = True
+        self.log.info("Processing upload: filename='%s', content type=%s" % (upload.name, upload.content_type))
 
         if upload.content_type in ['text/xml', 'application/xml']:
             # just assume it's valid AKN xml
+            self.log.info("Processing upload as an AKN XML file")
             doc.content = upload.read().decode('utf-8')
             return doc
 
-        if upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document':
+        if (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+                or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
+            self.log.info("Processing upload as a docx file")
             self.create_from_docx(upload, doc)
 
         elif upload.content_type == 'application/pdf':
+            self.log.info("Processing upload as a PDF file")
             self.create_from_pdf(upload, doc)
 
         else:
             # slaw will do its best
+            self.log.info("Processing upload as an unknown file")
             self.create_from_file(upload, doc)
 
         self.analyse_after_import(doc)
@@ -98,7 +109,8 @@ class Importer(LocaleBasedMatcher):
             f.write(input.encode('utf-8'))
             f.flush()
             f.seek(0)
-            return self.import_from_file(f.name, frbr_uri)
+            inputtype = 'html' if suffix == '.html' else 'text'
+            return self.import_from_file(f.name, frbr_uri, inputtype)
 
     def create_from_pdf(self, upload, doc):
         """ Import from a PDF upload.
@@ -135,7 +147,7 @@ class Importer(LocaleBasedMatcher):
         """
         return self.expand_ligatures(text)
 
-    def import_from_file(self, fname, frbr_uri):
+    def import_from_file(self, fname, frbr_uri, inputtype='text'):
         cmd = ['bundle', 'exec', 'slaw', 'parse']
 
         if self.fragment:
@@ -147,6 +159,9 @@ class Importer(LocaleBasedMatcher):
             cmd.extend(['--section-number-position', self.section_number_position])
 
         cmd.extend(['--grammar', self.slaw_grammar])
+        cmd.extend(['--input', inputtype])
+        if self.use_ascii:
+            cmd.extend(['--ascii'])
         cmd.append(fname)
 
         code, stdout, stderr = self.shell(cmd)

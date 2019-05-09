@@ -14,7 +14,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView
 
 from indigo_api.models import Task, Workflow
 
-from indigo_app.forms import WorkflowFilterForm
+from indigo_app.forms import WorkflowFilterForm, TaskFilterForm
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
 
 
@@ -51,18 +51,46 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
     model = Workflow
     threshold = timedelta(seconds=3)
 
+    def get(self, request, *args, **kwargs):
+        # allows us to set defaults on the form
+        params = QueryDict(mutable=True)
+        params.update(request.GET)
+
+        # initial state
+        if not params.get('state'):
+            params.setlist('state', ['open', 'assigned', 'pending_review', 'done', 'cancelled'])
+        params.setdefault('format', 'columns')
+
+        self.form = TaskFilterForm(self.country, params)
+        self.form.is_valid()
+
+        return super(WorkflowDetailView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, *args, **kwargs):
         context = super(WorkflowDetailView, self).get_context_data(**kwargs)
-
-        tasks = self.object.tasks.all()
-        context['has_tasks'] = bool(tasks)
-        context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
-        context['possible_tasks'] = self.place.tasks.unclosed().exclude(pk__in=[t.id for t in self.object.tasks.all()]).all()
 
         # stats
         self.object.n_tasks = self.object.tasks.count()
         self.object.n_done = self.object.tasks.closed().count()
         self.object.pct_done = self.object.n_done / (self.object.n_tasks or 1) * 100.0
+
+        context['form'] = self.form
+        tasks = self.form.filter_queryset(self.object.tasks) \
+            .select_related('document__language', 'document__language__language')\
+            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
+            .all()
+
+        context['tasks'] = tasks
+        context['has_tasks'] = self.object.n_tasks > 0
+        context['task_groups'] = Task.task_columns(['open', 'pending_review', 'assigned'], tasks)
+        context['possible_tasks'] = self.place.tasks\
+            .unclosed()\
+            .exclude(workflows=self.object) \
+            .select_related('document__language', 'document__language__language') \
+            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
+            .all()
+
+        Task.decorate_potential_assignees(tasks, self.country)
 
         context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done
         context['may_reopen'] = self.object.closed
@@ -123,8 +151,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         if len(stash) == 1:
             return first
         else:
-            workflow = self.get_object()
-            action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
+            action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=self.object)
             action.timestamp = first.timestamp
             return action
 
@@ -273,7 +300,7 @@ class WorkflowListView(WorkflowViewBase, ListView):
         return super(WorkflowListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        workflows = self.place.workflows.filter()
+        workflows = self.place.workflows
         return self.form.filter_queryset(workflows)
 
     def get_context_data(self, **kwargs):

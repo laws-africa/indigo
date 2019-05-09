@@ -2,12 +2,15 @@ import json
 
 from django import forms
 from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.forms import BaseModelFormSet
+from django.forms.formsets import DELETION_FIELD_NAME
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow, WorkProperty
 
 
 class WorkForm(forms.ModelForm):
@@ -16,10 +19,19 @@ class WorkForm(forms.ModelForm):
         fields = (
             'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
+            'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
+            'stub',
         )
 
+    # The user can provide either a file attachment, or a trusted
+    # remote URL with supporting data. The form sorts out which fields
+    # are applicable in each case.
     publication_document_file = forms.FileField(required=False)
     delete_publication_document = forms.BooleanField(required=False)
+
+    publication_document_trusted_url = forms.URLField(required=False)
+    publication_document_size = forms.IntegerField(required=False)
+    publication_document_mime_type = forms.CharField(required=False)
 
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)
@@ -28,25 +40,86 @@ class WorkForm(forms.ModelForm):
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
-        if pub_doc_file:
-            try:
-                pub_doc = self.instance.publication_document
-            except PublicationDocument.DoesNotExist:
-                pub_doc = PublicationDocument(work=self.instance)
+        pub_doc_url = self.cleaned_data['publication_document_trusted_url']
 
-            pub_doc.file = pub_doc_file
-            pub_doc.size = pub_doc_file.size
-            # we force a particular filename
-            pub_doc.filename = 'publication-document.pdf'
-            pub_doc.mime_type = pub_doc_file.content_type
-
-            pub_doc.save()
+        try:
+            existing = self.instance.publication_document
+        except PublicationDocument.DoesNotExist:
+            existing = None
 
         if self.cleaned_data['delete_publication_document']:
-            try:
-                self.instance.publication_document.delete()
-            except PublicationDocument.DoesNotExist:
-                pass
+            if existing:
+                existing.delete()
+
+        elif pub_doc_file:
+            if existing:
+                # ensure any previously uploaded file is deleted
+                existing.delete()
+
+            pub_doc = PublicationDocument(work=self.instance)
+            pub_doc.trusted_url = None
+            pub_doc.file = pub_doc_file
+            pub_doc.size = pub_doc_file.size
+            pub_doc.mime_type = pub_doc_file.content_type
+            pub_doc.save()
+
+        elif pub_doc_url:
+            if existing:
+                # ensure any previously uploaded file is deleted
+                existing.delete()
+
+            pub_doc = PublicationDocument(work=self.instance)
+            pub_doc.file = None
+            pub_doc.trusted_url = pub_doc_url
+            pub_doc.size = self.cleaned_data['publication_document_size']
+            pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
+            pub_doc.save()
+
+
+class WorkPropertyForm(forms.ModelForm):
+    key = forms.ChoiceField(required=False, choices=WorkProperty.CHOICES)
+    value = forms.CharField(required=False)
+
+    class Meta:
+        model = WorkProperty
+        fields = ('key', 'value')
+
+    def clean(self):
+        super(WorkPropertyForm, self).clean()
+        if not self.cleaned_data.get('key') or not self.cleaned_data.get('value'):
+            self.cleaned_data[DELETION_FIELD_NAME] = True
+        return self.cleaned_data
+
+
+class BaseWorkPropertyFormSet(BaseModelFormSet):
+    def setup_extras(self):
+        # add extra forms for the properties we don't have yet
+        existing = set([p.key for p in self.queryset.all()])
+        missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
+        self.initial_extra = [{'key': key} for key in missing]
+
+    def keys_and_forms(self):
+        # (value, label) pairs sorted by label
+        keys = sorted(WorkProperty.CHOICES, key=lambda x: x[1])
+        forms_by_key = {f['key'].value(): f for f in self.forms}
+        return [{
+            'key': val,
+            'label': label,
+            'form': forms_by_key[val],
+        } for val, label in keys]
+
+    def clean(self):
+        keys = set()
+        for form in self.forms:
+            key = form.cleaned_data.get('key')
+            if key:
+                if key in keys:
+                    form.add_error(None, ValidationError("Property '{}' is specified more than once.".format(key)))
+                else:
+                    keys.add(key)
+
+
+WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, formset=BaseWorkPropertyFormSet, can_delete=True)
 
 
 class DocumentForm(forms.ModelForm):
@@ -101,6 +174,20 @@ class BatchCreateWorkForm(forms.Form):
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
 
+    possible_tasks = [
+        {
+            'key': 'import',
+            'label': 'Import content',
+            'description': '''Import a point in time for this work; \
+            either the initial publication or a later consolidation.
+Make sure the document's expression date correctly reflects this.''',
+        },
+    ]
+    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
+                                               required=False)
+
 
 class ImportDocumentForm(forms.Form):
     file = forms.FileField()
@@ -133,21 +220,27 @@ class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
+    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
 
-    def filter_queryset(self, queryset, frbr_uri=None):
+    def __init__(self, country, *args, **kwargs):
+        self.country = country
+        super(TaskFilterForm, self).__init__(*args, **kwargs)
+        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+
+    def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):
             queryset = queryset.filter(labels__in=self.cleaned_data['labels'])
 
         if self.cleaned_data.get('state'):
             if 'assigned' in self.cleaned_data['state']:
-                queryset = queryset.filter(state__in=self.cleaned_data['state']+['open'])
+                queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
                 if 'open' not in self.cleaned_data['state']:
                     queryset = queryset.exclude(state='open', assigned_to=None)
             else:
                 queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
 
-        if frbr_uri:
-            queryset = queryset.filter(work__frbr_uri=frbr_uri)
+        if self.cleaned_data.get('assigned_to'):
+            queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
 
         return queryset
 

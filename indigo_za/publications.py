@@ -20,7 +20,7 @@ class PublicationFinderZA(BasePublicationFinder):
 
         date = params.get('date')
         number = params.get('number')
-        place = self.get_place(params.get('name'))
+        place = self.get_place(params.get('publication'))
 
         if not date:
             raise ValueError("I need at least a date to find a gazette.")
@@ -37,6 +37,7 @@ class PublicationFinderZA(BasePublicationFinder):
         return [{
             'title': obj['full_title'],
             'url': obj['archive_url'],
+            'trustworthy': True,
         } for obj in items]
 
     def get_place(self, name):

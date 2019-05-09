@@ -25,11 +25,23 @@ from indigo_app.forms import TaskForm, TaskFilterForm
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
     tab = 'tasks'
 
+    def record_workflow_actions(self, task, new_workflows):
+        old_workflows = task.workflows.all()
+
+        removed_workflows = set(old_workflows) - set(new_workflows)
+        added_workflows = set(new_workflows) - set(old_workflows)
+
+        for workflow in removed_workflows:
+            action.send(self.request.user, verb='removed', action_object=task,
+                        target=workflow, place_code=task.place.place_code)
+
+        for workflow in added_workflows:
+            action.send(self.request.user, verb='added', action_object=task,
+                        target=workflow, place_code=task.place.place_code)
+
 
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
-    paginate_by = 20
-    paginate_orphans = 4
     model = Task
 
     def get(self, request, *args, **kwargs):
@@ -42,17 +54,18 @@ class TaskListView(TaskViewBase, ListView):
             params.setlist('state', ['open', 'assigned', 'pending_review'])
         params.setdefault('format', 'columns')
 
-        self.form = TaskFilterForm(params)
+        self.form = TaskFilterForm(self.country, params)
         self.form.is_valid()
-
-        if self.form.cleaned_data['format'] == 'columns':
-            self.paginate_by = 40
 
         return super(TaskListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        tasks = Task.objects.filter(country=self.country, locality=self.locality).order_by('-updated_at')
-        return self.form.filter_queryset(tasks, frbr_uri=self.request.GET.get('frbr_uri'))
+        tasks = Task.objects\
+            .filter(country=self.country, locality=self.locality)\
+            .select_related('document__language', 'document__language__language') \
+            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
+            .order_by('-updated_at')
+        return self.form.filter_queryset(tasks)
 
     def get_context_data(self, **kwargs):
         context = super(TaskListView, self).get_context_data(**kwargs)
@@ -60,6 +73,8 @@ class TaskListView(TaskViewBase, ListView):
         context['form'] = self.form
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
+
+        Task.decorate_potential_assignees(context['tasks'], self.country)
 
         return context
 
@@ -86,6 +101,10 @@ class TaskDetailView(TaskViewBase, DetailView):
 
         if has_transition_perm(task.close, self):
             context['close_task_permission'] = True
+
+        context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
+
+        Task.decorate_potential_assignees([task], self.country)
 
         return context
 
@@ -146,7 +165,7 @@ class TaskCreateView(TaskViewBase, CreateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
-        context['place_workflows'] = self.place.workflows.all()
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
 
         return context
 
@@ -164,27 +183,18 @@ class TaskEditView(TaskViewBase, UpdateView):
 
     def form_valid(self, form):
         task = self.object
-        old_workflows = [wf.id for wf in task.workflows.all()]
         task.updated_by_user = self.request.user
-        task.workflows = form.cleaned_data.get('workflows')
+
 
         # action signals
         # first, was something changed other than workflows?
         if form.changed_data:
             action.send(self.request.user, verb='updated', action_object=task,
                         place_code=task.place.place_code)
-        # then, was the task added to / removed from any workflows?
-        new_workflows = [wf.id for wf in task.workflows.all()]
-        removed_workflows = set(old_workflows) - set(new_workflows)
-        added_workflows = set(new_workflows) - set(old_workflows)
-        for workflow in removed_workflows:
-            action.send(self.request.user, verb='removed', action_object=task,
-                        target=Workflow.objects.get(id=workflow),
-                        place_code=task.place.place_code)
-        for workflow in added_workflows:
-            action.send(self.request.user, verb='added', action_object=task,
-                        target=Workflow.objects.get(id=workflow),
-                        place_code=task.place.place_code)
+
+        new_workflows = form.cleaned_data.get('workflows')
+        self.record_workflow_actions(task, new_workflows)
+        task.workflows = new_workflows
 
         return super(TaskEditView, self).form_valid(form)
 
@@ -211,7 +221,7 @@ class TaskEditView(TaskViewBase, UpdateView):
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
-        context['place_workflows'] = self.place.workflows.all()
+        context['place_workflows'] = self.place.workflows.filter(closed=False)
 
         if has_transition_perm(task.cancel, self):
             context['cancel_task_permission'] = True
@@ -252,20 +262,22 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                     action.send(user, verb=verb, action_object=task,
                                 place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been submitted for review" % task.title)
-                elif verb == 'unsubmitted':
+                elif verb == 'unsubmitted' and task.last_assigned_to:
                     assignee = task.last_assigned_to
                     task.assigned_to = assignee
                     if user.id == assignee.id:
                         action.send(user, verb='unsubmitted and picked up', action_object=task,
                                     place_code=task.place.place_code)
-                        messages.success(request, u"You have reopened and picked up the task '%s'" % task.title)
+                        messages.success(request, u"You have unsubmitted and picked up the task '%s'" % task.title)
                     else:
                         action.send(user, verb='unsubmitted and reassigned', action_object=task,
                                     target=assignee,
                                     place_code=task.place.place_code)
-                        messages.success(request, u"Task '%s' has been reopened and reassigned" % task.title)
+                        messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
 
                 else:
+                    if verb == 'closed' or verb == 'cancelled':
+                        task.assigned_to = None
                     action.send(user, verb=verb, action_object=task,
                                 place_code=task.place.place_code)
                     messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
@@ -309,4 +321,38 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
 
         task.save()
 
-        return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
+    # permissions
+    permission_required = ('indigo_api.change_task',)
+
+    http_method_names = [u'post']
+    model = Task
+
+    def post(self, request, *args, **kwargs):
+        task = self.get_object()
+        user = self.request.user
+        task.updated_by_user = user
+        ids = self.request.POST.getlist('workflows')
+
+        if ids:
+            workflows = Workflow.objects.filter(country=task.country, locality=task.locality, id__in=ids).all()
+        else:
+            workflows = []
+
+        self.record_workflow_actions(task, workflows)
+        task.workflows = workflows
+
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})

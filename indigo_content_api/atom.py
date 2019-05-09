@@ -1,3 +1,4 @@
+# coding=utf-8
 from django.utils import feedgenerator
 from rest_framework.reverse import reverse
 from rest_framework_xml.renderers import XMLRenderer
@@ -82,7 +83,7 @@ class AtomFeed(feedgenerator.Atom1Feed):
             "title": "JSON",
         })
 
-        if not doc.stub and not self.summary:
+        if not self.summary:
             # full document body
             content = doc.to_html()
             handler.addQuickElement("content", content, {"type": "html"})
@@ -118,12 +119,11 @@ class AtomFeed(feedgenerator.Atom1Feed):
             desc += " as at " + doc.expression_date.isoformat()
         desc = "<h1>" + desc + "</h1>"
 
-        if not doc.stub:
-            try:
-                preface = doc.doc.act.preface
-                desc += "\n" + HTMLRenderer().render(doc, preface)
-            except AttributeError:
-                pass
+        try:
+            preface = doc.doc.act.preface
+            desc += "\n" + HTMLRenderer().render(doc, preface)
+        except AttributeError:
+            pass
 
         return desc
 
@@ -146,7 +146,7 @@ class AtomRenderer(XMLRenderer):
                       kwargs={'frbr_uri': frbr_uri[1:]})
 
         feed = AtomFeed(
-            title="%s - %s" % (title, frbr_uri),
+            title=u"%s – %s" % (title, frbr_uri),
             feed_url=renderer_context['request'].build_absolute_uri(),
             link=url,
             description="Indigo documents under the %s FRBR URI" % frbr_uri,

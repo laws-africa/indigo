@@ -23,6 +23,7 @@
   Indigo.WorkDetailView = Backbone.View.extend({
     el: '#edit-work-view',
     events: {
+      'change #edit-work-form': 'setDirty',
       'submit #edit-work-form': 'onSubmit',
       'click .change-repeal': 'changeRepeal',
       'click .delete-repeal': 'deleteRepeal',
@@ -32,10 +33,12 @@
       'click .delete-commencing-work': 'deleteCommencingWork',
       'click .delete-publication-document': 'deletePublicationDocument',
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
+      'click .attach-publication-url': 'attachPublicationUrl',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
     publicationDocumentTemplate: '#publication-document-template',
+    publicationUrlTemplate: '#publication-document-url-template',
     bindings: {
       // these are handled directly by the HTML form
       '#id_work-title': 'title',
@@ -45,6 +48,7 @@
       },
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
+      '#id_work-stub': 'stub',
       '#id_work-commencement_date': {
         observe: 'commencement_date',
         onSet: emptyIsNull,
@@ -108,13 +112,13 @@
       this.workRepealTemplate = Handlebars.compile($(this.workRepealTemplate).html());
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
       this.publicationDocumentTemplate = Handlebars.compile($(this.publicationDocumentTemplate).html());
+      this.publicationUrlTemplate = Handlebars.compile($(this.publicationUrlTemplate).html());
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.originalFrbrUri = this.model.get('frbr_uri');
       this.listenTo(this.model, 'change:title change:frbr_uri', this.updatePageTitle);
       this.listenTo(this.model, 'change', this.setDirty);
 
-      this.listenTo(this.model, 'change', this.canSave);
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
@@ -130,7 +134,6 @@
       this.parentChanged();
       this.publicationChanged();
       this.publicationDocumentChanged();
-      this.canSave();
     },
 
     updatePageTitle: function() {
@@ -149,16 +152,10 @@
 
     setDirty: function() {
       this.dirty = true;
-      this.canSave();
     },
 
     setClean: function() {
       this.dirty = false;
-      this.canSave();
-    },
-
-    canSave: function() {
-      this.$('.btn.save').attr('disabled', !this.dirty || !this.model.isValid());
     },
 
     onSubmit: function() {
@@ -272,32 +269,22 @@
     publicationChanged: function() {
       var date = this.model.get('publication_date'),
           number = this.model.get('publication_number'),
-          name = this.model.get('publication_name'),
+          publication = this.model.get('publication_name'),
           country = this.model.get('country'),
-          $ul = this.$('.work-publication-links');
+          $container = this.$('.work-publication-links'),
+          template = this.publicationUrlTemplate,
+          model = this.model;
 
       if (date && number) {
         var url = '/api/publications/' + country + '/find' + 
                   '?date=' + encodeURIComponent(date) + 
-                  '&name=' + encodeURIComponent(name) +
+                  '&publication=' + encodeURIComponent(publication) +
                   '&number=' + encodeURIComponent(number);
-
-        $ul.empty();
 
         $.getJSON(url)
           .done(function(response) {
-            response.publications.forEach(function(pub) {
-              var li = document.createElement('li'),
-                  a = document.createElement('a');
-
-              a.innerText = pub.title || pub.url;
-              a.setAttribute('href', pub.url);
-              a.setAttribute('target', '_blank');
-              a.setAttribute('rel', 'noreferrer');
-
-              li.appendChild(a);
-              $ul.append(li);
-            });
+            $container.find('.publication-url, .h6').remove();
+            $container.prepend(template(response));
           });
       }
     },
@@ -315,6 +302,18 @@
       }
     },
 
+    attachPublicationUrl: function(e) {
+      var elem = e.currentTarget.parentElement;
+
+      this.model.set('publication_document', {
+        size: parseInt(elem.getAttribute('data-size')) || null,
+        mime_type: elem.getAttribute('data-mime-type'),
+        trusted_url: elem.getAttribute('data-url'),
+        filename: elem.getAttribute('data-url'),
+        url: elem.getAttribute('data-url'),
+      });
+    },
+
     publicationDocumentChanged: function() {
       var pub_doc = this.model.get('publication_document'),
           wrapper = this.$('.publication-document-wrapper').empty();
@@ -322,10 +321,16 @@
       if (pub_doc) {
         pub_doc.prettySize = Indigo.formatting.prettyFileSize(pub_doc.size);
         wrapper.append(this.publicationDocumentTemplate(pub_doc));
-        this.$('#id_work-publication_document_file').hide();
+        this.$('.publication-document-file').hide();
         this.$('#id_work-delete_publication_document').val('');
+
+        // from the trusted url, will be ignored if we've attached a file
+        this.$('#id_work-publication_document_trusted_url').val(pub_doc.trusted_url);
+        this.$('#id_work-publication_document_mime_type').val(pub_doc.mime_type);
+        this.$('#id_work-publication_document_size').val(pub_doc.size);
       } else {
-        this.$('#id_work-publication_document_file').show();
+        this.$('#id_work-delete_publication_document').val('on');
+        this.$('.publication-document-file').show();
       }
     },
 
@@ -333,7 +338,6 @@
       e.preventDefault();
 
       this.$('#id_work-publication_document_file')[0].value = '';
-      this.$('#id_work-delete_publication_document').val('on');
       this.model.set('publication_document', null);
     },
 

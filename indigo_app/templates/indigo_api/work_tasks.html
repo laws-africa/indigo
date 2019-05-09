@@ -1,0 +1,15 @@
+{% extends "indigo_api/work_layout.html" %}
+
+{% block title %}Tasks – {{block.super }}{% endblock %}
+
+{% block work-content %}
+    <div class="card">
+      {% if tasks %}
+        {% include 'indigo_api/_task_cards.html' with task_groups=task_groups %}
+      {% else %}
+        <div class="card-body">
+          <p class="text-center"><em>No tasks found for {{ work.title }}.</em></p>
+        </div>
+      {% endif %}
+    </div>
+{% endblock %}

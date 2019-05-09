@@ -39,7 +39,6 @@ DOCUMENT_FILTER_FIELDS = {
     'frbr_uri': ['exact', 'startswith'],
     'language': ['exact'],
     'draft': ['exact'],
-    'stub': ['exact'],
     'expression_date': ['exact', 'lte', 'gte'],
 }
 

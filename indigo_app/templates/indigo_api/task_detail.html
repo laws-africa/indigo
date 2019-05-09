@@ -15,7 +15,11 @@
 
   <div class="d-flex mb-3">
     <div class="mr-3 text-center">
-      <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+      {% if task.state == 'open' and task.assigned_to %}
+        <span class="badge task-badge task-badge-assigned" title="assigned"><i class="fas fa-fw task-icon-assigned"></i></span><br>
+      {% else %}
+        <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+      {% endif %}
       <span class="text-muted">#{{ task.pk }}</span>
     </div>
 
@@ -25,11 +29,11 @@
       {% if task.document %}
         <div class="mb-2">
           <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-          <span class="text-muted">{{ task.document.work.frbr_uri }}</span>
+          <span class="text-muted">{{ task.work.frbr_uri }}</span>
         </div>
       {% elif task.work %}
         <div class="mb-2">
-          <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+          <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
           <span class="text-muted">{{ task.work.frbr_uri }}</span>
         </div>
       {% endif %}
@@ -37,7 +41,7 @@
   </div>
 
   <div class="row">
-    <div class="col-10">
+    <div class="col-9">
       <div class="card">
         <div class="card-body">
           {{ task.description|default:''|urlize|linebreaksbr }}
@@ -56,14 +60,16 @@
           <li class="activity-item">
             {% with task.resolve_anchor as anchor %}
               {% if anchor.element %}
-                Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a> as it appears currently:
+                Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a>
+                as it appears currently
+                {% if not anchor.exact_match %}(<b>{{ task.anchor.id }}</b> may have been moved or removed){% endif %}
                 <div class="sheet-outer" {% if not anchor.is_toc_element %}data-highlight="{{ task.anchor.id }}"{% endif %}>
                   <div class="sheet-inner is-fragment">
                     <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
                   </div>
                 </div>
               {% else %}
-                The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been removed.
+                The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been moved or removed.
               {% endif %}
             {% endwith %}
           </li>
@@ -96,17 +102,17 @@
       </div>
     </div>
 
-    <div class="col-2">
+    <div class="col-3">
       <h6>Assigned to</h6>
-      <ul class="list-unstyled">
+      <div class="mb-2">
         {% if task.assigned_to %}
-          <li>{% user_profile task.assigned_to %}</li>
+          {% user_profile task.assigned_to %}
         {% else %}
-          <li><em>Unassigned</em></li>
+          <em>Unassigned</em>
         {% endif %}
-      </ul>
+      </div>
 
-
+      {% if perms.indigo_api.change_task %}
         <form method="POST">
           {% csrf_token %}
           {% if task.assigned_to %}
@@ -126,7 +132,7 @@
           </div>
           {% endif %}
         </form>
-
+      {% endif %}
 
       <h6>Labels</h6>
       <ul class="list-unstyled">
@@ -141,18 +147,31 @@
         {% endwith %}
       </ul>
 
-      <h6>Workflows</h6>
-      <ul class="list-unstyled">
-        {% with task.workflows.all as workflows %}
-        {% if workflows %}
-          {% for workflow in workflows %}
-            <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a></li>
-          {% endfor %}
-        {% else %}
-          <li><em>None</em></li>
-        {% endif %}
-        {% endwith %}
-      </ul>
+      {% with task.workflows.all as workflows %}
+        <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST" data-submit="ajax">
+          {% csrf_token %}
+
+          <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
+              data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+              {% if not perms.indigo_api.change_task %}disabled{% endif %}
+              data-none-selected-text="Workflows" data-selected-text-format="static">
+
+            {% for workflow in possible_workflows|dictsort:'title' %}
+              <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>#{{ workflow.pk }} – {{ workflow.title }}</option>
+            {% endfor %}
+          </select>
+        </form>
+        <ul class="list-unstyled mb-2">
+          {% if workflows %}
+            {% for workflow in workflows|dictsort:'title' %}
+              <li><a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }} – {{ workflow.title }}</a></li>
+            {% endfor %}
+          {% else %}
+            <li><em>None</em></li>
+          {% endif %}
+        </ul>
+      {% endwith %}
+
     </div>
   </div>
 </div>

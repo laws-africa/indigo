@@ -47,6 +47,10 @@
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
       aceMode: 'ace/mode/indigo',
     },
+    // CSS selector for elements that can hold annotations
+    annotatable: ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
+                 ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
+                 ".akn-article, .akn-paragraph, .akn-subheading, .akn-item, table",
     toc: {
       elements: {
         akomaNtoso: 1,
@@ -63,10 +67,16 @@
       titles: {
         default     : function(i) { return i.num + " " + i.heading; },
         akomaNtoso  : function(i) { return "Entire document"; },
-        chapter     : function(i) { return "Ch. " + i.num + " " + i.heading; },
+        chapter     : function(i) { return "Ch. " + i.num + " – " + i.heading; },
         conclusions : function(i) { return "Conclusions"; },
         coverpage   : function(i) { return "Coverpage"; },
-        part        : function(i) { return "Part " + i.num + " " + i.heading; },
+        part        : function(i) {
+                                    if (i.heading) {
+                                      return "Part " + i.num + " – " + i.heading;
+                                    } else {
+                                      return "Part " + i.num;
+                                    }
+        },
         preamble    : function(i) { return "Preamble"; },
         preface     : function(i) { return "Preface"; },
         components  : function(i) { return "Schedules"; },
@@ -99,6 +109,7 @@
   Indigo.traditions.za = new Indigo.Tradition({
     country: 'za',
     grammar: Indigo.traditions.default.settings.grammar,
+    annotatable: Indigo.traditions.default.settings.annotatable,
     toc: {
       elements: Indigo.traditions.default.settings.toc.elements,
       titles: {
@@ -124,6 +135,7 @@
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-division, .akn-subdivision, .akn-article, .akn-component, .akn-components',
       aceMode: 'ace/mode/indigo_pl',
     },
+    annotatable: Indigo.traditions.default.settings.annotatable,
     toc: {
       elements: {
         akomaNtoso: 1,

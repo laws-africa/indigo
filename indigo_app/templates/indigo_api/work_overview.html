@@ -12,7 +12,10 @@
     {% endif %}
   </div>
 
-  <h3>{{ work.title }}</h3>
+  <h3>
+    {{ work.title }}
+    {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
+  </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 
   {% block country %}
@@ -35,7 +38,7 @@
 
       <div class="row">
         <div class="col-sm-6">
-          <dl>
+          <dl class="mb-0">
             <dt>Promulgation</dt>
             <dd>
               <div>
@@ -59,18 +62,18 @@
               {% endif %}
 
               {% if work.commencing_work %}
-              <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+              <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
               {% endif %}
             </dd>
           </dl>
         </div>
 
         <div class="col-sm-6">
-          <dl>
+          <dl class="mb-0">
             {% if work.parent_work %}
             <dt>Parent</dt>
             <dd>
-              <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+              <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
             </dd>
             {% endif %}
 
@@ -88,7 +91,7 @@
               {% if work.repealed_date %}
                 Repealed on {{ work.repealed_date|date:"Y-m-d" }}
                 {% if work.repealed_by %}
-                by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+                by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
                 {% endif %}
               {% else %}
                 <i>(not repealed)</i>
@@ -96,8 +99,18 @@
             </dd>
           </dl>
         </div>
-
       </div>
+
+      {% if work.properties %}
+        <div class="row">
+          {% for prop in work.labeled_properties %}
+            <dl class="col-sm-6 mb-0">
+              <dt>{{ prop.label }}</dt>
+              <dd>{{ prop.value }}</dd>
+            </dl>
+          {% endfor %}
+        </div>
+      {% endif %}
     </div>
   </div>
   {% endblock %}
@@ -109,21 +122,13 @@
     </div>
   </div>
 
+  {% if work.stub and work.document_set.undeleted.exists %}
+    <p class="alert alert-warning">
+      <i class="fas fa-exclamation-triangle text-warning"></i> Stub works should not have points in time. Either remove these points in time or don't mark this work as a stub.
+    </p>
+  {% endif %}
+
   {% include 'indigo_api/_work_points_in_time.html' with work=work editable=False %}
   {% endblock %}
-
-  {% block active_tasks %}
-  <div class="row mb-3 mt-5">
-    <div class="col">
-      <h4>Active tasks</h4>
-    </div>
-    <div class="col text-right">
-      <a href="{% url 'tasks' place=place.place_code %}?frbr_uri={{ work.frbr_uri }}" class="btn btn-primary">View all tasks</a>
-    </div>
-  </div>
-  <div class="card">
-  {% include 'indigo_api/_task_list.html' with tasks=active_tasks %}
-  </div>
- {% endblock %}
 
 {% endblock %}

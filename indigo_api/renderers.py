@@ -39,7 +39,7 @@ def file_candidates(document, prefix='', suffix=''):
     * doctype-language
     * doctype
     """
-    uri = document.doc.frbr_uri
+    uri = document.expression_uri
     doctype = uri.doctype
     language = uri.language
     country = uri.country
@@ -124,6 +124,9 @@ class AkomaNtosoRenderer(XMLRenderer):
     """ Django Rest Framework Akoma Ntoso Renderer.
     """
     serializer_class = NoopSerializer
+    # these are used by the document download menu
+    icon = 'far fa-file-code'
+    title = 'Akoma Ntoso XML'
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, Document):
@@ -142,11 +145,10 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, no_stub_content=False, resolver=None):
+    def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None):
         self.template_name = template_name
         self.standalone = standalone
         self.coverpage = coverpage
-        self.no_stub_content = no_stub_content
         self.resolver = resolver or settings.RESOLVER_URL
         self.media_url = ''
 
@@ -165,9 +167,6 @@ class HTMLRenderer(object):
             if not self.standalone:
                 # we're done
                 return content_html
-        elif self.no_stub_content and document.stub:
-            # Stub
-            content_html = ''
         else:
             # the entire document
             content_html = renderer.render_xml(document.document_xml)
@@ -254,6 +253,11 @@ class HTMLRenderer(object):
 class HTMLResponseRenderer(StaticHTMLRenderer):
     serializer_class = NoopSerializer
 
+    # these are used by the document download menu
+    icon = 'far fa-file-alt'
+    title = 'Standalone HTML'
+    suffix = '?standalone=1'
+
     def render(self, document, media_type=None, renderer_context=None):
         if not isinstance(document, Document):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
@@ -262,7 +266,6 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
         request = renderer_context['request']
 
         renderer = HTMLRenderer()
-        renderer.no_stub_content = getattr(view, 'no_stub_content', False)
         renderer.standalone = request.GET.get('standalone') == '1'
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
         renderer.media_url = request.GET.get('media-url', '')
@@ -366,7 +369,7 @@ class PDFRenderer(HTMLRenderer):
         # the margin slightly
 
         footer_font = 'Georgia, "Times New Roman", serif'
-        footer_font_size = '10'
+        footer_font_size = '8'
         footer_spacing = 5
         margin_top = 36.3 - footer_spacing
         margin_bottom = 36.3 - footer_spacing
@@ -411,7 +414,7 @@ class EPUBRenderer(HTMLRenderer):
     def render(self, document, element=None):
         self.create_book()
 
-        self.book.set_identifier(document.doc.frbr_uri.expression_uri())
+        self.book.set_identifier(document.expression_uri.expression_uri())
         self.book.set_title(document.title)
         self.book.set_language(document.language.language.iso)
         self.book.add_author(settings.INDIGO_ORGANISATION)
@@ -425,7 +428,7 @@ class EPUBRenderer(HTMLRenderer):
     def render_many(self, documents):
         self.create_book()
 
-        self.book.set_identifier(':'.join(d.doc.frbr_uri.expression_uri() for d in documents))
+        self.book.set_identifier(':'.join(d.expression_uri.expression_uri() for d in documents))
         self.book.add_author(settings.INDIGO_ORGANISATION)
         self.book.set_title('%d documents' % len(documents))
 
@@ -583,6 +586,9 @@ class PDFResponseRenderer(BaseRenderer):
     media_type = 'application/pdf'
     format = 'pdf'
     serializer_class = NoopSerializer
+    # these are used by the document download menu
+    icon = 'far fa-file-pdf'
+    title = 'PDF'
 
     def __init__(self, *args, **kwargs):
         super(PDFResponseRenderer, self).__init__(*args, **kwargs)
@@ -598,7 +604,6 @@ class PDFResponseRenderer(BaseRenderer):
         request = renderer_context['request']
 
         renderer = PDFRenderer()
-        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
@@ -651,6 +656,9 @@ class EPUBResponseRenderer(PDFResponseRenderer):
     """
     media_type = 'application/epub+zip'
     format = 'epub'
+    # these are used by the document download menu
+    icon = 'fas fa-book'
+    title = 'ePUB'
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):
@@ -662,7 +670,6 @@ class EPUBResponseRenderer(PDFResponseRenderer):
         filename = self.get_filename(data, view)
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         renderer = EPUBRenderer()
-        renderer.no_stub_content = getattr(renderer_context['view'], 'no_stub_content', False)
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
@@ -699,6 +706,9 @@ class ZIPResponseRenderer(BaseRenderer):
     media_type = 'application/zip'
     format = 'zip'
     serializer_class = NoopSerializer
+    # these are used by the document download menu
+    icon = 'far fa-file-archive'
+    title = 'ZIP Archive'
 
     def render(self, data, media_type=None, renderer_context=None):
         if not isinstance(data, (Document, list)):

@@ -9,6 +9,7 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
+      "publication_date": "2014-04-02",
       "frbr_uri": "/za/act/2014/10"
     }
   },
@@ -66,6 +67,7 @@
       "updated_at": "2015-02-17T10:57:47.779Z",
       "created_by_user": 1,
       "updated_by_user": 1,
+      "stub": true,
       "frbr_uri": "/za/act/2010/2"
     }
   },

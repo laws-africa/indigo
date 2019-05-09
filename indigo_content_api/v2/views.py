@@ -21,8 +21,8 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
         if getattr(response, 'accepted_media_type', None) == 'application/json' and isinstance(response.data, dict):
             self.rewrite_frbr_uris(response.data)
 
-        elif getattr(response, 'accepted_renderer', None) and response.accepted_renderer.media_type == 'application/xml':
-            self.rewrite_akn_xml(response.data)
+        elif getattr(response, 'accepted_renderer', None) and response.accepted_renderer.media_type in ['application/xml', 'text/html']:
+            self.rewrite_akn(response.data)
 
         return response
 
@@ -43,7 +43,10 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
                     for x in val:
                         self.rewrite_frbr_uris(x)
 
-    def rewrite_akn_xml(self, document):
+    def rewrite_akn(self, document):
+        if not hasattr(document, 'doc'):
+            return
+
         for elem in document.doc.root.xpath('//a:FRBRuri | //a:FRBRthis', namespaces={'a': document.doc.namespace}):
             v = elem.get('value') or ''
             if v and not v.startswith('/akn'):

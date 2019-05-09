@@ -33,6 +33,11 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
   var _this = this;
   var url = $(this).data('popup-url');
 
+  $.ajaxSetup({
+    url: "work_popup.html",
+    global: false,
+  });
+
   function popup(html) {
     $(_this).popover({content: html, html: true}).popover('show');
   }

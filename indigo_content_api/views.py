@@ -402,15 +402,15 @@ class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
 
 
 class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
-    non_akn_href_re = re.compile(r'^/[a-z]{2}[-/]')
+    non_akn_href_re = re.compile(r'^/[a-z]{2}[/-].*')
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super(PublishedDocumentDetailViewV2, self).finalize_response(request, response, *args, **kwargs)
 
-        if response.accepted_media_type == 'application/json' and isinstance(response.data, dict):
+        if getattr(response, 'accepted_media_type', None) == 'application/json' and isinstance(response.data, dict):
             self.rewrite_frbr_uris(response.data)
 
-        elif response.accepted_renderer and response.accepted_renderer.media_type == 'application/xml':
+        elif getattr(response, 'accepted_renderer', None) and response.accepted_renderer.media_type == 'application/xml':
             self.rewrite_akn_xml(response.data)
 
         return response
@@ -421,7 +421,7 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
         """
         if isinstance(data, dict):
             for key, val in data.iteritems():
-                if key.endswith('frbr_uri') or key == 'amending_uri':
+                if key.endswith('frbr_uri') or key == 'amending_uri' or key == 'repealing_uri':
                     if val and not val.startswith('/akn'):
                         data[key] = '/akn' + val
 

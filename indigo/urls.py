@@ -19,7 +19,7 @@ urlpatterns = [
     url(r'^resolver/', include('indigo_resolver.urls')),
     url(r'^', include('indigo_social.urls')),
     url(r'^', include('indigo_app.urls')),
-    url(r'^comments/', include('django_comments.urls')),
+
     url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
     url(r'^ping$', indigo_api.views.misc.ping),
 ]

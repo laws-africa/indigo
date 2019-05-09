@@ -91,14 +91,7 @@
         <table>
           <form action="{% comment_form_target %}" method="post">
             {% csrf_token %}
-            <textarea
-                    id="id_comment"
-                    name="comment"
-                    class="form-control"
-                    required=""
-                    maxlength="3000"
-                    rows="3"
-                    placeholder="Add comment"></textarea>
+            <textarea id="id_comment" name="comment" class="form-control" maxlength="3000" rows="3" placeholder="Add comment" required></textarea>
             {{ form.honeypot }}
             {{ form.content_type }}
             {{ form.object_pk }}

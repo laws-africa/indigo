@@ -134,7 +134,7 @@ class AkomaNtosoRenderer(XMLRenderer):
 
         view = renderer_context['view']
         filename = generate_filename(data, view, self.format)
-        renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
+        renderer_context['response']['Content-Disposition'] = 'attachment; filename=%s' % filename
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             return data.document_xml

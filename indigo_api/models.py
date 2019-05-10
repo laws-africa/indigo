@@ -293,6 +293,13 @@ class Work(models.Model):
 
         return super(Work, self).save(*args, **kwargs)
 
+    def save_with_revision(self, user):
+        """ Save this work and create a new revision at the same time.
+        """
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
+            self.save()
+
     def can_delete(self):
         return (not self.document_set.undeleted().exists() and
                 not self.child_works.exists() and

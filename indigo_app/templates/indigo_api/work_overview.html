@@ -140,8 +140,18 @@
         </div>
       </div>
 
-      {% if work.metrics.n_expressions < work.metrics.n_expected_expressions %}
-        <div>Publish all points in time<br>to improve completeness.</div>
+      {% if work.metrics.p_complete < 100 %}
+        <ul class="mb-0 mt-3 pl-4">
+          {% if not work.publication_document %}
+            <li>Add a publication document.</li>
+          {% endif %}
+          {% if not work.stub and work.metrics.n_expressions == 0 %}
+            <li>Publish at least one point in time.</li>
+          {% endif %}
+          {% if not work.stub and work.metrics.n_expressions < work.metrics.n_expected_expressions %}
+            <li>Publish all points in time.</li>
+          {% endif %}
+        </ul>
       {% endif %}
     </div>
   </div>

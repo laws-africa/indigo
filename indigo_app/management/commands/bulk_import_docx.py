@@ -129,7 +129,7 @@ class Command(BaseCommand):
         att.file.save(att.filename, docx_file)
 
         document.updated_by_user = user
-        document.save()
+        document.save_with_revision(user)
         self.create_review_task(document, user, filename)
 
         # TODO: fix action signal to be `created` rather than `updated`

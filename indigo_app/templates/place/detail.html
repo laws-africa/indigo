@@ -6,6 +6,44 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
+
+  <div class="d-flex justify-content-between">
+    <div></div>
+    <div class="d-flex mb-2">
+      <div class="p-relative mr-2" style="height: 55px; width: 150px;">
+        <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
+      </div>
+
+      <div>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="60" height="60">
+          <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
+            <stop offset="0%" stop-opacity="1" stop-color="#439f78"></stop>
+            <stop offset="{{ p_complete }}%" stop-opacity="1" stop-color="#439f78"></stop>
+            <stop offset="{{ p_complete }%" stop-opacity="1" stop-color="white"></stop>
+            <stop offset="100%" stop-opacity="1" stop-color="white"></stop>
+          </linearGradient>
+          <circle cx="50" cy="50" r="45" stroke="#c8ced3" stroke-width="5"></circle>
+          <circle cx="50" cy="50" r="42" fill="url(#lg)" stroke="white" stroke-width="3"></circle>
+        </svg>
+      </div>
+
+      <div class="ml-2 mt-2">
+        <h3 class="mb-0">{{ p_complete }}%</h3>
+        Complete
+      </div>
+    </div>
+
+    <div>
+      <div class="btn-group">
+        <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New work</a>
+        <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New work batch</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <div class="card-header">
       <div class="d-flex">
@@ -33,7 +71,7 @@
           </select>
         </div>
 
-        <div class="mr-3 pr-3 border-right">
+        <div>
           <select class="form-control sortby" name="sort">
             <option value="-updated_at" selected>Most recently updated</option>
             <option value="updated_at">Least recently updated</option>
@@ -41,14 +79,6 @@
             <option value="-title">Title (Z-A)</option>
             <option value="frbr_uri">FRBR URI</option>
           </select>
-        </div>
-
-        <div class="btn-group">
-          <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New work</a>
-          <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New work batch</a>
-          </div>
         </div>
 
       </div>
@@ -188,6 +218,9 @@
   {{/each}}
 {% endverbatim %}
 </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css">
 
 <script type="text/javascript">
 window.Indigo.countries = {{ indigo_countries_json|safe }};

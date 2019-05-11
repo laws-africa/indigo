@@ -27,6 +27,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, WorkPropertyFormSet
+from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -266,6 +267,9 @@ class WorkOverviewView(WorkViewBase, DetailView):
             .exclude(state='cancelled')\
             .order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline()
+
+        # ensure work metrics are up to date
+        WorkMetrics.create_or_update(self.work)
 
         return context
 

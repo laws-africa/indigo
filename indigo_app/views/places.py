@@ -117,11 +117,11 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         amendments = {a['amended_work_id']: {'n_amendments': a['n_amendments']} for a in amendments}
         context['work_n_amendments_json'] = json.dumps(amendments)
 
-        # completeness history
+        # breadth completeness history
         context['completeness_history'] = list(DailyWorkMetrics.objects
             .filter(place_code=self.place.place_code)
             .order_by('-date')
-            .values_list('p_complete', flat=True)[:90])
+            .values_list('p_breadth_complete', flat=True)[:90])
         context['completeness_history'].reverse()
         context['p_complete'] = context['completeness_history'][-1]
 

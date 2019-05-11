@@ -16,10 +16,14 @@ class Migration(migrations.Migration):
 UPDATE
   indigo_metrics_daily_workmetrics
 SET
+  p_breadth_complete = CASE WHEN n_works = 0 THEN 0 ELSE (100::float * n_complete_works / n_works)::int END,
   p_depth_complete = CASE WHEN n_expected_expressions = 0 THEN 100 ELSE (100::float * n_expressions / n_expected_expressions)::int END,
-  p_complete       = CASE WHEN n_expected_expressions = 0 THEN 100 ELSE (100::float * n_expressions / n_expected_expressions)::int END
+  p_complete       = (
+    CASE WHEN n_works = 0 THEN 0 ELSE (100::float * n_complete_works / n_works)::int END +
+    CASE WHEN n_expected_expressions = 0 THEN 100 ELSE (100::float * n_expressions / n_expected_expressions)::int END) / 2
 WHERE
   p_depth_complete IS NULL
+  AND p_breadth_complete IS NULL
   AND p_complete IS NULL 
 """, migrations.RunSQL.noop)
     ]

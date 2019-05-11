@@ -14,12 +14,12 @@
         <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
       </div>
 
-      <div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="60" height="60">
+      <div class="pt-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
           <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
             <stop offset="0%" stop-opacity="1" stop-color="#439f78"></stop>
             <stop offset="{{ p_complete }}%" stop-opacity="1" stop-color="#439f78"></stop>
-            <stop offset="{{ p_complete }%" stop-opacity="1" stop-color="white"></stop>
+            <stop offset="{{ p_complete }}%" stop-opacity="1" stop-color="white"></stop>
             <stop offset="100%" stop-opacity="1" stop-color="white"></stop>
           </linearGradient>
           <circle cx="50" cy="50" r="45" stroke="#c8ced3" stroke-width="5"></circle>

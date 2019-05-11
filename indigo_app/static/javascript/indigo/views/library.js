@@ -475,12 +475,19 @@
               data: data,
               backgroundColor: 'rgba(67, 159, 120, 0.2)',
               borderColor: 'rgba(67, 159, 120, 1)',
-              borderWidth: 1,
+              borderWidth: 2,
               fill: 'start',
             }]
           },
           options: {
             maintainAspectRatio: false,
+            tooltips: {
+              callbacks: {
+                title: function(items, data) { return items[0].value + '%'; },
+                label: function(item, data) { return; },
+                beforeLabel: function(item, data) { return; },
+              },
+            },
             layout: {
               padding: {
                 top: 10,

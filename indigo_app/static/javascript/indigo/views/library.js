@@ -490,10 +490,10 @@
             },
             layout: {
               padding: {
-                top: 10,
+                top: 2,
                 left: 2,
                 right: 2,
-                bottom: 0,
+                bottom: 1,
               }
             },
             legend: {display: false},

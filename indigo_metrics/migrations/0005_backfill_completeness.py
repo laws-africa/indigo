@@ -24,6 +24,6 @@ SET
 WHERE
   p_depth_complete IS NULL
   AND p_breadth_complete IS NULL
-  AND p_complete IS NULL 
+  AND p_complete IS NULL
 """, migrations.RunSQL.noop)
     ]

@@ -17,6 +17,7 @@ urlpatterns = [
     url(r'^accounts/accept-terms$', users.AcceptTermsView.as_view(), name='accept_terms'),
 
     url(r'^terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
+    url(r'^help', RedirectView.as_view(url='https://indigo.readthedocs.io/en/latest/', permanent=False), name='help'),
 
     url(r'^places/$', places.PlaceListView.as_view(), name='places'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/$', places.PlaceDetailView.as_view(), name='place'),

@@ -5,3 +5,9 @@
 .wb-all {
   word-break: break-all;
 }
+
+.p-sticky-0 {
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+}

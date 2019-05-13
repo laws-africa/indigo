@@ -57,8 +57,23 @@
       </div>
     </div>
 
-    <div class="card-header">
+    <div class="card-header p-sticky-0">
       {% include 'indigo_api/_task_filter_form.html' with form=form formats=False status=False %}
+
+      <form id="bulk-task-update-form" class="d-none" action="{% url 'bulk_task_update' place=place.place_code %}?next={{ request.get_full_path|urlencode }}" method="POST">
+        {% csrf_token %}
+
+        <div class="row">
+          <div class="col-3">
+            <select name="assigned_to" class="form-control">
+              <option>Assign to</option>
+            </select>
+          </div>
+          <div class="col-3 offset-6 text-right">
+            <button type="submit" class="btn btn-success">Save changes</button>
+          </div>
+        </div>
+      </form>
     </div>
 
     {% if has_tasks %}

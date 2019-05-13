@@ -1,6 +1,7 @@
 {% load humanize indigo_app %}
 {% load account %}
 
+
 <div class="bg-light p-3">
   <div class="row">
     {% for col in task_groups  %}
@@ -27,7 +28,14 @@
                 </form>
               {% endif %}
 
-              <div class="small text-muted mb-1">#{{ task.id }}</div>
+              <div class="small text-muted mb-1">
+                <label class="mb-0 font-weight-normal">
+                  {% if task.is_open %}
+                    <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form">
+                  {% endif %}
+                  #{{ task.id }}
+                </label>
+              </div>
               <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="d-block mb-1">{{ task.title }}</a>
 
               {% if task.document %}
@@ -56,7 +64,7 @@
                   <small class="text-muted">{% user_profile task.assigned_to %}</small>
 
                   {% if perms.indigo_api.change_task %}
-                    <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                    <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
                       {% csrf_token %}
 
                       <div class="dropdown">
@@ -76,7 +84,7 @@
                 </div>
               {% elif task.state == 'open' or task.state == 'pending_review' %}
                 {% if perms.indigo_api.change_task and task.potential_assignees %}
-                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                  <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
                     {% csrf_token %}
                     <div class="dropdown">
                       <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

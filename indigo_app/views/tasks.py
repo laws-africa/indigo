@@ -12,6 +12,8 @@ from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import BaseFormView
+from allauth.account.utils import user_display
 
 from django_fsm import has_transition_perm
 
@@ -19,7 +21,7 @@ from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -185,7 +187,6 @@ class TaskEditView(TaskViewBase, UpdateView):
         task = self.object
         task.updated_by_user = self.request.user
 
-
         # action signals
         # first, was something changed other than workflows?
         if form.changed_data:
@@ -298,7 +299,7 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
     def post(self, request, *args, **kwargs):
         task = self.get_object()
         user = self.request.user
-        task.updated_by_user = user
+
         if self.unassign:
             task.assigned_to = None
             action.send(user, verb='unassigned', action_object=task,
@@ -306,19 +307,15 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
             messages.success(request, u"Task '%s' has been unassigned" % task.title)
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
-            if task.country not in assignee.editor.permitted_countries.all():
+            if not task.can_assign_to(assignee):
                 raise PermissionDenied
-            task.assigned_to = assignee
-            if user.id == assignee.id:
-                action.send(user, verb='picked up', action_object=task,
-                            place_code=task.place.place_code)
+            task.assign_to(assignee, user)
+            if user == assignee:
                 messages.success(request, u"You have picked up the task '%s'" % task.title)
             else:
-                action.send(user, verb='assigned', action_object=task,
-                            target=assignee,
-                            place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been assigned" % task.title)
 
+        task.updated_by_user = user
         task.save()
 
         return redirect(self.get_redirect_url())
@@ -356,3 +353,43 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class BulkTaskUpdateView(TaskViewBase, BaseFormView):
+    """ Bulk update a set of tasks.
+    """
+    http_method_names = ['post']
+    form_class = BulkTaskUpdateForm
+    permission_required = ('indigo_api.change_task',)
+
+    def get_form_kwargs(self):
+        kwargs = super(BulkTaskUpdateView, self).get_form_kwargs()
+        kwargs['country'] = self.country
+        return kwargs
+
+    def form_valid(self, form):
+        assignee = form.cleaned_data.get('assigned_to')
+        tasks = form.cleaned_data['tasks']
+        count = 0
+
+        for task in tasks:
+            if task.is_open and assignee and task.can_assign_to(assignee):
+                task.assign_to(assignee, self.request.user)
+                task.updated_by_user = self.request.user
+                task.save()
+                count += 1
+
+        if count > 0:
+            plural = 's' if count > 1 else ''
+            messages.success(self.request, "Assigned {} task{} to {}".format(count, plural, user_display(assignee)))
+
+        return redirect(self.get_redirect_url())
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Computer says no.")
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('tasks', kwargs={'place': self.kwargs['place']})

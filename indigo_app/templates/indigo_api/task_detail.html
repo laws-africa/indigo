@@ -1,9 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
-
-{% load activity_tags %}
-{% load humanize indigo_app %}
-{% load account %}
-{% load comments %}
+{% load activity_tags humanize indigo_app account comments %}
 
 {% block title %}{{ task.title }}{% endblock %}
 
@@ -65,11 +61,11 @@
           {% for comment in comment_list %}
             <li class="activity-item card">
               <div class="card-header">
-                {% user_profile task.created_by_user %} commented <span class="time-ago"
-                                                                        data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>
+                {% user_profile task.created_by_user %} commented
+                <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>:
               </div>
               <div class="card-body">
-                {{ comment.comment | safe }}
+                {{ comment.comment|urlize|linebreaksbr }}
               </div>
             </li>
           {% endfor %}
@@ -96,28 +92,38 @@
             </li>
           {% endif %}
         </ul>
+
+        <hr>
+
         {% if user.is_authenticated %}
           {% get_comment_form for task as form %}
-          <form action="{% comment_form_target %}" method="post">
+          <form action="{% comment_form_target %}" method="post" id="task-comment-form">
             {% csrf_token %}
-            <textarea id="id_comment" name="comment" class="form-control" maxlength="3000" rows="10"
-                      cols="80" placeholder="Add comment" required></textarea>
-            <input type="hidden" name="honeypot" id="id_honeypot">
+            {{ form.honeypot.as_hidden }}
             {{ form.content_type }}
             {{ form.object_pk }}
             {{ form.timestamp }}
             {{ form.security_hash }}
-            <div class="form-group">
-              <input type="hidden" name="next"
-                     value="{% url 'task_detail' place=place.place_code pk=task.pk %}"/>
-            </div>
-            <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit"/>
+            <input type="hidden" name="next" value="{% url 'task_detail' place=place.place_code pk=task.pk %}"/>
 
+            <div class="card">
+              <div class="card-body">
+                <textarea id="id_comment" name="comment" class="form-control mb-3" maxlength="3000" rows="3"
+                          cols="80" placeholder="Add a comment"></textarea>
+
+                <div class="text-right">
+                  <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" disabled>
+                </div>
+              </div>
+            </div>
 
           </form>
         {% else %}
           <p>Please <a href="{{ login_url }}">log in</a> to leave a comment.</p>
         {% endif %}
+
+        <hr>
+
         <div class="mt-3">
           <form method="POST">
             {% csrf_token %}

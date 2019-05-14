@@ -302,9 +302,7 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
         user = self.request.user
 
         if self.unassign:
-            task.assigned_to = None
-            action.send(user, verb='unassigned', action_object=task,
-                        place_code=task.place.place_code)
+            task.assign_to(None, user)
             messages.success(request, u"Task '%s' has been unassigned" % task.title)
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
@@ -374,15 +372,20 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         count = 0
 
         for task in tasks:
-            if task.is_open and assignee and task.can_assign_to(assignee):
-                task.assign_to(assignee, self.request.user)
-                task.updated_by_user = self.request.user
-                task.save()
-                count += 1
+            if task.is_open:
+                if form.unassign or (assignee and task.can_assign_to(assignee)):
+                    if task.assigned_to != assignee:
+                        task.assign_to(assignee, self.request.user)
+                        task.updated_by_user = self.request.user
+                        task.save()
+                        count += 1
 
         if count > 0:
             plural = 's' if count > 1 else ''
-            messages.success(self.request, "Assigned {} task{} to {}".format(count, plural, user_display(assignee)))
+            if form.unassign:
+                messages.success(self.request, "Unassigned {} task{}".format(count, plural))
+            elif assignee:
+                messages.success(self.request, "Assigned {} task{} to {}".format(count, plural, user_display(assignee)))
 
         return redirect(self.get_redirect_url())
 

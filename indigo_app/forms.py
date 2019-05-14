@@ -260,6 +260,7 @@ class WorkflowFilterForm(forms.Form):
 class BulkTaskUpdateForm(forms.Form):
     tasks = forms.ModelMultipleChoiceField(queryset=Task.objects)
     assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
+    unassign = False
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -271,3 +272,9 @@ class BulkTaskUpdateForm(forms.Form):
         if user and self.country not in user.editor.permitted_countries.all():
             raise forms.ValidationError("That user doesn't have appropriate permissions for {}".format(self.country.name))
         return user
+
+    def clean(self):
+        if self.data.get('assigned_to') == '-1':
+            del self.errors['assigned_to']
+            self.cleaned_data['assigned_to'] = None
+            self.unassign = True

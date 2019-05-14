@@ -28,12 +28,14 @@
               {% endif %}
 
               <div class="small text-muted mb-1">
-                <label class="mb-0 font-weight-normal {% if task.is_open and selectable %}c-pointer{% endif %}">
-                  {% if task.is_open and selectable %}
+                {% if perms.indigo_api.change_task and task.is_open and selectable %}
+                  <label class="mb-0 font-weight-normal c-pointer">
                     <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form">
-                  {% endif %}
+                    #{{ task.id }}
+                  </label>
+                {% else %}
                   #{{ task.id }}
-                </label>
+                {% endif %}
               </div>
               <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="d-block mb-1">{{ task.title }}</a>
 

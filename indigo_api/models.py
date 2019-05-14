@@ -1139,13 +1139,18 @@ class Task(models.Model):
         return user.editor.permitted_countries.filter(pk=self.country.pk).exists()
 
     def assign_to(self, assignee, assigned_by):
+        """ Assign this task to assignee (may be None)
+        """
         self.assigned_to = assignee
         if assigned_by == self.assigned_to:
             action.send(self.assigned_to, verb='picked up', action_object=self,
                         place_code=self.place.place_code)
-        else:
+        elif assignee:
             action.send(assigned_by, verb='assigned', action_object=self,
                         target=self.assigned_to,
+                        place_code=self.place.place_code)
+        else:
+            action.send(assigned_by, verb='unassigned', action_object=self,
                         place_code=self.place.place_code)
 
     @classmethod

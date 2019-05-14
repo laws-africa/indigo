@@ -1,14 +1,13 @@
 <form id="bulk-task-update-form" class="d-none" action="{% url 'bulk_task_update' place=place.place_code %}?next={{ request.get_full_path|urlencode }}" method="POST">
   {% csrf_token %}
 
-  <div class="row">
+  <div class="row align-items-end">
     <div class="col-3">
-      <select name="assigned_to" class="form-control">
-        <option>Assign to</option>
-      </select>
+      <label>Assign to</label>
+      <select name="assigned_to" class="form-control"></select>
     </div>
     <div class="col-3 offset-6 text-right">
-      <button type="submit" class="btn btn-success">Save changes</button>
+      <button type="submit" class="btn btn-success">Update selected tasks</button>
     </div>
   </div>
 </form>

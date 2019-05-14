@@ -55,16 +55,23 @@
         }
       });
 
-      if (options) {
-        var $select = this.$form.find('[name=assigned_to]');
-        $select.empty();
-        options.forEach(function (value) {
-          var option = document.createElement('option');
-          option.value = value;
-          option.innerText = names[value];
-          $select.append(option);
-        });
-      }
+      var $select = this.$form.find('[name=assigned_to]').empty();
+      var option = document.createElement('option');
+      option.value = '-1';
+      option.innerText = 'Unassign';
+      $select.append(option);
+      option = document.createElement('option');
+      option.innerText = '-----';
+      option.disabled = true;
+      $select.append(option);
+
+      options = _.sortBy(options || [], function(id) { return names[id]; });
+      options.forEach(function (value) {
+        var option = document.createElement('option');
+        option.value = value;
+        option.innerText = names[value];
+        $select.append(option);
+      });
     },
   });
 })(window);

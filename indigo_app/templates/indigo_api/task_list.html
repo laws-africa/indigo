@@ -7,13 +7,17 @@
 
 <div class="container mt-3">
   <div class="card">
-    <div class="card-header d-flex p-sticky-0">
-      <div class="flex-grow-1">
-        {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True %}
-      </div>
+    <div class="card-header p-sticky-0">
+      <div>
+        <div class="d-flex">
+          <div class="flex-grow-1">
+            {% include 'indigo_api/_task_filter_form.html' with form=form format=True status=True %}
+          </div>
 
-      <div class="pl-3 border-left">
-        <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
+          <div class="pl-3 border-left">
+            <a href="{% url 'create_task' place=place.place_code %}" class="btn btn-success">New task</a>
+          </div>
+        </div>
       </div>
 
       {% include 'indigo_api/_task_bulk_update_form.html' %}

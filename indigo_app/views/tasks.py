@@ -45,6 +45,7 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
     model = Task
+    js_view = 'TaskListView TaskBulkUpdateView'
 
     def get(self, request, *args, **kwargs):
         # allows us to set defaults on the form
@@ -355,7 +356,7 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 
-class BulkTaskUpdateView(TaskViewBase, BaseFormView):
+class TaskBulkUpdateView(TaskViewBase, BaseFormView):
     """ Bulk update a set of tasks.
     """
     http_method_names = ['post']
@@ -363,7 +364,7 @@ class BulkTaskUpdateView(TaskViewBase, BaseFormView):
     permission_required = ('indigo_api.change_task',)
 
     def get_form_kwargs(self):
-        kwargs = super(BulkTaskUpdateView, self).get_form_kwargs()
+        kwargs = super(TaskBulkUpdateView, self).get_form_kwargs()
         kwargs['country'] = self.country
         return kwargs
 

@@ -1,7 +1,6 @@
 {% load humanize indigo_app %}
 {% load account %}
 
-
 <div class="bg-light p-3">
   <div class="row">
     {% for col in task_groups  %}
@@ -29,8 +28,8 @@
               {% endif %}
 
               <div class="small text-muted mb-1">
-                <label class="mb-0 font-weight-normal">
-                  {% if task.is_open %}
+                <label class="mb-0 font-weight-normal {% if task.is_open and selectable %}c-pointer{% endif %}">
+                  {% if task.is_open and selectable %}
                     <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form">
                   {% endif %}
                   #{{ task.id }}

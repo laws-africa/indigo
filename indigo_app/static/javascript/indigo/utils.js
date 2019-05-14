@@ -54,7 +54,7 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
   $('.popover').mouseleave(function () {
     $(_this).popover('hide');
   });
-}).on('mouseleave','a[data-popup-url]', function(){
+}).on('mouseleave','a[data-popup-url], .popover', function(){
   var _this = this;
   setTimeout(function () {
     if (!$('.popover:hover').length) {
@@ -62,5 +62,3 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
     }
   }, 300);
 });
-
-

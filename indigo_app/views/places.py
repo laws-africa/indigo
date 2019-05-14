@@ -123,7 +123,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .order_by('-date')
             .values_list('p_breadth_complete', flat=True)[:30])
         context['completeness_history'].reverse()
-        context['p_complete'] = context['completeness_history'][-1] if context['completeness_history'] else None
+        context['p_breadth_complete'] = context['completeness_history'][-1] if context['completeness_history'] else None
 
         return context
 

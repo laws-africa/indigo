@@ -1,5 +1,5 @@
 {% extends "place/tabbed_layout.html" %}
-{% load indigo_app humanize %}
+{% load indigo_app humanize staticfiles %}
 
 {% block title %}{{ place.name }}{% endblock %}
 {% block view-id %}library-view{% endblock %}
@@ -8,29 +8,20 @@
 <div class="container mt-3 mb-5">
 
   <div class="d-flex justify-content-between mb-3">
-    <div></div>
-    <div class="d-flex mb-2">
-      {% if p_complete is not None %}
-        <div class="p-relative mr-2" style="height: 50px; width: 150px;">
-          <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
-        </div>
-
-        <div>
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="50" height="50">
-            <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
-              <stop offset="0%" stop-opacity="1" stop-color="#439f78"></stop>
-              <stop offset="{{ p_complete }}%" stop-opacity="1" stop-color="#439f78"></stop>
-              <stop offset="{{ p_complete }}%" stop-opacity="1" stop-color="white"></stop>
-              <stop offset="100%" stop-opacity="1" stop-color="white"></stop>
-            </linearGradient>
-            <circle cx="50" cy="50" r="45" stroke="#c8ced3" stroke-width="5"></circle>
-            <circle cx="50" cy="50" r="42" fill="url(#lg)" stroke="white" stroke-width="3"></circle>
-          </svg>
-        </div>
-
-        <div class="ml-2">
-          <h3 class="mb-0">{{ p_complete }}%</h3>
-          Complete
+    <div class="mr-auto">
+      {% if p_breadth_complete is not None %}
+        <h6 class="text-center">Core Details</h6>
+        <div class="d-flex">
+          <div class="p-relative mr-2" style="height: 50px; width: 150px;">
+            <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
+          </div>
+          <div>
+            {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=p_breadth_complete %}
+          </div>
+          <div class="ml-2">
+            <h3 class="mb-0">{{ p_breadth_complete }}%</h3>
+            Complete
+          </div>
         </div>
       {% endif %}
     </div>
@@ -221,8 +212,8 @@
 {% endverbatim %}
 </script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"></script>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css">
+<script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
+<link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
 
 <script type="text/javascript">
 window.Indigo.countries = {{ indigo_countries_json|safe }};

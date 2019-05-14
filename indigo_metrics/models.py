@@ -51,6 +51,7 @@ class WorkMetrics(models.Model):
         if work.stub:
             metrics.p_depth_complete = 100
         else:
+            # TODO: take into account some measure of completeness for the expressions that do exist
             metrics.p_depth_complete = int(100.0 * metrics.n_expressions / metrics.n_expected_expressions)
 
         metrics.p_complete = int(metrics.p_depth_complete * cls.DEPTH_WEIGHT +

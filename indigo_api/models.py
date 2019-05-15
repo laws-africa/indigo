@@ -293,6 +293,13 @@ class Work(models.Model):
 
         return super(Work, self).save(*args, **kwargs)
 
+    def save_with_revision(self, user):
+        """ Save this work and create a new revision at the same time.
+        """
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
+            self.save()
+
     def can_delete(self):
         return (not self.document_set.undeleted().exists() and
                 not self.child_works.exists() and
@@ -1110,6 +1117,14 @@ class Task(models.Model):
     def place(self):
         return self.locality or self.country
 
+    @property
+    def is_closed(self):
+        return self.state in self.CLOSED_STATES
+
+    @property
+    def is_open(self):
+        return self.state in self.OPEN_STATES
+
     def clean(self):
         # enforce that any work and/or document are for the correct place
         if self.document and self.document.work != self.work:
@@ -1117,6 +1132,26 @@ class Task(models.Model):
 
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):
             self.work = None
+
+    def can_assign_to(self, user):
+        """ Can this task be assigned to this user?
+        """
+        return user.editor.permitted_countries.filter(pk=self.country.pk).exists()
+
+    def assign_to(self, assignee, assigned_by):
+        """ Assign this task to assignee (may be None)
+        """
+        self.assigned_to = assignee
+        if assigned_by == self.assigned_to:
+            action.send(self.assigned_to, verb='picked up', action_object=self,
+                        place_code=self.place.place_code)
+        elif assignee:
+            action.send(assigned_by, verb='assigned', action_object=self,
+                        target=self.assigned_to,
+                        place_code=self.place.place_code)
+        else:
+            action.send(assigned_by, verb='unassigned', action_object=self,
+                        place_code=self.place.place_code)
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country):

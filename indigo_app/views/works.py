@@ -27,6 +27,7 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
 from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, WorkPropertyFormSet
+from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -266,6 +267,9 @@ class WorkOverviewView(WorkViewBase, DetailView):
             .exclude(state='cancelled')\
             .order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline()
+
+        # ensure work metrics are up to date
+        WorkMetrics.create_or_update(self.work)
 
         return context
 
@@ -621,7 +625,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.commencement_date = self.make_date(row.get('commencement_date'), 'commencement_date')
                         work.assent_date = self.make_date(row.get('assent_date'), 'assent_date')
                         work.full_clean()
-                        work.save()
+                        work.save_with_revision(self.request.user)
 
                         # link publication document
                         params = {
@@ -678,7 +682,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if info.get('commenced_by'):
             try:
                 info['work'].commencing_work = self.find_work_by_title(info.get('commenced_by'))
-                info['work'].save()
+                info['work'].save_with_revision(self.request.user)
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='commencement')
 
@@ -734,7 +738,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             info['work'].repealed_date = repeal_date
 
             try:
-                info['work'].save()
+                info['work'].save_with_revision(self.request.user)
             except ValidationError:
                 self.create_task(info, form, task_type='repeal')
 
@@ -747,7 +751,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if info.get('parent_work'):
             try:
                 info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
-                info['work'].save()
+                info['work'].save_with_revision(self.request.user)
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='parent_work')
 
@@ -1030,7 +1034,7 @@ class ImportDocumentView(WorkViewBase, FormView):
             raise ValidationError(e.message or "error during import")
 
         document.updated_by_user = self.request.user
-        document.save()
+        document.save_with_revision(self.request.user)
 
         # add source file as an attachment
         AttachmentSerializer(context={'document': document}).create({'file': upload})

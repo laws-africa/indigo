@@ -1,6 +1,11 @@
 <div class="popup-content lh-compact">
-  <h6>{{ work.title }}</h6>
-  <p class="text-muted mb-3 wb-all">{{ work.frbr_uri }}</p>
+  <h6>
+    {{ work.title }}
+    {% if work.stub %}
+      <span class="badge badge-info">stub</span>
+    {% endif %}
+  </h6>
+  <p class="text-muted mb-1 wb-all">{{ work.frbr_uri }}</p>
 
   {% if work.assent_date %}
     <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>

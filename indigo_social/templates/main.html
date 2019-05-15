@@ -24,6 +24,6 @@
       </div>
     </li>
   {% else %}
-    <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}" class="nav-link"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
+    <li class="nav-item not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}" class="nav-link bg-success"><i class="fas fa-sign-in-alt"></i> Log in</a></li>
   {% endif %}
 {% endblock %}

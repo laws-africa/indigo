@@ -6,14 +6,21 @@
     <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>
   {% endif %}
 
-  <p class="mb-2">Published on {{ work.publication_date|date:"Y-m-d" }}{% if work.publication_name and work.publication_number and work.publication_document %} in <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener"> {{ work.publication_name }} no. {{ work.publication_number }}</a> {% elif work.publication_name and work.publication_number %} in {{ work.publication_name }} no. {{ work.publication_number }}{% endif %}.</p>
+  <p class="mb-2">Published on {{ work.publication_date|date:"Y-m-d" }}{% if work.publication_name and work.publication_number and work.publication_document %} in
+    <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener"> {{ work.publication_name }} no. {{ work.publication_number }}</a>
+    {% elif work.publication_name and work.publication_number %} in {{ work.publication_name }} no. {{ work.publication_number }}{%
+    endif %}.</p>
 
   {% if work.commencement_date %}
-    <p class="mb-2">Commenced on {{ work.commencement_date|date:"Y-m-d" }}{% if work.commencing_work %} by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>{% endif %}.</p>
+    <p class="mb-2">Commenced on {{ work.commencement_date|date:"Y-m-d" }}{% if work.commencing_work %} by
+      <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>{%
+      endif %}.</p>
   {% endif %}
 
   {% if work.repealed_date %}
-    <p class="mb-2">Repealed on {{ work.repealed_date|date:"Y-m-d" }}{% if work.repealed_by %} by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>{% endif %}.</p>
+    <p class="mb-2">Repealed on {{ work.repealed_date|date:"Y-m-d" }}{% if work.repealed_by %} by
+      <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>{%
+      endif %}.</p>
   {% endif %}
 
   {% if work.parent_work %}

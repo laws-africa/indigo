@@ -32,6 +32,22 @@
                         Submit for review
                       </button>
                       {% endif %}
+
+                      {% if task.state == 'pending_review' %}
+                      <button type="submit"
+                              class="dropdown-item"
+                              formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}"
+                              data-confirm="Are you sure you want to unsubmit this task?">
+                        Unsubmit
+                      </button>
+                      <button type="submit"
+                              class="dropdown-item"
+                              formaction="{% url 'close_task' place=place.place_code pk=task.pk %}"
+                              data-confirm="Are you sure you want to close this task?">
+                        Close
+                      </button>
+                      {% endif %}
+
                     </div>
                   </div>
                 </form>

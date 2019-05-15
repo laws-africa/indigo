@@ -284,8 +284,12 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
 
         task.save()
 
-        return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])
+        return redirect(self.get_redirect_url())
 
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
     # permissions

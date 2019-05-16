@@ -1,7 +1,5 @@
 {% extends "main.html" %}
 
-{% load static %}
-
 {% block main-header-title %}
   <h4 class="text-muted">
     <a href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a>
@@ -17,9 +15,5 @@
   <script type="text/javascript">
   window.Indigo.Preloads.country_code = '{{ country.code }}';
   window.Indigo.Preloads.locality_code = {% if locality %}'{{ locality.code }}'{% else %}null{% endif %};
-  </script>
-  <script src="https://cdn.ckeditor.com/4.11.4/standard/ckeditor.js"></script>
-  <script>
-    CKEDITOR.replace( 'id_comment');
   </script>
 {% endblock %}

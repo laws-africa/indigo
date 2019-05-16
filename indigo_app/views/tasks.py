@@ -1,10 +1,13 @@
 # coding=utf-8
 from __future__ import unicode_literals
 import json
+from itertools import chain
 
 from actstream import action
 
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
+
 from django.core.exceptions import PermissionDenied
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -12,6 +15,7 @@ from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
+from django_comments.models import Comment
 
 from django_fsm import has_transition_perm
 
@@ -86,6 +90,15 @@ class TaskDetailView(TaskViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(TaskDetailView, self).get_context_data(**kwargs)
         task = self.object
+
+        actions = task.action_object_actions.all()
+
+        task_content_type = ContentType.objects.get_for_model(self.model)
+        comments = Comment.objects.filter(content_type=task_content_type, object_pk=task.id)
+
+        task_details = sorted(chain(comments, actions), key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp, reverse=True)
+
+        context['task_details'] = task_details
 
         if self.request.user.has_perm('indigo_api.change_task'):
             context['change_task_permission'] = True

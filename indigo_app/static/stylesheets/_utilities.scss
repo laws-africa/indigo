@@ -5,3 +5,17 @@
 .wb-all {
   word-break: break-all;
 }
+
+.p-sticky-0 {
+  position: sticky;
+  top: 0px;
+  z-index: 1;
+}
+
+.bg-selected {
+  background-color: theme-color-level("primary", -9);
+}
+
+.c-pointer {
+  cursor: pointer;
+}

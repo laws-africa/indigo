@@ -18,9 +18,6 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--dry-run', action='store_true')
 
-    def get_works(self, country):
-        return Work.objects.filter(country=country, publication_document=None)
-
     def handle(self, *args, **options):
         self.dry_run = options['dry_run']
         if self.dry_run:

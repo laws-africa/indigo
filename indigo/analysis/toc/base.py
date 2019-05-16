@@ -102,7 +102,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
         return (None, None)
 
     def is_toc_element(self, element):
-        return element.tag in self._toc_elements_ns
+        return element.tag in self._toc_elements_ns or (
+            # AKN 2.0 crossheadings are <hcontainer name="crossheading">
+            'crossheading' in self.toc_elements and element.tag.endswith('}hcontainer')
+            and element.get('name', None) == 'crossheading')
 
     def table_of_contents(self, act, language):
         """ Get the table of contents of ``act`` as a list of :class:`TOCElement` instances. """
@@ -135,6 +138,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def make_toc_entry(self, element, component, parent=None):
         type_ = element.tag.split('}', 1)[-1]
         id_ = element.get('id')
+
+        # support for crossheadings in AKN 2.0
+        if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':
+            type_ = 'crossheading'
 
         if type_ == 'doc':
             # component, get the title from the alias

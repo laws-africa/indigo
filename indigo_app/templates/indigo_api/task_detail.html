@@ -7,7 +7,7 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  {% if not task.state == 'done' and not task.state == 'cancelled' and change_task_permission%}
+  {% if not task.state == 'done' and not task.state == 'cancelled' and task.change_task_permission %}
   <div class="float-right">
     <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
   </div>
@@ -80,21 +80,21 @@
         <form method="POST">
           {% csrf_token %}
 
-          {% if task.state == 'open' and submit_task_permission %}
+          {% if task.state == 'open' and task.submit_task_permission %}
             <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
           {% endif %}
 
           {% if task.state == 'cancelled' or task.state == 'done' %}
-            {% if reopen_task_permission %}
+            {% if task.reopen_task_permission %}
             <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
             {% endif %}
           {% endif %}
 
-          {% if task.state == 'pending_review' and unsubmit_task_permission %}
+          {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
             <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to unsubmit this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
           {% endif %}
 
-          {% if task.state == 'pending_review' and close_task_permission %}
+          {% if task.state == 'pending_review' and task.close_task_permission %}
             <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
           {% endif %}
         </form>

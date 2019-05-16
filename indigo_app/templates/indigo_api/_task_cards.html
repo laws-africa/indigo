@@ -27,7 +27,7 @@
                               data-confirm="Are you sure you want to remove this task?">
                         Remove from workflow
                       </button>
-                      {% if task.state == 'open' and task.assigned_to %}
+                      {% if task.state == 'open' and task.submit_task_permission %}
                       <button type="submit"
                               class="dropdown-item"
                               formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}"
@@ -36,13 +36,16 @@
                       </button>
                       {% endif %}
 
-                      {% if task.state == 'pending_review' %}
+                      {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
                       <button type="submit"
                               class="dropdown-item"
                               formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}"
                               data-confirm="Are you sure you want to unsubmit this task?">
                         Unsubmit
                       </button>
+                      {% endif %}
+
+                      {% if task.state == 'pending_review' and task.close_task_permission %}
                       <button type="submit"
                               class="dropdown-item"
                               formaction="{% url 'close_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }} %}"

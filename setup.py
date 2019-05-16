@@ -79,6 +79,12 @@ setup(
         # for indigo_social
         'pillow>=5.2.0',
         'pinax-badges>=2.0.0',
+
+        # for template_emails
+        'django-anymail==3.0',
+        'django-render-block==0.5',
+        'html2text==2016.5.29',
+        'six==1.10.0',
     ],
     extras_require={
         'dev': [

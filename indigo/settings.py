@@ -74,6 +74,7 @@ INSTALLED_APPS = (
     'pipeline',
     'rest_framework',
     'rest_framework.authtoken',
+    'templated_email',
     'django_filters',
 
     # required by the Indigo API

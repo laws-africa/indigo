@@ -50,6 +50,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
     context_object_name = 'workflow'
     model = Workflow
     threshold = timedelta(seconds=3)
+    js_view = 'WorkflowDetailView TaskBulkUpdateView'
 
     def get(self, request, *args, **kwargs):
         # allows us to set defaults on the form

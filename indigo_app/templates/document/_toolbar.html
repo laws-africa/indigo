@@ -99,6 +99,7 @@
       <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
     </div>
   </div>
+  <div class="not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_absolute_url|urlencode }}">Log in</a> to make changes.</div>
 
   <script id="document-activity-template" type="text/x-handlebars-template">
 

@@ -21,12 +21,13 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, WorkPropertyFormSet
+from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -103,16 +104,61 @@ class WorkDependentView(WorkViewBase):
         return self._work
 
 
-class EditWorkView(WorkViewBase, UpdateView):
+class WorkFormMixin(object):
+    """ Mixin to help the Create and Edit work views handle multiple forms.
+    """
+    is_create = False
+
+    def get_properties_formset(self):
+        kwargs = {'queryset': WorkProperty.objects.none()}
+        if self.request.method in ('POST', 'PUT'):
+            kwargs.update({
+                'data': self.request.POST,
+                'files': self.request.FILES,
+            })
+        return WorkPropertyFormSet(**kwargs)
+
+    def get_form(self, form_class=None):
+        self.properties_formset = self.get_properties_formset()
+        self.properties_formset.setup_extras()
+        return super(WorkFormMixin, self).get_form(form_class)
+
+    def post(self, request, *args, **kwargs):
+        self.object = None if self.is_create else self.get_object()
+        form = self.get_form()
+        if form.is_valid() and self.properties_formset.is_valid():
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+    def form_valid(self, form):
+        resp = super(WorkFormMixin, self).form_valid(form)
+        # ensure that all instances are forced to use this work
+        for form in self.properties_formset.forms:
+            form.instance.work = self.object
+        self.properties_formset.save()
+        return resp
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkFormMixin, self).get_context_data(**kwargs)
+        context['properties_formset'] = self.properties_formset
+        return context
+
+
+class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
 
+    def get_properties_formset(self):
+        formset = super(EditWorkView, self).get_properties_formset()
+        formset.queryset = self.object.raw_properties.filter(key__in=WorkProperty.KEYS.keys())
+        return formset
+
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
-
         return context
 
     def form_valid(self, form):
@@ -132,7 +178,7 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.expression_date = self.work.publication_date
                     doc.save()
 
-        if form.has_changed():
+        if form.has_changed() or self.properties_formset.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
             messages.success(self.request, u"Work updated.")
@@ -150,12 +196,13 @@ class EditWorkView(WorkViewBase, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
+class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, CreateView):
     model = Work
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
+    is_create = True
 
     def get_form_kwargs(self):
         kwargs = super(AddWorkView, self).get_form_kwargs()
@@ -220,6 +267,9 @@ class WorkOverviewView(WorkViewBase, DetailView):
             .exclude(state='cancelled')\
             .order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline()
+
+        # ensure work metrics are up to date
+        WorkMetrics.create_or_update(self.work)
 
         return context
 
@@ -575,7 +625,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.commencement_date = self.make_date(row.get('commencement_date'), 'commencement_date')
                         work.assent_date = self.make_date(row.get('assent_date'), 'assent_date')
                         work.full_clean()
-                        work.save()
+                        work.save_with_revision(self.request.user)
 
                         # link publication document
                         params = {
@@ -632,7 +682,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if info.get('commenced_by'):
             try:
                 info['work'].commencing_work = self.find_work_by_title(info.get('commenced_by'))
-                info['work'].save()
+                info['work'].save_with_revision(self.request.user)
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='commencement')
 
@@ -688,7 +738,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             info['work'].repealed_date = repeal_date
 
             try:
-                info['work'].save()
+                info['work'].save_with_revision(self.request.user)
             except ValidationError:
                 self.create_task(info, form, task_type='repeal')
 
@@ -701,7 +751,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if info.get('parent_work'):
             try:
                 info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
-                info['work'].save()
+                info['work'].save_with_revision(self.request.user)
             except Work.DoesNotExist:
                 self.create_task(info, form, task_type='parent_work')
 
@@ -714,10 +764,16 @@ There may have been a typo in the spreadsheet, or the work may not exist yet.
 Check the spreadsheet for reference and link it manually.'''
         elif task_type == 'amendment':
             task.title = 'Link amendment(s)'
-            task.description = '''This work's amended work(s) could not be linked automatically.
+            amended_title = info.get('amends')
+            if len(amended_title) > 256:
+                amended_title = "".join(amended_title[:256] + ', etc')
+            task.description = '''On the spreadsheet, it says that this work amends '{}' – see row {}.
+This amendment could not be linked automatically.
 There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
 there may not be a date for the amendment, or the amended work may not exist yet.
-Check the spreadsheet for reference and link it/them manually, or add the 'Pending commencement' label to this task.'''
+Check the spreadsheet for reference and link it/them manually, \
+or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info.get('row'))
+
         elif task_type == 'repeal':
             task.title = 'Link repeal'
             task.description = '''According to the spreadsheet this work was repealed by the '{}', \
@@ -978,7 +1034,7 @@ class ImportDocumentView(WorkViewBase, FormView):
             raise ValidationError(e.message or "error during import")
 
         document.updated_by_user = self.request.user
-        document.save()
+        document.save_with_revision(self.request.user)
 
         # add source file as an attachment
         AttachmentSerializer(context={'document': document}).create({'file': upload})

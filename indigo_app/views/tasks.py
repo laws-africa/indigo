@@ -17,6 +17,8 @@ from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View
 from django.views.generic.detail import SingleObjectMixin
+from django.views.generic.edit import BaseFormView
+from allauth.account.utils import user_display
 
 from django_fsm import has_transition_perm
 
@@ -24,7 +26,7 @@ from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -48,6 +50,7 @@ class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
 class TaskListView(TaskViewBase, ListView):
     context_object_name = 'tasks'
     model = Task
+    js_view = 'TaskListView TaskBulkUpdateView'
 
     def get(self, request, *args, **kwargs):
         # allows us to set defaults on the form
@@ -190,7 +193,6 @@ class TaskEditView(TaskViewBase, UpdateView):
         task = self.object
         task.updated_by_user = self.request.user
 
-
         # action signals
         # first, was something changed other than workflows?
         if form.changed_data:
@@ -308,41 +310,25 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
         sleep_time = request.POST.get('sleep_time', 60)
 
         if self.unassign:
-            task.assigned_to = None
-            action.send(user, verb='unassigned', action_object=task,
-                        place_code=task.place.place_code)
-            send_message = "Task '%s' has been unassigned" % task.title
-            messages.success(request, send_message)
-            subject, from_email, to = send_message, settings.DEFAULT_FROM_EMAIL, request.user.email
-            plaintext = get_template('email/unassigned.txt')
-            html = get_template('email/unassigned.html')
-            mail_data = Context({'title': task.title, 'username': request.user.username})
-            text_context = plaintext.render(mail_data)
-            html_context = html.render(mail_data)
-            msg = EmailMultiAlternatives(subject, text_context, from_email, [to])
-            msg.attach_alternative(html_context, "text/html")
-            msg.send()
+            task.assign_to(None, user)
+            messages.success(request, u"Task '%s' has been unassigned" % task.title)
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
-            if task.country not in assignee.editor.permitted_countries.all():
+            if not task.can_assign_to(assignee):
                 raise PermissionDenied
-            task.assigned_to = assignee
-            if user.id == assignee.id:
-                action.send(user, verb='picked up', action_object=task,
-                            place_code=task.place.place_code)
+            task.assign_to(assignee, user)
+            if user == assignee:
                 messages.success(request, u"You have picked up the task '%s'" % task.title)
                 subject = "You have picked up the task '%s'" % task.title
                 message = "Dear %s, \n\n You have picked up the task '%s'" % (request.user.username, task.title)
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [request.user.email])
             else:
-                action.send(user, verb='assigned', action_object=task,
-                            target=assignee,
-                            place_code=task.place.place_code)
                 messages.success(request, u"Task '%s' has been assigned" % task.title)
                 subject = "Task '%s' has been assigned" % task.title
                 message = "Dear %s, \n\n Task '%s' has been assigned" % (request.user.username, task.title)
                 send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [request.user.email])
 
+        task.updated_by_user = user
         task.save()
 
         return redirect(self.get_redirect_url())
@@ -380,3 +366,48 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
+
+
+class TaskBulkUpdateView(TaskViewBase, BaseFormView):
+    """ Bulk update a set of tasks.
+    """
+    http_method_names = ['post']
+    form_class = BulkTaskUpdateForm
+    permission_required = ('indigo_api.change_task',)
+
+    def get_form_kwargs(self):
+        kwargs = super(TaskBulkUpdateView, self).get_form_kwargs()
+        kwargs['country'] = self.country
+        return kwargs
+
+    def form_valid(self, form):
+        assignee = form.cleaned_data.get('assigned_to')
+        tasks = form.cleaned_data['tasks']
+        count = 0
+
+        for task in tasks:
+            if task.is_open:
+                if form.unassign or (assignee and task.can_assign_to(assignee)):
+                    if task.assigned_to != assignee:
+                        task.assign_to(assignee, self.request.user)
+                        task.updated_by_user = self.request.user
+                        task.save()
+                        count += 1
+
+        if count > 0:
+            plural = 's' if count > 1 else ''
+            if form.unassign:
+                messages.success(self.request, "Unassigned {} task{}".format(count, plural))
+            elif assignee:
+                messages.success(self.request, "Assigned {} task{} to {}".format(count, plural, user_display(assignee)))
+
+        return redirect(self.get_redirect_url())
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Computer says no.")
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('tasks', kwargs={'place': self.kwargs['place']})

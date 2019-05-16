@@ -60,14 +60,16 @@
           <li class="activity-item">
             {% with task.resolve_anchor as anchor %}
               {% if anchor.element %}
-                Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a> as it appears currently:
+                Here is <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a>
+                as it appears currently
+                {% if not anchor.exact_match %}(<b>{{ task.anchor.id }}</b> may have been moved or removed){% endif %}
                 <div class="sheet-outer" {% if not anchor.is_toc_element %}data-highlight="{{ task.anchor.id }}"{% endif %}>
                   <div class="sheet-inner is-fragment">
                     <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
                   </div>
                 </div>
               {% else %}
-                The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been removed.
+                The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not available and may have been moved or removed.
               {% endif %}
             {% endwith %}
           </li>

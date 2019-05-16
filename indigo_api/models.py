@@ -198,6 +198,7 @@ class Work(models.Model):
 
     _work_uri = None
     _repeal = None
+    _properties = None
 
     @property
     def work_uri(self):
@@ -222,10 +223,9 @@ class Work(models.Model):
     def subtype(self):
         return self.work_uri.subtype
 
-    # Helper to get/set locality using the locality_code, used by the WorkSerializer.
-
     @property
     def locality_code(self):
+        # Helper to get/set locality using the locality_code, used by the WorkSerializer.
         return self.locality.code
 
     @locality_code.setter
@@ -251,6 +251,19 @@ class Work(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @property
+    def properties(self):
+        if self._properties is None:
+            self._properties = {p.key: p.value for p in self.raw_properties.all()}
+        return self._properties
+
+    def labeled_properties(self):
+        return sorted([{
+            'label': WorkProperty.KEYS[key],
+            'key': key,
+            'value': val,
+        } for key, val in self.properties.iteritems() if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -279,6 +292,13 @@ class Work(models.Model):
             self.repealed_date = None
 
         return super(Work, self).save(*args, **kwargs)
+
+    def save_with_revision(self, user):
+        """ Save this work and create a new revision at the same time.
+        """
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
+            self.save()
 
     def can_delete(self):
         return (not self.document_set.undeleted().exists() and
@@ -434,6 +454,19 @@ class PublicationDocument(models.Model):
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
         return super(PublicationDocument, self).save(*args, **kwargs)
+
+
+class WorkProperty(models.Model):
+    # these are injected by other installations
+    KEYS = {}
+    CHOICES = KEYS.items()
+
+    work = models.ForeignKey(Work, null=False, related_name='raw_properties')
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=CHOICES)
+    value = models.CharField(max_length=1024, null=False, blank=False)
+
+    class Meta:
+        unique_together = ('work', 'key')
 
 
 class Amendment(models.Model):
@@ -1084,6 +1117,14 @@ class Task(models.Model):
     def place(self):
         return self.locality or self.country
 
+    @property
+    def is_closed(self):
+        return self.state in self.CLOSED_STATES
+
+    @property
+    def is_open(self):
+        return self.state in self.OPEN_STATES
+
     def clean(self):
         # enforce that any work and/or document are for the correct place
         if self.document and self.document.work != self.work:
@@ -1091,6 +1132,26 @@ class Task(models.Model):
 
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):
             self.work = None
+
+    def can_assign_to(self, user):
+        """ Can this task be assigned to this user?
+        """
+        return user.editor.permitted_countries.filter(pk=self.country.pk).exists()
+
+    def assign_to(self, assignee, assigned_by):
+        """ Assign this task to assignee (may be None)
+        """
+        self.assigned_to = assignee
+        if assigned_by == self.assigned_to:
+            action.send(self.assigned_to, verb='picked up', action_object=self,
+                        place_code=self.place.place_code)
+        elif assignee:
+            action.send(assigned_by, verb='assigned', action_object=self,
+                        target=self.assigned_to,
+                        place_code=self.place.place_code)
+        else:
+            action.send(assigned_by, verb='unassigned', action_object=self,
+                        place_code=self.place.place_code)
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country):

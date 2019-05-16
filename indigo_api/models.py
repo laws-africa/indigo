@@ -19,7 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, has_transition_perm, transition
 
 import arrow
 from taggit.managers import TaggableManager
@@ -1169,6 +1169,17 @@ class Task(models.Model):
                 task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
                 task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+
+        return tasks
+
+    @classmethod
+    def decorate_permissions(cls, tasks, view):
+        for task in tasks:
+            task.change_task_permission = view.request.user.has_perm('indigo_api.change_task')
+            task.submit_task_permission = has_transition_perm(task.submit, view)
+            task.reopen_task_permission = has_transition_perm(task.reopen, view)
+            task.unsubmit_task_permission = has_transition_perm(task.unsubmit, view)
+            task.close_task_permission = has_transition_perm(task.close, view)
 
         return tasks
 

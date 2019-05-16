@@ -78,6 +78,7 @@ class TaskListView(TaskViewBase, ListView):
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
         Task.decorate_potential_assignees(context['tasks'], self.country)
+        Task.decorate_permissions(context['tasks'], self)
 
         return context
 
@@ -90,24 +91,10 @@ class TaskDetailView(TaskViewBase, DetailView):
         context = super(TaskDetailView, self).get_context_data(**kwargs)
         task = self.object
 
-        if self.request.user.has_perm('indigo_api.change_task'):
-            context['change_task_permission'] = True
-
-        if has_transition_perm(task.submit, self):
-            context['submit_task_permission'] = True
-
-        if has_transition_perm(task.reopen, self):
-            context['reopen_task_permission'] = True
-
-        if has_transition_perm(task.unsubmit, self):
-            context['unsubmit_task_permission'] = True
-
-        if has_transition_perm(task.close, self):
-            context['close_task_permission'] = True
-
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 
         Task.decorate_potential_assignees([task], self.country)
+        Task.decorate_permissions([task], self)
 
         return context
 
@@ -286,8 +273,12 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
 
         task.save()
 
-        return redirect('task_detail', place=self.kwargs['place'], pk=self.kwargs['pk'])
+        return redirect(self.get_redirect_url())
 
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
 class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
     # permissions

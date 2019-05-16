@@ -75,7 +75,7 @@ setup(
         'requests>=2',
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
-        'django-contrib-comments==1.9.1',
+        'django-contrib-comments>=1.9.1',
 
         # for indigo_social
         'pillow>=5.2.0',

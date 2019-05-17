@@ -1,0 +1,31 @@
+{% block subject %}Task #{{ task.pk }} - {{ task.title }}{% endblock %}
+
+{% block html %}
+  {% include 'templated_email/_header.html' %}
+
+  <p>Hello {{ recipient.first_name }},</p>
+
+  <p>{{ action.actor.first_name }} assigned you task
+     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} - {{ task.title }}</a>:
+  </p>
+
+  <hr>
+
+  {% if task.document %}
+    <p>
+      {{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
+      {{ task.work.frbr_uri }}
+    </p>
+  {% elif task.work %}
+    <p>
+      {{ task.work.title }}<br>
+      {{ task.work.frbr_uri }}
+    </p>
+  {% endif %}
+
+  <p>{{ task.description|default:''|urlize|linebreaksbr }}</p>
+  <hr>
+
+  {% include 'templated_email/_footer.html' %}
+{% endblock %}
+

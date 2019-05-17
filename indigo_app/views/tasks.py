@@ -95,14 +95,15 @@ class TaskDetailView(TaskViewBase, DetailView):
         context = super(TaskDetailView, self).get_context_data(**kwargs)
         task = self.object
 
+        # merge actions and comments
         actions = task.action_object_actions.all()
-
         task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = Comment.objects.filter(content_type=task_content_type, object_pk=task.id)
-
-        task_details = sorted(chain(comments, actions), key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp, reverse=True)
-
-        context['task_details'] = task_details
+        comments = Comment.objects\
+            .filter(content_type=task_content_type, object_pk=task.id)\
+            .select_related('user')
+        context['task_timeline'] = sorted(
+            chain(comments, actions),
+            key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
 

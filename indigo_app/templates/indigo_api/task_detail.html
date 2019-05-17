@@ -49,24 +49,24 @@
         </div>
 
         <ul class="activity-list">
-          {% activity_stream 'action_object' task %}
-          {% for action in stream reversed %}
-            <li class="activity-item">
-              {% include 'indigo_app/actions/_action.html' with action=action this_task=True ignore_place=True %}
-            </li>
+          {% for entry in task_timeline %}
+            {% if entry.comment %}
+              <li class="activity-item card">
+                <div class="card-header">
+                  {% user_profile entry.user %} commented
+                  <span class="time-ago" data-timestamp="{{ entry.submit_date|date:'c' }}">{{ entry.submit_date|date:"Y-m-d H:i" }}</span>:
+                </div>
+                <div class="card-body">
+                  {{ entry.comment|urlize|linebreaksbr }}
+                </div>
+              </li>
+            {% else %}
+              <li class="activity-item">
+                {% include 'indigo_app/actions/_action.html' with action=entry this_task=True ignore_place=True %}
+              </li>
+            {% endif %}
           {% endfor %}
-          {% get_comment_list for task as comment_list %}
-          {% for comment in comment_list %}
-            <li class="activity-item card">
-              <div class="card-header">
-                {% user_profile task.created_by_user %} commented
-                <span class="time-ago" data-timestamp="{{ comment.submit_date|date:'c' }}">{{ comment.submit_date|date:"Y-m-d H:i" }}</span>:
-              </div>
-              <div class="card-body">
-                {{ comment.comment|urlize|linebreaksbr }}
-              </div>
-            </li>
-          {% endfor %}
+
           {% if task.anchor_id %}
             <li class="activity-item">
               {% with task.resolve_anchor as anchor %}

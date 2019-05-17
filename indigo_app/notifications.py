@@ -20,17 +20,17 @@ class Notifier(object):
             )
 
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):
-        defaults = {
+        real_context = {
             'SITE_URL': settings.INDIGO_URL,
             'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         }
-        defaults.update(context)
+        real_context.update(context)
 
         return send_templated_mail(
             template_name=template_name,
             from_email=None,
             recipient_list=recipient_list,
-            context=context,
+            context=real_context,
             **kwargs)
 
 

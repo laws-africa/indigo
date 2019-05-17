@@ -50,6 +50,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
     context_object_name = 'workflow'
     model = Workflow
     threshold = timedelta(seconds=3)
+    js_view = 'WorkflowDetailView TaskBulkUpdateView'
 
     def get(self, request, *args, **kwargs):
         # allows us to set defaults on the form
@@ -91,6 +92,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
             .all()
 
         Task.decorate_potential_assignees(tasks, self.country)
+        Task.decorate_permissions(tasks, self)
 
         context['may_close'] = not self.object.closed and self.object.n_tasks == self.object.n_done
         context['may_reopen'] = self.object.closed

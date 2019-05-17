@@ -55,6 +55,9 @@ INSTALLED_APPS = (
     # the Indigo API
     'indigo_api',
 
+    # Indigo metrics and stats
+    'indigo_metrics',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

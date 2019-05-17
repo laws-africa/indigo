@@ -21,13 +21,54 @@
                   <div class="dropdown float-right">
                     <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"></button>
                     <div class="dropdown-menu">
-                      <button type="submit" class="dropdown-item" formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}" data-confirm="Are you sure you want to remove this task?">Remove from workflow</button>
+                      <button type="submit"
+                              class="dropdown-item"
+                              formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}"
+                              data-confirm="Are you sure you want to remove this task?">
+                        Remove from workflow
+                      </button>
+                      {% if task.state == 'open' and task.submit_task_permission %}
+                      <button type="submit"
+                              class="dropdown-item"
+                              formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}"
+                              data-confirm="Are you sure you want to submit this task for review?">
+                        Submit for review
+                      </button>
+                      {% endif %}
+
+                      {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
+                      <button type="submit"
+                              class="dropdown-item"
+                              formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}"
+                              data-confirm="Are you sure you want to unsubmit this task?">
+                        Unsubmit
+                      </button>
+                      {% endif %}
+
+                      {% if task.state == 'pending_review' and task.close_task_permission %}
+                      <button type="submit"
+                              class="dropdown-item"
+                              formaction="{% url 'close_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }} %}"
+                              data-confirm="Are you sure you want to close this task?">
+                        Close
+                      </button>
+                      {% endif %}
+
                     </div>
                   </div>
                 </form>
               {% endif %}
 
-              <div class="small text-muted mb-1">#{{ task.id }}</div>
+              <div class="small text-muted mb-1">
+                {% if perms.indigo_api.change_task and task.is_open and selectable %}
+                  <label class="mb-0 font-weight-normal c-pointer">
+                    <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form">
+                    #{{ task.id }}
+                  </label>
+                {% else %}
+                  #{{ task.id }}
+                {% endif %}
+              </div>
               <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}" class="d-block mb-1">{{ task.title }}</a>
 
               {% if task.document %}
@@ -56,7 +97,7 @@
                   <small class="text-muted">{% user_profile task.assigned_to %}</small>
 
                   {% if perms.indigo_api.change_task %}
-                    <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                    <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
                       {% csrf_token %}
 
                       <div class="dropdown">
@@ -76,7 +117,7 @@
                 </div>
               {% elif task.state == 'open' or task.state == 'pending_review' %}
                 {% if perms.indigo_api.change_task and task.potential_assignees %}
-                  <form method="POST" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
+                  <form method="POST" class="assign-task-form" action="{% url 'assign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">
                     {% csrf_token %}
                     <div class="dropdown">
                       <button class="btn btn-outline-primary mt-2 btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

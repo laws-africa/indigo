@@ -19,7 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, has_transition_perm, transition
 
 import arrow
 from taggit.managers import TaggableManager
@@ -292,6 +292,13 @@ class Work(models.Model):
             self.repealed_date = None
 
         return super(Work, self).save(*args, **kwargs)
+
+    def save_with_revision(self, user):
+        """ Save this work and create a new revision at the same time.
+        """
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
+            self.save()
 
     def can_delete(self):
         return (not self.document_set.undeleted().exists() and
@@ -1110,6 +1117,14 @@ class Task(models.Model):
     def place(self):
         return self.locality or self.country
 
+    @property
+    def is_closed(self):
+        return self.state in self.CLOSED_STATES
+
+    @property
+    def is_open(self):
+        return self.state in self.OPEN_STATES
+
     def clean(self):
         # enforce that any work and/or document are for the correct place
         if self.document and self.document.work != self.work:
@@ -1117,6 +1132,26 @@ class Task(models.Model):
 
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):
             self.work = None
+
+    def can_assign_to(self, user):
+        """ Can this task be assigned to this user?
+        """
+        return user.editor.permitted_countries.filter(pk=self.country.pk).exists()
+
+    def assign_to(self, assignee, assigned_by):
+        """ Assign this task to assignee (may be None)
+        """
+        self.assigned_to = assignee
+        if assigned_by == self.assigned_to:
+            action.send(self.assigned_to, verb='picked up', action_object=self,
+                        place_code=self.place.place_code)
+        elif assignee:
+            action.send(assigned_by, verb='assigned', action_object=self,
+                        target=self.assigned_to,
+                        place_code=self.place.place_code)
+        else:
+            action.send(assigned_by, verb='unassigned', action_object=self,
+                        place_code=self.place.place_code)
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country):
@@ -1134,6 +1169,17 @@ class Task(models.Model):
                 task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
                 task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+
+        return tasks
+
+    @classmethod
+    def decorate_permissions(cls, tasks, view):
+        for task in tasks:
+            task.change_task_permission = view.request.user.has_perm('indigo_api.change_task')
+            task.submit_task_permission = has_transition_perm(task.submit, view)
+            task.reopen_task_permission = has_transition_perm(task.reopen, view)
+            task.unsubmit_task_permission = has_transition_perm(task.unsubmit, view)
+            task.close_task_permission = has_transition_perm(task.close, view)
 
         return tasks
 

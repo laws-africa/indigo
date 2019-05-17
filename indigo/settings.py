@@ -88,6 +88,9 @@ INSTALLED_APPS = (
     'reversion',
     'ckeditor',
     'corsheaders',
+
+    # required for commenting on tasks
+    'django_comments',
 )
 
 MIDDLEWARE = (

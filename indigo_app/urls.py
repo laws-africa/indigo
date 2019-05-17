@@ -66,4 +66,7 @@ urlpatterns = [
     url(r'^works(?P<frbr_uri>/\S+?)/$', works.WorkOverviewView.as_view(), name='work'),
 
     url(r'^documents/(?P<doc_id>\d+)/$', documents.DocumentDetailView.as_view(), name='document'),
+
+    url(r'^comments/', include('django_comments.urls')),
+
 ]

@@ -294,6 +294,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
             return self.request.GET.get('next')
         return reverse('task_detail', kwargs={'place': self.kwargs['place'], 'pk': self.kwargs['pk']})
 
+
 class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)

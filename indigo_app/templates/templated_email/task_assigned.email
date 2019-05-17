@@ -1,0 +1,15 @@
+{% block subject %}[laws.africa] #{{ task.pk }} - {{ task.title }}{% endblock %}
+
+{% block html %}
+  {% include 'templated_email/_header.html' %}
+
+  <p>Hello {{ recipient.first_name }},</p>
+
+  <p>{{ action.actor.first_name }} assigned you task
+     <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} - {{ task.title }}</a>:
+  </p>
+  <p>{{ task.description|default:''|urlize|linebreaksbr }}</p>
+
+  {% include 'templated_email/_footer.html' %}
+{% endblock %}
+

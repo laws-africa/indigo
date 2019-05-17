@@ -106,6 +106,7 @@
                         </button>
                         <div class="dropdown-menu" aria-labelledby="unassignDropdownMenuButton">
                           <button class="dropdown-item mb-1" type="submit" data-confirm="Are you sure you want to unassign this task?" formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}#task-{{ task.id }}">Unassign</button>
+                          <div class="dropdown-divider"></div>
                           {% for potential_assignee in task.potential_assignees %}
                           <button class="dropdown-item mb-1" type="submit" name="user_id" value="{{potential_assignee.id }}">{% user_display potential_assignee %}</button>
                           {% endfor %}

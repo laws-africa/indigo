@@ -19,6 +19,7 @@
       <select class="selectpicker notooltip" multiple title="Assigned to" name="{{ form.assigned_to.name }}" data-style="btn-outline-secondary">
         {% if user.is_authenticated and user in form.fields.assigned_to.queryset %}
           <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>Me</option>
+          <option data-divider="true"></option>
         {% endif %}
 
         {% for usr in form.fields.assigned_to.queryset %}

@@ -7,6 +7,36 @@ from templated_email import send_templated_mail
 from indigo_api.models import Task
 
 
+class Notifier(object):
+    def send_task_notifications(self, action):
+        if action.verb in ['assigned']:
+
+            self.send_templated_email('task_assigned', [action.target.email],
+                {
+                    'action': action,
+                    'task': action.action_object,
+                    'recipient': action.target,
+                },
+            )
+
+    def send_templated_email(self, template_name, recipient_list, context, **kwargs):
+        defaults = {
+            'SITE_URL': settings.INDIGO_URL,
+            'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
+        }
+        defaults.update(context)
+
+        return send_templated_mail(
+            template_name=template_name,
+            from_email=None,
+            recipient_list=recipient_list,
+            context=context,
+            **kwargs)
+
+
+notifier = Notifier()
+
+
 @receiver(signals.post_save, sender=Action)
 def post_save_task(sender, instance, **kwargs):
     """ Send 'created' action to activity stream if new task
@@ -14,22 +44,3 @@ def post_save_task(sender, instance, **kwargs):
     if kwargs['created']:
         if isinstance(instance.action_object, Task):
             notifier.send_task_notifications(instance)
-
-
-class Notifier(object):
-    def send_task_notifications(self, action):
-        if action.verb in ['assigned']:
-            send_templated_mail(
-                template_name='task_assigned',
-                from_email=None,
-                recipient_list=[action.target.email],
-                context={
-                    'action': action,
-                    'task': action.action_object,
-                    'recipient': action.target,
-                    'site_url': settings.INDIGO_URL,
-                },
-            )
-
-
-notifier = Notifier()

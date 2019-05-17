@@ -1,5 +1,6 @@
 from django.db.models import signals
 from django.dispatch import receiver
+from django.conf import settings
 from actstream.models import Action
 from templated_email import send_templated_mail
 
@@ -26,6 +27,7 @@ class Notifier(object):
                     'action': action,
                     'task': action.action_object,
                     'recipient': action.target,
+                    'site_url': settings.INDIGO_URL,
                 },
             )
 

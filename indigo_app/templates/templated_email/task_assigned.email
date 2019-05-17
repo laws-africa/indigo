@@ -6,7 +6,7 @@
   <p>Hello {{ recipient.first_name }},</p>
 
   <p>{{ action.actor.first_name }} assigned you task
-     <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} - {{ task.title }}</a>:
+     <a href="{{ site_url }}{{ settings.INDIGO_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} - {{ task.title }}</a>:
   </p>
   <p>{{ task.description|default:''|urlize|linebreaksbr }}</p>
 

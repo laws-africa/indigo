@@ -1,4 +1,4 @@
-{% block subject %}Task #{{ task.pk }} - {{ task.title }}{% endblock %}
+{% block subject %}Task #{{ task.pk }} - {{ task.title|safe }}{% endblock %}
 
 {% block html %}
   {% include 'templated_email/_header.html' %}

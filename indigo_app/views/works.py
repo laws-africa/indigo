@@ -795,21 +795,14 @@ Check the spreadsheet for reference and link it manually.'''
         task.workflows = form.cleaned_data.get('workflows').all()
         task.save()
 
-    def pub_doc_task(self, work, form, task_type):
+    def pub_doc_task(self, work, form):
         task = Task()
 
-        if task_type == 'link':
-            task.title = 'Link publication document'
-            task.description = '''This work's publication document could not be linked automatically.
+        task.title = 'Link publication document'
+        task.description = '''This work's publication document could not be linked automatically.
 There may be more than one candidate, or it may be unavailable.
 First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
 Otherwise, find it and upload it manually.'''
-
-        elif task_type == 'check':
-            task.title = 'Check publication document'
-            task.description = '''This work's publication document was linked automatically.
-Double-check that it's the right one.'''
-            task.state = 'pending_review'
 
         task.country = work.country
         task.locality = work.locality
@@ -969,16 +962,15 @@ Double-check that it's the right one.'''
                     pub_doc.trusted_url = pub_doc_details.get('url')
                     pub_doc.size = pub_doc_details.get('size')
                     pub_doc.save()
-                    self.pub_doc_task(work, form, task_type='check')
 
                 else:
-                    self.pub_doc_task(work, form, task_type='link')
+                    self.pub_doc_task(work, form)
 
             except ValueError as e:
                 raise ValidationError({'message': e.message})
 
         else:
-            self.pub_doc_task(work, form, task_type='link')
+            self.pub_doc_task(work, form)
 
 
 class ImportDocumentView(WorkViewBase, FormView):

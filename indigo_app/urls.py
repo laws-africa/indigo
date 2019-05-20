@@ -67,6 +67,8 @@ urlpatterns = [
 
     url(r'^documents/(?P<doc_id>\d+)/$', documents.DocumentDetailView.as_view(), name='document'),
 
+    url(r'^tasks/$', tasks.MyTasksView.as_view(), name='my_tasks'),
+
     url(r'^comments/', include('django_comments.urls')),
 
 ]

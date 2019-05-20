@@ -1,0 +1,27 @@
+{% extends "main.html" %}
+
+{% block content %}
+  <h1>My tasks</h1>
+
+  <ul>
+  {% for task in open_assigned_tasks %}
+    <li>{{ task.pk }} - {{ task.title }}</li>
+  {% endfor %}
+  </ul>
+
+  <h1>Tasks pending approval</h1>
+
+  <ul>
+    {% for task in tasks_pending_approval %}
+      <li>{{ task.pk }} - {{ task.title }}</li>
+    {% endfor %}
+  </ul>
+
+  <h1>Tasks recently approved</h1>
+
+  <ul>
+    {% for task in tasks_recently_approved %}
+      <li>{{ task.pk }} - {{ task.title }}</li>
+    {% endfor %}
+  </ul>
+{% endblock %}

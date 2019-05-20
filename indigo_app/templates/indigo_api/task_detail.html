@@ -137,11 +137,11 @@
             {% endif %}
 
             {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
-              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to unsubmit this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Unsubmit</button>
+              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to request changes on this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Request changes</button>
             {% endif %}
 
             {% if task.state == 'pending_review' and task.close_task_permission %}
-              <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to close this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
+              <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
             {% endif %}
           </form>
 

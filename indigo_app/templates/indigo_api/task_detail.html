@@ -137,7 +137,7 @@
             {% endif %}
 
             {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
-              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to request changes on this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Request changes</button>
+              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to request changes to this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Request changes</button>
             {% endif %}
 
             {% if task.state == 'pending_review' and task.close_task_permission %}

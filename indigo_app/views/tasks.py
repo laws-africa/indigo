@@ -249,7 +249,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
             'submit': 'submitted',
             'cancel': 'cancelled',
             'reopen': 'reopened',
-            'unsubmit': 'requested changes on',
+            'unsubmit': 'requested changes to',
             'close': 'approved',
         }
 

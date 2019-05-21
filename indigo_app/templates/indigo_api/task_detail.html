@@ -141,7 +141,7 @@
             {% endif %}
 
             {% if task.state == 'pending_review' and task.close_task_permission %}
-              <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">All done</button>
+              <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">Approve</button>
             {% endif %}
           </form>
 

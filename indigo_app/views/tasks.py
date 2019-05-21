@@ -249,8 +249,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
             'submit': 'submitted',
             'cancel': 'cancelled',
             'reopen': 'reopened',
-            'unsubmit': 'unsubmitted',
-            'close': 'closed',
+            'unsubmit': 'requested changes to',
+            'close': 'approved',
         }
 
         for change, verb in potential_changes.items():
@@ -259,31 +259,24 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
                 state_change(user)
-                if verb == 'submitted':
+
+                # assignee side effects of different state changes
+                if change == 'submit':
                     task.last_assigned_to = task.assigned_to
                     task.assigned_to = None
-                    action.send(user, verb=verb, action_object=task,
-                                place_code=task.place.place_code)
-                    messages.success(request, u"Task '%s' has been submitted for review" % task.title)
-                elif verb == 'unsubmitted' and task.last_assigned_to:
-                    assignee = task.last_assigned_to
-                    task.assigned_to = assignee
-                    if user.id == assignee.id:
-                        action.send(user, verb='unsubmitted and picked up', action_object=task,
-                                    place_code=task.place.place_code)
-                        messages.success(request, u"You have unsubmitted and picked up the task '%s'" % task.title)
-                    else:
-                        action.send(user, verb='unsubmitted and reassigned', action_object=task,
-                                    target=assignee,
-                                    place_code=task.place.place_code)
-                        messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
+                if change == 'unsubmit' and task.last_assigned_to:
+                    task.assigned_to = task.last_assigned_to
+                if change == 'close' or change == 'cancel':
+                    task.assigned_to = None
 
-                else:
-                    if verb == 'closed' or verb == 'cancelled':
-                        task.assigned_to = None
-                    action.send(user, verb=verb, action_object=task,
-                                place_code=task.place.place_code)
-                    messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+                # action signal and success message
+                action.send(user, verb=verb, action_object=task,
+                            place_code=task.place.place_code)
+                if change == 'submit':
+                    verb = 'submitted for review'
+                if change == 'unsubmit':
+                    verb = 'returned with changes requested'
+                messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()
 

@@ -183,7 +183,7 @@ class BatchCreateWorkForm(forms.Form):
 Make sure the document's expression date correctly reflects this.''',
         },
     ]
-    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    principal_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
                                                required=False)

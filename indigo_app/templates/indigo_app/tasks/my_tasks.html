@@ -4,14 +4,27 @@
 <div class="container mt-3">
   <div class="row">
     <div class="col-md-6">
-      <div class="card full-height card-radius">
+      <div class="card task-list-card-full-height task-list-card-radius">
         <h6 class="text-center my-3">Your current tasks</h6>
 
-        <div>
+        <div class="task-list-card-scroll">
           {% for task in open_assigned_tasks %}
           <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius task-list-card-current-task">
-            <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="task-list-card-heading mb-2">{{ task.title }}</a>
-            <p>{{ task.description }}</p>
+            <div class="text-muted">#{{ task.pk }}</div>
+            <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+
+            {% if task.document %}
+            <div>
+              <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% elif task.work %}
+            <div>
+              <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% endif %}
+
           </div>
           {% endfor %}
         </div>
@@ -19,16 +32,29 @@
     </div>
 
     <div class="col-md-3">
-      <div class="card full-height card-radius">
+      <div class="card task-list-card-full-height task-list-card-radius">
         <h6 class="text-center my-3">Tasks waiting for approval</h6>
 
-        <div>
+        <div class="task-list-card-scroll">
           {% for task in tasks_pending_approval %}
           <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius task-list-card-approval-task">
             <div class="approval-heading-span">
-              <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="task-list-card-heading mb-2">{{ task.title }}</a><i class="far fa-clock"></i>
+              <div class="text-muted">#{{ task.pk }}</div><i class="fas fa-fw task-icon-{{ task.state }} text-muted"></i>
             </div>
-            <p>{{ task.description }}</p>
+            <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+
+            {% if task.document %}
+            <div>
+              <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% elif task.work %}
+            <div>
+              <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% endif %}
+
           </div>
           {% endfor %}
         </div>
@@ -36,15 +62,28 @@
     </div>
 
     <div class="col-md-3">
-      <div class="card full-height task-list-card-radius task-list-card-approved-column">
+      <div class="card task-list-card-full-height task-list-card-radius task-list-card-approved-column">
         <h6 class="text-center my-3">Your approved tasks</h6>
 
-        <div>
+        <div class="task-list-card-scroll">
           {% for task in tasks_recently_approved %}
           <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius">
-            <h6>{{ task.title }}</h6>
-            <p>{{ task.description }}</p>
+            <div class="text-muted">#{{ task.pk }}</div>
+            <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
           </div>
+
+          {% if task.document %}
+          <div>
+            <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+            <span class="text-muted">{{ task.work.frbr_uri }}</span>
+          </div>
+          {% elif task.work %}
+          <div>
+            <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+            <span class="text-muted">{{ task.work.frbr_uri }}</span>
+          </div>
+          {% endif %}
+
           {% endfor %}
         </div>
       </div>

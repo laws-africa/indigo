@@ -258,26 +258,41 @@ button.btn-link.help {
 /* revision list */
 .document-revisions-view {
   background-color: $body-bg-color;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  right: 0px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
 
   .revisions-header {
+    display: flex;
     padding: 10px;
     border-bottom: 1px solid $border-color;
     background-color: white;
+
+    .title {
+      flex: 1;
+    }
+
+    .buttons {
+      flex: 0 0 300px;
+    }
   }
 
   .revisions-main {
     display: flex;
+    flex: 1 1 auto;
   }
 
   .revisions-content {
     position: relative;
-    height: calc(100vh - 106px);
     flex: 1;
   }
 
   .revisions-container {
     flex: 0 0 300px;
-    height: calc(100vh - 106px);
     overflow-y: auto;
     background-color: $white;
     border-left: 1px solid $border-color;

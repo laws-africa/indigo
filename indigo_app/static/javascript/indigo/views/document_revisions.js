@@ -14,6 +14,8 @@
       'click .restore-revision': 'restore',
       'click .revision': 'showRevision',
       'click .dismiss': 'dismiss',
+      'click .prev-change-btn': 'prevChange',
+      'click .next-change-btn': 'nextChange',
     },
 
     initialize: function(options) {
@@ -94,7 +96,12 @@
 
       $.get(revision.url() + '/diff')
         .then(function(response) {
-          self.$el.find('.revision-preview .akoma-ntoso').html(response.content);
+          var $akn = self.$el.find('.revision-preview .akoma-ntoso').html(response.content);
+          self.changedElements = $akn.find('ins, del, .ins, .del');
+          self.currentElementIndex = 0;
+
+          self.$el.find('.change-count').text(
+              response.n_changes + ' change' + (response.n_changes != 1 ? 's' : ''));
         });
     },
 
@@ -106,5 +113,17 @@
           window.location.reload();
         });
     },
+
+    prevChange: function(e) {
+      if (this.currentElementIndex > 0 && this.changedElements.length > 0) {
+        this.changedElements[--this.currentElementIndex].scrollIntoView();
+      }
+    },
+
+    nextChange: function(e) {
+      if (this.currentElementIndex < this.changedElements.length - 1) {
+        this.changedElements[++this.currentElementIndex].scrollIntoView();
+      }
+    }
   });
 })(window);

@@ -107,12 +107,12 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/v1/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/v1/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/v1/za/act/2014')
         assert_equal(response.status_code, 200)
@@ -432,4 +432,4 @@ class PublishedAPITest(APITestCase):
     def test_published_search(self):
         response = self.client.get('/api/v1/search/za?q=act')
         assert_equal(response.status_code, 200)
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)

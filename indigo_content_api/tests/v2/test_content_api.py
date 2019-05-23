@@ -107,12 +107,12 @@ class PublishedAPIV2Test(APITestCase):
         response = self.client.get('/api/v2/akn/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/v2/akn/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/v2/akn/za/act/2014')
         assert_equal(response.status_code, 200)
@@ -429,4 +429,11 @@ class PublishedAPIV2Test(APITestCase):
     def test_published_search(self):
         response = self.client.get('/api/v2/search/za?q=act')
         assert_equal(response.status_code, 200)
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
+
+    def test_published_work_before_1900(self):
+        response = self.client.get('/api/v2/akn/za/act/1880/1.html')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_not_in('<akomaNtoso', response.content)
+        assert_in('<div', response.content)

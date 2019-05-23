@@ -1,27 +1,55 @@
 {% extends "main.html" %}
 
 {% block content %}
-  <h1>My tasks</h1>
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card full-height card-radius">
+        <h6 class="text-center my-3">Your current tasks</h6>
 
-  <ul>
-  {% for task in open_assigned_tasks %}
-    <li>{{ task.pk }} - {{ task.title }}</li>
-  {% endfor %}
-  </ul>
+        <div>
+          {% for task in open_assigned_tasks %}
+          <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius task-list-card-current-task">
+            <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="task-list-card-heading mb-2">{{ task.title }}</a>
+            <p>{{ task.description }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
 
-  <h1>Tasks pending approval</h1>
+    <div class="col-md-3">
+      <div class="card full-height card-radius">
+        <h6 class="text-center my-3">Tasks waiting for approval</h6>
 
-  <ul>
-    {% for task in tasks_pending_approval %}
-      <li>{{ task.pk }} - {{ task.title }}</li>
-    {% endfor %}
-  </ul>
+        <div>
+          {% for task in tasks_pending_approval %}
+          <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius task-list-card-approval-task">
+            <div class="approval-heading-span">
+              <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="task-list-card-heading mb-2">{{ task.title }}</a><i class="far fa-clock"></i>
+            </div>
+            <p>{{ task.description }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
 
-  <h1>Tasks recently approved</h1>
+    <div class="col-md-3">
+      <div class="card full-height task-list-card-radius task-list-card-approved-column">
+        <h6 class="text-center my-3">Your approved tasks</h6>
 
-  <ul>
-    {% for task in tasks_recently_approved %}
-      <li>{{ task.pk }} - {{ task.title }}</li>
-    {% endfor %}
-  </ul>
+        <div>
+          {% for task in tasks_recently_approved %}
+          <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius">
+            <h6>{{ task.title }}</h6>
+            <p>{{ task.description }}</p>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 {% endblock %}

@@ -9,7 +9,7 @@ from indigo.plugins import plugins
 
 @plugins.register('importer')
 class ImporterZA(Importer):
-    """ Importer for the Polish tradition.
+    """ Importer for the South African tradition.
     """
     locale = ('za', None, None)
 

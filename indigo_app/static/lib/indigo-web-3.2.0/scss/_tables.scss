@@ -22,6 +22,13 @@
       font-weight: bold;
     }
 
+    // last elements in table cells don't get a bottom margin
+    th, td {
+      &> :last-child {
+        margin-bottom: 0px;
+      }
+    }
+
     // Bottom align for column headings
     thead th {
       vertical-align: bottom;

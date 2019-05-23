@@ -2,12 +2,15 @@ import json
 
 from django import forms
 from django.core.validators import URLValidator
+from django.core.exceptions import ValidationError
 from django.conf import settings
+from django.forms import BaseModelFormSet
+from django.forms.formsets import DELETION_FIELD_NAME
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow, WorkProperty
 
 
 class WorkForm(forms.ModelForm):
@@ -73,6 +76,52 @@ class WorkForm(forms.ModelForm):
             pub_doc.save()
 
 
+class WorkPropertyForm(forms.ModelForm):
+    key = forms.ChoiceField(required=False, choices=WorkProperty.CHOICES)
+    value = forms.CharField(required=False)
+
+    class Meta:
+        model = WorkProperty
+        fields = ('key', 'value')
+
+    def clean(self):
+        super(WorkPropertyForm, self).clean()
+        if not self.cleaned_data.get('key') or not self.cleaned_data.get('value'):
+            self.cleaned_data[DELETION_FIELD_NAME] = True
+        return self.cleaned_data
+
+
+class BaseWorkPropertyFormSet(BaseModelFormSet):
+    def setup_extras(self):
+        # add extra forms for the properties we don't have yet
+        existing = set([p.key for p in self.queryset.all()])
+        missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
+        self.initial_extra = [{'key': key} for key in missing]
+
+    def keys_and_forms(self):
+        # (value, label) pairs sorted by label
+        keys = sorted(WorkProperty.CHOICES, key=lambda x: x[1])
+        forms_by_key = {f['key'].value(): f for f in self.forms}
+        return [{
+            'key': val,
+            'label': label,
+            'form': forms_by_key[val],
+        } for val, label in keys]
+
+    def clean(self):
+        keys = set()
+        for form in self.forms:
+            key = form.cleaned_data.get('key')
+            if key:
+                if key in keys:
+                    form.add_error(None, ValidationError("Property '{}' is specified more than once.".format(key)))
+                else:
+                    keys.add(key)
+
+
+WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, formset=BaseWorkPropertyFormSet, can_delete=True)
+
+
 class DocumentForm(forms.ModelForm):
     class Meta:
         model = Document
@@ -134,7 +183,7 @@ class BatchCreateWorkForm(forms.Form):
 Make sure the document's expression date correctly reflects this.''',
         },
     ]
-    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    principal_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
                                                required=False)
@@ -171,6 +220,12 @@ class TaskFilterForm(forms.Form):
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, to_field_name='slug')
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
+    assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
+
+    def __init__(self, country, *args, **kwargs):
+        self.country = country
+        super(TaskFilterForm, self).__init__(*args, **kwargs)
+        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):
@@ -183,6 +238,9 @@ class TaskFilterForm(forms.Form):
                     queryset = queryset.exclude(state='open', assigned_to=None)
             else:
                 queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
+
+        if self.cleaned_data.get('assigned_to'):
+            queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
 
         return queryset
 
@@ -197,3 +255,26 @@ class WorkflowFilterForm(forms.Form):
             queryset = queryset.filter(closed=True)
 
         return queryset
+
+
+class BulkTaskUpdateForm(forms.Form):
+    tasks = forms.ModelMultipleChoiceField(queryset=Task.objects)
+    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
+    unassign = False
+
+    def __init__(self, country, *args, **kwargs):
+        self.country = country
+        super(BulkTaskUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+
+    def clean_assigned_to(self):
+        user = self.cleaned_data['assigned_to']
+        if user and self.country not in user.editor.permitted_countries.all():
+            raise forms.ValidationError("That user doesn't have appropriate permissions for {}".format(self.country.name))
+        return user
+
+    def clean(self):
+        if self.data.get('assigned_to') == '-1':
+            del self.errors['assigned_to']
+            self.cleaned_data['assigned_to'] = None
+            self.unassign = True

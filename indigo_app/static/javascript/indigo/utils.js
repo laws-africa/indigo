@@ -33,6 +33,11 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
   var _this = this;
   var url = $(this).data('popup-url');
 
+  $.ajaxSetup({
+    url: "work_popup.html",
+    global: false,
+  });
+
   function popup(html) {
     $(_this).popover({content: html, html: true}).popover('show');
   }
@@ -49,7 +54,7 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
   $('.popover').mouseleave(function () {
     $(_this).popover('hide');
   });
-}).on('mouseleave','a[data-popup-url]', function(){
+}).on('mouseleave','a[data-popup-url], .popover', function(){
   var _this = this;
   setTimeout(function () {
     if (!$('.popover:hover').length) {
@@ -57,5 +62,3 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
     }
   }, 300);
 });
-
-

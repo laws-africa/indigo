@@ -12,30 +12,32 @@
         <title>Table of Contents</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <style>
+          @import url('https://fonts.googleapis.com/css?family=PT+Serif:400,400i,700,700i');
+
           body {
-            font-family: Georgia, "Times New Roman", serif;
-            font-size: 12pt;
+            font-family: Palatino, "Book Antiqua", "PT Serif", Georgia, serif;
+            font-size: 10pt;
             line-height: 1.4;
           }
           h1 {
             text-align: center;
-            font-size: 18pt;
+            font-size: 16pt;
             margin-top: 0px;
             margin-bottom: 2em;
           }
           ol {
-            font-size: 14pt;
+            font-size: 12pt;
             padding-left: 0px;
             margin-bottom: 1em;
           }
           ol ol {
-            font-size: 12pt;
+            font-size: 10pt;
             padding-left: 1em;
           }
           li {list-style: none; clear: both;}
           .page {
             float: right;
-            font-size: 12pt;
+            font-size: 10pt;
           }
           a {text-decoration:none; color: black;}
         </style>

@@ -55,6 +55,9 @@ INSTALLED_APPS = (
     # the Indigo API
     'indigo_api',
 
+    # Indigo metrics and stats
+    'indigo_metrics',
+
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -85,6 +88,9 @@ INSTALLED_APPS = (
     'reversion',
     'ckeditor',
     'corsheaders',
+
+    # required for commenting on tasks
+    'django_comments',
 )
 
 MIDDLEWARE = (
@@ -197,7 +203,7 @@ ASSETS_URL_EXPIRE = False
 # for each Django app
 
 # where the compiled assets go
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = os.path.join(os.getcwd(), 'staticfiles')
 # the URL for assets
 STATIC_URL = '/static/'
 

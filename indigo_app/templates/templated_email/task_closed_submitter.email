@@ -1,0 +1,14 @@
+{% block subject %}Task #{{ task.pk }} - {{ task.title|safe }}{% endblock %}
+
+{% block html %}
+  {% include 'templated_email/_header.html' %}
+  <p>
+    {{ action.actor.first_name }} approved task
+    <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} - {{ task.title }}</a>.
+  </p>
+
+  <p>Nice work, {{ recipient.first_name }}!</p>
+
+  {% include 'templated_email/_footer.html' %}
+{% endblock %}
+

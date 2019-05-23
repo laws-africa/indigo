@@ -10,7 +10,7 @@
   <xsl:template name="escape">
     <xsl:param name="value"/>
 
-    <xsl:variable name="prefix" select="translate(substring($value, 1, 10), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
+    <xsl:variable name="prefix" select="translate(substring($value, 1, 13), 'abcdefghijklmnopqrstuvwxyz', 'ABCDEFGHIJKLMNOPQRSTUVWXYZ')" />
     <!-- '(' is considered special, so translate numbers into '(' so we can find and escape them -->
     <xsl:variable name="numprefix" select="translate(substring($value, 1, 3), '1234567890', '((((((((((')" />
 
@@ -21,6 +21,8 @@
                   starts-with($prefix, 'CHAPTER ') or
                   starts-with($prefix, 'PART ') or
                   starts-with($prefix, 'SCHEDULE ') or
+                  starts-with($prefix, 'LONGTITLE ') or
+                  starts-with($prefix, 'CROSSHEADING ') or
                   starts-with($prefix, '{|') or
                   starts-with($numprefix, '(')">
       <xsl:text>\</xsl:text>
@@ -86,6 +88,20 @@
     </xsl:if>
 
     <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
+  </xsl:template>
+
+  <!-- crossheadings -->
+  <xsl:template match="a:hcontainer[@name='crossheading']">
+    <xsl:text>CROSSHEADING </xsl:text>
+    <xsl:apply-templates select="a:heading" />
+    <xsl:text>&#10;&#10;</xsl:text>
+  </xsl:template>
+
+  <!-- longtitle -->
+  <xsl:template match="a:longTitle">
+    <xsl:text>LONGTITLE </xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>&#10;&#10;</xsl:text>
   </xsl:template>
 
   <!-- p tags must end with a blank line -->
@@ -237,6 +253,18 @@
     <xsl:text>](</xsl:text>
     <xsl:value-of select="@src" />
     <xsl:text>)</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:i">
+    <xsl:text>//</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>//</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:b">
+    <xsl:text>**</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>**</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:eol">

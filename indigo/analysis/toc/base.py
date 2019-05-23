@@ -1,3 +1,5 @@
+from __future__ import unicode_literals
+
 import re
 from itertools import chain
 from lxml.html import _collect_string_content
@@ -44,7 +46,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ The locale this TOC builder is suited for, as ``(country, language, locality)``.
     """
 
-    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions']
+    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'doc']
     """ Elements we include in the table of contents, without their XML namespace. Subclasses must
     provide this.
     """
@@ -100,7 +102,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
         return (None, None)
 
     def is_toc_element(self, element):
-        return element.tag in self._toc_elements_ns
+        return element.tag in self._toc_elements_ns or (
+            # AKN 2.0 crossheadings are <hcontainer name="crossheading">
+            'crossheading' in self.toc_elements and element.tag.endswith('}hcontainer')
+            and element.get('name', None) == 'crossheading')
 
     def table_of_contents(self, act, language):
         """ Get the table of contents of ``act`` as a list of :class:`TOCElement` instances. """
@@ -112,13 +117,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def build_table_of_contents(self):
         toc = []
         for component, element in self.act.components().iteritems():
-            if component != "main":
-                # non-main components are items in their own right
-                item = self.make_toc_entry(element, component)
-                item.children = self.process_elements(component, [element])
-                toc += [item]
-            else:
-                toc += self.process_elements(component, [element])
+            toc += self.process_elements(component, [element])
 
         return toc
 
@@ -139,6 +138,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def make_toc_entry(self, element, component, parent=None):
         type_ = element.tag.split('}', 1)[-1]
         id_ = element.get('id')
+
+        # support for crossheadings in AKN 2.0
+        if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':
+            type_ = 'crossheading'
 
         if type_ == 'doc':
             # component, get the title from the alias
@@ -235,6 +238,7 @@ class TOCElement(object):
         self.children = children
         self.subcomponent = subcomponent
         self.title = None
+        self.qualified_id = id_ if component == 'main' else "{}/{}".format(component, id_)
 
     def as_dict(self):
         info = {

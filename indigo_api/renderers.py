@@ -39,7 +39,7 @@ def file_candidates(document, prefix='', suffix=''):
     * doctype-language
     * doctype
     """
-    uri = document.doc.frbr_uri
+    uri = document.expression_uri
     doctype = uri.doctype
     language = uri.language
     country = uri.country
@@ -369,7 +369,7 @@ class PDFRenderer(HTMLRenderer):
         # the margin slightly
 
         footer_font = 'Georgia, "Times New Roman", serif'
-        footer_font_size = '10'
+        footer_font_size = '8'
         footer_spacing = 5
         margin_top = 36.3 - footer_spacing
         margin_bottom = 36.3 - footer_spacing
@@ -414,7 +414,7 @@ class EPUBRenderer(HTMLRenderer):
     def render(self, document, element=None):
         self.create_book()
 
-        self.book.set_identifier(document.doc.frbr_uri.expression_uri())
+        self.book.set_identifier(document.expression_uri.expression_uri())
         self.book.set_title(document.title)
         self.book.set_language(document.language.language.iso)
         self.book.add_author(settings.INDIGO_ORGANISATION)
@@ -428,7 +428,7 @@ class EPUBRenderer(HTMLRenderer):
     def render_many(self, documents):
         self.create_book()
 
-        self.book.set_identifier(':'.join(d.doc.frbr_uri.expression_uri() for d in documents))
+        self.book.set_identifier(':'.join(d.expression_uri.expression_uri() for d in documents))
         self.book.add_author(settings.INDIGO_ORGANISATION)
         self.book.set_title('%d documents' % len(documents))
 

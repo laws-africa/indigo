@@ -1,11 +1,14 @@
+@import 'lib/indigo-web-3.2.0/scss/akoma-ntoso';
+
 body.standalone {
   margin: 2em;
 }
 
 body.pdf {
-  font-family: Georgia, "Times New Roman", serif;
+  font-family: $akn-font-family;
   font-size: 12pt;
   color: black;
+  width: 200mm;
 
   .document,
   .akn-doc {
@@ -66,5 +69,3 @@ nav#id {
 
   margin-bottom: 5em;
 }
-
-@import 'lib/indigo-web-2.0.0/scss/akoma-ntoso';

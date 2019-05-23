@@ -10,7 +10,7 @@ from actstream import action
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.db import models
-from django.db.models import signals, Q
+from django.db.models import signals, Q, Prefetch
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -19,7 +19,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
-from django_fsm import FSMField, transition
+from django_fsm import FSMField, has_transition_perm, transition
 
 import arrow
 from taggit.managers import TaggableManager
@@ -141,11 +141,14 @@ class WorkQuerySet(models.QuerySet):
 
 
 class WorkManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         # defer expensive or unnecessary fields
         return super(WorkManager, self)\
             .get_queryset()\
-            .prefetch_related('country', 'country__country', 'locality', 'publication_document')
+            .select_related('updated_by_user', 'created_by_user', 'country',
+                            'country__country', 'locality', 'publication_document')
 
 
 class Work(models.Model):
@@ -195,6 +198,7 @@ class Work(models.Model):
 
     _work_uri = None
     _repeal = None
+    _properties = None
 
     @property
     def work_uri(self):
@@ -219,10 +223,9 @@ class Work(models.Model):
     def subtype(self):
         return self.work_uri.subtype
 
-    # Helper to get/set locality using the locality_code, used by the WorkSerializer.
-
     @property
     def locality_code(self):
+        # Helper to get/set locality using the locality_code, used by the WorkSerializer.
         return self.locality.code
 
     @locality_code.setter
@@ -248,6 +251,19 @@ class Work(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @property
+    def properties(self):
+        if self._properties is None:
+            self._properties = {p.key: p.value for p in self.raw_properties.all()}
+        return self._properties
+
+    def labeled_properties(self):
+        return sorted([{
+            'label': WorkProperty.KEYS[key],
+            'key': key,
+            'value': val,
+        } for key, val in self.properties.iteritems() if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -276,6 +292,13 @@ class Work(models.Model):
             self.repealed_date = None
 
         return super(Work, self).save(*args, **kwargs)
+
+    def save_with_revision(self, user):
+        """ Save this work and create a new revision at the same time.
+        """
+        with reversion.revisions.create_revision():
+            reversion.revisions.set_user(user)
+            self.save()
 
     def can_delete(self):
         return (not self.document_set.undeleted().exists() and
@@ -315,7 +338,7 @@ class Work(models.Model):
     def expressions(self):
         """ A queryset of expressions of this work, in ascending expression date order.
         """
-        return self.document_set.undeleted().order_by('expression_date')
+        return Document.objects.undeleted().filter(work=self).order_by('expression_date')
 
     def initial_expressions(self):
         """ Queryset of expressions at initial publication date.
@@ -328,7 +351,7 @@ class Work(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision', 'revision__user')\
+            .select_related('revision', 'revision__user')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
@@ -433,6 +456,19 @@ class PublicationDocument(models.Model):
         return super(PublicationDocument, self).save(*args, **kwargs)
 
 
+class WorkProperty(models.Model):
+    # these are injected by other installations
+    KEYS = {}
+    CHOICES = KEYS.items()
+
+    work = models.ForeignKey(Work, null=False, related_name='raw_properties')
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=CHOICES)
+    value = models.CharField(max_length=1024, null=False, blank=False)
+
+    class Meta:
+        unique_together = ('work', 'key')
+
+
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """
@@ -452,7 +488,7 @@ class Amendment(models.Model):
     def expressions(self):
         """ The amended work's documents (expressions) at this date.
         """
-        return self.amended_work.document_set.undeleted().filter(expression_date=self.date)
+        return self.amended_work.expressions().filter(expression_date=self.date)
 
     def can_delete(self):
         return not self.expressions().exists()
@@ -803,7 +839,7 @@ class Document(models.Model):
         """
         content_type = ContentType.objects.get_for_model(self)
         return reversion.models.Version.objects\
-            .prefetch_related('revision')\
+            .select_related('revision')\
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
@@ -1026,9 +1062,14 @@ class TaskQuerySet(models.QuerySet):
 
 
 class TaskManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return super(TaskManager, self).get_queryset()\
-            .prefetch_related('labels', 'work', 'document', 'created_by_user', 'assigned_to')
+            .select_related('created_by_user', 'assigned_to')\
+            .prefetch_related(Prefetch('work', queryset=Work.objects.filter()))\
+            .prefetch_related(Prefetch('document', queryset=Document.objects.no_xml()))\
+            .prefetch_related('labels')
 
 
 class Task(models.Model):
@@ -1076,6 +1117,14 @@ class Task(models.Model):
     def place(self):
         return self.locality or self.country
 
+    @property
+    def is_closed(self):
+        return self.state in self.CLOSED_STATES
+
+    @property
+    def is_open(self):
+        return self.state in self.OPEN_STATES
+
     def clean(self):
         # enforce that any work and/or document are for the correct place
         if self.document and self.document.work != self.work:
@@ -1084,26 +1133,69 @@ class Task(models.Model):
         if self.work and (self.work.country != self.country or self.work.locality != self.locality):
             self.work = None
 
+    def can_assign_to(self, user):
+        """ Can this task be assigned to this user?
+        """
+        return user.editor.permitted_countries.filter(pk=self.country.pk).exists()
+
+    def assign_to(self, assignee, assigned_by):
+        """ Assign this task to assignee (may be None)
+        """
+        self.assigned_to = assignee
+        if assigned_by == self.assigned_to:
+            action.send(self.assigned_to, verb='picked up', action_object=self,
+                        place_code=self.place.place_code)
+        elif assignee:
+            action.send(assigned_by, verb='assigned', action_object=self,
+                        target=self.assigned_to,
+                        place_code=self.place.place_code)
+        else:
+            action.send(assigned_by, verb='unassigned', action_object=self,
+                        place_code=self.place.place_code)
+
     @classmethod
     def decorate_potential_assignees(cls, tasks, country):
         submit_task_permission = Permission.objects.get(codename='submit_task')
         close_task_permission = Permission.objects.get(codename='close_task')
 
-        potential_assignees = User.objects.filter(editor__permitted_countries=country, user_permissions=submit_task_permission)
-        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission)
+        potential_assignees = User.objects\
+            .filter(editor__permitted_countries=country, user_permissions=submit_task_permission)\
+            .order_by('first_name', 'last_name')\
+            .all()
+        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission).all()
 
         for task in tasks:
             if task.state == 'open':
-                task.potential_assignees = [u for u in potential_assignees.all() if task.assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
-                task.potential_assignees = [u for u in potential_reviewers.all() if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+
+        return tasks
+
+    @classmethod
+    def decorate_permissions(cls, tasks, view):
+        for task in tasks:
+            task.change_task_permission = view.request.user.has_perm('indigo_api.change_task')
+            task.submit_task_permission = has_transition_perm(task.submit, view)
+            task.reopen_task_permission = has_transition_perm(task.reopen, view)
+            task.unsubmit_task_permission = has_transition_perm(task.unsubmit, view)
+            task.close_task_permission = has_transition_perm(task.close, view)
 
         return tasks
 
     # submit for review
     def may_submit(self, view):
-        return view.request.user.is_authenticated and \
-            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.submit_task')
+        user = view.request.user
+
+        if user.has_perm('indigo_api.close_task'):
+            senior_or_assignee = True
+        else:
+            senior_or_assignee = user == self.assigned_to
+
+        return senior_or_assignee and \
+            user.is_authenticated and \
+            user.editor.has_country_permission(view.country) and \
+            user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
@@ -1139,7 +1231,9 @@ class Task(models.Model):
     # close
     def may_close(self, view):
         return view.request.user.is_authenticated and \
-            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.close_task')
+        view.request.user.editor.has_country_permission(view.country) and  \
+        view.request.user.has_perm('indigo_api.close_task') and \
+        view.request.user != self.last_assigned_to
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
@@ -1203,9 +1297,11 @@ class WorkflowQuerySet(models.QuerySet):
 
 
 class WorkflowManager(models.Manager):
+    use_for_related_fields = True
+
     def get_queryset(self):
         return super(WorkflowManager, self).get_queryset()\
-            .prefetch_related('tasks', 'created_by_user')
+            .select_related('created_by_user')
 
 
 class Workflow(models.Model):

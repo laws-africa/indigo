@@ -15,8 +15,8 @@ from indigo_api.views.documents import DocumentViewMixin, DocumentResourceView, 
 from indigo_api.views.attachments import view_attachment_by_filename
 from indigo_api.models import Attachment, Country
 
-from .serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
-from .atom import AtomRenderer, AtomFeed
+from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
+from indigo_content_api.v1.atom import AtomRenderer, AtomFeed
 
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')

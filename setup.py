@@ -40,7 +40,7 @@ setup(
 
     python_requires='~=2.7',
     install_requires=[
-        'django>=1.11.15',
+        'django>=1.11.15,<2',
         'arrow>=0.5',
         'boto3>=1.7',
         'cobalt>=1.0.0',
@@ -63,6 +63,7 @@ setup(
         'django-storages>=1.6.6',
         'django-taggit-serializer>=0.1.5',
         'django-taggit>=0.22.0',
+        'django-templated-email>=2.3.0',
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.6.2,<3.7',
@@ -75,6 +76,7 @@ setup(
         'requests>=2',
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
+        'django-contrib-comments>=1.9.1',
 
         # for indigo_social
         'pillow>=5.2.0',

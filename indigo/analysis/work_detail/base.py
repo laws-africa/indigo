@@ -20,13 +20,6 @@ class BaseWorkDetail(LocaleBasedMatcher):
         uri = work.work_uri
         number = work.number
         work_type = self.work_friendly_type(work)
-
-        # Should be in a locale-specific place
-        if uri.number.startswith('cap'):
-            # eg. Chapter 2
-            number = number[3:]
-            return _('%(type)s %(number)s') % {'type': _(work_type), 'number': number}
-
         return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number, 'year': work.year}
 
     def work_friendly_type(self, work):

@@ -299,19 +299,6 @@ button.btn-link.help {
   }
 }
 
-.revision-preview {
-  ins {
-    background-color: #a6f3a6;
-    text-decoration: none;
-  }
-
-  del {
-    color: #a33;
-    background-color: #f8cbcb;
-    text-decoration: line-through;
-  }
-}
-
 .revision-list {
   .revision {
     padding: 5px 5px 5px 20px;
@@ -479,5 +466,21 @@ button.btn-link.help {
     height: calc(100vh - 50px);
     max-width: 1024px;
     margin: auto;
+  }
+}
+
+.diffset {
+  ins,
+  .ins,
+  .ins > .akn-num {
+    background-color: #a6f3a6;
+    text-decoration: none;
+  }
+
+  del,
+  .del,
+  .del > .akn-num {
+    background-color: #f8cbcb;
+    text-decoration: none;
   }
 }

@@ -75,13 +75,11 @@
 
 {% block content %}
 <div class="work-view">
-  <div class="main-content">
-    {% block main-content %}
-    <div class="container pt-3 pb-5">
-      {% block work-content %}{% endblock %}
-    </div>
-    {% endblock %}
+  {% block main-content %}
+  <div class="container pt-3 pb-5">
+    {% block work-content %}{% endblock %}
   </div>
+  {% endblock %}
 </div>
 
 {% include "indigo_api/_work_chooser_modal.html" %}

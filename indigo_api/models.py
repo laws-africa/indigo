@@ -1083,6 +1083,14 @@ class Task(models.Model):
     CLOSED_STATES = (CANCELLED, DONE)
     OPEN_STATES = (OPEN, PENDING_REVIEW)
 
+    VERBS = {
+        'submit': 'submitted',
+        'cancel': 'cancelled',
+        'reopen': 'reopened',
+        'unsubmit': 'requested changes to',
+        'close': 'approved',
+    }
+
     class Meta:
         permissions = (
             ('submit_task', 'Can submit an open task for review'),
@@ -1210,6 +1218,7 @@ class Task(models.Model):
     def submit(self, user):
         self.last_assigned_to = self.assigned_to
         self.assigned_to = None
+        action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
     def may_cancel(self, view):
@@ -1219,6 +1228,7 @@ class Task(models.Model):
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
         self.assigned_to = None
+        action.send(user, verb=self.VERBS['cancel'], action_object=self, place_code=self.place.place_code)
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1228,7 +1238,7 @@ class Task(models.Model):
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
         self.closed_by_user = None
-        pass
+        action.send(user, verb=self.VERBS['reopen'], action_object=self, place_code=self.place.place_code)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1238,6 +1248,7 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
         self.assigned_to = self.last_assigned_to
+        action.send(user, verb=self.VERBS['unsubmit'], action_object=self, place_code=self.place.place_code)
 
     # close
     def may_close(self, view):
@@ -1250,6 +1261,7 @@ class Task(models.Model):
     def close(self, user):
         self.closed_by_user = user
         self.assigned_to = None
+        action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 
     def anchor(self):
         return {'id': self.anchor_id}

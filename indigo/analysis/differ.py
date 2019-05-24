@@ -24,6 +24,12 @@ def fragments_fromstring(html):
     return items
 
 
+def wrap_tail(elem, wrapper):
+    x = wrapper(elem.tail)
+    elem.tail = None
+    elem.addnext(x)
+
+
 class AttributeDiffer(object):
     differ = Differ()
 
@@ -200,34 +206,46 @@ class AttributeDiffer(object):
             changes = 1
         else:
             for diff in self.describe_html_differences(old_tree, new_tree, None):
+                changes += 1
+
                 if diff[0] == 'added':
                     log.debug("ADDED: %s", diff[1].tag)
-                    diff[1].classes.add('ins')
-                    changes += 1
+                    new = diff[1]
+
+                    new.classes.add('ins')
+                    if new.tail:
+                        wrap_tail(new, lxml.html.builder.INS)
 
                 elif diff[0] == 'replaced':
                     log.debug("REPLACED: %s -> %s", diff[1].tag, diff[2].tag)
                     old, new = diff[1], diff[2]
+
                     old = deepcopy(old)
-                    # TODO: also mark tail
                     old.classes.add('del')
+
                     # same as new.addprevious(old) but preserves tails
                     # see https://stackoverflow.com/questions/23282241/
                     new.getparent().insert(new.getparent().index(new), old)
-                    new.classes.add('new')
-                    changes += 1
+                    if old.tail:
+                        wrap_tail(old, lxml.html.builder.DEL)
+
+                    new.classes.add('ins')
+                    if new.tail:
+                        wrap_tail(new, lxml.html.builder.INS)
 
                 elif diff[0] == 'deleted':
                     log.debug("DELETED: %s", diff[1].tag)
+                    old, parent = diff[1:]
+
+                    old = deepcopy(old)
+                    old.classes.add('del')
+
                     # the only possible way that a node can be deleted
                     # if it was the last node in the tree, otherwise
                     # it's considered replaced
-                    old, parent = diff[1:]
-                    # TODO: also mark tail
-                    old = deepcopy(old)
-                    old.classes.add('del')
                     parent.append(old)
-                    changes += 1
+                    if old.tail:
+                        wrap_tail(old, lxml.html.builder.DEL)
 
                 elif diff[0] == 'text-differs':
                     log.debug("TEXT CHANGED: %s: %s / %s", diff[1].tag, diff[1].text, diff[2].text)
@@ -240,7 +258,6 @@ class AttributeDiffer(object):
                             new.text = item
                         else:
                             new.insert(0, item)
-                    changes += 1
 
                 elif diff[0] == 'tail-differs':
                     log.debug("TAIL CHANGED: %s: %s / %s", diff[1].tag, diff[1].tail, diff[2].tail)
@@ -257,7 +274,6 @@ class AttributeDiffer(object):
                             # see https://stackoverflow.com/questions/23282241/
                             prev.getparent().insert(prev.getparent().index(prev) + 1, item)
                             prev = item
-                    changes += 1
 
         return changes
 

@@ -65,7 +65,7 @@ class AttributeDifferTestCase(TestCase):
 
         self.assertEqual(
             as_html(new),
-            '<p><del>Some text </del><ins>Some text bold text and a tail.</ins><b class="del">bold text</b><del> and a tail.</del></p>',
+            '<p>Some text <ins>bold text and a tail.</ins><b class="del">bold text</b><del> and a tail.</del></p>',
         )
 
     def test_inline_tag_added(self):
@@ -75,5 +75,5 @@ class AttributeDifferTestCase(TestCase):
 
         self.assertEqual(
             as_html(new),
-            '<p><del>Some text bold text and a tail.</del><ins>Some text </ins><b class="ins">bold text</b><ins> and a tail.</ins></p>',
+            '<p>Some text <del>bold text and a tail.</del><b class="ins">bold text</b><ins> and a tail.</ins></p>',
         )

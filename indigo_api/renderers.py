@@ -65,7 +65,7 @@ def resolver_url(request, resolver):
         return ''
 
     if resolver:
-        if resolver.startswith('http'):
+        if resolver.startswith('http') or resolver.startswith('/'):
             return resolver
         else:
             return request.build_absolute_uri('/resolver/%s/resolve' % resolver)

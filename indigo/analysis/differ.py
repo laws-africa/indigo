@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 import cgi
-from difflib import Differ
+from difflib import Differ, SequenceMatcher
 from itertools import izip_longest
 from copy import deepcopy
 import logging
@@ -132,6 +132,8 @@ class AttributeDiffer(object):
         left = []
         right = []
 
+        # TODO: rewrite this using sequermatcher, it's easier
+
         for diff in self.differ.compare(old, new):
             # diff is a string and one of:
             #   '  x' = 'x' is the same on both sides
@@ -152,6 +154,33 @@ class AttributeDiffer(object):
 
         return left, right
 
+    def html_inline_diff(self, old, new):
+        """ Diff strings and return an inline, unified HTML markup indicating
+        differences. """
+        if old is None:
+            old = ''
+        if new is None:
+            new = ''
+
+        output = []
+
+        matcher = SequenceMatcher(None, old, new)
+        for opcode, a0, a1, b0, b1 in matcher.get_opcodes():
+            if opcode == 'equal':
+                output.append(matcher.a[a0:a1])
+
+            elif opcode == 'insert':
+                output.append('<ins>{}</ins>'.format(matcher.b[b0:b1]))
+
+            elif opcode == 'delete':
+                output.append('<del>{}</del>'.format(matcher.a[a0:a1]))
+
+            elif opcode == 'replace':
+                output.append('<del>{}</del>'.format(matcher.a[a0:a1]))
+                output.append('<ins>{}</ins>'.format(matcher.b[b0:b1]))
+
+        return ''.join(output)
+
     def diff_document_html(self, old_tree, new_tree):
         changes = 0
 
@@ -159,30 +188,43 @@ class AttributeDiffer(object):
             new_tree.classes.add('ins')
             changes = 1
         else:
-            for diff in self.describe_html_differences(old_tree, new_tree, None, 0):
+            for diff in self.describe_html_differences(old_tree, new_tree, None):
                 if diff[0] == 'added':
                     log.debug("ADDED: {}".format(diff[1].tag))
                     diff[1].classes.add('ins')
                     changes += 1
 
-                elif diff[0] == 'deleted':
-                    log.debug("DELETED: {}".format(diff[1].tag))
-                    old, parent, index = diff[1:]
+                elif diff[0] == 'replaced':
+                    log.debug("REPLACED: {} -> {}".format(diff[1].tag, diff[2].tag))
+                    old, new = diff[1], diff[2]
                     old = deepcopy(old)
                     old.classes.add('del')
-                    parent.insert(index, old)
+                    new.addprevious(old)
+                    new.classes.add('new')
+                    changes += 1
+
+                elif diff[0] == 'deleted':
+                    log.debug("DELETED: {}".format(diff[1].tag))
+                    # the only possible way that a node can be deleted
+                    # if it was the last node in the tree, otherwise
+                    # it's considered replaced
+                    old, parent = diff[1:]
+                    old = deepcopy(old)
+                    old.classes.add('del')
+                    parent.append(old)
                     changes += 1
 
                 elif diff[0] == 'text-differs':
                     log.debug("CHANGED: {}: {} / {}".format(diff[1].tag, diff[1].text, diff[2].text))
                     old, new = diff[1], diff[2]
 
-                    # TODO: diff the text
-                    if new.text:
-                        new.insert(0, lxml.html.builder.INS(new.text))
-                    if old.text:
-                        new.insert(0, lxml.html.builder.DEL(old.text))
+                    html_diff = self.html_inline_diff(old.text, new.text)
                     new.text = None
+                    for item in reversed(lxml.html.fragments_fromstring(html_diff)):
+                        if isinstance(item, basestring):
+                            new.text = item
+                        else:
+                            new.insert(0, item)
                     changes += 1
 
                 elif diff[0] == 'tail-differs':
@@ -192,7 +234,7 @@ class AttributeDiffer(object):
 
         return changes
 
-    def describe_html_differences(self, old, new, parent, index):
+    def describe_html_differences(self, old, new, parent):
         if old is None:
             # node entirely new
             yield ('added', new)
@@ -200,13 +242,12 @@ class AttributeDiffer(object):
 
         if new is None:
             # node was deleted
-            yield ('deleted', old, parent, index)
+            yield ('deleted', old, parent)
             return
 
         # did the tag change?
         if old.tag != new.tag:
-            yield ('deleted', old, parent, index)
-            yield ('added', new)
+            yield ('replaced', old, new)
             return
 
         # TODO diff attributes
@@ -221,6 +262,6 @@ class AttributeDiffer(object):
         if old.tail != new.tail and (old.tail or '').strip() != (new.tail or '').strip():
             yield ('tail-differs', old, new)
 
-        for i, pair in enumerate(kiddies):
-            for diff in self.describe_html_differences(pair[0], pair[1], new, i):
+        for pair in kiddies:
+            for diff in self.describe_html_differences(pair[0], pair[1], new):
                 yield diff

@@ -48,6 +48,16 @@ class AttributeDifferTestCase(TestCase):
             '<p>some <del>old</del><ins>new</ins> text <b>no change</b> text <i>no change</i></p>',
         )
 
+    def test_tail_changed(self):
+        old = as_tree('<p>something <b>bold</b> 123 xx <i>and</i> same </p>')
+        new = as_tree('<p>something <b>bold</b> 456 xx <i>and</i> same </p>')
+        self.differ.diff_document_html(old, new)
+
+        self.assertEqual(
+            as_html(new),
+            '<p>something <b>bold</b> <del>123</del><ins>456</ins> xx <i>and</i> same </p>',
+        )
+
     def test_inline_tag_removed(self):
         old = as_tree('<p>Some text <b>bold text</b> and a tail.</p>')
         new = as_tree('<p>Some text bold text and a tail.</p>')

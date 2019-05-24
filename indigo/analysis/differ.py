@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 import cgi
+import re
 from difflib import Differ, SequenceMatcher
 from itertools import izip_longest
 from copy import deepcopy
@@ -11,6 +12,16 @@ import lxml.html
 import lxml.html.builder
 
 log = logging.getLogger(__name__)
+
+
+def fragments_fromstring(html):
+    """ Same as lxml.html.fragments_fromstring, except we preserve initial whitespace.
+    """
+    items = lxml.html.fragments_fromstring(html)
+    match = re.match(r'^(\s+)<', html)
+    if match:
+        items.insert(0, match.group(1))
+    return items
 
 
 class AttributeDiffer(object):
@@ -190,37 +201,41 @@ class AttributeDiffer(object):
         else:
             for diff in self.describe_html_differences(old_tree, new_tree, None):
                 if diff[0] == 'added':
-                    log.debug("ADDED: {}".format(diff[1].tag))
+                    log.debug("ADDED: %s", diff[1].tag)
                     diff[1].classes.add('ins')
                     changes += 1
 
                 elif diff[0] == 'replaced':
-                    log.debug("REPLACED: {} -> {}".format(diff[1].tag, diff[2].tag))
+                    log.debug("REPLACED: %s -> %s", diff[1].tag, diff[2].tag)
                     old, new = diff[1], diff[2]
                     old = deepcopy(old)
+                    # TODO: also mark tail
                     old.classes.add('del')
-                    new.addprevious(old)
+                    # same as new.addprevious(old) but preserves tails
+                    # see https://stackoverflow.com/questions/23282241/
+                    new.getparent().insert(new.getparent().index(new), old)
                     new.classes.add('new')
                     changes += 1
 
                 elif diff[0] == 'deleted':
-                    log.debug("DELETED: {}".format(diff[1].tag))
+                    log.debug("DELETED: %s", diff[1].tag)
                     # the only possible way that a node can be deleted
                     # if it was the last node in the tree, otherwise
                     # it's considered replaced
                     old, parent = diff[1:]
+                    # TODO: also mark tail
                     old = deepcopy(old)
                     old.classes.add('del')
                     parent.append(old)
                     changes += 1
 
                 elif diff[0] == 'text-differs':
-                    log.debug("CHANGED: {}: {} / {}".format(diff[1].tag, diff[1].text, diff[2].text))
+                    log.debug("TEXT CHANGED: %s: %s / %s", diff[1].tag, diff[1].text, diff[2].text)
                     old, new = diff[1], diff[2]
 
                     html_diff = self.html_inline_diff(old.text, new.text)
                     new.text = None
-                    for item in reversed(lxml.html.fragments_fromstring(html_diff)):
+                    for item in reversed(fragments_fromstring(html_diff)):
                         if isinstance(item, basestring):
                             new.text = item
                         else:
@@ -228,9 +243,21 @@ class AttributeDiffer(object):
                     changes += 1
 
                 elif diff[0] == 'tail-differs':
+                    log.debug("TAIL CHANGED: %s: %s / %s", diff[1].tag, diff[1].tail, diff[2].tail)
+                    old, new = diff[1], diff[2]
+
+                    html_diff = self.html_inline_diff(old.tail, new.tail)
+                    prev = new
+                    prev.tail = None
+                    for item in fragments_fromstring(html_diff):
+                        if isinstance(item, basestring):
+                            prev.tail = item
+                        else:
+                            # same as prev.addnext, but preserves prev's tail
+                            # see https://stackoverflow.com/questions/23282241/
+                            prev.getparent().insert(prev.getparent().index(prev) + 1, item)
+                            prev = item
                     changes += 1
-                    # TODO
-                    pass
 
         return changes
 

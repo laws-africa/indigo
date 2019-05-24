@@ -1,0 +1,12 @@
+{% block subject %}Task #{{ task.pk }} - {{ task.title|safe }}{% endblock %}
+
+{% block html %}
+  {% include 'templated_email/_header.html' %}
+
+  <p>Hello {{ recipient.first_name }},</p>
+
+  <p> {{ comment.user_name }} commented on Task {{ task.pk }} - ({{ task.title|safe }}): <hr> {{ comment.comment }} </p>
+
+  {% include 'templated_email/_footer.html' %}
+{% endblock %}
+

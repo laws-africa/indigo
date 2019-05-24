@@ -289,7 +289,7 @@ class AttributeDiffer(object):
             return
 
         # did the tag change?
-        if old.tag != new.tag:
+        if old.tag != new.tag or old.classes != new.classes:
             yield ('replaced', old, new)
             return
 

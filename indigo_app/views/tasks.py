@@ -424,7 +424,7 @@ class MyTasksView(AbstractAuthedIndigoView, TemplateView):
         # tasks recently approved
         threshold = datetime.date.today() - datetime.timedelta(days=7)
         context['tasks_recently_approved'] = Task.objects \
-            .filter(last_assigned_to=self.request.user, state='closed') \
+            .filter(last_assigned_to=self.request.user, state='done') \
             .filter(updated_at__gte=threshold) \
             .all()[:50]
 

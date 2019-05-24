@@ -260,15 +260,6 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                     raise PermissionDenied
                 state_change(user)
 
-                # assignee side effects of different state changes
-                if change == 'submit':
-                    task.last_assigned_to = task.assigned_to
-                    task.assigned_to = None
-                if change == 'unsubmit' and task.last_assigned_to:
-                    task.assigned_to = task.last_assigned_to
-                if change == 'close' or change == 'cancel':
-                    task.assigned_to = None
-
                 # action signal and success message
                 action.send(user, verb=verb, action_object=task,
                             place_code=task.place.place_code)

@@ -1,26 +1,12 @@
 // helper classes
 .task-list-card-full-height {
   height: 100%;
-  max-height: 70vh;
-}
-
-.task-list-card-radius {
-  border-radius: 4px;
+  max-height: 80vh;
 }
 
 .task-list-card-scroll {
   max-height: 100%;
   overflow: scroll;
-}
-
-.task-list-card-current-task {
-  border: 1px solid $primary;
-  box-shadow: 0px 0px 3px 2px rgba(0,0,0,0.15);
-}
-
-.task-list-card-approval-task {
-  background-color: #f8f8f8;
-  border: 1px solid #dedede;
 }
 
 .approval-heading-span {
@@ -34,6 +20,12 @@
   color: black;
 }
 
-.task-list-card-approved-column {
-  border-color: $success;
+.task-border-open {
+  border: 1px solid $primary;
+}
+.task-border-pending_review {
+  border: 1px solid #dedede;
+}
+.task-border-done {
+  border: 1px solid $success;
 }

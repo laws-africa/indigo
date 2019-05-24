@@ -4,12 +4,13 @@
 <div class="container mt-3">
   <div class="row">
     <div class="col-md-6">
-      <div class="card task-list-card-full-height task-list-card-radius">
+      <div class="card task-list-card-full-height">
         <h6 class="text-center my-3">Your current tasks</h6>
 
         <div class="task-list-card-scroll">
           {% for task in open_assigned_tasks %}
-          <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius task-list-card-current-task">
+          {{ task.state }}
+          <div class="task-list-card my-2 mx-3 p-2 task-border-{{ task.state }}">
             <div class="text-muted">#{{ task.pk }}</div>
             <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
 
@@ -32,12 +33,13 @@
     </div>
 
     <div class="col-md-3">
-      <div class="card task-list-card-full-height task-list-card-radius">
+      <div class="card task-list-card-full-height">
         <h6 class="text-center my-3">Tasks waiting for approval</h6>
 
         <div class="task-list-card-scroll">
           {% for task in tasks_pending_approval %}
-          <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius task-list-card-approval-task">
+          {{ task.state }}
+          <div class="task-list-card my-2 mx-3 p-2 task-border-{{ task.state }}">
             <div class="approval-heading-span">
               <div class="text-muted">#{{ task.pk }}</div><i class="fas fa-fw task-icon-{{ task.state }} text-muted"></i>
             </div>
@@ -62,28 +64,27 @@
     </div>
 
     <div class="col-md-3">
-      <div class="card task-list-card-full-height task-list-card-radius task-list-card-approved-column">
+      <div class="card task-list-card-full-height task-list-card-approved-column">
         <h6 class="text-center my-3">Your approved tasks</h6>
 
         <div class="task-list-card-scroll">
           {% for task in tasks_recently_approved %}
-          <div class="task-list-card my-2 mx-3 p-2 task-list-card-radius">
+          {{ task.state }}
+          <div class="task-list-card task-border-{{ task.state }} my-2 mx-3 p-2">
             <div class="text-muted">#{{ task.pk }}</div>
             <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+            {% if task.document %}
+            <div>
+              <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% elif task.work %}
+            <div>
+              <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% endif %}
           </div>
-
-          {% if task.document %}
-          <div>
-            <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-            <span class="text-muted">{{ task.work.frbr_uri }}</span>
-          </div>
-          {% elif task.work %}
-          <div>
-            <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
-            <span class="text-muted">{{ task.work.frbr_uri }}</span>
-          </div>
-          {% endif %}
-
           {% endfor %}
         </div>
       </div>

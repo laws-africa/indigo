@@ -8,11 +8,11 @@ from indigo_api.models import Document, Attachment, Country, Locality, Publicati
 from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer, AttachmentSerializer
 
 
-def published_doc_url(doc, request):
+def published_doc_url(doc, request, frbr_uri=None):
     """ Absolute URL for a published document.
     eg. /api/v1/za/acts/2005/01/eng@2006-02-03
     """
-    uri = doc.expression_uri.expression_uri()[1:]
+    uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
     uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
     return uri.replace('%40', '@')
 

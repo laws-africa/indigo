@@ -29,17 +29,34 @@ class Notifier(object):
                         'recipient': task.last_assigned_to,
                     })
 
-    def notify_comment_posted(self, action):
+    def notify_comment_posted(self, comment):
         """
         This function will be responsible for emailing members of a thread when
         a comment is posted on a task.
         """
+        task_content_type = ContentType.objects.get_for_model(Task)
 
-        self.send_templated_email('task_new_comment', action['recipient_list'], {
-            'task': action['task'],
-            'recipient_list': action['recipient_list'],
-            'comment': action['comment'],
-        })
+        if comment.content_type == task_content_type:
+            task = Task.objects.get(id=comment.object_pk)
+            task_comments = Comment.objects\
+                .filter(content_type=task_content_type, object_pk=task.id)\
+                .select_related('user')
+            recipient_list = [comment.user for comment in task_comments]
+
+            recipient_list.append(task.created_by_user)
+            if task.assigned_to:
+                recipient_list.append(task.assigned_to)
+            if task.last_assigned_to:
+                recipient_list.append(task.last_assigned_to)
+
+            recipient_list = list(set(recipient_list))
+            recipient_list.remove(comment.user)       
+
+            self.send_templated_email('task_new_comment', recipient_list, {
+                'task': task,
+                'recipient_list': recipient_list,
+                'comment': comment,
+            })
 
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):
         real_context = {
@@ -75,30 +92,5 @@ def post_comment_save_notification(sender, **kwargs):
     """
     Send email when a user comments on a task
     """
-    task_content_type = ContentType.objects.get_for_model(Task)
-
-    notifier = Notifier()
-
-    comment = kwargs['comment']
-    task = Task.objects.get(id=comment.object_pk)
-    task_comments = Comment.objects\
-        .filter(content_type=task_content_type, object_pk=task.id)\
-        .select_related('user')
-    email_recipient_list = [comment.user for comment in task_comments]
-
-    email_recipient_list.append(task.created_by_user)
-    if task.assigned_to:
-        email_recipient_list.append(task.assigned_to)
-    if task.last_assigned_to:
-        email_recipient_list.append(task.last_assigned_to)
-
-    email_recipient_list = list(set(email_recipient_list))
-    email_recipient_list.remove(comment.user)
-
-    action = {
-        'task': task,
-        'recipient_list': email_recipient_list,
-        'comment': comment,
-    }
-
-    notifier.notify_comment_posted(action)
+    if kwargs['comment']:
+        notifier.notify_comment_posted(kwargs['comment'])

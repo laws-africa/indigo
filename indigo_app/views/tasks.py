@@ -25,7 +25,7 @@ from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
+from indigo_app.forms import TaskCreateForm, TaskEditForm, TaskFilterForm, BulkTaskUpdateForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -120,7 +120,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    form_class = TaskForm
+    form_class = TaskCreateForm
     model = Task
 
     def form_valid(self, form):
@@ -182,7 +182,7 @@ class TaskEditView(TaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
-    form_class = TaskForm
+    form_class = TaskEditForm
     model = Task
 
     def form_valid(self, form):
@@ -245,33 +245,14 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
         user = self.request.user
         task.updated_by_user = user
 
-        potential_changes = {
-            'submit': 'submitted',
-            'cancel': 'cancelled',
-            'reopen': 'reopened',
-            'unsubmit': 'requested changes to',
-            'close': 'approved',
-        }
-
-        for change, verb in potential_changes.items():
+        for change, verb in Task.VERBS.iteritems():
             if self.change == change:
                 state_change = getattr(task, change)
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
+
                 state_change(user)
 
-                # assignee side effects of different state changes
-                if change == 'submit':
-                    task.last_assigned_to = task.assigned_to
-                    task.assigned_to = None
-                if change == 'unsubmit' and task.last_assigned_to:
-                    task.assigned_to = task.last_assigned_to
-                if change == 'close' or change == 'cancel':
-                    task.assigned_to = None
-
-                # action signal and success message
-                action.send(user, verb=verb, action_object=task,
-                            place_code=task.place.place_code)
                 if change == 'submit':
                     verb = 'submitted for review'
                 if change == 'unsubmit':

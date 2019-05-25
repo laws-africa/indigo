@@ -1073,10 +1073,23 @@ class TaskManager(models.Manager):
 
 
 class Task(models.Model):
-    STATES = ('open', 'pending_review', 'cancelled', 'done')
+    OPEN = 'open'
+    PENDING_REVIEW = 'pending_review'
+    CANCELLED = 'cancelled'
+    DONE = 'done'
 
-    CLOSED_STATES = ('cancelled', 'done')
-    OPEN_STATES = ('open', 'pending_review')
+    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE)
+
+    CLOSED_STATES = (CANCELLED, DONE)
+    OPEN_STATES = (OPEN, PENDING_REVIEW)
+
+    VERBS = {
+        'submit': 'submitted',
+        'cancel': 'cancelled',
+        'reopen': 'reopened',
+        'unsubmit': 'requested changes to',
+        'close': 'approved',
+    }
 
     class Meta:
         permissions = (
@@ -1100,10 +1113,14 @@ class Task(models.Model):
     # cf indigo_api.models.Annotation
     anchor_id = models.CharField(max_length=128, null=True, blank=True)
 
-    state = FSMField(default='open')
+    state = FSMField(default=OPEN)
+
+    # internal task code
+    code = models.CharField(max_length=100, null=True, blank=True)
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
     created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
@@ -1199,7 +1216,9 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        pass
+        self.last_assigned_to = self.assigned_to
+        self.assigned_to = None
+        action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
     def may_cancel(self, view):
@@ -1208,7 +1227,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        pass
+        self.assigned_to = None
+        action.send(user, verb=self.VERBS['cancel'], action_object=self, place_code=self.place.place_code)
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1217,7 +1237,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        pass
+        self.closed_by_user = None
+        action.send(user, verb=self.VERBS['reopen'], action_object=self, place_code=self.place.place_code)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1226,7 +1247,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        pass
+        self.assigned_to = self.last_assigned_to
+        action.send(user, verb=self.VERBS['unsubmit'], action_object=self, place_code=self.place.place_code)
 
     # close
     def may_close(self, view):
@@ -1237,7 +1259,9 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        pass
+        self.closed_by_user = user
+        self.assigned_to = None
+        action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 
     def anchor(self):
         return {'id': self.anchor_id}

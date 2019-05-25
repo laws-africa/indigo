@@ -1,3 +1,5 @@
+import logging
+
 from django.db.models import signals
 from django.dispatch import receiver
 from django.conf import settings
@@ -9,6 +11,9 @@ from indigo_api.models import Task
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
 from django_comments.signals import comment_was_posted
+
+
+log = logging.getLogger(__name__)
 
 
 class Notifier(object):
@@ -65,6 +70,8 @@ class Notifier(object):
             'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         }
         real_context.update(context)
+
+        log.info("Sending templated email {} to {}".format(template_name, recipient_list))
 
         recipient_list = [user.email for user in recipient_list]
 

@@ -375,7 +375,13 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'ERROR'
         },
+        'indigo': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
         'indigo_api': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
+        'indigo_app': {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
         'django': {

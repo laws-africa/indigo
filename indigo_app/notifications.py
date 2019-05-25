@@ -56,13 +56,14 @@ class Notifier(object):
                 recipient_list.append(task.last_assigned_to)
 
             recipient_list = list(set(recipient_list))
-            recipient_list.remove(comment.user)       
+            recipient_list.remove(comment.user)
 
-            self.send_templated_email('task_new_comment', recipient_list, {
-                'task': task,
-                'recipient_list': recipient_list,
-                'comment': comment,
-            })
+            for user in recipient_list:
+                self.send_templated_email('task_new_comment', [user], {
+                    'task': task,
+                    'recipient': user,
+                    'comment': comment,
+                })
 
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):
         real_context = {

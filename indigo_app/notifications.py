@@ -10,6 +10,7 @@ from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
 from django_comments.signals import comment_was_posted
 
+
 class Notifier(object):
     def send_task_notifications(self, action):
         task = action.action_object

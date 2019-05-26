@@ -151,6 +151,28 @@ class WorkManager(models.Manager):
                             'country__country', 'locality', 'publication_document')
 
 
+class TaxonomyVocabulary(models.Model):
+    authority = models.CharField(max_length=30, null=False, unique=True, blank=False)
+    name = models.CharField(max_length=30, null=False, unique=True, blank=False)
+    slug = models.SlugField(null=False, unique=True, blank=False)
+    title = models.CharField(max_length=30, null=False, unique=True, blank=False)
+
+    def __unicode__(self):
+        return unicode(self.name)
+
+
+class VocabularyTopic(models.Model):
+    taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='vocabularies', null=False, blank=False, on_delete=models.CASCADE)
+    level_1 = models.CharField(max_length=30, null=False, unique=True, blank=False)
+    level_2 = models.CharField(max_length=30, null=False, unique=True, blank=False)
+
+    class Meta:
+        unique_together = ('level_1', 'level_2', 'taxonomy_vocabulary')
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.level_1, self.level_2)
+
+
 class Work(models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
     allows us to track works that we don't have documents for, and provides a
@@ -187,6 +209,9 @@ class Work(models.Model):
     commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
+
+    # taxonomies
+    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='vocabulary_topics')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

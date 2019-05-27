@@ -211,7 +211,7 @@ class Work(models.Model):
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
     # taxonomies
-    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='vocabulary_topics')
+    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

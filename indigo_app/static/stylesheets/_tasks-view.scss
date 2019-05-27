@@ -24,8 +24,12 @@
   border: 1px solid $primary;
 }
 .task-border-pending_review {
-  border: 1px solid #dedede;
+  border: 1px solid $orange;
 }
 .task-border-done {
   border: 1px solid $success;
+}
+
+.text-orange {
+  color: $orange;
 }

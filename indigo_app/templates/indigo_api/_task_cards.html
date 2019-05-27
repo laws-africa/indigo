@@ -91,9 +91,20 @@
                 {% endfor %}
               </div>
 
+              {% if task.last_assigned_to and task.state == 'pending_review' %}
+                <div>
+                  <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Submitted by"></i>
+                  <small class="text-muted">{% user_profile task.last_assigned_to %}</small>
+                </div>
+              {% endif %}
+
               {% if task.assigned_to %}
                 <div>
-                  <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Assigned to"></i>
+                  {% if task.state == 'pending_review' %}
+                    <i class="fas fa-user-check fa-xs task-icon-assignee" title="Assigned to"></i>
+                  {% else %}
+                    <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Assigned to"></i>
+                  {% endif %}
                   <small class="text-muted">{% user_profile task.assigned_to %}</small>
 
                   {% if perms.indigo_api.change_task %}
@@ -134,12 +145,6 @@
                 {% endif %}
               {% endif %}
 
-              {% if task.last_assigned_to %}
-                <div>
-                  <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Submitted by"></i>
-                  <small class="text-muted">{% user_profile task.last_assigned_to %}</small>
-                </div>
-              {% endif %}
             </div>
           </div>
         {% endfor %}

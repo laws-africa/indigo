@@ -77,7 +77,7 @@
 
                 {% if task.assigned_to %}
                 <div>
-                  <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Assigned to"></i>
+                  <i class="fas fa-user-tag fa-xs task-icon-assignee text-orange" title="Assigned to"></i>
                   <small class="text-muted">{% user_profile task.assigned_to %}</small>
                 </div>
                 {% endif %}
@@ -117,6 +117,12 @@
               <div>
                 <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
                 <span class="text-muted">{{ task.work.frbr_uri }}</span>
+              </div>
+              {% endif %}
+              {% if task.closed_by_user %}
+              <div>
+                <i class="fas fa-user-check fa-xs task-icon-assignee text-success" title="Approved by"></i>
+                <small class="text-muted">{% user_profile task.closed_by_user %}</small>
               </div>
               {% endif %}
             </div>

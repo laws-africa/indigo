@@ -163,7 +163,7 @@ class TaxonomyVocabulary(models.Model):
 
 class VocabularyTopic(models.Model):
     taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='vocabularies', null=False, blank=False, on_delete=models.CASCADE)
-    level_1 = models.CharField(max_length=30, null=True, blank=True)
+    level_1 = models.CharField(max_length=30, null=False, blank=False)
     level_2 = models.CharField(max_length=30, null=True, blank=True)
 
     class Meta:

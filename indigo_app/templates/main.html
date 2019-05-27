@@ -29,7 +29,8 @@
               <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
               {% block navbar-left %}
                 {% if request.user.is_authenticated %}
-                <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+                  <li class="nav-item"><a class="nav-link" href="{% url 'my_tasks' %}">Tasks</a></li>
                 {% endif %}
                 {% block navbar-help-menu %}
                 <li class="nav-item dropdown">

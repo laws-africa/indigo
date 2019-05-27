@@ -35,15 +35,16 @@
   &:not(:last-child) {
     border-right: 1px solid $grey;
   }
+}
 
-  .task-list-card {
-    border: 0px;
-    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.25);
+.task-list-card {
+  border: 0px;
+  box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
 
-    &> .card-body {
-      padding: 0.75rem;
-      line-height: 1.2;
-    }
+  &> .card-body {
+    padding: 0.75rem;
+    line-height: 1.2;
   }
 }
 

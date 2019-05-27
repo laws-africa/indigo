@@ -1,0 +1,139 @@
+{% extends "main.html" %}
+{% load humanize indigo_app %}
+
+{% block title %}My tasks{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  <div class="row">
+    <div class="col-md-6">
+      <div class="card task-list-card-full-height">
+        <h6 class="text-center my-3">Your current tasks</h6>
+
+        <div class="task-list-card-scroll">
+          {% if open_assigned_tasks %}
+            {% for task in open_assigned_tasks %}
+            <div class="task-list-card my-2 mx-3 p-2 task-border-{{ task.state }}">
+              <div class="task-heading-span">
+                <div class="text-muted">#{{ task.pk }}</div><i class="fas fa-fw task-icon-{{ task.state }} text-primary small"></i>
+              </div>
+              <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+
+              {% for label in task.labels.all %}
+              <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+              {% endfor %}
+
+              {% if task.document %}
+              <div>
+                <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+                <span class="text-muted">{{ task.work.frbr_uri }}</span>
+              </div>
+              {% elif task.work %}
+              <div>
+                <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+                <span class="text-muted">{{ task.work.frbr_uri }}</span>
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="mx-3">
+              You don't have any assigned tasks right now.
+            </p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card task-list-card-full-height">
+        <h6 class="text-center my-3">Tasks waiting for approval</h6>
+
+        <div class="task-list-card-scroll">
+          {% if tasks_pending_approval %}
+            {% for task in tasks_pending_approval %}
+
+              <div class="task-list-card my-2 mx-3 p-2 task-border-{{ task.state }}">
+                <div class="task-heading-span">
+                  <div class="text-muted">#{{ task.pk }}</div><i class="fas fa-fw task-icon-{{ task.state }} text-orange small"></i>
+                </div>
+                <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+
+                {% for label in task.labels.all %}
+                <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+                {% endfor %}
+
+                {% if task.document %}
+                <div>
+                  <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+                  <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                </div>
+                {% elif task.work %}
+                <div>
+                  <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+                  <span class="text-muted">{{ task.work.frbr_uri }}</span>
+                </div>
+                {% endif %}
+
+                {% if task.assigned_to %}
+                <div>
+                  <i class="fas fa-user-tag fa-xs task-icon-assignee text-orange" title="Assigned to"></i>
+                  <small class="text-muted">{% user_profile task.assigned_to %}</small>
+                </div>
+                {% endif %}
+
+              </div>
+            {% endfor %}
+          {% else %}
+            <p class="mx-3">You have no tasks waiting for approval.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="card task-list-card-full-height task-list-card-approved-column">
+        <h6 class="text-center my-3">Your approved tasks</h6>
+
+        <div class="task-list-card-scroll">
+          {% if tasks_recently_approved %}
+            {% for task in tasks_recently_approved %}
+            <div class="task-list-card task-border-{{ task.state }} my-2 mx-3 p-2">
+              <div class="task-heading-span">
+                <div class="text-muted">#{{ task.pk }}</div><i class="fas fa-fw task-icon-{{ task.state }} text-success small"></i>
+              </div>
+              <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
+
+              {% for label in task.labels.all %}
+              <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+              {% endfor %}
+
+              {% if task.document %}
+              <div>
+                <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+                <span class="text-muted">{{ task.work.frbr_uri }}</span>
+              </div>
+              {% elif task.work %}
+              <div>
+                <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+                <span class="text-muted">{{ task.work.frbr_uri }}</span>
+              </div>
+              {% endif %}
+              {% if task.closed_by_user %}
+              <div>
+                <i class="fas fa-user-check fa-xs task-icon-assignee text-success" title="Approved by"></i>
+                <small class="text-muted">{% user_profile task.closed_by_user %}</small>
+              </div>
+              {% endif %}
+            </div>
+            {% endfor %}
+          {% else %}
+            <p class="mx-3">You have no tasks that have been approved.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

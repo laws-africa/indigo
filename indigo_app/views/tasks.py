@@ -2,8 +2,7 @@
 from __future__ import unicode_literals
 import json
 from itertools import chain
-
-from actstream import action
+import datetime
 
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
@@ -13,12 +12,12 @@ from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django_comments.models import Comment
 from django.views.generic.edit import BaseFormView
 from allauth.account.utils import user_display
-
+from actstream import action
 from django_fsm import has_transition_perm
 
 from indigo_api.models import Task, TaskLabel, User, Work, Workflow
@@ -377,3 +376,30 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('tasks', kwargs={'place': self.kwargs['place']})
+
+
+class MyTasksView(AbstractAuthedIndigoView, TemplateView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/my_tasks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(MyTasksView, self).get_context_data(**kwargs)
+
+        # open tasks assigned to this user
+        context['open_assigned_tasks'] = Task.objects \
+            .filter(assigned_to=self.request.user, state='open') \
+            .all()
+
+        # tasks previously assigned to this user and now pending approval
+        context['tasks_pending_approval'] = Task.objects \
+            .filter(last_assigned_to=self.request.user, state='pending_review') \
+            .all()
+
+        # tasks recently approved
+        threshold = datetime.date.today() - datetime.timedelta(days=7)
+        context['tasks_recently_approved'] = Task.objects \
+            .filter(last_assigned_to=self.request.user, state='done') \
+            .filter(updated_at__gte=threshold) \
+            .all()[:50]
+
+        return context

@@ -163,8 +163,8 @@ class TaxonomyVocabulary(models.Model):
 
 class VocabularyTopic(models.Model):
     taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='vocabularies', null=False, blank=False, on_delete=models.CASCADE)
-    level_1 = models.CharField(max_length=30, null=False, unique=True, blank=False)
-    level_2 = models.CharField(max_length=30, null=False, unique=True, blank=False)
+    level_1 = models.CharField(max_length=30, null=True, blank=True)
+    level_2 = models.CharField(max_length=30, null=True, blank=True)
 
     class Meta:
         unique_together = ('level_1', 'level_2', 'taxonomy_vocabulary')

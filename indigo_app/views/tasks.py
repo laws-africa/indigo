@@ -24,7 +24,7 @@ from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
+from indigo_app.forms import TaskCreateForm, TaskEditForm, TaskFilterForm, BulkTaskUpdateForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -119,7 +119,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    form_class = TaskForm
+    form_class = TaskCreateForm
     model = Task
 
     def form_valid(self, form):
@@ -181,7 +181,7 @@ class TaskEditView(TaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
-    form_class = TaskForm
+    form_class = TaskEditForm
     model = Task
 
     def form_valid(self, form):
@@ -244,45 +244,19 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
         user = self.request.user
         task.updated_by_user = user
 
-        potential_changes = {
-            'submit': 'submitted',
-            'cancel': 'cancelled',
-            'reopen': 'reopened',
-            'unsubmit': 'unsubmitted',
-            'close': 'closed',
-        }
-
-        for change, verb in potential_changes.items():
+        for change, verb in Task.VERBS.iteritems():
             if self.change == change:
                 state_change = getattr(task, change)
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
-                state_change(user)
-                if verb == 'submitted':
-                    task.last_assigned_to = task.assigned_to
-                    task.assigned_to = None
-                    action.send(user, verb=verb, action_object=task,
-                                place_code=task.place.place_code)
-                    messages.success(request, u"Task '%s' has been submitted for review" % task.title)
-                elif verb == 'unsubmitted' and task.last_assigned_to:
-                    assignee = task.last_assigned_to
-                    task.assigned_to = assignee
-                    if user.id == assignee.id:
-                        action.send(user, verb='unsubmitted and picked up', action_object=task,
-                                    place_code=task.place.place_code)
-                        messages.success(request, u"You have unsubmitted and picked up the task '%s'" % task.title)
-                    else:
-                        action.send(user, verb='unsubmitted and reassigned', action_object=task,
-                                    target=assignee,
-                                    place_code=task.place.place_code)
-                        messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
 
-                else:
-                    if verb == 'closed' or verb == 'cancelled':
-                        task.assigned_to = None
-                    action.send(user, verb=verb, action_object=task,
-                                place_code=task.place.place_code)
-                    messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+                state_change(user)
+
+                if change == 'submit':
+                    verb = 'submitted for review'
+                if change == 'unsubmit':
+                    verb = 'returned with changes requested'
+                messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()
 

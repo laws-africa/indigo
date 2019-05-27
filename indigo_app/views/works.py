@@ -544,7 +544,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
     initial = {
-        'primary_tasks': ['import'],
+        'principal_tasks': ['import'],
     }
 
     def get_context_data(self, **kwargs):
@@ -618,7 +618,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
-                    work.stub = not row.get('primary')
+                    work.stub = not row.get('principal')
 
                     try:
                         work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
@@ -795,21 +795,14 @@ Check the spreadsheet for reference and link it manually.'''
         task.workflows = form.cleaned_data.get('workflows').all()
         task.save()
 
-    def pub_doc_task(self, work, form, task_type):
+    def pub_doc_task(self, work, form):
         task = Task()
 
-        if task_type == 'link':
-            task.title = 'Link publication document'
-            task.description = '''This work's publication document could not be linked automatically.
+        task.title = 'Link publication document'
+        task.description = '''This work's publication document could not be linked automatically.
 There may be more than one candidate, or it may be unavailable.
 First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
 Otherwise, find it and upload it manually.'''
-
-        elif task_type == 'check':
-            task.title = 'Check publication document'
-            task.description = '''This work's publication document was linked automatically.
-Double-check that it's the right one.'''
-            task.state = 'pending_review'
 
         task.country = work.country
         task.locality = work.locality
@@ -840,10 +833,10 @@ Double-check that it's the right one.'''
             tasks.append(task)
 
         # bulk create tasks on primary works
-        if form.cleaned_data.get('primary_tasks'):
+        if form.cleaned_data.get('principal_tasks'):
             for info in works:
                 if info['status'] == 'success' and not info['work'].stub:
-                    for chosen_task in form.cleaned_data.get('primary_tasks'):
+                    for chosen_task in form.cleaned_data.get('principal_tasks'):
                         make_task(chosen_task)
 
         # bulk create tasks on all works
@@ -969,16 +962,15 @@ Double-check that it's the right one.'''
                     pub_doc.trusted_url = pub_doc_details.get('url')
                     pub_doc.size = pub_doc_details.get('size')
                     pub_doc.save()
-                    self.pub_doc_task(work, form, task_type='check')
 
                 else:
-                    self.pub_doc_task(work, form, task_type='link')
+                    self.pub_doc_task(work, form)
 
             except ValueError as e:
                 raise ValidationError({'message': e.message})
 
         else:
-            self.pub_doc_task(work, form, task_type='link')
+            self.pub_doc_task(work, form)
 
 
 class ImportDocumentView(WorkViewBase, FormView):

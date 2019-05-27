@@ -1,10 +1,18 @@
 <div class="document-revisions-view d-none">
-  <header class="revisions-header row">
-    <div class="col">
+  <header class="revisions-header">
+    <div class="title">
+      <div class="float-right">
+        <span class="change-count mr-3"></span>
+        <div class="btn-group" role="group">
+          <button type="button" class="btn btn-outline-secondary prev-change-btn">Previous <i class="fas fa-chevron-up"></i></button>
+          <button type="button" class="btn btn-outline-secondary next-change-btn">Next <i class="fas fa-chevron-down"></i></button>
+        </div>
+      </div>
+
       <h5>Recent Changes</h5>
     </div>
 
-    <div class="col text-right">
+    <div class="buttons text-right">
       <a href="#" class="btn btn-primary dismiss">Close</a>
     </div>
   </header>
@@ -13,7 +21,7 @@
     <div class="revisions-content">
       <div class="document-sheet-container sheet-outer">
         <div class="revision-preview sheet-inner">
-          <div class="akoma-ntoso"></div>
+          <div class="akoma-ntoso diffset"></div>
         </div>
       </div>
     </div>

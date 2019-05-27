@@ -183,7 +183,7 @@ class BatchCreateWorkForm(forms.Form):
 Make sure the document's expression date correctly reflects this.''',
         },
     ]
-    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    principal_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
                                                required=False)
@@ -204,7 +204,7 @@ class ImportDocumentForm(forms.Form):
             raise forms.ValidationError("Invalid json data")
 
 
-class TaskForm(forms.ModelForm):
+class TaskCreateForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
@@ -213,7 +213,12 @@ class TaskForm(forms.ModelForm):
                                             required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
                                                required=False)
-    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
+
+
+class TaskEditForm(TaskCreateForm):
+    class Meta:
+        model = Task
+        fields = ('title', 'description', 'labels', 'workflows')
 
 
 class TaskFilterForm(forms.Form):

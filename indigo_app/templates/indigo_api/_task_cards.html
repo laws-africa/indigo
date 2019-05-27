@@ -133,6 +133,13 @@
                   </form>
                 {% endif %}
               {% endif %}
+
+              {% if task.last_assigned_to %}
+                <div>
+                  <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Submitted by"></i>
+                  <small class="text-muted">{% user_profile task.last_assigned_to %}</small>
+                </div>
+              {% endif %}
             </div>
           </div>
         {% endfor %}

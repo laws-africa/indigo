@@ -113,12 +113,12 @@ class AttributeDiffer(object):
                 old_v = old[index]
                 new_v = patch['value']
                 html_old, html_new = self.html_diff(old_v, new_v)
-                diffs.insert(index, {
+                diffs[index] = {
                     'old': old_v,
                     'new': new_v,
                     'html_old': html_old,
                     'html_new': html_new,
-                })
+                }
             elif patch['op'] == 'remove':
                 v = old[index]
                 diffs.insert(index, {

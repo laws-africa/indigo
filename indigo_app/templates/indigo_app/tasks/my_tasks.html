@@ -15,7 +15,7 @@
           </h6>
           {% if open_assigned_tasks %}
             {% for task in open_assigned_tasks %}
-              {% include 'indigo_api/_task_card_single.html' with task_border=True %}
+              {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True %}
             {% endfor %}
           {% else %}
           <p class="mx-3">
@@ -35,7 +35,7 @@
           </h6>
           {% if tasks_pending_approval %}
           {% for task in tasks_pending_approval %}
-            {% include 'indigo_api/_task_card_single.html' with task_border=True assigned=True %}
+            {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True assigned=True %}
           {% endfor %}
           {% else %}
           <p class="mx-3">You have no tasks waiting for approval.</p>
@@ -53,7 +53,7 @@
           </h6>
             {% if tasks_recently_approved %}
             {% for task in tasks_recently_approved %}
-              {% include 'indigo_api/_task_card_single.html' with task_border=True approved=True %}
+              {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True approved=True %}
             {% endfor %}
             {% else %}
             <p class="mx-3">You have no tasks that have been approved.</p>

@@ -21,7 +21,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, TaxonomyVocabulary
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -159,6 +159,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
+        context['taxonomies'] = TaxonomyVocabulary.objects.all()
         return context
 
     def form_valid(self, form):

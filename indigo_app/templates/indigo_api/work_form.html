@@ -86,7 +86,18 @@
         </div>
 
         <div class="form-row">
-          <div class="form-group col-md-6 offset-md-6">
+          {% if taxonomies %}
+            <div class="form-group col-md-4">
+              <label for="taxonomy">Taxonomy tags</label>
+              <select id="taxonomy" class="form-control selectpicker" data-live-search="true" multiple>
+                {% for taxonomy in taxonomies %}
+                <option value="{{ taxonomy.name }}">{{ taxonomy }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          {% endif %}
+
+          <div class="form-group col-md-6 {% if taxonomies %}offset-md-2{% else %}offset-md-6{% endif %}">
             <div class="form-check">
               <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
               <label class="mb-0" for="{{ form.stub.id_for_label }}">Stub – this work will have no content</label>

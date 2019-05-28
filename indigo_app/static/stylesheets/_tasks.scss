@@ -86,7 +86,12 @@
 .task-border-done {
   border: 1px solid $success;
 }
-
-.text-orange {
+.text-open {
+  color: $primary
+}
+.text-pending_review {
   color: $orange;
+}
+.text-done {
+  color: $success;
 }

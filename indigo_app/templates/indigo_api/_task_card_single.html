@@ -1,0 +1,44 @@
+{% load humanize indigo_app %}
+
+<div class="task-list-card my-2 {% if task_border %} task-border-{{ task.state }} {% endif %}">
+  <div class="card-body">
+    <div class="task-heading-span mb-1">
+      <div class="small text-muted">#{{ task.pk }}</div>
+      <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small"></i>
+    </div>
+    <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="d-block mb-1">{{ task.title }}</a>
+
+    {% for label in task.labels.all %}
+    <span class="badge badge-secondary mb-1" title="{{ label.description }}">{{ label.title }}</span>
+    {% endfor %}
+
+    {% if task.document %}
+    <div>
+      <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted d-block mb-1">{{ task.document.title }}
+        @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a>
+      <span class="text-muted">{{ task.work.frbr_uri }}</span>
+    </div>
+    {% elif task.work %}
+    <div>
+      <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted d-block mb-1"
+         data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+      <span class="text-muted">{{ task.work.frbr_uri }}</span>
+    </div>
+    {% endif %}
+
+    {% if assigned and task.assigned_to %}
+    <div class="mt-1">
+      <i class="fas fa-user-tag fa-xs task-icon-assignee text-{{ task.state }}" title="Assigned to"></i>
+      <small class="text-muted">{% user_profile task.assigned_to %}</small>
+    </div>
+    {% endif %}
+
+    {% if approved and task.closed_by_user %}
+    <div class="mt-1">
+      <i class="fas fa-user-check fa-xs task-icon-assignee text-success" title="Approved by"></i>
+      <small class="text-muted">{% user_profile task.closed_by_user %}</small>
+    </div>
+    {% endif %}
+
+  </div>
+</div>

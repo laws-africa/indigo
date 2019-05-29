@@ -182,7 +182,6 @@ class MigrationTestCase(TestCase):
                 <p>None</p>
               </content>
             </paragraph>"""
-        print expected
         self.assertMultiLineEqual(act.to_xml().decode('utf-8'), expected)
 
     def test_migration_without_heading(self):

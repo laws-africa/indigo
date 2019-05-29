@@ -15,26 +15,38 @@
     <tr>
       <td>
         <div class="task-list-span">
-          <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-4"></i>
-          <div class="small text-muted mr-1">
+          <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-2"></i>
+          <div class="small text-muted mr-2">
             {% if perms.indigo_api.change_task and task.is_open and selectable%}
             <label class="mb-0 font-weight-normal c-pointer">
-              <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form">
+              <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
               #{{ task.id }}
             </label>
             {% else %}
             #{{ task.id }}
             {% endif %}
           </div>
-          <div class="text-muted">{{ task.title }}</div>
+          <div class="text-muted {% if task.labels.all %} mr-2 {% endif %}">{{ task.title }}</div>
+          {% for label in task.labels.all %}
+            <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+          {% endfor %}
         </div>
       </td>
       <td>
-        {{ task.state }}
         {{ task.place }}
       </td>
       <td>
-        {{ task.document }}
+        {% if task.document %}
+        <div>
+          <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+          <span class="text-muted">{{ task.work.frbr_uri }}</span>
+        </div>
+        {% elif task.work %}
+        <div>
+          <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+          <span class="text-muted">{{ task.work.frbr_uri }}</span>
+        </div>
+        {% endif %}
       </td>
     </tr>
   {% endif %}

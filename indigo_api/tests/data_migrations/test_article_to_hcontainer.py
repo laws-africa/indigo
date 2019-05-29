@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.test import TestCase
 from cobalt.act import Act
+from lxml import etree
 
 from indigo_api.data_migrations import ScheduleArticleToHcontainer
 
@@ -182,7 +183,9 @@ class MigrationTestCase(TestCase):
                 <p>None</p>
               </content>
             </paragraph>"""
-        self.assertMultiLineEqual(act.to_xml().decode('utf-8'), expected)
+        self.assertMultiLineEqual(
+            etree.tostring(act.root, encoding='utf-8', pretty_print=True).decode('utf-8'),
+            expected)
 
     def test_migration_without_heading(self):
         migration = ScheduleArticleToHcontainer()
@@ -202,5 +205,6 @@ class MigrationTestCase(TestCase):
                 <p>None</p>
               </content>
             </paragraph>"""
-        self.assertMultiLineEqual(act.to_xml().decode('utf-8'), expected)
-
+        self.assertMultiLineEqual(
+            etree.tostring(act.root, encoding='utf-8', pretty_print=True).decode('utf-8'),
+            expected)

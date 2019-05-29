@@ -130,7 +130,7 @@ class ImporterZA(Importer):
         if toc_start:
             # grab the first section-link line after that, it will be our end-of-TOC marker
             # eg '1. Definitions'
-            first_toc_entry = re.search(r'^\s*([0-9]+\..+)$', text[toc_start.end():], re.MULTILINE)
+            first_toc_entry = re.search(r'^\s*(((CHAPTER|PART) +[0-9]+)|[0-9]+\. +\w+)', text[toc_start.end():], re.MULTILINE | re.IGNORECASE)
 
             if first_toc_entry:
                 marker = first_toc_entry.group(1).strip()

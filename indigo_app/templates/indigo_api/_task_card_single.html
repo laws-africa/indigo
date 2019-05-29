@@ -138,7 +138,7 @@
       </div>
     {% endif %}
 
-    {% if last_assigned_user and task.last_assigned_to %}
+    {% if last_assigned_user and task.last_assigned_to and task.state == 'pending_review' %}
       <div>
         <i class="fas fa-user-edit fa-xs task-icon-assignee" title="Submitted by"></i>
         <small class="text-muted">{% user_profile task.last_assigned_to %}</small>

@@ -126,7 +126,9 @@ Definitions and interpretation
         assert_equal(self.importer.strip_toc(s), s)
 
     def test_strip_table_of_contents(self):
-        assert_equal(self.importer.strip_toc("""City of Johannesburg Metropolitan Municipality
+        self.maxDiff = None
+        self.assertMultiLineEqual(
+            self.importer.strip_toc("""City of Johannesburg Metropolitan Municipality
 CULTURE AND RECREATION BY-LAWS ( )PUBLISHED IN PROVINCIAL GAZETTE EXTRAORDINARY NO 179 DATED 21 MAY 2004 UNDER NOTICE NUMBER 825
 
 CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY
@@ -158,7 +160,8 @@ Repeal
 SCHEDULE 1 BY-LAWS REPEALED
 CHAPTER 1 LIBRARY AND INFORMATION SERVICES
 Definitions and interpretation
-1. (1) In this Chapter, unless the context otherwise indicates-"""), """City of Johannesburg Metropolitan Municipality
+1. (1) In this Chapter, unless the context otherwise indicates-"""),
+              """City of Johannesburg Metropolitan Municipality
 CULTURE AND RECREATION BY-LAWS ( )PUBLISHED IN PROVINCIAL GAZETTE EXTRAORDINARY NO 179 DATED 21 MAY 2004 UNDER NOTICE NUMBER 825
 
 CITY OF JOHANNESBURG METROPOLITAN MUNICIPALITY

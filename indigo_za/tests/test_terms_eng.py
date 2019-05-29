@@ -268,7 +268,6 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        s = etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8')
         self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">

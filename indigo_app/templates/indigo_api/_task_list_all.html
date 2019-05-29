@@ -1,0 +1,45 @@
+{% load humanize indigo_app %}
+
+{% if tasks %}
+<table class="table table-striped table-bordered">
+  <thead>
+    <tr>
+      <th scope="col">Task</th>
+      <th scope="col">Place</th>
+      <th scope="col">Work/Document</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for task in tasks %}
+  {% if task.state != 'pending_review' %}
+    <tr>
+      <td>
+        <div class="task-list-span">
+          <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-4"></i>
+          <div class="small text-muted mr-1">
+            {% if perms.indigo_api.change_task and task.is_open and selectable%}
+            <label class="mb-0 font-weight-normal c-pointer">
+              <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form">
+              #{{ task.id }}
+            </label>
+            {% else %}
+            #{{ task.id }}
+            {% endif %}
+          </div>
+          <div class="text-muted">{{ task.title }}</div>
+        </div>
+      </td>
+      <td>
+        {{ task.state }}
+        {{ task.place }}
+      </td>
+      <td>
+        {{ task.document }}
+      </td>
+    </tr>
+  {% endif %}
+  {% endfor %}
+  </tbody>
+
+</table>
+{% endif %}

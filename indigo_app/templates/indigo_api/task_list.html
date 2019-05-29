@@ -26,7 +26,7 @@
     {% if tasks %}
 
       {% if form.format.value == 'list' %}
-        {% include 'indigo_api/_task_list.html' with tasks=tasks %}
+        {% include 'indigo_api/_task_list_all.html' with tasks=tasks %}
       {% else %}
         {% include 'indigo_api/_task_cards.html' with task_groups=task_groups selectable=True %}
       {% endif %}

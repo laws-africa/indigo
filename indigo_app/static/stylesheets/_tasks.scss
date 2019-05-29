@@ -66,13 +66,17 @@
   }
 }
 
-// All tasks list view
-.task-list-span {
+.task-heading-span {
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
-// Duplicate as these are currently on another branch
+.task-list-card-heading {
+  text-decoration: underline;
+  color: black;
+}
+
 .task-border-open {
   border: 1px solid $primary;
 }

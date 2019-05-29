@@ -202,3 +202,43 @@ class TermsFinderENGTestCase(APITestCase):
   </section>
 </body>
 ''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8'))
+
+    def test_whitespace_between_adjacent_terms(self):
+        doc = Document(content=document_fixture(xml=u"""
+<section id="section-1">
+  <num>1.</num>
+  <heading>Definitions</heading>
+  <paragraph id="section-1.paragraph-0">
+    <content>
+      <p>"fire" means a combustion;</p>
+      <p>"truck" means a vehicle;</p>
+    </content>
+  </paragraph>
+  <paragraph id="section-1.paragraph-0">
+    <content>
+      <p>Do not park near a fire truck.</p>
+    </content>
+  </paragraph>
+</section>
+        """))
+
+        self.maxDiff = None
+        self.finder.find_terms_in_document(doc)
+        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <section id="section-1">
+    <num>1.</num>
+    <heading>Definitions</heading>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p refersTo="#term-fire">"<def refersTo="#term-fire">fire</def>" means a combustion;</p>
+        <p refersTo="#term-truck">"<def refersTo="#term-truck">truck</def>" means a vehicle;</p>
+      </content>
+    </paragraph>
+    <paragraph id="section-1.paragraph-0">
+      <content>
+        <p>Do not park near a <term refersTo="#term-fire" id="trm0">fire</term> <term refersTo="#term-truck" id="trm1">truck</term>.</p>
+      </content>
+    </paragraph>
+  </section>
+</body>
+''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8'))

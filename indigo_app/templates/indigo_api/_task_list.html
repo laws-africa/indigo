@@ -13,7 +13,7 @@
   {% for task in tasks %}
   <tr>
     <td>
-      <div class="task-list-span">
+      <div class="d-flex align-items-center">
         <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-2"></i>
         <div class="small text-muted mr-2">
           {% if perms.indigo_api.change_task and task.is_open and selectable%}

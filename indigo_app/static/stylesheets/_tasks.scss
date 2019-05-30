@@ -66,12 +66,6 @@
   }
 }
 
-.task-heading-span {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .task-list-card-heading {
   text-decoration: underline;
   color: black;
@@ -94,9 +88,4 @@
 }
 .text-done {
   color: $success;
-}
-
-.task-list-span {
-  display: flex;
-  align-items: center;
 }

@@ -1,0 +1,10 @@
+{% extends "main.html" %}
+{% load humanize indigo_app %}
+
+{% block title %}Available tasks{% endblock %}
+
+{% block content %}
+<div class="container mt-3">
+  {% include 'indigo_api/_task_list_all.html' with tasks=tasks selectable=False %}
+</div>
+{% endblock %}

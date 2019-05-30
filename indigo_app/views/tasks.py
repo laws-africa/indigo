@@ -403,3 +403,17 @@ class MyTasksView(AbstractAuthedIndigoView, TemplateView):
             .all()[:50]
 
         return context
+
+
+class AvailableTasksView(AbstractAuthedIndigoView, ListView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/available_tasks.html'
+    context_object_name = 'tasks'
+    paginate_by = 50
+    paginate_orphans = 4
+
+    def get_queryset(self):
+        return Task.objects \
+            .filter(assigned_to=None, state__in=Task.OPEN_STATES)\
+            .defer('document__document_xml', 'document__search_text', 'document__search_vector') \
+            .order_by('-updated_at')

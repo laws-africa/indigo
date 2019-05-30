@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 import cgi
 import re
-from difflib import Differ, SequenceMatcher
+from difflib import SequenceMatcher
 from itertools import izip_longest
 from copy import deepcopy
 import logging
@@ -31,8 +31,6 @@ def wrap_tail(elem, wrapper):
 
 
 class AttributeDiffer(object):
-    differ = Differ()
-
     def attr_title(self, attr):
         return attr.title().replace('_', ' ')
 
@@ -149,22 +147,22 @@ class AttributeDiffer(object):
         left = []
         right = []
 
-        # TODO: rewrite this using sequermatcher, it's easier
+        matcher = SequenceMatcher(None, old, new)
+        for opcode, a0, a1, b0, b1 in matcher.get_opcodes():
+            if opcode == 'equal':
+                s = cgi.escape(matcher.a[a0:a1])
+                left.append(s)
+                right.append(s)
 
-        for diff in self.differ.compare(old, new):
-            # diff is a string and one of:
-            #   '  x' = 'x' is the same on both sides
-            #   '- x' = 'x' has been removed
-            #   '+ x' = 'x' has been added
-            ch = cgi.escape(diff[2])
+            elif opcode == 'insert':
+                right.append('<ins>{}</ins>'.format(cgi.escape(matcher.b[b0:b1])))
 
-            if diff[0] == '+':
-                right.append('<ins>{}</ins>'.format(ch))
-            elif diff[0] == '-':
-                left.append('<del>{}</del>'.format(ch))
-            else:
-                left.append(ch)
-                right.append(ch)
+            elif opcode == 'delete':
+                left.append('<del>{}</del>'.format(cgi.escape(matcher.a[a0:a1])))
+
+            elif opcode == 'replace':
+                left.append('<del>{}</del>'.format(cgi.escape(matcher.a[a0:a1])))
+                right.append('<ins>{}</ins>'.format(cgi.escape(matcher.b[b0:b1])))
 
         left = ''.join(left)
         right = ''.join(right)

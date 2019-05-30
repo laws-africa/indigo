@@ -121,12 +121,12 @@ class AttributeDiffer(object):
                 }
             elif patch['op'] == 'remove':
                 v = old[index]
-                diffs.insert(index, {
+                diffs[index] = {
                     'old': v,
                     'new': None,
                     'html_old': "<del>{}</del>".format(cgi.escape(v)),
                     'html_new': '',
-                })
+                }
 
         return {
             'attr': attr,

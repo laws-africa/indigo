@@ -381,6 +381,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
 class MyTasksView(AbstractAuthedIndigoView, TemplateView):
     authentication_required = True
     template_name = 'indigo_app/tasks/my_tasks.html'
+    tab='my_tasks'
 
     def get_context_data(self, **kwargs):
         context = super(MyTasksView, self).get_context_data(**kwargs)
@@ -411,6 +412,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     context_object_name = 'tasks'
     paginate_by = 50
     paginate_orphans = 4
+    tab = 'available_tasks'
 
     def get_queryset(self):
         return Task.objects \

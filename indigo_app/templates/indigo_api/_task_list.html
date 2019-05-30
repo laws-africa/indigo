@@ -5,7 +5,9 @@
   <thead>
   <tr>
     <th scope="col">Task</th>
-    <th scope="col">Place</th>
+    {% if place %}
+      <th scope="col">Place</th>
+    {% endif %}
     <th scope="col">Work/Document</th>
   </tr>
   </thead>
@@ -33,9 +35,11 @@
         {% endfor %}
       </div>
     </td>
-    <td>
-      {{ task.place }}
-    </td>
+    {% if place %}
+      <td>
+        {{ task.place }}
+      </td>
+    {% endif %}
     <td>
       {% if task.document %}
       <div>

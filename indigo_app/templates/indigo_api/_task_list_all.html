@@ -25,9 +25,9 @@
             #{{ task.id }}
             {% endif %}
           </div>
-          <div class="text-muted {% if task.labels.all %} mr-2 {% endif %}">{{ task.title }}</div>
+          <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} mr-2 {% endif %}">{{ task.title }}</a>
           {% for label in task.labels.all %}
-            <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
+            <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
           {% endfor %}
         </div>
       </td>

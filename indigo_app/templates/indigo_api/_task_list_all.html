@@ -11,7 +11,6 @@
   </thead>
   <tbody>
   {% for task in tasks %}
-  {% if task.state != 'pending_review' %}
     <tr>
       <td>
         <div class="task-list-span">
@@ -47,7 +46,6 @@
         {% endif %}
       </td>
     </tr>
-  {% endif %}
   {% endfor %}
   </tbody>
 

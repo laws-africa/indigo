@@ -13,19 +13,21 @@
   {% for task in tasks %}
   <tr>
     <td>
+      <div class="small text-muted mr-2">
+        {% if perms.indigo_api.change_task and task.is_open and selectable%}
+        <label class="mb-0 font-weight-normal c-pointer">
+          <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
+          #{{ task.id }}
+        </label>
+        {% else %}
+        #{{ task.id }}
+        {% endif %}
+      </div>
       <div class="d-flex align-items-center">
         <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-2"></i>
-        <div class="small text-muted mr-2">
-          {% if perms.indigo_api.change_task and task.is_open and selectable%}
-          <label class="mb-0 font-weight-normal c-pointer">
-            <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
-            #{{ task.id }}
-          </label>
-          {% else %}
-          #{{ task.id }}
-          {% endif %}
-        </div>
-        <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} mr-2 {% endif %}">{{ task.title }}</a>
+        <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex mb-1 {% endif %}">{{ task.title }}</a>
+      </div>
+      <div class="d-flex align-items-center">
         {% for label in task.labels.all %}
         <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
         {% endfor %}

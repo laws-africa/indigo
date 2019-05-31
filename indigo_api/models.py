@@ -1259,7 +1259,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        self.closed_by_user = user
+        self.closed_by_user = self.assigned_to or user
         self.assigned_to = None
         action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 

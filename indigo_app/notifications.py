@@ -27,6 +27,13 @@ class Notifier(object):
                     'recipient': action.target,
                 })
 
+        elif action.verb == 'requested changes to':
+            self.send_templated_email('task_changes_requested', [action.action_object.assigned_to], {
+                    'action': action,
+                    'task': task,
+                    'recipient': action.action_object.assigned_to,
+                })
+
         elif action.verb == 'closed':
             if task.last_assigned_to and task.last_assigned_to != action.actor:
                 self.send_templated_email('task_closed_submitter', [task.last_assigned_to], {

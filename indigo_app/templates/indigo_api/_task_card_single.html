@@ -4,7 +4,6 @@
 <div class="card mb-3 task-list-card {% if task_border %} task-border-{{ task.state }} {% endif %}" id="task-{{ task.id }}">
   <div class="card-body">
     <!-- Workflow controls -->
-    {% if workflow_controls %}
       <form method="POST">
       {% csrf_token %}
 
@@ -35,16 +34,18 @@
               Approve
             </button>
           {% endif %}
-          <button type="submit"
-                  class="dropdown-item"
-                  formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}"
-                  data-confirm="Are you sure you want to remove this task?">
-            Remove from workflow
-          </button>
+
+          {% if workflow_controls %}
+            <button type="submit"
+                    class="dropdown-item"
+                    formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}"
+                    data-confirm="Are you sure you want to remove this task?">
+              Remove from workflow
+            </button>
+          {% endif %}
         </div>
       </div>
-    </form>
-    {% endif %}
+      </form>
 
     <!-- card heading -->
     <div class="task-heading-span mb-1">

@@ -1216,7 +1216,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        self.last_assigned_to = self.assigned_to if self.assigned_to else user
+        self.last_assigned_to = self.assigned_to
         self.assigned_to = None
         action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 

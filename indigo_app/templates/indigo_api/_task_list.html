@@ -1,7 +1,7 @@
 {% load humanize indigo_app %}
 
 {% if tasks %}
-<table class="table table-striped table-sm">
+<table class="table table-striped table-sm mb-0">
   <thead>
   <tr>
     <th scope="col" colspan="2">Task</th>
@@ -16,16 +16,18 @@
   <tr>
     <!-- Task Number -->
     <td>
-      <div class="text-muted mr-2">
+      <div class="text-nowrap">
         <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-2"></i>
-        {% if perms.indigo_api.change_task and task.is_open and selectable%}
-        <label class="mb-0 font-weight-normal c-pointer">
-          <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
+        <span class="text-muted">
+          {% if perms.indigo_api.change_task and task.is_open and selectable%}
+          <label class="mb-0 font-weight-normal c-pointer">
+            <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
+            #{{ task.id }}
+          </label>
+          {% else %}
           #{{ task.id }}
-        </label>
-        {% else %}
-        #{{ task.id }}
-        {% endif %}
+          {% endif %}
+        </span>
       </div>
     </td>
     <!-- Task title -->

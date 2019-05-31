@@ -43,7 +43,7 @@ setup(
         'django>=1.11.15,<2',
         'arrow>=0.5',
         'boto3>=1.7',
-        'cobalt>=2.0.0',
+        'cobalt>=2.1.0',
         'django-ckeditor>=5.3.1',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',

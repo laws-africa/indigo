@@ -13,40 +13,12 @@
         <p class="text-center"><em>No tasks found.</em></p>
       </div>
     {% endif %}
-
-    {% if is_paginated %}
-    <nav class="mt-4">
-      <ul class="pagination justify-content-center">
-        {% if page.has_previous %}
-        <li class="page-item"><a class="page-link" href="?page={{ page.previous_page_number }}">Prev</a></li>
-        {% else %}
-        <li class="page-item"><a class="page-link disabled">Prev</a></li>
-        {% endif %}
-
-        {% if page.number|add:'-5' > 0 %}
-        <li class="page-item"><a class="page-link" href="?page={{ page.number|add:'-5' }}">&hellip;</a></li>
-        {% endif %}
-
-        {% for num in page.paginator.page_range %}
-        {% if page.number == num %}
-        <li class="page-item active"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-        {% elif num > page.number|add:'-5' and num < page.number|add:'5' %}
-        <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
-        {% endif %}
-        {% endfor %}
-
-        {% if page.paginator.num_pages > page.number|add:'4' %}
-        <li class="page-item"><a class="page-link" href="?page={{ page.number|add:'5' }}">&hellip;</a></li>
-        {% endif %}
-
-        {% if page.has_next %}
-        <li class="page-item"><a class="page-link" href="?page={{ page.next_page_number }}">Next</a></li>
-        {% else %}
-        <li class="page-item"><a class="page-link disabled">Next</a></li>
-        {% endif %}
-      </ul>
-    </nav>
-    {% endif %}
   </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      {% include 'indigo_app/_paginator.html' %}
+    </nav>
+  {% endif %}
 </div>
 {% endblock %}

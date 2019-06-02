@@ -934,6 +934,9 @@ class Attachment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('filename',)
+
     # TODO: enforce unique filename for document
 
 
@@ -1040,6 +1043,7 @@ class DocumentActivity(models.Model):
 
     class Meta:
         unique_together = ('document', 'user', 'nonce')
+        ordering = ('created_at',)
 
     def touch(self):
         self.updated_at = timezone.now()
@@ -1333,6 +1337,7 @@ class Workflow(models.Model):
         permissions = (
             ('close_workflow', 'Can close a workflow'),
         )
+        ordering = ('title',)
 
     objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
 

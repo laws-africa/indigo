@@ -208,13 +208,19 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
             .order_by('-id')\
             .first()
 
+        differ = AttributeDiffer()
+
         if old_version:
-            old_html = old_version.object_version.object.to_html()
+            old_document = old_version.object_version.object
+            old_document.document_xml = differ.preprocess_document_diff(old_document.document_xml)
+            old_html = old_document.to_html()
         else:
             old_html = ""
-        new_html = version.object_version.object.to_html()
 
-        differ = AttributeDiffer()
+        new_document = version.object_version.object
+        new_document.document_xml = differ.preprocess_document_diff(new_document.document_xml)
+        new_html = new_document.to_html()
+
         old_tree = lxml.html.fromstring(old_html) if old_html else None
         new_tree = lxml.html.fromstring(new_html)
         n_changes = differ.diff_document_html(old_tree, new_tree)

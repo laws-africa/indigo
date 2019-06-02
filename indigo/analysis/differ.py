@@ -1,8 +1,7 @@
 from __future__ import unicode_literals
 
 import cgi
-import re
-from difflib import Differ, SequenceMatcher
+from difflib import SequenceMatcher
 from itertools import izip_longest
 from copy import deepcopy
 import logging
@@ -10,29 +9,14 @@ import logging
 import jsonpatch
 import lxml.html
 import lxml.html.builder
+from lxml import etree
+
+from indigo.xmlutils import unwrap_element, wrap_tail, fragments_fromstring
 
 log = logging.getLogger(__name__)
 
 
-def fragments_fromstring(html):
-    """ Same as lxml.html.fragments_fromstring, except we preserve initial whitespace.
-    """
-    items = lxml.html.fragments_fromstring(html)
-    match = re.match(r'^(\s+)<', html)
-    if match:
-        items.insert(0, match.group(1))
-    return items
-
-
-def wrap_tail(elem, wrapper):
-    x = wrapper(elem.tail)
-    elem.tail = None
-    elem.addnext(x)
-
-
 class AttributeDiffer(object):
-    differ = Differ()
-
     def attr_title(self, attr):
         return attr.title().replace('_', ' ')
 
@@ -113,20 +97,20 @@ class AttributeDiffer(object):
                 old_v = old[index]
                 new_v = patch['value']
                 html_old, html_new = self.html_diff(old_v, new_v)
-                diffs.insert(index, {
+                diffs[index] = {
                     'old': old_v,
                     'new': new_v,
                     'html_old': html_old,
                     'html_new': html_new,
-                })
+                }
             elif patch['op'] == 'remove':
                 v = old[index]
-                diffs.insert(index, {
+                diffs[index] = {
                     'old': v,
                     'new': None,
                     'html_old': "<del>{}</del>".format(cgi.escape(v)),
                     'html_new': '',
-                })
+                }
 
         return {
             'attr': attr,
@@ -149,22 +133,22 @@ class AttributeDiffer(object):
         left = []
         right = []
 
-        # TODO: rewrite this using sequermatcher, it's easier
+        matcher = SequenceMatcher(None, old, new)
+        for opcode, a0, a1, b0, b1 in matcher.get_opcodes():
+            if opcode == 'equal':
+                s = cgi.escape(matcher.a[a0:a1])
+                left.append(s)
+                right.append(s)
 
-        for diff in self.differ.compare(old, new):
-            # diff is a string and one of:
-            #   '  x' = 'x' is the same on both sides
-            #   '- x' = 'x' has been removed
-            #   '+ x' = 'x' has been added
-            ch = cgi.escape(diff[2])
+            elif opcode == 'insert':
+                right.append('<ins>{}</ins>'.format(cgi.escape(matcher.b[b0:b1])))
 
-            if diff[0] == '+':
-                right.append('<ins>{}</ins>'.format(ch))
-            elif diff[0] == '-':
-                left.append('<del>{}</del>'.format(ch))
-            else:
-                left.append(ch)
-                right.append(ch)
+            elif opcode == 'delete':
+                left.append('<del>{}</del>'.format(cgi.escape(matcher.a[a0:a1])))
+
+            elif opcode == 'replace':
+                left.append('<del>{}</del>'.format(cgi.escape(matcher.a[a0:a1])))
+                right.append('<ins>{}</ins>'.format(cgi.escape(matcher.b[b0:b1])))
 
         left = ''.join(left)
         right = ''.join(right)
@@ -308,3 +292,16 @@ class AttributeDiffer(object):
         for pair in kiddies:
             for diff in self.describe_html_differences(pair[0], pair[1], new):
                 yield diff
+
+    def preprocess_document_diff(self, xml_str):
+        """ Run pre-processing on XML before doing HTML diffs.
+
+        This removes <term> elements.
+        """
+        root = etree.fromstring(xml_str)
+
+        for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
+            unwrap_element(elem)
+
+        return etree.tostring(root, encoding='utf-8')
+

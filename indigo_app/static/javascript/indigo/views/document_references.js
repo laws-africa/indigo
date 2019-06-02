@@ -58,7 +58,7 @@
 
       $btn
         .prop('disabled', true)
-        .find('.fa').addClass('fa-spin');
+        .find('i').addClass('fa-spin');
 
       $.ajax({
         url: '/api/analysis/link-references',
@@ -72,7 +72,7 @@
         .always(function() {
           $btn
             .prop('disabled', false)
-            .find('.fa').removeClass('fa-spin');
+            .find('i').removeClass('fa-spin');
         });
     },
 

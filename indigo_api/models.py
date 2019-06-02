@@ -1043,6 +1043,7 @@ class DocumentActivity(models.Model):
 
     class Meta:
         unique_together = ('document', 'user', 'nonce')
+        ordering = ('created_at',)
 
     def touch(self):
         self.updated_at = timezone.now()

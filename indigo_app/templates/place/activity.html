@@ -8,13 +8,13 @@
     <h4 class="card-header">Activity</h4>
     <div class="card-body">
       {% include 'indigo_app/actions/_activity_list.html' with actions=page_obj.object_list ignore_place=True %}
-
-      {% if is_paginated %}
-        <nav class="mt-4">
-          {% include 'indigo_app/_paginator.html' %}
-        </nav>
-      {% endif %}
     </div>
   </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      {% include 'indigo_app/_paginator.html' %}
+    </nav>
+  {% endif %}
 </div>
 {% endblock %}

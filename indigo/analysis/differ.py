@@ -1,7 +1,6 @@
 from __future__ import unicode_literals
 
 import cgi
-import re
 from difflib import SequenceMatcher
 from itertools import izip_longest
 from copy import deepcopy
@@ -10,24 +9,11 @@ import logging
 import jsonpatch
 import lxml.html
 import lxml.html.builder
+from lxml import etree
+
+from indigo.xmlutils import unwrap_element, wrap_tail, fragments_fromstring
 
 log = logging.getLogger(__name__)
-
-
-def fragments_fromstring(html):
-    """ Same as lxml.html.fragments_fromstring, except we preserve initial whitespace.
-    """
-    items = lxml.html.fragments_fromstring(html)
-    match = re.match(r'^(\s+)<', html)
-    if match:
-        items.insert(0, match.group(1))
-    return items
-
-
-def wrap_tail(elem, wrapper):
-    x = wrapper(elem.tail)
-    elem.tail = None
-    elem.addnext(x)
 
 
 class AttributeDiffer(object):
@@ -306,3 +292,16 @@ class AttributeDiffer(object):
         for pair in kiddies:
             for diff in self.describe_html_differences(pair[0], pair[1], new):
                 yield diff
+
+    def preprocess_document_diff(self, xml_str):
+        """ Run pre-processing on XML before doing HTML diffs.
+
+        This removes <term> elements.
+        """
+        root = etree.fromstring(xml_str)
+
+        for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
+            unwrap_element(elem)
+
+        return etree.tostring(root, encoding='utf-8')
+

@@ -100,7 +100,8 @@ class RenderParseAPITest(APITestCase):
         })
         assert_equal(response.status_code, 200)
         self.maxDiff = None
-        self.assertEqual(u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+        self.assertEqual(
+            u"""<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
   <chapter id="chapter-2">
     <num>2</num>
     <heading>The Beginning</heading>
@@ -126,5 +127,5 @@ class RenderParseAPITest(APITestCase):
       </subsection>
     </section>
   </chapter>
-</akomaNtoso>
-""", response.data['output'].decode('utf-8'))
+</akomaNtoso>""",
+            response.data['output'].decode('utf-8'))

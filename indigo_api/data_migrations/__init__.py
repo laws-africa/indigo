@@ -1,3 +1,6 @@
+import re
+
+
 class AKNMigration(object):
     def migrate_document(self, document):
         return self.migrate_act(document.doc)
@@ -45,3 +48,27 @@ class ScheduleArticleToHcontainer(AKNMigration):
             article.insert(0, heading)
 
         return changed
+
+
+class FixSignificantWhitespace(AKNMigration):
+    """ Strip unnecessary whitespace from p, heading, subheading and listIntroduction
+    elements.
+
+    In the past, we pretty-printed our XML which introduced meaningful whitespace. This
+    migration removes it.
+    """
+    def migrate_document(self, document):
+        xml = self.strip_whitespace(document.document_xml)
+        if xml != document.document_xml:
+            document.reset_xml(xml, from_model=True)
+            return True
+
+    def strip_whitespace(self, xml):
+        opening = re.compile(r'<(p|heading|subheading|listIntroduction)>\n\s+<')
+        xml = opening.sub('<\\1><', xml)
+
+        closing = re.compile(r'\s*\n\s+</(p|heading|subheading|listIntroduction)>')
+        xml = closing.sub('</\\1>', xml)
+
+        return xml
+

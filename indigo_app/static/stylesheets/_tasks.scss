@@ -65,3 +65,27 @@
     background-color: $grey;
   }
 }
+
+.task-list-card-heading {
+  text-decoration: underline;
+  color: black;
+}
+
+.task-border-open {
+  border: 1px solid $primary;
+}
+.task-border-pending_review {
+  border: 1px solid $orange;
+}
+.task-border-done {
+  border: 1px solid $success;
+}
+.text-open {
+  color: $primary
+}
+.text-pending_review {
+  color: $orange;
+}
+.text-done {
+  color: $success;
+}

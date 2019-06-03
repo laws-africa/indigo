@@ -22,18 +22,18 @@ class Notifier(object):
 
         if action.verb == 'assigned':
             self.send_templated_email('task_assigned', [action.target], {
-                    'action': action,
-                    'task': task,
-                    'recipient': action.target,
-                })
+                'action': action,
+                'task': task,
+                'recipient': action.target,
+            })
 
         elif action.verb == 'closed':
             if task.last_assigned_to and task.last_assigned_to != action.actor:
                 self.send_templated_email('task_closed_submitter', [task.last_assigned_to], {
-                        'action': action,
-                        'task': action.action_object,
-                        'recipient': task.last_assigned_to,
-                    })
+                    'action': action,
+                    'task': action.action_object,
+                    'recipient': task.last_assigned_to,
+                })
 
     def notify_comment_posted(self, comment):
         """

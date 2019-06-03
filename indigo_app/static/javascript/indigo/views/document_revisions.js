@@ -98,7 +98,7 @@
         .then(function(response) {
           var $akn = self.$el.find('.revision-preview .akoma-ntoso').html(response.content);
           self.changedElements = $akn.find('ins, del, .ins, .del');
-          self.currentElementIndex = 0;
+          self.currentElementIndex = -1;
 
           self.$el.find('.change-count').text(
               response.n_changes + ' change' + (response.n_changes != 1 ? 's' : ''));
@@ -115,15 +115,18 @@
     },
 
     prevChange: function(e) {
-      if (this.currentElementIndex > 0 && this.changedElements.length > 0) {
-        this.changedElements[--this.currentElementIndex].scrollIntoView();
+      // workaround for (x - 1) % 3 == -1
+      if (this.currentElementIndex <= 0) {
+        this.currentElementIndex = this.changedElements.length - 1;
+      } else {
+        this.currentElementIndex--;
       }
+      this.changedElements[this.currentElementIndex].scrollIntoView();
     },
 
     nextChange: function(e) {
-      if (this.currentElementIndex < this.changedElements.length - 1) {
-        this.changedElements[++this.currentElementIndex].scrollIntoView();
-      }
+      this.currentElementIndex = (this.currentElementIndex + 1) % this.changedElements.length;
+      this.changedElements[this.currentElementIndex].scrollIntoView();
     }
   });
 })(window);

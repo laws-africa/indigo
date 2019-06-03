@@ -425,7 +425,7 @@ class PublishedAPIV2Test(APITestCase):
         response = self.client.get('/api/v2/akn/za/act/2014/10/eng@2014-02-12.json')
         assert_equal(response.status_code, 200)
 
-        assert_equal(response.data['publication_document']['url'], 'http://testserver/api/v2/akn/za/act/2014/10/eng@2014-02-12/media/za-act-2014-10-publication-document.pdf')
+        assert_equal(response.data['publication_document']['url'], 'http://localhost:8000/works/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
     def test_published_search_perms(self):
         self.client.logout()

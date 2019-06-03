@@ -22,10 +22,10 @@ class Notifier(object):
 
         if action.verb == 'assigned':
             self.send_templated_email('task_assigned', [action.target], {
-                    'action': action,
-                    'task': task,
-                    'recipient': action.target,
-                })
+                'action': action,
+                'task': task,
+                'recipient': action.target,
+            })
 
         elif action.verb == 'requested changes to':
             self.send_templated_email('task_changes_requested', [action.action_object.assigned_to], {
@@ -37,10 +37,10 @@ class Notifier(object):
         elif action.verb == 'closed':
             if task.last_assigned_to and task.last_assigned_to != action.actor:
                 self.send_templated_email('task_closed_submitter', [task.last_assigned_to], {
-                        'action': action,
-                        'task': action.action_object,
-                        'recipient': task.last_assigned_to,
-                    })
+                    'action': action,
+                    'task': action.action_object,
+                    'recipient': task.last_assigned_to,
+                })
 
     def notify_comment_posted(self, comment):
         """
@@ -54,7 +54,7 @@ class Notifier(object):
             task_comments = Comment.objects\
                 .filter(content_type=task_content_type, object_pk=task.id)\
                 .select_related('user')
-            recipient_list = [comment.user for comment in task_comments]
+            recipient_list = [c.user for c in task_comments]
 
             recipient_list.append(task.created_by_user)
             if task.assigned_to:
@@ -88,6 +88,7 @@ class Notifier(object):
             from_email=None,
             recipient_list=recipient_list,
             context=real_context,
+            fail_silently=settings.INDIGO_EMAIL_FAIL_SILENTLY,
             **kwargs)
 
 

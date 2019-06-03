@@ -81,6 +81,7 @@ class Notifier(object):
             from_email=None,
             recipient_list=recipient_list,
             context=real_context,
+            fail_silently=settings.INDIGO_EMAIL_FAIL_SILENTLY,
             **kwargs)
 
 

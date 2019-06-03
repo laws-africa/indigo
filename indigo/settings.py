@@ -114,6 +114,7 @@ SESSION_COOKIE_SECURE = not DEBUG
 
 # where does the pdftotext binary live?
 INDIGO_PDFTOTEXT = 'pdftotext'
+INDIGO_EMAIL_FAIL_SILENTLY = True
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases

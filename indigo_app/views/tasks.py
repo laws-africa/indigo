@@ -388,7 +388,7 @@ class MyTasksView(AbstractAuthedIndigoView, TemplateView):
 
         # open tasks assigned to this user
         context['open_assigned_tasks'] = Task.objects \
-            .filter(assigned_to=self.request.user, state='open') \
+            .filter(assigned_to=self.request.user, state__in=Task.OPEN_STATES) \
             .all()
 
         # tasks previously assigned to this user and now pending approval

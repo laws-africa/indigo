@@ -1251,7 +1251,7 @@ class Task(models.Model):
         return view.request.user.is_authenticated and \
             view.request.user.editor.has_country_permission(view.country) and \
             view.request.user.has_perm('indigo_api.unsubmit_task') and \
-            view.request.user == self.assigned_to or (not self.assigned_to)
+            (view.request.user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):

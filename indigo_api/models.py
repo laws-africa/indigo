@@ -1220,6 +1220,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
+        if not self.assigned_to:
+            self.assign_to(user, user)
         self.last_assigned_to = self.assigned_to
         self.assigned_to = None
         action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
@@ -1247,7 +1249,9 @@ class Task(models.Model):
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
         return view.request.user.is_authenticated and \
-            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.unsubmit_task')
+            view.request.user.editor.has_country_permission(view.country) and \
+            view.request.user.has_perm('indigo_api.unsubmit_task') and \
+            (view.request.user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
@@ -1257,13 +1261,15 @@ class Task(models.Model):
     # close
     def may_close(self, view):
         return view.request.user.is_authenticated and \
-        view.request.user.editor.has_country_permission(view.country) and  \
-        view.request.user.has_perm('indigo_api.close_task') and \
-        view.request.user != self.last_assigned_to
+            view.request.user.editor.has_country_permission(view.country) and \
+            view.request.user.has_perm('indigo_api.close_task') and \
+            (view.request.user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        self.closed_by_user = user
+        if not self.assigned_to:
+            self.assign_to(user, user)
+        self.closed_by_user = self.assigned_to
         self.assigned_to = None
         action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 

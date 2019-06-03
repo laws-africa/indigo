@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
 from unittest import TestCase
 
 import lxml.html
@@ -77,3 +78,43 @@ class AttributeDifferTestCase(TestCase):
             as_html(new),
             '<p>Some text <del>bold text and a tail.</del><b class="ins">bold text</b><ins> and a tail.</ins></p>',
         )
+
+    def test_diff_lists_deleted(self):
+        diffs = self.differ.diff_lists('test', 'Test', ['1', '2', '3'], ['1', '3'])
+        self.assertEqual({
+            'attr': 'test',
+            'title': 'Test',
+            'type': 'list',
+            'changes': [{
+                'html_new': '1',
+                'html_old': '1'
+            }, {
+                'html_new': '',
+                'html_old': '<del>2</del>',
+                'new': None,
+                'old': '2'
+            }, {
+                'html_new': '3',
+                'html_old': '3'
+            }]},
+            diffs)
+
+    def test_diff_lists_added(self):
+        diffs = self.differ.diff_lists('test', 'Test', ['1', '3'], ['1', '2', '3'])
+        self.assertEqual({
+            'attr': 'test',
+            'title': 'Test',
+            'type': 'list',
+            'changes': [{
+                'html_new': '1',
+                'html_old': '1'
+            }, {
+                'html_new': '<ins>2</ins>',
+                'html_old': '',
+                'new': '2',
+                'old': None
+            }, {
+                'html_new': '3',
+                'html_old': '3'
+            }]},
+            diffs)

@@ -17,14 +17,6 @@ def published_doc_url(doc, request, frbr_uri=None):
     return uri.replace('%40', '@')
 
 
-class PublishedPublicationDocumentSerializer(PublicationDocumentSerializer):
-    def get_url(self, instance):
-        if instance.trusted_url:
-            return instance.trusted_url
-        uri = published_doc_url(self.context['document'], self.context['request'])
-        return uri + '/media/' + instance.filename
-
-
 class ExpressionSerializer(serializers.Serializer):
     url = serializers.SerializerMethodField()
     language = serializers.CharField(source='language.code')
@@ -98,7 +90,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         except PublicationDocument.DoesNotExist:
             return None
 
-        return PublishedPublicationDocumentSerializer(
+        return PublicationDocumentSerializer(
             context={'document': doc, 'request': self.context['request']}
         ).to_representation(pub_doc)
 

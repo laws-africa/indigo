@@ -506,6 +506,7 @@ class EPUBRenderer(HTMLRenderer):
             'renderer': self.renderer,
             'coverpage': True,
             'resolver_url': self.resolver,
+            'coverpage_template': self.coverpage_template(document),
         }
         titlepage = render_to_string(template_name, context)
 

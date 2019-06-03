@@ -1,62 +1,67 @@
 {% load humanize indigo_app %}
 
 {% if tasks %}
-  <div class="list-group list-group-flush task-list">
-    {% for task in tasks %}
-      <div class="list-group-item task-list-item p-3 d-flex {% if selectable %}selectable-task{% endif %}">
-        {% if selectable %}
-          <div class="col">
-            <input type="checkbox" name="tasks" value="{{ task.id }}" id="selected_tasks_{{ task.id }}">
-          </div>
-        {% endif %}
-        <div class="col text-center">
-          {% if task.assigned_to and task.state != 'pending_review' %}
-            <span class="badge task-badge task-badge-assigned" title="assigned"><i class="fas fa-fw task-icon-assigned"></i></span><br>
+<table class="table table-striped table-sm mb-0">
+  <thead>
+  <tr>
+    <th scope="col" colspan="2">Task</th>
+    {% if place %}
+      <th scope="col">Place</th>
+    {% endif %}
+    <th scope="col">Work/Document</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for task in tasks %}
+  <tr>
+    <!-- Task Number -->
+    <td>
+      <div class="text-nowrap">
+        <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small mr-2"></i>
+        <span class="text-muted">
+          {% if perms.indigo_api.change_task and task.is_open and selectable%}
+          <label class="mb-0 font-weight-normal c-pointer">
+            <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
+            #{{ task.id }}
+          </label>
           {% else %}
-            <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+          #{{ task.id }}
           {% endif %}
-          <span class="text-muted">#{{ task.pk }}</span>
-        </div>
-
-        <div class="col flex-fill">
-          <div>
-            <a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a>
-            {% for label in task.labels.all %}
-              <span class="badge badge-secondary" title="{{ label.description }}">{{ label.title }}</span>
-            {% endfor %}
-
-            {% if task.document %}
-              <div>
-                <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-                <span class="text-muted">{{ task.work.frbr_uri }}</span>
-              </div>
-            {% elif task.work %}
-              <div>
-                <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
-                <span class="text-muted">{{ task.work.frbr_uri }}</span>
-              </div>
-            {% endif %}
-          </div>
-          <div class="text-muted">
-            <small>
-              Created <span class="time-ago" data-timestamp="{{ task.created_at|date:'c' }}">{{ task.created_at|naturaltime }}</span>
-              {% if task.created_by_user %}
-              by {% user_profile task.created_by_user %}
-              {% endif %}
-            </small>
-          </div>
-          {% if task.assigned_to %}
-          <div>
-            <i class="fas fa-user-tag fa-xs task-icon-assignee" title="Assigned to"></i>
-            <small class="text-muted">{% user_profile task.assigned_to %}</small>
-          </div>
-          {% endif %}
-        </div>
+        </span>
       </div>
-    {% endfor %}
-  </div>
+    </td>
+    <!-- Task title -->
+    <td>
+      <div class="d-flex align-items-center">
+        <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex mr-1 {% endif %}">{{ task.title }}</a>
+        {% for label in task.labels.all %}
+        <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
+        {% endfor %}
+      </div>
+    </td>
+
+    {% if place %}
+      <td>
+        {{ task.place }}
+      </td>
+    {% endif %}
+    <td>
+      {% if task.document %}
+      <div>
+        <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a>
+      </div>
+      {% elif task.work %}
+      <div>
+        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+      </div>
+      {% endif %}
+    </td>
+  </tr>
+  {% endfor %}
+  </tbody>
+</table>
 {% else %}
-  <div class="card-body">
-    <p class="alert alert-info">No tasks found</p>
-  </div>
+<div class="card-body">
+  <p class="alert alert-info">No tasks found</p>
+</div>
 {% endif %}

@@ -149,7 +149,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
         paginator, page, versions, is_paginated = self.paginate_queryset(activity, self.page_size)
         context.update({
             'paginator': paginator,
-            'page': page,
+            'page_obj': page,
             'is_paginated': is_paginated,
             'place': self.place,
         })

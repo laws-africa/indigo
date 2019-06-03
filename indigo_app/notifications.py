@@ -47,7 +47,7 @@ class Notifier(object):
             task_comments = Comment.objects\
                 .filter(content_type=task_content_type, object_pk=task.id)\
                 .select_related('user')
-            recipient_list = [comment.user for comment in task_comments]
+            recipient_list = [c.user for c in task_comments]
 
             recipient_list.append(task.created_by_user)
             if task.assigned_to:
@@ -81,6 +81,7 @@ class Notifier(object):
             from_email=None,
             recipient_list=recipient_list,
             context=real_context,
+            fail_silently=settings.INDIGO_EMAIL_FAIL_SILENTLY,
             **kwargs)
 
 

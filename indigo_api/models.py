@@ -1220,6 +1220,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
+        if not self.assigned_to:
+            self.assign_to(user, user)
         self.last_assigned_to = self.assigned_to
         self.assigned_to = None
         action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
@@ -1263,7 +1265,9 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        self.closed_by_user = user
+        if not self.assigned_to:
+            self.assign_to(user, user)
+        self.closed_by_user = self.assigned_to
         self.assigned_to = None
         action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 

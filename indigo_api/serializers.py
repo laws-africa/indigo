@@ -6,6 +6,7 @@ from collections import OrderedDict
 from lxml.etree import LxmlError
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
@@ -191,7 +192,12 @@ class PublicationDocumentSerializer(serializers.ModelSerializer):
     def get_url(self, instance):
         if instance.trusted_url:
             return instance.trusted_url
-        return reverse('work_publication_document', kwargs={'frbr_uri': instance.work.frbr_uri, 'filename': instance.filename})
+        # HACK HACK HACK
+        # TODO: this is a hack until we can teach indigo to be aware that
+        # the API might live on a different host
+        return settings.INDIGO_URL + '/works{}/media/publication/{}'.format(
+            instance.work.frbr_uri, instance.filename
+        )
 
 
 class UserSerializer(serializers.ModelSerializer):

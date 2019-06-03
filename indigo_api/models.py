@@ -6,7 +6,6 @@ import datetime
 from itertools import chain, groupby
 
 from actstream import action
-
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.db import models
@@ -20,18 +19,16 @@ from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
 from django_fsm import FSMField, has_transition_perm, transition
-
 import arrow
 from taggit.managers import TaggableManager
 import reversion.revisions
 import reversion.models
-
 from countries_plus.models import Country as MasterCountry
 from languages_plus.models import Language as MasterLanguage
-
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
+from indigo.custom_tasks import tasks
 from indigo.documents import ResolvedAnchor
 
 log = logging.getLogger(__name__)
@@ -1281,6 +1278,18 @@ class Task(models.Model):
             return None
 
         return ResolvedAnchor(anchor=self.anchor(), document=self.document)
+
+    @property
+    def customised(self):
+        """ If this task is customised, return a new object describing the customisation.
+        """
+        if self.code:
+            if not hasattr(self, '_customised'):
+                plugin = tasks.for_locale(self.code, country=self.country, locality=self.locality)
+                self._customised = plugin
+                if plugin:
+                    self._customised.setup(self)
+            return self._customised
 
     @classmethod
     def task_columns(cls, required_groups, tasks):

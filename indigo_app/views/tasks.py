@@ -244,6 +244,11 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
         user = self.request.user
         task.updated_by_user = user
 
+        if task.customised:
+            # redirect to custom close url, if necessary
+            if self.change == 'close' and task.customised.close_url():
+                return redirect(task.customised.close_url())
+
         for change, verb in Task.VERBS.iteritems():
             if self.change == change:
                 state_change = getattr(task, change)

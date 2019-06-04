@@ -249,7 +249,7 @@ class TaskFilterForm(forms.Form):
             queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
 
         if self.cleaned_data.get('submitted_by'):
-            queryset = queryset.filter(state='pending_review')\
+            queryset = queryset.filter(state__in=['pending_review', 'closed'])\
                 .filter(last_assigned_to__in=self.cleaned_data['submitted_by'])
 
         return queryset

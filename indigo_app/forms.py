@@ -29,7 +29,7 @@ class WorkForm(forms.ModelForm):
     # are applicable in each case.
     publication_document_file = forms.FileField(required=False)
     delete_publication_document = forms.BooleanField(required=False)
-    taxonomies = forms.ModelMultipleChoiceField(queryset=VocabularyTopic.objects.all(), required=False)
+    taxonomies = forms.ModelMultipleChoiceField(queryset=VocabularyTopic.objects, required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)

@@ -39,43 +39,9 @@
 
   <div class="card">
     <div class="card-header">
-      <div class="d-flex">
 
-        <div class="flex-grow-1 mr-2">
-          <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
-        </div>
-
-        <div class="mr-2">
-          <select class="form-control filter-subtype" name="subtype-filter"></select>
-        </div>
-
-        <div class="mr-2">
-          <select class="selectpicker filter-stub" data-style="btn-outline-secondary" data-width="auto">
-            <option value="excl">Exclude stubs</option>
-            <option value="only">Only stubs</option>
-            <option value="all">Everything</option>
-          </select>
-        </div>
-
-        <div class="mr-2">
-          <select class="selectpicker filter-status" multiple data-style="btn-outline-secondary" data-width="auto">
-            <option value="published" selected data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
-            <option value="draft" selected data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
-          </select>
-        </div>
-
-        <div>
-          <select class="form-control sortby" name="sort">
-            <option value="-updated_at" selected>Most recently updated</option>
-            <option value="updated_at">Least recently updated</option>
-            <option value="title">Title (A-Z)</option>
-            <option value="-title">Title (Z-A)</option>
-            <option value="frbr_uri">FRBR URI</option>
-          </select>
-        </div>
-
-      </div>
-
+        {% include 'indigo_api/_work_filter_form.html' with form=form format=True status=True %}
+      
       <div id="filter-tags" class="pt-3"></div>
     </div>
 

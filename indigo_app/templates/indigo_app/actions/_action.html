@@ -57,7 +57,12 @@
     {% endif %}
 
     {% if action.target.target_actions.content_type.model == 'user' %}
-      to {% user_profile action.target %}
+      {% if action.verb == 'requested changes to' %}
+        from
+      {% else %}
+        to
+      {% endif %}
+      {% user_profile action.target %}
     {% endif %}
 
     {% if action.target.target_actions.content_type.model == 'workflow' %}

@@ -1256,7 +1256,10 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
         self.assigned_to = self.last_assigned_to
-        action.send(user, verb=self.VERBS['unsubmit'], action_object=self, place_code=self.place.place_code)
+        action.send(user, verb=self.VERBS['unsubmit'],
+                    action_object=self,
+                    target=self.assigned_to,
+                    place_code=self.place.place_code)
 
     # close
     def may_close(self, view):

@@ -226,6 +226,7 @@ class TaskFilterForm(forms.Form):
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
+    submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -246,6 +247,10 @@ class TaskFilterForm(forms.Form):
 
         if self.cleaned_data.get('assigned_to'):
             queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
+
+        if self.cleaned_data.get('submitted_by'):
+            queryset = queryset.filter(state='pending_review')\
+                .filter(last_assigned_to__in=self.cleaned_data['submitted_by'])
 
         return queryset
 

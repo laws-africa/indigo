@@ -5,7 +5,7 @@
 
   <p>Hello {{ recipient.first_name }},</p>
 
-  <p>{{ action.actor.first_name }} assigned you task
+  <p>{{ action.actor.first_name }} requested changes on task
      <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>:
   </p>
 

@@ -88,10 +88,10 @@
         <div class="form-row">
           {% if taxonomies %}
             <div class="form-group col-md-4">
-              <label for="taxonomy">Taxonomy tags</label>
-              <select id="taxonomy" class="form-control selectpicker" data-live-search="true" multiple>
-                {% for taxonomy in taxonomies %}
-                <option value="{{ taxonomy.name }}">{{ taxonomy }}</option>
+              <label for="taxonomies">Taxonomy tags </label>
+              <select id="taxonomies" name="work-taxonomies" class="form-control selectpicker" data-live-search="true" multiple>
+                {% for taxonomy in form.taxonomies %}
+                  {{ taxonomy }}
                 {% endfor %}
               </select>
             </div>

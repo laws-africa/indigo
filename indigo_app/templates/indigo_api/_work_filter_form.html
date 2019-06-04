@@ -1,0 +1,57 @@
+{% load account %}
+
+
+<form method="GET" id="work-filter-form">
+  <div class="d-flex">
+
+    <div class="flex-grow-1 mr-2">
+        <input type="text" class="form-control filter-search-new" name="title-year-number" placeholder="Filter by title, year or number" value="">
+    </div>
+
+    <!-- Types filter -->
+    <div class="mr-2">
+        <select class="form-control filter-subtype" name="subtype-filter">
+          <option value="all">All types</option>
+          <option value="-">Acts</option>
+          <option value="by-law">By-law</option>
+          <option value="gn">Government Notice</option>
+          <option value="p">Proclamation</option>
+          <option value="si">Statutory Instrument</option>
+        </select>
+      </div>    
+
+    <!-- Stubs filter -->
+    <div class="mr-2">
+        <select class="selectpicker filter-stub" name="stub" data-style="btn-outline-secondary" data-width="auto">
+          <option value="excl">Exclude stubs</option>
+          <option value="only">Only stubs</option>
+          <option value="all">Everything</option>
+        </select>
+      </div>      
+
+    <!-- Status filter -->
+    <div class="mr-2">
+      <select class="selectpicker notooltip" multiple name="status" data-style="btn-outline-secondary">
+          <option value="published" selected data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
+          <option value="draft" selected data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
+      </select>
+    </div>  
+
+    <!-- Time updated filter -->
+    <div class="mr-2">
+      <select class="form-control sortby" name="sort">
+        <option value="-updated_at" selected>Most recently updated</option>
+        <option value="updated_at">Least recently updated</option>
+        <option value="title">Title (A-Z)</option>
+        <option value="-title">Title (Z-A)</option>
+        <option value="frbr_uri">FRBR URI</option>
+      </select>
+    </div>
+
+
+    <div class="btn-group">
+        <button type="submit" class="btn btn-success">Filter</button>
+    </div>  
+
+  </div>
+</form>

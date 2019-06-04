@@ -55,6 +55,13 @@
     <xsl:apply-templates />
   </xsl:template>
 
+  <xsl:template match="a:body">
+    <xsl:text>BODY</xsl:text>
+    <xsl:text>&#10;&#10;</xsl:text>
+
+    <xsl:apply-templates />
+  </xsl:template>
+
   <xsl:template match="a:part">
     <xsl:text>Part </xsl:text>
     <xsl:value-of select="a:num" />

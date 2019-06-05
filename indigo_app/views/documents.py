@@ -63,5 +63,14 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         return context
 
-class DocumentPopupView(DocumentDetailView, DetailView):
+class DocumentPopupView(AbstractAuthedIndigoView, DetailView):
+    model = Document
+    context_object_name = 'document'
+    pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document_popup.html'
+
+    def get_object(self, queryset=None):
+        doc = super(DocumentPopupView, self).get_object(queryset)
+        if doc.deleted:
+            raise Http404()
+        return doc

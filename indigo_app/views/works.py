@@ -782,8 +782,8 @@ There may have been a typo in the spreadsheet, or the work may not exist yet.
 Otherwise, the 'with effect from' date could be in the wrong format, or the repealing work might not have commenced yet.
 Check the spreadsheet for reference and link it manually, or add the 'Pending commencement' label to this task.'''.format(info.get('repealed_by'))
         elif task_type == 'parent_work':
-            task.title = 'Link parent work'
-            task.description = '''This work's parent work could not be linked automatically.
+            task.title = 'Link primary work'
+            task.description = '''This work's primary work could not be linked automatically.
 There may have been a typo in the spreadsheet, or the work may not exist yet.
 Check the spreadsheet for reference and link it manually.'''
 

@@ -127,7 +127,7 @@
             {% csrf_token %}
 
             {% if task.state == 'open' and task.submit_task_permission %}
-              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
+              <button class="btn btn-primary float-right" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
             {% endif %}
 
             {% if task.state == 'cancelled' or task.state == 'done' %}
@@ -140,8 +140,12 @@
               <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to request changes to this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Request changes</button>
             {% endif %}
 
-            {% if task.state == 'pending_review' and task.close_task_permission %}
-              <button class="btn btn-success" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">Approve</button>
+            {% if task.state == 'pending_review' %}
+              {% if task.customised.close_url %}
+                <a class="btn btn-primary float-right" href="{{ task.customised.close_url }}">Review changes</a>
+              {% elif task.close_task_permission %}
+                <button class="btn btn-success float-right" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">Approve</button>
+              {% endif %}
             {% endif %}
           </form>
 

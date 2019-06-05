@@ -5,9 +5,9 @@
   <p class="mb-2">@ {{ document.expression_date|date:'Y-m-d' }} · {{ document.language }}</p>
   <div class="mb-2">
     {% if document.draft %}
-    <span class="badge badge-warning">draft</span>
+      <span class="badge badge-warning">draft</span>
     {% else %}
-    <span class="badge badge-info">published</span>
+      <span class="badge badge-info">published</span>
     {% endif %}
   </div>
   <a href="{% url 'work' frbr_uri=work.frbr_uri %}" class="mb-2">{{ work.frbr_uri }}</a>

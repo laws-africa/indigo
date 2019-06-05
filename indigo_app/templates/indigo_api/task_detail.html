@@ -14,9 +14,9 @@
     <div class="d-flex mb-3">
       <div class="mr-3 text-center">
         {% if task.state == 'open' and task.assigned_to %}
-          <span class="badge task-badge task-badge-assigned" title="assigned"><i class="fas fa-fw task-icon-assigned"></i></span><br>
+          <i class="fas fa-fw task-icon-assigned" title="assigned"></i><br>
         {% else %}
-          <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span><br>
+          <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i><br>
         {% endif %}
         <span class="text-muted">#{{ task.pk }}</span>
       </div>

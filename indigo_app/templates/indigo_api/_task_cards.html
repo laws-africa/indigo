@@ -6,7 +6,7 @@
     {% for col in task_groups  %}
       <div class="col task-list-column">
         <h6 class="text-center mb-4">
-          <span class="badge task-badge task-badge-{{ col.badge }}"><i class="fas fa-sm fa-fw task-icon-{{ col.badge }}"></i></span>
+          <i class="fas fa-sm fa-fw task-icon-{{ col.badge }}"></i>
           {{ col.title }} <span class="text-muted">({{ col.tasks|length }})</span>
         </h6>
 

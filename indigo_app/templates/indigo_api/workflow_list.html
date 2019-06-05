@@ -35,7 +35,7 @@
       {% for workflow in workflows %}
         <div class="list-group-item p-3 d-flex">
           <div class="col text-center">
-            <span class="badge workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"><i class="fas fa-fw fa-tasks"></i></span><br>
+            <i class="fas fa-fw fa-tasks workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"></i><br>
             <span class="text-muted">#{{ workflow.pk }}</span>
           </div>
 
@@ -81,7 +81,7 @@
               {% for state, count in workflow.task_charts %}
                 {% if count %}
                   <div class="mt-2">
-                    <span class="badge task-badge task-badge-{{ state }} mr-2" title="{{ state }}"><i class="fas fa-sm fa-fw task-icon-{{ state }}"></i></span>
+                    <i class="fas fa-sm fa-fw task-icon-{{ state }}" title="{{ state }}"></i>
                     <span class="text-muted">{{ count }} task{{ count|pluralize }}</span>
                   </div>
                 {% endif %}

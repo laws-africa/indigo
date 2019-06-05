@@ -21,11 +21,27 @@
   background-color: $grey;
 }
 
-.task-icon-open:before { content: "\f08d"; }
-.task-icon-done:before { content: "\f00c"; }
-.task-icon-pending_review:before { content: "\f128"; }
-.task-icon-cancelled:before { content: "\f00d"; }
-.task-icon-assigned:before { content: "\f4fc"; }
+.task-icon-open:before {
+  content: "\f08d";
+  color: $primary;
+}
+.task-icon-done:before {
+  content: "\f00c";
+  color: $success;
+}
+
+.task-icon-pending_review:before {
+  content: "\f128";
+  color: $orange;
+}
+.task-icon-cancelled:before {
+  content: "\f00d";
+  color: $grey;
+}
+.task-icon-assigned:before {
+  content: "\f4fc";
+  color: $primary;
+}
 
 .task-icon-assignee {
   color: $primary;
@@ -55,14 +71,10 @@
 }
 
 .workflow-badge {
-  font-size: 100%;
-  padding: 0.4em;
-  color: $white;
-  background-color: theme-color('primary');
-  margin-top: 5px;
+  color: $primary;
 
   &.workflow-closed {
-    background-color: $grey;
+    color: $grey;
   }
 }
 

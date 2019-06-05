@@ -4,7 +4,7 @@
   <div class="d-flex">
     {% if status %}
       <div class="mr-2">
-        <select class="selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}" data-style="btn-outline-secondary">
+        <select class="narrow selectpicker notooltip" multiple title="Status" name="{{ form.state.name }}" data-style="btn-outline-secondary">
           <option value="open" {% if 'open' in form.state.value %}selected{% endif %}>Open</option>
           <option value="assigned" {% if 'assigned' in form.state.value %}selected{% endif %}>Assigned</option>
           <option value="pending_review" {% if 'pending_review' in form.state.value %}selected{% endif %}>Pending review</option>
@@ -16,7 +16,7 @@
     {% endif %}
 
     <div class="mr-2">
-      <select class="selectpicker notooltip" multiple title="Assigned to" name="{{ form.assigned_to.name }}" data-style="btn-outline-secondary">
+      <select class="narrow selectpicker notooltip" multiple title="Assigned to" name="{{ form.assigned_to.name }}" data-style="btn-outline-secondary">
         {% if user.is_authenticated and user in form.fields.assigned_to.queryset %}
           <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.assigned_to.value %}selected{% endif %}>Me</option>
           <option data-divider="true"></option>
@@ -31,7 +31,7 @@
     </div>
 
     <div class="mr-2">
-      <select class="selectpicker notooltip" multiple title="Submitted by" name="{{ form.submitted_by.name }}" data-style="btn-outline-secondary">
+      <select class="narrow selectpicker notooltip" multiple title="Submitted by" name="{{ form.submitted_by.name }}" data-style="btn-outline-secondary">
         {% if user.is_authenticated and user in form.fields.submitted_by.queryset %}
           <option value="{{ user.pk }}" {% if user.pk|stringformat:"i" in form.submitted_by.value %}selected{% endif %}>Me</option>
           <option data-divider="true"></option>
@@ -46,7 +46,7 @@
     </div>
 
     <div class="mr-2">
-      <select class="selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}" data-style="btn-outline-secondary">
+      <select class="narrow selectpicker notooltip" multiple title="Labels" name="{{ form.labels.name }}" data-style="btn-outline-secondary">
         {% for label in form.fields.labels.queryset %}
           <option value="{{ label.slug }}" {% if label.slug in form.labels.value %}selected{% endif %} data-subtext="{{ label.description }}">{{ label.title }}</option>
         {% endfor %}

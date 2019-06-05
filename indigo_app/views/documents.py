@@ -62,3 +62,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
         context['download_formats'].sort(key=lambda f: f['title'])
 
         return context
+
+class DocumentPopupView(DocumentDetailView, DetailView):
+    template_name = 'indigo_api/document_popup.html'

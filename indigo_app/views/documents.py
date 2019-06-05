@@ -63,11 +63,13 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         return context
 
+
 class DocumentPopupView(AbstractAuthedIndigoView, DetailView):
     model = Document
     context_object_name = 'document'
     pk_url_kwarg = 'doc_id'
     template_name = 'indigo_api/document_popup.html'
+    queryset = Document.objects.no_xml().undeleted()
 
     def get_object(self, queryset=None):
         doc = super(DocumentPopupView, self).get_object(queryset)

@@ -652,8 +652,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['repealed_by'] = row.get('repealed_by')
                         if row.get('with_effect_from'):
                             info['with_effect_from'] = row.get('with_effect_from')
-                        if row.get('parent_work'):
-                            info['parent_work'] = row.get('parent_work')
+                        if row.get('principal_work'):
+                            info['parent_work'] = row.get('principal_work')
 
                     except ValidationError as e:
                         info['status'] = 'error'

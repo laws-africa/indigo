@@ -5,7 +5,7 @@ from collections import defaultdict
 from datetime import timedelta
 
 from actstream.models import Action
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Q
+from django.db.models import Count, Subquery, IntegerField, OuterRef
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
@@ -20,7 +20,6 @@ from indigo_metrics.models import DailyWorkMetrics
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm
-from indigo_api.models import Task, TaskLabel, User, Work
 
 
 log = logging.getLogger(__name__)
@@ -59,7 +58,6 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
     js_view = 'LibraryView'
     tab = 'works'
-    model = Work
 
     def get(self, request, *args, **kwargs):
         params = QueryDict(mutable=True)
@@ -77,34 +75,12 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return self.form.filter_queryset(works)        
 
     def get_context_data(self, **kwargs):
-        params = QueryDict(mutable=True)
-        params.update(self.request.GET)
-
-        status_values = params.getlist('status')
-        stub_value = params.get('stub')
-        search_string = params.get('search-string')
-
         context = super(PlaceDetailView, self).get_context_data(**kwargs)
         context['form'] = self.form
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
         works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
-
-        # filter by title year or number
-        if search_string is not None:
-            works = WorkViewSet.queryset.filter(Q(title__icontains=search_string) | Q(frbr_uri__icontains=search_string))
-
-        # filter by stub
-        elif stub_value == "only":
-            works = WorkViewSet.queryset.filter(stub=True)
-        elif stub_value == "excl":
-            works = WorkViewSet.queryset.filter(stub=False)
-
-        # TODO: filter by status: published or draft
-        
-        # TODO: filter by subtype: act (-), by-law, gn, p, si
-
-        # TODO: filter by updated_at
+        works = self.form.filter_queryset(works)
 
         context['works_json'] = json.dumps(serializer.to_representation(works))
 

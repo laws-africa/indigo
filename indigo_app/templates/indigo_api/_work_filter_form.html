@@ -5,12 +5,12 @@
   <div class="d-flex">
 
     <div class="flex-grow-1 mr-2">
-        <input type="text" class="form-control filter-search-new" name="title-year-number" placeholder="Filter by title, year or number" value="">
+        <input type="text" class="form-control filter-search-new" name="search-string" placeholder="Filter by title, year or number" value="">
     </div>
 
-    <!-- Types filter -->
+    <!-- TODO: Types filter -->
     <div class="mr-2">
-        <select class="form-control filter-subtype" name="subtype-filter">
+        <select class="form-control filter-subtype" name="subtype">
           <option value="all">All types</option>
           <option value="-">Acts</option>
           <option value="by-law">By-law</option>
@@ -32,14 +32,14 @@
     <!-- Status filter -->
     <div class="mr-2">
       <select class="selectpicker notooltip" multiple name="status" data-style="btn-outline-secondary">
-          <option value="published" selected data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
-          <option value="draft" selected data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
+          <option value="published" data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
+          <option value="draft" data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
       </select>
     </div>  
 
-    <!-- Time updated filter -->
+    <!-- TODO: Time updated filter -->
     <div class="mr-2">
-      <select class="form-control sortby" name="sort">
+      <select class="form-control sortby" name="updated-at">
         <option value="-updated_at" selected>Most recently updated</option>
         <option value="updated_at">Least recently updated</option>
         <option value="title">Title (A-Z)</option>

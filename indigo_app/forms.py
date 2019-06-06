@@ -1,6 +1,7 @@
 import json
 
 from django import forms
+from django.db.models import Q
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -10,7 +11,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow, WorkProperty
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Work, Workflow, WorkProperty
 
 
 class WorkForm(forms.ModelForm):
@@ -246,6 +247,32 @@ class TaskFilterForm(forms.Form):
 
         if self.cleaned_data.get('assigned_to'):
             queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
+
+        return queryset
+
+
+# TODO: This is the new code
+class WorkFilterForm(forms.Form):
+    search_string = forms.CharField()  # title, year or number to sort with: string
+    stub = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only')])
+    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
+
+    def __init__(self, country, *args, **kwargs):
+        self.country = country
+        super(WorkFilterForm, self).__init__(*args, **kwargs)
+
+    def filter_queryset(self, queryset):
+        if self.cleaned_data.get('search-string'):
+            queryset = queryset.filter(Q(title__icontains=self.cleaned_data['search_string']) | Q(frbr_uri__icontains=self.cleaned_data['search_string']))
+
+        if self.cleaned_data.get('stub'):
+            queryset = queryset.filter(labels__in=self.cleaned_data['labels'])            
+
+        if self.cleaned_data.get('status'):
+            if 'published' in self.cleaned_data['status']:
+                queryset = queryset.filter(work__document__draft=True)
+            if 'draft' in self.cleaned_data['status']:
+                queryset = queryset.filter(work__document__draft=False)
 
         return queryset
 

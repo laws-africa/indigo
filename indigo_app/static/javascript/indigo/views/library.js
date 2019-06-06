@@ -23,10 +23,10 @@
     events: {
       'click .filter-tag': 'filterByTag',
       'change .filter-country': 'changeCountry',
-      'change .filter-subtype': 'filterBySubtype',
-      'keyup .filter-search': 'filterBySearch',
-      'change .filter-status': 'filterByStatus',
-      'change .filter-stub': 'filterByStub',
+      // 'change .filter-subtype': 'filterBySubtype',
+      // 'keyup .filter-search': 'filterBySearch',
+      // 'change .filter-status': 'filterByStatus',
+      // 'change .filter-stub': 'filterByStub',
       'change .sortby': 'changeSort',
     },
 
@@ -316,6 +316,7 @@
     },
   });
 
+  // displays in the library div
   Indigo.LibraryView = Backbone.View.extend({
     el: '#library',
     template: '#search-results-template',

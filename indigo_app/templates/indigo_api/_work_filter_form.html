@@ -5,7 +5,7 @@
   <div class="d-flex">
 
     <div class="flex-grow-1 mr-2">
-        <input type="text" class="form-control filter-search-new" name="search-string" placeholder="Filter by title, year or number" value="">
+        <input type="text" class="form-control filter-search" name="search_string" placeholder="Filter by title, year or number" value="">
     </div>
 
     <!-- TODO: Types filter -->
@@ -37,9 +37,9 @@
       </select>
     </div>  
 
-    <!-- TODO: Time updated filter -->
+    <!-- Time updated filter -->
     <div class="mr-2">
-      <select class="form-control sortby" name="updated-at">
+      <select class="form-control sortby" name="sortby">
         <option value="-updated_at" selected>Most recently updated</option>
         <option value="updated_at">Least recently updated</option>
         <option value="title">Title (A-Z)</option>

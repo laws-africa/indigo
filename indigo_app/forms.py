@@ -251,28 +251,52 @@ class TaskFilterForm(forms.Form):
         return queryset
 
 
-# TODO: This is the new code
 class WorkFilterForm(forms.Form):
-    search_string = forms.CharField()  # title, year or number to sort with: string
+    search_string = forms.CharField()
     stub = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
+    subtype = forms.ChoiceField(choices=[('-', '-'), ('by-law', 'by-law'), ('gn', 'gn'), ('p', 'p'), ('si', 'si')])
+    sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
 
     def filter_queryset(self, queryset):
-        if self.cleaned_data.get('search-string'):
+        print(self.cleaned_data)
+        if self.cleaned_data.get('search_string'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['search_string']) | Q(frbr_uri__icontains=self.cleaned_data['search_string']))
 
         if self.cleaned_data.get('stub'):
-            queryset = queryset.filter(labels__in=self.cleaned_data['labels'])            
+            if self.cleaned_data['stub'] == 'excl':
+                queryset = queryset.filter(stub=False)
 
+            elif self.cleaned_data['stub'] == 'only':
+                queryset = queryset.filter(stub=True)
+
+        # TODO: revisit this
         if self.cleaned_data.get('status'):
-            if 'published' in self.cleaned_data['status']:
-                queryset = queryset.filter(work__document__draft=True)
-            if 'draft' in self.cleaned_data['status']:
-                queryset = queryset.filter(work__document__draft=False)
+            if self.cleaned_data['status'] == ['draft']:
+                queryset = queryset.filter(document__draft=True)            
+            elif self.cleaned_data['status'] == ['published']:
+                queryset = queryset.filter(document__draft=False)
+
+        if self.cleaned_data.get('sortby'):
+            queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
+        
+        # filter by subtype indicated on frbr_uri
+        if self.cleaned_data.get('subtype'):
+            if self.cleaned_data['subtype'] == 'by-law':
+                queryset = queryset.filter(frbr_uri__contains='/by-law/')
+
+            elif self.cleaned_data['subtype'] == 'gn':
+                queryset = queryset.filter(frbr_uri__contains='/gn/')
+
+            elif self.cleaned_data['subtype'] == 'p':
+                queryset = queryset.filter(frbr_uri__contains='/p/')
+
+            elif self.cleaned_data['subtype'] == 'si':
+                queryset = queryset.filter(frbr_uri__contains='/si/')
 
         return queryset
 

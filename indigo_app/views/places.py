@@ -3,6 +3,7 @@ import logging
 import json
 from collections import defaultdict
 from datetime import timedelta
+from itertools import chain
 
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef
@@ -11,7 +12,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Country, Annotation, Task, Amendment
+from indigo_api.models import Country, Annotation, Task, Amendment, Work
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 from indigo_api.views.works import WorkViewSet
 from indigo_api.views.documents import DocumentViewSet
@@ -72,7 +73,17 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         works = Work.objects\
             .filter(country=self.country, locality=self.locality)\
             .order_by('-updated_at')
-        return self.form.filter_queryset(works)        
+        return self.form.filter_queryset(works)
+
+    def decorate_works(self, works):
+        """ Do some calculations that aid listing of works.
+        """
+        for work in works:
+            # most recent update, their the work or its documents
+            docs = work.document_set.undeleted().all()
+            update = max((c for c in chain(docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
+            work.most_recent_updated_at = update.updated_at
+            work.most_recent_updated_by = update.updated_by_user
 
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)
@@ -80,7 +91,9 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
         works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
-        works = self.form.filter_queryset(works)
+        context['works'] = works = self.form.filter_queryset(works)
+
+        self.decorate_works(works)
 
         context['works_json'] = json.dumps(serializer.to_representation(works))
 

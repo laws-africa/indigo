@@ -332,9 +332,9 @@
 
       // the filter view does all the hard work of actually fetching and
       // filtering the documents
-      this.filterView = new Indigo.LibraryFilterView();
-      this.filterView.on('change', this.render, this);
-      this.filterView.trigger('change');
+      //this.filterView = new Indigo.LibraryFilterView();
+      //this.filterView.on('change', this.render, this);
+      //this.filterView.trigger('change');
       this.drawCharts();
     },
 

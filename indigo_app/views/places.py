@@ -84,7 +84,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
     def get_queryset(self):
         queryset = Work.objects\
-            .select_related('parent_work')\
+            .select_related('parent_work', 'metrics')\
             .filter(country=self.country, locality=self.locality)\
             .distinct()\
             .order_by('-updated_at')

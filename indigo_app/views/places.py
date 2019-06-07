@@ -64,6 +64,10 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         params = QueryDict(mutable=True)
         params.update(request.GET)
 
+        # set default sorting order: most recently updated
+        if not params.get('sortby'):
+            params.setdefault('sortby', '-updated_at')
+
         self.form = WorkFilterForm(self.country, params)
         self.form.is_valid()
 

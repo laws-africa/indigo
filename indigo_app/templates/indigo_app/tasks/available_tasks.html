@@ -4,7 +4,7 @@
 {% block title %}Available tasks{% endblock %}
 
 {% block content %}
-<div class="container mt-3">
+<div class="container-fluid mt-3">
   <div class="card">
     {% if tasks %}
       {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False  place=True %}

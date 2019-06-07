@@ -3,13 +3,14 @@
 {% if tasks %}
 <table class="table table-striped table-sm mb-0">
   <thead>
-  <tr>
-    <th scope="col" colspan="2">Task</th>
-    {% if place %}
-      <th scope="col">Place</th>
-    {% endif %}
-    <th scope="col">Work/Document</th>
-  </tr>
+    <tr>
+      <th scope="col" colspan="2">Task</th>
+      {% if place %}
+        <th scope="col">Place</th>
+      {% endif %}
+      <th scope="col">Work/Document</th>
+      <th scope="col">Updated</th>
+    </tr>
   </thead>
   <tbody>
   {% for task in tasks %}
@@ -45,17 +46,19 @@
         {{ task.place }}
       </td>
     {% endif %}
+
     <td>
       {% if task.document %}
-      <div>
-        <a href="{% url 'document' doc_id=task.document.id %}" class="text-muted">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a>
-      </div>
+        <a href="{% url 'document' doc_id=task.document.id %}"
+           class="text-muted"
+           data-popup-url="{% url 'document_popup' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a>
       {% elif task.work %}
-      <div>
-        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" class="text-muted" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-      </div>
+        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
+           class="text-muted"
+           data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
       {% endif %}
     </td>
+    <td><span class="time-ago text-nowrap" data-timestamp="{{ task.updated_at|date:'c' }}">{{ task.updated_at|date:"Y-m-d H:i" }}</span></td>
   </tr>
   {% endfor %}
   </tbody>

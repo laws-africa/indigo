@@ -11,7 +11,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Work, Workflow, WorkProperty
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Work, Workflow, WorkProperty, Subtype
 
 
 class WorkForm(forms.ModelForm):
@@ -258,10 +258,10 @@ class TaskFilterForm(forms.Form):
 
 
 class WorkFilterForm(forms.Form):
-    search_string = forms.CharField()
+    q = forms.CharField()
     stub = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    subtype = forms.ChoiceField(choices=[('-', '-'), ('by-law', 'by-law'), ('gn', 'gn'), ('p', 'p'), ('si', 'si')])
+    subtype = forms.ModelChoiceField(queryset=Subtype.objects.all())
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
 
     def __init__(self, country, *args, **kwargs):
@@ -270,8 +270,8 @@ class WorkFilterForm(forms.Form):
 
     def filter_queryset(self, queryset):
         print(self.cleaned_data)
-        if self.cleaned_data.get('search_string'):
-            queryset = queryset.filter(Q(title__icontains=self.cleaned_data['search_string']) | Q(frbr_uri__icontains=self.cleaned_data['search_string']))
+        if self.cleaned_data.get('q'):
+            queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
         if self.cleaned_data.get('stub'):
             if self.cleaned_data['stub'] == 'excl':
@@ -292,17 +292,7 @@ class WorkFilterForm(forms.Form):
         
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
-            if self.cleaned_data['subtype'] == 'by-law':
-                queryset = queryset.filter(frbr_uri__contains='/by-law/')
-
-            elif self.cleaned_data['subtype'] == 'gn':
-                queryset = queryset.filter(frbr_uri__contains='/gn/')
-
-            elif self.cleaned_data['subtype'] == 'p':
-                queryset = queryset.filter(frbr_uri__contains='/p/')
-
-            elif self.cleaned_data['subtype'] == 'si':
-                queryset = queryset.filter(frbr_uri__contains='/si/')
+            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
 
         return queryset
 

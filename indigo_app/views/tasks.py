@@ -408,6 +408,8 @@ class MyTasksView(AbstractAuthedIndigoView, TemplateView):
             .filter(updated_at__gte=threshold) \
             .all()[:50]
 
+        context['tab_count'] = len(context['open_assigned_tasks']) + len(context['tasks_pending_approval'])
+
         return context
 
 
@@ -424,3 +426,8 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
             .filter(assigned_to=None, state__in=Task.OPEN_STATES)\
             .defer('document__document_xml', 'document__search_text', 'document__search_vector') \
             .order_by('-updated_at')
+
+    def get_context_data(self, **kwargs):
+        context = super(AvailableTasksView, self).get_context_data(**kwargs)
+        context['tab_count'] = context['paginator'].count
+        return context

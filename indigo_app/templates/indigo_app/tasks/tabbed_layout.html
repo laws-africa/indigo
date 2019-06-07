@@ -5,8 +5,18 @@
   <div class="container">
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
-      <a class="nav-item nav-link {% if view.tab == 'my_tasks' %}active{% endif %}" href="{% url 'my_tasks' %}">My tasks</a>
-      <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}"> All available tasks</a>
+      <a class="nav-item nav-link {% if view.tab == 'my_tasks' %}active{% endif %}" href="{% url 'my_tasks' %}">
+        My tasks
+        {% if view.tab == 'my_tasks' %}
+          <span class="badge badge-light">{{ tab_count }}</span>
+        {% endif %}
+      </a>
+      <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}">
+        All available tasks
+        {% if view.tab == 'available_tasks' %}
+          <span class="badge badge-light">{{ tab_count }}</span>
+        {% endif %}
+      </a>
       {% endblock %}
     </nav>
   </div>

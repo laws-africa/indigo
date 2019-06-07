@@ -1,4 +1,5 @@
 # coding=utf-8
+from __future__ import division
 import logging
 import json
 from collections import defaultdict
@@ -121,6 +122,16 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
             # count annotations
             work.n_annotations = sum(getattr(d, 'n_annotations', 0) for d in work.filtered_docs)
+
+            # ratios
+            if work.metrics.n_expected_expressions > 0:
+                n_drafts = sum(1 if d.draft else 0 for d in work.filtered_docs)
+                n_published = sum(0 if d.draft else 1 for d in work.filtered_docs)
+                work.drafts_ratio = 100 * (n_drafts / work.metrics.n_expected_expressions)
+                work.pub_ratio = 100 * (n_published / work.metrics.n_expected_expressions)
+            else:
+                work.drafts_ratio = 0
+                work.pub_ratio = 0
 
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)

@@ -179,28 +179,9 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)
         context['form'] = self.form
-
-        serializer = WorkSerializer(context={'request': self.request}, many=True)
         context['works'] = works = self.get_queryset().all()
 
         self.decorate_works(works)
-
-        context['works_json'] = json.dumps(serializer.to_representation(works))
-
-        serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
-
-        context['documents_json'] = json.dumps(serializer.to_representation(docs))
-
-        # summarise amendments per work
-        amendments = Amendment.objects.values('amended_work_id')\
-            .filter(amended_work_id__in=[w.id for w in works])\
-            .annotate(n_amendments=Count('pk'))\
-            .order_by()\
-            .all()
-
-        amendments = {a['amended_work_id']: {'n_amendments': a['n_amendments']} for a in amendments}
-        context['work_n_amendments_json'] = json.dumps(amendments)
 
         # breadth completeness history
         context['completeness_history'] = list(DailyWorkMetrics.objects

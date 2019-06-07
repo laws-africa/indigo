@@ -102,58 +102,66 @@
                   <div class="col-2">
                     <span class="time-ago" data-timestamp="{{ work.most_recent_updated_at|date:'c' }}">{{ work.most_recent_updated_at|date:"Y-m-d H:i" }}</span>
                     {% if work.most_recent_updated_by %}
-                      <div class="text-muted">by {% user_profile work.most_recent_updated_by %}</div>
+                      {% if work.most_recent_updated_by == request.user %}
+                        you
+                      {% else %}
+                        <div class="text-muted">by {% user_profile work.most_recent_updated_by %}</div>
+                      {% endif %}
                     {% endif %}
                   </div>
                 </div>
 
-                {% comment %}
-                 {{#if work_docs}}
-                 <div class="collapse work-extra-detail mt-1" id="work-detail-{{ id }}">
-                 {{#each work_docs}}
-                 <div class="d-flex">
-                 <div class="col-2">
-                 <a href="/documents/{{ id }}">@ {{ expression_date }} · {{ language }}</a>
-                 </div>
+                {% if work.filtered_docs %}
+                  <div class="collapse work-extra-detail mt-1" id="work-detail-{{ work.pk }}">
+                    {% for doc in work.filtered_docs %}
+                      <div class="d-flex">
+                        <div class="col-2">
+                          <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
+                        </div>
 
-                 <div class="col-4">
-                 {{#if draft}}
-                 <i class="fas fa-fw fa-circle draft" title="draft"></i>
-                 {{else}}
-                 <i class="fas fa-fw fa-circle published" title="published"></i>
-                 {{/if}}
-                 {{ title }}
-                 </div>
+                        <div class="col-4">
+                          {% if doc.draft %}
+                            <i class="fas fa-fw fa-circle draft" title="draft"></i>
+                          {% else %}
+                            <i class="fas fa-fw fa-circle published" title="published"></i>
+                          {% endif %}
+                          {{ doc.title }}
+                        </div>
 
-                 <div class="col-2">
-                 {{#if task_stats.n_active_tasks}}
-                 <div>
-                 <i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks
-                 </div>
-                 <div class="progress mt-1 progress-thin">
-                 <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
-                 <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
-                 </div>
-                 {{/if}}
-                 </div>
+                        <div class="col-2">
+                          {% comment %}
+                          {{#if task_stats.n_active_tasks}}
+                          <div>
+                            <i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks
+                          </div>
+                          <div class="progress mt-1 progress-thin">
+                            <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
+                            <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
+                          </div>
+                          {{/if}}
+                          {% endcomment %}
+                        </div>
 
-                 <div class="col-2">
-                 {{#if n_annotations}}
-                 <i class="far fa-comments"></i> {{ n_annotations }}
-                 {{/if}}
-                 </div>
+                        <div class="col-2">
+                          {% comment %}
+                          {{#if n_annotations}}
+                          <i class="far fa-comments"></i> {{ n_annotations }}
+                          {{/if}}
+                          {% endcomment %}
+                        </div>
 
-                 <div class="col-2">
-                 <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-                 {{#if updated_by_user.display_name}}
-                 <div class="text-muted">by <a href="/contributors/{{updated_by_user.username}}">{{ updated_by_user.display_name }}</a></div>
-                 {{/if}}
-                 </div>
-                 </div>
-                 {{/each}}
-                 </div>
-                 {{/if}}
-                                     {% endcomment %}
+                        <div class="col-2">
+                          <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
+                          {% if doc.updated_by_user == request.user %}
+                            you
+                          {% else %}
+                            <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
 
               </div>
             </div>

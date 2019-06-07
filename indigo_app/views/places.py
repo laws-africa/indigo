@@ -6,7 +6,7 @@ from datetime import timedelta
 from itertools import chain
 
 from actstream.models import Action
-from django.db.models import Count, Subquery, IntegerField, OuterRef
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.views.generic import TemplateView
@@ -70,18 +70,29 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return super(PlaceDetailView, self).get(request, *args, **kwargs)    
 
     def get_queryset(self):
-        works = Work.objects\
+        queryset = Work.objects\
+            .select_related('parent_work')\
             .filter(country=self.country, locality=self.locality)\
+            .distinct()\
             .order_by('-updated_at')
-        return self.form.filter_queryset(works)
+
+        queryset = self.form.filter_queryset(queryset)
+
+        # prefetch and filter documents
+        queryset = queryset.prefetch_related(Prefetch(
+            'document_set',
+            to_attr='filtered_docs',
+            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
+        ))
+
+        return queryset
 
     def decorate_works(self, works):
         """ Do some calculations that aid listing of works.
         """
         for work in works:
             # most recent update, their the work or its documents
-            docs = work.document_set.undeleted().all()
-            update = max((c for c in chain(docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
+            update = max((c for c in chain(work.filtered_docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
             work.most_recent_updated_at = update.updated_at
             work.most_recent_updated_by = update.updated_by_user
 
@@ -90,8 +101,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['form'] = self.form
 
         serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
-        context['works'] = works = self.form.filter_queryset(works)
+        context['works'] = works = self.get_queryset().all()
 
         self.decorate_works(works)
 

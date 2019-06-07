@@ -5,35 +5,32 @@
   <div class="d-flex">
 
     <div class="flex-grow-1 mr-2">
-        <input type="text" class="form-control filter-search" name="search_string" placeholder="Filter by title, year or number" value="">
+      <input type="text" class="form-control filter-search" name="q" placeholder="Filter by title, year or number" value="">
     </div>
 
-    <!-- TODO: Types filter -->
+    <!-- Subtypes filter -->
     <div class="mr-2">
-        <select class="form-control filter-subtype" name="subtype">
-          <option value="all">All types</option>
-          <option value="-">Acts</option>
-          <option value="by-law">By-law</option>
-          <option value="gn">Government Notice</option>
-          <option value="p">Proclamation</option>
-          <option value="si">Statutory Instrument</option>
-        </select>
-      </div>    
+      <select class="form-control filter-subtype" name="subtype">
+        {% for option in form.subtype %}
+          <option value="{{ option.abbreviation }}"> {{ option }} </option>
+        {% endfor %}
+      </select>
+    </div>    
 
     <!-- Stubs filter -->
     <div class="mr-2">
-        <select class="selectpicker filter-stub" name="stub" data-style="btn-outline-secondary" data-width="auto">
-          <option value="excl">Exclude stubs</option>
-          <option value="only">Only stubs</option>
-          <option value="all">Everything</option>
-        </select>
-      </div>      
+      <select class="selectpicker filter-stub" name="stub" data-style="btn-outline-secondary" data-width="auto">
+        <option value="excl">Exclude stubs</option>
+        <option value="only">Only stubs</option>
+        <option value="all">Everything</option>
+      </select>
+    </div>
 
     <!-- Status filter -->
     <div class="mr-2">
       <select class="selectpicker notooltip" multiple name="status" data-style="btn-outline-secondary">
-          <option value="published" data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
-          <option value="draft" data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
+        <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
+        <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
       </select>
     </div>  
 
@@ -50,7 +47,7 @@
 
 
     <div class="btn-group">
-        <button type="submit" class="btn btn-success">Filter</button>
+      <button type="submit" class="btn btn-success">Filter</button>
     </div>  
 
   </div>

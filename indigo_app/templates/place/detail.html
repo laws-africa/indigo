@@ -71,15 +71,13 @@
                   </div>
 
                   <div class="col-2">
-                    {% comment %}
-                                                 {{#if task_stats.n_active_tasks}}
-                                                 <div><i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks</div>
-                                                 <div class="progress mt-1 progress-thin">
-                                                 <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
-                                                 <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
-                                                 </div>
-                                                 {{/if}}
-                                                 {% endcomment %}
+                    {% if work.task_stats.n_active_tasks %}
+                      <div><i class="fas fa-thumbtack"></i> <strong>{{ work.task_stats.n_active_tasks }}</strong> Active tasks</div>
+                      <div class="progress mt-1 progress-thin">
+                        <div class="progress-bar task-badge-open" style="width: {{ work.task_stats.open_task_ratio }}%" title="open"></div>
+                        <div class="progress-bar task-badge-pending_review" style="width: {{ work.task_stats.pending_task_ratio }}%" title="pending review"></div>
+                      </div>
+                    {% endif %}
                   </div>
 
                   <div class="col-2">
@@ -127,17 +125,15 @@
                         </div>
 
                         <div class="col-2">
-                          {% comment %}
-                          {{#if task_stats.n_active_tasks}}
-                          <div>
-                            <i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks
-                          </div>
-                          <div class="progress mt-1 progress-thin">
-                            <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
-                            <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
-                          </div>
-                          {{/if}}
-                          {% endcomment %}
+                          {% if doc.task_stats.n_active_tasks %}
+                            <div>
+                              <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong> Active tasks
+                            </div>
+                            <div class="progress mt-1 progress-thin">
+                              <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="open"></div>
+                              <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="pending review"></div>
+                            </div>
+                          {% endif %}
                         </div>
 
                         <div class="col-2">

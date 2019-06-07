@@ -101,10 +101,27 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         return queryset
 
+    def count_tasks(self, obj, counts):
+        obj.task_stats = {'n_%s_tasks' % s: counts.get(s, 0) for s in Task.STATES}
+        obj.task_stats['n_tasks'] = sum(counts.itervalues())
+        obj.task_stats['n_active_tasks'] = (
+            obj.task_stats['n_open_tasks'] +
+            obj.task_stats['n_pending_review_tasks']
+        )
+        obj.task_stats['pending_task_ratio'] = 100 * (
+            obj.task_stats['n_pending_review_tasks'] /
+            (obj.task_stats['n_active_tasks'] or 1)
+        )
+        obj.task_stats['open_task_ratio'] = 100 * (
+            obj.task_stats['n_open_tasks'] /
+            (obj.task_stats['n_active_tasks'] or 1)
+        )
+
     def decorate_works(self, works):
         """ Do some calculations that aid listing of works.
         """
         docs_by_id = {d.id: d for w in works for d in w.filtered_docs}
+        works_by_id = {w.id: w for w in works}
 
         # count annotations
         annotations = Annotation.objects.values('document_id') \
@@ -115,6 +132,32 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         for count in annotations:
             docs_by_id[count['document_id']].n_annotations = count['n_annotations']
 
+        # count tasks
+        tasks = Task.objects.filter(work__in=works)
+
+        # tasks counts per state and per work
+        work_tasks = tasks.values('work_id', 'state').annotate(n_tasks=Count('work_id'))
+        task_states = defaultdict(dict)
+        for row in work_tasks:
+            task_states[row['work_id']][row['state']] = row['n_tasks']
+
+        # summarise task counts per work
+        for work_id, states in task_states.iteritems():
+            self.count_tasks(works_by_id[work_id], states)
+
+        # tasks counts per state and per document
+        doc_tasks = tasks.filter(document_id__in=docs_by_id.keys())\
+            .values('document_id', 'state')\
+            .annotate(n_tasks=Count('document_id'))
+        task_states = defaultdict(dict)
+        for row in doc_tasks:
+            task_states[row['document_id']][row['state']] = row['n_tasks']
+
+        # summarise task counts per document
+        for doc_id, states in task_states.iteritems():
+            self.count_tasks(docs_by_id[doc_id], states)
+
+        # decorate works
         for work in works:
             # most recent update, their the work or its documents
             update = max((c for c in chain(work.filtered_docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
@@ -149,35 +192,6 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
 
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
-
-        # tasks for place
-        tasks = Task.objects.filter(work__country=self.country, work__locality=self.locality)
-
-        # tasks counts per state and per work
-        work_tasks = tasks.values('work_id', 'state').annotate(n_tasks=Count('work_id'))
-        task_states = defaultdict(dict)
-        for row in work_tasks:
-            task_states[row['work_id']][row['state']] = row['n_tasks']
-
-        # summarise task counts per work
-        work_tasks = {}
-        for work_id, states in task_states.iteritems():
-            work_tasks[work_id] = {'n_%s_tasks' % s: states.get(s, 0) for s in Task.STATES}
-            work_tasks[work_id]['n_tasks'] = sum(states.itervalues())
-        context['work_tasks_json'] = json.dumps(work_tasks)
-
-        # tasks counts per state and per document
-        doc_tasks = tasks.values('document_id', 'state').annotate(n_tasks=Count('document_id'))
-        task_states = defaultdict(dict)
-        for row in doc_tasks:
-            task_states[row['document_id']][row['state']] = row['n_tasks']
-
-        # summarise task counts per document
-        document_tasks = {}
-        for doc_id, states in task_states.iteritems():
-            document_tasks[doc_id] = {'n_%s_tasks' % s: states.get(s, 0) for s in Task.STATES}
-            document_tasks[doc_id]['n_tasks'] = sum(states.itervalues())
-        context['document_tasks_json'] = json.dumps(document_tasks)
 
         # summarise amendments per work
         amendments = Amendment.objects.values('amended_work_id')\

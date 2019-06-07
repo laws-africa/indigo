@@ -54,7 +54,6 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-# TODO: WorkFilterForm
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
     js_view = 'LibraryView'

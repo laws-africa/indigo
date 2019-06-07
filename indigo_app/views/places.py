@@ -103,11 +103,25 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     def decorate_works(self, works):
         """ Do some calculations that aid listing of works.
         """
+        docs_by_id = {d.id: d for w in works for d in w.filtered_docs}
+
+        # count annotations
+        annotations = Annotation.objects.values('document_id') \
+            .filter(closed=False) \
+            .filter(document__deleted=False) \
+            .annotate(n_annotations=Count('document_id')) \
+            .filter(document_id__in=docs_by_id.keys())
+        for count in annotations:
+            docs_by_id[count['document_id']].n_annotations = count['n_annotations']
+
         for work in works:
             # most recent update, their the work or its documents
             update = max((c for c in chain(work.filtered_docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
             work.most_recent_updated_at = update.updated_at
             work.most_recent_updated_by = update.updated_by_user
+
+            # count annotations
+            work.n_annotations = sum(getattr(d, 'n_annotations', 0) for d in work.filtered_docs)
 
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)
@@ -124,18 +138,6 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
 
         context['documents_json'] = json.dumps(serializer.to_representation(docs))
-
-        # map from document id to count of open annotations
-        annotations = Annotation.objects.values('document_id')\
-            .filter(closed=False)\
-            .filter(document__deleted=False)\
-            .annotate(n_annotations=Count('document_id'))\
-            .filter(document__work__country=self.country)
-        if self.locality:
-            annotations = annotations.filter(document__work__locality=self.locality)
-
-        annotations = {x['document_id']: {'n_annotations': x['n_annotations']} for x in annotations}
-        context['annotations_json'] = json.dumps(annotations)
 
         # tasks for place
         tasks = Task.objects.filter(work__country=self.country, work__locality=self.locality)

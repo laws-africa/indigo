@@ -83,20 +83,20 @@
                   </div>
 
                   <div class="col-2">
-                    {% comment %}
-                                                 {{#unless no_children}}
-                                                 <div>
-                                                 <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ n_docs }}</strong></span>
-                                                 {{#if n_annotations}}
-                                                 <i class="ml-2 far fa-comments"></i> {{ n_annotations }}
-                                                 {{/if}}
-                                                 </div>
-                                                 <div class="progress mt-1 progress-thin">
-                                                 <div class="progress-bar bg-primary" style="width: {{ pub_ratio }}%" title="published"></div>
-                                                 <div class="progress-bar bg-warning" style="width: {{ drafts_ratio }}%" title="drafts"></div>
-                                                 </div>
-                                                 {{/unless}}
-                                                 {% endcomment %}
+                    {% if work.filtered_docs %}
+                      <div>
+                        <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ work.filtered_docs|length }}</strong></span>
+                        {% if work.n_annotations %}
+                          <i class="ml-2 far fa-comments"></i> {{ work.n_annotations }}
+                        {% endif %}
+                      </div>
+                      {% comment %}
+                      <div class="progress mt-1 progress-thin">
+                        <div class="progress-bar bg-primary" style="width: {{ pub_ratio }}%" title="published"></div>
+                        <div class="progress-bar bg-warning" style="width: {{ drafts_ratio }}%" title="drafts"></div>
+                      </div>
+                      {% endcomment %}
+                    {% endif %}
                   </div>
 
                   <div class="col-2">
@@ -143,11 +143,9 @@
                         </div>
 
                         <div class="col-2">
-                          {% comment %}
-                          {{#if n_annotations}}
-                          <i class="far fa-comments"></i> {{ n_annotations }}
-                          {{/if}}
-                          {% endcomment %}
+                          {% if doc.n_annotations %}
+                            <i class="far fa-comments"></i> {{ doc.n_annotations }}
+                          {% endif %}
                         </div>
 
                         <div class="col-2">

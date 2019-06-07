@@ -90,12 +90,10 @@
                           <i class="ml-2 far fa-comments"></i> {{ work.n_annotations }}
                         {% endif %}
                       </div>
-                      {% comment %}
                       <div class="progress mt-1 progress-thin">
-                        <div class="progress-bar bg-primary" style="width: {{ pub_ratio }}%" title="published"></div>
-                        <div class="progress-bar bg-warning" style="width: {{ drafts_ratio }}%" title="drafts"></div>
+                        <div class="progress-bar bg-primary" style="width: {{ work.pub_ratio }}%" title="published"></div>
+                        <div class="progress-bar bg-warning" style="width: {{ work.drafts_ratio }}%" title="drafts"></div>
                       </div>
-                      {% endcomment %}
                     {% endif %}
                   </div>
 

@@ -19,9 +19,9 @@
     <!-- Stubs filter -->
     <div class="mr-2">
       <select class="selectpicker filter-stub" name="stub" data-style="btn-outline-secondary" data-width="auto">
-        <option value="excl">Exclude stubs</option>
-        <option value="only">Only stubs</option>
-        <option value="all">Everything</option>
+        <option value="excl" {% if form.stub.value == 'excl' %} selected {% endif %}>Exclude stubs</option>
+        <option value="only" {% if form.stub.value == 'only' %} selected {% endif %}>Only stubs</option>
+        <option value="all" {% if form.stub.value == 'all' %} selected {% endif %}>Everything</option>
       </select>
     </div>
 
@@ -36,11 +36,11 @@
     <!-- Time updated filter -->
     <div class="mr-2">
       <select class="form-control sortby" name="sortby">
-        <option value="-updated_at" selected>Most recently updated</option>
-        <option value="updated_at">Least recently updated</option>
-        <option value="title">Title (A-Z)</option>
-        <option value="-title">Title (Z-A)</option>
-        <option value="frbr_uri">FRBR URI</option>
+        <option value="-updated_at" {% if form.sortby.value == '-updated_at' %} selected {% endif %}>Most recently updated</option>
+        <option value="updated_at" {% if form.sortby.value == 'updated_at' %} selected {% endif %}>Least recently updated</option>
+        <option value="title" {% if form.sortby.value == 'title' %} selected {% endif %}>Title (A-Z)</option>
+        <option value="-title" {% if form.sortby.value == '-title' %} selected {% endif %}>Title (Z-A)</option>
+        <option value="frbr_uri" {% if form.sortby.value == 'frbr_uri' %} selected {% endif %}>FRBR URI</option>
       </select>
     </div>
 

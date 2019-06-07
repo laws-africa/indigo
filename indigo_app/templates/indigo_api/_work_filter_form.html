@@ -1,18 +1,17 @@
 {% load account %}
 
-
 <form method="GET" id="work-filter-form">
   <div class="d-flex">
 
     <div class="flex-grow-1 mr-2">
-      <input type="text" class="form-control filter-search" name="q" placeholder="Filter by title, year or number" value="">
+      <input type="text" class="form-control filter-search" name="{{ form.q.name }}" placeholder="Filter by title, year or number" value="{{ form.q.value | default:'' }}">
     </div>
 
     <!-- Subtypes filter -->
     <div class="mr-2">
       <select class="form-control filter-subtype" name="subtype">
         {% for option in form.subtype %}
-          <option value="{{ option.abbreviation }}"> {{ option }} </option>
+          {{ option }}
         {% endfor %}
       </select>
     </div>    
@@ -44,7 +43,6 @@
         <option value="frbr_uri">FRBR URI</option>
       </select>
     </div>
-
 
     <div class="btn-group">
       <button type="submit" class="btn btn-success">Filter</button>

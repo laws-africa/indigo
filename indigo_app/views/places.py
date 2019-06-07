@@ -1,7 +1,6 @@
 # coding=utf-8
 from __future__ import division
 import logging
-import json
 from collections import defaultdict
 from datetime import timedelta
 from itertools import chain
@@ -13,9 +12,7 @@ from django.shortcuts import redirect
 from django.views.generic import TemplateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Country, Annotation, Task, Amendment, Work
-from indigo_api.serializers import WorkSerializer, DocumentSerializer
-from indigo_api.views.works import WorkViewSet
+from indigo_api.models import Country, Annotation, Task, Work
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics
 

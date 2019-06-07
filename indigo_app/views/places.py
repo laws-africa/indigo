@@ -64,9 +64,18 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         params = QueryDict(mutable=True)
         params.update(request.GET)
 
-        # set default sorting order: most recently updated
+        # set defaults for: sort order, status, stub and subtype
         if not params.get('sortby'):
             params.setdefault('sortby', '-updated_at')
+
+        if not params.get('status'):
+            params.setlist('status', ['published', 'draft'])
+
+        if not params.get('stub'):
+            params.setdefault('stub', 'excl')
+
+        if not params.get('subtype'):
+            params.setdefault('subtype', '-')
 
         self.form = WorkFilterForm(self.country, params)
         self.form.is_valid()

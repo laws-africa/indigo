@@ -263,7 +263,6 @@ class WorkFilterForm(forms.Form):
         super(WorkFilterForm, self).__init__(*args, **kwargs)
 
     def filter_queryset(self, queryset):
-        print(self.cleaned_data)
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
@@ -274,7 +273,6 @@ class WorkFilterForm(forms.Form):
             elif self.cleaned_data['stub'] == 'only':
                 queryset = queryset.filter(stub=True)
 
-        # TODO: revisit this
         if self.cleaned_data.get('status'):
             if self.cleaned_data['status'] == ['draft']:
                 queryset = queryset.filter(document__draft=True)            
@@ -286,7 +284,7 @@ class WorkFilterForm(forms.Form):
         
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
-            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
+            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
 
         return queryset
 

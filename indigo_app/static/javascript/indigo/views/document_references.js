@@ -68,6 +68,9 @@
         dataType: "json"})
         .then(function(response) {
           self.model.set('content', response.document.content);
+          // must be a nicer way to automatically trigger this, the entire doc
+          // has changed after all
+          Indigo.view.tocView.rebuild(true);
         })
         .always(function() {
           $btn

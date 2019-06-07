@@ -96,7 +96,6 @@
       'click .document-toolbar-menu .save': 'save',
       'click .document-toolbar-menu .delete-document': 'delete',
       'click .document-toolbar-menu .clone-document': 'clone',
-      'click .sidebar-nav .show-preview': 'showPreview',
     },
 
     initialize: function() {
@@ -106,7 +105,6 @@
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
       this.dirty = false;
-      this.previewDirty = true;
 
       this.detectUnsupportedBrowsers();
 
@@ -189,9 +187,6 @@
     },
 
     setDirty: function() {
-      // our preview is now dirty
-      this.previewDirty = true;
-
       if (!this.dirty) {
         this.dirty = true;
         this.$saveBtn.prop('disabled', false);
@@ -272,49 +267,6 @@
           }).fail(fail);
         }).fail(fail);
       }).fail(fail);
-    },
-
-    showPreview: function(e) {
-      var $link = $(e.currentTarget);
-
-      if ($link.hasClass('active')) {
-        this.closePreview();
-        return;
-      }
-
-      $link.addClass('active');
-      this.$('.work-view').addClass('d-none');
-      this.$('.document-preview-view').removeClass('d-none');
-      
-      if (this.previewDirty) {
-        var self = this,
-            data = this.document.toJSON(),
-            container = $('.preview-container').empty()[0];
-
-        data.content = this.documentContent.toXml();
-        data = JSON.stringify({'document': data});
-
-        $.ajax({
-          url: '/api/render',
-          type: "POST",
-          data: data,
-          contentType: "application/json; charset=utf-8",
-          dataType: "json"})
-          .then(function(response) {
-            var wrapper = document.createElement('div');
-            wrapper.className = 'akoma-ntoso country-' + data.country;
-            $(wrapper).html(response.output);
-            container.appendChild(wrapper);
-
-            self.previewDirty = false;
-          });
-      }
-    },
-
-    closePreview: function() {
-      this.$('.sidebar-nav .show-preview').removeClass('active');
-      this.$('.work-view').removeClass('d-none');
-      this.$('.document-preview-view').addClass('d-none');
     },
 
     delete: function() {

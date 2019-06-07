@@ -232,6 +232,7 @@ class TaskFilterForm(forms.Form):
         self.country = country
         super(TaskFilterForm, self).__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+        self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):

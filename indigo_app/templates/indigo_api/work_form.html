@@ -88,10 +88,15 @@
         <div class="form-row">
           {% if taxonomies %}
             <div class="form-group col-md-4">
-              <label for="taxonomies">Taxonomy tags </label>
+              <label for="taxonomies">Taxonomy tags</label>
               <select id="taxonomies" name="work-taxonomies" class="form-control selectpicker" data-live-search="true" multiple>
-                {% for taxonomy in form.taxonomies %}
-                  {{ taxonomy }}
+              {% regroup form.fields.taxonomies.queryset by taxonomy_vocabulary as topic_groups %}
+                {% for topic in topic_groups %}
+                  <optgroup label="{{ topic.grouper }}">
+                    {% for taxonomy in topic.list %}
+                      <option>{{ taxonomy.taxonomy_vocabulary }}</option>
+                    {% endfor %}
+                  </optgroup>
                 {% endfor %}
               </select>
             </div>

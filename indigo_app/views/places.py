@@ -9,7 +9,7 @@ from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.http import QueryDict
 from django.shortcuts import redirect
-from django.views.generic import TemplateView
+from django.views.generic import ListView, TemplateView
 from django.views.generic.list import MultipleObjectMixin
 
 from indigo_api.models import Country, Annotation, Task, Work
@@ -52,7 +52,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, MultipleObjectMixin, TemplateView):
+class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
     template_name = 'place/detail.html'
     js_view = 'LibraryView'
     tab = 'works'

@@ -163,7 +163,7 @@
 
   {% if is_paginated %}
     <nav class="mt-4">
-      {% include 'indigo_app/_paginator.html' %}
+      {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
     </nav>
   {% endif %}
 

@@ -1,4 +1,5 @@
 import json
+import urllib
 
 from django import forms
 from django.db.models import Q
@@ -267,6 +268,9 @@ class WorkFilterForm(forms.Form):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
+
+    def data_as_url(self):
+        return urllib.urlencode(self.cleaned_data, 'utf-8')
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('q'):

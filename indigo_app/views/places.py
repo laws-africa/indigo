@@ -52,10 +52,13 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, MultipleObjectMixin, TemplateView):
     template_name = 'place/detail.html'
     js_view = 'LibraryView'
     tab = 'works'
+
+    object_list = None
+    page_size = 50
 
     def get(self, request, *args, **kwargs):
         params = QueryDict(mutable=True)
@@ -176,9 +179,18 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PlaceDetailView, self).get_context_data(**kwargs)
         context['form'] = self.form
-        context['works'] = works = self.get_queryset().all()
+        works = self.get_queryset().all()    
 
         self.decorate_works(works)
+
+        paginator, page, versions, is_paginated = self.paginate_queryset(works, self.page_size)
+        context['works'] = page.object_list
+        context.update({
+            'paginator': paginator,
+            'page_obj': page,
+            'is_paginated': is_paginated,
+            'place': self.place,
+        })            
 
         # breadth completeness history
         context['completeness_history'] = list(DailyWorkMetrics.objects

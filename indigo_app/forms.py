@@ -1,6 +1,8 @@
 import json
+import urllib
 
 from django import forms
+from django.db.models import Q
 from django.core.validators import URLValidator
 from django.core.exceptions import ValidationError
 from django.conf import settings
@@ -10,7 +12,7 @@ from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
-from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Workflow, \
+from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, Workflow, \
     WorkProperty, VocabularyTopic
 
 
@@ -257,6 +259,57 @@ class TaskFilterForm(forms.Form):
         if self.cleaned_data.get('submitted_by'):
             queryset = queryset.filter(state__in=['pending_review', 'closed'])\
                 .filter(last_assigned_to__in=self.cleaned_data['submitted_by'])
+
+        return queryset
+
+
+class WorkFilterForm(forms.Form):
+    q = forms.CharField()
+    stub = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only')])
+    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
+    subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
+    sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
+
+    def __init__(self, country, *args, **kwargs):
+        self.country = country
+        super(WorkFilterForm, self).__init__(*args, **kwargs)
+
+    def data_as_url(self):
+        return urllib.urlencode(self.cleaned_data, 'utf-8')
+
+    def filter_queryset(self, queryset):
+        if self.cleaned_data.get('q'):
+            queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
+
+        if self.cleaned_data.get('stub'):
+            if self.cleaned_data['stub'] == 'excl':
+                queryset = queryset.filter(stub=False)
+
+            elif self.cleaned_data['stub'] == 'only':
+                queryset = queryset.filter(stub=True)
+
+        if self.cleaned_data.get('status'):
+            if self.cleaned_data['status'] == ['draft']:
+                queryset = queryset.filter(document__draft=True)            
+            elif self.cleaned_data['status'] == ['published']:
+                queryset = queryset.filter(document__draft=False)
+
+        if self.cleaned_data.get('sortby'):
+            queryset = queryset.order_by(self.cleaned_data.get('sortby'))        
+        
+        # filter by subtype indicated on frbr_uri
+        if self.cleaned_data.get('subtype'):
+            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
+
+        return queryset
+
+    def filter_document_queryset(self, queryset):
+        status = self.cleaned_data.get('status')
+
+        if status == ['draft']:
+            queryset = queryset.filter(draft=True)
+        elif status == ['published']:
+            queryset = queryset.filter(draft=False)
 
         return queryset
 

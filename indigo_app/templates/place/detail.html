@@ -39,48 +39,135 @@
 
   <div class="card">
     <div class="card-header">
-      <div class="d-flex">
-
-        <div class="flex-grow-1 mr-2">
-          <input type="text" class="form-control filter-search" placeholder="Filter by title, year or number">
-        </div>
-
-        <div class="mr-2">
-          <select class="form-control filter-subtype" name="subtype-filter"></select>
-        </div>
-
-        <div class="mr-2">
-          <select class="selectpicker filter-stub" data-style="btn-outline-secondary" data-width="auto">
-            <option value="excl">Exclude stubs</option>
-            <option value="only">Only stubs</option>
-            <option value="all">Everything</option>
-          </select>
-        </div>
-
-        <div class="mr-2">
-          <select class="selectpicker filter-status" multiple data-style="btn-outline-secondary" data-width="auto">
-            <option value="published" selected data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
-            <option value="draft" selected data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
-          </select>
-        </div>
-
-        <div>
-          <select class="form-control sortby" name="sort">
-            <option value="-updated_at" selected>Most recently updated</option>
-            <option value="updated_at">Least recently updated</option>
-            <option value="title">Title (A-Z)</option>
-            <option value="-title">Title (Z-A)</option>
-            <option value="frbr_uri">FRBR URI</option>
-          </select>
-        </div>
-
-      </div>
-
-      <div id="filter-tags" class="pt-3"></div>
+      {% include 'indigo_api/_work_filter_form.html' with form=form %}
     </div>
 
-    <div id="library"></div>
+    <div id="library">
+      <div class="list-group list-group-flush">
+        <div class="list-group-item ml-4">{{ paginator.count }} works</div>
+
+        {% for work in works %}
+          <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ work.pk }}">
+            <div class="d-flex">
+              <div class="float-left">
+                <span class="text-muted fas fa-caret-right fa-fw collapse-indicator"></span>
+              </div>
+
+              <div class="float-left flex-fill">
+                <div class="d-flex">
+                  <div class="col-6">
+                    <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+                    {% if work.stub %}
+                      <span class="badge badge-info">stub</span>
+                    {% endif %}
+                    <br>
+                    <span class="text-muted">{{ frbr_uri }}</span>
+                    {% if work.parent_work %}
+                      <div>
+                        Primary work: <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="col-2">
+                    {% if work.task_stats.n_active_tasks %}
+                      <div><i class="fas fa-thumbtack"></i> <strong>{{ work.task_stats.n_active_tasks }}</strong> Active tasks</div>
+                      <div class="progress mt-1 progress-thin">
+                        <div class="progress-bar task-badge-open" style="width: {{ work.task_stats.open_task_ratio }}%" title="open"></div>
+                        <div class="progress-bar task-badge-pending_review" style="width: {{ work.task_stats.pending_task_ratio }}%" title="pending review"></div>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="col-2">
+                    {% if work.filtered_docs %}
+                      <div>
+                        <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ work.filtered_docs|length }}</strong></span>
+                        {% if work.n_annotations %}
+                          <i class="ml-2 far fa-comments"></i> {{ work.n_annotations }}
+                        {% endif %}
+                      </div>
+                      <div class="progress mt-1 progress-thin">
+                        <div class="progress-bar bg-primary" style="width: {{ work.pub_ratio }}%" title="published"></div>
+                        <div class="progress-bar bg-warning" style="width: {{ work.drafts_ratio }}%" title="drafts"></div>
+                      </div>
+                    {% endif %}
+                  </div>
+
+                  <div class="col-2">
+                    <span class="time-ago" data-timestamp="{{ work.most_recent_updated_at|date:'c' }}">{{ work.most_recent_updated_at|date:"Y-m-d H:i" }}</span>
+                    {% if work.most_recent_updated_by %}
+                      {% if work.most_recent_updated_by == request.user %}
+                        you
+                      {% else %}
+                        <div class="text-muted">by {% user_profile work.most_recent_updated_by %}</div>
+                      {% endif %}
+                    {% endif %}
+                  </div>
+                </div>
+
+                {% if work.filtered_docs %}
+                  <div class="collapse work-extra-detail mt-1" id="work-detail-{{ work.pk }}">
+                    {% for doc in work.filtered_docs %}
+                      <div class="d-flex">
+                        <div class="col-2">
+                          <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
+                        </div>
+
+                        <div class="col-4">
+                          {% if doc.draft %}
+                            <i class="fas fa-fw fa-circle draft" title="draft"></i>
+                          {% else %}
+                            <i class="fas fa-fw fa-circle published" title="published"></i>
+                          {% endif %}
+                          {{ doc.title }}
+                        </div>
+
+                        <div class="col-2">
+                          {% if doc.task_stats.n_active_tasks %}
+                            <div>
+                              <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong> Active tasks
+                            </div>
+                            <div class="progress mt-1 progress-thin">
+                              <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="open"></div>
+                              <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="pending review"></div>
+                            </div>
+                          {% endif %}
+                        </div>
+
+                        <div class="col-2">
+                          {% if doc.n_annotations %}
+                            <i class="far fa-comments"></i> {{ doc.n_annotations }}
+                          {% endif %}
+                        </div>
+
+                        <div class="col-2">
+                          <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
+                          {% if doc.updated_by_user == request.user %}
+                            you
+                          {% else %}
+                            <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
+                          {% endif %}
+                        </div>
+                      </div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
   </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
+    </nav>
+  {% endif %}
+
 </div>
 
 {% endblock %}
@@ -88,141 +175,6 @@
 {% block js %}
 {{ block.super }}
 
-<script id="search-results-template" type="text/x-handlebars-template">
-{% verbatim %}
-
-  <div class="list-group list-group-flush">
-    <div class="list-group-item ml-4">{{ count }} works</div>
-    {{#each works}}
-    <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ id }}">
-      <div class="d-flex">
-        <div class="float-left">
-          <span class="text-muted fas fa-caret-right fa-fw collapse-indicator"></span>
-        </div>
-
-        <div class="float-left flex-fill">
-          <div class="d-flex">
-            <div class="col-6">
-              <a href="/works{{ frbr_uri }}/">{{ title }}</a>
-              {{#if stub}}
-              <span class="badge badge-info">stub</span>
-              {{/if}}
-              <br>
-              <span class="text-muted">{{ frbr_uri }}</span>
-              {{#if parent_work}}
-              <div>
-                Primary work: <a href="/works{{ parent_work.frbr_uri }}/" data-popup-url="/works{{ parent_work.frbr_uri }}/popup">{{ parent_work.title }}</a>
-              </div>
-              {{/if}}
-            </div>
-
-            <div class="col-2">
-              {{#if task_stats.n_active_tasks}}
-              <div><i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks</div>
-              <div class="progress mt-1 progress-thin">
-                <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
-                <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
-              </div>
-              {{/if}}
-            </div>
-
-            <div class="col-2">
-              {{#unless no_children}}
-              <div>
-                <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ n_docs }}</strong></span>
-                {{#if n_annotations}}
-                  <i class="ml-2 far fa-comments"></i> {{ n_annotations }}
-                {{/if}}
-              </div>
-              <div class="progress mt-1 progress-thin">
-                <div class="progress-bar bg-primary" style="width: {{ pub_ratio }}%" title="published"></div>
-                <div class="progress-bar bg-warning" style="width: {{ drafts_ratio }}%" title="drafts"></div>
-              </div>
-              {{/unless}}
-            </div>
-
-            <div class="col-2">
-              <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-              {{#if most_recent_updated_by.display_name}}
-              <div class="text-muted">by <a href="/contributors/{{most_recent_updated_by.username}}">{{ most_recent_updated_by.display_name }}</a></div>
-              {{/if}}
-            </div>
-          </div>
-
-          {{#if work_docs}}
-          <div class="collapse work-extra-detail mt-1" id="work-detail-{{ id }}">
-            {{#each work_docs}}
-              <div class="d-flex">
-                <div class="col-2">
-                  <a href="/documents/{{ id }}">@ {{ expression_date }} · {{ language }}</a>
-                </div>
-
-                <div class="col-4">
-                  {{#if draft}}
-                    <i class="fas fa-fw fa-circle draft" title="draft"></i>
-                  {{else}}
-                    <i class="fas fa-fw fa-circle published" title="published"></i>
-                  {{/if}}
-                  {{ title }}
-                </div>
-
-                <div class="col-2">
-                  {{#if task_stats.n_active_tasks}}
-                    <div>
-                      <i class="fas fa-thumbtack"></i> <strong>{{ task_stats.n_active_tasks }}</strong> Active tasks
-                    </div>
-                    <div class="progress mt-1 progress-thin">
-                      <div class="progress-bar task-badge-open" style="width: {{ task_stats.open_task_ratio }}%" title="open"></div>
-                      <div class="progress-bar task-badge-pending_review" style="width: {{ task_stats.pending_task_ratio }}%" title="pending review"></div>
-                    </div>
-                  {{/if}}
-                </div>
-
-                <div class="col-2">
-                  {{#if n_annotations}}
-                    <i class="far fa-comments"></i> {{ n_annotations }}
-                  {{/if}}
-                </div>
-
-                <div class="col-2">
-                  <span class="time-ago" data-timestamp="{{ updated_at }}">{{ updated_at }}</span>
-                  {{#if updated_by_user.display_name}}
-                  <div class="text-muted">by <a href="/contributors/{{updated_by_user.username}}">{{ updated_by_user.display_name }}</a></div>
-                  {{/if}}
-                </div>
-              </div>
-            {{/each}}
-          </div>
-          {{/if}}
-
-        </div>
-      </div>
-    </div>
-    {{/each}}
-  </div>
-
-{% endverbatim %}
-</script>
-
-<script id="filter-tags-template" type="text/x-handlebars-template">
-{% verbatim %}
-  {{#each tags}}
-  <a href="#" class="badge {{#if active}}badge-primary{{else}}badge-secondary{{/if}} filter-tag" data-tag="{{this.tag}}">{{this.tag}} <span class="badge badge-pill badge-light">{{this.count}}</span></a>
-  {{/each}}
-{% endverbatim %}
-</script>
-
 <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
 <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
-
-<script type="text/javascript">
-window.Indigo.countries = {{ indigo_countries_json|safe }};
-window.Indigo.Preloads.works = {{ works_json|safe }};
-window.Indigo.Preloads.library = {{ documents_json|safe }};
-window.Indigo.Preloads.document_annotations = {{ annotations_json|safe }};
-window.Indigo.Preloads.document_tasks = {{ document_tasks_json|safe }};
-window.Indigo.Preloads.work_tasks = {{ work_tasks_json|safe }};
-window.Indigo.Preloads.work_n_amendments = {{ work_n_amendments_json|safe }};
-</script>
-
 {% endblock %}

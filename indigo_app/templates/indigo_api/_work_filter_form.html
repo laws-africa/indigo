@@ -1,0 +1,52 @@
+{% load account %}
+
+<form method="GET" id="work-filter-form">
+  <div class="d-flex">
+
+    <div class="flex-grow-1 mr-2">
+      <input type="text" class="form-control" name="{{ form.q.name }}" placeholder="Filter by title, year or number" value="{{ form.q.value | default:'' }}">
+    </div>
+
+    <!-- Subtypes filter -->
+    <div class="mr-2">
+      <select class="form-control" name="subtype">
+        {% for option in form.subtype %}
+          {{ option }}
+        {% endfor %}
+      </select>
+    </div>    
+
+    <!-- Stubs filter -->
+    <div class="mr-2">
+      <select class="form-control" name="stub">
+        <option value="excl" {% if form.stub.value == 'excl' %} selected {% endif %}>Exclude stubs</option>
+        <option value="only" {% if form.stub.value == 'only' %} selected {% endif %}>Only stubs</option>
+        <option value="all" {% if form.stub.value == 'all' %} selected {% endif %}>Everything</option>
+      </select>
+    </div>
+
+    <!-- Status filter -->
+    <div class="mr-2">
+      <select class="selectpicker notooltip" multiple name="status" data-style="btn-outline-secondary">
+        <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
+        <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
+      </select>
+    </div>  
+
+    <!-- Time updated filter -->
+    <div class="mr-2">
+      <select class="form-control" name="sortby">
+        <option value="-updated_at" {% if form.sortby.value == '-updated_at' %} selected {% endif %}>Most recently updated</option>
+        <option value="updated_at" {% if form.sortby.value == 'updated_at' %} selected {% endif %}>Least recently updated</option>
+        <option value="title" {% if form.sortby.value == 'title' %} selected {% endif %}>Title (A-Z)</option>
+        <option value="-title" {% if form.sortby.value == '-title' %} selected {% endif %}>Title (Z-A)</option>
+        <option value="frbr_uri" {% if form.sortby.value == 'frbr_uri' %} selected {% endif %}>FRBR URI</option>
+      </select>
+    </div>
+
+    <div class="btn-group">
+      <button type="submit" class="btn btn-success">Filter</button>
+    </div>  
+
+  </div>
+</form>

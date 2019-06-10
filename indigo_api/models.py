@@ -980,6 +980,7 @@ class Subtype(models.Model):
 
     class Meta:
         verbose_name = 'Document subtype'
+        ordering = ('name',)
 
     def clean(self):
         if self.abbreviation:

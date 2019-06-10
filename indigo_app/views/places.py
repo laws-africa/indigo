@@ -1,22 +1,24 @@
 # coding=utf-8
+from __future__ import division
 import logging
-import json
 from collections import defaultdict
 from datetime import timedelta
+from itertools import chain
 
 from actstream.models import Action
-from django.db.models import Count, Subquery, IntegerField, OuterRef
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.http import QueryDict
 from django.shortcuts import redirect
-from django.views.generic import TemplateView
+from django.views.generic import ListView, TemplateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Country, Annotation, Task, Amendment
-from indigo_api.serializers import WorkSerializer, DocumentSerializer
-from indigo_api.views.works import WorkViewSet
+from indigo_api.models import Country, Annotation, Task, Work
 from indigo_api.views.documents import DocumentViewSet
-from indigo_metrics.models import DailyWorkMetrics
+from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
+
+from indigo_app.forms import WorkFilterForm
 
 
 log = logging.getLogger(__name__)
@@ -50,36 +52,85 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
     template_name = 'place/detail.html'
-    js_view = 'LibraryView'
     tab = 'works'
+    context_object_name = 'works'
+    paginate_by = 50
 
-    def get_context_data(self, **kwargs):
-        context = super(PlaceDetailView, self).get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
+        params = QueryDict(mutable=True)
+        params.update(request.GET)
 
-        serializer = WorkSerializer(context={'request': self.request}, many=True)
-        works = WorkViewSet.queryset.filter(country=self.country, locality=self.locality)
-        context['works_json'] = json.dumps(serializer.to_representation(works))
+        # set defaults for: sort order, status, stub and subtype
+        if not params.get('sortby'):
+            params.setdefault('sortby', '-updated_at')
 
-        serializer = DocumentSerializer(context={'request': self.request}, many=True)
-        docs = DocumentViewSet.queryset.filter(work__country=self.country, work__locality=self.locality)
-        context['documents_json'] = json.dumps(serializer.to_representation(docs))
+        if not params.get('status'):
+            params.setlist('status', ['published', 'draft'])
 
-        # map from document id to count of open annotations
-        annotations = Annotation.objects.values('document_id')\
-            .filter(closed=False)\
-            .filter(document__deleted=False)\
-            .annotate(n_annotations=Count('document_id'))\
-            .filter(document__work__country=self.country)
-        if self.locality:
-            annotations = annotations.filter(document__work__locality=self.locality)
+        if not params.get('stub'):
+            params.setdefault('stub', 'excl')
 
-        annotations = {x['document_id']: {'n_annotations': x['n_annotations']} for x in annotations}
-        context['annotations_json'] = json.dumps(annotations)
+        if not params.get('subtype'):
+            params.setdefault('subtype', '-')
 
-        # tasks for place
-        tasks = Task.objects.filter(work__country=self.country, work__locality=self.locality)
+        self.form = WorkFilterForm(self.country, params)
+        self.form.is_valid()
+
+        return super(PlaceDetailView, self).get(request, *args, **kwargs)    
+
+    def get_queryset(self):
+        queryset = Work.objects\
+            .select_related('parent_work', 'metrics')\
+            .filter(country=self.country, locality=self.locality)\
+            .distinct()\
+            .order_by('-updated_at')
+
+        queryset = self.form.filter_queryset(queryset)
+
+        # prefetch and filter documents
+        queryset = queryset.prefetch_related(Prefetch(
+            'document_set',
+            to_attr='filtered_docs',
+            queryset=self.form.filter_document_queryset(DocumentViewSet.queryset)
+        ))
+
+        return queryset
+
+    def count_tasks(self, obj, counts):
+        obj.task_stats = {'n_%s_tasks' % s: counts.get(s, 0) for s in Task.STATES}
+        obj.task_stats['n_tasks'] = sum(counts.itervalues())
+        obj.task_stats['n_active_tasks'] = (
+            obj.task_stats['n_open_tasks'] +
+            obj.task_stats['n_pending_review_tasks']
+        )
+        obj.task_stats['pending_task_ratio'] = 100 * (
+            obj.task_stats['n_pending_review_tasks'] /
+            (obj.task_stats['n_active_tasks'] or 1)
+        )
+        obj.task_stats['open_task_ratio'] = 100 * (
+            obj.task_stats['n_open_tasks'] /
+            (obj.task_stats['n_active_tasks'] or 1)
+        )
+
+    def decorate_works(self, works):
+        """ Do some calculations that aid listing of works.
+        """
+        docs_by_id = {d.id: d for w in works for d in w.filtered_docs}
+        works_by_id = {w.id: w for w in works}
+
+        # count annotations
+        annotations = Annotation.objects.values('document_id') \
+            .filter(closed=False) \
+            .filter(document__deleted=False) \
+            .annotate(n_annotations=Count('document_id')) \
+            .filter(document_id__in=docs_by_id.keys())
+        for count in annotations:
+            docs_by_id[count['document_id']].n_annotations = count['n_annotations']
+
+        # count tasks
+        tasks = Task.objects.filter(work__in=works)
 
         # tasks counts per state and per work
         work_tasks = tasks.values('work_id', 'state').annotate(n_tasks=Count('work_id'))
@@ -88,34 +139,53 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             task_states[row['work_id']][row['state']] = row['n_tasks']
 
         # summarise task counts per work
-        work_tasks = {}
         for work_id, states in task_states.iteritems():
-            work_tasks[work_id] = {'n_%s_tasks' % s: states.get(s, 0) for s in Task.STATES}
-            work_tasks[work_id]['n_tasks'] = sum(states.itervalues())
-        context['work_tasks_json'] = json.dumps(work_tasks)
+            self.count_tasks(works_by_id[work_id], states)
 
         # tasks counts per state and per document
-        doc_tasks = tasks.values('document_id', 'state').annotate(n_tasks=Count('document_id'))
+        doc_tasks = tasks.filter(document_id__in=docs_by_id.keys())\
+            .values('document_id', 'state')\
+            .annotate(n_tasks=Count('document_id'))
         task_states = defaultdict(dict)
         for row in doc_tasks:
             task_states[row['document_id']][row['state']] = row['n_tasks']
 
         # summarise task counts per document
-        document_tasks = {}
         for doc_id, states in task_states.iteritems():
-            document_tasks[doc_id] = {'n_%s_tasks' % s: states.get(s, 0) for s in Task.STATES}
-            document_tasks[doc_id]['n_tasks'] = sum(states.itervalues())
-        context['document_tasks_json'] = json.dumps(document_tasks)
+            self.count_tasks(docs_by_id[doc_id], states)
 
-        # summarise amendments per work
-        amendments = Amendment.objects.values('amended_work_id')\
-            .filter(amended_work_id__in=[w.id for w in works])\
-            .annotate(n_amendments=Count('pk'))\
-            .order_by()\
-            .all()
+        # decorate works
+        for work in works:
+            # most recent update, their the work or its documents
+            update = max((c for c in chain(work.filtered_docs, [work]) if c.updated_at), key=lambda x: x.updated_at)
+            work.most_recent_updated_at = update.updated_at
+            work.most_recent_updated_by = update.updated_by_user
 
-        amendments = {a['amended_work_id']: {'n_amendments': a['n_amendments']} for a in amendments}
-        context['work_n_amendments_json'] = json.dumps(amendments)
+            # count annotations
+            work.n_annotations = sum(getattr(d, 'n_annotations', 0) for d in work.filtered_docs)
+
+            # ratios
+            try:
+                # work metrics may not exist
+                metrics = work.metrics
+            except WorkMetrics.DoesNotExist:
+                metrics = None
+
+            if metrics and metrics.n_expected_expressions > 0:
+                n_drafts = sum(1 if d.draft else 0 for d in work.filtered_docs)
+                n_published = sum(0 if d.draft else 1 for d in work.filtered_docs)
+                work.drafts_ratio = 100 * (n_drafts / metrics.n_expected_expressions)
+                work.pub_ratio = 100 * (n_published / metrics.n_expected_expressions)
+            else:
+                work.drafts_ratio = 0
+                work.pub_ratio = 0
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceDetailView, self).get_context_data(**kwargs)
+        context['form'] = self.form
+        works = context['works']
+
+        self.decorate_works(list(works))
 
         # breadth completeness history
         context['completeness_history'] = list(DailyWorkMetrics.objects

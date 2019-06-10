@@ -148,6 +148,35 @@ class WorkManager(models.Manager):
                             'country__country', 'locality', 'publication_document')
 
 
+class TaxonomyVocabulary(models.Model):
+    authority = models.CharField(max_length=30, null=False, unique=True, blank=False, help_text="Organisation managing this taxonomy")
+    name = models.CharField(max_length=30, null=False, unique=True, blank=False, help_text="Short name for this taxonomy, under this authority")
+    slug = models.SlugField(null=False, unique=True, blank=False, help_text="Code used in the API")
+    title = models.CharField(max_length=30, null=False, unique=True, blank=False, help_text="Friendly, full title for the taxonomy")
+
+    class Meta:
+        verbose_name = 'Taxonomy'
+        verbose_name_plural = 'Taxonomies'
+
+    def __unicode__(self):
+        return unicode(self.title)
+
+
+class VocabularyTopic(models.Model):
+    taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='vocabularies', null=False, blank=False, on_delete=models.CASCADE)
+    level_1 = models.CharField(max_length=30, null=False, blank=False)
+    level_2 = models.CharField(max_length=30, null=True, blank=True, help_text='(optional)')
+
+    class Meta:
+        unique_together = ('level_1', 'level_2', 'taxonomy_vocabulary')
+
+    def __unicode__(self):
+        if self.level_2:
+            return '%s / %s' % (self.level_1, self.level_2)
+        else:
+            return self.level_1
+
+
 class Work(models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
     allows us to track works that we don't have documents for, and provides a
@@ -184,6 +213,9 @@ class Work(models.Model):
     commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
+
+    # taxonomies
+    taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

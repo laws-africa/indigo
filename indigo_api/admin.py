@@ -2,7 +2,7 @@ from django import forms
 from django.contrib import admin
 from ckeditor.widgets import CKEditorWidget
 
-from .models import Document, Subtype, Colophon, Work, TaskLabel
+from .models import Document, Subtype, Colophon, Work, TaskLabel, TaxonomyVocabulary, VocabularyTopic
 
 admin.site.register(Subtype)
 
@@ -39,3 +39,17 @@ class ColophonAdmin(admin.ModelAdmin):
 class TaskLabelAdmin(admin.ModelAdmin):
     list_display = ('title', 'description',)
     prepopulated_fields = {"slug": ("title",)}
+
+
+class VocabularyTopicInline(admin.TabularInline):
+    model = VocabularyTopic
+    can_delete = True
+    extra = 3
+
+
+@admin.register(TaxonomyVocabulary)
+class TaxonomyVocabularyAdmin(admin.ModelAdmin):
+    list_display = ('title', 'authority', '__str__')
+    prepopulated_fields = {"slug": ("authority", "name")}
+    inlines = (VocabularyTopicInline, )
+    fields = ('title', 'authority', 'name', 'slug')

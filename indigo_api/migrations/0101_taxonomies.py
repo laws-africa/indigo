@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0096_auto_20190424_1245'),
+        ('indigo_api', '0100_remove_whitespace'),
     ]
 
     operations = [

@@ -3,6 +3,7 @@ from __future__ import unicode_literals
 
 from django.test import TestCase
 from cobalt.act import Act
+from lxml import etree
 
 from indigo_api.data_migrations import ScheduleArticleToHcontainer
 
@@ -175,15 +176,16 @@ class MigrationTestCase(TestCase):
         act = Act(xml)
         migration.migrate_act(act)
 
-        expected = NEW_SCHEDULE % """<heading>Schedule</heading>
-            <subheading>BY-LAWS REPEALED BY SECTION 99</subheading>
-            <paragraph id="schedule2.paragraph-0">
-              <content>
-                <p>None</p>
-              </content>
-            </paragraph>"""
-        print expected
-        self.assertMultiLineEqual(act.to_xml().decode('utf-8'), expected)
+        expected = NEW_SCHEDULE % """
+        <heading>Schedule</heading><subheading>BY-LAWS REPEALED BY SECTION 99</subheading>
+        <paragraph id="schedule2.paragraph-0">
+          <content>
+            <p>None</p>
+          </content>
+        </paragraph>"""
+        self.assertMultiLineEqual(
+            expected,
+            etree.tostring(act.root, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_migration_without_heading(self):
         migration = ScheduleArticleToHcontainer()
@@ -197,11 +199,12 @@ class MigrationTestCase(TestCase):
         act = Act(xml)
         migration.migrate_act(act)
 
-        expected = NEW_SCHEDULE % """<heading>Schedule</heading>
-            <paragraph id="schedule2.paragraph-0">
-              <content>
-                <p>None</p>
-              </content>
-            </paragraph>"""
-        self.assertMultiLineEqual(act.to_xml().decode('utf-8'), expected)
-
+        expected = NEW_SCHEDULE % """
+        <heading>Schedule</heading><paragraph id="schedule2.paragraph-0">
+          <content>
+            <p>None</p>
+          </content>
+        </paragraph>"""
+        self.assertMultiLineEqual(
+            expected,
+            etree.tostring(act.root, encoding='utf-8', pretty_print=True).decode('utf-8'))

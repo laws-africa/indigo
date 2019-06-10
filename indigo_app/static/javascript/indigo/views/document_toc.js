@@ -19,7 +19,7 @@
       this.model.on('change', this.rebuild, this);
     },
 
-    rebuild: function() {
+    rebuild: function(force) {
       // recalculate the TOC from the model
       if (this.model.xmlDocument) {
         console.log('rebuilding TOC');
@@ -33,7 +33,7 @@
           // we've selected past the end of the TOC
           this.selectItem(this.toc.length-1);
 
-        } else if (index > -1 && this.toc.length != oldLength) {
+        } else if (force || (index > -1 && this.toc.length != oldLength)) {
           // arrangament of the TOC has changed, re-select the item we want
           this.selectItem(index, true);
 
@@ -151,6 +151,10 @@
         this.render();
 
         // only do this after rendering
+        if (force) {
+          // ensure it forces a change
+          this.selection.clear({silent: true});
+        }
         this.selection.set(i > -1 ? this.toc[i] : {});
       }
     },

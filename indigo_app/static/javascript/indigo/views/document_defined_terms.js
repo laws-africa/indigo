@@ -44,7 +44,7 @@
 
       $btn
         .prop('disabled', true)
-        .find('.fa').addClass('fa-spin');
+        .find('i').addClass('fa-spin');
 
       $.ajax({
         url: '/api/analysis/link-terms',
@@ -54,11 +54,14 @@
         dataType: "json"})
         .then(function(response) {
           self.model.set('content', response.document.content);
+          // must be a nicer way to automatically trigger this, the entire doc
+          // has changed after all
+          Indigo.view.tocView.rebuild(true);
         })
         .always(function() {
           $btn
             .prop('disabled', false)
-            .find('.fa').removeClass('fa-spin');
+            .find('i').removeClass('fa-spin');
         });
     },
   });

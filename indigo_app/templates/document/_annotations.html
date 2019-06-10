@@ -30,7 +30,7 @@
 <div class="button-container"></div>
 {{#if task}}
   <div class="task mt-2">
-    <span class="badge task-badge task-badge-{{ task.state }}" title="{{ task.state }}"><i class="fas fa-fw task-icon-{{ task.state }}"></i></span>
+    <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i>
     <a href="{{ task.view_url }}">Task #{{ task.id }}</a>
   </div>
 {{/if}}

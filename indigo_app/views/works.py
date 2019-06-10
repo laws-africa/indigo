@@ -545,7 +545,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     permission_required = ('indigo_api.add_work',)
     form_class = BatchCreateWorkForm
     initial = {
-        'primary_tasks': ['import'],
+        'principal_tasks': ['import'],
     }
 
     def get_context_data(self, **kwargs):
@@ -619,7 +619,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     work.publication_number = row.get('publication_number')
                     work.created_by_user = self.request.user
                     work.updated_by_user = self.request.user
-                    work.stub = not row.get('primary')
+                    work.stub = not row.get('principal')
 
                     try:
                         work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
@@ -783,8 +783,8 @@ There may have been a typo in the spreadsheet, or the work may not exist yet.
 Otherwise, the 'with effect from' date could be in the wrong format, or the repealing work might not have commenced yet.
 Check the spreadsheet for reference and link it manually, or add the 'Pending commencement' label to this task.'''.format(info.get('repealed_by'))
         elif task_type == 'parent_work':
-            task.title = 'Link parent work'
-            task.description = '''This work's parent work could not be linked automatically.
+            task.title = 'Link primary work'
+            task.description = '''This work's primary work could not be linked automatically.
 There may have been a typo in the spreadsheet, or the work may not exist yet.
 Check the spreadsheet for reference and link it manually.'''
 
@@ -834,10 +834,10 @@ Otherwise, find it and upload it manually.'''
             tasks.append(task)
 
         # bulk create tasks on primary works
-        if form.cleaned_data.get('primary_tasks'):
+        if form.cleaned_data.get('principal_tasks'):
             for info in works:
                 if info['status'] == 'success' and not info['work'].stub:
-                    for chosen_task in form.cleaned_data.get('primary_tasks'):
+                    for chosen_task in form.cleaned_data.get('principal_tasks'):
                         make_task(chosen_task)
 
         # bulk create tasks on all works

@@ -1,0 +1,24 @@
+{% extends "indigo_app/tasks/tabbed_layout.html" %}
+{% load humanize indigo_app %}
+
+{% block title %}Available tasks{% endblock %}
+
+{% block content %}
+<div class="container-fluid mt-3">
+  <div class="card">
+    {% if tasks %}
+      {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False  place=True %}
+    {% else %}
+      <div class="card-body">
+        <p class="text-center"><em>No tasks found.</em></p>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if is_paginated %}
+    <nav class="mt-4">
+      {% include 'indigo_app/_paginator.html' %}
+    </nav>
+  {% endif %}
+</div>
+{% endblock %}

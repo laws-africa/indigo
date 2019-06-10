@@ -42,7 +42,6 @@
           <li class="nav-heading"><span class="when-minimized">P. I. T.</span><span class="when-expanded">Point in Time</span></li>
           <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#properties-modal"><i class="fas fa-cog"></i> Properties</a></li>
           <li class="nav-item"><a class="nav-link" href="#" data-toggle="modal" data-target="#attachments-modal"><i class="fas fa-paperclip"></i> Attachments</a></li>
-          <li class="nav-item"><a class="nav-link show-preview" href="#"><i class="fas fa-fw fa-eye"></i> Preview</a></li>
           {% endif %}
           {% endblock %}
         {% endblock %}
@@ -75,13 +74,11 @@
 
 {% block content %}
 <div class="work-view">
-  <div class="main-content">
-    {% block main-content %}
-    <div class="container pt-3 pb-5">
-      {% block work-content %}{% endblock %}
-    </div>
-    {% endblock %}
+  {% block main-content %}
+  <div class="container pt-3 pb-5">
+    {% block work-content %}{% endblock %}
   </div>
+  {% endblock %}
 </div>
 
 {% include "indigo_api/_work_chooser_modal.html" %}

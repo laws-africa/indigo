@@ -107,12 +107,12 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/v1/za/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/v1/za/act/')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)
 
         response = self.client.get('/api/v1/za/act/2014')
         assert_equal(response.status_code, 200)
@@ -227,12 +227,20 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/v1/za/act/2014/10/eng/main/section/1.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_equal(response.content, '<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1">\n  <num>1.</num>\n  <content>\n    <p>tester</p>\n  </content>\n</section>\n')
+        assert_equal(response.content, '''<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1"><num>1.</num>
+        <content>
+          <p>tester</p>
+        </content>
+      </section>
+    
+''')
 
         response = self.client.get('/api/v1/za/act/2014/10/eng/main/section/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_equal(response.content, '<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3><span class="akn-content"><span class="akn-p">tester</span></span></section>')
+        assert_equal(response.content, '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3><span class="akn-content">
+          <span class="akn-p">tester</span>
+        </span></section>''')
 
     def test_at_expression_date(self):
         response = self.client.get('/api/v1/za/act/2010/1/eng@2011-01-01.json')
@@ -420,7 +428,7 @@ class PublishedAPITest(APITestCase):
         response = self.client.get('/api/v1/za/act/2014/10/eng@2014-02-12.json')
         assert_equal(response.status_code, 200)
 
-        assert_equal(response.data['publication_document']['url'], 'http://testserver/api/v1/za/act/2014/10/eng@2014-02-12/media/za-act-2014-10-publication-document.pdf')
+        assert_equal(response.data['publication_document']['url'], 'http://localhost:8000/works/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
     def test_published_search_perms(self):
         self.client.logout()
@@ -432,4 +440,4 @@ class PublishedAPITest(APITestCase):
     def test_published_search(self):
         response = self.client.get('/api/v1/search/za?q=act')
         assert_equal(response.status_code, 200)
-        assert_equal(len(response.data['results']), 3)
+        assert_equal(len(response.data['results']), 4)

@@ -65,7 +65,7 @@ def resolver_url(request, resolver):
         return ''
 
     if resolver:
-        if resolver.startswith('http'):
+        if resolver.startswith('http') or resolver.startswith('/'):
             return resolver
         else:
             return request.build_absolute_uri('/resolver/%s/resolve' % resolver)
@@ -105,7 +105,7 @@ class XSLTRenderer(object):
 
 
 def generate_filename(data, view, format=None):
-    if isinstance(data, Document):
+    if hasattr(data, 'frbr_uri'):
         parts = [data.year, data.number]
         if hasattr(view, 'component'):
             parts.extend([view.component if view.component != 'main' else None, view.subcomponent])
@@ -129,7 +129,7 @@ class AkomaNtosoRenderer(XMLRenderer):
     title = 'Akoma Ntoso XML'
 
     def render(self, data, media_type=None, renderer_context=None):
-        if not isinstance(data, Document):
+        if not hasattr(data, 'frbr_uri'):
             return super(AkomaNtosoRenderer, self).render(data, media_type, renderer_context)
 
         view = renderer_context['view']
@@ -259,7 +259,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
     suffix = '?standalone=1'
 
     def render(self, document, media_type=None, renderer_context=None):
-        if not isinstance(document, Document):
+        if not hasattr(document, 'frbr_uri'):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
 
         view = renderer_context['view']
@@ -506,6 +506,7 @@ class EPUBRenderer(HTMLRenderer):
             'renderer': self.renderer,
             'coverpage': True,
             'resolver_url': self.resolver,
+            'coverpage_template': self.coverpage_template(document),
         }
         titlepage = render_to_string(template_name, context)
 
@@ -595,7 +596,7 @@ class PDFResponseRenderer(BaseRenderer):
         self.cache = caches['default']
 
     def render(self, data, media_type=None, renderer_context=None):
-        if not isinstance(data, (Document, list)):
+        if not hasattr(data, 'frbr_uri') and not isinstance(data, list):
             return ''
 
         view = renderer_context['view']
@@ -631,7 +632,7 @@ class PDFResponseRenderer(BaseRenderer):
         return pdf
 
     def cache_key(self, data, view):
-        if isinstance(data, Document):
+        if hasattr(data, 'frbr_uri'):
             # it's unsaved, don't bother
             if data.id is None:
                 return None
@@ -661,7 +662,7 @@ class EPUBResponseRenderer(PDFResponseRenderer):
     title = 'ePUB'
 
     def render(self, data, media_type=None, renderer_context=None):
-        if not isinstance(data, (Document, list)):
+        if not hasattr(data, 'frbr_uri') and not isinstance(data, list):
             return ''
 
         view = renderer_context['view']
@@ -711,7 +712,7 @@ class ZIPResponseRenderer(BaseRenderer):
     title = 'ZIP Archive'
 
     def render(self, data, media_type=None, renderer_context=None):
-        if not isinstance(data, (Document, list)):
+        if not hasattr(data, 'frbr_uri') and not isinstance(data, list):
             return ''
 
         view = renderer_context['view']

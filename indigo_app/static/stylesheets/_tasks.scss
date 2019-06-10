@@ -21,11 +21,27 @@
   background-color: $grey;
 }
 
-.task-icon-open:before { content: "\f08d"; }
-.task-icon-done:before { content: "\f00c"; }
-.task-icon-pending_review:before { content: "\f128"; }
-.task-icon-cancelled:before { content: "\f00d"; }
-.task-icon-assigned:before { content: "\f4fc"; }
+.task-icon-open:before {
+  content: "\f08d";
+  color: $primary;
+}
+.task-icon-done:before {
+  content: "\f00c";
+  color: $success;
+}
+
+.task-icon-pending_review:before {
+  content: "\f128";
+  color: $orange;
+}
+.task-icon-cancelled:before {
+  content: "\f00d";
+  color: $grey;
+}
+.task-icon-assigned:before {
+  content: "\f4fc";
+  color: $primary;
+}
 
 .task-icon-assignee {
   color: $primary;
@@ -35,15 +51,16 @@
   &:not(:last-child) {
     border-right: 1px solid $grey;
   }
+}
 
-  .task-list-card {
-    border: 0px;
-    box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.25);
+.task-list-card {
+  border: 0px;
+  box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.25);
+  border-radius: 4px;
 
-    &> .card-body {
-      padding: 0.75rem;
-      line-height: 1.2;
-    }
+  &> .card-body {
+    padding: 0.75rem;
+    line-height: 1.2;
   }
 }
 
@@ -54,13 +71,37 @@
 }
 
 .workflow-badge {
-  font-size: 100%;
-  padding: 0.4em;
-  color: $white;
-  background-color: theme-color('primary');
-  margin-top: 5px;
+  color: $primary;
 
   &.workflow-closed {
-    background-color: $grey;
+    color: $grey;
   }
+}
+
+.task-list-card-heading {
+  text-decoration: underline;
+  color: black;
+}
+
+.task-border-open {
+  border: 1px solid $primary;
+}
+.task-border-pending_review {
+  border: 1px solid $orange;
+}
+.task-border-done {
+  border: 1px solid $success;
+}
+.text-open {
+  color: $primary
+}
+.text-pending_review {
+  color: $orange;
+}
+.text-done {
+  color: $success;
+}
+
+.narrow {
+  width: 200px !important;
 }

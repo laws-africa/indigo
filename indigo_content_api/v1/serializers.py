@@ -8,21 +8,13 @@ from indigo_api.models import Document, Attachment, Country, Locality, Publicati
 from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer, AttachmentSerializer
 
 
-def published_doc_url(doc, request):
+def published_doc_url(doc, request, frbr_uri=None):
     """ Absolute URL for a published document.
     eg. /api/v1/za/acts/2005/01/eng@2006-02-03
     """
-    uri = doc.expression_uri.expression_uri()[1:]
+    uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
     uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
     return uri.replace('%40', '@')
-
-
-class PublishedPublicationDocumentSerializer(PublicationDocumentSerializer):
-    def get_url(self, instance):
-        if instance.trusted_url:
-            return instance.trusted_url
-        uri = published_doc_url(self.context['document'], self.context['request'])
-        return uri + '/media/' + instance.filename
 
 
 class ExpressionSerializer(serializers.Serializer):
@@ -98,7 +90,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         except PublicationDocument.DoesNotExist:
             return None
 
-        return PublishedPublicationDocumentSerializer(
+        return PublicationDocumentSerializer(
             context={'document': doc, 'request': self.context['request']}
         ).to_representation(pub_doc)
 

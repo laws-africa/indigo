@@ -6,7 +6,6 @@ import datetime
 from itertools import chain, groupby
 
 from actstream import action
-
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.db import models
@@ -20,18 +19,16 @@ from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
 from django_fsm import FSMField, has_transition_perm, transition
-
 import arrow
 from taggit.managers import TaggableManager
 import reversion.revisions
 import reversion.models
-
 from countries_plus.models import Country as MasterCountry
 from languages_plus.models import Language as MasterLanguage
-
 from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
+from indigo.custom_tasks import tasks
 from indigo.documents import ResolvedAnchor
 
 log = logging.getLogger(__name__)
@@ -966,6 +963,9 @@ class Attachment(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        ordering = ('filename',)
+
     # TODO: enforce unique filename for document
 
 
@@ -1072,6 +1072,7 @@ class DocumentActivity(models.Model):
 
     class Meta:
         unique_together = ('document', 'user', 'nonce')
+        ordering = ('created_at',)
 
     def touch(self):
         self.updated_at = timezone.now()
@@ -1105,10 +1106,23 @@ class TaskManager(models.Manager):
 
 
 class Task(models.Model):
-    STATES = ('open', 'pending_review', 'cancelled', 'done')
+    OPEN = 'open'
+    PENDING_REVIEW = 'pending_review'
+    CANCELLED = 'cancelled'
+    DONE = 'done'
 
-    CLOSED_STATES = ('cancelled', 'done')
-    OPEN_STATES = ('open', 'pending_review')
+    STATES = (OPEN, PENDING_REVIEW, CANCELLED, DONE)
+
+    CLOSED_STATES = (CANCELLED, DONE)
+    OPEN_STATES = (OPEN, PENDING_REVIEW)
+
+    VERBS = {
+        'submit': 'submitted',
+        'cancel': 'cancelled',
+        'reopen': 'reopened',
+        'unsubmit': 'requested changes to',
+        'close': 'approved',
+    }
 
     class Meta:
         permissions = (
@@ -1132,10 +1146,14 @@ class Task(models.Model):
     # cf indigo_api.models.Annotation
     anchor_id = models.CharField(max_length=128, null=True, blank=True)
 
-    state = FSMField(default='open')
+    state = FSMField(default=OPEN)
+
+    # internal task code
+    code = models.CharField(max_length=100, null=True, blank=True)
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
     created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
@@ -1231,7 +1249,11 @@ class Task(models.Model):
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
     def submit(self, user):
-        pass
+        if not self.assigned_to:
+            self.assign_to(user, user)
+        self.last_assigned_to = self.assigned_to
+        self.assigned_to = None
+        action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
     def may_cancel(self, view):
@@ -1240,7 +1262,8 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
-        pass
+        self.assigned_to = None
+        action.send(user, verb=self.VERBS['cancel'], action_object=self, place_code=self.place.place_code)
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1249,27 +1272,38 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        pass
+        self.closed_by_user = None
+        action.send(user, verb=self.VERBS['reopen'], action_object=self, place_code=self.place.place_code)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
         return view.request.user.is_authenticated and \
-            view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.unsubmit_task')
+            view.request.user.editor.has_country_permission(view.country) and \
+            view.request.user.has_perm('indigo_api.unsubmit_task') and \
+            (view.request.user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        pass
+        self.assigned_to = self.last_assigned_to
+        action.send(user, verb=self.VERBS['unsubmit'],
+                    action_object=self,
+                    target=self.assigned_to,
+                    place_code=self.place.place_code)
 
     # close
     def may_close(self, view):
         return view.request.user.is_authenticated and \
-        view.request.user.editor.has_country_permission(view.country) and  \
-        view.request.user.has_perm('indigo_api.close_task') and \
-        view.request.user != self.last_assigned_to
+            view.request.user.editor.has_country_permission(view.country) and \
+            view.request.user.has_perm('indigo_api.close_task') and \
+            (view.request.user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        pass
+        if not self.assigned_to:
+            self.assign_to(user, user)
+        self.closed_by_user = self.assigned_to
+        self.assigned_to = None
+        action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 
     def anchor(self):
         return {'id': self.anchor_id}
@@ -1279,6 +1313,18 @@ class Task(models.Model):
             return None
 
         return ResolvedAnchor(anchor=self.anchor(), document=self.document)
+
+    @property
+    def customised(self):
+        """ If this task is customised, return a new object describing the customisation.
+        """
+        if self.code:
+            if not hasattr(self, '_customised'):
+                plugin = tasks.for_locale(self.code, country=self.country, locality=self.locality)
+                self._customised = plugin
+                if plugin:
+                    self._customised.setup(self)
+            return self._customised
 
     @classmethod
     def task_columns(cls, required_groups, tasks):
@@ -1341,6 +1387,7 @@ class Workflow(models.Model):
         permissions = (
             ('close_workflow', 'Can close a workflow'),
         )
+        ordering = ('title',)
 
     objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
 

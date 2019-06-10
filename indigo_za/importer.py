@@ -120,17 +120,17 @@ class ImporterZA(Importer):
         return '\n'.join(output)
 
     def strip_toc(self, text):
-        """ Do our best to remove table of contents at the start, it really confuses the grammer.
+        """ Do our best to remove table of contents at the start, it really confuses the grammar.
 
-        We do this by finding the first non-empty line after the 'Table of Contents' section.
+        We do this by finding the first section-like line after the 'Table of Contents' section.
         We then find the first place where that line is repeated, and consider that the start of the document.
         """
         # first, try to find 'TABLE OF CONTENTS' anywhere within the first 4K of text
         toc_start = re.search(r'TABLE OF CONTENTS|arrangement of sections', text[:4096], re.IGNORECASE)
         if toc_start:
-            # grab the first non-blank line after that, it will be our end-of-TOC marker
+            # grab the first section-link line after that, it will be our end-of-TOC marker
             # eg '1. Definitions'
-            first_toc_entry = re.search(r'^\s*(.+)$', text[toc_start.end():], re.MULTILINE)
+            first_toc_entry = re.search(r'^\s*(((CHAPTER|PART) +[0-9]+)|[0-9]+\. +\w+)', text[toc_start.end():], re.MULTILINE | re.IGNORECASE)
 
             if first_toc_entry:
                 marker = first_toc_entry.group(1).strip()

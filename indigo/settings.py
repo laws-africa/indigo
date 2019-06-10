@@ -114,6 +114,7 @@ SESSION_COOKIE_SECURE = not DEBUG
 
 # where does the pdftotext binary live?
 INDIGO_PDFTOTEXT = 'pdftotext'
+INDIGO_EMAIL_FAIL_SILENTLY = True
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -277,9 +278,9 @@ SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 
 # REST
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
+    'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
-    ),
+    ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -375,7 +376,13 @@ LOGGING = {
             'handlers': ['console'],
             'level': 'ERROR'
         },
+        'indigo': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
         'indigo_api': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
+        'indigo_app': {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
         'django': {

@@ -2,8 +2,7 @@
 from __future__ import unicode_literals
 import json
 from itertools import chain
-
-from actstream import action
+import datetime
 
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
@@ -13,19 +12,19 @@ from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
-from django.views.generic.base import View
+from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django_comments.models import Comment
 from django.views.generic.edit import BaseFormView
 from allauth.account.utils import user_display
-
+from actstream import action
 from django_fsm import has_transition_perm
 
 from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
+from indigo_app.forms import TaskCreateForm, TaskEditForm, TaskFilterForm, BulkTaskUpdateForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -120,7 +119,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    form_class = TaskForm
+    form_class = TaskCreateForm
     model = Task
 
     def form_valid(self, form):
@@ -182,7 +181,7 @@ class TaskEditView(TaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
-    form_class = TaskForm
+    form_class = TaskEditForm
     model = Task
 
     def form_valid(self, form):
@@ -245,45 +244,24 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
         user = self.request.user
         task.updated_by_user = user
 
-        potential_changes = {
-            'submit': 'submitted',
-            'cancel': 'cancelled',
-            'reopen': 'reopened',
-            'unsubmit': 'unsubmitted',
-            'close': 'closed',
-        }
+        if task.customised:
+            # redirect to custom close url, if necessary
+            if self.change == 'close' and task.customised.close_url():
+                return redirect(task.customised.close_url())
 
-        for change, verb in potential_changes.items():
+        for change, verb in Task.VERBS.iteritems():
             if self.change == change:
                 state_change = getattr(task, change)
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
-                state_change(user)
-                if verb == 'submitted':
-                    task.last_assigned_to = task.assigned_to
-                    task.assigned_to = None
-                    action.send(user, verb=verb, action_object=task,
-                                place_code=task.place.place_code)
-                    messages.success(request, u"Task '%s' has been submitted for review" % task.title)
-                elif verb == 'unsubmitted' and task.last_assigned_to:
-                    assignee = task.last_assigned_to
-                    task.assigned_to = assignee
-                    if user.id == assignee.id:
-                        action.send(user, verb='unsubmitted and picked up', action_object=task,
-                                    place_code=task.place.place_code)
-                        messages.success(request, u"You have unsubmitted and picked up the task '%s'" % task.title)
-                    else:
-                        action.send(user, verb='unsubmitted and reassigned', action_object=task,
-                                    target=assignee,
-                                    place_code=task.place.place_code)
-                        messages.success(request, u"Task '%s' has been unsubmitted and reassigned" % task.title)
 
-                else:
-                    if verb == 'closed' or verb == 'cancelled':
-                        task.assigned_to = None
-                    action.send(user, verb=verb, action_object=task,
-                                place_code=task.place.place_code)
-                    messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+                state_change(user)
+
+                if change == 'submit':
+                    verb = 'submitted for review'
+                if change == 'unsubmit':
+                    verb = 'returned with changes requested'
+                messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
         task.save()
 
@@ -403,3 +381,53 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         if self.request.GET.get('next'):
             return self.request.GET.get('next')
         return reverse('tasks', kwargs={'place': self.kwargs['place']})
+
+
+class MyTasksView(AbstractAuthedIndigoView, TemplateView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/my_tasks.html'
+    tab='my_tasks'
+
+    def get_context_data(self, **kwargs):
+        context = super(MyTasksView, self).get_context_data(**kwargs)
+
+        # open tasks assigned to this user
+        context['open_assigned_tasks'] = Task.objects \
+            .filter(assigned_to=self.request.user, state__in=Task.OPEN_STATES) \
+            .all()
+
+        # tasks previously assigned to this user and now pending approval
+        context['tasks_pending_approval'] = Task.objects \
+            .filter(last_assigned_to=self.request.user, state='pending_review') \
+            .all()
+
+        # tasks recently approved
+        threshold = datetime.date.today() - datetime.timedelta(days=7)
+        context['tasks_recently_approved'] = Task.objects \
+            .filter(last_assigned_to=self.request.user, state='done') \
+            .filter(updated_at__gte=threshold) \
+            .all()[:50]
+
+        context['tab_count'] = len(context['open_assigned_tasks']) + len(context['tasks_pending_approval'])
+
+        return context
+
+
+class AvailableTasksView(AbstractAuthedIndigoView, ListView):
+    authentication_required = True
+    template_name = 'indigo_app/tasks/available_tasks.html'
+    context_object_name = 'tasks'
+    paginate_by = 50
+    paginate_orphans = 4
+    tab = 'available_tasks'
+
+    def get_queryset(self):
+        return Task.objects \
+            .filter(assigned_to=None, state__in=Task.OPEN_STATES)\
+            .defer('document__document_xml', 'document__search_text', 'document__search_vector') \
+            .order_by('-updated_at')
+
+    def get_context_data(self, **kwargs):
+        context = super(AvailableTasksView, self).get_context_data(**kwargs)
+        context['tab_count'] = context['paginator'].count
+        return context

@@ -23,6 +23,7 @@ from cobalt.act import Base
 import lxml.html.diff
 from lxml.etree import LxmlError
 
+from indigo.analysis.differ import AttributeDiffer
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
@@ -207,16 +208,31 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
             .order_by('-id')\
             .first()
 
+        differ = AttributeDiffer()
+
         if old_version:
-            old_html = old_version.object_version.object.to_html()
+            old_document = old_version.object_version.object
+            old_document.document_xml = differ.preprocess_document_diff(old_document.document_xml)
+            old_html = old_document.to_html()
         else:
             old_html = ""
-        new_html = version.object_version.object.to_html()
-        diff = lxml.html.diff.htmldiff(old_html, new_html)
+
+        new_document = version.object_version.object
+        new_document.document_xml = differ.preprocess_document_diff(new_document.document_xml)
+        new_html = new_document.to_html()
+
+        old_tree = lxml.html.fromstring(old_html) if old_html else None
+        new_tree = lxml.html.fromstring(new_html)
+        n_changes = differ.diff_document_html(old_tree, new_tree)
+
+        diff = lxml.html.tostring(new_tree, encoding='utf-8')
 
         # TODO: include other diff'd attributes
 
-        return Response({'content': diff})
+        return Response({
+            'content': diff,
+            'n_changes': n_changes,
+        })
 
     def get_queryset(self):
         return self.document.versions()

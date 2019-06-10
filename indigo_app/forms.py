@@ -188,7 +188,7 @@ class BatchCreateWorkForm(forms.Form):
 Make sure the document's expression date correctly reflects this.''',
         },
     ]
-    primary_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
+    principal_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
                                                required=False)
@@ -209,7 +209,7 @@ class ImportDocumentForm(forms.Form):
             raise forms.ValidationError("Invalid json data")
 
 
-class TaskForm(forms.ModelForm):
+class TaskCreateForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
@@ -218,7 +218,12 @@ class TaskForm(forms.ModelForm):
                                             required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
                                                required=False)
-    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
+
+
+class TaskEditForm(TaskCreateForm):
+    class Meta:
+        model = Task
+        fields = ('title', 'description', 'labels', 'workflows')
 
 
 class TaskFilterForm(forms.Form):
@@ -226,11 +231,13 @@ class TaskFilterForm(forms.Form):
     state = forms.MultipleChoiceField(choices=((x, x) for x in Task.STATES + ('assigned',)))
     format = forms.ChoiceField(choices=[('columns', 'columns'), ('list', 'list')])
     assigned_to = forms.ModelMultipleChoiceField(queryset=User.objects)
+    submitted_by = forms.ModelMultipleChoiceField(queryset=User.objects)
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(TaskFilterForm, self).__init__(*args, **kwargs)
         self.fields['assigned_to'].queryset = User.objects.filter(editor__permitted_countries=self.country).order_by('first_name', 'last_name').all()
+        self.fields['submitted_by'].queryset = self.fields['assigned_to'].queryset
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('labels'):
@@ -246,6 +253,10 @@ class TaskFilterForm(forms.Form):
 
         if self.cleaned_data.get('assigned_to'):
             queryset = queryset.filter(assigned_to__in=self.cleaned_data['assigned_to'])
+
+        if self.cleaned_data.get('submitted_by'):
+            queryset = queryset.filter(state__in=['pending_review', 'closed'])\
+                .filter(last_assigned_to__in=self.cleaned_data['submitted_by'])
 
         return queryset
 

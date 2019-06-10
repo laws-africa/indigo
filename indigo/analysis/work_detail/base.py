@@ -17,8 +17,10 @@ class BaseWorkDetail(LocaleBasedMatcher):
         """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
         This usually differs from the short title. May return None.
         """
-        uri = work.work_uri
         number = work.number
+        if number == 'constitution':
+            return None
+        uri = work.work_uri
         work_type = self.work_friendly_type(work)
         return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number, 'year': work.year}
 

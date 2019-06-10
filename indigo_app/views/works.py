@@ -160,7 +160,6 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
-        context['taxonomies'] = VocabularyTopic.objects.all()
         return context
 
     def form_valid(self, form):

@@ -57,6 +57,9 @@
         {% else %}
           #{{ task.id }}
         {% endif %}
+        {% if task.changes_requested %}
+          <span class="badge badge-secondary ml-1">Changes requested</span>
+        {% endif %}
       </div>
       {% if icon %}
         <i class="fas fa-fw task-icon-{{ task.state }} text-{{ task.state }} small"></i>

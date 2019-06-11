@@ -1156,6 +1156,8 @@ class Task(models.Model):
     last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
+    changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
+
     created_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     updated_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
@@ -1286,6 +1288,7 @@ class Task(models.Model):
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
         self.assigned_to = self.last_assigned_to
+        self.changes_requested = True
         action.send(user, verb=self.VERBS['unsubmit'],
                     action_object=self,
                     target=self.assigned_to,
@@ -1303,6 +1306,7 @@ class Task(models.Model):
         if not self.assigned_to:
             self.assign_to(user, user)
         self.closed_by_user = self.assigned_to
+        self.changes_requested = False
         self.assigned_to = None
         action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 

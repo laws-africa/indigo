@@ -28,6 +28,9 @@
           {% else %}
           #{{ task.id }}
           {% endif %}
+          {% if task.changes_requested %}
+            <span class="badge badge-secondary ml-1">Changes requested</span>
+          {% endif %}
         </span>
       </div>
     </td>

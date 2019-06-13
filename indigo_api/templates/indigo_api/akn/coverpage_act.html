@@ -46,7 +46,15 @@
 
       {% if document.commencement_date %}
       <li class="commencement-date">
-        {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
+        {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }}{% endblocktrans %}
+        {% with document.work.commencing_work as commencing_work %}
+          {% if commencing_work %}
+            {% with subtype=commencing_work.subtype|upper number=commencing_work.number year=commencing_work.year title=commencing_work.title %}
+              {% blocktrans %}(as per {{ subtype }} {{ number }} of {{ year }} – {{ title }}){% endblocktrans %}
+            {% endwith %}
+          {% endif %}
+        {% endwith %}
+        {% blocktrans %}unless otherwise noted{% endblocktrans %}
       </li>
       {% endif %}
     </ul>

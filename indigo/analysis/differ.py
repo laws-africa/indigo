@@ -49,7 +49,7 @@ class AttributeDiffer(object):
             cmp = self.diff_default
             if isinstance(old, list) or isinstance(new, list):
                 cmp = self.diff_lists
-            cmp = getattr(self, 'diff_' + attr, cmp)
+            cmp = getattr(self, 'diff_attr_' + attr, cmp)
 
             diff = cmp(attr, title, old, new)
             if diff:

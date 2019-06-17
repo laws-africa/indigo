@@ -747,7 +747,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 self.create_task(info, form, task_type='repeal')
 
     def find_work_by_title(self, title):
-        return Work.objects.get(title=title, country=self.country, locality=self.locality)
+        potential_match = Work.objects.filter(title=title, country=self.country, locality=self.locality)
+        if len(potential_match) == 1:
+            return potential_match
 
     def link_parent_work(self, info, form):
         # if the work has a `parent_work`, try linking it

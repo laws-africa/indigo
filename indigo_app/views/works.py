@@ -688,10 +688,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         work = info['work']
         title = info['commenced_by']
         commencing_work = self.find_work_by_title(title)
-        if commencing_work:
-            work.commencing_work = commencing_work
+        if not commencing_work:
+            return self.create_task(info, form, task_type='commencement')
+
+        work.commencing_work = commencing_work
+        try:
             work.save_with_revision(self.request.user)
-        else:
+        except ValidationError:
             self.create_task(info, form, task_type='commencement')
 
     def link_amendment(self, info, form):

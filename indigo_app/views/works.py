@@ -675,7 +675,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             if info['status'] == 'success':
                 if info.get('commenced_by'):
                     self.link_commencement(info, form)
-                self.link_repeal(info, form)
+                if info.get('repealed_by'):
+                    self.link_repeal(info, form)
                 self.link_parent_work(info, form)
 
             if info['status'] == 'success' or info['status'] == 'duplicate':
@@ -729,25 +730,22 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         # make a task if this fails
         # (either because the work isn't found or because the repeal date isn't right,
         # which could be because it doesn't exist or because it's in the wrong format)
-        if info.get('repealed_by'):
-            try:
-                repealing_work = self.find_work_by_title(info.get('repealed_by'))
-            except Work.DoesNotExist:
-                return self.create_task(info, form, task_type='repeal')
+        work = info['work']
+        repealing_work = self.find_work_by_title(info['repealed_by'])
+        if not repealing_work:
+            return self.create_task(info, form, task_type='repeal')
 
-            repeal_date = repealing_work.commencement_date
-            repeal_date = info.get('with_effect_from') or repeal_date
+        repeal_date = repealing_work.commencement_date
+        if not repeal_date:
+            return self.create_task(info, form, task_type='repeal')
 
-            if not repeal_date:
-                return self.create_task(info, form, task_type='repeal')
+        work.repealed_by = repealing_work
+        work.repealed_date = repeal_date
 
-            info['work'].repealed_by = repealing_work
-            info['work'].repealed_date = repeal_date
-
-            try:
-                info['work'].save_with_revision(self.request.user)
-            except ValidationError:
-                self.create_task(info, form, task_type='repeal')
+        try:
+            work.save_with_revision(self.request.user)
+        except ValidationError:
+            self.create_task(info, form, task_type='repeal')
 
     def find_work_by_title(self, title):
         potential_match = Work.objects.filter(title=title, country=self.country, locality=self.locality)

@@ -673,7 +673,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def link_works(self, works, form):
         for info in works:
             if info['status'] == 'success':
-                self.link_commencement(info, form)
+                if info.get('commenced_by'):
+                    self.link_commencement(info, form)
                 self.link_repeal(info, form)
                 self.link_parent_work(info, form)
 
@@ -683,12 +684,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def link_commencement(self, info, form):
         # if the work is `commenced_by` something, try linking it
         # make a task if this fails
-        if info.get('commenced_by'):
-            try:
-                info['work'].commencing_work = self.find_work_by_title(info.get('commenced_by'))
-                info['work'].save_with_revision(self.request.user)
-            except Work.DoesNotExist:
-                self.create_task(info, form, task_type='commencement')
+        work = info['work']
+        title = info['commenced_by']
+        commencing_work = self.find_work_by_title(title)
+        if commencing_work:
+            work.commencing_work = commencing_work
+            work.save_with_revision(self.request.user)
+        else:
+            self.create_task(info, form, task_type='commencement')
 
     def link_amendment(self, info, form):
         # if the work `amends` something, try linking it

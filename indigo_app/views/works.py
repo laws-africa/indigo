@@ -680,7 +680,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 if info.get('parent_work'):
                     self.link_parent_work(info, form)
 
-            if info['status'] == 'success' or info['status'] == 'duplicate':
+            if (info['status'] == 'success' or info['status'] == 'duplicate') and info.get('amends'):
                 self.link_amendment(info, form)
 
     def link_commencement(self, info, form):
@@ -702,32 +702,29 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        if info.get('amends'):
-            try:
-                amended_work = self.find_work_by_title(info.get('amends'))
+        work = info['work']
+        amended_work = self.find_work_by_title(info['amends'])
+        if not amended_work:
+            return self.create_task(info, form, task_type='amendment')
 
-                date = info.get('commencement_date') or info['work'].commencement_date
+        date = info.get('commencement_date') or work.commencement_date
+        if not date:
+            return self.create_task(info, form, task_type='amendment')
 
-                try:
-                    Amendment.objects.get(
-                        amended_work=amended_work,
-                        amending_work=info['work'],
-                        date=date
-                    )
+        try:
+            Amendment.objects.get(
+                amended_work=amended_work,
+                amending_work=work,
+                date=date
+            )
 
-                except Amendment.DoesNotExist:
-                    if date:
-                        amendment = Amendment()
-                        amendment.amended_work = amended_work
-                        amendment.amending_work = info['work']
-                        amendment.created_by_user = self.request.user
-                        amendment.date = date
-                        amendment.save()
-                    else:
-                        self.create_task(info, form, task_type='amendment')
-
-            except Work.DoesNotExist:
-                self.create_task(info, form, task_type='amendment')
+        except Amendment.DoesNotExist:
+            amendment = Amendment()
+            amendment.amended_work = amended_work
+            amendment.amending_work = work
+            amendment.created_by_user = self.request.user
+            amendment.date = date
+            amendment.save()
 
     def link_repeal(self, info, form):
         # if the work is `repealed_by` something, try linking it

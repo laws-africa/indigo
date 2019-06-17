@@ -677,7 +677,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     self.link_commencement(info, form)
                 if info.get('repealed_by'):
                     self.link_repeal(info, form)
-                self.link_parent_work(info, form)
+                if info.get('parent_work'):
+                    self.link_parent_work(info, form)
 
             if info['status'] == 'success' or info['status'] == 'duplicate':
                 self.link_amendment(info, form)
@@ -758,12 +759,17 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def link_parent_work(self, info, form):
         # if the work has a `parent_work`, try linking it
         # make a task if this fails
-        if info.get('parent_work'):
-            try:
-                info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
-                info['work'].save_with_revision(self.request.user)
-            except Work.DoesNotExist:
-                self.create_task(info, form, task_type='parent_work')
+        work = info['work']
+        parent_work = self.find_work_by_title(info['parent_work'])
+        if not parent_work:
+            return self.create_task(info, form, task_type='parent_work')
+
+        work.parent_work = self.find_work_by_title(info.get('parent_work'))
+
+        try:
+            work.save_with_revision(self.request.user)
+        except ValidationError:
+            self.create_task(info, form, task_type='parent_work')
 
     def create_task(self, info, form, task_type):
         task = Task()

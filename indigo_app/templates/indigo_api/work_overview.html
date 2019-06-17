@@ -67,6 +67,17 @@
                     <br>Commenced by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
                     {% endif %}
                   </dd>
+
+                  {% regroup work.taxonomies.all by taxonomy_vocabulary as topic_groups %}
+                  {% if topic_groups %}
+                      {% for topic in topic_groups %}
+                        <dt>{{ topic.grouper }}</dt>
+                          {% for taxonomy in topic.list %}
+                            {{ taxonomy }}<br>
+                          {% endfor %}
+                      {% endfor %}
+                  {% endif %}
+
                 </dl>
               </div>
 

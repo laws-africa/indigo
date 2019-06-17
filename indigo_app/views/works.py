@@ -751,11 +751,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         except ValidationError:
             self.create_task(info, form, task_type='repeal')
 
-    def find_work_by_title(self, title):
-        potential_match = Work.objects.filter(title=title, country=self.country, locality=self.locality)
-        if len(potential_match) == 1:
-            return potential_match
-
     def link_parent_work(self, info, form):
         # if the work has a `parent_work`, try linking it
         # make a task if this fails
@@ -770,6 +765,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             work.save_with_revision(self.request.user)
         except ValidationError:
             self.create_task(info, form, task_type='parent_work')
+
+    def find_work_by_title(self, title):
+        potential_match = Work.objects.filter(title=title, country=self.country, locality=self.locality)
+        if len(potential_match) == 1:
+            return potential_match
 
     def create_task(self, info, form, task_type):
         task = Task()

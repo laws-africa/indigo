@@ -629,9 +629,12 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.save_with_revision(self.request.user)
 
                         # link publication document
+                        publication_number = work.publication_number
+                        if " " in work.publication_number:
+                            publication_number = work.publication_number.split()[-1]
                         params = {
                             'date': row.get('publication_date'),
-                            'number': work.publication_number,
+                            'number': publication_number,
                             'publication': work.publication_name,
                             'country': self.country.place_code,
                             'locality': self.locality.code if self.locality else None,

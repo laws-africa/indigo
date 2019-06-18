@@ -618,7 +618,79 @@ class DocumentQuerySet(models.QuerySet):
         return obj
 
 
-class Document(models.Model):
+class DocumentMixin(object):
+    @property
+    def year(self):
+        return self.work_uri.date.split('-', 1)[0]
+
+    @property
+    def number(self):
+        return self.work_uri.number
+
+    @property
+    def nature(self):
+        return self.work_uri.doctype
+
+    @property
+    def subtype(self):
+        return self.work_uri.subtype
+
+    @property
+    def country(self):
+        return self.work_uri.country
+
+    @property
+    def locality(self):
+        return self.work_uri.locality
+
+    @property
+    def django_language(self):
+        return self.language.language.iso_639_1
+
+    def get_subcomponent(self, component, subcomponent):
+        """ Get the named subcomponent in this document, such as `chapter/2` or 'section/13A'.
+        :class:`lxml.objectify.ObjectifiedElement` or `None`.
+        """
+        def search_toc(items):
+            for item in items:
+                if item.component == component and item.subcomponent == subcomponent:
+                    return item.element
+
+                if item.children:
+                    found = search_toc(item.children)
+                    if found:
+                        return found
+
+        return search_toc(self.table_of_contents())
+
+    def table_of_contents(self):
+        builder = plugins.for_document('toc', self)
+        return builder.table_of_contents_for_document(self)
+
+    def to_html(self, **kwargs):
+        from .renderers import HTMLRenderer
+        renderer = HTMLRenderer()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return renderer.render(self, **kwargs)
+
+    def element_to_html(self, element):
+        """ Render a child element of this document into HTML. """
+        from .renderers import HTMLRenderer
+        renderer = HTMLRenderer()
+        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return renderer.render(self, element=element)
+
+    def to_pdf(self, **kwargs):
+        from .renderers import PDFRenderer
+        return PDFRenderer().render(self, **kwargs)
+
+    def element_to_pdf(self, element):
+        """ Render a child element of this document into PDF. """
+        from .renderers import PDFRenderer
+        return PDFRenderer().render(self, element=element)
+
+
+class Document(DocumentMixin, models.Model):
     class Meta:
         permissions = (
             ('publish_document', 'Can publish and edit non-draft documents'),
@@ -688,30 +760,6 @@ class Document(models.Model):
         """ The correct way to update the raw XML of the document. This will re-parse the XML
         and other attributes -- such as the document title and FRBR URI based on the XML. """
         self.reset_xml(value, from_model=False)
-
-    @property
-    def year(self):
-        return self.work_uri.date.split('-', 1)[0]
-
-    @property
-    def number(self):
-        return self.work_uri.number
-
-    @property
-    def nature(self):
-        return self.work_uri.doctype
-
-    @property
-    def subtype(self):
-        return self.work_uri.subtype
-
-    @property
-    def country(self):
-        return self.work_uri.country
-
-    @property
-    def locality(self):
-        return self.work_uri.locality
 
     def amendments(self):
         if self.expression_date:
@@ -842,26 +890,6 @@ class Document(models.Model):
         self._doc = doc
         self.copy_attributes(from_model)
 
-    def table_of_contents(self):
-        builder = plugins.for_document('toc', self)
-        return builder.table_of_contents_for_document(self)
-
-    def get_subcomponent(self, component, subcomponent):
-        """ Get the named subcomponent in this document, such as `chapter/2` or 'section/13A'.
-        :class:`lxml.objectify.ObjectifiedElement` or `None`.
-        """
-        def search_toc(items):
-            for item in items:
-                if item.component == component and item.subcomponent == subcomponent:
-                    return item.element
-
-                if item.children:
-                    found = search_toc(item.children)
-                    if found:
-                        return found
-
-        return search_toc(self.table_of_contents())
-
     def versions(self):
         """ Return a queryset of `reversion.models.Version` objects for
         revisions for this work, most recent first.
@@ -872,28 +900,6 @@ class Document(models.Model):
             .filter(content_type=content_type)\
             .filter(object_id_int=self.id)\
             .order_by('-id')
-
-    def to_html(self, **kwargs):
-        from .renderers import HTMLRenderer
-        renderer = HTMLRenderer()
-        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
-        return renderer.render(self, **kwargs)
-
-    def element_to_html(self, element):
-        """ Render a child element of this document into HTML. """
-        from .renderers import HTMLRenderer
-        renderer = HTMLRenderer()
-        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
-        return renderer.render(self, element=element)
-
-    def to_pdf(self, **kwargs):
-        from .renderers import PDFRenderer
-        return PDFRenderer().render(self, **kwargs)
-
-    def element_to_pdf(self, element):
-        """ Render a child element of this document into PDF. """
-        from .renderers import PDFRenderer
-        return PDFRenderer().render(self, element=element)
 
     def manifestation_url(self, fqdn=''):
         """ Fully-qualified manifestation URL.
@@ -908,10 +914,6 @@ class Document(models.Model):
         doc = Act(xml)
         doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
         return doc
-
-    @property
-    def django_language(self):
-        return self.language.language.iso_639_1
 
     def __unicode__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])

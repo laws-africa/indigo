@@ -42,6 +42,11 @@ class Notifier(object):
                     'recipient': task.last_assigned_to,
                 })
 
+        elif action.verb == 'submitted' and task.changes_requested:
+            # send a notice to the reviewer that the task was
+            # resubmitted and reassigned
+            pass
+
     def notify_comment_posted(self, comment):
         """
         This function will be responsible for emailing members of a thread when

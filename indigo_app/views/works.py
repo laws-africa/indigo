@@ -762,9 +762,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self.create_task(info, form, task_type='parent_work')
 
     def find_work_by_title(self, title):
-        potential_match = Work.objects.filter(title=title, country=self.country, locality=self.locality)
-        if len(potential_match) == 1:
-            return potential_match.first()
+        potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
+        if len(potential_matches) == 1:
+            return potential_matches.first()
 
     def create_task(self, info, form, task_type):
         task = Task()

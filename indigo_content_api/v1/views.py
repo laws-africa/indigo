@@ -13,7 +13,7 @@ from cobalt import FrbrUri
 
 from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from indigo_api.views.documents import DocumentViewMixin, SearchView
-from indigo_api.views.attachments import view_attachment_by_filename, view_attachment
+from indigo_api.views.attachments import view_attachment
 from indigo_api.models import Attachment, Country, Document
 
 from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
@@ -384,8 +384,12 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
     def get_file(self, request, filename, *args, **kwargs):
         """ Download a media file.
         """
-        document = self.get_document()
-        return view_attachment_by_filename(document.id, filename)
+        attachment = self.filter_queryset(self.get_queryset())\
+            .filter(filename=filename)\
+            .first()
+        if not attachment:
+            return Http404()
+        return view_attachment(attachment)
 
     def get_publication_document(self, request, filename, *args, **kwargs):
         """ Download the media publication file for a work.

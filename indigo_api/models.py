@@ -1154,6 +1154,7 @@ class Task(models.Model):
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    reviewed_by_user = models.ForeignKey(User, related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
     closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
 
     changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
@@ -1255,7 +1256,7 @@ class Task(models.Model):
         if not self.assigned_to:
             self.assign_to(user, user)
         self.last_assigned_to = self.assigned_to
-        self.assigned_to = None
+        self.assigned_to = self.reviewed_by_user
         action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
@@ -1287,6 +1288,9 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
+        if not self.assigned_to or self.assigned_to != user:
+            self.assign_to(user, user)
+        self.reviewed_by_user = self.assigned_to
         self.assigned_to = self.last_assigned_to
         self.changes_requested = True
         action.send(user, verb=self.VERBS['unsubmit'],
@@ -1303,7 +1307,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        if not self.assigned_to:
+        if not self.assigned_to or self.assigned_to != user:
             self.assign_to(user, user)
         self.closed_by_user = self.assigned_to
         self.changes_requested = False

@@ -2,68 +2,68 @@
   <div class="modal-dialog modal-lg cheatsheet" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Indigo Editor Cheatsheet</h5>
+        <h5 class="modal-title">Editor Cheatsheet</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
       </div>
-      <div class="modal-body scrollable">
+      <div class="modal-body scrollable ace-xcode">
 
         <section class="clearfix">
-          <pre>PREFACE</pre>
+          <pre class="ace_constant ace_language">PREFACE</pre>
           <p>Starts the preface of the document.<br>Must come before preamble and body.</p>
         </section>
 
         <section class="clearfix">
-          <pre>PREAMBLE</pre>
+          <pre class="ace_constant ace_language">PREAMBLE</pre>
           <p>Starts the preamble of the document.<br>Must come after the preface and before the body.</p>
         </section>
 
         <section class="clearfix">
-          <pre>LONGTITLE To establish … and provide for matters connected therewith.</pre>
-          <p>Long title.<br/>Comes before 'BE IT ENACTED … as follows:—'</p>
+          <pre><span class="ace_constant ace_language">LONGTITLE</span> <span class="ace_entity ace_name ace_tag">To establish ...</span></pre>
+          <p>Long title.<br/>Comes before "BE IT ENACTED..."</p>
         </section>
 
         <section class="clearfix">
-          <pre>BODY</pre>
+          <pre class="ace_constant ace_language">BODY</pre>
           <p>Starts the body of the document.</p>
         </section>
 
         <section class="clearfix">
-          <pre>Chapter 2 - Interpretation
+          <pre><span class="ace_constant ace_language">Chapter</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
 
-Chapter 2</pre>
+<span class="ace_constant ace_language">Chapter</span> <span class="ace_constant ace_numeric">2</span></pre>
           <p>Starts a new chapter.<br>The chapter number is required, but the heading is optional.</p>
         </section>
 
         <section class="clearfix">
-          <pre>Part 2 - Interpretation
+          <pre><span class="ace_constant ace_language">Part</span> <span class="ace_constant ace_numeric">2</span> <span class="ace_entity ace_name ace_tag">- Interpretation</span>
 
-Part 2</pre>
+<span class="ace_constant ace_language">Part</span> <span class="ace_constant ace_numeric">2</span></pre>
           <p>Starts a new part.<br>The part number is required, but the heading is optional.</p>
         </section>
 
         <section class="clearfix">
-          <pre>CROSSHEADING E. Control under a Scheme</pre>
+          <pre><span class="ace_constant ace_language">CROSSHEADING</span> <span class="ace_entity ace_name ace_tag">E. Control under a Scheme</span></pre>
           <p>Numbered or unnumbered sub-part heading.</p>
         </section>
 
         <section class="clearfix">
-          <pre>2. Definitions
+          <pre><span class="ace_constant ace_numeric">2.</span> <span class="ace_entity ace_name ace_tag">Definitions</span>
 
-3.
+<span class="ace_constant ace_numeric">3.</span>
 A section without a heading.</pre>
           <p>Starts a new section.<br>The section heading is optional.</p>
         </section>
 
         <section class="clearfix">
-          <pre>(2) The content of subsection 2</pre>
+          <pre><span class="ace_constant ace_numeric">(2)</span> The content of subsection 2</pre>
           <p>Starts a new numbered subsection.</p>
         </section>
 
         <section class="clearfix">
           <pre>The following rules apply:
-(a) first rule,
-(b) second rule, and
-(c) third rule.</pre>
+<span class="ace_constant ace_numeric">(a)</span> first rule,
+<span class="ace_constant ace_numeric">(b)</span> second rule, and
+<span class="ace_constant ace_numeric">(c)</span> third rule.</pre>
           <p>Creates a numbered list.</p>
         </section>
 
@@ -83,19 +83,19 @@ A section without a heading.</pre>
         </section>
 
         <section class="clearfix">
-          <pre>Schedule
+          <pre><span class="ace_constant ace_language">Schedule</span>
 
-Schedule - Second Schedule
+<span class="ace_constant ace_language">Schedule</span> <span class="ace_constant ace_numeric">- Second Schedule</span>
 
-Schedule 3 - Important Title
+<span class="ace_constant ace_language">Schedule</span> <span class="ace_constant ace_numeric">3</span> <span class="ace_constant ace_numeric">- Important Title</span>
 
-Schedule 4 - Schedule with a Heading
+<span class="ace_constant ace_language">Schedule</span> <span class="ace_constant ace_numeric">4</span> <span class="ace_constant ace_numeric">- Schedule with a Heading</span>
 The Heading</pre>
           <p>Starts a new schedule.<br>The number, title and heading are all optional. The heading must be on the next line.</p>
         </section>
 
         <section class="clearfix">
-          <pre>{|
+          <pre class="ace_constant ace_language ace_table">{|
 |-
 ! header 1
 ! header 2
@@ -113,12 +113,12 @@ The Heading</pre>
         </section>
 
         <section class="clearfix">
-          <pre>[link text](http://example.com/link)</pre>
+          <pre class="ace_markup ace_underline ace_link">[link text](http://example.com/link)</pre>
           <p>Creates a hyperlink</p>
         </section>
 
         <section class="clearfix">
-          <pre>![alternative text](/media/image.png)</pre>
+          <pre class="ace_constant ace_other ace_image">![alternative text](/media/image.png)</pre>
           <p>Embeds an image, using <code>alternative text</code> if the image can't be found.</p>
         </section>
 

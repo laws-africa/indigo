@@ -1170,7 +1170,7 @@ class Task(models.Model):
 
     labels = models.ManyToManyField('TaskLabel', related_name='+')
 
-    # extra_data = JSONField(default={'points': 'TASK_POINTS_TIER_1'})
+    extra_data = JSONField(default={'points': 12})
 
     @property
     def place(self):

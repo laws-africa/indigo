@@ -58,9 +58,6 @@ INSTALLED_APPS = (
     # Indigo metrics and stats
     'indigo_metrics',
 
-    # Indigo points
-    'indigo_points',
-
     'allauth',
     'allauth.account',
     'allauth.socialaccount',

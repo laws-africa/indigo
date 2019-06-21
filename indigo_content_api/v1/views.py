@@ -388,7 +388,7 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
             .filter(filename=filename)\
             .first()
         if not attachment:
-            return Http404()
+            raise Http404()
         return view_attachment(attachment)
 
     def get_publication_document(self, request, filename, *args, **kwargs):
@@ -401,7 +401,7 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
                 return redirect(work.publication_document.trusted_url)
             return view_attachment(work.publication_document)
 
-        return Http404()
+        raise Http404()
 
 
 class PublishedDocumentSearchView(PlaceAPIBase, SearchView):

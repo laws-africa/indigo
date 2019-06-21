@@ -1,7 +1,7 @@
 from django.test.utils import override_settings
 from sass_processor.processor import SassProcessor
 
-from indigo_content_api.tests.test_content_api import ContentAPIV1Test
+from indigo_content_api.tests.v1.test_content_api import ContentAPIV1Test
 
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),

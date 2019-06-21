@@ -422,6 +422,8 @@ class ContentAPIV1Test(APITestCase):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng@2014-02-12.json')
         assert_equal(response.status_code, 200)
 
+        # this deliberately doesn't use the API path, it uses the app path which allows
+        # us to make this public
         assert_equal(response.data['publication_document']['url'], 'http://localhost:8000/works/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
     def test_published_search_perms(self):

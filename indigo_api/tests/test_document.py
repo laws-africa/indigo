@@ -84,20 +84,22 @@ class DocumentTestCase(TestCase):
         amended = Work.objects.get(id=3)
         d = date(2011, 12, 10)
 
-        # this will impact only work 2
+        # this will impact only document id 3
         user = User.objects.get(pk=1)
         a = Amendment(amending_work=amending, amended_work=amended, date=d, created_by_user=user)
         a.save()
 
         doc = Document.objects.get(id=2)
-        assert_equal(doc.amendment_events(), [])
+        # only the pre-existing amendment event
+        assert_equal(len(doc.amendment_events()), 1)
 
         doc = Document.objects.get(id=3)
-        events = doc.amendment_events()
-        assert_equal(len(events), 1)
-        assert_equal(events[0].amending_uri, amending.frbr_uri)
-        assert_equal(events[0].amending_title, amending.title)
-        assert_equal(events[0].date, d)
+        events = list(doc.amendment_events())
+        # one new in addition to the two previous ones
+        assert_equal(len(events), 3)
+        assert_equal(events[1].amending_uri, amending.frbr_uri)
+        assert_equal(events[1].amending_title, amending.title)
+        assert_equal(events[1].date, d)
 
     def test_get_subcomponent(self):
         d = Document(language=self.eng)

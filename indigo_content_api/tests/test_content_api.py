@@ -17,7 +17,7 @@ SassProcessor.processor_enabled = True
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
-class PublishedAPITest(APITestCase):
+class ContentAPIV1Test(APITestCase):
     fixtures = ['countries', 'user', 'editor', 'work', 'published', 'colophon']
     api_path = '/api/v1'
     api_host = 'testserver'
@@ -435,3 +435,10 @@ class PublishedAPITest(APITestCase):
         response = self.client.get(self.api_path + '/search/za?q=act')
         assert_equal(response.status_code, 200)
         assert_equal(len(response.data['results']), 4)
+
+    def test_published_work_before_1900(self):
+        response = self.client.get(self.api_path + '/za/act/1880/1.html')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_not_in('<akomaNtoso', response.content)
+        assert_in('<div', response.content)

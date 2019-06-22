@@ -34,20 +34,6 @@ class ContentAPIV2Test(ContentAPIV1Test):
         self.assertEqual(response.accepted_media_type, 'application/json')
         self.assertEqual(response.data['frbr_uri'], '/akn/za/act/2014/10')
 
-    def test_published_atom(self):
-        response = self.client.get(self.api_path + '/za/summary.atom')
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client.get(self.api_path + '/za/full.atom')
-        self.assertEqual(response.status_code, 404)
-
-        response = self.client.get(self.api_path + '/za/act/2014/full.atom')
-        self.assertEqual(response.status_code, 404)
-
-    def test_published_atom_404(self):
-        response = self.client.get('/api/v2/uk/summary.atom')
-        self.assertEqual(response.status_code, 404)
-
     def test_latest_expression_in_listing(self):
         # a listing should only include the most recent expression of a document
         # with different expression dates

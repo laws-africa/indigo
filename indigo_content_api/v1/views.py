@@ -17,7 +17,6 @@ from indigo_api.views.attachments import view_attachment
 from indigo_api.models import Attachment, Country, Document
 
 from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
-from indigo_content_api.v1.atom import AtomRenderer, AtomFeed
 
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
@@ -136,7 +135,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     * ``/za/``: list all published documents for South Africa.
     * ``/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/za/act/1994/summary.atom``: all the acts from 1994 as an atom feed
     * ``/za/act/1994.pdf``: all the acts from 1994 as a PDF
     * ``/za/act/1994.epub``: all the acts from 1994 as an ePUB
 
@@ -148,7 +146,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     serializer_class = PublishedDocumentSerializer
     # these determine what content negotiation takes place
-    renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
+    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
                         ZIPResponseRenderer)
 
     def perform_content_negotiation(self, request, force=False):
@@ -206,25 +204,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def list(self, request):
         """ Return details on many documents.
         """
-        if self.request.accepted_renderer.format == 'atom':
-            # feeds show most recently changed first
-            self.queryset = self.queryset.order_by('-updated_at')
-
-            # what type of feed?
-            if self.kwargs['frbr_uri'].endswith('summary'):
-                self.kwargs['feed'] = 'summary'
-                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-7]
-            elif self.kwargs['frbr_uri'].endswith('full'):
-                self.kwargs['feed'] = 'full'
-                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
-            else:
-                raise Http404
-
-            if self.kwargs['feed'] == 'full':
-                # full feed is big, limit it
-                self.paginator.page_size = AtomFeed.full_feed_page_size
-
-        elif self.request.accepted_renderer.format in ['pdf', 'epub', 'zip']:
+        if self.request.accepted_renderer.format in ['pdf', 'epub', 'zip']:
             # NB: don't try to sort in the db, that's already sorting to
             # return the latest expression of each doc. Sort here instead.
             documents = sorted(self.filter_queryset(self.get_queryset()).all(), key=lambda d: d.title)
@@ -260,18 +240,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         response.data['links'] = [
             {
                 "rel": "alternate",
-                "title": AtomFeed.summary_feed_title,
-                "href": url + "/summary.atom",
-                "mediaType": AtomRenderer.media_type,
-            },
-            {
-                "rel": "alternate",
-                "title": AtomFeed.full_feed_title,
-                "href": url + "/full.atom",
-                "mediaType": AtomRenderer.media_type,
-            },
-            {
-                "rel": "alternate",
                 "title": "PDF",
                 "href": url + ".pdf",
                 "mediaType": "application/pdf"
@@ -305,9 +273,9 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             return match.group(1)
 
     def handle_exception(self, exc):
-        # Formats like atom and XML don't render exceptions well, so just
+        # Formats like XML don't render exceptions well, so just
         # fall back to HTML
-        if hasattr(self.request, 'accepted_renderer') and self.request.accepted_renderer.format in ['xml', 'atom']:
+        if hasattr(self.request, 'accepted_renderer') and self.request.accepted_renderer.format in ['xml']:
             self.request.accepted_renderer = renderers.StaticHTMLRenderer()
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
@@ -317,10 +285,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         frbr_uri = super(PublishedDocumentDetailView, self).parse_frbr_uri(frbr_uri)
 
         if frbr_uri:
-            # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
-            if frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
-                return None
-
             # in a URL like
             #
             #   /act/1980/1/toc

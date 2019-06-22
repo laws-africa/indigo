@@ -5,6 +5,7 @@ from django.core.validators import _lazy_re_compile, RegexValidator
 from indigo_api.models import Country, User
 from indigo_social.models import UserProfile
 from indigo_social.badges import badges
+from pinax.badges.models import BadgeAward
 
 
 class UserProfileForm(forms.ModelForm):
@@ -65,6 +66,13 @@ def badge_choices():
 class AwardBadgeForm(forms.Form):
     badge = forms.ChoiceField(choices=badge_choices)
     next = forms.CharField(required=False)
+
+    def __init__(self, user=None, *args, **kwargs):
+        super(AwardBadgeForm, self).__init__(*args, **kwargs)
+        if user:
+            # filter possible badges to only those that the user doesn't already have
+            awarded = [b.slug for b in BadgeAward.objects.filter(user=user)]
+            self.fields['badge'].choices = [b for b in self.fields['badge'].choices if b[0] not in awarded]
 
     def actual_badge(self):
         return badges.registry.get(self.cleaned_data.get('badge'))

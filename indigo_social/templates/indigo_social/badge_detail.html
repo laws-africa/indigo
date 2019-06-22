@@ -36,6 +36,8 @@
       {% if request.user.is_superuser %}
       <h4 class="mt-3">Permissions granted by this badge</h4>
 
+      <p>Users awarded this badge are added to the <a href="{% url 'admin:auth_group_change' badge.group.pk %}">{{ badge.group_name }} group</a>.</p>
+
       <ul>
         {% for perm in badge.permissions %}
         <li>{{ perm }}</li>

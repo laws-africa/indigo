@@ -6,8 +6,8 @@
   z-index: 1055;
 
   @include media-breakpoint-up(md) { 
-    left: unset;
     max-width: 31%;
+    margin: auto;
   }
 }
 

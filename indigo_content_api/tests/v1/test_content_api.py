@@ -366,12 +366,7 @@ class ContentAPIV1Test(APITestCase):
 
         # create a doc with an attachment
         self.client.login(username='email@example.com', password='password')
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!")
-        tmp_file.seek(0)
-        response = self.client.post('/api/documents/%s/attachments' % id,
-                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
-        assert_equal(response.status_code, 201)
+        self.upload_attachment(id)
 
         # should have one item
         self.client.login(username='api-user@example.com', password='password')
@@ -391,6 +386,14 @@ class ContentAPIV1Test(APITestCase):
         # even for a non-existent one
         response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/bad.txt')
         assert_equal(response.status_code, 403)
+
+    def upload_attachment(self, doc_id):
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
+        tmp_file.write("hello!")
+        tmp_file.seek(0)
+        response = self.client.post('/api/documents/%s/attachments' % doc_id,
+                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
+        assert_equal(response.status_code, 201)
 
     def test_published_zipfile(self):
         response = self.client.get(self.api_path + '/za/act/2001/8/eng.zip')

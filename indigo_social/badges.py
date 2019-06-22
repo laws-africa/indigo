@@ -2,6 +2,7 @@ from django.contrib.auth.models import Permission, Group
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.core.signals import request_started
 
 from pinax.badges.base import Badge, BadgeAwarded, BadgeDetail
 from pinax.badges.registry import badges
@@ -236,3 +237,19 @@ def editor_countries_changed(sender, instance, action, reverse, model, pk_set, *
 def country_saved(sender, instance, created, raw, **kwargs):
     if created:
         CountryBadge.create_for_country(instance)
+
+
+def create_country_badges():
+    # Install a once-off signal handler to create country badges before the
+    # first request comes through. This allows us to work around the fact
+    # that during testing, ready() is called before the database migrations
+    # are applied, so no db tables exist. There doesn't seem to be a better
+    # way to get code to run when the app starts up and AFTER the db has
+    # been set up.
+    uid = "indigo-social-country-setup"
+
+    def create_badges(sender, **kwargs):
+        request_started.disconnect(create_badges, dispatch_uid=uid)
+        badges.CountryBadge.create_all()
+
+    request_started.connect(create_badges, dispatch_uid=uid, weak=False)

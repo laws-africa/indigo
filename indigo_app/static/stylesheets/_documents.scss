@@ -430,26 +430,16 @@ button.btn-link.help {
 }
 
 .cheatsheet {
-  section {
-    clear: both;
+  .editor-snippet {
+    padding: 10px;
+    border: 1px solid $gray-200;
+    background-color: $gray-100;
+  }
 
-    border-bottom: 1px solid $grey-lighter;
-    margin-bottom: 10px;
-
-    &:last-child {
-      border-bottom: 0px;
-    }
-
-    pre {
-      width: 40%;
-      float: left;
-    }
-
-    p {
-      width: 60%;
-      float: left;
-      padding-left: 20px;
-    }
+  .akoma-ntoso-snippet {
+    padding: 10px;
+    border: 1px solid $gray-200;
+    background-color: $gray-100;
   }
 }
 

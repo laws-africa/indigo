@@ -89,29 +89,29 @@ class AtomFeed(feedgenerator.Atom1Feed):
             handler.addQuickElement("content", content, {"type": "html"})
 
         # metadata
-        handler.addQuickElement("im:frbr-uri", doc.frbr_uri)
-        handler.addQuickElement("im:country", doc.country)
+        handler.addQuickElement("im:frbr-uri", doc.work.frbr_uri)
+        handler.addQuickElement("im:country", doc.work.country.code)
         if doc.locality:
-            handler.addQuickElement("im:locality", doc.locality)
-        handler.addQuickElement("im:nature", doc.nature)
+            handler.addQuickElement("im:locality", doc.work.locality.code)
+        handler.addQuickElement("im:nature", doc.work.nature)
         if doc.subtype:
-            handler.addQuickElement("im:subtype", doc.subtype)
-        handler.addQuickElement("im:year", doc.year)
-        handler.addQuickElement("im:number", doc.number)
+            handler.addQuickElement("im:subtype", doc.work.subtype)
+        handler.addQuickElement("im:year", doc.work.year)
+        handler.addQuickElement("im:number", doc.work.number)
 
         if doc.expression_date:
             handler.addQuickElement("im:expression-date", doc.expression_date.isoformat())
         if doc.assent_date:
-            handler.addQuickElement("im:assent-date", doc.assent_date.isoformat())
+            handler.addQuickElement("im:assent-date", doc.work.assent_date.isoformat())
         if doc.commencement_date:
-            handler.addQuickElement("im:commencement-date", doc.commencement_date.isoformat())
+            handler.addQuickElement("im:commencement-date", doc.work.commencement_date.isoformat())
 
         if doc.publication_date:
-            handler.addQuickElement("im:publication-date", doc.publication_date.isoformat())
+            handler.addQuickElement("im:publication-date", doc.work.publication_date.isoformat())
         if doc.publication_name:
-            handler.addQuickElement("im:publication-name", doc.publication_name)
+            handler.addQuickElement("im:publication-name", doc.work.publication_name)
         if doc.publication_number:
-            handler.addQuickElement("im:publication-number", doc.publication_number)
+            handler.addQuickElement("im:publication-number", doc.work.publication_number)
 
     def item_description(self, doc):
         desc = doc.title

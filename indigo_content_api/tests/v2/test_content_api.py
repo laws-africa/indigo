@@ -1,7 +1,8 @@
 from django.test.utils import override_settings
 from sass_processor.processor import SassProcessor
+from rest_framework.test import APITestCase
 
-from indigo_content_api.tests.v1.test_content_api import ContentAPIV1Test
+from indigo_content_api.tests.v1.test_content_api import ContentAPIV1TestMixin
 
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
@@ -9,14 +10,8 @@ from indigo_content_api.tests.v1.test_content_api import ContentAPIV1Test
 SassProcessor.processor_enabled = True
 
 
-# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
-@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
-class ContentAPIV2Test(ContentAPIV1Test):
-    fixtures = ['countries', 'user', 'editor', 'work', 'published', 'colophon']
+class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
     api_path = '/api/v2/akn'
-
-    def setUp(self):
-        self.client.login(username='api-user@example.com', password='password')
 
     def test_published_json(self):
         response = self.client.get(self.api_path + '/za/act/2014/10')
@@ -86,11 +81,17 @@ class ContentAPIV2Test(ContentAPIV1Test):
     def test_published_search_perms(self):
         old = self.api_path
         self.api_path = '/api/v2'
-        super(ContentAPIV2Test, self).test_published_search_perms()
+        super(ContentAPIV2TestMixin, self).test_published_search_perms()
         self.api_path = old
 
     def test_published_search(self):
         old = self.api_path
         self.api_path = '/api/v2'
-        super(ContentAPIV2Test, self).test_published_search()
+        super(ContentAPIV2TestMixin, self).test_published_search()
         self.api_path = old
+
+
+# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
+@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
+class ContentAPIV2Test(ContentAPIV2TestMixin, APITestCase):
+    fixtures = ['countries', 'user', 'editor', 'work', 'published', 'colophon']

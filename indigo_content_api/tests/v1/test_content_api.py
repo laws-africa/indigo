@@ -7,7 +7,6 @@ from django.test.utils import override_settings
 from sass_processor.processor import SassProcessor
 
 from indigo_api.renderers import PDFRenderer
-from indigo_api.models import PublicationDocument, Work
 
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
@@ -15,10 +14,7 @@ from indigo_api.models import PublicationDocument, Work
 SassProcessor.processor_enabled = True
 
 
-# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
-@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
-class ContentAPIV1Test(APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'work', 'published', 'colophon']
+class ContentAPIV1TestMixin(object):
     api_path = '/api/v1'
     api_host = 'testserver'
 
@@ -429,3 +425,9 @@ class ContentAPIV1Test(APITestCase):
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content)
         assert_in('<div', response.content)
+
+
+# Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
+@override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
+class ContentAPIV1Test(ContentAPIV1TestMixin, APITestCase):
+    fixtures = ['countries', 'user', 'editor', 'work', 'published', 'colophon']

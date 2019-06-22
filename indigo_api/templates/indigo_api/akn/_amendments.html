@@ -6,7 +6,7 @@
   <li class="amendment">
     {% with amending_title=amendment.amending_work.title amending_numtitle=amendment.amending_work.numbered_title date=amendment.date|date:"j E Y" %}
       {% work_resolver_url amendment.amending_work as resolver_uri %}
-      {% if numtitle %}
+      {% if amending_numtitle %}
         {% blocktrans %}[Amended by <a href="{{ resolver_uri }}" class="amending-title">{{ amending_title }} ({{ amending_numtitle }})</a> on <span class="amendment-date">{{ date }}</span>]{% endblocktrans %}
       {% else %}
         {% blocktrans %}[Amended by <a href="{{ resolver_uri }}" class="amending-title">{{ amending_title }}</a> on <span class="amendment-date">{{ date }}</span>]{% endblocktrans %}

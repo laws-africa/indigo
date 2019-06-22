@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from importlib import import_module
+
 from django.apps import AppConfig
 from django.core.signals import request_started
+from django.conf import settings
 
 
 class IndigoSocialConfig(AppConfig):
@@ -13,6 +16,10 @@ class IndigoSocialConfig(AppConfig):
 
     def setup_country_badges(self):
         import indigo_social.badges  # noqa
+
+        # import default set of badges, if any
+        if settings.INDIGO_SOCIAL['badges']:
+            import_module(settings.INDIGO_SOCIAL['badges'])
 
         # Install a once-off signal handler to create country badges before the
         # first request comes through. This allows us to work around the fact

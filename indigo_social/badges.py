@@ -250,6 +250,6 @@ def create_country_badges():
 
     def create_badges(sender, **kwargs):
         request_started.disconnect(create_badges, dispatch_uid=uid)
-        badges.CountryBadge.create_all()
+        CountryBadge.create_all()
 
     request_started.connect(create_badges, dispatch_uid=uid, weak=False)

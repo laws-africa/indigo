@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from importlib import import_module
+
 from django.apps import AppConfig
-from django.core.signals import request_started
+from django.conf import settings
 
 
 class IndigoSocialConfig(AppConfig):
@@ -14,16 +16,9 @@ class IndigoSocialConfig(AppConfig):
     def setup_country_badges(self):
         import indigo_social.badges  # noqa
 
-        # Install a once-off signal handler to create country badges before the
-        # first request comes through. This allows us to work around the fact
-        # that during testing, ready() is called before the database migrations
-        # are applied, so no db tables exist. There doesn't seem to be a better
-        # way to get code to run when the app starts up and AFTER the db has
-        # been set up.
-        uid = "indigo-social-country-setup"
+        # import default set of badges, if any
+        if settings.INDIGO_SOCIAL['badges']:
+            import_module(settings.INDIGO_SOCIAL['badges'])
 
-        def create_badges(sender, **kwargs):
-            request_started.disconnect(create_badges, dispatch_uid=uid)
-            indigo_social.badges.CountryBadge.create_all()
-
-        request_started.connect(create_badges, dispatch_uid=uid, weak=False)
+        # ensure country badges get created
+        indigo_social.badges.create_country_badges()

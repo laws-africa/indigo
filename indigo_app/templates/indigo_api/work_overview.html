@@ -72,13 +72,6 @@
 
               <div class="col-sm-6">
                 <dl class="mb-0">
-                  {% if work.parent_work %}
-                  <dt>Parent</dt>
-                  <dd>
-                    <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
-                  </dd>
-                  {% endif %}
-
                   <dt>Assent</dt>
                   <dd>
                     {% if work.assent_date %}
@@ -99,6 +92,30 @@
                       <i>(not repealed)</i>
                     {% endif %}
                   </dd>
+
+                  {% if work.parent_work %}
+                    <dt>Primary work</dt>
+                    <dd>
+                      <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+                    </dd>
+                  {% endif %}
+
+                  {% with work.child_works.all as kids %}
+                    {% if kids|length > 0 %}
+                      <dt>Subsidary works</dt>
+                      <dd>
+                        {% if kids|length > 3 %}
+                          <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>
+                        {% else %}
+                          <ul class="list-unstyled">
+                          {% for kid in kids %}
+                            <li><a href="{% url 'work' frbr_uri=kid.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=kid.frbr_uri %}">{{ kid.title }}</a></li>
+                          {% endfor %}
+                          </ul>
+                        {% endif %}
+                      </dd>
+                    {% endif %}
+                  {% endwith %}
                 </dl>
               </div>
             </div>

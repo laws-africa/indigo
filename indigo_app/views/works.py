@@ -629,9 +629,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                         work.save_with_revision(self.request.user)
 
                         # link publication document
+                        publication_number = work.publication_number.split()[-1]
                         params = {
                             'date': row.get('publication_date'),
-                            'number': work.publication_number,
+                            'number': publication_number,
                             'publication': work.publication_name,
                             'country': self.country.place_code,
                             'locality': self.locality.code if self.locality else None,
@@ -653,8 +654,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                             info['repealed_by'] = row.get('repealed_by')
                         if row.get('with_effect_from'):
                             info['with_effect_from'] = row.get('with_effect_from')
-                        if row.get('parent_work'):
-                            info['parent_work'] = row.get('parent_work')
+                        if row.get('primary_work'):
+                            info['parent_work'] = row.get('primary_work')
 
                     except ValidationError as e:
                         info['status'] = 'error'
@@ -670,123 +671,154 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def link_works(self, works, form):
         for info in works:
             if info['status'] == 'success':
-                self.link_commencement(info, form)
-                self.link_repeal(info, form)
-                self.link_parent_work(info, form)
+                if info.get('commenced_by'):
+                    self.link_commencement(info, form)
+                if info.get('repealed_by'):
+                    self.link_repeal(info, form)
+                if info.get('parent_work'):
+                    self.link_parent_work(info, form)
 
-            if info['status'] == 'success' or info['status'] == 'duplicate':
+            if (info['status'] == 'success' or info['status'] == 'duplicate') and info.get('amends'):
                 self.link_amendment(info, form)
 
     def link_commencement(self, info, form):
         # if the work is `commenced_by` something, try linking it
         # make a task if this fails
-        if info.get('commenced_by'):
-            try:
-                info['work'].commencing_work = self.find_work_by_title(info.get('commenced_by'))
-                info['work'].save_with_revision(self.request.user)
-            except Work.DoesNotExist:
-                self.create_task(info, form, task_type='commencement')
+        work = info['work']
+        title = info['commenced_by']
+        commencing_work = self.find_work_by_title(title)
+        if not commencing_work:
+            return self.create_task(info, form, task_type='commencement')
+
+        work.commencing_work = commencing_work
+        try:
+            work.save_with_revision(self.request.user)
+        except ValidationError:
+            self.create_task(info, form, task_type='commencement')
 
     def link_amendment(self, info, form):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        if info.get('amends'):
-            try:
-                amended_work = self.find_work_by_title(info.get('amends'))
+        work = info['work']
+        amended_work = self.find_work_by_title(info['amends'])
+        if not amended_work:
+            return self.create_task(info, form, task_type='amendment')
 
-                date = info.get('commencement_date') or info['work'].commencement_date
+        date = info.get('commencement_date') or work.commencement_date
+        if not date:
+            return self.create_task(info, form, task_type='amendment')
 
-                try:
-                    Amendment.objects.get(
-                        amended_work=amended_work,
-                        amending_work=info['work'],
-                        date=date
-                    )
+        try:
+            Amendment.objects.get(
+                amended_work=amended_work,
+                amending_work=work,
+                date=date
+            )
 
-                except Amendment.DoesNotExist:
-                    if date:
-                        amendment = Amendment()
-                        amendment.amended_work = amended_work
-                        amendment.amending_work = info['work']
-                        amendment.created_by_user = self.request.user
-                        amendment.date = date
-                        amendment.save()
-                    else:
-                        self.create_task(info, form, task_type='amendment')
-
-            except Work.DoesNotExist:
-                self.create_task(info, form, task_type='amendment')
+        except Amendment.DoesNotExist:
+            amendment = Amendment()
+            amendment.amended_work = amended_work
+            amendment.amending_work = work
+            amendment.created_by_user = self.request.user
+            amendment.date = date
+            amendment.save()
 
     def link_repeal(self, info, form):
         # if the work is `repealed_by` something, try linking it
         # make a task if this fails
         # (either because the work isn't found or because the repeal date isn't right,
         # which could be because it doesn't exist or because it's in the wrong format)
-        if info.get('repealed_by'):
-            try:
-                repealing_work = self.find_work_by_title(info.get('repealed_by'))
-            except Work.DoesNotExist:
-                return self.create_task(info, form, task_type='repeal')
+        work = info['work']
+        repealing_work = self.find_work_by_title(info['repealed_by'])
+        if not repealing_work:
+            return self.create_task(info, form, task_type='repeal')
 
-            repeal_date = repealing_work.commencement_date
-            repeal_date = info.get('with_effect_from') or repeal_date
+        repeal_date = repealing_work.commencement_date
+        if not repeal_date:
+            return self.create_task(info, form, task_type='repeal')
 
-            if not repeal_date:
-                return self.create_task(info, form, task_type='repeal')
+        work.repealed_by = repealing_work
+        work.repealed_date = repeal_date
 
-            info['work'].repealed_by = repealing_work
-            info['work'].repealed_date = repeal_date
-
-            try:
-                info['work'].save_with_revision(self.request.user)
-            except ValidationError:
-                self.create_task(info, form, task_type='repeal')
-
-    def find_work_by_title(self, title):
-        return Work.objects.get(title=title, country=self.country, locality=self.locality)
+        try:
+            work.save_with_revision(self.request.user)
+        except ValidationError:
+            self.create_task(info, form, task_type='repeal')
 
     def link_parent_work(self, info, form):
         # if the work has a `parent_work`, try linking it
         # make a task if this fails
-        if info.get('parent_work'):
-            try:
-                info['work'].parent_work = self.find_work_by_title(info.get('parent_work'))
-                info['work'].save_with_revision(self.request.user)
-            except Work.DoesNotExist:
-                self.create_task(info, form, task_type='parent_work')
+        work = info['work']
+        parent_work = self.find_work_by_title(info['parent_work'])
+        if not parent_work:
+            return self.create_task(info, form, task_type='parent_work')
+
+        work.parent_work = self.find_work_by_title(info.get('parent_work'))
+
+        try:
+            work.save_with_revision(self.request.user)
+        except ValidationError:
+            self.create_task(info, form, task_type='parent_work')
+
+    def find_work_by_title(self, title):
+        potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
+        if len(potential_matches) == 1:
+            return potential_matches.first()
 
     def create_task(self, info, form, task_type):
         task = Task()
         if task_type == 'commencement':
             task.title = 'Link commencement'
-            task.description = '''This work's commencement work could not be linked automatically.
-There may have been a typo in the spreadsheet, or the work may not exist yet.
-Check the spreadsheet for reference and link it manually.'''
+            task.description = '''On the spreadsheet, it says that this work is commenced by '{}' – see row {}.
+
+The commencement work could not be linked automatically.
+Possible reasons:
+– a typo in the spreadsheet
+– the commencing work hasn't been imported.
+
+Check the spreadsheet for reference and link it manually.'''.format(info['commenced_by'], info['row'])
+
         elif task_type == 'amendment':
             task.title = 'Link amendment(s)'
-            amended_title = info.get('amends')
+            amended_title = info['amends']
             if len(amended_title) > 256:
                 amended_title = "".join(amended_title[:256] + ', etc')
             task.description = '''On the spreadsheet, it says that this work amends '{}' – see row {}.
-This amendment could not be linked automatically.
-There may be more than one amended work listed, there may have been a typo in the spreadsheet, \
-there may not be a date for the amendment, or the amended work may not exist yet.
-Check the spreadsheet for reference and link it/them manually, \
-or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info.get('row'))
+
+The amendment could not be linked automatically.
+Possible reasons:
+– more than one amended work listed
+– a typo in the spreadsheet
+– no date for the amendment
+– the amended work hasn't been imported.
+
+Check the spreadsheet for reference and link it/them manually,
+or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info['row'])
 
         elif task_type == 'repeal':
             task.title = 'Link repeal'
-            task.description = '''According to the spreadsheet this work was repealed by the '{}', \
-            but the repeal could not be linked automatically.
-There may have been a typo in the spreadsheet, or the work may not exist yet.
-Otherwise, the 'with effect from' date could be in the wrong format, or the repealing work might not have commenced yet.
-Check the spreadsheet for reference and link it manually, or add the 'Pending commencement' label to this task.'''.format(info.get('repealed_by'))
+            task.description = '''On the spreadsheet, it says that this work was repealed by '{}' – see row {}.
+
+The repeal could not be linked automatically.
+Possible reasons:
+– a typo in the spreadsheet
+– no date for the repeal
+– the repealing work hasn't been imported.
+
+Check the spreadsheet for reference and link it manually,
+or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
+
         elif task_type == 'parent_work':
             task.title = 'Link primary work'
-            task.description = '''This work's primary work could not be linked automatically.
-There may have been a typo in the spreadsheet, or the work may not exist yet.
-Check the spreadsheet for reference and link it manually.'''
+            task.description = '''On the spreadsheet, it says that this work's primary work is '{}' – see row {}.
+
+The primary work could not be linked automatically.
+Possible reasons:
+– a typo in the spreadsheet
+– the primary work hasn't been imported.
+
+Check the spreadsheet for reference and link it manually.'''.format(info['parent_work'], info['row'])
 
         task.country = info['work'].country
         task.locality = info['work'].locality

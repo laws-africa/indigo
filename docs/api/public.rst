@@ -154,6 +154,7 @@ description of the English expression of Act 55 of 1998 as at 2014-01-07.
       "assent_date": "1998-10-12",
       "language": "eng",
       "repeal": null,
+      "numbered_title": "Act 55 of 1998",
       "amendments": [
         {
           "date": "2014-01-17",
@@ -209,6 +210,7 @@ locality            The code of the locality within the country.                
 nature              The nature of this work, normally "act".                                            String
 number              Number of this work with its year, or some other unique way of identifying it       String
                     within the year.
+numbered_title      Title of the work using only its numbering system (may be null).                    String
 publication_date    Date of original publication of the work.                                           ISO8601
 publication_name    Name of the publication in which the work was originally published.                 String
 publication_number  Number of the publication in which the work was originally published.               String

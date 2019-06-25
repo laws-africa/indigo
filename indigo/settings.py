@@ -296,6 +296,11 @@ INDIGO_USER_PROFILE_URL = 'indigo_social:user_profile'
 INDIGO_CONTENT_API_VERSIONED = True
 RESOLVER_URL = os.environ.get('RESOLVER_URL', INDIGO_URL + "/resolver/resolve")
 
+INDIGO_SOCIAL = {
+    # the badge module to load by default (optional)
+    'badges': 'indigo_social.default_badges',
+}
+
 DEFAULT_FROM_EMAIL = os.environ.get('DJANGO_DEFAULT_FROM_EMAIL', '%s <%s>' % (INDIGO_ORGANISATION, SUPPORT_EMAIL))
 EMAIL_HOST = os.environ.get('DJANGO_EMAIL_HOST')
 EMAIL_HOST_USER = os.environ.get('DJANGO_EMAIL_HOST_USER')

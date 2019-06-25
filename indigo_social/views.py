@@ -38,7 +38,7 @@ class UserProfileView(DetailView):
 
         context['can_award'] = self.request.user.has_perm('auth.change_user')
         if context['can_award']:
-            context['award_form'] = AwardBadgeForm()
+            context['award_form'] = AwardBadgeForm(user=self.object)
 
         activity = self.object.actor_actions.all()[:20]
         context['activity_stream'] = self.coalesce_entries(activity)

@@ -40,21 +40,13 @@ class WorksTest(testcases.TestCase):
 
     def test_create_edit_delete_amendment(self):
         work = Work.objects.get(frbr_uri='/za/act/2010/1')
-
-        # create
-        response = self.client.post('/works/za/act/2010/1/amendments/new', {'amending_work': '2', 'date': '2012-02-02'})
-        self.assertEqual(response.status_code, 302)
-        amendment = work.amendments.all()[0]
-        self.assertIsNotNone(amendment.created_by_user)
-        self.assertIsNotNone(amendment.updated_by_user)
-
-        self.assertEqual(amendment.amending_work.id, 2)
-        self.assertEqual(amendment.date.strftime("%Y-%m-%d"), '2012-02-02')
+        # the fixtures create two amendments, one at 2011-01-01 and one at 2012-02-02
+        amendment = list(work.amendments.all())[-1]
 
         # edit
         response = self.client.post('/works/za/act/2010/1/amendments/%s' % amendment.id, {'date': '2013-03-03'})
         self.assertEqual(response.status_code, 302)
-        amendment = work.amendments.all()[0]
+        amendment = list(work.amendments.all())[-1]
         self.assertEqual(amendment.date.strftime("%Y-%m-%d"), '2013-03-03')
 
         # expressions/documents should have updated
@@ -69,7 +61,7 @@ class WorksTest(testcases.TestCase):
         # delete
         response = self.client.post('/works/za/act/2010/1/amendments/%s' % amendment.id, {'delete': ''})
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(len(work.amendments.all()), 0)
+        self.assertEqual(len(work.amendments.all()), 1)
 
     def test_import_view(self):
         response = self.client.get('/works/za/act/2014/10/import/')

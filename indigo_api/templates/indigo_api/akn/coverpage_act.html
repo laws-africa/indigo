@@ -1,4 +1,4 @@
-{% load i18n %}
+{% load i18n indigo %}
 {% language document.django_language %}
 
 <div class="coverpage">
@@ -47,6 +47,19 @@
       {% if document.commencement_date %}
       <li class="commencement-date">
         {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
+        {% with document.work.commencing_work as commencing_work %}
+          {% if commencing_work %}
+            {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
+              <br>
+              {% work_resolver_url commencing_work as resolver_uri %}
+              {% if numbered_title %}
+                {% blocktrans %}(see <a href="{{ resolver_uri }}">{{ numbered_title }} – {{ title }}</a>){% endblocktrans %}
+              {% else %}
+                {% blocktrans %}(see <a href="{{ resolver_uri }}">{{ title }}</a>){% endblocktrans %}
+              {% endif %}
+            {% endwith %}
+          {% endif %}
+        {% endwith %}
       </li>
       {% endif %}
     </ul>

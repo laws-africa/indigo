@@ -49,6 +49,12 @@ var IndigoHighlightRules = function() {
                 token: "constant.language.table",
                 regex: /^\s*{\|/,
                 next: "table",
+            }, {
+                token: "markup.bold",
+                regex: /\*\*(.*?)\*\*/,
+            }, {
+                token: "markup.italic",
+                regex: /\/\/(.*?)\/\//,
             }
         ],
         "remark": [

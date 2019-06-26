@@ -1170,7 +1170,7 @@ class Task(models.Model):
 
     labels = models.ManyToManyField('TaskLabel', related_name='+')
 
-    extra_data = JSONField(null=True)
+    extra_data = JSONField(null=True, blank=True)
 
     @property
     def place(self):

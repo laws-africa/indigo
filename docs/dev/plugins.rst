@@ -48,6 +48,19 @@ Register a plugin using ``plugins.register(topic)`` and include a ``locale`` tha
         locale = ('za', 'afr', None)
         ...
 
+Fetching a Plugin
+-----------------
+
+You can fetch a plugin for a work or a document using :meth:`~indigo.plugins.plugins.for_work`,
+:meth:`~indigo.plugins.plugins.for_document`, or :meth:`~indigo.plugins.plugins.for_locale`
+on the plugin registry, giving it a plugin topic and a work, document or locale::
+
+    from indigo.plugins import plugins
+
+    toc_builder = plugins.for_document('toc', document)
+    if toc_builder:
+        toc_builder.table_of_contents_for_document(document)
+
 Custom Tasks
 ------------
 

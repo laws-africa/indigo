@@ -17,7 +17,7 @@ from indigo_api.signals import work_changed
 class BaseBulkCreator(LocaleBasedMatcher):
     """ Create works in bulk from a google sheets spreadsheet.
     """
-    def get_works(self, view, table, form):
+    def get_works(self, view, table):
         works = []
 
         # clean up headers
@@ -71,32 +71,25 @@ class BaseBulkCreator(LocaleBasedMatcher):
                         work.full_clean()
                         work.save_with_revision(view.request.user)
 
-                        # link publication document
-                        publication_number = work.publication_number.split()[-1]
-                        params = {
+                        # signals
+                        work_changed.send(sender=work.__class__, work=work, request=view.request)
+
+                        # info for links
+                        pub_doc_params = {
                             'date': row.get('publication_date'),
-                            'number': publication_number,
+                            'number': work.publication_number,
                             'publication': work.publication_name,
                             'country': view.country.place_code,
                             'locality': view.locality.code if view.locality else None,
                         }
-                        self.get_publication_document(params, work, form, view.request.user)
+                        info['params'] = pub_doc_params
 
-                        # signals
-                        work_changed.send(sender=work.__class__, work=work, request=view.request)
+                        work_links = ['commenced_by', 'amends', 'repealed_by', 'primary_work']
+                        for link in work_links:
+                            info[link] = row.get(link)
 
                         info['status'] = 'success'
                         info['work'] = work
-
-                        # TODO: neaten this up
-                        if row.get('commenced_by'):
-                            info['commenced_by'] = row.get('commenced_by')
-                        if row.get('amends'):
-                            info['amends'] = row.get('amends')
-                        if row.get('repealed_by'):
-                            info['repealed_by'] = row.get('repealed_by')
-                        if row.get('primary_work'):
-                            info['parent_work'] = row.get('primary_work')
 
                     except ValidationError as e:
                         info['status'] = 'error'
@@ -183,46 +176,4 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def strip_title_string(self, title_string):
         return re.sub(u'[\u2028 ]+', ' ', title_string)
-
-    def get_publication_document(self, params, work, form, user):
-        finder = plugins.for_locale('publications', params['country'], None, params['locality'])
-
-        if finder:
-            try:
-                publications = finder.find_publications(params)
-
-                if len(publications) == 1:
-                    pub_doc_details = publications[0]
-                    pub_doc = PublicationDocument()
-                    pub_doc.work = work
-                    pub_doc.file = None
-                    pub_doc.trusted_url = pub_doc_details.get('url')
-                    pub_doc.size = pub_doc_details.get('size')
-                    pub_doc.save()
-
-                else:
-                    self.pub_doc_task(work, form, user)
-
-            except ValueError as e:
-                raise ValidationError({'message': e.message})
-
-        else:
-            self.pub_doc_task(work, form, user)
-
-    def pub_doc_task(self, work, form, user):
-        task = Task()
-
-        task.title = 'Link publication document'
-        task.description = '''This work's publication document could not be linked automatically.
-There may be more than one candidate, or it may be unavailable.
-First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
-Otherwise, find it and upload it manually.'''
-
-        task.country = work.country
-        task.locality = work.locality
-        task.work = work
-        task.created_by_user = user
-        task.save()
-        task.workflows = form.cleaned_data.get('workflows').all()
-        task.save()
 

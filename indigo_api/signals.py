@@ -14,8 +14,3 @@ document_published = Signal(providing_args=["document", "request"])
 task_closed = Signal(providing_args=["task"])
 """ A user has closed a task
 """
-
-
-points_earned = Signal(providing_args=["user"])
-""" A user has earned points
-"""

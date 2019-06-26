@@ -51,8 +51,8 @@ Register a plugin using ``plugins.register(topic)`` and include a ``locale`` tha
 Fetching a Plugin
 -----------------
 
-You can fetch a plugin for a work or a document using :meth:`~indigo.plugins.plugins.for_work`,
-:meth:`~indigo.plugins.plugins.for_document`, or :meth:`~indigo.plugins.plugins.for_locale`
+You can fetch a plugin for a work or a document using :meth:`~indigo.plugins.LocaleBasedRegistry.for_work`,
+:meth:`~indigo.plugins.LocaleBasedRegistry.for_document`, or :meth:`~indigo.plugins.LocaleBasedRegistry.for_locale`
 on the plugin registry, giving it a plugin topic and a work, document or locale::
 
     from indigo.plugins import plugins
@@ -105,3 +105,30 @@ It's common to place your plugins in ``plugins.py`` and custom tasks in ``custom
             # ensure our plugins are pulled in
             import my_app.plugins
             import my_app.custom_tasks
+
+Plugin API Reference
+--------------------
+
+.. autoclass:: indigo_api.importers.base.Importer
+    :members:
+
+.. autoclass:: indigo.analysis.publications.base.BasePublicationFinder
+    :members:
+
+.. autoclass:: indigo.analysis.refs.base.BaseRefsFinder
+    :members:
+
+.. autoclass:: indigo.analysis.terms.base.BaseTermsFinder
+    :members:
+
+.. autoclass:: indigo.analysis.toc.base.TOCBuilderBase
+    :members:
+
+.. autoclass:: indigo.analysis.work_detail.base.BaseWorkDetail
+    :members:
+
+.. autoclass:: indigo.analysis.work_detail.base.BaseWorkDetail
+    :members:
+
+.. autoclass:: indigo.plugins.LocaleBasedRegistry
+    :members:

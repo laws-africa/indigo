@@ -7,4 +7,4 @@ class IndigoAppConfig(AppConfig):
 
     def ready(self):
         # ensure our plugins are pulled in
-        import indigo.analysis # noqa
+        import indigo.analysis  # noqa

@@ -8,6 +8,7 @@ from itertools import chain, groupby
 from actstream import action
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import signals, Q, Prefetch
 from django.core.exceptions import ValidationError
@@ -30,6 +31,7 @@ from cobalt.act import Act, FrbrUri, RepealEvent, AmendmentEvent, datestring
 from indigo.plugins import plugins
 from indigo.custom_tasks import tasks
 from indigo.documents import ResolvedAnchor
+from indigo_api.signals import task_closed
 
 log = logging.getLogger(__name__)
 
@@ -1168,6 +1170,8 @@ class Task(models.Model):
 
     labels = models.ManyToManyField('TaskLabel', related_name='+')
 
+    extra_data = JSONField(null=True, blank=True)
+
     @property
     def place(self):
         return self.locality or self.country
@@ -1311,6 +1315,9 @@ class Task(models.Model):
         self.changes_requested = False
         self.assigned_to = None
         action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
+
+        # send task_closed signal
+        task_closed.send(sender=self.__class__, task=self)
 
     def anchor(self):
         return {'id': self.anchor_id}

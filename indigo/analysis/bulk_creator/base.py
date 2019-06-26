@@ -105,12 +105,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_frbr_uri(self, country, locality, row):
         row_country = row.get('country')
         row_locality = row.get('locality')
-        row_subtype = row.get('subtype')
-        row_year = row.get('year')
-        row_number = row.get('number')
-        frbr_uri = FrbrUri(country=row_country, locality=row_locality,
-                           doctype='act', subtype=row_subtype,
-                           date=row_year, number=row_number, actor=None)
+        frbr_uri = FrbrUri(country=row_country,
+                           locality=row_locality,
+                           doctype='act',
+                           subtype=row.get('subtype'),
+                           date=row.get('year'),
+                           number=row.get('number'),
+                           actor=None)
 
         # if the country doesn't match
         # (but ignore if no country given – dealt with separately)
@@ -118,7 +119,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             raise ValueError(
                 'The country code given in the spreadsheet ("%s") '
                 'doesn\'t match the code for the country you\'re working in ("%s")'
-                % (row.get('country'), country.code.upper())
+                % (row_country, country.code.upper())
             )
 
         # if you're working on the country level but the spreadsheet gives a locality

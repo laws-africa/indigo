@@ -1,4 +1,7 @@
 # coding=utf-8
+
+from __future__ import unicode_literals
+
 import json
 import io
 import re
@@ -15,7 +18,6 @@ from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
-from cobalt.act import FrbrUri
 import datetime
 import requests
 import unicodecsv as csv
@@ -556,7 +558,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def form_valid(self, form):
         error = None
         works = None
-        bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, self.locality.code)
+        locality_code = self.locality.code if self.locality else None
+        bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
 
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
@@ -588,9 +591,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def link_publication_document(self, info, form):
         params = info.get('params')
         work = info['work']
-        finder = plugins.for_locale('publications', self.country.code, None, self.locality.code)
+        locality_code = self.locality.code if self.locality else None
+        finder = plugins.for_locale('publications', self.country.code, None, locality_code)
 
-        if not finder:
+        if not finder or not params.get('date'):
             return self.create_task(info, form, task_type='publication_document')
 
         publications = finder.find_publications(params)

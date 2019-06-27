@@ -583,7 +583,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 if info.get('parent_work'):
                     self.link_parent_work(info, form)
 
-            if not info['status'] == 'error' and info.get('amends'):
+            if info['status'] != 'error' and info.get('amends'):
                 # this will check duplicate works as well
                 # (they won't overwrite the existing works but the amendments will be linked)
                 self.link_amendment(info, form)

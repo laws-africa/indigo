@@ -10,13 +10,19 @@ from cobalt import FrbrUri
 from django.core.exceptions import ValidationError
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Work, Task, PublicationDocument
+from indigo_api.models import Work
 from indigo_api.signals import work_changed
 
 
+@plugins.register('bulk-creator')
 class BaseBulkCreator(LocaleBasedMatcher):
     """ Create works in bulk from a google sheets spreadsheet.
+    Overwrite get_frbr_uri() to check / raise errors for different fields.
     """
+    locale = (None, None, None)
+    """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
+    """
+
     def get_works(self, view, table):
         works = []
 
@@ -177,4 +183,3 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def strip_title_string(self, title_string):
         return re.sub(u'[\u2028 ]+', ' ', title_string)
-

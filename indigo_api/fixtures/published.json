@@ -131,7 +131,7 @@
     "model": "indigo_api.publicationdocument",
     "fields": {
       "work_id": 1,
-      "file": "work-attachments/1/publication-document",
+      "file": "fixtures/publication-document-1.pdf",
       "size": 1234,
       "filename": "za-act-2014-10-publication-document.pdf",
       "created_at": "2015-01-15T09:20:02.710Z",

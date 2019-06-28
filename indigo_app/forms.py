@@ -305,9 +305,8 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('subtype'):
             queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
 
-        # if self.cleaned_data.get('work-taxonomies'):
-        #     print self.cleaned_data.get('work-taxonomies')
-        print self.cleaned_data.get('taxonomies')
+        if self.cleaned_data.get('taxonomies'):
+            queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
         return queryset
 
     def filter_document_queryset(self, queryset):

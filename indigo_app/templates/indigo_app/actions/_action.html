@@ -7,6 +7,10 @@
   {% user_profile action.actor %} {{ action.verb }}
 {% endif %}
 
+{% if action.verb == 'earned' and action.data.points %}
+  {{ action.data.points }} points for {{ action.data.reason }}
+{% endif %}
+
 {% if model == 'work' %}
   {% with action.action_object as work %}
     the work <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>

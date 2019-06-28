@@ -269,6 +269,10 @@ class WorkFilterForm(forms.Form):
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
+    taxonomies = forms.ModelMultipleChoiceField(
+        queryset=VocabularyTopic.objects
+            .select_related('taxonomy_vocabulary')
+            .order_by('taxonomy_vocabulary__title', 'level_1', 'level_2'))
 
     def __init__(self, country, *args, **kwargs):
         self.country = country

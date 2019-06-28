@@ -72,9 +72,11 @@
                   {% if topic_groups %}
                       {% for topic in topic_groups %}
                         <dt>{{ topic.grouper }}</dt>
-                        {% for taxonomy in topic.list %}
-                          <dd> {{ taxonomy }}</dd>
-                        {% endfor %}
+                          <dd>
+                            {% for taxonomy in topic.list %}
+                              {{ taxonomy }} <br>
+                            {% endfor %}
+                          </dd>
                       {% endfor %}
                   {% endif %}
 

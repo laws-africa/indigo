@@ -307,6 +307,7 @@ class WorkFilterForm(forms.Form):
 
         if self.cleaned_data.get('taxonomies'):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
+
         return queryset
 
     def filter_document_queryset(self, queryset):

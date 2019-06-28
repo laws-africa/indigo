@@ -44,6 +44,22 @@
       </select>
     </div>
 
+    <!-- Work Taxonomy filter -->
+    <div class="mr-2">
+      {% regroup form.fields.taxonomies.queryset by taxonomy_vocabulary as topic_groups %}
+      {% if topic_groups %}
+        <select name="taxonomies" class="selectpicker notooltip" data-live-search="true" multiple data-selected-text-format="count > 3" data-style="btn-outline-secondary">
+          {% for topic in topic_groups %}
+            <optgroup label="{{ topic.grouper }}">
+              {% for taxonomy in topic.list %}
+                <option value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
+              {% endfor %}
+            </optgroup>
+          {% endfor %}
+        </select>
+      {% endif %}
+    </div>
+
     <div class="btn-group">
       <button type="submit" class="btn btn-success">Filter</button>
     </div>  

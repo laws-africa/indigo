@@ -70,14 +70,14 @@
 
                   {% regroup work.taxonomies.all by taxonomy_vocabulary as topic_groups %}
                   {% if topic_groups %}
-                      {% for topic in topic_groups %}
-                        <dt>{{ topic.grouper }}</dt>
-                          <dd>
-                            {% for taxonomy in topic.list %}
-                              {{ taxonomy }} <br>
-                            {% endfor %}
-                          </dd>
-                      {% endfor %}
+                    {% for topic in topic_groups %}
+                      <dt>{{ topic.grouper }}</dt>
+                      <dd>
+                        {% for taxonomy in topic.list %}
+                          {{ taxonomy }} <br>
+                        {% endfor %}
+                      </dd>
+                    {% endfor %}
                   {% endif %}
 
                 </dl>

@@ -41,7 +41,7 @@
           {% for topic in topic_groups %}
             <optgroup label="{{ topic.grouper }}">
               {% for taxonomy in topic.list %}
-                <option value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
+                <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
               {% endfor %}
             </optgroup>
           {% endfor %}

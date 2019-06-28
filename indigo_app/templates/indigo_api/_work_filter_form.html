@@ -27,20 +27,9 @@
 
     <!-- Status filter -->
     <div class="mr-2">
-      <select class="selectpicker notooltip" multiple name="status" data-style="btn-outline-secondary">
+      <select class="selectpicker notooltip" multiple name="status" data-width="fit" data-style="btn-outline-secondary">
         <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
         <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
-      </select>
-    </div>  
-
-    <!-- Time updated filter -->
-    <div class="mr-2">
-      <select class="form-control" name="sortby">
-        <option value="-updated_at" {% if form.sortby.value == '-updated_at' %} selected {% endif %}>Most recently updated</option>
-        <option value="updated_at" {% if form.sortby.value == 'updated_at' %} selected {% endif %}>Least recently updated</option>
-        <option value="title" {% if form.sortby.value == 'title' %} selected {% endif %}>Title (A-Z)</option>
-        <option value="-title" {% if form.sortby.value == '-title' %} selected {% endif %}>Title (Z-A)</option>
-        <option value="frbr_uri" {% if form.sortby.value == 'frbr_uri' %} selected {% endif %}>FRBR URI</option>
       </select>
     </div>
 
@@ -58,6 +47,17 @@
           {% endfor %}
         </select>
       {% endif %}
+    </div>
+
+    <!-- Time updated filter -->
+    <div class="mr-2">
+      <select class="form-control" name="sortby">
+        <option value="-updated_at" {% if form.sortby.value == '-updated_at' %} selected {% endif %}>Most recently updated</option>
+        <option value="updated_at" {% if form.sortby.value == 'updated_at' %} selected {% endif %}>Least recently updated</option>
+        <option value="title" {% if form.sortby.value == 'title' %} selected {% endif %}>Title (A-Z)</option>
+        <option value="-title" {% if form.sortby.value == '-title' %} selected {% endif %}>Title (Z-A)</option>
+        <option value="frbr_uri" {% if form.sortby.value == 'frbr_uri' %} selected {% endif %}>FRBR URI</option>
+      </select>
     </div>
 
     <div class="btn-group">

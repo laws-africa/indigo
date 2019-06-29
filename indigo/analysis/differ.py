@@ -277,6 +277,12 @@ class AttributeDiffer(object):
             yield ('replaced', old, new)
             return
 
+        # for images, diff the data-src attribute, not the actual src which may
+        # have a different media prefix
+        if old.tag == 'img' and old.get('data-src') != new.get('data-src'):
+            yield ('replaced', old, new)
+            return
+
         # TODO diff attributes
 
         # get a snapshot of the 'new' children, because yielding differences

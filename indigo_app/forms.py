@@ -269,6 +269,10 @@ class WorkFilterForm(forms.Form):
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
+    taxonomies = forms.ModelMultipleChoiceField(
+        queryset=VocabularyTopic.objects
+            .select_related('taxonomy_vocabulary')
+            .order_by('taxonomy_vocabulary__title', 'level_1', 'level_2'))
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -300,6 +304,9 @@ class WorkFilterForm(forms.Form):
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
             queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
+
+        if self.cleaned_data.get('taxonomies'):
+            queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
 
         return queryset
 

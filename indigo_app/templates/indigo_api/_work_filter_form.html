@@ -27,11 +27,27 @@
 
     <!-- Status filter -->
     <div class="mr-2">
-      <select class="selectpicker notooltip" multiple name="status" data-style="btn-outline-secondary">
+      <select class="selectpicker notooltip" multiple name="status" data-width="fit" data-style="btn-outline-secondary">
         <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
         <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
       </select>
-    </div>  
+    </div>
+
+    <!-- Work Taxonomy filter -->
+    <div class="mr-2">
+      {% regroup form.fields.taxonomies.queryset by taxonomy_vocabulary as topic_groups %}
+      {% if topic_groups %}
+        <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="fit" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
+          {% for topic in topic_groups %}
+            <optgroup label="{{ topic.grouper }}">
+              {% for taxonomy in topic.list %}
+                <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
+              {% endfor %}
+            </optgroup>
+          {% endfor %}
+        </select>
+      {% endif %}
+    </div>
 
     <!-- Time updated filter -->
     <div class="mr-2">

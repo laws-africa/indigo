@@ -365,7 +365,8 @@
 
     enterSection: function(e) {
       if (!Indigo.user.authenticated() ||
-          !Indigo.user.hasPerm('indigo_api.add_annotation')) return;
+          !Indigo.user.hasPerm('indigo_api.add_annotation') ||
+          e.enterAnnotationDone) return;
 
       var target = e.currentTarget,
           $target = $(target);
@@ -378,7 +379,7 @@
         this.$newButton.hide();
       }
 
-      e.stopPropagation();
+      e.enterAnnotationDone = true;
     },
 
     showAnnotationButton: _.debounce(function(target) {

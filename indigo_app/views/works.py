@@ -855,7 +855,7 @@ Otherwise, find it and upload it manually.'''
             task.country = self.country
             task.locality = self.locality
             task.created_by_user = self.request.user
-            task.code = self.TASK_CODES.get(chosen_task)
+            task.code = chosen_task
             for possible_task in form.possible_tasks:
                 if chosen_task == possible_task['key']:
                     task.title = possible_task['label']

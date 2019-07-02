@@ -1201,6 +1201,7 @@ class Task(models.Model):
         """ Assign this task to assignee (may be None)
         """
         self.assigned_to = assignee
+        self.save()
         if assigned_by == self.assigned_to:
             action.send(self.assigned_to, verb='picked up', action_object=self,
                         place_code=self.place.place_code)
@@ -1262,6 +1263,7 @@ class Task(models.Model):
             self.assign_to(user, user)
         self.last_assigned_to = self.assigned_to
         self.assigned_to = None
+        self.save()
         action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
@@ -1272,6 +1274,7 @@ class Task(models.Model):
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
         self.assigned_to = None
+        self.save()
         action.send(user, verb=self.VERBS['cancel'], action_object=self, place_code=self.place.place_code)
 
     # reopen – moves back to 'open'
@@ -1282,6 +1285,7 @@ class Task(models.Model):
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
         self.closed_by_user = None
+        self.save()
         action.send(user, verb=self.VERBS['reopen'], action_object=self, place_code=self.place.place_code)
 
     # unsubmit – moves back to 'open'
@@ -1295,6 +1299,7 @@ class Task(models.Model):
     def unsubmit(self, user):
         self.assigned_to = self.last_assigned_to
         self.changes_requested = True
+        self.save()
         action.send(user, verb=self.VERBS['unsubmit'],
                     action_object=self,
                     target=self.assigned_to,
@@ -1314,6 +1319,7 @@ class Task(models.Model):
         self.closed_by_user = self.assigned_to
         self.changes_requested = False
         self.assigned_to = None
+        self.save()
         action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 
         # send task_closed signal
@@ -1374,6 +1380,10 @@ class Task(models.Model):
         if self.extra_data is None:
             self.extra_data = {}
         return self.extra_data
+
+    @property
+    def friendly_state(self):
+        return self.state.replace('_', ' ')
 
 
 @receiver(signals.post_save, sender=Task)

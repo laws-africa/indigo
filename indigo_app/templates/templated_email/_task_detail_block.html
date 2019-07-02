@@ -1,0 +1,34 @@
+{% load account %}
+
+<div>
+  <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>
+  {% if task.changes_requested %}
+    <span style="background-color: #fd7e14; color: white; font-weight: 700; padding: .25em .4em; font-size: 75%;">Changes requested</span>
+  {% endif %}
+</div>
+
+<div>
+  {% if task.state == 'open' and task.assigned_to %}
+    <b>Assigned to {% user_display task.assigned_to %}</b>
+  {% else %}
+    <b>{{ task.friendly_state|capfirst }}</b>
+
+    {% if task.assigned_to %}
+      <br><b>Assigned to {% user_display task.assigned_to %}</b>
+    {% endif %}
+  {% endif %}
+</div>
+
+{% if task.document %}
+  <p>
+    {{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
+    <span style="color: #73818f;">{{ task.work.frbr_uri }}</span>
+  </p>
+{% elif task.work %}
+  <p>
+    {{ task.work.title }}<br>
+    <span style="color: #73818f;">{{ task.work.frbr_uri }}</span>
+  </p>
+{% endif %}
+
+<p>{{ task.description|default:''|urlize|linebreaksbr }}</p>

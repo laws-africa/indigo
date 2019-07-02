@@ -688,13 +688,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         title = info['commenced_by']
         commencing_work = self.find_work_by_title(title)
         if not commencing_work:
-            return self.create_task(info, form, task_type='commencement')
+            return self.create_task(info, form, task_type='link-commencement')
 
         work.commencing_work = commencing_work
         try:
             work.save_with_revision(self.request.user)
         except ValidationError:
-            self.create_task(info, form, task_type='commencement')
+            self.create_task(info, form, task_type='link-commencement')
 
     def link_amendment(self, info, form):
         # if the work `amends` something, try linking it
@@ -703,11 +703,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         work = info['work']
         amended_work = self.find_work_by_title(info['amends'])
         if not amended_work:
-            return self.create_task(info, form, task_type='amendment')
+            return self.create_task(info, form, task_type='link-amendment')
 
         date = info.get('commencement_date') or work.commencement_date
         if not date:
-            return self.create_task(info, form, task_type='amendment')
+            return self.create_task(info, form, task_type='link-amendment')
 
         try:
             Amendment.objects.get(
@@ -732,11 +732,11 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         work = info['work']
         repealing_work = self.find_work_by_title(info['repealed_by'])
         if not repealing_work:
-            return self.create_task(info, form, task_type='repeal')
+            return self.create_task(info, form, task_type='link-repeal')
 
         repeal_date = repealing_work.commencement_date
         if not repeal_date:
-            return self.create_task(info, form, task_type='repeal')
+            return self.create_task(info, form, task_type='link-repeal')
 
         work.repealed_by = repealing_work
         work.repealed_date = repeal_date
@@ -744,7 +744,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         try:
             work.save_with_revision(self.request.user)
         except ValidationError:
-            self.create_task(info, form, task_type='repeal')
+            self.create_task(info, form, task_type='link-repeal')
 
     def link_parent_work(self, info, form):
         # if the work has a `parent_work`, try linking it
@@ -752,14 +752,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         work = info['work']
         parent_work = self.find_work_by_title(info['parent_work'])
         if not parent_work:
-            return self.create_task(info, form, task_type='parent_work')
+            return self.create_task(info, form, task_type='link-parent-work')
 
         work.parent_work = self.find_work_by_title(info.get('parent_work'))
 
         try:
             work.save_with_revision(self.request.user)
         except ValidationError:
-            self.create_task(info, form, task_type='parent_work')
+            self.create_task(info, form, task_type='link-parent-work')
 
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
@@ -768,7 +768,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def create_task(self, info, form, task_type):
         task = Task()
-        if task_type == 'commencement':
+        if task_type == 'link-commencement':
             task.title = 'Link commencement'
             task.description = '''On the spreadsheet, it says that this work is commenced by '{}' – see row {}.
 
@@ -779,7 +779,7 @@ Possible reasons:
 
 Check the spreadsheet for reference and link it manually.'''.format(info['commenced_by'], info['row'])
 
-        elif task_type == 'amendment':
+        elif task_type == 'link-amendment':
             task.title = 'Link amendment(s)'
             amended_title = info['amends']
             if len(amended_title) > 256:
@@ -796,7 +796,7 @@ Possible reasons:
 Check the spreadsheet for reference and link it/them manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info['row'])
 
-        elif task_type == 'repeal':
+        elif task_type == 'link-repeal':
             task.title = 'Link repeal'
             task.description = '''On the spreadsheet, it says that this work was repealed by '{}' – see row {}.
 
@@ -809,7 +809,7 @@ Possible reasons:
 Check the spreadsheet for reference and link it manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
 
-        elif task_type == 'parent_work':
+        elif task_type == 'link-parent-work':
             task.title = 'Link primary work'
             task.description = '''On the spreadsheet, it says that this work's primary work is '{}' – see row {}.
 
@@ -823,6 +823,7 @@ Check the spreadsheet for reference and link it manually.'''.format(info['parent
         task.country = info['work'].country
         task.locality = info['work'].locality
         task.work = info['work']
+        task.code = task_type
         task.created_by_user = self.request.user
         task.save()
         task.workflows = form.cleaned_data.get('workflows').all()
@@ -841,6 +842,7 @@ Otherwise, find it and upload it manually.'''
         task.locality = work.locality
         task.work = work
         task.created_by_user = self.request.user
+        task.code = 'link-publication-document'
         task.save()
         task.workflows = form.cleaned_data.get('workflows').all()
         task.save()
@@ -853,6 +855,7 @@ Otherwise, find it and upload it manually.'''
             task.country = self.country
             task.locality = self.locality
             task.created_by_user = self.request.user
+            task.code = chosen_task
             for possible_task in form.possible_tasks:
                 if chosen_task == possible_task['key']:
                     task.title = possible_task['label']

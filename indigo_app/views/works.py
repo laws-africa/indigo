@@ -580,7 +580,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     self.link_commencement(info, form)
                 if info.get('repealed_by'):
                     self.link_repeal(info, form)
-                if info.get('parent_work'):
+                if info.get('primary_work'):
                     self.link_parent_work(info, form)
 
             if info['status'] != 'error' and info.get('amends'):
@@ -676,19 +676,19 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self.create_task(info, form, task_type='repeal')
 
     def link_parent_work(self, info, form):
-        # if the work has a `parent_work`, try linking it
+        # if the work has a `primary_work`, try linking it
         # make a task if this fails
         work = info['work']
-        parent_work = self.find_work_by_title(info['parent_work'])
+        parent_work = self.find_work_by_title(info['primary_work'])
         if not parent_work:
-            return self.create_task(info, form, task_type='parent_work')
+            return self.create_task(info, form, task_type='primary_work')
 
-        work.parent_work = self.find_work_by_title(info.get('parent_work'))
+        work.parent_work = parent_work
 
         try:
             work.save_with_revision(self.request.user)
         except ValidationError:
-            self.create_task(info, form, task_type='parent_work')
+            self.create_task(info, form, task_type='primary_work')
 
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
@@ -743,7 +743,7 @@ Possible reasons:
 Check the spreadsheet for reference and link it manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
 
-        elif task_type == 'parent_work':
+        elif task_type == 'primary_work':
             task.title = 'Link primary work'
             task.description = '''On the spreadsheet, it says that this work's primary work is '{}' – see row {}.
 
@@ -752,7 +752,7 @@ Possible reasons:
 – a typo in the spreadsheet
 – the primary work hasn't been imported.
 
-Check the spreadsheet for reference and link it manually.'''.format(info['parent_work'], info['row'])
+Check the spreadsheet for reference and link it manually.'''.format(info['primary_work'], info['row'])
 
         task.country = self.country
         task.locality = self.locality

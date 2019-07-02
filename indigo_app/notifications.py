@@ -1,16 +1,12 @@
 import logging
 
-from django.db.models import signals
-from django.dispatch import receiver
 from django.conf import settings
-from actstream.models import Action
-from templated_email import send_templated_mail
-
-from indigo_api.models import Task
-
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
-from django_comments.signals import comment_was_posted
+from templated_email import send_templated_mail
+from background_task import background
+
+from indigo_api.models import Task
 
 
 log = logging.getLogger(__name__)
@@ -29,10 +25,10 @@ class Notifier(object):
 
         elif action.verb == 'requested changes to' and action.target:
             self.send_templated_email('task_changes_requested', [action.target], {
-                    'action': action,
-                    'task': task,
-                    'recipient': action.target,
-                })
+                'action': action,
+                'task': task,
+                'recipient': action.target,
+            })
 
         elif action.verb == 'closed':
             if task.last_assigned_to and task.last_assigned_to != action.actor:
@@ -88,26 +84,30 @@ class Notifier(object):
             from_email=None,
             recipient_list=recipient_list,
             context=real_context,
-            fail_silently=settings.INDIGO_EMAIL_FAIL_SILENTLY,
+            fail_silently=settings.INDIGO.get('EMAIL_FAIL_SILENTLY'),
             **kwargs)
 
 
 notifier = Notifier()
 
 
-@receiver(signals.post_save, sender=Action)
-def post_save_task(sender, instance, **kwargs):
-    """ Send 'created' action to activity stream if new task
-    """
-    if kwargs['created']:
-        if isinstance(instance.action_object, Task):
-            notifier.send_task_notifications(instance)
+@background
+def send_task_notifications(task_id):
+    try:
+        notifier.send_task_notifications(Task.objects.get(pk=task_id))
+    except Task.DoesNotExist:
+        pass
 
 
-@receiver(comment_was_posted, sender=Comment)
-def post_comment_save_notification(sender, **kwargs):
-    """
-    Send email when a user comments on a task
-    """
-    if kwargs['comment']:
-        notifier.notify_comment_posted(kwargs['comment'])
+@background
+def notify_comment_posted(comment_id):
+    try:
+        notifier.notify_comment_posted(Comment.objects.get(pk=comment_id))
+    except Comment.DoesNotExist:
+        pass
+
+
+if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
+    # change background notification tasks to be synchronous
+    send_task_notifications = send_task_notifications.now
+    notify_comment_posted = notify_comment_posted.now

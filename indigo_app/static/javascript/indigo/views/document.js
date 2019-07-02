@@ -61,6 +61,30 @@
     },
   });
 
+  Indigo.CheatsheetView = Backbone.View.extend({
+    el: '.cheatsheet',
+    events: {
+      'change .search': 'search',
+      'keyup .search': 'search',
+    },
+
+    search: function() {
+      var needle = this.$('.search').val().trim().toLocaleLowerCase();
+
+      if (needle.length > 0) {
+        this.$('.card')
+          .addClass('d-none')
+          .each(function(i, card) {
+            if (card.innerText.toLocaleLowerCase().indexOf(needle) > -1) {
+              card.classList.remove('d-none');
+            }
+          });
+      } else {
+        this.$('.card').removeClass('d-none');
+      }
+    },
+  });
+
   // The DocumentDetailView is the primary view on the document detail page.
   // It is responsible for managing the other views and allowing the user to
   // save their changes. It has nested sub views that handle separate portions
@@ -121,6 +145,7 @@
       this.documentContent = new Indigo.DocumentContent({document: this.document});
       this.documentContent.on('change', this.setDirty, this);
 
+      this.cheatsheetView = new Indigo.CheatsheetView();
       this.titleView = new Indigo.DocumentTitleView({model: this.document});
       this.propertiesView = new Indigo.DocumentPropertiesView({model: this.document});
       this.propertiesView.on('dirty', this.setDirty, this);

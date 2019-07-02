@@ -49,7 +49,7 @@ class AttributeDiffer(object):
             cmp = self.diff_default
             if isinstance(old, list) or isinstance(new, list):
                 cmp = self.diff_lists
-            cmp = getattr(self, 'diff_' + attr, cmp)
+            cmp = getattr(self, 'diff_attr_' + attr, cmp)
 
             diff = cmp(attr, title, old, new)
             if diff:
@@ -274,6 +274,12 @@ class AttributeDiffer(object):
 
         # did the tag change?
         if old.tag != new.tag or old.classes != new.classes:
+            yield ('replaced', old, new)
+            return
+
+        # for images, diff the data-src attribute, not the actual src which may
+        # have a different media prefix
+        if old.tag == 'img' and old.get('data-src') != new.get('data-src'):
             yield ('replaced', old, new)
             return
 

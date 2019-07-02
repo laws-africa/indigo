@@ -35,7 +35,7 @@
 
   {% if work.parent_work %}
     <p class="mb-2">Primary work:
-      <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}.</a>
+      <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
     </p>
   {% endif %}
 </div>

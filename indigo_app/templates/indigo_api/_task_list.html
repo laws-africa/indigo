@@ -33,15 +33,13 @@
     </td>
     <!-- Task title -->
     <td>
-      <div class="d-flex align-items-center">
-        <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex mr-1 {% endif %}">{{ task.title }}</a>
-        {% if task.changes_requested %}
-          <span class="badge badge-secondary bg-pending_review ml-1 mr-1">Changes requested</span>
-        {% endif %}
-        {% for label in task.labels.all %}
-          <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
-        {% endfor %}
-      </div>
+      <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}" class="{% if task.labels.all %} d-flex mr-1 {% endif %}">{{ task.title }}</a>
+      {% if task.changes_requested %}
+        <span class="badge badge-secondary bg-pending_review ml-1 mr-1">Changes requested</span>
+      {% endif %}
+      {% for label in task.labels.all %}
+        <span class="badge badge-secondary mr-1" title="{{ label.description }}">{{ label.title }}</span>
+      {% endfor %}
     </td>
 
     {% if place %}

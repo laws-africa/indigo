@@ -11,22 +11,22 @@
   {% endif %}
 
   {% if family %}
-    {% include 'indigo_api/_work_related_table.html' with items=family title="Parents and children" %}
+    {% include 'indigo_api/_work_related_table.html' with items=family title="Parents and children" id="parent_kids" %}
   {% endif %}
 
   {% if repeals %}
-    {% include 'indigo_api/_work_related_table.html' with items=repeals title="Repeals" %}
+    {% include 'indigo_api/_work_related_table.html' with items=repeals title="Repeals" id="repeals" %}
   {% endif %}
 
   {% if commencement %}
-    {% include 'indigo_api/_work_related_table.html' with items=commencement title="Commencement" %}
+    {% include 'indigo_api/_work_related_table.html' with items=commencement title="Commencement" id="commencement" %}
   {% endif %}
 
   {% if amended %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended title="Works amended by this work" %}
+    {% include 'indigo_api/_work_related_table.html' with items=amended title="Works amended by this work" id="amended" %}
   {% endif %}
 
   {% if amended_by %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended_by title="Works amending this work"%}
+    {% include 'indigo_api/_work_related_table.html' with items=amended_by title="Works amending this work" id="amended_by"%}
   {% endif %}
 {% endblock %}

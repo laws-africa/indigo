@@ -5,7 +5,7 @@ from rest_framework.reverse import reverse
 from cobalt.act import datestring
 
 from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument
-from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer, AttachmentSerializer
+from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer as PublicationDocumentSerializerBase, AttachmentSerializer
 
 
 def published_doc_url(doc, request, frbr_uri=None):
@@ -46,6 +46,13 @@ class MediaAttachmentSerializer(AttachmentSerializer):
         return uri + '/media/' + instance.filename
 
 
+class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
+    class Meta:
+        model = PublicationDocument
+        # Don't include the trusted_url field
+        fields = ('url', 'filename', 'mime_type', 'size')
+
+
 class PublishedDocumentSerializer(DocumentSerializer):
     """ Serializer for published documents.
 
@@ -67,6 +74,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commencement_date', 'assent_date',
             'language', 'repeal', 'amendments', 'points_in_time',
+            'numbered_title',
 
             'links',
         )

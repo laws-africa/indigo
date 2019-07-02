@@ -9,3 +9,8 @@ work_changed = Signal(providing_args=["work", "request"])
 document_published = Signal(providing_args=["document", "request"])
 """ A user has changed a document from draft to published.
 """
+
+
+task_closed = Signal(providing_args=["task"])
+""" A user has closed a task
+"""

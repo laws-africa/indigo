@@ -8,15 +8,15 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.versioning import NamespaceVersioning
+from django.shortcuts import redirect
 from cobalt import FrbrUri
 
 from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
-from indigo_api.views.documents import DocumentViewMixin, DocumentResourceView, SearchView
-from indigo_api.views.attachments import view_attachment_by_filename
-from indigo_api.models import Attachment, Country
+from indigo_api.views.documents import DocumentViewMixin, SearchView
+from indigo_api.views.attachments import view_attachment
+from indigo_api.models import Attachment, Country, Document
 
 from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
-from indigo_content_api.v1.atom import AtomRenderer, AtomFeed
 
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
@@ -53,59 +53,29 @@ class PlaceAPIBase(ContentAPIBase):
         super(PlaceAPIBase, self).check_permissions(request)
 
 
-class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
-    """ List of countries that the content API supports.
+class FrbrUriViewMixin(PlaceAPIBase):
+    """ An API view that uses a frbr_uri kwarg parameter to identify a work or document.
+
+    This parses the FRBR URI, ensures it is valid, and stores it in .frbr_uri.
     """
-    queryset = Country.objects.prefetch_related('localities', 'country')
-    serializer_class = CountrySerializer
-
-
-class MediaViewSet(ContentAPIBase, DocumentResourceView, viewsets.ModelViewSet):
-    """ Attachment view for published documents, under frbr-uri/media.json
-    """
-    queryset = Attachment.objects
-    serializer_class = MediaAttachmentSerializer
-
-    def filter_queryset(self, queryset):
-        return queryset.filter(document=self.document).all()
-
-
-class PublishedDocumentDetailView(DocumentViewMixin,
-                                  PlaceAPIBase,
-                                  mixins.RetrieveModelMixin,
-                                  mixins.ListModelMixin,
-                                  viewsets.GenericViewSet):
-    """
-    The public read-only API for viewing and listing published documents by FRBR URI.
-
-    This handles both listing many documents based on a URI prefix, and
-    returning details for a single document. The default content type
-    is JSON.
-
-    For example:
-
-    * ``/za/``: list all published documents for South Africa.
-    * ``/za/act/1994/2/``: one document, Act 2 of 1992
-    * ``/za/act/1994/summary.atom``: all the acts from 1994 as an atom feed
-    * ``/za/act/1994.pdf``: all the acts from 1994 as a PDF
-    * ``/za/act/1994.epub``: all the acts from 1994 as an ePUB
-
-    """
-
-    # only published documents
-    queryset = DocumentViewMixin.queryset.published()
-
-    serializer_class = PublishedDocumentSerializer
-    # these determine what content negotiation takes place
-    renderer_classes = (renderers.JSONRenderer, AtomRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
-                        ZIPResponseRenderer)
-
     def initial(self, request, **kwargs):
         # ensure the URI starts with a slash
         self.kwargs['frbr_uri'] = '/' + self.kwargs['frbr_uri']
-        super(PublishedDocumentDetailView, self).initial(request, **kwargs)
-
+        super(FrbrUriViewMixin, self).initial(request, **kwargs)
         self.frbr_uri = self.parse_frbr_uri(self.kwargs['frbr_uri'])
+
+    def parse_frbr_uri(self, frbr_uri):
+        FrbrUri.default_language = None
+        try:
+            frbr_uri = FrbrUri.parse(frbr_uri)
+        except ValueError:
+            return None
+
+        frbr_uri.default_language = self.country.primary_language.code
+        if not frbr_uri.language:
+            frbr_uri.language = frbr_uri.default_language
+
+        return frbr_uri
 
     def determine_place(self):
         parts = self.kwargs['frbr_uri'].split('/', 2)[1].split('-', 2)
@@ -122,7 +92,62 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             if not self.locality:
                 raise Http404
 
-        super(PublishedDocumentDetailView, self).determine_place()
+        super(FrbrUriViewMixin, self).determine_place()
+
+    def get_document(self):
+        """ Find and return one document based on the FRBR URI
+        """
+        try:
+            obj = self.get_document_queryset().get_for_frbr_uri(self.frbr_uri)
+            if not obj:
+                raise ValueError()
+        except ValueError as e:
+            raise Http404(e.message)
+
+        # May raise a permission denied
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+    def get_document_queryset(self):
+        return self.document_queryset
+
+
+class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
+    """ List of countries that the content API supports.
+    """
+    queryset = Country.objects.prefetch_related('localities', 'country')
+    serializer_class = CountrySerializer
+
+
+class PublishedDocumentDetailView(DocumentViewMixin,
+                                  FrbrUriViewMixin,
+                                  mixins.RetrieveModelMixin,
+                                  mixins.ListModelMixin,
+                                  viewsets.GenericViewSet):
+    """
+    The public read-only API for viewing and listing published documents by FRBR URI.
+
+    This handles both listing many documents based on a URI prefix, and
+    returning details for a single document. The default content type
+    is JSON.
+
+    For example:
+
+    * ``/za/``: list all published documents for South Africa.
+    * ``/za/act/1994/2/``: one document, Act 2 of 1992
+    * ``/za/act/1994.pdf``: all the acts from 1994 as a PDF
+    * ``/za/act/1994.epub``: all the acts from 1994 as an ePUB
+
+    """
+
+    # only published documents
+    queryset = DocumentViewMixin.queryset.published()
+    document_queryset = queryset
+
+    serializer_class = PublishedDocumentSerializer
+    # these determine what content negotiation takes place
+    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
+                        ZIPResponseRenderer)
 
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format
@@ -144,14 +169,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         format = self.request.accepted_renderer.format
 
         # get the document
-        document = self.get_object()
-
-        # asking for a media attachment?
-        if self.component == 'media' and self.subcomponent:
-            filename = self.subcomponent
-            if self.format_kwarg:
-                filename += '.' + self.format_kwarg
-            return view_attachment_by_filename(document.id, filename)
+        document = self.get_document()
 
         if self.subcomponent:
             self.element = document.get_subcomponent(self.component, self.subcomponent)
@@ -174,15 +192,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                     kwargs={'frbr_uri': self.frbr_uri.expression_uri()[1:]})
                 return Response(serializer.data)
 
-            # media attachments
-            if (self.component, format) == ('media', 'json'):
-                view = MediaViewSet()
-                view.kwargs = {'document_id': document.id}
-                view.request = request
-                view.document = document
-                view.initial(request)
-                return view.list(request)
-
             # the item we're interested in
             self.element = document.doc.components().get(self.component)
 
@@ -195,25 +204,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def list(self, request):
         """ Return details on many documents.
         """
-        if self.request.accepted_renderer.format == 'atom':
-            # feeds show most recently changed first
-            self.queryset = self.queryset.order_by('-updated_at')
-
-            # what type of feed?
-            if self.kwargs['frbr_uri'].endswith('summary'):
-                self.kwargs['feed'] = 'summary'
-                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-7]
-            elif self.kwargs['frbr_uri'].endswith('full'):
-                self.kwargs['feed'] = 'full'
-                self.kwargs['frbr_uri'] = self.kwargs['frbr_uri'][:-4]
-            else:
-                raise Http404
-
-            if self.kwargs['feed'] == 'full':
-                # full feed is big, limit it
-                self.paginator.page_size = AtomFeed.full_feed_page_size
-
-        elif self.request.accepted_renderer.format in ['pdf', 'epub', 'zip']:
+        if self.request.accepted_renderer.format in ['pdf', 'epub', 'zip']:
             # NB: don't try to sort in the db, that's already sorting to
             # return the latest expression of each doc. Sort here instead.
             documents = sorted(self.filter_queryset(self.get_queryset()).all(), key=lambda d: d.title)
@@ -249,18 +240,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         response.data['links'] = [
             {
                 "rel": "alternate",
-                "title": AtomFeed.summary_feed_title,
-                "href": url + "/summary.atom",
-                "mediaType": AtomRenderer.media_type,
-            },
-            {
-                "rel": "alternate",
-                "title": AtomFeed.full_feed_title,
-                "href": url + "/full.atom",
-                "mediaType": AtomRenderer.media_type,
-            },
-            {
-                "rel": "alternate",
                 "title": "PDF",
                 "href": url + ".pdf",
                 "mediaType": "application/pdf"
@@ -272,20 +251,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
                 "mediaType": "application/epub+zip"
             },
         ]
-
-    def get_object(self):
-        """ Find and return one document, used by retrieve()
-        """
-        try:
-            obj = self.get_queryset().get_for_frbr_uri(self.frbr_uri)
-            if not obj:
-                raise ValueError()
-        except ValueError as e:
-            raise Http404(e.message)
-
-        # May raise a permission denied
-        self.check_object_permissions(self.request, obj)
-        return obj
 
     def filter_queryset(self, queryset):
         """ Filter the queryset, used by list()
@@ -308,41 +273,30 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             return match.group(1)
 
     def handle_exception(self, exc):
-        # Formats like atom and XML don't render exceptions well, so just
+        # Formats like XML don't render exceptions well, so just
         # fall back to HTML
-        if hasattr(self.request, 'accepted_renderer') and self.request.accepted_renderer.format in ['xml', 'atom']:
+        if hasattr(self.request, 'accepted_renderer') and self.request.accepted_renderer.format in ['xml']:
             self.request.accepted_renderer = renderers.StaticHTMLRenderer()
             self.request.accepted_media_type = renderers.StaticHTMLRenderer.media_type
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
 
     def parse_frbr_uri(self, frbr_uri):
-        FrbrUri.default_language = None
-        try:
-            frbr_uri = FrbrUri.parse(frbr_uri)
-        except ValueError:
-            return None
+        frbr_uri = super(PublishedDocumentDetailView, self).parse_frbr_uri(frbr_uri)
 
-        # ensure we haven't mistaken '/za-cpt/act/by-law/2011/full.atom' for a URI
-        if frbr_uri.number in ['full', 'summary'] and self.format_kwarg == 'atom':
-            return None
-
-        frbr_uri.default_language = self.country.primary_language.code
-        if not frbr_uri.language:
-            frbr_uri.language = frbr_uri.default_language
-
-        # in a URL like
-        #
-        #   /act/1980/1/toc
-        #
-        # don't mistake 'toc' for a language, it's really equivalent to
-        #
-        #   /act/1980/1/eng/toc
-        #
-        # if eng is the default language.
-        if frbr_uri.language == 'toc':
-            frbr_uri.language = frbr_uri.default_language
-            frbr_uri.expression_component = 'toc'
+        if frbr_uri:
+            # in a URL like
+            #
+            #   /act/1980/1/toc
+            #
+            # don't mistake 'toc' for a language, it's really equivalent to
+            #
+            #   /act/1980/1/eng/toc
+            #
+            # if eng is the default language.
+            if frbr_uri.language == 'toc':
+                frbr_uri.language = frbr_uri.default_language
+                frbr_uri.expression_component = 'toc'
 
         return frbr_uri
 
@@ -369,6 +323,49 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             add_url(item)
 
         return toc
+
+
+class PublishedDocumentMediaView(FrbrUriViewMixin,
+                                 mixins.RetrieveModelMixin,
+                                 mixins.ListModelMixin,
+                                 viewsets.GenericViewSet):
+    """ View to return media attached to a document or work,
+    either as a list or an individual file.
+
+    Also handles the special-cased /media/publication/publication-document.pdf
+    """
+
+    queryset = Attachment.objects
+    serializer_class = MediaAttachmentSerializer
+    document_queryset = Document.objects\
+        .undeleted()\
+        .no_xml()\
+        .published()
+
+    def filter_queryset(self, queryset):
+        return queryset.filter(document=self.get_document())
+
+    def get_file(self, request, filename, *args, **kwargs):
+        """ Download a media file.
+        """
+        attachment = self.filter_queryset(self.get_queryset())\
+            .filter(filename=filename)\
+            .first()
+        if not attachment:
+            raise Http404()
+        return view_attachment(attachment)
+
+    def get_publication_document(self, request, filename, *args, **kwargs):
+        """ Download the media publication file for a work.
+        """
+        work = self.get_document().work
+
+        if work.publication_document and work.publication_document.filename == filename:
+            if work.publication_document.trusted_url:
+                return redirect(work.publication_document.trusted_url)
+            return view_attachment(work.publication_document)
+
+        raise Http404()
 
 
 class PublishedDocumentSearchView(PlaceAPIBase, SearchView):

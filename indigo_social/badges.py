@@ -1,13 +1,11 @@
-from itertools import chain
-
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, Group
 from django.db.models.signals import m2m_changed, post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
+from django.core.signals import request_started
 
 from pinax.badges.base import Badge, BadgeAwarded, BadgeDetail
 from pinax.badges.registry import badges
-from allauth.account.signals import user_signed_up
 from indigo_api.models import Country
 from indigo_app.models import Editor
 
@@ -66,18 +64,35 @@ class PermissionBadge(BaseBadge):
     When awarded, the user is give the appropriate permissions. When unawarded, the reverse happens.
     """
     permissions = ()
+    group_name = None
 
     _perms = None
+    _group = None
 
     def grant(self, user):
         """ Grant this badge's permissions to a user.
         """
-        user.user_permissions.add(*self.get_permissions())
+        user.groups.add(self.group())
 
     def revoke(self, user):
         """ Revoke this badge's permissions from a user.
         """
-        user.user_permissions.remove(*self.get_permissions())
+        user.groups.remove(self.group())
+
+    def group(self):
+        """ Get the Group model this permission corresponds to.
+        """
+        if not self._group:
+            assert self.group_name is not None
+            self._group, created = Group.objects.get_or_create(name=self.group_name)
+            self.refresh_permissions()
+
+        return self._group
+
+    def refresh_permissions(self):
+        """ Ensure the permissions on the group are up to date.
+        """
+        self.group().permissions.add(*self.get_permissions())
 
     def get_permissions(self):
         """ Return a list of Permission objects for this badge.
@@ -93,24 +108,16 @@ class PermissionBadge(BaseBadge):
         return self._perms
 
     @classmethod
-    def permissions_changed(cls, user, perms, added):
-        """ User permissions have been added (or removed if added is False).
-        Award/unaward badges if necessary. If permissions have been removed,
-        it doesn't mean the user doesn't have them any more since they may
-        still be granted through groups.
+    def group_membership_changed(cls, user, groups, added):
+        """ User group memberships have been added (or removed if added is False).
+        Award/unaward badges if necessary.
         """
-        for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge)):
-            badge_perms = set(badge.permissions)
-
-            # is this badge linked to the adjusted perms?
-            if badge_perms & perms:
-                existing = user.get_all_permissions()
-
-                if existing & badge_perms == badge_perms:
-                    if added:
-                        badge.possibly_award(user=user)
-                elif not added:
-                    badge.unaward(user)
+        group_names = [g.name for g in groups]
+        for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge) and b.group_name in group_names):
+            if added:
+                badge.possibly_award(user=user)
+            else:
+                badge.unaward(user)
 
     @classmethod
     def synch_grants(cls, user):
@@ -126,35 +133,17 @@ class PermissionBadge(BaseBadge):
         """ Ensure all users have appropriate permissions badges.
 
         We do this by:
-        1. ensuring users with badges are granted all the perms (this allows perms to be added)
-        2. faking "adds" for all the perms each user has, which ensures new badges are granted.
-
-        This means that if a user no longer has permissions granted by a badge, they don't lose
-        the badge. Instead, they are granted the permissions.
-
-        This allows us to add new perms to existing badges.
+        1. ensuring the appropriate security groups exist, with the right permissions
+        2. faking "adds" for all the users that aren't already part of the group, to ensure
+           they get a badge.
         """
         for user in User.objects.all():
-            # ensure users badges are granted all the perms
+            # ensure users with badges are in the right security groups
             cls.synch_grants(user)
 
-            # possibly grant new badges
-            existing = user.get_all_permissions()
-            cls.permissions_changed(user, existing, added=True)
-
-
-@receiver(m2m_changed, sender=User.user_permissions.through)
-def permissions_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
-    """ When user permissions change, award or unaward any matching PermissionBadges
-    as necessary.
-    """
-    if reverse or action not in ["post_add", "post_remove"]:
-        return
-
-    user = instance
-    added = action == "post_add"
-    perms = perms_to_codes(model.objects.filter(pk__in=pk_set).prefetch_related('content_type').all())
-    PermissionBadge.permissions_changed(user, perms, added)
+            # ensure users in the various security groups have the badge
+            groups = user.groups.all()
+            cls.group_membership_changed(user, groups, added=True)
 
 
 @receiver(m2m_changed, sender=User.groups.through)
@@ -167,9 +156,8 @@ def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
 
     user = instance
     added = action == "post_add"
-    groups = model.objects.filter(pk__in=pk_set).prefetch_related('permissions', 'permissions__content_type').all()
-    perms = perms_to_codes(chain(*(g.permissions.all() for g in groups)))
-    PermissionBadge.permissions_changed(user, perms, added)
+    groups = Group.objects.filter(pk__in=pk_set).all()
+    PermissionBadge.group_membership_changed(user, groups, added)
 
 
 class CountryBadge(BaseBadge):
@@ -251,47 +239,17 @@ def country_saved(sender, instance, created, raw, **kwargs):
         CountryBadge.create_for_country(instance)
 
 
-# ------------------------------------------------------------------------
-# Badge definitions
+def create_country_badges():
+    # Install a once-off signal handler to create country badges before the
+    # first request comes through. This allows us to work around the fact
+    # that during testing, ready() is called before the database migrations
+    # are applied, so no db tables exist. There doesn't seem to be a better
+    # way to get code to run when the app starts up and AFTER the db has
+    # been set up.
+    uid = "indigo-social-country-setup"
 
+    def create_badges(sender, **kwargs):
+        request_started.disconnect(create_badges, dispatch_uid=uid)
+        CountryBadge.create_all()
 
-class ContributorBadge(PermissionBadge):
-    slug = 'contributor'
-    name = 'Contributor'
-    description = 'Can view work details'
-    permissions = ('indigo_api.add_annotation', 'indigo_api.change_annotation', 'indigo_api.delete_annotation',
-                   'indigo_api.add_task')
-
-
-class DrafterBadge(PermissionBadge):
-    slug = 'drafter'
-    name = 'Drafter'
-    description = 'Can create new works and edit the details of existing works'
-    permissions = ('indigo_api.add_work', 'indigo_api.change_work',
-                   'indigo_api.add_document', 'indigo_api.change_document',
-                   'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
-                   # required when restoring a document version
-                   'reversion.change_version',
-                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task',
-                   'indigo_api.add_workflow', 'indigo_api.change_workflow')
-
-
-class SeniorDrafterBadge(PermissionBadge):
-    slug = 'senior-drafter'
-    name = 'Senior Drafter'
-    description = 'Can review work tasks and delete documents and works'
-    permissions = ('indigo_api.delete_work', 'indigo_api.review_work',
-                   'indigo_api.review_document', 'indigo_api.delete_document', 'indigo_api.publish_document',
-                   'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task',
-                   'indigo_api.close_workflow', 'indigo_api.delete_workflow')
-
-
-badges.register(ContributorBadge)
-badges.register(DrafterBadge)
-badges.register(SeniorDrafterBadge)
-
-
-# when a user signs up, grant them the contributor badge immediately
-@receiver(user_signed_up, sender=User)
-def grant_contributor_new_user(sender, request, user, **kwargs):
-    badges.registry['contributor'].award(user=user)
+    request_started.connect(create_badges, dispatch_uid=uid, weak=False)

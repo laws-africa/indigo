@@ -15,12 +15,19 @@
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
       'click .quick-edit a': 'quickEdit',
+
       'click .edit-find': 'editFind',
       'click .edit-find-next': 'editFindNext',
       'click .edit-find-previous': 'editFindPrevious',
       'click .edit-find-replace': 'editFindReplace',
+
       'click .insert-image': 'insertImage',
       'click .insert-table': 'insertTable',
+      'click .insert-schedule': 'insertSchedule',
+
+      'click .markup-remark': 'markupRemark',
+      'click .markup-bold': 'markupBold',
+      'click .markup-italics': 'markupItalics',
     },
 
     initialize: function(options) {
@@ -77,7 +84,7 @@
       function htmlLoaded(xml) {
         var htmlTransform = new XSLTProcessor();
         htmlTransform.importStylesheet(xml);
-        htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
+        htmlTransform.setParameter(null, 'resolverUrl', '/works');
 
         self.htmlTransform = htmlTransform;
         self.editorReady.resolve();
@@ -347,6 +354,7 @@
         var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
 
         self.makeLinksExternal(html);
+        self.addWorkPopups(html);
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
         $akn.append(html);
@@ -399,6 +407,13 @@
       html.querySelectorAll('a').forEach(function(a) {
         a.setAttribute("target", "_blank");
         $(a).tooltip({title: a.getAttribute('data-href')});
+      });
+    },
+
+    addWorkPopups: function(html) {
+      html.querySelectorAll('a[href^="/works/"]').forEach(function(a) {
+        a.setAttribute("data-popup-url", a.href + '/popup');
+        $(a).tooltip('disable');
       });
     },
 
@@ -551,6 +566,53 @@
       this.textEditor.getSession().replace(range, table);
 
       this.textEditor.moveCursorTo(posn.row + 3, 2);
+      this.textEditor.focus();
+    },
+
+    insertSchedule: function(e) {
+      e.preventDefault();
+
+      this.textEditor.insert('\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n');
+      this.textEditor.focus();
+    },
+
+    quickMarkup: function(marker) {
+      var range = this.textEditor.getSelectionRange();
+
+      if (this.textEditor.getSelectedText().length > 0) {
+        this.textEditor.clearSelection();
+
+        var text = this.textEditor.getSession().getTextRange(range);
+        this.textEditor.getSession().replace(range, marker(text));
+      } else {
+        this.textEditor.insert(marker(''));
+      }
+    },
+
+    markupRemark: function(e) {
+      e.preventDefault();
+
+      this.quickMarkup(function(text) {
+        return '[[' + (text || '<remark>') + ']]';
+      });
+      this.textEditor.focus();
+    },
+
+    markupBold: function(e) {
+      e.preventDefault();
+
+      this.quickMarkup(function(text) {
+        return '**' + (text || '<text>') + '**';
+      });
+      this.textEditor.focus();
+    },
+
+    markupItalics: function(e) {
+      e.preventDefault();
+
+      this.quickMarkup(function(text) {
+        return '//' + (text || '<text>') + '//';
+      });
       this.textEditor.focus();
     },
 

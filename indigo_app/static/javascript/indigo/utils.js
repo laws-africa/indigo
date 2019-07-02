@@ -38,6 +38,7 @@ var _popupCache = {};
 $('body').on('mouseenter', 'a[data-popup-url]', function() {
   var _this = this;
   var url = $(this).data('popup-url');
+  var notFound = '<i>(not found)</i>';
 
   $.ajaxSetup({
     url: "work_popup.html",
@@ -54,6 +55,9 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
     $.get(url).then(function(html) {
       _popupCache[url] = html;
       popup(html);
+    }).fail(function(resp) {
+      _popupCache[url] = notFound;
+      popup(notFound);
     });
   }
 

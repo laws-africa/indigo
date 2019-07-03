@@ -187,13 +187,11 @@ class BatchCreateWorkForm(forms.Form):
             'label': 'Import content',
             'description': '''Import a point in time for this work; \
             either the initial publication or a later consolidation.
-Make sure the document's expression date correctly reflects this.''',
+Make sure the document's expression date is correct.''',
         },
     ]
     principal_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
-    all_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
-    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects,
-                                               required=False)
+    workflow = forms.ModelChoiceField(queryset=Workflow.objects)
 
 
 class ImportDocumentForm(forms.Form):

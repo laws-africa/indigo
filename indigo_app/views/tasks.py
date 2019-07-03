@@ -255,6 +255,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
 
+                # this saves the task
                 state_change(user)
 
                 if change == 'submit':
@@ -262,8 +263,6 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if change == 'unsubmit':
                     verb = 'returned with changes requested'
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
-
-        task.save()
 
         return redirect(self.get_redirect_url())
 
@@ -386,7 +385,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
 class MyTasksView(AbstractAuthedIndigoView, TemplateView):
     authentication_required = True
     template_name = 'indigo_app/tasks/my_tasks.html'
-    tab='my_tasks'
+    tab = 'my_tasks'
 
     def get_context_data(self, **kwargs):
         context = super(MyTasksView, self).get_context_data(**kwargs)

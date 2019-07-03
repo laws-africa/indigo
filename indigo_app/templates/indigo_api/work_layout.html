@@ -54,8 +54,8 @@
 
 {% block breadcrumbs %}
   <li class="breadcrumb-item"><a class="work-country" href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
-  {% if work.locality %}
-  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:work.locality.code %}">{{ work.locality.name }} · {{ work.locality.code }}</a></li>
+  {% if locality %}
+  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:locality.code %}">{{ locality.name }} · {{ locality.code }}</a></li>
   {% endif %}
   {% if work.pk %}
   <li class="breadcrumb-item"><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.frbr_uri }}</a></li>

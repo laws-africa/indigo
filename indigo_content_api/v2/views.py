@@ -21,7 +21,8 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
         if getattr(response, 'accepted_media_type', None) == 'application/json' and isinstance(response.data, dict):
             self.rewrite_frbr_uris(response.data)
 
-        elif getattr(response, 'accepted_renderer', None) and response.accepted_renderer.media_type in ['application/xml', 'text/html']:
+        elif getattr(response, 'accepted_renderer', None):
+            # for known renderers, rewrite akn data
             self.rewrite_akn(response.data)
 
         return response
@@ -44,6 +45,11 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
                         self.rewrite_frbr_uris(x)
 
     def rewrite_akn(self, document):
+        if isinstance(document, list):
+            for x in document:
+                self.rewrite_akn(x)
+            return
+
         if not hasattr(document, 'doc'):
             return
 

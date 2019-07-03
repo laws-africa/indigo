@@ -880,7 +880,7 @@ class Document(DocumentMixin, models.Model):
 
     def refresh_xml(self):
         log.debug("Refreshing document xml for %s" % self)
-        self.document_xml = self.doc.to_xml()
+        self.document_xml = self.doc.to_xml().decode('utf-8')
 
     def reset_xml(self, xml, from_model=False):
         """ Completely reset the document XML to a new value. If from_model is False,

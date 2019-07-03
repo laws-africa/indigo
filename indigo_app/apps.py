@@ -6,4 +6,4 @@ class IndigoAppConfig(AppConfig):
     verbose_name = 'Indigo Editor'
 
     def ready(self):
-        import indigo_app.notifications
+        import indigo_app.signals  # noqa

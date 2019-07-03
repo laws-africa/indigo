@@ -91,7 +91,7 @@ class Notifier(object):
 notifier = Notifier()
 
 
-@background
+@background(queue='indigo')
 def send_task_notifications(task_id):
     try:
         notifier.send_task_notifications(Task.objects.get(pk=task_id))
@@ -99,7 +99,7 @@ def send_task_notifications(task_id):
         pass
 
 
-@background
+@background(queue='indigo')
 def notify_comment_posted(comment_id):
     try:
         notifier.notify_comment_posted(Comment.objects.get(pk=comment_id))

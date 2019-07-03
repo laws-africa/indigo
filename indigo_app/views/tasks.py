@@ -255,7 +255,6 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
 
-                # this saves the task
                 state_change(user)
 
                 if change == 'submit':
@@ -263,6 +262,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if change == 'unsubmit':
                     verb = 'returned with changes requested'
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+
+        self.task.save()
 
         return redirect(self.get_redirect_url())
 

@@ -20,6 +20,7 @@ from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
 from django_fsm import FSMField, has_transition_perm, transition
+from django_fsm.signals import post_transition
 import arrow
 from taggit.managers import TaggableManager
 import reversion.revisions
@@ -1202,6 +1203,7 @@ class Task(models.Model):
         """ Assign this task to assignee (may be None)
         """
         self.assigned_to = assignee
+        self.save()
         if assigned_by == self.assigned_to:
             action.send(self.assigned_to, verb='picked up', action_object=self,
                         place_code=self.place.place_code)
@@ -1263,7 +1265,6 @@ class Task(models.Model):
             self.assign_to(user, user)
         self.last_assigned_to = self.assigned_to
         self.assigned_to = None
-        action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
     def may_cancel(self, view):
@@ -1274,7 +1275,6 @@ class Task(models.Model):
     def cancel(self, user):
         self.assigned_to = None
         self.closed_at = timezone.now()
-        action.send(user, verb=self.VERBS['cancel'], action_object=self, place_code=self.place.place_code)
 
     # reopen – moves back to 'open'
     def may_reopen(self, view):
@@ -1285,7 +1285,6 @@ class Task(models.Model):
     def reopen(self, user):
         self.closed_by_user = None
         self.closed_at = None
-        action.send(user, verb=self.VERBS['reopen'], action_object=self, place_code=self.place.place_code)
 
     # unsubmit – moves back to 'open'
     def may_unsubmit(self, view):
@@ -1298,10 +1297,6 @@ class Task(models.Model):
     def unsubmit(self, user):
         self.assigned_to = self.last_assigned_to
         self.changes_requested = True
-        action.send(user, verb=self.VERBS['unsubmit'],
-                    action_object=self,
-                    target=self.assigned_to,
-                    place_code=self.place.place_code)
 
     # close
     def may_close(self, view):
@@ -1318,7 +1313,6 @@ class Task(models.Model):
         self.closed_at = timezone.now()
         self.changes_requested = False
         self.assigned_to = None
-        action.send(user, verb=self.VERBS['close'], action_object=self, place_code=self.place.place_code)
 
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
@@ -1379,6 +1373,10 @@ class Task(models.Model):
             self.extra_data = {}
         return self.extra_data
 
+    @property
+    def friendly_state(self):
+        return self.state.replace('_', ' ')
+
 
 @receiver(signals.post_save, sender=Task)
 def post_save_task(sender, instance, **kwargs):
@@ -1387,6 +1385,34 @@ def post_save_task(sender, instance, **kwargs):
     if kwargs['created']:
         action.send(instance.created_by_user, verb='created', action_object=instance,
                     place_code=instance.place.place_code)
+
+
+@receiver(post_transition, sender=Task)
+def post_task_transition(sender, instance, name, **kwargs):
+    """ When tasks transition, store actions.
+
+    Doing this in a signal, rather than in the transition method on the class,
+    means that the task's state field is up to date. Our notification system
+    is triggered on action signals, and the action objects passed to action
+    signals are loaded fresh from the DB - so any objects they reference
+    are also loaded from the db. So we ensure that the task is saved to the
+    DB (including the updated state field), just before creating the action
+    signal.
+    """
+    if name in instance.VERBS:
+        user = kwargs['method_args'][0]
+        # ensure the task object changes are in the DB, since action signals
+        # load related data objects from the db
+        instance.save()
+
+        if name == 'unsubmit':
+            action.send(user, verb=instance.VERBS['unsubmit'],
+                        action_object=instance,
+                        target=instance.assigned_to,
+                        place_code=instance.place.place_code)
+        else:
+            action.send(user, verb=instance.VERBS[name], action_object=instance, place_code=instance.place.place_code)
+
 
 
 class WorkflowQuerySet(models.QuerySet):

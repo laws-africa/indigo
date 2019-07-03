@@ -10,20 +10,7 @@
   </p>
 
   <hr>
-
-  {% if task.document %}
-    <p>
-      {{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}<br>
-      {{ task.work.frbr_uri }}
-    </p>
-  {% elif task.work %}
-    <p>
-      {{ task.work.title }}<br>
-      {{ task.work.frbr_uri }}
-    </p>
-  {% endif %}
-
-  <p>{{ task.description|default:''|urlize|linebreaksbr }}</p>
+  {% include 'templated_email/_task_detail_block.html' %}
   <hr>
 
   {% include 'templated_email/_footer.html' %}

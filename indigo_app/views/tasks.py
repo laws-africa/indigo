@@ -386,7 +386,7 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
 class MyTasksView(AbstractAuthedIndigoView, TemplateView):
     authentication_required = True
     template_name = 'indigo_app/tasks/my_tasks.html'
-    tab='my_tasks'
+    tab = 'my_tasks'
 
     def get_context_data(self, **kwargs):
         context = super(MyTasksView, self).get_context_data(**kwargs)

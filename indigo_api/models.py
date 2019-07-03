@@ -880,7 +880,7 @@ class Document(DocumentMixin, models.Model):
 
     def refresh_xml(self):
         log.debug("Refreshing document xml for %s" % self)
-        self.document_xml = self.doc.to_xml()
+        self.document_xml = self.doc.to_xml().decode('utf-8')
 
     def reset_xml(self, xml, from_model=False):
         """ Completely reset the document XML to a new value. If from_model is False,
@@ -1159,6 +1159,7 @@ class Task(models.Model):
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    closed_at = models.DateTimeField(help_text="When the task was marked as done or cancelled.", null=True)
 
     changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
 
@@ -1274,6 +1275,7 @@ class Task(models.Model):
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
         self.assigned_to = None
+        self.closed_at = timezone.now()
         self.save()
         action.send(user, verb=self.VERBS['cancel'], action_object=self, place_code=self.place.place_code)
 
@@ -1285,6 +1287,7 @@ class Task(models.Model):
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
         self.closed_by_user = None
+        self.closed_at = None
         self.save()
         action.send(user, verb=self.VERBS['reopen'], action_object=self, place_code=self.place.place_code)
 
@@ -1317,6 +1320,7 @@ class Task(models.Model):
         if not self.assigned_to:
             self.assign_to(user, user)
         self.closed_by_user = self.assigned_to
+        self.closed_at = timezone.now()
         self.changes_requested = False
         self.assigned_to = None
         self.save()

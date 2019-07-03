@@ -263,7 +263,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                     verb = 'returned with changes requested'
                 messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
 
-        self.task.save()
+        task.save()
 
         return redirect(self.get_redirect_url())
 

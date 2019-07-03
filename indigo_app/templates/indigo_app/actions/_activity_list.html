@@ -1,17 +1,16 @@
-
 {% if actions %}
   <ul class="activity-list">
     {% if reverse_order %}
       {% for action in actions reversed %}
-      <li class="activity-item">
-        {% include 'indigo_app/actions/_action.html' with action=action %}
-      </li>
-    {% endfor %}
+        <li class="activity-item">
+          {% include 'indigo_app/actions/_action.html' with action=action %}
+        </li>
+      {% endfor %}
     {% else %}
       {% for action in actions %}
-      <li class="activity-item">
-        {% include 'indigo_app/actions/_action.html' with action=action %}
-      </li>
+        <li class="activity-item">
+          {% include 'indigo_app/actions/_action.html' with action=action %}
+        </li>
       {% endfor %}
     {% endif %}
   </ul>

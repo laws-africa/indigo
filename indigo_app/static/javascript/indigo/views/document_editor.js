@@ -84,7 +84,7 @@
       function htmlLoaded(xml) {
         var htmlTransform = new XSLTProcessor();
         htmlTransform.importStylesheet(xml);
-        htmlTransform.setParameter(null, 'resolverUrl', Indigo.resolverUrl);
+        htmlTransform.setParameter(null, 'resolverUrl', '/works');
 
         self.htmlTransform = htmlTransform;
         self.editorReady.resolve();
@@ -354,6 +354,7 @@
         var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
 
         self.makeLinksExternal(html);
+        self.addWorkPopups(html);
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
         $akn.append(html);
@@ -406,6 +407,13 @@
       html.querySelectorAll('a').forEach(function(a) {
         a.setAttribute("target", "_blank");
         $(a).tooltip({title: a.getAttribute('data-href')});
+      });
+    },
+
+    addWorkPopups: function(html) {
+      html.querySelectorAll('a[href^="/works/"]').forEach(function(a) {
+        a.setAttribute("data-popup-url", a.href + '/popup');
+        $(a).tooltip('disable');
       });
     },
 

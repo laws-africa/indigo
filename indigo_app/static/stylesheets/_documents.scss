@@ -447,14 +447,22 @@ button.btn-link.help {
   ins,
   .ins,
   .ins > .akn-num {
-    background-color: #a6f3a6;
+    background-color: $diff-green;
     text-decoration: none;
+  }
+
+  img.ins {
+    border: 1px solid adjust-color($diff-green, $lightness: -30%);
   }
 
   del,
   .del,
   .del > .akn-num {
-    background-color: #f8cbcb;
+    background-color: $diff-red;
     text-decoration: none;
+  }
+
+  img.del {
+    border: 1px solid adjust-color($diff-red, $lightness: -30%);
   }
 }

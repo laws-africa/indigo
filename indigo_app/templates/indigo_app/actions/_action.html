@@ -7,99 +7,13 @@
   {% user_profile action.actor %} {{ action.verb }}
 {% endif %}
 
-{% if model == 'work' %}
-  {% with action.action_object as work %}
-    the work <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-
-    {% if not ignore_place %}
-      in <a href="{% url 'place' place=work.place.place_code %}">{{ work.place }}</a>
-    {% endif %}
+{% if model %}
+  {% with "indigo_app/actions/_action_"|add:model|add:".html" as template_name %}
+    {% include template_name %}
   {% endwith %}
-
-{% elif model == 'amendment' %}
-  {% with action.action_object as amendment %}
-    an amendment on the work <a href="{% url 'work' frbr_uri=amendment.amended_work.frbr_uri %}">{{ amendment.amended_work.title }}</a>
-    by the work <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a>
-
-    {% if not ignore_place %}
-      in <a href="{% url 'place' place=amendment.amended_work.place.place_code %}">{{ amendment.amended_work.place }}</a>
-    {% endif %}
-  {% endwith %}
-
-{% elif model == 'document' %}
-  {% with action.action_object as document %}
-    {% if document.deleted %}
-      a document on the work <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}">{{ document.work.title }}</a> @ {{ document.expression_date }}
-    {% else %}
-      the document <a href="{% url 'document' doc_id=document.id %}">{{ document.title }} @ {{ document.expression_date }}</a>
-    {% endif %}
-
-    {% if not ignore_place %}
-      in <a href="{% url 'place' place=document.work.place.place_code %}">{{ document.work.place }}</a>
-    {% endif %}
-  {% endwith %}
-
-{% elif model == 'task' %}
-  {% with action.action_object as task %}
-    {% if this_task %}
-      this task
-    {% else %}
-      the task <a href="{% url 'task_detail' place=task.place.place_code pk=task.pk %}">{{ task.title }}</a>
-
-      {% if not action.target %}
-        {% if task.work %}
-          on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-          {% if task.document %}
-            @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
-          {% endif %}
-        {% endif %}
-      {% endif %}
-    {% endif %}
-
-    {% if action.target.target_actions.content_type.model == 'user' %}
-      {% if action.verb == 'requested changes to' %}
-        from
-      {% else %}
-        to
-      {% endif %}
-      {% user_profile action.target %}
-    {% endif %}
-
-    {% if action.target.target_actions.content_type.model == 'workflow' %}
-      {% with action.target as workflow %}
-        {% if action.verb == 'added' %}
-          to
-        {% elif action.verb == 'removed' %}
-          from
-        {% endif %}
-        {% if this_workflow %}
-          this workflow
-        {% else %}
-          the workflow <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
-        {% endif %}
-      {% endwith %}
-    {% endif %}
-
-    {% if action.verb == 'submitted' %}
-      for review
-    {% endif %}
-
-    {% if not ignore_place %}
-      in <a href="{% url 'place' place=task.place.place_code %}">{{ task.place }}</a>
-    {% endif %}
- {% endwith %}
-
-{% elif model == 'workflow' %}
-  {% with action.action_object as workflow %}
-    {% if this_workflow %}
-      this workflow
-    {% else %}
-      the workflow <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
-    {% endif %}
-
-    {% if not ignore_place %}
-      in <a href="{% url 'place' place=workflow.place.place_code %}">{{ workflow.place }}</a>
-    {% endif %}
+{% else %}
+  {% with "indigo_app/actions/_action_verb_"|add:action.verb|add:".html" as template_name %}
+    {% include template_name %}
   {% endwith %}
 {% endif %}
 

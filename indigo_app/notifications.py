@@ -96,7 +96,7 @@ notifier = Notifier()
 
 
 @receiver(signals.post_save, sender=Action)
-def post_save_task(sender, instance, **kwargs):
+def task_action_created(sender, instance, **kwargs):
     """ Send 'created' action to activity stream if new task
     """
     if kwargs['created']:

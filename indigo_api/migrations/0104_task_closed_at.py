@@ -14,7 +14,7 @@ def populate_closed_at(apps, schema_editor):
     content_type = ContentType.objects.get_for_model(Task)
 
     # backfill task.closed_at
-    for action in Action.objects.using(db_alias).filter(verb__in=['approved', 'cancelled'], action_object_content_type_id=content_type.pk):
+    for action in Action.objects.using(db_alias).filter(verb__in=['approved', 'cancelled', 'closed'], action_object_content_type_id=content_type.pk):
         Task.objects.filter(pk=action.action_object_object_id).update(closed_at=action.timestamp)
 
 

@@ -192,7 +192,8 @@ Background Tasks
 ----------------
 
 Indigo can optionally do some operations in the background. It requires a worker or
-cron job to run the ``django-background-tasks`` task queue. See `django-background-tasks <https://django-background-tasks.readthedocs.io/en/latest/>`
+cron job to run the ``django-background-tasks`` task queue. Indigo tasks are placed
+in the ``indigo`` task queue. See `django-background-tasks <https://django-background-tasks.readthedocs.io/en/latest/>`
 for more details on running background tasks.
 
 To enable background tasks, set ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND`` to True.

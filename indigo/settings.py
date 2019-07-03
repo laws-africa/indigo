@@ -32,6 +32,9 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
+    # add indigo_points plugin
+    'indigo_points',
+
     # Globals
     'indigo',
 
@@ -91,6 +94,7 @@ INSTALLED_APPS = (
 
     # required for commenting on tasks
     'django_comments',
+
 )
 
 MIDDLEWARE = (

@@ -1265,7 +1265,6 @@ class Task(models.Model):
             self.assign_to(user, user)
         self.submitted_by_user = self.assigned_to
         self.assigned_to = self.reviewed_by_user
-        action.send(user, verb=self.VERBS['submit'], action_object=self, place_code=self.place.place_code)
 
     # cancel
     def may_cancel(self, view):

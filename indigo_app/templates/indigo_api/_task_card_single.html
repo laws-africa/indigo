@@ -154,7 +154,9 @@
         {% endif %}
       </div>
       <!-- display task points -->
-      {% include 'indigo_app/points/_task_points.html' %}
+      {% if task.extra_data.points %}
+        {% include 'indigo_app/points/_task_points.html' %}
+      {% endif %}
     </div>
   </div>
 </div>

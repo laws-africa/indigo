@@ -5,44 +5,52 @@
 
 {% block content %}
   <div class="container mt-3 mb-5">
-    {% if not task.state == 'done' and not task.state == 'cancelled' and task.change_task_permission %}
-      <div class="float-right">
+    <div class="row">
+      <div class="d-flex mb-3 col-9 justify-content-between">
+        <div class="d-flex">
+          <div class="mr-3 text-center">
+            {% if task.state == 'open' and task.assigned_to %}
+            <i class="fas fa-fw task-icon-assigned" title="assigned"></i><br>
+            {% else %}
+            <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i><br>
+            {% endif %}
+            <span class="text-muted">#{{ task.pk }}</span>
+          </div>
+          <div>
+            <h5>
+              {{ task.title }}
+              {% if task.changes_requested %}
+              <span class="badge badge-secondary bg-pending_review ml-2">Changes requested</span>
+              {% endif %}
+            </h5>
+
+            {% if task.document %}
+            <div class="mb-2">
+              <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }}
+                @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% elif task.work %}
+            <div class="mb-2">
+              <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
+                 data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <div>
+          {% if task.extra_data.points %}
+            {% include 'indigo_app/points/_task_points.html' %}
+          {% endif %}
+        </div>
+      </div>
+
+      {% if not task.state == 'done' and not task.state == 'cancelled' and task.change_task_permission %}
+      <div class="col-3">
         <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
       </div>
-    {% endif %}
-
-    <div class="d-flex mb-3">
-      <div class="mr-3 text-center">
-        {% if task.state == 'open' and task.assigned_to %}
-          <i class="fas fa-fw task-icon-assigned" title="assigned"></i><br>
-        {% else %}
-          <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i><br>
-        {% endif %}
-        <span class="text-muted">#{{ task.pk }}</span>
-      </div>
-
-      <div>
-        <h5>
-          {{ task.title }}
-          {% if task.changes_requested %}
-            <span class="badge badge-secondary bg-pending_review ml-2">Changes requested</span>
-          {% endif %}
-        </h5>
-
-        {% if task.document %}
-          <div class="mb-2">
-            <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }}
-              @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
-            <span class="text-muted">{{ task.work.frbr_uri }}</span>
-          </div>
-        {% elif task.work %}
-          <div class="mb-2">
-            <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
-               data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
-            <span class="text-muted">{{ task.work.frbr_uri }}</span>
-          </div>
-        {% endif %}
-      </div>
+      {% endif %}
     </div>
 
     <div class="row">

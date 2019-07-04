@@ -10,6 +10,7 @@
       {% endif %}
       <th scope="col">Work/Document</th>
       <th scope="col">Updated</th>
+      <th scope="col">Points</th>
     </tr>
   </thead>
   <tbody>
@@ -59,7 +60,14 @@
            data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
       {% endif %}
     </td>
-    <td><span class="time-ago text-nowrap" data-timestamp="{{ task.updated_at|date:'c' }}">{{ task.updated_at|date:"Y-m-d H:i" }}</span></td>
+    <td>
+      <span class="time-ago text-nowrap" data-timestamp="{{ task.updated_at|date:'c' }}">{{ task.updated_at|date:"Y-m-d H:i" }}</span>
+    </td>
+    <td>
+      {% if task.extra_data.points %}
+        {% include 'indigo_app/points/_task_points.html' %}
+      {% endif %}
+    </td>
   </tr>
   {% endfor %}
   </tbody>

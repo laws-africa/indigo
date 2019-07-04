@@ -120,6 +120,18 @@ python manage.py test
 
 Read the [documentation for details on deploying Indigo](http://indigo.readthedocs.org/en/latest/running/index.html).
 
+## Releasing a New Version
+
+1. Run the tests!
+2. Update VERSION appropriately
+3. Update `docs/changelog.rst`
+4. Commit and push to github
+5. Release to PyPI:
+
+```bash
+python setup.py sdist bdist_wheel upload
+```
+
 ## License and Copyright
 
 The project is licensed under a [GNU GPL 3 license](LICENSE).

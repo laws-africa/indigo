@@ -1160,7 +1160,6 @@ class Task(models.Model):
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
     reviewed_by_user = models.ForeignKey(User, related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
-    closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
     closed_at = models.DateTimeField(help_text="When the task was marked as done or cancelled.", null=True)
 
     changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
@@ -1285,7 +1284,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        self.closed_by_user = None
+        self.reviewed_by_user = None
         self.closed_at = None
 
     # unsubmit – moves back to 'open'
@@ -1314,7 +1313,7 @@ class Task(models.Model):
     def close(self, user):
         if not self.assigned_to or self.assigned_to != user:
             self.assign_to(user, user)
-        self.closed_by_user = self.assigned_to
+        self.reviewed_by_user = self.assigned_to
         self.closed_at = timezone.now()
         self.changes_requested = False
         self.assigned_to = None

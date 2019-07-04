@@ -11,14 +11,42 @@
     <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>
   {% endif %}
 
-  <p class="mb-2">Published on {{ work.publication_date|date:"Y-m-d" }}
-    {% if work.publication_name and work.publication_number and work.publication_document %}
-      in <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">
-        {{ work.publication_name }} no. {{ work.publication_number }}</a>.
-    {% elif work.publication_name and work.publication_number %}
-      in {{ work.publication_name }} no. {{ work.publication_number }}.
-    {% endif %}
-  </p>
+  {% if work.publication_document %}
+    <p class="mb-2">
+      {% if work.publication_name %}
+        Published
+          {% if work.publication_date %}
+            on {{ work.publication_date|date:"Y-m-d" }}
+          {% endif %}
+        in
+        {% if work.publication_number %}
+          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}
+            no. {{ work.publication_number }}</a>.
+        {% else %}
+          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}</a>.
+        {% endif %}
+      {% else %}
+        {% if work.publication_date %}
+          Published on {{ work.publication_date|date:"Y-m-d" }}.<br/>
+        {% endif %}
+        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">Publication document</a>.
+      {% endif %}
+    </p>
+  {% elif work.publication_name %}
+      <p class="mb-2">
+        Published
+          {% if work.publication_date %}
+            on {{ work.publication_date|date:"Y-m-d" }}
+          {% endif %}
+          {% if work.publication_number %}
+            in {{ work.publication_name }} no. {{ work.publication_number }}.
+          {% else %}
+            in {{ work.publication_name }}.
+          {% endif %}
+      </p>
+  {% elif work.publication_date %}
+      Published on {{ work.publication_date|date:"Y-m-d" }}.<br/>
+  {% endif %}
 
   {% if work.commencement_date %}
     <p class="mb-2">Commenced on {{ work.commencement_date|date:"Y-m-d" }}{% if work.commencing_work %} by

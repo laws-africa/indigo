@@ -11,7 +11,7 @@
         </h6>
 
         {% for task in col.tasks %}
-          {% include 'indigo_api/_task_card_single.html' with assign_button=True assigned=True last_assigned_user=True %}
+          {% include 'indigo_api/_task_card_single.html' with assign_button=True assigned=True submitted_by_user=True %}
         {% endfor %}
       </div>
     {% endfor %}

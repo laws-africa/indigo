@@ -398,13 +398,13 @@ class MyTasksView(AbstractAuthedIndigoView, TemplateView):
 
         # tasks previously assigned to this user and now pending approval
         context['tasks_pending_approval'] = Task.objects \
-            .filter(last_assigned_to=self.request.user, state='pending_review') \
+            .filter(submitted_by_user=self.request.user, state='pending_review') \
             .all()
 
         # tasks recently approved
         threshold = datetime.date.today() - datetime.timedelta(days=7)
         context['tasks_recently_approved'] = Task.objects \
-            .filter(last_assigned_to=self.request.user, state='done') \
+            .filter(submitted_by_user=self.request.user, state='done') \
             .filter(updated_at__gte=threshold) \
             .all()[:50]
 

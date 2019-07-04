@@ -32,11 +32,11 @@ class Notifier(object):
             })
 
         elif action.verb == 'closed':
-            if task.last_assigned_to and task.last_assigned_to != action.actor:
-                self.send_templated_email('task_closed_submitter', [task.last_assigned_to], {
+            if task.submitted_by_user and task.submitted_by_user != action.actor:
+                self.send_templated_email('task_closed_submitter', [task.submitted_by_user], {
                     'action': action,
                     'task': action.action_object,
-                    'recipient': task.last_assigned_to,
+                    'recipient': task.submitted_by_user,
                 })
 
         elif action.verb == 'submitted' and task.changes_requested:
@@ -61,8 +61,8 @@ class Notifier(object):
             recipient_list.append(task.created_by_user)
             if task.assigned_to:
                 recipient_list.append(task.assigned_to)
-            if task.last_assigned_to:
-                recipient_list.append(task.last_assigned_to)
+            if task.submitted_by_user:
+                recipient_list.append(task.submitted_by_user)
 
             recipient_list = list(set(recipient_list))
             recipient_list.remove(comment.user)

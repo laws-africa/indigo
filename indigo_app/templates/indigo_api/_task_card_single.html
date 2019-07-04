@@ -6,42 +6,42 @@
     <!-- Workflow controls -->
     {% if workflow_controls %}
       <form method="POST">
-      {% csrf_token %}
+        {% csrf_token %}
 
-      <div class="dropdown float-right">
-        <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"></button>
-        <div class="dropdown-menu">
-          {% if task.state == 'open' and task.submit_task_permission %}
+        <div class="dropdown float-right">
+          <button class="btn btn-link btn-sm dropdown-toggle" type="button" data-toggle="dropdown"></button>
+          <div class="dropdown-menu">
+            {% if task.state == 'open' and task.submit_task_permission %}
+              <button type="submit"
+                      class="dropdown-item"
+                      formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
+                      data-confirm="Are you sure you want to submit this task for review?">
+                Submit for review
+              </button>
+            {% endif %}
+            {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
+              <button type="submit"
+                      class="dropdown-item"
+                      formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
+                      data-confirm="Are you sure you want to request changes to this task?">
+                Request changes
+              </button>
+            {% endif %}
+            {% if task.state == 'pending_review' and task.close_task_permission %}
+              <button type="submit"
+                      class="dropdown-item"
+                      formaction="{% url 'close_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
+                      data-confirm="Are you sure you want to approve this task?">
+                Approve
+              </button>
+            {% endif %}
             <button type="submit"
                     class="dropdown-item"
-                    formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                    data-confirm="Are you sure you want to submit this task for review?">
-              Submit for review
+                    formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}"
+                    data-confirm="Are you sure you want to remove this task?">
+              Remove from workflow
             </button>
-          {% endif %}
-          {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
-            <button type="submit"
-                    class="dropdown-item"
-                    formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                    data-confirm="Are you sure you want to request changes to this task?">
-              Request changes
-            </button>
-          {% endif %}
-          {% if task.state == 'pending_review' and task.close_task_permission %}
-            <button type="submit"
-                    class="dropdown-item"
-                    formaction="{% url 'close_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                    data-confirm="Are you sure you want to approve this task?">
-              Approve
-            </button>
-          {% endif %}
-          <button type="submit"
-                  class="dropdown-item"
-                  formaction="{% url 'workflow_remove_task' place=place.place_code pk=workflow.pk task_pk=task.pk %}"
-                  data-confirm="Are you sure you want to remove this task?">
-            Remove from workflow
-          </button>
-        </div>
+          </div>
       </div>
     </form>
     {% endif %}
@@ -153,10 +153,9 @@
           </div>
         {% endif %}
       </div>
-      <!-- display task points -->
-      {% if task.extra_data.points %}
-        {% include 'indigo_app/points/_task_points.html' %}
-      {% endif %}
+
+      {% block task-badges %}
+      {% endblock %}
     </div>
   </div>
 </div>

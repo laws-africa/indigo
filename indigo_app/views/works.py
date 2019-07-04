@@ -1,4 +1,7 @@
 # coding=utf-8
+
+from __future__ import unicode_literals
+
 import json
 import io
 import re
@@ -15,7 +18,6 @@ from django.http import Http404, JsonResponse
 from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
-from cobalt.act import FrbrUri
 import datetime
 import requests
 import unicodecsv as csv
@@ -556,11 +558,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def form_valid(self, form):
         error = None
         works = None
+        locality_code = self.locality.code if self.locality else None
+        bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
 
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
-            works = self.get_works(table, form)
-            self.link_works(works, form)
+            works = bulk_creator.get_works(self, table)
+            self.create_links(works, form)
             self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
@@ -568,118 +572,43 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         context_data = self.get_context_data(works=works, error=error)
         return self.render_to_response(context_data)
 
-    def get_country(self):
-        self.determine_place()
-        return self.country
-
-    def get_works(self, table, form):
-        works = []
-
-        # clean up headers
-        headers = [h.split(' ')[0].lower() for h in table[0]]
-
-        # transform rows into list of dicts for easy access
-        rows = [
-            {header: row[i] for i, header in enumerate(headers) if header}
-            for row in table[1:]
-        ]
-
-        for idx, row in enumerate(rows):
-            # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if not row.get('ignore') and [val for val in row.itervalues() if val]:
-                info = {
-                    'row': idx + 2,
-                }
-                works.append(info)
-
-                try:
-                    frbr_uri = self.get_frbr_uri(self.country, self.locality, row)
-                except ValueError as e:
-                    info['status'] = 'error'
-                    info['error_message'] = e.message
-                    continue
-
-                try:
-                    work = Work.objects.get(frbr_uri=frbr_uri)
-                    info['work'] = work
-                    info['status'] = 'duplicate'
-                    if row.get('amends'):
-                        info['amends'] = row.get('amends')
-                    if row.get('commencement_date'):
-                        info['commencement_date'] = row.get('commencement_date')
-
-                except Work.DoesNotExist:
-                    work = Work()
-
-                    work.frbr_uri = frbr_uri
-                    work.title = self.strip_title_string(row.get('title'))
-                    work.country = self.country
-                    work.locality = self.locality
-                    work.publication_name = row.get('publication_name')
-                    work.publication_number = row.get('publication_number')
-                    work.created_by_user = self.request.user
-                    work.updated_by_user = self.request.user
-                    work.stub = not row.get('principal')
-
-                    try:
-                        work.publication_date = self.make_date(row.get('publication_date'), 'publication_date')
-                        work.commencement_date = self.make_date(row.get('commencement_date'), 'commencement_date')
-                        work.assent_date = self.make_date(row.get('assent_date'), 'assent_date')
-                        work.full_clean()
-                        work.save_with_revision(self.request.user)
-
-                        # link publication document
-                        publication_number = work.publication_number.split()[-1]
-                        params = {
-                            'date': row.get('publication_date'),
-                            'number': publication_number,
-                            'publication': work.publication_name,
-                            'country': self.country.place_code,
-                            'locality': self.locality.code if self.locality else None,
-                        }
-                        self.get_publication_document(params, work, form)
-
-                        # signals
-                        work_changed.send(sender=work.__class__, work=work, request=self.request)
-
-                        info['status'] = 'success'
-                        info['work'] = work
-
-                        # TODO: neaten this up
-                        if row.get('commenced_by'):
-                            info['commenced_by'] = row.get('commenced_by')
-                        if row.get('amends'):
-                            info['amends'] = row.get('amends')
-                        if row.get('repealed_by'):
-                            info['repealed_by'] = row.get('repealed_by')
-                        if row.get('with_effect_from'):
-                            info['with_effect_from'] = row.get('with_effect_from')
-                        if row.get('primary_work'):
-                            info['parent_work'] = row.get('primary_work')
-
-                    except ValidationError as e:
-                        info['status'] = 'error'
-                        if hasattr(e, 'message_dict'):
-                            info['error_message'] = ' '.join(
-                                ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                            )
-                        else:
-                            info['error_message'] = e.message
-
-        return works
-
-    def link_works(self, works, form):
-        for info in works:
+    def create_links(self, works_info, form):
+        for info in works_info:
             if info['status'] == 'success':
+                self.link_publication_document(info, form)
                 if info.get('commenced_by'):
                     self.link_commencement(info, form)
                 if info.get('repealed_by'):
                     self.link_repeal(info, form)
-                if info.get('parent_work'):
+                if info.get('primary_work'):
                     self.link_parent_work(info, form)
 
-            if (info['status'] == 'success' or info['status'] == 'duplicate') and info.get('amends'):
+            if info['status'] != 'error' and info.get('amends'):
+                # this will check duplicate works as well
+                # (they won't overwrite the existing works but the amendments will be linked)
                 self.link_amendment(info, form)
+
+    def link_publication_document(self, info, form):
+        params = info.get('params')
+        work = info['work']
+        locality_code = self.locality.code if self.locality else None
+        finder = plugins.for_locale('publications', self.country.code, None, locality_code)
+
+        if not finder or not params.get('date'):
+            return self.create_task(info, form, task_type='link-publication-document')
+
+        publications = finder.find_publications(params)
+
+        if len(publications) != 1:
+            return self.create_task(info, form, task_type='link-publication-document')
+
+        pub_doc_details = publications[0]
+        pub_doc = PublicationDocument()
+        pub_doc.work = work
+        pub_doc.file = None
+        pub_doc.trusted_url = pub_doc_details.get('url')
+        pub_doc.size = pub_doc_details.get('size')
+        pub_doc.save()
 
     def link_commencement(self, info, form):
         # if the work is `commenced_by` something, try linking it
@@ -747,19 +676,19 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self.create_task(info, form, task_type='link-repeal')
 
     def link_parent_work(self, info, form):
-        # if the work has a `parent_work`, try linking it
+        # if the work has a `primary_work`, try linking it
         # make a task if this fails
         work = info['work']
-        parent_work = self.find_work_by_title(info['parent_work'])
+        parent_work = self.find_work_by_title(info['primary_work'])
         if not parent_work:
-            return self.create_task(info, form, task_type='link-parent-work')
+            return self.create_task(info, form, task_type='link-primary-work')
 
-        work.parent_work = self.find_work_by_title(info.get('parent_work'))
+        work.parent_work = parent_work
 
         try:
             work.save_with_revision(self.request.user)
         except ValidationError:
-            self.create_task(info, form, task_type='link-parent-work')
+            self.create_task(info, form, task_type='link-primary-work')
 
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
@@ -768,7 +697,13 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def create_task(self, info, form, task_type):
         task = Task()
-        if task_type == 'link-commencement':
+
+        if task_type == 'link-publication-document':
+            task.title = 'Link publication document'
+            task.description = '''This work's publication document could not be linked automatically – see row {}.
+Find it and upload it manually.'''.format(info['row'])
+
+        elif task_type == 'link-commencement':
             task.title = 'Link commencement'
             task.description = '''On the spreadsheet, it says that this work is commenced by '{}' – see row {}.
 
@@ -809,7 +744,7 @@ Possible reasons:
 Check the spreadsheet for reference and link it manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
 
-        elif task_type == 'link-parent-work':
+        elif task_type == 'link-primary-work':
             task.title = 'Link primary work'
             task.description = '''On the spreadsheet, it says that this work's primary work is '{}' – see row {}.
 
@@ -818,42 +753,25 @@ Possible reasons:
 – a typo in the spreadsheet
 – the primary work hasn't been imported.
 
-Check the spreadsheet for reference and link it manually.'''.format(info['parent_work'], info['row'])
+Check the spreadsheet for reference and link it manually.'''.format(info['primary_work'], info['row'])
 
-        task.country = info['work'].country
-        task.locality = info['work'].locality
+        task.country = self.country
+        task.locality = self.locality
         task.work = info['work']
         task.code = task_type
         task.created_by_user = self.request.user
-        task.save()
-        task.workflows = form.cleaned_data.get('workflows').all()
-        task.save()
 
-    def pub_doc_task(self, work, form):
-        task = Task()
-
-        task.title = 'Link publication document'
-        task.description = '''This work's publication document could not be linked automatically.
-There may be more than one candidate, or it may be unavailable.
-First check under 'Edit work' for multiple candidates. If there are, choose the correct one.
-Otherwise, find it and upload it manually.'''
-
-        task.country = work.country
-        task.locality = work.locality
-        task.work = work
-        task.created_by_user = self.request.user
-        task.code = 'link-publication-document'
+        # need to save before assigning workflow because of M2M relation
         task.save()
-        task.workflows = form.cleaned_data.get('workflows').all()
+        task.workflows = [form.cleaned_data.get('workflow')]
         task.save()
 
     def get_tasks(self, works, form):
-        tasks = []
-
         def make_task(chosen_task):
             task = Task()
             task.country = self.country
             task.locality = self.locality
+            task.work = info.get('work')
             task.created_by_user = self.request.user
             task.code = chosen_task
             for possible_task in form.possible_tasks:
@@ -861,28 +779,16 @@ Otherwise, find it and upload it manually.'''
                     task.title = possible_task['label']
                     task.description = possible_task['description']
 
-            # need to save before assigning work, workflow/s because of M2M relations
+            # need to save before assigning workflow because of M2M relation
             task.save()
-            task.work = info.get('work')
-            task.workflows = form.cleaned_data.get('workflows').all()
+            task.workflows = [form.cleaned_data.get('workflow')]
             task.save()
-            tasks.append(task)
 
-        # bulk create tasks on primary works
         if form.cleaned_data.get('principal_tasks'):
             for info in works:
                 if info['status'] == 'success' and not info['work'].stub:
                     for chosen_task in form.cleaned_data.get('principal_tasks'):
                         make_task(chosen_task)
-
-        # bulk create tasks on all works
-        if form.cleaned_data.get('all_tasks'):
-            for info in works:
-                if info['status'] == 'success':
-                    for chosen_task in form.cleaned_data.get('all_tasks'):
-                        make_task(chosen_task)
-
-        return tasks
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet
@@ -907,106 +813,6 @@ Otherwise, find it and upload it manually.'''
             raise ValidationError("Your sheet did not import successfully; please check that it is 'Published to the web' and shared with 'Anyone with the link'")
         else:
             return rows
-
-    def get_frbr_uri(self, country, locality, row):
-        row_country = row.get('country')
-        row_locality = row.get('locality')
-        row_subtype = row.get('subtype')
-        row_year = row.get('year')
-        row_number = row.get('number')
-        frbr_uri = FrbrUri(country=row_country, locality=row_locality,
-                           doctype='act', subtype=row_subtype,
-                           date=row_year, number=row_number, actor=None)
-
-        # if the country doesn't match
-        # (but ignore if no country given – dealt with separately)
-        if row_country and country.code != row_country.lower():
-            raise ValueError(
-                'The country code given in the spreadsheet ("%s") '
-                'doesn\'t match the code for the country you\'re working in ("%s")'
-                % (row.get('country'), country.code.upper())
-            )
-
-        # if you're working on the country level but the spreadsheet gives a locality
-        if not locality and row_locality:
-            raise ValueError(
-                'You are working in a country (%s), '
-                'but the spreadsheet gives a locality code ("%s")'
-                % (country, row_locality)
-            )
-
-        # if you're working in a locality but the spreadsheet doesn't give one
-        if locality and not row_locality:
-            raise ValueError(
-                'There\'s no locality code given in the spreadsheet, '
-                'but you\'re working in %s ("%s")'
-                % (locality, locality.code.upper())
-            )
-
-        # if the locality doesn't match
-        # (only if you're in a locality)
-        if locality and locality.code != row_locality.lower():
-            raise ValueError(
-                'The locality code given in the spreadsheet ("%s") '
-                'doesn\'t match the code for the locality you\'re working in ("%s")'
-                % (row_locality, locality.code.upper())
-            )
-
-        # check all frbr uri fields have been filled in and that no spaces were accidentally included
-        if ' ' in frbr_uri.work_uri():
-            raise ValueError('Check for spaces in country, locality, subtype, year, number – none allowed')
-        elif not frbr_uri.country:
-            raise ValueError('A country must be given')
-        elif not frbr_uri.date:
-            raise ValueError('A year must be given')
-        elif not frbr_uri.number:
-            raise ValueError('A number must be given')
-
-        # check that necessary work fields have been filled in
-        elif not row.get('title'):
-            raise ValueError('A title must be given')
-        elif not row.get('publication_date'):
-            raise ValueError('A publication date must be given')
-
-        return frbr_uri.work_uri().lower()
-
-    def make_date(self, string, field):
-        if not string:
-            date = None
-        else:
-            try:
-                date = datetime.datetime.strptime(string, '%Y-%m-%d')
-            except ValueError:
-                raise ValidationError('Check the format of %s; it should be e.g. "2012-12-31"' % field)
-        return date
-
-    def strip_title_string(self, title_string):
-        return re.sub(u'[\u2028 ]+', ' ', title_string)
-
-    def get_publication_document(self, params, work, form):
-        finder = plugins.for_locale('publications', self.country, None, self.locality)
-
-        if finder:
-            try:
-                publications = finder.find_publications(params)
-
-                if len(publications) == 1:
-                    pub_doc_details = publications[0]
-                    pub_doc = PublicationDocument()
-                    pub_doc.work = work
-                    pub_doc.file = None
-                    pub_doc.trusted_url = pub_doc_details.get('url')
-                    pub_doc.size = pub_doc_details.get('size')
-                    pub_doc.save()
-
-                else:
-                    self.pub_doc_task(work, form)
-
-            except ValueError as e:
-                raise ValidationError({'message': e.message})
-
-        else:
-            self.pub_doc_task(work, form)
 
 
 class ImportDocumentView(WorkViewBase, FormView):

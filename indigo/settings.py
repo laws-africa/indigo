@@ -42,9 +42,6 @@ INSTALLED_APPS = (
     'indigo_social',
     'pinax.badges',
 
-    # Activity stream
-    'actstream',
-
     # the Indigo act resolver
     'indigo_resolver',
 
@@ -57,6 +54,9 @@ INSTALLED_APPS = (
 
     # Indigo metrics and stats
     'indigo_metrics',
+
+    'background_task',
+    'actstream',
 
     'allauth',
     'allauth.account',
@@ -114,7 +114,15 @@ SESSION_COOKIE_SECURE = not DEBUG
 
 # where does the pdftotext binary live?
 INDIGO_PDFTOTEXT = 'pdftotext'
-INDIGO_EMAIL_FAIL_SILENTLY = True
+# TODO move all Indigo config options in here
+INDIGO = {
+    # Should we send notification emails in the background?
+    # Requires a separate task runner for django-background-tasks,
+    # see https://django-background-tasks.readthedocs.io/en/latest/
+    'NOTIFICATION_EMAILS_BACKGROUND': False,
+
+    'EMAIL_FAIL_SILENTLY': False,
+}
 
 # Database
 # https://docs.djangoproject.com/en/1.7/ref/settings/#databases
@@ -374,6 +382,10 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
+        },
+        'mail_admins': {
+            'level': 'ERROR',
+            'class': 'django.utils.log.AdminEmailHandler',
         }
     },
     'loggers': {
@@ -395,6 +407,11 @@ LOGGING = {
         },
         'django.template': {
             'level': 'INFO',
+        },
+        'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': False,
         },
     }
 }

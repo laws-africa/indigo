@@ -39,10 +39,12 @@ class Notifier(object):
                     'recipient': task.submitted_by_user,
                 })
 
-        elif action.verb == 'submitted' and task.changes_requested:
-            # send a notice to the reviewer that the task was
-            # resubmitted and reassigned
-            pass
+        elif action.verb == 'submitted' and task.reviewed_by_user:
+            self.send_templated_email('task_resubmitted', [task.reviewed_by_user], {
+                'action': action,
+                'task': task,
+                'recipient': task.reviewed_by_user,
+            })
 
     def notify_comment_posted(self, comment):
         """

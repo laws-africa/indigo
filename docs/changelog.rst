@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.0 (?)
--------
+3.0 (4 July 2019)
+-----------------
 
 This is the first major release of Indigo with over a year of active development. Upgrade to this version by installing updated dependencies and running migrations.
 

@@ -6,7 +6,7 @@
 {% block content %}
   <div class="container mt-3 mb-5">
     <div class="row">
-      <div class="d-flex mb-3 col-9 justify-content-between">
+      <div class="mb-3 col-9">
         <div class="d-flex">
           <div class="mr-3 text-center">
             {% if task.state == 'open' and task.assigned_to %}
@@ -16,7 +16,7 @@
             {% endif %}
             <span class="text-muted">#{{ task.pk }}</span>
           </div>
-          <div>
+          <div class="flex-grow-1">
             <h5>
               {{ task.title }}
               {% if task.changes_requested %}
@@ -38,12 +38,8 @@
             </div>
             {% endif %}
           </div>
-        </div>
-        <!-- Task points -->
-        <div>
-          {% if not task.state == 'done' and not task.state == 'cancelled' and task.extra_data.points %}
-            {% include 'indigo_app/points/_task_points.html' %}
-          {% endif %}
+
+          <div>{% block task-badges %}{% endblock %}</div>
         </div>
       </div>
 
@@ -246,10 +242,8 @@
             {% endif %}
           </ul>
         {% endwith %}
-        <!-- Task points -->
-        {% if task.state == 'done' and not task.state == 'cancelled' and task.extra_data.points %}
-          {% include 'indigo_app/points/_task_points.html' %}
-        {% endif %}
+
+        {% block task-column-footer %}{% endblock %}
       </div>
     </div>
   </div>

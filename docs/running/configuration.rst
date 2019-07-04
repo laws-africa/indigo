@@ -73,6 +73,15 @@ Config options are mostly passed to Indigo as environment variables. These are t
   **Required**
   Email address users can email for help.
 
+* ``INDIGO.EMAIL_FAIL_SILENTLY``
+
+  Should email sending fail silently?
+
+* ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND``
+
+  Should notification emails be sent asynchronously in the background? Default is False. See
+  `django-background-tasks documentation <https://django-background-tasks.readthedocs.io/en/latest/>`_.
+
 Authentication
 --------------
 

@@ -35,7 +35,7 @@ class Notifier(object):
             if task.submitted_by_user and task.submitted_by_user != action.actor:
                 self.send_templated_email('task_closed_submitter', [task.submitted_by_user], {
                     'action': action,
-                    'task': action.action_object,
+                    'task': task,
                     'recipient': task.submitted_by_user,
                 })
 

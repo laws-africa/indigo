@@ -1273,6 +1273,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
+        self.changes_requested = False
         self.assigned_to = None
         self.closed_at = timezone.now()
 

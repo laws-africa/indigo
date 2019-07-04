@@ -39,8 +39,9 @@
             {% endif %}
           </div>
         </div>
+        <!-- Task points -->
         <div>
-          {% if task.extra_data.points %}
+          {% if not task.state == 'done' and not task.state == 'cancelled' and task.extra_data.points %}
             {% include 'indigo_app/points/_task_points.html' %}
           {% endif %}
         </div>
@@ -217,7 +218,6 @@
             {% endif %}
           {% endwith %}
         </ul>
-
         {% with task.workflows.all as workflows %}
           <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
                 data-submit="ajax">
@@ -246,7 +246,10 @@
             {% endif %}
           </ul>
         {% endwith %}
-
+        <!-- Task points -->
+        {% if task.state == 'done' and not task.state == 'cancelled' and task.extra_data.points %}
+          {% include 'indigo_app/points/_task_points.html' %}
+        {% endif %}
       </div>
     </div>
   </div>

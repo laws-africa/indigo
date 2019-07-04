@@ -4,60 +4,55 @@
     {% if work.stub %}
       <span class="badge badge-info">stub</span>
     {% endif %}
+    <br/><span class="text-muted mt-1">{{ work.frbr_uri }}</span>
   </h6>
-  <p class="text-muted mb-1 wb-all">{{ work.frbr_uri }}</p>
 
   {% if work.assent_date %}
-    <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>
+    <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}</p>
   {% endif %}
 
-  {% if work.publication_document %}
+  {% if work.publication_name or work.publication_date %}
     <p class="mb-2">
-      {% if work.publication_name %}
-        Published
-          {% if work.publication_date %}
-            on {{ work.publication_date|date:"Y-m-d" }}
-          {% endif %}
-        in
-        {% if work.publication_number %}
-          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}
-            no. {{ work.publication_number }}</a>.
-        {% else %}
-          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}</a>.
-        {% endif %}
-      {% else %}
+      Published
         {% if work.publication_date %}
-          Published on {{ work.publication_date|date:"Y-m-d" }}.<br/>
+          on {{ work.publication_date|date:"Y-m-d" }}
         {% endif %}
-        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">Publication document</a>.
-      {% endif %}
-    </p>
-  {% elif work.publication_name %}
-      <p class="mb-2">
-        Published
-          {% if work.publication_date %}
-            on {{ work.publication_date|date:"Y-m-d" }}
-          {% endif %}
-          {% if work.publication_number %}
-            in {{ work.publication_name }} no. {{ work.publication_number }}.
+
+        {% if work.publication_name %}
+          in
+
+          {% if work.publication_document %}
+            <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}
+            {% if work.publication_number %}
+                no. {{ work.publication_number }}
+            {% endif %}
+            </a>
+
           {% else %}
-            in {{ work.publication_name }}.
+            {{ work.publication_name }}
+              {% if work.publication_number %}
+                no. {{ work.publication_number }}
+              {% endif %}
           {% endif %}
-      </p>
-  {% elif work.publication_date %}
-      Published on {{ work.publication_date|date:"Y-m-d" }}.<br/>
+
+        {% elif work.publication_document %}
+          <br/><a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">Publication document</a>
+        {% endif %}
+    </p>
+  {% elif work.publication_document %}
+    <p class="mb-2"><a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">Publication document</a></p>
   {% endif %}
 
   {% if work.commencement_date %}
     <p class="mb-2">Commenced on {{ work.commencement_date|date:"Y-m-d" }}{% if work.commencing_work %} by
       <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">
-        {{ work.commencing_work.title }}</a>{% endif %}.
+        {{ work.commencing_work.title }}</a>{% endif %}
     </p>
   {% endif %}
 
   {% if work.repealed_date %}
     <p class="mb-2">Repealed on {{ work.repealed_date|date:"Y-m-d" }}{% if work.repealed_by %} by
-      <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>{% endif %}.
+      <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>{% endif %}
     </p>
   {% endif %}
 

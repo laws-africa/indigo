@@ -14,39 +14,33 @@
   {% if work.publication_date or work.publication_name or work.publication_document %}
     <p class="mb-2">
 
-    {% if work.publication_date and work.publication_name and work.publication_document %}
+    {% if work.publication_date and work.publication_document %}
       Published on {{ work.publication_date|date:"Y-m-d" }} in
-      {% if work.publication_number %}
+      {% if work.publication_name and work.publication_number %}
         <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }} no. {{ work.publication_number }}</a>.
       {% else %}
-        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}</a>.
+        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{% if work.publication_name %}{{ work.publication_name }}{% else %}publication document{% endif %}</a>.
       {% endif %}
-
-    {% elif work.publication_name and work.publication_document %}
-      Published in
-      {% if work.publication_number %}
-        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }} no. {{ work.publication_number }}</a>.
-      {% else %}
-        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }}</a>.
-      {% endif %}
-
-    {% elif work.publication_date and work.publication_document %}
-      Published on {{ work.publication_date|date:"Y-m-d" }} –
-        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">publication document</a>.
 
     {% elif work.publication_document %}
-      <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">Publication document</a>.
-
-    {% elif work.publication_date and work.publication_name %}
-      Published on {{ work.publication_date|date:"Y-m-d" }} in
-      {% if work.publication_number %}
-        {{ work.publication_name }} no. {{ work.publication_number }}.
+      Published in
+      {% if work.publication_name and work.publication_number %}
+        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_name }} no. {{ work.publication_number }}</a>.
       {% else %}
-        {{ work.publication_name }}.
+        <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{% if work.publication_name %}{{ work.publication_name }}{% else %}publication document{% endif %}</a>.
       {% endif %}
 
     {% elif work.publication_date %}
-      Published on {{ work.publication_date|date:"Y-m-d" }}.
+      {% if not work.publication_name %}
+        Published on {{ work.publication_date|date:"Y-m-d" }}.
+      {% else %}
+        Published on {{ work.publication_date|date:"Y-m-d" }} in
+        {% if work.publication_number %}
+          {{ work.publication_name }} no. {{ work.publication_number }}.
+        {% else %}
+          {{ work.publication_name }}.
+        {% endif %}
+      {% endif %}
 
     {% elif work.publication_name %}
       Published in

@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
 from templated_email import send_templated_mail
 from background_task import background
+from actstream.models import Action
 
 from indigo_api.models import Task
 
@@ -13,7 +14,7 @@ log = logging.getLogger(__name__)
 
 
 class Notifier(object):
-    def send_task_notifications(self, action):
+    def notify_task_action(self, action):
         task = action.action_object
 
         if action.verb == 'assigned':
@@ -92,11 +93,11 @@ notifier = Notifier()
 
 
 @background(queue='indigo')
-def send_task_notifications(task_id):
+def notify_task_action(action_id):
     try:
-        notifier.send_task_notifications(Task.objects.get(pk=task_id))
+        notifier.notify_task_action(Action.objects.get(pk=action_id))
     except Task.DoesNotExist:
-        pass
+        log.warning("Action with id {} doesn't exist, ignoring".format(action_id))
 
 
 @background(queue='indigo')
@@ -104,10 +105,10 @@ def notify_comment_posted(comment_id):
     try:
         notifier.notify_comment_posted(Comment.objects.get(pk=comment_id))
     except Comment.DoesNotExist:
-        pass
+        log.warning("Comment with id {} doesn't exist, ignoring".format(comment_id))
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
-    send_task_notifications = send_task_notifications.now
+    notify_task_action = notify_task_action.now
     notify_comment_posted = notify_comment_posted.now

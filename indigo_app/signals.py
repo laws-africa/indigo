@@ -6,7 +6,7 @@ from django_comments.models import Comment
 from django_comments.signals import comment_was_posted
 
 from indigo_api.models import Task
-from indigo_app.notifications import send_task_notifications, notify_comment_posted
+from indigo_app.notifications import notify_task_action, notify_comment_posted
 
 
 @receiver(signals.post_save, sender=Action)
@@ -15,7 +15,7 @@ def task_action_created(sender, instance, **kwargs):
     """
     if kwargs['created']:
         if isinstance(instance.action_object, Task):
-            send_task_notifications(instance.pk)
+            notify_task_action(instance.pk)
 
 
 @receiver(comment_was_posted, sender=Comment)

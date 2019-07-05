@@ -26,3 +26,16 @@ def user_profile(user):
         html = username
 
     return html
+
+
+@register.simple_tag
+def publication_document_name(work):
+    parts = []
+    if work.publication_name:
+        parts.append(work.publication_name)
+        if work.publication_number:
+            parts.append('no {}'.format(work.publication_number))
+    else:
+        parts.append('publication document')
+
+    return ' '.join(parts)

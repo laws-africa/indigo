@@ -1,24 +1,38 @@
+{% load indigo_app %}
+
 <div class="popup-content lh-compact">
   <h6>
     {{ work.title }}
     {% if work.stub %}
       <span class="badge badge-info">stub</span>
     {% endif %}
+    <br><span class="text-muted mt-1 wb-all">{{ work.frbr_uri }}</span>
   </h6>
-  <p class="text-muted mb-1 wb-all">{{ work.frbr_uri }}</p>
 
   {% if work.assent_date %}
     <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>
   {% endif %}
 
-  <p class="mb-2">Published on {{ work.publication_date|date:"Y-m-d" }}
-    {% if work.publication_name and work.publication_number and work.publication_document %}
-      in <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">
-        {{ work.publication_name }} no. {{ work.publication_number }}</a>.
-    {% elif work.publication_name and work.publication_number %}
-      in {{ work.publication_name }} no. {{ work.publication_number }}.
-    {% endif %}
-  </p>
+  {% if work.publication_date or work.publication_name or work.publication_document %}
+    <p class="mb-2">
+      {% comment %}
+      This tag weirdness is to ensure that we can put a full-stop at the end of the line without
+      whitespace before it.
+      {% endcomment %}
+
+      Published
+      {% if work.publication_date %}
+        on {{ work.publication_date|date:"Y-m-d" }}{% endif %}{% if work.publication_document or work.publication_name %}
+        in
+        {% if work.publication_document %}
+          <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{% publication_document_name work %}</a>.
+        {% else %}
+          {% publication_document_name work %}.
+        {% endif %}
+      {% else %}.
+      {% endif %}
+    </p>
+  {% endif %}
 
   {% if work.commencement_date %}
     <p class="mb-2">Commenced on {{ work.commencement_date|date:"Y-m-d" }}{% if work.commencing_work %} by

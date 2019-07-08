@@ -1158,8 +1158,8 @@ class Task(models.Model):
     code = models.CharField(max_length=100, null=True, blank=True)
 
     assigned_to = models.ForeignKey(User, related_name='assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
-    last_assigned_to = models.ForeignKey(User, related_name='old_assigned_tasks', null=True, blank=True, on_delete=models.SET_NULL)
-    closed_by_user = models.ForeignKey(User, related_name='+', null=True, on_delete=models.SET_NULL)
+    submitted_by_user = models.ForeignKey(User, related_name='submitted_tasks', null=True, blank=True, on_delete=models.SET_NULL)
+    reviewed_by_user = models.ForeignKey(User, related_name='reviewed_tasks', null=True, on_delete=models.SET_NULL)
     closed_at = models.DateTimeField(help_text="When the task was marked as done or cancelled.", null=True)
 
     changes_requested = models.BooleanField(default=False, help_text="Have changes been requested on this task?")
@@ -1230,7 +1230,7 @@ class Task(models.Model):
             if task.state == 'open':
                 task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
-                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.last_assigned_to_id != u.id]
+                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.submitted_by_user_id != u.id]
 
         return tasks
 
@@ -1263,8 +1263,8 @@ class Task(models.Model):
     def submit(self, user):
         if not self.assigned_to:
             self.assign_to(user, user)
-        self.last_assigned_to = self.assigned_to
-        self.assigned_to = None
+        self.submitted_by_user = self.assigned_to
+        self.assigned_to = self.reviewed_by_user
 
     # cancel
     def may_cancel(self, view):
@@ -1273,6 +1273,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['open', 'pending_review'], target='cancelled', permission=may_cancel)
     def cancel(self, user):
+        self.changes_requested = False
         self.assigned_to = None
         self.closed_at = timezone.now()
 
@@ -1283,7 +1284,7 @@ class Task(models.Model):
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
     def reopen(self, user):
-        self.closed_by_user = None
+        self.reviewed_by_user = None
         self.closed_at = None
 
     # unsubmit – moves back to 'open'
@@ -1295,7 +1296,10 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
     def unsubmit(self, user):
-        self.assigned_to = self.last_assigned_to
+        if not self.assigned_to or self.assigned_to != user:
+            self.assign_to(user, user)
+        self.reviewed_by_user = self.assigned_to
+        self.assigned_to = self.submitted_by_user
         self.changes_requested = True
 
     # close
@@ -1307,9 +1311,9 @@ class Task(models.Model):
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):
-        if not self.assigned_to:
+        if not self.assigned_to or self.assigned_to != user:
             self.assign_to(user, user)
-        self.closed_by_user = self.assigned_to
+        self.reviewed_by_user = self.assigned_to
         self.closed_at = timezone.now()
         self.changes_requested = False
         self.assigned_to = None
@@ -1412,7 +1416,6 @@ def post_task_transition(sender, instance, name, **kwargs):
                         place_code=instance.place.place_code)
         else:
             action.send(user, verb=instance.VERBS[name], action_object=instance, place_code=instance.place.place_code)
-
 
 
 class WorkflowQuerySet(models.QuerySet):

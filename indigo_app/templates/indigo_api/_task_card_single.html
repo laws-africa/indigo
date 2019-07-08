@@ -139,17 +139,17 @@
           {% endif %}
         {% endif %}
 
-        {% if approved and task.closed_by_user %}
+        {% if approved and task.reviewed_by_user %}
           <div class="mb-1">
             <i class="fas fa-user-check fa-xs task-icon-assignee text-success" title="Approved by"></i>
-            <small class="text-muted">{% user_profile task.closed_by_user %}</small>
+            <small class="text-muted">{% user_profile task.reviewed_by_user %}</small>
           </div>
         {% endif %}
 
-        {% if last_assigned_user and task.last_assigned_to and task.state == 'pending_review' %}
+        {% if submitted_by_user and task.submitted_by_user and task.state == 'pending_review' %}
           <div>
             <i class="fas fa-user-edit fa-xs task-icon-assignee" title="Submitted by"></i>
-            <small class="text-muted">{% user_profile task.last_assigned_to %}</small>
+            <small class="text-muted">{% user_profile task.submitted_by_user %}</small>
           </div>
         {% endif %}
       </div>

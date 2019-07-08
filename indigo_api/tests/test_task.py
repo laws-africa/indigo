@@ -47,7 +47,7 @@ class TaskTestCase(TestCase):
 
         self.assertEqual(Task.CANCELLED, self.task.state)
         self.assertIsNotNone(self.task.closed_at)
-        self.assertIsNone(self.task.closed_by_user)
+        self.assertIsNone(self.task.reviewed_by_user)
 
     def test_reopen(self):
         za = Country.objects.get(country__pk='ZA')
@@ -59,7 +59,7 @@ class TaskTestCase(TestCase):
 
         self.assertEqual(Task.OPEN, self.task.state)
         self.assertIsNone(self.task.closed_at)
-        self.assertIsNone(self.task.closed_by_user)
+        self.assertIsNone(self.task.reviewed_by_user)
 
     def test_close(self):
         za = Country.objects.get(country__pk='ZA')
@@ -71,4 +71,4 @@ class TaskTestCase(TestCase):
 
         self.assertEqual(Task.DONE, self.task.state)
         self.assertIsNotNone(self.task.closed_at)
-        self.assertEqual(self.user, self.task.closed_by_user)
+        self.assertEqual(self.user, self.task.reviewed_by_user)

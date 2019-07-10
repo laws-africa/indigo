@@ -255,6 +255,7 @@ class PublishedDocumentDetailView(DocumentViewMixin,
     def filter_queryset(self, queryset):
         """ Filter the queryset, used by list()
         """
+        queryset = super(PublishedDocumentDetailView, self).filter_queryset(queryset)
         queryset = queryset\
             .latest_expression()\
             .filter(frbr_uri__istartswith=self.kwargs['frbr_uri'])\

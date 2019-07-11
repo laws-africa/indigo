@@ -32,9 +32,6 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = (
-    # Globals
-    'indigo',
-
     # Indigo local traditions
     'indigo_za',
 
@@ -54,6 +51,9 @@ INSTALLED_APPS = (
 
     # Indigo metrics and stats
     'indigo_metrics',
+
+    # base indigo installation
+    'indigo',
 
     'background_task',
     'actstream',

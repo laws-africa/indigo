@@ -1,0 +1,58 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: openup-indigo\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-11 21:03+0200\n"
+"PO-Revision-Date: 2018-07-26 10:04\n"
+"Last-Translator: longhotsummer <greg@kempe.net>\n"
+"Language-Team: Venda\n"
+"Language: ve_ZA\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: crowdin.com\n"
+"X-Crowdin-Project: openup-indigo\n"
+"X-Crowdin-Language: ve\n"
+"X-Crowdin-File: /master/locale/af/LC_MESSAGES/django.po\n"
+
+#: analysis/toc/base.py:13 analysis/work_detail/base.py:44
+msgid "Act"
+msgstr ""
+
+#: analysis/toc/base.py:14
+msgid "Article"
+msgstr ""
+
+#: analysis/toc/base.py:15
+msgid "By-law"
+msgstr ""
+
+#: analysis/toc/base.py:16 analysis/work_detail/base.py:35
+msgid "Chapter"
+msgstr "Ndima ya"
+
+#: analysis/toc/base.py:17
+msgid "Government Notice"
+msgstr ""
+
+#: analysis/toc/base.py:18
+msgid "Part"
+msgstr "Tshipiḓa tsha"
+
+#: analysis/toc/base.py:19
+msgid "Section"
+msgstr ""
+
+#: analysis/toc/base.py:20
+msgid "Preface"
+msgstr ""
+
+#: analysis/toc/base.py:21
+msgid "Preamble"
+msgstr ""
+
+#: analysis/work_detail/base.py:25
+#, python-format
+msgid "%(type)s %(number)s of %(year)s"
+msgstr ""

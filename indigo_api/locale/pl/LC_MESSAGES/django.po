@@ -1,0 +1,71 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-07-11 21:03+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n"
+"%100<12 || n%100>=14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n"
+"%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);\n"
+
+#: templates/indigo_api/akn/_amendments.html:10
+#, python-format
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+"%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
+"date\">%(date)s</span>]"
+msgstr ""
+
+#: templates/indigo_api/akn/_amendments.html:12
+#, python-format
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+"%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:32
+#, python-format
+msgid "Published in %(name)s no. %(number)s on %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:34
+#, python-format
+msgid "Published in %(name)s on %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:43
+#, python-format
+msgid "Assented to on %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:49
+#, python-format
+msgid "Commences on %(date)s unless otherwise noted"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:56
+#, python-format
+msgid "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:58
+#, python-format
+msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgstr ""
+
+#: templates/indigo_api/akn/export/standalone.html:17
+msgid "Table of Contents"
+msgstr ""
+

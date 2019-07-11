@@ -206,6 +206,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, Create
     prefix = 'work'
     permission_required = ('indigo_api.add_work',)
     is_create = True
+    PUB_DATE_OPTIONAL_COUNTRIES = []
 
     def get_form_kwargs(self):
         kwargs = super(AddWorkView, self).get_form_kwargs()
@@ -224,6 +225,8 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, Create
             'locality': self.locality.code if self.locality else None,
         })
         context['subtypes'] = Subtype.objects.order_by('name').all()
+        if self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES:
+            context['publication_date_optional'] = True
 
         return context
 

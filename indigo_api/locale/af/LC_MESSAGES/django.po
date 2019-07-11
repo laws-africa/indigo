@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-11 21:03+0200\n"
-"PO-Revision-Date: 2019-07-11 19:35\n"
+"PO-Revision-Date: 2019-07-11 19:55\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -22,14 +22,14 @@ msgstr ""
 #| "%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"date\">"
 #| "%(date)s</span>]"
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #| msgid ""
 #| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
 #| "%(amending_title)s</a> on <span class=\"date\">%(date)s</span>]"
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr ""
+msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:32
 #, python-format

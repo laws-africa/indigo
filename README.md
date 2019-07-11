@@ -108,6 +108,21 @@ slaw 1.0.0
 You will also need `pdftotext` to import PDF files. On Mac, you can use Homebrew and run `brew install poppler`.
 
 
+## Adding translation strings
+
+Translations are added on [CrowdIn](https://crowdin.com/project/openup-indigo).
+
+If you have added or changed strings that need translating, you must [tell Django to update the .po files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#localization-how-to-create-language-files):
+
+```bash
+django-admin makemessages -a --ignore env/\*
+django-admin compilemessages
+```
+
+And then commit the changes. CrowdIn will pick up any changed strings and make them available for translation. Once they are translated, it will
+open a pull request to merge the changes into master.
+
+
 ## Testing
 
 To run the tests use:

@@ -225,8 +225,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, Create
             'locality': self.locality.code if self.locality else None,
         })
         context['subtypes'] = Subtype.objects.order_by('name').all()
-        if self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES:
-            context['publication_date_optional'] = True
+        context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
 
         return context
 

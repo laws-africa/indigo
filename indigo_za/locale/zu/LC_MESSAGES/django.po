@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-11 21:03+0200\n"
-"PO-Revision-Date: 2019-07-12 06:59\n"
+"PO-Revision-Date: 2019-07-12 07:01\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -30,5 +30,5 @@ msgstr "Isahluko"
 
 #: toc.py:32
 msgid "Part"
-msgstr ""
+msgstr "Ingxenye"
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-11 21:03+0200\n"
-"PO-Revision-Date: 2019-07-12 06:48\n"
+"PO-Revision-Date: 2019-07-12 06:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Zulu\n"
 "Language: zu_ZA\n"
@@ -30,7 +30,7 @@ msgstr ""
 
 #: analysis/toc/base.py:16 analysis/work_detail/base.py:35
 msgid "Chapter"
-msgstr ""
+msgstr "Isahluko"
 
 #: analysis/toc/base.py:17
 msgid "Government Notice"
@@ -38,7 +38,7 @@ msgstr ""
 
 #: analysis/toc/base.py:18
 msgid "Part"
-msgstr ""
+msgstr "Ingxenye"
 
 #: analysis/toc/base.py:19
 msgid "Section"

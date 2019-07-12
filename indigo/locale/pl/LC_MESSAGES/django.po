@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-11 21:03+0200\n"
-"PO-Revision-Date: 2019-07-12 06:48\n"
+"PO-Revision-Date: 2019-07-12 06:59\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Polish\n"
 "Language: pl_PL\n"
@@ -18,7 +18,7 @@ msgstr ""
 
 #: analysis/toc/base.py:13 analysis/work_detail/base.py:44
 msgid "Act"
-msgstr ""
+msgstr "Ustawa"
 
 #: analysis/toc/base.py:14
 msgid "Article"

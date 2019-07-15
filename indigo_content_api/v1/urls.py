@@ -5,6 +5,7 @@ import views
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'countries', views.CountryViewSet, base_name='country')
+router.register(r'taxonomies', views.TaxonomyView, base_name='taxonomy')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

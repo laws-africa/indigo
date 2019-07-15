@@ -14,7 +14,8 @@ from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, PublicationDocument, Task
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
+    PublicationDocument, Task, TaxonomyVocabulary
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -597,3 +598,11 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
+
+
+class TaxonomyVocabularySerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TaxonomyVocabulary
+        fields = '__all__'
+        read_only_fields = fields

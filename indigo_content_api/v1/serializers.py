@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from cobalt.act import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, VocabularyTopic, TaxonomyVocabulary
 from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer as PublicationDocumentSerializerBase, AttachmentSerializer
 
 
@@ -212,3 +212,20 @@ class CountrySerializer(serializers.ModelSerializer):
                 "href": reverse('public-search', request=self.context['request'], kwargs={'country': instance.code}),
             },
         ]
+
+
+class VocabularyTopicSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = VocabularyTopic
+        fields = ['level_1', 'level_2']
+
+
+class TaxonomySerializer(serializers.ModelSerializer):
+    topics = VocabularyTopicSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = TaxonomyVocabulary
+        fields = ['title', 'topics']
+
+

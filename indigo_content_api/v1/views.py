@@ -14,9 +14,9 @@ from cobalt import FrbrUri
 from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
 from indigo_api.views.documents import DocumentViewMixin, SearchView
 from indigo_api.views.attachments import view_attachment
-from indigo_api.models import Attachment, Country, Document
+from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, VocabularyTopic
 
-from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer
+from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer, VocabularyTopicSerializer, TaxonomySerializer
 
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
@@ -395,3 +395,9 @@ class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
             raise Http404
 
         super(PublishedDocumentSearchView, self).determine_place()
+
+
+class TaxonomyView(viewsets.ReadOnlyModelViewSet):
+
+    queryset = TaxonomyVocabulary.objects.all()
+    serializer_class = TaxonomySerializer

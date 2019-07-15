@@ -166,7 +166,7 @@ class TaxonomyVocabulary(models.Model):
 
 
 class VocabularyTopic(models.Model):
-    taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='vocabularies', null=False, blank=False, on_delete=models.CASCADE)
+    taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='topics', null=False, blank=False, on_delete=models.CASCADE)
     level_1 = models.CharField(max_length=30, null=False, blank=False)
     level_2 = models.CharField(max_length=30, null=True, blank=True, help_text='(optional)')
 

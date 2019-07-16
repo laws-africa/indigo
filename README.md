@@ -110,7 +110,7 @@ You will also need `pdftotext` to import PDF files. On Mac, you can use Homebrew
 
 ## Adding translation strings
 
-Each indigo package has its own translations in the `locale` directory. Translations for strings are added on [CrowdIn](https://crowdin.com/project/openup-indigo).
+Each indigo package has its own translations in the `locale` directory. Translations for strings are added on [CrowdIn](https://crowdin.com/project/lawsafrica-indigo).
 
 If you have added or changed strings that need translating, you must [tell Django to update the .po files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#localization-how-to-create-language-files):
 

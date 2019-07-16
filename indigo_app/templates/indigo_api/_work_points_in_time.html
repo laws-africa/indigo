@@ -29,6 +29,7 @@
         {% if event.initial %}
           <h6>
             Initial publication
+            {% if not event.publication_date %}(using commencement date){% endif %}
             {% if event.commencement_date %}
               <span class="text-muted"> – Commenced on publication
                 {% if work.commencing_work %}

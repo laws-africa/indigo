@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
@@ -20,6 +22,17 @@ class WorkTestCase(TestCase):
 
         document = Document.objects.get(pk=20)
         self.assertEqual(document.frbr_uri, '/za/act/2999/1')
+
+    def test_commencement_as_pit_date(self):
+        """ When the publication date is unknown, fall back
+        to the commencement date as a possible point in time.
+        """
+        self.work.publication_date = None
+        self.work.commencement_date = datetime.date.today()
+        events = self.work.amendments_with_initial()
+        initial = events[-1]
+        self.assertTrue(initial.initial)
+        self.assertEqual(initial.date, self.work.commencement_date)
 
     def test_validates_uri(self):
         country = Country.objects.first()

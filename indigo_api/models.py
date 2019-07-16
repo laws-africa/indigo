@@ -408,7 +408,7 @@ class Work(models.Model):
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple amendments at the same date.
         """
-        initial = Amendment(amended_work=self, date=self.publication_date)
+        initial = Amendment(amended_work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
         amendments = list(self.amendments.all())
 

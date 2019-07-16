@@ -223,9 +223,10 @@ class VocabularyTopicSerializer(serializers.ModelSerializer):
 
 class TaxonomySerializer(serializers.ModelSerializer):
     topics = VocabularyTopicSerializer(many=True, read_only=True)
+    vocabulary = serializers.CharField(source='slug')
 
     class Meta:
         model = TaxonomyVocabulary
-        fields = ['title', 'topics']
+        fields = ['vocabulary', 'title', 'topics']
 
 

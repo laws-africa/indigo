@@ -209,7 +209,7 @@ class ImportDocumentForm(forms.Form):
             raise forms.ValidationError("Invalid json data")
 
 
-class TaskCreateForm(forms.ModelForm):
+class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
@@ -218,12 +218,7 @@ class TaskCreateForm(forms.ModelForm):
                                             required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
                                                required=False)
-
-
-class TaskEditForm(TaskCreateForm):
-    class Meta:
-        model = Task
-        fields = ('title', 'description', 'labels', 'workflows')
+    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
 
 
 class TaskFilterForm(forms.Form):

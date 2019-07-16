@@ -24,7 +24,7 @@ from indigo_api.models import Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
-from indigo_app.forms import TaskCreateForm, TaskEditForm, TaskFilterForm, BulkTaskUpdateForm
+from indigo_app.forms import TaskForm, TaskFilterForm, BulkTaskUpdateForm
 
 
 class TaskViewBase(PlaceViewBase, AbstractAuthedIndigoView):
@@ -119,7 +119,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     js_view = 'TaskEditView'
 
     context_object_name = 'task'
-    form_class = TaskCreateForm
+    form_class = TaskForm
     model = Task
 
     def form_valid(self, form):
@@ -181,7 +181,7 @@ class TaskEditView(TaskViewBase, UpdateView):
     permission_required = ('indigo_api.change_task',)
 
     context_object_name = 'task'
-    form_class = TaskEditForm
+    form_class = TaskForm
     model = Task
 
     def form_valid(self, form):

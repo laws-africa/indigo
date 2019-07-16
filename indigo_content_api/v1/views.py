@@ -399,5 +399,5 @@ class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
 
 class TaxonomyView(viewsets.ReadOnlyModelViewSet):
 
-    queryset = TaxonomyVocabulary.objects.all()
+    queryset = TaxonomyVocabulary.objects
     serializer_class = TaxonomySerializer

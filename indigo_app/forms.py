@@ -218,7 +218,6 @@ class TaskForm(forms.ModelForm):
                                             required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
                                                required=False)
-    assigned_to = forms.ModelChoiceField(queryset=User.objects, empty_label='Unassigned', required=False)
 
 
 class TaskFilterForm(forms.Form):

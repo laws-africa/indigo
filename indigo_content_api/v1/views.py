@@ -397,7 +397,7 @@ class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
         super(PublishedDocumentSearchView, self).determine_place()
 
 
-class TaxonomyView(viewsets.ModelViewSet):
+class TaxonomyView(viewsets.ReadOnlyModelViewSet):
 
     queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
     serializer_class = TaxonomySerializer

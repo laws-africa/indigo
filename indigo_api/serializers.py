@@ -15,7 +15,7 @@ from cobalt import Act, FrbrUri
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, TaxonomyVocabulary
+    PublicationDocument, Task
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -546,7 +546,7 @@ class WorkSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
-
+    taxonomies = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
 
@@ -565,6 +565,9 @@ class WorkSerializer(serializers.ModelSerializer):
 
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+
+            # taxonomies
+            'taxonomies',
         )
         read_only_fields = fields
 
@@ -572,6 +575,17 @@ class WorkSerializer(serializers.ModelSerializer):
         if not work.pk:
             return None
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
+
+    def get_taxonomies(self, instance):
+        taxonomies = {}
+        a = instance.taxonomies.get_queryset().prefetch_related('taxonomy_vocabulary')
+        for item in a:
+            level_1, level_2 = item.level_1, item.level_2
+            if taxonomies.get(item.taxonomy_vocabulary.title):
+                taxonomies[item.taxonomy_vocabulary.title].append({"level_1": level_1, "level_2" : level_2})
+            else:
+                taxonomies[item.taxonomy_vocabulary.title] = [{"level_1": level_1, "level_2" : level_2}]
+        return taxonomies
 
 
 class WorkAmendmentSerializer(serializers.ModelSerializer):
@@ -598,11 +612,3 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
-
-
-class TaxonomyVocabularySerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = TaxonomyVocabulary
-        fields = '__all__'
-        read_only_fields = fields

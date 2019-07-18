@@ -578,16 +578,6 @@ class WorkSerializer(serializers.ModelSerializer):
             return None
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
 
-    def groupby(data):
-        kv = {}
-        for k in data:
-            if k.taxonomy_vocabulary.title not in kv:
-                kv[k.taxonomy_vocabulary.title] = [k]
-            else:
-                kv[k.taxonomy_vocabulary.title].append(k)
-
-        return kv
-
     def get_taxonomies(self, instance):
         taxonomies = []
         topics = instance.taxonomies.get_queryset().prefetch_related('taxonomy_vocabulary')

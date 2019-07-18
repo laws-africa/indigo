@@ -68,6 +68,7 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         other_dates = [
             ('assent_date', self.work.assent_date),
             ('commencement_date', self.work.commencement_date),
+            ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
         # add to existing events (e.g. if publication and commencement dates are the same)

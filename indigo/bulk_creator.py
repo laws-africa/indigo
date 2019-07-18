@@ -29,6 +29,7 @@ class RowValidationFormBase(forms.Form):
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', 'Must be a year (yyyy).')
     ])
+    cap = forms.CharField(required=False)
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
     publication_date = forms.DateField(error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
@@ -69,7 +70,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         for idx, row in enumerate(rows):
             # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if row.get('ignore') or not [val for val in row.itervalues() if val]:
+            if row.get('ignore') or not [val for val in row.values() if val]:
                 continue
 
             info = {
@@ -116,7 +117,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     # signals
                     work_changed.send(sender=work.__class__, work=work, request=view.request)
 
-                    # info for links
+                    # info for links, extra properties
                     pub_doc_params = {
                         'date': row.get('publication_date'),
                         'number': work.publication_number,
@@ -126,9 +127,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     }
                     info['params'] = pub_doc_params
 
-                    work_links = ['commenced_by', 'amends', 'repealed_by', 'primary_work']
-                    for link in work_links:
-                        info[link] = row.get(link)
+                    for header in headers:
+                        info[header] = row.get(header)
 
                     info['status'] = 'success'
                     info['work'] = work

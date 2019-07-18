@@ -566,11 +566,15 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         works = None
         locality_code = self.locality.code if self.locality else None
         bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
+        extra_properties_getter = plugins.for_locale('extra-properties', self.country.code, None, locality_code)
 
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
             works = bulk_creator.get_works(self, table)
             self.create_links(works, form)
+            if extra_properties_getter:
+                extra_properties = extra_properties_getter.get_list()
+                self.add_extra_properties(works, extra_properties)
             self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
@@ -593,6 +597,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 # this will check duplicate works as well
                 # (they won't overwrite the existing works but the amendments will be linked)
                 self.link_amendment(info, form)
+
+    def add_extra_properties(self, works_info, extra_properties):
+        for info in works_info:
+            if info['status'] == 'success':
+                for extra_property in extra_properties:
+                    if info.get(extra_property):
+                        new_prop = WorkProperty(work=info['work'], key=extra_property, value=info.get(extra_property))
+                        new_prop.save()
 
     def link_publication_document(self, info, form):
         params = info.get('params')

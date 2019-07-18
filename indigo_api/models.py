@@ -488,13 +488,16 @@ class PublicationDocument(models.Model):
         return super(PublicationDocument, self).save(*args, **kwargs)
 
 
+def work_property_choices():
+    return WorkProperty.KEYS.items()
+
+
 class WorkProperty(models.Model):
     # these are injected by other installations
     KEYS = {}
-    CHOICES = KEYS.items()
 
     work = models.ForeignKey(Work, null=False, related_name='raw_properties')
-    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=CHOICES)
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True)
     value = models.CharField(max_length=1024, null=False, blank=False)
 
     class Meta:

@@ -1,8 +1,10 @@
 import logging
 import os.path
+from itertools import groupby
 
 from actstream.signals import action
 from collections import OrderedDict
+
 from lxml.etree import LxmlError
 
 from django.contrib.auth.models import User
@@ -576,15 +578,30 @@ class WorkSerializer(serializers.ModelSerializer):
             return None
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
 
-    def get_taxonomies(self, instance):
-        taxonomies = {}
-        a = instance.taxonomies.get_queryset().prefetch_related('taxonomy_vocabulary')
-        for item in a:
-            level_1, level_2 = item.level_1, item.level_2
-            if taxonomies.get(item.taxonomy_vocabulary.title):
-                taxonomies[item.taxonomy_vocabulary.title].append({"level_1": level_1, "level_2" : level_2})
+    def groupby(data):
+        kv = {}
+        for k in data:
+            if k.taxonomy_vocabulary.title not in kv:
+                kv[k.taxonomy_vocabulary.title] = [k]
             else:
-                taxonomies[item.taxonomy_vocabulary.title] = [{"level_1": level_1, "level_2" : level_2}]
+                kv[k.taxonomy_vocabulary.title].append(k)
+
+        return kv
+
+    def get_taxonomies(self, instance):
+        taxonomies = []
+        topics = instance.taxonomies.get_queryset().prefetch_related('taxonomy_vocabulary')
+
+        for vocab, group in groupby(topics, key=lambda t: t.taxonomy_vocabulary):
+            taxonomies.append({
+                "vocabulary": vocab.slug,
+                "title": vocab.title,
+                "topics": [{
+                    "level_1": g.level_1,
+                    "level_2": g.level_2,
+                } for g in group]
+            })
+
         return taxonomies
 
 

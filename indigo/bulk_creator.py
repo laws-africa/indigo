@@ -29,7 +29,6 @@ class RowValidationFormBase(forms.Form):
     year = forms.CharField(validators=[
         RegexValidator(r'\d{4}', 'Must be a year (yyyy).')
     ])
-    cap_number = forms.CharField(required=False)
     publication_name = forms.CharField(required=False)
     publication_number = forms.CharField(required=False)
     publication_date = forms.DateField(error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
@@ -53,6 +52,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     locale = (None, None, None)
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
     """
+    extra_properties = {}
+
     def get_row_validation_form(self, row_data):
         return RowValidationFormBase(row_data)
 

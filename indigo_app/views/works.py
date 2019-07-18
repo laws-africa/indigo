@@ -114,7 +114,10 @@ class WorkFormMixin(object):
     is_create = False
 
     def get_properties_formset(self):
-        kwargs = {'queryset': WorkProperty.objects.none()}
+        kwargs = {
+            'queryset': WorkProperty.objects.none(),
+            'prefix': 'propforms',
+        }
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,

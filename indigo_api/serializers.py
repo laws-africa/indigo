@@ -580,7 +580,7 @@ class WorkSerializer(serializers.ModelSerializer):
 
     def get_taxonomies(self, instance):
         taxonomies = []
-        topics = instance.taxonomies.get_queryset().prefetch_related('taxonomy_vocabulary')
+        topics = instance.taxonomies.get_queryset().prefetch_related('taxonomy_vocabulary').order_by('taxonomy_vocabulary_id')
 
         for vocab, group in groupby(topics, key=lambda t: t.taxonomy_vocabulary):
             taxonomies.append({

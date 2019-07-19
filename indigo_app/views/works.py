@@ -23,8 +23,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, \
-    VocabularyTopic
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed

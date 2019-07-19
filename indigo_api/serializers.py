@@ -17,7 +17,7 @@ from cobalt import Act, FrbrUri
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task
+    PublicationDocument, Task, VocabularyTopic
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -586,10 +586,7 @@ class WorkSerializer(serializers.ModelSerializer):
             taxonomies.append({
                 "vocabulary": vocab.slug,
                 "title": vocab.title,
-                "topics": [{
-                    "level_1": g.level_1,
-                    "level_2": g.level_2,
-                } for g in group]
+                "topics": VocabularyTopicSerializer(many=True).to_representation(list(group)),
             })
 
         return taxonomies
@@ -619,3 +616,9 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
+
+
+class VocabularyTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VocabularyTopic
+        fields = ['level_1', 'level_2']

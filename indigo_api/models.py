@@ -1220,14 +1220,12 @@ class Task(models.Model):
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country):
-        submit_task_permission = Permission.objects.get(codename='submit_task')
-        close_task_permission = Permission.objects.get(codename='close_task')
-
-        potential_assignees = User.objects\
-            .filter(editor__permitted_countries=country, user_permissions=submit_task_permission)\
+        permitted_users = User.objects\
+            .filter(editor__permitted_countries=country)\
             .order_by('first_name', 'last_name')\
             .all()
-        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission).all()
+        potential_assignees = [u for u in permitted_users if u.has_perm('indigo_api.submit_task')]
+        potential_reviewers = [u for u in permitted_users if u.has_perm('indigo_api.close_task')]
 
         for task in tasks:
             if task.state == 'open':

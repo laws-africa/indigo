@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 21:03+0200\n"
+"POT-Creation-Date: 2019-07-16 13:42+0200\n"
 "PO-Revision-Date: 2018-08-03 14:50\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Southern Ndebele\n"
@@ -61,7 +61,12 @@ msgstr ""
 msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgstr ""
 
+#: templates/indigo_api/akn/coverpage_act.html:69
+msgid ""
+"Note: The original publication document is not available and this content "
+"could not be verified."
+msgstr ""
+
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
 msgstr ""
-

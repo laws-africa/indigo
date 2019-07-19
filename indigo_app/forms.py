@@ -33,8 +33,8 @@ class WorkForm(forms.ModelForm):
     delete_publication_document = forms.BooleanField(required=False)
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
-            .select_related('taxonomy_vocabulary')
-            .order_by('taxonomy_vocabulary__title', 'level_1', 'level_2'),
+            .select_related('vocabulary')
+            .order_by('vocabulary__title', 'level_1', 'level_2'),
         required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
@@ -268,8 +268,8 @@ class WorkFilterForm(forms.Form):
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
-            .select_related('taxonomy_vocabulary')
-            .order_by('taxonomy_vocabulary__title', 'level_1', 'level_2'))
+            .select_related('vocabulary')
+            .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     def __init__(self, country, *args, **kwargs):
         self.country = country

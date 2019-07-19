@@ -68,7 +68,7 @@
                     {% endif %}
                   </dd>
 
-                  {% regroup work.taxonomies.all by taxonomy_vocabulary as topic_groups %}
+                  {% regroup work.taxonomies.all by vocabulary as topic_groups %}
                   {% if topic_groups %}
                     {% for topic in topic_groups %}
                       <dt>{{ topic.grouper }}</dt>

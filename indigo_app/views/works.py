@@ -567,8 +567,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
 
         try:
-            table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
+            table = bulk_creator.get_datatable(spreadsheet_url=form.cleaned_data['spreadsheet_url'], sheet=form.cleaned_data['tab'])
             works = bulk_creator.get_works(self, table)
+
             self.create_links(works, form)
             self.get_tasks(works, form)
         except ValidationError as e:

@@ -1,14 +1,21 @@
 # -*- coding: utf-8 -*-
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import re
+import csv
+import io
+import logging
 
 from cobalt import FrbrUri
 from django import forms
 from django.core.exceptions import ValidationError
 from django.core.validators import RegexValidator
+from django.conf import settings
+import requests
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo_api.models import Subtype, Work
@@ -52,6 +59,77 @@ class BaseBulkCreator(LocaleBasedMatcher):
     locale = (None, None, None)
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
     """
+
+    log = logging.getLogger(__name__)
+
+    _service = None
+    _gsheets_secret = None
+
+    GSHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
+
+    def get_datatable(self, spreadsheet_url, sheet_name):
+        match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
+        if not match:
+            raise ValidationError("Unable to extract key from Google Sheets URL")
+        spreadsheet_id = match.group(1)
+
+        if settings.INDIGO.get('GSHEETS_API_CREDS'):
+            return self.get_datatable_gsheets(spreadsheet_id, sheet_name)
+        else:
+            return self.get_datatable_csv(spreadsheet_id)
+
+    def get_datatable_csv(self, spreadsheet_id):
+        try:
+            url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv' % spreadsheet_id
+            response = requests.get(url, timeout=5)
+            response.raise_for_status()
+        except requests.RequestException as e:
+            raise ValidationError("Error talking to Google Sheets: %s" % e.message)
+
+        rows = csv.reader(io.BytesIO(response.content), encoding='utf-8')
+        rows = list(rows)
+
+        if not rows or not rows[0]:
+            raise ValidationError("Your sheet did not import successfully; please check that it is 'Published to the web' and shared with 'Anyone with the link'")
+        return rows
+
+    def get_spreadsheet_sheets(self, spreadsheet_id):
+        if settings.INDIGO.get('GSHEETS_API_CREDS'):
+            service = self.get_gsheets_client()
+            spreadsheets = service.spreadsheets()
+            metadata = spreadsheets.get(spreadsheetId=spreadsheet_id).execute()
+            return metadata['sheets']
+
+        return []
+
+    def get_datatable_gsheets(self, spreadsheet_id, sheet_name):
+        """ Fetch a datatable from a Google Sheets spreadsheet, using the given URL and sheet
+        index (tab index).
+        """
+        service = self.get_gsheets_client()
+        spreadsheets = service.spreadsheets()
+
+        try:
+            result = spreadsheets.values().get(spreadsheetId=spreadsheet_id, range=sheet_name).execute()
+        except HttpError as e:
+            self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
+            raise ValidationError("Unable to access spreadsheet. Is the URL correct and have you shared it with {}?".format(
+                self._gsheets_secret['client_email'],
+            ))
+
+        rows = result.get('values', [])
+        if not rows or not rows[0]:
+            raise ValidationError("There doesn't appear to be data in sheet {} of {}".format(sheet_name, spreadsheet_id))
+        return rows
+
+    def get_gsheets_client(self):
+        if not self._service:
+            if not self._gsheets_secret:
+                self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
+            credentials = service_account.Credentials.from_service_account_info(self._gsheets_secret, scopes=self.GSHEETS_SCOPES)
+            self._service = build('sheets', 'v4', credentials=credentials)
+        return self._service
+
     def get_row_validation_form(self, row_data):
         return RowValidationFormBase(row_data)
 

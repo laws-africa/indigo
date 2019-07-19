@@ -52,7 +52,8 @@ class DocumentViewMixin(object):
                           'language', 'language__language',
                           'work', 'work__country',
                           'work__parent_work', 'work__commencing_work', 'work__repealed_by',
-                          'work__amendments', 'work__amendments__amending_work', 'work__amendments__amended_work')
+                          'work__amendments', 'work__amendments__amending_work', 'work__amendments__amended_work',
+                          'work__taxonomies', 'work__taxonomies__vocabulary')
 
     def initial(self, request, **kwargs):
         super(DocumentViewMixin, self).initial(request, **kwargs)

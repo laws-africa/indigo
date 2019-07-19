@@ -35,7 +35,7 @@
 
     <!-- Work Taxonomy filter -->
     <div class="mr-2">
-      {% regroup form.fields.taxonomies.queryset by taxonomy_vocabulary as topic_groups %}
+      {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
       {% if topic_groups %}
         <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="fit" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
           {% for topic in topic_groups %}

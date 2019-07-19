@@ -158,7 +158,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         # Extra validation
         # - if the subtype hasn't been registered
-        if row_subtype and row_subtype not in available_subtypes:
+        if row_subtype and row_subtype.lower() not in available_subtypes:
             form.add_error('subtype', 'The subtype given ({}) doesn\'t match any in the list: {}.'
                            .format(row.get('subtype'), ", ".join(available_subtypes)))
 

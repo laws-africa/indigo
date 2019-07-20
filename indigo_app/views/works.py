@@ -555,27 +555,59 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         'principal_tasks': ['import'],
     }
 
+    _bulk_creator = None
+
+    @property
+    def bulk_creator(self):
+        if not self._bulk_creator:
+            locality_code = self.locality.code if self.locality else None
+            self._bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
+        return self._bulk_creator
+
+    def get_form(self, form_class=None):
+        form = super(BatchAddWorkView, self).get_form(form_class)
+        form.fields['workflow'].queryset = self.place.workflows.filter(closed=False).all()
+
+        if self.bulk_creator.is_gsheets_enabled and form.data.get('spreadsheet_url'):
+            sheet_id = self.bulk_creator.gsheets_id_from_url(form.data['spreadsheet_url'])
+
+            try:
+                sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
+                sheets = [s['properties']['title'] for s in sheets]
+                form.fields['sheet_name'].choices = [(s, s) for s in sheets]
+            except ValueError:
+                form.add_error(None,  "Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?".format(
+                    self.bulk_creator._gsheets_secret['client_email'],
+                ))
+
+        return form
+
     def get_context_data(self, **kwargs):
         context = super(BatchAddWorkView, self).get_context_data(**kwargs)
-        context['place_workflows'] = self.place.workflows.filter(closed=False)
+        context['bulk_creator'] = self.bulk_creator
         return context
 
     def form_valid(self, form):
         error = None
         works = None
-        locality_code = self.locality.code if self.locality else None
-        bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
 
-        try:
-            table = bulk_creator.get_datatable(spreadsheet_url=form.cleaned_data['spreadsheet_url'], sheet=form.cleaned_data['tab'])
-            works = bulk_creator.get_works(self, table)
+        if 'import' in form.data:
+            # do actual import
+            try:
+                table = self.bulk_creator.get_datatable(
+                    form.cleaned_data['spreadsheet_url'],
+                    form.cleaned_data['sheet_name'])
+                works = self.bulk_creator.get_works(self, table)
 
-            self.create_links(works, form)
-            self.get_tasks(works, form)
-        except ValidationError as e:
-            error = e.message
+                self.create_links(works, form)
+                self.get_tasks(works, form)
+            except ValidationError as e:
+                error = e.message
+        else:
+            # preview of the import
+            pass
 
-        context_data = self.get_context_data(works=works, error=error)
+        context_data = self.get_context_data(works=works, error=error, form=form)
         return self.render_to_response(context_data)
 
     def create_links(self, works_info, form):

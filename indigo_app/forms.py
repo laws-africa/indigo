@@ -185,6 +185,7 @@ class BatchCreateWorkForm(forms.Form):
             regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
+    sheet_name = forms.ChoiceField(required=False, choices=[])
 
     possible_tasks = [
         {

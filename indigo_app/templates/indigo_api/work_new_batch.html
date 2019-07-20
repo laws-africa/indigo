@@ -67,14 +67,39 @@
     {% csrf_token %}
 
     <div class="card">
+      <h5 class="card-header">Import from Google Sheets</h5>
       <div class="card-body">
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-danger" role="alert">
+            {% for error in form.non_field_errors %}
+              <div>{{ error }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+
         <div class="form-group">
-          <label for="{{ form.spreadsheet_url.id_for_label }}" class="h5">Google Sheets URL</label>
+          <label for="{{ form.spreadsheet_url.id_for_label }}">Google Sheets URL</label>
           <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
+
+        {% if form.fields.sheet_name.choices %}
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <label for="{{ form.sheet_name.id_for_label }}">Spreadsheet tab</label>
+                <select class="selectpicker form-control" name="{{ form.sheet_name.name }}" id="{{ form.sheet_name.id_for_label }}" data-live-search="true">
+                  {% for opt in form.sheet_name %}
+                    {{ opt }}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+        {% endif %}
 
         <div class="form-row">
           <div class="form-group">
@@ -104,14 +129,13 @@
           <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
         </div>
 
-        {% if place_workflows %}
+        {% if form.fields.workflow.choices %}
           <div class="form-group">
             <div class="row">
               <div class="col-md-6">
-                <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true">
-                  <option>Choose one</option>
-                  {% for workflow in place_workflows %}
-                    <option value="{{ workflow.id }}" {% if workflow.id in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
+                <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
+                  {% for workflow in form.fields.workflow.queryset %}
+                    <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
                   {% endfor %}
                 </select>
               </div>

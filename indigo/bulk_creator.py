@@ -67,13 +67,17 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     GSHEETS_SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly']
 
-    def get_datatable(self, spreadsheet_url, sheet_name):
-        match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
-        if not match:
-            raise ValidationError("Unable to extract key from Google Sheets URL")
-        spreadsheet_id = match.group(1)
+    def gsheets_id_from_url(self, url):
+        match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', url)
+        if match:
+            return match.group(1)
 
-        if settings.INDIGO.get('GSHEETS_API_CREDS'):
+    def get_datatable(self, spreadsheet_url, sheet_name):
+        spreadsheet_id = self.gsheets_id_from_url(spreadsheet_url)
+        if not spreadsheet_id:
+            raise ValidationError("Unable to extract key from Google Sheets URL")
+
+        if self.is_gsheets_enabled:
             return self.get_datatable_gsheets(spreadsheet_id, sheet_name)
         else:
             return self.get_datatable_csv(spreadsheet_id)
@@ -93,12 +97,20 @@ class BaseBulkCreator(LocaleBasedMatcher):
             raise ValidationError("Your sheet did not import successfully; please check that it is 'Published to the web' and shared with 'Anyone with the link'")
         return rows
 
+    @property
+    def is_gsheets_enabled(self):
+        return bool(settings.INDIGO.get('GSHEETS_API_CREDS'))
+
     def get_spreadsheet_sheets(self, spreadsheet_id):
-        if settings.INDIGO.get('GSHEETS_API_CREDS'):
-            service = self.get_gsheets_client()
-            spreadsheets = service.spreadsheets()
-            metadata = spreadsheets.get(spreadsheetId=spreadsheet_id).execute()
-            return metadata['sheets']
+        if self.is_gsheets_enabled:
+            try:
+                metadata = self.gsheets_client.spreadsheets()\
+                    .get(spreadsheetId=spreadsheet_id)\
+                    .execute()
+                return metadata['sheets']
+            except HttpError as e:
+                self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
+                raise ValueError(e.message)
 
         return []
 
@@ -106,11 +118,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
         """ Fetch a datatable from a Google Sheets spreadsheet, using the given URL and sheet
         index (tab index).
         """
-        service = self.get_gsheets_client()
-        spreadsheets = service.spreadsheets()
-
         try:
-            result = spreadsheets.values().get(spreadsheetId=spreadsheet_id, range=sheet_name).execute()
+            result = self.gsheets_client\
+                .spreadsheets()\
+                .values().get(spreadsheetId=spreadsheet_id, range=sheet_name)\
+                .execute()
         except HttpError as e:
             self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
             raise ValidationError("Unable to access spreadsheet. Is the URL correct and have you shared it with {}?".format(
@@ -122,7 +134,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             raise ValidationError("There doesn't appear to be data in sheet {} of {}".format(sheet_name, spreadsheet_id))
         return rows
 
-    def get_gsheets_client(self):
+    @property
+    def gsheets_client(self):
         if not self._service:
             if not self._gsheets_secret:
                 self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']

@@ -1469,6 +1469,9 @@ class Workflow(models.Model):
     def overdue(self):
         return self.due_date and self.due_date < datetime.date.today()
 
+    def __str__(self):
+        return self.title
+
 
 @receiver(signals.post_save, sender=Workflow)
 def post_save_workflow(sender, instance, **kwargs):

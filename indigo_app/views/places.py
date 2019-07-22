@@ -4,9 +4,11 @@ import logging
 from collections import defaultdict
 from datetime import timedelta
 from itertools import chain
+import json
 
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.utils.timezone import now
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.views.generic import ListView, TemplateView
@@ -283,3 +285,48 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
             action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
             action.timestamp = first.timestamp
             return action
+
+
+class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+    template_name = 'place/metrics.html'
+    tab = 'metrics'
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceMetricsView, self).get_context_data(**kwargs)
+
+        context['day_options'] = [
+            (30, "30 days"),
+            (90, "3 months"),
+            (180, "6 months"),
+            (360, "12 months"),
+        ]
+        try:
+            days = int(self.request.GET.get('days', 180))
+        except ValueError:
+            days = 180
+        context['days'] = days
+        since = now() - timedelta(days=days)
+
+        metrics = list(DailyWorkMetrics.objects
+            .filter(place_code=self.place.place_code)
+            .filter(date__gte=since)
+            .order_by('date')
+            .all())
+
+        context['latest_stat'] = metrics[-1]
+
+        # breadth completeness history
+        context['completeness_history'] = json.dumps([
+            [m.date.isoformat(), m.p_breadth_complete]
+            for m in metrics])
+
+        # works and expressions
+        context['n_works_history'] = json.dumps([
+            [m.date.isoformat(), m.n_works]
+            for m in metrics])
+
+        context['n_expressions_history'] = json.dumps([
+            [m.date.isoformat(), m.n_expressions]
+            for m in metrics])
+
+        return context

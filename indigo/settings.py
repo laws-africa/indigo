@@ -343,7 +343,8 @@ GOOGLE_ANALYTICS_ID = os.environ.get('GOOGLE_ANALYTICS_ID')
 # disable email in development
 if DEBUG:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
+    #EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+    #EMAIL_FILE_PATH = '~/Desktop/emails.txt
 
 # Messages
 from django.contrib.messages import constants as messages

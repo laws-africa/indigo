@@ -1,0 +1,16 @@
+{% block subject %}Test{% endblock %}
+
+{% block html %}
+  {% include 'templated_email/_header.html' %}
+
+<hr>
+<p>
+   {{badge.name}} 
+
+   {{ badge.awarded_at|timesince }}
+
+   {{ badge.description }}
+  </p>
+  {% include 'templated_email/_footer.html' %}
+  
+{% endblock %}

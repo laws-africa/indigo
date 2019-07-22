@@ -1,3 +1,4 @@
+import logging
 from itertools import chain
 
 from django.contrib.auth.models import Permission
@@ -10,11 +11,12 @@ from pinax.badges.registry import badges
 from allauth.account.signals import user_signed_up
 from indigo_api.models import Country
 from indigo_app.models import Editor
-
+from templated_email import send_templated_mail
+from django.conf import settings
 
 # monkey-patch the badge registry to make it easier to find badges
 badges.registry = badges._registry
-
+log = logging.getLogger(__name__)
 
 def perms_to_codes(perms):
     return set('%s.%s' % (p.content_type.app_label, p.codename) for p in perms)
@@ -38,9 +40,16 @@ class BaseBadge(Badge):
         """ Should this badge be awarded? This is part of the pinax-badges API
         and is called by `possibly_award`.
         """
+
         if self.can_award(user, **state):
             self.grant(user)
-            return BadgeAwarded()
+            self.send_templated_email('badge_awarded', [user], {
+                  'badge':self,
+                  'user':user,
+                  'recipient': user,  
+                })
+   
+        return BadgeAwarded()
 
     def unaward(self, user):
         """ Unaward all awards of this badge to a user.
@@ -58,6 +67,26 @@ class BaseBadge(Badge):
         """ Revoke this badge from a user.
         """
         pass
+
+    def send_templated_email(self, template_name, recipient_list, context, **kwargs):
+        real_context = {
+            'SITE_URL': settings.INDIGO_URL,
+            'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
+        }
+        real_context.update(context)
+
+        log.info("Sending templated email {} to {}".format(template_name, recipient_list))
+
+        recipient_list = [user.email for user in recipient_list]
+
+        return send_templated_mail(
+            template_name=template_name,
+            from_email=None,
+            recipient_list=recipient_list,
+            context=real_context,
+           fail_silently=settings.INDIGO_EMAIL_FAIL_SILENTLY,
+            **kwargs)
+
 
 
 class PermissionBadge(BaseBadge):

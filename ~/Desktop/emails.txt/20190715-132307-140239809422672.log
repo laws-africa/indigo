@@ -1,0 +1,18 @@
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+Subject: [Indigo Platform] Please Confirm Your E-mail Address
+From: Indigo Platform <None>
+To: meet@gmail.com
+Date: Mon, 15 Jul 2019 13:23:07 -0000
+Message-ID: <20190715132307.14098.95822@mhc-dev1>
+
+Hello from example.com!
+
+You're receiving this e-mail because user mhc meet has given yours as an e-mail address to connect their account.
+
+To confirm this is correct, go to http://127.0.0.1:8000/accounts/confirm-email/Mg:1hn0wd:v-cmUhLQer_EgmW5YNoKnYR85D0/
+
+Thank you from example.com!
+example.com
+-------------------------------------------------------------------------------

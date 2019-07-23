@@ -436,6 +436,9 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
 
         # sort them so we can compare them easily
+        print "========================================="
+        print response.data
+        print "========================================="
         taxonomies = sorted(response.data['taxonomies'], key=lambda t: t.vocabulary)
         for tax in taxonomies:
             tax['topics'].sort(key=lambda t: (t['level_1'], t['level_2']))
@@ -463,4 +466,4 @@ class ContentAPIV1TestMixin(object):
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class ContentAPIV1Test(ContentAPIV1TestMixin, APITestCase):
-    fixtures = ['taxonomies', 'countries', 'user', 'editor', 'work', 'published', 'colophon']
+    fixtures = ['countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon']

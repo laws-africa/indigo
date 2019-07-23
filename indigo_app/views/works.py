@@ -23,8 +23,7 @@ import requests
 import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, \
-    VocabularyTopic
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -68,6 +67,7 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         other_dates = [
             ('assent_date', self.work.assent_date),
             ('commencement_date', self.work.commencement_date),
+            ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
         # add to existing events (e.g. if publication and commencement dates are the same)
@@ -113,7 +113,10 @@ class WorkFormMixin(object):
     is_create = False
 
     def get_properties_formset(self):
-        kwargs = {'queryset': WorkProperty.objects.none()}
+        kwargs = {
+            'queryset': WorkProperty.objects.none(),
+            'prefix': 'propforms',
+        }
         if self.request.method in ('POST', 'PUT'):
             kwargs.update({
                 'data': self.request.POST,
@@ -562,11 +565,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         works = None
         locality_code = self.locality.code if self.locality else None
         bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
+        extra_properties = bulk_creator.extra_properties
 
         try:
             table = self.get_table(form.cleaned_data.get('spreadsheet_url'))
             works = bulk_creator.get_works(self, table)
             self.create_links(works, form)
+            if extra_properties:
+                self.add_extra_properties(works, extra_properties)
             self.get_tasks(works, form)
         except ValidationError as e:
             error = e.message
@@ -589,6 +595,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 # this will check duplicate works as well
                 # (they won't overwrite the existing works but the amendments will be linked)
                 self.link_amendment(info, form)
+
+    def add_extra_properties(self, works_info, extra_properties):
+        for info in works_info:
+            if info['status'] == 'success':
+                for extra_property in extra_properties.keys():
+                    if info.get(extra_property):
+                        new_prop = WorkProperty(work=info['work'], key=extra_property, value=info.get(extra_property))
+                        new_prop.save()
 
     def link_publication_document(self, info, form):
         params = info.get('params')

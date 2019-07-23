@@ -33,8 +33,8 @@ class WorkForm(forms.ModelForm):
     delete_publication_document = forms.BooleanField(required=False)
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
-            .select_related('taxonomy_vocabulary')
-            .order_by('taxonomy_vocabulary__title', 'level_1', 'level_2'),
+            .select_related('vocabulary')
+            .order_by('vocabulary__title', 'level_1', 'level_2'),
         required=False)
     publication_document_trusted_url = forms.URLField(required=False)
     publication_document_size = forms.IntegerField(required=False)
@@ -84,12 +84,16 @@ class WorkForm(forms.ModelForm):
 
 
 class WorkPropertyForm(forms.ModelForm):
-    key = forms.ChoiceField(required=False, choices=WorkProperty.CHOICES)
+    key = forms.ChoiceField(required=False, choices=[])
     value = forms.CharField(required=False)
 
     class Meta:
         model = WorkProperty
         fields = ('key', 'value')
+
+    def __init__(self, *args, **kwargs):
+        super(WorkPropertyForm, self).__init__(*args, **kwargs)
+        self.fields['key'].choices = WorkProperty.KEYS.items()
 
     def clean(self):
         super(WorkPropertyForm, self).clean()
@@ -103,11 +107,12 @@ class BaseWorkPropertyFormSet(BaseModelFormSet):
         # add extra forms for the properties we don't have yet
         existing = set([p.key for p in self.queryset.all()])
         missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
+        self.extra = len(missing)
         self.initial_extra = [{'key': key} for key in missing]
 
     def keys_and_forms(self):
         # (value, label) pairs sorted by label
-        keys = sorted(WorkProperty.CHOICES, key=lambda x: x[1])
+        keys = sorted(WorkProperty.KEYS.items(), key=lambda x: x[1])
         forms_by_key = {f['key'].value(): f for f in self.forms}
         return [{
             'key': val,
@@ -209,7 +214,7 @@ class ImportDocumentForm(forms.Form):
             raise forms.ValidationError("Invalid json data")
 
 
-class TaskCreateForm(forms.ModelForm):
+class TaskForm(forms.ModelForm):
     class Meta:
         model = Task
         fields = ('title', 'description', 'work', 'document', 'labels', 'workflows')
@@ -218,12 +223,6 @@ class TaskCreateForm(forms.ModelForm):
                                             required=False)
     workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
                                                required=False)
-
-
-class TaskEditForm(TaskCreateForm):
-    class Meta:
-        model = Task
-        fields = ('title', 'description', 'labels', 'workflows')
 
 
 class TaskFilterForm(forms.Form):
@@ -269,8 +268,8 @@ class WorkFilterForm(forms.Form):
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
-            .select_related('taxonomy_vocabulary')
-            .order_by('taxonomy_vocabulary__title', 'level_1', 'level_2'))
+            .select_related('vocabulary')
+            .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     def __init__(self, country, *args, **kwargs):
         self.country = country

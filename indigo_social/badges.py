@@ -22,6 +22,7 @@ class BaseBadge(Badge):
     multiple = False
     levels = [1]
     events = []
+    can_award_manually = True
 
     def __init__(self):
         # hoop jumping to ensure that BadgeAward objects pick up the correct name

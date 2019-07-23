@@ -166,12 +166,12 @@ class TaxonomyVocabulary(models.Model):
 
 
 class VocabularyTopic(models.Model):
-    taxonomy_vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='vocabularies', null=False, blank=False, on_delete=models.CASCADE)
+    vocabulary = models.ForeignKey(TaxonomyVocabulary, related_name='topics', null=False, blank=False, on_delete=models.CASCADE)
     level_1 = models.CharField(max_length=30, null=False, blank=False)
     level_2 = models.CharField(max_length=30, null=True, blank=True, help_text='(optional)')
 
     class Meta:
-        unique_together = ('level_1', 'level_2', 'taxonomy_vocabulary')
+        unique_together = ('level_1', 'level_2', 'vocabulary')
 
     def __unicode__(self):
         if self.level_2:
@@ -408,7 +408,7 @@ class Work(models.Model):
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple amendments at the same date.
         """
-        initial = Amendment(amended_work=self, date=self.publication_date)
+        initial = Amendment(amended_work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
         amendments = list(self.amendments.all())
 
@@ -488,13 +488,16 @@ class PublicationDocument(models.Model):
         return super(PublicationDocument, self).save(*args, **kwargs)
 
 
+def work_property_choices():
+    return WorkProperty.KEYS.items()
+
+
 class WorkProperty(models.Model):
     # these are injected by other installations
     KEYS = {}
-    CHOICES = KEYS.items()
 
     work = models.ForeignKey(Work, null=False, related_name='raw_properties')
-    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True, choices=CHOICES)
+    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True)
     value = models.CharField(max_length=1024, null=False, blank=False)
 
     class Meta:
@@ -1217,14 +1220,12 @@ class Task(models.Model):
 
     @classmethod
     def decorate_potential_assignees(cls, tasks, country):
-        submit_task_permission = Permission.objects.get(codename='submit_task')
-        close_task_permission = Permission.objects.get(codename='close_task')
-
-        potential_assignees = User.objects\
-            .filter(editor__permitted_countries=country, user_permissions=submit_task_permission)\
+        permitted_users = User.objects\
+            .filter(editor__permitted_countries=country)\
             .order_by('first_name', 'last_name')\
             .all()
-        potential_reviewers = potential_assignees.filter(user_permissions=close_task_permission).all()
+        potential_assignees = [u for u in permitted_users if u.has_perm('indigo_api.submit_task')]
+        potential_reviewers = [u for u in permitted_users if u.has_perm('indigo_api.close_task')]
 
         for task in tasks:
             if task.state == 'open':

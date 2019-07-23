@@ -87,7 +87,7 @@
 
         <div class="form-row">
           <div class="form-group col-md-6">
-            {% regroup form.fields.taxonomies.queryset by taxonomy_vocabulary as topic_groups %}
+            {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
             {% if topic_groups %}
               <label for="taxonomies">Taxonomy tags</label>
               <select id="taxonomies" name="work-taxonomies" class="form-control selectpicker" data-live-search="true" multiple data-selected-text-format="count > 3">

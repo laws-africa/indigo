@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2019-07-16 13:42+0200\n"
-"PO-Revision-Date: 2019-07-22 09:36\n"
+"PO-Revision-Date: 2019-07-12 06:48\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -18,13 +18,23 @@ msgstr ""
 
 #: templates/indigo_api/akn/_amendments.html:10
 #, python-format
-msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+"%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
+"date\">%(date)s</span>]"
+msgstr ""
+"[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+"%(amending_title)s (%(amending_numtitle)s)</a> op <span class=\"amendment-"
+"date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/_amendments.html:12
 #, python-format
-msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
-msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
+msgid ""
+"[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+"%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgstr ""
+"[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+"%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
 
 #: templates/indigo_api/akn/coverpage_act.html:32
 #, python-format
@@ -60,7 +70,12 @@ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgid "Note: The original publication document is not available and this content could not be verified."
 msgstr "Let wel: Die oorspronklik gepubliseerde dokument is nie beskikbaar nie; die inhoud kon dus nie bevestig word nie."
 
+#: templates/indigo_api/akn/coverpage_act.html:69
+msgid ""
+"Note: The original publication document is not available and this content "
+"could not be verified."
+msgstr ""
+
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
 msgstr "Inhoudsopgawe"
-

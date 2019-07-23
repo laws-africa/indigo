@@ -1,8 +1,10 @@
 import logging
 import os.path
+from itertools import groupby
 
 from actstream.signals import action
 from collections import OrderedDict
+
 from lxml.etree import LxmlError
 
 from django.contrib.auth.models import User
@@ -14,7 +16,8 @@ from taggit_serializer.serializers import TagListSerializerField
 from cobalt import Act, FrbrUri
 import reversion
 
-from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, PublicationDocument, Task
+from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
+    PublicationDocument, Task, VocabularyTopic
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -545,7 +548,7 @@ class WorkSerializer(serializers.ModelSerializer):
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
-
+    taxonomies = serializers.SerializerMethodField()
     amendments_url = serializers.SerializerMethodField()
     """ URL of document amendments. """
 
@@ -564,6 +567,9 @@ class WorkSerializer(serializers.ModelSerializer):
 
             # frbr_uri components
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+
+            # taxonomies
+            'taxonomies',
         )
         read_only_fields = fields
 
@@ -571,6 +577,19 @@ class WorkSerializer(serializers.ModelSerializer):
         if not work.pk:
             return None
         return reverse('work-amendments-list', request=self.context['request'], kwargs={'work_id': work.pk})
+
+    def get_taxonomies(self, instance):
+        taxonomies = []
+        topics = instance.taxonomies.get_queryset().prefetch_related('vocabulary').order_by('vocabulary_id')
+
+        for vocab, group in groupby(topics, key=lambda t: t.vocabulary):
+            taxonomies.append({
+                "vocabulary": vocab.slug,
+                "title": vocab.title,
+                "topics": VocabularyTopicSerializer(many=True).to_representation(list(group)),
+            })
+
+        return taxonomies
 
 
 class WorkAmendmentSerializer(serializers.ModelSerializer):
@@ -597,3 +616,9 @@ class WorkAmendmentSerializer(serializers.ModelSerializer):
             'work_id': instance.amended_work.pk,
             'pk': instance.pk,
         })
+
+
+class VocabularyTopicSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = VocabularyTopic
+        fields = ['level_1', 'level_2']

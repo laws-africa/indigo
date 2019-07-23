@@ -330,7 +330,9 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             for m in metrics])
 
         # works by year
-        works = Work.objects.filter(country=self.country, locality=self.locality)
+        works = Work.objects\
+            .filter(country=self.country, locality=self.locality)\
+            .select_related(None).prefetch_related(None).all()
         pairs = Counter([w.year for w in works]).items()
         pairs.sort()
         context['works_by_year'] = json.dumps(pairs)

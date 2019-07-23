@@ -3,6 +3,13 @@
 
 {% block user_profile_content %}
 <div class="card">
+  <h4 class="card-header">Your points progress</h4>
+  <div class="card-body">
+  {% block level-progress %}{% endblock %}
+  </div>
+</div>
+
+<div class="card mt-3">
   <h4 class="card-header">Badges earned</h4>
   <div class="card-body">
     {% badges_for_user user as badges %}

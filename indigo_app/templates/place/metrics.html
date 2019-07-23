@@ -5,6 +5,17 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
+  <div class="card">
+    <h6 class="card-header">Works by year</h6>
+    <div class="card-body">
+      <div class="p-relative mr-2" style="height: 150px">
+        <canvas id="works_by_year-chart" data-values="{{ works_by_year }}"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
   <div class="row">
     <div class="col-md-2 col-sm-3 ml-auto mb-3">
       <form method="GET">

@@ -1,7 +1,7 @@
 # coding=utf-8
 from __future__ import division
 import logging
-from collections import defaultdict
+from collections import defaultdict, Counter
 from datetime import timedelta
 from itertools import chain
 import json
@@ -328,5 +328,11 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['n_expressions_history'] = json.dumps([
             [m.date.isoformat(), m.n_expressions]
             for m in metrics])
+
+        # works by year
+        works = Work.objects.filter(country=self.country, locality=self.locality)
+        pairs = Counter([w.year for w in works]).items()
+        pairs.sort()
+        context['works_by_year'] = json.dumps(pairs)
 
         return context

@@ -15,6 +15,7 @@
       this.drawCompletenessChart();
       this.drawWorksChart();
       this.drawExpressionsChart();
+      this.drawWorksByYearChart();
     },
 
     drawTimeSeriesChart: function(canvas, data, label) {
@@ -62,7 +63,6 @@
               display: true,
               ticks: {
                 min: 0,
-                max: 100,
                 beginAtZero: true,
               },
             }],
@@ -151,6 +151,33 @@
             }
           }
         });
-    }
+    },
+
+    drawWorksByYearChart: function() {
+      var canvas = document.getElementById('works_by_year-chart'),
+          ctx = canvas.getContext('2d'),
+          data = JSON.parse(canvas.getAttribute('data-values'));
+
+      var values = _.map(data, function(pair) { return pair[1]; });
+      var labels = _.map(data, function(pair) { return pair[0]; });
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Works',
+            data: values,
+            borderWidth: 2,
+            backgroundColor: 'rgba(67, 159, 120, 0.2)',
+            borderColor: 'rgba(67, 159, 120, 1)',
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          legend: {display: false},
+        }
+      });
+    },
   });
 })(window);

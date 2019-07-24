@@ -43,10 +43,10 @@ class BaseBadge(Badge):
 
         if self.can_award(user, **state):
             self.grant(user)
-            self.send_templated_email('badge_awarded', [user], {
+            self.send_templated_email('badge_awarded', user, {
                   'badge':self,
                   'user':user,
-                  'recipient': user,  
+                   
                 })
    
         return BadgeAwarded()
@@ -68,21 +68,19 @@ class BaseBadge(Badge):
         """
         pass
 
-    def send_templated_email(self, template_name, recipient_list, context, **kwargs):
+    def send_templated_email(self, template_name, recipient, context, **kwargs):
         real_context = {
             'SITE_URL': settings.INDIGO_URL,
             'INDIGO_ORGANISATION': settings.INDIGO_ORGANISATION,
         }
         real_context.update(context)
 
-        log.info("Sending templated email {} to {}".format(template_name, recipient_list))
-
-        recipient_list = [user.email for user in recipient_list]
+        log.info("Sending templated email {} to {}".format(template_name, recipient))
 
         return send_templated_mail(
             template_name=template_name,
             from_email=None,
-            recipient_list=recipient_list,
+            recipient_list=[recipient.email],
             context=real_context,
            fail_silently=settings.INDIGO_EMAIL_FAIL_SILENTLY,
             **kwargs)

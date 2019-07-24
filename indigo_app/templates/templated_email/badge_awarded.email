@@ -4,12 +4,16 @@
   {% include 'templated_email/_header.html' %}
 
 <hr>
-<p>
+
+  <p>Congradulations!  {{ user.first_name }} {{ user.last_name }}
+ you have been awarded a new badge,</p>
+
    {{badge.name}} 
 
    {{ badge.awarded_at|timesince }}
 
    {{ badge.description }}
+   <hr>
   </p>
   {% include 'templated_email/_footer.html' %}
   

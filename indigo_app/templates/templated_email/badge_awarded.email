@@ -5,7 +5,7 @@
 
 <hr>
 
-  <p>Congradulations!  {{ user.first_name }} {{ user.last_name }}
+  <p>Congratulations! {{ user.first_name }} {{ user.last_name }}
  you have been awarded a new badge,</p>
 
    {{badge.name}} 

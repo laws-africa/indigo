@@ -1,0 +1,17 @@
+{% block subject %}Test{% endblock %}
+
+{% block html %}
+  {% include 'templated_email/_header.html' %}
+<hr>
+<p>
+  Congratulations {{ user.first_name }} {{ user.last_name }}!, 
+   you've been awarded a {{badge.name}} badge:
+</p>
+<p>
+    {{ badge.description }}
+</p>
+
+<hr>
+  {% include 'templated_email/_footer.html' %}
+  
+{% endblock %}

@@ -39,6 +39,7 @@
           Workflows <span class="badge badge-light">{{ place.place_workflows.unclosed.count }}</span>
         </a>
         <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">Activity</a>
+        <a class="nav-item nav-link {% if view.tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">Metrics</a>
       {% endblock %}
     </nav>
   </div>

@@ -7,7 +7,7 @@
     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}"> Task #{{ task.pk }} – {{ task.title }} </a>:
 
     <hr>
-    {{ task.user_name }}{{ task.user_email}}
+   
     <hr>
   </p>
 

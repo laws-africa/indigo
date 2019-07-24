@@ -59,6 +59,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     locale = (None, None, None)
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
     """
+    extra_properties = {}
 
     log = logging.getLogger(__name__)
 
@@ -160,7 +161,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         for idx, row in enumerate(rows):
             # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if row.get('ignore') or not [val for val in row.itervalues() if val]:
+            if row.get('ignore') or not [val for val in row.values() if val]:
                 continue
 
             info = {
@@ -207,7 +208,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     # signals
                     work_changed.send(sender=work.__class__, work=work, request=view.request)
 
-                    # info for links
+                    # info for links, extra properties
                     pub_doc_params = {
                         'date': row.get('publication_date'),
                         'number': work.publication_number,
@@ -217,9 +218,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     }
                     info['params'] = pub_doc_params
 
-                    work_links = ['commenced_by', 'amends', 'repealed_by', 'primary_work']
-                    for link in work_links:
-                        info[link] = row.get(link)
+                    for header in headers:
+                        info[header] = row.get(header)
 
                     info['status'] = 'success'
                     info['work'] = work
@@ -248,7 +248,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         # Extra validation
         # - if the subtype hasn't been registered
-        if row_subtype and row_subtype not in available_subtypes:
+        if row_subtype and row_subtype.lower() not in available_subtypes:
             form.add_error('subtype', 'The subtype given ({}) doesn\'t match any in the list: {}.'
                            .format(row.get('subtype'), ", ".join(available_subtypes)))
 

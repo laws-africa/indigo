@@ -600,6 +600,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 works = self.bulk_creator.get_works(self, table)
 
                 self.create_links(works, form)
+                if extra_properties:
+                    self.add_extra_properties(works, extra_properties)
                 self.get_tasks(works, form)
             except ValidationError as e:
                 error = e.message
@@ -625,6 +627,14 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 # this will check duplicate works as well
                 # (they won't overwrite the existing works but the amendments will be linked)
                 self.link_amendment(info, form)
+
+    def add_extra_properties(self, works_info, extra_properties):
+        for info in works_info:
+            if info['status'] == 'success':
+                for extra_property in extra_properties.keys():
+                    if info.get(extra_property):
+                        new_prop = WorkProperty(work=info['work'], key=extra_property, value=info.get(extra_property))
+                        new_prop.save()
 
     def link_publication_document(self, info, form):
         params = info.get('params')

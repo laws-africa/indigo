@@ -193,7 +193,7 @@
   {% block active_tasks %}
   <div class="h4 mb-3 mt-5">Current tasks</div>
   <div class="card">
-    {% include 'indigo_api/_task_list.html' with tasks=active_tasks work_overview=True %}
+    {% include 'indigo_api/_task_list.html' with tasks=active_tasks place=None hide_works=True %}
   </div>
   {% endblock %}
 

@@ -6,13 +6,13 @@
     <tr>
       {% block table-header %}
       <th scope="col" colspan="2">Task</th>
-      {% if not work_overview %}
-        {% if place %}
-          <th scope="col">Place</th>
-        {% endif %}
-        <th scope="col">Work/Document</th>
-      {% else %}
+      {% if place %}
+        <th scope="col">Place</th>
+      {% endif %}
+      {% if hide_works %}
         <th scope="col">Document</th>
+      {% else %}
+        <th scope="col">Work or Document</th>
       {% endif %}
       <th scope="col">Updated</th>
       {% endblock %}
@@ -52,7 +52,7 @@
       {% endblock %}
     </td>
 
-    {% if not work_overview and place %}
+    {% if place %}
       <td>
         {% block col-place %}
         {{ task.place }}
@@ -66,9 +66,10 @@
         <a href="{% url 'document' doc_id=task.document.id %}"
            class="text-muted"
            data-popup-url="{% url 'document_popup' doc_id=task.document.id %}">
-          {% if not work_overview %}{{ task.document.title }} @{% endif %}
-          {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a>
-      {% elif not work_overview and task.work %}
+          {% if not hide_works %}{{ task.document.title }} @{% endif %}
+          {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}
+        </a>
+      {% elif task.work and not hide_works %}
         <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
            class="text-muted"
            data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>

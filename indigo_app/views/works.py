@@ -592,7 +592,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         works = None
         dry_run = 'preview' in form.data
 
-        if 'import' or 'preview' in form.data:
+        if 'import' in form.data or 'preview' in form.data:
             try:
                 table = self.bulk_creator.get_datatable(
                     form.cleaned_data['spreadsheet_url'],
@@ -607,7 +607,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             except ValidationError as e:
                 error = e.message
 
-        context_data = self.get_context_data(works=works, error=error, form=form)
+        context_data = self.get_context_data(works=works, error=error, form=form, dry_run=dry_run)
         return self.render_to_response(context_data)
 
     def create_links(self, works_info, form):

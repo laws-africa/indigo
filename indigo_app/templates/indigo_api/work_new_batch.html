@@ -11,62 +11,105 @@
     {{ error }}
   </div>
   {% endif %}
+  <form method="POST">
+  {% csrf_token %}
 
   {% if works %}
+    <div class="card mt-3">
+      <h4 class="card-header">
+        {% if dry_run %}
+          Preview
+        {% else %}
+          Import done
+        {% endif %}
+      </h4>
+      <div class="card-body">
+        {% if dry_run %}
+          <p>
+            If all looks well, 'Import works'.<br>
+            If any changes are needed, make them on the spreadsheet and 'Refresh preview'.<br>
+            <button type="submit" name="preview" class="btn btn-primary mt-3 mb-2">Refresh preview</button>
+          </p>
+        {% endif %}
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Row</th>
+              <th>Status</th>
+              <th>Title / Error message</th>
+              <th>Type</th>
+              <th>Number</th>
+              <th>Year</th>
+              <th>FRBR URI</th>
+            </tr>
+          </thead>
 
-  <table class="table mt-3">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Row</th>
-        <th>Title / Error message</th>
-        <th>Uri</th>
-      </tr>
-    </thead>
+          <tbody>
+            {% for work in works %}
+              <tr>
+                <td>
+                  {{ work.row }}
+                </td>
+                <td>
+                  {% if work.status == 'success' %}
+                    <i class="fas fa-check-circle text-success"></i> –&nbsp;{% if dry_run %}Ready{% else %}Imported{% endif %}
+                  {% elif work.status == 'duplicate' %}
+                    <i class="fas fa-ban text-info"></i> –&nbsp;Duplicate
+                  {% elif work.status == 'error' %}
+                    <i class="fas fa-exclamation-triangle text-danger"></i> –&nbsp;Error
+                  {% endif %}
+                </td>
+                <td>
+                  {% if work.status == 'success' %}
+                    {{ work.work.title }}
+                  {% elif work.status == 'duplicate' %}
+                    A work with this type, year and number already exists in this place.
+                  {% elif work.status == 'error' %}
+                    {{ work.error_message }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if work.work.subtype %}
+                    {{ work.work.subtype }}
+                  {% else %}
+                    Act
+                  {% endif %}
+                </td>
+                <td>
+                  {{ work.work.number }}
+                </td>
+                <td>
+                  {{ work.work.year }}
+                </td>
+                <td>
+                  {% if work.status == 'error' %}
+                    —
+                  {% elif work.status == 'success' and dry_run %}
+                    {{ work.work.frbr_uri }}
+                  {% else %}
+                    <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
 
-    <tbody>
-      {% for work in works %}
-        <tr>
-          <td>
-            {% if work.status == 'success' %}
-            <i class="fas fa-check-circle text-success"></i>
-            {% elif work.status == 'duplicate' %}
-            <i class="fas fa-ban text-info"></i>
-            {% elif work.status == 'error' %}
-            <i class="fas fa-exclamation-triangle text-danger"></i>
-            {% endif %}
-          </td>
-          <td>
-            {{ work.row }}
-          </td>
-          <td>
-            {% if work.status == 'success' %}
-            <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.title }}</a>
-            {% elif work.status == 'duplicate' %}
-            A work with this FRBR URI already exists
-            {% elif work.status == 'error' %}
-            {{ work.error_message }}
-            {% endif %}
-          </td>
-          <td>
-            {% if work.status == 'error' %}
-            —
-            {% else %}
-            <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
-            {% endif %}
-          </td>
-        </tr>
-      {% endfor %}
-    </tbody>
-
-  </table>
-
+        </table>
+      </div>
+      {% if dry_run %}
+        <div class="card-footer">
+          {% if perms.indigo_api.add_work %}
+            <button type="submit" name="preview" class="btn btn-primary">Refresh preview</button>
+            <button type="submit" name="import" class="btn btn-success float-right">Import works</button>
+          {% else %}
+            <div class="alert alert-danger">You don't have permission to create works.</div>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
   {% endif %}
 
-  <form method="POST">
-    {% csrf_token %}
-
-    <div class="card">
+    <div class="card mt-3">
       <h5 class="card-header">Import from Google Sheets</h5>
       <div class="card-body">
 
@@ -80,12 +123,16 @@
 
         <div class="form-group">
           <label for="{{ form.spreadsheet_url.id_for_label }}">Google Sheets URL</label>
-          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required autofocus value="{{ form.spreadsheet_url.value|default:'' }}">
+          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required value="{{ form.spreadsheet_url.value|default:'' }}">
           {% for err in form.spreadsheet_url.errors %}
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
-        <button type="submit" name="show_tabs" class="btn btn-primary float-right">Show tabs</button>
+
+        <div>
+          <button type="submit" name="show_tabs" class="btn btn-primary">Show tabs</button>
+          <p class="mt-2">If nothing happens, try 'Preview' below.</p>
+        </div>
 
         {% if form.fields.sheet_name.choices %}
           <div class="form-group">
@@ -121,40 +168,38 @@
           {% endfor %}
         </div>
 
-        <label for="{{ form.workflow.id_for_label }}" class="h5">Workflow</label>
-        <p>
-          Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
-          If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.
-        </p>
-        <div class="float-right">
-          <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
-        </div>
-
-        {% if form.fields.workflow.choices %}
-          <div class="form-group">
-            <div class="row">
-              <div class="col-md-6">
-                <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
-                  {% for workflow in form.fields.workflow.queryset %}
-                    <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
-                  {% endfor %}
-                </select>
+        <div class="form-group">
+          <label for="{{ form.workflow.id_for_label }}" class="h5">Workflow</label>
+          <p>Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
+          If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.</p>
+          <div class="mb-3">
+            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
+          </div>
+          {% if form.fields.workflow.choices %}
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">
+                  <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
+                    {% for workflow in form.fields.workflow.queryset %}
+                      <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
-          {% for err in form.workflow.errors %}
-            <div class="form-text text-danger">{{ err }}</div>
-          {% endfor %}
-        {% else %}
-          <div class="text-danger">No workflows (create one and refresh)</div>
-        {% endif %}
+            {% for err in form.workflow.errors %}
+              <div class="form-text text-danger">{{ err }}</div>
+            {% endfor %}
+          {% else %}
+            <div class="text-danger">No workflows (create one and refresh)</div>
+          {% endif %}
+        </div>
 
       </div>
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
           <button type="submit" name="preview" class="btn btn-primary">Preview</button>
-          <button type="submit" name="import" class="btn btn-success">Import works</button>
         {% else %}
           <div class="alert alert-danger">You don't have permission to create works.</div>
         {% endif %}

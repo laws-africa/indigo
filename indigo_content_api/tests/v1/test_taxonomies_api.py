@@ -20,6 +20,19 @@ class TaxonomiesAPIV1Test(APITestCase):
             tax['topics'].sort(key=lambda t: (t['level_1'], t['level_2']))
 
         self.assertEqual([{
+            "vocabulary": "",
+            "title": "Third Party Taxonomy",
+            "topics": [
+                {
+                    "level_1": "Fun stuff",
+                    "level_2": None,
+                },
+                {
+                    "level_1": "Not so fun stuff",
+                    "level_2": None,
+                },
+            ],
+        }, {
             "vocabulary": "lawsafrica-subjects",
             "title": "Laws.Africa Subject Taxonomy",
             "topics": [
@@ -38,18 +51,6 @@ class TaxonomiesAPIV1Test(APITestCase):
                 {
                     "level_1": "People and Work",
                     "level_2": "Communications"
-                },
-            ],
-        }, {
-            "title": "Third Party Taxonomy",
-            "topics": [
-                {
-                    "level_1": "Fun stuff",
-                    "level_2": None,
-                },
-                {
-                    "level_1": "Not so fun stuff",
-                    "level_2": None,
                 },
             ],
         }], taxonomies)

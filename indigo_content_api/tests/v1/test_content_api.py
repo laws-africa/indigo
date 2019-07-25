@@ -442,20 +442,21 @@ class ContentAPIV1TestMixin(object):
             tax['topics'].sort(key=lambda t: (t['level_1'], t['level_2']))
 
         self.assertEqual([{
+            "vocabulary": "",
+            "title": "Third Party Taxonomy",
+            "topics": [
+                {
+                    "level_1": "Fun stuff",
+                    "level_2": None,
+                },
+            ],
+        }, {
             "vocabulary": "lawsafrica-subjects",
             "title": "Laws.Africa Subject Taxonomy",
             "topics": [
                 {
                     "level_1": "Money and Business",
                     "level_2": "Banking"
-                },
-            ],
-        }, {
-            "title": "Third Party Taxonomy",
-            "topics": [
-                {
-                    "level_1": "Fun stuff",
-                    "level_2": None,
                 },
             ],
         }], taxonomies)

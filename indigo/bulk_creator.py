@@ -155,7 +155,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         # transform rows into list of dicts for easy access
         rows = [
-            {header: row[i] for i, header in enumerate(headers) if header}
+            {header: row[i] for i, header in enumerate(headers) if header and i < len(row)}
             for row in table[1:]
         ]
 

@@ -150,7 +150,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_row_validation_form(self, row_data):
         return RowValidationFormBase(row_data)
 
-    def get_works(self, view, table):
+    def get_works(self, view, table, dry_run):
         works = []
 
         # clean up headers
@@ -206,23 +206,24 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
                 try:
                     work.full_clean()
-                    work.save_with_revision(view.request.user)
+                    if not dry_run:
+                        work.save_with_revision(view.request.user)
 
-                    # signals
-                    work_changed.send(sender=work.__class__, work=work, request=view.request)
+                        # signals
+                        work_changed.send(sender=work.__class__, work=work, request=view.request)
 
-                    # info for links, extra properties
-                    pub_doc_params = {
-                        'date': row.get('publication_date'),
-                        'number': work.publication_number,
-                        'publication': work.publication_name,
-                        'country': view.country.place_code,
-                        'locality': view.locality.code if view.locality else None,
-                    }
-                    info['params'] = pub_doc_params
+                        # info for links, extra properties
+                        pub_doc_params = {
+                            'date': row.get('publication_date'),
+                            'number': work.publication_number,
+                            'publication': work.publication_name,
+                            'country': view.country.place_code,
+                            'locality': view.locality.code if view.locality else None,
+                        }
+                        info['params'] = pub_doc_params
 
-                    for header in headers:
-                        info[header] = row.get(header)
+                        for header in headers:
+                            info[header] = row.get(header)
 
                     info['status'] = 'success'
                     info['work'] = work

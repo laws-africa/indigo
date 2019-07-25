@@ -153,6 +153,7 @@
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
+          <button type="submit" name="preview" class="btn btn-primary">Preview</button>
           <button type="submit" name="import" class="btn btn-success">Import works</button>
         {% else %}
           <div class="alert alert-danger">You don't have permission to create works.</div>

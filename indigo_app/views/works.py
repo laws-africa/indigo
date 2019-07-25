@@ -590,24 +590,22 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def form_valid(self, form):
         error = None
         works = None
+        dry_run = 'preview' in form.data
 
-        if 'import' in form.data:
-            # do actual import
+        if 'import' or 'preview' in form.data:
             try:
                 table = self.bulk_creator.get_datatable(
                     form.cleaned_data['spreadsheet_url'],
                     form.cleaned_data['sheet_name'])
-                works = self.bulk_creator.get_works(self, table)
+                works = self.bulk_creator.get_works(self, table, dry_run)
 
-                self.create_links(works, form)
-                if self.bulk_creator.extra_properties:
-                    self.add_extra_properties(works, self.bulk_creator.extra_properties)
-                self.get_tasks(works, form)
+                if not dry_run:
+                    self.create_links(works, form)
+                    if self.bulk_creator.extra_properties:
+                        self.add_extra_properties(works, self.bulk_creator.extra_properties)
+                    self.get_tasks(works, form)
             except ValidationError as e:
                 error = e.message
-        else:
-            # preview of the import
-            pass
 
         context_data = self.get_context_data(works=works, error=error, form=form)
         return self.render_to_response(context_data)

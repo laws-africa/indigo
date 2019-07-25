@@ -85,6 +85,7 @@
             <div class="form-text text-danger">{{ err }}</div>
           {% endfor %}
         </div>
+        <button type="submit" name="show_tabs" class="btn btn-primary float-right">Show tabs</button>
 
         {% if form.fields.sheet_name.choices %}
           <div class="form-group">
@@ -152,7 +153,7 @@
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
-          <button type="submit" class="btn btn-success">Import works</button>
+          <button type="submit" name="import" class="btn btn-success">Import works</button>
         {% else %}
           <div class="alert alert-danger">You don't have permission to create works.</div>
         {% endif %}

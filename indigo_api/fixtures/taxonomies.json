@@ -63,7 +63,7 @@
     }
   },
   {
-    "pk": 5,
+    "pk": 6,
     "model": "indigo_api.vocabularytopic",
     "fields": {
       "vocabulary": 2,

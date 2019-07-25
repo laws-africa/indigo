@@ -1,3 +1,4 @@
+import json
 import tempfile
 
 from mock import patch
@@ -436,10 +437,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
 
         # sort them so we can compare them easily
-        print "========================================="
-        print response.data
-        print "========================================="
-        taxonomies = sorted(response.data['taxonomies'], key=lambda t: t.vocabulary)
+        taxonomies = sorted(json.loads(json.dumps(response.data['taxonomies'])), key=lambda t: t['vocabulary'])
         for tax in taxonomies:
             tax['topics'].sort(key=lambda t: (t['level_1'], t['level_2']))
 

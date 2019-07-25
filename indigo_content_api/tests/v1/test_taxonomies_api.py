@@ -1,4 +1,5 @@
 from rest_framework.test import APITestCase
+import json
 
 
 class TaxonomiesAPIV1Test(APITestCase):
@@ -10,11 +11,11 @@ class TaxonomiesAPIV1Test(APITestCase):
         self.client.login(username='api-user@example.com', password='password')
 
     def test_taxonomies(self):
-        response = self.client.get(self.api_path + '/countries')
+        response = self.client.get(self.api_path + '/taxonomies.json')
         self.assertEqual(response.status_code, 200)
 
         # sort them so we can compare them easily
-        taxonomies = sorted(response.data['results'], key=lambda t: t.vocabulary)
+        taxonomies = sorted(json.loads(json.dumps(response.data['results'])), key=lambda t: t['vocabulary'])
         for tax in taxonomies:
             tax['topics'].sort(key=lambda t: (t['level_1'], t['level_2']))
 

@@ -170,8 +170,10 @@
 
         <div class="form-group">
           <label for="{{ form.workflow.id_for_label }}" class="h5">Workflow</label>
-          <p>Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
-          If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.</p>
+          <p>
+            Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
+            If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.
+          </p>
           <div class="mb-3">
             <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
           </div>
@@ -179,7 +181,7 @@
             <div class="form-group">
               <div class="row">
                 <div class="col-md-6">
-                  <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
+                  <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a workflow">
                     {% for workflow in form.fields.workflow.queryset %}
                       <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
                     {% endfor %}

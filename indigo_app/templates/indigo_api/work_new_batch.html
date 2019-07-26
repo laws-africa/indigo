@@ -170,8 +170,10 @@
 
         <div class="form-group">
           <label for="{{ form.workflow.id_for_label }}" class="h5">Workflow</label>
-          <p>Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
-          If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.</p>
+          <p>
+            Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
+            If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.
+          </p>
           <div class="mb-3">
             <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
           </div>

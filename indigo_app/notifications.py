@@ -11,7 +11,7 @@ from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
 
-from indigo.settings import INDIGO_URL, INDIGO_ORGANISATION
+from indigo.settings import INDIGO_ORGANISATION
 from indigo_api.models import Task
 
 

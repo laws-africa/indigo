@@ -9,7 +9,11 @@
       {% if place %}
         <th scope="col">Place</th>
       {% endif %}
-      <th scope="col">Work/Document</th>
+      {% if hide_works %}
+        <th scope="col">Document</th>
+      {% else %}
+        <th scope="col">Work or Document</th>
+      {% endif %}
       <th scope="col">Updated</th>
       {% endblock %}
     </tr>
@@ -61,8 +65,11 @@
       {% if task.document %}
         <a href="{% url 'document' doc_id=task.document.id %}"
            class="text-muted"
-           data-popup-url="{% url 'document_popup' doc_id=task.document.id %}">{{ task.document.title }} @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a>
-      {% elif task.work %}
+           data-popup-url="{% url 'document_popup' doc_id=task.document.id %}">
+          {% if not hide_works %}{{ task.document.title }} @{% endif %}
+          {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}
+        </a>
+      {% elif task.work and not hide_works %}
         <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
            class="text-muted"
            data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>

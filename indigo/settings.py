@@ -420,3 +420,8 @@ ACTSTREAM_SETTINGS = {
 }
 
 USE_NATIVE_JSONFIELD = True
+
+# Adminstrators intended to receive email notifications
+# Each item in the list should be a tuple of (Full name, email address). Example:
+# [('Indigo Admin', 'indigoadmin@example.com')]
+ADMINS = []

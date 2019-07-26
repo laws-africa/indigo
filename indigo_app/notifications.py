@@ -116,8 +116,7 @@ class Notifier(object):
         Thanks!""" \
         .format(INDIGO_ORGANISATION, user.get_full_name(), user.username, user.email)
 
-        mail_admins(subject, message, fail_silently=False, connection=None,
-                    html_message=None)
+        mail_admins(subject, message)
 
 
 notifier = Notifier()

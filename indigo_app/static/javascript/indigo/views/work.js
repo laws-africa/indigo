@@ -345,4 +345,16 @@
       return !this.saving && this.dirty;
     },
   });
+
+  Indigo.BulkImportWorksView = Backbone.View.extend({
+    el: '#bulk-import-works-view',
+
+    events: {
+      'click .btn.fetch_info': 'submitForm',
+    },
+
+    submitForm: function(e) {
+      this.$el.find('.progress-box').show();
+    },
+  });
 })(window);

@@ -1,5 +1,6 @@
 {% extends "place/layout.html" %}
 
+{% block view-id %}bulk-import-works-view{% endblock %}
 {% block title %}Create a new batch{% endblock %}
 
 {% block content %}
@@ -7,12 +8,26 @@
   <h2 class="mt-3 mb-3">Create a new batch of works</h2>
 
   {% if error %}
-  <div class="alert alert-danger" role="alert">
-    {{ error }}
-  </div>
+    <div class="alert alert-danger" role="alert">
+      {{ error }}
+    </div>
   {% endif %}
+
   <form method="POST">
   {% csrf_token %}
+
+  <div class="row">
+    <div class="offset-md col-md-12">
+      <section class="progress-box" style="display: none">
+        <div>
+          <p>Fetching information from Google sheets, this may take a minute ...</p>
+          <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
 
   {% if works %}
     <div class="card mt-3">
@@ -28,7 +43,7 @@
           <p>
             If all looks well, 'Import works'.<br>
             If any changes are needed, make them on the spreadsheet and 'Refresh preview'.<br>
-            <button type="submit" name="preview" class="btn btn-primary mt-3 mb-2">Refresh preview</button>
+            <button type="submit" name="preview" class="btn btn-primary mt-3 mb-2 fetch_info">Refresh preview</button>
           </p>
         {% endif %}
         <table class="table">
@@ -99,8 +114,8 @@
       {% if dry_run %}
         <div class="card-footer">
           {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary">Refresh preview</button>
-            <button type="submit" name="import" class="btn btn-success float-right">Import works</button>
+            <button type="submit" name="preview" class="btn btn-primary fetch_info">Refresh preview</button>
+            <button type="submit" name="import" class="btn btn-success float-right fetch_info">Import works</button>
           {% else %}
             <div class="alert alert-danger">You don't have permission to create works.</div>
           {% endif %}
@@ -130,7 +145,7 @@
         </div>
 
         <div>
-          <button type="submit" name="show_tabs" class="btn btn-primary">Show tabs</button>
+          <button type="submit" name="show_tabs" class="btn btn-primary fetch_info">Show tabs</button>
           <p class="mt-2">If nothing happens, try 'Preview' below.</p>
         </div>
 
@@ -201,7 +216,7 @@
 
       <div class="card-footer">
         {% if perms.indigo_api.add_work %}
-          <button type="submit" name="preview" class="btn btn-primary">Preview</button>
+          <button type="submit" name="preview" class="btn btn-primary fetch_info">Preview</button>
         {% else %}
           <div class="alert alert-danger">You don't have permission to create works.</div>
         {% endif %}

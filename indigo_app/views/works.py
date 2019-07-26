@@ -550,6 +550,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     template_name = 'indigo_api/work_new_batch.html'
     # permissions
     permission_required = ('indigo_api.add_work',)
+    js_view = 'BulkImportWorksView'
     form_class = BatchCreateWorkForm
     initial = {
         'principal_tasks': ['import'],

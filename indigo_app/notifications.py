@@ -1,12 +1,17 @@
 import logging
 
+from allauth.account.signals import user_signed_up
 from django.conf import settings
+from django.core.mail import mail_admins
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
+from django.dispatch import receiver
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
 
+from indigo.settings import INDIGO_URL, INDIGO_ORGANISATION
 from indigo_api.models import Task
 
 
@@ -95,6 +100,25 @@ class Notifier(object):
             fail_silently=settings.INDIGO.get('EMAIL_FAIL_SILENTLY'),
             **kwargs)
 
+    def notify_admins_user_signed_up(self, user):
+        """ Function to send emails to admins to notify them when a new user 
+        signs up
+        """
+        subject = "New User Alert"
+        message = """Hey there.
+        
+        We're just writing to let you know that a new user has signed up on {0} with the following details:
+
+            Full name: {1}
+            Username: {2}
+            Email: {3}
+
+        Thanks!""" \
+        .format(INDIGO_ORGANISATION, user.get_full_name(), user.username, user.email)
+
+        mail_admins(subject, message, fail_silently=False, connection=None,
+                    html_message=None)
+
 
 notifier = Notifier()
 
@@ -113,6 +137,12 @@ def notify_comment_posted(comment_id):
         notifier.notify_comment_posted(Comment.objects.get(pk=comment_id))
     except Comment.DoesNotExist:
         log.warning("Comment with id {} doesn't exist, ignoring".format(comment_id))
+
+
+@receiver(user_signed_up, sender=User)
+def user_sign_up_signal_handler(**kwargs):
+    if kwargs['user']:
+        notifier.notify_admins_user_signed_up(kwargs['user'])
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):

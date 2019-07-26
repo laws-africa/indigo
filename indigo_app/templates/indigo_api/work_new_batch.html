@@ -102,7 +102,7 @@
                   {% elif work.status == 'success' and dry_run %}
                     {{ work.work.frbr_uri }}
                   {% else %}
-                    <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
+                    <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
                   {% endif %}
                 </td>
               </tr>
@@ -146,7 +146,7 @@
 
         <div>
           <button type="submit" name="show_tabs" class="btn btn-primary fetch_info">Show tabs</button>
-          <p class="mt-2">If nothing happens, try 'Preview' below.</p>
+          <p class="mt-2">If nothing happens, try 'Preview' below.<br>(You'll have to make the tab you want to import the first in the spreadsheet.)</p>
         </div>
 
         {% if form.fields.sheet_name.choices %}

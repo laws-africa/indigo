@@ -210,6 +210,9 @@ ASSETS_URL_EXPIRE = False
 # by default, it will look for everything in the 'static' dir
 # for each Django app
 
+MEDIA_ROOT = os.path.join(BASE_DIR, 'static')
+MEDIA_URL = '/media/'
+
 # where the compiled assets go
 STATIC_ROOT = os.path.join(os.getcwd(), 'staticfiles')
 # the URL for assets

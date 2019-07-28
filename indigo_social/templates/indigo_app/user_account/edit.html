@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block account-content %}
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
   {% csrf_token %}
 
   <div class="card mb-5">

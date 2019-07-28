@@ -7,6 +7,10 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 
+def user_directory_path(instance, filename):
+    return 'profile_photos/user_{0}/{1}'.format(instance.user.id, filename)
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True, default='', help_text="A short bio")
@@ -15,7 +19,7 @@ class UserProfile(models.Model):
     organisations = models.TextField(blank=True, null=True, default='', help_text="Organisation(s)")
     specialisations = models.TextField(blank=True, null=True, default='', help_text="Specialisation(s)")
     areas_of_law = models.CharField(max_length=256, blank=True, null=True, default='', help_text="Area(s) of law")
-    profile_photo = models.ImageField(blank=True, null=True)
+    profile_photo = models.ImageField(blank=True, null=True, upload_to=user_directory_path)
     twitter_username = models.CharField(max_length=256, blank=True, null=True, default='')
     linkedin_profile = models.URLField(blank=True, null=True, default='')
 

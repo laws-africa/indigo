@@ -89,7 +89,7 @@
         <div class="col-6">
           <div class="form-group">
             <label for="{{ form.profile_photo.id_for_label }}">{{ form.profile_photo.label }}</label>
-            <input type="file" class="form-control" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" value="{{ form.profile_photo.value }}">
+            <input type="file" class="form-control" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" value="{{ form.profile_photo.value }}" accept=".png, .jpg, .jpeg">
             {% if form.profile_photo.errors %}
               <div class="text-danger">
                 {% for error in form.profile_photo.errors %}

@@ -1246,6 +1246,16 @@ class Task(models.Model):
 
         return tasks
 
+    @classmethod
+    def decorate_submission_message(cls, tasks, view):
+        for task in tasks:
+            submission_message = 'Are you sure you want to submit this task for review?'
+            if task.assigned_to and not task.assigned_to == view.request.user:
+                submission_message = 'Are you sure you want to submit this task for review on behalf of {} {}?'.format(task.assigned_to.first_name, task.assigned_to.last_name)
+            task.submission_message = submission_message
+
+        return tasks
+
     # submit for review
     def may_submit(self, view):
         user = view.request.user

@@ -7,7 +7,6 @@ from itertools import chain, groupby
 
 from actstream import action
 from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import signals, Q, Prefetch
@@ -1251,7 +1250,8 @@ class Task(models.Model):
         for task in tasks:
             submission_message = 'Are you sure you want to submit this task for review?'
             if task.assigned_to and not task.assigned_to == view.request.user:
-                submission_message = 'Are you sure you want to submit this task for review on behalf of {} {}?'.format(task.assigned_to.first_name, task.assigned_to.last_name)
+                submission_message = 'Are you sure you want to submit this task for review on behalf of {}?'\
+                    .format(user_display(task.assigned_to))
             task.submission_message = submission_message
 
         return tasks

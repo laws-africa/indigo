@@ -510,7 +510,11 @@ class WorkTasksView(WorkViewBase, DetailView):
             context['tasks']
         )
 
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message(context['tasks'], self)
+
         Task.decorate_potential_assignees(context['tasks'], self.country)
+        Task.decorate_permissions(context['tasks'], self)
 
         return context
 

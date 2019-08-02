@@ -7,7 +7,6 @@ from itertools import chain, groupby
 
 from actstream import action
 from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.contrib.postgres.fields import JSONField
 from django.db import models
 from django.db.models import signals, Q, Prefetch
@@ -1243,6 +1242,17 @@ class Task(models.Model):
             task.reopen_task_permission = has_transition_perm(task.reopen, view)
             task.unsubmit_task_permission = has_transition_perm(task.unsubmit, view)
             task.close_task_permission = has_transition_perm(task.close, view)
+
+        return tasks
+
+    @classmethod
+    def decorate_submission_message(cls, tasks, view):
+        for task in tasks:
+            submission_message = 'Are you sure you want to submit this task for review?'
+            if task.assigned_to and not task.assigned_to == view.request.user:
+                submission_message = 'Are you sure you want to submit this task for review on behalf of {}?'\
+                    .format(user_display(task.assigned_to))
+            task.submission_message = submission_message
 
         return tasks
 

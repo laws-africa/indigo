@@ -4,9 +4,11 @@ from actstream import action
 
 from django.views.decorators.cache import cache_control
 from django.db.models import F
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchQuery
 from django.http import Http404
 from django.urls import reverse
+from django_comments.models import Comment
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
 from rest_framework.views import APIView
@@ -25,7 +27,7 @@ from lxml.etree import LxmlError
 
 from indigo.analysis.differ import AttributeDiffer
 from indigo.plugins import plugins
-from ..models import Document, Annotation, DocumentActivity
+from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer, HTMLRenderer
 from ..authz import DocumentPermissions, AnnotationPermissions
@@ -150,7 +152,36 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
-        return queryset.filter(document=self.document).all()
+        queryset = list(queryset.filter(document=self.document).all())
+
+        fake_annotations = []
+
+        for annotation in queryset:
+            if annotation.task and annotation.in_reply_to is None:
+                task_content_type = ContentType.objects.get_for_model(Task)
+                # the task linked to the annotation
+                task = annotation.task
+                # get the tasks comments
+                task_comments = Comment.objects\
+                        .filter(content_type=task_content_type, object_pk=task.id)
+
+                for comment in task_comments:
+                    new_annotation = Annotation(
+                        # id=comment.id,
+                        document=self.document,
+                        text=comment.comment,
+                        created_by_user=comment.user,
+                        in_reply_to=annotation,
+                        closed=False,
+                        created_at=comment.submit_date,
+                        updated_at=comment.submit_date,
+                        anchor_id=annotation.anchor_id    
+                    )
+
+                    fake_annotations.append(new_annotation)
+        
+        queryset.extend(fake_annotations)
+        return queryset
 
     @detail_route(methods=['GET', 'POST'])
     def task(self, request, *args, **kwargs):

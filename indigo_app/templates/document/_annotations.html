@@ -2,27 +2,30 @@
 {% verbatim %}
 {{#unless permissions.readonly }}
   <div class="float-right">
-    <a href="#" class="dropdown-toggle btn btn-sm" data-toggle="dropdown"></a>
-    <div class="dropdown-menu">
-      {{#unless in_reply_to}}
-        {{#unless task}}
-          {{#if permissions.can_create_task}}
-            <a href="#" class="dropdown-item create-anntn-task">Create task</a>
+
+    {{#if id}}
+      <a href="#" class="dropdown-toggle btn btn-sm" data-toggle="dropdown"></a>
+    
+      <div class="dropdown-menu">
+        {{#unless in_reply_to}}
+          {{#unless task}}
+            {{#if permissions.can_create_task}}
+              <a href="#" class="dropdown-item create-anntn-task">Create task</a>
+            {{/if}}
+          {{/unless}}
+          {{#if permissions.can_change }}
+            <a href="#" class="dropdown-item close-anntn">Resolve</a>
+            <div class="dropdown-divider"></div>
           {{/if}}
         {{/unless}}
-        {{#if permissions.can_change }}
-          <a href="#" class="dropdown-item close-anntn">Resolve</a>
-          <div class="dropdown-divider"></div>
-        {{/if}}
-      {{/unless}}
 
-      {{#if permissions.can_change }}
-        {{#if id}}
+        {{#if permissions.can_change }}
           <a href="#" class="dropdown-item edit-anntn">Edit</a>
           <a href="#" class="dropdown-item delete-anntn">Delete</a>
         {{/if}}
-      {{/if}}
-    </div>
+      </div>
+    {{/if}}
+
   </div>
 {{/unless}}
 

@@ -166,19 +166,17 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
                         .filter(content_type=task_content_type, object_pk=task.id)
 
                 for comment in task_comments:
-                    new_annotation = Annotation(
-                        # id=comment.id,
+                    fake_annotation = Annotation(
                         document=self.document,
                         text=comment.comment,
                         created_by_user=comment.user,
                         in_reply_to=annotation,
-                        closed=False,
                         created_at=comment.submit_date,
                         updated_at=comment.submit_date,
                         anchor_id=annotation.anchor_id    
                     )
 
-                    fake_annotations.append(new_annotation)
+                    fake_annotations.append(fake_annotation)
         
         queryset.extend(fake_annotations)
         return queryset

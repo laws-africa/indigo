@@ -8,7 +8,7 @@
    */
   Indigo.AnnotationView = Backbone.View.extend({
     className: function() {
-      return 'annotation ' + (!this.model.get('in_reply_to') ? 'root' : 'reply');
+      return 'annotation ' + (!this.model.get('in_reply_to') ? 'root' : 'reply_id');
     },
     events: {
       'click .delete-anntn': 'delete',
@@ -34,8 +34,14 @@
 
     render: function() {
       this.$el.empty();
-
-      if (this.isNew) {
+      /**
+       * Comments appended to the annotation thread appeared as new empty annotations
+       * since they lack IDs, additional check is to confirm that indeed the new
+       * annotation has no text. Appended task comments have a text field.
+       * 
+       * Other fields: text, created_by_user, in_reply_to, anchor_id
+       */
+      if (this.isNew && this.document === null) {
         // controls for adding a new annotation
         var template = $("#new-annotation-template")
           .clone()

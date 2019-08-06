@@ -155,7 +155,6 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
         queryset = list(queryset.filter(document=self.document).all())
 
         fake_annotations = []
-
         for annotation in queryset:
             if annotation.task and annotation.in_reply_to is None:
                 task_content_type = ContentType.objects.get_for_model(Task)
@@ -177,8 +176,8 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
                     )
 
                     fake_annotations.append(fake_annotation)
-        
-        queryset.extend(fake_annotations)
+
+        queryset += fake_annotations
         return queryset
 
     @detail_route(methods=['GET', 'POST'])

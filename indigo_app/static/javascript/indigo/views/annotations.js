@@ -34,10 +34,12 @@
 
     render: function() {
       this.$el.empty();
+
       /**
-       * Comments appended to the annotation thread appeared as new empty annotations
-       * since they lack IDs, additional check is to confirm that indeed the new
-       * annotation has no text. Appended task comments have a text field.
+       * Comments from tasks appended to the annotation thread appeared as new 
+       * empty annotations since they lack IDs. 
+       * Additional check is to confirm that indeed the new fake annotation has 
+       * no document. Appended task comments have a document attribute.
        * 
        * Other fields: text, created_by_user, in_reply_to, anchor_id
        */

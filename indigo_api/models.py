@@ -105,6 +105,15 @@ class Country(models.Model):
         return cls.objects.get(country__pk=code.upper())
 
 
+@receiver(signals.post_save, sender=Country)
+def post_save_country(sender, instance, **kwargs):
+    """ When a country is saved, make sure a PlaceSettings exists for it.
+    """
+    if not instance.place_settings:
+        place_settings = PlaceSettings(country=instance)
+        place_settings.save()
+
+
 class Locality(models.Model):
     """ The localities available in the UI. They aren't enforced by the API.
     """
@@ -129,6 +138,15 @@ class Locality(models.Model):
 
     def __unicode__(self):
         return unicode(self.name)
+
+
+@receiver(signals.post_save, sender=Locality)
+def post_save_locality(sender, instance, **kwargs):
+    """ When a locality is saved, make sure a PlaceSettings exists for it.
+    """
+    if not instance.place_settings:
+        place_settings = PlaceSettings(country=instance.country, locality=instance)
+        place_settings.save()
 
 
 class WorkQuerySet(models.QuerySet):
@@ -1499,3 +1517,12 @@ class TaskLabel(models.Model):
 
     def __str__(self):
         return self.slug
+
+
+class PlaceSettings(models.Model):
+    country = models.ForeignKey(Country, related_name='place_settings', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, related_name='place_settings', null=True, blank=True, on_delete=models.CASCADE)
+
+    spreadsheet_url = models.URLField()
+    as_at_date = models.DateField()
+    additional_properties = {}

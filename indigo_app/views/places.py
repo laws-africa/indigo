@@ -355,12 +355,12 @@ class PlaceSettingsView(PlaceViewBase, UpdateView):
     fields = ('spreadsheet_url', 'as_at_date')
 
     def get_object(self):
-        place = self.locality or self.country
-        if not place.place_settings.all():
+        try:
+            place_settings = PlaceSettings.objects.get(country=self.country, locality=self.locality)
+        except PlaceSettings.DoesNotExist:
             place_settings = PlaceSettings(country=self.country, locality=self.locality)
             place_settings.save()
 
-        place_settings = PlaceSettings.objects.get(country=self.country, locality=self.locality)
         return place_settings
 
     def form_valid(self, form):

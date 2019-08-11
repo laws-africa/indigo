@@ -1,0 +1,24 @@
+{% extends "place/tabbed_layout.html" %}
+
+{% block title %}Settings – {{ place.name }}{% endblock %}
+
+{% block content %}
+<div class="container mt-3 mb-5">
+  <div class="card">
+    <h4 class="card-header">Settings</h4>
+    <div class="card-body">
+      <form method="POST" action="">
+        {% csrf_token %}
+
+        {{ form }}
+
+        <button class="btn btn-success" type="submit">
+          Save
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

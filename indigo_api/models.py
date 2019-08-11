@@ -109,7 +109,7 @@ class Country(models.Model):
 def post_save_country(sender, instance, **kwargs):
     """ When a country is saved, make sure a PlaceSettings exists for it.
     """
-    if not instance.place_settings:
+    if not instance.place_settings.all():
         place_settings = PlaceSettings(country=instance)
         place_settings.save()
 
@@ -144,7 +144,7 @@ class Locality(models.Model):
 def post_save_locality(sender, instance, **kwargs):
     """ When a locality is saved, make sure a PlaceSettings exists for it.
     """
-    if not instance.place_settings:
+    if not instance.place_settings.all():
         place_settings = PlaceSettings(country=instance.country, locality=instance)
         place_settings.save()
 
@@ -1519,10 +1519,19 @@ class TaskLabel(models.Model):
         return self.slug
 
 
+class PlaceProperty(models.Model):
+    key = models.CharField(max_length=512)
+    value = models.CharField(max_length=512, null=True, blank=True)
+
+
 class PlaceSettings(models.Model):
     country = models.ForeignKey(Country, related_name='place_settings', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='place_settings', null=True, blank=True, on_delete=models.CASCADE)
 
-    spreadsheet_url = models.URLField()
-    as_at_date = models.DateField()
-    additional_properties = {}
+    spreadsheet_url = models.URLField(null=True, blank=True)
+    as_at_date = models.DateField(null=True, blank=True)
+    additional_properties = models.ForeignKey(PlaceProperty, related_name='place', null=True, blank=True)
+
+    @property
+    def place(self):
+        return self.locality or self.country

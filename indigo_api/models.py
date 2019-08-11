@@ -1519,18 +1519,15 @@ class TaskLabel(models.Model):
         return self.slug
 
 
-class PlaceProperty(models.Model):
-    key = models.CharField(max_length=512)
-    value = models.CharField(max_length=512, null=True, blank=True)
-
-
 class PlaceSettings(models.Model):
     country = models.ForeignKey(Country, related_name='place_settings', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='place_settings', null=True, blank=True, on_delete=models.CASCADE)
 
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
-    additional_properties = models.ForeignKey(PlaceProperty, related_name='place', null=True, blank=True)
+
+    # WorkProperty.KEYS
+    additional_properties = {}
 
     @property
     def place(self):

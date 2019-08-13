@@ -3,7 +3,7 @@
 {% block html %}
   {% include 'templated_email/_header.html' %}
 
-  <p> {{ annotation.created_by_user.username }} replied to a thread on
+  <p> {{ annotation.created_by_user.username }} replied to a comment on
     <a href="{{ SITE_URL }}{% url 'document' doc_id=document.pk %}"> Document #{{ document.pk }} – {{ document.title }} </a>:
 
     <hr>

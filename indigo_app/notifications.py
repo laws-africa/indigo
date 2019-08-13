@@ -3,7 +3,6 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
-from django.db.models.signals import post_save
 from django.dispatch import receiver
 from templated_email import send_templated_mail
 from background_task import background
@@ -78,11 +77,12 @@ class Notifier(object):
                     'comment': comment,
                 })
 
-    def notify_reply_to_annotation(self, parent_annotation, annotation):
+    def notify_reply_to_annotation(self, annotation):
         """ Send email notifications when there is a reply to an annotation. This
         email is sent to annotation creator and all users who replied, excluding
         the currently replying user.
         """
+        parent_annotation = annotation.in_reply_to
         related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)
         document = parent_annotation.document
 
@@ -140,13 +140,16 @@ def notify_comment_posted(comment_id):
         log.warning("Comment with id {} doesn't exist, ignoring".format(comment_id))
 
 
-@receiver(post_save, sender=Annotation)
-def post_annotation_reply(sender, **kwargs):
-    if kwargs['instance'].in_reply_to:
-        notifier.notify_reply_to_annotation(kwargs['instance'].in_reply_to, kwargs['instance'])
+@background(queue='indigo')
+def notify_annotation_reply_posted(annotation_id):
+    try:
+        notifier.notify_reply_to_annotation(Annotation.objects.get(pk=annotation_id))
+    except Comment.DoesNotExist:
+        log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
     notify_task_action = notify_task_action.now
     notify_comment_posted = notify_comment_posted.now
+    notify_annotation_reply_posted = notify_annotation_reply_posted.now

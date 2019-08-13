@@ -133,11 +133,11 @@ def notify_comment_posted(comment_id):
 
 
 @background(queue='indigo')
-def notify_new_user_signed_up(user):
+def notify_new_user_signed_up(user_id):
     try:
-        notifier.notify_admins_user_signed_up(user) 
+        notifier.notify_admins_user_signed_up(User.objects.get(pk=user_id)) 
     except User.DoesNotExist:
-        log.warning("User with id {} doesn't exist, ignoring".format(comment_id))           
+        log.warning("User with id {} doesn't exist, ignoring".format(user_id))           
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):

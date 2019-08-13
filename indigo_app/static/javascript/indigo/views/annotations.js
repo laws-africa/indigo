@@ -8,7 +8,7 @@
    */
   Indigo.AnnotationView = Backbone.View.extend({
     className: function() {
-      return 'annotation ' + (!this.model.get('in_reply_to') ? 'root' : 'reply_id');
+      return 'annotation ' + (!this.model.get('in_reply_to') ? 'root' : 'reply');
     },
     events: {
       'click .delete-anntn': 'delete',

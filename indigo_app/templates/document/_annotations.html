@@ -1,11 +1,8 @@
 <script id="annotation-template" type="text/x-handlebars-template">
-{% verbatim %}
-{{#unless permissions.readonly }}
-  <div class="float-right">
-
-    {{#if id}}
+  {% verbatim %}
+  {{#unless permissions.readonly }}
+    <div class="float-right">
       <a href="#" class="dropdown-toggle btn btn-sm" data-toggle="dropdown"></a>
-    
       <div class="dropdown-menu">
         {{#unless in_reply_to}}
           {{#unless task}}
@@ -18,34 +15,34 @@
             <div class="dropdown-divider"></div>
           {{/if}}
         {{/unless}}
-
+  
         {{#if permissions.can_change }}
-          <a href="#" class="dropdown-item edit-anntn">Edit</a>
-          <a href="#" class="dropdown-item delete-anntn">Delete</a>
+          {{#if id}}
+            <a href="#" class="dropdown-item edit-anntn">Edit</a>
+            <a href="#" class="dropdown-item delete-anntn">Delete</a>
+          {{/if}}
         {{/if}}
       </div>
-    {{/if}}
-
+    </div>
+  {{/unless}}
+  
+  <div class="author">{{ created_by_user.display_name }}</div>
+  <div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
+  <div class="content">{{{ html }}}</div>
+  <div class="button-container"></div>
+  {{#if task}}
+    <div class="task mt-2">
+      <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i>
+      <a href="{{ task.view_url }}">Task #{{ task.id }}</a>
+    </div>
+  {{/if}}
+  {% endverbatim %}
+  </script>
+  
+  <div id="new-annotation-floater" style="display: none"><i class="fas fa-comment"></i></div>
+  
+  <div id="new-annotation-template" style="display: none">
+    <textarea class="form-control" placeholder="Comment..."></textarea>
+    <button class="btn btn-primary btn-sm save" disabled>Comment</button>
+    <button class="btn btn-outline-secondary btn-sm float-right cancel">Cancel</button>
   </div>
-{{/unless}}
-
-<div class="author">{{ created_by_user.display_name }}</div>
-<div class="time-ago" data-timestamp="{{ created_at }}">{{ created_at_text }}</div>
-<div class="content">{{{ html }}}</div>
-<div class="button-container"></div>
-{{#if task}}
-  <div class="task mt-2">
-    <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i>
-    <a href="{{ task.view_url }}">Task #{{ task.id }}</a>
-  </div>
-{{/if}}
-{% endverbatim %}
-</script>
-
-<div id="new-annotation-floater" style="display: none"><i class="fas fa-comment"></i></div>
-
-<div id="new-annotation-template" style="display: none">
-  <textarea class="form-control" placeholder="Comment..."></textarea>
-  <button class="btn btn-primary btn-sm save" disabled>Comment</button>
-  <button class="btn btn-outline-secondary btn-sm float-right cancel">Cancel</button>
-</div>

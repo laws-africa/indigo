@@ -1,12 +1,10 @@
 import logging
 
-from allauth.account.signals import user_signed_up
 from django.conf import settings
 from django.core.mail import mail_admins
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
-from django.dispatch import receiver
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
@@ -105,15 +103,11 @@ class Notifier(object):
         signs up
         """
         subject = "New User Alert"
-        message = """Hey there.
-        
-        We're just writing to let you know that a new user has signed up on {0} with the following details:
+        message = """Hey there. \n\nWe are just writing to let you know that a new user has signed up on {0} with the following details:
 
             Full name: {1}
             Username: {2}
-            Email: {3}
-
-        Thanks!""" \
+            Email: {3} \n\nThanks!""" \
         .format(INDIGO_ORGANISATION, user.get_full_name(), user.username, user.email)
 
         mail_admins(subject, message)
@@ -138,13 +132,16 @@ def notify_comment_posted(comment_id):
         log.warning("Comment with id {} doesn't exist, ignoring".format(comment_id))
 
 
-@receiver(user_signed_up, sender=User)
-def user_sign_up_signal_handler(**kwargs):
-    if kwargs['user']:
-        notifier.notify_admins_user_signed_up(kwargs['user'])
+@background(queue='indigo')
+def notify_new_user_signed_up(user):
+    try:
+        notifier.notify_admins_user_signed_up(user) 
+    except User.DoesNotExist:
+        log.warning("User with id {} doesn't exist, ignoring".format(comment_id))           
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
     notify_task_action = notify_task_action.now
     notify_comment_posted = notify_comment_posted.now
+    notify_new_user_signed_up = notify_new_user_signed_up.now

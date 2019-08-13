@@ -153,11 +153,11 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
     def filter_queryset(self, queryset):
         queryset = list(queryset.filter(document=self.document).all())
+        task_content_type = ContentType.objects.get_for_model(Task)
 
         fake_annotations = []
         for annotation in queryset:
             if annotation.task and annotation.in_reply_to is None:
-                task_content_type = ContentType.objects.get_for_model(Task)
                 # the task linked to the annotation
                 task = annotation.task
                 # get the tasks comments

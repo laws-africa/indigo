@@ -33,4 +33,4 @@ def user_sign_up_signal_handler(**kwargs):
     """ Send an email to the admins when a new user signs up
     """
     if kwargs['user']:
-        notify_new_user_signed_up(kwargs['user'])
+        notify_new_user_signed_up(kwargs['user'].pk)

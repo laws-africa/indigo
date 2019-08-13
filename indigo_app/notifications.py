@@ -83,7 +83,7 @@ class Notifier(object):
         email is sent to annotation creator and all users who replied, excluding
         the currently replying user.
         """
-        related_annotations = Annotation.objects.filter(in_reply_to_id=parent_annotation.id)
+        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)
         document = parent_annotation.document
 
         recipient_list = [i.created_by_user for i in related_annotations]

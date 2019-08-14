@@ -5,8 +5,8 @@ from actstream.models import Action
 from django_comments.models import Comment
 from django_comments.signals import comment_was_posted
 
-from indigo_api.models import Task
-from indigo_app.notifications import notify_task_action, notify_comment_posted
+from indigo_api.models import Task, Annotation
+from indigo_app.notifications import notify_task_action, notify_comment_posted, notify_annotation_reply_posted
 
 
 @receiver(signals.post_save, sender=Action)
@@ -24,3 +24,9 @@ def post_comment_save_notification(sender, **kwargs):
     """
     if kwargs['comment']:
         notify_comment_posted(kwargs['comment'].pk)
+
+
+@receiver(signals.post_save, sender=Annotation)
+def post_annotation_reply(sender, **kwargs):
+    if kwargs['instance'].in_reply_to:
+        notify_annotation_reply_posted(kwargs['instance'].pk)

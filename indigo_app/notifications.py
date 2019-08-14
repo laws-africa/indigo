@@ -3,11 +3,12 @@ import logging
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
+from django.dispatch import receiver
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
 
-from indigo_api.models import Task
+from indigo_api.models import Task, Annotation
 
 
 log = logging.getLogger(__name__)
@@ -76,6 +77,30 @@ class Notifier(object):
                     'comment': comment,
                 })
 
+    def notify_reply_to_annotation(self, annotation):
+        """ Send email notifications when there is a reply to an annotation. This
+        email is sent to annotation creator and all users who replied, excluding
+        the currently replying user.
+        """
+        parent_annotation = annotation.in_reply_to
+        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)
+        document = parent_annotation.document
+
+        recipient_list = [i.created_by_user for i in related_annotations]
+
+        # add creator of parent annotation
+        recipient_list.append(parent_annotation.created_by_user)
+        
+        recipient_list = list(set(recipient_list))
+        recipient_list.remove(annotation.created_by_user)
+
+        for user in recipient_list:
+            self.send_templated_email('annotation_new_reply', [user], {
+                'document': document,
+                'recipient': user,
+                'annotation': annotation,
+            })
+
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):
         real_context = {
             'SITE_URL': settings.INDIGO_URL,
@@ -115,7 +140,16 @@ def notify_comment_posted(comment_id):
         log.warning("Comment with id {} doesn't exist, ignoring".format(comment_id))
 
 
+@background(queue='indigo')
+def notify_annotation_reply_posted(annotation_id):
+    try:
+        notifier.notify_reply_to_annotation(Annotation.objects.get(pk=annotation_id))
+    except Comment.DoesNotExist:
+        log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
+
+
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
     notify_task_action = notify_task_action.now
     notify_comment_posted = notify_comment_posted.now
+    notify_annotation_reply_posted = notify_annotation_reply_posted.now

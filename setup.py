@@ -69,6 +69,7 @@ setup(
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.6.2,<3.7',
         'EbookLib>=0.15',
+        'google-api-python-client>=1.7.9',
         'jsonpatch>=1.23',
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',

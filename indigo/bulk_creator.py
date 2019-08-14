@@ -91,12 +91,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
         except requests.RequestException as e:
             raise ValidationError("Error talking to Google Sheets: %s" % e.message)
 
-        rows = csv.reader(io.BytesIO(response.content), encoding='utf-8')
-        rows = list(rows)
+        reader = csv.reader(io.BytesIO(response.content))
+        rows = list(reader)
 
         if not rows or not rows[0]:
-            raise ValidationError("Your sheet did not import successfully; please check that it is 'Published to the web' and shared with 'Anyone with the link'")
-        return rows
+            raise ValidationError(
+                "Your sheet did not import successfully; "
+                "please check that you have link sharing ON (Anyone with the link)."
+            )
+        return [[item.decode('utf8') for item in row] for row in rows]
 
     @property
     def is_gsheets_enabled(self):
@@ -155,7 +158,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         # transform rows into list of dicts for easy access
         rows = [
-            {header: row[i] for i, header in enumerate(headers) if header}
+            {header: row[i] for i, header in enumerate(headers) if header and i < len(row)}
             for row in table[1:]
         ]
 

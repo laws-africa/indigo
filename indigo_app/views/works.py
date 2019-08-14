@@ -600,8 +600,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 works = self.bulk_creator.get_works(self, table)
 
                 self.create_links(works, form)
-                if extra_properties:
-                    self.add_extra_properties(works, extra_properties)
+                if self.bulk_creator.extra_properties:
+                    self.add_extra_properties(works, self.bulk_creator.extra_properties)
                 self.get_tasks(works, form)
             except ValidationError as e:
                 error = e.message

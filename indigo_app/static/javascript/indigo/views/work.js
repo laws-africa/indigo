@@ -346,15 +346,15 @@
     },
   });
 
-  Indigo.BulkImportWorksView = Backbone.View.extend({
+  Indigo.BatchAddWorkView = Backbone.View.extend({
     el: '#bulk-import-works-view',
 
     events: {
-      'click .btn.fetch_info': 'submitForm',
+      'click .btn.show-progress': 'showProgress',
     },
 
-    submitForm: function(e) {
-      this.$el.find('.progress-box').show();
+    showProgress: function(e) {
+      document.getElementById('import-progress').classList.remove('d-none');
     },
   });
 })(window);

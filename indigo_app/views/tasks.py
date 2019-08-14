@@ -80,6 +80,9 @@ class TaskListView(TaskViewBase, ListView):
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message(context['tasks'], self)
+
         Task.decorate_potential_assignees(context['tasks'], self.country)
         Task.decorate_permissions(context['tasks'], self)
 
@@ -105,6 +108,9 @@ class TaskDetailView(TaskViewBase, DetailView):
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
+
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message([task], self)
 
         Task.decorate_potential_assignees([task], self.country)
         Task.decorate_permissions([task], self)

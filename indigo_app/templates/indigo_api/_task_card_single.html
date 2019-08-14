@@ -15,7 +15,7 @@
               <button type="submit"
                       class="dropdown-item"
                       formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}?next={{ request.get_full_path|urlencode }}"
-                      data-confirm="Are you sure you want to submit this task for review?">
+                      data-confirm="{{ task.submission_message }}">
                 Submit for review
               </button>
             {% endif %}

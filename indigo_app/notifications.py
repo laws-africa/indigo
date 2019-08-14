@@ -10,7 +10,7 @@ from background_task import background
 from actstream.models import Action
 
 from indigo.settings import INDIGO_ORGANISATION
-from indigo_api.models import Task
+from indigo_api.models import Task, Annotation
 
 
 log = logging.getLogger(__name__)
@@ -79,6 +79,30 @@ class Notifier(object):
                     'comment': comment,
                 })
 
+    def notify_reply_to_annotation(self, annotation):
+        """ Send email notifications when there is a reply to an annotation. This
+        email is sent to annotation creator and all users who replied, excluding
+        the currently replying user.
+        """
+        parent_annotation = annotation.in_reply_to
+        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)
+        document = parent_annotation.document
+
+        recipient_list = [i.created_by_user for i in related_annotations]
+
+        # add creator of parent annotation
+        recipient_list.append(parent_annotation.created_by_user)
+
+        recipient_list = list(set(recipient_list))
+        recipient_list.remove(annotation.created_by_user)
+
+        for user in recipient_list:
+            self.send_templated_email('annotation_new_reply', [user], {
+                'document': document,
+                'recipient': user,
+                'annotation': annotation,
+            })
+
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):
         real_context = {
             'SITE_URL': settings.INDIGO_URL,
@@ -99,7 +123,7 @@ class Notifier(object):
             **kwargs)
 
     def notify_admins_user_signed_up(self, user):
-        """ Function to send emails to admins to notify them when a new user 
+        """ Function to send emails to admins to notify them when a new user
         signs up
         """
         subject = "New User Alert"
@@ -135,9 +159,17 @@ def notify_comment_posted(comment_id):
 @background(queue='indigo')
 def notify_new_user_signed_up(user_id):
     try:
-        notifier.notify_admins_user_signed_up(User.objects.get(pk=user_id)) 
+        notifier.notify_admins_user_signed_up(User.objects.get(pk=user_id))
     except User.DoesNotExist:
-        log.warning("User with id {} doesn't exist, ignoring".format(user_id))           
+        log.warning("User with id {} doesn't exist, ignoring".format(user_id))
+
+
+@background(queue='indigo')
+def notify_annotation_reply_posted(annotation_id):
+    try:
+        notifier.notify_reply_to_annotation(Annotation.objects.get(pk=annotation_id))
+    except Comment.DoesNotExist:
+        log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
 
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
@@ -145,3 +177,4 @@ if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     notify_task_action = notify_task_action.now
     notify_comment_posted = notify_comment_posted.now
     notify_new_user_signed_up = notify_new_user_signed_up.now
+    notify_annotation_reply_posted = notify_annotation_reply_posted.now

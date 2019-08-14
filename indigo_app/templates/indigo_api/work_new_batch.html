@@ -48,10 +48,12 @@
           {% endfor %}
         </div>
 
+        {% if bulk_creator.is_gsheets_enabled %}
         <div>
           <button type="submit" name="show_tabs" class="btn btn-primary fetch_info">Show tabs</button>
           <p class="mt-2">If nothing happens, try 'Preview' below.<br>(You'll have to make the tab you want to import the first in the spreadsheet.)</p>
         </div>
+        {% endif %}
 
         {% if form.fields.sheet_name.choices %}
           <div class="form-group">

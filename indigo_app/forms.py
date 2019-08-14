@@ -186,17 +186,6 @@ class BatchCreateWorkForm(forms.Form):
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
-
-    possible_tasks = [
-        {
-            'key': 'import',
-            'label': 'Import content',
-            'description': '''Import a point in time for this work; \
-            either the initial publication or a later consolidation.
-Make sure the document's expression date is correct.''',
-        },
-    ]
-    principal_tasks = forms.MultipleChoiceField(choices=((t['key'], t['label']) for t in possible_tasks), required=False)
     workflow = forms.ModelChoiceField(queryset=Workflow.objects)
 
 

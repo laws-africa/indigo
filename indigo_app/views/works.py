@@ -552,9 +552,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     permission_required = ('indigo_api.add_work',)
     js_view = 'BulkImportWorksView'
     form_class = BatchCreateWorkForm
-    initial = {
-        'principal_tasks': ['import'],
-    }
 
     _bulk_creator = None
 
@@ -831,11 +828,9 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
             task.workflows = [form.cleaned_data.get('workflow')]
             task.save()
 
-        if form.cleaned_data.get('principal_tasks'):
-            for info in works:
-                if info['status'] == 'success' and not info['work'].stub:
-                    for chosen_task in form.cleaned_data.get('principal_tasks'):
-                        make_task(chosen_task)
+        for info in works:
+            if info['status'] == 'success' and not info['work'].stub:
+                make_task('import')
 
     def get_table(self, spreadsheet_url):
         # get list of lists where each inner list is a row in a spreadsheet

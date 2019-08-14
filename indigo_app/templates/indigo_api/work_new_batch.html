@@ -5,7 +5,7 @@
 
 {% block content %}
 <div class="container">
-  <h2 class="mt-3 mb-3">Create a new batch of works</h2>
+  <h2 class="mt-3 mb-3">Import a batch of works from Google Sheets</h2>
 
   {% if error %}
     <div class="alert alert-danger" role="alert">
@@ -13,39 +13,107 @@
     </div>
   {% endif %}
 
-  <form method="POST">
-  {% csrf_token %}
-
-  <div class="row">
-    <div class="offset-md col-md-12">
-      <section class="progress-box" style="display: none">
-        <div>
-          <p>Fetching information from Google sheets, this may take a minute ...</p>
-          <div class="progress">
-            <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
-          </div>
-        </div>
-      </section>
+  {% if form.non_field_errors %}
+    <div class="alert alert-danger" role="alert">
+      {% for error in form.non_field_errors %}
+        <div>{{ error }}</div>
+      {% endfor %}
     </div>
-  </div>
+  {% endif %}
 
-  {% if works %}
-    <div class="card mt-3">
-      <h4 class="card-header">
-        {% if dry_run %}
-          Preview
-        {% else %}
-          Import done
-        {% endif %}
-      </h4>
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="row">
+      <div class="offset-md col-md-12">
+        <section class="progress-box" style="display: none">
+          <div>
+            <p>Fetching information from Google sheets, this may take a minute ...</p>
+            <div class="progress">
+              <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div class="card mb-3">
       <div class="card-body">
-        {% if dry_run %}
-          <p>
-            If all looks well, 'Import works'.<br>
-            If any changes are needed, make them on the spreadsheet and 'Refresh preview'.<br>
-            <button type="submit" name="preview" class="btn btn-primary mt-3 mb-2 fetch_info">Refresh preview</button>
-          </p>
+
+        <div class="form-group">
+          <label for="{{ form.spreadsheet_url.id_for_label }}">Google Sheets URL</label>
+          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required value="{{ form.spreadsheet_url.value|default:'' }}">
+          {% for err in form.spreadsheet_url.errors %}
+            <div class="form-text text-danger">{{ err }}</div>
+          {% endfor %}
+        </div>
+
+        <div>
+          <button type="submit" name="show_tabs" class="btn btn-primary fetch_info">Show tabs</button>
+          <p class="mt-2">If nothing happens, try 'Preview' below.<br>(You'll have to make the tab you want to import the first in the spreadsheet.)</p>
+        </div>
+
+        {% if form.fields.sheet_name.choices %}
+          <div class="form-group">
+            <div class="form-row">
+              <div class="col-md-6">
+                <label for="{{ form.sheet_name.id_for_label }}">Spreadsheet tab</label>
+                <select class="selectpicker form-control" name="{{ form.sheet_name.name }}" id="{{ form.sheet_name.id_for_label }}" data-live-search="true">
+                  {% for opt in form.sheet_name %}
+                    {{ opt }}
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
         {% endif %}
+
+        <div class="form-group">
+          <label for="{{ form.workflow.id_for_label }}">Choose a workflow for newly created tasks</label>
+
+          {% if form.fields.workflow.choices %}
+            <div class="form-group">
+              <div class="row">
+                <div class="col-md-6">
+                  <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
+                    {% for workflow in form.fields.workflow.queryset %}
+                      <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+            </div>
+            {% for err in form.workflow.errors %}
+              <div class="form-text text-danger">{{ err }}</div>
+            {% endfor %}
+          {% else %}
+            <div class="text-danger">No workflows (create one and refresh)</div>
+          {% endif %}
+
+          <a href="{% url 'workflow_create' place=place.place_code %}">Create a new workflow</a>
+        </div>
+
+      </div>
+
+      <div class="card-footer">
+        {% if perms.indigo_api.add_work %}
+          <button type="submit" name="preview" class="btn btn-primary fetch_info">Preview</button>
+        {% else %}
+          <div class="alert alert-danger">You don't have permission to create works.</div>
+        {% endif %}
+      </div>
+    </div>
+
+    {% if works %}
+      <div class="card mt-3">
+        <h4 class="card-header">
+          {% if dry_run %}
+            Preview of your import
+          {% else %}
+            Import complete
+          {% endif %}
+        </h4>
+
         <table class="table">
           <thead>
             <tr>
@@ -63,15 +131,15 @@
             {% for work in works %}
               <tr>
                 <td>
-                  {{ work.row }}
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ work.row }}" target="_blank">{{ work.row }}</a>
                 </td>
-                <td>
+                <td class="text-nowrap">
                   {% if work.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> –&nbsp;{% if dry_run %}Ready{% else %}Imported{% endif %}
+                    <i class="fas fa-check-circle text-success"></i> {% if dry_run %}Ready to import{% else %}Imported{% endif %}
                   {% elif work.status == 'duplicate' %}
-                    <i class="fas fa-ban text-info"></i> –&nbsp;Duplicate
+                    <i class="fas fa-ban text-info"></i> Duplicate
                   {% elif work.status == 'error' %}
-                    <i class="fas fa-exclamation-triangle text-danger"></i> –&nbsp;Error
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Error
                   {% endif %}
                 </td>
                 <td>
@@ -110,118 +178,19 @@
           </tbody>
 
         </table>
-      </div>
-      {% if dry_run %}
-        <div class="card-footer">
-          {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary fetch_info">Refresh preview</button>
-            <button type="submit" name="import" class="btn btn-success float-right fetch_info">Import works</button>
-          {% else %}
-            <div class="alert alert-danger">You don't have permission to create works.</div>
-          {% endif %}
-        </div>
-      {% endif %}
-    </div>
-  {% endif %}
 
-    <div class="card mt-3">
-      <h5 class="card-header">Import from Google Sheets</h5>
-      <div class="card-body">
-
-        {% if form.non_field_errors %}
-          <div class="alert alert-danger" role="alert">
-            {% for error in form.non_field_errors %}
-              <div>{{ error }}</div>
-            {% endfor %}
+        {% if dry_run %}
+          <div class="card-footer">
+            {% if perms.indigo_api.add_work %}
+              <button type="submit" name="preview" class="btn btn-primary fetch_info">Refresh preview</button>
+              <button type="submit" name="import" class="btn btn-success float-right fetch_info">Import works</button>
+            {% else %}
+              <div class="alert alert-danger">You don't have permission to create works.</div>
+            {% endif %}
           </div>
         {% endif %}
-
-        <div class="form-group">
-          <label for="{{ form.spreadsheet_url.id_for_label }}">Google Sheets URL</label>
-          <input type="url" class="form-control" id="{{ form.spreadsheet_url.id_for_label }}" name="{{ form.spreadsheet_url.name }}" placeholder="The URL of the spreadsheet to import works from" required value="{{ form.spreadsheet_url.value|default:'' }}">
-          {% for err in form.spreadsheet_url.errors %}
-            <div class="form-text text-danger">{{ err }}</div>
-          {% endfor %}
-        </div>
-
-        <div>
-          <button type="submit" name="show_tabs" class="btn btn-primary fetch_info">Show tabs</button>
-          <p class="mt-2">If nothing happens, try 'Preview' below.<br>(You'll have to make the tab you want to import the first in the spreadsheet.)</p>
-        </div>
-
-        {% if form.fields.sheet_name.choices %}
-          <div class="form-group">
-            <div class="form-row">
-              <div class="col-md-6">
-                <label for="{{ form.sheet_name.id_for_label }}">Spreadsheet tab</label>
-                <select class="selectpicker form-control" name="{{ form.sheet_name.name }}" id="{{ form.sheet_name.id_for_label }}" data-live-search="true">
-                  {% for opt in form.sheet_name %}
-                    {{ opt }}
-                  {% endfor %}
-                </select>
-              </div>
-            </div>
-          </div>
-        {% endif %}
-
-        <div class="form-row">
-          <div class="form-group">
-            {% for p_task in form.principal_tasks %}
-              <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="{{ p_task.id_for_label }}" name="{{ form.principal_tasks.html_name }}" value="{{ p_task.data.value }}" {% if p_task.data.selected %}checked{% endif %}>
-                <label for="{{ p_task.id_for_label }}" class="form-check-label ml-1 mt-2">
-                  {{ p_task.data.label }}
-                  {% if p_task.data.label == 'Import content' %}
-                    – Select this to create an 'Import content' task on each principal work created during this import.
-                  {% endif %}
-                </label>
-              </div>
-            {% endfor %}
-          </div>
-          {% for err in form.principal_tasks.errors %}
-            <div class="form-text text-danger">{{ err }}</div>
-          {% endfor %}
-        </div>
-
-        <div class="form-group">
-          <label for="{{ form.workflow.id_for_label }}" class="h5">Workflow</label>
-          <p>
-            Some tasks may be created automatically during this import – choose a workflow to group them together.<br>
-            If you need to, create a new workflow then return to this tab, refresh the page and select it from the dropdown.
-          </p>
-          <div class="mb-3">
-            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-primary" target="_blank">Create workflow</a>
-          </div>
-          {% if form.fields.workflow.choices %}
-            <div class="form-group">
-              <div class="row">
-                <div class="col-md-6">
-                  <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
-                    {% for workflow in form.fields.workflow.queryset %}
-                      <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
-                    {% endfor %}
-                  </select>
-                </div>
-              </div>
-            </div>
-            {% for err in form.workflow.errors %}
-              <div class="form-text text-danger">{{ err }}</div>
-            {% endfor %}
-          {% else %}
-            <div class="text-danger">No workflows (create one and refresh)</div>
-          {% endif %}
-        </div>
-
       </div>
-
-      <div class="card-footer">
-        {% if perms.indigo_api.add_work %}
-          <button type="submit" name="preview" class="btn btn-primary fetch_info">Preview</button>
-        {% else %}
-          <div class="alert alert-danger">You don't have permission to create works.</div>
-        {% endif %}
-      </div>
-    </div>
+    {% endif %}
   </form>
 
 

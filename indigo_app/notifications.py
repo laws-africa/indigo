@@ -1,13 +1,15 @@
 import logging
 
 from django.conf import settings
+from django.core.mail import mail_admins
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django_comments.models import Comment
-from django.dispatch import receiver
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
 
+from indigo.settings import INDIGO_ORGANISATION
 from indigo_api.models import Task, Annotation
 
 
@@ -90,7 +92,7 @@ class Notifier(object):
 
         # add creator of parent annotation
         recipient_list.append(parent_annotation.created_by_user)
-        
+
         recipient_list = list(set(recipient_list))
         recipient_list.remove(annotation.created_by_user)
 
@@ -120,6 +122,20 @@ class Notifier(object):
             fail_silently=settings.INDIGO.get('EMAIL_FAIL_SILENTLY'),
             **kwargs)
 
+    def notify_admins_user_signed_up(self, user):
+        """ Function to send emails to admins to notify them when a new user
+        signs up
+        """
+        subject = "New User Alert"
+        message = """Hey there. \n\nWe are just writing to let you know that a new user has signed up on {0} with the following details:
+
+            Full name: {1}
+            Username: {2}
+            Email: {3} \n\nThanks!""" \
+        .format(INDIGO_ORGANISATION, user.get_full_name(), user.username, user.email)
+
+        mail_admins(subject, message)
+
 
 notifier = Notifier()
 
@@ -141,6 +157,14 @@ def notify_comment_posted(comment_id):
 
 
 @background(queue='indigo')
+def notify_new_user_signed_up(user_id):
+    try:
+        notifier.notify_admins_user_signed_up(User.objects.get(pk=user_id))
+    except User.DoesNotExist:
+        log.warning("User with id {} doesn't exist, ignoring".format(user_id))
+
+
+@background(queue='indigo')
 def notify_annotation_reply_posted(annotation_id):
     try:
         notifier.notify_reply_to_annotation(Annotation.objects.get(pk=annotation_id))
@@ -152,4 +176,5 @@ if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
     notify_task_action = notify_task_action.now
     notify_comment_posted = notify_comment_posted.now
+    notify_new_user_signed_up = notify_new_user_signed_up.now
     notify_annotation_reply_posted = notify_annotation_reply_posted.now

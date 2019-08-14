@@ -120,6 +120,8 @@ class Importer(LocaleBasedMatcher):
             text = self.pdf_to_text(f)
             if self.reformat:
                 text = self.reformat_text(text)
+            if len(text) < 512:
+                raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
 
         xml = self.import_from_text(text, doc.frbr_uri, '.txt')
         doc.reset_xml(xml, from_model=True)

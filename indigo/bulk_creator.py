@@ -176,23 +176,25 @@ class BaseBulkCreator(LocaleBasedMatcher):
             for info in works:
                 if info['status'] == 'success':
                     if info.get('commenced_by'):
-                        self.link_commencement(info)
+                        self.link_commencement(info['work'], info)
 
                     if info.get('repealed_by'):
-                        self.link_repeal(info)
+                        self.link_repeal(info['work'], info)
 
                     if info.get('primary_work'):
-                        self.link_parent_work(info)
+                        self.link_parent_work(info['work'], info)
 
                 if info['status'] != 'error' and info.get('amends'):
                     # this will check duplicate works as well
                     # (they won't overwrite the existing works but the amendments will be linked)
-                    self.link_amendment(info)
+                    self.link_amendment(info['work'], info)
+
+        return works
 
     def create_work(self, view, row, idx, dry_run):
-        info = {
-            'row': idx + 2,
-        }
+        # copy all row details
+        info = {k: v for k, v in row.iteritems()}
+        info['row'] = idx + 2
 
         row = self.validate_row(view, row)
 
@@ -244,14 +246,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     }
                     info['params'] = pub_doc_params
 
-                    for header in headers:
-                        info[header] = row.get(header)
-
                     self.add_extra_properties(work, info)
                     self.link_publication_document(work, info)
 
-                    if not info['work'].stub:
-                        self.create_task(info, 'import')
+                    if not work.stub:
+                        self.create_task(work, info, 'import')
 
                 info['work'] = work
                 info['status'] = 'success'
@@ -337,12 +336,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
         finder = plugins.for_locale('publications', self.country.code, None, locality_code)
 
         if not finder or not params.get('date'):
-            return self.create_task(info, task_type='link-publication-document')
+            return self.create_task(work, info, task_type='link-publication-document')
 
         publications = finder.find_publications(params)
 
         if len(publications) != 1:
-            return self.create_task(info, task_type='link-publication-document')
+            return self.create_task(work, info, task_type='link-publication-document')
 
         pub_doc_details = publications[0]
         pub_doc = PublicationDocument()
@@ -352,14 +351,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
         pub_doc.size = pub_doc_details.get('size')
         pub_doc.save()
 
-    def link_commencement(self, info):
+    def link_commencement(self, work, info):
         # if the work is `commenced_by` something, try linking it
         # make a task if this fails
         title = info['commenced_by']
         work = info['work']
         commencing_work = self.find_work_by_title(title)
         if not commencing_work:
-            return self.create_task(info, task_type='link-commencement')
+            return self.create_task(work, info, task_type='link-commencement')
 
         work.commencing_work = commencing_work
         try:
@@ -367,19 +366,18 @@ class BaseBulkCreator(LocaleBasedMatcher):
         except ValidationError:
             self.create_task(info, task_type='link-commencement')
 
-    def link_repeal(self, info):
+    def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it
         # make a task if this fails
         # (either because the work isn't found or because the repeal date isn't right,
         # which could be because it doesn't exist or because it's in the wrong format)
-        work = info['work']
         repealing_work = self.find_work_by_title(info['repealed_by'])
         if not repealing_work:
-            return self.create_task(info, task_type='link-repeal')
+            return self.create_task(work, info, task_type='link-repeal')
 
         repeal_date = repealing_work.commencement_date
         if not repeal_date:
-            return self.create_task(info, task_type='link-repeal')
+            return self.create_task(work, info, task_type='link-repeal')
 
         work.repealed_by = repealing_work
         work.repealed_date = repeal_date
@@ -389,13 +387,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
         except ValidationError:
             self.create_task(info, task_type='link-repeal')
 
-    def link_parent_work(self, info):
+    def link_parent_work(self, work, info):
         # if the work has a `primary_work`, try linking it
         # make a task if this fails
-        work = info['work']
         parent_work = self.find_work_by_title(info['primary_work'])
         if not parent_work:
-            return self.create_task(info, task_type='link-primary-work')
+            return self.create_task(work, info, task_type='link-primary-work')
 
         work.parent_work = parent_work
 
@@ -404,14 +401,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
         except ValidationError:
             self.create_task(info, task_type='link-primary-work')
 
-    def link_amendment(self, info):
+    def link_amendment(self, work, info):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        work = info['work']
         amended_work = self.find_work_by_title(info['amends'])
         if not amended_work:
-            return self.create_task(info, task_type='link-amendment')
+            return self.create_task(work, info, task_type='link-amendment')
 
         date = info.get('commencement_date') or work.commencement_date
         if not date:
@@ -432,7 +428,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             amendment.date = date
             amendment.save()
 
-    def create_task(self, info, task_type):
+    def create_task(self, work, info, task_type):
         task = Task()
 
         if task_type == 'link-publication-document':
@@ -499,7 +495,7 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
 
         task.country = self.country
         task.locality = self.locality
-        task.work = info['work']
+        task.work = work
         task.code = task_type
         task.created_by_user = self.user
 

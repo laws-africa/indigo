@@ -24,19 +24,6 @@
   <form method="POST">
     {% csrf_token %}
 
-    <div class="row">
-      <div class="offset-md col-md-12">
-        <section class="progress-box" style="display: none">
-          <div>
-            <p>Fetching information from Google sheets, this may take a minute ...</p>
-            <div class="progress">
-              <div class="progress-bar progress-bar-striped progress-bar-animated" style="width: 100%"></div>
-            </div>
-          </div>
-        </section>
-      </div>
-    </div>
-
     <div class="card mb-3">
       <div class="card-body">
 
@@ -50,7 +37,7 @@
 
         {% if bulk_creator.is_gsheets_enabled %}
         <div>
-          <button type="submit" name="show_tabs" class="btn btn-primary fetch_info">Show tabs</button>
+          <button type="submit" name="show_tabs" class="btn btn-primary">Show tabs</button>
           <p class="mt-2">If nothing happens, try 'Preview' below.<br>(You'll have to make the tab you want to import the first in the spreadsheet.)</p>
         </div>
         {% endif %}
@@ -100,7 +87,7 @@
       {% if not works %}
         <div class="card-footer">
           {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary fetch_info">Preview</button>
+            <button type="submit" name="preview" class="btn btn-primary show-progress">Preview</button>
           {% else %}
             <div class="alert alert-danger">You don't have permission to create works.</div>
           {% endif %}
@@ -183,20 +170,21 @@
 
         </table>
 
-        {% if dry_run %}
-          <div class="card-footer">
-            {% if perms.indigo_api.add_work %}
-              <button type="submit" name="preview" class="btn btn-primary fetch_info">Refresh preview</button>
-              <button type="submit" name="import" class="btn btn-success float-right fetch_info">Import works</button>
-            {% else %}
-              <div class="alert alert-danger">You don't have permission to create works.</div>
-            {% endif %}
-          </div>
-        {% endif %}
+        <div class="card-footer">
+          {% if perms.indigo_api.add_work %}
+            <button type="submit" name="preview" class="btn btn-primary show-progress">Refresh preview</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">Import works</button>
+          {% else %}
+            <div class="alert alert-danger">You don't have permission to create works.</div>
+          {% endif %}
+        </div>
       </div>
     {% endif %}
   </form>
 
+  <div class="progress d-none mt-3" id="import-progress">
+    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 100%"></div>
+  </div>
 
   {% if not works %}
     <div class="card mt-3">

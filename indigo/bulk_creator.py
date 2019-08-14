@@ -193,7 +193,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def create_work(self, view, row, idx, dry_run):
         # copy all row details
-        info = {k: v for k, v in row.iteritems()}
+        info = row
         info['row'] = idx + 2
 
         row = self.validate_row(view, row)

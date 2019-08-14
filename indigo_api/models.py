@@ -985,6 +985,9 @@ class Subtype(models.Model):
     name = models.CharField(max_length=1024, help_text="Name of the document subtype")
     abbreviation = models.CharField(max_length=20, help_text="Short abbreviation to use in FRBR URI. No punctuation.", unique=True)
 
+    # cheap cache for subtypes, to avoid DB lookups
+    _cache = {}
+
     class Meta:
         verbose_name = 'Document subtype'
         ordering = ('name',)
@@ -995,6 +998,18 @@ class Subtype(models.Model):
 
     def __unicode__(self):
         return '%s (%s)' % (self.name, self.abbreviation)
+
+    @classmethod
+    def for_abbreviation(cls, abbr):
+        if not cls._cache:
+            cls._cache = {s.abbreviation: s for s in cls.objects.all()}
+        return cls._cache.get(abbr)
+
+
+@receiver(signals.post_save, sender=Subtype)
+def on_subtype_saved(sender, instance, **kwargs):
+    # clear the subtype cache
+    Subtype._cache = {}
 
 
 class Colophon(models.Model):

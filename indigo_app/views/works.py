@@ -560,6 +560,8 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         if not self._bulk_creator:
             locality_code = self.locality.code if self.locality else None
             self._bulk_creator = plugins.for_locale('bulk-creator', self.country.code, None, locality_code)
+            self._bulk_creator.country = self.country
+            self._bulk_creator.locality = self.locality
         return self._bulk_creator
 
     def get_form(self, form_class=None):
@@ -591,270 +593,20 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         dry_run = 'preview' in form.data
 
         if 'import' in form.data or 'preview' in form.data:
+            workflow = form.cleaned_data['workflow']
+
             try:
                 table = self.bulk_creator.get_datatable(
                     form.cleaned_data['spreadsheet_url'],
                     form.cleaned_data['sheet_name'])
-                works = self.bulk_creator.get_works(self, table, dry_run)
 
-                if not dry_run:
-                    self.create_links(works, form)
-                    if self.bulk_creator.extra_properties:
-                        self.add_extra_properties(works, self.bulk_creator.extra_properties)
-                    self.get_tasks(works, form)
+                works = self.bulk_creator.create_works(
+                    self, table, dry_run, workflow=workflow, user=self.request.user)
             except ValidationError as e:
                 error = e.message
 
         context_data = self.get_context_data(works=works, error=error, form=form, dry_run=dry_run)
         return self.render_to_response(context_data)
-
-    def create_links(self, works_info, form):
-        for info in works_info:
-            if info['status'] == 'success':
-                self.link_publication_document(info, form)
-                if info.get('commenced_by'):
-                    self.link_commencement(info, form)
-                if info.get('repealed_by'):
-                    self.link_repeal(info, form)
-                if info.get('primary_work'):
-                    self.link_parent_work(info, form)
-
-            if info['status'] != 'error' and info.get('amends'):
-                # this will check duplicate works as well
-                # (they won't overwrite the existing works but the amendments will be linked)
-                self.link_amendment(info, form)
-
-    def add_extra_properties(self, works_info, extra_properties):
-        for info in works_info:
-            if info['status'] == 'success':
-                for extra_property in extra_properties.keys():
-                    if info.get(extra_property):
-                        new_prop = WorkProperty(work=info['work'], key=extra_property, value=info.get(extra_property))
-                        new_prop.save()
-
-    def link_publication_document(self, info, form):
-        params = info.get('params')
-        work = info['work']
-        locality_code = self.locality.code if self.locality else None
-        finder = plugins.for_locale('publications', self.country.code, None, locality_code)
-
-        if not finder or not params.get('date'):
-            return self.create_task(info, form, task_type='link-publication-document')
-
-        publications = finder.find_publications(params)
-
-        if len(publications) != 1:
-            return self.create_task(info, form, task_type='link-publication-document')
-
-        pub_doc_details = publications[0]
-        pub_doc = PublicationDocument()
-        pub_doc.work = work
-        pub_doc.file = None
-        pub_doc.trusted_url = pub_doc_details.get('url')
-        pub_doc.size = pub_doc_details.get('size')
-        pub_doc.save()
-
-    def link_commencement(self, info, form):
-        # if the work is `commenced_by` something, try linking it
-        # make a task if this fails
-        work = info['work']
-        title = info['commenced_by']
-        commencing_work = self.find_work_by_title(title)
-        if not commencing_work:
-            return self.create_task(info, form, task_type='link-commencement')
-
-        work.commencing_work = commencing_work
-        try:
-            work.save_with_revision(self.request.user)
-        except ValidationError:
-            self.create_task(info, form, task_type='link-commencement')
-
-    def link_amendment(self, info, form):
-        # if the work `amends` something, try linking it
-        # (this will only work if there's only one amendment listed)
-        # make a task if this fails
-        work = info['work']
-        amended_work = self.find_work_by_title(info['amends'])
-        if not amended_work:
-            return self.create_task(info, form, task_type='link-amendment')
-
-        date = info.get('commencement_date') or work.commencement_date
-        if not date:
-            return self.create_task(info, form, task_type='link-amendment')
-
-        try:
-            Amendment.objects.get(
-                amended_work=amended_work,
-                amending_work=work,
-                date=date
-            )
-
-        except Amendment.DoesNotExist:
-            amendment = Amendment()
-            amendment.amended_work = amended_work
-            amendment.amending_work = work
-            amendment.created_by_user = self.request.user
-            amendment.date = date
-            amendment.save()
-
-    def link_repeal(self, info, form):
-        # if the work is `repealed_by` something, try linking it
-        # make a task if this fails
-        # (either because the work isn't found or because the repeal date isn't right,
-        # which could be because it doesn't exist or because it's in the wrong format)
-        work = info['work']
-        repealing_work = self.find_work_by_title(info['repealed_by'])
-        if not repealing_work:
-            return self.create_task(info, form, task_type='link-repeal')
-
-        repeal_date = repealing_work.commencement_date
-        if not repeal_date:
-            return self.create_task(info, form, task_type='link-repeal')
-
-        work.repealed_by = repealing_work
-        work.repealed_date = repeal_date
-
-        try:
-            work.save_with_revision(self.request.user)
-        except ValidationError:
-            self.create_task(info, form, task_type='link-repeal')
-
-    def link_parent_work(self, info, form):
-        # if the work has a `primary_work`, try linking it
-        # make a task if this fails
-        work = info['work']
-        parent_work = self.find_work_by_title(info['primary_work'])
-        if not parent_work:
-            return self.create_task(info, form, task_type='link-primary-work')
-
-        work.parent_work = parent_work
-
-        try:
-            work.save_with_revision(self.request.user)
-        except ValidationError:
-            self.create_task(info, form, task_type='link-primary-work')
-
-    def find_work_by_title(self, title):
-        potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
-        if len(potential_matches) == 1:
-            return potential_matches.first()
-
-    def create_task(self, info, form, task_type):
-        task = Task()
-
-        if task_type == 'link-publication-document':
-            task.title = 'Link publication document'
-            task.description = '''This work's publication document could not be linked automatically – see row {}.
-Find it and upload it manually.'''.format(info['row'])
-
-        elif task_type == 'link-commencement':
-            task.title = 'Link commencement'
-            task.description = '''On the spreadsheet, it says that this work is commenced by '{}' – see row {}.
-
-The commencement work could not be linked automatically.
-Possible reasons:
-– a typo in the spreadsheet
-– the commencing work hasn't been imported.
-
-Check the spreadsheet for reference and link it manually.'''.format(info['commenced_by'], info['row'])
-
-        elif task_type == 'link-amendment':
-            task.title = 'Link amendment(s)'
-            amended_title = info['amends']
-            if len(amended_title) > 256:
-                amended_title = "".join(amended_title[:256] + ', etc')
-            task.description = '''On the spreadsheet, it says that this work amends '{}' – see row {}.
-
-The amendment could not be linked automatically.
-Possible reasons:
-– more than one amended work listed
-– a typo in the spreadsheet
-– no date for the amendment
-– the amended work hasn't been imported.
-
-Check the spreadsheet for reference and link it/them manually,
-or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info['row'])
-
-        elif task_type == 'link-repeal':
-            task.title = 'Link repeal'
-            task.description = '''On the spreadsheet, it says that this work was repealed by '{}' – see row {}.
-
-The repeal could not be linked automatically.
-Possible reasons:
-– a typo in the spreadsheet
-– no date for the repeal
-– the repealing work hasn't been imported.
-
-Check the spreadsheet for reference and link it manually,
-or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
-
-        elif task_type == 'link-primary-work':
-            task.title = 'Link primary work'
-            task.description = '''On the spreadsheet, it says that this work's primary work is '{}' – see row {}.
-
-The primary work could not be linked automatically.
-Possible reasons:
-– a typo in the spreadsheet
-– the primary work hasn't been imported.
-
-Check the spreadsheet for reference and link it manually.'''.format(info['primary_work'], info['row'])
-
-        task.country = self.country
-        task.locality = self.locality
-        task.work = info['work']
-        task.code = task_type
-        task.created_by_user = self.request.user
-
-        # need to save before assigning workflow because of M2M relation
-        task.save()
-        task.workflows = [form.cleaned_data.get('workflow')]
-        task.save()
-
-    def get_tasks(self, works, form):
-        def make_task(chosen_task):
-            task = Task()
-            task.country = self.country
-            task.locality = self.locality
-            task.work = info.get('work')
-            task.created_by_user = self.request.user
-            task.code = chosen_task
-            for possible_task in form.possible_tasks:
-                if chosen_task == possible_task['key']:
-                    task.title = possible_task['label']
-                    task.description = possible_task['description']
-
-            # need to save before assigning workflow because of M2M relation
-            task.save()
-            task.workflows = [form.cleaned_data.get('workflow')]
-            task.save()
-
-        for info in works:
-            if info['status'] == 'success' and not info['work'].stub:
-                make_task('import')
-
-    def get_table(self, spreadsheet_url):
-        # get list of lists where each inner list is a row in a spreadsheet
-
-        match = re.match(r'^https://docs.google.com/spreadsheets/d/(\S+)/', spreadsheet_url)
-
-        # not sure this is doing anything? URLValidator picking this type of issue up already?
-        if not match:
-            raise ValidationError("Unable to extract key from Google Sheets URL")
-
-        try:
-            url = 'https://docs.google.com/spreadsheets/d/%s/export?format=csv' % match.group(1)
-            response = requests.get(url, timeout=5)
-            response.raise_for_status()
-        except requests.RequestException as e:
-            raise ValidationError("Error talking to Google Sheets: %s" % e.message)
-
-        rows = csv.reader(io.BytesIO(response.content), encoding='utf-8')
-        rows = list(rows)
-
-        if not rows or not rows[0]:
-            raise ValidationError("Your sheet did not import successfully; please check that it is 'Published to the web' and shared with 'Anyone with the link'")
-        else:
-            return rows
 
 
 class ImportDocumentView(WorkViewBase, FormView):

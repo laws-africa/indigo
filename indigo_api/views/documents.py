@@ -152,7 +152,10 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
-        queryset = list(queryset.filter(document=self.document).all())
+        return queryset.filter(document=self.document).all()
+    
+    def list(self, request, **kwargs):
+        queryset = list(Annotation.objects.filter(document=self.document).all())
         task_content_type = ContentType.objects.get_for_model(Task)
 
         fake_annotations = []
@@ -172,13 +175,20 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
                         in_reply_to=annotation,
                         created_at=comment.submit_date,
                         updated_at=comment.submit_date,
-                        anchor_id=annotation.anchor_id    
+                        anchor_id=annotation.anchor_id,
                     )
 
                     fake_annotations.append(fake_annotation)
 
         queryset += fake_annotations
-        return queryset
+        context = {}
+        context['request'] = request
+        results = AnnotationSerializer(queryset, many=True, context=context)
+        data = {
+            "count": len(queryset),
+            "results": results.data,
+        }
+        return Response(data)
 
     @detail_route(methods=['GET', 'POST'])
     def task(self, request, *args, **kwargs):

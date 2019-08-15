@@ -35,13 +35,6 @@
           {% endfor %}
         </div>
 
-        {% if bulk_creator.is_gsheets_enabled %}
-        <div>
-          <button type="submit" name="show_tabs" class="btn btn-primary">Show tabs</button>
-          <p class="mt-2">If nothing happens, try 'Preview' below.<br>(You'll have to make the tab you want to import the first in the spreadsheet.)</p>
-        </div>
-        {% endif %}
-
         {% if form.fields.sheet_name.choices %}
           <div class="form-group">
             <div class="form-row">
@@ -55,6 +48,8 @@
               </div>
             </div>
           </div>
+        {% else %}
+          <p><b>Note:</b> The first (leftmost) sheet will be imported.</p>
         {% endif %}
 
         <div class="form-group">
@@ -62,7 +57,7 @@
 
           {% if form.fields.workflow.choices %}
             <div class="form-group">
-              <div class="row">
+              <div class="form-row">
                 <div class="col-md-6">
                   <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
                     {% for workflow in form.fields.workflow.queryset %}

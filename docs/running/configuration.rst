@@ -77,10 +77,18 @@ Config options are mostly passed to Indigo as environment variables. These are t
 
   Should email sending fail silently?
 
+* ``INDIGO.GSHEETS_API_CREDS``
+
+  JSON of Google Sheets API credentials token details, if you want Indigo to be able to talk to Google Sheets directly. Otherwise,
+  Indigo will use CSV export and the Google Sheet will need to be publicly accessible.
+
+  For details on setting up Google Sheets for API access, see https://medium.com/@denisluiz/python-with-google-sheets-service-account-step-by-step-8f74c26ed28e
+
 * ``INDIGO.NOTIFICATION_EMAILS_BACKGROUND``
 
   Should notification emails be sent asynchronously in the background? Default is False. See
   `django-background-tasks documentation <https://django-background-tasks.readthedocs.io/en/latest/>`_.
+
 
 Authentication
 --------------

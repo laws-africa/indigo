@@ -567,14 +567,23 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self._bulk_creator.locality = self.locality
         return self._bulk_creator
 
+    def get_initial(self):
+        return {
+            'spreadsheet_url': self.place.settings.spreadsheet_url,
+        }
+
     def get_form(self, form_class=None):
         form = super(BatchAddWorkView, self).get_form(form_class)
         form.fields['workflow'].queryset = self.place.workflows.filter(closed=False).all()
 
-        if self.bulk_creator.is_gsheets_enabled and form.data.get('spreadsheet_url'):
-            sheet_id = self.bulk_creator.gsheets_id_from_url(form.data['spreadsheet_url'])
+        url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
+
+        if self.bulk_creator.is_gsheets_enabled and url:
+            sheet_id = self.bulk_creator.gsheets_id_from_url(url)
 
             try:
+                if not sheet_id:
+                    raise ValueError()
                 sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
                 sheets = [s['properties']['title'] for s in sheets]
                 form.fields['sheet_name'].choices = [(s, s) for s in sheets]

@@ -4,21 +4,47 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="card">
-    <h4 class="card-header">Settings</h4>
-    <div class="card-body">
-      <form method="POST" action="">
-        {% csrf_token %}
+  <form method="POST" action="">
+    {% csrf_token %}
 
-        {{ form }}
+    <div class="card">
+      <h4 class="card-header">Settings</h4>
+      <div class="card-body">
 
-        <button class="btn btn-success" type="submit">
-          Save
-        </button>
+        <div class="form-group">
+          <label for="{{ form.spreadsheet_url.id_for_label }}">Spreadsheet URL</label>
+          <input type="url" class="form-control" name="{{ form.spreadsheet_url.name }}" id="{{ form.spreadsheet_url.id_for_label }}" value="{{ form.spreadsheet_url.value|default:'' }}">
+          <p class="form-text text-muted">URL of the Google Sheets spreadsheet with work metadata.</p>
+          {% if form.spreadsheet_url.errors %}
+            <div class="text-danger">
+              {% for error in form.spreadsheet_url.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
 
-      </form>
+        <div class="form-row">
+          <div class="form-group col-md-4">
+            <label for="{{ form.as_at_date.id_for_label }}">{{ form.as_at_date.label }}</label>
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date.html_name }}" value="{{ form.as_at_date.value|date:"Y-m-d"|default:'' }}">
+            <p class="form-text text-muted">Date up to which all works have been consolidated.</p>
+            {% if form.as_at_date.errors %}
+              <div class="text-danger">
+                {% for error in form.as_at_date.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="card-footer text-right">
+        <button class="btn btn-success" type="submit">Save</button>
+      </div>
     </div>
-  </div>
+  </form>
 
 </div>
 {% endblock %}

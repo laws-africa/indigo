@@ -9,6 +9,7 @@ import json
 from actstream import action
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -342,26 +343,19 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return context
 
 
-class PlaceSettingsView(PlaceViewBase, UpdateView):
+class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     template_name = 'place/settings.html'
     model = PlaceSettings
     tab = 'place_settings'
-    slug_field = 'place'
-    slug_url_kwarg = 'place'
 
     # permissions
+    # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
 
     fields = ('spreadsheet_url', 'as_at_date')
 
     def get_object(self):
-        try:
-            place_settings = PlaceSettings.objects.get(country=self.country, locality=self.locality)
-        except PlaceSettings.DoesNotExist:
-            place_settings = PlaceSettings(country=self.country, locality=self.locality)
-            place_settings.save()
-
-        return place_settings
+        return self.place.settings
 
     def form_valid(self, form):
         placesettings = self.object
@@ -371,6 +365,8 @@ class PlaceSettingsView(PlaceViewBase, UpdateView):
         if form.changed_data:
             action.send(self.request.user, verb='updated', action_object=placesettings,
                         place_code=placesettings.place.place_code)
+
+        messages.success(self.request, "Settings updated.")
 
         return super(PlaceSettingsView, self).form_valid(form)
 

@@ -40,7 +40,9 @@
         </a>
         <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">Activity</a>
         <a class="nav-item nav-link {% if view.tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">Metrics</a>
-        <a class="nav-item nav-link {% if view.tab == 'place_settings' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">Settings</a>
+        {% if user_can_change_place_settings %}
+          <a class="nav-item nav-link {% if view.tab == 'place_settings' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">Settings</a>
+        {% endif %}
       {% endblock %}
     </nav>
   </div>

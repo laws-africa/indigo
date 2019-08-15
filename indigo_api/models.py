@@ -64,6 +64,8 @@ class Country(models.Model):
     country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
     primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
 
+    _settings = None
+
     class Meta:
         ordering = ['country__name']
         verbose_name_plural = 'Countries'
@@ -85,6 +87,14 @@ class Country(models.Model):
 
     def place_workflows(self):
         return self.workflows.filter(locality=None)
+
+    @property
+    def settings(self):
+        """ PlaceSettings object for this country.
+        """
+        if not self._settings:
+            self._settings = self.place_settings.filter(locality=None).first()
+        return self._settings
 
     def as_json(self):
         return {
@@ -109,9 +119,8 @@ class Country(models.Model):
 def post_save_country(sender, instance, **kwargs):
     """ When a country is saved, make sure a PlaceSettings exists for it.
     """
-    if not instance.place_settings.all():
-        place_settings = PlaceSettings(country=instance)
-        place_settings.save()
+    if not instance.settings:
+        PlaceSettings.objects.create(country=instance)
 
 
 class Locality(models.Model):
@@ -120,6 +129,8 @@ class Locality(models.Model):
     country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE, related_name='localities')
     name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
     code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
+
+    _settings = None
 
     class Meta:
         ordering = ['name']
@@ -136,6 +147,14 @@ class Locality(models.Model):
     def place_workflows(self):
         return self.workflows
 
+    @property
+    def settings(self):
+        """ PlaceSettings object for this place.
+        """
+        if not self._settings:
+            self._settings = self.place_settings.first()
+        return self._settings
+
     def __unicode__(self):
         return unicode(self.name)
 
@@ -144,9 +163,8 @@ class Locality(models.Model):
 def post_save_locality(sender, instance, **kwargs):
     """ When a locality is saved, make sure a PlaceSettings exists for it.
     """
-    if not instance.place_settings.all():
-        place_settings = PlaceSettings(country=instance.country, locality=instance)
-        place_settings.save()
+    if not instance.settings:
+        PlaceSettings.create(country=instance.country, locality=instance)
 
 
 class WorkQuerySet(models.QuerySet):

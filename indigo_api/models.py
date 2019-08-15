@@ -64,6 +64,8 @@ class Country(models.Model):
     country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
     primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
 
+    _settings = None
+
     class Meta:
         ordering = ['country__name']
         verbose_name_plural = 'Countries'
@@ -86,6 +88,14 @@ class Country(models.Model):
     def place_workflows(self):
         return self.workflows.filter(locality=None)
 
+    @property
+    def settings(self):
+        """ PlaceSettings object for this country.
+        """
+        if not self._settings:
+            self._settings = self.place_settings.filter(locality=None).first()
+        return self._settings
+
     def as_json(self):
         return {
             'name': self.name,
@@ -105,12 +115,22 @@ class Country(models.Model):
         return cls.objects.get(country__pk=code.upper())
 
 
+@receiver(signals.post_save, sender=Country)
+def post_save_country(sender, instance, **kwargs):
+    """ When a country is saved, make sure a PlaceSettings exists for it.
+    """
+    if not instance.settings:
+        PlaceSettings.objects.create(country=instance)
+
+
 class Locality(models.Model):
     """ The localities available in the UI. They aren't enforced by the API.
     """
     country = models.ForeignKey(Country, null=False, on_delete=models.CASCADE, related_name='localities')
     name = models.CharField(max_length=512, null=False, blank=False, help_text="Local name of this locality")
     code = models.CharField(max_length=100, null=False, blank=False, help_text="Unique code of this locality (used in the FRBR URI)")
+
+    _settings = None
 
     class Meta:
         ordering = ['name']
@@ -127,8 +147,24 @@ class Locality(models.Model):
     def place_workflows(self):
         return self.workflows
 
+    @property
+    def settings(self):
+        """ PlaceSettings object for this place.
+        """
+        if not self._settings:
+            self._settings = self.place_settings.first()
+        return self._settings
+
     def __unicode__(self):
         return unicode(self.name)
+
+
+@receiver(signals.post_save, sender=Locality)
+def post_save_locality(sender, instance, **kwargs):
+    """ When a locality is saved, make sure a PlaceSettings exists for it.
+    """
+    if not instance.settings:
+        PlaceSettings.objects.create(country=instance.country, locality=instance)
 
 
 class WorkQuerySet(models.QuerySet):
@@ -1514,3 +1550,17 @@ class TaskLabel(models.Model):
 
     def __str__(self):
         return self.slug
+
+
+class PlaceSettings(models.Model):
+    """ General settings for a country (and/or locality).
+    """
+    country = models.ForeignKey(Country, related_name='place_settings', null=False, blank=False, on_delete=models.CASCADE)
+    locality = models.ForeignKey(Locality, related_name='place_settings', null=True, blank=True, on_delete=models.CASCADE)
+
+    spreadsheet_url = models.URLField(null=True, blank=True)
+    as_at_date = models.DateField(null=True, blank=True)
+
+    @property
+    def place(self):
+        return self.locality or self.country

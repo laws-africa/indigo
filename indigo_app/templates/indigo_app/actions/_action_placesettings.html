@@ -1,0 +1,5 @@
+{% load indigo_app %}
+
+{% with action.action_object as place_settings %}
+    the settings for <a href="{% url 'place' place=place_settings.place.place_code %}">{{ place_settings.place }}</a>
+{% endwith %}

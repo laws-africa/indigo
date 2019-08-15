@@ -17,8 +17,10 @@
       {{/unless}}
 
       {{#if permissions.can_change }}
-        <a href="#" class="dropdown-item edit-anntn">Edit</a>
-        <a href="#" class="dropdown-item delete-anntn">Delete</a>
+        {{#if id}}
+          <a href="#" class="dropdown-item edit-anntn">Edit</a>
+          <a href="#" class="dropdown-item delete-anntn">Delete</a>
+        {{/if}}
       {{/if}}
     </div>
   </div>

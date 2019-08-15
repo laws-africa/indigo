@@ -186,7 +186,7 @@ class BatchCreateWorkForm(forms.Form):
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
     sheet_name = forms.ChoiceField(required=False, choices=[])
-    workflow = forms.ModelChoiceField(queryset=Workflow.objects)
+    workflow = forms.ModelChoiceField(queryset=Workflow.objects, empty_label="(None)", required=False)
 
 
 class ImportDocumentForm(forms.Form):

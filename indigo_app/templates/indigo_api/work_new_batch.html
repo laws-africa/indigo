@@ -59,9 +59,9 @@
             <div class="form-group">
               <div class="form-row">
                 <div class="col-md-6">
-                  <select class="selectpicker form-control" required name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" placeholder="Choose a workflow">
-                    {% for workflow in form.fields.workflow.queryset %}
-                      <option value="{{ workflow.id }}" {% if workflow.id|slugify in form.workflow.value %}selected{% endif %}>{{ workflow.title }}</option>
+                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a workflow">
+                    {% for option in form.workflow %}
+                      {{ option }}
                     {% endfor %}
                   </select>
                 </div>

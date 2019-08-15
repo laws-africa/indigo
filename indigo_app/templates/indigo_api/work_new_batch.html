@@ -79,15 +79,13 @@
 
       </div>
 
-      {% if not works %}
-        <div class="card-footer">
-          {% if perms.indigo_api.add_work %}
-            <button type="submit" name="preview" class="btn btn-primary show-progress">Preview</button>
-          {% else %}
-            <div class="alert alert-danger">You don't have permission to create works.</div>
-          {% endif %}
-        </div>
-      {% endif %}
+      <div class="card-footer">
+        {% if perms.indigo_api.add_work %}
+          <button type="submit" name="preview" class="btn btn-primary show-progress">Preview</button>
+        {% else %}
+          <div class="alert alert-danger">You don't have permission to create works.</div>
+        {% endif %}
+      </div>
     </div>
 
     {% if works %}

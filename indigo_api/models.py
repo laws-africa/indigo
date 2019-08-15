@@ -164,7 +164,7 @@ def post_save_locality(sender, instance, **kwargs):
     """ When a locality is saved, make sure a PlaceSettings exists for it.
     """
     if not instance.settings:
-        PlaceSettings.create(country=instance.country, locality=instance)
+        PlaceSettings.objects.create(country=instance.country, locality=instance)
 
 
 class WorkQuerySet(models.QuerySet):
@@ -1538,14 +1538,13 @@ class TaskLabel(models.Model):
 
 
 class PlaceSettings(models.Model):
+    """ General settings for a country (and/or locality).
+    """
     country = models.ForeignKey(Country, related_name='place_settings', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey(Locality, related_name='place_settings', null=True, blank=True, on_delete=models.CASCADE)
 
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
-
-    # WorkProperty.KEYS
-    additional_properties = {}
 
     @property
     def place(self):

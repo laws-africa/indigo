@@ -510,7 +510,11 @@ class WorkTasksView(WorkViewBase, DetailView):
             context['tasks']
         )
 
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message(context['tasks'], self)
+
         Task.decorate_potential_assignees(context['tasks'], self.country)
+        Task.decorate_permissions(context['tasks'], self)
 
         return context
 
@@ -619,7 +623,7 @@ class ImportDocumentView(WorkViewBase, FormView):
     it allows us to handle errors without refreshing the whole page.
     """
     template_name = 'indigo_api/work_import_document.html'
-    permission_required = ('indigo_api.add_document')
+    permission_required = ('indigo_api.add_document',)
     js_view = 'ImportView'
     form_class = ImportDocumentForm
 
@@ -658,7 +662,7 @@ class ImportDocumentView(WorkViewBase, FormView):
             importer.create_from_upload(upload, document, self.request)
         except ValueError as e:
             log.error("Error during import: %s" % e.message, exc_info=e)
-            raise ValidationError(e.message or "error during import")
+            return JsonResponse({'file': e.message or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user
         document.save_with_revision(self.request.user)

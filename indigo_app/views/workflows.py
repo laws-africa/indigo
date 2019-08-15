@@ -91,6 +91,9 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
             .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
             .all()
 
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message(tasks, self)
+
         Task.decorate_potential_assignees(tasks, self.country)
         Task.decorate_permissions(tasks, self)
 

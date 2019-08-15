@@ -35,7 +35,15 @@
     render: function() {
       this.$el.empty();
 
-      if (this.isNew) {
+      /**
+       * Comments from tasks appended to the annotation thread appeared as new 
+       * empty annotations since they lack IDs. 
+       * Additional check is to confirm that indeed the new fake annotation has 
+       * no document. Appended task comments have a document attribute.
+       * 
+       * Other fields: text, created_by_user, in_reply_to, anchor_id
+       */
+      if (this.isNew && this.document === null) {
         // controls for adding a new annotation
         var template = $("#new-annotation-template")
           .clone()

@@ -6,15 +6,18 @@ from datetime import timedelta
 from itertools import chain
 import json
 
+from actstream import action
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
-from django.utils.timezone import now
+from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
-from django.views.generic import ListView, TemplateView
+from django.urls import reverse
+from django.utils.timezone import now
+from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Country, Annotation, Task, Work
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
 
@@ -338,3 +341,34 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['works_by_year'] = json.dumps(pairs)
 
         return context
+
+
+class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
+    template_name = 'place/settings.html'
+    model = PlaceSettings
+    tab = 'place_settings'
+
+    # permissions
+    # TODO: this should be scoped to the country/locality
+    permission_required = ('indigo_api.change_placesettings',)
+
+    fields = ('spreadsheet_url', 'as_at_date')
+
+    def get_object(self):
+        return self.place.settings
+
+    def form_valid(self, form):
+        placesettings = self.object
+        placesettings.updated_by_user = self.request.user
+
+        # action signals
+        if form.changed_data:
+            action.send(self.request.user, verb='updated', action_object=placesettings,
+                        place_code=placesettings.place.place_code)
+
+        messages.success(self.request, "Settings updated.")
+
+        return super(PlaceSettingsView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('place_settings', kwargs={'place': self.kwargs['place']})

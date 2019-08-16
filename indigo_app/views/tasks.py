@@ -20,7 +20,7 @@ from allauth.account.utils import user_display
 from actstream import action
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, User, Work, Workflow
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -100,9 +100,29 @@ class TaskDetailView(TaskViewBase, DetailView):
         # merge actions and comments
         actions = task.action_object_actions.all()
         task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = Comment.objects\
+        comments = list(Comment.objects\
             .filter(content_type=task_content_type, object_pk=task.id)\
-            .select_related('user')
+            .select_related('user'))
+        
+        # get the annotation for the particular task
+        task_annotation = Annotation.objects.filter(task=task).first()
+
+        # for the annotation that is linked to the task, get all the replies
+        if task_annotation:
+            fake_comments = []
+            # get the replies to the annotation
+            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)
+            for annotation in annotation_replies:
+                fake_comment = Comment(
+                    user=annotation.created_by_user,
+                    comment=annotation.text,
+                    object_pk=task_annotation.task,
+                    submit_date=annotation.created_at
+                )
+                fake_comments.append(fake_comment)
+
+            comments += fake_comments
+
         context['task_timeline'] = sorted(
             chain(comments, actions),
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)

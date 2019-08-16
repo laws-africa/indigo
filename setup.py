@@ -50,7 +50,7 @@ setup(
         'django-allauth>=0.36.0',
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',
-        'django-cors-headers>1.3.1',
+        'django-cors-headers>1.3.1,<3.0.0',
         'django-countries-plus==1.1',  # 1.2 breaks migrations
         'django-jsonfield>=1.0.1',
         'django-jsonfield-compat>=0.4.4',

@@ -466,7 +466,10 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
         actions = self.work.action_object_actions.all()
         versions = self.work.versions().all()
-        entries = sorted(chain(actions, versions), key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp, reverse=True)
+        task_actions = self.get_task_actions()
+        entries = sorted(chain(actions, versions, task_actions),
+                         key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
+                         reverse=True)
         entries = self.coalesce_entries(entries)
 
         decorate_versions([e for e in entries if hasattr(e, 'revision')])
@@ -497,6 +500,11 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
             entries.append(entry)
 
         return entries
+
+    def get_task_actions(self):
+        tasks = self.work.tasks.all()
+        actions_per_task = [t.action_object_actions.all() for t in tasks]
+        return [action for actions in actions_per_task for action in actions]
 
 
 class WorkTasksView(WorkViewBase, DetailView):

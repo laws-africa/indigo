@@ -105,23 +105,21 @@ class TaskDetailView(TaskViewBase, DetailView):
             .select_related('user'))
         
         # get the annotation for the particular task
-        task_annotation = Annotation.objects.filter(task=task).first()
+        try:
+            task_annotation = task.annotation
+        except Annotation.DoesNotExist:
+            task_annotation = None
 
         # for the annotation that is linked to the task, get all the replies
         if task_annotation:
-            fake_comments = []
             # get the replies to the annotation
             annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)\
                     .select_related('created_by_user')
-            for annotation in annotation_replies:
-                fake_comment = Comment(
-                    user=annotation.created_by_user,
-                    comment=annotation.text,
-                    submit_date=annotation.created_at
-                )
-                fake_comments.append(fake_comment)
 
-            comments += fake_comments
+            comments.extend([Comment(user=a.created_by_user,
+                                     comment=a.text,
+                                     submit_date=a.created_at)
+                            for a in annotation_replies])
 
         context['task_timeline'] = sorted(
             chain(comments, actions),

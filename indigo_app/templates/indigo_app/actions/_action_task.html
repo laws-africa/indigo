@@ -8,9 +8,13 @@
 
     {% if not action.target %}
       {% if task.work %}
-        on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
-        {% if task.document %}
-          @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+        {% if ignore_work %}
+          on this work
+        {% else %}
+          on the work <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+          {% if task.document %}
+            @ <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.expression_date }}</a>
+          {% endif %}
         {% endif %}
       {% endif %}
     {% endif %}

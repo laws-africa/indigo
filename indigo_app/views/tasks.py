@@ -111,12 +111,12 @@ class TaskDetailView(TaskViewBase, DetailView):
         if task_annotation:
             fake_comments = []
             # get the replies to the annotation
-            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)
+            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)\
+                    .select_related('created_by_user')
             for annotation in annotation_replies:
                 fake_comment = Comment(
                     user=annotation.created_by_user,
                     comment=annotation.text,
-                    object_pk=task_annotation.task,
                     submit_date=annotation.created_at
                 )
                 fake_comments.append(fake_comment)

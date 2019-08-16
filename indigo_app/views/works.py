@@ -467,14 +467,9 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         actions = self.work.action_object_actions.all()
         versions = self.work.versions().all()
         task_actions = self.get_task_actions()
-        if task_actions:
-            entries = sorted(chain(actions, versions, task_actions),
-                             key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
-                             reverse=True)
-        else:
-            entries = sorted(chain(actions, versions),
-                             key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
-                             reverse=True)
+        entries = sorted(chain(actions, versions, task_actions),
+                         key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
+                         reverse=True)
         entries = self.coalesce_entries(entries)
 
         decorate_versions([e for e in entries if hasattr(e, 'revision')])
@@ -507,16 +502,9 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         return entries
 
     def get_task_actions(self):
-        tasks = self.work.tasks.all() if self.work.tasks else None
-        task_actions = [t.action_object_actions.all() for t in tasks] if tasks else None
-        task_actions_unified = None
-        if task_actions:
-            for i, task_action in enumerate(task_actions):
-                if i > 0:
-                    previous = task_actions[i-1]
-                    task_actions_unified = previous.union(task_action)
-
-        return task_actions_unified
+        tasks = self.work.tasks.all()
+        actions_per_task = [t.action_object_actions.all() for t in tasks]
+        return [action for actions in actions_per_task for action in actions]
 
 
 class WorkTasksView(WorkViewBase, DetailView):

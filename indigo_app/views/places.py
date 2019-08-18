@@ -9,6 +9,7 @@ import json
 from actstream import action
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.db.models.functions import TruncYear
 from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -17,7 +18,7 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
 
@@ -339,6 +340,16 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         pairs = Counter([w.year for w in works]).items()
         pairs.sort()
         context['works_by_year'] = json.dumps(pairs)
+
+        # amendments by year
+        years = Amendment.objects\
+            .filter(amended_work__country=self.country, amended_work__locality=self.locality)\
+            .annotate(year=TruncYear('date'))\
+            .values('year')\
+            .annotate(n=Count('id'))\
+            .all()
+        years = sorted([[x['year'].year, x['n']] for x in years])
+        context['amendments_by_year'] = json.dumps(years)
 
         return context
 

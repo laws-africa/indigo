@@ -12,10 +12,11 @@
     },
 
     drawCharts: function() {
+      this.drawWorksByYearChart();
+      this.drawAmendmentsByYearChart();
       this.drawCompletenessChart();
       this.drawWorksChart();
       this.drawExpressionsChart();
-      this.drawWorksByYearChart();
     },
 
     drawTimeSeriesChart: function(canvas, data, label) {
@@ -168,14 +169,55 @@
           datasets: [{
             label: 'Works',
             data: values,
-            borderWidth: 2,
-            backgroundColor: 'rgba(67, 159, 120, 0.2)',
-            borderColor: 'rgba(67, 159, 120, 1)',
+            borderWidth: 0,
+            backgroundColor: 'rgba(67, 159, 120, 1)',
           }]
         },
         options: {
           maintainAspectRatio: false,
           legend: {display: false},
+          scales: {
+            yAxes: [{
+              ticks: {
+                precision: 0,
+                beginAtZero: true,
+              },
+            }],
+          },
+        }
+      });
+    },
+
+    drawAmendmentsByYearChart: function() {
+      var canvas = document.getElementById('amendments_by_year-chart'),
+          ctx = canvas.getContext('2d'),
+          data = JSON.parse(canvas.getAttribute('data-values'));
+
+      var values = _.map(data, function(pair) { return pair[1]; });
+      var labels = _.map(data, function(pair) { return pair[0]; });
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Amendments',
+            data: values,
+            borderWidth: 0,
+            backgroundColor: 'rgba(67, 159, 120, 1)',
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          legend: {display: false},
+          scales: {
+            yAxes: [{
+              ticks: {
+                precision: 0,
+                beginAtZero: true,
+              },
+            }],
+          },
         }
       });
     },

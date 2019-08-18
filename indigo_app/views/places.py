@@ -18,7 +18,7 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
 
@@ -295,6 +295,12 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/metrics.html'
     tab = 'metrics'
 
+    def add_year_zeros(self, years):
+        # ensure zeros
+        min_year, max_year = min(years.iterkeys()), max(years.iterkeys())
+        for year in xrange(min_year, max_year + 1):
+            years.setdefault(year, 0)
+
     def get_context_data(self, **kwargs):
         context = super(PlaceMetricsView, self).get_context_data(**kwargs)
 
@@ -337,9 +343,11 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         works = Work.objects\
             .filter(country=self.country, locality=self.locality)\
             .select_related(None).prefetch_related(None).all()
-        pairs = Counter([w.year for w in works]).items()
-        pairs.sort()
-        context['works_by_year'] = json.dumps(pairs)
+        years = Counter([int(w.year) for w in works])
+        self.add_year_zeros(years)
+        years = years.items()
+        years.sort()
+        context['works_by_year'] = json.dumps(years)
 
         # amendments by year
         years = Amendment.objects\
@@ -348,8 +356,21 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .values('year')\
             .annotate(n=Count('id'))\
             .all()
-        years = sorted([[x['year'].year, x['n']] for x in years])
+        years = {x['year'].year: x['n'] for x in years}
+        self.add_year_zeros(years)
+        years = years.items()
+        years.sort()
         context['amendments_by_year'] = json.dumps(years)
+
+        # works by subtype
+        def subtype_name(abbr):
+            if not abbr:
+                return 'Act'
+            st = Subtype.for_abbreviation(abbr)
+            return st.name if st else abbr
+        pairs = Counter([subtype_name(w.subtype) for w in works]).items()
+        pairs.sort(key=lambda p: p[1], reverse=True)
+        context['subtypes'] = json.dumps(pairs)
 
         return context
 

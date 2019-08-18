@@ -31,17 +31,25 @@
 
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
-        <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">Works</a>
+        <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">
+          <i class="fas fa-fw fa-book"></i> Works
+        </a>
         <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">
-          Tasks <span class="badge badge-light">{{ place.place_tasks.unclosed.count }}</span>
+          <i class="fas fa-fw fa-thumbtack"></i> Tasks <span class="badge badge-light">{{ place.place_tasks.unclosed.count }}</span>
         </a>
         <a class="nav-item nav-link {% if view.tab == 'workflows' %}active{% endif %}" href="{% url 'workflows' place=place.place_code %}">
-          Workflows <span class="badge badge-light">{{ place.place_workflows.unclosed.count }}</span>
+          <i class="fas fa-fw fa-tasks"></i> Workflows <span class="badge badge-light">{{ place.place_workflows.unclosed.count }}</span>
         </a>
-        <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">Activity</a>
-        <a class="nav-item nav-link {% if view.tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">Metrics</a>
+        <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">
+          <i class="fas fa-fw fa-clock"></i> Activity
+        </a>
+        <a class="nav-item nav-link {% if view.tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">
+          <i class="fa fa-fw fa-chart-bar"></i> Metrics
+        </a>
         {% if user_can_change_place_settings %}
-          <a class="nav-item nav-link {% if view.tab == 'place_settings' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">Settings</a>
+          <a class="nav-item nav-link {% if view.tab == 'place_settings' %}active{% endif %}" href="{% url 'place_settings' place=place.place_code %}">
+            <i class="fas fa-fw fa-cog"></i> Settings
+          </a>
         {% endif %}
       {% endblock %}
     </nav>

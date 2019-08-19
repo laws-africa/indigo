@@ -12,7 +12,7 @@
           {% if entry.revision %}
             {% include 'indigo_api/_work_diff_card.html' with version=entry current=forloop.first %}
           {% else %}
-            {% include 'indigo_app/actions/_action.html' with action=entry %}
+            {% include 'indigo_app/actions/_action.html' with action=entry ignore_work=True ignore_place=True %}
           {% endif %}
         </li>
       {% endfor %}

@@ -1,18 +1,24 @@
 # coding=utf-8
 from __future__ import division
 import logging
-from collections import defaultdict
+from collections import defaultdict, Counter
 from datetime import timedelta
 from itertools import chain
+import json
 
+from actstream import action
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.db.models.functions import Extract
+from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
-from django.views.generic import ListView, TemplateView
+from django.urls import reverse
+from django.utils.timezone import now
+from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Country, Annotation, Task, Work
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
 
@@ -283,3 +289,119 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
             action = Action(actor=first.actor, verb='added %d tasks to' % len(stash), action_object=workflow)
             action.timestamp = first.timestamp
             return action
+
+
+class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+    template_name = 'place/metrics.html'
+    tab = 'metrics'
+
+    def add_year_zeros(self, years):
+        # ensure zeros
+        min_year, max_year = min(years.iterkeys()), max(years.iterkeys())
+        for year in xrange(min_year, max_year + 1):
+            years.setdefault(year, 0)
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceMetricsView, self).get_context_data(**kwargs)
+
+        context['day_options'] = [
+            (30, "30 days"),
+            (90, "3 months"),
+            (180, "6 months"),
+            (360, "12 months"),
+        ]
+        try:
+            days = int(self.request.GET.get('days', 180))
+        except ValueError:
+            days = 180
+        context['days'] = days
+        since = now() - timedelta(days=days)
+
+        metrics = list(DailyWorkMetrics.objects
+            .filter(place_code=self.place.place_code)
+            .filter(date__gte=since)
+            .order_by('date')
+            .all())
+
+        context['latest_stat'] = metrics[-1]
+
+        # breadth completeness history
+        context['completeness_history'] = json.dumps([
+            [m.date.isoformat(), m.p_breadth_complete]
+            for m in metrics])
+
+        # works and expressions
+        context['n_works_history'] = json.dumps([
+            [m.date.isoformat(), m.n_works]
+            for m in metrics])
+
+        context['n_expressions_history'] = json.dumps([
+            [m.date.isoformat(), m.n_expressions]
+            for m in metrics])
+
+        # works by year
+        works = Work.objects\
+            .filter(country=self.country, locality=self.locality)\
+            .select_related(None).prefetch_related(None).all()
+        years = Counter([int(w.year) for w in works])
+        self.add_year_zeros(years)
+        years = years.items()
+        years.sort()
+        context['works_by_year'] = json.dumps(years)
+
+        # amendments by year
+        years = Amendment.objects\
+            .filter(amended_work__country=self.country, amended_work__locality=self.locality)\
+            .annotate(year=Extract('date', 'year'))\
+            .values('year')\
+            .annotate(n=Count('id'))\
+            .order_by()\
+            .all()
+        years = {x['year']: x['n'] for x in years}
+        self.add_year_zeros(years)
+        years = years.items()
+        years.sort()
+        context['amendments_by_year'] = json.dumps(years)
+
+        # works by subtype
+        def subtype_name(abbr):
+            if not abbr:
+                return 'Act'
+            st = Subtype.for_abbreviation(abbr)
+            return st.name if st else abbr
+        pairs = Counter([subtype_name(w.subtype) for w in works]).items()
+        pairs.sort(key=lambda p: p[1], reverse=True)
+        context['subtypes'] = json.dumps(pairs)
+
+        return context
+
+
+class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
+    template_name = 'place/settings.html'
+    model = PlaceSettings
+    tab = 'place_settings'
+
+    # permissions
+    # TODO: this should be scoped to the country/locality
+    permission_required = ('indigo_api.change_placesettings',)
+
+    fields = ('spreadsheet_url', 'as_at_date')
+
+    def get_object(self):
+        return self.place.settings
+
+    def form_valid(self, form):
+        placesettings = self.object
+        placesettings.updated_by_user = self.request.user
+
+        # action signals
+        if form.changed_data:
+            action.send(self.request.user, verb='updated', action_object=placesettings,
+                        place_code=placesettings.place.place_code)
+
+        messages.success(self.request, "Settings updated.")
+
+        return super(PlaceSettingsView, self).form_valid(form)
+
+    def get_success_url(self):
+        return reverse('place_settings', kwargs={'place': self.kwargs['place']})

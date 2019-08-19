@@ -137,7 +137,7 @@
             {% csrf_token %}
 
             {% if task.state == 'open' and task.submit_task_permission %}
-              <button class="btn btn-primary float-right" type="submit" data-confirm="Are you sure you want to submit this task for review?" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
+              <button class="btn btn-primary float-right" type="submit" data-confirm="{{ task.submission_message }}" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
             {% endif %}
 
             {% if task.state == 'cancelled' or task.state == 'done' %}

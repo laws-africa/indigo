@@ -73,6 +73,7 @@ class PlaceViewBase(object):
         kwargs['locality'] = self.locality
         kwargs['country'] = self.country
         kwargs['place'] = self.place
+        kwargs['user_can_change_place_settings'] = self.request.user.has_perm('indigo_api.change_placesettings')
         return super(PlaceViewBase, self).get_context_data(**kwargs)
 
     def determine_place(self):

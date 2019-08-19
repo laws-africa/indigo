@@ -20,7 +20,7 @@ from allauth.account.utils import user_display
 from actstream import action
 from django_fsm import has_transition_perm
 
-from indigo_api.models import Task, TaskLabel, User, Work, Workflow
+from indigo_api.models import Annotation, Task, TaskLabel, User, Work, Workflow
 from indigo_api.serializers import WorkSerializer, DocumentSerializer
 
 from indigo_app.views.base import AbstractAuthedIndigoView, PlaceViewBase
@@ -80,6 +80,9 @@ class TaskListView(TaskViewBase, ListView):
         context['frbr_uri'] = self.request.GET.get('frbr_uri')
         context['task_groups'] = Task.task_columns(self.form.cleaned_data['state'], context['tasks'])
 
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message(context['tasks'], self)
+
         Task.decorate_potential_assignees(context['tasks'], self.country)
         Task.decorate_permissions(context['tasks'], self)
 
@@ -97,14 +100,35 @@ class TaskDetailView(TaskViewBase, DetailView):
         # merge actions and comments
         actions = task.action_object_actions.all()
         task_content_type = ContentType.objects.get_for_model(self.model)
-        comments = Comment.objects\
+        comments = list(Comment.objects\
             .filter(content_type=task_content_type, object_pk=task.id)\
-            .select_related('user')
+            .select_related('user'))
+        
+        # get the annotation for the particular task
+        try:
+            task_annotation = task.annotation
+        except Annotation.DoesNotExist:
+            task_annotation = None
+
+        # for the annotation that is linked to the task, get all the replies
+        if task_annotation:
+            # get the replies to the annotation
+            annotation_replies = Annotation.objects.filter(in_reply_to=task_annotation)\
+                    .select_related('created_by_user')
+
+            comments.extend([Comment(user=a.created_by_user,
+                                     comment=a.text,
+                                     submit_date=a.created_at)
+                            for a in annotation_replies])
+
         context['task_timeline'] = sorted(
             chain(comments, actions),
             key=lambda x: x.submit_date if hasattr(x, 'comment') else x.timestamp)
 
         context['possible_workflows'] = Workflow.objects.unclosed().filter(country=task.country, locality=task.locality).all()
+
+        # warn when submitting task on behalf of another user
+        Task.decorate_submission_message([task], self)
 
         Task.decorate_potential_assignees([task], self.country)
         Task.decorate_permissions([task], self)

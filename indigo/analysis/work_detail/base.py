@@ -36,7 +36,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
 
         elif uri.subtype:
             # use the subtype full name, if we have it
-            subtype = Subtype.objects.filter(abbreviation=uri.subtype).first()
+            subtype = Subtype.for_abbreviation(uri.subtype)
             if subtype:
                 return _(subtype.name)
             return _(uri.subtype.upper())

@@ -9,7 +9,7 @@ import json
 from actstream import action
 from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
-from django.db.models.functions import TruncYear
+from django.db.models.functions import Extract
 from django.contrib import messages
 from django.http import QueryDict
 from django.shortcuts import redirect
@@ -352,11 +352,12 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         # amendments by year
         years = Amendment.objects\
             .filter(amended_work__country=self.country, amended_work__locality=self.locality)\
-            .annotate(year=TruncYear('date'))\
+            .annotate(year=Extract('date', 'year'))\
             .values('year')\
             .annotate(n=Count('id'))\
+            .order_by()\
             .all()
-        years = {x['year'].year: x['n'] for x in years}
+        years = {x['year']: x['n'] for x in years}
         self.add_year_zeros(years)
         years = years.items()
         years.sort()

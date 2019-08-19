@@ -110,6 +110,7 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "frbr_uri": "/za/act/1880/1",
+      "taxonomies" : [1,5],
       "publication_date": "1880-10-12"
     }
   }

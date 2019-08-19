@@ -9,7 +9,7 @@ from indigo_api.models import Task
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class TasksTest(WebTest):
-    fixtures = ['countries', 'user', 'work', 'editor', 'drafts', 'tasks']
+    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'tasks']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))

@@ -8,7 +8,7 @@ from indigo_api.models import Document, Work, Country
 
 
 class WorkTestCase(TestCase):
-    fixtures = ['countries', 'user', 'work', 'published', 'drafts']
+    fixtures = ['countries', 'user', 'taxonomies', 'work', 'published', 'drafts']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)

@@ -1,0 +1,73 @@
+[
+  {
+    "pk": 1,
+    "model": "indigo_api.taxonomyvocabulary",
+    "fields": {
+      "authority":"lawsafrica",
+      "name": "subjects",
+      "slug": "lawsafrica-subjects",
+      "title": "Laws.Africa Subject Taxonomy"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "indigo_api.taxonomyvocabulary",
+    "fields": {
+      "authority": "third" ,
+      "name": "party",
+      "title": "Third Party Taxonomy"
+    }
+  },
+  {
+    "pk": 1,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 1,
+      "level_1": "Money and Business",
+      "level_2": "Banking"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 1,
+      "level_1": "Money and Business",
+      "level_2": "Finance"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 1,
+      "level_1": "People and Work",
+      "level_2": "Children"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 1,
+      "level_1": "People and Work",
+      "level_2": "Communications"
+    }
+  },
+  {
+    "pk": 5,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 2,
+      "level_1": "Fun stuff"
+    }
+  },
+  {
+    "pk": 6,
+    "model": "indigo_api.vocabularytopic",
+    "fields": {
+      "vocabulary": 2,
+      "level_1": "Not so fun stuff"
+    }
+  }
+]

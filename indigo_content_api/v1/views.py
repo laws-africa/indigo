@@ -119,6 +119,11 @@ class CountryViewSet(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericView
     serializer_class = CountrySerializer
 
 
+class TaxonomyView(ContentAPIBase, mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
+    serializer_class = TaxonomySerializer
+
+
 class PublishedDocumentDetailView(DocumentViewMixin,
                                   FrbrUriViewMixin,
                                   mixins.RetrieveModelMixin,
@@ -395,9 +400,3 @@ class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
             raise Http404
 
         super(PublishedDocumentSearchView, self).determine_place()
-
-
-class TaxonomyView(viewsets.ReadOnlyModelViewSet):
-
-    queryset = TaxonomyVocabulary.objects.prefetch_related('topics')
-    serializer_class = TaxonomySerializer

@@ -99,6 +99,30 @@ class AttributeDifferTestCase(TestCase):
             }]},
             diffs)
 
+    def test_diff_lists_empty(self):
+        diffs = self.differ.diff_lists('test', 'Test', ['1', '2', '3'], [])
+        self.assertEqual({
+            'attr': 'test',
+            'title': 'Test',
+            'type': 'list',
+            'changes': [{
+                'html_new': '',
+                'html_old': '<del>1</del>',
+                'new': None,
+                'old': '1'
+            }, {
+                'html_new': '',
+                'html_old': '<del>2</del>',
+                'new': None,
+                'old': '2'
+            }, {
+                'html_new': '',
+                'html_old': '<del>3</del>',
+                'new': None,
+                'old': '3'
+            }]},
+            diffs)
+
     def test_diff_lists_added(self):
         diffs = self.differ.diff_lists('test', 'Test', ['1', '3'], ['1', '2', '3'])
         self.assertEqual({

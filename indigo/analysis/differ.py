@@ -81,6 +81,8 @@ class AttributeDiffer(object):
             'html_new': cgi.escape(x),
         } for x in old]
 
+        remove_offset = 0
+
         for patch in jsonpatch.make_patch(old, new):
             # eg. "/0"
             index = int(patch['path'].split("/", 1)[1])
@@ -104,6 +106,7 @@ class AttributeDiffer(object):
                     'html_new': html_new,
                 }
             elif patch['op'] == 'remove':
+                index += remove_offset
                 v = old[index]
                 diffs[index] = {
                     'old': v,
@@ -111,6 +114,8 @@ class AttributeDiffer(object):
                     'html_old': "<del>{}</del>".format(cgi.escape(v)),
                     'html_new': '',
                 }
+                # subsequent remove operations will need to be offset
+                remove_offset += 1
 
         return {
             'attr': attr,

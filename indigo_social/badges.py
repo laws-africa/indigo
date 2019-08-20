@@ -23,6 +23,7 @@ class BaseBadge(Badge):
     levels = [1]
     events = []
     can_award_manually = True
+    nature = None
 
     def __init__(self):
         # hoop jumping to ensure that BadgeAward objects pick up the correct name
@@ -66,6 +67,7 @@ class PermissionBadge(BaseBadge):
     """
     permissions = ()
     group_name = None
+    nature = 'permission'
 
     _perms = None
     _group = None
@@ -162,6 +164,8 @@ def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
 
 
 class CountryBadge(BaseBadge):
+    nature = 'country'
+
     def grant(self, user):
         user.editor.permitted_countries.add(self.country)
 

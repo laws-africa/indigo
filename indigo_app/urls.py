@@ -24,6 +24,7 @@ urlpatterns = [
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/activity$', places.PlaceActivityView.as_view(), name='place_activity'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/metrics$', places.PlaceMetricsView.as_view(), name='place_metrics'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/settings', places.PlaceSettingsView.as_view(), name='place_settings'),
+    url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/localities', places.PlaceLocalitiesView.as_view(), name='place_localities'),
 
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/$', tasks.TaskListView.as_view(), name='tasks'),
     url(r'^places/(?P<place>[a-z]{2}(-[^/]+)?)/tasks/new$', tasks.TaskCreateView.as_view(), name='create_task'),

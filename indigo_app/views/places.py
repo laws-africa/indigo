@@ -18,7 +18,7 @@ from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
 
-from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
 
@@ -35,7 +35,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
     js_view = ''
 
     def dispatch(self, request, **kwargs):
-        if Country.objects.count == 1:
+        if Country.objects.count() == 1:
             return redirect('place', place=Country.objects.all()[0].place_code)
 
         return super(PlaceListView, self).dispatch(request, **kwargs)
@@ -405,3 +405,25 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
 
     def get_success_url(self):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
+
+
+class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+    template_name = 'place/localities.html'
+    tab = 'localities'
+
+    def get_context_data(self, **kwargs):
+        context = super(PlaceLocalitiesView, self).get_context_data(**kwargs)
+
+        context['localities'] = Locality.objects \
+            .filter(country=self.country) \
+            .annotate(n_works=Count('works')) \
+            .annotate(n_open_tasks=Subquery(
+            Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
+                .values('locality')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+            output_field=IntegerField()
+        )) \
+            .all()
+
+        return context

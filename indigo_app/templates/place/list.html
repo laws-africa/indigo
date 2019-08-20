@@ -10,7 +10,7 @@
         <a href="{% url 'place' place=country.place_code %}" class="text-body text-no-underline-ever">
           <div class="card mb-3">
             <div class="card-body">
-              <h5 class="card-title">{{ country.name }}</h5>
+              <h5 class="card-title">{{ country.name }} · {{ country.code }}</h5>
 
               {% if country.n_open_tasks %}
               <div class="text-muted float-right">{{ country.n_open_tasks }} tasks</div>

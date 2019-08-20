@@ -4,7 +4,7 @@ GEM
     log4r (1.1.10)
     mimemagic (0.3.3)
     mini_portile2 (2.4.0)
-    nokogiri (1.10.3)
+    nokogiri (1.10.4)
       mini_portile2 (~> 2.4.0)
     polyglot (0.3.5)
     slaw (4.1.0)

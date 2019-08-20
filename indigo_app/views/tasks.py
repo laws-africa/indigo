@@ -445,13 +445,24 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     paginate_orphans = 4
     tab = 'available_tasks'
 
+    def get(self, request, *args, **kwargs):
+        self.form = TaskFilterForm(None, request.GET)
+        self.form.is_valid()
+        return super(AvailableTasksView, self).get(request, *args, **kwargs)
+
     def get_queryset(self):
-        return Task.objects \
-            .filter(assigned_to=None, state__in=Task.OPEN_STATES)\
+        tasks = Task.objects \
+            .filter(assigned_to=None)\
             .defer('document__document_xml', 'document__search_text', 'document__search_vector') \
             .order_by('-updated_at')
 
+        if not self.form.cleaned_data.get('state'):
+            tasks = tasks.filter(state__in=Task.OPEN_STATES)
+
+        return self.form.filter_queryset(tasks)
+
     def get_context_data(self, **kwargs):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
+        context['form'] = self.form
         context['tab_count'] = context['paginator'].count
         return context

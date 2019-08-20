@@ -6,8 +6,30 @@
 {% block content %}
 <div class="container-fluid mt-3">
   <div class="card">
+    <div class="card-header">
+      <form method="GET" id="task-filter-form" onchange="this.submit();">
+        <div class="d-flex">
+
+          <div class="btn-group btn-group-toggle" data-toggle="buttons">
+            <label class="btn btn-outline-secondary {% if not form.state.value.0 %}active{% endif %}">
+              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="" {% if not form.state.value %}checked{% endif %}> Available tasks
+            </label>
+            <label class="btn btn-outline-secondary {% if 'open' in form.state.value %}active{% endif %}">
+              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="open" {% if 'open' in form.state.value %}checked{% endif %}>
+              <i class="fas fa-sm fa-fw task-icon-open"></i> Open
+            </label>
+            <label class="btn btn-outline-secondary {% if 'pending_review' in form.state.value %}active{% endif %}">
+              <input type="radio" name="{{ form.state.name }}" autocomplete="off" value="pending_review" {% if 'pending_review' in form.state.value %}checked{% endif %}>
+              <i class="fas fa-sm fa-fw task-icon-pending_review"></i> Pending review
+            </label>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
     {% if tasks %}
-      {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False  place=True %}
+      {% include 'indigo_api/_task_list.html' with tasks=tasks selectable=False place=True %}
     {% else %}
       <div class="card-body">
         <p class="text-center"><em>No tasks found.</em></p>
@@ -17,7 +39,7 @@
 
   {% if is_paginated %}
     <nav class="mt-4">
-      {% include 'indigo_app/_paginator.html' %}
+      {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
     </nav>
   {% endif %}
 </div>

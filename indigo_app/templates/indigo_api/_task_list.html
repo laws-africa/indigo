@@ -55,7 +55,7 @@
     {% if place %}
       <td>
         {% block col-place %}
-        {{ task.place }}
+          <a href="{% url 'tasks' place=task.place.place_code %}">{{ task.place }}</a>
         {% endblock %}
       </td>
     {% endif %}

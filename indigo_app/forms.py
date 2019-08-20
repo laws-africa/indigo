@@ -249,6 +249,9 @@ class TaskFilterForm(forms.Form):
 
         return queryset
 
+    def data_as_url(self):
+        return urllib.urlencode(self.cleaned_data, 'utf-8')
+
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()

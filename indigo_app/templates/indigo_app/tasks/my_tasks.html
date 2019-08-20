@@ -10,8 +10,7 @@
       <div class="card task-list-card">
         <div class="card-body">
           <h6 class="text-center mb-3">
-          <span>Your current tasks <span class="text-muted">({{ open_assigned_tasks|length }})</span>
-          </span>
+            <span>Your current tasks <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
           </h6>
           {% if open_assigned_tasks %}
             {% for task in open_assigned_tasks %}

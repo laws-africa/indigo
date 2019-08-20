@@ -12,7 +12,7 @@
     "bower": "^1.8.0",
     "chart.js": "^2.8.0",
     "indigo-web": "^3.4.0",
-    "yarn": "^1.6.0"
+    "yarn": "^1.17.3"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0"

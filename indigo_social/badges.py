@@ -116,7 +116,7 @@ class PermissionBadge(BaseBadge):
         Award/unaward badges if necessary.
         """
         group_names = [g.name for g in groups]
-        for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge) and b.group_name in group_names):
+        for badge in (b for b in badges.registry.values() if isinstance(b, PermissionBadge) and b.group_name in group_names):
             if added:
                 badge.possibly_award(user=user)
             else:
@@ -127,7 +127,7 @@ class PermissionBadge(BaseBadge):
         """ Ensure users that have been awarded permissions badges, have all the
         right permissions. This is useful when the permissions have been changed.
         """
-        for badge in (b for b in badges.registry.itervalues() if isinstance(b, PermissionBadge)):
+        for badge in (b for b in badges.registry.values() if isinstance(b, PermissionBadge)):
             if user.badges_earned.filter(slug=badge.slug).exists():
                 badge.grant(user)
 

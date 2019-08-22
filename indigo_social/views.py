@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 from datetime import timedelta
 
 from actstream.models import Action
@@ -256,7 +254,7 @@ class BadgeListView(TemplateView):
     template_name = 'indigo_social/badges.html'
 
     def get_context_data(self, **context):
-        context['badges'] = sorted(badges.registry.values(), key=lambda b: b.name)
+        context['badges'] = sorted(list(badges.registry.values()), key=lambda b: b.name)
         return context
 
 

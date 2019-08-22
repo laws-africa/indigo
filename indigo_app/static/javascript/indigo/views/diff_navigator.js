@@ -14,6 +14,10 @@
     },
 
     initialize: function (options) {
+      this.refresh();
+    },
+
+    refresh: function() {
       this.changedElements = $(this.el.getAttribute('data-target')).find('ins, del, .ins, .del');
       this.currentElementIndex = -1;
     },
@@ -25,12 +29,12 @@
       } else {
         this.currentElementIndex--;
       }
-      this.changedElements[this.currentElementIndex].scrollIntoView();
+      if (this.currentElementIndex > -1) this.changedElements[this.currentElementIndex].scrollIntoView();
     },
 
     nextChange: function (e) {
       this.currentElementIndex = (this.currentElementIndex + 1) % this.changedElements.length;
-      this.changedElements[this.currentElementIndex].scrollIntoView();
+      if (this.currentElementIndex > -1) this.changedElements[this.currentElementIndex].scrollIntoView();
     }
   });
 })(window);

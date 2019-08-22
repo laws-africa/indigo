@@ -20,7 +20,7 @@ class Authorities(object):
         return Authority.objects.filter(slug=name).first()
 
     def all(self):
-        return self.registry.values() + list(Authority.objects.all())
+        return list(self.registry.values()) + list(Authority.objects.all())
 
     def register(self, name=None):
         """ Class decorator that registers a new class with the registry.

@@ -524,7 +524,7 @@ class PublicationDocument(models.Model):
 
 
 def work_property_choices():
-    return list(WorkProperty.KEYS.items())
+    return WorkProperty.KEYS.items()
 
 
 class WorkProperty(models.Model):

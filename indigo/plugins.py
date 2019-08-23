@@ -30,7 +30,7 @@ class LocaleBasedRegistry(object):
         """ Find an appropriate importer for this locale description. Tightest match wins.
         """
         target = (country, language, locality)
-        match = self.lookup(topic, target, iter(self.registry[topic].values()))
+        match = self.lookup(topic, target, self.registry[topic].values())
         if match:
             # return an instance
             return match()

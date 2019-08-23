@@ -19,7 +19,7 @@ def populate_new_country(apps, schema_editor):
 
         if not colophon.new_country:
             # arbitrary country
-            colophon.new_country = list(countries.values())[0]
+            colophon.new_country = countries.values()[0]
 
         colophon.save()
 

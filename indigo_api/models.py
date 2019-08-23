@@ -50,7 +50,7 @@ class Language(models.Model):
         """
         return self.language.iso_639_2B
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.language)
 
     @classmethod
@@ -103,7 +103,7 @@ class Country(models.Model):
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.country.name)
 
     @classmethod
@@ -155,7 +155,7 @@ class Locality(models.Model):
             self._settings = self.place_settings.first()
         return self._settings
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.name)
 
 
@@ -196,7 +196,7 @@ class TaxonomyVocabulary(models.Model):
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.title)
 
 
@@ -208,7 +208,7 @@ class VocabularyTopic(models.Model):
     class Meta:
         unique_together = ('level_1', 'level_2', 'vocabulary')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.level_2:
             return '%s / %s' % (self.level_1, self.level_2)
         else:
@@ -330,7 +330,7 @@ class Work(models.Model):
             'label': WorkProperty.KEYS[key],
             'key': key,
             'value': val,
-        } for key, val in list(self.properties.items()) if key in WorkProperty.KEYS], key=lambda x: x['label'])
+        } for key, val in self.properties.items() if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -475,7 +475,7 @@ class Work(models.Model):
 
         return pits
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
@@ -956,7 +956,7 @@ class Document(DocumentMixin, models.Model):
         doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
         return doc
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
 
     @classmethod
@@ -1032,7 +1032,7 @@ class Subtype(models.Model):
         if self.abbreviation:
             self.abbreviation = self.abbreviation.lower()
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.name, self.abbreviation)
 
     @classmethod
@@ -1062,7 +1062,7 @@ class Colophon(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=False, help_text='Which country does this colophon apply to?')
     body = models.TextField()
 
-    def __unicode__(self):
+    def __str__(self):
         return str(self.name)
 
 
@@ -1423,7 +1423,7 @@ class Task(models.Model):
                 'badge': key,
             }
 
-        for key, group in list(tasks.items()):
+        for key, group in tasks.items():
             if key not in groups:
                 groups[key] = {
                     'title': key.replace('_', ' ').capitalize(),

@@ -30,7 +30,7 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
         start with /akn/
         """
         if isinstance(data, dict):
-            for key, val in list(data.items()):
+            for key, val in data.items():
                 if key.endswith('frbr_uri') or key == 'amending_uri' or key == 'repealing_uri':
                     if val and not val.startswith('/akn'):
                         data[key] = '/akn' + val

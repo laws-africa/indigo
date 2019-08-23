@@ -36,7 +36,7 @@ class Command(BaseCommand):
             print('{}: {} {}'.format(user.id, user.first_name, user.last_name))
         while True:
             try:
-                result = int(input('Which user are you? Select the number from the list above: '))
+                result = int(eval(input('Which user are you? Select the number from the list above: ')))
                 user = User.objects.get(id=result)
             except:
                 print('\nSomething went wrong; try again (you must type a number from the list above)\n\n')
@@ -115,8 +115,8 @@ class Command(BaseCommand):
         try:
             importer.create_from_upload(upload, document, None)
         except ValueError as e:
-            print("Error during import: %s" % e.message)
-            raise ValidationError(e.message or "error during import")
+            print("Error during import: %s" % str(e))
+            raise ValidationError(str(e) or "error during import")
 
         docx_file.seek(0)
         filename = os.path.split(docx_file.name)[1]

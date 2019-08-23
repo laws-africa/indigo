@@ -30,6 +30,6 @@ class FindPublicationsView(APIView):
                 }
                 publications = finder.find_publications(params)
             except ValueError as e:
-                raise ValidationError({'message': e.message})
+                raise ValidationError({'message': str(e)})
 
         return Response({'publications': publications})

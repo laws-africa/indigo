@@ -114,7 +114,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
                 instance.reset_xml(request.data.get('content'))
                 instance.save_with_revision(request.user)
             except LxmlError as e:
-                raise ValidationError({'content': ["Invalid XML: %s" % e.message]})
+                raise ValidationError({'content': ["Invalid XML: %s" % str(e)]})
 
             return Response({'content': instance.document_xml})
 
@@ -338,8 +338,8 @@ class ParseView(APIView):
             text = serializer.validated_data.get('content')
             xml = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
         except ValueError as e:
-            log.error("Error during import: %s" % e.message, exc_info=e)
-            raise ValidationError({'content': e.message or "error during import"})
+            log.error("Error during import: %s" % str(e), exc_info=e)
+            raise ValidationError({'content': str(e) or "error during import"})
 
         # parse and re-serialize the XML to ensure it's clean, and sort out encodings
         xml = Base(xml).to_xml()

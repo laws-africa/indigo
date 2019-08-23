@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals, division
-
 from datetime import timedelta
 
 from actstream import action
@@ -193,7 +191,7 @@ class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
     def form_valid(self, form):
         workflow = self.object
         if workflow.closed:
-            messages.error(self.request, u"You can't add tasks to a closed workflow.")
+            messages.error(self.request, "You can't add tasks to a closed workflow.")
             return redirect(self.get_success_url())
 
         workflow.updated_by_user = self.request.user
@@ -203,7 +201,7 @@ class WorkflowAddTasksView(WorkflowViewBase, UpdateView):
             action.send(workflow.updated_by_user, verb='added', action_object=task, target=workflow,
                         place_code=workflow.place.place_code)
 
-        messages.success(self.request, u"Added %d tasks to this workflow." % len(form.cleaned_data['tasks']))
+        messages.success(self.request, "Added %d tasks to this workflow." % len(form.cleaned_data['tasks']))
 
         return redirect(self.get_success_url())
 
@@ -227,7 +225,7 @@ class WorkflowRemoveTaskView(WorkflowViewBase, DetailView):
         workflow.updated_by_user = self.request.user
         action.send(workflow.updated_by_user, verb='removed', action_object=task, target=workflow,
                     place_code=workflow.place.place_code)
-        messages.success(self.request, u"Removed %s from this workflow." % task.title)
+        messages.success(self.request, "Removed %s from this workflow." % task.title)
 
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
@@ -246,7 +244,7 @@ class WorkflowCloseView(WorkflowViewBase, DetailView):
         action.send(workflow.updated_by_user, verb='closed', action_object=workflow,
                     place_code=workflow.place.place_code)
 
-        messages.success(self.request, u"Workflow \"%s\" closed." % workflow.title)
+        messages.success(self.request, "Workflow \"%s\" closed." % workflow.title)
 
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
@@ -265,7 +263,7 @@ class WorkflowReopenView(WorkflowViewBase, DetailView):
         action.send(workflow.updated_by_user, verb='reopened', action_object=workflow,
                     place_code=workflow.place.place_code)
 
-        messages.success(self.request, u"Workflow \"%s\" reopened." % workflow.title)
+        messages.success(self.request, "Workflow \"%s\" reopened." % workflow.title)
 
         return redirect('workflow_detail', place=self.kwargs['place'], pk=workflow.pk)
 
@@ -280,7 +278,7 @@ class WorkflowDeleteView(WorkflowViewBase, DetailView):
 
         workflow.delete()
 
-        messages.success(self.request, u"Workflow \"%s\" deleted." % workflow.title)
+        messages.success(self.request, "Workflow \"%s\" deleted." % workflow.title)
 
         return redirect('workflows', place=self.kwargs['place'])
 
@@ -323,7 +321,7 @@ class WorkflowListView(WorkflowViewBase, ListView):
 
         for w in workflows:
             w.task_counts = {s['tasks__state']: s['n_tasks'] for s in task_stats if s['id'] == w.id}
-            w.task_counts['total'] = sum(x for x in w.task_counts.itervalues())
+            w.task_counts['total'] = sum(x for x in w.task_counts.values())
             w.task_counts['complete'] = w.task_counts.get('cancelled', 0) + w.task_counts.get('done', 0)
             w.task_counts['assigned'] = w.tasks.filter(state='open').exclude(assigned_to=None).count()
             if w.task_counts['assigned'] > 0:

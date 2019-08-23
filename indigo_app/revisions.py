@@ -1,5 +1,3 @@
-from itertools import izip
-
 import jsonpatch
 
 
@@ -8,7 +6,7 @@ IGNORE_FIELDS = ('created_at', 'updated_at', 'updated_by_user', 'created_by_user
 
 def decorate_versions(versions, ignore=IGNORE_FIELDS):
     # make pretty differences
-    for curr, prev in izip(versions, list(versions[1:]) + [None]):
+    for curr, prev in zip(versions, list(versions[1:]) + [None]):
         curr_d = curr.field_dict
         prev_d = {} if prev is None else prev.field_dict
 

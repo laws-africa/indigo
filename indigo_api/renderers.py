@@ -86,13 +86,13 @@ class XSLTRenderer(object):
         params = {
             'defaultIdScope': ET.XSLT.strparam(self.defaultIdScope(node) or ''),
         }
-        params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.iteritems()})
+        params.update({k: ET.XSLT.strparam(v) for k, v in list(self.xslt_params.items())})
         return ET.tostring(self.xslt(node, **params))
 
     def render_xml(self, xml):
         """ Render an XML string into an HTML string """
         if not isinstance(xml, str):
-            xml = xml.encode('utf-8')
+            xml = xml.decode('utf-8')
         return self.render(ET.fromstring(xml))
 
     def defaultIdScope(self, node):
@@ -303,7 +303,7 @@ class PDFRenderer(HTMLRenderer):
 
         # embed the HTML into the PDF container
         html = render_to_string('indigo_api/akn/export/pdf.html', {
-            'documents': zip(documents, html),
+            'documents': list(zip(documents, html)),
         })
         return self.to_pdf(html, documents=documents)
 
@@ -570,7 +570,7 @@ class EPUBRenderer(HTMLRenderer):
         return '-'.join([p for p in parts if p])
 
     def clean_html(self, html, wrap=None):
-        html = self.BAD_DIV_TAG_RE.sub('\\1div\\3', html)
+        html = self.BAD_DIV_TAG_RE.sub('\\1div\\3', str(html))
         if wrap:
             html = '<div class="' + wrap + '">' + html + '</div>'
         return html

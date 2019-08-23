@@ -51,7 +51,7 @@ class Language(models.Model):
         return self.language.iso_639_2B
 
     def __unicode__(self):
-        return unicode(self.language)
+        return str(self.language)
 
     @classmethod
     def for_code(cls, code):
@@ -104,7 +104,7 @@ class Country(models.Model):
         }
 
     def __unicode__(self):
-        return unicode(self.country.name)
+        return str(self.country.name)
 
     @classmethod
     def for_frbr_uri(cls, frbr_uri):
@@ -156,7 +156,7 @@ class Locality(models.Model):
         return self._settings
 
     def __unicode__(self):
-        return unicode(self.name)
+        return str(self.name)
 
 
 @receiver(signals.post_save, sender=Locality)
@@ -197,7 +197,7 @@ class TaxonomyVocabulary(models.Model):
         verbose_name_plural = 'Taxonomies'
 
     def __unicode__(self):
-        return unicode(self.title)
+        return str(self.title)
 
 
 class VocabularyTopic(models.Model):
@@ -330,7 +330,7 @@ class Work(models.Model):
             'label': WorkProperty.KEYS[key],
             'key': key,
             'value': val,
-        } for key, val in self.properties.iteritems() if key in WorkProperty.KEYS], key=lambda x: x['label'])
+        } for key, val in list(self.properties.items()) if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -516,7 +516,7 @@ class PublicationDocument(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def build_filename(self):
-        return u'{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
+        return '{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
 
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
@@ -524,7 +524,7 @@ class PublicationDocument(models.Model):
 
 
 def work_property_choices():
-    return WorkProperty.KEYS.items()
+    return list(WorkProperty.KEYS.items())
 
 
 class WorkProperty(models.Model):
@@ -1063,7 +1063,7 @@ class Colophon(models.Model):
     body = models.TextField()
 
     def __unicode__(self):
-        return unicode(self.name)
+        return str(self.name)
 
 
 class Annotation(models.Model):
@@ -1100,8 +1100,8 @@ class Annotation(models.Model):
             ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
 
             # TODO: strip markdown?
-            task.title = u'"%s": %s' % (ref, self.text)
-            task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
+            task.title = '"%s": %s' % (ref, self.text)
+            task.description = '%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
             self.task = task
@@ -1423,7 +1423,7 @@ class Task(models.Model):
                 'badge': key,
             }
 
-        for key, group in tasks.iteritems():
+        for key, group in list(tasks.items()):
             if key not in groups:
                 groups[key] = {
                     'title': key.replace('_', ' ').capitalize(),

@@ -24,7 +24,7 @@ class AnalysisTestCase(APITestCase):
             'document': {
                 'expression_date': '2001-01-01',
                 'language': 'eng',
-                'content': document_fixture(xml=u"""
+                'content': document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions and interpretation</heading>

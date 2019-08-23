@@ -1,5 +1,3 @@
-from __future__ import absolute_import
-
 import re
 import logging
 from itertools import chain
@@ -24,7 +22,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
     # elements which must not be checked for references to terms
     no_term_markup = ['term', 'ref', 'remark']
 
-    ontology_template = u"/ontology/term/this.{language}.{term}"
+    ontology_template = "/ontology/term/this.{language}.{term}"
 
     @property
     def language(self):
@@ -37,7 +35,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
         # we have to re-parse it
         root = etree.fromstring(document.content)
         self.find_terms(root)
-        document.content = etree.tostring(root, encoding='UTF-8')
+        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
     def find_terms(self, doc):
         self.setup(doc)
@@ -154,7 +152,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
         for ref in refs.iterchildren(self.tlc_term_tag):
             ref.getparent().remove(ref)
 
-        for id, term in terms.iteritems():
+        for id, term in terms.items():
             self.build_tlc_term(refs, id, term)
 
     def build_tlc_term(self, parent, id, term):
@@ -176,10 +174,10 @@ class BaseTermsFinder(LocaleBasedMatcher):
             return
 
         # term to term id
-        term_lookup = {v: k for k, v in terms.iteritems()}
+        term_lookup = {v: k for k, v in terms.items()}
 
         # big regex of all the terms, longest first
-        terms = sorted(terms.itervalues(), key=lambda t: -len(t))
+        terms = sorted(iter(terms.values()), key=lambda t: -len(t))
         terms_re = re.compile(r'\b(%s)\b' % '|'.join(re.escape(t) for t in terms))
 
         def make_term(match):

@@ -1,7 +1,4 @@
 # coding=utf-8
-
-from __future__ import unicode_literals
-
 import json
 import io
 import re
@@ -159,7 +156,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
 
     def get_properties_formset(self):
         formset = super(EditWorkView, self).get_properties_formset()
-        formset.queryset = self.object.raw_properties.filter(key__in=WorkProperty.KEYS.keys())
+        formset.queryset = self.object.raw_properties.filter(key__in=list(WorkProperty.KEYS.keys()))
         return formset
 
     def get_context_data(self, **kwargs):
@@ -187,7 +184,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
         if form.has_changed() or self.properties_formset.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, u"Work updated.")
+            messages.success(self.request, "Work updated.")
 
             # rename publication-document if frbr_uri has changed
             if 'frbr_uri' in form.changed_data:
@@ -252,7 +249,7 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, u'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            messages.success(request, 'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
             return redirect(self.get_success_url())
         else:
             messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
@@ -623,7 +620,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 works = self.bulk_creator.create_works(
                     self, table, dry_run, workflow=workflow, user=self.request.user)
             except ValidationError as e:
-                error = e.message
+                error = str(e)
 
         context_data = self.get_context_data(works=works, error=error, form=form, dry_run=dry_run)
         return self.render_to_response(context_data)
@@ -678,8 +675,8 @@ class ImportDocumentView(WorkViewBase, FormView):
         try:
             importer.create_from_upload(upload, document, self.request)
         except ValueError as e:
-            log.error("Error during import: %s" % e.message, exc_info=e)
-            return JsonResponse({'file': e.message or "error during import"}, status=400)
+            log.error("Error during import: %s" % str(e), exc_info=e)
+            return JsonResponse({'file': str(e) or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user
         document.save_with_revision(self.request.user)

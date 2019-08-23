@@ -57,7 +57,7 @@ class Publication(models.Model):
         unique_together = (('country', 'name'),)
 
     def __unicode__(self):
-        return unicode(self.name)
+        return str(self.name)
 
 
 @receiver(post_save, sender=User)

@@ -1,5 +1,5 @@
 import json
-import urllib.request, urllib.parse, urllib.error
+import urllib.parse
 
 from django import forms
 from django.db.models import Q

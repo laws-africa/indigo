@@ -344,7 +344,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .select_related(None).prefetch_related(None).all()
         years = Counter([int(w.year) for w in works])
         self.add_year_zeros(years)
-        years = list(years.items())
+        years = years.items()
         years.sort()
         context['works_by_year'] = json.dumps(years)
 
@@ -358,7 +358,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .all()
         years = {x['year']: x['n'] for x in years}
         self.add_year_zeros(years)
-        years = list(years.items())
+        years = years.items()
         years.sort()
         context['amendments_by_year'] = json.dumps(years)
 
@@ -368,7 +368,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
                 return 'Act'
             st = Subtype.for_abbreviation(abbr)
             return st.name if st else abbr
-        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
+        pairs = Counter([subtype_name(w.subtype) for w in works]).items()
         pairs.sort(key=lambda p: p[1], reverse=True)
         context['subtypes'] = json.dumps(pairs)
 

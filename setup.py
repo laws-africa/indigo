@@ -31,19 +31,19 @@ setup(
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
     ],
 
     packages=find_packages(exclude=['docs']),
     include_package_data=True,
 
-    python_requires='~=2.7',
+    python_requires='~=3.6',
     install_requires=[
         'django>=1.11.15,<2',
         'arrow>=0.5',
         'boto3>=1.7',
-        'cobalt>=2.2.0',
+        'cobalt @ git+ssh://git@github.com/laws-africa/cobalt@python3', # using the git version provisionally before its published to PyPi
         'django-ckeditor>=5.3.1',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',

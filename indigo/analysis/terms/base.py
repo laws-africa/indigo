@@ -177,7 +177,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
         term_lookup = {v: k for k, v in terms.items()}
 
         # big regex of all the terms, longest first
-        terms = sorted(iter(terms.values()), key=lambda t: -len(t))
+        terms = sorted(terms.values(), key=lambda t: -len(t))
         terms_re = re.compile(r'\b(%s)\b' % '|'.join(re.escape(t) for t in terms))
 
         def make_term(match):

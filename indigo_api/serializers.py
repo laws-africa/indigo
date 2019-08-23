@@ -389,7 +389,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             document.content = content
 
         # save rest of changes
-        for attr, value in list(validated_data.items()):
+        for attr, value in validated_data.items():
             setattr(document, attr, value)
 
         # Link to the appropriate work, based on the FRBR URI

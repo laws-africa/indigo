@@ -86,7 +86,7 @@ class XSLTRenderer(object):
         params = {
             'defaultIdScope': ET.XSLT.strparam(self.defaultIdScope(node) or ''),
         }
-        params.update({k: ET.XSLT.strparam(v) for k, v in list(self.xslt_params.items())})
+        params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.items()})
         return ET.tostring(self.xslt(node, **params))
 
     def render_xml(self, xml):

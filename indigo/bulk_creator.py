@@ -120,8 +120,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         index (tab index).
         """
         try:
-            result = list(self.gsheets_client\
-                .spreadsheets().values()).get(spreadsheetId=spreadsheet_id, range=sheet_name)\
+            result = self.gsheets_client\
+                .spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=sheet_name)\
                 .execute()
         except HttpError as e:
             self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
@@ -163,7 +163,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         for idx, row in enumerate(rows):
             # ignore if it's blank or explicitly marked 'ignore' in the 'ignore' column
-            if row.get('ignore') or not [val for val in list(row.values()) if val]:
+            if row.get('ignore') or not [val for val in row.values() if val]:
                 continue
 
             works.append(self.create_work(view, row, idx, dry_run))
@@ -255,7 +255,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 info['status'] = 'error'
                 if hasattr(e, 'message_dict'):
                     info['error_message'] = ' '.join(
-                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in list(e.message_dict.items())]
+                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
                     )
                 else:
                     info['error_message'] = str(e)
@@ -321,7 +321,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return frbr_uri.work_uri().lower()
 
     def add_extra_properties(self, work, info):
-        for extra_property in list(self.extra_properties.keys()):
+        for extra_property in self.extra_properties.keys():
             if info.get(extra_property):
                 new_prop = WorkProperty(work=work, key=extra_property, value=info.get(extra_property))
                 new_prop.save()

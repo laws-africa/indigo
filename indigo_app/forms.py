@@ -106,13 +106,13 @@ class BaseWorkPropertyFormSet(BaseModelFormSet):
     def setup_extras(self):
         # add extra forms for the properties we don't have yet
         existing = set([p.key for p in self.queryset.all()])
-        missing = [key for key in list(WorkProperty.KEYS.keys()) if key not in existing]
+        missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
         self.extra = len(missing)
         self.initial_extra = [{'key': key} for key in missing]
 
     def keys_and_forms(self):
         # (value, label) pairs sorted by label
-        keys = sorted(list(WorkProperty.KEYS.items()), key=lambda x: x[1])
+        keys = sorted(WorkProperty.KEYS.items(), key=lambda x: x[1])
         forms_by_key = {f['key'].value(): f for f in self.forms}
         return [{
             'key': val,

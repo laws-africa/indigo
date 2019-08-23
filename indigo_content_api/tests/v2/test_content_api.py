@@ -50,9 +50,9 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
                 'date': '2011-01-01',
                 'expressions': [{
                     'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng@2011-01-01',
-                    'expression_frbr_uri': u'/akn/za/act/2010/1/eng@2011-01-01',
-                    'language': u'eng',
-                    'title': u'Act with amendments',
+                    'expression_frbr_uri': '/akn/za/act/2010/1/eng@2011-01-01',
+                    'language': 'eng',
+                    'title': 'Act with amendments',
                     'expression_date': '2011-01-01',
                 }]
             },
@@ -60,9 +60,9 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
                 'date': '2012-02-02',
                 'expressions': [{
                     'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng@2012-02-02',
-                    'expression_frbr_uri': u'/akn/za/act/2010/1/eng@2012-02-02',
-                    'language': u'eng',
-                    'title': u'Act with amendments',
+                    'expression_frbr_uri': '/akn/za/act/2010/1/eng@2012-02-02',
+                    'language': 'eng',
+                    'title': 'Act with amendments',
                     'expression_date': '2012-02-02',
                 }]
             }

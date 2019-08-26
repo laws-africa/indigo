@@ -296,9 +296,10 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
     def add_year_zeros(self, years):
         # ensure zeros
-        min_year, max_year = min(years.keys()), max(years.keys())
-        for year in range(min_year, max_year + 1):
-            years.setdefault(year, 0)
+        if years:
+            min_year, max_year = min(years.keys()), max(years.keys())
+            for year in range(min_year, max_year + 1):
+                years.setdefault(year, 0)
 
     def get_context_data(self, **kwargs):
         context = super(PlaceMetricsView, self).get_context_data(**kwargs)
@@ -322,7 +323,8 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .order_by('date')
             .all())
 
-        context['latest_stat'] = metrics[-1]
+        if metrics:
+            context['latest_stat'] = metrics[-1]
 
         # breadth completeness history
         context['completeness_history'] = json.dumps([

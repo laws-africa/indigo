@@ -28,7 +28,7 @@ git clone https://github.com/laws-africa/indigo.git
 cd indigo
 ```
 
-Ensure you have python 2.7, [virtualenv and pip](https://virtualenv.pypa.io/en/stable/installation/) installed.
+Ensure you have python 3.6, [virtualenv and pip](https://virtualenv.pypa.io/en/stable/installation/) installed.
 
 Create and activate a virtualenv and install dependencies:
 

@@ -43,7 +43,7 @@ setup(
         'django>=1.11.15,<2',
         'arrow>=0.5',
         'boto3>=1.7',
-        'cobalt @ git+https://github.com/laws-africa/cobalt@master', # using the git version provisionally before its published to PyPi
+        'cobalt>=3.0',
         'django-ckeditor>=5.3.1',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',

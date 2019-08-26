@@ -43,14 +43,14 @@ setup(
         'django>=1.11.15,<2',
         'arrow>=0.5',
         'boto3>=1.7',
-        'cobalt @ git+https://github.com/laws-africa/cobalt@python3', # using the git version provisionally before its published to PyPi
+        'cobalt @ git+https://github.com/laws-africa/cobalt@master', # using the git version provisionally before its published to PyPi
         'django-ckeditor>=5.3.1',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',
         'django-allauth>=0.36.0',
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',
-        'django-cors-headers>1.3.1,<3.0.0',
+        'django-cors-headers>=3.1.0',
         'django-countries-plus==1.1',  # 1.2 breaks migrations
         'django-jsonfield>=1.0.1',
         'django-jsonfield-compat>=0.4.4',

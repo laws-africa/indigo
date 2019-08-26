@@ -1,0 +1,18 @@
+// Achievements/Badges
+.achievement {
+  margin-right: 20px;
+
+  &-level {
+    font-family: "Font Awesome 5 Free";
+    font-size: 50px;
+    color: var(--level-color);
+  }
+
+  &-description {
+    width: 70px;
+    font-size: 12px;
+    line-height: 14px;
+    text-align: center;
+    margin-top: 5px;
+  }
+}

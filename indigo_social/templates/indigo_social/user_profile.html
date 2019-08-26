@@ -1,11 +1,45 @@
 {% extends "indigo_social/user_layout.html" %}
 {% load activity_tags pinax_badges_tags %}
+{% load static %}
 
 {% block user_profile_content %}
+<!--I don'tthink we need this? Achievements/badges are independent from indigo-points-->
 <div class="card">
-  <h4 class="card-header">Your points progress</h4>
+  <h4 class="card-header">Achievements</h4>
   <div class="card-body">
-  {% block level-progress %}{% endblock %}
+    {% block achievements %}{% endblock %}
+  </div>
+</div>
+
+<div class="card mt-3">
+  <h4 class="card-header">Achievements</h4>
+  <div class="card-body">
+    {% badges_for_user user as badges %}
+    {{ badges.count }} have been awarded!
+      <div class="d-flex flex-row flex-wrap mt-3">
+        <!--This can most probably be done more elegantly-->
+        {% for badge in badges %}
+        {{ BadgeAward.level }}
+        {% if badge.nature == 'country' or badge.nature == 'level' %}
+          <div class="achievement d-flex flex-column align-items-center">
+            <div class="achievement-icon">
+              {% if badge.nature == 'country' %}
+              <img src="{% static 'images/icons/icon-traveller.svg' %}">
+              {% elif badge.nature == 'level' %}
+              <i class="fas fa-certificate achievement-level"></i>
+              {% endif %}
+            </div>
+            <div class="achievement-description">
+              {% if badge.nature == 'country' %}
+                {{ badge.country_name }}
+              {% elif badge.nature == 'level' %}
+                {{ badge.description }}
+              {% endif %}
+            </div>
+          </div>
+        {% endif %}
+        {% endfor %}
+      </div>
   </div>
 </div>
 

@@ -176,6 +176,11 @@ class CountryBadge(BaseBadge):
     def name(self):
         return "Country: %s" % self.country.name
 
+    ## Is this okay to add here?
+    @property
+    def country_name(self):
+      return self.country.name
+
     @property
     def description(self):
         return "Can make changes to works for %s" % self.country.name

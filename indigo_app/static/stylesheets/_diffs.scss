@@ -1,0 +1,29 @@
+.diff-table {
+  thead {
+    th {
+      border-bottom: 1px solid $grey;
+    }
+    td {
+      border-bottom: 1px solid white;
+    }
+  }
+  td, th {
+    padding: 0px;
+  }
+  tr:not(:first-child) th {
+    padding-top: 10px;
+  }
+}
+
+.sheet-inner .diff-navigator {
+  position: sticky;
+  top: 0px;
+  padding: 5px 0px;
+  margin-top: -20px;
+  text-align: right;
+
+  .btn-group {
+    background-color: white;
+    box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.2)
+  }
+}

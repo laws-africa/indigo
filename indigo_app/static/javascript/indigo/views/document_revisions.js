@@ -14,8 +14,6 @@
       'click .restore-revision': 'restore',
       'click .revision': 'showRevision',
       'click .dismiss': 'dismiss',
-      'click .prev-change-btn': 'prevChange',
-      'click .next-change-btn': 'nextChange',
     },
 
     initialize: function(options) {
@@ -29,6 +27,8 @@
       this.listenTo(this.documentContent, 'sync', this.refresh);
 
       $('.menu .revisions').on('click', _.bind(this.show, this));
+
+      this.diffNavigator = new Indigo.DiffNavigator({el: document.querySelector('.diff-navigator')});
     },
 
     show: function(e) {
@@ -97,11 +97,9 @@
       $.get(revision.url() + '/diff')
         .then(function(response) {
           var $akn = self.$el.find('.revision-preview .akoma-ntoso').html(response.content);
-          self.changedElements = $akn.find('ins, del, .ins, .del');
-          self.currentElementIndex = -1;
-
           self.$el.find('.change-count').text(
-              response.n_changes + ' change' + (response.n_changes != 1 ? 's' : ''));
+            response.n_changes + ' change' + (response.n_changes != 1 ? 's' : ''));
+          self.diffNavigator.refresh();
         });
     },
 
@@ -113,20 +111,5 @@
           window.location.reload();
         });
     },
-
-    prevChange: function(e) {
-      // workaround for (x - 1) % 3 == -1
-      if (this.currentElementIndex <= 0) {
-        this.currentElementIndex = this.changedElements.length - 1;
-      } else {
-        this.currentElementIndex--;
-      }
-      this.changedElements[this.currentElementIndex].scrollIntoView();
-    },
-
-    nextChange: function(e) {
-      this.currentElementIndex = (this.currentElementIndex + 1) % this.changedElements.length;
-      this.changedElements[this.currentElementIndex].scrollIntoView();
-    }
   });
 })(window);

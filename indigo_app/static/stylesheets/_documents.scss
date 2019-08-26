@@ -284,6 +284,11 @@ button.btn-link.help {
   .revisions-main {
     display: flex;
     flex: 1 1 auto;
+    position: absolute;
+    top: 56px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
   }
 
   .revisions-content {

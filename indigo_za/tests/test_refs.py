@@ -15,7 +15,7 @@ class RefsFinderENGzaTestCase(APITestCase):
         self.finder = RefsFinderENGza()
 
     def test_find_simple(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -42,10 +42,10 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_find_multiple_in_tail(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -70,10 +70,10 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_ignore_existing(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -100,10 +100,10 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_constitution(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -161,10 +161,10 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_find_without_act_in_parens(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -190,7 +190,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
 
 class RefsFinderAFRzaTestCase(APITestCase):
@@ -199,7 +199,7 @@ class RefsFinderAFRzaTestCase(APITestCase):
         self.finder = RefsFinderAFRza()
 
     def test_find_simple(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -226,10 +226,10 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_find_multiple_in_tail(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -254,10 +254,10 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_ignore_existing(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -284,10 +284,10 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
     def test_constitution(self):
-        doc = Document(content=document_fixture(xml=u"""
+        doc = Document(content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Tester</heading>
@@ -341,4 +341,4 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>
     </body>
   
-''', etree.tostring(doc.doc.body, pretty_print=True))
+''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))

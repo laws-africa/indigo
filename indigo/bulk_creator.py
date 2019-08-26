@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, unicode_literals
-
 import re
 import csv
 import io
@@ -48,7 +45,7 @@ class RowValidationFormBase(forms.Form):
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
-        return re.sub(u'[\u2028 ]+', ' ', title)
+        return re.sub('[\u2028 ]+', ' ', title)
 
 
 @plugins.register('bulk-creator')
@@ -89,7 +86,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             response = requests.get(url, timeout=5)
             response.raise_for_status()
         except requests.RequestException as e:
-            raise ValidationError("Error talking to Google Sheets: %s" % e.message)
+            raise ValidationError("Error talking to Google Sheets: %s" % str(e))
 
         reader = csv.reader(io.BytesIO(response.content))
         rows = list(reader)
@@ -114,7 +111,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 return metadata['sheets']
             except HttpError as e:
                 self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
-                raise ValueError(e.message)
+                raise ValueError(str(e))
 
         return []
 
@@ -124,8 +121,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         """
         try:
             result = self.gsheets_client\
-                .spreadsheets()\
-                .values().get(spreadsheetId=spreadsheet_id, range=sheet_name)\
+                .spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=sheet_name)\
                 .execute()
         except HttpError as e:
             self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
@@ -262,7 +258,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                         ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
                     )
                 else:
-                    info['error_message'] = e.message
+                    info['error_message'] = str(e)
 
         return info
 

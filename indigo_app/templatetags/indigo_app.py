@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from allauth.account.utils import user_display
 
 from django import template

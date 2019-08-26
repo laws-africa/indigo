@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 import re
 
 from django.db import models
@@ -41,7 +39,7 @@ class Authority(models.Model):
         return self.references.count
 
     def __str__(self):
-        return u'Authority<%s>' % self.name
+        return 'Authority<%s>' % self.name
 
 
 class AuthorityReference(models.Model):
@@ -70,4 +68,4 @@ class AuthorityReference(models.Model):
         return domain
 
     def __str__(self):
-        return u'%s – "%s"' % (self.frbr_uri, self.title)
+        return '%s – "%s"' % (self.frbr_uri, self.title)

@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import subprocess
 import tempfile
 import shutil
@@ -132,7 +128,7 @@ class Importer(LocaleBasedMatcher):
         if self.cropbox:
             # left, top, width, height
             cropbox = (str(int(float(i))) for i in self.cropbox)
-            cropbox = zip("-x -y -W -H".split(), cropbox)
+            cropbox = list(zip("-x -y -W -H".split(), cropbox))
             # flatten
             cmd += [x for pair in cropbox for x in pair]
 

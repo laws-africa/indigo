@@ -22,7 +22,7 @@ class TOCBuilderBaseTestCase(TestCase):
         toc = self.builder.table_of_contents_for_document(doc)
         self.assertEqual([t.as_dict() for t in toc], [{
             'component': 'main',
-            'title': u'Section',
+            'title': 'Section',
             'type': 'section',
             'id': 'section-1',
             'subcomponent': 'section'
@@ -38,7 +38,7 @@ class TOCBuilderBaseTestCase(TestCase):
         toc = self.builder.table_of_contents_entry_for_element(doc, elem)
         self.assertEqual(toc.as_dict(), {
             'component': 'main',
-            'title': u'Section',
+            'title': 'Section',
             'type': 'section',
             'id': 'section-1',
             'subcomponent': 'section'
@@ -54,7 +54,7 @@ class TOCBuilderBaseTestCase(TestCase):
         toc = self.builder.table_of_contents_entry_for_element(doc, elem)
         self.assertEqual(toc.as_dict(), {
             'component': 'schedule',
-            'title': u'Section',
+            'title': 'Section',
             'type': 'section',
             'id': 'section-1',
             'subcomponent': 'section'

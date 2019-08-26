@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import arrow
 from django.db import models, migrations
 from indigo_api.models import Document

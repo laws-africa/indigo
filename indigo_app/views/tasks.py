@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals
 import json
 from itertools import chain
 import datetime
@@ -260,7 +259,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
     permission_required = ('indigo_api.change_task',)
 
     change = None
-    http_method_names = [u'post']
+    http_method_names = ['post']
     model = Task
 
     def post(self, request, *args, **kwargs):
@@ -273,7 +272,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
             if self.change == 'close' and task.customised.close_url():
                 return redirect(task.customised.close_url())
 
-        for change, verb in Task.VERBS.iteritems():
+        for change, verb in Task.VERBS.items():
             if self.change == change:
                 state_change = getattr(task, change)
                 if not has_transition_perm(state_change, self):
@@ -285,7 +284,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                     verb = 'submitted for review'
                 if change == 'unsubmit':
                     verb = 'returned with changes requested'
-                messages.success(request, u"Task '%s' has been %s" % (task.title, verb))
+                messages.success(request, "Task '%s' has been %s" % (task.title, verb))
 
         task.save()
 
@@ -302,7 +301,7 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
     permission_required = ('indigo_api.change_task',)
 
     unassign = False
-    http_method_names = [u'post']
+    http_method_names = ['post']
     model = Task
 
     def post(self, request, *args, **kwargs):
@@ -311,16 +310,16 @@ class TaskAssignView(TaskViewBase, View, SingleObjectMixin):
 
         if self.unassign:
             task.assign_to(None, user)
-            messages.success(request, u"Task '%s' has been unassigned" % task.title)
+            messages.success(request, "Task '%s' has been unassigned" % task.title)
         else:
             assignee = User.objects.get(id=self.request.POST.get('user_id'))
             if not task.can_assign_to(assignee):
                 raise PermissionDenied
             task.assign_to(assignee, user)
             if user == assignee:
-                messages.success(request, u"You have picked up the task '%s'" % task.title)
+                messages.success(request, "You have picked up the task '%s'" % task.title)
             else:
-                messages.success(request, u"Task '%s' has been assigned" % task.title)
+                messages.success(request, "Task '%s' has been assigned" % task.title)
 
         task.updated_by_user = user
         task.save()
@@ -337,7 +336,7 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
     # permissions
     permission_required = ('indigo_api.change_task',)
 
-    http_method_names = [u'post']
+    http_method_names = ['post']
     model = Task
 
     def post(self, request, *args, **kwargs):

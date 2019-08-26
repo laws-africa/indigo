@@ -26,7 +26,7 @@ class LibraryTest(testcases.TestCase):
         work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
 
         fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
-        f = open(fname, 'r')
+        f = open(fname, 'rb')
 
         response = self.client.post('/works/za/act/2014/10/import/', {
             'file': f,
@@ -51,7 +51,7 @@ class LibraryTest(testcases.TestCase):
         1. First Verse
         (1) In the beginning
         (2) There was nothing
-        """)
+        """.encode())
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 

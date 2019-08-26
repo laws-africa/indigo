@@ -1,5 +1,4 @@
 # coding=utf-8
-from __future__ import division
 import logging
 from collections import defaultdict, Counter
 from datetime import timedelta
@@ -106,7 +105,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
     def count_tasks(self, obj, counts):
         obj.task_stats = {'n_%s_tasks' % s: counts.get(s, 0) for s in Task.STATES}
-        obj.task_stats['n_tasks'] = sum(counts.itervalues())
+        obj.task_stats['n_tasks'] = sum(counts.values())
         obj.task_stats['n_active_tasks'] = (
             obj.task_stats['n_open_tasks'] +
             obj.task_stats['n_pending_review_tasks']
@@ -131,7 +130,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             .filter(closed=False) \
             .filter(document__deleted=False) \
             .annotate(n_annotations=Count('document_id')) \
-            .filter(document_id__in=docs_by_id.keys())
+            .filter(document_id__in=list(docs_by_id.keys()))
         for count in annotations:
             docs_by_id[count['document_id']].n_annotations = count['n_annotations']
 
@@ -145,11 +144,11 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             task_states[row['work_id']][row['state']] = row['n_tasks']
 
         # summarise task counts per work
-        for work_id, states in task_states.iteritems():
+        for work_id, states in task_states.items():
             self.count_tasks(works_by_id[work_id], states)
 
         # tasks counts per state and per document
-        doc_tasks = tasks.filter(document_id__in=docs_by_id.keys())\
+        doc_tasks = tasks.filter(document_id__in=list(docs_by_id.keys()))\
             .values('document_id', 'state')\
             .annotate(n_tasks=Count('document_id'))
         task_states = defaultdict(dict)
@@ -157,7 +156,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             task_states[row['document_id']][row['state']] = row['n_tasks']
 
         # summarise task counts per document
-        for doc_id, states in task_states.iteritems():
+        for doc_id, states in task_states.items():
             self.count_tasks(docs_by_id[doc_id], states)
 
         # decorate works
@@ -297,8 +296,8 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
     def add_year_zeros(self, years):
         # ensure zeros
-        min_year, max_year = min(years.iterkeys()), max(years.iterkeys())
-        for year in xrange(min_year, max_year + 1):
+        min_year, max_year = min(years.keys()), max(years.keys())
+        for year in range(min_year, max_year + 1):
             years.setdefault(year, 0)
 
     def get_context_data(self, **kwargs):
@@ -345,7 +344,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .select_related(None).prefetch_related(None).all()
         years = Counter([int(w.year) for w in works])
         self.add_year_zeros(years)
-        years = years.items()
+        years = list(years.items())
         years.sort()
         context['works_by_year'] = json.dumps(years)
 
@@ -359,7 +358,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .all()
         years = {x['year']: x['n'] for x in years}
         self.add_year_zeros(years)
-        years = years.items()
+        years = list(years.items())
         years.sort()
         context['amendments_by_year'] = json.dumps(years)
 
@@ -369,7 +368,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
                 return 'Act'
             st = Subtype.for_abbreviation(abbr)
             return st.name if st else abbr
-        pairs = Counter([subtype_name(w.subtype) for w in works]).items()
+        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
         pairs.sort(key=lambda p: p[1], reverse=True)
         context['subtypes'] = json.dumps(pairs)
 

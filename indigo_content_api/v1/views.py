@@ -102,7 +102,7 @@ class FrbrUriViewMixin(PlaceAPIBase):
             if not obj:
                 raise ValueError()
         except ValueError as e:
-            raise Http404(e.message)
+            raise Http404(str(e))
 
         # May raise a permission denied
         self.check_object_permissions(self.request, obj)

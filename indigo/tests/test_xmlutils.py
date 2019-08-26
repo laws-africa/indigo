@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from unittest import TestCase
 
 from lxml import etree
@@ -13,7 +12,7 @@ class XMLUtilsTestCase(TestCase):
         term = root.find('term')
         unwrap_element(term)
 
-        actual = etree.tostring(root)
+        actual = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertMultiLineEqual(
             '<p>text content <b>child1</b> <i>child2</i> endterm tail</p>',
             actual,
@@ -24,7 +23,7 @@ class XMLUtilsTestCase(TestCase):
         term = root.find('term')
         unwrap_element(term)
 
-        actual = etree.tostring(root)
+        actual = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertMultiLineEqual(
             '<p>text content tail</p>',
             actual,
@@ -35,7 +34,7 @@ class XMLUtilsTestCase(TestCase):
         term = root.getchildren()[1]
         unwrap_element(term)
 
-        actual = etree.tostring(root)
+        actual = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertMultiLineEqual(
             '<p>text <term>first</term> and content <b>child1</b> <i>child2</i> endterm tail</p>',
             actual,

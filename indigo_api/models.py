@@ -50,8 +50,8 @@ class Language(models.Model):
         """
         return self.language.iso_639_2B
 
-    def __unicode__(self):
-        return unicode(self.language)
+    def __str__(self):
+        return str(self.language)
 
     @classmethod
     def for_code(cls, code):
@@ -103,8 +103,8 @@ class Country(models.Model):
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
-    def __unicode__(self):
-        return unicode(self.country.name)
+    def __str__(self):
+        return str(self.country.name)
 
     @classmethod
     def for_frbr_uri(cls, frbr_uri):
@@ -155,8 +155,8 @@ class Locality(models.Model):
             self._settings = self.place_settings.first()
         return self._settings
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
 
 @receiver(signals.post_save, sender=Locality)
@@ -196,8 +196,8 @@ class TaxonomyVocabulary(models.Model):
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return str(self.title)
 
 
 class VocabularyTopic(models.Model):
@@ -208,7 +208,7 @@ class VocabularyTopic(models.Model):
     class Meta:
         unique_together = ('level_1', 'level_2', 'vocabulary')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.level_2:
             return '%s / %s' % (self.level_1, self.level_2)
         else:
@@ -330,7 +330,7 @@ class Work(models.Model):
             'label': WorkProperty.KEYS[key],
             'key': key,
             'value': val,
-        } for key, val in self.properties.iteritems() if key in WorkProperty.KEYS], key=lambda x: x['label'])
+        } for key, val in self.properties.items() if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -475,7 +475,7 @@ class Work(models.Model):
 
         return pits
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
@@ -516,7 +516,7 @@ class PublicationDocument(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def build_filename(self):
-        return u'{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
+        return '{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
 
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
@@ -956,7 +956,7 @@ class Document(DocumentMixin, models.Model):
         doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
         return doc
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
 
     @classmethod
@@ -1032,7 +1032,7 @@ class Subtype(models.Model):
         if self.abbreviation:
             self.abbreviation = self.abbreviation.lower()
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.name, self.abbreviation)
 
     @classmethod
@@ -1062,8 +1062,8 @@ class Colophon(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=False, help_text='Which country does this colophon apply to?')
     body = models.TextField()
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
 
 class Annotation(models.Model):
@@ -1100,8 +1100,8 @@ class Annotation(models.Model):
             ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
 
             # TODO: strip markdown?
-            task.title = u'"%s": %s' % (ref, self.text)
-            task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
+            task.title = '"%s": %s' % (ref, self.text)
+            task.description = '%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
             self.task = task
@@ -1423,7 +1423,7 @@ class Task(models.Model):
                 'badge': key,
             }
 
-        for key, group in tasks.iteritems():
+        for key, group in tasks.items():
             if key not in groups:
                 groups[key] = {
                     'title': key.replace('_', ' ').capitalize(),

@@ -1,0 +1,6 @@
+// other installations can override indigo SCSS variables by providing
+// their own static/indigo/_variables.scss file which will be included automatically,
+// after other Indigo variables are set, but before any styles are included.
+
+// This file is deliberately not included alongside the app.scss file, as SCSS imports
+// always look in the directory containing the including file first.

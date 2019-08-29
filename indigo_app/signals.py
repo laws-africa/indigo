@@ -45,4 +45,4 @@ def post_annotation_reply(sender, **kwargs):
 @receiver(badge_awarded)
 def post_badge_earned(sender, **kwargs):
 	if kwargs.get('badge_award') and not kwargs['badge_award'].can_award_manually:
-			notify_user_badge_earned(kwargs['badge_award'].pk)
+		notify_user_badge_earned(kwargs['badge_award'].pk)

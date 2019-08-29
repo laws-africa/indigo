@@ -9,6 +9,17 @@
         <div role="separator" class="divider"></div>
         <a class="dropdown-item revisions" href="#">Recent changes</a>
         <div class="dropdown-submenu">
+          <a href="#" class="dropdown-item">Compare to</a>
+          <div class="dropdown-menu">
+            {% for exp in comparison_expressions %}
+              <a class="dropdown-item comparisons" href="#" id="{{ exp.id }}">
+                {{ exp.expression_date|date:"Y-m-d" }}
+                {% if exp.id == document.id %}– current point in time{% endif %}
+              </a>
+            {% endfor %}
+          </div>
+        </div>
+        <div class="dropdown-submenu">
           <a href="#" class="dropdown-item">Download as</a>
           <div class="dropdown-menu">
             {% for fmt in download_formats %}

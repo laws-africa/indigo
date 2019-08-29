@@ -1,0 +1,19 @@
+{% block subject %}Achievement unlocked!{% endblock %}
+
+ {% block html %}
+  {% include 'templated_email/_header.html' %}
+<hr>
+<p>
+  Congratulations {{ user.get_full_name }}!.
+</p>
+<p>
+  You have earned a {{badge.name}} badge:
+</p>
+<p>
+    {{ badge.description }}
+</p>
+
+ <hr>
+  {% include 'templated_email/_footer.html' %}
+
+ {% endblock %}

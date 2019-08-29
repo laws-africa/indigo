@@ -4,7 +4,7 @@
   {% include 'templated_email/_header.html' %}
 <hr>
 <p>
-  Congratulations {{ user.get_full_name }}!.
+  Congratulations {{ recipient.get_full_name }}!.
 </p>
 <p>
   You have earned a {{badge.name}} badge:
@@ -12,6 +12,8 @@
 <p>
     {{ badge.description }}
 </p>
+
+<p>Nice work!</p>
 
  <hr>
   {% include 'templated_email/_footer.html' %}

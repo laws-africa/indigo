@@ -7,7 +7,7 @@
   Congratulations {{ recipient.get_full_name }}!.
 </p>
 <p>
-  You have earned a {{badge.name}} badge:
+  You have earned a {{ badge.name }} badge:
 </p>
 <p>
     {{ badge.description }}

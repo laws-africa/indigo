@@ -40,11 +40,11 @@
         <a class="nav-item nav-link {% if view.tab == 'workflows' %}active{% endif %}" href="{% url 'workflows' place=place.place_code %}">
           <i class="fas fa-fw fa-tasks"></i> Workflows <span class="badge badge-light">{{ place.place_workflows.unclosed.count }}</span>
         </a>
+        <a class="nav-item nav-link {% if view.tab == 'insights' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">
+          <i class="fa fa-fw fa-chart-bar"></i> Insights
+        </a>
         <a class="nav-item nav-link {% if view.tab == 'activity' %}active{% endif %}" href="{% url 'place_activity' place=place.place_code %}">
           <i class="fas fa-fw fa-clock"></i> Activity
-        </a>
-        <a class="nav-item nav-link {% if view.tab == 'metrics' %}active{% endif %}" href="{% url 'place_metrics' place=place.place_code %}">
-          <i class="fa fa-fw fa-chart-bar"></i> Metrics
         </a>
         {% if place.localities.exists %}
           <a class="nav-item nav-link {% if view.tab == 'localities' %}active{% endif %}" href="{% url 'place_localities' place=place.place_code %}">

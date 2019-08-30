@@ -1,0 +1,71 @@
+// *** Bootstrap variables
+
+// Typography
+$font-size-base: .875rem;
+
+// Options
+$enable-rounded: false;
+$breadcrumb-divider: quote("≫");
+
+// Colours
+$gray-base: #181b1e;
+$gray-100:  #f0f3f5; // lighten($gray-base, 85%);
+$gray-200:  #e4e7ea; // lighten($gray-base, 80%);
+$gray-300:  #c8ced3; // lighten($gray-base, 70%);
+$gray-400:  #acb4bc; // lighten($gray-base, 60%);
+$gray-500:  #8f9ba6; // lighten($gray-base, 50%);
+$gray-600:  #73818f; // lighten($gray-base, 40%);
+$gray-700:  #5c6873; // lighten($gray-base, 30%);
+$gray-800:  #2f353a; // lighten($gray-base, 10%);
+$gray-900:  #23282c; // lighten($gray-base, 5%);
+
+$card-cap-bg: $gray-100;
+$card-border-color: $gray-300;
+
+$white: #fff;
+$blue: #2d7ad4;
+$red: #f44336;
+$green: #439f78;
+$cyan: #8183A8;
+$yellow: #c08f40;
+$indigo: #305fa1;
+
+$primary: $blue;
+
+$spacer: $font-size-base;
+
+$diff-green: #a6f3a6;
+$diff-red: #f8cbcb;
+
+// navbar
+$navbar-dark-color:                 rgba($white, .8);
+$navbar-dark-hover-color:           rgba($white, .9);
+$navbar-dark-disabled-color:        rgba($white, .5);
+
+
+
+// *** Indigo variables
+$body-bg-color: #e4e5e8;
+
+$grey-lightest: $gray-100;
+$grey-lighter: $gray-200;
+$grey: $gray-300;
+$grey-darker: $gray-400;
+$grey-darkest: $gray-500;
+
+$border-colour: $grey;
+$workspace-header-colour: white;
+$workspace-header-border-colour: $grey-darker;
+$header-colour2: $grey-lighter;
+
+$navbar-height: 50px;
+$header-height: 45px;
+$workspace-header-height: 90px;
+
+$document-sidebar-width: 260px;
+$document-sidebar-colour: $grey-lighter;
+
+$selection-colour: #b2d8fc;
+
+// sidebar
+$sidebar-width: 200px;

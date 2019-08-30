@@ -292,7 +292,8 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
 
 class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/metrics.html'
-    tab = 'metrics'
+    tab = 'insights'
+    insights_tab = 'metrics'
 
     def add_year_zeros(self, years):
         # ensure zeros

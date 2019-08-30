@@ -8,6 +8,7 @@ from django_comments.models import Comment
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
+from pinax.badges.models import BadgeAward
 
 from indigo.settings import INDIGO_ORGANISATION
 from indigo_api.models import Task, Annotation
@@ -136,6 +137,15 @@ class Notifier(object):
 
         mail_admins(subject, message)
 
+    def notify_badge_awarded(self, badge_award):
+        """ Send an email notification when a user acquires a new Badge.
+        """
+        user = badge_award.user
+        self.send_templated_email('badge_awarded', [user], {
+                'recipient': user,
+                'badge': badge_award,
+            })
+
 
 notifier = Notifier()
 
@@ -171,6 +181,13 @@ def notify_annotation_reply_posted(annotation_id):
     except Comment.DoesNotExist:
         log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
 
+@background(queue='indigo')
+def notify_user_badge_earned(badge_id):
+    try:
+        notifier.notify_badge_awarded(BadgeAward.objects.get(pk=badge_id))
+    except BadgeAward.DoesNotExist:
+        log.warning("Badge with id {} doesn't exist, ignoring".format(badge_id))        
+
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
@@ -178,3 +195,4 @@ if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     notify_comment_posted = notify_comment_posted.now
     notify_new_user_signed_up = notify_new_user_signed_up.now
     notify_annotation_reply_posted = notify_annotation_reply_posted.now
+    notify_user_badge_earned = notify_user_badge_earned.now

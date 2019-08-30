@@ -211,7 +211,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     tab = 'activity'
 
     object_list = None
-    page_size = 20
+    page_size = 30
     js_view = ''
     threshold = timedelta(seconds=3)
 

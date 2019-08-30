@@ -1,21 +1,17 @@
-{% block subject %}Achievement unlocked!{% endblock %}
+{% block subject %}Achievement unlocked - {{ badge.name }}{% endblock %}
 
- {% block html %}
-  {% include 'templated_email/_header.html' %}
-<hr>
-<p>
-  Congratulations {{ recipient.get_full_name }}!.
-</p>
-<p>
-  You have earned a {{ badge.name }} badge:
-</p>
-<p>
-    {{ badge.description }}
-</p>
+{% block html %}
+{% include 'templated_email/_header.html' %}
+
+<h3 style="text-align: center">Achievement Unlocked!</h3>
+<h1 style="text-align: center">{{ badge.name }}</h1>
+
+<p>Congratulations {{ recipient.first_name }}, you've unlocked the <b>{{ badge.name }}</b> badge:</p>
+
+<p>{{ badge.description }}</p>
 
 <p>Nice work!</p>
 
- <hr>
-  {% include 'templated_email/_footer.html' %}
-
- {% endblock %}
+<hr>
+{% include 'templated_email/_footer.html' %}
+{% endblock %}

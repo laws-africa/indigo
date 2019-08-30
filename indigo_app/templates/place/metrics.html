@@ -1,11 +1,10 @@
-{% extends "place/tabbed_layout.html" %}
+{% extends "place/insights_layout.html" %}
 {% load staticfiles %}
 
 {% block title %}Metrics – {{ place.name }}{% endblock %}
 
-{% block content %}
-<div class="container mt-3 mb-5">
-  <div class="card">
+{% block insights-content %}
+  <div class="card mt-3">
     <h6 class="card-header">Works and Amendments</h6>
     <div class="card-body">
 
@@ -107,7 +106,6 @@
     </div>
 
   </div>
-</div>
 {% endblock %}
 
 {% block js %}

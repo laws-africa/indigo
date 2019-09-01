@@ -29,7 +29,7 @@ from indigo_app.forms import WorkFilterForm
 log = logging.getLogger(__name__)
 
 
-class PlaceListHelper:
+class PlaceMetricsHelper:
     def add_activity_metrics(self, places, metrics, since):
         # fold metrics into countries
         for place in places:
@@ -58,7 +58,7 @@ class PlaceListHelper:
         return output
 
 
-class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceListHelper):
+class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     template_name = 'place/list.html'
 
     def dispatch(self, request, **kwargs):
@@ -331,12 +331,12 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
             return action
 
 
-class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     template_name = 'place/metrics.html'
     tab = 'insights'
     insights_tab = 'metrics'
 
-    def add_year_zeros(self, years):
+    def add_zero_years(self, years):
         # ensure zeros
         if years:
             min_year, max_year = min(years.keys()), max(years.keys())
@@ -387,7 +387,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .filter(country=self.country, locality=self.locality)\
             .select_related(None).prefetch_related(None).all()
         years = Counter([int(w.year) for w in works])
-        self.add_year_zeros(years)
+        self.add_zero_years(years)
         years = list(years.items())
         years.sort()
         context['works_by_year'] = json.dumps(years)
@@ -401,7 +401,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .order_by()\
             .all()
         years = {x['year']: x['n'] for x in years}
-        self.add_year_zeros(years)
+        self.add_zero_years(years)
         years = list(years.items())
         years.sort()
         context['amendments_by_year'] = json.dumps(years)
@@ -415,6 +415,17 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
         pairs.sort(key=lambda p: p[1], reverse=True)
         context['subtypes'] = json.dumps(pairs)
+
+        # place activity
+        metrics = DailyPlaceMetrics.objects \
+            .filter(country=self.country, locality=self.locality, date__gte=since) \
+            .order_by('date') \
+            .all()
+
+        context['activity_history'] = json.dumps([
+            [m.date.isoformat(), m.n_activities]
+            for m in metrics
+        ])
 
         return context
 
@@ -450,7 +461,7 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceListHelper):
+class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     template_name = 'place/localities.html'
     tab = 'localities'
     js_view = 'PlaceListView'

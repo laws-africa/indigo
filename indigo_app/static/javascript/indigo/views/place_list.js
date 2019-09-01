@@ -60,7 +60,7 @@
       var data = JSON.parse(canvas.getAttribute('data-values'));
 
       data = _.map(data, function(pair) { return {t: pair[0], y: pair[1]}; });
-      this.drawTimeSeriesChart(canvas, data, 'Works');
+      this.drawTimeSeriesChart(canvas, data, 'Activity');
     },
   });
 })(window);

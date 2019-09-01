@@ -29,7 +29,36 @@ from indigo_app.forms import WorkFilterForm
 log = logging.getLogger(__name__)
 
 
-class PlaceListView(AbstractAuthedIndigoView, TemplateView):
+class PlaceListHelper:
+    def add_activity_metrics(self, places, metrics, since):
+        # fold metrics into countries
+        for place in places:
+            place.activity_history = json.dumps([
+                [m.date.isoformat(), m.n_activities]
+                for m in self.add_zero_days(metrics.get(place, []), since)
+            ])
+
+    def add_zero_days(self, metrics, since):
+        """ Fold zeroes into the daily metrics
+        """
+        today = date.today()
+        d = since
+        i = 0
+        output = []
+
+        while d <= today:
+            if i < len(metrics) and metrics[i].date == d:
+                output.append(metrics[i])
+                i += 1
+            else:
+                # add a zero
+                output.append(DailyPlaceMetrics(date=d))
+            d = d + timedelta(days=1)
+
+        return output
+
+
+class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceListHelper):
     template_name = 'place/list.html'
 
     def dispatch(self, request, **kwargs):
@@ -64,34 +93,9 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
         metrics = {
             country: list(group)
             for country, group in groupby(metrics, lambda m: m.country)}
-
-        # fold metrics into countries
-        for country in context['countries']:
-            country.activity_history = json.dumps([
-                [m.date.isoformat(), m.n_activities]
-                for m in self.add_zero_days(metrics.get(country, []), since.date())
-            ])
+        self.add_activity_metrics(context['countries'], metrics, since.date())
 
         return context
-
-    def add_zero_days(self, metrics, since):
-        """ Fold zeroes into the daily metrics
-        """
-        today = date.today()
-        d = since
-        i = 0
-        output = []
-
-        while d <= today:
-            if i < len(metrics) and metrics[i].date == d:
-                output.append(metrics[i])
-                i += 1
-            else:
-                # add a zero
-                output.append(DailyPlaceMetrics(date=d))
-            d = d + timedelta(days=1)
-
-        return output
 
 
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
@@ -446,9 +450,10 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceListHelper):
     template_name = 'place/localities.html'
     tab = 'localities'
+    js_view = 'PlaceListView'
 
     def get_context_data(self, **kwargs):
         context = super(PlaceLocalitiesView, self).get_context_data(**kwargs)
@@ -464,5 +469,19 @@ class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView)
             output_field=IntegerField()
         )) \
             .all()
+
+        # place activity
+        since = now() - timedelta(days=14)
+        metrics = DailyPlaceMetrics.objects \
+            .filter(country=self.country, date__gte=since) \
+            .exclude(locality=None) \
+            .order_by('locality', 'date') \
+            .all()
+
+        # group by locality
+        metrics = {
+            country: list(group)
+            for country, group in groupby(metrics, lambda m: m.locality)}
+        self.add_activity_metrics(context['localities'], metrics, since.date())
 
         return context

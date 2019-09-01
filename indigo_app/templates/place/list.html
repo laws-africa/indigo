@@ -1,4 +1,5 @@
 {% extends "main.html" %}
+{% load staticfiles %}
 
 {% block title %}Places {{ block.super }}{% endblock %}
 
@@ -17,10 +18,20 @@
               {% endif %}
               <div class="text-muted">{{ country.n_works }} works</div>
             </div>
+            <div class="card-footer pb-0 p-relative" style="height: 50px">
+              <canvas class="place-activity-chart" data-values="{{ country.activity_history }}" title="Recent activity"></canvas>
+            </div>
           </div>
         </a>
       </div>
     {% endfor %}
   </div>
 </div>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
 {% endblock %}

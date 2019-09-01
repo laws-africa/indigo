@@ -1,8 +1,8 @@
 # coding=utf-8
 import logging
 from collections import defaultdict, Counter
-from datetime import timedelta
-from itertools import chain
+from datetime import timedelta, date
+from itertools import chain, groupby
 import json
 
 from actstream import action
@@ -19,7 +19,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality
 from indigo_api.views.documents import DocumentViewSet
-from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
+from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -31,7 +31,6 @@ log = logging.getLogger(__name__)
 
 class PlaceListView(AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/list.html'
-    js_view = ''
 
     def dispatch(self, request, **kwargs):
         if Country.objects.count() == 1:
@@ -54,7 +53,45 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
             ))\
             .all()
 
+        # place activity
+        since = now() - timedelta(days=14)
+        metrics = DailyPlaceMetrics.objects\
+            .filter(locality=None, date__gte=since)\
+            .order_by('country', 'date')\
+            .all()
+
+        # group by country
+        metrics = {
+            country: list(group)
+            for country, group in groupby(metrics, lambda m: m.country)}
+
+        # fold metrics into countries
+        for country in context['countries']:
+            country.activity_history = json.dumps([
+                [m.date.isoformat(), m.n_activities]
+                for m in self.add_zero_days(metrics.get(country, []), since.date())
+            ])
+
         return context
+
+    def add_zero_days(self, metrics, since):
+        """ Fold zeroes into the daily metrics
+        """
+        today = date.today()
+        d = since
+        i = 0
+        output = []
+
+        while d <= today:
+            if i < len(metrics) and metrics[i].date == d:
+                output.append(metrics[i])
+                i += 1
+            else:
+                # add a zero
+                output.append(DailyPlaceMetrics(date=d))
+            d = d + timedelta(days=1)
+
+        return output
 
 
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):

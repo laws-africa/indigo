@@ -25,39 +25,20 @@
           datasets: [{
             label: label,
             data: data,
-            borderWidth: 2,
-            lineTension: 0,
-            pointRadius: 0,
+            borderWidth: 0,
             backgroundColor: 'rgba(67, 159, 120, 0.2)',
-            borderColor: 'rgba(67, 159, 120, 1)',
-            fill: false,
           }]
         },
         options: {
           maintainAspectRatio: false,
           legend: {display: false},
-          elements: {
-            line: {
-              tension: 0.4,
-            },
-            point: {
-              radius: 0,
-            },
-          },
+          tooltips: {enabled: false},
           scales: {
             xAxes: [{
-              type: 'time',
-              distribution: 'series',
-              time: {
-                minUnit: 'day',
-              },
-              ticks: {
-                source: 'data',
-                autoSkip: true,
-              }
+              display: false,
             }],
             yAxes: [{
-              display: true,
+              display: false,
               ticks: {
                 min: 0,
                 beginAtZero: true,
@@ -71,7 +52,7 @@
     drawActivityCharts: function() {
       var self = this;
       $('.place-activity-chart').each(function(i, canvas) {
-        self.drawActivityChart(e);
+        self.drawActivityChart(canvas);
       });
     },
 

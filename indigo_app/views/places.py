@@ -233,13 +233,15 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         self.decorate_works(list(works))
 
-        # breadth completeness history
-        context['completeness_history'] = list(DailyWorkMetrics.objects
+        # breadth completeness history, most recent 30 days
+        metrics = list(DailyWorkMetrics.objects
             .filter(place_code=self.place.place_code)
-            .order_by('-date')
-            .values_list('p_breadth_complete', flat=True)[:30])
-        context['completeness_history'].reverse()
-        context['p_breadth_complete'] = context['completeness_history'][-1] if context['completeness_history'] else None
+            .order_by('-date')[:30])
+        # latest last
+        metrics.reverse()
+        if metrics:
+            context['latest_completeness_stat'] = metrics[-1]
+            context['completeness_history'] = [m.p_breadth_complete for m in metrics]
 
         return context
 

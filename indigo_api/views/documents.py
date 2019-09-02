@@ -463,3 +463,34 @@ class SearchView(DocumentViewMixin, ListAPIView):
             serializer.data[i]['_snippet'] = doc.snippet
 
         return serializer
+
+
+class ComparisonView(APIView):
+    """ Support for running a document comparison.
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        differ = AttributeDiffer()
+
+        current_document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        current_document.document_xml = differ.preprocess_document_diff(current_document.document_xml)
+        current_html = current_document.to_html()
+
+        comparison_doc_id = request.data['comparison_doc_id']
+        comparison_document = Document.objects.get(id=comparison_doc_id)
+        comparison_document.document_xml = differ.preprocess_document_diff(comparison_document.document_xml)
+        comparison_document_html = comparison_document.to_html()
+
+        current_tree = lxml.html.fromstring(current_html) if current_html else None
+        comparison_tree = lxml.html.fromstring(comparison_document_html)
+        n_changes = differ.diff_document_html(current_tree, comparison_tree)
+
+        diff = lxml.html.tostring(comparison_tree, encoding='utf-8')
+
+        # TODO: include other diff'd attributes
+
+        return Response({'content': diff})

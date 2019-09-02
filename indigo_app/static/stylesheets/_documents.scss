@@ -346,6 +346,50 @@ button.btn-link.help {
   }
 }
 
+/* document comparison */
+.document-comparison-view {
+  background-color: $body-bg-color;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  right: 0px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+
+  .comparison-header {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
+    background-color: white;
+
+    .title {
+      flex: 1;
+    }
+
+    .buttons {
+      flex: 0 0 300px;
+    }
+  }
+
+  .comparison-main {
+    display: flex;
+    flex: 1 1 auto;
+    position: absolute;
+    top: 56px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+
+  .comparison-content {
+    position: relative;
+    flex: 1;
+    height: 100%;
+  }
+
+}
+
 .fas.draft {
   color: $yellow;
 }

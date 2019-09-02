@@ -12,7 +12,7 @@
           <a href="#" class="dropdown-item">Compare to</a>
           <div class="dropdown-menu">
             {% for exp in comparison_expressions %}
-              <a class="dropdown-item comparisons" href="#" id="{{ exp.id }}">
+              <a class="dropdown-item comparison" href="#" id="{{ exp.id }}">
                 {{ exp.expression_date|date:"Y-m-d" }}
                 {% if exp.id == document.id %}– current point in time{% endif %}
               </a>

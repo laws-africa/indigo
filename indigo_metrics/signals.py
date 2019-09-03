@@ -7,7 +7,7 @@ from indigo_metrics.models import DailyPlaceMetrics
 
 @receiver(signals.post_save, sender=Action)
 def action_created(sender, instance, **kwargs):
-    """ Send 'created' action to activity stream if new task
+    """ Send 'created' action to activity stream
     """
     if kwargs['created']:
         if instance.data and instance.data.get('place_code'):

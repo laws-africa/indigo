@@ -47,43 +47,38 @@
     </div>
   </div>
 
-  <div class="row">
+  <div class="card mb-3">
+    <h6 class="card-header">Core Detail Completeness</h6>
+    <div class="card-body">
 
-    <div class="col-md-12 mb-3">
-      <div class="card">
-        <h6 class="card-header">Core Detail Completeness</h6>
-        <div class="card-body">
-
-          <div class="row">
-            <div class="col-6">
-              <div class="p-relative" style="height: 100px">
-                <canvas id="completeness-chart" data-values="{{ completeness_history }}"></canvas>
-              </div>
-            </div>
-
-            <div class="col-3 d-flex text-center align-items-center justify-content-center">
-              <div>
-                {% include 'indigo_metrics/_progress_ball.html' with size=100 progress=latest_stat.p_breadth_complete %}
-              </div>
-              <div class="ml-3">
-                <h3 class="mb-0">{{ latest_stat.p_breadth_complete }}%</h3>
-                <h5>Complete</h5>
-              </div>
-            </div>
-
-            <div class="col-3 text-center align-self-center">
-              <h3 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h3>
-              <h5>Works Complete</h5>
-            </div>
+      <div class="row">
+        <div class="col-6">
+          <div class="p-relative" style="height: 100px">
+            <canvas id="completeness-chart" data-values="{{ completeness_history }}"></canvas>
           </div>
+        </div>
 
+        <div class="col-3 d-flex text-center align-items-center justify-content-center">
+          <div>
+            {% include 'indigo_metrics/_progress_ball.html' with size=100 progress=latest_stat.p_breadth_complete %}
+          </div>
+          <div class="ml-3">
+            <h3 class="mb-0">{{ latest_stat.p_breadth_complete }}%</h3>
+            <h5>Complete</h5>
+          </div>
+        </div>
+
+        <div class="col-3 text-center align-self-center">
+          <h3 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h3>
+          <h5>Works Complete</h5>
         </div>
       </div>
+
     </div>
   </div>
 
   <div class="row">
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-3">
       <div class="card">
         <h6 class="card-header">Works</h6>
         <div class="card-body">
@@ -94,7 +89,7 @@
       </div>
     </div>
 
-    <div class="col-md-6 mb-4">
+    <div class="col-md-6 mb-3">
       <div class="card">
         <h6 class="card-header">Expressions (documents)</h6>
         <div class="card-body">
@@ -104,7 +99,15 @@
         </div>
       </div>
     </div>
+  </div>
 
+  <div class="card mb-3">
+    <h6 class="card-header">Changes and updates</h6>
+    <div class="card-body">
+      <div class="p-relative" style="height: 100px">
+        <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
+      </div>
+    </div>
   </div>
 {% endblock %}
 

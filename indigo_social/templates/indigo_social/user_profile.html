@@ -3,13 +3,6 @@
 {% load static %}
 
 {% block user_profile_content %}
-<!--I don'tthink we need this? Achievements/badges are independent from indigo-points-->
-<div class="card">
-  <h4 class="card-header">Achievements</h4>
-  <div class="card-body">
-    {% block achievements %}{% endblock %}
-  </div>
-</div>
 
 <div class="card mt-3">
   <h4 class="card-header">Achievements</h4>
@@ -17,74 +10,41 @@
     {% badges_for_user user as badges %}
     {{ badges.count }} have been awarded!
       <div class="d-flex flex-row flex-wrap mt-3">
-        <!--This can most probably be done more elegantly-->
         {% for badge in badges %}
-        {{ BadgeAward.level }}
-        {% if badge.nature == 'country' or badge.nature == 'level' %}
           <div class="achievement d-flex flex-column align-items-center">
-            <div class="achievement-icon">
-              {% if badge.nature == 'country' %}
-              <img src="{% static 'images/icons/icon-traveller.svg' %}">
-              {% elif badge.nature == 'level' %}
-              <i class="fas fa-certificate achievement-level"></i>
-              {% endif %}
+            <div class="achievement-icon badge-{{ badge.slug }} {{ badge.icon_classes }} level-group-3" data-level-badge="3"
+                {%if badge.level %} data-level-badge="{{ badge.level }}" {% endif %}>
+              <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="certificate" class="svg-inline--fa fa-certificate fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path class="background" fill="currentColor" d="M458.622 255.92l45.985-45.005c13.708-12.977 7.316-36.039-10.664-40.339l-62.65-15.99 17.661-62.015c4.991-17.838-11.829-34.663-29.661-29.671l-61.994 17.667-15.984-62.671C337.085.197 313.765-6.276 300.99 7.228L256 53.57 211.011 7.229c-12.63-13.351-36.047-7.234-40.325 10.668l-15.984 62.671-61.995-17.667C74.87 57.907 58.056 74.738 63.046 92.572l17.661 62.015-62.65 15.99C.069 174.878-6.31 197.944 7.392 210.915l45.985 45.005-45.985 45.004c-13.708 12.977-7.316 36.039 10.664 40.339l62.65 15.99-17.661 62.015c-4.991 17.838 11.829 34.663 29.661 29.671l61.994-17.667 15.984 62.671c4.439 18.575 27.696 24.018 40.325 10.668L256 458.61l44.989 46.001c12.5 13.488 35.987 7.486 40.325-10.668l15.984-62.671 61.994 17.667c17.836 4.994 34.651-11.837 29.661-29.671l-17.661-62.015 62.65-15.99c17.987-4.302 24.366-27.367 10.664-40.339l-45.984-45.004z"></path>
+              </svg>
             </div>
             <div class="achievement-description">
-              {% if badge.nature == 'country' %}
-                {{ badge.country_name }}
-              {% elif badge.nature == 'level' %}
-                {{ badge.description }}
-              {% endif %}
+              {{ badge.description }}
             </div>
           </div>
-        {% endif %}
         {% endfor %}
+        {% if not badges %}
+        <p>No badges earned yet :(</p>
+        {% endif %}
       </div>
-  </div>
-</div>
+        {% if can_award %}
+        <hr>
 
-<div class="card mt-3">
-  <h4 class="card-header">Badges earned</h4>
-  <div class="card-body">
-    {% badges_for_user user as badges %}
-    <div class="row">
-      {% for badge in badges %}
-      <div class="col-md-6">
-        <div class="media mb-3">
-          <i class="fas fa-award fa-fw fa-3x mr-3"></i>
-          <div class="media-body">
-            <h5 class="mt-0 mb-0"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
-            <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
-            {{ badge.description }}
+        <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}">
+          {% csrf_token %}
+
+          <p>Award a new badge to this user:</p>
+          <div class="form-inline">
+            <select name="{{ award_form.badge.name }}" class="form-control">
+              {% for val, label in award_form.fields.badge.choices %}
+              <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+
+            <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
           </div>
-        </div>
-      </div>
-      {% endfor %}
+        </form>
+        {% endif %}
     </div>
-
-    {% if not badges %}
-      <p>No badges earned yet :(</p>
-    {% endif %}
-
-    {% if can_award %}
-      <hr>
-
-      <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}">
-        {% csrf_token %}
-
-        <p>Award a new badge to this user:</p>
-        <div class="form-inline">
-          <select name="{{ award_form.badge.name }}" class="form-control">
-            {% for val, label in award_form.fields.badge.choices %}
-            <option value="{{ val }}">{{ label }}</option>
-            {% endfor %}
-          </select>
-
-          <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
-        </div>
-      </form>
-    {% endif %}
-  </div>
 </div>
 
 <div class="card mt-3">

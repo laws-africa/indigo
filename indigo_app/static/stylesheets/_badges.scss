@@ -13,6 +13,48 @@
     font-size: 12px;
     line-height: 14px;
     text-align: center;
-    margin-top: 5px;
+    margin-top: 10px;
+  }
+
+  &-badge {
+    width: 50px;
+    height: 50px;
+  }
+
+  &-icon {
+    min-height: 50px;
+    &:after {
+      content: attr(data-level-badge);
+      color: white;
+      font-family: Sans-Serif;
+      font-size: 20px;
+      display: flex;
+      align-content: center;
+      justify-content: center;
+      margin-top: -40px;
+    }
   }
 }
+
+svg {
+  width: 50px;
+  height: 50px;
+}
+
+// TODO: add colours based on different levels
+.level-group-1 {
+  .background {
+    fill: red;
+  }
+}
+.level-group-2 {
+  .background {
+    fill: blue;
+  }
+}
+.level-group-3 {
+  .background {
+    fill: rebeccapurple;
+  }
+}
+

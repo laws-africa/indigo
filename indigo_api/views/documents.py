@@ -488,9 +488,9 @@ class ComparisonView(APIView):
 
         current_tree = lxml.html.fromstring(current_html)
         comparison_tree = lxml.html.fromstring(comparison_document_html)
-        n_changes = differ.diff_document_html(current_tree, comparison_tree)
+        n_changes = differ.diff_document_html(comparison_tree, current_tree)
 
-        diff = lxml.html.tostring(comparison_tree, encoding='utf-8')
+        diff = lxml.html.tostring(current_tree, encoding='utf-8')
 
         # TODO: include other diff'd attributes
 

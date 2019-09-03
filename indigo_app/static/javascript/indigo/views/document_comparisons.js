@@ -35,7 +35,9 @@
         contentType: "application/json; charset=utf-8",
         dataType: "json"})
           .then(function(response) {
-            self.$el.find('.document-sheet-container .sheet-inner').html(response.content);
+            self.$el.find('.akoma-ntoso').html(response.content);
+            self.$el.find('.n_changes').html(response.n_changes);
+            self.$el.find('.comp_doc_date').html(response.comp_doc_date);
           });
 
     },
@@ -51,8 +53,8 @@
 
     dismiss: function(e) {
       e.preventDefault();
-      $('.work-view').removeClass('d-none');
       this.$el.addClass('d-none');
+      $('.work-view').removeClass('d-none');
     }
 
   });

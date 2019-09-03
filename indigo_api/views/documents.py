@@ -482,10 +482,11 @@ class ComparisonView(APIView):
 
         comparison_doc_id = request.data['comparison_doc_id']
         comparison_document = Document.objects.get(id=comparison_doc_id)
+        comp_doc_date = comparison_document.expression_date
         comparison_document.document_xml = differ.preprocess_document_diff(comparison_document.document_xml)
         comparison_document_html = comparison_document.to_html()
 
-        current_tree = lxml.html.fromstring(current_html) if current_html else None
+        current_tree = lxml.html.fromstring(current_html)
         comparison_tree = lxml.html.fromstring(comparison_document_html)
         n_changes = differ.diff_document_html(current_tree, comparison_tree)
 
@@ -493,4 +494,8 @@ class ComparisonView(APIView):
 
         # TODO: include other diff'd attributes
 
-        return Response({'content': diff})
+        return Response({
+            'content': diff,
+            'n_changes': n_changes,
+            'comp_doc_date': comp_doc_date,
+        })

@@ -47,6 +47,12 @@
       this.$el.removeClass('d-none');
       this.comparison(comparison_doc_id);
 
+    },
+
+    dismiss: function(e) {
+      e.preventDefault();
+      $('.work-view').removeClass('d-none');
+      this.$el.addClass('d-none');
     }
 
   });

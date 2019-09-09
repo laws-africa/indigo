@@ -90,6 +90,11 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
         super(ContentAPIV2TestMixin, self).test_published_search()
         self.api_path = old
 
+    def test_published_html_akn_prefixed(self):
+        response = self.client.get(self.api_path + '/za/act/2010/1.html')
+        self.assertNotIn('/resolver/resolve/za', response.content.decode('utf-8'))
+        self.assertIn('/resolver/resolve/akn/za', response.content.decode('utf-8'))
+
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)

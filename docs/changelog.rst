@@ -1,12 +1,18 @@
 Changelog
 =========
 
-4.0.0 (?)
----------
+4.0.0 (11 September 2019)
+-------------------------
 
 This release drops support for Python 2.x. Please upgrade to at least Python 3.6.
 
-* BREAKING: drop support for Python 2.x
+* BREAKING: Drop support for Python 2.x
+* FEATURE: Calculate activity metrics for places
+* FEATURE: Importing bulk works from Google Sheets now allows you to choose a tab to import from
+* Preview when importing bulk works
+* Requests are atomic and run in transactions by default
+* Improved place listing view, including activity for the place
+* Localities page for a place
 
 3.0 (5 July 2019)
 -----------------

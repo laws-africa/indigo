@@ -1,7 +1,7 @@
 Changelog
 =========
 
-4.0.0 (11 September 2019)
+4.0.0 (12 September 2019)
 -------------------------
 
 This release drops support for Python 2.x. Please upgrade to at least Python 3.6.

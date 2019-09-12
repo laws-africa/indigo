@@ -1,9 +1,13 @@
+import logging
 import datetime
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection, models, transaction
 
 from indigo_api.models import PublicationDocument, Country
+
+
+log = logging.getLogger(__name__)
 
 
 class WorkMetrics(models.Model):
@@ -76,6 +80,15 @@ class WorkMetrics(models.Model):
 
         return metrics
 
+    @classmethod
+    def update_all_work_metrics(cls):
+        from indigo_api.models import Work
+
+        log.info('Updating individual work metrics.')
+        for work in Work.objects.all():
+            cls.create_or_update(work)
+        log.info('Work metrics updated')
+
 
 class DailyWorkMetrics(models.Model):
     """ Daily summarised work metrics.
@@ -99,6 +112,12 @@ class DailyWorkMetrics(models.Model):
     class Meta:
         db_table = 'indigo_metrics_daily_workmetrics'
         unique_together = (("date", "place_code"),)
+
+    @classmethod
+    def update_daily_work_metrics(cls, date):
+        log.info('Updating aggregate daily work metrics for %s.' % date)
+        cls.create_or_update(date)
+        log.info('Daily work metrics updated')
 
     @classmethod
     def create_or_update(cls, date=None):

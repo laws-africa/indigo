@@ -401,6 +401,9 @@ LOGGING = {
         'indigo_app': {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
+        'indigo_metrics': {
+            'level': 'DEBUG' if DEBUG else 'INFO',
+        },
         'django': {
             'level': 'INFO',
         },

@@ -89,6 +89,16 @@
       this.$textEditor.on('paste', function(e) {
         var cb = e.originalEvent.clipboardData;
 
+        function pasteTable(table) {
+          self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
+            if (t > 0) text = "\n" + text;
+
+            allowPaste = true;
+            self.textEditor.onPaste(text);
+            allowPaste = false;
+          });
+        }
+
         if (cb.types.indexOf('text/html') > -1) {
           var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
               tables = doc.body.querySelectorAll('table');
@@ -103,13 +113,7 @@
                 if (elems[i].tagName.indexOf(':') > -1) elems[i].remove();
               }
 
-              self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
-                if (t > 0) text = "\n" + text;
-
-                allowPaste = true;
-                self.textEditor.onPaste(text);
-                allowPaste = false;
-              });
+              pasteTable(table);
             }
           } else {
             // no tables, use normal paste

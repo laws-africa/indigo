@@ -1,6 +1,11 @@
 Changelog
 =========
 
+4.1.0 (?)
+---------
+
+* FEATURE: Paste tables directly from Word when in edit mode.
+
 4.0.0 (12 September 2019)
 -------------------------
 

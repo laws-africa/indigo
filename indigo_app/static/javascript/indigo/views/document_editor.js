@@ -63,11 +63,62 @@
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
+      this.setupTablePasting();
 
       this.$toolbar = $('.document-toolbar');
 
       this.loadXSL();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+    },
+
+    /* Setup pasting so that when the user pastes an HTML table
+       while in text edit mode, we change it into wikipedia style tables.
+
+       We cannot disable the Ace editor paste functionality. Instead, we
+       bypass it by pretending there is no text to paste. Then, we handle
+       the paste event itself and re-inject the correct text to paste.
+     */
+    setupTablePasting: function() {
+      var allowPaste = false,
+          self = this;
+
+      this.textEditor.on('paste', function(e) {
+        if (!allowPaste) { e.text = ''; }
+      });
+
+      this.$textEditor.on('paste', function(e) {
+        var cb = e.originalEvent.clipboardData;
+
+        if (cb.types.indexOf('text/html') > -1) {
+          var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
+              tables = doc.body.querySelectorAll('table');
+
+          if (tables.length > 0) {
+            for (var t = 0; t < tables.length; t++) {
+              var table = tables[t];
+
+              // strip out non HTML tags - we don't want MS Office's tags
+              var elems = table.getElementsByTagName("*");
+              for (var i = 0; i < elems.length; i++) {
+                if (elems[i].tagName.indexOf(':') > -1) elems[i].remove();
+              }
+
+              self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
+                if (t > 0) text = "\n" + text;
+
+                allowPaste = true;
+                self.textEditor.onPaste(text);
+                allowPaste = false;
+              });
+            }
+          } else {
+            // no tables, use normal paste
+            allowPaste = true;
+            self.textEditor.onPaste(cb.getData('text'));
+            allowPaste = false;
+          }
+        }
+      });
     },
 
     documentChanged: function() {

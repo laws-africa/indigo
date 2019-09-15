@@ -52,6 +52,7 @@
             content: issue.get('description'),
             title: issue.get('message'),
             trigger: 'hover',
+            placement: 'top',
           });
         });
       }

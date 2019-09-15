@@ -75,6 +75,13 @@
   {% include "document/_properties.html" %}
   {% include "document/_attachments.html" %}
   {% include "document/_cheatsheet.html" %}
+
+<script id="issue-gutter-template" type="text/x-handlebars-template">
+{% verbatim %}
+<a href="#"><i class="fas fa-exclamation-triangle text-warning"></i></a>
+{% endverbatim %}
+</script>
+
 {% endblock %}
 
 {% block js %}

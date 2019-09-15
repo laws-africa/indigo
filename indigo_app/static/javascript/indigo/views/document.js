@@ -182,6 +182,10 @@
       this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});
+      this.linterView = new Indigo.DocumentLinterView({
+        document: this.document,
+        editorView: this.bodyEditorView,
+      });
 
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');

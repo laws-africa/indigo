@@ -4,33 +4,39 @@
     if (!exports.Indigo) exports.Indigo = {};
     Indigo = exports.Indigo;
 
-    // Render document issues
-    Indigo.DocumentLinterView = Backbone.View.extend({
+    Indigo.linters = [];
+
+    // Run linters and render document issues
+    Indigo.DocumentIssuesView = Backbone.View.extend({
       el: 'body',
       template: '#issue-gutter-template',
 
       initialize: function(options) {
         this.document = options.document;
+        this.documentContent = options.documentContent;
         this.editorView = options.editorView;
         this.model = this.document.issues = new Backbone.Collection();
         this.template = Handlebars.compile($(this.template).html());
 
-        this.model.add({
-            code: 'W101',
-            anchor: {
-              id: 'section-1',
-            },
-            message: 'Duplicate section number: Section 2',
-            description: 'Section numbers should be unique. Is there a typo?',
-            severity: 'W',
-        });
-
         this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
         this.listenTo(this.model, 'change add remove', this.render);
+        this.listenTo(this.documentContent, 'change', this.runLinters);
+      },
+
+      runLinters: function() {
+        var issues = [];
+
+        for (var i = 0; i < Indigo.linters.length; i++) {
+          var iss = Indigo.linters[i](this.document, this.documentContent);
+          if (iss && iss.length > 0) {
+            issues = issues.concat(iss);
+          }
+        }
+
+        this.model.reset(issues);
       },
 
       render: function() {
-        // TODO
         var self = this;
 
         this.model.forEach(function(issue) {
@@ -38,15 +44,8 @@
           var target = document.getElementById(issue.get('anchor').id);
           if (!target) return;
 
-          // TODO: quick-edit should be gutter - should be first child
-          var gutter = target.firstElementChild && target.firstElementChild.classList.contains('quick-edit') ? target.firstElementChild : null;
+          var gutter = self.editorView.sourceEditor.ensureGutterActions(target);
           var node = $(self.template(issue.toJSON()))[0];
-
-          if (!gutter) {
-            gutter = document.createElement('div');
-            gutter.className = 'quick-edit ig';
-            target.prepend(gutter);
-          }
 
           gutter.append(node);
           $(node).popover({

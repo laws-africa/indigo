@@ -34,18 +34,16 @@ $primary: $blue;
 
 $spacer: $font-size-base;
 
-$diff-green: #a6f3a6;
-$diff-red: #f8cbcb;
-
 // navbar
 $navbar-dark-color:                 rgba($white, .8);
 $navbar-dark-hover-color:           rgba($white, .9);
 $navbar-dark-disabled-color:        rgba($white, .5);
 
 
-
 // *** Indigo variables
 $body-bg-color: #e4e5e8;
+$navbar-bg-color: $indigo;
+$footer-bg-color: #d3d5d9;
 
 $grey-lightest: $gray-100;
 $grey-lighter: $gray-200;
@@ -58,14 +56,17 @@ $workspace-header-colour: white;
 $workspace-header-border-colour: $grey-darker;
 $header-colour2: $grey-lighter;
 
+$tabbed-header-bg: $gray-100;
+
 $navbar-height: 50px;
 $header-height: 45px;
 $workspace-header-height: 90px;
 
 $document-sidebar-width: 260px;
 $document-sidebar-colour: $grey-lighter;
+$sidebar-width: 200px;
 
 $selection-colour: #b2d8fc;
 
-// sidebar
-$sidebar-width: 200px;
+$diff-green: #a6f3a6;
+$diff-red: #f8cbcb;

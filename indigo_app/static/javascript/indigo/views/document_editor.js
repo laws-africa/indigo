@@ -115,14 +115,15 @@
 
               pasteTable(table);
             }
-          }
 
-        } else {
-          // no tables, use normal paste
-          allowPaste = true;
-          self.textEditor.onPaste(cb.getData('text'));
-          allowPaste = false;
+            return;
+          }
         }
+
+        // no html or no tables, use normal paste
+        allowPaste = true;
+        self.textEditor.onPaste(cb.getData('text'));
+        allowPaste = false;
       });
     },
 

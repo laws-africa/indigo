@@ -7,17 +7,16 @@ $font-size-base: .875rem;
 $enable-rounded: false;
 $breadcrumb-divider: quote("≫");
 
-// Colours
-$gray-base: #181b1e;
-$gray-100:  #f0f3f5; // lighten($gray-base, 85%);
-$gray-200:  #e4e7ea; // lighten($gray-base, 80%);
-$gray-300:  #c8ced3; // lighten($gray-base, 70%);
-$gray-400:  #acb4bc; // lighten($gray-base, 60%);
-$gray-500:  #8f9ba6; // lighten($gray-base, 50%);
-$gray-600:  #73818f; // lighten($gray-base, 40%);
-$gray-700:  #5c6873; // lighten($gray-base, 30%);
-$gray-800:  #2f353a; // lighten($gray-base, 10%);
-$gray-900:  #23282c; // lighten($gray-base, 5%);
+// normal bootstrap grays
+$gray-100: #f8f9fa;
+$gray-200: #e9ecef;
+$gray-300: #dee2e6;
+$gray-400: #ced4da;
+$gray-500: #adb5bd;
+$gray-600: #6c757d;
+$gray-700: #495057;
+$gray-800: #343a40;
+$gray-900: #212529;
 
 $card-cap-bg: $gray-100;
 $card-border-color: $gray-300;
@@ -26,8 +25,6 @@ $white: #fff;
 $blue: #2d7ad4;
 $red: #f44336;
 $green: #439f78;
-$cyan: #8183A8;
-$yellow: #c08f40;
 $indigo: #305fa1;
 
 $primary: $blue;
@@ -41,9 +38,9 @@ $navbar-dark-disabled-color:        rgba($white, .5);
 
 
 // *** Indigo variables
-$body-bg-color: #e4e5e8;
+$body-bg-color: #f3f5f6;
 $navbar-bg-color: $indigo;
-$footer-bg-color: #d3d5d9;
+$footer-bg-color: #e9ecef;
 
 $grey-lightest: $gray-100;
 $grey-lighter: $gray-200;
@@ -56,7 +53,7 @@ $workspace-header-colour: white;
 $workspace-header-border-colour: $grey-darker;
 $header-colour2: $grey-lighter;
 
-$tabbed-header-bg: $gray-100;
+$tabbed-header-bg: #fefefe;
 
 $navbar-height: 50px;
 $header-height: 45px;

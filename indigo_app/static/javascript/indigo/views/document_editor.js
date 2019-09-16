@@ -698,6 +698,7 @@
     el: 'body',
     events: {
       'click .btn.show-xml-editor': 'toggleShowXMLEditor',
+      'click .btn.show-akn-hierarchy': 'toggleShowAKNHierarchy',
     },
 
     initialize: function(options) {
@@ -750,6 +751,11 @@
       var show = !$(e.currentTarget).hasClass('active');
       this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
       this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
+    },
+
+    toggleShowAKNHierarchy: function(e) {
+      var show = !$(e.currentTarget).hasClass('active');
+      this.$el.find('#document-sheet').toggleClass('show-akn-hierarchy', show);
     },
 
     removeFragment: function(fragment) {

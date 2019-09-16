@@ -4,6 +4,7 @@
       {% if request.user.is_authenticated %}
       <button type="button" class="btn btn-primary edit-text mr-2" title="Edit text"><i class="fas fa-pencil-alt"></i> Edit</button>
       {% endif %}
+      <button type="button" class="btn btn-outline-secondary show-akn-hierarchy" data-toggle="buttons" title="Outline Akoma Ntoso Hierarchy"><i class="fas fa-sitemap"></i> Show hierarchy</button>
       {% if perms.indigo_api.view_document_xml %}
       <button type="button" class="btn btn-outline-secondary show-xml-editor" data-toggle="buttons" title="Show XML"><i class="fas fa-code"></i> Show source</button>
       {% endif %}

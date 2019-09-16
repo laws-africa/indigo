@@ -47,12 +47,19 @@
           var gutter = self.editorView.sourceEditor.ensureGutterActions(target);
           var node = $(self.template(issue.toJSON()))[0];
 
+          var content = issue.get('description');
+
+          if (issue.get('suggestion')) {
+            content = content + "<br><br><b>Tip:</b> " + issue.get('suggestion');
+          }
+
           gutter.append(node);
           $(node).popover({
-            content: issue.get('description'),
+            content: content,
             title: issue.get('message'),
             trigger: 'hover',
             placement: 'top',
+            html: true,
           });
         });
       }

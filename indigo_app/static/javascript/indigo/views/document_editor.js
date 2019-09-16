@@ -14,7 +14,7 @@
       'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
-      'click .quick-edit a': 'quickEdit',
+      'click .quick-edit': 'quickEdit',
 
       'click .edit-find': 'editFind',
       'click .edit-find-next': 'editFindNext',
@@ -36,7 +36,7 @@
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
-      this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fas fa-pencil-alt"></i></a></div>');
+      this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -115,13 +115,15 @@
 
               pasteTable(table);
             }
-          } else {
-            // no tables, use normal paste
-            allowPaste = true;
-            self.textEditor.onPaste(cb.getData('text'));
-            allowPaste = false;
+
+            return;
           }
         }
+
+        // no html or no tables, use normal paste
+        allowPaste = true;
+        self.textEditor.onPaste(cb.getData('text'));
+        allowPaste = false;
       });
     },
 
@@ -489,10 +491,25 @@
     },
 
     makeElementsQuickEditable: function(html) {
+      var self = this;
+
       $(html.firstElementChild)
         .find(this.parent.model.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
-        .prepend(this.quickEditTemplate);
+        .each(function(i, e) {
+          self.ensureGutterActions(e).append(self.quickEditTemplate.cloneNode(true));
+        });
+    },
+
+    // Ensure this element has a gutter actions child
+    ensureGutterActions: function(elem) {
+      if (!elem.firstElementChild || !elem.firstElementChild.classList.contains('gutter-actions')) {
+        var div = document.createElement('div');
+        div.className = 'gutter-actions ig';
+        elem.prepend(div);
+      }
+
+      return elem.firstElementChild;
     },
 
     editTable: function(e) {

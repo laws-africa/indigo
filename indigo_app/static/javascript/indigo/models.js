@@ -110,6 +110,21 @@
       return first;
     },
 
+    /** Evaluate an xpath expression on this document, using the namespace prefix 'a'.
+     */
+    xpath: function(expression, context, result) {
+      var ns = {
+        a: this.xmlDocument.lookupNamespaceURI(''),
+      };
+
+      if (result === undefined) result = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+
+      function nsLookup(x) {
+        return ns[x];
+      }
+      return this.xmlDocument.evaluate(expression, context, nsLookup, result);
+    },
+
     save: function(options) {
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.

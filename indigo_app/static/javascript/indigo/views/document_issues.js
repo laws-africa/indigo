@@ -17,6 +17,7 @@
         this.editorView = options.editorView;
         this.model = this.document.issues = new Backbone.Collection();
         this.template = Handlebars.compile($(this.template).html());
+        this.$akn = this.$('#document-sheet .akoma-ntoso');
 
         this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
         this.listenTo(this.model, 'change add remove', this.render);
@@ -40,27 +41,31 @@
         var self = this;
 
         this.model.forEach(function(issue) {
-          // TODO: scoped? use data attribute?
-          var target = document.getElementById(issue.get('anchor').id);
-          if (!target) return;
+          // may be multiple targets with the same id
+          // this assumes that the issue id is scoped (ie. to a schedule, etc.)
+          var targets = self.$akn.find('[id="' + issue.get('anchor').id + '"]');
 
-          var gutter = self.editorView.sourceEditor.ensureGutterActions(target);
-          var node = $(self.template(issue.toJSON()))[0];
+          for (var i = 0; i < targets.length; i++) {
+            var target = targets[i];
 
-          var content = issue.get('description');
+            var gutter = self.editorView.sourceEditor.ensureGutterActions(target);
+            var node = $(self.template(issue.toJSON()))[0];
 
-          if (issue.get('suggestion')) {
-            content = content + "<br><br><b>Tip:</b> " + issue.get('suggestion');
+            var content = issue.get('description');
+
+            if (issue.get('suggestion')) {
+              content = content + "<br><br><b>Tip:</b> " + issue.get('suggestion');
+            }
+
+            gutter.append(node);
+            $(node).popover({
+              content: content,
+              title: issue.get('message'),
+              trigger: 'hover',
+              placement: 'bottom',
+              html: true,
+            });
           }
-
-          gutter.append(node);
-          $(node).popover({
-            content: content,
-            title: issue.get('message'),
-            trigger: 'hover',
-            placement: 'top',
-            html: true,
-          });
         });
       }
     });

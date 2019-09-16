@@ -180,7 +180,7 @@
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           self.model.set('repealed_by', chosen);
-          self.model.set('repealed_date', chosen.get('publication_date'));
+          self.model.set('repealed_date', chosen.get('commencement_date') || chosen.get('publication_date'));
         }
       });
     },

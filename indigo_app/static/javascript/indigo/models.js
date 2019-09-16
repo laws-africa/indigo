@@ -117,10 +117,12 @@
         a: this.xmlDocument.lookupNamespaceURI(''),
       };
 
+      if (result === undefined) result = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+
       function nsLookup(x) {
         return ns[x];
       }
-      return this.xmlDocument.evaluate(expression, context, nsLookup, XPathResult.ORDERED_NODE_ITERATOR_TYPE);
+      return this.xmlDocument.evaluate(expression, context, nsLookup, result);
     },
 
     save: function(options) {

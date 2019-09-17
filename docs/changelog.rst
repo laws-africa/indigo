@@ -7,6 +7,7 @@ Changelog
 * FEATURE: Paste tables directly from Word when in edit mode.
 * FEATURE: Scaffolding for showing document issues.
 * FEATURE: Show document hierarchy.
+* FEATURE: Support customisable importing of HTML files.
 
 4.0.0 (12 September 2019)
 -------------------------

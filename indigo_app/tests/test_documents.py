@@ -85,7 +85,8 @@ class DocumentViewsTest(testcases.TestCase):
         work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
 
         tmp_file = tempfile.NamedTemporaryFile(suffix='.html')
-        tmp_file.write("<div>a text file with <p>badly formed</div> HTML</p>".encode())
+        # the \xc2\xa0 is an non-breaking space which should be changed to a normal space
+        tmp_file.write(b"<div>a\xc2\xa0text file with <p>badly formed</div> HTML</p>")
         tmp_file.seek(0)
 
         response = self.client.post('/works/za/act/2014/10/import/', {

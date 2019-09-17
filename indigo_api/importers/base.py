@@ -107,19 +107,19 @@ class Importer(LocaleBasedMatcher):
     def create_from_html(self, upload, doc):
         """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
         """
-        text = self.html_to_text(upload.read(), doc)
+        text = self.html_to_text(upload.read().decode('utf-8'), doc)
         xml = self.import_from_text(text, doc.frbr_uri, 'text')
         doc.reset_xml(xml, from_model=True)
 
     def html_to_text(self, html, doc):
-        """ Transform HTML into Akoma-Ntoso friendly text.
+        """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
         """
         candidates = file_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
         xslt_filename = find_best_static(candidates)
         if not xslt_filename:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))
 
-        html = ET.HTML(html + b"</div>")
+        html = ET.HTML(html)
         xslt = ET.XSLT(ET.parse(xslt_filename))
         result = xslt(html)
         return str(result)

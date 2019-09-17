@@ -1121,6 +1121,8 @@ class Annotation(models.Model):
 
             # TODO: strip markdown?
             task.title = '"%s": %s' % (ref, self.text)
+            if len(task.title) > 255:
+                task.title = task.title[:250] + "..."
             task.description = '%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()

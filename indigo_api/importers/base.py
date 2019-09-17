@@ -7,9 +7,11 @@ import logging
 from django.conf import settings
 from django.core.files.base import ContentFile
 import mammoth
+import lxml.etree as ET
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo_api.renderers import file_candidates, find_best_static
 
 
 @plugins.register('importer')
@@ -103,7 +105,24 @@ class Importer(LocaleBasedMatcher):
             doc.reset_xml(xml, from_model=True)
 
     def create_from_html(self, upload, doc):
-        self.create_from_file(upload, doc, 'html')
+        """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
+        """
+        text = self.html_to_text(upload.read(), doc)
+        xml = self.import_from_text(text, doc.frbr_uri, 'text')
+        doc.reset_xml(xml, from_model=True)
+
+    def html_to_text(self, html, doc):
+        """ Transform HTML into Akoma-Ntoso friendly text.
+        """
+        candidates = file_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
+        xslt_filename = find_best_static(candidates)
+        if not xslt_filename:
+            raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))
+
+        html = ET.HTML(html + b"</div>")
+        xslt = ET.XSLT(ET.parse(xslt_filename))
+        result = xslt(html)
+        return str(result)
 
     def import_from_text(self, input, frbr_uri, suffix=''):
         """ Create a new Document by importing it from plain text.

@@ -60,6 +60,17 @@ def file_candidates(document, prefix='', suffix=''):
     return [prefix + f + suffix for f in options]
 
 
+def find_best_static(candidates):
+    """ Return the first static file that exists given a list of candidate files.
+    """
+    for option in candidates:
+        log.debug("Looking for %s" % option)
+        fname = find_static(option)
+        if fname:
+            log.debug("Using xsl %s" % fname)
+            return fname
+
+
 def resolver_url(request, resolver):
     if resolver in ['no', 'none']:
         return ''
@@ -237,14 +248,10 @@ class HTMLRenderer(object):
         found is used.
         """
         candidates = file_candidates(document, prefix='xsl/', suffix='.xsl')
-        for option in candidates:
-            log.debug("Looking for %s" % option)
-            fname = find_static(option)
-            if fname:
-                log.debug("Using xsl %s" % fname)
-                return fname
-
-        raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
+        best = find_best_static(candidates)
+        if not best:
+            raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
+        return best
 
     def _xml_renderer(self, document):
         params = {

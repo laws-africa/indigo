@@ -108,6 +108,8 @@ class Importer(LocaleBasedMatcher):
         """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
         """
         text = self.html_to_text(upload.read().decode('utf-8'), doc)
+        if self.reformat:
+            text = self.reformat_text_from_html(text)
         xml = self.import_from_text(text, doc.frbr_uri, 'text')
         doc.reset_xml(xml, from_model=True)
 
@@ -141,7 +143,7 @@ class Importer(LocaleBasedMatcher):
             # pdf to text
             text = self.pdf_to_text(f)
             if self.reformat:
-                text = self.reformat_text(text)
+                text = self.reformat_text_from_pdf(text)
             if len(text) < 512:
                 raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
 
@@ -170,6 +172,12 @@ class Importer(LocaleBasedMatcher):
         """ Clean up extracted text before giving it to Slaw.
         """
         return self.expand_ligatures(text)
+
+    def reformat_text_from_html(self, text):
+        return self.reformat_text(text)
+
+    def reformat_text_from_pdf(self, text):
+        return self.reformat_text(text)
 
     def import_from_file(self, fname, frbr_uri, inputtype):
         cmd = ['bundle', 'exec', 'slaw', 'parse']

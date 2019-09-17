@@ -86,17 +86,24 @@ class Importer(LocaleBasedMatcher):
             self.log.info("Processing upload as a PDF file")
             self.create_from_pdf(upload, doc)
 
+        elif upload.content_type == 'text/html':
+            self.log.info("Processing upload as an HTML file")
+            self.create_from_html(upload, doc)
+
         else:
             # slaw will do its best
             self.log.info("Processing upload as an unknown file")
-            self.create_from_file(upload, doc)
+            self.create_from_file(upload, doc, 'text')
 
         self.analyse_after_import(doc)
 
-    def create_from_file(self, upload, doc):
+    def create_from_file(self, upload, doc, inputtype):
         with self.tempfile_for_upload(upload) as f:
-            xml = self.import_from_file(f.name, doc.frbr_uri)
+            xml = self.import_from_file(f.name, doc.frbr_uri, inputtype)
             doc.reset_xml(xml, from_model=True)
+
+    def create_from_html(self, upload, doc):
+        self.create_from_file(upload, doc, 'html')
 
     def import_from_text(self, input, frbr_uri, suffix=''):
         """ Create a new Document by importing it from plain text.
@@ -145,7 +152,7 @@ class Importer(LocaleBasedMatcher):
         """
         return self.expand_ligatures(text)
 
-    def import_from_file(self, fname, frbr_uri, inputtype='text'):
+    def import_from_file(self, fname, frbr_uri, inputtype):
         cmd = ['bundle', 'exec', 'slaw', 'parse']
 
         if self.fragment:

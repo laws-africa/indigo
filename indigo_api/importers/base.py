@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 import shutil
 import logging
+import re
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -171,7 +172,8 @@ class Importer(LocaleBasedMatcher):
     def reformat_text(self, text):
         """ Clean up extracted text before giving it to Slaw.
         """
-        return self.expand_ligatures(text)
+        text = self.expand_ligatures(text)
+        return text
 
     def reformat_text_from_html(self, text):
         return self.reformat_text(text)

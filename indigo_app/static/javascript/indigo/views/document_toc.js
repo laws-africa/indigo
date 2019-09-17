@@ -16,7 +16,7 @@
         index: -1,
       });
       this.toc = [];
-      this.model.on('change', this.rebuild, this);
+      this.model.on('change:dom', this.rebuild, this);
     },
 
     rebuild: function(force) {

@@ -9,6 +9,9 @@
    *
    * The model also manages an XML DOM form of the document content and keeps
    * the two in sync.
+   *
+   * This model fires an additional 'change:dom' event when the XML DOM
+   * tree itself has changed due to a modification by this model.
    */
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {

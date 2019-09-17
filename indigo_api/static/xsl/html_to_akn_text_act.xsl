@@ -121,8 +121,7 @@
   </xsl:template>
 
   <xsl:template match="br">
-    <xsl:text>
-</xsl:text>
+    <xsl:text> </xsl:text>
   </xsl:template>
 
 

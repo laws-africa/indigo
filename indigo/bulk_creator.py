@@ -497,8 +497,9 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
 
         # need to save before assigning workflow because of M2M relation
         task.save()
-        task.workflows = [self.workflow]
-        task.save()
+        if self.workflow:
+            task.workflows = [self.workflow]
+            task.save()
 
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)

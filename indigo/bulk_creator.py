@@ -501,6 +501,8 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
             task.workflows = [self.workflow]
             task.save()
 
+        return task
+
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
         if len(potential_matches) == 1:

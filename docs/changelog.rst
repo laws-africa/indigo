@@ -9,6 +9,7 @@ Changelog
 * FEATURE: Show document hierarchy.
 * FEATURE: Support customisable importing of HTML files.
 * Clearer indication of repealed works.
+* indigo-web 3.6.1 - explicit styling for crossHeading elements
 
 4.0.0 (12 September 2019)
 -------------------------

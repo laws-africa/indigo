@@ -24,7 +24,6 @@
   &-icon {
     min-height: 50px;
     &:after {
-      content: attr(data-level-badge);
       color: white;
       font-family: Sans-Serif;
       font-size: 20px;
@@ -41,20 +40,48 @@ svg {
   height: 50px;
 }
 
-// TODO: add colours based on different levels
-.level-group-1 {
+// TODO: update group colours once we have decided on these
+$group-1: #ff0000;
+$group-2: #253c4f;
+$group-3: #758daa;
+$group-4: #3f5c75;
+
+.badge-level-1 {
+  &:after {
+    content: '1';
+  }
   .background {
-    fill: red;
+    fill: $group-1;
   }
 }
-.level-group-2 {
+
+.badge-level-2 {
+  &:after {
+    content: '2';
+  }
   .background {
-    fill: blue;
+    fill: $group-2;
   }
 }
-.level-group-3 {
+
+.badge-level-3 {
+  &:after {
+    content: '3';
+  }
   .background {
-    fill: rebeccapurple;
+    fill: $group-3;
   }
 }
+
+.badge-level-4 {
+  &:after {
+    content: '4';
+  }
+  .background {
+    fill: $group-4;
+  }
+}
+
+
+
 

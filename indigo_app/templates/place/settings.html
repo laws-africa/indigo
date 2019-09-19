@@ -38,6 +38,19 @@
             {% endif %}
           </div>
         </div>
+
+        <div class="form-group">
+          <label for="{{ form.styleguide_url.id_for_label }}">Style Guide URL</label>
+          <input type="url" class="form-control" name="{{ form.styleguide_url.name }}" id="{{ form.styleguide_url.id_for_label }}" value="{{ form.styleguide_url.value|default:'' }}">
+          <p class="form-text text-muted">URL of the Style Guide documentation for {{ place.name }}.</p>
+          {% if form.styleguide_url.errors %}
+            <div class="text-danger">
+              {% for error in form.styleguide_url.errors %}
+                <p>{{ error }}</p>
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
       </div>
 
       <div class="card-footer text-right">

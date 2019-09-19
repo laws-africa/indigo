@@ -441,7 +441,7 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
 
-    fields = ('spreadsheet_url', 'as_at_date')
+    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
 
     def get_object(self):
         return self.place.settings

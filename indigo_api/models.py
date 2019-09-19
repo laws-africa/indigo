@@ -1585,6 +1585,7 @@ class PlaceSettings(models.Model):
 
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
+    styleguide_url = models.URLField(null=True, blank=True)
 
     @property
     def place(self):

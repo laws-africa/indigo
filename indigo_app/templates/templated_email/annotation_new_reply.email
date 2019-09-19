@@ -11,6 +11,12 @@
     <hr>
   </p>
 
+  <!-- TODO: include task summary if task linked to annotation -->
+  <hr>
+  {% include 'templated_email/_task_detail_block.html' %}
+  <hr>
+
+
   {% include 'templated_email/_footer.html' %}
 {% endblock %}
 

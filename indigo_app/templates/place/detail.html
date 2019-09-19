@@ -65,6 +65,9 @@
                       {% if work.stub %}
                         <span class="badge badge-info">stub</span>
                       {% endif %}
+                      {% if work.repealed_date %} 
+                        <span class="badge badge-info">repealed</span>
+                      {% endif %}
                     </div>
                     <div class="text-muted">{{ work.frbr_uri }}</div>
                     {% if work.parent_work %}

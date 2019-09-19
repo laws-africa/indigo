@@ -15,6 +15,7 @@
   <h3>
     {{ work.title }}
     {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
+    {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
   </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
 

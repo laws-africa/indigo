@@ -8,6 +8,7 @@ Changelog
 * FEATURE: Scaffolding for showing document issues.
 * FEATURE: Show document hierarchy.
 * FEATURE: Support customisable importing of HTML files.
+* Clearer indication of repealed works.
 
 4.0.0 (12 September 2019)
 -------------------------

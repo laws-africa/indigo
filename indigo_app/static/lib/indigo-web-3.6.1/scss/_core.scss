@@ -20,6 +20,7 @@
     margin-top: 0px;
     margin-bottom: $akn-para-spacing;
 
+    font-family: $akn-font-family;
     font-weight: bold;
   }
 
@@ -45,7 +46,8 @@
     line-height: $akn-line-height;
   }
 
-  .akn-subheading {
+  .akn-subheading,
+  .akn-crossHeading {
     text-align: center;
     font-style: italic;
   }
@@ -58,7 +60,9 @@
   .akn-chapter,
   .akn-conclusions,
   .akn-coverPage,
+  .akn-crossHeading,
   .akn-division,
+  .akn-hcontainer,
   .akn-heading,
   .akn-list,
   .akn-paragraph,
@@ -90,6 +94,12 @@
   .akn-section,
   .akn-subdivision {
     margin-bottom: $akn-section-spacing;
+  }
+
+  /* Schedules */
+  // When a schedule has a title and a heading, there should be no space between them.
+  .akn-hcontainer[data-name=schedule] > .akn-heading + .akn-heading {
+    margin-top: -$akn-para-spacing;
   }
 
   /* Indent list-like containers that have margin numbers.

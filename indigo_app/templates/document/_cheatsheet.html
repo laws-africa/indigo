@@ -609,7 +609,10 @@ Line 3</pre>
 
       </div>
       <div class="modal-footer">
-        <a class="btn btn-link" href="{% url 'help' %}" target="_blank">Full editor documentation</a>
+        {% if place.settings.styleguide_url %}
+          <a class="btn btn-outline-secondary mr-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-question-circle fa-fw"></i> {{ work.country.name }} Style Guide</a>
+        {% endif %}
+        <a class="btn btn-outline-secondary mr-2" href="{% url 'help' %}" target="_blank">Full editor documentation</a>
         <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
       </div>
     </div>

@@ -8,6 +8,9 @@
       {% if perms.indigo_api.view_document_xml %}
       <button type="button" class="btn btn-outline-secondary show-xml-editor" data-toggle="buttons" title="Show XML"><i class="fas fa-code"></i> Show source</button>
       {% endif %}
+      {% if place.settings.styleguide_url %}
+        <a class="btn btn-outline-secondary ml-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
+      {% endif %}
     </div>
 
     <div class="btn-group btn-group-sm mr-2 text-editor-buttons d-none">
@@ -39,6 +42,9 @@
       <button class="btn btn-success save"><i class="fas fa-check"></i> Update</button>
       <button class="btn btn-secondary mr-2 cancel" title="Cancel"><i class="fas fa-times"></i> Cancel</button>
       <button class="btn btn-outline-secondary" data-target="#cheatsheet-modal" data-toggle="modal"><i class="fas fa-question-circle fa-fw"></i> Editor help...</button>
+      {% if place.settings.styleguide_url %}
+        <a class="btn btn-outline-secondary ml-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
+      {% endif %}
     </div>
 
     <!-- table editor buttons -->

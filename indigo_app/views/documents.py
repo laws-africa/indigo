@@ -39,6 +39,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
             .to_representation(
                 doc.work.expressions().all()
             ))
+        context['place'] = doc.work.place
         context['country'] = doc.work.country
         context['locality'] = doc.work.locality
 

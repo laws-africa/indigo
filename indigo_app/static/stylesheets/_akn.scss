@@ -1,5 +1,5 @@
 /* akoma ntoso styles */
-@import 'lib/indigo-web-3.4.0/scss/akoma-ntoso';
+@import 'lib/indigo-web-3.6.1/scss/akoma-ntoso';
 
 /* overrides for indigo inserts into akoma-ntoso trees */
 .akoma-ntoso .ig {
@@ -20,6 +20,7 @@ $hierarchy-elems: (
   'preface': $purple,
   'preamble': $indigo,
   'hcontainer': $gray-500,
+  'crossHeading': $gray-500,
 );
 
 .show-akn-hierarchy .akoma-ntoso {
@@ -43,9 +44,10 @@ $hierarchy-elems: (
         padding: 0px 4px;
 
         font-family: $font-family-sans-serif;
+        font-weight: normal;
+        font-style: normal;
+        font-size: 12px;
         text-transform: uppercase;
-        font-size: 80%;
-        text-align: right;
       }
     }
   }
@@ -58,9 +60,6 @@ $hierarchy-elems: (
   }
 
   .akn-hcontainer {
-    // TODO: these should be in indigo-web
-    display: block;
-    position: relative;
     margin-bottom: 10px;
 
     &::before {

@@ -141,6 +141,16 @@
     </section>
   </xsl:template>
 
+  <!-- crossHeadings - this mimics what the output will be for AKN 3, where crossHeading is a real element -->
+  <xsl:template match="a:hcontainer[@name='crossheading']">
+    <h3 class="akn-crossHeading">
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates select="a:heading" mode="inline" />
+    </h3>
+  </xsl:template>
+  <!-- don't include name attribute on crossheading output -->
+  <xsl:template match="a:hcontainer[@name='crossheading']/@name"/>
+
   <!-- components/schedules -->
   <xsl:template match="a:doc">
     <!-- a:doc doesn't have an id, so add one -->
@@ -155,7 +165,7 @@
           <!-- old style schedule -->
           <xsl:apply-templates select="@*" />
           <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-            <h2>
+            <h2 class="akn-heading">
               <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
             </h2>
           </xsl:if>
@@ -166,7 +176,7 @@
   </xsl:template>
 
   <xsl:template match="a:hcontainer[@name='schedule']/a:heading | a:hcontainer[@name='schedule']/a:subheading">
-    <h2>
+    <h2 class="akn-heading">
       <xsl:apply-templates />
     </h2>
   </xsl:template>

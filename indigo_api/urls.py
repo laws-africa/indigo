@@ -1,10 +1,8 @@
 from django.conf.urls import url, include
-from django.views.decorators.cache import cache_page
 from rest_framework.routers import DefaultRouter
 
 import indigo_api.views.attachments as attachments
 import indigo_api.views.documents as documents
-import indigo_api.views.misc as misc
 import indigo_api.views.publications as publications
 import indigo_api.views.works as works
 

@@ -46,42 +46,30 @@ $group-2: #253c4f;
 $group-3: #758daa;
 $group-4: #3f5c75;
 
-.badge-level-1 {
-  &:after {
-    content: '1';
+$total: 4;
+@for $i from 1 through $total {
+  .badge-level-#{$i} {
+    &:after {
+      content: '#{$i}';
+    }
   }
-  .background {
-    fill: $group-1;
+};
+
+@for $level from 1 through 9 {
+  .badge-level-#{$level} {
+    .background {
+      fill: $group-1;
+    }
   }
 }
 
-.badge-level-2 {
-  &:after {
-    content: '2';
-  }
-  .background {
-    fill: $group-2;
-  }
-}
-
-.badge-level-3 {
-  &:after {
-    content: '3';
-  }
-  .background {
-    fill: $group-3;
+@for $level from 10 through 19 {
+  .badge-level-#{$level} {
+    .background {
+      fill: $group-2;
+    }
   }
 }
-
-.badge-level-4 {
-  &:after {
-    content: '4';
-  }
-  .background {
-    fill: $group-4;
-  }
-}
-
 
 
 

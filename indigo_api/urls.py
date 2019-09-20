@@ -9,8 +9,6 @@ import indigo_api.views.publications as publications
 import indigo_api.views.works as works
 
 
-PUBLICATION_CACHE_SECS = 3600 * 24 * 30  # one month
-
 router = DefaultRouter(trailing_slash=False)
 router.register(r'documents', documents.DocumentViewSet, base_name='document')
 router.register(r'documents/(?P<document_id>[0-9]+)/attachments', attachments.AttachmentViewSet, base_name='document-attachments')
@@ -26,8 +24,7 @@ urlpatterns = [
     url(r'^parse$', documents.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', documents.LinkTermsView.as_view(), name='link-terms'),
     url(r'^analysis/link-references$', documents.LinkReferencesView.as_view(), name='link-references'),
-    url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$',
-        cache_page(PUBLICATION_CACHE_SECS)(publications.FindPublicationsView.as_view()), name='find-publications'),
+    url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', publications.FindPublicationsView.as_view(), name='find-publications'),
 
     url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', attachments.AttachmentMediaView.as_view(), name='document-media'),
     url(r'documents/(?P<document_id>[0-9]+)/activity', documents.DocumentActivityViewSet.as_view({

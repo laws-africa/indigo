@@ -6,15 +6,15 @@
   <p> {{ annotation.created_by_user.get_full_name }} left a new reply to a comment on
     <a href="{{ SITE_URL }}{% url 'document' doc_id=document.pk %}?anntn={{ annotation.in_reply_to.pk }}">Document #{{ document.pk }} – {{ document.title }}</a>:
 
-  <div style="padding: 10px; display: block; box-sizing: border-box;">
+  <div class="parent-annotation">
     {{ parent_annotation.created_by_user.get_full_name }}: {{ parent_annotation.text|urlize|linebreaksbr }}
   </div>
 
-  <div class="replies" style="width: 80%; margin: 0 auto;">
+  <div class="replies">
     {% if truncated_replies %}
 
       {% for annotation in earlier_replies %}
-        <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box; font-size: 12px;"> 
+        <div class="annotation-reply"> 
             {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }}
         </div>
       {% endfor%}  
@@ -22,7 +22,7 @@
       ... <br>
 
       {% for annotation in later_replies %}
-        <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box; font-size: 12px;"> 
+        <div class="annotation-reply"> 
             {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }}
         </div>
       {% endfor%}  
@@ -30,14 +30,14 @@
     {% else %}
 
       {% for annotation in related_annotations %}
-        <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box; font-size: 12px;"> 
+        <div class="annotation-reply"> 
             {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }}
         </div>
       {% endfor%}
 
     {% endif %}
 
-    <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box;"> 
+    <div class="annotation-reply"> 
         <b> {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }} </b>
     </div>
   </div>

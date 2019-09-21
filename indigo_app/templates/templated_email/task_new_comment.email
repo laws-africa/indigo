@@ -11,10 +11,8 @@
     <hr>
   </p>
 
-  {% include 'templated_email/_footer.html' %}
-{% endblock %}
-
-<!-- TODO: include task summary -->
-  <hr>
   {% include 'templated_email/_task_detail_block.html' %}
   <hr>
+
+  {% include 'templated_email/_footer.html' %}
+{% endblock %}

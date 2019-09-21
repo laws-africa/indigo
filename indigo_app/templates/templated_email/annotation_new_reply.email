@@ -3,18 +3,50 @@
 {% block html %}
   {% include 'templated_email/_header.html' %}
 
-  <p> {{ annotation.created_by_user.username }} replied to a comment on
+  <p> {{ annotation.created_by_user.get_full_name }} left a new reply to a comment on
     <a href="{{ SITE_URL }}{% url 'document' doc_id=document.pk %}?anntn={{ annotation.in_reply_to.pk }}">Document #{{ document.pk }} – {{ document.title }}</a>:
 
-    <hr>
-    {{ annotation.text|urlize|linebreaksbr }}
-    <hr>
-  </p>
+  <div style="padding: 10px; display: block; box-sizing: border-box;">
+    {{ parent_annotation.created_by_user.get_full_name }}: {{ parent_annotation.text|urlize|linebreaksbr }}
+  </div>
 
-  <!-- TODO: include task summary if task linked to annotation -->
-  <hr>
-  {% include 'templated_email/_task_detail_block.html' %}
-  <hr>
+  <div class="replies" style="width: 80%; margin: 0 auto;">
+    {% if truncated_replies %}
+
+      {% for annotation in earlier_replies %}
+        <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box; font-size: 12px;"> 
+            {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }}
+        </div>
+      {% endfor%}  
+
+      ... <br>
+
+      {% for annotation in later_replies %}
+        <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box; font-size: 12px;"> 
+            {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }}
+        </div>
+      {% endfor%}  
+
+    {% else %}
+
+      {% for annotation in related_annotations %}
+        <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box; font-size: 12px;"> 
+            {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }}
+        </div>
+      {% endfor%}
+
+    {% endif %}
+
+    <div style="background-color: #e9ecef; border-top: 1px solid #dee2e6; padding: 10px; display: block; box-sizing: border-box;"> 
+        <b> {{ annotation.created_by_user.get_full_name }}: {{ annotation.text|urlize|linebreaksbr }} </b>
+    </div>
+  </div>
+
+  {% if task %}
+    <hr>
+      {% include 'templated_email/_task_detail_block.html' %}
+    <hr>
+  {% endif%}
 
 
   {% include 'templated_email/_footer.html' %}

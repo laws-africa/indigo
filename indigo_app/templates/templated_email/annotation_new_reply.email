@@ -7,7 +7,7 @@
     <a href="{{ SITE_URL }}{% url 'document' doc_id=document.pk %}?anntn={{ annotation.in_reply_to.pk }}">Document #{{ document.pk }} – {{ document.title }}</a>:
 
   <div class="annotation-item card" style="margin-bottom: 7px; border: 1px solid #dee2e6;">
-    <div class="card-header">
+    <div class="card-header" style="padding: 0.75rem 1.25rem; background-color: #f8f9fa;">
       {{ parent_annotation.created_by_user.get_full_name }} commented:
     </div>
     <div class="card-body" style="padding: 1.25rem;">

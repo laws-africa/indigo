@@ -603,6 +603,34 @@ def post_save_amendment(sender, instance, **kwargs):
                     place_code=instance.amended_work.place.place_code)
 
 
+class ArbitraryExpressionDate(models.Model):
+    """ An arbitrary expression date not tied to an amendment, e.g. a consolidation date.
+    """
+    date = models.DateField(null=False, blank=False, help_text="Arbitrary date, e.g. consolidation date")
+    description = models.TextField(null=True, blank=True)
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work", related_name="arbitrary_expression_dates")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    class Meta:
+        unique_together = ('date', 'work')
+
+
+@receiver(signals.post_save, sender=Amendment)
+def post_save_arbitrary_expression_date(sender, instance, **kwargs):
+    # Send action to activity stream, as 'created' if a new arbitrary expression date
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.work.place.place_code)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.work.place.place_code)
+
+
 class DocumentManager(models.Manager):
     def get_queryset(self):
         # defer expensive or unnecessary fields

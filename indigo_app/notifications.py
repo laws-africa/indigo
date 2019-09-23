@@ -89,7 +89,7 @@ class Notifier(object):
         related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)\
                                                 .order_by('created_at')
         document = parent_annotation.document
-        related_task = parent_annotation.task or None
+        related_task = parent_annotation.task
 
         recipient_list = [i.created_by_user for i in related_annotations]
 

@@ -6,26 +6,26 @@
   <p> {{ annotation.created_by_user.get_full_name }} left a new reply to a comment on
     <a href="{{ SITE_URL }}{% url 'document' doc_id=document.pk %}?anntn={{ annotation.in_reply_to.pk }}">Document #{{ document.pk }} – {{ document.title }}</a>:
 
-<div class="annotation-item card">
-  <div class="card-header">
-    {{ parent_annotation.created_by_user.get_full_name }} commented:
+  <div class="annotation-item card" style="margin-bottom: 7px; border: 1px solid #dee2e6;">
+    <div class="card-header">
+      {{ parent_annotation.created_by_user.get_full_name }} commented:
+    </div>
+    <div class="card-body" style="padding: 1.25rem;">
+      {{ parent_annotation.text|urlize|linebreaksbr }}
+    </div>
   </div>
-  <div class="card-body">
-    {{ parent_annotation.text|urlize|linebreaksbr }}
-  </div>
-</div>
 
   <div class="replies">
-    <ul class="annotation-list">
+    <ul class="annotation-list" style="list-style-type: none;">
 
     {% if truncated_replies %}
 
       {% for annotation in earlier_replies %}
-          <li class="annotation-reply card">
-            <div class="card-header">
+          <li class="annotation-reply card" style="margin-bottom: 7px; border: 1px solid #dee2e6;">
+            <div class="card-header" style="padding: 0.75rem 1.25rem; background-color: #f8f9fa;">
               {{ annotation.created_by_user.get_full_name }} replied:
             </div>
-            <div class="card-body reply">
+            <div class="card-body reply" style="padding: 1.25rem; background-color: #e9ecef;">
               {{ annotation.text|urlize|linebreaksbr }}
             </div>
           </li>
@@ -34,11 +34,11 @@
       <br> <i> ... thread truncated </i> </br> <br>
 
       {% for annotation in later_replies %}
-          <li class="annotation-reply card">
-            <div class="card-header">
+          <li class="annotation-reply card" style="margin-bottom: 7px; border: 1px solid #dee2e6;">
+            <div class="card-header" style="padding: 0.75rem 1.25rem; background-color: #f8f9fa;">
               {{ annotation.created_by_user.get_full_name }} replied:
             </div>
-            <div class="card-body reply">
+            <div class="card-body reply" style="padding: 1.25rem; background-color: #e9ecef;">
               {{ annotation.text|urlize|linebreaksbr }}
             </div>
           </li>
@@ -47,11 +47,11 @@
     {% else %}
 
       {% for annotation in related_annotations %}
-        <li class="annotation-reply card">
-          <div class="card-header">
+        <li class="annotation-reply card" style="margin-bottom: 7px; border: 1px solid #dee2e6;">
+          <div class="card-header" style="padding: 0.75rem 1.25rem; background-color: #f8f9fa;">
             {{ annotation.created_by_user.get_full_name }} replied:
           </div>
-          <div class="card-body reply">
+          <div class="card-body reply" style="padding: 1.25rem; background-color: #e9ecef;">
             {{ annotation.text|urlize|linebreaksbr }}
           </div>
         </li>
@@ -59,11 +59,11 @@
 
     {% endif %}
 
-    <li class="annotation-reply card">
-      <div class="card-header new-reply">
-        {{ annotation.created_by_user.get_full_name }} replied:
+    <li class="annotation-reply card" style="margin-bottom: 7px; border: 1px solid #dee2e6;">
+      <div class="card-header" style="padding: 0.75rem 1.25rem; background-color: #f8f9fa;">
+        {{ annotation.created_by_user.get_full_name }} replied: <b> New! </b>
       </div>
-      <div class="card-body reply">
+      <div class="card-body reply" style="padding: 1.25rem; background-color: #e9ecef;">
         <b> {{ annotation.text|urlize|linebreaksbr }} </b>
       </div>
     </li>
@@ -80,4 +80,3 @@
 
   {% include 'templated_email/_footer.html' %}
 {% endblock %}
-

@@ -1,7 +1,5 @@
 # coding=utf-8
 import json
-import io
-import re
 import logging
 from itertools import chain
 from datetime import timedelta
@@ -16,11 +14,9 @@ from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
-import requests
-import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, ArbitraryExpressionDate
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -285,6 +281,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
         context['work_timeline'] = self.get_work_timeline()
+        context['consolidation_date'] = self.place.settings.as_at_date or datetime.date.today()
         return context
 
 
@@ -361,6 +358,21 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
         if self.object:
             url = url + "#amendment-%s" % self.object.id
         return url
+
+
+class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
+    """ View to add a new arbitrary expression date.
+    """
+    model = ArbitraryExpressionDate
+    permission_required = ('indigo_api.add_amendment',)
+
+    def post(self, request, *args, **kwargs):
+        arbitrary_expression_date = ArbitraryExpressionDate(work=self.work)
+        arbitrary_expression_date.date = request.POST['arbitrary_expression_date']
+        arbitrary_expression_date.created_by_user = self.request.user
+        arbitrary_expression_date.save()
+
+        return redirect('work_amendments', frbr_uri=self.kwargs['frbr_uri'])
 
 
 class AddWorkPointInTimeView(WorkDependentView, CreateView):

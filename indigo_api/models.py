@@ -620,7 +620,7 @@ class ArbitraryExpressionDate(models.Model):
         unique_together = ('date', 'work')
 
 
-@receiver(signals.post_save, sender=Amendment)
+@receiver(signals.post_save, sender=ArbitraryExpressionDate)
 def post_save_arbitrary_expression_date(sender, instance, **kwargs):
     # Send action to activity stream, as 'created' if a new arbitrary expression date
     if kwargs['created']:

@@ -6,13 +6,13 @@
   <p> {{ annotation.created_by_user.get_full_name }} left a new reply to a comment on
     <a href="{{ SITE_URL }}{% url 'document' doc_id=document.pk %}?anntn={{ annotation.in_reply_to.pk }}">Document #{{ document.pk }} – {{ document.title }}</a>:
 
-  <div class="parent-annotation" style="padding: 1rem;">
+  <div style="padding: 1rem;">
     <b> {{ parent_annotation.created_by_user.get_full_name }}: </b> {{ parent_annotation.text|urlize|linebreaksbr }}
   </div>
 
 
-  <div class="replies">
-    <ul class="annotation-list" style="list-style-type: none;">
+  <div>
+    <ul style="list-style-type: none;">
 
     {% if truncated_replies %}
 

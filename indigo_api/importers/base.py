@@ -3,7 +3,6 @@ import subprocess
 import tempfile
 import shutil
 import logging
-import re
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -12,7 +11,7 @@ import lxml.etree as ET
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
-from indigo_api.renderers import file_candidates, find_best_static
+from indigo_api.utils import file_candidates, find_best_static
 
 
 @plugins.register('importer')

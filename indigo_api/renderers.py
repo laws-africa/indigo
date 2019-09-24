@@ -5,10 +5,9 @@ import os.path
 import zipfile
 import logging
 
-from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
+from django.template.loader import get_template, render_to_string
 from django.core.cache import caches
 from django.conf import settings
-from django.contrib.staticfiles.finders import find as find_static
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
@@ -16,59 +15,11 @@ from ebooklib import epub
 from languages_plus.models import Language
 from sass_processor.processor import SassProcessor
 
+from indigo_api.utils import find_best_template, find_best_static, filename_candidates
 from .serializers import NoopSerializer
 from .models import Document, Colophon
 
 log = logging.getLogger(__name__)
-
-
-def file_candidates(document, prefix='', suffix=''):
-    """ Candidate files to use for this document.
-
-    This takes into account the country, type, subtype and language of the document,
-    providing a number of opportunities to adjust the rendering logic.
-
-    The following templates are looked for, in order:
-
-    * doctype-subtype-language-country
-    * doctype-subtype-language
-    * doctype-subtype-country
-    * doctype-subtype
-    * doctype-language-country
-    * doctype-country
-    * doctype-language
-    * doctype
-    """
-    uri = document.expression_uri
-    doctype = uri.doctype
-    language = uri.language
-    country = uri.country
-    subtype = uri.subtype
-
-    options = []
-    if subtype:
-        options.append('-'.join([doctype, subtype, language, country]))
-        options.append('-'.join([doctype, subtype, language]))
-        options.append('-'.join([doctype, subtype, country]))
-        options.append('-'.join([doctype, subtype]))
-
-    options.append('-'.join([doctype, language, country]))
-    options.append('-'.join([doctype, country]))
-    options.append('-'.join([doctype, language]))
-    options.append(doctype)
-
-    return [prefix + f + suffix for f in options]
-
-
-def find_best_static(candidates):
-    """ Return the first static file that exists given a list of candidate files.
-    """
-    for option in candidates:
-        log.debug("Looking for %s" % option)
-        fname = find_static(option)
-        if fname:
-            log.debug("Using xsl %s" % fname)
-            return fname
 
 
 def resolver_url(request, resolver):
@@ -170,6 +121,8 @@ class HTMLRenderer(object):
         :param document: document to render if +element+ is None
         :param element: element to render (optional)
         """
+        self.document = document
+
         # use this to render the bulk of the document
         renderer = self._xml_renderer(document)
 
@@ -229,17 +182,11 @@ class HTMLRenderer(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = file_candidates(document, prefix='indigo_api/akn/' + prefix, suffix=suffix)
-        for option in candidates:
-            try:
-                log.debug("Looking for %s" % option)
-                if get_template(option):
-                    log.debug("Using template %s" % option)
-                    return option
-            except TemplateDoesNotExist:
-                pass
-
-        raise ValueError("Couldn't find an HTML template to use for %s, tried: %s" % (document, candidates))
+        candidates = filename_candidates(document, prefix='indigo_api/akn/' + prefix, suffix=suffix)
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find an HTML template to use for %s, tried: %s" % (document, candidates))
+        return best
 
     def find_xslt(self, document):
         """ Return the filename of an xslt template to use to render this document.
@@ -247,7 +194,7 @@ class HTMLRenderer(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = file_candidates(document, prefix='xsl/', suffix='.xsl')
+        candidates = filename_candidates(document, prefix='xsl/', suffix='.xsl')
         best = find_best_static(candidates)
         if not best:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
@@ -388,14 +335,12 @@ class PDFRenderer(HTMLRenderer):
         # We want to pull the footer (7.5mm high) into the margin, so we decrease
         # the margin slightly
 
-        footer_font = 'Georgia, "Times New Roman", serif'
-        footer_font_size = '8'
-        footer_spacing = 5
-        margin_top = 36.3 - footer_spacing
-        margin_bottom = 36.3 - footer_spacing
+        header_font = 'Georgia, "Times New Roman", serif'
+        header_font_size = '8'
+        header_spacing = 5
+        margin_top = 36.3 - header_spacing
+        margin_bottom = 36.3 - header_spacing
         margin_left = 25.6
-
-        toc_xsl = get_template('indigo_api/akn/export/pdf_toc.xsl').origin.name
 
         options = {
             'page-size': 'A4',
@@ -404,18 +349,30 @@ class PDFRenderer(HTMLRenderer):
             'margin-left': '%.2fmm' % margin_left,
             'margin-right': '%.2fmm' % margin_left,
             'header-left': '[section]',
-            'header-spacing': '%.2f' % footer_spacing,
-            'header-font-name': footer_font,
-            'header-font-size': footer_font_size,
+            'header-spacing': '%.2f' % header_spacing,
+            'header-font-name': header_font,
+            'header-font-size': header_font_size,
             'header-line': True,
-            'footer-center': '[page] of [toPage]',
-            'footer-spacing': '%.2f' % footer_spacing,
-            'footer-font-name': footer_font,
-            'footer-font-size': footer_font_size,
-            'xsl-style-sheet': toc_xsl,
+            'footer-html': self.footer_html(),
+            'footer-spacing': '%.2f' % header_spacing,
+            'xsl-style-sheet': self.toc_xsl(),
         }
 
         return options
+
+    def toc_xsl(self):
+        candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_toc_', suffix='.xsl')
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find TOC XSL file for PDF.")
+        return get_template(best).origin.name
+
+    def footer_html(self):
+        candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_footer_', suffix='.html')
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find footer file for PDF.")
+        return get_template(best).origin.name
 
 
 class EPUBRenderer(HTMLRenderer):

@@ -75,9 +75,7 @@
 
         {% for amendment in event.amendments %}
           {% if not amendment.amending_work and amendment.id %}
-            <h6>Consolidation</h6>
-
-            <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=amendment.id %}" method="POST" id="arbitrary-expression-date-form-{{ amendment.id }}">
+            <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=amendment.id %}" method="POST" id="arbitrary-expression-date-{{ amendment.id }}">
               {% csrf_token %}
 
               {% if editable and perms.indigo_api.change_amendment %}
@@ -92,6 +90,7 @@
                 </div>
               {% endif %}
 
+              <h6>Consolidation</h6>
               <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ amendment.id }}">
                 <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
                 <button class="btn btn-success" type="submit">Save</button>

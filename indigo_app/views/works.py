@@ -355,7 +355,7 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
-        if self.object:
+        if self.object and self.object.id:
             url = url + "#amendment-%s" % self.object.id
         return url
 
@@ -421,6 +421,8 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#arbitrary-expression-date-%s" % self.object.id
         return url
 
 

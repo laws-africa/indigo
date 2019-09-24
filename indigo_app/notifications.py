@@ -86,22 +86,42 @@ class Notifier(object):
         the currently replying user.
         """
         parent_annotation = annotation.in_reply_to
-        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)
+        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)\
+                                                .order_by('created_at')
         document = parent_annotation.document
+        related_task = parent_annotation.task
 
         recipient_list = [i.created_by_user for i in related_annotations]
 
         # add creator of parent annotation
         recipient_list.append(parent_annotation.created_by_user)
-
         recipient_list = list(set(recipient_list))
         recipient_list.remove(annotation.created_by_user)
+
+        related_annotations = list(related_annotations)
+        related_annotations.remove(annotation)
+
+        truncated_replies = False
+        earlier_replies = None
+        later_replies = None
+
+        if len(related_annotations) > 9:
+            # showing the first 3 & last 2 replies if total number of replies is greater than 9
+            truncated_replies = True
+            earlier_replies = related_annotations[:3]
+            later_replies = related_annotations [-2:]
 
         for user in recipient_list:
             self.send_templated_email('annotation_new_reply', [user], {
                 'document': document,
                 'recipient': user,
                 'annotation': annotation,
+                'parent_annotation': parent_annotation,
+                'related_annotations': related_annotations,
+                'truncated_replies': truncated_replies,
+                'earlier_replies': earlier_replies,
+                'later_replies': later_replies,
+                'task': related_task
             })
 
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):

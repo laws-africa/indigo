@@ -11,7 +11,7 @@ import lxml.etree as ET
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
-from indigo_api.utils import file_candidates, find_best_static
+from indigo_api.utils import filename_candidates, find_best_static
 
 
 @plugins.register('importer')
@@ -116,7 +116,7 @@ class Importer(LocaleBasedMatcher):
     def html_to_text(self, html, doc):
         """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
         """
-        candidates = file_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
+        candidates = filename_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
         xslt_filename = find_best_static(candidates)
         if not xslt_filename:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))

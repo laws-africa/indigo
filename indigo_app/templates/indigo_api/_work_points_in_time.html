@@ -75,7 +75,31 @@
         {% endif %}
 
         {% for amendment in event.amendments %}
-          {% if amendment.pk %}
+          {% if not amendment.amending_work and amendment.id %}
+            <h6>Consolidation</h6>
+
+            <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=amendment.id %}" method="POST" id="arbitrary-expression-date-form-{{ amendment.id }}">
+              {% csrf_token %}
+
+              {% if editable and perms.indigo_api.change_amendment %}
+                <div class="dropdown float-right">
+                  <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
+                  <div class="dropdown-menu">
+                    <a href="#arbitrary-expression-date-form-{{ amendment.id }}" class="dropdown-item" data-toggle="collapse">Change date</a>
+                    {% if amendment.can_delete %}
+                    <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this consolidation date?">Delete</button>
+                    {% endif %}
+                  </div>
+                </div>
+              {% endif %}
+
+              <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ amendment.id }}">
+                <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
+                <button class="btn btn-success" type="submit">Save</button>
+                <a href="#arbitrary-expression-date-form-{{ amendment.id }}" class="btn btn-link" data-toggle="collapse">Cancel</a>
+              </div>
+            </form>
+          {% elif amendment.pk %}
             <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST" id="amendment-{{ amendment.id|default:'initial' }}">
               {% csrf_token %}
 
@@ -91,12 +115,8 @@
                 </div>
               {% endif %}
 
-              {% if not amendment.amending_work %}
-                <h6 class="mb-3">Consolidation</h6>
-              {% else %}
                 <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
                 <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
-              {% endif %}
 
               <div class="form-inline edit-wrapper mb-3 collapse" id="amendment-form-{{ amendment.id }}">
                 <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">

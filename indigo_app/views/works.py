@@ -375,6 +375,55 @@ class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
         return redirect('work_amendments', frbr_uri=self.kwargs['frbr_uri'])
 
 
+class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
+    """ View to update or delete an arbitrary expression date.
+    """
+    http_method_names = ['post']
+    model = ArbitraryExpressionDate
+    pk_url_kwarg = 'arbitrary_expression_date_id'
+    fields = ['date']
+
+    def get_queryset(self):
+        return self.work.arbitrary_expression_dates.all()
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_amendment',)
+        return ('indigo_api.change_amendment',)
+
+    def post(self, request, *args, **kwargs):
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
+        return super(EditArbitraryExpressionDateView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # get old/existing/incorrect date
+        old_date = form.initial['date']
+
+        # do normal things to amend work
+        self.object.updated_by_user = self.request.user
+        result = super(EditArbitraryExpressionDateView, self).form_valid(form)
+
+        # update old docs to have the new date as their expression date
+        docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
+        for doc in docs:
+            doc.expression_date = self.object.date
+            doc.updated_by_user = self.request.user
+            doc.save()
+
+        return result
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.can_delete():
+            self.object.delete()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        return url
+
+
 class AddWorkPointInTimeView(WorkDependentView, CreateView):
     """ View to get or create a new point-in-time for a work, at a particular date
     and in a particular language.

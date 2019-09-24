@@ -458,33 +458,34 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def expressions_by_date(self):
-        """ Return a list of Amendment objects, including a fake one at the end
+    def amendments_with_initial_and_arbitrary(self):
+        """ Return a list of Amendment and ArbitraryExpressionDate objects, including a fake one at the end
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple amendments at the same date.
         """
         initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
+        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
+        amendments_expressions.sort(key=lambda x: x.date)
 
         if initial.date:
-            if not expressions or expressions[0].date != initial.date:
-                expressions.insert(0, initial)
+            if not amendments_expressions or amendments_expressions[0].date != initial.date:
+                amendments_expressions.insert(0, initial)
 
-            if expressions[0].date == initial.date:
-                expressions[0].initial = True
+            if amendments_expressions[0].date == initial.date:
+                amendments_expressions[0].initial = True
 
-        expressions.reverse()
-        return expressions
+        amendments_expressions.reverse()
+        return amendments_expressions
 
     def points_in_time(self):
         """ Return a list of dicts describing a point in time, one entry for each date,
         in descending date order.
         """
-        expressions = self.expressions_by_date()
+        amendments_expressions = self.amendments_with_initial_and_arbitrary()
         pits = []
 
-        for date, group in groupby(expressions, key=lambda x: x.date):
+        for date, group in groupby(amendments_expressions, key=lambda x: x.date):
             group = list(group)
             pits.append({
                 'date': date,

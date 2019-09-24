@@ -458,33 +458,33 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def amendments_with_initial(self):
+    def expressions_by_date(self):
         """ Return a list of Amendment objects, including a fake one at the end
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple amendments at the same date.
         """
-        initial = Amendment(amended_work=self, date=self.publication_date or self.commencement_date)
+        initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        amendments = list(self.amendments.all())
+        expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
 
         if initial.date:
-            if not amendments or amendments[0].date != initial.date:
-                amendments.insert(0, initial)
+            if not expressions or expressions[0].date != initial.date:
+                expressions.insert(0, initial)
 
-            if amendments[0].date == initial.date:
-                amendments[0].initial = True
+            if expressions[0].date == initial.date:
+                expressions[0].initial = True
 
-        amendments.reverse()
-        return amendments
+        expressions.reverse()
+        return expressions
 
     def points_in_time(self):
         """ Return a list of dicts describing a point in time, one entry for each date,
         in descending date order.
         """
-        amendments = self.amendments_with_initial()
+        expressions = self.expressions_by_date()
         pits = []
 
-        for date, group in groupby(amendments, key=lambda x: x.date):
+        for date, group in groupby(expressions, key=lambda x: x.date):
             group = list(group)
             pits.append({
                 'date': date,
@@ -618,6 +618,19 @@ class ArbitraryExpressionDate(models.Model):
 
     class Meta:
         unique_together = ('date', 'work')
+        ordering = ['date']
+
+    def expressions(self):
+        """ The work's documents (expressions) at this date.
+        """
+        return self.work.expressions().filter(expression_date=self.date)
+
+    def can_delete(self):
+        return not self.expressions().exists()
+
+    @property
+    def amended_work(self):
+        return self.work
 
 
 @receiver(signals.post_save, sender=ArbitraryExpressionDate)

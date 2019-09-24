@@ -17,7 +17,7 @@
                 {% csrf_token %}
                 <button class="dropdown-item" type="submit" name="arbitrary_expression_date"
                         value="{{ consolidation_date|date:'Y-m-d' }}"
-                        formaction="{% url 'new_work_arbitraryexpressiondate' frbr_uri=work.frbr_uri %}">Add consolidation date: {{ consolidation_date|date:'Y-m-d' }}</button>
+                        formaction="{% url 'new_arbitrary_expression_date' frbr_uri=work.frbr_uri %}">Add consolidation date: {{ consolidation_date|date:'Y-m-d' }}</button>
               </form>
             </div>
 
@@ -91,8 +91,12 @@
                 </div>
               {% endif %}
 
-              <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
-              <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
+              {% if not amendment.amending_work %}
+                <h6 class="mb-3">Consolidation</h6>
+              {% else %}
+                <h6 class="mb-0">Amended by <a href="{% url 'work' frbr_uri=amendment.amending_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=amendment.amending_work.frbr_uri %}">{{ amendment.amending_work.title }}</a></h6>
+                <div class="text-muted mb-3">{{ amendment.amending_work.frbr_uri }}</div>
+              {% endif %}
 
               <div class="form-inline edit-wrapper mb-3 collapse" id="amendment-form-{{ amendment.id }}">
                 <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">

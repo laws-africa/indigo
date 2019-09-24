@@ -3,7 +3,8 @@
 {% block html %}
   {% include 'templated_email/_header.html' %}
 
-  <p> {{ comment.user_name }} commented on
+  <p>
+    {{ comment.user.get_full_name }} commented on
     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}"> Task #{{ task.pk }} – {{ task.title }}</a>:
 
     <hr>

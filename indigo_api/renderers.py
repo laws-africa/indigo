@@ -354,6 +354,7 @@ class PDFRenderer(HTMLRenderer):
             'header-font-size': header_font_size,
             'header-line': True,
             'footer-html': self.footer_html(),
+            'footer-line': True,
             'footer-spacing': '%.2f' % header_spacing,
             'xsl-style-sheet': self.toc_xsl(),
         }

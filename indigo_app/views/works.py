@@ -405,7 +405,7 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
         result = super(EditArbitraryExpressionDateView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
-        docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
+        docs = Document.objects.filter(work=self.object.work, expression_date=old_date)
         for doc in docs:
             doc.expression_date = self.object.date
             doc.updated_by_user = self.request.user

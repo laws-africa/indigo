@@ -13,11 +13,10 @@
 
             <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
             <div class="dropdown-menu">
-              <form method="POST">
+              <form method="POST" action="{% url 'new_arbitrary_expression_date' frbr_uri=work.frbr_uri %}">
                 {% csrf_token %}
                 <button class="dropdown-item" type="submit" name="arbitrary_expression_date"
-                        value="{{ consolidation_date|date:'Y-m-d' }}"
-                        formaction="{% url 'new_arbitrary_expression_date' frbr_uri=work.frbr_uri %}">Add consolidation date: {{ consolidation_date|date:'Y-m-d' }}</button>
+                        value="{{ consolidation_date|date:'Y-m-d' }}">Add consolidation date: {{ consolidation_date|date:'Y-m-d' }}</button>
               </form>
             </div>
 

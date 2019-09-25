@@ -8,6 +8,7 @@ Changelog
 * FEATURE: Scaffolding for showing document issues.
 * FEATURE: Show document hierarchy.
 * FEATURE: Support customisable importing of HTML files.
+* FEATURE: Customisable PDF footers
 * Clearer indication of repealed works.
 * indigo-web 3.6.1 - explicit styling for crossHeading elements
 

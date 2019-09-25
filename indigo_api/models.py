@@ -114,6 +114,26 @@ class Country(models.Model):
     def for_code(cls, code):
         return cls.objects.get(country__pk=code.upper())
 
+    @classmethod
+    def get_country_locality(cls, code):
+        """ Lookup a Country and Locality for a place code such as za or za-cpt.
+
+        Raises DoesNotExist if either of the places doesn't exist.
+        """
+        if '-' in code:
+            country_code, locality_code = code.split('-', 1)
+        else:
+            country_code = code
+            locality_code = None
+
+        country = cls.for_code(country_code)
+        if locality_code:
+            locality = country.localities.get(code=locality_code)
+        else:
+            locality = None
+
+        return country, locality
+
 
 @receiver(signals.post_save, sender=Country)
 def post_save_country(sender, instance, **kwargs):
@@ -1101,6 +1121,8 @@ class Annotation(models.Model):
 
             # TODO: strip markdown?
             task.title = '"%s": %s' % (ref, self.text)
+            if len(task.title) > 255:
+                task.title = task.title[:250] + "..."
             task.description = '%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
@@ -1563,6 +1585,7 @@ class PlaceSettings(models.Model):
 
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
+    styleguide_url = models.URLField(null=True, blank=True)
 
     @property
     def place(self):

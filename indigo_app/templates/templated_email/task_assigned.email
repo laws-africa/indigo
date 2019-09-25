@@ -6,7 +6,7 @@
   <p>Hello {{ recipient.first_name }},</p>
 
   <p>
-    {{ action.actor.first_name }}
+    {{ action.actor.get_full_name }}
     {% if task.state == 'pending_review' %}
       asked you to review the task
     {% else %}

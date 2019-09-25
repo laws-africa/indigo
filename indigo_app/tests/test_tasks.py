@@ -36,3 +36,11 @@ class TasksTest(WebTest):
         response = self.app.get('/places/za/tasks/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('test title', response.text)
+
+    def test_my_tasks(self):
+        response = self.app.get('/tasks/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_available_tasks(self):
+        response = self.app.get('/tasks/available/')
+        self.assertEqual(response.status_code, 200)

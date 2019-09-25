@@ -14,7 +14,7 @@
       'click .text-editor-buttons .btn.cancel': 'closeTextEditor',
       'click .btn.edit-text': 'fullEdit',
       'click .btn.edit-table': 'editTable',
-      'click .quick-edit a': 'quickEdit',
+      'click .quick-edit': 'quickEdit',
 
       'click .edit-find': 'editFind',
       'click .edit-find-next': 'editFindNext',
@@ -36,7 +36,7 @@
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
-      this.quickEditTemplate = $('<div class="quick-edit ig"><a href="#"><i class="fas fa-pencil-alt"></i></a></div>');
+      this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -63,11 +63,68 @@
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
+      this.setupTablePasting();
 
       this.$toolbar = $('.document-toolbar');
 
       this.loadXSL();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+    },
+
+    /* Setup pasting so that when the user pastes an HTML table
+       while in text edit mode, we change it into wikipedia style tables.
+
+       We cannot disable the Ace editor paste functionality. Instead, we
+       bypass it by pretending there is no text to paste. Then, we handle
+       the paste event itself and re-inject the correct text to paste.
+     */
+    setupTablePasting: function() {
+      var allowPaste = false,
+          self = this;
+
+      this.textEditor.on('paste', function(e) {
+        if (!allowPaste) { e.text = ''; }
+      });
+
+      this.$textEditor.on('paste', function(e) {
+        var cb = e.originalEvent.clipboardData;
+
+        function pasteTable(table) {
+          self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
+            if (t > 0) text = "\n" + text;
+
+            allowPaste = true;
+            self.textEditor.onPaste(text);
+            allowPaste = false;
+          });
+        }
+
+        if (cb.types.indexOf('text/html') > -1) {
+          var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
+              tables = doc.body.querySelectorAll('table');
+
+          if (tables.length > 0) {
+            for (var t = 0; t < tables.length; t++) {
+              var table = tables[t];
+
+              // strip out non HTML tags - we don't want MS Office's tags
+              var elems = table.getElementsByTagName("*");
+              for (var i = 0; i < elems.length; i++) {
+                if (elems[i].tagName.indexOf(':') > -1) elems[i].remove();
+              }
+
+              pasteTable(table);
+            }
+
+            return;
+          }
+        }
+
+        // no html or no tables, use normal paste
+        allowPaste = true;
+        self.textEditor.onPaste(cb.getData('text'));
+        allowPaste = false;
+      });
     },
 
     documentChanged: function() {
@@ -434,10 +491,25 @@
     },
 
     makeElementsQuickEditable: function(html) {
+      var self = this;
+
       $(html.firstElementChild)
         .find(this.parent.model.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
-        .prepend(this.quickEditTemplate);
+        .each(function(i, e) {
+          self.ensureGutterActions(e).append(self.quickEditTemplate.cloneNode(true));
+        });
+    },
+
+    // Ensure this element has a gutter actions child
+    ensureGutterActions: function(elem) {
+      if (!elem.firstElementChild || !elem.firstElementChild.classList.contains('gutter-actions')) {
+        var div = document.createElement('div');
+        div.className = 'gutter-actions ig';
+        elem.prepend(div);
+      }
+
+      return elem.firstElementChild;
     },
 
     editTable: function(e) {
@@ -626,6 +698,7 @@
     el: 'body',
     events: {
       'click .btn.show-xml-editor': 'toggleShowXMLEditor',
+      'click .btn.show-akn-hierarchy': 'toggleShowAKNHierarchy',
     },
 
     initialize: function(options) {
@@ -678,6 +751,11 @@
       var show = !$(e.currentTarget).hasClass('active');
       this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
       this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
+    },
+
+    toggleShowAKNHierarchy: function(e) {
+      var show = !$(e.currentTarget).hasClass('active');
+      this.$el.find('#document-sheet').toggleClass('show-akn-hierarchy', show);
     },
 
     removeFragment: function(fragment) {

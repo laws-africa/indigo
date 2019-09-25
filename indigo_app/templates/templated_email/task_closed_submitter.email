@@ -3,7 +3,7 @@
 {% block html %}
   {% include 'templated_email/_header.html' %}
   <p>
-    {{ action.actor.first_name }} approved task
+    {{ action.actor.get_full_name }} approved task
     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>.
   </p>
 

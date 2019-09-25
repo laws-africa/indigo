@@ -107,11 +107,11 @@
         </button>
       </div>
 
-      <form action="{% url 'workflow_add_tasks' place=place.place_code pk=workflow.pk %}" method="POST">
+      <form action="{% url 'workflow_add_tasks' place=place.place_code pk=workflow.pk %}" method="POST" id="workflow-add-tasks-form">
         {% csrf_token %}
 
         <div class="scrollable">
-          {% include 'indigo_api/_task_list.html' with tasks=possible_tasks selectable=True %}
+          {% include 'indigo_api/_task_list.html' with tasks=possible_tasks selectable=True form_id="workflow-add-tasks-form" %}
         </div>
 
         <div class="modal-footer">

@@ -174,7 +174,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
 
         # ensure any docs for this work at initial pub date move with it, if it changes
         if 'publication_date' in form.changed_data:
-            old_date = form.initial['publication_date']
+            old_date = form.initial['publication_date'] or self.work.commencement_date
 
             if old_date and self.work.publication_date:
                 for doc in Document.objects.filter(work=self.work, expression_date=old_date):

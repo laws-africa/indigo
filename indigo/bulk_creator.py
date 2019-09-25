@@ -88,7 +88,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         except requests.RequestException as e:
             raise ValidationError("Error talking to Google Sheets: %s" % str(e))
 
-        reader = csv.reader(io.BytesIO(response.content))
+        reader = csv.reader(io.StringIO(response.content.decode('utf-8')))
         rows = list(reader)
 
         if not rows or not rows[0]:
@@ -96,7 +96,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 "Your sheet did not import successfully; "
                 "please check that you have link sharing ON (Anyone with the link)."
             )
-        return [[item.decode('utf8') for item in row] for row in rows]
+        return rows
 
     @property
     def is_gsheets_enabled(self):
@@ -497,8 +497,11 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
 
         # need to save before assigning workflow because of M2M relation
         task.save()
-        task.workflows = [self.workflow]
-        task.save()
+        if self.workflow:
+            task.workflows = [self.workflow]
+            task.save()
+
+        return task
 
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)

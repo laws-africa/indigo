@@ -1,8 +1,8 @@
 # coding=utf-8
 import logging
 from collections import defaultdict, Counter
-from datetime import timedelta
-from itertools import chain
+from datetime import timedelta, date
+from itertools import chain, groupby
 import json
 
 from actstream import action
@@ -19,7 +19,7 @@ from django.views.generic.list import MultipleObjectMixin
 
 from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality
 from indigo_api.views.documents import DocumentViewSet
-from indigo_metrics.models import DailyWorkMetrics, WorkMetrics
+from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
@@ -29,9 +29,37 @@ from indigo_app.forms import WorkFilterForm
 log = logging.getLogger(__name__)
 
 
-class PlaceListView(AbstractAuthedIndigoView, TemplateView):
+class PlaceMetricsHelper:
+    def add_activity_metrics(self, places, metrics, since):
+        # fold metrics into countries
+        for place in places:
+            place.activity_history = json.dumps([
+                [m.date.isoformat(), m.n_activities]
+                for m in self.add_zero_days(metrics.get(place, []), since)
+            ])
+
+    def add_zero_days(self, metrics, since):
+        """ Fold zeroes into the daily metrics
+        """
+        today = date.today()
+        d = since
+        i = 0
+        output = []
+
+        while d <= today:
+            if i < len(metrics) and metrics[i].date == d:
+                output.append(metrics[i])
+                i += 1
+            else:
+                # add a zero
+                output.append(DailyPlaceMetrics(date=d))
+            d = d + timedelta(days=1)
+
+        return output
+
+
+class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     template_name = 'place/list.html'
-    js_view = ''
 
     def dispatch(self, request, **kwargs):
         if Country.objects.count() == 1:
@@ -53,6 +81,19 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView):
                 output_field=IntegerField()
             ))\
             .all()
+
+        # place activity
+        since = now() - timedelta(days=14)
+        metrics = DailyPlaceMetrics.objects\
+            .filter(locality=None, date__gte=since)\
+            .order_by('country', 'date')\
+            .all()
+
+        # group by country
+        metrics = {
+            country: list(group)
+            for country, group in groupby(metrics, lambda m: m.country)}
+        self.add_activity_metrics(context['countries'], metrics, since.date())
 
         return context
 
@@ -192,13 +233,15 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         self.decorate_works(list(works))
 
-        # breadth completeness history
-        context['completeness_history'] = list(DailyWorkMetrics.objects
+        # breadth completeness history, most recent 30 days
+        metrics = list(DailyWorkMetrics.objects
             .filter(place_code=self.place.place_code)
-            .order_by('-date')
-            .values_list('p_breadth_complete', flat=True)[:30])
-        context['completeness_history'].reverse()
-        context['p_breadth_complete'] = context['completeness_history'][-1] if context['completeness_history'] else None
+            .order_by('-date')[:30])
+        # latest last
+        metrics.reverse()
+        if metrics:
+            context['latest_completeness_stat'] = metrics[-1]
+            context['completeness_history'] = [m.p_breadth_complete for m in metrics]
 
         return context
 
@@ -211,7 +254,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     tab = 'activity'
 
     object_list = None
-    page_size = 20
+    page_size = 30
     js_view = ''
     threshold = timedelta(seconds=3)
 
@@ -290,11 +333,12 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
             return action
 
 
-class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     template_name = 'place/metrics.html'
-    tab = 'metrics'
+    tab = 'insights'
+    insights_tab = 'metrics'
 
-    def add_year_zeros(self, years):
+    def add_zero_years(self, years):
         # ensure zeros
         if years:
             min_year, max_year = min(years.keys()), max(years.keys())
@@ -345,7 +389,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .filter(country=self.country, locality=self.locality)\
             .select_related(None).prefetch_related(None).all()
         years = Counter([int(w.year) for w in works])
-        self.add_year_zeros(years)
+        self.add_zero_years(years)
         years = list(years.items())
         years.sort()
         context['works_by_year'] = json.dumps(years)
@@ -359,7 +403,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .order_by()\
             .all()
         years = {x['year']: x['n'] for x in years}
-        self.add_year_zeros(years)
+        self.add_zero_years(years)
         years = list(years.items())
         years.sort()
         context['amendments_by_year'] = json.dumps(years)
@@ -374,6 +418,17 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         pairs.sort(key=lambda p: p[1], reverse=True)
         context['subtypes'] = json.dumps(pairs)
 
+        # place activity
+        metrics = DailyPlaceMetrics.objects \
+            .filter(country=self.country, locality=self.locality, date__gte=since) \
+            .order_by('date') \
+            .all()
+
+        context['activity_history'] = json.dumps([
+            [m.date.isoformat(), m.n_activities]
+            for m in metrics
+        ])
+
         return context
 
 
@@ -386,7 +441,7 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
 
-    fields = ('spreadsheet_url', 'as_at_date')
+    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
 
     def get_object(self):
         return self.place.settings
@@ -408,9 +463,10 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
 
 
-class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
+class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
     template_name = 'place/localities.html'
     tab = 'localities'
+    js_view = 'PlaceListView'
 
     def get_context_data(self, **kwargs):
         context = super(PlaceLocalitiesView, self).get_context_data(**kwargs)
@@ -426,5 +482,19 @@ class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView)
             output_field=IntegerField()
         )) \
             .all()
+
+        # place activity
+        since = now() - timedelta(days=14)
+        metrics = DailyPlaceMetrics.objects \
+            .filter(country=self.country, date__gte=since) \
+            .exclude(locality=None) \
+            .order_by('locality', 'date') \
+            .all()
+
+        # group by locality
+        metrics = {
+            country: list(group)
+            for country, group in groupby(metrics, lambda m: m.locality)}
+        self.add_activity_metrics(context['localities'], metrics, since.date())
 
         return context

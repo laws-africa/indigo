@@ -29,7 +29,7 @@
         <span class="text-muted">
           {% if perms.indigo_api.change_task and task.is_open and selectable%}
           <label class="mb-0 font-weight-normal c-pointer">
-            <input type="checkbox" name="tasks" value="{{ task.id }}" form="bulk-task-update-form" class="mr-1">
+            <input type="checkbox" name="tasks" value="{{ task.id }}" form="{{ form_id|default:'bulk-task-update-form' }}" class="mr-1">
             #{{ task.id }}
           </label>
           {% else %}

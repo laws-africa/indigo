@@ -168,7 +168,10 @@
     },
 
     changeRepeal: function() {
-      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
+      var chooser = new Indigo.WorkChooserView({
+            country: this.model.get('country'),
+            locality: this.model.get('locality'),
+          }),
           self = this;
 
       if (this.model.get('repealed_by')) {
@@ -177,7 +180,7 @@
       chooser.showModal().done(function(chosen) {
         if (chosen) {
           self.model.set('repealed_by', chosen);
-          self.model.set('repealed_date', chosen.get('publication_date'));
+          self.model.set('repealed_date', chosen.get('commencement_date') || chosen.get('publication_date'));
         }
       });
     },
@@ -205,7 +208,10 @@
     },
 
     changeCommencingWork: function() {
-      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
+      var chooser = new Indigo.WorkChooserView({
+            country: this.model.get('country'),
+            locality: this.model.get('locality'),
+          }),
           self = this;
 
       if (this.model.get('commencing_work')) {
@@ -231,7 +237,10 @@
     },
 
     changeParent: function() {
-      var chooser = new Indigo.WorkChooserView({country: this.model.get('country')}),
+      var chooser = new Indigo.WorkChooserView({
+            country: this.model.get('country'),
+            locality: this.model.get('locality'),
+          }),
           self = this;
 
       if (this.model.get('parent_work')) {

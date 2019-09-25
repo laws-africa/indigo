@@ -58,7 +58,7 @@ body.is-staff {
 
 .site-footer {
   margin-top: 80px;
-  background-color: #d3d5d9;
+  background-color: $footer-bg-color;
   padding: 40px 0px;
 
   .logo {
@@ -78,6 +78,8 @@ body.is-staff {
 
 /* navbar */
 .navbar {
+  background-color: $navbar-bg-color;
+
   .navbar-brand {
     padding: 0px;
   }
@@ -86,8 +88,6 @@ body.is-staff {
     margin: -10px 10px -10px 0px;
     height: 40px;
   }
-
-  background-color: $indigo;
 
   .nav-item {
     margin-left: $spacer;
@@ -195,7 +195,7 @@ body.is-staff {
 
 .tabbed-header {
   padding-bottom: 0px;
-  background-color: $gray-100;
+  background-color: $tabbed-header-bg;
   border-bottom: 1px solid $gray-300;
 
   .nav-tabs {

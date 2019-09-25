@@ -1,15 +1,11 @@
 from django.conf.urls import url, include
-from django.views.decorators.cache import cache_page
 from rest_framework.routers import DefaultRouter
 
 import indigo_api.views.attachments as attachments
 import indigo_api.views.documents as documents
-import indigo_api.views.misc as misc
 import indigo_api.views.publications as publications
 import indigo_api.views.works as works
 
-
-PUBLICATION_CACHE_SECS = 3600 * 24 * 30  # one month
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'documents', documents.DocumentViewSet, base_name='document')
@@ -27,8 +23,7 @@ urlpatterns = [
     url(r'^analysis/link-terms$', documents.LinkTermsView.as_view(), name='link-terms'),
     url(r'^analysis/link-references$', documents.LinkReferencesView.as_view(), name='link-references'),
     url(r'^document-comparison$', documents.ComparisonView.as_view(), name='document-comparison'),
-    url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$',
-        cache_page(PUBLICATION_CACHE_SECS)(publications.FindPublicationsView.as_view()), name='find-publications'),
+    url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', publications.FindPublicationsView.as_view(), name='find-publications'),
 
     url(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', attachments.AttachmentMediaView.as_view(), name='document-media'),
     url(r'documents/(?P<document_id>[0-9]+)/activity', documents.DocumentActivityViewSet.as_view({

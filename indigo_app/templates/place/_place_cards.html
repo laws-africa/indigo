@@ -1,0 +1,21 @@
+<div class="row">
+  {% for place in places %}
+    <div class="col-md-3">
+      <a href="{% url 'place' place=place.place_code %}" class="text-body text-no-underline-ever">
+        <div class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{ place.name }} · {{ place.code }}</h5>
+
+            {% if place.n_open_tasks %}
+              <div class="text-muted float-right">{{ place.n_open_tasks }} tasks</div>
+            {% endif %}
+            <div class="text-muted">{{ place.n_works }} works</div>
+          </div>
+          <div class="card-footer pb-0 p-relative" style="height: 50px">
+            <canvas class="place-activity-chart" data-values="{{ place.activity_history }}" title="Recent activity"></canvas>
+          </div>
+        </div>
+      </a>
+    </div>
+  {% endfor %}
+</div>

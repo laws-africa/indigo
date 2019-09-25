@@ -1,0 +1,6 @@
+// other installations can provide their own SCSS by providing
+// their own static/indigo/_custom.scss file which will be included automatically,
+// after all other Indigo SCSS files
+
+// This file is deliberately not included alongside the app.scss file, as SCSS imports
+// always look in the directory containing the including file first.

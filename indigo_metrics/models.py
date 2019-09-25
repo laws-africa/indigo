@@ -1,8 +1,13 @@
+import logging
 import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import connection, models, transaction
 
-from indigo_api.models import PublicationDocument
+from indigo_api.models import PublicationDocument, Country
+
+
+log = logging.getLogger(__name__)
 
 
 class WorkMetrics(models.Model):
@@ -75,6 +80,15 @@ class WorkMetrics(models.Model):
 
         return metrics
 
+    @classmethod
+    def update_all_work_metrics(cls):
+        from indigo_api.models import Work
+
+        log.info('Updating individual work metrics.')
+        for work in Work.objects.all():
+            cls.create_or_update(work)
+        log.info('Work metrics updated')
+
 
 class DailyWorkMetrics(models.Model):
     """ Daily summarised work metrics.
@@ -98,6 +112,12 @@ class DailyWorkMetrics(models.Model):
     class Meta:
         db_table = 'indigo_metrics_daily_workmetrics'
         unique_together = (("date", "place_code"),)
+
+    @classmethod
+    def update_daily_work_metrics(cls, date):
+        log.info('Updating aggregate daily work metrics for %s.' % date)
+        cls.create_or_update(date)
+        log.info('Daily work metrics updated')
 
     @classmethod
     def create_or_update(cls, date=None):
@@ -146,3 +166,36 @@ FROM (
 GROUP BY
   date, place_code, country, locality
 """, [date])
+
+
+class DailyPlaceMetrics(models.Model):
+    date = models.DateField(null=False, db_index=True)
+    place_code = models.CharField(null=False, db_index=True, max_length=20)
+    country = models.ForeignKey('indigo_api.Country', null=False)
+    locality = models.ForeignKey('indigo_api.Locality', null=True)
+
+    n_activities = models.IntegerField(null=False, default=0)
+
+    class Meta:
+        db_table = 'indigo_metrics_daily_placemetrics'
+        unique_together = (("date", "place_code"),)
+
+    @classmethod
+    def record_activity(cls, action):
+        place_code = action.data.get('place_code')
+        if not place_code:
+            return
+
+        try:
+            country, locality = Country.get_country_locality(place_code)
+        except ObjectDoesNotExist:
+            return
+
+        metrics, created = cls.objects.get_or_create(
+            date=action.timestamp.date(),
+            country=country,
+            locality=locality,
+            place_code=place_code)
+
+        metrics.n_activities += 1
+        metrics.save()

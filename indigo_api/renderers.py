@@ -60,6 +60,17 @@ def file_candidates(document, prefix='', suffix=''):
     return [prefix + f + suffix for f in options]
 
 
+def find_best_static(candidates):
+    """ Return the first static file that exists given a list of candidate files.
+    """
+    for option in candidates:
+        log.debug("Looking for %s" % option)
+        fname = find_static(option)
+        if fname:
+            log.debug("Using xsl %s" % fname)
+            return fname
+
+
 def resolver_url(request, resolver):
     if resolver in ['no', 'none']:
         return ''
@@ -145,12 +156,13 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None):
+    def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None, media_resolver_use_akn_prefix=False):
         self.template_name = template_name
         self.standalone = standalone
         self.coverpage = coverpage
         self.resolver = resolver or settings.RESOLVER_URL
         self.media_url = ''
+        self.media_resolver_use_akn_prefix = media_resolver_use_akn_prefix
 
     def render(self, document, element=None):
         """ Render this document to HTML.
@@ -174,15 +186,14 @@ class HTMLRenderer(object):
         # find the template to use
         template_name = self.template_name or self.find_template(document)
 
-        context = {
+        context = self.get_context_data(**{
             'document': document,
             'element': element,
             'content_html': content_html,
             'renderer': renderer,
             'coverpage': self.coverpage,
-            'resolver_url': self.resolver,
             'coverpage_template': self.coverpage_template(document),
-        }
+        })
 
         # Now render some boilerplate around it.
         if self.standalone:
@@ -197,11 +208,17 @@ class HTMLRenderer(object):
 
     def render_coverpage(self, document):
         template_name = self.coverpage_template(document)
+        return render_to_string(template_name, self.get_context_data(document=document))
+
+    def get_context_data(self, **kwargs):
+        """ Get the context data passed to the HTML template.
+        """
         context = {
-            'document': document,
             'resolver_url': self.resolver,
+            'media_resolver_use_akn_prefix': self.media_resolver_use_akn_prefix,
         }
-        return render_to_string(template_name, context)
+        context.update(kwargs)
+        return context
 
     def find_colophon(self, document):
         return Colophon.objects.filter(country=document.work.country).first()
@@ -231,14 +248,10 @@ class HTMLRenderer(object):
         found is used.
         """
         candidates = file_candidates(document, prefix='xsl/', suffix='.xsl')
-        for option in candidates:
-            log.debug("Looking for %s" % option)
-            fname = find_static(option)
-            if fname:
-                log.debug("Using xsl %s" % fname)
-                return fname
-
-        raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
+        best = find_best_static(candidates)
+        if not best:
+            raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
+        return best
 
     def _xml_renderer(self, document):
         params = {
@@ -263,12 +276,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
 
         view = renderer_context['view']
-        request = renderer_context['request']
-
-        renderer = HTMLRenderer()
-        renderer.standalone = request.GET.get('standalone') == '1'
-        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
-        renderer.media_url = request.GET.get('media-url', '')
+        renderer = self.get_renderer(renderer_context)
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
@@ -276,6 +284,18 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
 
         renderer.coverpage = renderer_context['request'].GET.get('coverpage') == '1'
         return renderer.render(document, view.element)
+
+    def get_renderer(self, renderer_context):
+        request = renderer_context['request']
+
+        renderer = HTMLRenderer()
+        renderer.standalone = request.GET.get('standalone') == '1'
+        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
+        renderer.media_url = request.GET.get('media-url', '')
+        # V2 API responses require that resolvers use /akn as a prefix
+        renderer.media_resolver_use_akn_prefix = getattr(request, 'version', None) == 'v2'
+
+        return renderer
 
 
 class PDFRenderer(HTMLRenderer):

@@ -188,6 +188,16 @@ class ContentAPIV1TestMixin(object):
                 'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng/main/section/1',
                 'title': 'Section 1.'}])
 
+    def test_published_toc_sections_with_headings(self):
+        response = self.client.get(self.api_path + '/za/act/2010/1/eng/toc.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['toc'], [
+            {'id': 'section-1', 'type': 'section', 'num': '1.',
+             'component': 'main', 'subcomponent': 'section/1',
+             'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng/main/section/1',
+             'heading': 'Foo', 'title': '1. Foo'}])
+
     def test_published_toc_uses_expression_date_in_urls(self):
         # use @2014-02-12
         response = self.client.get(self.api_path + '/za/act/2014/10/eng@2014-02-12/toc.json')

@@ -1,26 +1,17 @@
 {% extends "main.html" %}
+{% load staticfiles %}
 
 {% block title %}Places {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="row">
-    {% for country in countries %}
-      <div class="col-md-3">
-        <a href="{% url 'place' place=country.place_code %}" class="text-body text-no-underline-ever">
-          <div class="card mb-3">
-            <div class="card-body">
-              <h5 class="card-title">{{ country.name }} · {{ country.code }}</h5>
-
-              {% if country.n_open_tasks %}
-              <div class="text-muted float-right">{{ country.n_open_tasks }} tasks</div>
-              {% endif %}
-              <div class="text-muted">{{ country.n_works }} works</div>
-            </div>
-          </div>
-        </a>
-      </div>
-    {% endfor %}
-  </div>
+  {% include 'place/_place_cards.html' with places=countries %}
 </div>
+{% endblock %}
+
+{% block js %}
+  {{ block.super }}
+
+  <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
 {% endblock %}

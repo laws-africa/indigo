@@ -373,19 +373,11 @@ button.btn-link.help {
   }
 
   .comparison-main {
-    display: flex;
-    flex: 1 1 auto;
     position: absolute;
     top: 86px;
     left: 0px;
     right: 0px;
     bottom: 0px;
-  }
-
-  .comparison-content {
-    position: relative;
-    flex: 1;
-    height: 100%;
   }
 
 }

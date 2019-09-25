@@ -39,7 +39,6 @@
             self.$el.find('.n_changes').html(response.n_changes);
             self.$el.find('.comp_doc_date').html(response.comp_doc_date);
           });
-
     },
 
     show: function(e) {
@@ -48,7 +47,6 @@
       $('.work-view').addClass('d-none');
       this.$el.removeClass('d-none');
       this.comparison(comparison_doc_id);
-
     },
 
     dismiss: function(e) {

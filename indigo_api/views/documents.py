@@ -483,6 +483,8 @@ class ComparisonView(APIView):
 
         comparison_doc_id = request.data['comparison_doc_id']
         comparison_document = Document.objects.get(id=comparison_doc_id)
+        if not comparison_document:
+            raise Http404()
         comp_doc_date = comparison_document.expression_date
         comparison_document.document_xml = differ.preprocess_document_diff(comparison_document.document_xml)
         comparison_document_html = comparison_document.to_html()

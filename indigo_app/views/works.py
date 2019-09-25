@@ -364,15 +364,20 @@ class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
     """ View to add a new arbitrary expression date.
     """
     model = ArbitraryExpressionDate
+    fields = ['date']
     permission_required = ('indigo_api.add_amendment',)
 
-    def post(self, request, *args, **kwargs):
-        arbitrary_expression_date = ArbitraryExpressionDate(work=self.work)
-        arbitrary_expression_date.date = request.POST['arbitrary_expression_date']
-        arbitrary_expression_date.created_by_user = self.request.user
-        arbitrary_expression_date.save()
+    def get_form_kwargs(self):
+        kwargs = super(AddArbitraryExpressionDateView, self).get_form_kwargs()
+        kwargs['instance'] = ArbitraryExpressionDate(work=self.work)
+        kwargs['instance'].created_by_user = self.request.user
+        return kwargs
 
-        return redirect('work_amendments', frbr_uri=self.kwargs['frbr_uri'])
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#arbitrary-expression-date-%s" % self.object.id
+        return url
 
 
 class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):

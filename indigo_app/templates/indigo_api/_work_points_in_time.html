@@ -15,7 +15,7 @@
             <div class="dropdown-menu">
               <form method="POST" action="{% url 'new_arbitrary_expression_date' frbr_uri=work.frbr_uri %}">
                 {% csrf_token %}
-                <button class="dropdown-item" type="submit" name="arbitrary_expression_date"
+                <button class="dropdown-item" type="submit" name="date"
                         value="{{ consolidation_date|date:'Y-m-d' }}">Add consolidation date: {{ consolidation_date|date:'Y-m-d' }}</button>
               </form>
             </div>

@@ -1,7 +1,5 @@
 # coding=utf-8
 import json
-import io
-import re
 import logging
 from itertools import chain
 from datetime import timedelta
@@ -16,11 +14,9 @@ from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
-import requests
-import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, ArbitraryExpressionDate
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -285,6 +281,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
         context['work_timeline'] = self.get_work_timeline()
+        context['consolidation_date'] = self.place.settings.as_at_date or datetime.date.today()
         return context
 
 
@@ -358,8 +355,79 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
-        if self.object:
+        if self.object and self.object.id:
             url = url + "#amendment-%s" % self.object.id
+        return url
+
+
+class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
+    """ View to add a new arbitrary expression date.
+    """
+    model = ArbitraryExpressionDate
+    fields = ['date']
+    permission_required = ('indigo_api.add_amendment',)
+
+    def get_form_kwargs(self):
+        kwargs = super(AddArbitraryExpressionDateView, self).get_form_kwargs()
+        kwargs['instance'] = ArbitraryExpressionDate(work=self.work)
+        kwargs['instance'].created_by_user = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#arbitrary-expression-date-%s" % self.object.id
+        return url
+
+
+class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
+    """ View to update or delete an arbitrary expression date.
+    """
+    http_method_names = ['post']
+    model = ArbitraryExpressionDate
+    pk_url_kwarg = 'arbitrary_expression_date_id'
+    fields = ['date']
+
+    def get_queryset(self):
+        return self.work.arbitrary_expression_dates.all()
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_amendment',)
+        return ('indigo_api.change_amendment',)
+
+    def post(self, request, *args, **kwargs):
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
+        return super(EditArbitraryExpressionDateView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # get old/existing/incorrect date
+        old_date = form.initial['date']
+
+        # do normal things to amend work
+        self.object.updated_by_user = self.request.user
+        result = super(EditArbitraryExpressionDateView, self).form_valid(form)
+
+        # update old docs to have the new date as their expression date
+        docs = Document.objects.filter(work=self.object.work, expression_date=old_date)
+        for doc in docs:
+            doc.expression_date = self.object.date
+            doc.updated_by_user = self.request.user
+            doc.save()
+
+        return result
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.can_delete():
+            self.object.delete()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#arbitrary-expression-date-%s" % self.object.id
         return url
 
 

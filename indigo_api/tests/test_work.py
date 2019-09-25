@@ -29,7 +29,7 @@ class WorkTestCase(TestCase):
         """
         self.work.publication_date = None
         self.work.commencement_date = datetime.date.today()
-        events = self.work.amendments_with_initial()
+        events = self.work.amendments_with_initial_and_arbitrary()
         initial = events[-1]
         self.assertTrue(initial.initial)
         self.assertEqual(initial.date, self.work.commencement_date)

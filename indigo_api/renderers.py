@@ -565,6 +565,7 @@ class PDFResponseRenderer(BaseRenderer):
     media_type = 'application/pdf'
     format = 'pdf'
     serializer_class = NoopSerializer
+    pdf_renderer_class = PDFRenderer
     # these are used by the document download menu
     icon = 'far fa-file-pdf'
     title = 'PDF'
@@ -582,7 +583,7 @@ class PDFResponseRenderer(BaseRenderer):
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         request = renderer_context['request']
 
-        renderer = PDFRenderer()
+        renderer = self.get_pdf_renderer()
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
@@ -628,6 +629,9 @@ class PDFResponseRenderer(BaseRenderer):
 
     def get_filename(self, data, view):
         return generate_filename(data, view, self.format)
+
+    def get_pdf_renderer(self):
+        return self.pdf_renderer_class()
 
 
 class EPUBResponseRenderer(PDFResponseRenderer):

@@ -1,10 +1,8 @@
 <div class="document-comparison-view d-none">
   <header class="comparison-header">
     <div class="title">
-      <h5>Comparison</h5>
+      <h5>Differences between {{ document.expression_date }} (this expression) and <a href="{% url 'document' doc_id={{ comparison_doc.id }}%}">{{ comparison_doc.expression_date }}</a></h5>
       <p>
-        Between current version and document at
-        <span class="comp_doc_date"></span>.
         Number of changes:
         <span class="n_changes"></span>.
       </p>
@@ -16,14 +14,11 @@
   </header>
 
   <div class="comparison-main">
-    <div class="comparison-content">
-      <div class="document-sheet-container sheet-outer">
-        <div class="sheet-inner">
-          <div class="akoma-ntoso diffset"></div>
-        </div>
+    <div class="document-sheet-container sheet-outer">
+      <div class="sheet-inner">
+        <div class="akoma-ntoso diffset"></div>
       </div>
     </div>
-
   </div>
 
 </div>

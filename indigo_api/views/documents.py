@@ -472,6 +472,7 @@ class ComparisonView(APIView):
 
     def post(self, request):
         serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
 
         differ = AttributeDiffer()

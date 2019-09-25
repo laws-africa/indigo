@@ -485,7 +485,6 @@ class ComparisonView(APIView):
         comparison_document = Document.objects.get(id=comparison_doc_id)
         if not comparison_document:
             raise Http404()
-        comp_doc_date = comparison_document.expression_date
         comparison_document.document_xml = differ.preprocess_document_diff(comparison_document.document_xml)
         comparison_document_html = comparison_document.to_html()
 
@@ -500,5 +499,4 @@ class ComparisonView(APIView):
         return Response({
             'content': diff,
             'n_changes': n_changes,
-            'comp_doc_date': comp_doc_date,
         })

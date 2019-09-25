@@ -9,24 +9,27 @@
    */
   Indigo.DocumentComparisonView = Backbone.View.extend({
     el: '.document-comparison-view',
+    comparisonHeaderTemplate: '#comparison-header-template',
     events: {
       'click .dismiss': 'dismiss'
     },
 
     initialize: function(options) {
+      this.comparisonHeaderTemplate = Handlebars.compile($(this.comparisonHeaderTemplate).html());
+      this.document = options.document;
       this.documentContent = options.documentContent;
+      this.expressions = new Indigo.Library(Indigo.Preloads.expressions);
 
       $('.menu .comparison').on('click', _.bind(this.show, this));
-
     },
 
     comparison: function(comparison_doc_id) {
-
       var data = {},
           self = this;
       data.document = this.documentContent.document.toJSON();
       data.document.content = this.documentContent.toXml();
       data.comparison_doc_id = comparison_doc_id;
+      this.compareTo = this.expressions.get(comparison_doc_id);
 
       $.ajax({
         url: '/api/document-comparison',
@@ -37,7 +40,6 @@
           .then(function(response) {
             self.$el.find('.akoma-ntoso').html(response.content);
             self.$el.find('.n_changes').html(response.n_changes);
-            self.$el.find('.comp_doc_date').html(response.comp_doc_date);
           });
     },
 
@@ -47,6 +49,11 @@
       $('.work-view').addClass('d-none');
       this.$el.removeClass('d-none');
       this.comparison(comparison_doc_id);
+
+      this.$('.title').html(this.comparisonHeaderTemplate({
+        document: this.document,
+        comparison_doc: this.compareTo
+      }));
     },
 
     dismiss: function(e) {

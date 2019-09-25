@@ -1,7 +1,15 @@
 <div class="document-comparison-view d-none">
   <header class="comparison-header">
     <div class="title">
-      <h5>Differences between {{ document.expression_date }} (this expression) and <a href="{% url 'document' doc_id={{ comparison_doc.id }}%}">{{ comparison_doc.expression_date }}</a></h5>
+
+      <script id="comparison-header-template" type="text/x-handlebars-template">
+      {% verbatim %}
+        <h5>Differences between {{ document.expression_date }} (current content of this expression) and
+          <a href="/documents{{ comparison_document.id }}">{{ comparison_document.expression_date }}</a>
+        </h5>
+      {% endverbatim %}
+      </script>
+
       <p>
         Number of changes:
         <span class="n_changes"></span>.

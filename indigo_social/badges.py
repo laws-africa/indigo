@@ -24,6 +24,7 @@ class BaseBadge(Badge):
     events = []
     can_award_manually = True
     nature = None
+    css_class = ""
 
     def __init__(self):
         # hoop jumping to ensure that BadgeAward objects pick up the correct name
@@ -59,6 +60,10 @@ class BaseBadge(Badge):
         """
         pass
 
+    @property
+    def image(self):
+        return f"images/badges/{self.slug}.svg"
+
 
 class PermissionBadge(BaseBadge):
     """ Description of a permissions-based badge, linked to a set of django permissions.
@@ -68,6 +73,7 @@ class PermissionBadge(BaseBadge):
     permissions = ()
     group_name = None
     nature = 'permission'
+    image = "images/badges/permission.svg"
 
     _perms = None
     _group = None
@@ -165,6 +171,7 @@ def groups_changed(sender, instance, action, reverse, model, pk_set, **kwargs):
 
 class CountryBadge(BaseBadge):
     nature = 'country'
+    image = "images/badges/country.svg"
 
     def grant(self, user):
         user.editor.permitted_countries.add(self.country)

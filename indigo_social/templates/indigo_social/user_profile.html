@@ -1,29 +1,22 @@
 {% extends "indigo_social/user_layout.html" %}
 {% load activity_tags pinax_badges_tags %}
+{% load static %}
 
 {% block user_profile_content %}
-<div class="card">
-  <h4 class="card-header">Badges earned</h4>
-  <div class="card-body">
-    {% badges_for_user user as badges %}
-    <div class="row">
-      {% for badge in badges %}
-      <div class="col-md-6">
-        <div class="media mb-3">
-          <i class="fas fa-award fa-fw fa-3x mr-3"></i>
-          <div class="media-body">
-            <h5 class="mt-0 mb-0"><a href="{% url 'indigo_social:badge_detail' slug=badge.slug %}">{{ badge.name }}</a></h5>
-            <div class="text-muted">{{ badge.awarded_at|timesince }} ago</div>
-            {{ badge.description }}
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
 
-    {% if not badges %}
+<div class="card mt-3">
+  {% badges_for_user user as badges %}
+  <h4 class="card-header">{{ badges.count }} Achievements</h4>
+  <div class="card-body">
+    <div class="d-flex flex-row flex-wrap mt-3 achievement-list">
+      {% for badge in badges %}
+        {% include 'indigo_social/_achievement.html' with badge=badge award=badge with_description=True %}
+      {% endfor %}
+
+      {% if not badges %}
       <p>No badges earned yet :(</p>
-    {% endif %}
+      {% endif %}
+    </div>
 
     {% if can_award %}
       <hr>
@@ -42,8 +35,8 @@
           <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
         </div>
       </form>
-    {% endif %}
-  </div>
+      {% endif %}
+    </div>
 </div>
 
 <div class="card mt-3">

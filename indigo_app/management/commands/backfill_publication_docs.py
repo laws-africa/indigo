@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.core.management.base import BaseCommand
@@ -22,7 +20,7 @@ class Command(BaseCommand):
             print('{}: {} – {} {}'.format(user.id, user.username, user.first_name, user.last_name))
         while True:
             try:
-                result = int(input('Which user are you? Select the number from the list above: '))
+                result = int(eval(input('Which user are you? Select the number from the list above: ')))
                 user = User.objects.get(id=result)
             except:
                 print('\nSomething went wrong; try again (you must type a number from the list above)\n\n')
@@ -38,8 +36,7 @@ class Command(BaseCommand):
 
     def get_params(self, work):
         params = {
-            # TODO: Python 3 doesn't have `unicode()`
-            'date': unicode(work.publication_date),
+            'date': str(work.publication_date),
             'number': work.publication_number,
             'publication': work.publication_name,
             'country': work.country.place_code,
@@ -115,7 +112,7 @@ Otherwise, find it and upload it manually.'''
                     self.pub_doc_task(work, user)
 
             except ValueError as e:
-                raise ValidationError({'message': e.message})
+                raise ValidationError({'message': str(e)})
 
         else:
             self.pub_doc_task(work, user)

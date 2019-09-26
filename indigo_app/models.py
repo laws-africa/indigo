@@ -56,8 +56,8 @@ class Publication(models.Model):
         ordering = ['name']
         unique_together = (('country', 'name'),)
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
 
 @receiver(post_save, sender=User)

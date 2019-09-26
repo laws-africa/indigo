@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 from nose.tools import *  # noqa
 
 from django.test import testcases
@@ -23,7 +21,7 @@ PUBLISHED IN THE PROVINCIAL GAZETTE
 
 more text
 """
-        reformatted = self.importer.reformat_text(text)
+        reformatted = self.importer.reformat_text_from_pdf(text)
         assert_equal(reformatted, "text\n\n\n\n\n\nmore text\n")
 
     def test_dont_remove_blanks(self):
@@ -39,7 +37,7 @@ Person_________ (id number)
 
 more text
 """
-            reformatted = self.importer.reformat_text(text)
+            reformatted = self.importer.reformat_text_from_pdf(text)
             assert_equal(reformatted, "We're in a form:\n\nPerson________(id number)\n\nPerson _________ (id number)\n\nPerson _________(id number)\n\nPerson_________ (id number)\n\nmore text\n")
 
     def test_break_nested_lists(self):
@@ -172,3 +170,39 @@ CULTURE AND RECREATION BY-LAWS
 CHAPTER 1 LIBRARY AND INFORMATION SERVICES
 Definitions and interpretation
 1. (1) In this Chapter, unless the context otherwise indicates-""")
+
+    def test_fix_quotes(self):
+        assert_equal(self.importer.fix_quotes(
+            '’’this thing’’ means “that” and ‟this\'\''),
+            '"this thing" means "that" and "this"')
+
+    def test_whitespace_subsections(self):
+        assert_equal(self.importer.subsection_num_spaces("""
+(a) not changed
+( b ) changed
+(b  ) changed
+(bb ) changed
+        """), """
+(a) not changed
+(b) changed
+(b) changed
+(bb) changed
+        """)
+
+    def test_whitespace_subsections(self):
+        assert_equal(self.importer.unhyphenate(
+            "report on the im- plementation"),
+            "report on the implementation")
+
+    def test_strip_whitespace(self):
+        assert_equal(self.importer.strip_whitespace("""
+\xA0       test
+
+        (a) foo   bar
+          (b) baz boom
+        """), """
+test
+
+(a) foo   bar
+(b) baz boom
+        """)

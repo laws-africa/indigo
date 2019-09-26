@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import, unicode_literals
-
 import re
 import csv
 import io
@@ -48,7 +45,7 @@ class RowValidationFormBase(forms.Form):
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
-        return re.sub(u'[\u2028 ]+', ' ', title)
+        return re.sub('[\u2028 ]+', ' ', title)
 
 
 @plugins.register('bulk-creator')
@@ -89,9 +86,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
             response = requests.get(url, timeout=5)
             response.raise_for_status()
         except requests.RequestException as e:
-            raise ValidationError("Error talking to Google Sheets: %s" % e.message)
+            raise ValidationError("Error talking to Google Sheets: %s" % str(e))
 
-        reader = csv.reader(io.BytesIO(response.content))
+        reader = csv.reader(io.StringIO(response.content.decode('utf-8')))
         rows = list(reader)
 
         if not rows or not rows[0]:
@@ -99,7 +96,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 "Your sheet did not import successfully; "
                 "please check that you have link sharing ON (Anyone with the link)."
             )
-        return [[item.decode('utf8') for item in row] for row in rows]
+        return rows
 
     @property
     def is_gsheets_enabled(self):
@@ -114,7 +111,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 return metadata['sheets']
             except HttpError as e:
                 self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
-                raise ValueError(e.message)
+                raise ValueError(str(e))
 
         return []
 
@@ -124,8 +121,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         """
         try:
             result = self.gsheets_client\
-                .spreadsheets()\
-                .values().get(spreadsheetId=spreadsheet_id, range=sheet_name)\
+                .spreadsheets().values().get(spreadsheetId=spreadsheet_id, range=sheet_name)\
                 .execute()
         except HttpError as e:
             self.log.warning("Error getting data from google sheets for {}".format(spreadsheet_id), exc_info=e)
@@ -262,7 +258,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                         ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
                     )
                 else:
-                    info['error_message'] = e.message
+                    info['error_message'] = str(e)
 
         return info
 
@@ -501,8 +497,11 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
 
         # need to save before assigning workflow because of M2M relation
         task.save()
-        task.workflows = [self.workflow]
-        task.save()
+        if self.workflow:
+            task.workflows = [self.workflow]
+            task.save()
+
+        return task
 
     def find_work_by_title(self, title):
         potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)

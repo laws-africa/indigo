@@ -114,7 +114,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
                 instance.reset_xml(request.data.get('content'))
                 instance.save_with_revision(request.user)
             except LxmlError as e:
-                raise ValidationError({'content': ["Invalid XML: %s" % e.message]})
+                raise ValidationError({'content': ["Invalid XML: %s" % str(e)]})
 
             return Response({'content': instance.document_xml})
 
@@ -338,8 +338,8 @@ class ParseView(APIView):
             text = serializer.validated_data.get('content')
             xml = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
         except ValueError as e:
-            log.error("Error during import: %s" % e.message, exc_info=e)
-            raise ValidationError({'content': e.message or "error during import"})
+            log.error("Error during import: %s" % str(e), exc_info=e)
+            raise ValidationError({'content': str(e) or "error during import"})
 
         # parse and re-serialize the XML to ensure it's clean, and sort out encodings
         xml = Base(xml).to_xml()
@@ -463,3 +463,41 @@ class SearchView(DocumentViewMixin, ListAPIView):
             serializer.data[i]['_snippet'] = doc.snippet
 
         return serializer
+
+
+class ComparisonView(APIView):
+    """ Support for running a document comparison.
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
+        serializer.is_valid(raise_exception=True)
+
+        differ = AttributeDiffer()
+
+        current_document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        current_document.document_xml = differ.preprocess_document_diff(current_document.document_xml)
+        current_html = current_document.to_html()
+
+        comparison_doc_id = request.data['comparison_doc_id']
+        try:
+            comparison_document = Document.objects.get(id=comparison_doc_id)
+        except Document.DoesNotExist:
+            raise Http404()
+        comparison_document.document_xml = differ.preprocess_document_diff(comparison_document.document_xml)
+        comparison_document_html = comparison_document.to_html()
+
+        current_tree = lxml.html.fromstring(current_html)
+        comparison_tree = lxml.html.fromstring(comparison_document_html)
+        n_changes = differ.diff_document_html(comparison_tree, current_tree)
+
+        diff = lxml.html.tostring(current_tree, encoding='utf-8')
+
+        # TODO: include other diff'd attributes
+
+        return Response({
+            'content': diff,
+            'n_changes': n_changes,
+        })

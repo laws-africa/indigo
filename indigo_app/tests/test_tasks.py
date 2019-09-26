@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.test import override_settings
 from django.contrib.auth.models import User
 from django_webtest import WebTest
@@ -26,7 +24,7 @@ class TasksTest(WebTest):
 
         self.assertEqual(task.title, "test title")
         self.assertEqual(task.description, "test description")
-        self.assertEqual([x.title for x in task.labels.all()], [u"Label 1"])
+        self.assertEqual([x.title for x in task.labels.all()], ["Label 1"])
 
     def test_place_tasks(self):
         form = self.app.get('/places/za/tasks/new').forms['task-form']
@@ -38,3 +36,11 @@ class TasksTest(WebTest):
         response = self.app.get('/places/za/tasks/')
         self.assertEqual(response.status_code, 200)
         self.assertIn('test title', response.text)
+
+    def test_my_tasks(self):
+        response = self.app.get('/tasks/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_available_tasks(self):
+        response = self.app.get('/tasks/available/')
+        self.assertEqual(response.status_code, 200)

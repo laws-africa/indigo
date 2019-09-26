@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import re
 
 from indigo_api.importers.base import Importer
@@ -34,9 +32,10 @@ class ImporterZA(Importer):
         r'^\s*[_-]{5,}\s*$',
     ]), re.MULTILINE)
 
-    def reformat_text(self, text):
-        # change weird quotes to normal ones
-        text = re.sub(r"‘‘|’’|''", '"', text)
+    def reformat_text_from_pdf(self, text):
+        text = self.strip_whitespace(text)
+        text = self.expand_ligatures(text)
+        text = self.fix_quotes(text)
 
         # boilerplate
         text = self.boilerplate_re1.sub('', text)
@@ -45,6 +44,36 @@ class ImporterZA(Importer):
         text = self.unbreak_lines(text)
         text = self.break_lines(text)
         text = self.strip_toc(text)
+
+        return text
+
+    def reformat_text_from_html(self, text):
+        text = self.strip_whitespace(text)
+        text = self.expand_ligatures(text)
+        text = self.fix_quotes(text)
+        text = self.unhyphenate(text)
+        text = self.subsection_num_spaces(text)
+        text = self.strip_toc(text)
+
+        return text
+
+    def fix_quotes(self, text):
+        # change weird quotes to normal ones
+        return re.sub(r"‘‘|’’|''|“|”|‟", '"', text)
+
+    def unhyphenate(self, text):
+        """ Change "hyphen- ated" to "hyphenated".
+
+        This happens particularly when importing from HTML with <br> used in the middle,
+        which we change to a space.
+        """
+        return re.sub(r'([a-z])- ([a-z])', '\\1\\2', text)
+
+    def subsection_num_spaces(self, text):
+        """ Change subsection numbers like ( f) to (f)
+        """
+        text = re.sub(r'^\(\s+([a-z0-9]+)\s*\)', '(\\1)', text, 0, re.MULTILINE)
+        text = re.sub(r'^\(([a-z0-9]+)\s+\)', '(\\1)', text, 0, re.MULTILINE)
 
         return text
 
@@ -75,7 +104,7 @@ class ImporterZA(Importer):
         text = re.sub(r' (\(a\) .+?\n\(b\))', '\n\\1', text)
 
         # "foo" means ...; "bar" means
-        text = re.sub(r'; (["”“][^"”“]+?["”“] means)', ';\n\\1', text)
+        text = re.sub(r'; (["][^"]+?["] means)', ';\n\\1', text)
 
         # CHAPTER 4 PARKING METER PARKING GROUNDS Place of parking
         text = re.sub(r'([A-Z0-9 ]{5,}) ([A-Z][a-z ]{5,})', '\\1\n\\2', text)
@@ -83,7 +112,7 @@ class ImporterZA(Importer):
         return text
 
     def unbreak_lines(self, text):
-        """ Find likely candidates for unnecessarily broken lines and unbreaks them.
+        """ Find likely candidates for unnecessarily broken lines and unbreak them.
         """
         lines = text.split("\n")
         output = []
@@ -99,7 +128,6 @@ class ImporterZA(Importer):
             re.compile(r'^\s*(and|or)'),
         )]
 
-        prev = None
         for i, line in enumerate(lines):
             if i == 0:
                 output.append(line)
@@ -143,4 +171,12 @@ class ImporterZA(Importer):
                     if marker.startswith(match.group(1)) or match.group(1).strip().startswith(marker):
                         return text[:toc_start.start()] + text[posn + match.start():]
 
+        return text
+
+    def strip_whitespace(self, text):
+        """ Remove leading whitespace at the start of non-blank lines.
+        """
+        # replacing non-breaking spaces with normal spaces
+        text = text.replace('\xA0', ' ')
+        text = re.sub(r'^[ \t]+([^ \t])', '\\1', text, 0, re.MULTILINE)
         return text

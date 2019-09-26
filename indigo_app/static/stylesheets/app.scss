@@ -1,31 +1,10 @@
-@import "bootstrap-variables";
+@import "variables";
+
+// give other projects a chance to override variables
+@import "indigo/variables";
 
 @import 'lib/bootstrap-4.3.1/scss/bootstrap';
 
-$body-bg-color: #e4e5e8;
-
-$grey-lightest: $gray-100;
-$grey-lighter: $gray-200;
-$grey: $gray-300;
-$grey-darker: $gray-400;
-$grey-darkest: $gray-500;
-
-$border-colour: $grey;
-$workspace-header-colour: white;
-$workspace-header-border-colour: $grey-darker;
-$header-colour2: $grey-lighter;
-
-$navbar-height: 50px;
-$header-height: 45px;
-$workspace-header-height: 90px;
-
-$document-sidebar-width: 260px;
-$document-sidebar-colour: $grey-lighter;
-
-$selection-colour: #b2d8fc;
-
-// sidebar
-$sidebar-width: 200px;
 
 // fontawesome
 $fa-font-path: "../lib/fontawesome-5.2/webfonts";
@@ -48,6 +27,7 @@ $fa-font-path: "../lib/fontawesome-5.2/webfonts";
 @import 'attachments';
 @import 'badges';
 @import 'documents';
+@import 'diffs';
 @import 'forms';
 @import 'importform';
 @import 'library';
@@ -58,3 +38,6 @@ $fa-font-path: "../lib/fontawesome-5.2/webfonts";
 @import 'toast';
 @import 'utilities';
 @import 'works';
+
+// import custom styles right at the end
+@import 'indigo/custom';

@@ -57,9 +57,9 @@ You can see that this is built from the work's URI, with a language code
 Location of the API
 -------------------
 
-The API is available at the `/api/v2/` URL of your Indigo installation.
+The API is available at the ``/api/v2/`` URL of your Indigo installation.
 
-Version 1 ``/v2/`` of the API is deprecated and will be removed soon.
+Version 1 ``/v1/`` of the API is deprecated and will be removed soon.
 
 Authentication
 --------------

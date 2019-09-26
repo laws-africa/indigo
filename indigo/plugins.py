@@ -18,7 +18,8 @@ class LocaleBasedRegistry(object):
     def for_document(self, topic, document):
         """ Find an appropriate helper for this document.
         """
-        return self.for_locale(topic, country=document.country, locality=document.locality, language=document.language.code)
+        locality = document.work.locality.code if document.work.locality else None
+        return self.for_locale(topic, country=document.work.country.code, locality=locality, language=document.language.code)
 
     def for_work(self, topic, work):
         """ Find an appropriate helper for this work.
@@ -30,7 +31,7 @@ class LocaleBasedRegistry(object):
         """ Find an appropriate importer for this locale description. Tightest match wins.
         """
         target = (country, language, locality)
-        match = self.lookup(topic, target, self.registry[topic].itervalues())
+        match = self.lookup(topic, target, self.registry[topic].values())
         if match:
             # return an instance
             return match()
@@ -69,7 +70,7 @@ class LocaleBasedMatcher(object):
         """
         m = []
 
-        for tgt, us in itertools.izip(target, cls.locale):
+        for tgt, us in zip(target, cls.locale):
             if us is None:
                 # we match anything
                 m.append(_inf)

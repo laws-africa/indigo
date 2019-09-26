@@ -1,8 +1,6 @@
-from __future__ import unicode_literals
-
 import cgi
 from difflib import SequenceMatcher
-from itertools import izip_longest
+from itertools import zip_longest
 from copy import deepcopy
 import logging
 
@@ -132,8 +130,8 @@ class AttributeDiffer(object):
             old = ''
         if new is None:
             new = ''
-        old = unicode(old).replace('\n', ' ')
-        new = unicode(new).replace('\n', ' ')
+        old = str(old).replace('\n', ' ')
+        new = str(new).replace('\n', ' ')
 
         left = []
         right = []
@@ -243,7 +241,7 @@ class AttributeDiffer(object):
                     html_diff = self.html_inline_diff(old.text, new.text)
                     new.text = None
                     for item in reversed(fragments_fromstring(html_diff)):
-                        if isinstance(item, basestring):
+                        if isinstance(item, str):
                             new.text = item
                         else:
                             new.insert(0, item)
@@ -256,7 +254,7 @@ class AttributeDiffer(object):
                     prev = new
                     prev.tail = None
                     for item in fragments_fromstring(html_diff):
-                        if isinstance(item, basestring):
+                        if isinstance(item, str):
                             prev.tail = item
                         else:
                             # same as prev.addnext, but preserves prev's tail
@@ -292,7 +290,7 @@ class AttributeDiffer(object):
 
         # get a snapshot of the 'new' children, because yielding differences
         # will change the 'new' tree
-        kiddies = izip_longest(old.getchildren(), new.getchildren())
+        kiddies = zip_longest(old.getchildren(), new.getchildren())
 
         if old.text != new.text and (old.text or '').strip() != (new.text or '').strip():
             yield ('text-differs', old, new)

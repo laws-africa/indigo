@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from django.utils.safestring import mark_safe
 from django import template
 

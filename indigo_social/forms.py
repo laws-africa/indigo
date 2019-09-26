@@ -60,7 +60,7 @@ class UserProfileForm(forms.ModelForm):
 
 
 def badge_choices():
-    return sorted([(b.slug, u'%s – %s' % (b.name, b.description)) for b in badges.registry.itervalues() if b.can_award_manually])
+    return sorted([(b.slug, '%s – %s' % (b.name, b.description)) for b in badges.registry.values() if b.can_award_manually])
 
 
 class AwardBadgeForm(forms.Form):

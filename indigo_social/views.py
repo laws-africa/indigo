@@ -1,6 +1,4 @@
 # coding=utf-8
-from __future__ import unicode_literals
-
 from datetime import timedelta
 
 from actstream.models import Action
@@ -137,7 +135,7 @@ class UserActivityView(MultipleObjectMixin, DetailView):
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_activity.html'
     object_list = None
-    page_size = 20
+    page_size = 30
     js_view = ''
     threshold = timedelta(seconds=3)
 

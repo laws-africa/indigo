@@ -24,7 +24,7 @@
 
     commentChanged: function(e) {
       var text = (e.target.value || '').trim();
-      this.$('#task-comment-form #id_submit').attr('disabled', text.length == 0);
+      this.$('#task-comment-form #id_submit').attr('disabled', text.length === 0);
     }
   });
 })(window);

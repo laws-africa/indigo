@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
 import random
 import string
 import datetime
@@ -12,7 +10,7 @@ from cobalt.act import Act, FrbrUri
 
 def random_frbr_uri(country=None):
     today = datetime.datetime.now()
-    number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in xrange(5))
+    number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
     country = country or 'za'
     return FrbrUri(country=country.lower(), locality=None, doctype="act",
                    subtype=None, actor=None, date=str(today.year),

@@ -2,7 +2,7 @@ from django.conf.urls import url, include
 from rest_framework.routers import DefaultRouter
 
 import indigo_content_api.v1.views as v1_views
-import views as v2_views
+from . import views as v2_views
 
 router = DefaultRouter(trailing_slash=False)
 router.register(r'countries', v1_views.CountryViewSet, base_name='country')

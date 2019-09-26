@@ -5,10 +5,9 @@ import os.path
 import zipfile
 import logging
 
-from django.template.loader import get_template, render_to_string, TemplateDoesNotExist
+from django.template.loader import get_template, render_to_string
 from django.core.cache import caches
 from django.conf import settings
-from django.contrib.staticfiles.finders import find as find_static
 from rest_framework.renderers import BaseRenderer, StaticHTMLRenderer
 from rest_framework_xml.renderers import XMLRenderer
 from wkhtmltopdf.utils import make_absolute_paths, wkhtmltopdf
@@ -16,48 +15,11 @@ from ebooklib import epub
 from languages_plus.models import Language
 from sass_processor.processor import SassProcessor
 
+from indigo_api.utils import find_best_template, find_best_static, filename_candidates
 from .serializers import NoopSerializer
 from .models import Document, Colophon
 
 log = logging.getLogger(__name__)
-
-
-def file_candidates(document, prefix='', suffix=''):
-    """ Candidate files to use for this document.
-
-    This takes into account the country, type, subtype and language of the document,
-    providing a number of opportunities to adjust the rendering logic.
-
-    The following templates are looked for, in order:
-
-    * doctype-subtype-language-country
-    * doctype-subtype-language
-    * doctype-subtype-country
-    * doctype-subtype
-    * doctype-language-country
-    * doctype-country
-    * doctype-language
-    * doctype
-    """
-    uri = document.expression_uri
-    doctype = uri.doctype
-    language = uri.language
-    country = uri.country
-    subtype = uri.subtype
-
-    options = []
-    if subtype:
-        options.append('-'.join([doctype, subtype, language, country]))
-        options.append('-'.join([doctype, subtype, language]))
-        options.append('-'.join([doctype, subtype, country]))
-        options.append('-'.join([doctype, subtype]))
-
-    options.append('-'.join([doctype, language, country]))
-    options.append('-'.join([doctype, country]))
-    options.append('-'.join([doctype, language]))
-    options.append(doctype)
-
-    return [prefix + f + suffix for f in options]
 
 
 def resolver_url(request, resolver):
@@ -86,13 +48,13 @@ class XSLTRenderer(object):
         params = {
             'defaultIdScope': ET.XSLT.strparam(self.defaultIdScope(node) or ''),
         }
-        params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.iteritems()})
+        params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.items()})
         return ET.tostring(self.xslt(node, **params))
 
     def render_xml(self, xml):
         """ Render an XML string into an HTML string """
         if not isinstance(xml, str):
-            xml = xml.encode('utf-8')
+            xml = xml.decode('utf-8')
         return self.render(ET.fromstring(xml))
 
     def defaultIdScope(self, node):
@@ -145,12 +107,13 @@ class AkomaNtosoRenderer(XMLRenderer):
 class HTMLRenderer(object):
     """ Render documents as as HTML.
     """
-    def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None):
+    def __init__(self, coverpage=True, standalone=False, template_name=None, resolver=None, media_resolver_use_akn_prefix=False):
         self.template_name = template_name
         self.standalone = standalone
         self.coverpage = coverpage
         self.resolver = resolver or settings.RESOLVER_URL
         self.media_url = ''
+        self.media_resolver_use_akn_prefix = media_resolver_use_akn_prefix
 
     def render(self, document, element=None):
         """ Render this document to HTML.
@@ -158,6 +121,8 @@ class HTMLRenderer(object):
         :param document: document to render if +element+ is None
         :param element: element to render (optional)
         """
+        self.document = document
+
         # use this to render the bulk of the document
         renderer = self._xml_renderer(document)
 
@@ -174,15 +139,14 @@ class HTMLRenderer(object):
         # find the template to use
         template_name = self.template_name or self.find_template(document)
 
-        context = {
+        context = self.get_context_data(**{
             'document': document,
             'element': element,
             'content_html': content_html,
             'renderer': renderer,
             'coverpage': self.coverpage,
-            'resolver_url': self.resolver,
             'coverpage_template': self.coverpage_template(document),
-        }
+        })
 
         # Now render some boilerplate around it.
         if self.standalone:
@@ -197,11 +161,17 @@ class HTMLRenderer(object):
 
     def render_coverpage(self, document):
         template_name = self.coverpage_template(document)
+        return render_to_string(template_name, self.get_context_data(document=document))
+
+    def get_context_data(self, **kwargs):
+        """ Get the context data passed to the HTML template.
+        """
         context = {
-            'document': document,
             'resolver_url': self.resolver,
+            'media_resolver_use_akn_prefix': self.media_resolver_use_akn_prefix,
         }
-        return render_to_string(template_name, context)
+        context.update(kwargs)
+        return context
 
     def find_colophon(self, document):
         return Colophon.objects.filter(country=document.work.country).first()
@@ -212,17 +182,11 @@ class HTMLRenderer(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = file_candidates(document, prefix='indigo_api/akn/' + prefix, suffix=suffix)
-        for option in candidates:
-            try:
-                log.debug("Looking for %s" % option)
-                if get_template(option):
-                    log.debug("Using template %s" % option)
-                    return option
-            except TemplateDoesNotExist:
-                pass
-
-        raise ValueError("Couldn't find an HTML template to use for %s, tried: %s" % (document, candidates))
+        candidates = filename_candidates(document, prefix='indigo_api/akn/' + prefix, suffix=suffix)
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find an HTML template to use for %s, tried: %s" % (document, candidates))
+        return best
 
     def find_xslt(self, document):
         """ Return the filename of an xslt template to use to render this document.
@@ -230,15 +194,11 @@ class HTMLRenderer(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = file_candidates(document, prefix='xsl/', suffix='.xsl')
-        for option in candidates:
-            log.debug("Looking for %s" % option)
-            fname = find_static(option)
-            if fname:
-                log.debug("Using xsl %s" % fname)
-                return fname
-
-        raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
+        candidates = filename_candidates(document, prefix='xsl/', suffix='.xsl')
+        best = find_best_static(candidates)
+        if not best:
+            raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
+        return best
 
     def _xml_renderer(self, document):
         params = {
@@ -263,12 +223,7 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
             return super(HTMLResponseRenderer, self).render(document, media_type, renderer_context)
 
         view = renderer_context['view']
-        request = renderer_context['request']
-
-        renderer = HTMLRenderer()
-        renderer.standalone = request.GET.get('standalone') == '1'
-        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
-        renderer.media_url = request.GET.get('media-url', '')
+        renderer = self.get_renderer(renderer_context)
 
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             renderer.coverpage = renderer_context['request'].GET.get('coverpage', '1') == '1'
@@ -276,6 +231,18 @@ class HTMLResponseRenderer(StaticHTMLRenderer):
 
         renderer.coverpage = renderer_context['request'].GET.get('coverpage') == '1'
         return renderer.render(document, view.element)
+
+    def get_renderer(self, renderer_context):
+        request = renderer_context['request']
+
+        renderer = HTMLRenderer()
+        renderer.standalone = request.GET.get('standalone') == '1'
+        renderer.resolver = resolver_url(request, request.GET.get('resolver'))
+        renderer.media_url = request.GET.get('media-url', '')
+        # V2 API responses require that resolvers use /akn as a prefix
+        renderer.media_resolver_use_akn_prefix = getattr(request, 'version', None) == 'v2'
+
+        return renderer
 
 
 class PDFRenderer(HTMLRenderer):
@@ -303,7 +270,7 @@ class PDFRenderer(HTMLRenderer):
 
         # embed the HTML into the PDF container
         html = render_to_string('indigo_api/akn/export/pdf.html', {
-            'documents': zip(documents, html),
+            'documents': list(zip(documents, html)),
         })
         return self.to_pdf(html, documents=documents)
 
@@ -368,14 +335,12 @@ class PDFRenderer(HTMLRenderer):
         # We want to pull the footer (7.5mm high) into the margin, so we decrease
         # the margin slightly
 
-        footer_font = 'Georgia, "Times New Roman", serif'
-        footer_font_size = '8'
-        footer_spacing = 5
-        margin_top = 36.3 - footer_spacing
-        margin_bottom = 36.3 - footer_spacing
+        header_font = 'Georgia, "Times New Roman", serif'
+        header_font_size = '8'
+        header_spacing = 5
+        margin_top = 36.3 - header_spacing
+        margin_bottom = 36.3 - header_spacing
         margin_left = 25.6
-
-        toc_xsl = get_template('indigo_api/akn/export/pdf_toc.xsl').origin.name
 
         options = {
             'page-size': 'A4',
@@ -384,18 +349,31 @@ class PDFRenderer(HTMLRenderer):
             'margin-left': '%.2fmm' % margin_left,
             'margin-right': '%.2fmm' % margin_left,
             'header-left': '[section]',
-            'header-spacing': '%.2f' % footer_spacing,
-            'header-font-name': footer_font,
-            'header-font-size': footer_font_size,
+            'header-spacing': '%.2f' % header_spacing,
+            'header-font-name': header_font,
+            'header-font-size': header_font_size,
             'header-line': True,
-            'footer-center': '[page] of [toPage]',
-            'footer-spacing': '%.2f' % footer_spacing,
-            'footer-font-name': footer_font,
-            'footer-font-size': footer_font_size,
-            'xsl-style-sheet': toc_xsl,
+            'footer-html': self.footer_html(),
+            'footer-line': True,
+            'footer-spacing': '%.2f' % header_spacing,
+            'xsl-style-sheet': self.toc_xsl(),
         }
 
         return options
+
+    def toc_xsl(self):
+        candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_toc_', suffix='.xsl')
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find TOC XSL file for PDF.")
+        return get_template(best).origin.name
+
+    def footer_html(self):
+        candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_footer_', suffix='.html')
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find footer file for PDF.")
+        return get_template(best).origin.name
 
 
 class EPUBRenderer(HTMLRenderer):
@@ -570,7 +548,7 @@ class EPUBRenderer(HTMLRenderer):
         return '-'.join([p for p in parts if p])
 
     def clean_html(self, html, wrap=None):
-        html = self.BAD_DIV_TAG_RE.sub('\\1div\\3', html)
+        html = self.BAD_DIV_TAG_RE.sub('\\1div\\3', str(html))
         if wrap:
             html = '<div class="' + wrap + '">' + html + '</div>'
         return html
@@ -587,6 +565,7 @@ class PDFResponseRenderer(BaseRenderer):
     media_type = 'application/pdf'
     format = 'pdf'
     serializer_class = NoopSerializer
+    pdf_renderer_class = PDFRenderer
     # these are used by the document download menu
     icon = 'far fa-file-pdf'
     title = 'PDF'
@@ -604,7 +583,7 @@ class PDFResponseRenderer(BaseRenderer):
         renderer_context['response']['Content-Disposition'] = 'inline; filename=%s' % filename
         request = renderer_context['request']
 
-        renderer = PDFRenderer()
+        renderer = self.get_pdf_renderer()
         renderer.resolver = resolver_url(request, request.GET.get('resolver'))
 
         # check the cache
@@ -650,6 +629,9 @@ class PDFResponseRenderer(BaseRenderer):
 
     def get_filename(self, data, view):
         return generate_filename(data, view, self.format)
+
+    def get_pdf_renderer(self):
+        return self.pdf_renderer_class()
 
 
 class EPUBResponseRenderer(PDFResponseRenderer):

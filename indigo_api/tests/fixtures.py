@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*
 
-DOCUMENT_FIXTURE = u"""<?xml version="1.0" encoding="UTF-8"?>
+DOCUMENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
 <akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
   <act contains="originalVersion">
     <meta>
@@ -36,7 +36,7 @@ DOCUMENT_FIXTURE = u"""<?xml version="1.0" encoding="UTF-8"?>
 </akomaNtoso>
 """
 
-BODY_FIXTURE = u"""
+BODY_FIXTURE = """
 <body>
   <section id="section-1">
     <content>
@@ -46,7 +46,7 @@ BODY_FIXTURE = u"""
 </body>
 """
 
-COMPONENT_FIXTURE = u"""<?xml version="1.0" encoding="UTF-8"?>
+COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
 <akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
   <act contains="originalVersion">
     <meta>
@@ -129,13 +129,13 @@ def body_fixture(text):
 
 def document_fixture(text=None, xml=None):
     if text:
-        xml = u"""<section id="section-1"><content><p>%s</p></content></section>""" % text
+        xml = """<section id="section-1"><content><p>%s</p></content></section>""" % text
 
     return DOCUMENT_FIXTURE % xml
 
 
 def component_fixture(text=None, xml=None):
     if text:
-        xml = u"""<section id="section-1"><content><p>%s</p></content></section>""" % text
+        xml = """<section id="section-1"><content><p>%s</p></content></section>""" % text
 
     return COMPONENT_FIXTURE % xml

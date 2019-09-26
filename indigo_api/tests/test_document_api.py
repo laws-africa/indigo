@@ -145,7 +145,7 @@ class DocumentAPITest(APITestCase):
         id = response.data['id']
 
         revisions1 = self.client.get('/api/documents/%s/revisions' % id).data
-        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'in γνωρίζω body')})
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('in γνωρίζω body')})
         assert_equal(response.status_code, 200)
         revisions2 = self.client.get('/api/documents/%s/revisions' % id).data
 
@@ -154,10 +154,10 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
-        assert_in(u'<p>in γνωρίζω body</p>', response.data['content'])
+        assert_in('<p>in γνωρίζω body</p>', response.data['content'])
 
         # also try updating the content at /content
-        response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture(u'also γνωρίζω the body')})
+        response = self.client.put('/api/documents/%s/content' % id, {'content': document_fixture('also γνωρίζω the body')})
         assert_equal(response.status_code, 200)
         revisions3 = self.client.get('/api/documents/%s/revisions' % id).data
 
@@ -166,14 +166,14 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
-        assert_in(u'<p>also γνωρίζω the body</p>', response.data['content'])
+        assert_in('<p>also γνωρίζω the body</p>', response.data['content'])
 
     def test_revert_a_revision(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there'), 'expression_date': '2001-01-01', 'language': 'eng'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture('hello in there'), 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
-        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'goodbye')})
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('goodbye')})
         assert_equal(response.status_code, 200)
 
         revisions = self.client.get('/api/documents/%s/revisions' % id).data
@@ -185,14 +185,14 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
-        assert_in(u'<p>hello in there</p>', response.data['content'])
+        assert_in('<p>hello in there</p>', response.data['content'])
 
     def test_get_a_revision_diff(self):
-        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture(u'hello in there'), 'expression_date': '2001-01-01', 'language': 'eng'})
+        response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'content': document_fixture('hello in there'), 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)
         id = response.data['id']
 
-        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture(u'goodbye')})
+        response = self.client.patch('/api/documents/%s' % id, {'content': document_fixture('goodbye')})
         assert_equal(response.status_code, 200)
 
         revisions = self.client.get('/api/documents/%s/revisions' % id).data
@@ -210,13 +210,13 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.data['title'], 'Test Act')
 
         response = self.client.patch('/api/documents/%s' % id, {
-            'content': document_fixture(u'in γνωρίζω body'),
+            'content': document_fixture('in γνωρίζω body'),
             'title': 'the title'})
         assert_equal(response.status_code, 200)
 
         response = self.client.get('/api/documents/%s/content' % id)
         assert_equal(response.status_code, 200)
-        assert_in(u'<p>in γνωρίζω body</p>', response.data['content'])
+        assert_in('<p>in γνωρίζω body</p>', response.data['content'])
 
         response = self.client.get('/api/documents/%s' % id)
         assert_equal(response.data['title'], 'the title')
@@ -351,7 +351,7 @@ class DocumentAPITest(APITestCase):
                 'heading': 'Administrative provisions',
                 'id': 'chapter-2',
                 'component': 'main',
-                'title': u'Chapter 2 – Administrative provisions',
+                'title': 'Chapter 2 – Administrative provisions',
                 'subcomponent': 'chapter/2',
                 'children': [
                     {
@@ -379,7 +379,7 @@ class DocumentAPITest(APITestCase):
         # create it
         # create a doc with an attachment
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!")
+        tmp_file.write("hello!".encode())
         tmp_file.seek(0)
         response = self.client.post('/api/documents/%s/attachments' % id,
                                     {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
@@ -397,7 +397,7 @@ class DocumentAPITest(APITestCase):
         # create it
         # create a doc with an attachment
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!")
+        tmp_file.write("hello!".encode())
         tmp_file.seek(0)
         response = self.client.post('/api/documents/%s/attachments' % id,
                                     {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
@@ -455,7 +455,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s.pdf' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/pdf')
-        assert_in('pdf-content', response.content)
+        assert_in('pdf-content', response.content.decode('utf-8'))
 
     def test_document_xml(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
@@ -466,7 +466,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
         assert_equal(response['Content-Disposition'], 'attachment; filename=1998-2.xml')
-        assert_true(response.content.startswith('<akomaNtoso'))
+        assert_true(response.content.decode('utf-8').startswith('<akomaNtoso'))
 
     def test_document_epub(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
@@ -476,7 +476,7 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s.epub' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/epub+zip')
-        assert_true(response.content.startswith('PK'))
+        assert_true(response.content.startswith(b'PK'))
 
     def test_document_pdf_404(self):
         response = self.client.get('/api/documents/999.pdf')
@@ -494,10 +494,10 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s.html?standalone=1' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_in('<body  class="standalone"', response.content)
-        assert_in('class="colophon"', response.content)
-        assert_in('class="toc"', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_in('<body  class="standalone"', response.content.decode('utf-8'))
+        assert_in('class="colophon"', response.content.decode('utf-8'))
+        assert_in('class="toc"', response.content.decode('utf-8'))
 
     def test_document_html(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
@@ -507,11 +507,11 @@ class DocumentAPITest(APITestCase):
         response = self.client.get('/api/documents/%s.html' % id)
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_not_in('<body  class="standalone"', response.content)
-        assert_not_in('class="colophon"', response.content)
-        assert_not_in('class="toc"', response.content)
-        assert_in('<div ', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_not_in('<body  class="standalone"', response.content.decode('utf-8'))
+        assert_not_in('class="colophon"', response.content.decode('utf-8'))
+        assert_not_in('class="toc"', response.content.decode('utf-8'))
+        assert_in('<div ', response.content.decode('utf-8'))
 
     def test_published_html_l10n(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'language': 'afr', 'expression_date': '2001-01-01'})
@@ -520,9 +520,9 @@ class DocumentAPITest(APITestCase):
 
         response = self.client.get('/api/documents/%s.html' % id)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_in('<div', response.content)
-        assert_in('Daad 2 van 1998', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_in('<div', response.content.decode('utf-8'))
+        assert_in('Daad 2 van 1998', response.content.decode('utf-8'))
 
     def test_document_zipfile(self):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'language': 'afr', 'expression_date': '2001-01-01'})

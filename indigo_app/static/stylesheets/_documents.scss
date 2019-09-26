@@ -99,17 +99,18 @@ button.btn-link.help {
     position: relative;
   }
 
-  .quick-edit {
+  .gutter-actions {
     position: absolute;
     left: -25px;
     margin-top: 2px;
+    display: flex;
+    flex-direction: column;
+  }
 
-    a {
-      color: $grey-lighter;
-      padding: 5px;
-    }
+  a.quick-edit {
+    color: $grey-lighter;
 
-    a:hover {
+    &:hover {
       color: $primary;
       text-decoration: none;
     }
@@ -284,6 +285,11 @@ button.btn-link.help {
   .revisions-main {
     display: flex;
     flex: 1 1 auto;
+    position: absolute;
+    top: 56px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
   }
 
   .revisions-content {
@@ -339,6 +345,42 @@ button.btn-link.help {
   .revision-comment {
     font-style: italic;
   }
+}
+
+/* document comparison */
+.document-comparison-view {
+  background-color: $body-bg-color;
+  position: fixed;
+  top: 50px;
+  left: 50px;
+  right: 0px;
+  bottom: 0px;
+  display: flex;
+  flex-direction: column;
+
+  .comparison-header {
+    display: flex;
+    padding: 10px;
+    border-bottom: 1px solid $border-color;
+    background-color: white;
+
+    .title {
+      flex: 1;
+    }
+
+    .buttons {
+      flex: 0 0 300px;
+    }
+  }
+
+  .comparison-main {
+    position: absolute;
+    top: 86px;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+  }
+
 }
 
 .fas.draft {
@@ -464,5 +506,21 @@ button.btn-link.help {
 
   img.del {
     border: 1px solid adjust-color($diff-red, $lightness: -30%);
+  }
+}
+
+.issue-icon {
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  font-style: normal;
+
+  &.issue-warning::before {
+    color: $yellow;
+    content: "\f071";
+  }
+
+  &.issue-error::before {
+    color: $red;
+    content: "\f071";
   }
 }

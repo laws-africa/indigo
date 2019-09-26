@@ -8,6 +8,7 @@ from django_comments.models import Comment
 from templated_email import send_templated_mail
 from background_task import background
 from actstream.models import Action
+from pinax.badges.models import BadgeAward
 
 from indigo.settings import INDIGO_ORGANISATION
 from indigo_api.models import Task, Annotation
@@ -85,22 +86,42 @@ class Notifier(object):
         the currently replying user.
         """
         parent_annotation = annotation.in_reply_to
-        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)
+        related_annotations = Annotation.objects.filter(in_reply_to=parent_annotation)\
+                                                .order_by('created_at')
         document = parent_annotation.document
+        related_task = parent_annotation.task
 
         recipient_list = [i.created_by_user for i in related_annotations]
 
         # add creator of parent annotation
         recipient_list.append(parent_annotation.created_by_user)
-
         recipient_list = list(set(recipient_list))
         recipient_list.remove(annotation.created_by_user)
+
+        related_annotations = list(related_annotations)
+        related_annotations.remove(annotation)
+
+        truncated_replies = False
+        earlier_replies = None
+        later_replies = None
+
+        if len(related_annotations) > 9:
+            # showing the first 3 & last 2 replies if total number of replies is greater than 9
+            truncated_replies = True
+            earlier_replies = related_annotations[:3]
+            later_replies = related_annotations [-2:]
 
         for user in recipient_list:
             self.send_templated_email('annotation_new_reply', [user], {
                 'document': document,
                 'recipient': user,
                 'annotation': annotation,
+                'parent_annotation': parent_annotation,
+                'related_annotations': related_annotations,
+                'truncated_replies': truncated_replies,
+                'earlier_replies': earlier_replies,
+                'later_replies': later_replies,
+                'task': related_task
             })
 
     def send_templated_email(self, template_name, recipient_list, context, **kwargs):
@@ -135,6 +156,15 @@ class Notifier(object):
         .format(INDIGO_ORGANISATION, user.get_full_name(), user.username, user.email)
 
         mail_admins(subject, message)
+
+    def notify_badge_awarded(self, badge_award):
+        """ Send an email notification when a user acquires a new Badge.
+        """
+        user = badge_award.user
+        self.send_templated_email('badge_awarded', [user], {
+                'recipient': user,
+                'badge': badge_award,
+            })
 
 
 notifier = Notifier()
@@ -171,6 +201,13 @@ def notify_annotation_reply_posted(annotation_id):
     except Comment.DoesNotExist:
         log.warning("Annotation with id {} doesn't exist, ignoring".format(annotation_id))
 
+@background(queue='indigo')
+def notify_user_badge_earned(badge_id):
+    try:
+        notifier.notify_badge_awarded(BadgeAward.objects.get(pk=badge_id))
+    except BadgeAward.DoesNotExist:
+        log.warning("Badge with id {} doesn't exist, ignoring".format(badge_id))        
+
 
 if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     # change background notification tasks to be synchronous
@@ -178,3 +215,4 @@ if not settings.INDIGO.get('NOTIFICATION_EMAILS_BACKGROUND', False):
     notify_comment_posted = notify_comment_posted.now
     notify_new_user_signed_up = notify_new_user_signed_up.now
     notify_annotation_reply_posted = notify_annotation_reply_posted.now
+    notify_user_badge_earned = notify_user_badge_earned.now

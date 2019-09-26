@@ -158,6 +158,7 @@
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
+      this.comparisonView = new Indigo.DocumentComparisonView({document: this.document, documentContent: this.documentContent});
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
@@ -182,6 +183,11 @@
       this.annotationsView.listenTo(this.bodyEditorView.sourceEditor, 'rendered', this.annotationsView.renderAnnotations);
 
       this.activityView = new Indigo.DocumentActivityView({document: this.document});
+      this.issuesView = new Indigo.DocumentIssuesView({
+        document: this.document,
+        documentContent: this.documentContent,
+        editorView: this.bodyEditorView,
+      });
 
       // pretend we've fetched it, this sets up additional handlers
       this.document.trigger('sync');

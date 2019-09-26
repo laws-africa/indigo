@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 import re
 from itertools import chain
 from lxml.html import _collect_string_content
@@ -95,7 +93,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         """
         ancestors = [element] + list(element.iterancestors())
 
-        for component, comp_element in self.act.components().iteritems():
+        for component, comp_element in self.act.components().items():
             if comp_element in ancestors:
                 return (component, comp_element)
 
@@ -116,7 +114,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
     def build_table_of_contents(self):
         toc = []
-        for component, element in self.act.components().iteritems():
+        for component, element in self.act.components().items():
             toc += self.process_elements(component, [element])
 
         return toc
@@ -208,7 +206,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         else:
             title = _(item.type.capitalize())
             if item.num:
-                title += u' ' + item.num
+                title += ' ' + item.num
 
         return title
 

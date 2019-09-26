@@ -54,58 +54,58 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_in('<akomaNtoso', response.content)
+        assert_in('<akomaNtoso', response.content.decode('utf-8'))
 
         response = self.client.get(self.api_path + '/za/act/2014/10/eng.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_in('<akomaNtoso', response.content)
+        assert_in('<akomaNtoso', response.content.decode('utf-8'))
 
     @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
     def test_published_pdf(self, mock):
         response = self.client.get(self.api_path + '/za/act/2014/10.pdf')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/pdf')
-        assert_in('pdf-content', response.content)
+        assert_in('pdf-content', response.content.decode('utf-8'))
 
         response = self.client.get(self.api_path + '/za/act/2014/10/eng.pdf')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/pdf')
-        assert_in('pdf-content', response.content)
+        assert_in('pdf-content', response.content.decode('utf-8'))
 
     def test_published_epub(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.epub')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/epub+zip')
-        assert_true(response.content.startswith('PK'))
+        assert_true(response.content.startswith(b'PK'))
 
         response = self.client.get(self.api_path + '/za/act/2014/10/eng.epub')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/epub+zip')
-        assert_true(response.content.startswith('PK'))
+        assert_true(response.content.startswith(b'PK'))
 
     def test_published_html(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_in('<div', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_in('<div', response.content.decode('utf-8'))
 
         response = self.client.get(self.api_path + '/za/act/2014/10/eng.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_not_in('<body', response.content)
-        assert_in('<div', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_not_in('<body', response.content.decode('utf-8'))
+        assert_in('<div', response.content.decode('utf-8'))
 
     def test_published_html_standalone(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.html?standalone=1')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_in('<body  class="standalone"', response.content)
-        assert_in('class="colophon"', response.content)
-        assert_in('class="toc"', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_in('<body  class="standalone"', response.content.decode('utf-8'))
+        assert_in('class="colophon"', response.content.decode('utf-8'))
+        assert_in('class="toc"', response.content.decode('utf-8'))
 
     def test_published_listing(self):
         response = self.client.get(self.api_path + '/za/')
@@ -128,7 +128,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act.pdf')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/pdf')
-        assert_in('pdf-content', response.content)
+        assert_in('pdf-content', response.content.decode('utf-8'))
 
     def test_published_listing_pagination(self):
         response = self.client.get(self.api_path + '/za/')
@@ -188,6 +188,16 @@ class ContentAPIV1TestMixin(object):
                 'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng/main/section/1',
                 'title': 'Section 1.'}])
 
+    def test_published_toc_sections_with_headings(self):
+        response = self.client.get(self.api_path + '/za/act/2010/1/eng/toc.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['toc'], [
+            {'id': 'section-1', 'type': 'section', 'num': '1.',
+             'component': 'main', 'subcomponent': 'section/1',
+             'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng/main/section/1',
+             'heading': 'Foo', 'title': '1. Foo'}])
+
     def test_published_toc_uses_expression_date_in_urls(self):
         # use @2014-02-12
         response = self.client.get(self.api_path + '/za/act/2014/10/eng@2014-02-12/toc.json')
@@ -213,7 +223,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/main/section/1.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_equal(response.content, '''<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1"><num>1.</num>
+        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1"><num>1.</num>
         <content>
           <p>tester</p>
         </content>
@@ -224,7 +234,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/main/section/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_equal(response.content, '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3><span class="akn-content">
+        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3><span class="akn-content">
           <span class="akn-p">tester</span>
         </span></section>''')
 
@@ -288,9 +298,9 @@ class ContentAPIV1TestMixin(object):
                 'date': '2011-01-01',
                 'expressions': [{
                     'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng@2011-01-01',
-                    'expression_frbr_uri': u'/za/act/2010/1/eng@2011-01-01',
-                    'language': u'eng',
-                    'title': u'Act with amendments',
+                    'expression_frbr_uri': '/za/act/2010/1/eng@2011-01-01',
+                    'language': 'eng',
+                    'title': 'Act with amendments',
                     'expression_date': '2011-01-01',
                 }]
             },
@@ -298,9 +308,9 @@ class ContentAPIV1TestMixin(object):
                 'date': '2012-02-02',
                 'expressions': [{
                     'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng@2012-02-02',
-                    'expression_frbr_uri': u'/za/act/2010/1/eng@2012-02-02',
-                    'language': u'eng',
-                    'title': u'Act with amendments',
+                    'expression_frbr_uri': '/za/act/2010/1/eng@2012-02-02',
+                    'language': 'eng',
+                    'title': 'Act with amendments',
                     'expression_date': '2012-02-02',
                 }]
             }
@@ -373,7 +383,7 @@ class ContentAPIV1TestMixin(object):
 
     def upload_attachment(self, doc_id):
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!")
+        tmp_file.write("hello!".encode())
         tmp_file.seek(0)
         response = self.client.post('/api/documents/%s/attachments' % doc_id,
                                     {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
@@ -429,8 +439,8 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/1880/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_not_in('<akomaNtoso', response.content)
-        assert_in('<div', response.content)
+        assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
+        assert_in('<div', response.content.decode('utf-8'))
 
     def test_taxonomies(self):
         response = self.client.get(self.api_path + '/za/act/1880/1.json')

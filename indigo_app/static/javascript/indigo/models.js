@@ -9,6 +9,9 @@
    *
    * The model also manages an XML DOM form of the document content and keeps
    * the two in sync.
+   *
+   * This model fires an additional 'change:dom' event when the XML DOM
+   * tree itself has changed due to a modification by this model.
    */
   Indigo.DocumentContent = Backbone.Model.extend({
     initialize: function(options) {
@@ -108,6 +111,21 @@
 
       this.trigger('change:dom');
       return first;
+    },
+
+    /** Evaluate an xpath expression on this document, using the namespace prefix 'a'.
+     */
+    xpath: function(expression, context, result) {
+      var ns = {
+        a: this.xmlDocument.lookupNamespaceURI(''),
+      };
+
+      if (result === undefined) result = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+
+      function nsLookup(x) {
+        return ns[x];
+      }
+      return this.xmlDocument.evaluate(expression, context, nsLookup, result);
     },
 
     save: function(options) {

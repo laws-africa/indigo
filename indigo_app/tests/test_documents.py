@@ -8,7 +8,7 @@ from indigo_api.models import Work
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
-class LibraryTest(testcases.TestCase):
+class DocumentViewsTest(testcases.TestCase):
     fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published']
 
     def setUp(self):
@@ -26,7 +26,7 @@ class LibraryTest(testcases.TestCase):
         work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
 
         fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
-        f = open(fname, 'r')
+        f = open(fname, 'rb')
 
         response = self.client.post('/works/za/act/2014/10/import/', {
             'file': f,
@@ -51,7 +51,7 @@ class LibraryTest(testcases.TestCase):
         1. First Verse
         (1) In the beginning
         (2) There was nothing
-        """)
+        """.encode())
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 
@@ -80,3 +80,24 @@ class LibraryTest(testcases.TestCase):
         # test media view
         response = self.client.get('/api/documents/%s/media/%s' % (doc.id, fname))
         self.assertEqual(response.status_code, 200)
+
+    def test_create_from_html(self):
+        work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
+
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.html')
+        # the \xc2\xa0 is an non-breaking space which should be changed to a normal space
+        tmp_file.write(b"<div>a\xc2\xa0text file with <p>badly formed</div> HTML</p>")
+        tmp_file.seek(0)
+
+        response = self.client.post('/works/za/act/2014/10/import/', {
+            'file': tmp_file,
+            'expression_date': '2001-01-01',
+            'language': '1'
+        }, format='multipart')
+        self.assertEqual(response.status_code, 200)
+
+        # check the doc
+        doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
+        self.assertEqual(doc.draft, True)
+        self.assertIn('a text file with badly formed</p><p>HTML', doc.content, msg='missing imported html')
+        self.assertEqual(len(doc.attachments.all()), 1)

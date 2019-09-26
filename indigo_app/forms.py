@@ -1,5 +1,5 @@
 import json
-import urllib
+import urllib.parse
 
 from django import forms
 from django.db.models import Q
@@ -93,7 +93,7 @@ class WorkPropertyForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(WorkPropertyForm, self).__init__(*args, **kwargs)
-        self.fields['key'].choices = WorkProperty.KEYS.items()
+        self.fields['key'].choices = list(WorkProperty.KEYS.items())
 
     def clean(self):
         super(WorkPropertyForm, self).clean()
@@ -250,7 +250,7 @@ class TaskFilterForm(forms.Form):
         return queryset
 
     def data_as_url(self):
-        return urllib.urlencode(self.cleaned_data, 'utf-8')
+        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
 
 class WorkFilterForm(forms.Form):
@@ -269,7 +269,7 @@ class WorkFilterForm(forms.Form):
         super(WorkFilterForm, self).__init__(*args, **kwargs)
 
     def data_as_url(self):
-        return urllib.urlencode(self.cleaned_data, 'utf-8')
+        return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('q'):

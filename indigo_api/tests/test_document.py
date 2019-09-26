@@ -32,7 +32,7 @@ class DocumentTestCase(TestCase):
     def test_set_content(self):
         d = Document()
         d.work = self.work
-        d.content = document_fixture(u'γνωρίζω')
+        d.content = document_fixture('γνωρίζω')
 
         assert_equal(d.frbr_uri, '/za/act/1900/1')
         assert_equal(d.country, 'za')

@@ -50,7 +50,7 @@ class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
         super(SerializedRelatedField, self).__init__(*args, **kwargs)
 
     def get_serializer(self):
-        if isinstance(self.serializer, basestring):
+        if isinstance(self.serializer, str):
             self.serializer = globals()[self.serializer]
         return self.serializer
 
@@ -308,7 +308,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         try:
             Act(value)
         except LxmlError as e:
-            raise ValidationError("Invalid XML: %s" % e.message)
+            raise ValidationError("Invalid XML: %s" % str(e))
         return value
 
     def validate_frbr_uri(self, value):

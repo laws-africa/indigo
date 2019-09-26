@@ -32,5 +32,9 @@
       border-radius: 50%;
       z-index: 1;
     }
+
+    &:last-child {
+      margin-bottom: 0px;
+    }
   }
 }

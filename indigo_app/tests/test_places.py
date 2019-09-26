@@ -15,3 +15,20 @@ class PlacesTest(testcases.TestCase):
     def test_place_activity(self):
         response = self.client.get('/places/za/activity')
         self.assertEqual(response.status_code, 200)
+
+    def test_place_metrics(self):
+        response = self.client.get('/places/za/metrics')
+        self.assertEqual(response.status_code, 200)
+
+    def test_place_settings(self):
+        response = self.client.get('/places/za/metrics')
+        self.assertEqual(response.status_code, 200)
+
+    def test_place_settings_no_perms(self):
+        self.client.logout()
+        response = self.client.get('/places/za/metrics')
+        self.assertEqual(response.status_code, 302)
+
+    def test_place_localities(self):
+        response = self.client.get('/places/za/localities')
+        self.assertEqual(response.status_code, 200)

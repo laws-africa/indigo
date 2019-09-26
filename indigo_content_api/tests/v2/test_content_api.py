@@ -50,9 +50,9 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
                 'date': '2011-01-01',
                 'expressions': [{
                     'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng@2011-01-01',
-                    'expression_frbr_uri': u'/akn/za/act/2010/1/eng@2011-01-01',
-                    'language': u'eng',
-                    'title': u'Act with amendments',
+                    'expression_frbr_uri': '/akn/za/act/2010/1/eng@2011-01-01',
+                    'language': 'eng',
+                    'title': 'Act with amendments',
                     'expression_date': '2011-01-01',
                 }]
             },
@@ -60,9 +60,9 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
                 'date': '2012-02-02',
                 'expressions': [{
                     'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng@2012-02-02',
-                    'expression_frbr_uri': u'/akn/za/act/2010/1/eng@2012-02-02',
-                    'language': u'eng',
-                    'title': u'Act with amendments',
+                    'expression_frbr_uri': '/akn/za/act/2010/1/eng@2012-02-02',
+                    'language': 'eng',
+                    'title': 'Act with amendments',
                     'expression_date': '2012-02-02',
                 }]
             }
@@ -89,6 +89,11 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
         self.api_path = '/api/v2'
         super(ContentAPIV2TestMixin, self).test_published_search()
         self.api_path = old
+
+    def test_published_html_akn_prefixed(self):
+        response = self.client.get(self.api_path + '/za/act/2010/1.html')
+        self.assertNotIn('/resolver/resolve/za', response.content.decode('utf-8'))
+        self.assertIn('/resolver/resolve/akn/za', response.content.decode('utf-8'))
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277

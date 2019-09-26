@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 from unittest import TestCase
 
 import lxml.html
@@ -12,7 +11,7 @@ def as_tree(html):
 
 
 def as_html(tree):
-    return lxml.html.tostring(tree, encoding='utf-8')
+    return lxml.html.tostring(tree, encoding='utf-8').decode('utf-8')
 
 
 class AttributeDifferTestCase(TestCase):

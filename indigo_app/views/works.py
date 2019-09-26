@@ -1,10 +1,5 @@
 # coding=utf-8
-
-from __future__ import unicode_literals
-
 import json
-import io
-import re
 import logging
 from itertools import chain
 from datetime import timedelta
@@ -19,11 +14,9 @@ from django.urls import reverse
 from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
-import requests
-import unicodecsv as csv
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, ArbitraryExpressionDate
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -159,7 +152,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
 
     def get_properties_formset(self):
         formset = super(EditWorkView, self).get_properties_formset()
-        formset.queryset = self.object.raw_properties.filter(key__in=WorkProperty.KEYS.keys())
+        formset.queryset = self.object.raw_properties.filter(key__in=list(WorkProperty.KEYS.keys()))
         return formset
 
     def get_context_data(self, **kwargs):
@@ -177,7 +170,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
 
         # ensure any docs for this work at initial pub date move with it, if it changes
         if 'publication_date' in form.changed_data:
-            old_date = form.initial['publication_date']
+            old_date = form.initial['publication_date'] or self.work.commencement_date
 
             if old_date and self.work.publication_date:
                 for doc in Document.objects.filter(work=self.work, expression_date=old_date):
@@ -187,7 +180,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
         if form.has_changed() or self.properties_formset.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
-            messages.success(self.request, u"Work updated.")
+            messages.success(self.request, "Work updated.")
 
             # rename publication-document if frbr_uri has changed
             if 'frbr_uri' in form.changed_data:
@@ -252,7 +245,7 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 
         if self.work.can_delete():
             self.work.delete()
-            messages.success(request, u'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
+            messages.success(request, 'Deleted %s · %s' % (self.work.title, self.work.frbr_uri))
             return redirect(self.get_success_url())
         else:
             messages.error(request, 'This work cannot be deleted while linked documents and related works exist.')
@@ -288,6 +281,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
         context['work_timeline'] = self.get_work_timeline()
+        context['consolidation_date'] = self.place.settings.as_at_date or datetime.date.today()
         return context
 
 
@@ -361,8 +355,79 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
-        if self.object:
+        if self.object and self.object.id:
             url = url + "#amendment-%s" % self.object.id
+        return url
+
+
+class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
+    """ View to add a new arbitrary expression date.
+    """
+    model = ArbitraryExpressionDate
+    fields = ['date']
+    permission_required = ('indigo_api.add_amendment',)
+
+    def get_form_kwargs(self):
+        kwargs = super(AddArbitraryExpressionDateView, self).get_form_kwargs()
+        kwargs['instance'] = ArbitraryExpressionDate(work=self.work)
+        kwargs['instance'].created_by_user = self.request.user
+        return kwargs
+
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#arbitrary-expression-date-%s" % self.object.id
+        return url
+
+
+class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
+    """ View to update or delete an arbitrary expression date.
+    """
+    http_method_names = ['post']
+    model = ArbitraryExpressionDate
+    pk_url_kwarg = 'arbitrary_expression_date_id'
+    fields = ['date']
+
+    def get_queryset(self):
+        return self.work.arbitrary_expression_dates.all()
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_amendment',)
+        return ('indigo_api.change_amendment',)
+
+    def post(self, request, *args, **kwargs):
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
+        return super(EditArbitraryExpressionDateView, self).post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        # get old/existing/incorrect date
+        old_date = form.initial['date']
+
+        # do normal things to amend work
+        self.object.updated_by_user = self.request.user
+        result = super(EditArbitraryExpressionDateView, self).form_valid(form)
+
+        # update old docs to have the new date as their expression date
+        docs = Document.objects.filter(work=self.object.work, expression_date=old_date)
+        for doc in docs:
+            doc.expression_date = self.object.date
+            doc.updated_by_user = self.request.user
+            doc.save()
+
+        return result
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object.can_delete():
+            self.object.delete()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#arbitrary-expression-date-%s" % self.object.id
         return url
 
 
@@ -623,7 +688,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                 works = self.bulk_creator.create_works(
                     self, table, dry_run, workflow=workflow, user=self.request.user)
             except ValidationError as e:
-                error = e.message
+                error = str(e)
 
         context_data = self.get_context_data(works=works, error=error, form=form, dry_run=dry_run)
         return self.render_to_response(context_data)
@@ -678,8 +743,8 @@ class ImportDocumentView(WorkViewBase, FormView):
         try:
             importer.create_from_upload(upload, document, self.request)
         except ValueError as e:
-            log.error("Error during import: %s" % e.message, exc_info=e)
-            return JsonResponse({'file': e.message or "error during import"}, status=400)
+            log.error("Error during import: %s" % str(e), exc_info=e)
+            return JsonResponse({'file': str(e) or "error during import"}, status=400)
 
         document.updated_by_user = self.request.user
         document.save_with_revision(self.request.user)

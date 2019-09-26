@@ -1,4 +1,3 @@
-from __future__ import absolute_import
 from lxml import etree
 import re
 
@@ -29,7 +28,7 @@ class BaseRefsFinder(LocaleBasedMatcher):
         self.frbr_uri = document.doc.frbr_uri
         self.setup(root)
         self.find_references(root)
-        document.content = etree.tostring(root, encoding='UTF-8')
+        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
     def setup(self, root):
         self.ns = root.nsmap[None]

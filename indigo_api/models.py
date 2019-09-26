@@ -50,8 +50,8 @@ class Language(models.Model):
         """
         return self.language.iso_639_2B
 
-    def __unicode__(self):
-        return unicode(self.language)
+    def __str__(self):
+        return str(self.language)
 
     @classmethod
     def for_code(cls, code):
@@ -103,8 +103,8 @@ class Country(models.Model):
             'publications': [pub.name for pub in self.publication_set.all()],
         }
 
-    def __unicode__(self):
-        return unicode(self.country.name)
+    def __str__(self):
+        return str(self.country.name)
 
     @classmethod
     def for_frbr_uri(cls, frbr_uri):
@@ -113,6 +113,26 @@ class Country(models.Model):
     @classmethod
     def for_code(cls, code):
         return cls.objects.get(country__pk=code.upper())
+
+    @classmethod
+    def get_country_locality(cls, code):
+        """ Lookup a Country and Locality for a place code such as za or za-cpt.
+
+        Raises DoesNotExist if either of the places doesn't exist.
+        """
+        if '-' in code:
+            country_code, locality_code = code.split('-', 1)
+        else:
+            country_code = code
+            locality_code = None
+
+        country = cls.for_code(country_code)
+        if locality_code:
+            locality = country.localities.get(code=locality_code)
+        else:
+            locality = None
+
+        return country, locality
 
 
 @receiver(signals.post_save, sender=Country)
@@ -155,8 +175,8 @@ class Locality(models.Model):
             self._settings = self.place_settings.first()
         return self._settings
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
 
 @receiver(signals.post_save, sender=Locality)
@@ -196,8 +216,8 @@ class TaxonomyVocabulary(models.Model):
         verbose_name = 'Taxonomy'
         verbose_name_plural = 'Taxonomies'
 
-    def __unicode__(self):
-        return unicode(self.title)
+    def __str__(self):
+        return str(self.title)
 
 
 class VocabularyTopic(models.Model):
@@ -208,7 +228,7 @@ class VocabularyTopic(models.Model):
     class Meta:
         unique_together = ('level_1', 'level_2', 'vocabulary')
 
-    def __unicode__(self):
+    def __str__(self):
         if self.level_2:
             return '%s / %s' % (self.level_1, self.level_2)
         else:
@@ -330,7 +350,7 @@ class Work(models.Model):
             'label': WorkProperty.KEYS[key],
             'key': key,
             'value': val,
-        } for key, val in self.properties.iteritems() if key in WorkProperty.KEYS], key=lambda x: x['label'])
+        } for key, val in self.properties.items() if key in WorkProperty.KEYS], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -438,33 +458,34 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def amendments_with_initial(self):
-        """ Return a list of Amendment objects, including a fake one at the end
+    def amendments_with_initial_and_arbitrary(self):
+        """ Return a list of Amendment and ArbitraryExpressionDate objects, including a fake one at the end
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple amendments at the same date.
         """
-        initial = Amendment(amended_work=self, date=self.publication_date or self.commencement_date)
+        initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        amendments = list(self.amendments.all())
+        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
+        amendments_expressions.sort(key=lambda x: x.date)
 
         if initial.date:
-            if not amendments or amendments[0].date != initial.date:
-                amendments.insert(0, initial)
+            if not amendments_expressions or amendments_expressions[0].date != initial.date:
+                amendments_expressions.insert(0, initial)
 
-            if amendments[0].date == initial.date:
-                amendments[0].initial = True
+            if amendments_expressions[0].date == initial.date:
+                amendments_expressions[0].initial = True
 
-        amendments.reverse()
-        return amendments
+        amendments_expressions.reverse()
+        return amendments_expressions
 
     def points_in_time(self):
         """ Return a list of dicts describing a point in time, one entry for each date,
         in descending date order.
         """
-        amendments = self.amendments_with_initial()
+        amendments_expressions = self.amendments_with_initial_and_arbitrary()
         pits = []
 
-        for date, group in groupby(amendments, key=lambda x: x.date):
+        for date, group in groupby(amendments_expressions, key=lambda x: x.date):
             group = list(group)
             pits.append({
                 'date': date,
@@ -475,7 +496,7 @@ class Work(models.Model):
 
         return pits
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
 
@@ -516,7 +537,7 @@ class PublicationDocument(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def build_filename(self):
-        return u'{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
+        return '{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
 
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
@@ -581,6 +602,47 @@ def post_save_amendment(sender, instance, **kwargs):
     else:
         action.send(instance.updated_by_user, verb='updated', action_object=instance,
                     place_code=instance.amended_work.place.place_code)
+
+
+class ArbitraryExpressionDate(models.Model):
+    """ An arbitrary expression date not tied to an amendment, e.g. a consolidation date.
+    """
+    date = models.DateField(null=False, blank=False, help_text="Arbitrary date, e.g. consolidation date")
+    description = models.TextField(null=True, blank=True)
+    work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Work", related_name="arbitrary_expression_dates")
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    class Meta:
+        unique_together = ('date', 'work')
+        ordering = ['date']
+
+    def expressions(self):
+        """ The work's documents (expressions) at this date.
+        """
+        return self.work.expressions().filter(expression_date=self.date)
+
+    def can_delete(self):
+        return not self.expressions().exists()
+
+    @property
+    def amended_work(self):
+        return self.work
+
+
+@receiver(signals.post_save, sender=ArbitraryExpressionDate)
+def post_save_arbitrary_expression_date(sender, instance, **kwargs):
+    # Send action to activity stream, as 'created' if a new arbitrary expression date
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.work.place.place_code)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.work.place.place_code)
 
 
 class DocumentManager(models.Manager):
@@ -956,7 +1018,7 @@ class Document(DocumentMixin, models.Model):
         doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
         return doc
 
-    def __unicode__(self):
+    def __str__(self):
         return 'Document<%s, %s>' % (self.id, self.title[0:50])
 
     @classmethod
@@ -1032,7 +1094,7 @@ class Subtype(models.Model):
         if self.abbreviation:
             self.abbreviation = self.abbreviation.lower()
 
-    def __unicode__(self):
+    def __str__(self):
         return '%s (%s)' % (self.name, self.abbreviation)
 
     @classmethod
@@ -1062,8 +1124,8 @@ class Colophon(models.Model):
     country = models.ForeignKey(Country, on_delete=models.CASCADE, null=False, help_text='Which country does this colophon apply to?')
     body = models.TextField()
 
-    def __unicode__(self):
-        return unicode(self.name)
+    def __str__(self):
+        return str(self.name)
 
 
 class Annotation(models.Model):
@@ -1100,8 +1162,10 @@ class Annotation(models.Model):
             ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
 
             # TODO: strip markdown?
-            task.title = u'"%s": %s' % (ref, self.text)
-            task.description = u'%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
+            task.title = '"%s": %s' % (ref, self.text)
+            if len(task.title) > 255:
+                task.title = task.title[:250] + "..."
+            task.description = '%s commented on "%s":\n\n%s' % (user_display(self.created_by_user), ref, self.text)
 
             task.save()
             self.task = task
@@ -1423,7 +1487,7 @@ class Task(models.Model):
                 'badge': key,
             }
 
-        for key, group in tasks.iteritems():
+        for key, group in tasks.items():
             if key not in groups:
                 groups[key] = {
                     'title': key.replace('_', ' ').capitalize(),
@@ -1563,6 +1627,7 @@ class PlaceSettings(models.Model):
 
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
+    styleguide_url = models.URLField(null=True, blank=True)
 
     @property
     def place(self):

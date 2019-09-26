@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-
-from __future__ import absolute_import
-from __future__ import unicode_literals
-
 import subprocess
 import tempfile
 import shutil
@@ -11,9 +7,11 @@ import logging
 from django.conf import settings
 from django.core.files.base import ContentFile
 import mammoth
+import lxml.etree as ET
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo_api.utils import filename_candidates, find_best_static
 
 
 @plugins.register('importer')
@@ -90,17 +88,43 @@ class Importer(LocaleBasedMatcher):
             self.log.info("Processing upload as a PDF file")
             self.create_from_pdf(upload, doc)
 
+        elif upload.content_type == 'text/html':
+            self.log.info("Processing upload as an HTML file")
+            self.create_from_html(upload, doc)
+
         else:
             # slaw will do its best
             self.log.info("Processing upload as an unknown file")
-            self.create_from_file(upload, doc)
+            self.create_from_file(upload, doc, 'text')
 
         self.analyse_after_import(doc)
 
-    def create_from_file(self, upload, doc):
+    def create_from_file(self, upload, doc, inputtype):
         with self.tempfile_for_upload(upload) as f:
-            xml = self.import_from_file(f.name, doc.frbr_uri)
+            xml = self.import_from_file(f.name, doc.frbr_uri, inputtype)
             doc.reset_xml(xml, from_model=True)
+
+    def create_from_html(self, upload, doc):
+        """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
+        """
+        text = self.html_to_text(upload.read().decode('utf-8'), doc)
+        if self.reformat:
+            text = self.reformat_text_from_html(text)
+        xml = self.import_from_text(text, doc.frbr_uri, 'text')
+        doc.reset_xml(xml, from_model=True)
+
+    def html_to_text(self, html, doc):
+        """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
+        """
+        candidates = filename_candidates(doc, prefix='xsl/html_to_akn_text_', suffix='.xsl')
+        xslt_filename = find_best_static(candidates)
+        if not xslt_filename:
+            raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (doc, candidates))
+
+        html = ET.HTML(html)
+        xslt = ET.XSLT(ET.parse(xslt_filename))
+        result = xslt(html)
+        return str(result)
 
     def import_from_text(self, input, frbr_uri, suffix=''):
         """ Create a new Document by importing it from plain text.
@@ -119,7 +143,7 @@ class Importer(LocaleBasedMatcher):
             # pdf to text
             text = self.pdf_to_text(f)
             if self.reformat:
-                text = self.reformat_text(text)
+                text = self.reformat_text_from_pdf(text)
             if len(text) < 512:
                 raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
 
@@ -132,7 +156,7 @@ class Importer(LocaleBasedMatcher):
         if self.cropbox:
             # left, top, width, height
             cropbox = (str(int(float(i))) for i in self.cropbox)
-            cropbox = zip("-x -y -W -H".split(), cropbox)
+            cropbox = list(zip("-x -y -W -H".split(), cropbox))
             # flatten
             cmd += [x for pair in cropbox for x in pair]
 
@@ -147,9 +171,16 @@ class Importer(LocaleBasedMatcher):
     def reformat_text(self, text):
         """ Clean up extracted text before giving it to Slaw.
         """
-        return self.expand_ligatures(text)
+        text = self.expand_ligatures(text)
+        return text
 
-    def import_from_file(self, fname, frbr_uri, inputtype='text'):
+    def reformat_text_from_html(self, text):
+        return self.reformat_text(text)
+
+    def reformat_text_from_pdf(self, text):
+        return self.reformat_text(text)
+
+    def import_from_file(self, fname, frbr_uri, inputtype):
         cmd = ['bundle', 'exec', 'slaw', 'parse']
 
         if self.fragment:

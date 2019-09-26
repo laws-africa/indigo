@@ -5,15 +5,14 @@
       <script id="comparison-header-template" type="text/x-handlebars-template">
       {% verbatim %}
         <h5>Differences between {{ document.expression_date }} (current content of this expression) and
-          <a href="/documents{{ comparison_document.id }}">{{ comparison_document.expression_date }}</a>
+          <a href="/documents/{{ comparison_doc.id }}">{{ comparison_doc.expression_date }}</a>
         </h5>
+        <div>
+          <span class="n_changes"></span> changes
+        </div>
       {% endverbatim %}
       </script>
 
-      <p>
-        Number of changes:
-        <span class="n_changes"></span>.
-      </p>
     </div>
 
     <div class="buttons text-right">

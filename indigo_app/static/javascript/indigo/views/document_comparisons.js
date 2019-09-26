@@ -23,13 +23,13 @@
       $('.menu .comparison').on('click', _.bind(this.show, this));
     },
 
-    comparison: function(comparison_doc_id) {
+    comparison: function(comparisonDocId) {
       var data = {},
           self = this;
       data.document = this.documentContent.document.toJSON();
       data.document.content = this.documentContent.toXml();
-      data.comparison_doc_id = comparison_doc_id;
-      this.compareTo = this.expressions.get(comparison_doc_id);
+      data.comparison_doc_id = comparisonDocId;
+      this.comparisonDoc = this.expressions.get(comparisonDocId);
 
       $.ajax({
         url: '/api/document-comparison',
@@ -44,15 +44,15 @@
     },
 
     show: function(e) {
-      var comparison_doc_id = e.currentTarget.id;
+      var comparisonDocId = e.currentTarget.id;
       e.preventDefault();
       $('.work-view').addClass('d-none');
       this.$el.removeClass('d-none');
-      this.comparison(comparison_doc_id);
+      this.comparison(comparisonDocId);
 
       this.$('.title').html(this.comparisonHeaderTemplate({
-        document: this.document,
-        comparison_doc: this.compareTo
+        document: this.document.toJSON(),
+        comparison_doc: this.comparisonDoc.toJSON()
       }));
     },
 

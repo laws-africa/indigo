@@ -5,44 +5,43 @@
 {% block user_profile_content %}
 
 <div class="card mt-3">
-  <h4 class="card-header">Achievements</h4>
+  {% badges_for_user user as badges %}
+  <h4 class="card-header">{{ badges.count }} Achievements</h4>
   <div class="card-body">
-    {% badges_for_user user as badges %}
-    {{ badges.count }} have been awarded!
-      <div class="d-flex flex-row flex-wrap mt-3">
-        {% for badge in badges %}
-          <div class="achievement d-flex flex-column align-items-center"
-               data-toggle="tooltip" data-placement="right" data-html="true"
-               title="<p>Awarded {{ badge.awarded_at|timesince }} ago </p> <p>{{ badge.description }} </p>">
-            <div class="achievement-icon badge-{{ badge.nature }} badge-{{ badge.slug }}">
-            </div>
-            <div class="achievement-description">
-              {{ badge.name }}
-            </div>
+    <div class="d-flex flex-row flex-wrap mt-3 achievement-list">
+      {% for badge in badges %}
+        <div class="achievement" data-toggle="tooltip" data-placement="right" data-html="true"
+             title="<p>Awarded {{ badge.awarded_at|timesince }} ago </p> <p>{{ badge.description }} </p>">
+          <div class="achievement-icon badge-{{ badge.nature }} badge-{{ badge.slug }} {{ badge.css_class }}" style="background-image: url({% static badge.image %});"></div>
+          <div class="achievement-description">
+            {{ badge.name }}
           </div>
-        {% endfor %}
-        {% if not badges %}
-        <p>No badges earned yet :(</p>
-        {% endif %}
-      </div>
-        {% if can_award %}
-        <hr>
+        </div>
+      {% endfor %}
 
-        <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}">
-          {% csrf_token %}
+      {% if not badges %}
+      <p>No badges earned yet :(</p>
+      {% endif %}
+    </div>
 
-          <p>Award a new badge to this user:</p>
-          <div class="form-inline">
-            <select name="{{ award_form.badge.name }}" class="form-control">
-              {% for val, label in award_form.fields.badge.choices %}
-              <option value="{{ val }}">{{ label }}</option>
-              {% endfor %}
-            </select>
+    {% if can_award %}
+      <hr>
 
-            <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
-          </div>
-        </form>
-        {% endif %}
+      <form method="post" action="{% url 'indigo_social:award_user_badge' username=user.username %}">
+        {% csrf_token %}
+
+        <p>Award a new badge to this user:</p>
+        <div class="form-inline">
+          <select name="{{ award_form.badge.name }}" class="form-control">
+            {% for val, label in award_form.fields.badge.choices %}
+            <option value="{{ val }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+
+          <button type="submit" class="btn btn-primary ml-3" data-confirm="Are you sure you want to award this badge to this user?">Award badge</button>
+        </div>
+      </form>
+      {% endif %}
     </div>
 </div>
 

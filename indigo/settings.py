@@ -33,9 +33,6 @@ ALLOWED_HOSTS = ['*']
 
 INSTALLED_APPS = (
 
-    # Indigo points
-    'indigo_points',
-
     # Indigo local traditions
     'indigo_za',
 

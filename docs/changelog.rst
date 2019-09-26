@@ -11,6 +11,7 @@ Changelog
 * FEATURE: Customisable PDF footers
 * Clearer indication of repealed works.
 * indigo-web 3.6.1 - explicit styling for crossHeading elements
+* Badge icons are now stylable images
 
 4.0.0 (12 September 2019)
 -------------------------

@@ -39,6 +39,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
             .to_representation(
                 doc.work.expressions().all()
             ))
+        context['comparison_expressions'] = doc.work.expressions().filter(language=doc.language).order_by('-expression_date')
         context['place'] = doc.work.place
         context['country'] = doc.work.country
         context['locality'] = doc.work.locality

@@ -156,7 +156,7 @@
             <input type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list">
             <p class="form-text text-muted">Original publication, eg. national gazette</p>
             <datalist id="publication_list">
-              {% for pub in work.country.publication_set.all %}
+              {% for pub in country.publication_set.all %}
                 <option value="{{ pub.name }}">
               {% endfor %}
             </datalist>

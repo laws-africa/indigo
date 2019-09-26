@@ -10,13 +10,7 @@
   <div class="card-body">
     <div class="d-flex flex-row flex-wrap mt-3 achievement-list">
       {% for badge in badges %}
-        <div class="achievement" data-toggle="tooltip" data-placement="right" data-html="true"
-             title="<p>Awarded {{ badge.awarded_at|timesince }} ago </p> <p>{{ badge.description }} </p>">
-          <div class="achievement-icon badge-{{ badge.nature }} badge-{{ badge.slug }} {{ badge.css_class }}" style="background-image: url({% static badge.image %});"></div>
-          <div class="achievement-description">
-            {{ badge.name }}
-          </div>
-        </div>
+        {% include 'indigo_social/_achievement.html' with badge=badge award=badge with_description=True %}
       {% endfor %}
 
       {% if not badges %}

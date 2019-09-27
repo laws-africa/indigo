@@ -308,9 +308,15 @@ class AttributeDiffer(object):
         This removes <term> elements.
         """
         root = etree.fromstring(xml_str)
+        root = self.preprocess_xml_diff(root)
+        return etree.tostring(root, encoding='utf-8')
 
+    def preprocess_xml_diff(self, root):
+        """ Run pre-processing on XML before doing HTML diffs.
+
+        This removes <term> elements.
+        """
         for elem in root.xpath('//a:term', namespaces={'a': root.nsmap[None]}):
             unwrap_element(elem)
 
-        return etree.tostring(root, encoding='utf-8')
-
+        return root

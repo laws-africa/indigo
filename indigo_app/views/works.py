@@ -233,6 +233,17 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, Create
             reversion.set_user(self.request.user)
             return super(AddWorkView, self).form_valid(form)
 
+    def form_invalid(self, form):
+        error_msgs = [error[0] for error in form.errors.values()]
+
+        messages.error(self.request, error_msgs[0])
+        return redirect(self.get_redirect_url())
+
+    def get_redirect_url(self):
+        if self.request.GET.get('next'):
+            return self.request.GET.get('next')
+        return reverse('new_work', kwargs={'place': self.kwargs['place']})
+
     def get_success_url(self):
         return reverse('work', kwargs={'frbr_uri': self.object.frbr_uri})
 

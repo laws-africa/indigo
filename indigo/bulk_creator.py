@@ -246,7 +246,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     self.link_publication_document(work, info)
 
                     if not work.stub:
-                        self.create_task(work, info, 'import')
+                        self.create_task(work, info, task_type='import')
 
                 info['work'] = work
                 info['status'] = 'success'
@@ -360,7 +360,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         try:
             work.save_with_revision(self.user)
         except ValidationError:
-            self.create_task(info, task_type='link-commencement')
+            self.create_task(work, info, task_type='link-commencement')
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it
@@ -381,7 +381,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         try:
             work.save_with_revision(self.user)
         except ValidationError:
-            self.create_task(info, task_type='link-repeal')
+            self.create_task(work, info, task_type='link-repeal')
 
     def link_parent_work(self, work, info):
         # if the work has a `primary_work`, try linking it
@@ -395,7 +395,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         try:
             work.save_with_revision(self.user)
         except ValidationError:
-            self.create_task(info, task_type='link-primary-work')
+            self.create_task(work, info, task_type='link-primary-work')
 
     def link_amendment(self, work, info):
         # if the work `amends` something, try linking it
@@ -407,7 +407,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         date = info.get('commencement_date') or work.commencement_date
         if not date:
-            return self.create_task(info, task_type='link-amendment')
+            return self.create_task(work, info, task_type='link-amendment')
 
         try:
             Amendment.objects.get(

@@ -17,7 +17,7 @@ from sass_processor.processor import SassProcessor
 
 from indigo_api.utils import find_best_template, find_best_static, filename_candidates
 from .serializers import NoopSerializer
-from .models import Document, Colophon
+from .models import Colophon
 
 log = logging.getLogger(__name__)
 
@@ -44,15 +44,17 @@ class XSLTRenderer(object):
         self.xslt_params = xslt_params or {}
 
     def render(self, node):
-        """ Render an XML Tree or Element object into an HTML string """
+        """ Render an XML Tree or Element object into an HTML string.
+        """
         params = {
             'defaultIdScope': ET.XSLT.strparam(self.defaultIdScope(node) or ''),
         }
         params.update({k: ET.XSLT.strparam(v) for k, v in self.xslt_params.items()})
-        return ET.tostring(self.xslt(node, **params))
+        return str(self.xslt(node, **params))
 
     def render_xml(self, xml):
-        """ Render an XML string into an HTML string """
+        """ Render an XML string into an HTML string.
+        """
         if not isinstance(xml, str):
             xml = xml.decode('utf-8')
         return self.render(ET.fromstring(xml))
@@ -101,7 +103,7 @@ class AkomaNtosoRenderer(XMLRenderer):
         if not hasattr(view, 'component') or (view.component == 'main' and not view.subcomponent):
             return data.document_xml
 
-        return ET.tostring(view.element, pretty_print=True)
+        return ET.tostring(view.element, pretty_print=True, encoding='utf-8')
 
 
 class HTMLRenderer(object):

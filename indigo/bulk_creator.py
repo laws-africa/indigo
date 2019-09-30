@@ -15,7 +15,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work, WorkProperty, PublicationDocument, Task, Amendment, ArbitraryExpressionDate
+from indigo_api.models import Subtype, Work, WorkProperty, PublicationDocument, Task, Amendment
 from indigo_api.signals import work_changed
 
 
@@ -325,17 +325,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if info.get(extra_property):
                 new_prop = WorkProperty(work=work, key=extra_property, value=info.get(extra_property))
                 new_prop.save()
-            elif extra_property == 'arbitrary_expression_date' and not work.stub:
-                place = self.locality or self.country
-                date = place.settings.as_at_date
-                if date:
-                    arbitrary_expression_date = ArbitraryExpressionDate(
-                        date=date,
-                        description=f'automatically added based on as-at date for {place}',
-                        work=work,
-                        created_by_user=self.user
-                    )
-                    arbitrary_expression_date.save()
 
     def link_publication_document(self, work, info):
         params = info.get('params')

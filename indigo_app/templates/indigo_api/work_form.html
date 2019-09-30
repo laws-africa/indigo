@@ -11,6 +11,18 @@
     <div class="alert alert-danger">You don't have permission to create or change a work.</div>
   {% endif %}
 
+  {% if form.errors %}
+    <div class="alert alert-danger" role="alert">
+      <p>There were some errors in the information you entered. Please correct the following:</p>
+      {{ form.non_field_errors }}
+      <ul>
+        {% for field in form %}
+          {% if field.errors %}<li>{{ field.label }}: {{ field.errors|striptags }}</li>{% endif %}
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
   <form id="edit-work-form" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
 

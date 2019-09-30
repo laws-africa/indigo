@@ -428,8 +428,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         task = Task()
 
         if task_type == 'link-publication-document':
-            task.title = 'Link publication document'
-            task.description = '''This work's publication document could not be linked automatically – see row {}.
+            task.title = 'Link gazette'
+            task.description = '''This work's gazette (original publication document) could not be linked automatically – see row {}.
 Find it and upload it manually.'''.format(info['row'])
 
         elif task_type == 'import':

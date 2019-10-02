@@ -15,18 +15,18 @@
   {% endif %}
 
   {% if repeals %}
-    {% include 'indigo_api/_work_related_table.html' with items=repeals title="Repeals" id="repeals" %}
+    {% include 'indigo_api/_work_related_table.html' with items=repeals title="Repeals" id="repeals" with_date=True %}
   {% endif %}
 
   {% if commencement %}
-    {% include 'indigo_api/_work_related_table.html' with items=commencement title="Commencement" id="commencement" %}
+    {% include 'indigo_api/_work_related_table.html' with items=commencement title="Commencement" id="commencement" with_date=True %}
   {% endif %}
 
   {% if amended %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended title="Works amended by this work" id="amended" %}
+    {% include 'indigo_api/_work_related_table.html' with items=amended title="Works amended by this work" id="amended" with_date=True %}
   {% endif %}
 
   {% if amended_by %}
-    {% include 'indigo_api/_work_related_table.html' with items=amended_by title="Works amending this work" id="amended_by"%}
+    {% include 'indigo_api/_work_related_table.html' with items=amended_by title="Works amending this work" id="amended_by" with_date=True %}
   {% endif %}
 {% endblock %}

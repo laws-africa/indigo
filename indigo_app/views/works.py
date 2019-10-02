@@ -477,6 +477,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
         amended = [{
             'rel': 'amends',
             'work': a.amended_work,
+            'date': a.date,
         } for a in amended]
         context['amended'] = amended
 
@@ -485,6 +486,7 @@ class WorkRelatedView(WorkViewBase, DetailView):
         amended_by = [{
             'rel': 'amended by',
             'work': a.amending_work,
+            'date': a.date,
         } for a in amended_by]
         context['amended_by'] = amended_by
 
@@ -494,10 +496,12 @@ class WorkRelatedView(WorkViewBase, DetailView):
             repeals.append({
                 'rel': 'repealed by',
                 'work': self.work.repealed_by,
+                'date': self.work.repealed_date,
             })
         repeals = repeals + [{
             'rel': 'repeals',
             'work': w,
+            'date': w.repealed_date,
         } for w in self.work.repealed_works.all()]
         context['repeals'] = repeals
 
@@ -507,10 +511,12 @@ class WorkRelatedView(WorkViewBase, DetailView):
             commencement.append({
                 'rel': 'commenced by',
                 'work': self.work.commencing_work,
+                'date': self.work.commencement_date,
             })
         commencement = commencement + [{
             'rel': 'commenced',
             'work': w,
+            'date': w.commencement_date,
         } for w in self.work.commenced_works.all()]
         context['commencement'] = commencement
 

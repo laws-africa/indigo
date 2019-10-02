@@ -919,11 +919,13 @@ class Document(DocumentMixin, models.Model):
         self.update_search_text()
         return super(Document, self).save(*args, **kwargs)
 
-    def save_with_revision(self, user):
+    def save_with_revision(self, user, comment=None):
         """ Save this document and create a new revision at the same time.
         """
         with reversion.revisions.create_revision():
             reversion.revisions.set_user(user)
+            if comment:
+                reversion.revisions.set_comment(comment)
             self.save()
 
     def copy_attributes(self, from_model=True):

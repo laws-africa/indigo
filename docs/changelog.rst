@@ -6,12 +6,13 @@ Changelog
 
 * FEATURE: Paste tables directly from Word when in edit mode.
 * FEATURE: Scaffolding for showing document issues.
-* FEATURE: Show document hierarchy.
+* FEATURE: Show document hierarchy in editor.
 * FEATURE: Support customisable importing of HTML files.
 * FEATURE: Customisable PDF footers
 * Clearer indication of repealed works.
 * indigo-web 3.6.1 - explicit styling for crossHeading elements
 * Badge icons are now stylable images
+* Javascript traditions inherit from the defaults better, and are simpler to manage.
 
 4.0.0 (12 September 2019)
 -------------------------

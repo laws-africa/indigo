@@ -374,7 +374,7 @@
 
       this.threadViews.forEach(function(v) {
         v.display();
-        if (v.model.at(0).get('id').toString() == prefocus) {
+        if (prefocus && (v.model.at(0).get('id') || "").toString() == prefocus) {
           v.$el.click();
         }
       });

@@ -14,8 +14,24 @@
     this.initialize.apply(this, arguments);
   };
 
+  // Recursively copies properties from source to target
+  function deepMerge(target, source) {
+    for (var prop in source) {
+      if (!(prop in target)) {
+        target[prop] = source[prop];
+      } else {
+        deepMerge(target[prop], source[prop]);
+      }
+    }
+  }
+
   _.extend(Indigo.Tradition.prototype, {
-    initialize: function() {},
+    initialize: function() {
+      if (Indigo.traditions.default) {
+        // pull in missing settings from the default tradition
+        deepMerge(this.settings, Indigo.traditions.default.settings);
+      }
+    },
 
     // Should this XML node be included in the table of contents?
     // By default, checks if the name of the node is in the +elements+ object.
@@ -47,6 +63,8 @@
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
       aceMode: 'ace/mode/indigo',
     },
+    // list of names of linter functions applicable to this location
+    linters: [],
     // CSS selector for elements that can hold annotations
     annotatable: ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
                  ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +
@@ -101,65 +119,6 @@
 
           return component.charAt(0).toUpperCase() + component.slice(1);
         },
-      },
-    },
-  });
-
-  // South Africa
-  Indigo.traditions.za = new Indigo.Tradition({
-    country: 'za',
-    grammar: Indigo.traditions.default.settings.grammar,
-    annotatable: Indigo.traditions.default.settings.annotatable,
-    toc: {
-      elements: Indigo.traditions.default.settings.toc.elements,
-      titles: {
-        // just rely on the defaults
-      },
-    },
-  });
-
-  // Poland
-  Indigo.traditions.pl = new Indigo.Tradition({
-    country: 'pl',
-    grammar: {
-      fragments: {
-        article: 'articles',
-        chapter: 'chapters',
-        component: 'schedules',
-        components: 'schedules_container',
-        division: 'divisions',
-        paragraph: 'paragraphs',
-        section: 'sections',
-        subdivision: 'subdivisions',
-      },
-      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-division, .akn-subdivision, .akn-article, .akn-component, .akn-components',
-      aceMode: 'ace/mode/indigo_pl',
-    },
-    annotatable: Indigo.traditions.default.settings.annotatable,
-    toc: {
-      elements: {
-        akomaNtoso: 1,
-        article: 1,
-        chapter: 1,
-        component: 1,
-        components: 1,
-        conclusions: 1,
-        coverpage: 1,
-        division: 1,
-        paragraph: 1,
-        preamble: 1,
-        preface: 1,
-        section: 1,
-        subdivision: 1,
-      },
-      titles: {
-        article     : function(i) { return "Art. " + i.num + " " + i.heading; },
-        chapter     : function(i) { return "Rozdział " + i.num + " " + i.heading; },
-        division    : function(i) { return "Dział " + i.num + " " + i.heading; },
-        list        : function(i) { return i.num + " " + i.heading; },
-        paragraph   : function(i) { return i.num + " " + i.heading; },
-        section     : function(i) { return "§ " + i.num + " " + i.heading; },
-        subdivision : function(i) { return "Oddział " + i.num + " " + i.heading; },
       },
     },
   });

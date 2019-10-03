@@ -140,12 +140,8 @@ Read the [documentation for details on deploying Indigo](http://indigo.readthedo
 1. Run the tests!
 2. Update VERSION appropriately
 3. Update `docs/changelog.rst`
-4. Commit and push to github
-5. Release to PyPI:
-
-```bash
-python setup.py sdist bdist_wheel upload
-```
+4. Commit changes
+5. Tag: `git tag vX.X.X` and push to github `git push; git push --tags`
 
 ## License and Copyright
 

@@ -6,7 +6,7 @@ Changelog
 
 * FEATURE: Paste tables directly from Word when in edit mode.
 * FEATURE: Scaffolding for showing document issues.
-* FEATURE: Show document hierarchy.
+* FEATURE: Show document hierarchy in editor.
 * FEATURE: Support customisable importing of HTML files.
 * FEATURE: Customisable PDF footers
 * Clearer indication of repealed works.

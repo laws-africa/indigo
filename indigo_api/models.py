@@ -380,11 +380,14 @@ class Work(models.Model):
 
         return super(Work, self).save(*args, **kwargs)
 
-    def save_with_revision(self, user):
+    def save_with_revision(self, user, comment=None):
         """ Save this work and create a new revision at the same time.
         """
         with reversion.revisions.create_revision():
             reversion.revisions.set_user(user)
+            if comment:
+                reversion.revisions.set_comment(comment)
+            self.updated_by_user = user
             self.save()
 
     def can_delete(self):
@@ -926,6 +929,7 @@ class Document(DocumentMixin, models.Model):
             reversion.revisions.set_user(user)
             if comment:
                 reversion.revisions.set_comment(comment)
+            self.updated_by_user = user
             self.save()
 
     def copy_attributes(self, from_model=True):

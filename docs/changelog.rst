@@ -1,8 +1,8 @@
 Changelog
 =========
 
-4.1.0 (?)
----------
+4.1.0 (3 October 2019)
+----------------------
 
 * FEATURE: Paste tables directly from Word when in edit mode.
 * FEATURE: Scaffolding for showing document issues.

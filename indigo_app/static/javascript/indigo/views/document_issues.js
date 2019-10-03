@@ -4,8 +4,6 @@
     if (!exports.Indigo) exports.Indigo = {};
     Indigo = exports.Indigo;
 
-    Indigo.linters = [];
-
     // Run linters and render document issues
     Indigo.DocumentIssuesView = Backbone.View.extend({
       el: 'body',
@@ -24,15 +22,30 @@
         this.listenTo(this.documentContent, 'change', this.runLinters);
       },
 
-      runLinters: function() {
-        var issues = [];
+      getLinters: function(document) {
+        var linters = [];
 
-        for (var i = 0; i < Indigo.linters.length; i++) {
-          var iss = Indigo.linters[i](this.document, this.documentContent);
+        document.tradition().settings.linters.forEach(function(name) {
+          var fn = Indigo.Linting.linters[name];
+          if (fn) {
+            linters.push(fn);
+          }
+        });
+
+        return linters;
+      },
+
+      runLinters: function() {
+        var issues = [],
+            linters = this.getLinters(this.document),
+            self = this;
+
+        linters.forEach(function(linter) {
+          var iss = linter(self.document, self.documentContent);
           if (iss && iss.length > 0) {
             issues = issues.concat(iss);
           }
-        }
+        });
 
         this.model.reset(issues);
       },

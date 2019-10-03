@@ -12,6 +12,7 @@ Changelog
 * Clearer indication of repealed works.
 * indigo-web 3.6.1 - explicit styling for crossHeading elements
 * Badge icons are now stylable images
+* Javascript traditions inherit from the defaults better, and are simpler to manage.
 
 4.0.0 (12 September 2019)
 -------------------------

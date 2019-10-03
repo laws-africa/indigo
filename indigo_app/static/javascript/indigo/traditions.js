@@ -14,8 +14,24 @@
     this.initialize.apply(this, arguments);
   };
 
+  // Recursively copies properties from source to target
+  function deepMerge(target, source) {
+    for (var prop in source) {
+      if (!(prop in target)) {
+        target[prop] = source[prop];
+      } else {
+        deepMerge(target[prop], source[prop]);
+      }
+    }
+  }
+
   _.extend(Indigo.Tradition.prototype, {
-    initialize: function() {},
+    initialize: function() {
+      if (Indigo.traditions.default) {
+        // pull in missing settings from the default tradition
+        deepMerge(this.settings, Indigo.traditions.default.settings);
+      }
+    },
 
     // Should this XML node be included in the table of contents?
     // By default, checks if the name of the node is in the +elements+ object.
@@ -47,6 +63,8 @@
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
       aceMode: 'ace/mode/indigo',
     },
+    // list of names of linter functions applicable to this location
+    linters: [],
     // CSS selector for elements that can hold annotations
     annotatable: ".akn-coverPage, .akn-preface, .akn-preamble, .akn-conclusions, " +
                  ".akn-chapter, .akn-part, .akn-section, .akn-subsection, .akn-blockList, .akn-heading, " +

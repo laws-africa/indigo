@@ -182,41 +182,4 @@
   img {
     max-width: 100%;
   }
-
-  /* generated custom elements */
-  .coverpage {
-    text-align: center;
-    margin-bottom: $akn-section-spacing;
-
-    .notice-list {
-      margin: 0px;
-      padding: 0px;
-
-      li {
-        list-style: none;
-      }
-    }
-
-    .assent-date,
-    .commencement-date {
-      margin-bottom: $akn-para-spacing;
-      font-weight: bold;
-    }
-
-    .amendment-list {
-      margin-top: $akn-section-spacing;
-      padding: 0px;
-    }
-
-    .amendment {
-      list-style: none;
-      margin-bottom: $akn-para-spacing;
-      font-style: italic;
-    }
-
-    .verification-notice {
-      margin-top: $akn-para-spacing;
-      font-style: italic;
-    }
-  }
 }

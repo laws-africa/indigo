@@ -63,6 +63,14 @@
         </li>
       {% endif %}
 
+      {% if document.work.as_at_date %}
+        {% block as_at_date_notice %}
+          <li class="as-at-date-notice">
+            [{% blocktrans with date=document.work.as_at_date|date:"j E Y" %}Up to date as at {{ date }}{% endblocktrans %}]
+          </li>
+        {% endblock %}
+      {% endif %}
+
       {% if not document.work.publication_document %}
         {% block verification_notice %}
           <li class="verification-notice">

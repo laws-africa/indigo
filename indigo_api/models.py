@@ -499,6 +499,10 @@ class Work(models.Model):
 
         return pits
 
+    @property
+    def as_at_date(self):
+        return self.place.settings.as_at_date
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

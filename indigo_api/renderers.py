@@ -6,6 +6,7 @@ import os
 import os.path
 import zipfile
 import logging
+import shutil
 
 from django.template.loader import get_template, render_to_string
 from django.core.cache import caches
@@ -258,7 +259,7 @@ class PDFRenderer(HTMLRenderer):
         self.colophon = colophon
 
     def render(self, document, element=None):
-        self.media_url = 'doc-0'
+        self.media_url = 'doc-0/'
         html = super(PDFRenderer, self).render(document, element=element)
 
         # embed the HTML into the PDF container
@@ -276,7 +277,7 @@ class PDFRenderer(HTMLRenderer):
         with tempfile.TemporaryDirectory() as tmpdir:
             # render individual documents
             for i, doc in enumerate(documents):
-                self.media_url = f'doc-{i}'
+                self.media_url = f'doc-{i}/'
                 doc_html = super(PDFRenderer, self).render(doc, **kwargs)
                 self.save_attachments(doc_html, doc, f'doc-{i}/media/', tmpdir)
 

@@ -11,12 +11,15 @@
       'click a': 'click',
     },
 
-    initialize: function() {
+    initialize: function(options) {
       this.selection = new Backbone.Model({
         index: -1,
       });
       this.toc = [];
       this.model.on('change:dom', this.rebuild, this);
+      this.issues = options.document.issues;
+
+      this.listenTo(this.issues, 'reset change add remove', this.issuesChanged);
     },
 
     rebuild: function(force) {
@@ -103,13 +106,86 @@
 
       this.toc = toc;
       this.roots = roots;
+
+      this.mergeIssues();
+    },
+
+    issuesChanged: function() {
+      this.mergeIssues();
+      this.render();
+    },
+
+    mergeIssues: function() {
+      // fold document issues into the TOC
+      var self = this,
+          withIssues = [];
+
+      _.each(this.toc, function(entry) {
+        entry.issues = [];
+      });
+
+      this.issues.each(function(issue) {
+        // find the toc entry for this issue
+        var element = issue.get('element');
+
+        if (element) {
+          var entry = self.entryForElement(element);
+          if (entry) {
+            entry.issues.push(issue);
+            withIssues.push(entry);
+          }
+        }
+      });
+
+      // now attach decent issue descriptions
+      _.each(withIssues, function(entry) {
+        var severity = _.map(entry.issues, function(issue) { return issue.get('severity'); });
+        severity = _.contains(severity, 'error') ? 'error' : 'warning';
+
+        entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length == 1 ? '' : 's');
+        entry.issues_description = entry.issues.map(function(issue) { return issue.get('message'); }).join('<br>');
+        entry.issues_severity = severity;
+      });
+    },
+
+    entryForElement: function(element) {
+      // find the TOC entry for an XML element
+      var tradition = Indigo.traditions.get(this.model.document.get('country')),
+          toc = this.toc;
+
+      // first, find the closest element's ancestor that is a toc element
+      while (element) {
+        if (tradition.is_toc_element(element)) {
+          // now get the toc item for this element
+          return _.find(toc, function(entry) {
+            return entry.element === element;
+          });
+        }
+
+        element = element.parentElement;
+      }
     },
 
     render: function() {
-      // recursively build the TOC
+      // recursively render the TOC
       function renderItem(root, item) {
         var li = document.createElement('li');
         li.classList.add('toc-item');
+
+        // issues?
+        if (item.issues && item.issues.length) {
+          var icon = document.createElement('i');
+          icon.className = 'float-right issue-icon issue-' + item.issues_severity;
+          li.appendChild(icon);
+
+          $(icon).popover({
+            content: item.issues_description,
+            title: item.issues_title,
+            trigger: 'hover',
+            placement: 'bottom',
+            html: true,
+          });
+        }
 
         var a = document.createElement('a');
         a.setAttribute('href', '#');

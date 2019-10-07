@@ -157,9 +157,9 @@
       while (element) {
         if (tradition.is_toc_element(element)) {
           // now get the toc item for this element
-          return _.find(toc, function(entry) {
-            return entry.element === element;
-          });
+          for (var i = 0; i < toc.length; i++) {
+            if (toc[i].element === element) return toc[i];
+          }
         }
 
         element = element.parentElement;

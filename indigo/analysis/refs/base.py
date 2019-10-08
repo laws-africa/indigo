@@ -167,6 +167,12 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
             element_id = candidate_elements[0].get('id')
             return f'#{element_id}'
 
+    def is_internal(self, match):
+        ref = match.group("ref")
+        if ref.endswith('the ') or ref.endswith('Act '):
+            return False
+        return True
+
     def find_references(self, root):
         for ancestor in self.ancestor_nodes(root):
             for candidate in self.candidate_nodes(ancestor):
@@ -175,13 +181,13 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
                 if not candidate.is_tail:
                     # text directly inside a node
                     match = self.section_re.search(node.text)
-                    if match:
+                    if match and self.is_internal(match):
                         # mark the reference and continue to check the new tail
                         node = self.mark_reference(node, match, in_tail=False)
 
                 while node is not None and node.tail:
                     match = self.section_re.search(node.tail)
-                    if not match:
+                    if (not match) or (not self.is_internal(match)):
                         break
 
                     # mark the reference and continue to check the new tail
@@ -210,8 +216,6 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
         """ Make a reference out of this match, returning a (ref, start, end) tuple
         which is the new ref node, and the start and end position of what text
         in the parent element it should be replacing.
-
-        By default, the first group in the `section_re` is substituted with the ref.
         """
         ref = etree.Element(self.ref_tag)
         ref.text = match.group('ref')
@@ -243,6 +247,7 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
         r'''\b[sS]ections?\s+
             (?P<ref>
              (?P<num>\d+)
+            (\s+of\s+(this\s+|the\s+|Act\s+)?)?
             )
         ''', re.X)
 

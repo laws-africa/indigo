@@ -159,12 +159,13 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
         self.candidate_xpath = etree.XPath(self.candidate_xpath, namespaces=self.nsmap)
 
     def make_href(self, node, match):
-        """ Turn this match into an href
+        """ Turn this match into an href if a reference is found
         """
         num = match.group("num")
-        candidate_element = node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)[0]
-        element_id = candidate_element.attrib.get('id')
-        return f'#{element_id}'
+        candidate_elements = node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
+        if candidate_elements:
+            element_id = candidate_elements[0].get('id')
+            return f'#{element_id}'
 
     def find_references(self, root):
         for ancestor in self.ancestor_nodes(root):
@@ -187,6 +188,11 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
                     node = self.mark_reference(node, match, in_tail=True)
 
     def mark_reference(self, node, match, in_tail):
+        # first check to see if a reference will be found
+        href = self.make_href(node, match)
+        if not href:
+            return node
+
         ref, start_pos, end_pos = self.make_ref(node, match)
 
         if in_tail:

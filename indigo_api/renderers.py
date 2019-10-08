@@ -7,6 +7,7 @@ import os.path
 import zipfile
 import logging
 import shutil
+import urllib.parse
 
 from django.template.loader import get_template, render_to_string
 from django.core.cache import caches
@@ -309,7 +310,7 @@ class PDFRenderer(HTMLRenderer):
         os.makedirs(media_dir, exist_ok=True)
 
         for attachment in document.attachments.all():
-            if attachment.filename in fnames:
+            if urllib.parse.quote(attachment.filename) in fnames:
                 # save the attachment into tmpdir
                 fname = os.path.join(media_dir, attachment.filename)
                 with open(fname, "wb") as f:

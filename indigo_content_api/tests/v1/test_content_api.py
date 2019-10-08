@@ -227,7 +227,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'application/xml')
         assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1"><num>1.</num>
         <content>
-          <p>tester😀</p><p/>
+          <p>tester😀</p><p/><p><img src="media/test-image.png"/></p>
         </content>
       </section>
     
@@ -238,7 +238,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'text/html')
         assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3>
 <span class="akn-content">
-          <span class="akn-p">tester😀</span><span class="akn-p"></span>
+          <span class="akn-p">tester😀</span><span class="akn-p"></span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>
 ''')
 
@@ -479,4 +479,4 @@ class ContentAPIV1TestMixin(object):
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class ContentAPIV1Test(ContentAPIV1TestMixin, APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon']
+    fixtures = ['countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon', 'attachments']

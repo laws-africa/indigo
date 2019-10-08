@@ -21,14 +21,14 @@ class SectionRefsFinderTestCase(TestCase):
                 xml="""
       <section id="section-7">
         <num>7.</num>
-        <heading>Section 7 heading</heading>
+        <heading>Active ref heading</heading>
         <content>
           <p>As given in section 26, blah.</p>
         </content>
       </section>
       <section id="section-26">
         <num>26.</num>
-        <heading>Section 26 heading</heading>
+        <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
@@ -42,14 +42,14 @@ class SectionRefsFinderTestCase(TestCase):
                 xml="""
       <section id="section-7">
         <num>7.</num>
-        <heading>Section 7 heading</heading>
+        <heading>Active ref heading</heading>
         <content>
           <p>As given in section <ref href="#section-26">26</ref>, blah.</p>
         </content>
       </section>
       <section id="section-26">
         <num>26.</num>
-        <heading>Section 26 heading</heading>
+        <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
@@ -62,3 +62,137 @@ class SectionRefsFinderTestCase(TestCase):
         root = etree.fromstring(expected.content)
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(document.content, expected.content)
+
+    def test_section_basic_in_tail(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As <i>given</i> in (we're now in a tail) section 26, blah.</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        expected = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref>, blah.</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected.content)
+        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(document.content, expected.content)
+
+    def test_section_notfound(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As given in section 26, which isn't in this document, blah.</p>
+        </content>
+      </section>
+      <section id="section-35">
+        <num>35.</num>
+        <heading>Not the section we want</heading>
+        <content>
+          <p>Not the provision you're looking for.</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        expected_content = document.content
+        self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected_content)
+        expected_content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(document.content, expected_content)
+
+    def test_section_external(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As given in section 26 of Act 5 of 2012, blah.</p>
+          <p>As given in section 26 of the Nursing Act, blah.</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Passive ref heading</heading>
+        <content>
+          <p>An important provision, but not the one referred to above.</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        expected_content = document.content
+        self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected_content)
+        expected_content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(document.content, expected_content)
+
+    def test_section_external_in_tail(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As <i>given</i> in (we're now in a tail) section 26 of Act 5 of 2012, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) section 26 of the Nursing Act, blah.</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Passive ref heading</heading>
+        <content>
+          <p>An important provision, but not the one referred to above.</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        expected_content = document.content
+        self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected_content)
+        expected_content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(document.content, expected_content)

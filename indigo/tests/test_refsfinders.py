@@ -24,6 +24,7 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Active ref heading</heading>
         <content>
           <p>As given in section 26, blah.</p>
+          <p>As given in section 26 of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">
@@ -45,6 +46,7 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Active ref heading</heading>
         <content>
           <p>As given in section <ref href="#section-26">26</ref>, blah.</p>
+          <p>As given in section <ref href="#section-26">26</ref> of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">
@@ -72,6 +74,7 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Active ref heading</heading>
         <content>
           <p>As <i>given</i> in (we're now in a tail) section 26, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) section 26 of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">
@@ -93,6 +96,7 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Active ref heading</heading>
         <content>
           <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref>, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref> of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">

@@ -218,9 +218,9 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
         in the parent element it should be replacing.
         """
         ref = etree.Element(self.ref_tag)
-        ref.text = match.group('ref')
+        ref.text = match.group('num')
         ref.set('href', self.make_href(node, match))
-        return (ref, match.start('ref'), match.end('ref'))
+        return ref, match.start('num'), match.end('num')
 
     def ancestor_nodes(self, root):
         for x in self.ancestor_xpath(root):
@@ -247,7 +247,7 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
         r'''\b[sS]ections?\s+
             (?P<ref>
              (?P<num>\d+)
-            (\s+of\s+(this\s+|the\s+|Act\s+)?)?
+            (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
             )
         ''', re.X)
 

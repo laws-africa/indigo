@@ -310,6 +310,7 @@ class PDFRenderer(HTMLRenderer):
         os.makedirs(media_dir, exist_ok=True)
 
         for attachment in document.attachments.all():
+            # the src attribute values in fnames are URL-quoted
             if urllib.parse.quote(attachment.filename) in fnames:
                 # save the attachment into tmpdir
                 fname = os.path.join(media_dir, attachment.filename)

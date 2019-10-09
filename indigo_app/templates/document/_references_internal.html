@@ -1,0 +1,48 @@
+<div class="modal fade" id="references-internal-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">References to sections</h5>
+        <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+      </div>
+      <div class="scrollable">
+        <div class="section-references-list"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary remove-section-references pull-left"><i class="fas fa-times"></i> Remove references</button>
+        <button type="button" class="btn btn-outline-secondary find-section-references"><i class="fas fa-sync"></i> Find references</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script id="internal-references-template" type="text/x-handlebars-template">
+{% verbatim %}
+
+{{#if references}}
+  <table class="table table-striped table-sm">
+    <thead>
+      <tr>
+        <th>Source</th>
+        <th>Target</th>
+      </tr>
+    </thead>
+    <tbody>
+      {{#each references}}
+      <tr>
+        <td>{{ source }}</td>
+        <td><a href="{{ href }}" target="_blank">{{ href }}</a></td>
+      </tr>
+      {{/each}}
+    </tbody>
+  </table>
+
+{{else}}
+<p>
+  <em>The document does not contain any section references.</em>
+</p>
+{{/if}}
+
+{% endverbatim %}
+</script>

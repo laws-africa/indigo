@@ -413,6 +413,27 @@ class LinkReferencesView(APIView):
             finder.find_references_in_document(document)
 
 
+class LinkSectionReferencesView(APIView):
+    """ Find and link references to sections
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
+        serializer.is_valid(raise_exception=True)
+        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+
+        self.find_references(document)
+
+        return Response({'document': {'content': document.document_xml}})
+
+    def find_references(self, document):
+        finder = plugins.for_document('section-refs', document)
+        if finder:
+            finder.find_references_in_document(document)
+
+
 class SearchView(DocumentViewMixin, ListAPIView):
     """ Search and return either works, or documents, depending on `scope`.
 

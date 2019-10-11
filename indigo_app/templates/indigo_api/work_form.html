@@ -47,6 +47,7 @@
       </p>
     </div>
 
+    {% block work-form-details %}
     <div class="card mb-3">
       <h5 class="card-header">Work details</h5>
       <div class="card-body">
@@ -149,11 +150,14 @@
 
       </div>
     </div>
+    {% endblock work-form-details %}
 
+    {% block work-form-publication %}
     <div class="card mb-3" id="publication">
       <h5 class="card-header">Publication</h5>
       <div class="card-body">
 
+        {% block work-form-publication-details %}
         <div class="form-row">
           {% block publication-date %}
           <div class="form-group col">
@@ -180,7 +184,9 @@
             <p class="form-text text-muted">Publication's sequence number, eg. gazette number</p>
           </div>
         </div>
+        {% endblock work-form-publication-details %}
 
+        {% block work-form-publication-file %}
         <div class="form-group">
           <label for="work_publication_document" class="mb-0">Official publication document</label>
           <p class="form-text text-muted mt-0">A copy of the official publication document, such as the gazette.</p>
@@ -218,10 +224,13 @@
             </script>
           </div>
         </div>
+        {% endblock work-form-publication-file %}
 
       </div>
     </div>
+    {% endblock work-form-publication %}
 
+    {% block work-form-commencement %}
     <div class="card mb-3" id="commencement">
       <h5 class="card-header">Commencement and Assent</h5>
       <div class="card-body">
@@ -252,7 +261,9 @@
 
       </div>
     </div>
+    {% endblock work-form-commencement %}
 
+    {% block work-form-repeal %}
     <div class="card mb-3" id="repeal">
       <h5 class="card-header">Repeal</h5>
       <div class="card-body">
@@ -274,6 +285,7 @@
         </div>
       </div>
     </div>
+    {% endblock work-form-repeal %}
   </form>
 
   {% if work.pk %}

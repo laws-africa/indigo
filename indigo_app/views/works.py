@@ -173,10 +173,15 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddWorkView, self).get_context_data(**kwargs)
-        context['work_json'] = json.dumps({
+
+        work = {
             'country': self.country.code,
             'locality': self.locality.code if self.locality else None,
-        })
+        }
+        if self.place.publication_set.count() == 1:
+            work['publication_name'] = self.place.publication_set.first().name
+        context['work_json'] = json.dumps(work)
+
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
 

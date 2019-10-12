@@ -26,6 +26,8 @@ urlpatterns = [
     url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media$', v1_views.PublishedDocumentMediaView.as_view({'get': 'list'}), name='published-document-media'),
 
     # Expression details
+    # eg. /akn/za/act/2007/98/toc.json
+    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/].*)/toc\.(?P<format>[a-z0-9]+)$', v2_views.PublishedDocumentTOCView.as_view({'get': 'get'}), name='published-document-toc'),
     # eg. /akn/za/act/2007/98
     url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/].*)$', v2_views.PublishedDocumentDetailViewV2.as_view({'get': 'get'}), name='published-document-detail'),
 

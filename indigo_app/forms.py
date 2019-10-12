@@ -4,10 +4,7 @@ import urllib.parse
 from django import forms
 from django.db.models import Q
 from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.conf import settings
-from django.forms import BaseModelFormSet
-from django.forms.formsets import DELETION_FIELD_NAME
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
@@ -40,10 +37,42 @@ class WorkForm(forms.ModelForm):
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
 
+    # custom work properties that shouldn't be rendered automatically.
+    # this assumes that these properties are rendered manually on the form
+    # page.
+    no_render_properties = []
+
+    def __init__(self, place, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.place = place
+
+        for prop, label in self.place.settings.work_properties.items():
+            key = f'property_{prop}'
+            if self.instance:
+                self.initial[key] = self.instance.properties.get(prop)
+            self.fields[key] = forms.CharField(label=label, required=False)
+
+    def property_fields(self):
+        fields = [
+            self[f'property_{prop}']
+            for prop in self.place.settings.work_properties.keys()
+            if prop not in self.no_render_properties
+        ]
+        fields.sort(key=lambda f: f.label)
+        return fields
+
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)
+        self.save_properties()
         self.save_publication_document()
         return work
+
+    def save_properties(self):
+        for prop in self.place.settings.work_properties.keys():
+            val = self.cleaned_data.get(f'property_{prop}')
+            if val is not None and val != '':
+                self.instance.properties[prop] = val
+        self.instance.save()
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']

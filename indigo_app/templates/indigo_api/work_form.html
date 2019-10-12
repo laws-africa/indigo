@@ -124,22 +124,15 @@
           </div>
         </div>
 
-        <!-- additional properties -->
-        {{ properties_formset.management_form }}
-
         <div class="form-row">
-          {% for info in properties_formset.keys_and_forms %}
-            <div class="form-group col-md-6">
-              {% if info.form.id.value %}
-                {{ info.form.id }}
-              {% endif %}
-              <input type="hidden" name="{{ info.form.key.html_name }}" value="{{ info.key }}">
-              <label for="{{ info.form.value.id_for_label }}">{{ info.label }}</label>
-              <input type="text" class="form-control" value="{{ info.form.value.value|default:'' }}" name="{{ info.form.value.html_name }}" maxlength="1024">
+          {% for fld in form.property_fields %}
+            <div class="form-group col-md-4">
+              <label for="{{ fld.id_for_label }}">{{ fld.label }}</label>
+              <input type="text" class="form-control" value="{{ fld.value|default:'' }}" name="{{ fld.html_name }}" maxlength="1024">
 
-              {% if info.subform.non_field_errors %}
+              {% if fld.errors %}
                 <div class="form-row mt-2 mb-4">
-                  {% for error in info.subform.non_field_errors %}
+                  {% for error in fld.errors %}
                     <div class="text-danger">{{ error }}</div>
                   {% endfor %}
                 </div>
@@ -169,7 +162,7 @@
 
           <div class="form-group col">
             <label for="{{ form.publication_name.id_for_label }}">Publication name</label>
-            <input type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list">
+            <input type="text" class="form-control" id="{{ form.publication_name.id_for_label }}" name="{{ form.publication_name.html_name }}" list="publication_list" value="{{ form.publication_name.value|default:'' }}">
             <p class="form-text text-muted">Original publication, eg. national gazette</p>
             <datalist id="publication_list">
               {% for pub in country.publication_set.all %}

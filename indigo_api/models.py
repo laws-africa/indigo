@@ -342,11 +342,13 @@ class Work(models.Model):
         return self.locality or self.country
 
     def labeled_properties(self):
+        props = self.place.settings.work_properties
+
         return sorted([{
-            'label': WorkProperty.KEYS[key],
+            'label': props[key],
             'key': key,
             'value': val,
-        } for key, val in self.properties.items() if key in WorkProperty.KEYS], key=lambda x: x['label'])
+        } for key, val in self.properties.items() if val and key in props], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -1622,3 +1624,19 @@ class PlaceSettings(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @property
+    def work_properties(self):
+        """ Return a dict of place-specific properties for works.
+
+        For a locality, looks for locality-specific settings before falling back to
+        country settings.
+        """
+        places = settings.INDIGO.get('WORK_PROPERTIES', {})
+
+        if self.locality:
+            props = places.get(self.locality.place_code)
+            if props is not None:
+                return props
+
+        return places.get(self.country.place_code, {})

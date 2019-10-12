@@ -240,6 +240,18 @@
       this.$el.parent().addClass('annotation-focused');
     },
 
+    scrollIntoView: function() {
+      var container = this.$el.closest('.document-sheet-container')[0],
+          top = this.el.getBoundingClientRect().top;
+
+      if (container) {
+        container.scrollBy({
+          top: top - container.getBoundingClientRect().top - 50,
+          behavior: 'smooth',
+        });
+      }
+    },
+
     blurred: function(e) {
       if (!(this.el == e.target || jQuery.contains(this.el, e.target))) {
         this.blur();
@@ -392,7 +404,8 @@
         if (v.display()) visible.push(v);
 
         if (prefocus && (v.model.at(0).get('id') || "").toString() == prefocus) {
-          v.$el.click();
+          v.focus();
+          v.scrollIntoView();
         }
       });
 
@@ -481,7 +494,7 @@
       this.visibleThreads.forEach(function(thread) {
         var top = thread.el.getBoundingClientRect().top;
 
-        if (toNext && top > threshold + 1 || !toNext && top < threshold) {
+        if (toNext && top > threshold + 1 || !toNext && top < threshold - 1) {
           candidates.push({
             view: thread,
             offset: top - threshold,
@@ -493,8 +506,8 @@
       if (!toNext) candidates.reverse();
 
       if (candidates.length > 0) {
-        this.sheetContainer.scrollTop += candidates[0].offset;
         candidates[0].view.focus();
+        candidates[0].view.scrollIntoView();
       }
     },
   });

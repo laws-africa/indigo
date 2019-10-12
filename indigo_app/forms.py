@@ -13,7 +13,7 @@ from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, Workflow, \
-    WorkProperty, VocabularyTopic
+    VocabularyTopic
 
 
 class WorkForm(forms.ModelForm):
@@ -81,57 +81,6 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
-
-
-class WorkPropertyForm(forms.ModelForm):
-    key = forms.ChoiceField(required=False, choices=[])
-    value = forms.CharField(required=False)
-
-    class Meta:
-        model = WorkProperty
-        fields = ('key', 'value')
-
-    def __init__(self, *args, **kwargs):
-        super(WorkPropertyForm, self).__init__(*args, **kwargs)
-        self.fields['key'].choices = list(WorkProperty.KEYS.items())
-
-    def clean(self):
-        super(WorkPropertyForm, self).clean()
-        if not self.cleaned_data.get('key') or not self.cleaned_data.get('value'):
-            self.cleaned_data[DELETION_FIELD_NAME] = True
-        return self.cleaned_data
-
-
-class BaseWorkPropertyFormSet(BaseModelFormSet):
-    def setup_extras(self):
-        # add extra forms for the properties we don't have yet
-        existing = set([p.key for p in self.queryset.all()])
-        missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
-        self.extra = len(missing)
-        self.initial_extra = [{'key': key} for key in missing]
-
-    def keys_and_forms(self):
-        # (value, label) pairs sorted by label
-        keys = sorted(WorkProperty.KEYS.items(), key=lambda x: x[1])
-        forms_by_key = {f['key'].value(): f for f in self.forms}
-        return [{
-            'key': val,
-            'label': label,
-            'form': forms_by_key[val],
-        } for val, label in keys]
-
-    def clean(self):
-        keys = set()
-        for form in self.forms:
-            key = form.cleaned_data.get('key')
-            if key:
-                if key in keys:
-                    form.add_error(None, ValidationError("Property '{}' is specified more than once.".format(key)))
-                else:
-                    keys.add(key)
-
-
-WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, formset=BaseWorkPropertyFormSet, can_delete=True)
 
 
 class DocumentForm(forms.ModelForm):

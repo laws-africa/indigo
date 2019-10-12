@@ -15,7 +15,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work, WorkProperty, PublicationDocument, Task, Amendment
+from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment
 from indigo_api.signals import work_changed
 
 
@@ -223,6 +223,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.stub = not row.get('principal')
             work.created_by_user = view.request.user
             work.updated_by_user = view.request.user
+            self.add_extra_properties(work, info)
 
             try:
                 work.full_clean()
@@ -232,7 +233,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     # signals
                     work_changed.send(sender=work.__class__, work=work, request=view.request)
 
-                    # info for links, extra properties
+                    # info for links
                     pub_doc_params = {
                         'date': row.get('publication_date'),
                         'number': work.publication_number,
@@ -242,7 +243,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     }
                     info['params'] = pub_doc_params
 
-                    self.add_extra_properties(work, info)
                     self.link_publication_document(work, info)
 
                     if not work.stub:
@@ -323,8 +323,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def add_extra_properties(self, work, info):
         for extra_property in self.extra_properties.keys():
             if info.get(extra_property):
-                new_prop = WorkProperty(work=work, key=extra_property, value=info.get(extra_property))
-                new_prop.save()
+                work.properties[extra_property] = info.get(extra_property)
 
     def link_publication_document(self, work, info):
         params = info.get('params')

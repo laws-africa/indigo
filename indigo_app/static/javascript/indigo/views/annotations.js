@@ -212,20 +212,26 @@
       if (this.root.get('closed')) return;
 
       var node = document.getElementById(this.anchor);
-      if (node) node.appendChild(this.el);
+      if (node) {
+        node.appendChild(this.el);
 
-      // the DOM elements get rudely remove from the view when the document
-      // sheet is re-rendered, which seems to break event handlers, so
-      // we have to re-bind them
-      this.delegateEvents();
-      this.annotationViews.forEach(function(v) { v.delegateEvents(); });
+        // the DOM elements get rudely removed from the view when the document
+        // sheet is re-rendered, which seems to break event handlers, so
+        // we have to re-bind them
+        this.delegateEvents();
+        this.annotationViews.forEach(function(v) { v.delegateEvents(); });
 
-      if (forInput) {
-        this.focus();
-        this.$el
-          .find('textarea')
-          .first()
-          .focus();
+        if (forInput) {
+          this.focus();
+          this.$el
+            .find('textarea')
+            .first()
+            .focus();
+        }
+
+        return true;
+      } else {
+        return false;
       }
     },
 
@@ -328,11 +334,15 @@
       this.prefocus = options.prefocus;
       this.annotatable = this.model.tradition().settings.annotatable;
       this.sheetContainer = this.el.querySelector('.document-sheet-container');
+      this.$annotationNav = this.$el.find('.annotation-nav');
 
       this.$newButton = $("#new-annotation-floater");
       this.$el.on('mouseover', this.annotatable, _.bind(this.enterSection, this));
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
+      this.counts = new Backbone.Model({'threads': 0});
+      this.listenTo(this.counts, 'change', this.renderCounts);
+      this.visibleThreads = [];
 
       this.annotations.fetch().then(function() {
         // group by thread and transform into collections
@@ -366,6 +376,8 @@
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
+      this.visibleThreads = _.without(this.visibleThreads, view);
+      this.counts.set('threads', this.counts.get('threads') - 1);
     },
 
     renderAnnotations: function() {
@@ -373,14 +385,25 @@
       // so it will always attempt to prefocus an annotation. It just so happens
       // that the click events prevent anything after the initial prefocus from
       // working. It's dirty, we should only prefocus on the first render.
-      var prefocus = this.prefocus;
+      var prefocus = this.prefocus,
+          visible = [];
 
       this.threadViews.forEach(function(v) {
-        v.display();
+        if (v.display()) visible.push(v);
+
         if (prefocus && (v.model.at(0).get('id') || "").toString() == prefocus) {
           v.$el.click();
         }
       });
+
+      this.visibleThreads = visible;
+      this.counts.set('threads', visible.length);
+    },
+
+    renderCounts: function() {
+      var count = this.counts.get('threads');
+      this.$annotationNav.find('.n-threads').text(count);
+      this.$annotationNav.toggleClass('d-none', count === 0);
     },
 
     enterSection: function(e) {
@@ -427,6 +450,9 @@
       this.$newButton.hide();
       view.display(true);
 
+      this.visibleThreads.push(view);
+      this.counts.set('threads', this.counts.get('threads') + 1);
+
       e.stopPropagation();
     },
 
@@ -445,37 +471,30 @@
     },
 
     scrollSelected: function(toNext) {
-      var top = this.sheetContainer.getBoundingClientRect().top + (toNext ? 50 : -50);
+      var threshold = this.sheetContainer.getBoundingClientRect().top + 50,
+          candidates = [];
 
-      // get offset from top of page
-      var threads = _.map(this.threadViews, function(v) {
-        return {
-          view: v,
-          top: v.el.getBoundingClientRect().top,
-        };
-      });
-      // ignore hidden threads
-      threads = _.filter(threads, function(t) { return t.top !== 0; });
-      // offset from scroll container
-      threads.forEach(function(t) { t.offset = t.top - top; });
-      // sort by offset
-      threads = _.sortBy(threads, function(t) { return t.offset; });
+      // ensure none are selected
+      this.visibleThreads.forEach(function(t) { t.blur(); });
 
-      // ensure they're not selected
-      threads.forEach(function(t) {
-        t.view.blur();
-      });
+      // candidates to be focused
+      this.visibleThreads.forEach(function(thread) {
+        var top = thread.el.getBoundingClientRect().top;
 
-      if (!toNext) threads.reverse();
-
-      // find the correct thread
-      for (var i = 0; i < threads.length; i++) {
-        if (toNext && threads[i].offset > 0 ||
-            !toNext && threads[i].offset < 0) {
-          this.sheetContainer.scrollTop += threads[i].offset;
-          threads[i].view.focus();
-          break;
+        if (toNext && top > threshold + 1 || !toNext && top < threshold) {
+          candidates.push({
+            view: thread,
+            offset: top - threshold,
+          });
         }
+      });
+      candidates = _.sortBy(candidates, function(t) { return t.offset; });
+
+      if (!toNext) candidates.reverse();
+
+      if (candidates.length > 0) {
+        this.sheetContainer.scrollTop += candidates[0].offset;
+        candidates[0].view.focus();
       }
     },
   });

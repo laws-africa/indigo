@@ -314,9 +314,11 @@
    * Handle all the annotations in a document
    */
   Indigo.DocumentAnnotationsView = Backbone.View.extend({
-    el: "#document-sheet",
+    el: ".document-workspace-content",
     events: {
       'click #new-annotation-floater': 'newAnnotation',
+      'click .next-annotation': 'nextAnnotation',
+      'click .prev-annotation': 'prevAnnotation',
     },
 
     initialize: function(options) {
@@ -325,6 +327,7 @@
       this.threadViews = [];
       this.prefocus = options.prefocus;
       this.annotatable = this.model.tradition().settings.annotatable;
+      this.sheetContainer = this.el.querySelector('.document-sheet-container');
 
       this.$newButton = $("#new-annotation-floater");
       this.$el.on('mouseover', this.annotatable, _.bind(this.enterSection, this));
@@ -425,6 +428,55 @@
       view.display(true);
 
       e.stopPropagation();
+    },
+
+    nextAnnotation: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.scrollSelected(true);
+    },
+
+    prevAnnotation: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.scrollSelected(false);
+    },
+
+    scrollSelected: function(toNext) {
+      var top = this.sheetContainer.getBoundingClientRect().top + (toNext ? 50 : -50);
+
+      // get offset from top of page
+      var threads = _.map(this.threadViews, function(v) {
+        return {
+          view: v,
+          top: v.el.getBoundingClientRect().top,
+        };
+      });
+      // ignore hidden threads
+      threads = _.filter(threads, function(t) { return t.top !== 0; });
+      // offset from scroll container
+      threads.forEach(function(t) { t.offset = t.top - top; });
+      // sort by offset
+      threads = _.sortBy(threads, function(t) { return t.offset; });
+
+      // ensure they're not selected
+      threads.forEach(function(t) {
+        t.view.blur();
+      });
+
+      if (!toNext) threads.reverse();
+
+      // find the correct thread
+      for (var i = 0; i < threads.length; i++) {
+        if (toNext && threads[i].offset > 0 ||
+            !toNext && threads[i].offset < 0) {
+          this.sheetContainer.scrollTop += threads[i].offset;
+          threads[i].view.focus();
+          break;
+        }
+      }
     },
   });
 })(window);

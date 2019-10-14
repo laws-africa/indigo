@@ -38,6 +38,8 @@ class RowValidationFormBase(forms.Form):
     publication_date = forms.DateField(error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     assent_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
     commencement_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+    stub = forms.BooleanField(required=False)
+    # handle spreadsheet that still uses 'principal'
     principal = forms.BooleanField(required=False)
     commenced_by = forms.CharField(required=False)
     amends = forms.CharField(required=False)
@@ -220,7 +222,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.publication_date = row.get('publication_date')
             work.commencement_date = row.get('commencement_date')
             work.assent_date = row.get('assent_date')
-            work.stub = not row.get('principal')
+            work.stub = row.get('stub')
+            # handle spreadsheet that still uses 'principal'
+            if 'stub' not in info:
+                work.stub = not row.get('principal')
             work.created_by_user = view.request.user
             work.updated_by_user = view.request.user
 

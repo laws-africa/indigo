@@ -272,6 +272,9 @@ class Work(models.Model):
 
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
+    # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties
+    properties = JSONField(null=False, blank=True, default=dict)
+
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
 
@@ -285,7 +288,6 @@ class Work(models.Model):
 
     _work_uri = None
     _repeal = None
-    _properties = None
 
     @property
     def work_uri(self):
@@ -339,18 +341,14 @@ class Work(models.Model):
     def place(self):
         return self.locality or self.country
 
-    @property
-    def properties(self):
-        if self._properties is None:
-            self._properties = {p.key: p.value for p in self.raw_properties.all()}
-        return self._properties
-
     def labeled_properties(self):
+        props = self.place.settings.work_properties
+
         return sorted([{
-            'label': WorkProperty.KEYS[key],
+            'label': props[key],
             'key': key,
             'value': val,
-        } for key, val in self.properties.items() if key in WorkProperty.KEYS], key=lambda x: x['label'])
+        } for key, val in self.properties.items() if val and key in props], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -549,22 +547,6 @@ class PublicationDocument(models.Model):
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
         return super(PublicationDocument, self).save(*args, **kwargs)
-
-
-def work_property_choices():
-    return WorkProperty.KEYS.items()
-
-
-class WorkProperty(models.Model):
-    # these are injected by other installations
-    KEYS = {}
-
-    work = models.ForeignKey(Work, null=False, related_name='raw_properties')
-    key = models.CharField(max_length=1024, null=False, blank=False, db_index=True)
-    value = models.CharField(max_length=1024, null=False, blank=False)
-
-    class Meta:
-        unique_together = ('work', 'key')
 
 
 class Amendment(models.Model):
@@ -1642,3 +1624,19 @@ class PlaceSettings(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @property
+    def work_properties(self):
+        """ Return a dict of place-specific properties for works.
+
+        For a locality, looks for locality-specific settings before falling back to
+        country settings.
+        """
+        places = settings.INDIGO.get('WORK_PROPERTIES', {})
+
+        if self.locality:
+            props = places.get(self.locality.place_code)
+            if props is not None:
+                return props
+
+        return places.get(self.country.place_code, {})

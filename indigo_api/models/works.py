@@ -170,6 +170,19 @@ class Work(models.Model):
     def place(self):
         return self.locality or self.country
 
+    @property
+    def amended(self):
+        if self.amendments.all():
+            return True
+
+    @property
+    def most_recent_amendment_year(self):
+        amendments = list(self.amendments.all())
+        if amendments:
+            amendments.sort(key=lambda x: x.date)
+            latest = amendments.pop()
+            return latest.date.year
+
     def labeled_properties(self):
         props = self.place.settings.work_properties
 

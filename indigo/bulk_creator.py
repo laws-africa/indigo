@@ -56,8 +56,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
     locale = (None, None, None)
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
     """
-    extra_properties = {}
-
     log = logging.getLogger(__name__)
 
     _service = None
@@ -321,7 +319,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return frbr_uri.work_uri().lower()
 
     def add_extra_properties(self, work, info):
-        for extra_property in self.extra_properties.keys():
+        place = self.locality or self.country
+        for extra_property in place.settings.work_properties.keys():
             if info.get(extra_property):
                 work.properties[extra_property] = info.get(extra_property)
 

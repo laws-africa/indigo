@@ -60,6 +60,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
     """
     extra_properties = {}
 
+    """ list of tuples of the form ('alias', 'meaning')
+    (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
+    """
+    aliases = []
+
     log = logging.getLogger(__name__)
 
     _service = None
@@ -267,10 +272,32 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         return info
 
+    def transform_aliases(self, row):
+        """ Adds the term the platform expects to `row` for validation (and later saving).
+        e.g. if the spreadsheet has `gazettement_date` where we expect `publication_date`,
+        `publication_date` and the appropriate value will be added to `row`
+        if ('gazettement_date', 'publication_date') was specified in the subclass's aliases
+        """
+        for alias, meaning in self.aliases:
+            if alias in row:
+                row[meaning] = row[alias]
+
+    def transform_error_aliases(self, errors):
+        """ Changes the term the platform expects back into its alias for displaying.
+        e.g. if spreadsheet has `gazettement_date` where we expect `publication_date`,
+        the error will display as `gazettement_date`
+        if ('gazettement_date', 'publication_date') was specified in the subclass's aliases
+        """
+        for alias, meaning in self.aliases:
+            for title in errors.keys():
+                if meaning == title:
+                    errors[alias] = errors.pop(title)
+
     def validate_row(self, view, row):
         row_country = row.get('country')
         row_locality = row.get('locality')
         row_subtype = row.get('subtype')
+        self.transform_aliases(row)
         available_subtypes = [s.abbreviation for s in Subtype.objects.all()]
 
         row_data = row
@@ -310,6 +337,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                        .format(view.locality, view.locality.code.upper()))
 
         errors = form.errors
+        self.transform_error_aliases(errors)
+
         row = form.cleaned_data
         row['errors'] = errors
         return row

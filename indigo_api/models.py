@@ -273,7 +273,7 @@ class Work(models.Model):
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
     # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties
-    properties = JSONField(null=False, blank=False, default=dict)
+    properties = JSONField(null=False, blank=True, default=dict)
 
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')

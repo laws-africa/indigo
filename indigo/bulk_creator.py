@@ -193,6 +193,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         return works
 
+    def transform_extra_properties(self, work):
+        """ Subclass in places where e.g. a 'Categories' TaxonomyVocabulary's VocabularyTopic
+        is given in a column of the spreadsheet.
+        """
+        pass
+
     def create_work(self, view, row, idx, dry_run):
         # copy all row details
         info = row
@@ -238,6 +244,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 work.full_clean()
                 if not dry_run:
                     work.save_with_revision(view.request.user)
+                    self.transform_extra_properties(work)
 
                     # signals
                     work_changed.send(sender=work.__class__, work=work, request=view.request)

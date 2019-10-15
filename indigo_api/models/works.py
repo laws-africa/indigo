@@ -170,7 +170,6 @@ class Work(models.Model):
     def place(self):
         return self.locality or self.country
 
-    @property
     def amended(self):
         return self.amendments.exists()
 

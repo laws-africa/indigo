@@ -172,15 +172,11 @@ class Work(models.Model):
 
     @property
     def amended(self):
-        if self.amendments.all():
-            return True
+        return self.amendments.exists()
 
-    @property
     def most_recent_amendment_year(self):
-        amendments = list(self.amendments.all())
-        if amendments:
-            amendments.sort(key=lambda x: x.date)
-            latest = amendments.pop()
+        latest = self.amendments.order_by('-date').first()
+        if latest:
             return latest.date.year
 
     def labeled_properties(self):

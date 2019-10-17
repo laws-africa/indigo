@@ -154,21 +154,21 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
     def setup(self, root):
         self.ns = root.nsmap[None]
         self.nsmap = {'a': self.ns}
-        self.ref_tag = "{%s}ref" % self.ns
+        self.ref_tag = f'{{{self.ns}}}ref'
         self.ancestor_xpath = etree.XPath('|'.join(f'.//a:{a}' for a in self.ancestors), namespaces=self.nsmap)
         self.candidate_xpath = etree.XPath(self.candidate_xpath, namespaces=self.nsmap)
 
     def make_href(self, node, match):
         """ Turn this match into an href if a reference is found
         """
-        num = match.group("num")
+        num = match.group('num')
         candidate_elements = node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
         if candidate_elements:
             element_id = candidate_elements[0].get('id')
             return f'#{element_id}'
 
     def is_internal(self, match):
-        ref = match.group("ref")
+        ref = match.group('ref')
         if ref.endswith('the ') or ref.endswith('Act '):
             return False
         return True
@@ -218,9 +218,9 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
         in the parent element it should be replacing.
         """
         ref = etree.Element(self.ref_tag)
-        ref.text = match.group('num')
+        ref.text = match.group('section_ref')
         ref.set('href', self.make_href(node, match))
-        return ref, match.start('num'), match.end('num')
+        return ref, match.start('section_ref'), match.end('section_ref')
 
     def ancestor_nodes(self, root):
         for x in self.ancestor_xpath(root):
@@ -244,11 +244,13 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
     locale = (None, 'eng', None)
 
     section_re = re.compile(
-        r'''\b[sS]ections?\s+
-            (?P<ref>
-             (?P<num>\d+)
-            (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
-            )
-        ''', re.X)
+        r'''(?P<ref>
+        (?P<section_ref>
+        \b[sS]ections?\s+
+        (?P<num>\d+)
+        )
+        (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
+        )''',
+        re.X)
 
     candidate_xpath = ".//text()[contains(., 'section') and not(ancestor::a:ref)]"

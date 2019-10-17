@@ -24,6 +24,7 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Active ref heading</heading>
         <content>
           <p>As given in section 26, blah.</p>
+          <p>As given in section 26 and section 31, blah.</p>
           <p>As given in section 26 of this Act, blah.</p>
         </content>
       </section>
@@ -32,6 +33,20 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>Less important</heading>
+        <content>
+          <p>Meh.</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
         </content>
       </section>
         """
@@ -45,8 +60,9 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in section <ref href="#section-26">26</ref>, blah.</p>
-          <p>As given in section <ref href="#section-26">26</ref> of this Act, blah.</p>
+          <p>As given in <ref href="#section-26">section 26</ref>, blah.</p>
+          <p>As given in <ref href="#section-26">section 26</ref> and <ref href="#section-31">section 31</ref>, blah.</p>
+          <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">
@@ -54,6 +70,20 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>Less important</heading>
+        <content>
+          <p>Meh.</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
         </content>
       </section>
         """
@@ -95,8 +125,8 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref>, blah.</p>
-          <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref> of this Act, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) <ref href="#section-26">section 26</ref>, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) <ref href="#section-26">section 26</ref> of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">

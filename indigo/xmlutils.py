@@ -64,3 +64,14 @@ def unwrap_element(elem):
             parent.text = (parent.text or '') + (elem.tail or '')
 
     parent.remove(elem)
+
+
+def rewrite_ids(elem, old_id_prefix, new_id_prefix):
+    old_id_len = len(old_id_prefix)
+    if elem.get('id').startswith(old_id_prefix):
+        elem.set('id', new_id_prefix + elem.get('id')[old_id_len:])
+
+    # rewrite children
+    for child in elem.xpath('.//a:*[@id]', namespaces={'a': elem.nsmap[None]}):
+        if child.get('id').startswith(old_id_prefix):
+            child.set('id', new_id_prefix + child.get('id')[old_id_len:])

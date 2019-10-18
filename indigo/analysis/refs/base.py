@@ -167,12 +167,6 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
             element_id = candidate_elements[0].get('id')
             return f'#{element_id}'
 
-    def is_internal(self, match):
-        ref = match.group('ref')
-        if ref.endswith('the ') or ref.endswith('Act '):
-            return False
-        return True
-
     def find_references(self, root):
         for ancestor in self.ancestor_nodes(root):
             for candidate in self.candidate_nodes(ancestor):
@@ -180,18 +174,46 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
 
                 if not candidate.is_tail:
                     # text directly inside a node
-                    match = self.section_re.search(node.text)
-                    if match and self.is_internal(match) and self.make_href(node, match):
-                        # mark the reference and continue to check the new tail
-                        node = self.mark_reference(node, match, in_tail=False)
+                    matches = self.section_re.finditer(node.text)
+                    node = self.mark_refs_in_matches(matches, node, in_tail=False)
 
                 while node is not None and node.tail:
+                    # if nothing in the tail matches anymore, we're done
                     match = self.section_re.search(node.tail)
-                    if (not match) or (not self.is_internal(match)) or (not self.make_href(node, match)):
+                    if not match:
                         break
 
-                    # mark the reference and continue to check the new tail
-                    node = self.mark_reference(node, match, in_tail=True)
+                    # there might be just one match that's a baddie,
+                    # in which case we're also done
+                    if len(self.section_re.findall(node.tail)) == 1:
+                        match = self.section_re.search(node.tail)
+                        if not self.is_valid(match, node):
+                            break
+
+                    matches = self.section_re.finditer(node.tail)
+                    node = self.mark_refs_in_matches(matches, node, in_tail=True)
+
+    def mark_refs_in_matches(self, matches, node, in_tail):
+        for match in matches:
+            if self.is_valid(match, node):
+                # mark the reference and continue to check the new tail
+                node = self.mark_reference(node, match, in_tail)
+                break
+
+        return node
+
+    def is_valid(self, match, node):
+        # check that it's not an external reference
+        ref = match.group('ref')
+        if ref.endswith('the ') or ref.endswith('Act '):
+            return False
+
+        # check that it's not a bad reference
+        num = match.group('num')
+        if not node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap):
+            return False
+
+        return True
 
     def mark_reference(self, node, match, in_tail):
         ref, start_pos, end_pos = self.make_ref(node, match)

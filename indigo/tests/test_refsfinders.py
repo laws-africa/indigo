@@ -14,6 +14,7 @@ class SectionRefsFinderTestCase(TestCase):
     def setUp(self):
         self.section_refs_finder = SectionRefsFinderENG()
         self.eng = Language.for_code('eng')
+        self.maxDiff = None
 
     def test_section_basic(self):
         document = Document(
@@ -26,6 +27,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in section 26, blah.</p>
           <p>As given in section 26 and section 31, blah.</p>
           <p>As given in section 26 of this Act, blah.</p>
+          <p>In section 200 it says one thing and section 26 it says another.</p>
         </content>
       </section>
       <section id="section-26">
@@ -63,6 +65,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in <ref href="#section-26">section 26</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> and <ref href="#section-31">section 31</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
+          <p>In section 200 it says one thing and <ref href="#section-26">section 26</ref> it says another.</p>
         </content>
       </section>
       <section id="section-26">

@@ -181,24 +181,19 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
                 if not candidate.is_tail:
                     # text directly inside a node
                     match = self.section_re.search(node.text)
-                    if match and self.is_internal(match):
+                    if match and self.is_internal(match) and self.make_href(node, match):
                         # mark the reference and continue to check the new tail
                         node = self.mark_reference(node, match, in_tail=False)
 
                 while node is not None and node.tail:
                     match = self.section_re.search(node.tail)
-                    if (not match) or (not self.is_internal(match)):
+                    if (not match) or (not self.is_internal(match)) or (not self.make_href(node, match)):
                         break
 
                     # mark the reference and continue to check the new tail
                     node = self.mark_reference(node, match, in_tail=True)
 
     def mark_reference(self, node, match, in_tail):
-        # first check to see if a reference will be found
-        href = self.make_href(node, match)
-        if not href:
-            return node
-
         ref, start_pos, end_pos = self.make_ref(node, match)
 
         if in_tail:

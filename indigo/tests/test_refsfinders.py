@@ -108,6 +108,7 @@ class SectionRefsFinderTestCase(TestCase):
         <content>
           <p>As <i>given</i> in (we're now in a tail) section 26, blah.</p>
           <p>As <i>given</i> in (we're now in a tail) section 26 of this Act, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) section 200, blah, but section 26 says something else.</p>
         </content>
       </section>
       <section id="section-26">
@@ -130,6 +131,7 @@ class SectionRefsFinderTestCase(TestCase):
         <content>
           <p>As <i>given</i> in (we're now in a tail) <ref href="#section-26">section 26</ref>, blah.</p>
           <p>As <i>given</i> in (we're now in a tail) <ref href="#section-26">section 26</ref> of this Act, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) section 200, blah, but <ref href="#section-26">section 26</ref> says something else.</p>
         </content>
       </section>
       <section id="section-26">

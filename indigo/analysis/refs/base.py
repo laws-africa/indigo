@@ -175,28 +175,27 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
                 if not candidate.is_tail:
                     # text directly inside a node
                     matches = self.section_re.finditer(node.text)
+                    # mark the reference and continue to check the new tail
                     node = self.mark_refs_in_matches(matches, node, in_tail=False)
 
                 while node is not None and node.tail:
+                    matches = list(self.section_re.finditer(node.tail))
+
                     # if nothing in the tail matches anymore, we're done
-                    match = self.section_re.search(node.tail)
-                    if not match:
+                    if not matches:
                         break
 
                     # there might be just one match that's a baddie,
                     # in which case we're also done
-                    if len(self.section_re.findall(node.tail)) == 1:
-                        match = self.section_re.search(node.tail)
-                        if not self.is_valid(match, node):
-                            break
+                    if len(matches) == 1 and not self.is_valid(matches[0], node):
+                        break
 
-                    matches = self.section_re.finditer(node.tail)
+                    # mark the reference and continue to check the new tail
                     node = self.mark_refs_in_matches(matches, node, in_tail=True)
 
     def mark_refs_in_matches(self, matches, node, in_tail):
         for match in matches:
             if self.is_valid(match, node):
-                # mark the reference and continue to check the new tail
                 node = self.mark_reference(node, match, in_tail)
                 break
 

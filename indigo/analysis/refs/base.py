@@ -158,15 +158,6 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
         self.ancestor_xpath = etree.XPath('|'.join(f'.//a:{a}' for a in self.ancestors), namespaces=self.nsmap)
         self.candidate_xpath = etree.XPath(self.candidate_xpath, namespaces=self.nsmap)
 
-    def make_href(self, node, match):
-        """ Turn this match into an href if a reference is found
-        """
-        num = match.group('num')
-        candidate_elements = node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
-        if candidate_elements:
-            element_id = candidate_elements[0].get('id')
-            return f'#{element_id}'
-
     def find_references(self, root):
         for ancestor in self.ancestor_nodes(root):
             for candidate in self.candidate_nodes(ancestor):
@@ -175,14 +166,14 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
                 if not candidate.is_tail:
                     # text directly inside a node
                     for match in self.section_re.finditer(node.text):
-                        if self.is_valid(match, node):
+                        if self.is_valid(node, match):
                             # mark the reference and continue to check the new tail
                             node = self.mark_reference(node, match, in_tail=False)
                             break
 
                 while node is not None and node.tail:
                     for match in self.section_re.finditer(node.tail):
-                        if self.is_valid(match, node):
+                        if self.is_valid(node, match):
                             # mark the reference and continue to check the new tail
                             node = self.mark_reference(node, match, in_tail=True)
                             break
@@ -191,18 +182,13 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
                         # we didn't break out of the loop, so there are no valid matches, give up
                         node = None
 
-    def is_valid(self, match, node):
-        # check that it's not an external reference
-        ref = match.group('ref')
-        if ref.endswith('the ') or ref.endswith('Act '):
-            return False
+    def is_valid(self, node, match):
+        return self.find_target(node, match) is not None
 
-        # check that it's not a bad reference
-        num = match.group('num')
-        if not node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap):
-            return False
-
-        return True
+    def find_target(self, node, match):
+        """ Return the target element that this reference targets.
+        """
+        raise NotImplementedError()
 
     def mark_reference(self, node, match, in_tail):
         ref, start_pos, end_pos = self.make_ref(node, match)
@@ -224,9 +210,14 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
         in the parent element it should be replacing.
         """
         ref = etree.Element(self.ref_tag)
-        ref.text = match.group('section_ref')
+        ref.text = match.group('ref')
         ref.set('href', self.make_href(node, match))
-        return ref, match.start('section_ref'), match.end('section_ref')
+        return ref, match.start('ref'), match.end('ref')
+
+    def make_href(self, node, match):
+        """ Return the target href for this match.
+        """
+        raise NotImplementedError()
 
     def ancestor_nodes(self, root):
         for x in self.ancestor_xpath(root):
@@ -253,10 +244,10 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     locale = (None, 'eng', None)
 
     section_re = re.compile(
-        r'''(?P<ref>
-        (?P<section_ref>
-        \b[sS]ections?\s+
-        (?P<num>\d+[A-Z]*)
+        r'''
+        (?P<ref>
+          \b[sS]ections?\s+
+          (?P<num>\d+[A-Z]*)
         )
         (?P<subsection_ref>\s*\(\d+[A-Z]*\))?
         (?P<paragraph_ref>\s*\([a-z]+[A-Z]*\))?
@@ -264,7 +255,27 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         (?P<item_ref>\s*\([a-z]{2,}[A-Z]*\))?
         (?!\s*\()
         (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
-        )''',
+        ''',
         re.X)
 
     candidate_xpath = ".//text()[contains(., 'section') and not(ancestor::a:ref)]"
+    match_cache = {}
+
+    def is_valid(self, node, match):
+        # check that it's not an external reference
+        ref = match.group(0)
+        if ref.endswith('the ') or ref.endswith('Act '):
+            return False
+
+        return super().is_valid(node, match)
+
+    def find_target(self, node, match):
+        num = match.group('num')
+        candidate_elements = node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
+        if candidate_elements:
+            self.match_cache[num] = candidate_elements[0]
+            return candidate_elements[0]
+
+    def make_href(self, node, match):
+        target = self.match_cache[match.group('num')]
+        return '#' + target.get('id')

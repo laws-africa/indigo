@@ -3,7 +3,24 @@ import re
 from rest_framework import renderers
 
 from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
-from indigo_content_api.v1.views import PublishedDocumentDetailView
+from indigo_content_api.v1.views import PublishedDocumentDetailView, PublishedDocumentTOCView
+
+
+def rewrite_frbr_uris(data):
+    """ Recursively rewrite entries in data that are FRBR URIs, to ensure they start with /akn/
+    """
+    if isinstance(data, dict):
+        for key, val in data.items():
+            if key.endswith('frbr_uri') or key == 'amending_uri' or key == 'repealing_uri':
+                if val and not val.startswith('/akn'):
+                    data[key] = '/akn' + val
+
+            if isinstance(val, dict):
+                rewrite_frbr_uris(val)
+
+            elif isinstance(val, list):
+                for x in val:
+                    rewrite_frbr_uris(x)
 
 
 class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
@@ -17,30 +34,13 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
         response = super(PublishedDocumentDetailViewV2, self).finalize_response(request, response, *args, **kwargs)
 
         if getattr(response, 'accepted_media_type', None) == 'application/json' and isinstance(response.data, dict):
-            self.rewrite_frbr_uris(response.data)
+            rewrite_frbr_uris(response.data)
 
         elif getattr(response, 'accepted_renderer', None):
             # for known renderers, rewrite akn data
             self.rewrite_akn(response.data)
 
         return response
-
-    def rewrite_frbr_uris(self, data):
-        """ Recursively rewrite entries in data that are FRBR URIs, to ensure they
-        start with /akn/
-        """
-        if isinstance(data, dict):
-            for key, val in data.items():
-                if key.endswith('frbr_uri') or key == 'amending_uri' or key == 'repealing_uri':
-                    if val and not val.startswith('/akn'):
-                        data[key] = '/akn' + val
-
-                if isinstance(val, dict):
-                    self.rewrite_frbr_uris(val)
-
-                elif isinstance(val, list):
-                    for x in val:
-                        self.rewrite_frbr_uris(x)
 
     def rewrite_akn(self, document):
         if isinstance(document, list):

@@ -181,12 +181,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         else:
             # special cases of the entire document
 
-            # table of contents
-            if (self.component, format) == ('toc', 'json'):
-                uri = document.doc.frbr_uri
-                uri.expression_date = self.frbr_uri.expression_date
-                return Response({'toc': self.table_of_contents(document, uri)})
-
             # json description
             if (self.component, format) == ('main', 'json'):
                 serializer = self.get_serializer(document)
@@ -287,27 +281,23 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
         return super(PublishedDocumentDetailView, self).handle_exception(exc)
 
-    def parse_frbr_uri(self, frbr_uri):
-        frbr_uri = super(PublishedDocumentDetailView, self).parse_frbr_uri(frbr_uri)
 
-        if frbr_uri:
-            # in a URL like
-            #
-            #   /act/1980/1/toc
-            #
-            # don't mistake 'toc' for a language, it's really equivalent to
-            #
-            #   /act/1980/1/eng/toc
-            #
-            # if eng is the default language.
-            if frbr_uri.language == 'toc':
-                frbr_uri.language = frbr_uri.default_language
-                frbr_uri.expression_component = 'toc'
+class PublishedDocumentTOCView(DocumentViewMixin, FrbrUriViewMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+    """ View that returns the TOC for a document.
+    """
+    renderer_classes = (renderers.JSONRenderer,)
+    document_queryset = Document.objects \
+        .undeleted() \
+        .published()
 
-        return frbr_uri
+    def get(self, request, **kwargs):
+        document = self.get_document()
+        uri = document.doc.frbr_uri
+        uri.expression_date = self.frbr_uri.expression_date
+        return Response({'toc': self.table_of_contents(document, uri)})
 
     def table_of_contents(self, document, uri=None):
-        toc = super(PublishedDocumentDetailView, self).table_of_contents(document, uri)
+        toc = super().table_of_contents(document, uri)
 
         # this updates the TOC entries by adding a 'url' component
         # based on the document's URI and the path of the TOC subcomponent

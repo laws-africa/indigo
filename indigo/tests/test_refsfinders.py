@@ -26,6 +26,7 @@ class SectionRefsFinderTestCase(TestCase):
         <content>
           <p>As given in section 26, blah.</p>
           <p>As given in section 26(b), blah.</p>
+          <p>As given in section 26(1)(b)(iii), which we'll discard for now, blah.</p>
           <p>As given in section 26B, blah.</p>
           <p>As given in section 26 and section 31, blah.</p>
           <p>As given in section 26 of this Act, blah.</p>
@@ -75,6 +76,7 @@ class SectionRefsFinderTestCase(TestCase):
         <content>
           <p>As given in <ref href="#section-26">section 26</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref>(b), blah.</p>
+          <p>As given in section 26(1)(b)(iii), which we'll discard for now, blah.</p>
           <p>As given in <ref href="#section-26B">section 26B</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> and <ref href="#section-31">section 31</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
@@ -213,6 +215,8 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in section 26 of Act 5 of 2012, blah.</p>
           <p>As given in section 26 of the Nursing Act, blah.</p>
           <p>As given in section 26(b) of the Nursing Act, blah.</p>
+          <p>As given in section 26(b)(iii) of the Nursing Act, blah.</p>
+          <p>As given in section 26 (b) (iii) of the Nursing Act, blah.</p>
         </content>
       </section>
       <section id="section-26">

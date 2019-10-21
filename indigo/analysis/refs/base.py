@@ -271,6 +271,7 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
         )
         (?P<subsection_ref>\s*\(\d+[A-Z]*\))?
         (?P<paragraph_ref>\s*\([a-z]+[A-Z]*\))?
+        (?!\s*\()
         (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
         )''',
         re.X)

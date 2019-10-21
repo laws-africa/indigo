@@ -131,7 +131,7 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
     """ Finds internal references in documents, such as to sections.
     """
 
-    section_re = None
+    ref_re = None
     """ This must be defined by a subclass. It should be a compiled regular
     expression, with named captures for `ref` and `num`.
     """
@@ -167,14 +167,14 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
 
                 if not candidate.is_tail:
                     # text directly inside a node
-                    for match in self.section_re.finditer(node.text):
+                    for match in self.ref_re.finditer(node.text):
                         if self.is_valid(node, match):
                             # mark the reference and continue to check the new tail
                             node = self.mark_reference(node, match, in_tail=False)
                             break
 
                 while node is not None and node.tail:
-                    for match in self.section_re.finditer(node.tail):
+                    for match in self.ref_re.finditer(node.tail):
                         if self.is_valid(node, match):
                             # mark the reference and continue to check the new tail
                             node = self.mark_reference(node, match, in_tail=True)
@@ -245,7 +245,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)
 
-    section_re = re.compile(
+    ref_re = re.compile(
         r'''
         (?P<ref>
           \b[sS]ections?\s+

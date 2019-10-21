@@ -212,6 +212,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
 
 class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     serializer_class = VersionSerializer
+    # The permissions applied in this case are for reversion.Version
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
 
     @detail_route(methods=['POST'])

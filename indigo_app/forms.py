@@ -4,16 +4,13 @@ import urllib.parse
 from django import forms
 from django.db.models import Q
 from django.core.validators import URLValidator
-from django.core.exceptions import ValidationError
 from django.conf import settings
-from django.forms import BaseModelFormSet
-from django.forms.formsets import DELETION_FIELD_NAME
 from captcha.fields import ReCaptchaField
 from allauth.account.forms import SignupForm
 
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, Workflow, \
-    WorkProperty, VocabularyTopic
+    VocabularyTopic
 
 
 class WorkForm(forms.ModelForm):
@@ -40,10 +37,42 @@ class WorkForm(forms.ModelForm):
     publication_document_size = forms.IntegerField(required=False)
     publication_document_mime_type = forms.CharField(required=False)
 
+    # custom work properties that shouldn't be rendered automatically.
+    # this assumes that these properties are rendered manually on the form
+    # page.
+    no_render_properties = []
+
+    def __init__(self, place, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.place = place
+
+        for prop, label in self.place.settings.work_properties.items():
+            key = f'property_{prop}'
+            if self.instance:
+                self.initial[key] = self.instance.properties.get(prop)
+            self.fields[key] = forms.CharField(label=label, required=False)
+
+    def property_fields(self):
+        fields = [
+            self[f'property_{prop}']
+            for prop in self.place.settings.work_properties.keys()
+            if prop not in self.no_render_properties
+        ]
+        fields.sort(key=lambda f: f.label)
+        return fields
+
     def save(self, commit=True):
         work = super(WorkForm, self).save(commit)
+        self.save_properties()
         self.save_publication_document()
         return work
+
+    def save_properties(self):
+        for prop in self.place.settings.work_properties.keys():
+            val = self.cleaned_data.get(f'property_{prop}')
+            if val is not None and val != '':
+                self.instance.properties[prop] = val
+        self.instance.save()
 
     def save_publication_document(self):
         pub_doc_file = self.cleaned_data['publication_document_file']
@@ -81,57 +110,6 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
-
-
-class WorkPropertyForm(forms.ModelForm):
-    key = forms.ChoiceField(required=False, choices=[])
-    value = forms.CharField(required=False)
-
-    class Meta:
-        model = WorkProperty
-        fields = ('key', 'value')
-
-    def __init__(self, *args, **kwargs):
-        super(WorkPropertyForm, self).__init__(*args, **kwargs)
-        self.fields['key'].choices = list(WorkProperty.KEYS.items())
-
-    def clean(self):
-        super(WorkPropertyForm, self).clean()
-        if not self.cleaned_data.get('key') or not self.cleaned_data.get('value'):
-            self.cleaned_data[DELETION_FIELD_NAME] = True
-        return self.cleaned_data
-
-
-class BaseWorkPropertyFormSet(BaseModelFormSet):
-    def setup_extras(self):
-        # add extra forms for the properties we don't have yet
-        existing = set([p.key for p in self.queryset.all()])
-        missing = [key for key in WorkProperty.KEYS.keys() if key not in existing]
-        self.extra = len(missing)
-        self.initial_extra = [{'key': key} for key in missing]
-
-    def keys_and_forms(self):
-        # (value, label) pairs sorted by label
-        keys = sorted(WorkProperty.KEYS.items(), key=lambda x: x[1])
-        forms_by_key = {f['key'].value(): f for f in self.forms}
-        return [{
-            'key': val,
-            'label': label,
-            'form': forms_by_key[val],
-        } for val, label in keys]
-
-    def clean(self):
-        keys = set()
-        for form in self.forms:
-            key = form.cleaned_data.get('key')
-            if key:
-                if key in keys:
-                    form.add_error(None, ValidationError("Property '{}' is specified more than once.".format(key)))
-                else:
-                    keys.add(key)
-
-
-WorkPropertyFormSet = forms.modelformset_factory(WorkProperty, form=WorkPropertyForm, formset=BaseWorkPropertyFormSet, can_delete=True)
 
 
 class DocumentForm(forms.ModelForm):

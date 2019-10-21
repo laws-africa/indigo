@@ -1,5 +1,5 @@
 .annotations-container {
-  margin-right: 170px;
+  margin-right: $annotation-gutter-width;
 
   /* annotatable elements */
   .akn-article,
@@ -151,4 +151,14 @@
       display: none !important;
     }
   }
+}
+
+.annotation-nav {
+  position: absolute;
+  top: 0px;
+  right: 15px;
+  width: $annotation-gutter-width - 10px;
+  background-color: $body-bg-color;
+  text-align: right;
+  z-index: 150;
 }

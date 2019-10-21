@@ -16,12 +16,12 @@ from reversion import revisions as reversion
 import datetime
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, WorkProperty, ArbitraryExpressionDate
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate
 from indigo_api.serializers import WorkSerializer, AttachmentSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, WorkPropertyFormSet
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
@@ -100,60 +100,16 @@ class WorkDependentView(WorkViewBase):
         return self._work
 
 
-class WorkFormMixin(object):
-    """ Mixin to help the Create and Edit work views handle multiple forms.
-    """
-    is_create = False
-
-    def get_properties_formset(self):
-        kwargs = {
-            'queryset': WorkProperty.objects.none(),
-            'prefix': 'propforms',
-        }
-        if self.request.method in ('POST', 'PUT'):
-            kwargs.update({
-                'data': self.request.POST,
-                'files': self.request.FILES,
-            })
-        return WorkPropertyFormSet(**kwargs)
-
-    def get_form(self, form_class=None):
-        self.properties_formset = self.get_properties_formset()
-        self.properties_formset.setup_extras()
-        return super(WorkFormMixin, self).get_form(form_class)
-
-    def post(self, request, *args, **kwargs):
-        self.object = None if self.is_create else self.get_object()
-        form = self.get_form()
-        if form.is_valid() and self.properties_formset.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-    def form_valid(self, form):
-        resp = super(WorkFormMixin, self).form_valid(form)
-        # ensure that all instances are forced to use this work
-        for form in self.properties_formset.forms:
-            form.instance.work = self.object
-        self.properties_formset.save()
-        return resp
-
-    def get_context_data(self, **kwargs):
-        context = super(WorkFormMixin, self).get_context_data(**kwargs)
-        context['properties_formset'] = self.properties_formset
-        return context
-
-
-class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
+class EditWorkView(WorkViewBase, UpdateView):
     js_view = 'WorkDetailView'
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
 
-    def get_properties_formset(self):
-        formset = super(EditWorkView, self).get_properties_formset()
-        formset.queryset = self.object.raw_properties.filter(key__in=list(WorkProperty.KEYS.keys()))
-        return formset
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['place'] = self.place
+        return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
@@ -177,7 +133,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
                     doc.expression_date = self.work.publication_date
                     doc.save()
 
-        if form.has_changed() or self.properties_formset.has_changed():
+        if form.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)
             messages.success(self.request, "Work updated.")
@@ -195,7 +151,7 @@ class EditWorkView(WorkViewBase, WorkFormMixin, UpdateView):
         return reverse('work', kwargs={'frbr_uri': self.work.frbr_uri})
 
 
-class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, CreateView):
+class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
     model = Work
     js_view = 'WorkDetailView'
     form_class = WorkForm
@@ -211,15 +167,21 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, WorkFormMixin, Create
         work.country = self.country
         work.locality = self.locality
         kwargs['instance'] = work
+        kwargs['place'] = self.place
 
         return kwargs
 
     def get_context_data(self, **kwargs):
         context = super(AddWorkView, self).get_context_data(**kwargs)
-        context['work_json'] = json.dumps({
+
+        work = {
             'country': self.country.code,
             'locality': self.locality.code if self.locality else None,
-        })
+        }
+        if self.place.publication_set.count() == 1:
+            work['publication_name'] = self.place.publication_set.first().name
+        context['work_json'] = json.dumps(work)
+
         context['subtypes'] = Subtype.objects.order_by('name').all()
         context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
 
@@ -691,8 +653,9 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
                     form.cleaned_data['spreadsheet_url'],
                     form.cleaned_data['sheet_name'])
 
-                works = self.bulk_creator.create_works(
-                    self, table, dry_run, workflow=workflow, user=self.request.user)
+                works = self.bulk_creator.create_works(self, table, dry_run, workflow=workflow, user=self.request.user)
+                if not dry_run:
+                    messages.success(self.request, f"Imported {len([w for w in works if w.get('status') == 'success'])} works.")
             except ValidationError as e:
                 error = str(e)
 

@@ -1,9 +1,13 @@
 import lxml.etree as ET
+import lxml.html
 import tempfile
 import re
+import os
 import os.path
 import zipfile
 import logging
+import shutil
+import urllib.parse
 
 from django.template.loader import get_template, render_to_string
 from django.core.cache import caches
@@ -256,29 +260,67 @@ class PDFRenderer(HTMLRenderer):
         self.colophon = colophon
 
     def render(self, document, element=None):
+        self.media_url = 'doc-0/'
         html = super(PDFRenderer, self).render(document, element=element)
 
         # embed the HTML into the PDF container
         html = render_to_string('indigo_api/akn/export/pdf.html', {
             'documents': [(document, html)],
         })
-        return self.to_pdf(html, document=document)
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            self.save_attachments(html, document, 'doc-0/media/', tmpdir)
+            return self.to_pdf(html, tmpdir, document=document)
 
     def render_many(self, documents, **kwargs):
         html = []
 
-        for doc in documents:
-            html.append(super(PDFRenderer, self).render(doc, **kwargs))
+        with tempfile.TemporaryDirectory() as tmpdir:
+            # render individual documents
+            for i, doc in enumerate(documents):
+                self.media_url = f'doc-{i}/'
+                doc_html = super(PDFRenderer, self).render(doc, **kwargs)
+                self.save_attachments(doc_html, doc, f'doc-{i}/media/', tmpdir)
 
-        # embed the HTML into the PDF container
-        html = render_to_string('indigo_api/akn/export/pdf.html', {
-            'documents': list(zip(documents, html)),
-        })
-        return self.to_pdf(html, documents=documents)
+                html.append(doc_html)
 
-    def to_pdf(self, html, document=None, documents=None):
+            # combine and embed the HTML into the PDF container
+            html = render_to_string('indigo_api/akn/export/pdf.html', {
+                'documents': list(zip(documents, html)),
+            })
+
+            return self.to_pdf(html, tmpdir, documents=documents)
+
+    def save_attachments(self, html, document, prefix, tmpdir):
+        """ Place attachments needed by the html of this document into tmpdir. Only attachments
+        referenced using the given prefix are saved.
+        """
+        html = lxml.html.fromstring(html)
+        prefix_len = len(prefix)
+
+        # gather up the attachments that occur in the html
+        fnames = set(
+            img.get('src')[prefix_len:]
+            for img in html.iter('img')
+            if img.get('src', '').startswith(prefix)
+        )
+
+        # ensure the media directory exists
+        media_dir = os.path.join(tmpdir, prefix)
+        os.makedirs(media_dir, exist_ok=True)
+
+        for attachment in document.attachments.all():
+            # the src attribute values in fnames are URL-quoted
+            if urllib.parse.quote(attachment.filename) in fnames:
+                # save the attachment into tmpdir
+                fname = os.path.join(media_dir, attachment.filename)
+                with open(fname, "wb") as f:
+                    shutil.copyfileobj(attachment.file, f)
+
+    def to_pdf(self, html, dirname, document=None, documents=None):
         args = []
         options = self.pdf_options()
+        options['allow'] = dirname
 
         # this makes all paths, such as stylesheets and javascript, use
         # absolute file paths so that wkhtmltopdf finds them
@@ -299,7 +341,7 @@ class PDFRenderer(HTMLRenderer):
         if self.toc:
             args.extend(['toc', '--xsl-style-sheet', toc_xsl])
 
-        with tempfile.NamedTemporaryFile(suffix='.html') as f:
+        with tempfile.NamedTemporaryFile(suffix='.html', dir=dirname) as f:
             f.write(html.encode('utf-8'))
             f.flush()
             args.append('file://' + f.name)
@@ -475,6 +517,23 @@ class EPUBRenderer(HTMLRenderer):
 
         # add everything as a child of this document
         self.book.toc.append((titlepage, children))
+
+        # add images
+        self.add_attachments(document, file_dir)
+
+    def add_attachments(self, document, file_dir):
+        fnames = set(
+            img.get('src')[6:]
+            for img in document.doc.root.xpath('//a:img[@src]', namespaces={'a': document.doc.namespace})
+            if img.get('src', '').startswith('media/')
+        )
+
+        for attachment in document.attachments.all():
+            if attachment.filename in fnames:
+                img = epub.EpubImage()
+                img.file_name = f'{file_dir}/media/{attachment.filename}'
+                img.content = attachment.file.read()
+                self.book.add_item(img)
 
     def add_titlepage(self, document, file_dir):
         # find the template to use

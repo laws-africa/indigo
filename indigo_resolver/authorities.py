@@ -1,5 +1,8 @@
+from django.conf import settings
+from django.urls import reverse
+
 from indigo_content_api.v1.views import PublishedDocumentDetailView
-from indigo_resolver.models import AuthorityReference, Authority
+from indigo_resolver.models import Authority
 
 
 class BaseAuthority(object):
@@ -34,39 +37,39 @@ class Authorities(object):
 authorities = Authorities()
 
 
-@authorities.register('saflii.org')
-class SafliiAuthority(BaseAuthority):
+class AuthorityReference:
+    url = None
+    frbr_uri = None
+    title = None
+    authority = None
+
+    def __init__(self, url, frbr_uri, title, authority):
+        self.url = url
+        self.frbr_uri = frbr_uri
+        self.title = title
+        self.authority = authority
+
+    def authority_name(self):
+        return self.authority.name
+
+
+@authorities.register('local')
+class InternalAuthority(BaseAuthority):
+    """ Resolver authority that redirects to the local database.
+    """
     queryset = PublishedDocumentDetailView.queryset
-    name = 'SAFLII'
-    not_found_url = "http://www.saflii.org/content/error.html"
+    name = settings.INDIGO_ORGANISATION
 
     def get_references(self, frbr_uri):
         try:
             document = self.queryset.get_for_frbr_uri(frbr_uri)
-            return [self.make_reference(document)]
         except ValueError:
             return []
+        return [self.make_reference(document)]
 
     def make_reference(self, document):
-        url = self.get_external_url(document)
-        return AuthorityReference(url=url, frbr_uri=document.frbr_uri, title=document.title, authority=self)
-
-    def get_external_url(self, document):
-        """ Mimic SAFLII's mechanism for determining unique URLs for a
-        document, based on its title.
-
-        Eg. "National Environmental Management: Air Quality Act (Act 39 of 2004)" -> "nemaqa39o2004494"
-        """
-        title = '%s (Act %s of %s)' % (document.title, document.number, document.year)
-        title = title.lower()
-
-        # gather up any digit, or the first alpha char after a space or at the start of the string
-        parts = [
-            str(c) for i, c in enumerate(title)
-            if c.isdigit() or (title[i].isalpha() and (i == 0 or title[i - 1].isspace()))
-        ]
-
-        count = sum([ord(c) - ord('a') for c in title if c.isalpha()])
-        fragment = ''.join(parts) + str(count)
-
-        return 'http://www.saflii.org/za/legis/legislation/%s/' % fragment
+        return AuthorityReference(
+            url=reverse('work', kwargs={'frbr_uri': document.frbr_uri}),
+            frbr_uri=document.frbr_uri,
+            title=document.title,
+            authority=self)

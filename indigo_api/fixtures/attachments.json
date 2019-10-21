@@ -1,0 +1,15 @@
+[
+  {
+    "pk": 1,
+    "model": "indigo_api.Attachment",
+    "fields": {
+      "document": 1,
+      "file": "indigo_api/fixtures/test-image.png",
+      "size": 100,
+      "filename": "test-image.png",
+      "mime_type": "image/png",
+      "created_at": "2015-01-15T09:20:02.710Z",
+      "updated_at": "2015-02-17T10:57:47.779Z"
+    }
+  }
+]

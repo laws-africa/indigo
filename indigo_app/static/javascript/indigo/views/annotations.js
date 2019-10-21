@@ -212,26 +212,44 @@
       if (this.root.get('closed')) return;
 
       var node = document.getElementById(this.anchor);
-      if (node) node.appendChild(this.el);
+      if (node) {
+        node.appendChild(this.el);
 
-      // the DOM elements get rudely remove from the view when the document
-      // sheet is re-rendered, which seems to break event handlers, so
-      // we have to re-bind them
-      this.delegateEvents();
-      this.annotationViews.forEach(function(v) { v.delegateEvents(); });
+        // the DOM elements get rudely removed from the view when the document
+        // sheet is re-rendered, which seems to break event handlers, so
+        // we have to re-bind them
+        this.delegateEvents();
+        this.annotationViews.forEach(function(v) { v.delegateEvents(); });
 
-      if (forInput) {
-        this.focus();
-        this.$el
-          .find('textarea')
-          .first()
-          .focus();
+        if (forInput) {
+          this.focus();
+          this.$el
+            .find('textarea')
+            .first()
+            .focus();
+        }
+
+        return true;
+      } else {
+        return false;
       }
     },
 
     focus: function() {
       this.$el.addClass('focused');
       this.$el.parent().addClass('annotation-focused');
+    },
+
+    scrollIntoView: function() {
+      var container = this.$el.closest('.document-sheet-container')[0],
+          top = this.el.getBoundingClientRect().top;
+
+      if (container) {
+        container.scrollBy({
+          top: top - container.getBoundingClientRect().top - 50,
+          behavior: 'smooth',
+        });
+      }
     },
 
     blurred: function(e) {
@@ -314,9 +332,11 @@
    * Handle all the annotations in a document
    */
   Indigo.DocumentAnnotationsView = Backbone.View.extend({
-    el: "#document-sheet",
+    el: ".document-workspace-content",
     events: {
       'click #new-annotation-floater': 'newAnnotation',
+      'click .next-annotation': 'nextAnnotation',
+      'click .prev-annotation': 'prevAnnotation',
     },
 
     initialize: function(options) {
@@ -325,11 +345,16 @@
       this.threadViews = [];
       this.prefocus = options.prefocus;
       this.annotatable = this.model.tradition().settings.annotatable;
+      this.sheetContainer = this.el.querySelector('.document-sheet-container');
+      this.$annotationNav = this.$el.find('.annotation-nav');
 
       this.$newButton = $("#new-annotation-floater");
       this.$el.on('mouseover', this.annotatable, _.bind(this.enterSection, this));
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
+      this.counts = new Backbone.Model({'threads': 0});
+      this.listenTo(this.counts, 'change', this.renderCounts);
+      this.visibleThreads = [];
 
       this.annotations.fetch().then(function() {
         // group by thread and transform into collections
@@ -363,6 +388,8 @@
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
+      this.visibleThreads = _.without(this.visibleThreads, view);
+      this.counts.set('threads', this.counts.get('threads') - 1);
     },
 
     renderAnnotations: function() {
@@ -370,14 +397,26 @@
       // so it will always attempt to prefocus an annotation. It just so happens
       // that the click events prevent anything after the initial prefocus from
       // working. It's dirty, we should only prefocus on the first render.
-      var prefocus = this.prefocus;
+      var prefocus = this.prefocus,
+          visible = [];
 
       this.threadViews.forEach(function(v) {
-        v.display();
+        if (v.display()) visible.push(v);
+
         if (prefocus && (v.model.at(0).get('id') || "").toString() == prefocus) {
-          v.$el.click();
+          v.focus();
+          v.scrollIntoView();
         }
       });
+
+      this.visibleThreads = visible;
+      this.counts.set('threads', visible.length);
+    },
+
+    renderCounts: function() {
+      var count = this.counts.get('threads');
+      this.$annotationNav.find('.n-threads').text(count);
+      this.$annotationNav.toggleClass('d-none', count === 0);
     },
 
     enterSection: function(e) {
@@ -424,7 +463,52 @@
       this.$newButton.hide();
       view.display(true);
 
+      this.visibleThreads.push(view);
+      this.counts.set('threads', this.counts.get('threads') + 1);
+
       e.stopPropagation();
+    },
+
+    nextAnnotation: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.scrollSelected(true);
+    },
+
+    prevAnnotation: function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.scrollSelected(false);
+    },
+
+    scrollSelected: function(toNext) {
+      var threshold = this.sheetContainer.getBoundingClientRect().top + 50,
+          candidates = [];
+
+      // ensure none are selected
+      this.visibleThreads.forEach(function(t) { t.blur(); });
+
+      // candidates to be focused
+      this.visibleThreads.forEach(function(thread) {
+        var top = thread.el.getBoundingClientRect().top;
+
+        if (toNext && top > threshold + 1 || !toNext && top < threshold - 1) {
+          candidates.push({
+            view: thread,
+            offset: top - threshold,
+          });
+        }
+      });
+      candidates = _.sortBy(candidates, function(t) { return t.offset; });
+
+      if (!toNext) candidates.reverse();
+
+      if (candidates.length > 0) {
+        candidates[0].view.focus();
+        candidates[0].view.scrollIntoView();
+      }
     },
   });
 })(window);

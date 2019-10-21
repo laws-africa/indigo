@@ -22,7 +22,6 @@ urlpatterns = [
     url(r'^parse$', documents.ParseView.as_view(), name='parse'),
     url(r'^analysis/link-terms$', documents.LinkTermsView.as_view(), name='link-terms'),
     url(r'^analysis/link-references$', documents.LinkReferencesView.as_view(), name='link-references'),
-    url(r'^analysis/link-section-references$', documents.LinkSectionReferencesView.as_view(), name='link-section-references'),
     url(r'^document-comparison$', documents.ComparisonView.as_view(), name='document-comparison'),
     url(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', publications.FindPublicationsView.as_view(), name='find-publications'),
 

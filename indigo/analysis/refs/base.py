@@ -125,17 +125,18 @@ class RefsFinderENG(BaseRefsFinder):
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
 
 
-class BaseSectionRefsFinder(LocaleBasedMatcher):
-    """ Finds internal references to sections in documents.
-
+class BaseInternalRefsFinder(LocaleBasedMatcher):
+    """ Finds internal references in documents, such as to sections.
     """
 
     section_re = None
     """ This must be defined by a subclass. It should be a compiled regular
     expression, with named captures for `ref` and `num`.
     """
-    # TODO: add subsection reference
-    candidate_xpath = None  # this must be defined by a subclass
+    candidate_xpath = None
+    """ Xpath for candidate text nodes that should be tested for references.
+    Must be defined by a subclass.
+    """
 
     # the ancestor elements that can contain references
     ancestors = ['body', 'mainBody', 'conclusions']
@@ -236,8 +237,8 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
             yield x
 
 
-@plugins.register('section-refs')
-class SectionRefsFinderENG(BaseSectionRefsFinder):
+@plugins.register('internal-refs')
+class SectionRefsFinderENG(BaseInternalRefsFinder):
     """ Finds internal references to sections in documents, of the form:
 
         section 26
@@ -246,7 +247,6 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
         TODO: match paragraphs
         TODO: match multiple sections
         TODO: match ranges of sections
-
     """
 
     # country, language, locality

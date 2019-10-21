@@ -267,8 +267,10 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
         r'''(?P<ref>
         (?P<section_ref>
         \b[sS]ections?\s+
-        (?P<num>\d+(?!\()([A-Z]+)?)
+        (?P<num>\d+[A-Z]*)
         )
+        (?P<subsection_ref>\s*\(\d+[A-Z]*\))?
+        (?P<paragraph_ref>\s*\([a-z]+[A-Z]*\))?
         (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
         )''',
         re.X)

@@ -62,13 +62,3 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
                 ref.set('href', '/akn' + v)
 
         document.refresh_xml()
-
-
-class PublishedDocumentTOCViewV2(PublishedDocumentTOCView):
-    def finalize_response(self, request, response, *args, **kwargs):
-        response = super().finalize_response(request, response, *args, **kwargs)
-
-        if getattr(response, 'accepted_media_type', None) == 'application/json' and isinstance(response.data, dict):
-            self.rewrite_frbr_uris(response.data)
-
-        return response

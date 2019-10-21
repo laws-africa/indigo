@@ -461,9 +461,11 @@
     },
 
     makeLinksExternal: function(html) {
-      html.querySelectorAll('a').forEach(function(a) {
-        a.setAttribute("target", "_blank");
-        $(a).tooltip({title: a.getAttribute('data-href')});
+      html.querySelectorAll('a[href]').forEach(function(a) {
+        if (!a.getAttribute('href').startsWith('#')) {
+          a.setAttribute("target", "_blank");
+          $(a).tooltip({title: a.getAttribute('data-href')});
+        }
       });
     },
 

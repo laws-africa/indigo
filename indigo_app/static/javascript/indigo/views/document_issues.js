@@ -13,12 +13,12 @@
         this.document = options.document;
         this.documentContent = options.documentContent;
         this.editorView = options.editorView;
-        this.model = this.document.issues = new Backbone.Collection();
+        this.model = this.document.issues;
         this.template = Handlebars.compile($(this.template).html());
         this.$akn = this.$('#document-sheet .akoma-ntoso');
 
         this.listenTo(this.editorView.sourceEditor, 'rendered', this.render);
-        this.listenTo(this.model, 'change add remove', this.render);
+        this.listenTo(this.model, 'reset change add remove', this.render);
         this.listenTo(this.documentContent, 'change', this.runLinters);
       },
 

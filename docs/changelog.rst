@@ -1,6 +1,15 @@
 Changelog
 =========
 
+5.0.0 (?)
+---------
+
+* FEATURE: count of comments on a document, and comment navigation
+* FEATURE: resolver for looking up documents in the local database
+* FEATURE: include images in PDFs and ePUBs
+* FEATURE: Support for arbitrary expression dates
+* Custom work properties for a place moved into settings
+
 4.1.0 (3 October 2019)
 ----------------------
 

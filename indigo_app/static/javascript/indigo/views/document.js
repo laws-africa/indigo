@@ -138,6 +138,7 @@
       // get it from the library
       this.document = new Indigo.Document(Indigo.Preloads.document);
       this.document.work = new Indigo.Work(Indigo.Preloads.work);
+      this.document.issues = new Backbone.Collection();
 
       this.document.on('change', this.setDirty, this);
       this.document.on('change:draft', this.draftChanged, this);
@@ -159,7 +160,7 @@
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
       this.comparisonView = new Indigo.DocumentComparisonView({document: this.document, documentContent: this.documentContent});
-      this.tocView = new Indigo.DocumentTOCView({model: this.documentContent});
+      this.tocView = new Indigo.DocumentTOCView({model: this.documentContent, document: this.document});
 
       this.bodyEditorView = new Indigo.DocumentEditorView({
         model: this.document,

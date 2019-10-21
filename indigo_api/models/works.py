@@ -102,7 +102,7 @@ class Work(models.Model):
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
     # key-value pairs of extra data, using keys for this place from PlaceSettings.work_properties
-    properties = JSONField(null=False, blank=False, default=dict)
+    properties = JSONField(null=False, blank=True, default=dict)
 
     # taxonomies
     taxonomies = models.ManyToManyField(VocabularyTopic, related_name='works')
@@ -169,6 +169,14 @@ class Work(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    def amended(self):
+        return self.amendments.exists()
+
+    def most_recent_amendment_year(self):
+        latest = self.amendments.order_by('-date').first()
+        if latest:
+            return latest.date.year
 
     def labeled_properties(self):
         props = self.place.settings.work_properties

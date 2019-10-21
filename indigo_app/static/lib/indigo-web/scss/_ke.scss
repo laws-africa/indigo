@@ -1,0 +1,25 @@
+/*
+ * Kenya (KE) AKN styles
+ */
+
+.akoma-ntoso.country-ke {
+  // remarks and editorial comments aren't italicised
+  .akn-remark {
+    font-style: normal;
+  }
+
+  .coverpage {
+    .amendment,
+    .verification-notice,
+    .as-at-date-notice {
+      font-style: normal;
+    }
+  }
+
+  // Single-line remarks must be centered.
+  .akn-p > .akn-remark:only-child {
+    display: block;
+    margin-top: $akn-para-spacing;
+    text-align: center;
+  }
+}

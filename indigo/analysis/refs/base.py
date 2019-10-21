@@ -173,33 +173,22 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
 
                 if not candidate.is_tail:
                     # text directly inside a node
-                    matches = self.section_re.finditer(node.text)
-                    # mark the reference and continue to check the new tail
-                    node = self.mark_refs_in_matches(matches, node, in_tail=False)
+                    for match in self.section_re.finditer(node.text):
+                        if self.is_valid(match, node):
+                            # mark the reference and continue to check the new tail
+                            node = self.mark_reference(node, match, in_tail=False)
+                            break
 
                 while node is not None and node.tail:
-                    matches = list(self.section_re.finditer(node.tail))
+                    for match in self.section_re.finditer(node.tail):
+                        if self.is_valid(match, node):
+                            # mark the reference and continue to check the new tail
+                            node = self.mark_reference(node, match, in_tail=True)
+                            break
 
-                    # if nothing in the tail matches anymore, we're done
-                    if not matches:
-                        break
-
-                    # there might only be baddies left,
-                    # in which case we're also done
-                    valid_matches = [self.is_valid(match, node) for match in matches]
-                    if True not in valid_matches:
-                        break
-
-                    # mark the reference and continue to check the new tail
-                    node = self.mark_refs_in_matches(matches, node, in_tail=True)
-
-    def mark_refs_in_matches(self, matches, node, in_tail):
-        for match in matches:
-            if self.is_valid(match, node):
-                node = self.mark_reference(node, match, in_tail)
-                break
-
-        return node
+                    else:
+                        # we didn't break out of the loop, so there are no valid matches, give up
+                        node = None
 
     def is_valid(self, match, node):
         # check that it's not an external reference

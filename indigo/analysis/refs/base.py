@@ -2,19 +2,21 @@ from lxml import etree
 import re
 
 from indigo.plugins import LocaleBasedMatcher, plugins
+from indigo.xmlutils import closest
 
 
 class BaseRefsFinder(LocaleBasedMatcher):
     """ Finds references to Acts in documents.
-
-    Subclasses must implement `find_references_in_document`.
     """
 
     act_re = None
     """ This must be defined by a subclass. It should be a compiled regular
     expression, with named captures for `ref`, `num` and `year`.
     """
-    candidate_xpath = None  # this must be defined by a subclass
+    candidate_xpath = None
+    """ Xpath for candidate text nodes that should be tested for references.
+    Must be defined by subclasses.
+    """
 
     # the ancestor elements that can contain references
     ancestors = ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions']
@@ -135,7 +137,7 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
     """
     candidate_xpath = None
     """ Xpath for candidate text nodes that should be tested for references.
-    Must be defined by a subclass.
+    Must be defined by subclasses.
     """
 
     # the ancestor elements that can contain references
@@ -261,6 +263,10 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     candidate_xpath = ".//text()[contains(., 'section') and not(ancestor::a:ref)]"
     match_cache = {}
 
+    def setup(self, root):
+        super().setup(root)
+        self.ancestor_tags = set(f'{{{self.ns}}}{t}' for t in self.ancestors)
+
     def is_valid(self, node, match):
         # check that it's not an external reference
         ref = match.group(0)
@@ -271,7 +277,9 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
 
     def find_target(self, node, match):
         num = match.group('num')
-        candidate_elements = node.xpath(f"//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
+        # find the closest ancestor to scope the lookups to
+        ancestor = closest(node, lambda e: e.tag in self.ancestor_tags)
+        candidate_elements = ancestor.xpath(f".//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
         if candidate_elements:
             self.match_cache[num] = candidate_elements[0]
             return candidate_elements[0]

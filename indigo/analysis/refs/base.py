@@ -139,7 +139,6 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
 
     # the ancestor elements that can contain references
     ancestors = ['body', 'mainBody', 'conclusions']
-    # TODO: check on ancestor elements
 
     def find_references_in_document(self, document):
         """ Find references in +document+, which is an Indigo Document object.
@@ -185,9 +184,10 @@ class BaseSectionRefsFinder(LocaleBasedMatcher):
                     if not matches:
                         break
 
-                    # there might be just one match that's a baddie,
+                    # there might only be baddies left,
                     # in which case we're also done
-                    if len(matches) == 1 and not self.is_valid(matches[0], node):
+                    valid_matches = [self.is_valid(match, node) for match in matches]
+                    if True not in valid_matches:
                         break
 
                     # mark the reference and continue to check the new tail
@@ -252,7 +252,11 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
     """ Finds internal references to sections in documents, of the form:
 
         section 26
-        TODO: add more patterns
+        section 26B
+        TODO: match subsections
+        TODO: match paragraphs
+        TODO: match multiple sections
+        TODO: match ranges of sections
 
     """
 
@@ -263,7 +267,7 @@ class SectionRefsFinderENG(BaseSectionRefsFinder):
         r'''(?P<ref>
         (?P<section_ref>
         \b[sS]ections?\s+
-        (?P<num>\d+)
+        (?P<num>\d+(?!\()([A-Z]+)?)
         )
         (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
         )''',

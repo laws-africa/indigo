@@ -394,7 +394,7 @@ class LinkTermsView(APIView):
 
 
 class LinkReferencesView(APIView):
-    """ Find and link references to other documents (acts)
+    """ Find and link internal references and references to other works.
     """
     permission_classes = (IsAuthenticated,)
 
@@ -410,6 +410,10 @@ class LinkReferencesView(APIView):
 
     def find_references(self, document):
         finder = plugins.for_document('refs', document)
+        if finder:
+            finder.find_references_in_document(document)
+
+        finder = plugins.for_document('internal-refs', document)
         if finder:
             finder.find_references_in_document(document)
 

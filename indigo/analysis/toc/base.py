@@ -8,6 +8,8 @@ from indigo.plugins import plugins, LocaleBasedMatcher
 
 
 # Ensure that these translations are included by makemessages
+from indigo.xmlutils import closest
+
 _('Act')
 _('Article')
 _('By-law')
@@ -76,12 +78,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         with override(self.language):
             component = self.determine_component(element)[0]
-            try:
-                # find the first node at or above element, that is a valid TOC element
-                element = next(c for c in chain([element], element.iterancestors()) if self.is_toc_element(c))
+            # find the first node at or above element, that is a valid TOC element
+            element = closest(element, lambda e: self.is_toc_element(e))
+            if element is not None:
                 return self.make_toc_entry(element, component)
-            except StopIteration:
-                pass
 
     def setup(self, act, language):
         self.act = act

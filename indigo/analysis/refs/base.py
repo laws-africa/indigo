@@ -2,19 +2,21 @@ from lxml import etree
 import re
 
 from indigo.plugins import LocaleBasedMatcher, plugins
+from indigo.xmlutils import closest
 
 
 class BaseRefsFinder(LocaleBasedMatcher):
     """ Finds references to Acts in documents.
-
-    Subclasses must implement `find_references_in_document`.
     """
 
     act_re = None
     """ This must be defined by a subclass. It should be a compiled regular
     expression, with named captures for `ref`, `num` and `year`.
     """
-    candidate_xpath = None  # this must be defined by a subclass
+    candidate_xpath = None
+    """ Xpath for candidate text nodes that should be tested for references.
+    Must be defined by subclasses.
+    """
 
     # the ancestor elements that can contain references
     ancestors = ['coverpage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions']
@@ -123,3 +125,165 @@ class RefsFinderENG(BaseRefsFinder):
             )
         ''', re.X)
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
+
+
+class BaseInternalRefsFinder(LocaleBasedMatcher):
+    """ Finds internal references in documents, such as to sections.
+    """
+
+    ref_re = None
+    """ This must be defined by a subclass. It should be a compiled regular
+    expression, with named captures for `ref` and `num`.
+    """
+    candidate_xpath = None
+    """ Xpath for candidate text nodes that should be tested for references.
+    Must be defined by subclasses.
+    """
+
+    # the ancestor elements that can contain references
+    ancestors = ['body', 'mainBody', 'conclusions']
+
+    def find_references_in_document(self, document):
+        """ Find references in +document+, which is an Indigo Document object.
+        """
+        # we need to use etree, not objectify, so we can't use document.doc.root,
+        # we have to re-parse it
+        root = etree.fromstring(document.content)
+        self.setup(root)
+        self.find_references(root)
+        document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+
+    def setup(self, root):
+        self.ns = root.nsmap[None]
+        self.nsmap = {'a': self.ns}
+        self.ref_tag = f'{{{self.ns}}}ref'
+        self.ancestor_xpath = etree.XPath('|'.join(f'.//a:{a}' for a in self.ancestors), namespaces=self.nsmap)
+        self.candidate_xpath = etree.XPath(self.candidate_xpath, namespaces=self.nsmap)
+
+    def find_references(self, root):
+        for ancestor in self.ancestor_nodes(root):
+            for candidate in self.candidate_nodes(ancestor):
+                node = candidate.getparent()
+
+                if not candidate.is_tail:
+                    # text directly inside a node
+                    for match in self.ref_re.finditer(node.text):
+                        if self.is_valid(node, match):
+                            # mark the reference and continue to check the new tail
+                            node = self.mark_reference(node, match, in_tail=False)
+                            break
+
+                while node is not None and node.tail:
+                    for match in self.ref_re.finditer(node.tail):
+                        if self.is_valid(node, match):
+                            # mark the reference and continue to check the new tail
+                            node = self.mark_reference(node, match, in_tail=True)
+                            break
+
+                    else:
+                        # we didn't break out of the loop, so there are no valid matches, give up
+                        node = None
+
+    def is_valid(self, node, match):
+        return self.find_target(node, match) is not None
+
+    def find_target(self, node, match):
+        """ Return the target element that this reference targets.
+        """
+        raise NotImplementedError()
+
+    def mark_reference(self, node, match, in_tail):
+        ref, start_pos, end_pos = self.make_ref(node, match)
+
+        if in_tail:
+            node.addnext(ref)
+            node.tail = match.string[:start_pos]
+            ref.tail = match.string[end_pos:]
+        else:
+            node.text = match.string[:start_pos]
+            node.insert(0, ref)
+            ref.tail = match.string[end_pos:]
+
+        return ref
+
+    def make_ref(self, node, match):
+        """ Make a reference out of this match, returning a (ref, start, end) tuple
+        which is the new ref node, and the start and end position of what text
+        in the parent element it should be replacing.
+        """
+        ref = etree.Element(self.ref_tag)
+        ref.text = match.group('ref')
+        ref.set('href', self.make_href(node, match))
+        return ref, match.start('ref'), match.end('ref')
+
+    def make_href(self, node, match):
+        """ Return the target href for this match.
+        """
+        raise NotImplementedError()
+
+    def ancestor_nodes(self, root):
+        for x in self.ancestor_xpath(root):
+            yield x
+
+    def candidate_nodes(self, root):
+        for x in self.candidate_xpath(root):
+            yield x
+
+
+@plugins.register('internal-refs')
+class SectionRefsFinderENG(BaseInternalRefsFinder):
+    """ Finds internal references to sections in documents, of the form:
+
+        section 26
+        section 26B
+        TODO: match subsections
+        TODO: match paragraphs
+        TODO: match multiple sections
+        TODO: match ranges of sections
+    """
+
+    # country, language, locality
+    locale = (None, 'eng', None)
+
+    ref_re = re.compile(
+        r'''
+        (?P<ref>
+          \b[sS]ections?\s+
+          (?P<num>\d+[A-Z]*)
+        )
+        (?P<subsection_ref>\s*\(\d+[A-Z]*\))?
+        (?P<paragraph_ref>\s*\([a-z]+[A-Z]*\))?
+        (?P<subparagraph_ref>\s*\([ivx]+[A-Z]*\))?
+        (?P<item_ref>\s*\([a-z]{2,}[A-Z]*\))?
+        (?!\s*\()
+        (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
+        ''',
+        re.X)
+
+    candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
+    match_cache = {}
+
+    def setup(self, root):
+        super().setup(root)
+        self.ancestor_tags = set(f'{{{self.ns}}}{t}' for t in self.ancestors)
+
+    def is_valid(self, node, match):
+        # check that it's not an external reference
+        ref = match.group(0)
+        if ref.endswith('the ') or ref.endswith('Act '):
+            return False
+
+        return super().is_valid(node, match)
+
+    def find_target(self, node, match):
+        num = match.group('num')
+        # find the closest ancestor to scope the lookups to
+        ancestor = closest(node, lambda e: e.tag in self.ancestor_tags)
+        candidate_elements = ancestor.xpath(f".//a:section[a:num[text()='{num}.']]", namespaces=self.nsmap)
+        if candidate_elements:
+            self.match_cache[num] = candidate_elements[0]
+            return candidate_elements[0]
+
+    def make_href(self, node, match):
+        target = self.match_cache[match.group('num')]
+        return '#' + target.get('id')

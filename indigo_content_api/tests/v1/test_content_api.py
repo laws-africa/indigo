@@ -475,6 +475,10 @@ class ContentAPIV1TestMixin(object):
             ],
         }], taxonomies)
 
+    def test_as_at_date(self):
+        response = self.client.get(self.api_path + '/za/act/1880/1.json')
+        assert_equal(response.data['as_at_date'].strftime("%Y-%m-%d"), "2019-01-01")
+
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)

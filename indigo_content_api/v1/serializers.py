@@ -63,6 +63,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     points_in_time = serializers.SerializerMethodField()
     publication_document = serializers.SerializerMethodField()
     taxonomies = serializers.SerializerMethodField()
+    as_at_date = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
@@ -76,7 +77,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commencement_date', 'assent_date',
             'language', 'repeal', 'amendments', 'points_in_time',
-            'numbered_title', 'taxonomies',
+            'numbered_title', 'taxonomies', 'as_at_date',
 
             'links',
         )
@@ -110,6 +111,9 @@ class PublishedDocumentSerializer(DocumentSerializer):
     def get_taxonomies(self, doc):
         from indigo_api.serializers import WorkSerializer
         return WorkSerializer().get_taxonomies(doc.work)
+
+    def get_as_at_date(self, doc):
+        return doc.work.place.settings.as_at_date
 
     def get_links(self, doc):
         if not doc.draft:

@@ -95,5 +95,13 @@
             "country": "NA",
             "primary_language": 1
         }
+    },
+    {
+        "model": "indigo_api.PlaceSettings",
+        "pk": 1,
+        "fields": {
+            "country_id": 1,
+            "as_at_date": "2019-01-01"
+        }
     }
 ]

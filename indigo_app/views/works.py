@@ -594,7 +594,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
 class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     template_name = 'indigo_api/work_new_batch.html'
     # permissions
-    permission_required = ('indigo_api.add_work',)
+    permission_required = ('indigo_api.bulk_add_work',)
     form_class = BatchCreateWorkForm
 
     _bulk_creator = None

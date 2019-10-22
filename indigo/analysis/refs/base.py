@@ -260,7 +260,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         ''',
         re.X)
 
-     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
+    candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
     match_cache = {}
 
     def setup(self, root):

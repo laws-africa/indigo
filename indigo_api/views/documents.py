@@ -394,7 +394,7 @@ class LinkTermsView(APIView):
 
 
 class LinkReferencesView(APIView):
-    """ Find and link references to other documents (acts)
+    """ Find and link internal references and references to other works.
     """
     permission_classes = (IsAuthenticated,)
 
@@ -413,24 +413,7 @@ class LinkReferencesView(APIView):
         if finder:
             finder.find_references_in_document(document)
 
-
-class LinkSectionReferencesView(APIView):
-    """ Find and link references to sections
-    """
-    permission_classes = (IsAuthenticated,)
-
-    def post(self, request):
-        serializer = DocumentAPISerializer(data=self.request.data)
-        serializer.fields['document'].fields['content'].required = True
-        serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
-
-        self.find_references(document)
-
-        return Response({'document': {'content': document.document_xml}})
-
-    def find_references(self, document):
-        finder = plugins.for_document('section-refs', document)
+        finder = plugins.for_document('internal-refs', document)
         if finder:
             finder.find_references_in_document(document)
 

@@ -32,7 +32,8 @@
 
       refs = this.model.xmlDocument.querySelectorAll('ref');
       refs = _.filter(refs, function(elem) {
-        return elem.getAttribute('href') && elem.getAttribute('href').startsWith("/");
+        var h = elem.getAttribute('href');
+        return h && (h.startsWith('/') || h.startsWith('#'));
       });
 
       refs = _.unique(_.map(refs, function(elem) {

@@ -231,6 +231,10 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
+        finder = plugins.for_document('internal-refs', doc)
+        if finder:
+            finder.find_references_in_document(doc)
+
     def create_from_docx(self, docx_file, doc):
         """ We can create a mammoth image handler that stashes the binary data of the image
         and returns an appropriate img attribute to be put into the HTML (and eventually xml).

@@ -1,4 +1,6 @@
 import re
+from itertools import chain
+
 import lxml.html
 
 
@@ -75,3 +77,13 @@ def rewrite_ids(elem, old_id_prefix, new_id_prefix):
     for child in elem.xpath('.//a:*[@id]', namespaces={'a': elem.nsmap[None]}):
         if child.get('id').startswith(old_id_prefix):
             child.set('id', new_id_prefix + child.get('id')[old_id_len:])
+
+
+def closest(element, predicate):
+    """ Starting at the given element, find the closest node in the ancestor
+    chain that satisfies the given lambda expression.
+    """
+    try:
+        return next(e for e in chain([element], element.iterancestors()) if predicate(e))
+    except StopIteration:
+        return None

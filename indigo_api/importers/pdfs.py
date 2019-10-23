@@ -35,7 +35,6 @@ def pdf_extract_pages(src_fname, pages, tgt_fname):
         page_nums = []
 
         # split the pages out
-        # TODO: be smarter when extracting the whole PDF, or for contiguous page ranges
         for num in pages:
             if isinstance(num, tuple):
                 from_page, to_page = num

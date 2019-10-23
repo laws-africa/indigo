@@ -3,6 +3,7 @@ import subprocess
 import tempfile
 import shutil
 import logging
+import re
 
 from django.conf import settings
 from django.core.files.base import ContentFile
@@ -13,6 +14,34 @@ from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo_api.utils import filename_candidates, find_best_static
 from indigo_api.importers.pdfs import pdf_extract_pages
+
+
+pages_re = re.compile(r'(\d+)(\s*-\s*(\d+))?')
+
+
+def parse_page_nums(pages):
+    """ Turn a string such as '5,7,9-11,12' into a list of integers and (start, end) range tuples.
+
+    Raises ValueError if a part of the string isn't well-formed.
+    """
+    page_nums = []
+
+    parts = [p.strip() for p in pages.strip().split(',')]
+    # iterate over non-empty items separated by commas
+    for part in (p for p in parts if p):
+        match = pages_re.fullmatch(part)
+        if not match:
+            raise ValueError(f"Invalid page number: {part}")
+        if match.group(3):
+            # tuple
+            page_nums.append(
+                (int(match.group(1)),
+                 int(match.group(3))))
+        else:
+            # singelton
+            page_nums.append(int(match.group(1)))
+
+    return page_nums
 
 
 @plugins.register('importer')
@@ -160,8 +189,9 @@ class Importer(LocaleBasedMatcher):
     def pdf_to_text(self, f):
         if self.pages:
             if isinstance(self.pages, str):
-                self.pages = self.parse_pages()
-            pdf_extract_pages(f.name, self.pages, f.name)
+                self.pages = parse_page_nums(self.pages)
+            if self.pages:
+                pdf_extract_pages(f.name, self.pages, f.name)
 
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
 

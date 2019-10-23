@@ -12,6 +12,7 @@ import lxml.etree as ET
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
 from indigo_api.utils import filename_candidates, find_best_static
+from indigo_api.importers.pdfs import pdf_extract_pages
 
 
 @plugins.register('importer')
@@ -52,6 +53,12 @@ class Importer(LocaleBasedMatcher):
     use_ascii = True
     """ Should we pass --ascii to slaw? This can have significant performance benefits
     for large files. See https://github.com/cjheath/treetop/issues/31
+    """
+
+    pages = None
+    """ Pages to import for document types that support it, or None to import them all.
+    
+    This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
     """
 
     def shell(self, cmd):
@@ -151,6 +158,11 @@ class Importer(LocaleBasedMatcher):
         doc.reset_xml(xml, from_model=True)
 
     def pdf_to_text(self, f):
+        if self.pages:
+            if isinstance(self.pages, str):
+                self.pages = self.parse_pages()
+            pdf_extract_pages(f.name, self.pages, f.name)
+
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
 
         if self.cropbox:

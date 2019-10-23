@@ -67,10 +67,10 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         if Country.objects.count() == 1:
             return redirect('place', place=Country.objects.all()[0].place_code)
 
-        return super(PlaceListView, self).dispatch(request, **kwargs)
+        return super().dispatch(request, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['countries'] = Country.objects\
             .prefetch_related('country')\
@@ -100,8 +100,13 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         return context
 
 
-class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
+class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
+    tab = 'overview'
+
+
+class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
+    template_name = 'place/works.html'
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
@@ -233,7 +238,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
                 work.pub_ratio = 0
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context['works']
 
@@ -362,7 +367,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceActivityView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         activity = Action.objects.filter(data__place_code=self.place.place_code)
         activity = self.coalesce_entries(activity)
@@ -449,7 +454,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, Pl
                 years.setdefault(year, 0)
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceMetricsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['day_options'] = [
             (30, "30 days"),
@@ -560,7 +565,7 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
 
         messages.success(self.request, "Settings updated.")
 
-        return super(PlaceSettingsView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
@@ -572,7 +577,7 @@ class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView,
     js_view = 'PlaceListView'
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceLocalitiesView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['localities'] = Locality.objects \
             .filter(country=self.country) \

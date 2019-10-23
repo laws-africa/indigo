@@ -171,6 +171,7 @@
       this.bodyEditorView.on('clean', this.setClean, this);
       this.bodyEditorView.editorReady.then(function() {
         // select the appropriate element in the toc
+        // TODO: there's a race condition here: the TOC might not be built yet
         if (Indigo.queryParams.toc && self.tocView.selectItemById(Indigo.queryParams.toc)) {
           return;
         }

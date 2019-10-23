@@ -16,6 +16,7 @@
         index: -1,
       });
       this.toc = [];
+      this.roots = [];
       this.model.on('change:dom', this.rebuild, this);
       this.issues = options.document.issues;
 

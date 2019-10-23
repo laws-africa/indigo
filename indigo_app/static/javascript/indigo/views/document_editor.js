@@ -201,7 +201,7 @@
       this.$('.btn.show-xml-editor.active').click();
 
       // show the edit toolbar
-      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
 
@@ -332,7 +332,7 @@
       this.$('.document-content-view').removeClass('show-text-editor');
 
       // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').removeClass('d-none');
 
@@ -526,7 +526,7 @@
       this.$('.edit-text').hide();
 
       // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
 
@@ -539,7 +539,7 @@
       this.$('.edit-table').prop('disabled', false);
 
       // adjust the toolbar
-      this.$toolbar.find('.btn-toolbar > .btn-group').addClass('d-none');
+      this.$toolbar.find('.btn-toolbar').addClass('d-none');
       this.$toolbar.find('.general-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').removeClass('d-none');
 

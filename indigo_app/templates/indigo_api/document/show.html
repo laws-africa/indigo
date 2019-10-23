@@ -24,8 +24,8 @@
       </h5>
 
       <div class="document-toolbar-wrapper">
-        {% include 'document/_menu.html' %}
-        {% include 'document/_toolbar.html' %}
+        {% include 'indigo_api/document/_menu.html' %}
+        {% include 'indigo_api/document/_toolbar.html' %}
       </div>
     </div>
   </header>
@@ -33,8 +33,8 @@
 
 {% block main-content %}
   <div class="document-workspace document-content-view">
-    {% include "document/_toc.html" %}
-    {% include "document/_content.html" %}
+    {% include "indigo_api/document/_toc.html" %}
+    {% include "indigo_api/document/_content.html" %}
   </div>
 
   <script id="breadcrumb-template" type="text/x-handlebars-template">
@@ -63,20 +63,20 @@
   {% endverbatim %}
   </script>
 
-  {% include "document/_defined_terms.html" %}
-  {% include "document/_references.html" %}
-  {% include "document/_annotations.html" %}
-  {% include "document/_insert_image_modal.html" %}
+  {% include "indigo_api/document/_defined_terms.html" %}
+  {% include "indigo_api/document/_references.html" %}
+  {% include "indigo_api/document/_annotations.html" %}
+  {% include "indigo_api/document/_insert_image_modal.html" %}
 {% endblock %}
 
 {% block content %}
   {{ block.super }}
-  {% include "document/_revisions.html" %}
-  {% include "document/_comparison.html" %}
-  {% include "document/_properties.html" %}
-  {% include "document/_attachments.html" %}
-  {% include "document/_cheatsheet.html" %}
-  {% include "document/_issues.html" %}
+  {% include "indigo_api/document/_revisions.html" %}
+  {% include "indigo_api/document/_comparison.html" %}
+  {% include "indigo_api/document/_properties.html" %}
+  {% include "indigo_api/document/_attachments.html" %}
+  {% include "indigo_api/document/_cheatsheet.html" %}
+  {% include "indigo_api/document/_issues.html" %}
 {% endblock %}
 
 {% block js %}

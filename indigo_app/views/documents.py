@@ -16,7 +16,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
     model = Document
     context_object_name = 'document'
     pk_url_kwarg = 'doc_id'
-    template_name = 'document/show.html'
+    template_name = 'indigo_api/document/show.html'
 
     def get_object(self, queryset=None):
         doc = super(DocumentDetailView, self).get_object(queryset)

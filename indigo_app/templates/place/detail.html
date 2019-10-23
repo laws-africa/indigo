@@ -5,7 +5,79 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
+  <div class="card mb-3">
+    <h5 class="card-header">Recently updated works</h5>
+    <div class="card-body">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Work</th>
+            <th>Added</th>
+          </tr>
+        </thead>
+        {% for work in recently_updated_works %}
+          <tr>
+            <td>
+              <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+              {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+              <span class="text-muted">· {{ work.frbr_uri }}</span>
+            </td>
+            <td>
+              <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+                {% if work.updated_by_user %}
+                  by
+                  {% if work.updated_by_user == request.user %}
+                    you
+                  {% else %}
+                    <div class="text-muted">by {% user_profile work.updated_by_user %}</div>
+                  {% endif %}
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="card-footer">
+      <a href="{% url 'place_works' place=place.place_code %}">All works →</a>
+    </div>
+  </div>
 
+  <div class="card">
+    <h5 class="card-header">Recently added works</h5>
+    <div class="card-body">
+      <table class="table table-sm">
+        <thead>
+        <tr>
+          <th>Work</th>
+          <th>Updated</th>
+        </tr>
+        </thead>
+        {% for work in recently_created_works %}
+          <tr>
+            <td>
+              <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+              {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+              <span class="text-muted">· {{ work.frbr_uri }}</span>
+            </td>
+            <td>
+              <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
+              {% if work.created_by_user %}
+                by
+                {% if work.created_by_user == request.user %}
+                  you
+                {% else %}
+                  <div class="text-muted">by {% user_profile work.created_by_user %}</div>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="card-footer">
+      <a href="{% url 'place_works' place=place.place_code %}">All works →</a>
+    </div>
+  </div>
 </div>
 {% endblock %}
 

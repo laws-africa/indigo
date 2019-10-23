@@ -104,6 +104,25 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
     tab = 'overview'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context['recently_updated_works'] = self.get_recently_updated_works()
+        context['recently_created_works'] = self.get_recently_created_works()
+
+        return context
+
+    def get_recently_updated_works(self):
+        # TODO: this should also factor in documents that have been updated
+        return Work.objects \
+            .filter(country=self.country, locality=self.locality) \
+            .order_by('-updated_at')[:5]
+
+    def get_recently_created_works(self):
+        return Work.objects \
+                   .filter(country=self.country, locality=self.locality) \
+                   .order_by('-created_at')[:5]
+
 
 class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
     template_name = 'place/works.html'

@@ -1,8 +1,14 @@
 Changelog
 =========
 
-5.0.0 (?)
+6.0.0 (?)
 ---------
+
+* Move document templates from templates/documents/ to templates/indigo_api/documents/
+
+
+5.0.0 (21 October 2019)
+-----------------------
 
 * FEATURE: count of comments on a document, and comment navigation
 * FEATURE: resolver for looking up documents in the local database

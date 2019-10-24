@@ -708,6 +708,7 @@ class ImportDocumentView(WorkViewBase, FormView):
         importer.section_number_position = opts.get('section_number_position', 'guess')
 
         importer.cropbox = opts.get('cropbox', None)
+        importer.page_nums = form.cleaned_data['page_nums']
 
         try:
             importer.create_from_upload(upload, document, self.request)

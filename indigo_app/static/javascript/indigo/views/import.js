@@ -180,9 +180,10 @@
           self.drawPDF(this.result);
         };
         reader.readAsArrayBuffer(this.file);
+        this.$('.pdf-only').removeClass('d-none');
       } else {
         this.scale = null;
-        this.$('.pages').hide();
+        this.$('.pdf-only').addClass('d-block');
       }
     },
 
@@ -249,6 +250,7 @@
       // kick off the rendering, one page at a time
       PDFJS.getDocument({data: data}).then(function(pdf) {
         renderPage(pdf, 1);
+        self.$('input[name=page_nums]').val('1-' + pdf.numPages);
       });
     },
 

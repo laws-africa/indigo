@@ -8,7 +8,7 @@ from shutil import copyfile
 def pdf_count_pages(fname):
     """ Counts the number of pages in a PDF.
     """
-    result = subprocess.run(["pdfinfo", fname], capture_output=True, check=True)
+    result = subprocess.run(["pdfinfo", fname], stdout=subprocess.PIPE, check=True)
     m = re.search(r'Pages:\s*(\d+)', result.stdout.decode('utf-8'))
     if m:
         return int(m.group(1))

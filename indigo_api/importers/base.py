@@ -84,7 +84,7 @@ class Importer(LocaleBasedMatcher):
     for large files. See https://github.com/cjheath/treetop/issues/31
     """
 
-    pages = None
+    page_nums = None
     """ Pages to import for document types that support it, or None to import them all.
     
     This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
@@ -187,11 +187,11 @@ class Importer(LocaleBasedMatcher):
         doc.reset_xml(xml, from_model=True)
 
     def pdf_to_text(self, f):
-        if self.pages:
-            if isinstance(self.pages, str):
-                self.pages = parse_page_nums(self.pages)
-            if self.pages:
-                pdf_extract_pages(f.name, self.pages, f.name)
+        if self.page_nums:
+            if isinstance(self.page_nums, str):
+                self.page_nums = parse_page_nums(self.page_nums)
+            if self.page_nums:
+                pdf_extract_pages(f.name, self.page_nums, f.name)
 
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
 

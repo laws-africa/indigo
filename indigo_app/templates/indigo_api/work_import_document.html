@@ -63,10 +63,20 @@
         </div>
       </div>
 
-      <section class="pages spinner-when-empty"></section>
+      <section class="pages pdf-only spinner-when-empty"></section>
 
       <div class="row">
         <div class="offset-md-2 col-md-8">
+
+          <section class="card mt-3 d-none pdf-only">
+            <div class="card-body form-row">
+              <div class="form-group col-md-6">
+                <label>Pages to import</label>
+                <input type="text" name="page_nums" class="form-control" placeholder="eg. 1-5, 7, 11" pattern="\s*\d+\s*(-\s*\d+)?(\s*,\s*\d+\s*(-\s*\d+\s*)?)*">
+                <small class="form-text text-muted">eg. 1-5, 7, 11</small>
+              </div>
+            </div>
+          </section>
 
           <section class="card numbered mb-3 mt-3" data-num="3">
             <h5 class="card-header">What do section titles look like?</h5>

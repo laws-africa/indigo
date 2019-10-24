@@ -237,6 +237,10 @@ class WorkFilterForm(forms.Form):
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
+    repealed = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only'), ('-repealed_date', '-repealed_date'), ('repealed_date', 'repealed_date')])
+    commenced = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only'), ('-commencement_date', '-commencement_date'), ('commencement_date', 'commencement_date')])
+    assented = forms.ChoiceField(choices=[('-assent_date', '-assent_date'), ('assent_date', 'assent_date')])
+    published = forms.ChoiceField(choices=[('-publication_date', '-publication_date'), ('publication_date', 'publication_date')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
@@ -276,6 +280,46 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('taxonomies'):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
 
+        # Advanced filters
+        # filter by repealed status and date
+        if self.cleaned_data.get('repealed'):
+            if self.cleaned_data['repealed'] == 'only':
+                queryset = queryset.filter(repealed_date__isnull=False)
+            elif self.cleaned_data['repealed'] == 'excl':
+                queryset = queryset.filter(repealed_date__isnull=True)
+            elif self.cleaned_data['repealed'] == '-repealed_date':
+                queryset = queryset.order_by('-repealed_date')
+            elif self.cleaned_data['repealed'] == 'repealed_date':
+                queryset = queryset.order_by('repealed_date')
+
+        # filter by commencement status
+        if self.cleaned_data.get('commenced'):
+            if self.cleaned_data['commenced'] == 'only':
+                queryset = queryset.filter(commencement_date__isnull=False)
+            elif self.cleaned_data['commenced'] == 'excl':
+                queryset = queryset.filter(commencement_date__isnull=True)
+            elif self.cleaned_data['commenced'] == '-commencement_date':
+                queryset = queryset.order_by('-commencement_date')  
+            elif self.cleaned_data['commenced'] == 'commencement_date':
+                queryset = queryset.order_by('commencement_date')
+
+        # filter by assent date
+        if self.cleaned_data.get('assented'):
+            if self.cleaned_data['assented'] == '-assent_date':
+                queryset = queryset.order_by('-assent_date')
+            elif self.cleaned_data['assented'] == 'assent_date':
+                queryset = queryset.order_by('assent_date')
+
+        # filter by publication date
+        if self.cleaned_data.get('published'):
+            if self.cleaned_data['published'] == '-publication_date':
+                queryset = queryset.order_by('-publication_date')
+            elif self.cleaned_data['published'] == 'publication_date':
+                queryset = queryset.order_by('publication_date')
+
+        # TODO: advanced filters
+        # primary work or subleg
+        # ammended or not (possibly by date)
         return queryset
 
     def filter_document_queryset(self, queryset):

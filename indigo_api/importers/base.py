@@ -12,6 +12,7 @@ import lxml.etree as ET
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo_api.serializers import AttachmentSerializer
 from indigo_api.utils import filename_candidates, find_best_static
 from indigo_api.importers.pdfs import pdf_extract_pages
 
@@ -109,12 +110,10 @@ class Importer(LocaleBasedMatcher):
         self.log.info("Processing upload: filename='%s', content type=%s" % (upload.name, upload.content_type))
 
         if upload.content_type in ['text/xml', 'application/xml']:
-            # just assume it's valid AKN xml
             self.log.info("Processing upload as an AKN XML file")
-            doc.content = upload.read().decode('utf-8')
-            return doc
+            self.create_from_akn(upload, doc)
 
-        if (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
             self.log.info("Processing upload as a docx file")
@@ -135,10 +134,16 @@ class Importer(LocaleBasedMatcher):
 
         self.analyse_after_import(doc)
 
+    def create_from_akn(self, upload, doc):
+        # just assume it's valid AKN xml
+        doc.content = upload.read().decode('utf-8')
+        self.stash_attachment(upload, doc)
+
     def create_from_file(self, upload, doc, inputtype):
         with self.tempfile_for_upload(upload) as f:
             xml = self.import_from_file(f.name, doc.frbr_uri, inputtype)
             doc.reset_xml(xml, from_model=True)
+            self.stash_attachment(upload, doc)
 
     def create_from_html(self, upload, doc):
         """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
@@ -148,6 +153,7 @@ class Importer(LocaleBasedMatcher):
             text = self.reformat_text_from_html(text)
         xml = self.import_from_text(text, doc.frbr_uri, 'text')
         doc.reset_xml(xml, from_model=True)
+        self.stash_attachment(upload, doc)
 
     def html_to_text(self, html, doc):
         """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
@@ -185,6 +191,8 @@ class Importer(LocaleBasedMatcher):
 
         xml = self.import_from_text(text, doc.frbr_uri, '.txt')
         doc.reset_xml(xml, from_model=True)
+        # TODO: stash the modified pdf file
+        self.stash_attachment(upload, doc)
 
     def pdf_to_text(self, f):
         if self.page_nums:
@@ -314,6 +322,7 @@ class Importer(LocaleBasedMatcher):
 
         xml = self.import_from_text(html, doc.frbr_uri, '.html')
         doc.reset_xml(xml, from_model=True)
+        self.stash_attachment(docx_file, doc)
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.
@@ -324,3 +333,7 @@ class Importer(LocaleBasedMatcher):
             .replace('ﬃ', 'ffi')\
             .replace('ﬄ', 'ffl')\
             .replace('ﬆ', 'st')
+
+    def stash_attachment(self, upload, doc):
+        # add source file as an attachment
+        AttachmentSerializer(context={'document': doc}).create({'file': upload})

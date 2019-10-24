@@ -17,7 +17,7 @@ import datetime
 
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate
-from indigo_api.serializers import WorkSerializer, AttachmentSerializer
+from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
@@ -718,9 +718,6 @@ class ImportDocumentView(WorkViewBase, FormView):
 
         document.updated_by_user = self.request.user
         document.save_with_revision(self.request.user)
-
-        # add source file as an attachment
-        AttachmentSerializer(context={'document': document}).create({'file': upload})
 
         return JsonResponse({'location': reverse('document', kwargs={'doc_id': document.id})})
 

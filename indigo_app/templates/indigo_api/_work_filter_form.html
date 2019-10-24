@@ -61,8 +61,60 @@
     </div>
 
     <div class="btn-group">
+      <button class="btn btn-success mr-2" type="button" data-toggle="collapse" data-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
+        Advanced
+      </button>
       <button type="submit" class="btn btn-success">Filter</button>
-    </div>  
+    </div> 
+  </div>
 
+  <div class="collapse" id="advancedFilters">
+    <div class="d-flex">
+
+      <!-- Repealed filter -->
+      <div class="mt-2 mr-2">
+        <select class="form-control" name="repealed">
+          <option value="all" {% if form.repealed.value == 'all' %} selected {% endif %}>Repealed works?</option>
+          <option value="excl" {% if form.repealed.value == 'excl' %} selected {% endif %}>Exclude Repealed Works</option>
+          <option value="only" {% if form.repealed.value == 'only' %} selected {% endif %}>Only Repealed Works</option>
+          <option value="-repealed_date" {% if form.repealed.value == '-repealed_date' %} selected {% endif %}>Most recently repealed</option>
+          <option value="repealed_date" {% if form.repealed.value == 'repealed_date' %} selected {% endif %}>Least recently repealed</option>
+        </select>
+      </div>    
+
+      <!-- Commenced filter -->
+      <div class="mt-2 mr-2">
+        <select class="form-control" name="commenced">
+          <option value="all" {% if form.commenced.value == 'all' %} selected {% endif %}>Commenced works?</option>
+          <option value="only" {% if form.commenced.value == 'only' %} selected {% endif %}>Only Commenced Works</option>
+          <option value="excl" {% if form.commenced.value == 'exlc' %} selected {% endif %}>Exclude Commenced Works</option>
+          <option value="-commencement_date" {% if form.commenced.value == '-commencement_date' %} selected {% endif %}>Most recently commenced</option>
+          <option value="commencement_date" {% if form.commenced.value == 'commencement_date' %} selected {% endif %}>Least recently commenced</option>
+        </select>
+      </div>       
+
+      <!-- Primary work or subleg filter -->
+
+      <!-- Assent Date filter -->
+      <div class="mt-2 mr-2">
+        <select class="form-control" name="assented">
+          <option value="all" {% if form.assented.value == 'all' %} selected {% endif %}>Assent Date Filter</option>
+          <option value="-assent_date" {% if form.assented.value == '-assent_date' %} selected {% endif %}>Most recently assented</option>
+          <option value="assent_date" {% if form.assented.value == 'assent_date' %} selected {% endif %}>Least recently assented</option>
+        </select>
+      </div>       
+
+      <!-- Ammended or Not filter -->
+
+      <!-- Publication Date filter -->
+      <div class="mt-2 mr-2">
+        <select class="form-control" name="published">
+          <option value="all" {% if form.published.value == 'all' %} selected {% endif %}>Publication Date</option>
+          <option value="-publication_date" {% if form.published.value == '-publication_date' %} selected {% endif %}>Most recently published</option>
+          <option value="publication_date" {% if form.published.value == 'publication_date' %} selected {% endif %}>Least recently published</option>
+        </select>
+      </div>      
+
+    </div>
   </div>
 </form>

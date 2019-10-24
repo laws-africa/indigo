@@ -9,6 +9,7 @@ from django.conf import settings
 from django.core.files.base import ContentFile
 import mammoth
 import lxml.etree as ET
+from django.core.files.uploadedfile import UploadedFile
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
@@ -182,6 +183,13 @@ class Importer(LocaleBasedMatcher):
         """ Import from a PDF upload.
         """
         with self.tempfile_for_upload(upload) as f:
+            # extract pages
+            if self.page_nums:
+                if isinstance(self.page_nums, str):
+                    self.page_nums = parse_page_nums(self.page_nums)
+                if self.page_nums:
+                    pdf_extract_pages(f.name, self.page_nums, f.name)
+
             # pdf to text
             text = self.pdf_to_text(f)
             if self.reformat:
@@ -189,18 +197,17 @@ class Importer(LocaleBasedMatcher):
             if len(text) < 512:
                 raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
 
-        xml = self.import_from_text(text, doc.frbr_uri, '.txt')
-        doc.reset_xml(xml, from_model=True)
-        # TODO: stash the modified pdf file
-        self.stash_attachment(upload, doc)
+            xml = self.import_from_text(text, doc.frbr_uri, '.txt')
+            doc.reset_xml(xml, from_model=True)
+
+            # stash the (potentially) modified pdf file
+            f.seek(0, 2)
+            fsize = f.tell()
+            f.seek(0)
+            pdf = UploadedFile(file=f, name=upload.name, size=fsize, content_type=upload.content_type)
+            self.stash_attachment(pdf, doc)
 
     def pdf_to_text(self, f):
-        if self.page_nums:
-            if isinstance(self.page_nums, str):
-                self.page_nums = parse_page_nums(self.page_nums)
-            if self.page_nums:
-                pdf_extract_pages(f.name, self.page_nums, f.name)
-
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
 
         if self.cropbox:

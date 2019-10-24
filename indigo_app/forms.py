@@ -171,6 +171,7 @@ class ImportDocumentForm(forms.Form):
     file = forms.FileField()
     language = forms.ModelChoiceField(Language.objects)
     expression_date = forms.DateField()
+    page_nums = forms.CharField(required=False)
     # options as JSON data
     options = forms.CharField(required=False)
 

@@ -4,6 +4,7 @@ import datetime
 
 from django.test import testcases, override_settings
 
+from indigo_api.importers.pdfs import pdf_count_pages
 from indigo_api.models import Work
 
 
@@ -101,3 +102,31 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(doc.draft, True)
         self.assertIn('a text file with badly formed</p><p>HTML', doc.content, msg='missing imported html')
         self.assertEqual(len(doc.attachments.all()), 1)
+
+    def test_create_from_pdf_with_page_nums(self):
+        work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
+
+        fname = os.path.join(os.path.dirname(__file__), '../fixtures/sample.pdf')
+        f = open(fname, 'rb')
+
+        response = self.client.post('/works/za/act/2014/10/import/', {
+            'file': f,
+            'expression_date': '2001-01-01',
+            'page_nums': '2-3',
+            'language': '1'
+        }, format='multipart')
+        self.assertEqual(response.status_code, 200)
+
+        # check the doc
+        doc = work.expressions().filter(expression_date=datetime.date(2001, 1, 1)).first()
+        self.assertEqual(doc.draft, True)
+        self.assertNotIn('first page', doc.content, msg='"first page" should not be included')
+        self.assertIn('second page', doc.content, msg='"second page" missing')
+        self.assertIn('third page', doc.content, msg='"third page" missing')
+        self.assertNotIn('fourth page', doc.content, msg='"fourth page" should not be included')
+        self.assertEqual(len(doc.attachments.all()), 1)
+
+        # ensure the attachment only has 2 pages
+        attachment = doc.attachments.first()
+        pages = pdf_count_pages(attachment.file.name)
+        self.assertEqual(pages, 2)

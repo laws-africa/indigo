@@ -3,15 +3,47 @@ import subprocess
 import tempfile
 import shutil
 import logging
+import re
 
 from django.conf import settings
 from django.core.files.base import ContentFile
 import mammoth
 import lxml.etree as ET
+from django.core.files.uploadedfile import UploadedFile
 
 from indigo_api.models import Attachment
 from indigo.plugins import plugins, LocaleBasedMatcher
+from indigo_api.serializers import AttachmentSerializer
 from indigo_api.utils import filename_candidates, find_best_static
+from indigo_api.importers.pdfs import pdf_extract_pages
+
+
+pages_re = re.compile(r'(\d+)(\s*-\s*(\d+))?')
+
+
+def parse_page_nums(pages):
+    """ Turn a string such as '5,7,9-11,12' into a list of integers and (start, end) range tuples.
+
+    Raises ValueError if a part of the string isn't well-formed.
+    """
+    page_nums = []
+
+    parts = [p.strip() for p in pages.strip().split(',')]
+    # iterate over non-empty items separated by commas
+    for part in (p for p in parts if p):
+        match = pages_re.fullmatch(part)
+        if not match:
+            raise ValueError(f"Invalid page number: {part}")
+        if match.group(3):
+            # tuple
+            page_nums.append(
+                (int(match.group(1)),
+                 int(match.group(3))))
+        else:
+            # singelton
+            page_nums.append(int(match.group(1)))
+
+    return page_nums
 
 
 @plugins.register('importer')
@@ -54,6 +86,12 @@ class Importer(LocaleBasedMatcher):
     for large files. See https://github.com/cjheath/treetop/issues/31
     """
 
+    page_nums = None
+    """ Pages to import for document types that support it, or None to import them all.
+    
+    This can either be a string, such as "1,5,7-11" or it can be a list of integers and (first, last) tuples.
+    """
+
     def shell(self, cmd):
         self.log.info("Running %s" % cmd)
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -73,12 +111,10 @@ class Importer(LocaleBasedMatcher):
         self.log.info("Processing upload: filename='%s', content type=%s" % (upload.name, upload.content_type))
 
         if upload.content_type in ['text/xml', 'application/xml']:
-            # just assume it's valid AKN xml
             self.log.info("Processing upload as an AKN XML file")
-            doc.content = upload.read().decode('utf-8')
-            return doc
+            self.create_from_akn(upload, doc)
 
-        if (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        elif (upload.content_type == 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
                 or upload.name.endswith('.docx')):
             # pre-process docx to HTML and then import html
             self.log.info("Processing upload as a docx file")
@@ -99,10 +135,16 @@ class Importer(LocaleBasedMatcher):
 
         self.analyse_after_import(doc)
 
+    def create_from_akn(self, upload, doc):
+        # just assume it's valid AKN xml
+        doc.content = upload.read().decode('utf-8')
+        self.stash_attachment(upload, doc)
+
     def create_from_file(self, upload, doc, inputtype):
         with self.tempfile_for_upload(upload) as f:
             xml = self.import_from_file(f.name, doc.frbr_uri, inputtype)
             doc.reset_xml(xml, from_model=True)
+            self.stash_attachment(upload, doc)
 
     def create_from_html(self, upload, doc):
         """ Apply an XSLT to map the HTML to text, then process the text with Slaw.
@@ -112,6 +154,7 @@ class Importer(LocaleBasedMatcher):
             text = self.reformat_text_from_html(text)
         xml = self.import_from_text(text, doc.frbr_uri, 'text')
         doc.reset_xml(xml, from_model=True)
+        self.stash_attachment(upload, doc)
 
     def html_to_text(self, html, doc):
         """ Transform HTML (a str) into Akoma-Ntoso friendly text (str).
@@ -140,6 +183,13 @@ class Importer(LocaleBasedMatcher):
         """ Import from a PDF upload.
         """
         with self.tempfile_for_upload(upload) as f:
+            # extract pages
+            if self.page_nums:
+                if isinstance(self.page_nums, str):
+                    self.page_nums = parse_page_nums(self.page_nums)
+                if self.page_nums:
+                    pdf_extract_pages(f.name, self.page_nums, f.name)
+
             # pdf to text
             text = self.pdf_to_text(f)
             if self.reformat:
@@ -147,8 +197,15 @@ class Importer(LocaleBasedMatcher):
             if len(text) < 512:
                 raise ValueError("There is not enough text in the PDF to import. You may need to OCR the file first.")
 
-        xml = self.import_from_text(text, doc.frbr_uri, '.txt')
-        doc.reset_xml(xml, from_model=True)
+            xml = self.import_from_text(text, doc.frbr_uri, '.txt')
+            doc.reset_xml(xml, from_model=True)
+
+            # stash the (potentially) modified pdf file
+            f.seek(0, 2)
+            fsize = f.tell()
+            f.seek(0)
+            pdf = UploadedFile(file=f, name=upload.name, size=fsize, content_type=upload.content_type)
+            self.stash_attachment(pdf, doc)
 
     def pdf_to_text(self, f):
         cmd = [settings.INDIGO_PDFTOTEXT, "-enc", "UTF-8", "-nopgbrk", "-raw"]
@@ -272,6 +329,7 @@ class Importer(LocaleBasedMatcher):
 
         xml = self.import_from_text(html, doc.frbr_uri, '.html')
         doc.reset_xml(xml, from_model=True)
+        self.stash_attachment(docx_file, doc)
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.
@@ -282,3 +340,7 @@ class Importer(LocaleBasedMatcher):
             .replace('ﬃ', 'ffi')\
             .replace('ﬄ', 'ffl')\
             .replace('ﬆ', 'st')
+
+    def stash_attachment(self, upload, doc):
+        # add source file as an attachment
+        AttachmentSerializer(context={'document': doc}).create({'file': upload})

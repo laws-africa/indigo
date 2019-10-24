@@ -58,7 +58,7 @@
   .pages {
     display: none;
     width: 100%;
-    height: 570px;
+    height: 585px;
 
     position: relative;
     overflow-x: scroll;
@@ -70,6 +70,12 @@
       position: absolute;
       box-sizing: content-box;
       border: 1px solid $grey-darkest;
+
+      &::after {
+        display: block;
+        text-align: center;
+        content: attr(data-num);
+      }
 
       // spinner for loading pages
       &.loading::after {

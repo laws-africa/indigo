@@ -183,7 +183,7 @@
         this.$('.pdf-only').removeClass('d-none');
       } else {
         this.scale = null;
-        this.$('.pdf-only').addClass('d-block');
+        this.$('.pdf-only').addClass('d-none');
       }
     },
 
@@ -206,6 +206,7 @@
         page.style.width = '338px';
         page.style.height = '550px';
         page.style.left = nextLeft + 'px';
+        page.setAttribute('data-num', pageNum);
         container.appendChild(page);
 
         pdf.getPage(pageNum).then(function(pdfPage) {

@@ -523,4 +523,9 @@ button.btn-link.help {
     color: $red;
     content: "\f071";
   }
+
+  &.issue-information::before {
+    color: $blue;
+    content: "\f071";
+  }
 }

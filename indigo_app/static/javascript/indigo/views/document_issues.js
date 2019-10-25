@@ -51,12 +51,23 @@
       },
 
       render: function() {
-        var self = this;
+        var self = this,
+            displayed = {};
 
         this.model.forEach(function(issue) {
-          // may be multiple targets with the same id
+          // Only attach a particular issue to a node once. This is required for linters that, for example, identify
+          // elements with duplicate ids and produce an issue for each copy of the ID. Since we display them based
+          // on ID, we want to avoid display the same issue multiple times for each element with that ID.
+
+          var anchor_id = issue.get('anchor').id,
+              ident = anchor_id + '/' + issue.get('code'),
+              targets;
+
+          if (displayed[ident]) return;
+          displayed[ident] = true
+
           // this assumes that the issue id is scoped (ie. to a schedule, etc.)
-          var targets = self.$akn.find('[id="' + issue.get('anchor').id + '"]');
+          targets = self.$akn.find('[id="' + anchor_id + '"]');
 
           for (var i = 0; i < targets.length; i++) {
             var target = targets[i];

@@ -246,10 +246,10 @@ class WorkFilterForm(forms.Form):
     publication_date_check = forms.BooleanField(required=False)
     publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
-    # ammendment date filter
-    ammendment_date_check = forms.BooleanField(required=False)
-    ammendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
-    ammendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
+    # amendment date filter
+    amendment_date_check = forms.BooleanField(required=False)
+    amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+    amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
     commencement_date_check = forms.BooleanField(required=False)
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
@@ -365,7 +365,21 @@ class WorkFilterForm(forms.Form):
 
             queryset = queryset.filter(repealed_date__range=[start_date, end_date])
 
-        # filter by ammenmend date
+        # filter by amendment date
+        if self.cleaned_data.get('amendment_date_check') and self.cleaned_data['amendment_date_check']:
+            start_date = None
+            end_date = datetime.date.today()
+
+            if self.cleaned_data.get('amendment_date_start'):
+                start_date = self.cleaned_data['amendment_date_start']
+            else:
+                # TODO: refine this, currently returns a date 24 weeks before the end date
+                start_date = end_date - datetime.timedelta(weeks=24)
+
+            if self.cleaned_data.get('amendment_date_end'):
+                end_date = self.cleaned_data['amendment_date_end']
+
+            queryset = queryset.filter(amendments__date__range=[start_date, end_date])
 
         # filter by primary work
         if self.cleaned_data.get('primary_work_filter'):

@@ -121,11 +121,25 @@
       };
 
       if (result === undefined) result = XPathResult.ORDERED_NODE_SNAPSHOT_TYPE;
+      if (context === undefined) context = this.xmlDocument.getRootNode();
 
       function nsLookup(x) {
         return ns[x];
       }
       return this.xmlDocument.evaluate(expression, context, nsLookup, result);
+    },
+
+    /** Get an array of <act> and <doc> elements for this document.
+     */
+    componentElements: function() {
+      var components = [],
+          result = this.xpath('//a:act | //a:components/a:component/a:doc');
+
+      for (var i = 0; i < result.snapshotLength; i++) {
+        components.push(result.snapshotItem(i));
+      }
+
+      return components
     },
 
     save: function(options) {

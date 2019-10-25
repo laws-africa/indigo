@@ -26,7 +26,7 @@
       this.listenTo(this.document, 'sync', this.refresh);
       this.listenTo(this.documentContent, 'sync', this.refresh);
 
-      $('.menu .revisions').on('click', _.bind(this.show, this));
+      $('.show-revisions').on('click', _.bind(this.show, this));
 
       this.diffNavigator = new Indigo.DiffNavigator({el: document.querySelector('.diff-navigator')});
     },

@@ -20,7 +20,7 @@
       this.documentContent = options.documentContent;
       this.expressions = new Indigo.Library(Indigo.Preloads.expressions);
 
-      $('.menu .comparison').on('click', _.bind(this.show, this));
+      $('.show-pit-comparison').on('click', _.bind(this.show, this));
     },
 
     comparison: function(comparisonDocId) {

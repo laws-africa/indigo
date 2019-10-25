@@ -49,10 +49,6 @@
 .document-toolbar-wrapper {
   display: flex;
   padding-bottom: 5px;
-
-  .document-toolbar-menu {
-    flex: 0 0 $sidebar-width;
-  }
 }
 
 /* headers with help buttons */
@@ -262,6 +258,7 @@ button.btn-link.help {
   bottom: 0px;
   display: flex;
   flex-direction: column;
+  z-index: 100;
 
   .revisions-header {
     display: flex;

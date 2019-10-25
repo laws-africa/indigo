@@ -65,7 +65,7 @@
       this.tableEditor.on('finish', this.tableEditFinish, this);
       this.setupTablePasting();
 
-      this.$toolbar = $('.document-toolbar');
+      this.$toolbar = $('.document-editor-toolbar');
 
       this.loadXSL();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);

@@ -162,6 +162,7 @@
       
     <!-- Reset filters -->
     <div class="d-flex flex-row">
+      <input type="checkbox" class="custom-control-input" id="advanced_filters_active" name="advanced_filters_active" {% if form.advanced_filters_active.value %} checked {% endif %} hidden>
       <button type="reset" class="btn btn-info">Reset filters</button>
     </div>
 

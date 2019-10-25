@@ -4,6 +4,7 @@ Changelog
 6.0.0 (?)
 ---------
 
+* FEATURE: choose which pages to import from PDFs
 * Move document templates from templates/documents/ to templates/indigo_api/documents/
 
 

@@ -69,52 +69,101 @@
   </div>
 
   <div class="collapse" id="advancedFilters">
-    <div class="d-flex">
-
-      <!-- Repealed filter -->
-      <div class="mt-2 mr-2">
-        <select class="form-control" name="repealed">
-          <option value="all" {% if form.repealed.value == 'all' %} selected {% endif %}>Repealed works?</option>
-          <option value="excl" {% if form.repealed.value == 'excl' %} selected {% endif %}>Exclude Repealed Works</option>
-          <option value="only" {% if form.repealed.value == 'only' %} selected {% endif %}>Only Repealed Works</option>
-          <option value="-repealed_date" {% if form.repealed.value == '-repealed_date' %} selected {% endif %}>Most recently repealed</option>
-          <option value="repealed_date" {% if form.repealed.value == 'repealed_date' %} selected {% endif %}>Least recently repealed</option>
-        </select>
-      </div>    
-
-      <!-- Commenced filter -->
-      <div class="mt-2 mr-2">
-        <select class="form-control" name="commenced">
-          <option value="all" {% if form.commenced.value == 'all' %} selected {% endif %}>Commenced works?</option>
-          <option value="only" {% if form.commenced.value == 'only' %} selected {% endif %}>Only Commenced Works</option>
-          <option value="excl" {% if form.commenced.value == 'exlc' %} selected {% endif %}>Exclude Commenced Works</option>
-          <option value="-commencement_date" {% if form.commenced.value == '-commencement_date' %} selected {% endif %}>Most recently commenced</option>
-          <option value="commencement_date" {% if form.commenced.value == 'commencement_date' %} selected {% endif %}>Least recently commenced</option>
-        </select>
-      </div>       
-
-      <!-- Primary work or subleg filter -->
-
+    <div class="row mt-2">
       <!-- Assent Date filter -->
-      <div class="mt-2 mr-2">
-        <select class="form-control" name="assented">
-          <option value="all" {% if form.assented.value == 'all' %} selected {% endif %}>Assent Date Filter</option>
-          <option value="-assent_date" {% if form.assented.value == '-assent_date' %} selected {% endif %}>Most recently assented</option>
-          <option value="assent_date" {% if form.assented.value == 'assent_date' %} selected {% endif %}>Least recently assented</option>
-        </select>
-      </div>       
+      <div class="col mt-2">
+        <div class="input-group input-daterange">
+          <div class="custom-control custom-checkbox mt-2 mr-2">
+            <input type="checkbox" class="custom-control-input" id="assent_date_check" name="assent_date_check" {% if form.assent_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="assent_date_check">Assented between</label>
+          </div>
 
-      <!-- Ammended or Not filter -->
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
+          <div class="input-group-addon"> and </div>
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
+        </div>
+      </div>
 
       <!-- Publication Date filter -->
-      <div class="mt-2 mr-2">
-        <select class="form-control" name="published">
-          <option value="all" {% if form.published.value == 'all' %} selected {% endif %}>Publication Date</option>
-          <option value="-publication_date" {% if form.published.value == '-publication_date' %} selected {% endif %}>Most recently published</option>
-          <option value="publication_date" {% if form.published.value == 'publication_date' %} selected {% endif %}>Least recently published</option>
-        </select>
-      </div>      
+      <div class="col mt-2">
+        <div class="input-group input-daterange">
+          <div class="custom-control custom-checkbox mt-2 mr-2">
+            <input type="checkbox" class="custom-control-input" id="publication_date_check" name="publication_date_check" {% if form.publication_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="publication_date_check">Published between</label>
+          </div>
 
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
+          <div class="input-group-addon"> and </div>
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
+        </div>
+      </div>
+    </div>    
+
+    <hr>
+
+    <div class="row">
+      <!-- Commenced filter -->
+      <div class="col mt-2">
+        <div class="input-group input-daterange">
+          <div class="custom-control custom-checkbox mt-2 mr-2">
+            <input type="checkbox" class="custom-control-input" id="commencement_date_check" name="commencement_date_check" {% if form.commencement_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="commencement_date_check">Commenced between</label>
+          </div>
+
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
+          <div class="input-group-addon"> and </div>
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
+        </div>
+      </div>
+
+      <!-- Repealed filter -->
+      <div class="col mt-2">
+        <div class="input-group input-daterange">
+          <div class="custom-control custom-checkbox mt-2 mr-2">
+            <input type="checkbox" class="custom-control-input" id="repealed_date_check" name="repealed_date_check" {% if form.repealed_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="repealed_date_check">Repealed between</label>
+          </div>
+
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
+          <div class="input-group-addon"> and </div>
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="repealed_date_end" value="{{ form.repealed_date_start.value | default:'' }}">
+        </div>
+      </div>
     </div>
+
+    <hr>
+
+    <div class="row">
+      <!-- Ammendment Date Filter-->
+      <div class="col mt-2">
+        <div class="input-group input-daterange">
+          <div class="custom-control custom-checkbox mt-2 mr-2">
+            <input type="checkbox" class="custom-control-input" id="ammendment_date_check" name="ammendment_date_check" {% if form.ammendment_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="ammendment_date_check">Ammended between</label>
+          </div>
+
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="ammendment_date_start" value="{{ form.ammendment_date_start.value | default:'' }}">
+          <div class="input-group-addon"> and </div>
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="ammendment_date_end" value="{{ form.ammendment_date_end.value | default:'' }}">
+        </div>
+      </div>   
+      
+      <!-- Primary work or subleg filter -->
+      <div class="col mt-2 mr-2">
+        <select class="form-control" name="primary_work_filter">
+          <option value="all" {% if form.primary_work_filter.value == 'all' %} selected {% endif %}>Primary works?</option>
+          <option value="only" {% if form.primary_work_filter.value == 'only' %} selected {% endif %}>Only Primary Works</option>
+          <option value="excl" {% if form.primary_work_filter.value == 'exlc' %} selected {% endif %}>Exclude Primary Works</option>
+        </select>
+      </div> 
+    </div>    
+
+    <hr>
+      
+    <!-- Reset filters -->
+    <div class="d-flex flex-row">
+      <button type="reset" class="btn btn-info">Reset filters</button>
+    </div>
+
   </div>
 </form>

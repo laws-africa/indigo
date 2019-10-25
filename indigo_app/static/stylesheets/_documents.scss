@@ -53,10 +53,6 @@
   .document-toolbar-menu {
     flex: 0 0 $sidebar-width;
   }
-
-  .document-workspace-buttons {
-    margin-top: -6px;
-  }
 }
 
 /* headers with help buttons */
@@ -440,12 +436,6 @@ button.btn-link.help {
 }
 
 #document-activity-view {
-  float: left;
-
-  ul {
-    margin-top: 7px;
-  }
-
   li {
     list-style: none;
     float: left;

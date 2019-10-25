@@ -28,10 +28,9 @@
 
   /* sidebar */
   .document-sidebar {
-    flex: 0 0 200px;
+    flex: 0 0 15%;
     // TODO
     height: calc(100vh - 50px - 96px);
-    width: $document-sidebar-width;
 
     overflow-x: hidden;
     overflow-y: auto;

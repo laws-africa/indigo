@@ -102,20 +102,6 @@
     <hr>
 
     <div class="row">
-      <!-- Commenced filter -->
-      <div class="col mt-2">
-        <div class="input-group input-daterange">
-          <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="commencement_date_check" name="commencement_date_check" {% if form.commencement_date_check.value %} checked {% endif %}>
-            <label class="custom-control-label" for="commencement_date_check">Commenced between</label>
-          </div>
-
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
-          <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
-        </div>
-      </div>
-
       <!-- Repealed filter -->
       <div class="col mt-2">
         <div class="input-group input-daterange">
@@ -129,6 +115,20 @@
           <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="repealed_date_end" value="{{ form.repealed_date_start.value | default:'' }}">
         </div>
       </div>
+      
+      <!-- Commenced filter -->
+      <div class="col mt-2">
+        <div class="input-group input-daterange">
+          <div class="custom-control custom-checkbox mt-2 mr-2">
+            <input type="checkbox" class="custom-control-input" id="commencement_date_check" name="commencement_date_check" {% if form.commencement_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="commencement_date_check">Commenced between</label>
+          </div>
+
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
+          <div class="input-group-addon"> and </div>
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
+        </div>
+      </div>
     </div>
 
     <hr>
@@ -138,13 +138,13 @@
       <div class="col mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="ammendment_date_check" name="ammendment_date_check" {% if form.ammendment_date_check.value %} checked {% endif %}>
-            <label class="custom-control-label" for="ammendment_date_check">Ammended between</label>
+            <input type="checkbox" class="custom-control-input" id="amendment_date_check" name="amendment_date_check" {% if form.amendment_date_check.value %} checked {% endif %}>
+            <label class="custom-control-label" for="amendment_date_check">Amended between</label>
           </div>
 
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="ammendment_date_start" value="{{ form.ammendment_date_start.value | default:'' }}">
+          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
           <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="ammendment_date_end" value="{{ form.ammendment_date_end.value | default:'' }}">
+          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
         </div>
       </div>   
       

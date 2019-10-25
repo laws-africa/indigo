@@ -64,7 +64,7 @@
               targets;
 
           if (displayed[ident]) return;
-          displayed[ident] = true
+          displayed[ident] = true;
 
           // this assumes that the issue id is scoped (ie. to a schedule, etc.)
           targets = self.$akn.find('[id="' + anchor_id + '"]');

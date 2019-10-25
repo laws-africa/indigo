@@ -139,7 +139,7 @@
         components.push(result.snapshotItem(i));
       }
 
-      return components
+      return components;
     },
 
     save: function(options) {

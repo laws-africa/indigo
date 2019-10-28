@@ -30,7 +30,7 @@ from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
 from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer, HTMLRenderer
-from ..authz import DocumentPermissions, AnnotationPermissions
+from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
 from ..utils import Headline, SearchPagination, SearchRankCD
 from .misc import DEFAULT_PERMS
 
@@ -283,9 +283,12 @@ class DocumentActivityViewSet(DocumentResourceView,
                               mixins.CreateModelMixin,
                               viewsets.GenericViewSet):
     """ API endpoint to see who's working in a document.
+
+    Because this "locks" a document, only users who have permission to edit the document
+    can create an activity object.
     """
     serializer_class = DocumentActivitySerializer
-    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
+    permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentActivityPermission)
 
     def get_queryset(self):
         return self.document.activities.prefetch_related('user').all()

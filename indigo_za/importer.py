@@ -153,5 +153,5 @@ class ImporterZA(Importer):
         # Remove leading whitespace at the start of non-blank lines.
         text = re.sub(r'^[ \t]+([^ \t])', '\\1', text, 0, re.MULTILINE)
         # Remove excessive whitespace inside text
-        text = re.sub(r'(\S)[ \t]{2,}', '\\1 ', text, 0, re.MULTILINE)
+        text = re.sub(r'(\S)[ \t]{2,}', '\\1 ', text)
         return text

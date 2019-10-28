@@ -146,9 +146,12 @@ class ImporterZA(Importer):
         return '\n'.join(output)
 
     def strip_whitespace(self, text):
-        """ Remove leading whitespace at the start of non-blank lines.
+        """ Strip and normalise whitespace.
         """
         # replacing non-breaking spaces with normal spaces
         text = text.replace('\xA0', ' ')
+        # Remove leading whitespace at the start of non-blank lines.
         text = re.sub(r'^[ \t]+([^ \t])', '\\1', text, 0, re.MULTILINE)
+        # Remove excessive whitespace inside text
+        text = re.sub(r'(\S)[ \t]{2,}', '\\1 ', text, 0, re.MULTILINE)
         return text

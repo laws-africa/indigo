@@ -138,9 +138,11 @@ permit; and
 
         (a) foo   bar
           (b) baz boom
+          (c)   baz   boom
         """), """
 test
 
-(a) foo   bar
+(a) foo bar
 (b) baz boom
+(c) baz boom
         """)

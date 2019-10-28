@@ -85,7 +85,7 @@
       var changed = false;
 
       this.model.xmlDocument.querySelectorAll('ref').forEach(function(ref) {
-        if ((ref.getAttribute('href') || "").startsWith('/')) {
+        if ((ref.getAttribute('href') || "").startsWith('/') || (ref.getAttribute('href') || "").startsWith('#')) {
           // get rid of ref
           var parent = ref.parentNode;
           while (ref.firstChild) parent.insertBefore(ref.firstChild, ref);

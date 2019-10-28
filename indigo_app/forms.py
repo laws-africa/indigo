@@ -3,6 +3,7 @@ import json
 import urllib.parse
 
 from django import forms
+from django.contrib import messages
 from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings
@@ -315,6 +316,11 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('assent_date_end'):
                 end_date = self.cleaned_data['assent_date_end']
 
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+                self.assent_date_start = start_date
+                self.assent_date_end = end_date             
+
             queryset = queryset.filter(assent_date__range=[start_date, end_date])
 
         # filter by publication date range
@@ -331,8 +337,13 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('publication_date_end'):
                 end_date = self.cleaned_data['publication_date_end']
 
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+                self.assent_date_start = start_date
+                self.assent_date_end = end_date                  
+
             queryset = queryset.filter(assent_date__range=[start_date, end_date])
-       
+
         # filter by commencement date
         if self.cleaned_data.get('commencement_date_check') and self.cleaned_data['commencement_date_check']:
             start_date = None
@@ -346,6 +357,11 @@ class WorkFilterForm(forms.Form):
 
             if self.cleaned_data.get('commencement_date_end'):
                 end_date = self.cleaned_data['commencement_date_end']
+            
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+                self.commencement_date_start = start_date
+                self.commencement_date_end = end_date            
 
             queryset = queryset.filter(commencement_date__range=[start_date, end_date])
 
@@ -363,6 +379,11 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data.get('repealed_date_end'):
                 end_date = self.cleaned_data['repealed_date_end']
 
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+                self.repealed_date_start = start_date
+                self.repealed_date_end = end_date
+
             queryset = queryset.filter(repealed_date__range=[start_date, end_date])
 
         # filter by amendment date
@@ -378,6 +399,11 @@ class WorkFilterForm(forms.Form):
 
             if self.cleaned_data.get('amendment_date_end'):
                 end_date = self.cleaned_data['amendment_date_end']
+
+            if start_date > end_date:
+                start_date, end_date = end_date, start_date
+                self.amendment_date_start = start_date
+                self.amendment_date_end = end_date            
 
             queryset = queryset.filter(amendments__date__range=[start_date, end_date])
 

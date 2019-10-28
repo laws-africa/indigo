@@ -55,6 +55,10 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['form'] = DocumentForm(instance=doc)
         context['subtypes'] = Subtype.objects.order_by('name').all()
+        context['user_can_edit'] = (
+            self.request.user.is_authenticated
+            and self.request.user.has_perm('indigo_api.change_document')
+            and self.request.user.editor.has_country_permission(doc.work.country))
 
         context['download_formats'] = [{
             'url': reverse('document-detail', kwargs={'pk': doc.id, 'format': r.format}) + getattr(r, 'suffix', ''),

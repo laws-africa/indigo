@@ -132,7 +132,7 @@
         <div>You don't have permission to make changes.</div>
       {% endif %}
     {% else %}
-      <div><a href="{% url 'account_login' %}?next={{ request.get_absolute_url|urlencode }}">Log in</a> to make changes.</div>
+      <div><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Log in</a> to make changes.</div>
     {% endif %}
   {% endblock %}
 </div>

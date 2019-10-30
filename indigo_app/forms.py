@@ -3,7 +3,6 @@ import json
 import urllib.parse
 
 from django import forms
-from django.contrib import messages
 from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings

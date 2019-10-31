@@ -316,9 +316,8 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['assent_date_end']
 
             if start_date > end_date:
-                start_date, end_date = end_date, start_date
-                self.assent_date_start = start_date
-                self.assent_date_end = end_date             
+                self.assent_date_start = end_date
+                self.assent_date_end = start_date             
 
             queryset = queryset.filter(assent_date__range=[start_date, end_date])
 
@@ -337,9 +336,8 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['publication_date_end']
 
             if start_date > end_date:
-                start_date, end_date = end_date, start_date
-                self.assent_date_start = start_date
-                self.assent_date_end = end_date                  
+                self.assent_date_start = end_date
+                self.assent_date_end = start_date                  
 
             queryset = queryset.filter(assent_date__range=[start_date, end_date])
 
@@ -358,9 +356,8 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['commencement_date_end']
             
             if start_date > end_date:
-                start_date, end_date = end_date, start_date
-                self.commencement_date_start = start_date
-                self.commencement_date_end = end_date            
+                self.commencement_date_start = end_date
+                self.commencement_date_end = start_date
 
             queryset = queryset.filter(commencement_date__range=[start_date, end_date])
 
@@ -379,9 +376,8 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['repealed_date_end']
 
             if start_date > end_date:
-                start_date, end_date = end_date, start_date
-                self.repealed_date_start = start_date
-                self.repealed_date_end = end_date
+                self.repealed_date_start = end_date
+                self.repealed_date_end = start_date
 
             queryset = queryset.filter(repealed_date__range=[start_date, end_date])
 
@@ -400,9 +396,8 @@ class WorkFilterForm(forms.Form):
                 end_date = self.cleaned_data['amendment_date_end']
 
             if start_date > end_date:
-                start_date, end_date = end_date, start_date
-                self.amendment_date_start = start_date
-                self.amendment_date_end = end_date            
+                self.amendment_date_start = end_date
+                self.amendment_date_end = start_date
 
             queryset = queryset.filter(amendments__date__range=[start_date, end_date])
 
@@ -411,7 +406,7 @@ class WorkFilterForm(forms.Form):
             if self.cleaned_data['primary_work_filter'] == 'only':
                 queryset = queryset.filter(parent_work__isnull=True)
             elif self.cleaned_data['primary_work_filter'] == 'excl':
-                queryset = queryset.filter(parent_work__isnull=False)     
+                queryset = queryset.filter(parent_work__isnull=False)
 
         return queryset
 

@@ -235,7 +235,7 @@
             <p class="form-text text-muted">Date when most of the work comes into force<br>(only leave blank if not yet commenced)</p>
             {% if work.pk and work.commencement_date %}
               {% if work.amendments_made.exists or work.repealed_works.exists %}
-                <div class="alert alert-danger">If you change the commencement date here, you'll also have to change any related amendment / repeal dates manually. See this work's <a href="{% url 'work_related' work.frbr_uri %}">related works</a>.</div>
+                <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>
               {% endif %}
             {% endif %}
           </div>

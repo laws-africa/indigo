@@ -302,7 +302,7 @@ class WorkFilterForm(forms.Form):
 
         # Advanced filters
         # filter by assent date range
-        if self.cleaned_data.get('assent_date_check') and self.cleaned_data['assent_date_check']:
+        if self.cleaned_data.get('assent_date_check'):
             end_date = datetime.date.today()
             # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
             start_date = end_date - datetime.timedelta(weeks=24)
@@ -320,7 +320,7 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
 
         # filter by publication date range
-        if self.cleaned_data.get('publication_date_check') and self.cleaned_data['publication_date_check']:
+        if self.cleaned_data.get('publication_date_check'):
             end_date = datetime.date.today()
             # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
             start_date = end_date - datetime.timedelta(weeks=24)
@@ -338,7 +338,7 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
 
         # filter by commencement date
-        if self.cleaned_data.get('commencement_date_check') and self.cleaned_data['commencement_date_check']:
+        if self.cleaned_data.get('commencement_date_check'):
             end_date = datetime.date.today()
             # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
             start_date = end_date - datetime.timedelta(weeks=24)
@@ -356,7 +356,7 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
 
         # filter by repeal date
-        if self.cleaned_data.get('repealed_date_check') and self.cleaned_data['repealed_date_check']:
+        if self.cleaned_data.get('repealed_date_check'):
             end_date = datetime.date.today()
             # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
             start_date = end_date - datetime.timedelta(weeks=24)
@@ -374,7 +374,7 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
 
         # filter by amendment date
-        if self.cleaned_data.get('amendment_date_check') and self.cleaned_data['amendment_date_check']:
+        if self.cleaned_data.get('amendment_date_check'):
             end_date = datetime.date.today()
             # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
             start_date = end_date - datetime.timedelta(weeks=24)

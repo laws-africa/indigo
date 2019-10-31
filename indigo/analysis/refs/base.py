@@ -1,7 +1,7 @@
 from lxml import etree
 import re
 
-from indigo.analysis.markup import TextPatternMarker
+from indigo.analysis.markup import TextPatternMarker, MultipleTextPatternMarker
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo.xmlutils import closest, wrap_text
 
@@ -63,18 +63,13 @@ class RefsFinderENG(BaseRefsFinder):
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
 
 
-class BaseInternalRefsFinder(LocaleBasedMatcher):
+class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):
     """ Finds internal references in documents, such as to sections.
-    """
 
-    ref_re = None
-    """ This must be defined by a subclass. It should be a compiled regular
-    expression, with named captures for `ref` and `num`.
+    The item_re and pattern_re patterns must both have a named capture group
+    called 'ref', which is the full reference to me marked up.
     """
-    candidate_xpath = None
-    """ Xpath for candidate text nodes that should be tested for references.
-    Must be defined by subclasses.
-    """
+    marker_tag = 'ref'
 
     # the ancestor elements that can contain references
     ancestors = ['body', 'mainBody', 'conclusions']
@@ -86,89 +81,31 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
         # we have to re-parse it
         root = etree.fromstring(document.content)
         self.setup(root)
-        self.find_references(root)
+        self.markup_patterns(root)
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
-
-    def setup(self, root):
-        self.ns = root.nsmap[None]
-        self.nsmap = {'a': self.ns}
-        self.ref_tag = f'{{{self.ns}}}ref'
-        self.ancestor_xpath = etree.XPath('|'.join(f'.//a:{a}' for a in self.ancestors), namespaces=self.nsmap)
-        self.candidate_xpath = etree.XPath(self.candidate_xpath, namespaces=self.nsmap)
-
-    def find_references(self, root):
-        for ancestor in self.ancestor_nodes(root):
-            for candidate in self.candidate_nodes(ancestor):
-                node = candidate.getparent()
-
-                if not candidate.is_tail:
-                    # text directly inside a node
-                    for match in self.find_matches(node.text):
-                        new_node = self.handle_match(node, match, in_tail=False)
-                        if new_node is not None:
-                            # the node has now changed, making the offsets in any subsequent
-                            # matches incorrect. so stop looking and start again, checking
-                            # the tail of the newly inserted node
-                            node = new_node
-                            break
-
-                while node is not None and node.tail:
-                    for match in self.find_matches(node.tail):
-                        new_node = self.handle_match(node, match, in_tail=True)
-                        if new_node is not None:
-                            # the node has now changed, making the offsets in any subsequent
-                            # matches incorrect. so stop looking and start again, checking
-                            # the tail of the newly inserted node
-                            node = new_node
-                            break
-                    else:
-                        # we didn't break out of the loop, so there are no valid matches, give up
-                        node = None
-
-    def find_matches(self, text):
-        """ Return an iterable of matches in this chunk of text.
-        """
-        return self.ref_re.finditer(text)
 
     def is_valid(self, node, match):
         return self.find_target(node, match) is not None
 
-    def handle_match(self, node, match, in_tail):
-        """ Process a match. If this modifies the text (or tail, if in_tail is True), then
-        return the new node that should have its tail checked for further matches.
-        Otherwise, return None.
-        """
-        if self.is_valid(node, match):
-            ref, start_pos, end_pos = self.make_ref(node, match)
-            return wrap_text(node, in_tail, lambda t: ref, start_pos, end_pos)
+    def is_item_valid(self, node, match):
+        return self.is_valid(node, match)
+
+    def markup_match(self, node, match):
+        ref = etree.Element(self.marker_tag)
+        ref.text = match.group('ref')
+        ref.set('href', self.make_href(node, match))
+        return ref, match.start('ref'), match.end('ref')
 
     def find_target(self, node, match):
         """ Return the target element that this reference targets.
         """
         raise NotImplementedError()
 
-    def make_ref(self, node, match):
-        """ Make a reference out of this match, returning a (ref, start, end) tuple
-        which is the new ref node, and the start and end position of what text
-        in the parent element it should be replacing.
-        """
-        ref = etree.Element(self.ref_tag)
-        ref.text = match.group('ref')
-        ref.set('href', self.make_href(node, match))
-        return ref, match.start('ref'), match.end('ref')
-
     def make_href(self, node, match):
         """ Return the target href for this match.
         """
-        raise NotImplementedError()
-
-    def ancestor_nodes(self, root):
-        for x in self.ancestor_xpath(root):
-            yield x
-
-    def candidate_nodes(self, root):
-        for x in self.candidate_xpath(root):
-            yield x
+        target = self.find_target(node, match)
+        return '#' + target.get('id')
 
 
 @plugins.register('internal-refs')
@@ -198,7 +135,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)
 
-    ref_re = re.compile(
+    pattern_re = re.compile(
         r'''\b
         (
           (?P<ref>
@@ -234,30 +171,8 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
             return False
         return True
 
-    def handle_match(self, node, full_match, in_tail):
-        # we've found a reference to (potentially) a list of section refs.
-        # we handle each item in the list separately, from right to left so
-        # that the match offsets don't change.
-        if not self.is_valid(node, full_match):
-            # keep searching
-            return None
-
-        items = list(self.item_re.finditer(full_match.group(1)))
-        if len(items) == 1:
-            # markup the whole of "Section 26" as a link, rather than just "26"
-            items = [full_match]
-            offset = 0
-        else:
-            offset = full_match.start(1)
-
-        last = None
-        for match in reversed(items):
-            if self.is_item_valid(node, match):
-                ref = self.mark_item_reference(node, match, offset, in_tail)
-                if last is None:
-                    last = ref
-
-        return last
+    def is_item_valid(self, node, match):
+        return self.find_target(node, match) is not None
 
     def find_target(self, node, match):
         num = match.group('num')
@@ -267,14 +182,6 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         if candidate_elements:
             self.match_cache[num] = candidate_elements[0]
             return candidate_elements[0]
-
-    def is_item_valid(self, node, match):
-        # use the traditional validity check
-        return super().is_valid(node, match)
-
-    def mark_item_reference(self, node, match, offset, in_tail):
-        ref, start_pos, end_pos = self.make_ref(node, match)
-        return wrap_text(node, in_tail, lambda t: ref, start_pos + offset, end_pos + offset)
 
     def make_href(self, node, match):
         target = self.match_cache[match.group('num')]

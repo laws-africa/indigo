@@ -187,7 +187,7 @@
           <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc" target="_blank">Work info template</a>: 'File | Make a copy'.</li>
           <li>Record the Spreadsheet URL under <a href="{% url 'place_settings' place=place.place_code %}" target="_blank">Settings</a>.</li>
           {% if bulk_creator.is_gsheets_enabled %}
-            <li>Share the spreadsheet with (give Edit rights to) {{ share_with }}.</li>
+            <li>Share the spreadsheet with {{ bulk_creator.share_with }}.</li>
             <li>Choose a spreadsheet tab and a workflow.</li>
           {% else %}
             <li>Make it accessible by turning link sharing on: 'Share | Get shareable link' (top-right corner).</li>

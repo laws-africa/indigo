@@ -638,8 +638,6 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
     def get_context_data(self, **kwargs):
         context = super(BatchAddWorkView, self).get_context_data(**kwargs)
         context['bulk_creator'] = self.bulk_creator
-        if self.bulk_creator.is_gsheets_enabled:
-            context['share_with'] = self.bulk_creator.share_with
         return context
 
     def form_valid(self, form):

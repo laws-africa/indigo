@@ -538,7 +538,8 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
     def get_task_actions(self):
         tasks = self.work.tasks.all()
         actions_per_task = [t.action_object_actions.all() for t in tasks]
-        return [action for actions in actions_per_task for action in actions]
+        return [action for actions in actions_per_task for action in actions
+                if action.verb == 'approved']
 
 
 class WorkTasksView(WorkViewBase, DetailView):

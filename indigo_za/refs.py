@@ -22,7 +22,7 @@ class RefsFinderENGza(BaseRefsFinder):
     locale = ('za', 'eng', None)
 
     # if Act part changes, you may also want to update indigo/analysis/refs/global.py
-    act_re = re.compile(
+    pattern_re = re.compile(
         r'''\b
             (
              Act,?\s+(\d{4}\s+)?                    # Act   or   Act, 1998
@@ -50,7 +50,7 @@ class RefsFinderENGza(BaseRefsFinder):
         else:
             return '/%s/act/%s/%s' % (self.frbr_uri.country, year, number)
 
-    def make_ref(self, match):
+    def markup_match(self, node, match):
         if self.constitution in match.group(0):
             group = 0
         elif match.group(2):
@@ -58,10 +58,10 @@ class RefsFinderENGza(BaseRefsFinder):
         else:
             group = 1
 
-        ref = etree.Element(self.ref_tag)
+        ref = etree.Element(self.marker_tag)
         ref.text = match.group(group)
         ref.set('href', self.make_href(match))
-        return (ref, match.start(group), match.end(group))
+        return ref, match.start(group), match.end(group)
 
 
 @plugins.register('refs')
@@ -77,7 +77,7 @@ class RefsFinderAFRza(RefsFinderENGza):
     # country, language, locality
     locale = ('za', 'afr', None)
 
-    act_re = re.compile(
+    pattern_re = re.compile(
         r'''\b
             (?P<ref>
              Wet,?\s+([nN]o\.?\s*)?
@@ -92,13 +92,13 @@ class RefsFinderAFRza(RefsFinderENGza):
 
     constitution = 'Grondwet'
 
-    def make_ref(self, match):
+    def markup_match(self, node, match):
         if self.constitution in match.group(0):
             group = 0
         else:
             group = 'ref'
 
-        ref = etree.Element(self.ref_tag)
+        ref = etree.Element(self.marker_tag)
         ref.text = match.group(group)
         ref.set('href', self.make_href(match))
-        return (ref, match.start(group), match.end(group))
+        return ref, match.start(group), match.end(group)

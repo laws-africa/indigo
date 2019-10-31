@@ -24,6 +24,8 @@
                   starts-with($prefix, 'CHAPTER ') or
                   starts-with($prefix, 'PART ') or
                   starts-with($prefix, 'SCHEDULE ') or
+                  starts-with($prefix, 'HEADING ') or
+                  starts-with($prefix, 'SUBHEADING ') or
                   starts-with($prefix, 'LONGTITLE ') or
                   starts-with($prefix, 'CROSSHEADING ') or
                   starts-with($prefix, '{|') or
@@ -151,13 +153,14 @@
 
 
   <!-- components/schedules -->
-  <!-- new-style schedules, "article" elements -->
+  <!-- new-style schedules, "hcontainer" elements -->
   <xsl:template match="a:hcontainer[@name='schedule']">
-    <xsl:text>SCHEDULE - </xsl:text>
+    <xsl:text>SCHEDULE&#10;HEADING </xsl:text>
     <xsl:apply-templates select="a:heading" />
     <xsl:text>&#10;</xsl:text>
 
     <xsl:if test="a:subheading">
+      <xsl:text>SUBHEADING </xsl:text>
       <xsl:apply-templates select="a:subheading" />
       <xsl:text>&#10;</xsl:text>
     </xsl:if>
@@ -169,11 +172,12 @@
 
   <!-- old-style schedules, "article" elements -->
   <xsl:template match="a:doc/a:mainBody/a:article">
-    <xsl:text>SCHEDULE - </xsl:text>
+    <xsl:text>SCHEDULE&#10;HEADING </xsl:text>
     <xsl:value-of select="../../a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
     <xsl:text>&#10;</xsl:text>
 
     <xsl:if test="a:heading">
+      <xsl:text>SUBHEADING </xsl:text>
       <xsl:apply-templates select="a:heading" />
       <xsl:text>&#10;</xsl:text>
     </xsl:if>

@@ -75,6 +75,8 @@
             <p>BODY</p>
             <p>PREAMBLE</p>
             <p>PREFACE</p>
+            <p>HEADING text</p>
+            <p>SUBHEADING text</p>
             <p>SCHEDULE this line should be escaped</p>
           </content>
         </paragraph>

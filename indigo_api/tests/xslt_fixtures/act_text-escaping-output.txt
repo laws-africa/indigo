@@ -18,5 +18,9 @@ BODY
 
 \PREFACE
 
+\HEADING text
+
+\SUBHEADING text
+
 \SCHEDULE this line should be escaped
 

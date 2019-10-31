@@ -92,12 +92,10 @@ class TextPatternMarker:
         return marker, match.start(0), match.end(0)
 
     def ancestor_nodes(self, root):
-        for x in self.ancestor_xpath(root):
-            yield x
+        return self.ancestor_xpath(root)
 
     def candidate_nodes(self, root):
-        for x in self.candidate_xpath(root):
-            yield x
+        return self.candidate_xpath(root)
 
 
 class MultipleTextPatternMarker(TextPatternMarker):

@@ -3,7 +3,7 @@ import re
 
 from indigo.analysis.markup import TextPatternMarker, MultipleTextPatternMarker
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo.xmlutils import closest, wrap_text
+from indigo.xmlutils import closest
 
 
 class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):

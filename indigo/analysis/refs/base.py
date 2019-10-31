@@ -2,7 +2,7 @@ from lxml import etree
 import re
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo.xmlutils import closest
+from indigo.xmlutils import closest, wrap_text
 
 
 class BaseRefsFinder(LocaleBasedMatcher):
@@ -204,26 +204,12 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
         """
         if self.is_valid(node, match):
             ref, start_pos, end_pos = self.make_ref(node, match)
-            return self.mark_reference(node, ref, start_pos, end_pos, in_tail)
+            return wrap_text(node, in_tail, lambda t: ref, start_pos, end_pos)
 
     def find_target(self, node, match):
         """ Return the target element that this reference targets.
         """
         raise NotImplementedError()
-
-    def mark_reference(self, node, ref, start_pos, end_pos, in_tail):
-        if in_tail:
-            text = node.tail or ''
-            node.addnext(ref)
-            node.tail = text[:start_pos]
-            ref.tail = text[end_pos:]
-        else:
-            text = node.text or ''
-            node.text = text[:start_pos]
-            node.insert(0, ref)
-            ref.tail = text[end_pos:]
-
-        return ref
 
     def make_ref(self, node, match):
         """ Make a reference out of this match, returning a (ref, start, end) tuple
@@ -350,7 +336,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
 
     def mark_item_reference(self, node, match, offset, in_tail):
         ref, start_pos, end_pos = self.make_ref(node, match)
-        return self.mark_reference(node, ref, start_pos + offset, end_pos + offset, in_tail)
+        return wrap_text(node, in_tail, lambda t: ref, start_pos + offset, end_pos + offset)
 
     def make_href(self, node, match):
         target = self.match_cache[match.group('num')]

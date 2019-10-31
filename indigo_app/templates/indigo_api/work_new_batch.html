@@ -74,7 +74,7 @@
             <div class="text-danger">No workflows (create one and refresh)</div>
           {% endif %}
 
-          <a href="{% url 'workflow_create' place=place.place_code %}">Create a new workflow</a>
+          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">Create a new workflow</a>
         </div>
 
       </div>
@@ -184,21 +184,13 @@
       <div class="card-body">
         Instructions:
         <ul>
-          <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc">Work info template</a>: 'File' | 'Make a copy…'</li>
-          <li>Make it accessible: 'SHARE'  | 'Get shareable link' (top-right corner)</li>
-          <li>Watch <a href="https://www.youtube.com/watch?v=tfNm_PtZ7JQ&index=2&list=PL7MJ_sFHs953q_23TdDhnvQWqxAkrc672">this video</a> for instructions on how to populate the spreadsheet</li>
-          <li>Choose a country from the drop-down</li>
-          <li>Paste the url for your spreadsheet into the box below that</li>
-          <li>Click on 'Import works'!</li>
+          <li>Make a copy of the <a href="https://docs.google.com/spreadsheets/d/1JJKal7IFjFKKojsHIJAW12elDUNIwAuMrCV4sJ1jUOc" target="_blank">Work info template</a>: 'File | Make a copy'.</li>
+          <li>Record the Spreadsheet URL under <a href="{% url 'place_settings' place=place.place_code %}" target="_blank">Settings</a>.</li>
+          <li>Share the spreadsheet with (give Edit rights to) indigo@indigo-laws-africa.iam.gserviceaccount.com.</li>
+          <li>Choose a spreadsheet tab and a workflow.</li>
+          <li><strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>.</li>
+          <li><strong>Import works</strong>.</li>
         </ul>
-      </div>
-
-      <div class="card-body">
-       <div class="col-md-8 m-auto">
-         <div class="embed-responsive embed-responsive-16by9">
-           <iframe class="embed-responsive-item" src="https://www.youtube.com/embed/tfNm_PtZ7JQ?rel=0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-         </div>
-       </div>
       </div>
     </div>
   {% endif %}

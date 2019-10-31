@@ -168,20 +168,22 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
                 if not candidate.is_tail:
                     # text directly inside a node
                     for match in self.find_matches(node.text):
-                        if self.is_valid(node, match):
-                            node = self.mark_reference(node, match, in_tail=False)
+                        new_node = self.handle_match(node, match, in_tail=False)
+                        if new_node is not None:
                             # the node has now changed, making the offsets in any subsequent
                             # matches incorrect. so stop looking and start again, checking
                             # the tail of the newly inserted node
+                            node = new_node
                             break
 
                 while node is not None and node.tail:
                     for match in self.find_matches(node.tail):
-                        if self.is_valid(node, match):
-                            node = self.mark_reference(node, match, in_tail=True)
+                        new_node = self.handle_match(node, match, in_tail=True)
+                        if new_node is not None:
                             # the node has now changed, making the offsets in any subsequent
                             # matches incorrect. so stop looking and start again, checking
                             # the tail of the newly inserted node
+                            node = new_node
                             break
                     else:
                         # we didn't break out of the loop, so there are no valid matches, give up
@@ -195,22 +197,31 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
     def is_valid(self, node, match):
         return self.find_target(node, match) is not None
 
+    def handle_match(self, node, match, in_tail):
+        """ Process a match. If this modifies the text (or tail, if in_tail is True), then
+        return the new node that should have its tail checked for further matches.
+        Otherwise, return None.
+        """
+        if self.is_valid(node, match):
+            ref, start_pos, end_pos = self.make_ref(node, match)
+            return self.mark_reference(node, ref, start_pos, end_pos, in_tail)
+
     def find_target(self, node, match):
         """ Return the target element that this reference targets.
         """
         raise NotImplementedError()
 
-    def mark_reference(self, node, match, in_tail):
-        ref, start_pos, end_pos = self.make_ref(node, match)
-
+    def mark_reference(self, node, ref, start_pos, end_pos, in_tail):
         if in_tail:
+            text = node.tail or ''
             node.addnext(ref)
-            node.tail = match.string[:start_pos]
-            ref.tail = match.string[end_pos:]
+            node.tail = text[:start_pos]
+            ref.tail = text[end_pos:]
         else:
-            node.text = match.string[:start_pos]
+            text = node.text or ''
+            node.text = text[:start_pos]
             node.insert(0, ref)
-            ref.tail = match.string[end_pos:]
+            ref.tail = text[end_pos:]
 
         return ref
 
@@ -266,21 +277,24 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     locale = (None, 'eng', None)
 
     ref_re = re.compile(
-        r'''
-        \bsections?\s+
-        (                       # all items in the list
-          (\d+[A-Z0-9()]*)      # first section number, including subsections
-            (\s*
-              (,|and|or)\s+     # list separators
-              (\d+[A-Z0-9()]*)  # listed section numbers, including subsections
-            )*
+        r'''\b
+        (
+          (?P<ref>
+            sections?\s+
+            (?P<num>\d+[A-Z0-9]*)  # first section number, including subsections
+          )
+          (\s*\([A-Z0-9]+\))*      # bracketed subsections of first number
+          (\s*                     # optional list of sections
+            (,|and|or)\s+          # list separators
+            (\d+[A-Z0-9]*(\([A-Z0-9]+\))*)
+          )*
         )
         (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
         ''',
         re.X | re.IGNORECASE)
 
     # individual numbers in the list grouping above
-    item_re = re.compile(r'(?P<ref>(?P<num>\d+))[A-Z0-9()]*', re.IGNORECASE)
+    item_re = re.compile(r'(?P<ref>(?P<num>\d+[A-Z0-9]*))[A-Z0-9()]*', re.IGNORECASE)
 
     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
     match_cache = {}
@@ -296,24 +310,28 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
             return False
         return True
 
-    def mark_reference(self, node, full_match, in_tail):
+    def handle_match(self, node, full_match, in_tail):
         # we've found a reference to (potentially) a list of section refs.
         # we handle each item in the list separately, from right to left so
         # that the match offsets don't change.
-        last = None
-        offset = full_match.start(1)
+        if not self.is_valid(node, full_match):
+            # keep searching
+            return None
+
         items = list(self.item_re.finditer(full_match.group(1)))
         if len(items) == 1:
-            # TODO: this doesn't work, the regexes are different
-            if self.is_item_valid(node, items[0]):
-                return super().mark_reference(node, items[0], in_tail)
-
+            # markup the whole of "Section 26" as a link, rather than just "26"
+            items = [full_match]
+            offset = 0
         else:
-            for match in reversed(items):
-                if self.is_item_valid(node, match):
-                    ref = self.mark_item_reference(node, match, offset, in_tail)
-                    if last is None:
-                        last = ref
+            offset = full_match.start(1)
+
+        last = None
+        for match in reversed(items):
+            if self.is_item_valid(node, match):
+                ref = self.mark_item_reference(node, match, offset, in_tail)
+                if last is None:
+                    last = ref
 
         return last
 
@@ -332,21 +350,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
 
     def mark_item_reference(self, node, match, offset, in_tail):
         ref, start_pos, end_pos = self.make_ref(node, match)
-        start_pos += offset
-        end_pos += offset
-
-        if in_tail:
-            text = node.tail or ''
-            node.addnext(ref)
-            node.tail = text[:start_pos]
-            ref.tail = text[end_pos:]
-        else:
-            text = node.text or ''
-            node.text = text[:start_pos]
-            node.insert(0, ref)
-            ref.tail = text[end_pos:]
-
-        return ref
+        return self.mark_reference(node, ref, start_pos + offset, end_pos + offset, in_tail)
 
     def make_href(self, node, match):
         target = self.match_cache[match.group('num')]

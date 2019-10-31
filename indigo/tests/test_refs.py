@@ -28,7 +28,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in section 26(b), blah.</p>
           <p>As given in section 26(1)(b)(iii), blah.</p>
           <p>As given in section 26(1)(b)(iii)(bb), blah.</p>
-          <p>As given in section 26(1)(b)(iii)(dd)(A), which we'll discard for now, blah.</p>
+          <p>As given in section 26(1)(b)(iii)(dd)(A), blah.</p>
           <p>As given in section 26B, blah.</p>
           <p>As given in section 26 and section 31, blah.</p>
           <p>As given in sections 26 and 31, blah.</p>
@@ -84,14 +84,14 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in <ref href="#section-26">section 26</ref>(b), blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii), blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii)(bb), blah.</p>
-          <p>As given in section 26(1)(b)(iii)(dd)(A), which we'll discard for now, blah.</p>
+          <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii)(dd)(A), blah.</p>
           <p>As given in <ref href="#section-26B">section 26B</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> and <ref href="#section-31">section 31</ref>, blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref> and <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>.</p>
           <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref>(1) or <ref href="#section-31">31</ref>.</p>
+          <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
           <p>In section 200 it says one thing and in <ref href="#section-26">section 26</ref> it says another.</p>
           <p>In section 26 of Act 5 of 2012 it says one thing and in <ref href="#section-26">section 26</ref> of this Act it says another.</p>
           <p>Two baddies: In section 200 it says one thing and in section 26 of Act 5 of 2012 it says another.</p>
@@ -156,6 +156,20 @@ class SectionRefsFinderTestCase(TestCase):
           <p>An important provision.</p>
         </content>
       </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
         """
             ),
             language=self.eng)
@@ -176,6 +190,20 @@ class SectionRefsFinderTestCase(TestCase):
       </section>
       <section id="section-26">
         <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
@@ -233,7 +261,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>Not the provision you're looking for.</p>
         </content>
       </section>
-          """
+        """
             ),
             language=self.eng)
 

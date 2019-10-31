@@ -170,7 +170,7 @@
     changeRepeal: function() {
       var chooser = new Indigo.WorkChooserView({
             country: this.model.get('country'),
-            locality: this.model.get('locality'),
+            locality: this.model.get('locality') || '-',
           }),
           self = this;
 
@@ -210,7 +210,7 @@
     changeCommencingWork: function() {
       var chooser = new Indigo.WorkChooserView({
             country: this.model.get('country'),
-            locality: this.model.get('locality'),
+            locality: this.model.get('locality') || '-',
           }),
           self = this;
 
@@ -239,7 +239,7 @@
     changeParent: function() {
       var chooser = new Indigo.WorkChooserView({
             country: this.model.get('country'),
-            locality: this.model.get('locality'),
+            locality: this.model.get('locality') || '-',
           }),
           self = this;
 

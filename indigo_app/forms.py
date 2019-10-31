@@ -303,93 +303,68 @@ class WorkFilterForm(forms.Form):
         # Advanced filters
         # filter by assent date range
         if self.cleaned_data.get('assent_date_check'):
-            end_date = datetime.date.today()
-            # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
-            start_date = end_date - datetime.timedelta(weeks=24)
-
-            if self.cleaned_data.get('assent_date_start'):
+            if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
                 start_date = self.cleaned_data['assent_date_start']
-
-            if self.cleaned_data.get('assent_date_end'):
                 end_date = self.cleaned_data['assent_date_end']
 
-            if start_date > end_date:
-                self.assent_date_start = end_date
-                self.assent_date_end = start_date             
+                queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
 
-            queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
+            elif self.cleaned_data.get('assent_date_start') or self.cleaned_data.get('assent_date_end'):
+                start_date = end_date = self.cleaned_data.get('assent_date_start') or self.cleaned_data.get('assent_date_end')
+
+                queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
 
         # filter by publication date range
         if self.cleaned_data.get('publication_date_check'):
-            end_date = datetime.date.today()
-            # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
-            start_date = end_date - datetime.timedelta(weeks=24)
-
-            if self.cleaned_data.get('publication_date_start'):
+            if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
                 start_date = self.cleaned_data['publication_date_start']
-
-            if self.cleaned_data.get('publication_date_end'):
                 end_date = self.cleaned_data['publication_date_end']
 
-            if start_date > end_date:
-                self.publication_date_start = end_date
-                self.publication_date_end = start_date                  
+                queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
 
-            queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
+            elif self.cleaned_data.get('publication_date_start') or self.cleaned_data.get('publication_date_end'):
+                start_date = end_date = self.cleaned_data.get('publication_date_start') or self.cleaned_data.get('publication_date_end')
+
+                queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')            
 
         # filter by commencement date
         if self.cleaned_data.get('commencement_date_check'):
-            end_date = datetime.date.today()
-            # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
-            start_date = end_date - datetime.timedelta(weeks=24)
-
-            if self.cleaned_data.get('commencement_date_start'):
+            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']
-
-            if self.cleaned_data.get('commencement_date_end'):
                 end_date = self.cleaned_data['commencement_date_end']
-            
-            if start_date > end_date:
-                self.commencement_date_start = end_date
-                self.commencement_date_end = start_date
 
-            queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
+                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')
+
+            elif self.cleaned_data.get('commencement_date_start') or self.cleaned_data.get('commencement_date_end'):
+                start_date = end_date = self.cleaned_data.get('commencement_date_start') or self.cleaned_data.get('commencement_date_end')
+
+                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')             
 
         # filter by repeal date
         if self.cleaned_data.get('repealed_date_check'):
-            end_date = datetime.date.today()
-            # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
-            start_date = end_date - datetime.timedelta(weeks=24)
-
-            if self.cleaned_data.get('repealed_date_start'):
+            if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
                 start_date = self.cleaned_data['repealed_date_start']
-
-            if self.cleaned_data.get('repealed_date_end'):
                 end_date = self.cleaned_data['repealed_date_end']
 
-            if start_date > end_date:
-                self.repealed_date_start = end_date
-                self.repealed_date_end = start_date
+                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
 
-            queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')
+            elif self.cleaned_data.get('repealed_date_start') or self.cleaned_data.get('repealed_date_end'):
+                start_date = end_date = self.cleaned_data.get('repealed_date_start') or self.cleaned_data.get('repealed_date_end')
+
+                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')               
 
         # filter by amendment date
         if self.cleaned_data.get('amendment_date_check'):
-            end_date = datetime.date.today()
-            # TODO: refine this, currently defaults to a date 24 weeks(~6 months) before the end date
-            start_date = end_date - datetime.timedelta(weeks=24)
-
-            if self.cleaned_data.get('amendment_date_start'):
+            if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
                 start_date = self.cleaned_data['amendment_date_start']
-
-            if self.cleaned_data.get('amendment_date_end'):
                 end_date = self.cleaned_data['amendment_date_end']
 
-            if start_date > end_date:
-                self.amendment_date_start = end_date
-                self.amendment_date_end = start_date
+                queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
 
-            queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
+            elif self.cleaned_data.get('amendment_date_start') or self.cleaned_data.get('amendment_date_end'):
+                start_date = end_date = self.cleaned_data.get('amendment_date_start') or self.cleaned_data.get('amendment_date_end')
+
+                queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')  
 
         # filter by primary work
         if self.cleaned_data.get('primary_work_filter'):

@@ -282,7 +282,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     # individual numbers in the list grouping above
     # we use <ref> and <num> named captures so that the is_valid and make_ref
     # methods can handle matches from both ref_re and this re.
-    item_re = re.compile(r'(?P<ref>(?P<num>\d+[A-Z0-9]*))[A-Z0-9()]*', re.IGNORECASE)
+    item_re = re.compile(r'(?P<ref>(?P<num>\d+[A-Z0-9]*))(\([A-Z0-9]+\))*', re.IGNORECASE)
 
     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
     match_cache = {}

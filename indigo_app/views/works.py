@@ -498,9 +498,10 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         context = super(WorkVersionsView, self).get_context_data(**kwargs)
 
         actions = self.work.action_object_actions.all()
+        amendment_actions = [aa for a in self.work.amendments.all() for aa in a.action_object_actions.all()]
         versions = self.work.versions().all()
         task_actions = self.get_task_actions()
-        entries = sorted(chain(actions, versions, task_actions),
+        entries = sorted(chain(actions, amendment_actions, versions, task_actions),
                          key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
                          reverse=True)
         entries = self.coalesce_entries(entries)

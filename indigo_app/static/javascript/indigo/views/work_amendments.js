@@ -22,7 +22,7 @@
 
       var chooser = new Indigo.WorkChooserView({
             country: this.model.get('country'),
-            locality: this.model.get('locality'),
+            locality: this.model.get('locality') || "-",
           }),
           form = document.getElementById('new-amendment-form'),
           self = this;

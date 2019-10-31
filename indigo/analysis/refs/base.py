@@ -167,22 +167,30 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
 
                 if not candidate.is_tail:
                     # text directly inside a node
-                    for match in self.ref_re.finditer(node.text):
+                    for match in self.find_matches(node.text):
                         if self.is_valid(node, match):
-                            # mark the reference and continue to check the new tail
                             node = self.mark_reference(node, match, in_tail=False)
+                            # the node has now changed, making the offsets in any subsequent
+                            # matches incorrect. so stop looking and start again, checking
+                            # the tail of the newly inserted node
                             break
 
                 while node is not None and node.tail:
-                    for match in self.ref_re.finditer(node.tail):
+                    for match in self.find_matches(node.tail):
                         if self.is_valid(node, match):
-                            # mark the reference and continue to check the new tail
                             node = self.mark_reference(node, match, in_tail=True)
+                            # the node has now changed, making the offsets in any subsequent
+                            # matches incorrect. so stop looking and start again, checking
+                            # the tail of the newly inserted node
                             break
-
                     else:
                         # we didn't break out of the loop, so there are no valid matches, give up
                         node = None
+
+    def find_matches(self, text):
+        """ Return an iterable of matches in this chunk of text.
+        """
+        return self.ref_re.finditer(text)
 
     def is_valid(self, node, match):
         return self.find_target(node, match) is not None
@@ -234,11 +242,23 @@ class BaseInternalRefsFinder(LocaleBasedMatcher):
 class SectionRefsFinderENG(BaseInternalRefsFinder):
     """ Finds internal references to sections in documents, of the form:
 
+        # singletons
         section 26
         section 26B
+
+        # lists
+        sections 22 and 32
+        and sections 19, 22 and 23, unless it appears to him
+        Sections 24, 26, 28, 36, 42(2), 46, 48, 49(2), 52, 53, 54 and 56 shall mutatis mutandis
+        sections 23, 24, 25, 26 and 28;
+        sections 22(1) and 25(3)(b);
+        sections 18, 61 and 62(1).
+        in terms of section 2 or 7
+        sections 12(6)(d) and (e)
+        Subject to sections 1(4), 3(6), 4, 8, 24, 34(2) and 44, no person
+
         TODO: match subsections
         TODO: match paragraphs
-        TODO: match multiple sections
         TODO: match ranges of sections
     """
 
@@ -247,18 +267,20 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
 
     ref_re = re.compile(
         r'''
-        (?P<ref>
-          \b[sS]ections?\s+
-          (?P<num>\d+[A-Z]*)
+        \bsections?\s+
+        (                       # all items in the list
+          (\d+[A-Z0-9()]*)      # first section number, including subsections
+            (\s*
+              (,|and|or)\s+     # list separators
+              (\d+[A-Z0-9()]*)  # listed section numbers, including subsections
+            )*
         )
-        (?P<subsection_ref>\s*\(\d+[A-Z]*\))?
-        (?P<paragraph_ref>\s*\([a-z]+[A-Z]*\))?
-        (?P<subparagraph_ref>\s*\([ivx]+[A-Z]*\))?
-        (?P<item_ref>\s*\([a-z]{2,}[A-Z]*\))?
-        (?!\s*\()
         (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
         ''',
-        re.X)
+        re.X | re.IGNORECASE)
+
+    # individual numbers in the list grouping above
+    item_re = re.compile(r'(?P<ref>(?P<num>\d+))[A-Z0-9()]*', re.IGNORECASE)
 
     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
     match_cache = {}
@@ -272,8 +294,28 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         ref = match.group(0)
         if ref.endswith('the ') or ref.endswith('Act '):
             return False
+        return True
 
-        return super().is_valid(node, match)
+    def mark_reference(self, node, full_match, in_tail):
+        # we've found a reference to (potentially) a list of section refs.
+        # we handle each item in the list separately, from right to left so
+        # that the match offsets don't change.
+        last = None
+        offset = full_match.start(1)
+        items = list(self.item_re.finditer(full_match.group(1)))
+        if len(items) == 1:
+            # TODO: this doesn't work, the regexes are different
+            if self.is_item_valid(node, items[0]):
+                return super().mark_reference(node, items[0], in_tail)
+
+        else:
+            for match in reversed(items):
+                if self.is_item_valid(node, match):
+                    ref = self.mark_item_reference(node, match, offset, in_tail)
+                    if last is None:
+                        last = ref
+
+        return last
 
     def find_target(self, node, match):
         num = match.group('num')
@@ -283,6 +325,28 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         if candidate_elements:
             self.match_cache[num] = candidate_elements[0]
             return candidate_elements[0]
+
+    def is_item_valid(self, node, match):
+        # use the traditional validity check
+        return super().is_valid(node, match)
+
+    def mark_item_reference(self, node, match, offset, in_tail):
+        ref, start_pos, end_pos = self.make_ref(node, match)
+        start_pos += offset
+        end_pos += offset
+
+        if in_tail:
+            text = node.tail or ''
+            node.addnext(ref)
+            node.tail = text[:start_pos]
+            ref.tail = text[end_pos:]
+        else:
+            text = node.text or ''
+            node.text = text[:start_pos]
+            node.insert(0, ref)
+            ref.tail = text[end_pos:]
+
+        return ref
 
     def make_href(self, node, match):
         target = self.match_cache[match.group('num')]

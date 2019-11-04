@@ -179,7 +179,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
             'locality': self.locality.code if self.locality else None,
         }
         if self.country.publication_set.count() == 1:
-            work['publication_name'] = self.place.publication_set.first().name
+            work['publication_name'] = self.country.publication_set.first().name
         context['work_json'] = json.dumps(work)
 
         context['subtypes'] = Subtype.objects.order_by('name').all()

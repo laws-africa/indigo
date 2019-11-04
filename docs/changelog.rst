@@ -5,6 +5,7 @@ Changelog
 ---------
 
 * FEATURE: choose which pages to import from PDFs
+* FEATURE: link to internal section references
 * New schedule syntax makes headings and subheadings clearer
 * Move document templates from templates/documents/ to templates/indigo_api/documents/
 

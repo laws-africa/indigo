@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
   // check if any advanced filter check is selected on load and expand the
   // advanced section on page load
-  let primaryWorkFilterValue = document.getElementById('primary_work_filter').value;
+  var primaryWorkFilterValue = document.getElementById('primary_work_filter').value;
 
   if ($("#work-filter-form input:checkbox:checked").length > 0) {
     $('.collapse').collapse('show');
@@ -86,7 +86,7 @@ function swapDates(startDate, endDate){
 
 function swapAssentDates(){
   if (document.getElementById('assent_date_check').checked){
-    let swappedDates = swapDates($('#assent_date_start').val(), $('#assent_date_end').val());
+    var swappedDates = swapDates($('#assent_date_start').val(), $('#assent_date_end').val());
 
     $('#assent_date_start').val(swappedDates[0]);
     $('#assent_date_end').val(swappedDates[1]);
@@ -95,7 +95,7 @@ function swapAssentDates(){
 
 function swapPublicationDates(){
   if (document.getElementById('publication_date_check').checked){
-    let swappedDates = swapDates($('#publication_date_start').val(), $('#publication_date_end').val());
+    var swappedDates = swapDates($('#publication_date_start').val(), $('#publication_date_end').val());
 
     $('#publication_date_start').val(swappedDates[0]);
     $('#publication_date_end').val(swappedDates[1]);
@@ -104,7 +104,7 @@ function swapPublicationDates(){
 
 function swapRepealedDates(){
   if (document.getElementById('repealed_date_check').checked){
-    let swappedDates = swapDates($('#repealed_date_start').val(), $('#repealed_date_end').val());
+    var swappedDates = swapDates($('#repealed_date_start').val(), $('#repealed_date_end').val());
 
     $('#repealed_date_start').val(swappedDates[0]);
     $('#repealed_date_end').val(swappedDates[1]);
@@ -113,7 +113,7 @@ function swapRepealedDates(){
 
 function swapCommencementDates(){
   if (document.getElementById('commencement_date_check').checked){
-    let swappedDates = swapDates($('#commencement_date_start').val(), $('#commencement_date_end').val());
+    var swappedDates = swapDates($('#commencement_date_start').val(), $('#commencement_date_end').val());
 
     $('#commencement_date_start').val(swappedDates[0]);
     $('#commencement_date_end').val(swappedDates[1]);
@@ -122,7 +122,7 @@ function swapCommencementDates(){
 
 function swapAmendmentDates(){
   if (document.getElementById('amendment_date_check').checked){
-    let swappedDates = swapDates($('#amendment_date_start').val(), $('#amendment_date_end').val());
+    var swappedDates = swapDates($('#amendment_date_start').val(), $('#amendment_date_end').val());
 
     $('#amendment_date_start').val(swappedDates[0]);
     $('#amendment_date_end').val(swappedDates[1]);

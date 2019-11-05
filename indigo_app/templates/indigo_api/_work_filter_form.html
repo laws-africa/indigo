@@ -150,10 +150,10 @@
       
       <!-- Primary work or subleg filter -->
       <div class="col mt-2 mr-2">
-        <select class="form-control" name="primary_work_filter">
+        <select class="form-control" name="primary_work_filter" id="primary_work_filter">
           <option value="all" {% if form.primary_work_filter.value == 'all' %} selected {% endif %}>Primary works filter</option>
           <option value="only" {% if form.primary_work_filter.value == 'only' %} selected {% endif %}>Only Primary Works</option>
-          <option value="excl" {% if form.primary_work_filter.value == 'exlc' %} selected {% endif %}>Exclude Primary Works</option>
+          <option value="excl" {% if form.primary_work_filter.value == 'excl' %} selected {% endif %}>Exclude Primary Works</option>
         </select>
       </div> 
     </div>    
@@ -162,8 +162,6 @@
       
     <!-- Reset filters -->
     <div class="d-flex flex-row">
-      <!-- TODO: this is still WIP, to keep the advanced section if any advanced filter is selected -->
-      <input type="checkbox" class="custom-control-input" id="advanced_filters_active" name="advanced_filters_active" {% if form.advanced_filters_active.value %} checked {% endif %} hidden>
       <button type="reset" class="btn btn-info" onclick="this.form.reset()">Reset filters</button>
     </div>
 

@@ -185,76 +185,7 @@
 {% block js %}
   {{ block.super }}
 
-  <script type="text/javascript">
-    document.addEventListener("DOMContentLoaded", function() {
-      // check if any advanced filter check is selected on load and expand the
-      // advanced section on page load
-      let primaryWorkFilterValue = document.getElementById('primary_work_filter').value;
-
-      if ($("#work-filter-form input:checkbox:checked").length > 0) {
-        $('.collapse').collapse('show');
-
-      } else if (primaryWorkFilterValue === 'only' || primaryWorkFilterValue === 'excl') {
-        $('.collapse').collapse('show');
-      }
-    });
-
-    function checkAssentDate(){
-      // if assent_date checkbox is clicked, make the dates required fields
-      if (document.getElementById('assent_date_check').checked) {
-        document.getElementById("assent_date_start").required = true;
-        document.getElementById("assent_date_end").required = true;
-      } else {
-        document.getElementById("assent_date_start").required = false;
-        document.getElementById("assent_date_end").required = false;      
-      }
-    }
-
-    function checkPublicationDate(){
-      // if publication _date checkbox is clicked, make the dates required fields
-      if (document.getElementById('publication_date_check').checked) {
-        document.getElementById("publication_date_start").required = true;
-        document.getElementById("publication_date_end").required = true;
-      } else {
-        document.getElementById("publication_date_start").required = false;
-        document.getElementById("publication_date_end").required = false;      
-      }
-    }
-
-    function checkRepealDate(){
-      // if repealed date checkbox is clicked, make the dates required fields
-      if (document.getElementById('repealed_date_check').checked) {
-        document.getElementById("repealed_date_start").required = true;
-        document.getElementById("repealed_date_end").required = true;
-      } else {
-        document.getElementById("repealed_date_start").required = false;
-        document.getElementById("repealed_date_end").required = false;      
-      }
-    }
-
-    function checkCommencementDate(){
-      // if commencement date checkbox is clicked, make the dates required fields
-      if (document.getElementById('commencement_date_check').checked) {
-        document.getElementById("commencement_date_start").required = true;
-        document.getElementById("commencement_date_end").required = true;
-      } else {
-        document.getElementById("commencement_date_start").required = false;
-        document.getElementById("commencement_date_end").required = false;      
-      }
-    }
-
-    function checkAmendDate(){
-      // if amendment date checkbox is clicked, make the dates required fields
-      if (document.getElementById('amendment_date_check').checked) {
-        document.getElementById("amendment_date_start").required = true;
-        document.getElementById("amendment_date_end").required = true;
-      } else {
-        document.getElementById("amendment_date_start").required = false;
-        document.getElementById("amendment_date_end").required = false;      
-      }
-    }
- 
-  </script>
+  <script type="text/javascript" src="{% static 'javascript/indigo/views/advanced_work_filters.js' %}"></script>
   <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">
 {% endblock %}

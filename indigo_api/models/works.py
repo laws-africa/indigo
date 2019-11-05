@@ -339,9 +339,19 @@ class Work(models.Model):
 
         return pits
 
-    @property
     def as_at_date(self):
-        return self.place.settings.as_at_date
+        # the as-at date is the maximum of the most recent, published expression date,
+        # and the place's as-at date.
+        q = self.expressions().published().order_by('-expression_date').values('expression_date').first()
+
+        dates = [
+            (q or {}).get('expression_date'),
+            self.place.settings.as_at_date,
+        ]
+
+        dates = [d for d in dates if d]
+        if dates:
+            return max(dates)
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

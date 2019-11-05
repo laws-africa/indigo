@@ -189,12 +189,12 @@
     document.addEventListener("DOMContentLoaded", function() {
       // check if any advanced filter check is selected on load and expand the
       // advanced section on page load
-      let primaryWorkFilter = document.getElementById('primary_work_filter').value;
+      let primaryWorkFilterValue = document.getElementById('primary_work_filter').value;
 
       if ($("#work-filter-form input:checkbox:checked").length > 0) {
         $('.collapse').collapse('show');
 
-      } else if ( primaryWorkFilter === 'only' || primaryWorkFilter === 'excl' ) {
+      } else if (primaryWorkFilterValue === 'only' || primaryWorkFilterValue === 'excl') {
         $('.collapse').collapse('show');
       }
     });
@@ -253,8 +253,7 @@
         document.getElementById("amendment_date_end").required = false;      
       }
     }
-
-  // if any advanced filter is applied, keep the section expanded   
+ 
   </script>
   <script src="{% static 'lib/chart.js-2.8.0/Chart.min.js' %}"></script>
   <link rel="stylesheet" href="{% static 'lib/chart.js-2.8.0/Chart.min.css' %}">

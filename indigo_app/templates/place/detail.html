@@ -186,7 +186,19 @@
   {{ block.super }}
 
   <script type="text/javascript">
-    // Advanced filters
+    document.addEventListener("DOMContentLoaded", function() {
+      // check if any advanced filter check is selected on load and expand the
+      // advanced section on page load
+      let primaryWorkFilter = document.getElementById('primary_work_filter').value;
+
+      if ($("#work-filter-form input:checkbox:checked").length > 0) {
+        $('.collapse').collapse('show');
+
+      } else if ( primaryWorkFilter === 'only' || primaryWorkFilter === 'excl' ) {
+        $('.collapse').collapse('show');
+      }
+    });
+
     function checkAssentDate(){
       // if assent_date checkbox is clicked, make the dates required fields
       if (document.getElementById('assent_date_check').checked) {

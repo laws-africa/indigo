@@ -16,15 +16,6 @@
       </select>
     </div>    
 
-    <!-- Stubs filter -->
-    <div class="mr-2">
-      <select class="form-control" name="stub">
-        <option value="excl" {% if form.stub.value == 'excl' %} selected {% endif %}>Exclude stubs</option>
-        <option value="only" {% if form.stub.value == 'only' %} selected {% endif %}>Only stubs</option>
-        <option value="all" {% if form.stub.value == 'all' %} selected {% endif %}>Everything</option>
-      </select>
-    </div>
-
     <!-- Status filter -->
     <div class="mr-2">
       <select class="selectpicker notooltip" multiple name="status" data-width="fit" data-style="btn-outline-secondary">
@@ -51,7 +42,7 @@
   <div class="collapse border-top mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">
     <div class="row mt-2">
       <!-- Primary work or subleg filter -->
-      <div class="col-md-4">
+      <div class="col-md-3">
         <select class="form-control" name="{{ form.primary_subsidiary.html_name }}">
           {% for opt in form.primary_subsidiary %}
             <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
@@ -59,8 +50,17 @@
         </select>
       </div>
 
+      <!-- Stubs filter -->
+      <div class="col-md-3">
+        <select class="form-control" name="stub">
+          {% for opt in form.stub %}
+            <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
       <!-- Work Taxonomy filter -->
-      <div class="col-md-6 offset-md-2">
+      <div class="col-md-6">
         {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
         {% if topic_groups %}
           <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="auto" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
@@ -78,7 +78,7 @@
 
     <div class="row mt-2">
       <!-- Assent Date filter -->
-      <div class="col mt-2">
+      <div class="col-md-6 mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
             <input type="checkbox" class="custom-control-input" id="assent_date_check" name="assent_date_check" {% if form.assent_date_check.value %} checked {% endif %} onchange="checkAssentDate()">
@@ -92,7 +92,7 @@
       </div>
 
       <!-- Publication Date filter -->
-      <div class="col mt-2">
+      <div class="col-md-6 mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
             <input type="checkbox" class="custom-control-input" id="publication_date_check" name="publication_date_check" {% if form.publication_date_check.value %} checked {% endif %} onchange="checkPublicationDate()">
@@ -108,7 +108,7 @@
 
     <div class="row">
       <!-- Repealed filter -->
-      <div class="col mt-2">
+      <div class="col-md-6 mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
             <input type="checkbox" class="custom-control-input" id="repealed_date_check" name="repealed_date_check" {% if form.repealed_date_check.value %} checked {% endif %} onchange="checkRepealDate()">
@@ -122,7 +122,7 @@
       </div>
 
       <!-- Commenced filter -->
-      <div class="col mt-2">
+      <div class="col-md-6 mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
             <input type="checkbox" class="custom-control-input" id="commencement_date_check" name="commencement_date_check" {% if form.commencement_date_check.value %} checked {% endif %} onchange="checkCommencementDate()">
@@ -138,7 +138,7 @@
 
     <div class="row">
       <!-- Amendment Date Filter-->
-      <div class="col mt-2">
+      <div class="col-md-6 mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
             <input type="checkbox" class="custom-control-input" id="amendment_date_check" name="amendment_date_check" {% if form.amendment_date_check.value %} checked {% endif %} onchange="checkAmendDate()">

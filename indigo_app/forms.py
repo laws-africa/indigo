@@ -234,7 +234,7 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only')])
+    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
@@ -266,7 +266,8 @@ class WorkFilterForm(forms.Form):
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     advanced_filters = ['assent_date_check', 'publication_date_check', 'amendment_date_check',
-                        'commencement_date_check', 'repealed_date_check', 'primary_subsidiary', 'taxonomies']
+                        'commencement_date_check', 'repealed_date_check', 'primary_subsidiary', 'taxonomies',
+                        'stub']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -283,12 +284,10 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if self.cleaned_data.get('stub'):
-            if self.cleaned_data['stub'] == 'excl':
-                queryset = queryset.filter(stub=False)
-
-            elif self.cleaned_data['stub'] == 'only':
-                queryset = queryset.filter(stub=True)
+        if self.cleaned_data.get('stub') == '':
+            queryset = queryset.filter(stub=False)
+        elif self.cleaned_data.get('stub') == 'only':
+            queryset = queryset.filter(stub=True)
 
         if self.cleaned_data.get('status'):
             if self.cleaned_data['status'] == ['draft']:

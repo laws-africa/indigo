@@ -33,22 +33,6 @@
       </select>
     </div>
 
-    <!-- Work Taxonomy filter -->
-    <div class="mr-2">
-      {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
-      {% if topic_groups %}
-        <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="fit" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
-          {% for topic in topic_groups %}
-            <optgroup label="{{ topic.grouper }}">
-              {% for taxonomy in topic.list %}
-                <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
-              {% endfor %}
-            </optgroup>
-          {% endfor %}
-        </select>
-      {% endif %}
-    </div>
-
     <!-- Time updated filter -->
     <div class="mr-2">
       <select class="form-control" name="sortby">
@@ -60,22 +44,45 @@
       </select>
     </div>
 
-    <div class="btn-group">
-      <button class="btn btn-info mr-2" type="button" data-toggle="collapse" data-target="#advancedFilters" aria-expanded="false" aria-controls="advancedFilters">
-        Advanced
-      </button>
-      <button type="submit" class="btn btn-success">Filter</button>
-    </div> 
+    <button type="submit" class="btn btn-success mr-2">Apply</button>
+    <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">Advanced...</a>
   </div>
 
-  <div class="collapse" id="advancedFilters">
+  <div class="collapse border-top mt-2" id="advancedFilters">
+    <div class="row mt-2">
+      <!-- Primary work or subleg filter -->
+      <div class="col-md-4">
+        <select class="form-control" name="primary_work_filter" id="primary_work_filter">
+          <option value="all" {% if form.primary_work_filter.value == 'all' %} selected {% endif %}>Primary and subsidiary works</option>
+          <option value="only" {% if form.primary_work_filter.value == 'only' %} selected {% endif %}>Only primary works</option>
+          <option value="excl" {% if form.primary_work_filter.value == 'excl' %} selected {% endif %}>Only subsidiary works</option>
+        </select>
+      </div>
+
+      <!-- Work Taxonomy filter -->
+      <div class="col-md-6 offset-md-2">
+        {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
+        {% if topic_groups %}
+          <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="auto" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
+            {% for topic in topic_groups %}
+              <optgroup label="{{ topic.grouper }}">
+                {% for taxonomy in topic.list %}
+                  <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        {% endif %}
+      </div>
+    </div>
+
     <div class="row mt-2">
       <!-- Assent Date filter -->
       <div class="col mt-2">
         <div class="input-group input-daterange">
           <div class="custom-control custom-checkbox mt-2 mr-2">
             <input type="checkbox" class="custom-control-input" id="assent_date_check" name="assent_date_check" {% if form.assent_date_check.value %} checked {% endif %} onchange="checkAssentDate()">
-            <label class="custom-control-label" for="assent_date_check">Assented between</label>
+            <label class="custom-control-label" for="assent_date_check">Assented to between</label>
           </div>
 
           <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
@@ -98,8 +105,6 @@
         </div>
       </div>
     </div>    
-
-    <hr>
 
     <div class="row">
       <!-- Repealed filter -->
@@ -131,8 +136,6 @@
       </div>
     </div>
 
-    <hr>
-
     <div class="row">
       <!-- Amendment Date Filter-->
       <div class="col mt-2">
@@ -147,22 +150,12 @@
           <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
         </div>
       </div>   
-      
-      <!-- Primary work or subleg filter -->
-      <div class="col mt-2 mr-2">
-        <select class="form-control" name="primary_work_filter" id="primary_work_filter">
-          <option value="all" {% if form.primary_work_filter.value == 'all' %} selected {% endif %}>Primary works filter</option>
-          <option value="only" {% if form.primary_work_filter.value == 'only' %} selected {% endif %}>Only Primary Works</option>
-          <option value="excl" {% if form.primary_work_filter.value == 'excl' %} selected {% endif %}>Exclude Primary Works</option>
-        </select>
-      </div> 
-    </div>    
+    </div>
 
-    <hr>
-      
     <!-- Reset filters -->
-    <div class="d-flex flex-row">
-      <button type="reset" class="btn btn-info" onclick="this.form.reset()">Reset filters</button>
+    <div class="text-right mt-3">
+      <a href="{{ request.path }}" class="btn btn-link mr-2">Clear filters</a>
+      <button type="submit" class="btn btn-success">Apply filters</button>
     </div>
 
   </div>

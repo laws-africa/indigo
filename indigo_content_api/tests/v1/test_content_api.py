@@ -1,5 +1,6 @@
 import json
 import tempfile
+from datetime import date
 
 from mock import patch
 from nose.tools import *  # noqa
@@ -8,6 +9,7 @@ from django.test.utils import override_settings
 from sass_processor.processor import SassProcessor
 
 from indigo_api.renderers import PDFRenderer
+from indigo_api.models import Country
 
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
@@ -89,7 +91,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
-        assert_in('<div', response.content.decode('utf-8'))
+        assert_in('<span', response.content.decode('utf-8'))
         # html should not have self-closing tags
         assert_not_in('/>', response.content.decode('utf-8'))
 
@@ -98,7 +100,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
         assert_not_in('<body', response.content.decode('utf-8'))
-        assert_in('<div', response.content.decode('utf-8'))
+        assert_in('<span', response.content.decode('utf-8'))
 
     def test_published_html_standalone(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.html?standalone=1')
@@ -444,7 +446,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
         assert_not_in('<akomaNtoso', response.content.decode('utf-8'))
-        assert_in('<div', response.content.decode('utf-8'))
+        assert_in('<span', response.content.decode('utf-8'))
 
     def test_taxonomies(self):
         response = self.client.get(self.api_path + '/za/act/1880/1.json')
@@ -477,7 +479,18 @@ class ContentAPIV1TestMixin(object):
 
     def test_as_at_date(self):
         response = self.client.get(self.api_path + '/za/act/1880/1.json')
-        assert_equal(response.data['as_at_date'].strftime("%Y-%m-%d"), "2019-01-01")
+        assert_equal(response.data['as_at_date'], "2019-01-01")
+
+    def test_as_at_date_max_expression_date(self):
+        """ The as-at date for an individual work with points in time after the as-at date,
+        is the latest point in time date.
+        """
+        za = Country.for_code('za')
+        za.settings.as_at_date = date(2009, 1, 1)
+        za.settings.save()
+
+        response = self.client.get(self.api_path + '/za/act/2010/1.json')
+        assert_equal(response.data['as_at_date'], "2012-02-02")
 
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277

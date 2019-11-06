@@ -259,12 +259,14 @@ class WorkFilterForm(forms.Form):
     repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # primary work filter
-    primary_work_filter = forms.ChoiceField(choices=[('all', 'all'), ('only', 'only'), ('excl', 'excl')])
+    primary_subsidiary = forms.ChoiceField(choices=[('', 'Primary and subsidiary works'), ('primary', 'Primary works only'), ('subsidiary', 'Subsidiary works only')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'))
-    advanced_filters_active = forms.BooleanField(required=False, initial=False)
+
+    advanced_filters = ['assent_date_check', 'publication_date_check', 'amendment_date_check',
+                        'commencement_date_check', 'repealed_date_check', 'primary_subsidiary', 'taxonomies']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -272,6 +274,10 @@ class WorkFilterForm(forms.Form):
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
+
+    def show_advanced_filters(self):
+        # Should we show the advanced options box by default?
+        return any(bool(self.cleaned_data.get(a)) for a in self.advanced_filters)
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('q'):
@@ -367,10 +373,10 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')  
 
         # filter by primary work
-        if self.cleaned_data.get('primary_work_filter'):
-            if self.cleaned_data['primary_work_filter'] == 'only':
+        if self.cleaned_data.get('primary_subsidiary'):
+            if self.cleaned_data['primary_subsidiary'] == 'primary':
                 queryset = queryset.filter(parent_work__isnull=True)
-            elif self.cleaned_data['primary_work_filter'] == 'excl':
+            elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
                 queryset = queryset.filter(parent_work__isnull=False)
 
         return queryset

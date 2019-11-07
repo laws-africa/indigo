@@ -94,7 +94,7 @@
 
         var item = {
           'num': $node.children('num').text(),
-          'heading': $node.children('heading').text(),
+          'heading': $node.children('heading')[0].textContent,
           'element': node,
           'type': node.localName,
           'id': qualified_id,

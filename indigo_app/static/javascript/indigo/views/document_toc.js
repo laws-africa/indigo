@@ -86,8 +86,7 @@
       function generate_toc(node) {
         var $node = $(node);
         var $component = $node.parent().closest('doc');
-        var qualified_id = node.id,
-            heading = $node.children('heading')[0];
+        var qualified_id = node.id;
 
         if ($component.length > 0) {
           qualified_id = $component.attr('name') + '/' + qualified_id;
@@ -95,7 +94,7 @@
 
         var item = {
           'num': $node.children('num').text(),
-          'heading': heading ? heading.textContent : '',
+          'heading': $node.children('heading')[0].textContent,
           'element': node,
           'type': node.localName,
           'id': qualified_id,

@@ -79,15 +79,24 @@
     <div class="row mt-2">
       <!-- Assent Date filter -->
       <div class="col-md-6 mt-2">
-        <div class="input-group input-daterange">
-          <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="assent_date_check" name="assent_date_check" {% if form.assent_date_check.value %} checked {% endif %} onchange="checkAssentDate()">
-            <label class="custom-control-label" for="assent_date_check">Assented to between</label>
+        <div class="form-group">
+          <label for="{{ form.assent.id_for_label }}">Assent</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.assent.html_name }}" class="form-control" id="{{ form.assent.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.assent %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.assent.value != 'range'%}d-none{% endif %}" id="assent-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
+              </div>
+            </div>
           </div>
-
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
-          <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
         </div>
       </div>
 

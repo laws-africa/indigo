@@ -353,7 +353,7 @@ class WorkFilterForm(forms.Form):
         # filter by amendment date
         if self.cleaned_data.get('amendment') == 'yes':
             queryset = queryset.filter(amendments__date__isnull=False)
-        if self.cleaned_data.get('amendment') == 'no':
+        elif self.cleaned_data.get('amendment') == 'no':
             queryset = queryset.filter(amendments__date__isnull=True)
         elif self.cleaned_data.get('amendment') == 'range':
             if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):

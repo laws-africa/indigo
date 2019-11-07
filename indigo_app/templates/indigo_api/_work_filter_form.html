@@ -161,7 +161,7 @@
               </select>
             </div>
             <div class="col">
-              <div class="input-group input-daterange {% if form.commencement.value != 'range'%}d-none{% endif %}" id="commencedment-daterange">
+              <div class="input-group input-daterange {% if form.commencement.value != 'range'%}d-none{% endif %}" id="commencement-daterange">
                 <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
                 <div class="input-group-addon"> and </div>
                 <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">

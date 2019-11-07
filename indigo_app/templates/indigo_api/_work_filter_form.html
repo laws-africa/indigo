@@ -102,15 +102,24 @@
 
       <!-- Publication Date filter -->
       <div class="col-md-6 mt-2">
-        <div class="input-group input-daterange">
-          <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="publication_date_check" name="publication_date_check" {% if form.publication_date_check.value %} checked {% endif %} onchange="checkPublicationDate()">
-            <label class="custom-control-label" for="publication_date_check">Published between</label>
+        <div class="form-group">
+          <label for="{{ form.publication.id_for_label }}">Publication</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.publication.html_name }}" class="form-control" id="{{ form.publication.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.publication %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.publication.value != 'range'%}d-none{% endif %}" id="publication-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="publication_date_start" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="publication_date_end" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
+              </div>
+            </div>
           </div>
-
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="publication_date_start" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
-          <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="publication_date_end" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
         </div>
       </div>
     </div>    
@@ -118,29 +127,47 @@
     <div class="row">
       <!-- Repealed filter -->
       <div class="col-md-6 mt-2">
-        <div class="input-group input-daterange">
-          <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="repealed_date_check" name="repealed_date_check" {% if form.repealed_date_check.value %} checked {% endif %} onchange="checkRepealDate()">
-            <label class="custom-control-label" for="repealed_date_check">Repealed between</label>
+        <div class="form-group">
+          <label for="{{ form.repeal.id_for_label }}">Repeal</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.repeal.html_name }}" class="form-control" id="{{ form.repeal.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.repeal %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.repeal.value != 'range'%}d-none{% endif %}" id="repeal-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
+              </div>
+            </div>
           </div>
-
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
-          <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
         </div>
       </div>
 
       <!-- Commenced filter -->
       <div class="col-md-6 mt-2">
-        <div class="input-group input-daterange">
-          <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="commencement_date_check" name="commencement_date_check" {% if form.commencement_date_check.value %} checked {% endif %} onchange="checkCommencementDate()">
-            <label class="custom-control-label" for="commencement_date_check">Commenced between</label>
+        <div class="form-group">
+          <label for="{{ form.commencement.id_for_label }}">Commencement</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.commencement.html_name }}" class="form-control" id="{{ form.commencement.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.commencement %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.commencement.value != 'range'%}d-none{% endif %}" id="commencedment-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
+              </div>
+            </div>
           </div>
-
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
-          <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
         </div>
       </div>
     </div>
@@ -148,17 +175,26 @@
     <div class="row">
       <!-- Amendment Date Filter-->
       <div class="col-md-6 mt-2">
-        <div class="input-group input-daterange">
-          <div class="custom-control custom-checkbox mt-2 mr-2">
-            <input type="checkbox" class="custom-control-input" id="amendment_date_check" name="amendment_date_check" {% if form.amendment_date_check.value %} checked {% endif %} onchange="checkAmendDate()">
-            <label class="custom-control-label" for="amendment_date_check">Amended between</label>
+        <div class="form-group">
+          <label for="{{ form.amendment.id_for_label }}">Amendment</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.amendment.html_name }}" class="form-control" id="{{ form.amendment.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.amendment %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.amendment.value != 'range'%}d-none{% endif %}" id="amendment-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_start" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
+              </div>
+            </div>
           </div>
-
-          <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_start" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
-          <div class="input-group-addon"> and </div>
-          <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
         </div>
-      </div>   
+      </div>      
     </div>
 
     <!-- Reset filters -->

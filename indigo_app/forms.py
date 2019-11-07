@@ -1,3 +1,4 @@
+import datetime
 import json
 import urllib.parse
 
@@ -234,14 +235,39 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('excl', 'excl'), ('all', 'all'), ('only', 'only')])
+    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
+    # assent date filter
+    assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
+    assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+    assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
+    # publication date filter
+    publication = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not published'), ('yes', 'Published'), ('range', 'Published between...')])
+    publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+    publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
+    # amendment date filter
+    amendment = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not amended'), ('yes', 'Amended'), ('range', 'Amended between...')])
+    amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+    amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
+    # commencement date filter
+    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
+    commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+    commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
+    # repealed work filter
+    repeal = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not repealed'), ('yes', 'Repealed'), ('range', 'Repealed between...')])
+    repealed_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
+    repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
+    # primary work filter
+    primary_subsidiary = forms.ChoiceField(choices=[('', 'Primary and subsidiary works'), ('primary', 'Primary works only'), ('subsidiary', 'Subsidiary works only')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'))
+
+    advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
+                        'primary_subsidiary', 'taxonomies', 'stub']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -250,16 +276,18 @@ class WorkFilterForm(forms.Form):
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
+    def show_advanced_filters(self):
+        # Should we show the advanced options box by default?
+        return any(bool(self.cleaned_data.get(a)) for a in self.advanced_filters)
+
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if self.cleaned_data.get('stub'):
-            if self.cleaned_data['stub'] == 'excl':
-                queryset = queryset.filter(stub=False)
-
-            elif self.cleaned_data['stub'] == 'only':
-                queryset = queryset.filter(stub=True)
+        if self.cleaned_data.get('stub') == '':
+            queryset = queryset.filter(stub=False)
+        elif self.cleaned_data.get('stub') == 'only':
+            queryset = queryset.filter(stub=True)
 
         if self.cleaned_data.get('status'):
             if self.cleaned_data['status'] == ['draft']:
@@ -276,6 +304,70 @@ class WorkFilterForm(forms.Form):
 
         if self.cleaned_data.get('taxonomies'):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
+
+        # Advanced filters
+
+        # filter by assent date range
+        if self.cleaned_data.get('assent') == 'yes':
+            queryset = queryset.exclude(assent_date__isnull=False)
+        elif self.cleaned_data.get('assent') == 'no':
+            queryset = queryset.exclude(assent_date__isnull=True)
+        elif self.cleaned_data.get('assent') == 'range':
+            if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
+                start_date = self.cleaned_data['assent_date_start']
+                end_date = self.cleaned_data['assent_date_end']
+                queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
+
+        # filter by publication date range
+        if self.cleaned_data.get('publication') == 'yes':
+            queryset = queryset.exclude(publication_date__isnull=False)
+        elif self.cleaned_data.get('publication') == 'no':
+            queryset = queryset.exclude(publication_date__isnull=True)
+        elif self.cleaned_data.get('publication') == 'range':
+            if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
+                start_date = self.cleaned_data['publication_date_start']
+                end_date = self.cleaned_data['publication_date_end']
+                queryset = queryset.filter(publication_date__range=[start_date, end_date]).order_by('-publication_date')
+          
+        # filter by commencement date
+        if self.cleaned_data.get('commencement') == 'yes':
+            queryset = queryset.filter(commencement_date__isnull=False)
+        elif self.cleaned_data.get('commencement') == 'no':
+            queryset = queryset.filter(commencement_date__isnull=True)
+        elif self.cleaned_data.get('commencement') == 'range':
+            if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
+                start_date = self.cleaned_data['commencement_date_start']
+                end_date = self.cleaned_data['commencement_date_end']
+                queryset = queryset.filter(commencement_date__range=[start_date, end_date]).order_by('-commencement_date')           
+
+        # filter by repeal date
+        if self.cleaned_data.get('repeal') == 'yes':
+            queryset = queryset.filter(repealed_date__isnull=False)
+        elif self.cleaned_data.get('repeal') == 'no':
+            queryset = queryset.filter(repealed_date__isnull=False)
+        elif self.cleaned_data.get('repeal') == 'range':
+            if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
+                start_date = self.cleaned_data['repealed_date_start']
+                end_date = self.cleaned_data['repealed_date_end']
+                queryset = queryset.filter(repealed_date__range=[start_date, end_date]).order_by('-repealed_date')           
+
+        # filter by amendment date
+        if self.cleaned_data.get('amendment') == 'yes':
+            queryset = queryset.filter(amendments__date__isnull=False)
+        elif self.cleaned_data.get('amendment') == 'no':
+            queryset = queryset.filter(amendments__date__isnull=True)
+        elif self.cleaned_data.get('amendment') == 'range':
+            if self.cleaned_data.get('amendment_date_start') and self.cleaned_data.get('amendment_date_end'):
+                start_date = self.cleaned_data['amendment_date_start']
+                end_date = self.cleaned_data['amendment_date_end']
+                queryset = queryset.filter(amendments__date__range=[start_date, end_date]).order_by('-amendments__date')
+
+        # filter by primary work
+        if self.cleaned_data.get('primary_subsidiary'):
+            if self.cleaned_data['primary_subsidiary'] == 'primary':
+                queryset = queryset.filter(parent_work__isnull=True)
+            elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
+                queryset = queryset.filter(parent_work__isnull=False)
 
         return queryset
 

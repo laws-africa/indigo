@@ -103,6 +103,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
+    js_view = 'PlaceDetailView WorkFilterFormView'
 
     def get(self, request, *args, **kwargs):
         params = QueryDict(mutable=True)

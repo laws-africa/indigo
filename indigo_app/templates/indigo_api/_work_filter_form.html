@@ -16,37 +16,12 @@
       </select>
     </div>    
 
-    <!-- Stubs filter -->
-    <div class="mr-2">
-      <select class="form-control" name="stub">
-        <option value="excl" {% if form.stub.value == 'excl' %} selected {% endif %}>Exclude stubs</option>
-        <option value="only" {% if form.stub.value == 'only' %} selected {% endif %}>Only stubs</option>
-        <option value="all" {% if form.stub.value == 'all' %} selected {% endif %}>Everything</option>
-      </select>
-    </div>
-
     <!-- Status filter -->
     <div class="mr-2">
       <select class="selectpicker notooltip" multiple name="status" data-width="fit" data-style="btn-outline-secondary">
         <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
         <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
       </select>
-    </div>
-
-    <!-- Work Taxonomy filter -->
-    <div class="mr-2">
-      {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
-      {% if topic_groups %}
-        <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="fit" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
-          {% for topic in topic_groups %}
-            <optgroup label="{{ topic.grouper }}">
-              {% for taxonomy in topic.list %}
-                <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
-              {% endfor %}
-            </optgroup>
-          {% endfor %}
-        </select>
-      {% endif %}
     </div>
 
     <!-- Time updated filter -->
@@ -60,9 +35,173 @@
       </select>
     </div>
 
-    <div class="btn-group">
-      <button type="submit" class="btn btn-success">Filter</button>
-    </div>  
+    <button type="submit" class="btn btn-success mr-2">Apply</button>
+    <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">Advanced...</a>
+  </div>
+
+  <div class="collapse border-top mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">
+    <div class="row mt-2">
+      <!-- Primary work or subleg filter -->
+      <div class="col-md-3">
+        <select class="form-control" name="{{ form.primary_subsidiary.html_name }}">
+          {% for opt in form.primary_subsidiary %}
+            <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Stubs filter -->
+      <div class="col-md-3">
+        <select class="form-control" name="stub">
+          {% for opt in form.stub %}
+            <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Work Taxonomy filter -->
+      <div class="col-md-6">
+        {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
+        {% if topic_groups %}
+          <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="auto" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
+            {% for topic in topic_groups %}
+              <optgroup label="{{ topic.grouper }}">
+                {% for taxonomy in topic.list %}
+                  <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
+                {% endfor %}
+              </optgroup>
+            {% endfor %}
+          </select>
+        {% endif %}
+      </div>
+    </div>
+
+    <div class="row mt-2">
+      <!-- Assent Date filter -->
+      <div class="col-md-6 mt-2">
+        <div class="form-group">
+          <label for="{{ form.assent.id_for_label }}">Assent</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.assent.html_name }}" class="form-control" id="{{ form.assent.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.assent %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.assent.value != 'range'%}d-none{% endif %}" id="assent-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="assent_date_start" name="assent_date_start" value="{{ form.assent_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="assent_date_end" name="assent_date_end" value="{{ form.assent_date_end.value | default:'' }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Publication Date filter -->
+      <div class="col-md-6 mt-2">
+        <div class="form-group">
+          <label for="{{ form.publication.id_for_label }}">Publication</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.publication.html_name }}" class="form-control" id="{{ form.publication.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.publication %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.publication.value != 'range'%}d-none{% endif %}" id="publication-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="publication_date_start" name="publication_date_start" value="{{ form.publication_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="publication_date_end" name="publication_date_end" value="{{ form.publication_date_end.value | default:'' }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>    
+
+    <div class="row">
+      <!-- Repealed filter -->
+      <div class="col-md-6 mt-2">
+        <div class="form-group">
+          <label for="{{ form.repeal.id_for_label }}">Repeal</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.repeal.html_name }}" class="form-control" id="{{ form.repeal.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.repeal %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.repeal.value != 'range'%}d-none{% endif %}" id="repeal-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_start" name="repealed_date_start" value="{{ form.repealed_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="repealed_date_end" name="repealed_date_end" value="{{ form.repealed_date_end.value | default:'' }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Commenced filter -->
+      <div class="col-md-6 mt-2">
+        <div class="form-group">
+          <label for="{{ form.commencement.id_for_label }}">Commencement</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.commencement.html_name }}" class="form-control" id="{{ form.commencement.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.commencement %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.commencement.value != 'range'%}d-none{% endif %}" id="commencement-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_start" name="commencement_date_start" value="{{ form.commencement_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="commencement_date_end" name="commencement_date_end" value="{{ form.commencement_date_end.value | default:'' }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Amendment Date Filter-->
+      <div class="col-md-6 mt-2">
+        <div class="form-group">
+          <label for="{{ form.amendment.id_for_label }}">Amendment</label>
+          <div class="form-row">
+            <div class="col">
+              <select name="{{ form.amendment.html_name }}" class="form-control" id="{{ form.amendment.id_for_label }}" data-toggle="daterange">
+                {% for opt in form.amendment %}
+                  {{ opt }}
+                {% endfor %}
+              </select>
+            </div>
+            <div class="col">
+              <div class="input-group input-daterange {% if form.amendment.value != 'range'%}d-none{% endif %}" id="amendment-daterange">
+                <input type="text" class="form-control mr-1" data-provide="datepicker" placeholder="start date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_start" name="amendment_date_start" value="{{ form.amendment_date_start.value | default:'' }}">
+                <div class="input-group-addon"> and </div>
+                <input type="text" class="form-control ml-1 mr-1" data-provide="datepicker" placeholder="end date" pattern="\d{4}-\d\d-\d\d" id="amendment_date_end" name="amendment_date_end" value="{{ form.amendment_date_end.value | default:'' }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>      
+    </div>
+
+    <!-- Reset filters -->
+    <div class="text-right mt-3">
+      <a href="{{ request.path }}" class="btn btn-link mr-2">Clear filters</a>
+      <button type="submit" class="btn btn-success">Apply filters</button>
+    </div>
 
   </div>
 </form>

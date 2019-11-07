@@ -239,7 +239,7 @@ class WorkFilterForm(forms.Form):
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
-    assent_date_check = forms.BooleanField(required=False)
+    assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # publication date filter
@@ -265,7 +265,7 @@ class WorkFilterForm(forms.Form):
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
-    advanced_filters = ['assent_date_check', 'publication_date_check', 'amendment_date_check',
+    advanced_filters = ['assent', 'publication_date_check', 'amendment_date_check',
                         'commencement_date_check', 'repealed_date_check', 'primary_subsidiary', 'taxonomies',
                         'stub']
 
@@ -306,17 +306,16 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
 
         # Advanced filters
+
         # filter by assent date range
-        if self.cleaned_data.get('assent_date_check'):
+        if self.cleaned_data.get('assent') == 'yes':
+            queryset = queryset.exclude(assent_date__isnull=False)
+        elif self.cleaned_data.get('assent') == 'no':
+            queryset = queryset.exclude(assent_date__isnull=True)
+        elif self.cleaned_data.get('assent') == 'range':
             if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
                 start_date = self.cleaned_data['assent_date_start']
                 end_date = self.cleaned_data['assent_date_end']
-
-                queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
-
-            elif self.cleaned_data.get('assent_date_start') or self.cleaned_data.get('assent_date_end'):
-                start_date = end_date = self.cleaned_data.get('assent_date_start') or self.cleaned_data.get('assent_date_end')
-
                 queryset = queryset.filter(assent_date__range=[start_date, end_date]).order_by('-assent_date')
 
         # filter by publication date range

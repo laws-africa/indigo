@@ -34,8 +34,9 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections 26 and 31, blah.</p>
           <p>As given in sections 26 or 31, blah.</p>
           <p>As given in sections 26, 30 and 31.</p>
-          <p>As given in sections 26(b), 30(1) or 31.</p>
+          <p>As given in sections 26(b), 30 (1) or 31.</p>
           <p>As given in section 26 of this Act, blah.</p>
+          <p>As given in section 26 (1) of this Act, blah.</p>
           <p>In section 200 it says one thing and in section 26 it says another.</p>
           <p>In section 26 of Act 5 of 2012 it says one thing and in section 26 of this Act it says another.</p>
           <p>Two baddies: In section 200 it says one thing and in section 26 of Act 5 of 2012 it says another.</p>
@@ -90,8 +91,9 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections <ref href="#section-26">26</ref> and <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref>(1) or <ref href="#section-31">31</ref>.</p>
+          <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref> (1) or <ref href="#section-31">31</ref>.</p>
           <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
+          <p>As given in <ref href="#section-26">section 26</ref> (1) of this Act, blah.</p>
           <p>In section 200 it says one thing and in <ref href="#section-26">section 26</ref> it says another.</p>
           <p>In section 26 of Act 5 of 2012 it says one thing and in <ref href="#section-26">section 26</ref> of this Act it says another.</p>
           <p>Two baddies: In section 200 it says one thing and in section 26 of Act 5 of 2012 it says another.</p>

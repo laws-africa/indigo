@@ -244,7 +244,7 @@ class WorkFilterForm(forms.Form):
     assent_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     assent_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # publication date filter
-    publication = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not published'), ('yes', 'Published'), ('range', 'Published between...')])
+    publication = forms.ChoiceField(choices=[('', 'Any'), ('no', 'No publication date'), ('yes', 'Published'), ('range', 'Published between...')])
     publication_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     publication_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # amendment date filter
@@ -309,9 +309,9 @@ class WorkFilterForm(forms.Form):
 
         # filter by assent date range
         if self.cleaned_data.get('assent') == 'yes':
-            queryset = queryset.exclude(assent_date__isnull=False)
+            queryset = queryset.filter(assent_date__isnull=False)
         elif self.cleaned_data.get('assent') == 'no':
-            queryset = queryset.exclude(assent_date__isnull=True)
+            queryset = queryset.filter(assent_date__isnull=True)
         elif self.cleaned_data.get('assent') == 'range':
             if self.cleaned_data.get('assent_date_start') and self.cleaned_data.get('assent_date_end'):
                 start_date = self.cleaned_data['assent_date_start']
@@ -320,9 +320,9 @@ class WorkFilterForm(forms.Form):
 
         # filter by publication date range
         if self.cleaned_data.get('publication') == 'yes':
-            queryset = queryset.exclude(publication_date__isnull=False)
+            queryset = queryset.filter(publication_date__isnull=False)
         elif self.cleaned_data.get('publication') == 'no':
-            queryset = queryset.exclude(publication_date__isnull=True)
+            queryset = queryset.filter(publication_date__isnull=True)
         elif self.cleaned_data.get('publication') == 'range':
             if self.cleaned_data.get('publication_date_start') and self.cleaned_data.get('publication_date_end'):
                 start_date = self.cleaned_data['publication_date_start']

@@ -284,7 +284,7 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if self.cleaned_data.get('stub') == '':
+        if not self.cleaned_data.get('stub'):
             queryset = queryset.filter(stub=False)
         elif self.cleaned_data.get('stub') == 'only':
             queryset = queryset.filter(stub=True)

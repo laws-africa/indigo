@@ -6,6 +6,7 @@ Changelog
 
 * FEATURE: choose which pages to import from PDFs
 * FEATURE: link to internal section references
+* FEATURE: advanced work filtering (publication, commencement, repeal, amendment etc.)
 * New schedule syntax makes headings and subheadings clearer
 * Move document templates from templates/documents/ to templates/indigo_api/documents/
 

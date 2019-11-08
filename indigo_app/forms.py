@@ -235,7 +235,7 @@ class TaskFilterForm(forms.Form):
 
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
-    stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
+    stub = forms.ChoiceField(choices=[('excl', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
     subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
@@ -284,7 +284,7 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('q'):
             queryset = queryset.filter(Q(title__icontains=self.cleaned_data['q']) | Q(frbr_uri__icontains=self.cleaned_data['q']))
 
-        if self.cleaned_data.get('stub') == '':
+        if self.cleaned_data.get('stub') == 'excl':
             queryset = queryset.filter(stub=False)
         elif self.cleaned_data.get('stub') == 'only':
             queryset = queryset.filter(stub=True)

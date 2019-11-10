@@ -28,7 +28,7 @@
       {% endblock %}
 
       {% if work.pk %}
-        <nav class="nav nav-tabs mt-3">
+        <nav class="nav nav-tabs mt-4">
           {% block work-header-tabs %}
             <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-book"></i> Overview

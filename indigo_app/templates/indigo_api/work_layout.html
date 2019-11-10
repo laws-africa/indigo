@@ -52,27 +52,55 @@
 {% endblock %}
 
 
-{% block breadcrumbs %}
-  <li class="breadcrumb-item"><a class="work-country" href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
-  {% if locality %}
-  <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:locality.code %}">{{ locality.name }} · {{ locality.code }}</a></li>
-  {% endif %}
-  {% if work.pk %}
-  <li class="breadcrumb-item"><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.frbr_uri }}</a></li>
-  {% endif %}
-{% endblock %}
+{% block main-header %}
+  <header class="main-header tabbed-header">
+    <div class="container">
+      <ul class="breadcrumb text-muted">
+        {% block breadcrumbs %}
+          <li class="breadcrumb-item"><a class="work-country" href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a></li>
+          {% if locality %}
+          <li class="breadcrumb-item"><a class="work-locality" href="{% url 'place' place=country.code|add:'-'|add:locality.code %}">{{ locality.name }} · {{ locality.code }}</a></li>
+          {% endif %}
+          {% if work.pk %}
+          <li class="breadcrumb-item"><a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.frbr_uri }}</a></li>
+          {% endif %}
+        {% endblock %}
+      </ul>
 
+      {% block main-header-title %}
+        {% if work.pk %}
+          <h5 class="main-header-title">
+            <span class="work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</span> 
+            {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
+            {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+          </h5>
+        {% endif %}
+      {% endblock %}
 
-{% block main-header-title %}
-<div class="float-right">
-  <a href="{% url 'create_task' place=place.place_code %}?frbr_uri={{ work.frbr_uri|urlencode }}" class="btn btn-success">Create task</a>
-</div>
-
-<h5 class="main-header-title">
-  <span class="work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</span> 
-  {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
-  {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
-</h5>
+      {% if work.pk %}
+        <nav class="nav nav-tabs mt-3">
+          {% block work-header-tabs %}
+            <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}">
+              <i class="fas fa-fw fa-book"></i> Overview
+            </a>
+            <a class="nav-item nav-link {% if view.tab == 'amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">
+              <i class="fas fa-fw fa-clock"></i> Points in time
+            </a>
+            <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}">
+              <i class="fas fa-fw fa-thumbtack"></i> Tasks
+              <span class="badge badge-light">{{ work.tasks.unclosed.count }}</span>
+            </a>
+            <a class="nav-item nav-link {% if view.tab == 'related' %}active{% endif %}" href="{% url 'work_related' frbr_uri=work.frbr_uri %}">
+              <i class="fas fa-fw fa-sitemap"></i> Related works
+            </a>
+            <a class="nav-item nav-link {% if view.tab == 'versions' %}active{% endif %}" href="{% url 'work_versions' frbr_uri=work.frbr_uri %}">
+              <i class="fas fa-fw fa-history"></i> Changes
+            </a>
+          {% endblock %}
+        </nav>
+      {% endif %}
+    </div>
+  </header>
 {% endblock %}
 
 

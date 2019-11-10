@@ -105,6 +105,7 @@ class EditWorkView(WorkViewBase, UpdateView):
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
+    tab = 'overview'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
@@ -220,6 +221,7 @@ class DeleteWorkView(WorkViewBase, DeleteView):
 class WorkOverviewView(WorkViewBase, DetailView):
     js_view = ''
     template_name_suffix = '_overview'
+    tab = 'overview'
 
     def get_context_data(self, **kwargs):
         context = super(WorkOverviewView, self).get_context_data(**kwargs)
@@ -239,6 +241,7 @@ class WorkOverviewView(WorkViewBase, DetailView):
 
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
+    tab = 'amendments'
 
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
@@ -417,6 +420,7 @@ class AddWorkPointInTimeView(WorkDependentView, CreateView):
 class WorkRelatedView(WorkViewBase, DetailView):
     js_view = ''
     template_name_suffix = '_related'
+    tab = 'related'
 
     def get_context_data(self, **kwargs):
         context = super(WorkRelatedView, self).get_context_data(**kwargs)
@@ -493,6 +497,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
     object_list = None
     page_size = 20
     threshold = timedelta(seconds=3)
+    tab = 'versions'
 
     def get_context_data(self, **kwargs):
         context = super(WorkVersionsView, self).get_context_data(**kwargs)
@@ -542,6 +547,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
 class WorkTasksView(WorkViewBase, DetailView):
     template_name_suffix = '_tasks'
+    tab = 'tasks'
 
     def get_context_data(self, **kwargs):
         context = super(WorkTasksView, self).get_context_data(**kwargs)

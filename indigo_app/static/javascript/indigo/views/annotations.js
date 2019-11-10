@@ -203,6 +203,7 @@
       if (this.root.get('closed')) {
         this.blur();
         this.$el.remove();
+        this.trigger('closed', this);
       } else {
         this.display();
       }
@@ -381,6 +382,7 @@
       });
 
       this.listenTo(view, 'deleted', this.threadDeleted);
+      this.listenTo(view, 'closed', this.threadClosed);
       this.threadViews.push(view);
 
       return view;
@@ -388,6 +390,11 @@
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
+      this.visibleThreads = _.without(this.visibleThreads, view);
+      this.counts.set('threads', this.counts.get('threads') - 1);
+    },
+
+    threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
       this.counts.set('threads', this.counts.get('threads') - 1);
     },

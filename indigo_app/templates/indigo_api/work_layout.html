@@ -72,6 +72,8 @@
   <span class="work-title">{% if work.pk %}{{ work.title }}{% else %}Create a new work{% endif %}</span> 
   {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
   {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+  {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
+    {% elif not work.commencement_date %} <span class="badge badge-info">commencement uncertain</span> {% endif %}
 </h5>
 {% endblock %}
 

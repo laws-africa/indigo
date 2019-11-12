@@ -62,6 +62,14 @@
           {{#if stub}}
           <span class="badge badge-info">stub</span>
           {{/if}}
+          {{#unless commenced}}
+          <span class="badge badge-info">not commenced</span>
+          {{/unless}}
+          {{#if commenced}}
+          {{#unless commencement_date}}
+          <span class="badge badge-info">commencement uncertain</span>
+          {{/unless}}
+          {{/if}}
         </td>
         <td class="frbr_uri">{{ frbr_uri }}</td>
       </tr>

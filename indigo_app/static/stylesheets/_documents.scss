@@ -22,8 +22,13 @@
   .document-workspace-content,
   .document-xml-editor {
     flex: 1;
-    height: calc(100vh - 50px - 96px);
     position: relative;
+  }
+
+  .source-attachment-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   /* sidebar */

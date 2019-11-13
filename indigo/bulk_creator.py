@@ -541,3 +541,10 @@ Check the spreadsheet for reference and link it manually.'''.format(info['primar
         if len(potential_matches) == 1:
             return potential_matches.first()
 
+    @property
+    def share_with(self):
+        if not self._gsheets_secret:
+            self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
+
+        return self._gsheets_secret.get('client_email')
+

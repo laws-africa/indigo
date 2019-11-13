@@ -31,17 +31,22 @@
 
           <div class="document-workspace-buttons mt-1">
             {% block save-buttons %}
-            <div class="logged-in">
-              <div class="btn-group save-btn-group">
-                <button class="btn btn-success save" disabled><span class="if-published">Save &amp; publish</span><span class="if-draft">Save draft</span></button>
-                <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
-                <div class="dropdown-menu dropdown-menu-right">
-                  <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; publish</a>
-                  <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
-                </div>
-              </div>
-            </div>
-            <div class="not-logged-in"><a href="{% url 'account_login' %}?next={{ request.get_absolute_url|urlencode }}">Log in</a> to make changes.</div>
+              {% if request.user.is_authenticated %}
+                {% if user_can_edit %}
+                  <div class="btn-group save-btn-group">
+                    <button class="btn btn-success save" disabled><span class="if-published">Save &amp; publish</span><span class="if-draft">Save draft</span></button>
+                    <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; publish</a>
+                      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
+                    </div>
+                  </div>
+                {% else %}
+                  <div>You don't have permission to make changes.</div>
+                {% endif %}
+              {% else %}
+                <div><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Log in</a> to make changes.</div>
+              {% endif %}
             {% endblock %}
           </div>
         </div>

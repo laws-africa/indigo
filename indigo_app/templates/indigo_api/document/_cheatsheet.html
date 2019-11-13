@@ -256,6 +256,17 @@ This is the body of the section.</pre>
           </div>
           {% endblock %}
 
+          {% block cheat-special %}
+          <div class="card">
+            <a href="#cheat-special" data-toggle="collapse" class="card-header">Insert a special character</a>
+            <div id="cheat-special" class="collapse" data-parent="#cheat-accordion">
+              <div class="card-body">
+                <p>See guidance on using special characters in the <a href="https://docs.laws.africa/editing-a-document/special-characters" target="_blank">Editor Guide</a>.</p>
+              </div>
+            </div>
+          </div>
+          {% endblock %}
+
           {% block cheat-italics %}
           <div class="card">
             <a href="#cheat-italics" data-toggle="collapse" class="card-header">Make text italics</a>
@@ -433,12 +444,13 @@ This is the body of the section.</pre>
                 <div class="row mb-4">
                   <div class="col">
                     <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE</span>
+<span class="ace_constant ace_language">HEADING </span><span class="ace_entity ace_name ace_tag">Schedule heading</span>
 
 This is the body of the schedule.</pre>
                   </div>
                   <div class="col">
                     <div class="akoma-ntoso akoma-ntoso-snippet">
-                      <h2>Schedule</h2>
+                      <h2>Schedule heading</h2>
                       <div class="akn-paragraph akn--no-indent">
                         <span class="akn-content">
                           <span class="akn-p mb-0">This is the body of the schedule.</span>
@@ -448,32 +460,13 @@ This is the body of the schedule.</pre>
                   </div>
                 </div>
 
-                <p>Include a name using <code>SCHEDULE - Schedule Name</code>.</p>
-
-                <div class="row mb-4">
-                  <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE - First Schedule</span>
-
-This is the body of the first schedule.</pre>
-                  </div>
-                  <div class="col">
-                    <div class="akoma-ntoso akoma-ntoso-snippet">
-                      <h2>First Schedule</h2>
-                      <div class="akn-paragraph akn--no-indent">
-                        <span class="akn-content">
-                          <span class="akn-p mb-0">This is the body of the first schedule.</span>
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <p>Include a subtitle by putting it immediately below <code>SCHEDULE</code>.</p>
+                <p>Include a subheading with <code>SUBHEADING</code> below <code>HEADING</code>.</p>
 
                 <div class="row">
                   <div class="col">
-                    <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE - First Schedule</span>
-Laws to be repealed
+                    <pre class="editor-snippet"><span class="ace_constant ace_language">SCHEDULE</span>
+<span class="ace_constant ace_language">HEADING </span><span class="ace_entity ace_name ace_tag">First schedule </span>
+<span class="ace_constant ace_language">SUBHEADING </span><span class="ace_entity ace_name ace_tag">Laws to be repealed</span>
 
 This is the body of the first schedule.</pre>
                   </div>

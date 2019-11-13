@@ -179,8 +179,8 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
             'country': self.country.code,
             'locality': self.locality.code if self.locality else None,
         }
-        if self.place.publication_set.count() == 1:
-            work['publication_name'] = self.place.publication_set.first().name
+        if self.country.publication_set.count() == 1:
+            work['publication_name'] = self.country.publication_set.first().name
         context['work_json'] = json.dumps(work)
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
@@ -503,9 +503,10 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         context = super(WorkVersionsView, self).get_context_data(**kwargs)
 
         actions = self.work.action_object_actions.all()
+        amendment_actions = [aa for a in self.work.amendments.all() for aa in a.action_object_actions.all()]
         versions = self.work.versions().all()
         task_actions = self.get_task_actions()
-        entries = sorted(chain(actions, versions, task_actions),
+        entries = sorted(chain(actions, amendment_actions, versions, task_actions),
                          key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
                          reverse=True)
         entries = self.coalesce_entries(entries)
@@ -541,7 +542,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
     def get_task_actions(self):
         tasks = self.work.tasks.all()
-        actions_per_task = [t.action_object_actions.all() for t in tasks]
+        actions_per_task = [t.action_object_actions.filter(verb='approved') for t in tasks]
         return [action for actions in actions_per_task for action in actions]
 
 

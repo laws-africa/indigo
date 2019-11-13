@@ -1,0 +1,10 @@
+[
+    {
+        "model": "indigo_app.Publication",
+        "pk": 1,
+        "fields": {
+            "country_id": 1,
+            "name": "Government Gazette"
+        }
+    }
+]

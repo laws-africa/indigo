@@ -73,3 +73,12 @@ class AttachmentPermissions(BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return DocumentPermissions().has_object_permission(request, view, obj.document)
+
+
+class DocumentActivityPermission(BasePermission):
+    """ The user must be able to make changes to the document in order to "lock"
+    it with a DocumentActivity object.
+    """
+    def has_permission(self, request, view):
+        return (request.user.has_perm('indigo_api.change_document')
+                and request.user.editor.has_country_permission(view.document.work.country))

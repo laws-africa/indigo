@@ -18,4 +18,4 @@ class DailyWorkMetricsTestCase(TestCase):
         DailyWorkMetrics.create_or_update(date)
 
         dailies = DailyWorkMetrics.objects.filter(date=date).all()
-        self.assertEqual(len(dailies), 1)
+        self.assertEqual(len(dailies), 2)

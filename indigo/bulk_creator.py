@@ -224,6 +224,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.publication_name = row.get('publication_name')
             work.publication_number = row.get('publication_number')
             work.publication_date = row.get('publication_date')
+            work.commenced = bool(row.get('commencement_date') or row.get('commenced_by'))
             work.commencement_date = row.get('commencement_date')
             work.assent_date = row.get('assent_date')
             work.stub = row.get('stub')

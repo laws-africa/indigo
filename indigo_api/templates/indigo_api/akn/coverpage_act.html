@@ -44,7 +44,15 @@
         </li>
       {% endif %}
 
-      {% if document.commencement_date %}
+      {% if not document.work.commenced %}
+        <li class="commencement-date">
+          {% blocktrans %}Not yet commenced: This work has not come into force yet.{% endblocktrans %}
+        </li>
+      {% elif not document.commencement_date %}
+        <li class="commencement-date">
+          {% blocktrans %}Commencement uncertain: This work has likely commenced but a commencement date hasn't been captured.{% endblocktrans %}
+        </li>
+      {% elif document.commencement_date %}
         <li class="commencement-date">
           {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
           {% with document.work.commencing_work as commencing_work %}

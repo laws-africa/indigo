@@ -26,13 +26,29 @@
         this.iframe = document.getElementById('source-attachment-iframe');
         this.mime_types = {'application/pdf': true, 'text/html': true};
         this.chosen = null;
+
+        // work publication documen
+        if (this.document.work.get('publication_document')) {
+          var p = this.document.work.get('publication_document');
+
+          this.pubdoc = new Indigo.Attachment(this.document.work.get('publication_document'));
+          this.pubdoc.set('view_url', this.pubdoc.get('url'));
+          this.pubdoc.set('id', this.pubdoc.cid);
+        } else {
+          this.pubdoc = null;
+        }
       },
 
       rebuildChoices: function() {
-        var self = this;
-        this.choices.reset(this.attachments.filter(function(att) {
+        var self = this,
+            choices;
+
+        choices = this.attachments.filter(function(att) {
           return self.mime_types[att.get('mime_type')];
-        }));
+        });
+        if (this.pubdoc) choices.push(this.pubdoc);
+
+        this.choices.reset(choices);
       },
 
       render: function() {
@@ -40,18 +56,13 @@
             self = this;
 
         this.$dropdown.empty();
+        this.choices.each(function(att) {
+          dd.appendChild(new Option(
+            att.get('filename'), att.get('id'), false, self.chosen == att
+          ));
+        });
 
-        if (this.choices.length === 0) {
-          this.$toggle.attr('disabled', true);
-        } else {
-          this.$toggle.attr('disabled', false);
-
-          this.choices.each(function(att) {
-            dd.appendChild(new Option(
-              att.get('filename'), att.get('id'), false, self.chosen == att
-            ));
-          });
-        }
+        this.$toggle.attr('disabled', this.choices.length == 0);
       },
 
       toggle: function(e) {
@@ -59,7 +70,7 @@
         var show = !$(e.target).hasClass('active');
 
         if (show) {
-          this.choose(this.chosen || this.attachments.at(0));
+          this.choose(this.chosen || this.choices.at(0));
         } else {
           this.$view.addClass('d-none');
           this.$('.source-attachment-toggle').removeClass('active');
@@ -67,7 +78,7 @@
       },
 
       choose: function(item) {
-        item = this.attachments.get(item);
+        item = this.choices.get(item);
 
         if (this.chosen != item) {
           this.chosen = item;

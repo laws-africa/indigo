@@ -242,11 +242,13 @@
               <label for="{{ form.commencement_date.id_for_label }}">Commencement date</label>
               <input type="text" class="form-control" data-provide="datepicker" id="{{ form.commencement_date.id_for_label }}" name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
               <p class="form-text text-muted">Date when most of the work comes into force</p>
+
               <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="commencement_date_unknown" value="on">
-                <label class="ml-2 mr-2" for="commencement_date_unknown">Commencement date unknown</label>
-                <p class="form-text text-muted">Check this box in the rare case of knowing a (usually old) work has come into force but not being able to track down its commencement date.</p>
+                <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
+                <label for="commencement_date_unknown">Commencement date is unknown</label>
               </div>
+              <p class="form-text text-muted">Check this box when a (usually old) work has come into force, but the exact commencement date is not known.</p>
+
               {% if work.pk and work.commencement_date %}
                 {% if work.amendments_made.exists or work.repealed_works.exists %}
                   <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>

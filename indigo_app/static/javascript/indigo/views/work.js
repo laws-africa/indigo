@@ -232,6 +232,8 @@
       if (this.model.get('commenced')) {
         this.$('#commencement_details').removeClass('d-none');
       } else {
+        this.model.set('commencement_date', null);
+        this.model.set('commencing_work', null);
         this.$('#commencement_details').addClass('d-none');
       }
     },

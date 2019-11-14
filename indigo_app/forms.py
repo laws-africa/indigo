@@ -252,7 +252,7 @@ class WorkFilterForm(forms.Form):
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
-    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('uncertain', 'Commencement uncertain'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
+    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # repealed work filter
@@ -334,7 +334,7 @@ class WorkFilterForm(forms.Form):
             queryset = queryset.filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'no':
             queryset = queryset.filter(commenced=False)
-        elif self.cleaned_data.get('commencement') == 'uncertain':
+        elif self.cleaned_data.get('commencement') == 'date_unknown':
             queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'range':
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):

@@ -12,7 +12,7 @@
     {% if not work.commenced %}
       <span class="badge badge-info">not commenced</span>
     {% elif not work.commencement_date %}
-      <span class="badge badge-info">commencement uncertain</span>
+      <span class="badge badge-info">commencement date unknown</span>
     {% endif %}
     <br><span class="text-muted mt-1 wb-all">{{ work.frbr_uri }}</span>
   </h6>

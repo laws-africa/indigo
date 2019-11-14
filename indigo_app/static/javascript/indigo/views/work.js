@@ -49,7 +49,6 @@
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
       '#id_work-stub': 'stub',
-      // Including the below leads to 'Commenced' being unchecked when the form loads; no idea why.
       '#id_work-commenced': 'commenced',
       '#id_work-commencement_date': {
         observe: 'commencement_date',
@@ -123,7 +122,6 @@
 
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commenced', this.commencedChanged);
-      this.listenTo(this.model, 'change:commencement_date', this.commencementDateChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
       this.listenTo(this.model, 'change:number', this.numberChanged);
@@ -134,7 +132,6 @@
       this.model.updateFrbrUri();
       this.stickit();
       this.repealChanged();
-      this.commencementAlert();
       this.commencingWorkChanged();
       this.parentChanged();
       this.publicationChanged();
@@ -210,7 +207,6 @@
     deleteCommencingWork: function(e) {
       e.preventDefault();
       this.model.set('commencing_work', null);
-      this.commencementAlert();
     },
 
     changeCommencingWork: function() {
@@ -231,10 +227,12 @@
     },
 
     commencementAlert: function() {
-      if (!this.model.get('commencement_date') && !this.model.get('commencing_work')) {
-        this.$('#commencement_alert').addClass('d-none');
-      } else if (this.model.get('commenced')) {
-        this.$('#commencement_alert').removeClass('d-none');
+      if (this.model.get('commencement_date') || this.model.get('commencing_work')) {
+        if (!this.model.get('commenced')) {
+          this.$('#commencement_alert').removeClass('d-none');
+        } else if (this.model.get('commenced')) {
+          this.$('#commencement_alert').addClass('d-none');
+        }
       }
     },
 
@@ -244,10 +242,6 @@
       } else {
         this.$('#commencement_details').addClass('d-none');
       }
-      this.commencementAlert();
-    },
-
-    commencementDateChanged: function() {
       this.commencementAlert();
     },
 
@@ -261,7 +255,6 @@
       } else {
         this.$('.work-commencing-work').html(this.commencingWorkTemplate({}));
       }
-      this.commencementAlert();
     },
 
     changeParent: function() {

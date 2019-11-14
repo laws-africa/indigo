@@ -235,7 +235,7 @@
               <label class="ml-2 mr-2" for="{{ form.commenced.id_for_label }}">Commenced – this work has come into force</label>
             </div>
           </div>
-          <div id="commencement_alert" class="alert alert-warning">If you clear this and Save, the commencement date and/or work will be removed.</div>
+          <div id="commencement_alert" class="d-none alert alert-warning">If you clear this and Save, the commencement date and/or work will be removed.</div>
         </div>
         <div id="commencement_details" {% if not work.commenced %}class="d-none"{% endif %}>
           <div class="form-row">

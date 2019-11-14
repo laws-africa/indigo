@@ -50,6 +50,7 @@
       '#id_work-publication_number': 'publication_number',
       '#id_work-stub': 'stub',
       '#id_work-commenced': 'commenced',
+      '#commencement_date_unknown': 'commencement_date_unknown',
       '#id_work-commencement_date': {
         observe: 'commencement_date',
         onSet: emptyIsNull,
@@ -122,6 +123,7 @@
 
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
       this.listenTo(this.model, 'change:commenced', this.commencedChanged);
+      this.listenTo(this.model, 'change:commencement_date_unknown', this.commencementDateUnknownChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
       this.listenTo(this.model, 'change:number', this.numberChanged);
@@ -226,23 +228,20 @@
       });
     },
 
-    commencementAlert: function() {
-      if (this.model.get('commencement_date') || this.model.get('commencing_work')) {
-        if (!this.model.get('commenced')) {
-          this.$('#commencement_alert').removeClass('d-none');
-        } else if (this.model.get('commenced')) {
-          this.$('#commencement_alert').addClass('d-none');
-        }
-      }
-    },
-
     commencedChanged: function() {
       if (this.model.get('commenced')) {
         this.$('#commencement_details').removeClass('d-none');
       } else {
         this.$('#commencement_details').addClass('d-none');
       }
-      this.commencementAlert();
+    },
+
+    commencementDateUnknownChanged: function() {
+      if (this.model.get('commencement_date_unknown')) {
+        this.$('#id_work-commencement_date').addClass('d-none');
+      } else {
+        this.$('#id_work-commencement_date').removeClass('d-none');
+      }
     },
 
     commencingWorkChanged: function() {

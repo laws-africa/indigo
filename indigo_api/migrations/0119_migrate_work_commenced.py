@@ -16,7 +16,7 @@ def migrate_work_commenced(apps, schema_editor):
             work.save()
 
 
-def unmigrate_work_commenced():
+def unmigrate_work_commenced(apps, schema_editor):
     pass
 
 

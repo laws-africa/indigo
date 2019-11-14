@@ -16,10 +16,6 @@ def migrate_work_commenced(apps, schema_editor):
             work.save()
 
 
-def unmigrate_work_commenced(apps, schema_editor):
-    pass
-
-
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -27,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_work_commenced, unmigrate_work_commenced),
+        migrations.RunPython(migrate_work_commenced, migrations.RunPython.noop),
     ]

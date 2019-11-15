@@ -23,6 +23,7 @@
     initialize: function(options) {
       this.template = options.template;
       this.listenTo(this.model, 'destroy', this.remove);
+      this.document = options.document;
 
       // is this view dealing with starting a new annotation thread?
       this.isNew = this.model.isNew();
@@ -33,6 +34,7 @@
     },
 
     render: function() {
+      var self = this;
       this.$el.empty();
 
       if (this.isNew) {
@@ -54,8 +56,8 @@
 
           json.task.view_url =
             "/places/" +
-            Indigo.view.document.work.get('country') +
-            (Indigo.view.document.work.get('locality') ? ('-' + Indigo.view.document.work.get('locality')) : '') +
+            self.document.work.get('country') +
+            (self.document.work.get('locality') ? ('-' + self.document.work.get('locality')) : '') +
             "/tasks/" +
             json.task.id;
         }
@@ -172,7 +174,11 @@
           note.id = note.cid;
           note.attributes.id = note.cid;
         }
-        return new Indigo.AnnotationView({model: note, template: options.template});
+        return new Indigo.AnnotationView({
+          model: note,
+          template: options.template,
+          document: options.document,
+        });
       });
 
       this.listenTo(this.model, 'destroy', this.annotationDeleted);
@@ -203,6 +209,7 @@
       if (this.root.get('closed')) {
         this.blur();
         this.$el.remove();
+        this.trigger('closed', this);
       } else {
         this.display();
       }
@@ -289,7 +296,11 @@
       reply
         .save()
         .then(function() {
-          view = new Indigo.AnnotationView({model: reply, template: self.annotationTemplate});
+          view = new Indigo.AnnotationView({
+            model: reply,
+            template: self.annotationTemplate,
+            document: self.document,
+          });
           self.model.add(reply);
           self.annotationViews.push(view);
 
@@ -381,6 +392,7 @@
       });
 
       this.listenTo(view, 'deleted', this.threadDeleted);
+      this.listenTo(view, 'closed', this.threadClosed);
       this.threadViews.push(view);
 
       return view;
@@ -388,6 +400,11 @@
 
     threadDeleted: function(view) {
       this.threadViews = _.without(this.threadViews, view);
+      this.visibleThreads = _.without(this.visibleThreads, view);
+      this.counts.set('threads', this.counts.get('threads') - 1);
+    },
+
+    threadClosed: function(view) {
       this.visibleThreads = _.without(this.visibleThreads, view);
       this.counts.set('threads', this.counts.get('threads') - 1);
     },

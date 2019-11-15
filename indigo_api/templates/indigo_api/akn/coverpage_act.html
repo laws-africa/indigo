@@ -44,7 +44,15 @@
         </li>
       {% endif %}
 
-      {% if document.commencement_date %}
+      {% if not document.work.commenced %}
+        <li class="commencement-date">
+          {% blocktrans %}Not commenced{% endblocktrans %}
+        </li>
+      {% elif not document.commencement_date %}
+        <li class="commencement-date">
+          {% blocktrans %}Commencement date unknown{% endblocktrans %}
+        </li>
+      {% elif document.commencement_date %}
         <li class="commencement-date">
           {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
           {% with document.work.commencing_work as commencing_work %}

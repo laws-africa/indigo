@@ -64,6 +64,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     publication_document = serializers.SerializerMethodField()
     taxonomies = serializers.SerializerMethodField()
     as_at_date = serializers.DateField(source='work.as_at_date')
+    commenced = serializers.BooleanField(source='work.commenced')
 
     class Meta:
         model = Document
@@ -75,7 +76,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
-            'expression_date', 'commencement_date', 'assent_date',
+            'expression_date', 'commenced', 'commencement_date', 'assent_date',
             'language', 'repeal', 'amendments', 'points_in_time',
             'numbered_title', 'taxonomies', 'as_at_date',
 

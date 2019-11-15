@@ -70,6 +70,11 @@
                       {% if work.repealed_date %} 
                         <span class="badge badge-info">repealed</span>
                       {% endif %}
+                      {% if not work.commenced %}
+                        <span class="badge badge-info">not commenced</span>
+                      {% elif not work.commencement_date %}
+                        <span class="badge badge-info">commencement date unknown</span>
+                      {% endif %}
                     </div>
                     <div class="text-muted">{{ work.frbr_uri }}</div>
                     {% if work.parent_work %}

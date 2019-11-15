@@ -7,6 +7,8 @@ Changelog
 * FEATURE: choose which pages to import from PDFs
 * FEATURE: link to internal section references
 * FEATURE: advanced work filtering (publication, commencement, repeal, amendment etc.)
+* FEATURE: show offline warning when editing a document
+* FEATURE: site sidebar removed and replaced with tabs
 * FEATURE: show source attachments and work publication document side-by-side when editing a document
 * New schedule syntax makes headings and subheadings clearer
 * Move document templates from templates/documents/ to templates/indigo_api/documents/

@@ -1,14 +1,42 @@
-<div class="document-toolbar">
+<div class="btn-toolbar border-right mr-2 pr-2">
+  <div class="btn-group btn-group-sm mr-2">
+    <a class="btn btn-outline-secondary" href="#attachments-modal" data-toggle="modal"><i class="fas fa-paperclip"></i> Attachments</a>
+    <button class="btn btn-outline-secondary show-revisions"><i class="fas fa-history"></i> Changes</button>
+    {% if comparison_expressions %}
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-exchange-alt"></i> Compare to</button>
+        <div class="dropdown-menu">
+          {% for exp in comparison_expressions %}
+            <a class="dropdown-item show-pit-comparison" href="#" id="{{ exp.id }}">
+              {{ exp.expression_date|date:"Y-m-d" }}
+              {% if exp.id == document.id %}– current point in time{% endif %}
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <div class="btn-group btn-group-sm">
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-magic"></i> Analysis</button>
+    <div class="dropdown-menu">
+      <a class="dropdown-item" href="#defined-terms-modal" data-toggle="modal">Defined terms...</a>
+      <a class="dropdown-item" href="#references-modal" data-toggle="modal">References...</a>
+    </div>
+  </div>
+</div>
+
+<div class="document-editor-toolbar">
   <div class="btn-toolbar general-buttons">
     <div class="btn-group btn-group-sm mr-2">
       {% if request.user.is_authenticated %}
-      <button type="button" class="btn btn-primary edit-text" title="Edit text"><i class="fas fa-pencil-alt"></i> Edit</button>
+      <button type="button" class="btn btn-primary edit-text"><i class="fas fa-pencil-alt"></i> Edit</button>
       {% endif %}
     </div>
     <div class="btn-group btn-group-sm mr-2">
-      <button type="button" class="btn btn-outline-secondary show-akn-hierarchy" data-toggle="buttons" title="Outline Akoma Ntoso Hierarchy"><i class="fas fa-sitemap"></i> Show hierarchy</button>
+      <button type="button" class="btn btn-outline-secondary show-akn-hierarchy" data-toggle="buttons" title="Outline Akoma Ntoso Hierarchy"><i class="fas fa-sitemap"></i> Hierarchy</button>
       {% if perms.indigo_api.view_document_xml %}
-      <button type="button" class="btn btn-outline-secondary show-xml-editor" data-toggle="buttons" title="Show XML"><i class="fas fa-code"></i> Show source</button>
+      <button type="button" class="btn btn-outline-secondary show-xml-editor" data-toggle="buttons"><i class="fas fa-code"></i> Akoma Ntoso</button>
       {% endif %}
       {% if place.settings.styleguide_url %}
         <a class="btn btn-outline-secondary ml-2" href="{{ place.settings.styleguide_url }}" target="_blank"><i class="fas fa-book-open fa-fw"></i> {{ work.country.name }} Style Guide</a>
@@ -114,37 +142,25 @@
   <!-- end table editor buttons -->
 </div>
 
-<div id="document-activity-view" class="ml-auto"></div>
+<div class="btn-toolbar ml-auto">
+  <div class="btn-group btn-group-sm mr-2">
+    <a class="btn btn-link" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack mr-1"></i>Tasks</a>
+  </div>
 
-<div class="btn-toolbar document-workspace-buttons">
-  {% block save-buttons %}
-    {% if request.user.is_authenticated %}
-      {% if user_can_edit %}
-        <div class="btn-group save-btn-group">
-          <button class="btn btn-success save" disabled><span class="if-published">Save &amp; publish</span><span class="if-draft">Save draft</span></button>
-          <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
-          <div class="dropdown-menu dropdown-menu-right">
-            <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; publish</a>
-            <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
-          </div>
+  <div class="btn-group btn-group-sm">
+    <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i> Settings</button>
+    <div class="dropdown-menu dropdown-menu-right">
+      <a class="dropdown-item" href="#properties-modal" data-toggle="modal">Properties...</a>
+      <div class="dropdown-submenu">
+        <a href="#" class="dropdown-item">Download as</a>
+        <div class="dropdown-menu dropdown-menu-right">
+          {% for fmt in download_formats %}
+            <a class="dropdown-item" href="{{ fmt.url }}" target="_blank"><i class="{{ fmt.icon }}"></i> {{ fmt.title }}</a>
+          {% endfor %}
         </div>
-      {% else %}
-        <div>You don't have permission to make changes.</div>
-      {% endif %}
-    {% else %}
-      <div><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Log in</a> to make changes.</div>
-    {% endif %}
-  {% endblock %}
+      </div>
+      <div class="dropdown-divider"></div>
+      <a class="dropdown-item delete-document" href="#">Delete</a>
+    </div>
+  </div>
 </div>
-
-<script id="document-activity-template" type="text/x-handlebars-template">
-  {% verbatim %}
-  <ul>
-    {{#each activity}}
-    <li class="{{#if is_asleep }}is-asleep{{/if}} user-{{ user.colour }}" title="{{ user.display_name }} is also editing">
-      <i class="fas fa-user"></i> {{ user.display_name }}
-    </li>
-    {{/each}}
-  </ul>
-  {% endverbatim %}
-</script>

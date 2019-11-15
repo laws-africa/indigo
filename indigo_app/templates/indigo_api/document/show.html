@@ -11,20 +11,48 @@
 {% block main-header %}
   <header class="main-header with-menubar">
     <div class="container-fluid">
-      <ul class="breadcrumb text-muted">
-        {# this will be filled in by the view #}
-        <li class="breadcrumb-item">&nbsp;</li>
-      </ul>
+      <div class="d-flex">
+        <div class="flex-grow-1">
+          <ul class="breadcrumb text-muted">
+            {# this will be filled in by the view #}
+            <li class="breadcrumb-item">&nbsp;</li>
+          </ul>
 
-      <h5 class="main-header-title">
-        <span class="document-title">{{ document.title }}</span>
-        <span class="badge badge-info if-published">published</span>
-        <span class="badge badge-warning if-draft">draft</span>
-        <span class="badge badge-info if-repealed">repealed</span>
-      </h5>
+          <h5 class="main-header-title">
+            <span class="document-title">{{ document.title }}</span>
+            <span class="badge badge-info if-published">published</span>
+            <span class="badge badge-warning if-draft">draft</span>
+            <span class="badge badge-info if-repealed">repealed</span>
+          </h5>
+        </div>
+
+        <div class="d-flex">
+          {% include 'indigo_api/document/_activity.html' %}
+
+          <div class="document-workspace-buttons mt-1">
+            {% block save-buttons %}
+              {% if request.user.is_authenticated %}
+                {% if user_can_edit %}
+                  <div class="btn-group save-btn-group">
+                    <button class="btn btn-success save" disabled><span class="if-published">Save &amp; publish</span><span class="if-draft">Save draft</span></button>
+                    <button class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown"></button>
+                    <div class="dropdown-menu dropdown-menu-right">
+                      <a class="dropdown-item save-and-publish if-draft {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Save &amp; publish</a>
+                      <a class="dropdown-item save-and-unpublish if-published {% if not perms.indigo_api.publish_document %}disabled{% endif %}" href="#">Unpublish &amp; save</a>
+                    </div>
+                  </div>
+                {% else %}
+                  <div>You don't have permission to make changes.</div>
+                {% endif %}
+              {% else %}
+                <div><a href="{% url 'account_login' %}?next={{ request.get_full_path|urlencode }}">Log in</a> to make changes.</div>
+              {% endif %}
+            {% endblock %}
+          </div>
+        </div>
+      </div>
 
       <div class="document-toolbar-wrapper">
-        {% include 'indigo_api/document/_menu.html' %}
         {% include 'indigo_api/document/_toolbar.html' %}
       </div>
     </div>

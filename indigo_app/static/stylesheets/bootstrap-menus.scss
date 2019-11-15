@@ -99,6 +99,11 @@ body.win .dropdown-menu {
   border-left-color: #fff;
 }
 
+.dropdown-submenu > .dropdown-menu-right {
+  right: 100%;
+  left: auto;
+}
+
 .dropdown-submenu.pull-left {
   float: none;
 }

@@ -10,6 +10,7 @@ Changelog
 * FEATURE: show offline warning when editing a document
 * FEATURE: site sidebar removed and replaced with tabs
 * FEATURE: show source attachments and work publication document side-by-side when editing a document
+* FEATURE: explicit support for commenced work with an unknown commencement date
 * New schedule syntax makes headings and subheadings clearer
 * Move document templates from templates/documents/ to templates/indigo_api/documents/
 

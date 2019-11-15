@@ -127,6 +127,7 @@
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
       this.dirty = false;
+      Indigo.offlineNoticeView.autoShow();
 
       this.detectUnsupportedBrowsers();
 

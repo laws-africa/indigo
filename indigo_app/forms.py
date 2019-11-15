@@ -18,7 +18,7 @@ class WorkForm(forms.ModelForm):
     class Meta:
         model = Work
         fields = (
-            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commencement_date', 'commencing_work',
+            'title', 'frbr_uri', 'assent_date', 'parent_work', 'commenced', 'commencement_date', 'commencing_work',
             'repealed_by', 'repealed_date', 'publication_name', 'publication_number', 'publication_date',
             'publication_document_trusted_url', 'publication_document_size', 'publication_document_mime_type',
             'stub', 'taxonomies',
@@ -252,7 +252,7 @@ class WorkFilterForm(forms.Form):
     amendment_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     amendment_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # commencement date filter
-    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
+    commencement = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not commenced'), ('date_unknown', 'Commencement date unknown'), ('yes', 'Commenced'), ('range', 'Commenced between...')])
     commencement_date_start = forms.DateField(input_formats=['%Y-%m-%d'])
     commencement_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # repealed work filter
@@ -331,9 +331,11 @@ class WorkFilterForm(forms.Form):
           
         # filter by commencement date
         if self.cleaned_data.get('commencement') == 'yes':
-            queryset = queryset.filter(commencement_date__isnull=False)
+            queryset = queryset.filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'no':
-            queryset = queryset.filter(commencement_date__isnull=True)
+            queryset = queryset.filter(commenced=False)
+        elif self.cleaned_data.get('commencement') == 'date_unknown':
+            queryset = queryset.filter(commencement_date__isnull=True).filter(commenced=True)
         elif self.cleaned_data.get('commencement') == 'range':
             if self.cleaned_data.get('commencement_date_start') and self.cleaned_data.get('commencement_date_end'):
                 start_date = self.cleaned_data['commencement_date_start']

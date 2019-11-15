@@ -154,6 +154,15 @@ body.is-staff {
   z-index: 1030;
 }
 
+#offline-alert {
+  position: fixed;
+  top: 10px;
+  width: 50%;
+  left: 25%;
+  z-index: 1;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+}
+
 .modal {
   .scrollable {
     max-height: 450px;

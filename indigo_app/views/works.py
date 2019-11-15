@@ -105,7 +105,6 @@ class EditWorkView(WorkViewBase, UpdateView):
     form_class = WorkForm
     prefix = 'work'
     permission_required = ('indigo_api.change_work',)
-    tab = 'overview'
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

@@ -86,10 +86,10 @@
           items = this.collection.toJSON();
 
       if (this.locked) {
-        document.querySelector('.document-workspace-buttons .logged-in').innerHTML =
+        document.querySelector('.document-workspace-buttons .save-btn-group').innerHTML =
           items[0].is_self ?
-            ('You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.') :
-            ('Editing has been locked<br>by ' + items[0].user.display_name + '.');
+            ('<div>You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.') :
+            ('Editing has been locked by ' + items[0].user.display_name + '.</div>');
       }
 
       // exclude us

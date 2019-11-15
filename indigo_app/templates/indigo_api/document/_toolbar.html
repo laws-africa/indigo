@@ -143,6 +143,10 @@
 </div>
 
 <div class="btn-toolbar ml-auto">
+  <div class="btn-group btn-group-sm mr-2">
+    <a class="btn btn-link" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}"><i class="fas fa-thumbtack mr-1"></i>Tasks</a>
+  </div>
+
   <div class="btn-group btn-group-sm">
     <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-cog"></i> Settings</button>
     <div class="dropdown-menu dropdown-menu-right">

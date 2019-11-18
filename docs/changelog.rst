@@ -1,8 +1,8 @@
 Changelog
 =========
 
-6.0.0 (?)
----------
+6.0.0 (18 November 2019)
+------------------------
 
 * FEATURE: choose which pages to import from PDFs
 * FEATURE: link to internal section references

@@ -394,6 +394,7 @@ class PDFRenderer(HTMLRenderer):
             'margin-right': '%.2fmm' % margin_left,
             'header-left': '[section]',
             'header-spacing': '%.2f' % header_spacing,
+            'header-right': self.document.work.place.name,
             'header-font-name': header_font,
             'header-font-size': header_font_size,
             'header-line': True,

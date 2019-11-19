@@ -73,6 +73,10 @@ Config options are mostly passed to Indigo as environment variables. These are t
   **Required**
   Email address users can email for help.
 
+* ``INDIGO_AUTH_REQUIRED``
+
+  Should Indigo require authentication to view read-only pages? Default is True.
+
 * ``INDIGO.EMAIL_FAIL_SILENTLY``
 
   Should email sending fail silently?

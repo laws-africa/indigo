@@ -165,6 +165,8 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
+          <p>As given in section 26(1), blah.</p>
+          <p>As given in section 26 (1), blah.</p>
           <p>As given in section 26(1), (2) and (3), blah.</p>
           <p>As given in section 26 (1), (2) and (3), blah.</p>
           <p>As given in sections 26(1), (2) and (3), blah.</p>
@@ -179,6 +181,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As per Proclamation 9 of 1926, as given in section 26 thereof, blah.</p>
           <p>As per Proclamation 9 of 1926, as given in section 26 of that Proclamation, blah.</p>
           <p>As per Act 9 of 2005, as given in section 26 of that Act, blah.</p>
+          <p>As given in section 26(1)(b)(iii)(dd)(A) of Act 5 of 2002, blah.</p>
         </content>
       </section>
       <section id="section-26">
@@ -234,6 +237,8 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
+          <p>As given in <ref href="#section-26">section 26</ref>(1), blah.</p>
+          <p>As given in <ref href="#section-26">section 26</ref> (1), blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref>(1), (2) and (3), blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> (1), (2) and (3), blah.</p>
           <p>As given in <ref href="#section-26">sections 26</ref>(1), (2) and (3), blah.</p>
@@ -248,6 +253,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As per Proclamation 9 of 1926, as given in section 26 thereof, blah.</p>
           <p>As per Proclamation 9 of 1926, as given in section 26 of that Proclamation, blah.</p>
           <p>As per Act 9 of 2005, as given in section 26 of that Act, blah.</p>
+          <p>As given in section 26(1)(b)(iii)(dd)(A) of Act 5 of 2002, blah.</p>
         </content>
       </section>
       <section id="section-26">

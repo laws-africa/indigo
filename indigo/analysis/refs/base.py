@@ -148,7 +148,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
             (\d+[A-Z0-9]*(\s*\([A-Z0-9]+\))*)
           )*
         )
-        (\s+of\s+(this\s+Act|the\s+|Act\s+)?)?
+        (\s+of\s+(this)?|\s+thereof)?
         ''',
         re.X | re.IGNORECASE)
 
@@ -167,7 +167,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     def is_valid(self, node, match):
         # check that it's not an external reference
         ref = match.group(0)
-        if ref.endswith('the ') or ref.endswith('Act '):
+        if ref.endswith('of ') or ref.endswith('thereof'):
             return False
         return True
 

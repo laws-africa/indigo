@@ -235,6 +235,8 @@
     commencedChanged: function() {
       if (this.model.get('commenced')) {
         this.$('#commencement_details').removeClass('d-none');
+        this.commencementDateUnknown.checked = false;
+        this.commencementDateUnknownChanged();
       } else {
         this.model.set('commencement_date', null);
         this.model.set('commencing_work', null);

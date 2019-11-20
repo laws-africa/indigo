@@ -226,7 +226,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref>(1) and <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> (1) and <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref>(1) or <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in section <ref href="#section-26">26</ref> (b), <ref href="#section-30"> (1) or <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in section <ref href="#section-26">26</ref> (b), <ref href="#section-30">30</ref> (1) or <ref href="#section-31">31</ref>, blah.</p>
         </content>
       </section>
       <section id="section-26">

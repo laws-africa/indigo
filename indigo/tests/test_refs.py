@@ -31,10 +31,6 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in section 26(1)(b)(iii)(dd)(A), blah.</p>
           <p>As given in section 26B, blah.</p>
           <p>As given in section 26 and section 31, blah.</p>
-          <p>As given in sections 26 and 31, blah.</p>
-          <p>As given in sections 26 or 31, blah.</p>
-          <p>As given in sections 26, 30 and 31.</p>
-          <p>As given in sections 26(b), 30 (1) or 31.</p>
           <p>In section 200 it says one thing and in section 26 it says another.</p>
           <p>Two baddies: In section 200 it says one thing and in section 26 of Act 5 of 2012 it says another.</p>
         </content>
@@ -51,13 +47,6 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Another important heading</heading>
         <content>
           <p>Another important provision.</p>
-        </content>
-      </section>
-      <section id="section-30">
-        <num>30.</num>
-        <heading>Less important</heading>
-        <content>
-          <p>Meh.</p>
         </content>
       </section>
       <section id="section-31">
@@ -85,10 +74,6 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii)(dd)(A), blah.</p>
           <p>As given in <ref href="#section-26B">section 26B</ref>, blah.</p>
           <p>As given in <ref href="#section-26">section 26</ref> and <ref href="#section-31">section 31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref> and <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref> (1) or <ref href="#section-31">31</ref>.</p>
           <p>In section 200 it says one thing and in <ref href="#section-26">section 26</ref> it says another.</p>
           <p>Two baddies: In section 200 it says one thing and in section 26 of Act 5 of 2012 it says another.</p>
         </content>
@@ -105,13 +90,6 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Another important heading</heading>
         <content>
           <p>Another important provision.</p>
-        </content>
-      </section>
-      <section id="section-30">
-        <num>30.</num>
-        <heading>Less important</heading>
-        <content>
-          <p>Meh.</p>
         </content>
       </section>
       <section id="section-31">
@@ -186,6 +164,110 @@ class SectionRefsFinderTestCase(TestCase):
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)
 
+    def test_section_multiple(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As given in sections 26 and 31, blah.</p>
+          <p>As given in sections 26, 26B, 30 and 31, blah.</p>
+          <p>As given in section 26 or 31, blah.</p>
+          <p>As given in sections 26 or 31, blah.</p>
+          <p>As given in sections 26, 30(1) and 31, blah.</p>
+          <p>As given in sections 26, 30 (1) and 31, blah.</p>
+          <p>As given in sections 26(b), 30(1) or 31, blah.</p>
+          <p>As given in section 26 (b), 30 (1) or 31, blah.</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-26B">
+        <num>26B.</num>
+        <heading>Another important heading</heading>
+        <content>
+          <p>Another important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>Less important</heading>
+        <content>
+          <p>Meh.</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        expected = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>As given in sections <ref href="#section-26">26</ref> and <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-26B">26B</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in section <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref>(1) and <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> (1) and <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref>(1) or <ref href="#section-31">31</ref>, blah.</p>
+          <p>As given in section <ref href="#section-26">26</ref> (b), <ref href="#section-30"> (1) or <ref href="#section-31">31</ref>, blah.</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-26B">
+        <num>26B.</num>
+        <heading>Another important heading</heading>
+        <content>
+          <p>Another important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>Less important</heading>
+        <content>
+          <p>Meh.</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected.content)
+        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(expected.content, document.content)
+
     def test_section_edge(self):
         document = Document(
             document_xml=document_fixture(
@@ -225,8 +307,6 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in section 26(2) and (3), blah.</p>
           <p>As given in sections 26 (2) and (3), blah.</p>
           <p>As given in sections 26(2) and (3), blah.</p>
-          <p>As given in sections 26, 30(1) and 31.</p>
-          <p>As given in sections 26, 30 (1) and 31.</p>
           <p>As given in section 26(1)(a) of Proclamation 9 of 1926, blah.</p>
           <p>As per Proclamation 9 of 1926, as given in section 26 thereof, blah.</p>
           <p>As per Proclamation 9 of 1926, as given in section 26 of that Proclamation, blah.</p>
@@ -297,8 +377,6 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in <ref href="#section-26">section 26</ref>(2) and (3), blah.</p>
           <p>As given in <ref href="#section-26">sections 26</ref> (2) and (3), blah.</p>
           <p>As given in <ref href="#section-26">sections 26</ref>(2) and (3), blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref>(1) and <ref href="#section-31">31</ref>.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> (1) and <ref href="#section-31">31</ref>.</p>
           <p>As given in section 26(1)(a) of Proclamation 9 of 1926, blah.</p>
           <p>As per Proclamation 9 of 1926, as given in section 26 thereof, blah.</p>
           <p>As per Proclamation 9 of 1926, as given in section 26 of that Proclamation, blah.</p>

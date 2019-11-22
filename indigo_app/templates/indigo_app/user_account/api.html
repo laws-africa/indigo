@@ -14,7 +14,7 @@
     <div class="card-body">
       <p>Use the API token below to authenticate your calls to the Indigo API. <strong>Keep it secret!</strong></p>
 
-      <input type="text" class="form-control" id="api_token" value="{{ request.user.editor.api_token.key }}" readonly>
+      <input type="text" class="form-control" id="api_token" name="api_token" value="{{ request.user.editor.api_token.key }}" readonly>
 
       <hr>
       <p>Generate a new API token if your current token has been leaked. <strong>Your old token will stop working.</strong></p>

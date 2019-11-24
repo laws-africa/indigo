@@ -10,12 +10,14 @@ from actstream.models import Action
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.db.models.functions import Extract
 from django.contrib import messages
-from django.http import QueryDict
+from django.http import QueryDict, HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.utils.timezone import now
 from django.views.generic import ListView, TemplateView, UpdateView
 from django.views.generic.list import MultipleObjectMixin
+import io
+import xlsxwriter
 
 from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality
 from indigo_api.views.documents import DocumentViewSet
@@ -125,6 +127,9 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         self.form = WorkFilterForm(self.country, params)
         self.form.is_valid()
 
+        if params.get('format') == 'xslx':
+            return self.generate_xslx()
+        
         return super(PlaceDetailView, self).get(request, *args, **kwargs)    
 
     def get_queryset(self):
@@ -245,6 +250,60 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             context['completeness_history'] = [m.p_breadth_complete for m in metrics]
 
         return context
+
+    def generate_xslx(self):
+        queryset = self.get_queryset()
+        filename = f"Legislation-{self.kwargs['place']}.xlsx"
+        output = io.BytesIO()
+        workbook = xlsxwriter.Workbook(output)
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        works_sheet = workbook.add_worksheet('Works')
+        relationships_sheet = workbook.add_worksheet('Relationships')
+
+        works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
+                               'Number', 'Publication Date', 'Publication Number',
+                               'Assent Date', 'Commenced', 'Commencement Date', 
+                               'Repealed Date', 'Parent Work', 'Stub']
+        relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
+
+        # Write the works sheet column titles
+        for position, title in enumerate(works_sheet_columns, 1):
+            works_sheet.write(0, position, title)
+        
+        works_sheet_row = 1
+        # Dump the works data row by row
+        for position, work in enumerate(queryset, 1):
+            works_sheet.write(works_sheet_row, 0, position)
+            works_sheet.write(works_sheet_row, 1, work.frbr_uri)
+            works_sheet.write(works_sheet_row, 2, work.place.place_code) 
+            works_sheet.write(works_sheet_row, 3, work.title)
+            works_sheet.write(works_sheet_row, 4, work.subtype)
+            works_sheet.write(works_sheet_row, 5, work.year)
+            works_sheet.write(works_sheet_row, 6, work.number)
+            works_sheet.write(works_sheet_row, 7, work.publication_date, date_format)
+            works_sheet.write(works_sheet_row, 8, work.publication_number)
+            works_sheet.write(works_sheet_row, 9, work.assent_date, date_format)
+            works_sheet.write(works_sheet_row, 10, True if work.commencement_date else False)
+            works_sheet.write(works_sheet_row, 11, work.commencement_date, date_format)
+            works_sheet.write(works_sheet_row, 12, work.repealed_date, date_format)
+            works_sheet.write(works_sheet_row, 13, work.parent_work.frbr_uri if work.parent_work else None)
+            works_sheet.write(works_sheet_row, 14, work.stub)
+
+            works_sheet_row += 1
+
+        # write the relationships sheet column titles
+        for position, title in enumerate(relationships_sheet_columns, 1):
+            relationships_sheet.write(0, position, title)
+        relationships_sheet_row = 1
+
+        # TODO: dump relationships data
+
+        workbook.close()
+        output.seek(0)
+
+        response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="%s"' % filename
+        return response
 
 
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):

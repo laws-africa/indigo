@@ -256,47 +256,9 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         filename = f"Legislation-{self.kwargs['place']}.xlsx"
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output)
-        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
-        works_sheet = workbook.add_worksheet('Works')
-        relationships_sheet = workbook.add_worksheet('Relationships')
 
-        works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
-                               'Number', 'Publication Date', 'Publication Number',
-                               'Assent Date', 'Commenced', 'Commencement Date', 
-                               'Repealed Date', 'Parent Work', 'Stub']
-        relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
-
-        # Write the works sheet column titles
-        for position, title in enumerate(works_sheet_columns, 1):
-            works_sheet.write(0, position, title)
-        
-        works_sheet_row = 1
-        # Dump the works data row by row
-        for position, work in enumerate(queryset, 1):
-            works_sheet.write(works_sheet_row, 0, position)
-            works_sheet.write(works_sheet_row, 1, work.frbr_uri)
-            works_sheet.write(works_sheet_row, 2, work.place.place_code) 
-            works_sheet.write(works_sheet_row, 3, work.title)
-            works_sheet.write(works_sheet_row, 4, work.subtype)
-            works_sheet.write(works_sheet_row, 5, work.year)
-            works_sheet.write(works_sheet_row, 6, work.number)
-            works_sheet.write(works_sheet_row, 7, work.publication_date, date_format)
-            works_sheet.write(works_sheet_row, 8, work.publication_number)
-            works_sheet.write(works_sheet_row, 9, work.assent_date, date_format)
-            works_sheet.write(works_sheet_row, 10, True if work.commencement_date else False)
-            works_sheet.write(works_sheet_row, 11, work.commencement_date, date_format)
-            works_sheet.write(works_sheet_row, 12, work.repealed_date, date_format)
-            works_sheet.write(works_sheet_row, 13, work.parent_work.frbr_uri if work.parent_work else None)
-            works_sheet.write(works_sheet_row, 14, work.stub)
-
-            works_sheet_row += 1
-
-        # write the relationships sheet column titles
-        for position, title in enumerate(relationships_sheet_columns, 1):
-            relationships_sheet.write(0, position, title)
-        relationships_sheet_row = 1
-
-        # TODO: dump relationships data
+        self.write_works(workbook, queryset)
+        self.write_relationships(workbook, queryset)
 
         workbook.close()
         output.seek(0)
@@ -304,6 +266,91 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename="%s"' % filename
         return response
+
+    def write_works(self, workbook, queryset):
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        works_sheet = workbook.add_worksheet('Works')
+        works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
+                               'Number', 'Publication Date', 'Publication Number',
+                               'Assent Date', 'Commenced', 'Commencement Date', 
+                               'Repealed Date', 'Parent Work', 'Stub']        
+        # Write the works sheet column titles
+        for position, title in enumerate(works_sheet_columns, 1):
+            works_sheet.write(0, position, title)
+
+        for row, work in enumerate(queryset, 1):
+            works_sheet.write(row, 0, row)
+            works_sheet.write(row, 1, work.frbr_uri)
+            works_sheet.write(row, 2, work.place.place_code) 
+            works_sheet.write(row, 3, work.title)
+            works_sheet.write(row, 4, work.subtype)
+            works_sheet.write(row, 5, work.year)
+            works_sheet.write(row, 6, work.number)
+            works_sheet.write(row, 7, work.publication_date, date_format)
+            works_sheet.write(row, 8, work.publication_number)
+            works_sheet.write(row, 9, work.assent_date, date_format)
+            works_sheet.write(row, 10, True if work.commencement_date else False)
+            works_sheet.write(row, 11, work.commencement_date, date_format)
+            works_sheet.write(row, 12, work.repealed_date, date_format)
+            works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
+            works_sheet.write(row, 14, work.stub)
+
+    def write_relationships(self, workbook, queryset):
+        date_format = workbook.add_format({'num_format': 'yyyy-mm-dd'})
+        relationships_sheet = workbook.add_worksheet('Relationships')
+        relationships_sheet_columns = ['First Work', 'Relationship', 'Second Work', 'Date']
+
+        # write the relationships sheet column titles
+        for position, title in enumerate(relationships_sheet_columns, 1):
+            relationships_sheet.write(0, position, title)
+
+        row = 1
+        for work in queryset:
+            family = []
+
+            # parent work
+            if work.parent_work:
+                family.append({
+                    'rel': 'subsidiary of',
+                    'work': work.parent_work.frbr_uri,
+                    'date': None
+                })
+
+            # amended works
+            amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
+            if len(amended) > 0:
+                family = family + [{
+                    'rel': 'amends',
+                    'work': a.frbr_uri,
+                    'date': a.date
+                } for a in amended]
+
+            # repealed works
+            repealed_works = work.repealed_works.all()
+            if len(repealed_works) > 0:
+                family = family + [{
+                    'rel': 'repeals',
+                    'work': r.frbr_uri,
+                    'date': r.repealed_date
+                } for r in repealed_works]
+
+            # commenced works
+            commenced_works = work.commenced_works.all()
+            if len(commenced_works) > 0:
+                family = family + [{
+                    'rel': 'commences',
+                    'work': c.frbr_uri,
+                    'date': c.commencement_date
+                } for c in commenced_works]
+
+            if len(family) > 0:
+                for relationship in family:
+                    relationships_sheet.write(row, 0, row)
+                    relationships_sheet.write(row, 1, work.frbr_uri)
+                    relationships_sheet.write(row, 2, relationship['rel'])
+                    relationships_sheet.write(row, 3, relationship['work'])
+                    relationships_sheet.write(row, 4, relationship['date'], date_format)
+                    row += 1
 
 
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):

@@ -240,7 +240,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'text/html')
         assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3>
 <span class="akn-content">
-          <span class="akn-p">tester😀</span><span class="akn-p"></span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
+          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>
 ''')
 

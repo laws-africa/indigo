@@ -242,6 +242,15 @@
     </section>
   </xsl:template>
 
+  <!-- empty p tags must take up space in HTML, so add an nbsp;
+       empty means no child elements and only whitespace content -->
+  <xsl:template match="a:p[not(*) and not(normalize-space())]">
+    <span class="akn-{local-name()}">
+      <xsl:apply-templates select="@*" />
+      <xsl:text>&#160;</xsl:text>
+    </span>
+  </xsl:template>
+
   <!-- for all nodes, generate a SPAN element with a class matching
        the AN name of the node and copy over the attributes -->
   <xsl:template match="*" name="generic-elem">

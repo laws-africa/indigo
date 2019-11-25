@@ -320,7 +320,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
             family = family + [{
                 'rel': 'amends',
-                'work': a.frbr_uri,
+                'work': a.amended_work.frbr_uri,
                 'date': a.date
             } for a in amended]
 

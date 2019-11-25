@@ -217,6 +217,9 @@ class TaskFilterForm(forms.Form):
                 queryset = queryset.filter(state__in=self.cleaned_data['state'] + ['open'])
                 if 'open' not in self.cleaned_data['state']:
                     queryset = queryset.exclude(state='open', assigned_to=None)
+            elif 'pending_review' in self.cleaned_data['state']:
+                queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None) | \
+                           queryset.filter(state='pending_review')
             else:
                 queryset = queryset.filter(state__in=self.cleaned_data['state']).filter(assigned_to=None)
 

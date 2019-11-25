@@ -3,7 +3,6 @@
 .activity-list {
   list-style: none;
   position: relative;
-  padding-top: 1rem;
 
   // activity timeline bar
   &::before {
@@ -12,10 +11,17 @@
     position: absolute;
     bottom: 7px;
     left: 20px;
-    top: 0;
+    top: 10px;
     width: 2px;
     z-index: 0;
     background-color: $grey;
+  }
+
+  // line should not start at first activity-item
+  &.open-top {
+    &::before {
+      top: 0px;
+    }
   }
 
   .activity-item {

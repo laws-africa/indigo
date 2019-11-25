@@ -42,16 +42,6 @@ body.is-staff {
   border-top: 0px;
 }
 
-.page-body {
-  display: flex;
-  flex-direction: row;
-  flex-grow: 1;
-}
-
-.main-container-wrapper {
-  flex: 1;
-}
-
 .main-content {
   min-height: 70vh;
 }
@@ -164,6 +154,15 @@ body.is-staff {
   z-index: 1030;
 }
 
+#offline-alert {
+  position: fixed;
+  top: 10px;
+  width: 50%;
+  left: 25%;
+  z-index: 1;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.25);
+}
+
 .modal {
   .scrollable {
     max-height: 450px;
@@ -194,6 +193,7 @@ body.is-staff {
 }
 
 .tabbed-header {
+  padding-top: 5px;
   padding-bottom: 0px;
   background-color: $tabbed-header-bg;
   border-bottom: 1px solid $gray-300;

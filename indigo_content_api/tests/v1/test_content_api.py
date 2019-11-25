@@ -240,7 +240,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'text/html')
         assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3>
 <span class="akn-content">
-          <span class="akn-p">tester😀</span><span class="akn-p"></span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
+          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>
 ''')
 
@@ -331,6 +331,13 @@ class ContentAPIV1TestMixin(object):
             'repealing_uri': '/za/act/2014/10',
             'repealing_title': 'Water Act',
         })
+
+    def test_commenced(self):
+        response = self.client.get(self.api_path + '/za/act/2010/1.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/json')
+        assert_equal(response.data['commenced'], True)
+        assert_equal(response.data['commencement_date'], '2010-06-01')
 
     def test_published_alternate_links(self):
         response = self.client.get(self.api_path + '/za/act/2001/8/eng.json')

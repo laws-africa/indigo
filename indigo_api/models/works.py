@@ -88,6 +88,7 @@ class Work(models.Model):
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
+    commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
     commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
@@ -211,6 +212,10 @@ class Work(models.Model):
             self.repealed_by = None
         if self.parent_work == self:
             self.parent_work = None
+
+        if not self.commenced:
+            self.commencement_date = None
+            self.commencing_work = None
 
         if not self.repealed_by:
             self.repealed_date = None

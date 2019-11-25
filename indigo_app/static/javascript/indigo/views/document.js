@@ -113,13 +113,11 @@
   Indigo.DocumentDetailView = Backbone.View.extend({
     el: 'body',
     events: {
-      'click .menu .dropdown-submenu > a': 'stopMenuClick',
+      'click .dropdown-submenu > a': 'stopMenuClick',
       'click .document-workspace-buttons .btn.save': 'save',
       'click .document-workspace-buttons .save-and-publish': 'saveAndPublish',
       'click .document-workspace-buttons .save-and-unpublish': 'saveAndUnpublish',
-      'click .document-toolbar-menu .save': 'save',
-      'click .document-toolbar-menu .delete-document': 'delete',
-      'click .document-toolbar-menu .clone-document': 'clone',
+      'click .document-toolbar-wrapper .delete-document': 'delete',
     },
 
     initialize: function() {
@@ -129,6 +127,7 @@
       this.$saveBtn = $('.document-workspace-buttons .btn.save');
       this.$menu = $('.document-toolbar-menu');
       this.dirty = false;
+      Indigo.offlineNoticeView.autoShow();
 
       this.detectUnsupportedBrowsers();
 
@@ -155,6 +154,7 @@
       this.attachmentsView = new Indigo.DocumentAttachmentsView({document: this.document});
       this.attachmentsView.on('dirty', this.setDirty, this);
       this.attachmentsView.on('clean', this.setClean, this);
+      this.sourceAttachmentsView = new Indigo.SourceAttachmentView({document: this.document});
 
       this.definedTermsView = new Indigo.DocumentDefinedTermsView({model: this.documentContent});
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
@@ -317,22 +317,6 @@
           .then(function() {
             document.location = '/works' + frbr_uri + '/';
           });
-      }
-    },
-
-    clone: function() {
-      if (confirm('Go ahead and create a copy of this document?')) {
-        var clone = this.document.clone();
-        clone.set({
-          draft: true,
-          id: null,
-          content: this.documentContent.get('content'),
-        });
-
-        Indigo.progressView.peg();
-        clone.save().then(function(doc) {
-          document.location = '/documents/' + doc.id + '/';
-        });
       }
     },
 

@@ -1,12 +1,16 @@
 Changelog
 =========
 
-6.0.0 (?)
----------
+6.0.0 (18 November 2019)
+------------------------
 
 * FEATURE: choose which pages to import from PDFs
 * FEATURE: link to internal section references
 * FEATURE: advanced work filtering (publication, commencement, repeal, amendment etc.)
+* FEATURE: show offline warning when editing a document
+* FEATURE: site sidebar removed and replaced with tabs
+* FEATURE: show source attachments and work publication document side-by-side when editing a document
+* FEATURE: explicit support for commenced work with an unknown commencement date
 * New schedule syntax makes headings and subheadings clearer
 * Move document templates from templates/documents/ to templates/indigo_api/documents/
 

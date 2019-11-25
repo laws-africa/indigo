@@ -28,11 +28,15 @@
                 ["add_task", "indigo_api", "task"],
                 ["change_task", "indigo_api", "task"],
                 ["delete_task", "indigo_api", "task"],
+                ["submit_task", "indigo_api", "task"],
+                ["unsubmit_task", "indigo_api", "task"],
+                ["close_task", "indigo_api", "task"],
                 ["add_version", "reversion", "version"],
                 ["add_workflow", "indigo_api", "workflow"],
                 ["change_workflow", "indigo_api", "workflow"],
                 ["delete_workflow", "indigo_api", "workflow"],
-                ["close_workflow", "indigo_api", "workflow"]
+                ["close_workflow", "indigo_api", "workflow"],
+                ["change_placesettings", "indigo_api", "placesettings"]
             ],
             "password": "pbkdf2_sha256$12000$NkxvaoXfb4p2$A6u0ez3trvm9VyIT606HB5G3NKRLl4znE4ZlsZS5T7U=",
             "email": "email@example.com",

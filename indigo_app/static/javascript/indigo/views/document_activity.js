@@ -56,6 +56,8 @@
         data: {nonce: this.nonce},
         global: false,
       }).then(function(resp) {
+        Indigo.offlineNoticeView.setOnline();
+
         // mark is_self
         resp.results.forEach(function(r) {
           r.is_self = (r.nonce == self.nonce);
@@ -68,6 +70,14 @@
         // once locked, page must be refreshed before editing can happen
         self.locked = self.locked || !self.collection.at(0).get('is_self');
         self.render();
+      }).fail(function(xhr, error) {
+        if (xhr.status >= 100) {
+          // we got a response from the server, we're not offline
+          Indigo.offlineNoticeView.setOnline();
+        } else if (xhr.status === 0 && error == 'error') {
+          // couldn't make the request, we must be offline
+          Indigo.offlineNoticeView.setOffline();
+        }
       });
     },
 
@@ -78,8 +88,8 @@
       if (this.locked) {
         document.querySelector('.document-workspace-buttons .save-btn-group').innerHTML =
           items[0].is_self ?
-            ('You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.') :
-            ('Editing has been locked<br>by ' + items[0].user.display_name + '.');
+            ('<div>You must <a href="#" onclick="window.location.reload();">refresh</a><br>before making changes.') :
+            ('Editing has been locked by ' + items[0].user.display_name + '.</div>');
       }
 
       // exclude us

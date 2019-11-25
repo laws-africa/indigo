@@ -34,6 +34,7 @@
       'click .delete-publication-document': 'deletePublicationDocument',
       'change #id_work-publication_document_file': 'publicationDocumentFileChanged',
       'click .attach-publication-url': 'attachPublicationUrl',
+      'change #commencement_date_unknown': 'commencementDateUnknownChanged',
     },
     workRepealTemplate: '#work-repeal-template',
     commencingWorkTemplate: '#commencing-work-template',
@@ -49,6 +50,7 @@
       '#id_work-publication_name': 'publication_name',
       '#id_work-publication_number': 'publication_number',
       '#id_work-stub': 'stub',
+      '#id_work-commenced': 'commenced',
       '#id_work-commencement_date': {
         observe: 'commencement_date',
         onSet: emptyIsNull,
@@ -113,6 +115,7 @@
       this.commencingWorkTemplate = Handlebars.compile($(this.commencingWorkTemplate).html());
       this.publicationDocumentTemplate = Handlebars.compile($(this.publicationDocumentTemplate).html());
       this.publicationUrlTemplate = Handlebars.compile($(this.publicationUrlTemplate).html());
+      this.commencementDateUnknown = document.getElementById('commencement_date_unknown');
 
       this.model = new Indigo.Work(Indigo.Preloads.work, {parse: true});
       this.originalFrbrUri = this.model.get('frbr_uri');
@@ -120,6 +123,7 @@
       this.listenTo(this.model, 'change', this.setDirty);
 
       this.listenTo(this.model, 'change:repealed_by', this.repealChanged);
+      this.listenTo(this.model, 'change:commenced', this.commencedChanged);
       this.listenTo(this.model, 'change:commencing_work', this.commencingWorkChanged);
       this.listenTo(this.model, 'change:parent_work', this.parentChanged);
       this.listenTo(this.model, 'change:number', this.numberChanged);
@@ -134,6 +138,10 @@
       this.parentChanged();
       this.publicationChanged();
       this.publicationDocumentChanged();
+      if (!this.model.get('commencement_date')) {
+        this.commencementDateUnknown.checked = true;
+        this.commencementDateUnknownChanged();
+      }
     },
 
     updatePageTitle: function() {
@@ -222,6 +230,25 @@
           self.model.set('commencing_work', chosen);
         }
       });
+    },
+
+    commencedChanged: function() {
+      if (this.model.get('commenced')) {
+        this.$('#commencement_details').removeClass('d-none');
+        this.commencementDateUnknown.checked = false;
+        this.commencementDateUnknownChanged();
+      } else {
+        this.model.set('commencement_date', null);
+        this.model.set('commencing_work', null);
+        this.$('#commencement_details').addClass('d-none');
+      }
+    },
+
+    commencementDateUnknownChanged: function() {
+      this.$('#id_work-commencement_date').attr('disabled', this.commencementDateUnknown.checked);
+      if (this.commencementDateUnknown.checked) {
+        this.model.set('commencement_date', null);
+      }
     },
 
     commencingWorkChanged: function() {

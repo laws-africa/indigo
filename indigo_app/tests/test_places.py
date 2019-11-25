@@ -1,4 +1,6 @@
+from django.contrib.auth.models import User
 from django.test import testcases, override_settings
+from django_webtest import WebTest
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -32,3 +34,17 @@ class PlacesTest(testcases.TestCase):
     def test_place_localities(self):
         response = self.client.get('/places/za/localities')
         self.assertEqual(response.status_code, 200)
+
+
+@override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+class PlacesWebTest(WebTest):
+    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'tasks']
+
+    def setUp(self):
+        self.app.set_user(User.objects.get(username='email@example.com'))
+
+    def test_place_settings(self):
+        form = self.app.get('/places/za/settings').forms[0]
+        form['as_at_date'].value = '2019-01-01'
+        form = form.submit().follow().forms[0]
+        self.assertEqual(form['as_at_date'].value, '2019-01-01')

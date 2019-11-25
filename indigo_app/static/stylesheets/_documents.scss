@@ -22,16 +22,20 @@
   .document-workspace-content,
   .document-xml-editor {
     flex: 1;
-    height: calc(100vh - 50px - 96px);
     position: relative;
+  }
+
+  .source-attachment-view {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
   }
 
   /* sidebar */
   .document-sidebar {
-    flex: 0 0 200px;
+    flex: 0 0 15%;
     // TODO
     height: calc(100vh - 50px - 96px);
-    width: $document-sidebar-width;
 
     overflow-x: hidden;
     overflow-y: auto;
@@ -49,14 +53,6 @@
 .document-toolbar-wrapper {
   display: flex;
   padding-bottom: 5px;
-
-  .document-toolbar-menu {
-    flex: 0 0 $sidebar-width;
-  }
-
-  .document-workspace-buttons {
-    margin-top: -6px;
-  }
 }
 
 /* headers with help buttons */
@@ -260,12 +256,13 @@ button.btn-link.help {
 .document-revisions-view {
   background-color: $body-bg-color;
   position: fixed;
-  top: 50px;
-  left: 50px;
+  top: 51px;
+  left: 0px;
   right: 0px;
   bottom: 0px;
   display: flex;
   flex-direction: column;
+  z-index: 100;
 
   .revisions-header {
     display: flex;
@@ -351,8 +348,8 @@ button.btn-link.help {
 .document-comparison-view {
   background-color: $body-bg-color;
   position: fixed;
-  top: 50px;
-  left: 50px;
+  top: 51px;
+  left: 0px;
   right: 0px;
   bottom: 0px;
   display: flex;
@@ -440,12 +437,6 @@ button.btn-link.help {
 }
 
 #document-activity-view {
-  float: left;
-
-  ul {
-    margin-top: 7px;
-  }
-
   li {
     list-style: none;
     float: left;

@@ -101,6 +101,7 @@ $(function() {
   Indigo.queryParams = getQueryParams();
 
   Indigo.progressView = new Indigo.ProgressView();
+  Indigo.offlineNoticeView = new Indigo.OfflineNoticeView();
   Indigo.errorView = new Indigo.ErrorBoxView();
 
   // helpers

@@ -318,39 +318,35 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
             # amended works
             amended = Amendment.objects.filter(amending_work=work).prefetch_related('amended_work').all()
-            if len(amended) > 0:
-                family = family + [{
-                    'rel': 'amends',
-                    'work': a.frbr_uri,
-                    'date': a.date
-                } for a in amended]
+            family = family + [{
+                'rel': 'amends',
+                'work': a.frbr_uri,
+                'date': a.date
+            } for a in amended]
 
             # repealed works
             repealed_works = work.repealed_works.all()
-            if len(repealed_works) > 0:
-                family = family + [{
-                    'rel': 'repeals',
-                    'work': r.frbr_uri,
-                    'date': r.repealed_date
-                } for r in repealed_works]
+            family = family + [{
+                'rel': 'repeals',
+                'work': r.frbr_uri,
+                'date': r.repealed_date
+            } for r in repealed_works]
 
             # commenced works
             commenced_works = work.commenced_works.all()
-            if len(commenced_works) > 0:
-                family = family + [{
-                    'rel': 'commences',
-                    'work': c.frbr_uri,
-                    'date': c.commencement_date
-                } for c in commenced_works]
+            family = family + [{
+                'rel': 'commences',
+                'work': c.frbr_uri,
+                'date': c.commencement_date
+            } for c in commenced_works]
 
-            if len(family) > 0:
-                for relationship in family:
-                    relationships_sheet.write(row, 0, row)
-                    relationships_sheet.write(row, 1, work.frbr_uri)
-                    relationships_sheet.write(row, 2, relationship['rel'])
-                    relationships_sheet.write(row, 3, relationship['work'])
-                    relationships_sheet.write(row, 4, relationship['date'], date_format)
-                    row += 1
+            for relationship in family:
+                relationships_sheet.write(row, 0, row)
+                relationships_sheet.write(row, 1, work.frbr_uri)
+                relationships_sheet.write(row, 2, relationship['rel'])
+                relationships_sheet.write(row, 3, relationship['work'])
+                relationships_sheet.write(row, 4, relationship['date'], date_format)
+                row += 1
 
 
 class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):

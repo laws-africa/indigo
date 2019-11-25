@@ -1,6 +1,11 @@
 Changelog
 =========
 
+7.0.0 (?)
+---------
+
+* FEATURE: export work details as XLSX
+
 6.0.0 (18 November 2019)
 ------------------------
 

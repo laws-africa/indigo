@@ -73,6 +73,7 @@ class Work(models.Model):
         permissions = (
             ('review_work', 'Can review work details'),
             ('bulk_add_work', 'Can import works in bulk'),
+            ('bulk_export_work', 'Can export works in bulk'),
         )
 
     frbr_uri = models.CharField(max_length=512, null=False, blank=False, unique=True, help_text="Used globally to identify this work")

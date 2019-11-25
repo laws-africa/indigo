@@ -79,6 +79,7 @@ setup(
         'unicodecsv>=0.14.1',
         'whitenoise<2,>=1.0.6',
         'django-contrib-comments>=1.9.1',
+        'XlsxWriter>=1.2.6',
 
         # for indigo_social
         'pillow>=5.2.0',

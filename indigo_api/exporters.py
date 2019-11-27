@@ -311,8 +311,9 @@ class EPUBExporter(HTMLExporter):
     BAD_DIV_TAG_RE = re.compile(r'(</?)(section)(\s+|>)', re.IGNORECASE)
     PATH_SUB_RE = re.compile(r'[^a-zA-Z0-9-_]')
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, colophon=True, *args, **kwargs):
         super(EPUBExporter, self).__init__(*args, **kwargs)
+        self.colophon = colophon
 
     def render(self, document, element=None):
         self.create_book()
@@ -322,7 +323,8 @@ class EPUBExporter(HTMLExporter):
         self.book.set_language(document.language.language.iso)
         self.book.add_author(settings.INDIGO_ORGANISATION)
 
-        self.add_colophon(document)
+        if self.colophon:
+            self.add_colophon(document=document)
         self.book.spine.append('nav')
 
         self.add_document(document)
@@ -341,7 +343,8 @@ class EPUBExporter(HTMLExporter):
         for lang in langs[1:]:
             self.book.add_metadata('DC', 'language', lang)
 
-        self.add_colophon(documents[0])
+        if self.colophon:
+            self.add_colophon(documents=documents)
         self.book.spine.append('nav')
 
         for d in documents:
@@ -361,7 +364,7 @@ class EPUBExporter(HTMLExporter):
         # compile scss and add the file
         processor = SassProcessor()
         processor.processor_enabled = True
-        path = processor('stylesheets/epub.scss')
+        path = processor('stylesheets/export-epub.scss')
         with processor.storage.open(path) as f:
             css = f.read()
         self.book.add_item(epub.EpubItem(file_name=path, media_type="text/css", content=css))
@@ -375,13 +378,28 @@ class EPUBExporter(HTMLExporter):
                     href = '/'.join(['..'] * item.file_name.count('/') + [stylesheet])
                     item.add_link(href=href, rel='stylesheet', type='text/css')
 
-    def add_colophon(self, document):
-        colophon = self.find_colophon(document)
+    def add_colophon(self, document, documents=None):
+        colophon = self.find_colophon(document or documents[0])
         if colophon:
+            html = self.render_colophon(colophon, document, documents)
             entry = epub.EpubHtml(uid='colophon', file_name='colophon.xhtml')
-            entry.content = self.clean_html(colophon.body, wrap='colophon')
+            entry.content = self.clean_html(html)
             self.book.add_item(entry)
             self.book.spine.append(entry)
+
+    def render_colophon(self, colophon, document, documents):
+        # find the wrapper template
+        candidates = filename_candidates(document, prefix='indigo_api/akn/export/epub_colophon_', suffix='.html')
+        best = find_best_template(candidates)
+        if not best:
+            raise ValueError("Couldn't find colophon file for EPUB.")
+
+        colophon_wrapper = get_template(best).origin.name
+        return render_to_string(colophon_wrapper, {
+            'colophon': colophon,
+            'document': document,
+            'documents': documents,
+        })
 
     def add_document(self, document):
         # relative directory for files for this document

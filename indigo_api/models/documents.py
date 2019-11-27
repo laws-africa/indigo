@@ -277,6 +277,12 @@ class Document(DocumentMixin, models.Model):
         return self._expression_uri
 
     @property
+    def expression_frbr_uri(self):
+        """ The FRBR Expression URI as a string.
+        """
+        return self.expression_uri.expression_uri(False)
+
+    @property
     def commencement_date(self):
         return self.work.commencement_date
 

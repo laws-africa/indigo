@@ -355,8 +355,16 @@ class PDFRenderer(HTMLRenderer):
         colophon = self.find_colophon(document or documents[0])
         if colophon:
             # find the wrapper template
-            html = render_to_string('indigo_api/akn/export/pdf_colophon.html', {
+            candidates = filename_candidates(self.document, prefix='indigo_api/akn/export/pdf_colophon_', suffix='.html')
+            best = find_best_template(candidates)
+            if not best:
+                raise ValueError("Couldn't find colophon file for PDF.")
+
+            colophon_wrapper = get_template(best).origin.name
+            html = render_to_string(colophon_wrapper, {
                 'colophon': colophon,
+                'document': document,
+                'documents': documents,
             })
             return make_absolute_paths(html)
 

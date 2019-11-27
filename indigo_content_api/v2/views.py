@@ -2,7 +2,7 @@ import re
 
 from rest_framework import renderers
 
-from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
+from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_content_api.v1.views import PublishedDocumentDetailView, PublishedDocumentTOCView
 
 
@@ -25,8 +25,8 @@ def rewrite_frbr_uris(data):
 
 class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
     # Note that the V2 API doesn't support Atom
-    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
-                        ZIPResponseRenderer)
+    renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer, AkomaNtosoRenderer, HTMLRenderer,
+                        ZIPRenderer)
 
     non_akn_href_re = re.compile(r'^/[a-z]{2}[/-].*')
 

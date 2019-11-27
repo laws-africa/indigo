@@ -11,7 +11,7 @@ from rest_framework.versioning import NamespaceVersioning
 from django.shortcuts import redirect
 from cobalt import FrbrUri
 
-from indigo_api.renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer
+from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.documents import DocumentViewMixin, SearchView
 from indigo_api.views.attachments import view_attachment
 from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, VocabularyTopic
@@ -151,8 +151,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
 
     serializer_class = PublishedDocumentSerializer
     # these determine what content negotiation takes place
-    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer, AkomaNtosoRenderer, HTMLResponseRenderer,
-                        ZIPResponseRenderer)
+    renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer, AkomaNtosoRenderer, HTMLRenderer,
+                        ZIPRenderer)
 
     def perform_content_negotiation(self, request, force=False):
         # force content negotiation to succeed, because sometimes the suffix format

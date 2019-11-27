@@ -153,26 +153,26 @@ class DocumentMixin(object):
         return builder.table_of_contents_for_document(self)
 
     def to_html(self, **kwargs):
-        from ..renderers import HTMLRenderer
-        renderer = HTMLRenderer()
-        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
-        return renderer.render(self, **kwargs)
+        from indigo_api.exporters import HTMLExporter
+        exporter = HTMLExporter()
+        exporter.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return exporter.render(self, **kwargs)
 
     def element_to_html(self, element):
         """ Render a child element of this document into HTML. """
-        from ..renderers import HTMLRenderer
-        renderer = HTMLRenderer()
-        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
-        return renderer.render(self, element=element)
+        from indigo_api.exporters import HTMLExporter
+        exporter = HTMLExporter()
+        exporter.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return exporter.render(self, element=element)
 
     def to_pdf(self, **kwargs):
-        from ..renderers import PDFRenderer
-        return PDFRenderer().render(self, **kwargs)
+        from indigo_api.exporters import PDFExporter
+        return PDFExporter().render(self, **kwargs)
 
     def element_to_pdf(self, element):
         """ Render a child element of this document into PDF. """
-        from ..renderers import PDFRenderer
-        return PDFRenderer().render(self, element=element)
+        from indigo_api.exporters import PDFExporter
+        return PDFExporter().render(self, element=element)
 
 
 class Document(DocumentMixin, models.Model):

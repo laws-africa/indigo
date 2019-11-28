@@ -292,6 +292,10 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
+        italics_terms_finder = plugins.for_document('italics_terms', doc)
+        if italics_terms_finder:
+            italics_terms_finder.mark_up_italics_in_document(doc)
+
     def create_from_docx(self, docx_file, doc):
         """ We can create a mammoth image handler that stashes the binary data of the image
         and returns an appropriate img attribute to be put into the HTML (and eventually xml).

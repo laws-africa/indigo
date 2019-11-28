@@ -7,6 +7,7 @@ import urllib.parse
 import lxml.html
 from django.conf import settings
 from django.template.loader import render_to_string, get_template
+from django.contrib.staticfiles.finders import find as find_static
 from ebooklib import epub
 from languages_plus.models import Language
 from lxml import etree as ET
@@ -381,11 +382,29 @@ class EPUBExporter(HTMLExporter):
     def add_colophon(self, document, documents=None):
         colophon = self.find_colophon(document or documents[0])
         if colophon:
-            html = self.render_colophon(colophon, document, documents)
+            html = self.clean_html(self.render_colophon(colophon, document, documents))
+
+            # pull in any static images used in the colophon
+            doc = ET.HTML(html)
+            images = [img for img in doc.xpath('//img[@src]') if img.get('src').startswith('/static/')]
+            # rewrite paths to be relative
+            for img in images:
+                img.set('src', img.get('src')[1:])
+            html = ET.tostring(doc)
+
             entry = epub.EpubHtml(uid='colophon', file_name='colophon.xhtml')
-            entry.content = self.clean_html(html)
+            entry.content = html
             self.book.add_item(entry)
             self.book.spine.append(entry)
+
+            for fname in set(img.get('src') for img in images):
+                local_fname = find_static(fname[7:])
+                if local_fname:
+                    img = epub.EpubImage()
+                    img.file_name = fname
+                    with open(local_fname, 'rb') as f:
+                        img.content = f.read()
+                    self.book.add_item(img)
 
     def render_colophon(self, colophon, document, documents):
         # find the wrapper template

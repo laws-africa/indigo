@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
@@ -167,6 +168,10 @@ class PlaceSettings(models.Model):
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
     styleguide_url = models.URLField(null=True, blank=True)
+    italics_terms = ArrayField(
+        models.CharField(max_length=1024),
+        null=True
+    )
 
     @property
     def place(self):

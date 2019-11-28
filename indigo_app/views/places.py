@@ -544,12 +544,26 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
 
-    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
+    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'italics_terms')
+
+    def get_form(self, form_class=None):
+        form = super(PlaceSettingsView, self).get_form()
+        # use country's italics_terms list if in locality
+        if self.locality:
+            form.initial['italics_terms'] = self.country.settings.italics_terms
+        return form
 
     def get_object(self):
         return self.place.settings
 
     def form_valid(self, form):
+        # TODO: transform italics_terms into an array (it's currently being saved as a one-item list); alternatively, don't use ArrayField on PlaceSettings model)
+
+        # save changes to italics_terms to country
+        if self.locality and 'italics_terms' in form.changed_data:
+            self.country.settings.italics_terms = form.cleaned_data['italics_terms']
+            self.country.settings.save()
+
         placesettings = self.object
         placesettings.updated_by_user = self.request.user
 

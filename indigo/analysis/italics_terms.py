@@ -11,21 +11,20 @@ class BaseItalsFinder(LocaleBasedMatcher, TextPatternMarker):
     marker_tag = 'i'
     candidate_xpath = ".//text()[not(ancestor::a:i)]"
 
-    def mark_up_italics_in_document(self, document):
-        """ Find terms in +document+, which is an Indigo Document object.
+    def mark_up_italics_in_document(self, document, italics_terms):
+        """ Find and italicise terms in +document+, which is an Indigo Document object.
         """
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
         root = etree.fromstring(document.content)
         self.setup(root)
-        self.get_pattern_re(document)
+        self.get_pattern_re(italics_terms)
         self.markup_patterns(root)
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
-    def get_pattern_re(self, document):
-        # TODO: do this differently once terms stored as an actual array
-        terms = document.work.country.settings.italics_terms[0]
-        f_string = f'{terms}'.replace('\r\n', '|').replace(' ', '\s*')
+    def get_pattern_re(self, italics_terms):
+        # TODO: do this differently once italics_terms stored as an actual array
+        f_string = f'{italics_terms[0]}'.replace('\r\n', '|').replace(' ', '\s*')
         self.pattern_re = re.compile(rf'(?P<itals>{f_string})', re.X)
 
     def markup_match(self, node, match):
@@ -36,7 +35,7 @@ class BaseItalsFinder(LocaleBasedMatcher, TextPatternMarker):
         return itals, match.start('itals'), match.end('itals')
 
 
-@plugins.register('italics_terms')
+@plugins.register('italics-terms')
 class ItalsFinderENG(BaseItalsFinder):
     """ Finds references to italics terms in English documents.
     """

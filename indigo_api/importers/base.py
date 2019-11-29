@@ -292,9 +292,10 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
-        italics_terms_finder = plugins.for_document('italics_terms', doc)
-        if italics_terms_finder:
-            italics_terms_finder.mark_up_italics_in_document(doc)
+        italics_terms_finder = plugins.for_document('italics-terms', doc)
+        italics_terms = doc.work.country.settings.italics_terms
+        if italics_terms_finder and italics_terms:
+            italics_terms_finder.mark_up_italics_in_document(doc, italics_terms)
 
     def create_from_docx(self, docx_file, doc):
         """ We can create a mammoth image handler that stashes the binary data of the image

@@ -437,9 +437,10 @@ class MarkUpItalicsTermsView(APIView):
         return Response({'document': {'content': document.document_xml}})
 
     def mark_up_italics(self, document):
-        italics_terms_finder = plugins.for_document('italics_terms', document)
-        if italics_terms_finder:
-            italics_terms_finder.mark_up_italics_in_document(document)
+        italics_terms_finder = plugins.for_document('italics-terms', document)
+        italics_terms = document.work.country.settings.italics_terms
+        if italics_terms_finder and italics_terms:
+            italics_terms_finder.mark_up_italics_in_document(document, italics_terms)
 
 
 class SearchView(DocumentViewMixin, ListAPIView):

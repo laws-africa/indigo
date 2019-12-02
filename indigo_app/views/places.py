@@ -107,8 +107,33 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
+        works = Work.objects.filter(country=self.country, locality=self.locality) \
+            .order_by('-updated_at')
+
         context['recently_updated_works'] = self.get_recently_updated_works()
         context['recently_created_works'] = self.get_recently_created_works()
+
+        # place activity
+        since = now() - timedelta(days=14)
+        metrics = DailyPlaceMetrics.objects \
+            .filter(country=self.country, locality=self.locality, date__gte=since) \
+            .order_by('date') \
+            .all()
+
+        context['activity_history'] = json.dumps([
+            [m.date.isoformat(), m.n_activities]
+            for m in metrics
+        ])
+        
+        # works by subtype
+        def subtype_name(abbr):
+            if not abbr:
+                return 'Act'
+            st = Subtype.for_abbreviation(abbr)
+            return st.name if st else abbr
+        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
+        pairs.sort(key=lambda p: p[1], reverse=True)
+        context['subtypes'] = json.dumps(pairs)        
 
         return context
 

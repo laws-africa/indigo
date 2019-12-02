@@ -17,6 +17,12 @@
       this.drawCharts();
     },
 
+    drawCharts: function() {
+      this.drawActivityChart();
+      this.drawWorksByTypeChart();
+      this.drawCompletenessChart();
+    },
+
     linkClicked: function(e) {
       // don't bubble to avoid collapsing the container unnecessarily
       e.stopPropagation();
@@ -31,7 +37,7 @@
            .toggleClass('fa-caret-down', opened);
     },
 
-    drawCharts: function() {
+    drawCompletenessChart: function() {
         var canvas = document.getElementById('completeness-chart'),
             ctx = canvas.getContext('2d'),
             data = _.map(canvas.getAttribute('data-values').split(','), function(i) { return parseInt(i); });
@@ -88,6 +94,84 @@
             }
           }
         });
-    }
+    },
+
+    drawActivityChart: function() {
+      var canvas = document.getElementById('activity-chart'),
+          ctx = canvas.getContext('2d'),
+          data = JSON.parse(canvas.getAttribute('data-values'));
+
+      data = _.map(data, function(pair) { return {t: pair[0], y: pair[1]}; });
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: data,
+          datasets: [{
+            label: "Actions",
+            data: data,
+            borderWidth: 0,
+            backgroundColor: 'rgba(67, 159, 120, 1)',
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          legend: {display: false},
+          scales: {
+            xAxes: [{
+              type: 'time',
+              distribution: 'linear',
+              time: {
+                minUnit: 'day',
+              },
+              ticks: {
+                source: 'auto',
+                autoSkip: true,
+              }
+            }],
+            yAxes: [{
+              display: true,
+              ticks: {
+                min: 0,
+                beginAtZero: true,
+              },
+            }],
+          }
+        }
+      });
+    },
+
+    drawWorksByTypeChart: function() {
+      var canvas = document.getElementById('works_by_type-chart'),
+          ctx = canvas.getContext('2d'),
+          data = JSON.parse(canvas.getAttribute('data-values'));
+
+      var values = _.map(data, function(pair) { return pair[1]; });
+      var labels = _.map(data, function(pair) { return pair[0]; });
+
+      new Chart(ctx, {
+        type: 'horizontalBar',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            borderWidth: 0,
+            backgroundColor: 'rgba(67, 159, 120, 1)',
+          }]
+        },
+        options: {
+          maintainAspectRatio: false,
+          legend: {display: false},
+          scales: {
+            yAxes: [{
+              ticks: {
+                precision: 0,
+                beginAtZero: true,
+              },
+            }],
+          },
+        }
+      });
+    },
   });
 })(window);

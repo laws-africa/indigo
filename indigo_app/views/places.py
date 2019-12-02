@@ -133,7 +133,15 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             return st.name if st else abbr
         pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
         pairs.sort(key=lambda p: p[1], reverse=True)
-        context['subtypes'] = json.dumps(pairs)        
+        context['subtypes'] = json.dumps(pairs)
+
+        stubs_count = works.filter(stub=True).count()
+        context['stubs_percentage'] = int((stubs_count / works.count()) * 100)
+        context['non_stubs_percentage'] = 100 - context['stubs_percentage']
+
+        primary_works_count = works.filter(parent_work__isnull=True).count()
+        context['primary_works_percentage'] = int((primary_works_count / works.count()) * 100)
+        context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
 
         return context
 

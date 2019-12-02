@@ -179,7 +179,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         if params.get('format') == 'xslx':
             return self.generate_xslx()
         
-        return super(PlaceDetailView, self).get(request, *args, **kwargs)    
+        return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = Work.objects\

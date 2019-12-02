@@ -55,14 +55,17 @@
     saveChanges: function(e) {
       if (!this.editing) return;
 
-      var table = this.editor.table,
-          oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.getAttribute('data-id'));
+      var table,
+          width = this.table.clientWidth,
+          oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id'));
+
+      table = $.parseHTML(this.ckeditor.getData())[0];
+      if (table.tagName != 'TABLE') table = table.querySelector('table');
 
       // stop editing
-      if (this.ckeditor) {
-        this.ckeditor.destroy();
-        this.ckeditor = null;
-      }
+      // TODO: what does this do with the changed content?
+      this.ckeditor.destroy();
+      this.ckeditor = null;
       this.editTable(null);
 
       // get new xml
@@ -110,7 +113,7 @@
       var table = this.editor.table,
           initialTable = this.initialTable;
 
-      this.editTable(null);
+      //this.editTable(null);
 
       // nuke the active ckeditor instance, if any
       if (this.ckeditor) {
@@ -126,27 +129,48 @@
     editTable: function(table) {
       var self = this;
 
-      if (this.editor.table == table)
+      // TODO this.table is the html table as ckeditor sees it, whereas 'table' is an HTML table before ckeditor has wrapped it
+      if (this.table == table)
         return;
 
       if (table) {
         // cancel existing edit
-        if (this.editor.table) {
+        if (this.table) {
           this.discardChanges(null, true);
         }
 
+        this.observers = [];
         this.initialTable = table.cloneNode(true);
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
-        self.editor.setTable(table);
-        self.editor.cells[0][0].click();
+        var editable = table.parentElement;
+        editable.contentEditable = true;
+
+        CKEDITOR.on('instanceReady', function(evt) {
+          evt.removeListener();
+          self.table = editable.querySelector('table');
+          self.manageTableWidth(self.table);
+          //self.editor.setTable(editable.firstElementChild);
+        });
+
+        this.ckeditor = CKEDITOR.inline(editable, {
+          enterMode: CKEDITOR.ENTER_BR,
+          shiftEnterMode: CKEDITOR.ENTER_BR,
+          toolbar: [],
+          allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p); ' +
+                          'table[id, data-id]; thead; tbody; tr; th{width}[colspan,rowspan]; td{width}[colspan,rowspan]; p;',
+        });
 
         this.editing = true;
         this.trigger('start');
       } else {
-        this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
+        // clean up observers
+        this.observers.forEach(function(observer) { observer.disconnect(); });
+        this.observers = [];
 
-        this.editor.setTable(null);
+        this.$(table).closest('.table-editor-wrapper').removeClass('table-editor-active');
+
+        //this.editor.setTable(null);
         this.initialTable = null;
 
         this.editing = false;
@@ -154,7 +178,46 @@
       }
     },
 
+    /* Set up observers to:
+     * 1. ensure that the table width isn't changed
+     * 2. change pixel-based column widths to percentages
+     */
+    manageTableWidth: function(table) {
+      // Discard fixed pixel widths on the table itself. This are applied by CKEditor's
+      // table resizer.
+      var observer = new MutationObserver(function(mutations, observer) {
+        for (var i = 0; i < mutations.length; i++) {
+          var mutation = mutations[i];
+
+          // discard fixed pixel widths
+          if (mutation.target.style.width) {
+            mutation.target.style.removeProperty('width');
+          }
+        }
+      });
+      observer.observe(table, {attributes: true, attributeFilter: ['style']});
+      this.observers.push(observer);
+
+      // change pixel width columns to percentages
+      observer = new MutationObserver(function(mutations, observer) {
+        for (var i = 0; i < mutations.length; i++) {
+          var mutation = mutations[i],
+              tag = mutation.target.tagName;
+
+          if ((tag === 'TD' || tag === 'TH') && mutation.target.style.width.slice(-2) == "px") {
+            mutation.target.style.setProperty(
+              'width',
+              parseInt(mutation.target.style.width.slice(0, -2)) / table.clientWidth * 100 + '%');
+          }
+        }
+      });
+      observer.observe(table, {subtree: true, attributes: true, attributeFilter: ['style']});
+      this.observers.push(observer);
+    },
+
     cellChanged: function() {
+      return;
+
       // cell has changed, unbind and re-bind editor
       if (this.ckeditor) {
         this.ckeditor.element.$.contentEditable = false;

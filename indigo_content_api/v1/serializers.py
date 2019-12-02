@@ -21,7 +21,7 @@ def published_doc_url(doc, request, frbr_uri=None):
 class ExpressionSerializer(serializers.Serializer):
     url = serializers.SerializerMethodField()
     language = serializers.CharField(source='language.code')
-    expression_frbr_uri = serializers.SerializerMethodField()
+    expression_frbr_uri = serializers.CharField()
     expression_date = serializers.DateField()
     title = serializers.CharField()
 
@@ -31,9 +31,6 @@ class ExpressionSerializer(serializers.Serializer):
 
     def get_url(self, doc):
         return published_doc_url(doc, self.context['request'])
-
-    def get_expression_frbr_uri(self, doc):
-        return doc.expression_uri.expression_uri()
 
 
 class MediaAttachmentSerializer(AttachmentSerializer):

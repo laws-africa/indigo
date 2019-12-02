@@ -153,26 +153,26 @@ class DocumentMixin(object):
         return builder.table_of_contents_for_document(self)
 
     def to_html(self, **kwargs):
-        from ..renderers import HTMLRenderer
-        renderer = HTMLRenderer()
-        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
-        return renderer.render(self, **kwargs)
+        from indigo_api.exporters import HTMLExporter
+        exporter = HTMLExporter()
+        exporter.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return exporter.render(self, **kwargs)
 
     def element_to_html(self, element):
         """ Render a child element of this document into HTML. """
-        from ..renderers import HTMLRenderer
-        renderer = HTMLRenderer()
-        renderer.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
-        return renderer.render(self, element=element)
+        from indigo_api.exporters import HTMLExporter
+        exporter = HTMLExporter()
+        exporter.media_url = reverse('document-detail', kwargs={'pk': self.id}) + '/'
+        return exporter.render(self, element=element)
 
     def to_pdf(self, **kwargs):
-        from ..renderers import PDFRenderer
-        return PDFRenderer().render(self, **kwargs)
+        from indigo_api.exporters import PDFExporter
+        return PDFExporter().render(self, **kwargs)
 
     def element_to_pdf(self, element):
         """ Render a child element of this document into PDF. """
-        from ..renderers import PDFRenderer
-        return PDFRenderer().render(self, element=element)
+        from indigo_api.exporters import PDFExporter
+        return PDFExporter().render(self, element=element)
 
 
 class Document(DocumentMixin, models.Model):
@@ -275,6 +275,12 @@ class Document(DocumentMixin, models.Model):
             if self.expression_date:
                 self._expression_uri.expression_date = '@' + datestring(self.expression_date)
         return self._expression_uri
+
+    @property
+    def expression_frbr_uri(self):
+        """ The FRBR Expression URI as a string.
+        """
+        return self.expression_uri.expression_uri(False)
 
     @property
     def commencement_date(self):

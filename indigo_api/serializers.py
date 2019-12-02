@@ -235,6 +235,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     draft = serializers.BooleanField(default=True)
     language = serializers.CharField(source='language.code', required=True)
+    expression_frbr_uri = serializers.CharField(read_only=True)
 
     # if a title isn't given, it's taken from the associated work
     title = serializers.CharField(required=False, allow_blank=False, allow_null=False)
@@ -256,8 +257,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
-
-    expression_frbr_uri = serializers.SerializerMethodField()
 
     class Meta:
         model = Document
@@ -330,9 +329,6 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             return Language.for_code(value)
         except Language.DoesNotExist:
             raise ValidationError("Invalid language: %s" % value)
-
-    def get_expression_frbr_uri(self, doc):
-        return doc.expression_uri.expression_uri(False)
 
     def create(self, validated_data):
         document = Document()

@@ -11,7 +11,7 @@ from django.core.files.base import ContentFile
 from sass_processor.processor import SassProcessor
 
 from indigo_api.tests.fixtures import *  # noqa
-from indigo_api.renderers import PDFRenderer
+from indigo_api.exporters import PDFExporter
 from indigo_api.models import Work, Attachment
 
 
@@ -446,7 +446,7 @@ class DocumentAPITest(APITestCase):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['filename'], 'withslashes.txt')
 
-    @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
+    @patch.object(PDFExporter, '_wkhtmltopdf', return_value='pdf-content')
     def test_document_pdf(self, mock):
         response = self.client.post('/api/documents', {'frbr_uri': '/za/act/1998/2', 'expression_date': '2001-01-01', 'language': 'eng'})
         assert_equal(response.status_code, 201)

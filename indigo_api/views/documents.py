@@ -29,7 +29,8 @@ from indigo.analysis.differ import AttributeDiffer
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity, Task
 from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
-from ..renderers import AkomaNtosoRenderer, PDFResponseRenderer, EPUBResponseRenderer, HTMLResponseRenderer, ZIPResponseRenderer, HTMLRenderer
+from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
+from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
 from ..utils import Headline, SearchPagination, SearchRankCD
 from .misc import DEFAULT_PERMS
@@ -76,8 +77,8 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
     """
     serializer_class = DocumentSerializer
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
-    renderer_classes = (renderers.JSONRenderer, PDFResponseRenderer, EPUBResponseRenderer,
-                        HTMLResponseRenderer, AkomaNtosoRenderer, ZIPResponseRenderer,
+    renderer_classes = (renderers.JSONRenderer, PDFRenderer, EPUBRenderer,
+                        HTMLRenderer, AkomaNtosoRenderer, ZIPRenderer,
                         renderers.BrowsableAPIRenderer)
     filter_backends = (DjangoFilterBackend,)
     filter_fields = DOCUMENT_FILTER_FIELDS
@@ -367,7 +368,7 @@ class RenderView(APIView):
         document.id = serializer.initial_data['document'].get('id')
 
         if self.coverpage_only:
-            renderer = HTMLRenderer()
+            renderer = HTMLExporter()
             renderer.media_url = reverse('document-detail', kwargs={'pk': document.id}) + '/'
             html = renderer.render_coverpage(document)
             return Response({'output': html})

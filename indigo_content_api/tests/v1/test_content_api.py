@@ -8,7 +8,7 @@ from rest_framework.test import APITestCase
 from django.test.utils import override_settings
 from sass_processor.processor import SassProcessor
 
-from indigo_api.renderers import PDFRenderer
+from indigo_api.exporters import PDFExporter
 from indigo_api.models import Country
 
 
@@ -63,7 +63,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'application/xml')
         assert_in('<akomaNtoso', response.content.decode('utf-8'))
 
-    @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
+    @patch.object(PDFExporter, '_wkhtmltopdf', return_value='pdf-content')
     def test_published_pdf(self, mock):
         response = self.client.get(self.api_path + '/za/act/2014/10.pdf')
         assert_equal(response.status_code, 200)
@@ -127,7 +127,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(len(response.data['results']), 1)
 
-    @patch.object(PDFRenderer, '_wkhtmltopdf', return_value='pdf-content')
+    @patch.object(PDFExporter, '_wkhtmltopdf', return_value='pdf-content')
     def test_published_listing_pdf(self, mock):
         response = self.client.get(self.api_path + '/za/act.pdf')
         assert_equal(response.status_code, 200)

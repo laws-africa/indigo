@@ -23,6 +23,7 @@
             <div class="p-relative">
               <canvas id="works_by_type-chart" data-values="{{ subtypes }}"></canvas>
             </div>
+            <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
           </div>
         </div>
       </div>
@@ -30,7 +31,28 @@
       <div class="card mt-3">
         <div class="card-body">
           <h5 class="card-title">Stubs and Subsidiary Legislation</h5>
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+
+          <div class="row mb-3">
+            <div class="col-2"> Stubs </div>
+            <div class="col-7">
+              <div class="progress" style="border-radius: 3px; height: 20px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ stubs_percentage }}%" aria-valuenow="{{ stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ non_stubs_percentage }}%" aria-valuenow="{{ non_stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div> 
+            </div>
+            <div class="col-3"> Non-stubs </div>
+          </div>
+
+          <div class="row">
+            <div class="col-2"> Primary </div>
+            <div class="col-7">
+              <div class="progress" style="border-radius: 3px; height: 20px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ primary_works_percentage }}%" aria-valuenow="{{ primary_works_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ subsidiary_works_percentage }}%" aria-valuenow="{{ subsidiary_works_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div> 
+            </div>
+            <div class="col-3"> Subsidiary </div>
+          </div>
         </div>
       </div>
     </div>

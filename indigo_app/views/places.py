@@ -549,7 +549,9 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     def get_form(self, form_class=None):
         form = super(PlaceSettingsView, self).get_form()
         # use country's italics_terms list, and display one term per line
-        form.initial['italics_terms'] = '\n'.join(self.country.settings.italics_terms)
+        form.initial['italics_terms'] = '\n'.join(self.country.settings.italics_terms) \
+            if self.country.settings.italics_terms \
+            else ''
         return form
 
     def get_object(self):

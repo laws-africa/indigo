@@ -438,6 +438,7 @@ class MarkUpItalicsTermsView(APIView):
 
     def mark_up_italics(self, document):
         italics_terms_finder = plugins.for_document('italics-terms', document)
+        # use country list even if in locality
         italics_terms = document.work.country.settings.italics_terms
         if italics_terms_finder and italics_terms:
             italics_terms_finder.mark_up_italics_in_document(document, italics_terms)

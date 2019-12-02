@@ -5,7 +5,8 @@ from indigo.analysis.markup import TextPatternMarker
 from indigo.plugins import LocaleBasedMatcher, plugins
 
 
-class BaseItalsFinder(LocaleBasedMatcher, TextPatternMarker):
+@plugins.register('italics-terms')
+class BaseItalicsFinder(LocaleBasedMatcher, TextPatternMarker):
     """ Italicises terms in a document.
     """
     marker_tag = 'i'
@@ -22,22 +23,17 @@ class BaseItalsFinder(LocaleBasedMatcher, TextPatternMarker):
         self.markup_patterns(root)
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
-    def get_pattern_re(self, italics_terms):
-        # TODO: do this differently once italics_terms stored as an actual array
-        f_string = f'{italics_terms[0]}'.replace('\r\n', '|').replace(' ', '\s*')
-        self.pattern_re = re.compile(rf'(?P<itals>{f_string})', re.X)
+    def get_pattern_re(self, terms):
+        terms = [t.strip() for t in terms]
+        terms = [re.escape(t) for t in terms if t]
+        terms = '|'.join(terms)
+        terms = fr'\b({terms})\b'
+
+        self.pattern_re = re.compile(terms)
 
     def markup_match(self, node, match):
         """ Markup the match with a <i> tag.
         """
-        itals = etree.Element(self.marker_tag)
-        itals.text = match.group('itals')
-        return itals, match.start('itals'), match.end('itals')
-
-
-@plugins.register('italics-terms')
-class ItalsFinderENG(BaseItalsFinder):
-    """ Finds references to italics terms in English documents.
-    """
-    # country, language, locality
-    locale = (None, 'eng', None)
+        italics_term = etree.Element(self.marker_tag)
+        italics_term.text = match.group()
+        return italics_term, match.start(), match.end()

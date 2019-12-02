@@ -170,7 +170,8 @@ class PlaceSettings(models.Model):
     styleguide_url = models.URLField(null=True, blank=True)
     italics_terms = ArrayField(
         models.CharField(max_length=1024),
-        null=True
+        null=True,
+        blank=True
     )
 
     @property

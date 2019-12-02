@@ -5,14 +5,74 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
-  <div class="card mb-3">
+
+  <div class="row">
+    <div class="col">
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Open Tasks</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="{% url 'tasks' place=place.place_code %}" class="card-link">Tasks →</a>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Types of Works</h5>
+          <div class="card-body">
+            <div class="p-relative">
+              <canvas id="works_by_type-chart" data-values="{{ subtypes }}"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Stubs and Subsidiary Legislation</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">As at</h5>
+          <h5 class="card-text">{% now "Y-m-d" %}</h5>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <h5 class="card-header">Recent Activity</h5>
+        <div class="card-body">
+          <div class="p-relative" style="height: 100px">
+            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
+          </div>
+          <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
+        </div>       
+      </div>
+
+      <div class="card mt-3">
+        <div class="card-body">
+          <h5 class="card-title">Most Incomplete Works</h5>
+          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+          <a href="#" class="card-link">Card link</a>
+          <a href="#" class="card-link">Another link</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="card mt-3">
     <h5 class="card-header">Recently updated works</h5>
     <div class="card-body">
       <table class="table table-sm">
         <thead>
           <tr>
             <th>Work</th>
-            <th>Added</th>
+            <th>Updates</th>
           </tr>
         </thead>
         {% for work in recently_updated_works %}
@@ -42,14 +102,14 @@
     </div>
   </div>
 
-  <div class="card">
+  <div class="card mt-3">
     <h5 class="card-header">Recently added works</h5>
     <div class="card-body">
       <table class="table table-sm">
         <thead>
         <tr>
           <th>Work</th>
-          <th>Updated</th>
+          <th>Added</th>
         </tr>
         </thead>
         {% for work in recently_created_works %}

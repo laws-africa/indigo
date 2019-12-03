@@ -527,7 +527,6 @@
 
       // adjust the toolbar
       this.$toolbar.find('.btn-toolbar').addClass('d-none');
-      this.$toolbar.find('.table-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
 
       this.editing = true;

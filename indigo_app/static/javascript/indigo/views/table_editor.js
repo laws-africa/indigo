@@ -27,7 +27,7 @@
 
       this.parent = options.parent;
       this.documentContent = options.documentContent;
-      this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
+      this.tableWrapper = this.$('.table-editor-wrapper').removeClass('d-none').remove()[0];
       this.editing = false;
 
       this.ckeditor = null;

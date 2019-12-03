@@ -22,7 +22,7 @@
 
   <xsl:template match="html:td | html:th">
 		<xsl:element name="{name(.)}">
-      <xsl:apply-templates select="@colspan | @rowspan" />
+      <xsl:apply-templates select="@colspan | @rowspan | @style | @class" />
 
       <p>
         <xsl:for-each select="node()">
@@ -75,7 +75,7 @@
 
   <!-- attributes -->
 
-  <xsl:template match="@id | @colspan | @rowspan">
+  <xsl:template match="@id | @colspan | @rowspan | @style | @class">
     <xsl:attribute name="{name(.)}"><xsl:value-of select="." /></xsl:attribute>
   </xsl:template>
 

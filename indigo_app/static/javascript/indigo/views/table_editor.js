@@ -18,6 +18,9 @@
       'click .table-delete-column': 'deleteColumn',
       'click .table-merge-cells': 'toggleMergeCells',
       'click .table-toggle-heading': 'toggleHeading',
+      'click .table-text-left': 'alignTextLeft',
+      'click .table-text-center': 'alignTextCenter',
+      'click .table-text-right': 'alignTextRight',
       'click .save-edit-table': 'saveChanges',
       'click .cancel-edit-table': 'discardChanges',
     },
@@ -139,8 +142,10 @@
           enterMode: CKEDITOR.ENTER_BR,
           shiftEnterMode: CKEDITOR.ENTER_BR,
           toolbar: [],
-          allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p); ' +
-                          'table[id, data-id]; thead; tbody; tr; th{width}[colspan,rowspan]; td{width}[colspan,rowspan]; p;',
+          allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p); p; ' +
+                          'table[id, data-id]; thead; tbody; tr;' +
+                          'th(akn--text-center,akn--text-right){width}[colspan,rowspan]; ' +
+                          'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
           on: {
             selectionChange: _.bind(this.selectionChanged, this),
           },
@@ -210,6 +215,24 @@
 
       $('.table-merge-cells').toggleClass('active', merged);
       $('.table-toggle-heading').toggleClass('active', headings);
+
+      this.updateToolbar();
+    },
+
+    updateToolbar: function() {
+      var selected = this.getSelectedCells(),
+          alignment = {};
+
+      // toggle alignment buttons
+      selected.forEach(function(cell) {
+        if (cell.classList.contains('akn--text-center')) alignment.center = (alignment.center || 0) + 1;
+        else if (cell.classList.contains('akn--text-right')) alignment.right = (alignment.right || 0) + 1;
+        else alignment.left = (alignment.left || 0) + 1;
+      });
+
+      $('.table-text-left, .table-text-center, .table-text-right').removeClass('active');
+      alignment = _.keys(alignment);
+      if (alignment.length == 1) $('.table-text-' + alignment[0]).addClass('active');
     },
 
     insertRowAbove: function() {
@@ -275,6 +298,29 @@
           self.renameNode(cell, makeHeading ? 'th' : 'td'),
           cell);
       });
+    },
+
+    alignTextCenter: function(e) {
+      this.getSelectedCells().forEach(function(cell) {
+        cell.classList.remove('akn--text-left', 'akn--text-right');
+        cell.classList.add('akn--text-center');
+      });
+      this.updateToolbar();
+    },
+
+    alignTextRight: function(e) {
+      this.getSelectedCells().forEach(function(cell) {
+        cell.classList.remove('akn--text-left', 'akn--text-center');
+        cell.classList.add('akn--text-right');
+      });
+      this.updateToolbar();
+    },
+
+    alignTextLeft: function(e) {
+      this.getSelectedCells().forEach(function(cell) {
+        cell.classList.remove('akn--text-right', 'akn--text-center');
+      });
+      this.updateToolbar();
     },
 
     renameNode: function(node, newname) {

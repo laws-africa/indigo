@@ -390,12 +390,14 @@ button.btn-link.help {
 
 /* table editor */
 .table-editor-wrapper {
-  .btn-toolbar {
-    margin-bottom: 5px;
+  td > p:last-child,
+  th > p:last-child {
+    margin-bottom: 0px;
+  }
 
-    .btn-group {
-      float: right;
-    }
+  .table-editor-buttons {
+    padding: 5px 0px;
+    margin: 0px 2px;
   }
 
   .when-active {
@@ -406,33 +408,17 @@ button.btn-link.help {
     .when-active {
       display: block;
     }
+
     .when-inactive {
       display: none;
     }
 
-    table {
-      outline: $selection-colour auto 5px;
+    .table-editor-buttons {
+      position: sticky;
+      top: -23px;
+      background-color: white;
+      z-index: 10;
     }
-
-    th.selected,
-    td.selected {
-      background-color: $selection-colour;
-    }
-
-    th.active,
-    td.active {
-      outline: $selection-colour auto 5px;
-    }
-
-    th.active.selected:focus,
-    td.active.selected:focus {
-      background-color: transparent;
-    }
-  }
-
-  td > p:last-child,
-  th > p:last-child {
-    margin-bottom: 0px;
   }
 }
 

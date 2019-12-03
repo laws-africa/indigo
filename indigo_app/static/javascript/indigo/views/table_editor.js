@@ -5,10 +5,7 @@
   Indigo = exports.Indigo;
 
   /* The TableEditorView handles inline editing of tables.
-   * It works in conjunction with CKEditor and the standalone TableEditor
-   * support script. CKEditor provides the actual editing support and
-   * enforces decent HTML. The TableEditor script treats the table like
-   * an Excel spreadsheet and allows adding rows, merging cells, etc.
+   * CKEditor provides the actual editing support and enforces decent HTML.
    */
   Indigo.TableEditorView = Backbone.View.extend({
     el: 'body',
@@ -30,10 +27,7 @@
 
       this.parent = options.parent;
       this.documentContent = options.documentContent;
-      this.editor = new TableEditor();
-      this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
-      this.editor.onCellChanged = _.bind(this.cellChanged, this);
-      this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
+      this.tableWrapper = this.$('.table-editor-wrapper').removeClass('d-none').remove()[0];
       this.editing = false;
 
       this.ckeditor = null;
@@ -55,14 +49,13 @@
     saveChanges: function(e) {
       if (!this.editing) return;
 
-      var table = this.editor.table,
-          oldTable = this.documentContent.xmlDocument.getElementById(this.editor.table.getAttribute('data-id'));
+      var table,
+          oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id'));
+
+      table = $.parseHTML(this.ckeditor.getData())[0];
+      if (table.tagName != 'TABLE') table = table.querySelector('table');
 
       // stop editing
-      if (this.ckeditor) {
-        this.ckeditor.destroy();
-        this.ckeditor = null;
-      }
       this.editTable(null);
 
       // get new xml
@@ -86,7 +79,7 @@
       xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {
         var text = p.firstChild;
 
-        if (text && text.nodeType == text.TEXT_NODE) {
+        if (text && text.nodeType === text.TEXT_NODE) {
           text.textContent = text.textContent.replace(/^\s+/, '');
         }
       });
@@ -95,7 +88,7 @@
       xml.querySelectorAll('table td > p:last-child, table th > p:last-child').forEach(function(p) {
         var text = p.lastChild;
 
-        if (text && text.nodeType == text.TEXT_NODE) {
+        if (text && text.nodeType === text.TEXT_NODE) {
           text.textContent = text.textContent.replace(/\s+$/, '');
         }
       });
@@ -107,136 +100,211 @@
       if (!this.editing) return;
       if (!force && !confirm("You'll lose your changes, are you sure?")) return;
 
-      var table = this.editor.table,
+      var container = this.table.parentElement,
           initialTable = this.initialTable;
 
       this.editTable(null);
 
-      // nuke the active ckeditor instance, if any
-      if (this.ckeditor) {
-        this.ckeditor.destroy(true);
-        this.ckeditor = null;
-      }
-
       // undo changes
-      table.parentElement.replaceChild(initialTable, table);
+      container.replaceChild(initialTable, container.querySelector('table'));
     },
 
     // start editing an HTML table
     editTable: function(table) {
-      var self = this;
+      var self = this,
+          editable;
 
-      if (this.editor.table == table)
-        return;
+      if (this.table === table) return;
 
       if (table) {
         // cancel existing edit
-        if (this.editor.table) {
+        if (this.table) {
           this.discardChanges(null, true);
         }
 
+        this.observers = [];
         this.initialTable = table.cloneNode(true);
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
-        self.editor.setTable(table);
-        self.editor.cells[0][0].click();
+        editable = table.parentElement;
+        editable.contentEditable = true;
+
+        CKEDITOR.on('instanceReady', function(evt) {
+          evt.removeListener();
+          self.table = editable.querySelector('table');
+          self.manageTableWidth(self.table);
+        });
+
+        this.ckeditor = CKEDITOR.inline(editable, {
+          enterMode: CKEDITOR.ENTER_BR,
+          shiftEnterMode: CKEDITOR.ENTER_BR,
+          toolbar: [],
+          allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p); ' +
+                          'table[id, data-id]; thead; tbody; tr; th{width}[colspan,rowspan]; td{width}[colspan,rowspan]; p;',
+          on: {
+            selectionChange: _.bind(this.selectionChanged, this),
+          },
+        });
 
         this.editing = true;
         this.trigger('start');
       } else {
-        this.editor.$table.closest('.table-editor-wrapper').removeClass('table-editor-active');
+        // clean up observers
+        this.observers.forEach(function(observer) { observer.disconnect(); });
+        this.observers = [];
 
-        this.editor.setTable(null);
+        this.table.parentElement.contentEditable = false;
+        $(this.table).closest('.table-editor-wrapper').removeClass('table-editor-active');
+
+        this.ckeditor.destroy();
+        this.ckeditor = null;
+
         this.initialTable = null;
-
+        this.table = null;
         this.editing = false;
         this.trigger('finish');
       }
     },
 
-    cellChanged: function() {
-      // cell has changed, unbind and re-bind editor
-      if (this.ckeditor) {
-        this.ckeditor.element.$.contentEditable = false;
-        this.ckeditor.destroy();
-      }
+    /* Set up observers to:
+     * 1. ensure that the table width isn't changed
+     * 2. change pixel-based column widths to percentages
+     */
+    manageTableWidth: function(table) {
+      // Discard fixed pixel widths on the table itself. This are applied by CKEditor's
+      // table resizer.
+      var observer = new MutationObserver(function(mutations, observer) {
+        for (var i = 0; i < mutations.length; i++) {
+          var mutation = mutations[i];
 
-      this.editor.activeCell.contentEditable = true;
-      this.ckeditor = CKEDITOR.inline(this.editor.activeCell, {
-        removePlugins: 'toolbar',
-        enterMode: CKEDITOR.ENTER_BR,
-        shiftEnterMode: CKEDITOR.ENTER_BR,
-        allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark)',
+          // discard fixed pixel widths
+          if (mutation.target.style.width) {
+            mutation.target.style.removeProperty('width');
+          }
+        }
       });
+      observer.observe(table, {attributes: true, attributeFilter: ['style']});
+      this.observers.push(observer);
+
+      // change pixel width columns to percentages
+      observer = new MutationObserver(function(mutations, observer) {
+        for (var i = 0; i < mutations.length; i++) {
+          var mutation = mutations[i],
+              tag = mutation.target.tagName;
+
+          if ((tag === 'TD' || tag === 'TH') && mutation.target.style.width.slice(-2) === "px") {
+            mutation.target.style.setProperty(
+              'width',
+              parseInt(mutation.target.style.width.slice(0, -2)) / table.clientWidth * 100 + '%');
+          }
+        }
+      });
+      observer.observe(table, {subtree: true, attributes: true, attributeFilter: ['style']});
+      this.observers.push(observer);
     },
 
-    selectionChanged: function() {
-      var selected = this.editor.getSelectedCells(),
+    selectionChanged: function(evt) {
+      var selected = this.getSelectedCells(),
           merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
-          headings = _.any(selected, function(c) { return c.tagName == 'TH'; });
+          headings = _.any(selected, function(c) { return c.tagName === 'TH'; });
 
-      $('.table-merge-cells')
-        .prop('disabled', !merged && selected.length < 2)
-        .toggleClass('active', merged);
-
+      $('.table-merge-cells').toggleClass('active', merged);
       $('.table-toggle-heading').toggleClass('active', headings);
     },
 
     insertRowAbove: function() {
-      if (!this.editor.activeCell) return;
-      this.editor.insertRow(this.editor.activeCoords[1]);
+      this.ckeditor.execCommand("rowInsertBefore");
     },
 
     insertRowBelow: function() {
-      if (!this.editor.activeCell) return;
-      this.editor.insertRow(this.editor.activeCoords[1] + this.editor.activeCell.rowSpan);
+      this.ckeditor.execCommand("rowInsertAfter");
     },
 
     insertColumnLeft: function(e) {
-      if (!this.editor.activeCell) return;
-      this.editor.insertColumn(this.editor.activeCoords[0]);
+      this.ckeditor.execCommand("columnInsertBefore");
     },
 
     insertColumnRight: function(e) {
-      if (!this.editor.activeCell) return;
-      this.editor.insertColumn(this.editor.activeCoords[0] + 1);
+      this.ckeditor.execCommand("columnInsertAfter");
     },
 
     deleteRow: function(e) {
-      if (!this.editor.activeCell) return;
-
-      this.editor.removeRow(this.editor.activeCoords[1]);
-      // TODO update the active cell
+      if (this.table.rows.length > 1) this.ckeditor.execCommand("rowDelete");
     },
 
     deleteColumn: function(e) {
-      if (!this.editor.activeCell) return;
+      // there needs to be at least one row with more than one column
+      var okay = false;
 
-      this.editor.removeColumn(this.editor.activeCoords[0]);
-      // update the active cell
+      for (var i = 0; i < this.table.rows.length; i++) {
+        if (this.table.rows[i].cells.length > 1 || this.table.rows[i].cells[0].colSpan > 1) {
+          okay = true;
+          break;
+        }
+      }
+
+      if (okay) this.ckeditor.execCommand("columnDelete");
     },
 
     toggleMergeCells: function(e) {
-      var merged = _.any(this.editor.getSelectedCells(), function(c) { return c.colSpan > 1 || c.rowSpan > 1; });
+      var self = this,
+          cells = this.getSelectedCells(),
+          merged = _.any(cells, function(c) { return c.colSpan > 1 || c.rowSpan > 1; });
 
       if (merged) {
-        this.editor.splitSelection();
+        cells.forEach(function(cell) {
+          self.ckeditor.getSelection().selectElement(new CKEDITOR.dom.element(cell));
+          if (cell.colSpan > 1) self.ckeditor.execCommand("cellVerticalSplit");
+          if (cell.rowSpan > 1) self.ckeditor.execCommand("cellHorizontalSplit");
+        });
       } else {
-        this.editor.mergeSelection();
-        this.selectionChanged();
+        this.ckeditor.execCommand("cellMerge");
       }
     },
 
     toggleHeading: function(e) {
       var self = this,
-          selection = this.editor.getSelectedCells();
+          cells = this.getSelectedCells(),
+          makeHeading = !_.any(cells, function(c) { return c.tagName === 'TH'; });
 
-      var heading = _.any(selection, function(c) { return c.tagName == 'TH'; });
-      _.each(selection, function(c) {
-        self.editor.toggleHeading(c, !heading);
+      cells.forEach(function(cell) {
+        if (cell.tagName === 'TH' && makeHeading) return;
+        if (cell.tagName === 'TD' && !makeHeading) return;
+
+        cell.parentElement.replaceChild(
+          self.renameNode(cell, makeHeading ? 'th' : 'td'),
+          cell);
       });
+    },
 
-      this.selectionChanged();
+    renameNode: function(node, newname) {
+      var newnode = node.ownerDocument.createElement(newname),
+        attrs = node.attributes;
+
+      for (var i = 0; i < attrs.length; i++) {
+        newnode.setAttribute(attrs[i].name, attrs[i].value);
+      }
+
+      while (node.childNodes.length > 0) {
+        newnode.appendChild(node.childNodes[0]);
+      }
+
+      return newnode;
+    },
+
+    getSelectedCells: function() {
+      var cells = Array.from(this.table.querySelectorAll('.cke_table-faked-selection'));
+
+      if (!cells.length) {
+        // selection is the currently active cell
+        var ranges = this.ckeditor.getSelection().getRanges();
+        if (ranges.length) {
+          var cell = ranges[0].startContainer.getAscendant({th: 1, td: 1}, true);
+          if (cell) cells = [cell.$];
+        }
+      }
+
+      return cells;
     },
   });
 })(window);

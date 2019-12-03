@@ -84,63 +84,6 @@
       {% endif %}
     </div>
   </div>
-
-  <!-- table editor buttons -->
-  <div class="btn-toolbar table-editor-buttons d-none">
-    <!-- this wrapper is removed from the DOM and positioned inline alongside tables in the content view,
-         it's just useful to write the HTML here and not in Javascript. -->
-    <div class="table-editor-wrapper">
-      <div class="ig btn-toolbar">
-        <div class="btn-group btn-group-sm when-inactive">
-          <button class="btn btn-primary edit-table"><i class="fas fa-pencil-alt"></i> Edit table</button>
-        </div>
-
-        <div class="btn-group btn-group-sm when-active">
-          <button class="btn btn-success save-edit-table"><i class="fas fa-check"></i> Update</button>
-          <button class="btn btn-secondary cancel-edit-table" title="Cancel"><i class="fas fa-times"></i></button>
-        </div>
-      </div>
-
-      <div class="table-container"></div>
-    </div>
-    <!-- end wrapper -->
-
-    <div class="btn-group mr-2">
-      <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-plus"></i> Insert
-        </button>
-        <div class="dropdown-menu">
-          <a href="#" class="dropdown-item table-insert-row-above">Insert row above</a>
-          <a href="#" class="dropdown-item table-insert-row-below">Insert row below</a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item table-insert-column-left">Insert column left</a>
-          <a href="#" class="dropdown-item table-insert-column-right">Insert column right</a>
-        </div>
-      </div>
-
-      <div class="btn-group btn-group-sm">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <i class="fas fa-minus"></i> Delete <span class="caret"></span>
-        </button>
-        <div class="dropdown-menu">
-          <a href="#" class="dropdown-item table-delete-row">Delete row</a>
-          <a href="#" class="dropdown-item table-delete-column">Delete column</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="btn-group btn-group-sm mr-2">
-      <button type="button" class="btn btn-outline-secondary table-merge-cells">Merge cells</button>
-      <button type="button" class="btn btn-outline-secondary table-toggle-heading"><i class="fas fa-heading"></i> Heading</button>
-    </div>
-
-    <div class="btn-group btn-group-sm mr-2">
-      <button class="btn btn-sm btn-success save-edit-table"><i class="fas fa-check"></i> Update</button>
-      <button class="btn btn-sm btn-secondary cancel-edit-table" title="Cancel"><i class="fas fa-times"></i> Cancel</button>
-    </div>
-  </div>
-  <!-- end table editor buttons -->
 </div>
 
 <div class="btn-toolbar ml-auto">
@@ -165,3 +108,55 @@
     </div>
   </div>
 </div>
+
+<!-- this wrapper is removed from the DOM and positioned inline alongside tables in the content view,
+     it's just useful to write the HTML here and not in Javascript. -->
+<div class="table-editor-wrapper d-none">
+  <div class="btn-toolbar table-editor-buttons">
+    <div class="ig btn-toolbar when-inactive">
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-primary edit-table"><i class="fas fa-pencil-alt"></i> Edit table</button>
+      </div>
+    </div>
+
+    <div class="ig btn-toolbar when-active">
+      <div class="btn-group btn-group-sm mr-2">
+        <button class="btn btn-success save-edit-table"><i class="fas fa-check"></i> Update</button>
+        <button class="btn btn-secondary cancel-edit-table" title="Cancel"><i class="fas fa-times"></i> Cancel</button>
+      </div>
+
+      <div class="btn-group mr-2">
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-plus"></i> Insert
+          </button>
+          <div class="dropdown-menu">
+            <button class="dropdown-item table-insert-row-above">Insert row above</button>
+            <button class="dropdown-item table-insert-row-below">Insert row below</button>
+            <div class="dropdown-divider"></div>
+            <button class="dropdown-item table-insert-column-left">Insert column left</button>
+            <button class="dropdown-item table-insert-column-right">Insert column right</button>
+          </div>
+        </div>
+
+        <div class="btn-group btn-group-sm">
+          <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <i class="fas fa-minus"></i> Delete <span class="caret"></span>
+          </button>
+          <div class="dropdown-menu">
+            <button href="#" class="dropdown-item table-delete-row">Delete row</button>
+            <button href="#" class="dropdown-item table-delete-column">Delete column</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="btn-group btn-group-sm">
+        <button type="button" class="btn btn-outline-secondary table-merge-cells">Merge cells</button>
+        <button type="button" class="btn btn-outline-secondary table-toggle-heading"><i class="fas fa-heading"></i> Heading</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="table-container"></div>
+</div>
+<!-- end table editor wrapper -->

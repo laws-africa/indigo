@@ -54,6 +54,12 @@
     <eol/>
   </xsl:template>
 
+  <xsl:template match="html:b | html:i">
+    <xsl:element name="{name(.)}">
+      <xsl:apply-templates />
+    </xsl:element>
+  </xsl:template>
+
   <xsl:template match="html:a">
     <ref>
       <xsl:attribute name="href"><xsl:value-of select="@data-href" /></xsl:attribute>

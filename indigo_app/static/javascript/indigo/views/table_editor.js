@@ -210,8 +210,8 @@
 
     selectionChanged: function(evt) {
       var selected = this.getSelectedCells(),
-          merged = _.any(selected, function (c) { return c.colSpan > 1 || c.rowSpan > 1; }),
-          headings = _.any(selected, function (c) { return c.tagName === 'TH'; });
+          merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
+          headings = _.any(selected, function(c) { return c.tagName === 'TH'; });
 
       $('.table-merge-cells').toggleClass('active', merged);
       $('.table-toggle-heading').toggleClass('active', headings);

@@ -527,5 +527,54 @@
         candidates[0].view.scrollIntoView();
       }
     },
+
+    createRange: function() {
+      return this.rangeToTarget(document.getSelection().getRangeAt(0));
+    },
+
+    rangeToTarget: function(range) {
+      var anchor = range.commonAncestorContainer,
+          target = {selectors: []},
+          selector;
+
+      // TODO: handle no id element (ie. body, preamble, etc.)
+      anchor = $(anchor).closest('[id]')[0];
+      // TODO: data-id?
+      target.anchor_id = anchor.getAttribute('id');
+
+      // position selector
+      selector = textPositionFromRange(anchor, range);
+      selector.type = "TextPositionSelector";
+      target.selectors.push(selector);
+
+      // quote selector, based on the position
+      selector = textQuoteFromTextPosition(anchor, selector);
+      selector.type = "TextQuoteSelector";
+      target.selectors.push(selector);
+
+      return target;
+    },
+
+    targetToRange: function(target) {
+      // TODO: scope, look upwards, etc.
+      var anchor = document.getElementById(target.anchor_id),
+          posnSelector = _.findWhere(target.selectors, {type: "TextPositionSelector"}),
+          quoteSelector = _.findWhere(target.selectors, {type: "TextQuoteSelector"}),
+          range;
+
+      if (posnSelector) {
+        range = textPositionToRange(anchor, posnSelector);
+
+        // compare text with the exact from the quote selector
+        if (quoteSelector && range.toString() === quoteSelector.exact) {
+          return range;
+        }
+      }
+
+      // fall back to the quote selector
+      if (quoteSelector) {
+        return textQuoteToRange(anchor, quoteSelector);
+      }
+    }
   });
 })(window);

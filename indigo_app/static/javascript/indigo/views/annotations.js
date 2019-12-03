@@ -575,6 +575,45 @@
       if (quoteSelector) {
         return textQuoteToRange(anchor, quoteSelector);
       }
-    }
+    },
+
+    markupRange: function(range) {
+      var start,
+          end = range.endContainer,
+          iterator, node, nodes = [];
+
+      function split(node, offset) {
+        // TODO: will node always be a text node?
+        if (offset != 0 && offset != node.length) {
+          return node.splitText(offset);
+        } else {
+          return node;
+        }
+      }
+
+      function markup(node) {
+        // TODO: data attributes, etc.
+        var mark = document.createElement('mark');
+        node.parentElement.insertBefore(mark, node);
+        mark.appendChild(node);
+      }
+
+      // split start and end
+      start = split(range.startContainer, range.startOffset);
+      node = split(range.endContainer, range.endOffset);
+      // returns the node AFTER the split (if it splits), but we want the one just before
+      if (node !== end) end = node.previousSibling;
+
+      iterator = document.createNodeIterator(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+
+      // find the start
+      domSeek(iterator, start);
+      while (node = iterator.nextNode()) {
+        nodes.push(node);
+        if ((node.compareDocumentPosition(end) & node.DOCUMENT_POSITION_FOLLOWING) == 0) break;
+      }
+
+      nodes.forEach(markup);
+    },
   });
 })(window);

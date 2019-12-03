@@ -5,10 +5,7 @@
   Indigo = exports.Indigo;
 
   /* The TableEditorView handles inline editing of tables.
-   * It works in conjunction with CKEditor and the standalone TableEditor
-   * support script. CKEditor provides the actual editing support and
-   * enforces decent HTML. The TableEditor script treats the table like
-   * an Excel spreadsheet and allows adding rows, merging cells, etc.
+   * CKEditor provides the actual editing support and enforces decent HTML.
    */
   Indigo.TableEditorView = Backbone.View.extend({
     el: 'body',
@@ -82,7 +79,7 @@
       xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {
         var text = p.firstChild;
 
-        if (text && text.nodeType == text.TEXT_NODE) {
+        if (text && text.nodeType === text.TEXT_NODE) {
           text.textContent = text.textContent.replace(/^\s+/, '');
         }
       });
@@ -91,7 +88,7 @@
       xml.querySelectorAll('table td > p:last-child, table th > p:last-child').forEach(function(p) {
         var text = p.lastChild;
 
-        if (text && text.nodeType == text.TEXT_NODE) {
+        if (text && text.nodeType === text.TEXT_NODE) {
           text.textContent = text.textContent.replace(/\s+$/, '');
         }
       });
@@ -195,7 +192,7 @@
           var mutation = mutations[i],
               tag = mutation.target.tagName;
 
-          if ((tag === 'TD' || tag === 'TH') && mutation.target.style.width.slice(-2) == "px") {
+          if ((tag === 'TD' || tag === 'TH') && mutation.target.style.width.slice(-2) === "px") {
             mutation.target.style.setProperty(
               'width',
               parseInt(mutation.target.style.width.slice(0, -2)) / table.clientWidth * 100 + '%');
@@ -209,7 +206,7 @@
     selectionChanged: function(evt) {
       var selected = this.getSelectedCells(),
           merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
-          headings = _.any(selected, function(c) { return c.tagName == 'TH'; });
+          headings = _.any(selected, function(c) { return c.tagName === 'TH'; });
 
       $('.table-merge-cells')
         .prop('disabled', !merged && selected.length < 2)
@@ -271,11 +268,11 @@
     toggleHeading: function(e) {
       var self = this,
           cells = this.getSelectedCells(),
-          makeHeading = !_.any(cells, function(c) { return c.tagName == 'TH'; });
+          makeHeading = !_.any(cells, function(c) { return c.tagName === 'TH'; });
 
       cells.forEach(function(cell) {
-        if (cell.tagName == 'TH' && makeHeading) return;
-        if (cell.tagName == 'TD' && !makeHeading) return;
+        if (cell.tagName === 'TH' && makeHeading) return;
+        if (cell.tagName === 'TD' && !makeHeading) return;
 
         cell.parentElement.replaceChild(
           self.renameNode(cell, makeHeading ? 'th' : 'td'),

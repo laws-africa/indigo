@@ -30,9 +30,6 @@
 
       this.parent = options.parent;
       this.documentContent = options.documentContent;
-      this.editor = new TableEditor();
-      this.editor.onSelectionChanged = _.bind(this.selectionChanged, this);
-      this.editor.onCellChanged = _.bind(this.cellChanged, this);
       this.tableWrapper = this.$('.table-editor-buttons .table-editor-wrapper').remove()[0];
       this.editing = false;
 
@@ -147,6 +144,9 @@
           toolbar: [],
           allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p); ' +
                           'table[id, data-id]; thead; tbody; tr; th{width}[colspan,rowspan]; td{width}[colspan,rowspan]; p;',
+          on: {
+            selectionChange: _.bind(this.selectionChanged, this),
+          },
         });
 
         this.editing = true;
@@ -206,26 +206,8 @@
       this.observers.push(observer);
     },
 
-    cellChanged: function() {
-      return;
-
-      // cell has changed, unbind and re-bind editor
-      if (this.ckeditor) {
-        this.ckeditor.element.$.contentEditable = false;
-        this.ckeditor.destroy();
-      }
-
-      this.editor.activeCell.contentEditable = true;
-      this.ckeditor = CKEDITOR.inline(this.editor.activeCell, {
-        removePlugins: 'toolbar',
-        enterMode: CKEDITOR.ENTER_BR,
-        shiftEnterMode: CKEDITOR.ENTER_BR,
-        allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark)',
-      });
-    },
-
-    selectionChanged: function() {
-      var selected = this.editor.getSelectedCells(),
+    selectionChanged: function(evt) {
+      var selected = this.getSelectedCells(),
           merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
           headings = _.any(selected, function(c) { return c.tagName == 'TH'; });
 
@@ -237,60 +219,98 @@
     },
 
     insertRowAbove: function() {
-      if (!this.editor.activeCell) return;
-      this.editor.insertRow(this.editor.activeCoords[1]);
+      this.ckeditor.execCommand("rowInsertBefore");
     },
 
     insertRowBelow: function() {
-      if (!this.editor.activeCell) return;
-      this.editor.insertRow(this.editor.activeCoords[1] + this.editor.activeCell.rowSpan);
+      this.ckeditor.execCommand("rowInsertAfter");
     },
 
     insertColumnLeft: function(e) {
-      if (!this.editor.activeCell) return;
-      this.editor.insertColumn(this.editor.activeCoords[0]);
+      this.ckeditor.execCommand("columnInsertBefore");
     },
 
     insertColumnRight: function(e) {
-      if (!this.editor.activeCell) return;
-      this.editor.insertColumn(this.editor.activeCoords[0] + 1);
+      this.ckeditor.execCommand("columnInsertAfter");
     },
 
     deleteRow: function(e) {
-      if (!this.editor.activeCell) return;
-
-      this.editor.removeRow(this.editor.activeCoords[1]);
-      // TODO update the active cell
+      if (this.table.rows.length > 1) this.ckeditor.execCommand("rowDelete");
     },
 
     deleteColumn: function(e) {
-      if (!this.editor.activeCell) return;
+      // there needs to be at least one row with more than one column
+      var okay = false;
 
-      this.editor.removeColumn(this.editor.activeCoords[0]);
-      // update the active cell
+      for (var i = 0; i < this.table.rows.length; i++) {
+        if (this.table.rows[i].cells.length > 1 || this.table.rows[i].cells[0].colSpan > 1) {
+          okay = true;
+          break;
+        }
+      }
+
+      if (okay) this.ckeditor.execCommand("columnDelete");
     },
 
     toggleMergeCells: function(e) {
-      var merged = _.any(this.editor.getSelectedCells(), function(c) { return c.colSpan > 1 || c.rowSpan > 1; });
+      var self = this,
+          cells = this.getSelectedCells(),
+          merged = _.any(cells, function(c) { return c.colSpan > 1 || c.rowSpan > 1; });
 
       if (merged) {
-        this.editor.splitSelection();
+        cells.forEach(function(cell) {
+          self.ckeditor.getSelection().selectElement(new CKEDITOR.dom.element(cell));
+          if (cell.colSpan > 1) self.ckeditor.execCommand("cellVerticalSplit");
+          if (cell.rowSpan > 1) self.ckeditor.execCommand("cellHorizontalSplit");
+        });
       } else {
-        this.editor.mergeSelection();
-        this.selectionChanged();
+        this.ckeditor.execCommand("cellMerge");
       }
     },
 
     toggleHeading: function(e) {
       var self = this,
-          selection = this.editor.getSelectedCells();
+          cells = this.getSelectedCells(),
+          makeHeading = !_.any(cells, function(c) { return c.tagName == 'TH'; });
 
-      var heading = _.any(selection, function(c) { return c.tagName == 'TH'; });
-      _.each(selection, function(c) {
-        self.editor.toggleHeading(c, !heading);
+      cells.forEach(function(cell) {
+        if (cell.tagName == 'TH' && makeHeading) return;
+        if (cell.tagName == 'TD' && !makeHeading) return;
+
+        cell.parentElement.replaceChild(
+          self.renameNode(cell, makeHeading ? 'th' : 'td'),
+          cell);
       });
+    },
 
-      this.selectionChanged();
+    renameNode: function(node, newname) {
+      var newnode = node.ownerDocument.createElement(newname),
+        attrs = node.attributes;
+
+      for (var i = 0; i < attrs.length; i++) {
+        newnode.setAttribute(attrs[i].name, attrs[i].value);
+      }
+
+      while (node.childNodes.length > 0) {
+        newnode.appendChild(node.childNodes[0]);
+      }
+
+      return newnode;
+    },
+
+    getSelectedCells: function() {
+      var cells = Array.from(this.table.querySelectorAll('.cke_table-faked-selection'));
+
+      if (!cells.length) {
+        // selection is the currently active cell
+        var ranges = this.ckeditor.getSelection().getRanges();
+        if (ranges.length) {
+          var cell = ranges[0].startContainer.getAscendant({th: 1, td: 1}, true);
+          if (cell) cells = [cell.$];
+        }
+      }
+
+      return cells;
     },
   });
 })(window);

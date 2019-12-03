@@ -30,9 +30,9 @@
     listItalicsTerms: function() {
       var terms = {};
 
-      return _.map(this.model.xmlDocument.querySelectorAll('i'), function(elem) {
+      return _.unique(_.map(this.model.xmlDocument.querySelectorAll('i'), function(elem) {
         return elem.textContent;
-      }).sort();
+      }).sort());
     },
 
     markUpItalics: function(e) {

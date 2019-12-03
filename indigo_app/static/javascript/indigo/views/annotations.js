@@ -3,6 +3,99 @@
 
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
+  Indigo.annotations  = Indigo.annotations || {};
+
+  /**
+   * Given a browser Range object, transform it into a target description
+   * suitable for use with annotations.
+   */
+  Indigo.annotations.rangeToTarget = function(range) {
+    var anchor = range.commonAncestorContainer,
+      target = {selectors: []},
+      selector;
+
+    // TODO: handle no id element (ie. body, preamble, etc.)
+    anchor = $(anchor).closest('[id]')[0];
+    // TODO: data-id?
+    target.anchor_id = anchor.getAttribute('id');
+
+    // position selector
+    selector = textPositionFromRange(anchor, range);
+    selector.type = "TextPositionSelector";
+    target.selectors.push(selector);
+
+    // quote selector, based on the position
+    selector = textQuoteFromTextPosition(anchor, selector);
+    selector.type = "TextQuoteSelector";
+    target.selectors.push(selector);
+
+    return target;
+  };
+
+  /**
+   * Given an annotation target object, convert it into a browser
+   * Range object.
+   */
+  Indigo.annotations.targetToRange = function(target) {
+    // TODO: scope, look upwards, etc.
+    var anchor = document.getElementById(target.anchor_id),
+      posnSelector = _.findWhere(target.selectors, {type: "TextPositionSelector"}),
+      quoteSelector = _.findWhere(target.selectors, {type: "TextQuoteSelector"}),
+      range;
+
+    if (posnSelector) {
+      range = textPositionToRange(anchor, posnSelector);
+
+      // compare text with the exact from the quote selector
+      if (quoteSelector && range.toString() === quoteSelector.exact) {
+        return range;
+      }
+    }
+
+    // fall back to the quote selector
+    if (quoteSelector) {
+      return textQuoteToRange(anchor, quoteSelector);
+    }
+  },
+
+  Indigo.annotations.markRange = function(range, tagName, callback) {
+    var start, iterator, node,
+        nodes = [],
+        end = range.endContainer;
+
+    function split(node, offset) {
+      // TODO: will node always be a text node?
+      if (offset !== 0 && offset !== node.length) {
+        return node.splitText(offset);
+      } else {
+        return node;
+      }
+    }
+
+    // split the start and end text nodes so that the offsets
+    // fall on text node boundaries
+    start = split(range.startContainer, range.startOffset);
+    node = split(range.endContainer, range.endOffset);
+    // returns the node AFTER the split (if it splits), but we want the one just before
+    if (node !== end) end = node.previousSibling;
+
+    // gather all the text nodes between start and end
+    iterator = document.createNodeIterator(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
+    domSeek(iterator, start);
+    while (node = iterator.nextNode()) {
+      nodes.push(node);
+      if ((node.compareDocumentPosition(end) & node.DOCUMENT_POSITION_FOLLOWING) === 0) break;
+    }
+
+    // mark the gathered nodes
+    nodes.forEach(function(node) {
+      // TODO: data attributes, etc.
+      var mark = document.createElement(tagName);
+      node.parentElement.insertBefore(mark, node);
+      mark.appendChild(node);
+      if (callback) callback(mark);
+    });
+  };
 
   /** This view handles a single annotation in a thread.
    */
@@ -529,91 +622,7 @@
     },
 
     createRange: function() {
-      return this.rangeToTarget(document.getSelection().getRangeAt(0));
-    },
-
-    rangeToTarget: function(range) {
-      var anchor = range.commonAncestorContainer,
-          target = {selectors: []},
-          selector;
-
-      // TODO: handle no id element (ie. body, preamble, etc.)
-      anchor = $(anchor).closest('[id]')[0];
-      // TODO: data-id?
-      target.anchor_id = anchor.getAttribute('id');
-
-      // position selector
-      selector = textPositionFromRange(anchor, range);
-      selector.type = "TextPositionSelector";
-      target.selectors.push(selector);
-
-      // quote selector, based on the position
-      selector = textQuoteFromTextPosition(anchor, selector);
-      selector.type = "TextQuoteSelector";
-      target.selectors.push(selector);
-
-      return target;
-    },
-
-    targetToRange: function(target) {
-      // TODO: scope, look upwards, etc.
-      var anchor = document.getElementById(target.anchor_id),
-          posnSelector = _.findWhere(target.selectors, {type: "TextPositionSelector"}),
-          quoteSelector = _.findWhere(target.selectors, {type: "TextQuoteSelector"}),
-          range;
-
-      if (posnSelector) {
-        range = textPositionToRange(anchor, posnSelector);
-
-        // compare text with the exact from the quote selector
-        if (quoteSelector && range.toString() === quoteSelector.exact) {
-          return range;
-        }
-      }
-
-      // fall back to the quote selector
-      if (quoteSelector) {
-        return textQuoteToRange(anchor, quoteSelector);
-      }
-    },
-
-    markupRange: function(range) {
-      var start,
-          end = range.endContainer,
-          iterator, node, nodes = [];
-
-      function split(node, offset) {
-        // TODO: will node always be a text node?
-        if (offset != 0 && offset != node.length) {
-          return node.splitText(offset);
-        } else {
-          return node;
-        }
-      }
-
-      function markup(node) {
-        // TODO: data attributes, etc.
-        var mark = document.createElement('mark');
-        node.parentElement.insertBefore(mark, node);
-        mark.appendChild(node);
-      }
-
-      // split start and end
-      start = split(range.startContainer, range.startOffset);
-      node = split(range.endContainer, range.endOffset);
-      // returns the node AFTER the split (if it splits), but we want the one just before
-      if (node !== end) end = node.previousSibling;
-
-      iterator = document.createNodeIterator(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
-
-      // find the start
-      domSeek(iterator, start);
-      while (node = iterator.nextNode()) {
-        nodes.push(node);
-        if ((node.compareDocumentPosition(end) & node.DOCUMENT_POSITION_FOLLOWING) == 0) break;
-      }
-
-      nodes.forEach(markup);
+      return Indigo.rangeToTarget(document.getSelection().getRangeAt(0));
     },
   });
 })(window);

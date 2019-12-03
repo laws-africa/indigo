@@ -208,10 +208,7 @@
           merged = _.any(selected, function(c) { return c.colSpan > 1 || c.rowSpan > 1; }),
           headings = _.any(selected, function(c) { return c.tagName === 'TH'; });
 
-      $('.table-merge-cells')
-        .prop('disabled', !merged && selected.length < 2)
-        .toggleClass('active', merged);
-
+      $('.table-merge-cells').toggleClass('active', merged);
       $('.table-toggle-heading').toggleClass('active', headings);
     },
 

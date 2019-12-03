@@ -7,7 +7,7 @@ import json
 
 from actstream import action
 from actstream.models import Action
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Q
 from django.db.models.functions import Extract
 from django.contrib import messages
 from django.http import QueryDict, HttpResponse
@@ -112,6 +112,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         context['recently_updated_works'] = self.get_recently_updated_works()
         context['recently_created_works'] = self.get_recently_created_works()
+        context['open_tasks'] = self.calculate_open_tasks() 
 
         # place activity
         since = now() - timedelta(days=14)
@@ -135,10 +136,12 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         pairs.sort(key=lambda p: p[1], reverse=True)
         context['subtypes'] = json.dumps(pairs)
 
+        # stubs overview
         stubs_count = works.filter(stub=True).count()
         context['stubs_percentage'] = int((stubs_count / works.count()) * 100)
         context['non_stubs_percentage'] = 100 - context['stubs_percentage']
 
+        # primary works overview
         primary_works_count = works.filter(parent_work__isnull=True).count()
         context['primary_works_percentage'] = int((primary_works_count / works.count()) * 100)
         context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
@@ -155,6 +158,35 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return Work.objects \
                    .filter(country=self.country, locality=self.locality) \
                    .order_by('-created_at')[:5]
+
+    def calculate_open_tasks(self):
+        tasks = Task.objects.filter(country=self.country, locality=self.locality) \
+            .filter(Q(state=Task.OPEN) | Q(state=Task.PENDING_REVIEW))
+        total_open_tasks = tasks.count()
+        pending_review_tasks = tasks.filter(state='pending_review').count()
+        open_tasks = tasks.filter(state='open').exclude(assigned_to__isnull=False).count()
+        assigned_tasks = tasks.filter(state='open').exclude(assigned_to=None).count()
+
+        task_chart = [{
+                'state': 'open',
+                'state_string': 'Unassigned',
+                'count': open_tasks,
+                'percentage': int((open_tasks / total_open_tasks) * 100)
+            },
+            {
+                'state': 'assigned',
+                'state_string': 'Assigned',
+                'count': assigned_tasks,
+                'percentage': int((assigned_tasks / total_open_tasks) * 100)
+            },
+            {
+                'state': 'pending_review',
+                'state_string': 'Pending Review',
+                'count': pending_review_tasks,
+                'percentage': int((pending_review_tasks / total_open_tasks) * 100)
+            }]
+
+        return task_chart
 
 
 class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):

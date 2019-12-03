@@ -112,7 +112,8 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         context['recently_updated_works'] = self.get_recently_updated_works()
         context['recently_created_works'] = self.get_recently_created_works()
-        context['open_tasks'] = self.calculate_open_tasks() 
+        context['open_tasks'] = self.calculate_open_tasks()
+        context['subtypes'] = self.get_works_by_subtype(works)
 
         # place activity
         since = now() - timedelta(days=14)
@@ -125,25 +126,17 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             [m.date.isoformat(), m.n_activities]
             for m in metrics
         ])
-        
-        # works by subtype
-        def subtype_name(abbr):
-            if not abbr:
-                return 'Act'
-            st = Subtype.for_abbreviation(abbr)
-            return st.name if st else abbr
-        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
-        pairs.sort(key=lambda p: p[1], reverse=True)
-        context['subtypes'] = json.dumps(pairs)
 
         # stubs overview
-        stubs_count = works.filter(stub=True).count()
-        context['stubs_percentage'] = int((stubs_count / works.count()) * 100)
+        context['stubs_count'] = works.filter(stub=True).count()
+        context['non_stubs_count'] = works.filter(stub=False).count()
+        context['stubs_percentage'] = int((context['stubs_count'] / works.count()) * 100)
         context['non_stubs_percentage'] = 100 - context['stubs_percentage']
 
         # primary works overview
-        primary_works_count = works.filter(parent_work__isnull=True).count()
-        context['primary_works_percentage'] = int((primary_works_count / works.count()) * 100)
+        context['primary_works_count'] = works.filter(parent_work__isnull=True).count()
+        context['subsidiary_works_count'] = works.filter(parent_work__isnull=False).count()
+        context['primary_works_percentage'] = int((context['primary_works_count'] / works.count()) * 100)
         context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
 
         return context
@@ -158,6 +151,22 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return Work.objects \
                    .filter(country=self.country, locality=self.locality) \
                    .order_by('-created_at')[:5]
+
+    def get_works_by_subtype(self, works):
+        def subtype_name(abbr):
+            if not abbr:
+                return 'Act'
+            st = Subtype.for_abbreviation(abbr)
+            return st.name if st else abbr
+        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
+        pairs = [list(p) for p in pairs]
+        pairs.sort(key=lambda p: p[1], reverse=True)
+
+        total = sum([x[1] for x in pairs])
+        for p in pairs:
+            p.append(int((p[1] / (total or 1)) * 100))        
+
+        return pairs
 
     def calculate_open_tasks(self):
         tasks = Task.objects.filter(country=self.country, locality=self.locality) \

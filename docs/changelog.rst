@@ -5,6 +5,7 @@ Changelog
 ---------
 
 * FEATURE: export work details as XLSX
+* FEATURE: resizable table columns (using CKEditoR)
 * Make it easier to override colophons
 * Rename output renderers to exporters, so as not to clash with DRF renderers
 

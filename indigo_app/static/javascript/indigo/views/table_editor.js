@@ -56,16 +56,12 @@
       if (!this.editing) return;
 
       var table,
-          width = this.table.clientWidth,
           oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id'));
 
       table = $.parseHTML(this.ckeditor.getData())[0];
       if (table.tagName != 'TABLE') table = table.querySelector('table');
 
       // stop editing
-      // TODO: what does this do with the changed content?
-      this.ckeditor.destroy();
-      this.ckeditor = null;
       this.editTable(null);
 
       // get new xml
@@ -110,28 +106,21 @@
       if (!this.editing) return;
       if (!force && !confirm("You'll lose your changes, are you sure?")) return;
 
-      var table = this.editor.table,
+      var container = this.table.parentElement,
           initialTable = this.initialTable;
 
-      //this.editTable(null);
-
-      // nuke the active ckeditor instance, if any
-      if (this.ckeditor) {
-        this.ckeditor.destroy(true);
-        this.ckeditor = null;
-      }
+      this.editTable(null);
 
       // undo changes
-      table.parentElement.replaceChild(initialTable, table);
+      container.replaceChild(initialTable, container.querySelector('table'));
     },
 
     // start editing an HTML table
     editTable: function(table) {
-      var self = this;
+      var self = this,
+          editable;
 
-      // TODO this.table is the html table as ckeditor sees it, whereas 'table' is an HTML table before ckeditor has wrapped it
-      if (this.table == table)
-        return;
+      if (this.table === table) return;
 
       if (table) {
         // cancel existing edit
@@ -143,14 +132,13 @@
         this.initialTable = table.cloneNode(true);
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
-        var editable = table.parentElement;
+        editable = table.parentElement;
         editable.contentEditable = true;
 
         CKEDITOR.on('instanceReady', function(evt) {
           evt.removeListener();
           self.table = editable.querySelector('table');
           self.manageTableWidth(self.table);
-          //self.editor.setTable(editable.firstElementChild);
         });
 
         this.ckeditor = CKEDITOR.inline(editable, {
@@ -168,11 +156,14 @@
         this.observers.forEach(function(observer) { observer.disconnect(); });
         this.observers = [];
 
-        this.$(table).closest('.table-editor-wrapper').removeClass('table-editor-active');
+        this.table.parentElement.contentEditable = false;
+        $(this.table).closest('.table-editor-wrapper').removeClass('table-editor-active');
 
-        //this.editor.setTable(null);
+        this.ckeditor.destroy();
+        this.ckeditor = null;
+
         this.initialTable = null;
-
+        this.table = null;
         this.editing = false;
         this.trigger('finish');
       }

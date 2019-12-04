@@ -53,4 +53,4 @@ class PlacesWebTest(WebTest):
         self.assertEqual(form['spreadsheet_url'].value, 'https://docs.google.com/spreadsheets/u/1/d/1a2o-842lGliSwlLo3gSbYSRbaOYu-2PZhC1rOf8MgA4/edit')
         self.assertEqual(form['as_at_date'].value, '2019-01-01')
         self.assertEqual(form['styleguide_url'].value, 'https://docs.laws.africa/editing-a-document/importing-a-document')
-        self.assertEqual(form['italics_terms'].value, 'Gazette\nhabeus corpus\nipso facto\nper\ndomicilium\nFederal Gazette\nad hoc')
+        self.assertEqual(form['italics_terms'].value, 'Federal Gazette\nGazette\nad hoc\ndomicilium\nhabeus corpus\nipso facto\nper')

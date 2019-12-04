@@ -63,31 +63,30 @@
   Indigo.annotations.markRange = function(range, tagName, callback) {
     var iterator, node, posn,
         nodes = [],
-        start = range.startContainer,
-        end = range.endContainer;
+        start, end;
 
     function split(node, offset) {
       // split the text node so that the offsets fall on text node boundaries
-      if (offset !== 0 && offset !== node.length) {
+      if (offset !== 0) {
         return node.splitText(offset);
       } else {
         return node;
       }
     }
 
-    if (start.nodeType === Node.TEXT_NODE) {
+    if (range.startContainer.nodeType === Node.TEXT_NODE) {
       // split the start and end text nodes so that the offsets fall on text node boundaries
-      start = split(start, range.startOffset);
+      start = split(range.startContainer, range.startOffset);
     } else {
       // first text node
-      start =  document.createNodeIterator(start, NodeFilter.SHOW_TEXT).nextNode();
+      start =  document.createNodeIterator(range.startContainer, NodeFilter.SHOW_TEXT).nextNode();
       if (!start) return;
     }
 
-    if (end.nodeType === Node.TEXT_NODE) {
-      node = split(range.endContainer, range.endOffset);
-      // returns the node AFTER the split (if it splits), but we want the one just before
-      if (node !== end) end = node.previousSibling;
+    if (range.endContainer.nodeType === Node.TEXT_NODE) {
+      end = split(range.endContainer, range.endOffset);
+    } else {
+      end = range.endContainer;
     }
 
     // gather all the text nodes between start and end, except anything that has the "ig" class,
@@ -108,13 +107,12 @@
 
     // gather text nodes
     while (node) {
-      nodes.push(node);
-
       posn = node.compareDocumentPosition(end);
       // stop if node isn't inside end, and doesn't come before end
-      if (posn & Node.DOCUMENT_POSITION_CONTAINS === 0 &&
-          posn & Node.DOCUMENT_POSITION_FOLLOWING === 0) break;
+      if ((posn & Node.DOCUMENT_POSITION_CONTAINS) === 0 &&
+          (posn & Node.DOCUMENT_POSITION_FOLLOWING) === 0) break;
 
+      nodes.push(node);
       node = iterator.nextNode();
     }
 
@@ -281,7 +279,7 @@
       // TODO: handle anchor for new annotations
       this.anchor = options.anchor || this.root.get('anchor').id;
       // TODO: handle actual target
-      this.target = {anchor_id: this.anchor};
+      this.target = this.root.get('target') || {anchor_id: this.anchor};
 
       // views for each annotation
       this.annotationViews = this.model.map(function(note) {
@@ -539,9 +537,10 @@
       this.annotatable = this.model.tradition().settings.annotatable;
       this.sheetContainer = this.el.querySelector('.document-sheet-container');
       this.$annotationNav = this.$el.find('.annotation-nav');
+      this.annotationsContainer = this.$el.find('.annotations-container')[0];
+      document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
       this.$newButton = $("#new-annotation-floater");
-      this.$el.on('mouseover', this.annotatable, _.bind(this.enterSection, this));
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
       this.counts = new Backbone.Model({'threads': 0});
@@ -617,40 +616,14 @@
       this.$annotationNav.toggleClass('d-none', count === 0);
     },
 
-    enterSection: function(e) {
-      if (!Indigo.user.authenticated() ||
-          !Indigo.user.hasPerm('indigo_api.add_annotation') ||
-          e.enterAnnotationDone) return;
-
-      var target = e.currentTarget,
-          $target = $(target);
-
-      if (!$target.is(this.annotatable)) return;
-
-      if ($target.children(".annotation-thread").length === 0) {
-        this.showAnnotationButton(target);
-      } else {
-        this.$newButton.hide();
-      }
-
-      e.enterAnnotationDone = true;
-    },
-
-    showAnnotationButton: _.debounce(function(target) {
-      target.appendChild(this.$newButton[0]);
-      this.$newButton.show();
-    }, 100),
-
     // setup a new annotation thread
     newAnnotation: function(e) {
       var anchor = this.$newButton.closest(this.annotatable).attr('id'),
-          root = new Indigo.Annotation({
-            anchor: {
-              id: anchor,
-            },
-          }),
-          thread,
-          view;
+          target, root, thread, view;
+
+      target = Indigo.annotations.rangeToTarget(this.pendingRange);
+      // TODO: disentangle
+      root = new Indigo.Annotation({target: target, anchor: {id: anchor}});
 
       this.threadViews.forEach(function(v) { v.blur(); });
 
@@ -658,7 +631,7 @@
       thread = new Backbone.Collection([root]);
       view = this.makeView(thread);
 
-      this.$newButton.hide();
+      this.$newButton.remove();
       view.display(true);
 
       this.visibleThreads.push(view);
@@ -706,6 +679,35 @@
       if (candidates.length > 0) {
         candidates[0].view.focus();
         candidates[0].view.scrollIntoView();
+      }
+    },
+
+    selectionChanged: function(e) {
+      var range, root,
+          sel = document.getSelection(),
+          btn = this.$newButton;
+
+      if (sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed) {
+        range = sel.getRangeAt(0);
+        root = this.annotationsContainer.querySelector('.akoma-ntoso');
+
+        // is the common ancestor inside the akn container?
+        if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {
+          // TODO: ignore selection inside .ig elements
+          // TODO: handle selection spanning .ig elements
+
+          // find first element
+          root = range.startContainer;
+          while (root && root.nodeType != Node.ELEMENT_NODE) root = root.parentElement;
+
+          root.appendChild(this.$newButton[0]);
+          this.pendingRange = range;
+        }
+      } else {
+        // this needs to stick around for a little bit, for the case
+        // where the selection has been cleared because the button is
+        // being clicked
+        window.setTimeout(function() { btn.remove(); }, 100);
       }
     },
 

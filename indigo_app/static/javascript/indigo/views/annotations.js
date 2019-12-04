@@ -58,13 +58,16 @@
     }
   },
 
+  /* Mark all the text nodes in a range with a given tag (eg. 'mark')
+   */
   Indigo.annotations.markRange = function(range, tagName, callback) {
-    var start, iterator, node,
+    var iterator, node, posn,
         nodes = [],
+        start = range.startContainer,
         end = range.endContainer;
 
     function split(node, offset) {
-      // TODO: will node always be a text node?
+      // split the text node so that the offsets fall on text node boundaries
       if (offset !== 0 && offset !== node.length) {
         return node.splitText(offset);
       } else {
@@ -72,24 +75,51 @@
       }
     }
 
-    // split the start and end text nodes so that the offsets
-    // fall on text node boundaries
-    start = split(range.startContainer, range.startOffset);
-    node = split(range.endContainer, range.endOffset);
-    // returns the node AFTER the split (if it splits), but we want the one just before
-    if (node !== end) end = node.previousSibling;
+    if (start.nodeType === Node.TEXT_NODE) {
+      // split the start and end text nodes so that the offsets fall on text node boundaries
+      start = split(start, range.startOffset);
+    } else {
+      // first text node
+      start =  document.createNodeIterator(start, NodeFilter.SHOW_TEXT).nextNode();
+      if (!start) return;
+    }
 
-    // gather all the text nodes between start and end
-    iterator = document.createNodeIterator(range.commonAncestorContainer, NodeFilter.SHOW_TEXT);
-    domSeek(iterator, start);
-    while (node = iterator.nextNode()) {
+    if (end.nodeType === Node.TEXT_NODE) {
+      node = split(range.endContainer, range.endOffset);
+      // returns the node AFTER the split (if it splits), but we want the one just before
+      if (node !== end) end = node.previousSibling;
+    }
+
+    // gather all the text nodes between start and end, except anything that has the "ig" class,
+    // since that's an internal Indigo element
+    iterator = document.createTreeWalker(
+      range.commonAncestorContainer,
+      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
+      function(n) {
+        // allow text nodes, skip
+        if (n.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
+        if (n.classList.contains('ig')) return NodeFilter.FILTER_REJECT;
+        return NodeFilter.FILTER_SKIP;
+      });
+
+    // advance until we're at the start node
+    node = iterator.nextNode();
+    while (node && node !== start) node = iterator.nextNode();
+
+    // gather text nodes
+    while (node) {
       nodes.push(node);
-      if ((node.compareDocumentPosition(end) & node.DOCUMENT_POSITION_FOLLOWING) === 0) break;
+
+      posn = node.compareDocumentPosition(end);
+      // stop if node isn't inside end, and doesn't come before end
+      if (posn & Node.DOCUMENT_POSITION_CONTAINS === 0 &&
+          posn & Node.DOCUMENT_POSITION_FOLLOWING === 0) break;
+
+      node = iterator.nextNode();
     }
 
     // mark the gathered nodes
     nodes.forEach(function(node) {
-      // TODO: data attributes, etc.
       var mark = document.createElement(tagName);
       node.parentElement.insertBefore(mark, node);
       mark.appendChild(node);
@@ -246,7 +276,11 @@
 
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
+
+      // TODO: handle anchor for new annotations
       this.anchor = options.anchor || this.root.get('anchor').id;
+      // TODO: handle actual target
+      this.target = {anchor_id: this.anchor};
 
       // views for each annotation
       this.annotationViews = this.model.map(function(note) {
@@ -311,8 +345,30 @@
     display: function(forInput) {
       if (this.root.get('closed')) return;
 
-      var node = document.getElementById(this.anchor);
-      if (node) {
+      var node, range;
+
+      // convert it to a range
+      if (this.target.selectors) {
+        range = Indigo.annotations.targetToRange(this.target);
+        // TODO: if we don't have an anchor, then try walking up the anchor chain until we can find a target.
+
+      } else {
+        // no selectors, old-style annotation for an entire element
+        node = document.getElementById(this.target.anchor_id);
+        if (node) {
+          range = document.createRange();
+          range.selectNodeContents(node);
+        }
+      }
+
+      if (range) {
+        node = range.startContainer;
+        while (node && node.nodeType != Node.ELEMENT_NODE) node = node.parentElement;
+
+        // mark the range
+        Indigo.annotations.markRange(range, 'mark');
+
+        // attach the floater
         node.appendChild(this.el);
 
         // the DOM elements get rudely removed from the view when the document

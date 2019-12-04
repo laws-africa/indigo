@@ -35,6 +35,11 @@ class Country(models.Model):
     """
     country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
     primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
+    italics_terms = ArrayField(
+        models.CharField(max_length=1024),
+        null=True,
+        blank=True
+    )
 
     _settings = None
 
@@ -168,11 +173,6 @@ class PlaceSettings(models.Model):
     spreadsheet_url = models.URLField(null=True, blank=True)
     as_at_date = models.DateField(null=True, blank=True)
     styleguide_url = models.URLField(null=True, blank=True)
-    italics_terms = ArrayField(
-        models.CharField(max_length=1024),
-        null=True,
-        blank=True
-    )
 
     @property
     def place(self):

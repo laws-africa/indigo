@@ -293,7 +293,7 @@ class Importer(LocaleBasedMatcher):
             finder.find_references_in_document(doc)
 
         italics_terms_finder = plugins.for_document('italics-terms', doc)
-        italics_terms = doc.work.country.settings.italics_terms
+        italics_terms = doc.work.country.italics_terms
         if italics_terms_finder and italics_terms:
             italics_terms_finder.mark_up_italics_in_document(doc, italics_terms)
 

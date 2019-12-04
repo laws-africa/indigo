@@ -25,7 +25,7 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
+from indigo_app.forms import WorkFilterForm
 
 log = logging.getLogger(__name__)
 
@@ -538,28 +538,19 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     template_name = 'place/settings.html'
     model = PlaceSettings
     tab = 'place_settings'
-    form_class = PlaceSettingsForm
 
     # permissions
     # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
 
+    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
+
     def get_object(self):
         return self.place.settings
-
-    def get_form(self, form_class=None):
-        form = super(PlaceSettingsView, self).get_form()
-        form.initial['italics_terms'] = self.country.settings.italics_terms
-        return form
 
     def form_valid(self, form):
         placesettings = self.object
         placesettings.updated_by_user = self.request.user
-
-        # save changes to italics_terms to the country
-        if self.locality and 'italics_terms' in form.changed_data:
-            self.country.settings.italics_terms = form.cleaned_data.get('italics_terms')
-            self.country.settings.save()
 
         # action signals
         if form.changed_data:

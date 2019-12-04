@@ -422,15 +422,3 @@ class BulkTaskUpdateForm(forms.Form):
             del self.errors['assigned_to']
             self.cleaned_data['assigned_to'] = None
             self.unassign = True
-
-
-class PlaceSettingsForm(forms.ModelForm):
-    italics_terms = SimpleArrayField(forms.CharField(max_length=1024, required=False), delimiter='\n', required=False)
-
-    class Meta:
-        model = PlaceSettings
-        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'italics_terms')
-
-    def clean_italics_terms(self):
-        # strip blanks and duplications, the CharField already trims items
-        return sorted(list(set(x for x in self.cleaned_data['italics_terms'] if x)))

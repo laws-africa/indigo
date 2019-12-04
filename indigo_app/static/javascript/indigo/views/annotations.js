@@ -273,6 +273,7 @@
     initialize: function(options) {
       this.annotationTemplate = options.template;
       this.document = options.document;
+      this.marks = [];
 
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
@@ -335,6 +336,7 @@
 
       if (this.root.get('closed')) {
         this.blur();
+        this.unmark();
         this.$el.remove();
         this.trigger('closed', this);
       } else {
@@ -343,9 +345,11 @@
     },
 
     display: function(forInput) {
+      var node, range;
+
       if (this.root.get('closed')) return;
 
-      var node, range;
+      this.unmark();
 
       // convert it to a range
       if (this.target.selectors) {
@@ -362,11 +366,11 @@
       }
 
       if (range) {
-        node = range.startContainer;
-        while (node && node.nodeType != Node.ELEMENT_NODE) node = node.parentElement;
+        this.mark(range);
 
-        // mark the range
-        Indigo.annotations.markRange(range, 'mark');
+        node = range.startContainer;
+        // find the first element
+        while (node && node.nodeType != Node.ELEMENT_NODE) node = node.parentElement;
 
         // attach the floater
         node.appendChild(this.el);
@@ -391,9 +395,36 @@
       }
     },
 
+    mark: function(range) {
+      var self = this,
+          handler = _.bind(this.markClicked, this);
+
+      this.marks = [];
+      Indigo.annotations.markRange(range, 'mark', function (mark) {
+        self.marks.push(mark);
+        mark.addEventListener('click', handler);
+      });
+    },
+
+    unmark: function() {
+      this.marks.forEach(function(mark) {
+        while (mark.firstChild) {
+          mark.parentElement.insertBefore(mark.firstChild, mark);
+        }
+        mark.parentElement.removeChild(mark);
+      });
+      this.marks = [];
+    },
+
+    markClicked: function(e) {
+      e.stopPropagation();
+      // fake a click on the element to blur any currently active annotation
+      this.el.click();
+    },
+
     focus: function() {
       this.$el.addClass('focused');
-      this.$el.parent().addClass('annotation-focused');
+      this.marks.forEach(function(mark) { mark.classList.add('active'); });
     },
 
     scrollIntoView: function() {
@@ -416,7 +447,7 @@
 
     blur: function(e) {
       this.$el.removeClass('focused');
-      this.$el.parent().removeClass('annotation-focused');
+      this.marks.forEach(function(mark) { mark.classList.remove('active'); });
     },
 
     replyFocus: function(e) {
@@ -468,6 +499,7 @@
         }
 
         this.blur();
+        this.unmark();
         this.remove();
         this.trigger('deleted', this);
       }

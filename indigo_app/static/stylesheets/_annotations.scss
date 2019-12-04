@@ -22,8 +22,15 @@
     position: relative;
   }
 
-  .annotation-focused {
-    background: rgba(255, 255, 0, 0.25);
+  mark {
+    padding: 0px;
+    background-color: #ffffd0;
+  }
+
+  // active marks, and overlapping active marks
+  mark.active,
+  mark.active mark {
+    background-color: #ffff00;
   }
 
   .annotation-thread {

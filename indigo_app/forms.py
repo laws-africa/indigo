@@ -422,3 +422,15 @@ class BulkTaskUpdateForm(forms.Form):
             del self.errors['assigned_to']
             self.cleaned_data['assigned_to'] = None
             self.unassign = True
+
+
+class CountryAdminForm(forms.ModelForm):
+    italics_terms = SimpleArrayField(forms.CharField(max_length=1024, required=False), delimiter='\n', required=False, widget=forms.Textarea)
+
+    class Meta:
+        model = Country
+        fields = ('country', 'primary_language', 'italics_terms')
+
+    def clean_italics_terms(self):
+        # strip blanks and duplications
+        return sorted(list(set(x for x in self.cleaned_data['italics_terms'] if x)))

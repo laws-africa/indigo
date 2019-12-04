@@ -25,8 +25,7 @@ from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetri
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm
-
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
 
 log = logging.getLogger(__name__)
 
@@ -539,20 +538,11 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     template_name = 'place/settings.html'
     model = PlaceSettings
     tab = 'place_settings'
+    form_class = PlaceSettingsForm
 
     # permissions
     # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
-
-    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url', 'italics_terms')
-
-    def get_form(self, form_class=None):
-        form = super(PlaceSettingsView, self).get_form()
-        # use country's italics_terms list, and display one term per line
-        form.initial['italics_terms'] = '\n'.join(self.country.settings.italics_terms) \
-            if self.country.settings.italics_terms \
-            else ''
-        return form
 
     def get_object(self):
         return self.place.settings
@@ -560,19 +550,6 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     def form_valid(self, form):
         placesettings = self.object
         placesettings.updated_by_user = self.request.user
-
-        # save changes to italics_terms 1) as a list 2) to the country
-        if 'italics_terms' in form.changed_data:
-            italics_terms = form.cleaned_data.get('italics_terms')
-            # this will look something like:
-            # ['Gazette\r\nhabeus corpus\r\nipso facto\r\nper\r\ndomicilium\r\nFederal Gazette\r\nad hoc']
-            if italics_terms:
-                italics_terms = [t.strip() for t in italics_terms[0].split('\n')]
-            if self.locality:
-                self.country.settings.italics_terms = italics_terms
-                self.country.settings.save()
-            else:
-                placesettings.italics_terms = italics_terms
 
         # action signals
         if form.changed_data:

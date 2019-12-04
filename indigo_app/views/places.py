@@ -547,9 +547,19 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     def get_object(self):
         return self.place.settings
 
+    def get_form(self, form_class=None):
+        form = super(PlaceSettingsView, self).get_form()
+        form.initial['italics_terms'] = self.country.settings.italics_terms
+        return form
+
     def form_valid(self, form):
         placesettings = self.object
         placesettings.updated_by_user = self.request.user
+
+        # save changes to italics_terms to the country
+        if self.locality and 'italics_terms' in form.changed_data:
+            self.country.settings.italics_terms = form.cleaned_data.get('italics_terms')
+            self.country.settings.save()
 
         # action signals
         if form.changed_data:

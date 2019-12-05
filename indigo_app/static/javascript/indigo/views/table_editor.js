@@ -39,6 +39,18 @@
       // make TH and TD editable
       CKEDITOR.dtd.$editable.th = 1;
       CKEDITOR.dtd.$editable.td = 1;
+      this.ckeditorConfig = {
+        enterMode: CKEDITOR.ENTER_BR,
+        shiftEnterMode: CKEDITOR.ENTER_BR,
+        toolbar: [],
+        // this must align with the elements and attributes supported by
+        // indigo_app/static/xsl/html_to_akn.xsl
+        allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
+                        'b; i; p;' +
+                        'table[id, data-id]; thead; tbody; tr;' +
+                        'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
+                        'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
+      };
 
       // setup transforms
       var htmlTransform = new XSLTProcessor();
@@ -138,18 +150,8 @@
           self.manageTableWidth(self.table);
         });
 
-        this.ckeditor = CKEDITOR.inline(editable, {
-          enterMode: CKEDITOR.ENTER_BR,
-          shiftEnterMode: CKEDITOR.ENTER_BR,
-          toolbar: [],
-          allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p); p; ' +
-                          'table[id, data-id]; thead; tbody; tr;' +
-                          'th(akn--text-center,akn--text-right){width}[colspan,rowspan]; ' +
-                          'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
-          on: {
-            selectionChange: _.bind(this.selectionChanged, this),
-          },
-        });
+        this.ckeditor = CKEDITOR.inline(editable, this.ckeditorConfig);
+        this.ckeditor.on('selectionChange', _.bind(this.selectionChanged, this));
 
         this.editing = true;
         this.trigger('start');

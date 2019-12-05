@@ -6,42 +6,104 @@
   Indigo.annotations  = Indigo.annotations || {};
 
   /**
+   * Removes foreign elements from the tree at root, executes callback,
+   * and then replaces the foreign elements.
+   *
+   * This is useful for annotations because we inject foreign (ie. non-Akoma Ntoso)
+   * elements into the rendered AKN document, such as table editor buttons, annotations
+   * and issue indicators.
+   *
+   * @returns the result of callback()
+   */
+  Indigo.annotations.withoutForeignElements = function(root, callback, selector) {
+    var result,
+        removed = [];
+
+    selector = selector || '.ig';
+
+    // remove the foreign elements
+    root.querySelectorAll(selector).forEach(function(elem) {
+      var info = {e: elem};
+
+      // store where the element was in the tree
+      if (elem.nextSibling) info.before = elem.nextSibling;
+      // no next sibling, it's the last child
+      else info.parent = elem.parentElement;
+
+      elem.parentElement.removeChild(elem);
+      removed.push(info);
+    });
+
+    result = callback();
+
+    // put the elements back
+    removed.forEach(function(info) {
+      if (info.before) info.before.parentElement.insertBefore(info.e, info.before);
+      else info.parent.appendChild(info.e);
+    });
+
+    return result;
+  }
+
+  /**
    * Given a browser Range object, transform it into a target description
    * suitable for use with annotations.
    */
   Indigo.annotations.rangeToTarget = function(range) {
     var anchor = range.commonAncestorContainer,
-      target = {selectors: []},
-      selector;
+        target = {selectors: []},
+        selector;
 
     // TODO: handle no id element (ie. body, preamble, etc.)
     anchor = $(anchor).closest('[id]')[0];
     // TODO: data-id?
-    target.anchor_id = anchor.getAttribute('id');
+    target.anchor_id = anchor.id;
 
-    // position selector
-    selector = textPositionFromRange(anchor, range);
-    selector.type = "TextPositionSelector";
-    target.selectors.push(selector);
+    Indigo.annotations.withoutForeignElements(anchor, function() {
+      // position selector
+      selector = textPositionFromRange(anchor, range);
+      selector.type = "TextPositionSelector";
+      target.selectors.push(selector);
 
-    // quote selector, based on the position
-    selector = textQuoteFromTextPosition(anchor, selector);
-    selector.type = "TextQuoteSelector";
-    target.selectors.push(selector);
+      // quote selector, based on the position
+      selector = textQuoteFromTextPosition(anchor, selector);
+      selector.type = "TextQuoteSelector";
+      target.selectors.push(selector);
+    });
 
     return target;
   };
 
   /**
-   * Given an annotation target object, convert it into a browser
-   * Range object.
+   * Convert a Target object (anchor_id, selectors) to Range object.
    */
   Indigo.annotations.targetToRange = function(target) {
-    // TODO: scope, look upwards, etc.
-    var anchor = document.getElementById(target.anchor_id),
-      posnSelector = _.findWhere(target.selectors, {type: "TextPositionSelector"}),
-      quoteSelector = _.findWhere(target.selectors, {type: "TextQuoteSelector"}),
-      range;
+    var node, range;
+
+    node = document.getElementById(target.anchor_id);
+    // TODO: try harder
+    if (!node) return;
+
+    if (!target.selectors) {
+      // no selectors, old-style annotation for an entire element
+      range = document.createRange();
+      range.selectNodeContents(node);
+      return range;
+    }
+
+    // TODO: if we don't have an anchor, then try walking up the anchor chain until we can find a target.
+    return Indigo.annotations.withoutForeignElements(node, function() {
+      return Indigo.annotations.selectorsToRange(node, target.selectors);
+    });
+  };
+
+  /**
+   * Given a root and a list of selectors, convert it into a browser Range object.
+   */
+  Indigo.annotations.selectorsToRange = function(anchor, selectors) {
+    var posnSelector = _.findWhere(selectors, {type: "TextPositionSelector"}),
+        quoteSelector = _.findWhere(selectors, {type: "TextQuoteSelector"}),
+        range;
 
     if (posnSelector) {
       range = textPositionToRange(anchor, posnSelector);
@@ -56,7 +118,7 @@
     if (quoteSelector) {
       return textQuoteToRange(anchor, quoteSelector);
     }
-  },
+  };
 
   /* Mark all the text nodes in a range with a given tag (eg. 'mark')
    */
@@ -349,26 +411,14 @@
 
       this.unmark();
 
-      // convert it to a range
-      if (this.target.selectors) {
-        range = Indigo.annotations.targetToRange(this.target);
-        // TODO: if we don't have an anchor, then try walking up the anchor chain until we can find a target.
-
-      } else {
-        // no selectors, old-style annotation for an entire element
-        node = document.getElementById(this.target.anchor_id);
-        if (node) {
-          range = document.createRange();
-          range.selectNodeContents(node);
-        }
-      }
+      range = Indigo.annotations.targetToRange(this.target);
 
       if (range) {
         this.mark(range);
 
         node = range.startContainer;
         // find the first element
-        while (node && node.nodeType != Node.ELEMENT_NODE) node = node.parentElement;
+        while (node && node.nodeType !== Node.ELEMENT_NODE) node = node.parentElement;
 
         // attach the floater
         node.appendChild(this.el);

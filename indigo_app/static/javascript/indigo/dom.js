@@ -47,14 +47,16 @@ $(function() {
 
   /**
    * Given a browser Range object, transform it into a target description
-   * suitable for use with annotations.
+   * suitable for use with annotations. Will not go above root, if given.
    */
-  Indigo.dom.rangeToTarget = function(range) {
+  Indigo.dom.rangeToTarget = function(range, root) {
     var anchor = range.commonAncestorContainer,
         target = {selectors: []},
         selector;
 
     anchor = $(anchor).closest('[id]')[0];
+    if (root && anchor !== root &&
+      (anchor.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) === 0) return;
     target.anchor_id = anchor.id;
 
     Indigo.dom.withoutForeignElements(anchor, function() {

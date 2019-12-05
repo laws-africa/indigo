@@ -491,22 +491,22 @@
     newAnnotation: function(e) {
       var target, root, thread, view;
 
-      target = Indigo.dom.rangeToTarget(this.pendingRange);
+      e.stopPropagation();
+      this.removeNewButton();
+
+      // don't go outside of the AKN document
+      root = this.annotationsContainer.querySelector('.akoma-ntoso');
+      target = Indigo.dom.rangeToTarget(this.pendingRange, root);
+      if (!target) return;
+
       root = new Indigo.Annotation({selectors: target.selectors, anchor_id: target.anchor_id});
-
-      this.threadViews.forEach(function(v) { v.blur(); });
-
       this.annotations.add(root);
       thread = new Backbone.Collection([root]);
       view = this.makeView(thread);
-
-      this.removeNewButton();
-      view.display(true);
-
       this.visibleThreads.push(view);
       this.counts.set('threads', this.counts.get('threads') + 1);
-
-      e.stopPropagation();
+      this.threadViews.forEach(function (v) { v.blur(); });
+      view.display(true);
     },
 
     removeNewButton: function() {

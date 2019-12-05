@@ -215,6 +215,7 @@
       if (this.root.get('closed')) {
         this.blur();
         this.unmark();
+        this.el.parentElement.classList.remove('annotation-parent');
         this.$el.remove();
         this.trigger('closed', this);
       } else {
@@ -238,6 +239,7 @@
         while (node && node.nodeType !== Node.ELEMENT_NODE) node = node.parentElement;
 
         // attach the floater
+        node.classList.add('annotation-parent');
         node.appendChild(this.el);
 
         // the DOM elements get rudely removed from the view when the document
@@ -365,6 +367,7 @@
 
         this.blur();
         this.unmark();
+        this.el.parentElement.classList.remove('annotation-parent');
         this.remove();
         this.trigger('deleted', this);
       }
@@ -408,7 +411,7 @@
       this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
-      this.$newButton = $("#new-annotation-floater");
+      this.newButton = document.getElementById('new-annotation-floater');
       this.newButtonTimeout = null;
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
@@ -497,13 +500,21 @@
       thread = new Backbone.Collection([root]);
       view = this.makeView(thread);
 
-      this.$newButton.remove();
+      this.removeNewButton();
       view.display(true);
 
       this.visibleThreads.push(view);
       this.counts.set('threads', this.counts.get('threads') + 1);
 
       e.stopPropagation();
+    },
+
+    removeNewButton: function() {
+      if (this.newButton.parentElement) {
+        this.newButton.parentElement.classList.remove('annotation-parent');
+        this.newButton.parentElement.removeChild(this.newButton);
+      }
+      this.newButtonTimeout = null;
     },
 
     nextAnnotation: function(e) {
@@ -550,8 +561,7 @@
 
     selectionChanged: function(e) {
       var range, root,
-          sel = document.getSelection(),
-          btn = this.$newButton;
+          sel = document.getSelection();
 
       if (sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed) {
         if (this.newButtonTimeout) window.clearTimeout(this.newButtonTimeout);
@@ -563,16 +573,17 @@
         if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {
           // find first element
           root = range.startContainer;
-          while (root && root.nodeType != Node.ELEMENT_NODE) root = root.parentElement;
+          while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
-          root.appendChild(this.$newButton[0]);
+          root.appendChild(this.newButton);
+          root.classList.add('annotation-parent');
           this.pendingRange = range;
         }
       } else {
         // this needs to stick around for a little bit, for the case
         // where the selection has been cleared because the button is
         // being clicked
-        this.newButtonTimeout = window.setTimeout(function() { btn.remove(); }, 200);
+        this.newButtonTimeout = window.setTimeout(_.bind(this.removeNewButton, this), 200);
       }
     },
 

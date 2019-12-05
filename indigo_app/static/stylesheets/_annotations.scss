@@ -1,23 +1,10 @@
 .annotations-container {
   margin-right: $annotation-gutter-width;
 
-  /* annotatable elements */
-  .akn-article,
-  .akn-blockList,
-  .akn-chapter,
-  .akn-conclusions,
-  .akn-coverPage,
-  .akn-crossHeading,
-  .akn-hcontainer,
-  .akn-heading,
-  .akn-item,
-  .akn-paragraph,
-  .akn-part,
-  .akn-preamble,
-  .akn-preface,
-  .akn-section,
-  .akn-subheading,
-  .akn-subsection,
+  .annotation-parent {
+    position: relative;
+  }
+
   table {
     position: relative;
   }

@@ -263,6 +263,7 @@ $(function() {
    * so that we can call our custom textPositionToRange()
    */
   Indigo.dom.textQuoteToRange = function(root, selector, options) {
-    return Indigo.dom.textPositionToRange(root, textQuoteToTextPosition(root, selector, options));
+    var posn = textQuoteToTextPosition(root, selector, options);
+    if (posn) return Indigo.dom.textPositionToRange(root, posn);
   };
 });

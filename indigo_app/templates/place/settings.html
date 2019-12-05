@@ -52,18 +52,6 @@
           {% endif %}
         </div>
 
-        <div class="form-group">
-          <label for="{{ form.italics_terms.id_for_label }}">Italics terms</label>
-          <textarea class="form-control" rows="4" name="{{ form.italics_terms.name }}" id="{{ form.italics_terms.id_for_label }}">{{ form.italics_terms.value|default:'' }}</textarea>
-          <p class="form-text text-muted">Terms that should be italicised for {{ place.country.name }}, one per line. Case sensitive.</p>
-          {% if form.italics_terms.errors %}
-            <div class="text-danger">
-              {% for error in form.italics_terms.errors %}
-                <p>{{ error }}</p>
-              {% endfor %}
-            </div>
-          {% endif %}
-        </div>
       </div>
 
       <div class="card-footer text-right">

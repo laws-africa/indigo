@@ -11,6 +11,7 @@ from django.db.models import signals
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
+from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
@@ -500,6 +501,7 @@ class Annotation(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
+    selectors = JSONField(null=True)
 
     def anchor(self):
         return {'id': self.anchor_id}

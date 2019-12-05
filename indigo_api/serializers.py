@@ -1,6 +1,7 @@
 import logging
 import os.path
 from itertools import groupby
+import json
 
 from actstream.signals import action
 from collections import OrderedDict
@@ -468,7 +469,6 @@ class TaskSerializer(serializers.ModelSerializer):
 class AnnotationSerializer(serializers.ModelSerializer):
     url = serializers.SerializerMethodField()
     created_by_user = UserSerializer(read_only=True)
-    anchor = AnnotationAnchorSerializer()
     in_reply_to = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, allow_null=True, required=False)
     task = TaskSerializer(read_only=True)
 
@@ -478,10 +478,11 @@ class AnnotationSerializer(serializers.ModelSerializer):
             'id',
             'url',
             'text',
-            'anchor',
+            'anchor_id',
             'in_reply_to',
             'closed',
             'task',
+            'selectors',
             'created_by_user', 'created_at', 'updated_at',
         )
         read_only_fields = ('id', 'created_by_user', 'in_reply_to', 'created_at', 'updated_at', 'task')
@@ -489,14 +490,11 @@ class AnnotationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data['created_by_user'] = self.context['request'].user
         validated_data['document'] = self.context['document']
-        validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
         return super(AnnotationSerializer, self).create(validated_data)
 
     def update(self, instance, validated_data):
         if 'in_reply_to' in validated_data:
             del validated_data['in_reply_to']
-
-        validated_data['anchor_id'] = validated_data.pop('anchor').get('id')
         return super(AnnotationSerializer, self).update(instance, validated_data)
 
     def validate_in_reply_to(self, in_reply_to):

@@ -155,10 +155,11 @@
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
 
-      // TODO: handle anchor for new annotations
-      this.anchor = options.anchor || this.root.get('anchor').id;
-      // TODO: handle actual target
-      this.target = this.root.get('target') || {anchor_id: this.anchor};
+      // target for converting to a range
+      this.target = {
+        anchor_id: this.root.get('anchor_id'),
+        selectors: this.root.get('selectors'),
+      };
 
       // views for each annotation
       this.annotationViews = this.model.map(function(note) {
@@ -331,7 +332,7 @@
       reply = new Indigo.Annotation({
         text: text,
         in_reply_to: this.root.get('id'),
-        anchor: this.root.get('anchor'),
+        anchor_id: this.root.get('anchor_id'),
       });
       this.document.annotations.add(reply);
 
@@ -408,6 +409,7 @@
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
       this.$newButton = $("#new-annotation-floater");
+      this.newButtonTimeout = null;
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
       this.counts = new Backbone.Model({'threads': 0});
@@ -484,12 +486,10 @@
 
     // setup a new annotation thread
     newAnnotation: function(e) {
-      var anchor = this.$newButton.closest(this.annotatable).attr('id'),
-          target, root, thread, view;
+      var target, root, thread, view;
 
       target = Indigo.dom.rangeToTarget(this.pendingRange);
-      // TODO: disentangle
-      root = new Indigo.Annotation({target: target, anchor: {id: anchor}});
+      root = new Indigo.Annotation({selectors: target.selectors, anchor_id: target.anchor_id});
 
       this.threadViews.forEach(function(v) { v.blur(); });
 
@@ -554,6 +554,8 @@
           btn = this.$newButton;
 
       if (sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed) {
+        if (this.newButtonTimeout) window.clearTimeout(this.newButtonTimeout);
+
         range = sel.getRangeAt(0);
         root = this.annotationsContainer.querySelector('.akoma-ntoso');
 
@@ -570,7 +572,7 @@
         // this needs to stick around for a little bit, for the case
         // where the selection has been cleared because the button is
         // being clicked
-        window.setTimeout(function() { btn.remove(); }, 200);
+        this.newButtonTimeout = window.setTimeout(function() { btn.remove(); }, 200);
       }
     },
 

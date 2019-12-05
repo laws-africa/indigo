@@ -197,7 +197,7 @@ $(function() {
 
     // mark the gathered nodes
     nodes.forEach(function(node) {
-      var mark = document.createElement(tagName);
+      var mark = document.createElement(tagName || 'mark');
       node.parentElement.insertBefore(mark, node);
       mark.appendChild(node);
       if (callback) callback(mark);

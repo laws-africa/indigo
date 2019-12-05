@@ -1,9 +1,12 @@
+import json
+
 from allauth.account.utils import user_display
 
 from django import template
 from django.urls import reverse
 from django.utils.html import format_html
 from django.conf import settings
+from jsonfield.utils import TZAwareJSONEncoder
 
 register = template.Library()
 
@@ -37,3 +40,8 @@ def publication_document_name(work):
         parts.append('publication document')
 
     return ' '.join(parts)
+
+
+@register.filter
+def jsonify(value):
+    return json.dumps(value, cls=TZAwareJSONEncoder)

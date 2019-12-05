@@ -444,7 +444,6 @@ class TaskSerializer(serializers.ModelSerializer):
     work = serializers.CharField(source='work.frbr_uri')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
-    anchor = AnnotationAnchorSerializer()
 
     class Meta:
         model = Task
@@ -460,7 +459,6 @@ class TaskSerializer(serializers.ModelSerializer):
             'labels',
             'assigned_to',
             'annotation',
-            'anchor',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
         )
         read_only_fields = fields

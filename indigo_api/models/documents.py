@@ -503,8 +503,9 @@ class Annotation(models.Model):
     task = models.OneToOneField('task', on_delete=models.SET_NULL, null=True, related_name='annotation')
     selectors = JSONField(null=True)
 
-    def anchor(self):
-        return {'id': self.anchor_id}
+    def resolve_anchor(self):
+        if self.anchor_id and self.document:
+            return ResolvedAnchor(self.anchor_id, self.selectors, self.document)
 
     def create_task(self, user):
         """ Create a new task for this annotation.
@@ -524,7 +525,7 @@ class Annotation(models.Model):
             task.created_by_user = user
             task.updated_by_user = user
 
-            anchor = ResolvedAnchor(self.anchor(), self.document)
+            anchor = self.resolve_anchor()
             ref = anchor.toc_entry.title if anchor.toc_entry else self.anchor_id
 
             # TODO: strip markdown?

@@ -43,7 +43,7 @@ $(function() {
     });
 
     return result;
-  }
+  };
 
   /**
    * Given a browser Range object, transform it into a target description

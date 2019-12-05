@@ -1,6 +1,10 @@
 $(function() {
   if (!Indigo.dom) Indigo.dom = {};
 
+  // Selector for elements that are foreign to AKN documents, such as table editor buttons
+  // and annotations.
+  Indigo.dom.foreignElementsSelector = '.ig';
+
   /**
    * Removes foreign elements from the tree at root, executes callback,
    * and then replaces the foreign elements.
@@ -15,7 +19,7 @@ $(function() {
     var result,
       removed = [];
 
-    selector = selector || '.ig';
+    selector = selector || Indigo.dom.foreignElementsSelector;
 
     // remove the foreign elements
     root.querySelectorAll(selector).forEach(function(elem) {

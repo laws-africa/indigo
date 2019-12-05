@@ -1,5 +1,6 @@
 # coding=utf-8
 from django.conf import settings
+from django.contrib.postgres.fields import ArrayField
 from django.db import models
 from django.db.models import signals
 from django.dispatch import receiver
@@ -34,6 +35,11 @@ class Country(models.Model):
     """
     country = models.OneToOneField(MasterCountry, on_delete=models.CASCADE)
     primary_language = models.ForeignKey(Language, on_delete=models.PROTECT, null=False, related_name='+', help_text='Primary language for this country')
+    italics_terms = ArrayField(
+        models.CharField(max_length=1024),
+        null=True,
+        blank=True
+    )
 
     _settings = None
 

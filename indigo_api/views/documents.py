@@ -422,6 +422,28 @@ class LinkReferencesView(APIView):
             finder.find_references_in_document(document)
 
 
+class MarkUpItalicsTermsView(APIView):
+    """ Find and mark up italics terms.
+    """
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer.fields['document'].fields['content'].required = True
+        serializer.is_valid(raise_exception=True)
+        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+
+        self.mark_up_italics(document)
+
+        return Response({'document': {'content': document.document_xml}})
+
+    def mark_up_italics(self, document):
+        italics_terms_finder = plugins.for_document('italics-terms', document)
+        italics_terms = document.work.country.italics_terms
+        if italics_terms_finder and italics_terms:
+            italics_terms_finder.mark_up_italics_in_document(document, italics_terms)
+
+
 class SearchView(DocumentViewMixin, ListAPIView):
     """ Search and return either works, or documents, depending on `scope`.
 

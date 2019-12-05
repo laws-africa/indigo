@@ -136,6 +136,33 @@
 
 
   /** This view handles a thread of annotations.
+   *
+   * A thread is anchored to a place (the target) in the document using W3C Annotation compliant selectors.
+   *
+   * The target is determined by an anchor element and list of selectors. The selectors are relative to the
+   * anchor element. The anchor is determined by the nearest element with an ID.
+   *
+   * We use two selectors, based on the W3C Annotations Model (https://www.w3.org/TR/annotation-model/)
+   * and using https://github.com/tilgovi/dom-anchor-text-quote and https://github.com/tilgovi/dom-anchor-text-position.
+   *
+   * 1. The first is a TextPositionSelector that simply specifies the start and
+   *    end offset of the annotation in the text of the anchor element.
+   *    (https://www.w3.org/TR/annotation-model/#text-position-selector)
+   *
+   * 2. The second is a TextQuoteSelector that includes the selected text, and some context
+   *    from just before and just after it.
+   *    https://www.w3.org/TR/annotation-model/#text-quote-selector
+   *
+   * These selectors are used together to determine what text should be highlighted. Together, they make the
+   * system somewhat robust against changes to the highlighted text. See https://web.hypothes.is/blog/fuzzy-anchoring/
+   * for inspiration.
+   *
+   * First, we try to find the text with the TextPositionSelector. We then check the result against the
+   * TextQuoteSelector's "exact" selected text. If they match, then we've selected the right text. This
+   * makes the common case fast.
+   *
+   * If they don't match, then we try a fuzzy match using the TextQuoteSelector. If that doesn't match,
+   * we give up.
    */
   Indigo.AnnotationThreadView = Backbone.View.extend({
     className: 'annotation-thread ig',

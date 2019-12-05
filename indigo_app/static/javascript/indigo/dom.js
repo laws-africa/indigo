@@ -119,7 +119,7 @@ $(function() {
       range;
 
     if (posnSelector) {
-      range = textPositionToRange(anchor, posnSelector);
+      range = Indigo.dom.textPositionToRange(anchor, posnSelector);
 
       // compare text with the exact from the quote selector
       if (quoteSelector && range.toString() === quoteSelector.exact) {
@@ -129,7 +129,7 @@ $(function() {
 
     // fall back to the quote selector
     if (quoteSelector) {
-      return textQuoteToRange(anchor, quoteSelector);
+      return Indigo.dom.textQuoteToRange(anchor, quoteSelector);
     }
   };
 
@@ -202,5 +202,56 @@ $(function() {
       mark.appendChild(node);
       if (callback) callback(mark);
     });
+  };
+
+
+  // Tweaked version of toRange from https://github.com/tilgovi/dom-anchor-text-position
+  // so that we can fix a bug that arises when selecting to the end of a node.
+  Indigo.dom.textPositionToRange = function(root, selector) {
+    if (root === undefined) {
+      throw new Error('missing required parameter "root"');
+    }
+
+    var document = root.ownerDocument;
+    var range = document.createRange();
+    var iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
+
+    var start = selector.start || 0;
+    var end = selector.end || start;
+    var count = domSeek(iter, start);
+    var remainder = start - count;
+
+    if (iter.pointerBeforeReferenceNode) {
+      range.setStart(iter.referenceNode, remainder);
+    } else {
+      range.setStart(iter.nextNode(), remainder);
+      iter.previousNode();
+    }
+
+    var length = end - start + remainder;
+    count = domSeek(iter, length);
+    remainder = length - count;
+
+    if (iter.pointerBeforeReferenceNode) {
+      range.setEnd(iter.referenceNode, remainder);
+    } else {
+      // XXX: work around a bug in dom-anchor-text-position, see
+      // https://github.com/tilgovi/dom-anchor-text-position/issues/2
+      var node = iter.nextNode();
+      if (node) {
+        range.setEnd(node, remainder);
+      } else {
+        range.setEnd(iter.referenceNode, iter.referenceNode.length);
+      }
+    }
+
+    return range;
+  };
+
+
+  Indigo.dom.textQuoteToRange = function(root, selector, options) {
+    // re-implements toRange from https://github.com/tilgovi/dom-anchor-text-quote
+    // so that we can call our custom textPositionToRange()
+    return Indigo.dom.textPositionToRange(root, textQuoteToTextPosition(root, selector, options));
   };
 });

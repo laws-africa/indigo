@@ -42,6 +42,8 @@
 
       data.document.content = this.model.toXml();
 
+      this.$('a[href="#this-document-italics-terms"]').click();
+
       $btn
         .prop('disabled', true)
         .find('i').addClass('fa-spin');
@@ -69,6 +71,8 @@
       // remove all italics mark-up
       var self = this,
           changed = false;
+
+      this.$('a[href="#this-document-italics-terms"]').click();
 
       this.model.xmlDocument.querySelectorAll('i').forEach(function(term) {
         // get rid of <i>

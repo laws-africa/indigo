@@ -125,7 +125,8 @@
   Indigo.annotations.markRange = function(range, tagName, callback) {
     var iterator, node, posn,
         nodes = [],
-        start, end;
+        start, end,
+        ignore = {'TABLE': 1, 'THEAD': 1, 'TBODY': 1, 'TR': 1};
 
     function split(node, offset) {
       // split the text node so that the offsets fall on text node boundaries
@@ -136,47 +137,47 @@
       }
     }
 
-    if (range.startContainer.nodeType === Node.TEXT_NODE) {
-      // split the start and end text nodes so that the offsets fall on text node boundaries
-      start = split(range.startContainer, range.startOffset);
-    } else {
-      // first text node
-      start =  document.createNodeIterator(range.startContainer, NodeFilter.SHOW_TEXT).nextNode();
-      if (!start) return;
-    }
+    // remove foreign elements while working with the range
+    Indigo.annotations.withoutForeignElements(range.commonAncestorContainer, function() {
+      if (range.startContainer.nodeType === Node.TEXT_NODE) {
+        // split the start and end text nodes so that the offsets fall on text node boundaries
+        start = split(range.startContainer, range.startOffset);
+      } else {
+        // first text node
+        start = document.createNodeIterator(range.startContainer, NodeFilter.SHOW_TEXT).nextNode();
+        if (!start) return;
+      }
 
-    if (range.endContainer.nodeType === Node.TEXT_NODE) {
-      end = split(range.endContainer, range.endOffset);
-    } else {
-      end = range.endContainer;
-    }
+      if (range.endContainer.nodeType === Node.TEXT_NODE) {
+        end = split(range.endContainer, range.endOffset);
+      } else {
+        end = range.endContainer;
+      }
 
-    // gather all the text nodes between start and end, except anything that has the "ig" class,
-    // since that's an internal Indigo element
-    iterator = document.createTreeWalker(
-      range.commonAncestorContainer,
-      NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT,
-      function(n) {
-        // allow text nodes, skip
-        if (n.nodeType === Node.TEXT_NODE) return NodeFilter.FILTER_ACCEPT;
-        if (n.classList.contains('ig')) return NodeFilter.FILTER_REJECT;
-        return NodeFilter.FILTER_SKIP;
-      });
+      // gather all the text nodes between start and end
+      iterator = document.createNodeIterator(
+        range.commonAncestorContainer, NodeFilter.SHOW_TEXT,
+        function (n) {
+          // ignore text nodes in weird positions in tables
+          if (ignore[n.parentElement.tagName]) return NodeFilter.FILTER_SKIP;
+          return NodeFilter.FILTER_ACCEPT;
+        });
 
-    // advance until we're at the start node
-    node = iterator.nextNode();
-    while (node && node !== start) node = iterator.nextNode();
+      // advance until we're at the start node
+      node = iterator.nextNode();
+      while (node && node !== start) node = iterator.nextNode();
 
-    // gather text nodes
-    while (node) {
-      posn = node.compareDocumentPosition(end);
-      // stop if node isn't inside end, and doesn't come before end
-      if ((posn & Node.DOCUMENT_POSITION_CONTAINS) === 0 &&
+      // gather text nodes
+      while (node) {
+        posn = node.compareDocumentPosition(end);
+        // stop if node isn't inside end, and doesn't come before end
+        if ((posn & Node.DOCUMENT_POSITION_CONTAINS) === 0 &&
           (posn & Node.DOCUMENT_POSITION_FOLLOWING) === 0) break;
 
-      nodes.push(node);
-      node = iterator.nextNode();
-    }
+        nodes.push(node);
+        node = iterator.nextNode();
+      }
+    });
 
     // mark the gathered nodes
     nodes.forEach(function(node) {

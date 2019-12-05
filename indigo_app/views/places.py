@@ -27,7 +27,6 @@ from .base import AbstractAuthedIndigoView, PlaceViewBase
 
 from indigo_app.forms import WorkFilterForm
 
-
 log = logging.getLogger(__name__)
 
 

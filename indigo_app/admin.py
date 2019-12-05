@@ -4,6 +4,7 @@ from django.contrib.auth.admin import UserAdmin
 
 from .models import Editor, Publication
 from indigo_api.models import Language, Country, Locality
+from indigo_app.forms import CountryAdminForm
 
 
 class EditorInline(admin.StackedInline):
@@ -33,6 +34,7 @@ class UserAdmin(UserAdmin):
 
 @admin.register(Country)
 class CountryAdmin(admin.ModelAdmin):
+    form = CountryAdminForm
     list_display = ('country',)
     inlines = (LocalityInline, PublicationInline)
 

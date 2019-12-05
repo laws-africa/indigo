@@ -123,6 +123,19 @@ And then commit the changes. CrowdIn will pick up any changed strings and make t
 open a pull request to merge the changes into master.
 
 
+## npm module dependencies
+
+Indigo uses a small number of node modules written in ES6. They need to be compiled into a single JS file
+because Indigo doesn't use ES6.
+
+To do this, install [browserify](http://browserify.org/), then:
+
+```
+npm install
+browserify indigo_app/static/lib/dom-anchor.src.js > indigo_app/static/lib/dom-anchor.js
+```
+
+
 ## Testing
 
 To run the tests use:

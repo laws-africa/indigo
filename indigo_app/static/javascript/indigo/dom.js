@@ -51,12 +51,10 @@ $(function() {
    */
   Indigo.dom.rangeToTarget = function(range) {
     var anchor = range.commonAncestorContainer,
-      target = {selectors: []},
-      selector;
+        target = {selectors: []},
+        selector;
 
-    // TODO: handle no id element (ie. body, preamble, etc.)
     anchor = $(anchor).closest('[id]')[0];
-    // TODO: data-id?
     target.anchor_id = anchor.id;
 
     Indigo.dom.withoutForeignElements(anchor, function() {
@@ -76,24 +74,37 @@ $(function() {
 
   /**
    * Convert a Target object (anchor_id, selectors) to Range object.
+   *
+   * This does its best to try to find a match, walking up the anchor hierarchy if possible.
    */
   Indigo.dom.targetToRange = function(target) {
-    var node, range;
+    var anchor, range,
+        anchor_id = target.anchor_id,
+        ix = anchor_id.lastIndexOf('.');
 
-    node = document.getElementById(target.anchor_id);
-    // TODO: try harder
-    if (!node) return;
+    anchor = document.getElementById(anchor_id);
 
     if (!target.selectors) {
       // no selectors, old-style annotation for an entire element
-      range = document.createRange();
-      range.selectNodeContents(node);
+      if (anchor) {
+        range = document.createRange();
+        range.selectNodeContents(anchor);
+      }
       return range;
     }
 
-    // TODO: if we don't have an anchor, then try walking up the anchor chain until we can find a target.
-    return Indigo.dom.withoutForeignElements(node, function() {
-      return Indigo.dom.selectorsToRange(node, target.selectors);
+    // do our best to find the anchor node, going upwards up the id chain if
+    // the id has dotted components
+    while (!anchor && ix > -1) {
+      anchor_id = anchor_id.substring(0, ix);
+      ix = anchor_id.lastIndexOf('.');
+      anchor = document.getElementById(anchor_id);
+    }
+
+    if (!anchor) return;
+
+    return Indigo.dom.withoutForeignElements(anchor, function() {
+      return Indigo.dom.selectorsToRange(anchor, target.selectors);
     });
   };
 

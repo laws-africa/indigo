@@ -586,9 +586,5 @@
         this.newButtonTimeout = window.setTimeout(_.bind(this.removeNewButton, this), 200);
       }
     },
-
-    createRange: function() {
-      return Indigo.rangeToTarget(document.getSelection().getRangeAt(0));
-    },
   });
 })(window);

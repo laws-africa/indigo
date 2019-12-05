@@ -105,13 +105,18 @@ $(function() {
 
     if (!anchor) return;
 
+    // remove foreign elements, then use the selectors to find the text
+    // build up a Range object.
     return Indigo.dom.withoutForeignElements(anchor, function() {
       return Indigo.dom.selectorsToRange(anchor, target.selectors);
     });
   };
 
   /**
-   * Given a root and a list of selectors, convert it into a browser Range object.
+   * Given a root and a list of selectors, create browser Range object.
+   *
+   * Only TextPositionSelector and TextQuoteSelector types from https://www.w3.org/TR/annotation-model/
+   * are used.
    */
   Indigo.dom.selectorsToRange = function(anchor, selectors) {
     var posnSelector = _.findWhere(selectors, {type: "TextPositionSelector"}),
@@ -133,7 +138,9 @@ $(function() {
     }
   };
 
-  /* Mark all the text nodes in a range with a given tag (eg. 'mark')
+  /**
+   * Mark all the text nodes in a range with a given tag (eg. 'mark'),
+   * calling the callback for each new marked element.
    */
   Indigo.dom.markRange = function(range, tagName, callback) {
     var iterator, node, posn,
@@ -204,9 +211,10 @@ $(function() {
     });
   };
 
-
-  // Tweaked version of toRange from https://github.com/tilgovi/dom-anchor-text-position
-  // so that we can fix a bug that arises when selecting to the end of a node.
+  /**
+   * Tweaked version of toRange from https://github.com/tilgovi/dom-anchor-text-position
+   * so that we can fix a bug that arises when selecting to the end of a node.
+   */
   Indigo.dom.textPositionToRange = function(root, selector) {
     if (root === undefined) {
       throw new Error('missing required parameter "root"');
@@ -248,10 +256,13 @@ $(function() {
     return range;
   };
 
-
+  /**
+   * Given a root and a TextQuoteSelector, convert it to a Range object.
+   *
+   * Re-implements toRange from https://github.com/tilgovi/dom-anchor-text-quote
+   * so that we can call our custom textPositionToRange()
+   */
   Indigo.dom.textQuoteToRange = function(root, selector, options) {
-    // re-implements toRange from https://github.com/tilgovi/dom-anchor-text-quote
-    // so that we can call our custom textPositionToRange()
     return Indigo.dom.textPositionToRange(root, textQuoteToTextPosition(root, selector, options));
   };
 });

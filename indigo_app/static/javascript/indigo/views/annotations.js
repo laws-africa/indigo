@@ -227,7 +227,6 @@
       if (this.root.get('closed')) return;
 
       this.unmark();
-
       range = Indigo.dom.targetToRange(this.target);
 
       if (range) {
@@ -405,6 +404,7 @@
       this.sheetContainer = this.el.querySelector('.document-sheet-container');
       this.$annotationNav = this.$el.find('.annotation-nav');
       this.annotationsContainer = this.$el.find('.annotations-container')[0];
+      this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
       this.$newButton = $("#new-annotation-floater");
@@ -424,7 +424,6 @@
           return thread;
         });
 
-        var template = self.annotationTemplate = Handlebars.compile($("#annotation-template").html());
         threads.forEach(_.bind(self.makeView, self));
 
         self.renderAnnotations();
@@ -560,9 +559,6 @@
 
         // is the common ancestor inside the akn container?
         if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {
-          // TODO: ignore selection inside .ig elements
-          // TODO: handle selection spanning .ig elements
-
           // find first element
           root = range.startContainer;
           while (root && root.nodeType != Node.ELEMENT_NODE) root = root.parentElement;
@@ -574,7 +570,7 @@
         // this needs to stick around for a little bit, for the case
         // where the selection has been cleared because the button is
         // being clicked
-        window.setTimeout(function() { btn.remove(); }, 100);
+        window.setTimeout(function() { btn.remove(); }, 200);
       }
     },
 

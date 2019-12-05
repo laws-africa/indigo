@@ -133,8 +133,11 @@ $(function() {
       }
     }
 
+    node = range.commonAncestorContainer;
+    if (node.nodeType != Node.ELEMENT_NODE) node = node.parentElement;
+
     // remove foreign elements while working with the range
-    Indigo.dom.withoutForeignElements(range.commonAncestorContainer, function() {
+    Indigo.dom.withoutForeignElements(node, function() {
       if (range.startContainer.nodeType === Node.TEXT_NODE) {
         // split the start and end text nodes so that the offsets fall on text node boundaries
         start = split(range.startContainer, range.startOffset);

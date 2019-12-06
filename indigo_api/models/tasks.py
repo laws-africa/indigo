@@ -99,7 +99,7 @@ class Task(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
-    labels = models.ManyToManyField('TaskLabel', related_name='+')
+    labels = models.ManyToManyField('TaskLabel', related_name='tasks')
 
     extra_data = JSONField(null=True, blank=True)
 

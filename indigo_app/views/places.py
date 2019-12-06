@@ -7,7 +7,7 @@ import json
 
 from actstream import action
 from actstream.models import Action
-from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch, Q
+from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.db.models.functions import Extract
 from django.contrib import messages
 from django.http import QueryDict, HttpResponse
@@ -131,13 +131,13 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         # stubs overview
         context['stubs_count'] = works.filter(stub=True).count()
         context['non_stubs_count'] = works.filter(stub=False).count()
-        context['stubs_percentage'] = int((context['stubs_count'] / works.count()) * 100)
+        context['stubs_percentage'] = int((context['stubs_count'] / (works.count() or 1)) * 100)
         context['non_stubs_percentage'] = 100 - context['stubs_percentage']
 
         # primary works overview
         context['primary_works_count'] = works.filter(parent_work__isnull=True).count()
         context['subsidiary_works_count'] = works.filter(parent_work__isnull=False).count()
-        context['primary_works_percentage'] = int((context['primary_works_count'] / works.count()) * 100)
+        context['primary_works_percentage'] = int((context['primary_works_count'] / (works.count() or 1)) * 100)
         context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
 
         # Completeness
@@ -176,8 +176,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return pairs
 
     def calculate_open_tasks(self):
-        tasks = Task.objects.filter(country=self.country, locality=self.locality) \
-            .filter(Q(state=Task.OPEN) | Q(state=Task.PENDING_REVIEW))
+        tasks = Task.objects.unclosed().filter(country=self.country, locality=self.locality)
         total_open_tasks = tasks.count()
         pending_review_tasks = tasks.filter(state='pending_review').count()
         open_tasks = tasks.filter(state='open').exclude(assigned_to__isnull=False).count()
@@ -203,14 +202,15 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             }]
 
         # open tasks by label
-        labels = TaskLabel.objects.all()
+        labels = TaskLabel.objects.filter(tasks__in=tasks) \
+            .annotate(n_tasks=Count('tasks__id'))
+
         labels_chart = []
         for l in labels:
-            count = tasks.filter(labels__in=[l.id]).count()
             labels_chart.append({
-                'count': count,
+                'count': l.n_tasks,
                 'title': l.title,
-                'percentage': int((count / total_open_tasks) * 100)
+                'percentage': int((l.n_tasks / (total_open_tasks or 1)) * 100)
             })
 
         return {"task_chart": task_chart, "labels_chart": labels_chart}

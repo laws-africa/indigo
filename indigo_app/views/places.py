@@ -19,7 +19,7 @@ from django.views.generic.list import MultipleObjectMixin
 import io
 import xlsxwriter
 
-from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality, TaskLabel
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
@@ -112,7 +112,8 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         context['recently_updated_works'] = self.get_recently_updated_works()
         context['recently_created_works'] = self.get_recently_created_works()
-        context['open_tasks'] = self.calculate_open_tasks()
+        context['open_tasks'] = self.calculate_open_tasks()['task_chart']
+        context['open_tasks_by_label'] = self.calculate_open_tasks()['labels_chart']
         context['subtypes'] = self.get_works_by_subtype(works)
 
         # place activity
@@ -138,6 +139,21 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['subsidiary_works_count'] = works.filter(parent_work__isnull=False).count()
         context['primary_works_percentage'] = int((context['primary_works_count'] / works.count()) * 100)
         context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
+
+        # Completeness
+        metrics = list(DailyWorkMetrics.objects
+            .filter(place_code=self.place.place_code)
+            .filter(date__gte=since)
+            .order_by('date')
+            .all())
+
+        if metrics:
+            context['latest_stat'] = metrics[-1]
+
+        # breadth completeness history
+        context['completeness_history'] = json.dumps([
+            [m.date.isoformat(), m.p_breadth_complete]
+            for m in metrics])
 
         return context
 
@@ -195,7 +211,18 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
                 'percentage': int((pending_review_tasks / (total_open_tasks or 1)) * 100)
             }]
 
-        return task_chart
+        # open tasks by label
+        labels = TaskLabel.objects.all()
+        labels_chart = []
+        for l in labels:
+            count = tasks.filter(labels__in=[l.id]).count()
+            labels_chart.append({
+                'count': count,
+                'title': l.title,
+                'percentage': int((count / total_open_tasks) * 100)
+            })
+
+        return {"task_chart": task_chart, "labels_chart": labels_chart}
 
 
 class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):

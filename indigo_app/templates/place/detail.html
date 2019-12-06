@@ -38,7 +38,7 @@
             {% for item in open_tasks_by_label %}
               {% if item.count %}
                 <div class="row mb-2">
-                  <div class="col-4">{{ item.title }}</div>
+                  <div class="col-4"><span class="badge badge-secondary">{{ item.title }}</span></div>
                   <div class="col-6">
                     <div class="progress" style="border-radius: 3px; height: 20px;">
                       <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
@@ -55,15 +55,15 @@
       </div>
 
       <div class="card mt-3">
-        <h5 class="card-header">Recent Activity</h5>
+        <div class="card-header">
+            <a href="{% url 'place_metrics' place=place.place_code %}" class="float-right">Metrics →</a>
+            <h5 class="mb-0">Recent activity</h5>
+        </div>
         <div class="card-body">
           <div class="p-relative" style="height: 100px">
             <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
           </div>
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
-        </div>        
+        </div>      
       </div>
     </div>
 
@@ -130,10 +130,12 @@
               <h6>Works complete</h6>
             </div>
 
-            <div class="col-5 text-center align-self-center">
-              <h6>Works up to date as at</h6>
-              <h4>{% now "Y-m-d" %}</h4>
-            </div>
+            {% if place.settings.as_at_date %}
+              <div class="col-5 text-center align-self-center">
+                <h6>Works up to date as at</h6>
+                <h4>{{ place.settings.as_at_date }}</h4>
+              </div>
+            {% endif %}
           </div>
     
         </div>

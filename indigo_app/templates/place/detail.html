@@ -9,7 +9,10 @@
   <div class="row">
     <div class="col">
       <div class="card mt-3">
-        <h5 class="card-header"> Open Tasks </h5>
+        <div class="card-header">
+          <a class="float-right" href="{% url 'tasks' place=place.place_code %}">Tasks →</a>
+          <h5 class="mb-0">Open tasks</h5>
+        </div>
         <div class="card-body">
           {% for item in open_tasks %}
             {% if item.count %}
@@ -28,35 +31,28 @@
               </div>
             {% endif %}
           {% endfor %}
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'tasks' place=place.place_code %}" class="card-link">Tasks →</a>
-        </div>
-      </div>
 
-      <div class="card mt-3">
-        <h5 class="card-header"> Open Tasks by Label </h5>
-        <div class="card-body">
-          {% for item in open_tasks_by_label %}
-            {% if item.count %}
-              <div class="row mb-2">
-                <div class="col-4">{{ item.title }}</div>
-                <div class="col-6">
-                  <div class="progress" style="border-radius: 3px; height: 20px;">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
+          {% if open_tasks_by_label %}
+            <hr>
+
+            {% for item in open_tasks_by_label %}
+              {% if item.count %}
+                <div class="row mb-2">
+                  <div class="col-4">{{ item.title }}</div>
+                  <div class="col-6">
+                    <div class="progress" style="border-radius: 3px; height: 20px;">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <span class="text-muted">{{ item.count }} task{{ item.count|pluralize }}</span>
                   </div>
                 </div>
-                <div class="col-2">
-                  <span class="text-muted">{{ item.count }} task{{ item.count|pluralize }}</span>
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
         </div>
-        <div class="card-footer">
-          <a href="{% url 'tasks' place=place.place_code %}" class="card-link">Tasks →</a>
-        </div>
-      </div>      
+      </div>
 
       <div class="card mt-3">
         <h5 class="card-header">Recent Activity</h5>
@@ -110,7 +106,10 @@
       </div>
 
       <div class="card mt-3">
-        <h5 class="card-header">Types of Works</h5>
+        <div class="card-header">
+          <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
+          <h5 class="mb-0">Types of works</h5>
+        </div>
         <div class="card-body">
           {% for item in subtypes %}
             {% if item.1 %}          
@@ -125,15 +124,9 @@
               </div>                             
             {% endif %}
           {% endfor %}
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
-        </div>
-      </div>
 
-      <div class="card mt-3">
-        <h5 class="card-header">Stubs and Subsidiary Legislation</h5>
-        <div class="card-body">
+          <hr>
+
           <div class="row mb-2">
             <div class="col-3"> Stubs ({{ stubs_count }}) </div>
             <div class="col-6">

@@ -35,6 +35,81 @@
       </div>
 
       <div class="card mt-3">
+        <h5 class="card-header"> Open Tasks by Label </h5>
+        <div class="card-body">
+          {% for item in open_tasks_by_label %}
+            {% if item.count %}
+              <div class="row mb-2">
+                <div class="col-4">{{ item.title }}</div>
+                <div class="col-6">
+                  <div class="progress" style="border-radius: 3px; height: 20px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
+                  </div>
+                </div>
+                <div class="col-2">
+                  <span class="text-muted">{{ item.count }} task{{ item.count|pluralize }}</span>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'tasks' place=place.place_code %}" class="card-link">Tasks →</a>
+        </div>
+      </div>      
+
+      <div class="card mt-3">
+        <h5 class="card-header">Recent Activity</h5>
+        <div class="card-body">
+          <div class="p-relative" style="height: 100px">
+            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
+          </div>
+        </div>
+        <div class="card-footer">
+          <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
+        </div>        
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card mt-3">
+        <h5 class="card-header">As at</h5>
+        <div class="card-body">
+          <h5 class="card-text">{% now "Y-m-d" %}</h5> {# now "jS F Y H:i" #}
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <h5 class="card-header">Core Detail Completeness</h5>
+        <div class="card-body">
+    
+          <div class="row">
+            <div class="col-6">
+              <div class="p-relative" style="height: 100px">
+                <canvas id="completeness-chart" data-values="{{ completeness_history }}"></canvas>
+              </div>
+            </div>
+    
+            <div class="col-3 d-flex text-center align-items-center justify-content-center">
+              <div>
+                {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_stat.p_breadth_complete %}
+              </div>
+              <div class="ml-3">
+                <h3 class="mb-0">{{ latest_stat.p_breadth_complete }}%</h3>
+                <h5>Complete</h5>
+              </div>
+            </div>
+    
+            <div class="col-3 text-center align-self-center">
+              <h3 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h3>
+              <h5>Works Complete</h5>
+            </div>
+          </div>
+    
+        </div>
+      </div>
+
+      <div class="card mt-3">
         <h5 class="card-header">Types of Works</h5>
         <div class="card-body">
           {% for item in subtypes %}
@@ -82,45 +157,6 @@
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="col">
-      <div class="card mt-3">
-        <h5 class="card-header">As at</h5>
-        <div class="card-body">
-          <h5 class="card-text">{% now "Y-m-d" %}</h5>
-        </div>
-      </div>
-
-      <div class="card mt-3">
-        <h5 class="card-header">Recent Activity</h5>
-        <div class="card-body">
-          <div class="p-relative" style="height: 100px">
-            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
-          </div>
-        </div>
-        <div class="card-footer">
-          <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
-        </div>        
-      </div>
-
-      <div class="card mt-3">
-        <h5 class="card-header">Most Incomplete Works</h5>        
-        <div class="card-body">
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>
-
-      <div class="card mt-3">
-        <h5 class="card-header">Top Contributors</h5>        
-        <div class="card-body">
-          <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-          <a href="#" class="card-link">Card link</a>
-          <a href="#" class="card-link">Another link</a>
-        </div>
-      </div>      
 
     </div>
   </div>

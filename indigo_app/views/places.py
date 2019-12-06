@@ -141,19 +141,10 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
 
         # Completeness
-        metrics = list(DailyWorkMetrics.objects
-            .filter(place_code=self.place.place_code)
-            .filter(date__gte=since)
-            .order_by('date')
-            .all())
-
-        if metrics:
-            context['latest_stat'] = metrics[-1]
-
-        # breadth completeness history
-        context['completeness_history'] = json.dumps([
-            [m.date.isoformat(), m.p_breadth_complete]
-            for m in metrics])
+        context['latest_stat'] = DailyWorkMetrics.objects\
+            .filter(place_code=self.place.place_code)\
+            .order_by('date')\
+            .first()
 
         return context
 

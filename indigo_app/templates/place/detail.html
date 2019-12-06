@@ -69,43 +69,6 @@
 
     <div class="col">
       <div class="card mt-3">
-        <h5 class="card-header">As at</h5>
-        <div class="card-body">
-          <h5 class="card-text">{% now "Y-m-d" %}</h5> {# now "jS F Y H:i" #}
-        </div>
-      </div>
-
-      <div class="card mt-3">
-        <h5 class="card-header">Core Detail Completeness</h5>
-        <div class="card-body">
-    
-          <div class="row">
-            <div class="col-6">
-              <div class="p-relative" style="height: 100px">
-                <canvas id="completeness-chart" data-values="{{ completeness_history }}"></canvas>
-              </div>
-            </div>
-    
-            <div class="col-3 d-flex text-center align-items-center justify-content-center">
-              <div>
-                {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_stat.p_breadth_complete %}
-              </div>
-              <div class="ml-3">
-                <h3 class="mb-0">{{ latest_stat.p_breadth_complete }}%</h3>
-                <h5>Complete</h5>
-              </div>
-            </div>
-    
-            <div class="col-3 text-center align-self-center">
-              <h3 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h3>
-              <h5>Works Complete</h5>
-            </div>
-          </div>
-    
-        </div>
-      </div>
-
-      <div class="card mt-3">
         <div class="card-header">
           <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
           <h5 class="mb-0">Types of works</h5>
@@ -148,6 +111,31 @@
             </div>
             <div class="col-3"> Subsidiary ({{ subsidiary_works_count }}) </div>
           </div>
+        </div>
+      </div>
+      <div class="card mt-3">
+        <div class="card-body">
+    
+          <div class="row">
+            <div class="col-3 text-center">
+              <div>
+                {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_stat.p_breadth_complete %}
+              </div>
+              <h4 class="mb-0 mt-3">{{ latest_stat.p_breadth_complete }}%</h4>
+              <h6>Complete</h6>
+            </div>
+    
+            <div class="col-4 text-center align-self-center">
+              <h4 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h4>
+              <h6>Works complete</h6>
+            </div>
+
+            <div class="col-5 text-center align-self-center">
+              <h6>Works up to date as at</h6>
+              <h4>{% now "Y-m-d" %}</h4>
+            </div>
+          </div>
+    
         </div>
       </div>
 

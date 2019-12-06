@@ -8,10 +8,10 @@
 
   <div class="row">
     <div class="col">
-      <div class="card mt-3">
+      <div class="card mt-4">
         <div class="card-header">
           <a class="float-right" href="{% url 'tasks' place=place.place_code %}">Tasks →</a>
-          <h5 class="mb-0">Open tasks</h5>
+          <h5 class="mb-0">Current tasks ({{ place.place_tasks.unclosed.count }})</h5>
         </div>
         <div class="card-body">
           {% for item in open_tasks %}
@@ -26,7 +26,7 @@
                   </div>
                 </div>
                 <div class="col-2">
-                  <span class="text-muted">{{ item.count }} task{{ item.count|pluralize }}</span>
+                  <span class="text-muted">{{ item.count }}</span>
                 </div>
               </div>
             {% endif %}
@@ -45,7 +45,7 @@
                     </div>
                   </div>
                   <div class="col-2">
-                    <span class="text-muted">{{ item.count }} task{{ item.count|pluralize }}</span>
+                    <span class="text-muted">{{ item.count }}</span>
                   </div>
                 </div>
               {% endif %}
@@ -54,21 +54,21 @@
         </div>
       </div>
 
-      <div class="card mt-3">
-        <h5 class="card-header">Recent Activity</h5>
+      <div class="card mt-4">
+        <div class="card-header">
+          <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">Metrics →</a>
+          <h5 class="mb-0">Recent activity</h5>
+        </div>
         <div class="card-body">
           <div class="p-relative" style="height: 100px">
             <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
           </div>
         </div>
-        <div class="card-footer">
-          <a href="{% url 'place_metrics' place=place.place_code %}" class="card-link">Metrics →</a>
-        </div>        
       </div>
     </div>
 
     <div class="col">
-      <div class="card mt-3">
+      <div class="card mt-4">
         <div class="card-header">
           <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
           <h5 class="mb-0">Types of works</h5>
@@ -91,14 +91,14 @@
           <hr>
 
           <div class="row mb-2">
-            <div class="col-3"> Stubs ({{ stubs_count }}) </div>
+            <div class="col-3"> Principal works ({{ non_stubs_count }}) </div>
             <div class="col-6">
               <div class="progress" style="border-radius: 3px; height: 20px;">
-                <div class="progress-bar bg-success" role="progressbar" style="width: {{ stubs_percentage }}%" aria-valuenow="{{ stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
-                <div class="progress-bar" role="progressbar" style="width: {{ non_stubs_percentage }}%" aria-valuenow="{{ non_stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ non_stubs_percentage }}%" aria-valuenow="{{ non_stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ stubs_percentage }}%" aria-valuenow="{{ stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
               </div> 
             </div>
-            <div class="col-3"> Non-stubs ({{ non_stubs_count }}) </div>
+            <div class="col-3"> Stubs ({{ stubs_count }}) </div>
           </div>
 
           <div class="row">
@@ -113,7 +113,7 @@
           </div>
         </div>
       </div>
-      <div class="card mt-3">
+      <div class="card mt-4">
         <div class="card-body">
     
           <div class="row">
@@ -142,8 +142,11 @@
     </div>
   </div>
 
-  <div class="card mt-3">
-    <h5 class="card-header">Recently updated works</h5>
+  <div class="card mt-4">
+    <div class="card-header">
+      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
+      <h5 class="mb-0">Recently updated works</h5>
+    </div>
     <div class="card-body">
       <table class="table table-sm">
         <thead>
@@ -174,13 +177,13 @@
         {% endfor %}
       </table>
     </div>
-    <div class="card-footer">
-      <a href="{% url 'place_works' place=place.place_code %}">All works →</a>
-    </div>
   </div>
 
-  <div class="card mt-3">
-    <h5 class="card-header">Recently added works</h5>
+  <div class="card mt-4">
+    <div class="card-header">
+      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
+      <h5 class="mb-0">Recently added works</h5>
+    </div>
     <div class="card-body">
       <table class="table table-sm">
         <thead>
@@ -210,9 +213,6 @@
           </tr>
         {% endfor %}
       </table>
-    </div>
-    <div class="card-footer">
-      <a href="{% url 'place_works' place=place.place_code %}">All works →</a>
     </div>
   </div>
 </div>

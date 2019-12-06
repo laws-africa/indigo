@@ -242,7 +242,6 @@
       if (this.root.get('closed')) {
         this.blur();
         this.unmark();
-        this.el.parentElement.classList.remove('annotation-parent');
         this.$el.remove();
         this.trigger('closed', this);
       } else {
@@ -266,7 +265,6 @@
         while (node && node.nodeType !== Node.ELEMENT_NODE) node = node.parentElement;
 
         // attach the floater
-        node.classList.add('annotation-parent');
         node.appendChild(this.el);
 
         // the DOM elements get rudely removed from the view when the document
@@ -394,7 +392,6 @@
 
         this.blur();
         this.unmark();
-        this.el.parentElement.classList.remove('annotation-parent');
         this.remove();
         this.trigger('deleted', this);
       }
@@ -538,7 +535,6 @@
 
     removeNewButton: function() {
       if (this.newButton.parentElement) {
-        this.newButton.parentElement.classList.remove('annotation-parent');
         this.newButton.parentElement.removeChild(this.newButton);
       }
       this.newButtonTimeout = null;
@@ -603,7 +599,6 @@
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
           root.appendChild(this.newButton);
-          root.classList.add('annotation-parent');
           this.pendingRange = range;
         }
       } else {

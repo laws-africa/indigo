@@ -12,14 +12,6 @@ mark.active mark {
 .annotations-container {
   margin-right: $annotation-gutter-width;
 
-  .annotation-parent {
-    position: relative;
-  }
-
-  table {
-    position: relative;
-  }
-
   .annotation-thread {
     position: absolute;
     top: 0px;

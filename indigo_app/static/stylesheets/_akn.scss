@@ -5,7 +5,10 @@
 .akoma-ntoso .ig {
   font-family: $font-family-base;
   font-size: 14px;
+  font-weight: normal;
+  text-align: left;
   color: #333;
+  user-select: none;
 }
 
 $hierarchy-elems: (
@@ -65,5 +68,30 @@ $hierarchy-elems: (
     &::before {
       content: attr(data-name) !important;
     }
+  }
+}
+
+// Position hierarchical and block AKN elements relatively,
+// so that inserted indicators and annotations can be positioned relatively
+.akoma-ntoso {
+  .akn-article,
+  .akn-blockList,
+  .akn-chapter,
+  .akn-conclusions,
+  .akn-coverPage,
+  .akn-crossHeading,
+  .akn-hcontainer,
+  .akn-heading,
+  .akn-item,
+  .akn-paragraph,
+  .akn-part,
+  .akn-preamble,
+  .akn-preface,
+  .akn-section,
+  .akn-subheading,
+  .akn-subsection,
+  .akn-p,
+  table {
+    position: relative;
   }
 }

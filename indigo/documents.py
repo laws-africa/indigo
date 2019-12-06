@@ -9,18 +9,21 @@ class ResolvedAnchor(object):
     is_toc_element = False
     exact_match = False
 
-    def __init__(self, anchor, document, exact=False):
-        """ Try to resolve an anchor in a document. If exact is False (the default),
+    def __init__(self, anchor_id, selectors, document, exact=False):
+        """ Try to resolve a target (anchor + selectors) in a document. If exact is False (the default),
         then if the exact anchor can't be resolved, try to resolve as close as possible.
         The exact_match attribute will be set accordingly.
+
+        Selectors are currently ignored because they apply to the rendered text, rather than the XML.
         """
-        self.anchor = anchor
+        self.anchor_id = anchor_id
+        self.selectors = selectors
         self.document = document
 
         self.resolve(exact)
 
     def resolve(self, exact):
-        anchor_id = self.anchor['id']
+        anchor_id = self.anchor_id
 
         if '/' in anchor_id:
             component, anchor_id = anchor_id.split('/', 1)
@@ -75,3 +78,9 @@ class ResolvedAnchor(object):
             return None
 
         return self.document.element_to_html(self.toc_entry.element)
+
+    def target(self):
+        return {
+            'anchor_id': self.anchor_id,
+            'selectors': self.selectors,
+        }

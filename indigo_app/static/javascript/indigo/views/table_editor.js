@@ -68,7 +68,7 @@
           oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id'));
 
       table = $.parseHTML(this.ckeditor.getData())[0];
-      if (table.tagName != 'TABLE') table = table.querySelector('table');
+      if (table.tagName !== 'TABLE') table = table.querySelector('table');
 
       // stop editing
       this.editTable(null);
@@ -116,12 +116,12 @@
       if (!force && !confirm("You'll lose your changes, are you sure?")) return;
 
       var container = this.table.parentElement,
-          initialTable = this.initialTable;
+          originalTable = this.originalTable;
 
       this.editTable(null);
 
       // undo changes
-      container.replaceChild(initialTable, container.querySelector('table'));
+      container.replaceChild(originalTable, container.querySelector('table'));
     },
 
     // start editing an HTML table
@@ -138,7 +138,14 @@
         }
 
         this.observers = [];
-        this.initialTable = table.cloneNode(true);
+
+        // Make a copy of the table and edit it. This means that we have the original,
+        // including any event handlers that other components may have attached to its content.
+        // If the edit is cancelled, this is swapped back into place.
+        this.originalTable = table;
+        table = table.cloneNode(true);
+        this.originalTable.parentElement.replaceChild(table, this.originalTable);
+
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
         editable = table.parentElement;
@@ -150,6 +157,8 @@
           self.manageTableWidth(self.table);
         });
 
+        // remove foreign content
+        $(editable).find(Indigo.dom.foreignElementsSelector).remove();
         this.ckeditor = CKEDITOR.inline(editable, this.ckeditorConfig);
         this.ckeditor.on('selectionChange', _.bind(this.selectionChanged, this));
 
@@ -166,7 +175,7 @@
         this.ckeditor.destroy();
         this.ckeditor = null;
 
-        this.initialTable = null;
+        this.originalTable = null;
         this.table = null;
         this.editing = false;
         this.trigger('finish');

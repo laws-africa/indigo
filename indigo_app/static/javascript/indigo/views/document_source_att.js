@@ -58,11 +58,11 @@
         this.$dropdown.empty();
         this.choices.each(function(att) {
           dd.appendChild(new Option(
-            att.get('filename'), att.get('id'), false, self.chosen == att
+            att.get('filename'), att.get('id'), false, self.chosen === att
           ));
         });
 
-        this.$toggle.attr('disabled', this.choices.length == 0);
+        this.$toggle.attr('disabled', this.choices.length === 0);
       },
 
       toggle: function(e) {
@@ -80,7 +80,7 @@
       choose: function(item) {
         item = this.choices.get(item);
 
-        if (this.chosen != item) {
+        if (this.chosen !== item) {
           this.chosen = item;
           this.iframe.src = this.chosen.get('view_url');
           this.$('.source-attachment-pop').attr('href', this.chosen.get('view_url'));

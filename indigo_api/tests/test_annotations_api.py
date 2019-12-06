@@ -16,18 +16,28 @@ class AnnotationAPITest(APITestCase):
     def test_new_annotation(self):
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
+            'selectors': [{
+                'type': 'TextPositionSelector',
+                'start': 100,
+                'end': 102,
+            }],
         })
 
         assert_equal(response.status_code, 201)
         assert_equal(response.data['text'], 'hello')
+        assert_equal(response.data['selectors'], [{
+            'type': 'TextPositionSelector',
+            'start': 100,
+            'end': 102,
+        }])
         assert_is_none(response.data['in_reply_to'])
         assert_is_not_none(response.data['created_by_user'])
 
     def test_reply(self):
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
         })
 
         assert_equal(response.status_code, 201)
@@ -35,7 +45,7 @@ class AnnotationAPITest(APITestCase):
 
         reply = self.client.post('/api/documents/10/annotations', {
             'text': 'reply',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
             'in_reply_to': note_id,
         })
         assert_equal(reply.status_code, 201)
@@ -45,14 +55,14 @@ class AnnotationAPITest(APITestCase):
         # create
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
         })
         note_id = response.data['id']
 
         # change
         resp2 = self.client.patch('/api/documents/10/annotations/%s' % note_id, {
             'text': 'updated',
-            'anchor': {'id': 'different'},
+            'anchor_id': 'different',
             'created_by_user': {'id': 99},
             'created_at': 'foo',
             'updated_at': 'bar',
@@ -62,14 +72,14 @@ class AnnotationAPITest(APITestCase):
         # verify
         resp3 = self.client.get('/api/documents/10/annotations/%s' % note_id)
         assert_equal(resp3.data['text'], 'updated')
-        assert_equal(resp3.data['anchor'], {'id': 'different'})
+        assert_equal(resp3.data['anchor_id'], 'different')
         assert_equal(resp3.data['created_by_user'], response.data['created_by_user'])
 
     def test_cant_change_different_owner(self):
         # create
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
         })
         note_id = response.data['id']
 
@@ -86,7 +96,7 @@ class AnnotationAPITest(APITestCase):
         # create
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
         })
         note_id = response.data['id']
 
@@ -102,7 +112,7 @@ class AnnotationAPITest(APITestCase):
     def test_create_annotation_task(self):
         response = self.client.post('/api/documents/10/annotations', {
             'text': 'hello',
-            'anchor': {'id': 'section.1'},
+            'anchor_id': 'section.1',
         })
 
         assert_equal(response.status_code, 201)
@@ -112,4 +122,4 @@ class AnnotationAPITest(APITestCase):
         assert_equal(response.status_code, 201)
         assert_equal(response.data['title'], '"section.1": hello')
         assert_equal(response.data['state'], 'open')
-        assert_equal(response.data['anchor'], {'id': 'section.1'})
+        assert_is_none(response.data.get('anchor_id'))

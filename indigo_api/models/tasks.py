@@ -78,9 +78,6 @@ class Task(models.Model):
     work = models.ForeignKey('indigo_api.Work', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
     document = models.ForeignKey('indigo_api.Document', related_name='tasks', null=True, blank=True, on_delete=models.CASCADE)
 
-    # cf indigo_api.models.Annotation
-    anchor_id = models.CharField(max_length=128, null=True, blank=True)
-
     state = FSMField(default=OPEN)
 
     # internal task code
@@ -259,14 +256,9 @@ class Task(models.Model):
         # send task_closed signal
         task_closed.send(sender=self.__class__, task=self)
 
-    def anchor(self):
-        return {'id': self.anchor_id}
-
     def resolve_anchor(self):
-        if not self.anchor_id or not self.document:
-            return None
-
-        return ResolvedAnchor(anchor=self.anchor(), document=self.document)
+        if self.annotation:
+            return self.annotation.resolve_anchor()
 
     @property
     def customised(self):

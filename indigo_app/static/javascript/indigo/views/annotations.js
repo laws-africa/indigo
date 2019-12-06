@@ -136,6 +136,33 @@
 
 
   /** This view handles a thread of annotations.
+   *
+   * A thread is anchored to a place (the target) in the document using W3C Annotation compliant selectors.
+   *
+   * The target is determined by an anchor element and list of selectors. The selectors are relative to the
+   * anchor element. The anchor is determined by the nearest element with an ID.
+   *
+   * We use two selectors, based on the W3C Annotations Model (https://www.w3.org/TR/annotation-model/)
+   * and using https://github.com/tilgovi/dom-anchor-text-quote and https://github.com/tilgovi/dom-anchor-text-position.
+   *
+   * 1. The first is a TextPositionSelector that simply specifies the start and
+   *    end offset of the annotation in the text of the anchor element.
+   *    (https://www.w3.org/TR/annotation-model/#text-position-selector)
+   *
+   * 2. The second is a TextQuoteSelector that includes the selected text, and some context
+   *    from just before and just after it.
+   *    https://www.w3.org/TR/annotation-model/#text-quote-selector
+   *
+   * These selectors are used together to determine what text should be highlighted. Together, they make the
+   * system somewhat robust against changes to the highlighted text. See https://web.hypothes.is/blog/fuzzy-anchoring/
+   * for inspiration.
+   *
+   * First, we try to find the text with the TextPositionSelector. We then check the result against the
+   * TextQuoteSelector's "exact" selected text. If they match, then we've selected the right text. This
+   * makes the common case fast.
+   *
+   * If they don't match, then we try a fuzzy match using the TextQuoteSelector. If that doesn't match,
+   * we give up.
    */
   Indigo.AnnotationThreadView = Backbone.View.extend({
     className: 'annotation-thread ig',
@@ -150,10 +177,16 @@
     initialize: function(options) {
       this.annotationTemplate = options.template;
       this.document = options.document;
+      this.marks = [];
 
       // root annotation
       this.root = this.model.find(function(a) { return !a.get('in_reply_to'); });
-      this.anchor = options.anchor || this.root.get('anchor').id;
+
+      // target for converting to a range
+      this.target = {
+        anchor_id: this.root.get('anchor_id'),
+        selectors: this.root.get('selectors'),
+      };
 
       // views for each annotation
       this.annotationViews = this.model.map(function(note) {
@@ -208,6 +241,7 @@
 
       if (this.root.get('closed')) {
         this.blur();
+        this.unmark();
         this.$el.remove();
         this.trigger('closed', this);
       } else {
@@ -216,10 +250,21 @@
     },
 
     display: function(forInput) {
+      var node, range;
+
       if (this.root.get('closed')) return;
 
-      var node = document.getElementById(this.anchor);
-      if (node) {
+      this.unmark();
+      range = Indigo.dom.targetToRange(this.target);
+
+      if (range) {
+        this.mark(range);
+
+        node = range.startContainer;
+        // find the first element
+        while (node && node.nodeType !== Node.ELEMENT_NODE) node = node.parentElement;
+
+        // attach the floater
         node.appendChild(this.el);
 
         // the DOM elements get rudely removed from the view when the document
@@ -242,9 +287,36 @@
       }
     },
 
+    mark: function(range) {
+      var self = this,
+          handler = _.bind(this.markClicked, this);
+
+      this.marks = [];
+      Indigo.dom.markRange(range, 'mark', function (mark) {
+        self.marks.push(mark);
+        mark.addEventListener('click', handler);
+      });
+    },
+
+    unmark: function() {
+      this.marks.forEach(function(mark) {
+        while (mark.firstChild) {
+          mark.parentElement.insertBefore(mark.firstChild, mark);
+        }
+        mark.parentElement.removeChild(mark);
+      });
+      this.marks = [];
+    },
+
+    markClicked: function(e) {
+      e.stopPropagation();
+      // fake a click on the element to blur any currently active annotation
+      this.el.click();
+    },
+
     focus: function() {
       this.$el.addClass('focused');
-      this.$el.parent().addClass('annotation-focused');
+      this.marks.forEach(function(mark) { mark.classList.add('active'); });
     },
 
     scrollIntoView: function() {
@@ -267,7 +339,7 @@
 
     blur: function(e) {
       this.$el.removeClass('focused');
-      this.$el.parent().removeClass('annotation-focused');
+      this.marks.forEach(function(mark) { mark.classList.remove('active'); });
     },
 
     replyFocus: function(e) {
@@ -287,7 +359,7 @@
       reply = new Indigo.Annotation({
         text: text,
         in_reply_to: this.root.get('id'),
-        anchor: this.root.get('anchor'),
+        anchor_id: this.root.get('anchor_id'),
       });
       this.document.annotations.add(reply);
 
@@ -319,6 +391,7 @@
         }
 
         this.blur();
+        this.unmark();
         this.remove();
         this.trigger('deleted', this);
       }
@@ -358,9 +431,12 @@
       this.annotatable = this.model.tradition().settings.annotatable;
       this.sheetContainer = this.el.querySelector('.document-sheet-container');
       this.$annotationNav = this.$el.find('.annotation-nav');
+      this.annotationsContainer = this.$el.find('.annotations-container')[0];
+      this.annotationTemplate = Handlebars.compile($("#annotation-template").html());
+      document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
-      this.$newButton = $("#new-annotation-floater");
-      this.$el.on('mouseover', this.annotatable, _.bind(this.enterSection, this));
+      this.newButton = document.getElementById('new-annotation-floater');
+      this.newButtonTimeout = null;
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});
       this.counts = new Backbone.Model({'threads': 0});
@@ -377,7 +453,6 @@
           return thread;
         });
 
-        var template = self.annotationTemplate = Handlebars.compile($("#annotation-template").html());
         threads.forEach(_.bind(self.makeView, self));
 
         self.renderAnnotations();
@@ -436,54 +511,33 @@
       this.$annotationNav.toggleClass('d-none', count === 0);
     },
 
-    enterSection: function(e) {
-      if (!Indigo.user.authenticated() ||
-          !Indigo.user.hasPerm('indigo_api.add_annotation') ||
-          e.enterAnnotationDone) return;
-
-      var target = e.currentTarget,
-          $target = $(target);
-
-      if (!$target.is(this.annotatable)) return;
-
-      if ($target.children(".annotation-thread").length === 0) {
-        this.showAnnotationButton(target);
-      } else {
-        this.$newButton.hide();
-      }
-
-      e.enterAnnotationDone = true;
-    },
-
-    showAnnotationButton: _.debounce(function(target) {
-      target.appendChild(this.$newButton[0]);
-      this.$newButton.show();
-    }, 100),
-
     // setup a new annotation thread
     newAnnotation: function(e) {
-      var anchor = this.$newButton.closest(this.annotatable).attr('id'),
-          root = new Indigo.Annotation({
-            anchor: {
-              id: anchor,
-            },
-          }),
-          thread,
-          view;
+      var target, root, thread, view;
 
-      this.threadViews.forEach(function(v) { v.blur(); });
+      e.stopPropagation();
+      this.removeNewButton();
 
+      // don't go outside of the AKN document
+      root = this.annotationsContainer.querySelector('.akoma-ntoso');
+      target = Indigo.dom.rangeToTarget(this.pendingRange, root);
+      if (!target) return;
+
+      root = new Indigo.Annotation({selectors: target.selectors, anchor_id: target.anchor_id});
       this.annotations.add(root);
       thread = new Backbone.Collection([root]);
       view = this.makeView(thread);
-
-      this.$newButton.hide();
-      view.display(true);
-
       this.visibleThreads.push(view);
       this.counts.set('threads', this.counts.get('threads') + 1);
+      this.threadViews.forEach(function (v) { v.blur(); });
+      view.display(true);
+    },
 
-      e.stopPropagation();
+    removeNewButton: function() {
+      if (this.newButton.parentElement) {
+        this.newButton.parentElement.removeChild(this.newButton);
+      }
+      this.newButtonTimeout = null;
     },
 
     nextAnnotation: function(e) {
@@ -525,6 +579,33 @@
       if (candidates.length > 0) {
         candidates[0].view.focus();
         candidates[0].view.scrollIntoView();
+      }
+    },
+
+    selectionChanged: function(e) {
+      var range, root,
+          sel = document.getSelection();
+
+      if (sel.rangeCount > 0 && !sel.getRangeAt(0).collapsed) {
+        if (this.newButtonTimeout) window.clearTimeout(this.newButtonTimeout);
+
+        range = sel.getRangeAt(0);
+        root = this.annotationsContainer.querySelector('.akoma-ntoso');
+
+        // is the common ancestor inside the akn container?
+        if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {
+          // find first element
+          root = range.startContainer;
+          while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
+
+          root.appendChild(this.newButton);
+          this.pendingRange = range;
+        }
+      } else {
+        // this needs to stick around for a little bit, for the case
+        // where the selection has been cleared because the button is
+        // being clicked
+        this.newButtonTimeout = window.setTimeout(_.bind(this.removeNewButton, this), 200);
       }
     },
   });

@@ -16,9 +16,14 @@
 
     initialize: function() {
       this.$('[data-highlight]').each(function(i, container) {
-        var target = container.getAttribute('data-highlight');
-        var elem = container.querySelector("[data-id='" + target + "']");
-        if (elem) elem.classList.add('highlight');
+        var target = JSON.parse(container.getAttribute('data-highlight')),
+            range = Indigo.dom.targetToRange(target, container);
+
+        if (range) {
+          Indigo.dom.markRange(range, 'mark', function(m) {
+            m.classList.add('active');
+          });
+        }
       });
     },
 

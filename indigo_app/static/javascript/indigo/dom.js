@@ -228,12 +228,20 @@ $(function() {
     var end = selector.end || start;
     var count = domSeek(iter, start);
     var remainder = start - count;
+    var node;
 
     if (iter.pointerBeforeReferenceNode) {
       range.setStart(iter.referenceNode, remainder);
     } else {
-      range.setStart(iter.nextNode(), remainder);
-      iter.previousNode();
+      // XXX: work around a bug in dom-anchor-text-position, see
+      // https://github.com/tilgovi/dom-anchor-text-position/issues/2
+      node = iter.nextNode();
+      if (node) {
+        range.setStart(node, remainder);
+      } else {
+        range.setStart(iter.referenceNode, iter.referenceNode.length);
+        iter.previousNode();
+      }
     }
 
     var length = end - start + remainder;
@@ -245,7 +253,7 @@ $(function() {
     } else {
       // XXX: work around a bug in dom-anchor-text-position, see
       // https://github.com/tilgovi/dom-anchor-text-position/issues/2
-      var node = iter.nextNode();
+      node = iter.nextNode();
       if (node) {
         range.setEnd(node, remainder);
       } else {

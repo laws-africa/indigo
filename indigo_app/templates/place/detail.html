@@ -11,7 +11,7 @@
       <div class="card mt-4">
         <div class="card-header">
           <a class="float-right" href="{% url 'tasks' place=place.place_code %}">Tasks →</a>
-          <h5 class="mb-0">Current tasks ({{ place.place_tasks.unclosed.count }})</h5>
+          <h5 class="mb-0">Current tasks ({{ total_open_tasks }})</h5>
         </div>
         <div class="card-body">
           {% for item in open_tasks %}

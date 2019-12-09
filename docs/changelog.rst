@@ -1,8 +1,8 @@
 Changelog
 =========
 
-7.0.0 (?)
----------
+7.0.0 (9 December 2019)
+-----------------------
 
 * FEATURE: export work details as XLSX
 * FEATURE: resizable table columns (using CKEditoR)

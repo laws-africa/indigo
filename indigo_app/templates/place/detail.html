@@ -10,66 +10,6 @@
     <div class="col">
       <div class="card mt-4">
         <div class="card-header">
-          <a class="float-right" href="{% url 'tasks' place=place.place_code %}">Tasks →</a>
-          <h5 class="mb-0">Current tasks ({{ total_open_tasks }})</h5>
-        </div>
-        <div class="card-body">
-          {% for item in open_tasks %}
-            {% if item.count %}
-              <div class="row mb-2">
-                <div class="col-4">
-                  <i class="fas fa-sm fa-fw task-icon-{{ item.state }}"></i> {{ item.state_string }}
-                </div>
-                <div class="col-6">
-                  <div class="progress" style="border-radius: 3px; height: 20px;">
-                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
-                  </div>
-                </div>
-                <div class="col-2">
-                  <span class="text-muted">{{ item.count }}</span>
-                </div>
-              </div>
-            {% endif %}
-          {% endfor %}
-
-          {% if open_tasks_by_label %}
-            <hr>
-
-            {% for item in open_tasks_by_label %}
-              {% if item.count %}
-                <div class="row mb-2">
-                  <div class="col-4"><span class="badge badge-secondary">{{ item.title }}</span></div>
-                  <div class="col-6">
-                    <div class="progress" style="border-radius: 3px; height: 20px;">
-                      <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
-                    </div>
-                  </div>
-                  <div class="col-2">
-                    <span class="text-muted">{{ item.count }}</span>
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-        </div>
-      </div>
-
-      <div class="card mt-4">
-        <div class="card-header">
-          <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">Metrics →</a>
-          <h5 class="mb-0">Recent activity</h5>
-        </div>
-        <div class="card-body">
-          <div class="p-relative" style="height: 100px">
-            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="card mt-4">
-        <div class="card-header">
           <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
           <h5 class="mb-0">Types of works</h5>
         </div>
@@ -140,7 +80,66 @@
     
         </div>
       </div>
+    </div>
 
+    <div class="col">
+      <div class="card mt-4">
+        <div class="card-header">
+          <a class="float-right" href="{% url 'tasks' place=place.place_code %}">Tasks →</a>
+          <h5 class="mb-0">Current tasks ({{ total_open_tasks }})</h5>
+        </div>
+        <div class="card-body">
+          {% for item in open_tasks %}
+            {% if item.count %}
+              <div class="row mb-2">
+                <div class="col-4">
+                  <i class="fas fa-sm fa-fw task-icon-{{ item.state }}"></i> {{ item.state_string }}
+                </div>
+                <div class="col-6">
+                  <div class="progress" style="border-radius: 3px; height: 20px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
+                  </div>
+                </div>
+                <div class="col-2">
+                  <span class="text-muted">{{ item.count }}</span>
+                </div>
+              </div>
+            {% endif %}
+          {% endfor %}
+
+          {% if open_tasks_by_label %}
+            <hr>
+
+            {% for item in open_tasks_by_label %}
+              {% if item.count %}
+                <div class="row mb-2">
+                  <div class="col-4"><span class="badge badge-secondary">{{ item.title }}</span></div>
+                  <div class="col-6">
+                    <div class="progress" style="border-radius: 3px; height: 20px;">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <span class="text-muted">{{ item.count }}</span>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">Metrics →</a>
+          <h5 class="mb-0">Recent activity</h5>
+        </div>
+        <div class="card-body">
+          <div class="p-relative" style="height: 100px">
+            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

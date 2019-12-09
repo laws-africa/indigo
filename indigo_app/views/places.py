@@ -103,6 +103,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
     tab = 'overview'
+    js_view = 'PlaceWorksView'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -225,7 +226,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
-    js_view = 'PlaceDetailView WorkFilterFormView'
+    js_view = 'PlaceWorksView WorkFilterFormView'
 
     def get(self, request, *args, **kwargs):
         params = QueryDict(mutable=True)

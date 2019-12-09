@@ -5,7 +5,7 @@
   Indigo = exports.Indigo;
 
   // List of works for a place
-  Indigo.PlaceDetailView = Backbone.View.extend({
+  Indigo.PlaceWorksView = Backbone.View.extend({
     el: '#library',
     events: {
       'click .list-group-item a': 'linkClicked',

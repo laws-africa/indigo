@@ -4,6 +4,7 @@ import re
 from indigo.analysis.markup import TextPatternMarker, MultipleTextPatternMarker
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo.xmlutils import closest
+from indigo_api.models import Subtype
 
 
 class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
@@ -61,6 +62,51 @@ class RefsFinderENG(BaseRefsFinder):
             )
         ''', re.X)
     candidate_xpath = ".//text()[contains(., 'Act') and not(ancestor::a:ref)]"
+
+
+@plugins.register('refs-subtypes')
+class RefsFinderSubtypesENG(BaseRefsFinder):
+    """ Finds references to works other than Acts in documents, of the form:
+
+        P 52 of 2001
+        Ordinance no. 52 of 1998
+        GN 1/2009
+
+    """
+
+    # country, language, locality
+    locale = (None, 'eng', None)
+
+    subtypes = [s for s in Subtype.objects.all()]
+    subtype_names = [s.name for s in subtypes]
+    subtype_abbreviations = [s.abbreviation for s in subtypes]
+
+    subtypes_string = '|'.join([re.escape(s) for s in subtype_names + subtype_abbreviations])
+    pattern_re = re.compile(
+        fr'''
+            (?P<ref>
+                (?P<subtype>{subtypes_string})\s*
+                ([nN]o\.?\s*)?
+                (?P<num>\d+)
+                (\s+of\s+|/)
+                (?P<year>\d{{4}})
+            )
+        ''', re.X | re.I)
+
+    xpath_contains = " or ".join([f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), "
+                                  f"'{subtype.lower()}')"
+                                  for subtype in subtype_names + subtype_abbreviations])
+    candidate_xpath = f".//text()[{xpath_contains} and not(ancestor::a:ref)]"
+
+    def make_href(self, match):
+        # use correct subtype for FRBR URI
+        subtype = match.group('subtype')
+        for s in self.subtypes:
+            if subtype.lower() == s.name.lower() or subtype.lower() == s.abbreviation.lower():
+                subtype = s.abbreviation
+                break
+
+        return f'/{self.frbr_uri.country}/act/{subtype}/{match.group("year")}/{match.group("num")}'
 
 
 class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):

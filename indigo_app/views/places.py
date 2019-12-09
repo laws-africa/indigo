@@ -112,9 +112,13 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         context['recently_updated_works'] = self.get_recently_updated_works()
         context['recently_created_works'] = self.get_recently_created_works()
-        context['open_tasks'] = self.calculate_open_tasks()['task_chart']
-        context['open_tasks_by_label'] = self.calculate_open_tasks()['labels_chart']
         context['subtypes'] = self.get_works_by_subtype(works)
+
+        # open tasks
+        open_tasks_data = self.calculate_open_tasks()
+        context['open_tasks'] = open_tasks_data['open_tasks_chart']
+        context['open_tasks_by_label'] = open_tasks_data['labels_chart']
+        context['total_open_tasks'] = open_tasks_data['total_open_tasks']
 
         # place activity
         since = now() - timedelta(days=14)
@@ -182,7 +186,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         open_tasks = tasks.filter(state='open').exclude(assigned_to__isnull=False).count()
         assigned_tasks = tasks.filter(state='open').exclude(assigned_to=None).count()
 
-        task_chart = [{
+        open_tasks_chart = [{
                 'state': 'open',
                 'state_string': 'Open',
                 'count': open_tasks,
@@ -213,7 +217,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
                 'percentage': int((l.n_tasks / (total_open_tasks or 1)) * 100)
             })
 
-        return {"task_chart": task_chart, "labels_chart": labels_chart}
+        return {"open_tasks_chart": open_tasks_chart, "labels_chart": labels_chart, "total_open_tasks": total_open_tasks}
 
 
 class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):

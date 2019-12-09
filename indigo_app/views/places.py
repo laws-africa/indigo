@@ -184,7 +184,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         task_chart = [{
                 'state': 'open',
-                'state_string': 'Unassigned',
+                'state_string': 'Open',
                 'count': open_tasks,
                 'percentage': int((open_tasks / (total_open_tasks or 1)) * 100)
             },
@@ -196,7 +196,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             },
             {
                 'state': 'pending_review',
-                'state_string': 'Pending Review',
+                'state_string': 'Pending review',
                 'count': pending_review_tasks,
                 'percentage': int((pending_review_tasks / (total_open_tasks or 1)) * 100)
             }]

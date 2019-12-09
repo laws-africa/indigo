@@ -103,7 +103,6 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
 class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
     tab = 'overview'
-    js_view = 'PlaceWorksView'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

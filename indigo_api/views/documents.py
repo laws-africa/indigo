@@ -8,6 +8,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchQuery
 from django.http import Http404
 from django.urls import reverse
+from django.utils import timezone
 from django_comments.models import Comment
 
 from rest_framework.exceptions import ValidationError, MethodNotAllowed
@@ -300,20 +301,11 @@ class DocumentActivityViewSet(DocumentResourceView,
         return super(DocumentActivityViewSet, self).list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
-        # does it already exist?
-        activity = None
-
-        # update activity if we have a nonce
-        if request.data['nonce']:
-            activity = self.get_queryset().filter(user=request.user, nonce=request.data['nonce']).first()
-
-        if activity:
-            activity.touch()
-            activity.save()
-        else:
-            # new activity
-            super(DocumentActivityViewSet, self).create(request, *args, **kwargs)
-
+        # either create a new activity object, or update it
+        self.get_queryset().update_or_create(
+            document=self.document, user=request.user, nonce=request.data['nonce'],
+            defaults={'updated_at': timezone.now()},
+        )
         return self.list(request, *args, **kwargs)
 
     def destroy(self, request, *args, **kwargs):

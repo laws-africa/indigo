@@ -564,9 +564,6 @@ class DocumentActivity(models.Model):
         unique_together = ('document', 'user', 'nonce')
         ordering = ('created_at',)
 
-    def touch(self):
-        self.updated_at = timezone.now()
-
     def is_asleep(self):
         return (timezone.now() - self.updated_at).total_seconds() > self.ASLEEP_SECS
 

@@ -146,7 +146,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         # Completeness
         context['latest_stat'] = DailyWorkMetrics.objects\
             .filter(place_code=self.place.place_code)\
-            .order_by('date')\
+            .order_by('-date')\
             .first()
 
         return context

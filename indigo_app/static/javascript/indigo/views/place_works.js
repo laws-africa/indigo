@@ -5,7 +5,7 @@
   Indigo = exports.Indigo;
 
   // List of works for a place
-  Indigo.PlaceDetailView = Backbone.View.extend({
+  Indigo.PlaceWorksView = Backbone.View.extend({
     el: '#library',
     events: {
       'click .list-group-item a': 'linkClicked',
@@ -15,6 +15,10 @@
 
     initialize: function() {
       this.drawCharts();
+    },
+
+    drawCharts: function() {
+      this.drawCompletenessChart();
     },
 
     linkClicked: function(e) {
@@ -31,7 +35,7 @@
            .toggleClass('fa-caret-down', opened);
     },
 
-    drawCharts: function() {
+    drawCompletenessChart: function() {
         var canvas = document.getElementById('completeness-chart'),
             ctx = canvas.getContext('2d'),
             data = _.map(canvas.getAttribute('data-values').split(','), function(i) { return parseInt(i); });
@@ -88,6 +92,6 @@
             }
           }
         });
-    }
+    },
   });
 })(window);

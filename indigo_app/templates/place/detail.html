@@ -207,7 +207,7 @@
                 {% if work.created_by_user == request.user %}
                   you
                 {% else %}
-                  {% user_profile work.updated_by_user %}
+                  {% user_profile work.created_by_user %}
                 {% endif %}
               {% endif %}
             </td>

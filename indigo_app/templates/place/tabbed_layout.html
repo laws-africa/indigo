@@ -31,7 +31,10 @@
 
     <nav class="nav nav-tabs">
       {% block main-header-tabs %}
-        <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">
+        <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'place' place=place.place_code %}">
+          <i class="fas fa-fw fa-globe-africa"></i> Overview
+        </a>
+        <a class="nav-item nav-link {% if view.tab == 'works' %}active{% endif %}" href="{% url 'place_works' place=place.place_code %}">
           <i class="fas fa-fw fa-book"></i> Works
         </a>
         <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'tasks' place=place.place_code %}">

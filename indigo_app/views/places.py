@@ -19,7 +19,7 @@ from django.views.generic.list import MultipleObjectMixin
 import io
 import xlsxwriter
 
-from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality
+from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality, TaskLabel
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
@@ -66,10 +66,10 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         if Country.objects.count() == 1:
             return redirect('place', place=Country.objects.all()[0].place_code)
 
-        return super(PlaceListView, self).dispatch(request, **kwargs)
+        return super().dispatch(request, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceListView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['countries'] = Country.objects\
             .prefetch_related('country')\
@@ -99,12 +99,132 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         return context
 
 
-class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
+class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
     template_name = 'place/detail.html'
+    tab = 'overview'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        works = Work.objects.filter(country=self.country, locality=self.locality) \
+            .order_by('-updated_at')
+
+        context['recently_updated_works'] = self.get_recently_updated_works()
+        context['recently_created_works'] = self.get_recently_created_works()
+        context['subtypes'] = self.get_works_by_subtype(works)
+
+        # open tasks
+        open_tasks_data = self.calculate_open_tasks()
+        context['open_tasks'] = open_tasks_data['open_tasks_chart']
+        context['open_tasks_by_label'] = open_tasks_data['labels_chart']
+        context['total_open_tasks'] = open_tasks_data['total_open_tasks']
+
+        # place activity
+        since = now() - timedelta(days=14)
+        metrics = DailyPlaceMetrics.objects \
+            .filter(country=self.country, locality=self.locality, date__gte=since) \
+            .order_by('date') \
+            .all()
+
+        context['activity_history'] = json.dumps([
+            [m.date.isoformat(), m.n_activities]
+            for m in metrics
+        ])
+
+        # stubs overview
+        context['stubs_count'] = works.filter(stub=True).count()
+        context['non_stubs_count'] = works.filter(stub=False).count()
+        context['stubs_percentage'] = int((context['stubs_count'] / (works.count() or 1)) * 100)
+        context['non_stubs_percentage'] = 100 - context['stubs_percentage']
+
+        # primary works overview
+        context['primary_works_count'] = works.filter(parent_work__isnull=True).count()
+        context['subsidiary_works_count'] = works.filter(parent_work__isnull=False).count()
+        context['primary_works_percentage'] = int((context['primary_works_count'] / (works.count() or 1)) * 100)
+        context['subsidiary_works_percentage'] = 100 - context['primary_works_percentage']
+
+        # Completeness
+        context['latest_stat'] = DailyWorkMetrics.objects\
+            .filter(place_code=self.place.place_code)\
+            .order_by('date')\
+            .first()
+
+        return context
+
+    def get_recently_updated_works(self):
+        # TODO: this should also factor in documents that have been updated
+        return Work.objects \
+            .filter(country=self.country, locality=self.locality) \
+            .order_by('-updated_at')[:5]
+
+    def get_recently_created_works(self):
+        return Work.objects \
+                   .filter(country=self.country, locality=self.locality) \
+                   .order_by('-created_at')[:5]
+
+    def get_works_by_subtype(self, works):
+        def subtype_name(abbr):
+            if not abbr:
+                return 'Act'
+            st = Subtype.for_abbreviation(abbr)
+            return st.name if st else abbr
+        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
+        pairs = [list(p) for p in pairs]
+        pairs.sort(key=lambda p: p[1], reverse=True)
+
+        total = sum([x[1] for x in pairs])
+        for p in pairs:
+            p.append(int((p[1] / (total or 1)) * 100))        
+
+        return pairs
+
+    def calculate_open_tasks(self):
+        tasks = Task.objects.unclosed().filter(country=self.country, locality=self.locality)
+        total_open_tasks = tasks.count()
+        pending_review_tasks = tasks.filter(state='pending_review').count()
+        open_tasks = tasks.filter(state='open').exclude(assigned_to__isnull=False).count()
+        assigned_tasks = tasks.filter(state='open').exclude(assigned_to=None).count()
+
+        open_tasks_chart = [{
+                'state': 'open',
+                'state_string': 'Open',
+                'count': open_tasks,
+                'percentage': int((open_tasks / (total_open_tasks or 1)) * 100)
+            },
+            {
+                'state': 'assigned',
+                'state_string': 'Assigned',
+                'count': assigned_tasks,
+                'percentage': int((assigned_tasks / (total_open_tasks or 1)) * 100)
+            },
+            {
+                'state': 'pending_review',
+                'state_string': 'Pending review',
+                'count': pending_review_tasks,
+                'percentage': int((pending_review_tasks / (total_open_tasks or 1)) * 100)
+            }]
+
+        # open tasks by label
+        labels = TaskLabel.objects.filter(tasks__in=tasks) \
+            .annotate(n_tasks=Count('tasks__id'))
+
+        labels_chart = []
+        for l in labels:
+            labels_chart.append({
+                'count': l.n_tasks,
+                'title': l.title,
+                'percentage': int((l.n_tasks / (total_open_tasks or 1)) * 100)
+            })
+
+        return {"open_tasks_chart": open_tasks_chart, "labels_chart": labels_chart, "total_open_tasks": total_open_tasks}
+
+
+class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
+    template_name = 'place/works.html'
     tab = 'works'
     context_object_name = 'works'
     paginate_by = 50
-    js_view = 'PlaceDetailView WorkFilterFormView'
+    js_view = 'PlaceWorksView WorkFilterFormView'
 
     def get(self, request, *args, **kwargs):
         params = QueryDict(mutable=True)
@@ -129,7 +249,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         if params.get('format') == 'xslx':
             return self.generate_xslx()
         
-        return super(PlaceDetailView, self).get(request, *args, **kwargs)    
+        return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
         queryset = Work.objects\
@@ -232,7 +352,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
                 work.pub_ratio = 0
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceDetailView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         context['form'] = self.form
         works = context['works']
 
@@ -361,7 +481,7 @@ class PlaceActivityView(PlaceViewBase, MultipleObjectMixin, TemplateView):
     threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceActivityView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         activity = Action.objects.filter(data__place_code=self.place.place_code)
         activity = self.coalesce_entries(activity)
@@ -448,7 +568,7 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, Pl
                 years.setdefault(year, 0)
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceMetricsView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['day_options'] = [
             (30, "30 days"),
@@ -559,7 +679,7 @@ class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
 
         messages.success(self.request, "Settings updated.")
 
-        return super(PlaceSettingsView, self).form_valid(form)
+        return super().form_valid(form)
 
     def get_success_url(self):
         return reverse('place_settings', kwargs={'place': self.kwargs['place']})
@@ -571,7 +691,7 @@ class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView,
     js_view = 'PlaceListView'
 
     def get_context_data(self, **kwargs):
-        context = super(PlaceLocalitiesView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
 
         context['localities'] = Locality.objects \
             .filter(country=self.country) \

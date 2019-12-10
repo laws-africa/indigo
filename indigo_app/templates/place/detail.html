@@ -2,196 +2,221 @@
 {% load indigo_app humanize staticfiles %}
 
 {% block title %}{{ place.name }}{% endblock %}
-{% block view-id %}library-view{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">
 
-  <div class="d-flex justify-content-between mb-3">
-    <div class="mr-auto">
-      {% if latest_completeness_stat %}
-        <h6 class="text-center">Core Details</h6>
-        <div class="d-flex">
-          <div class="p-relative mr-2" style="height: 50px; width: 150px;">
-            <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
+  <div class="row">
+    <div class="col">
+      <div class="card mt-4">
+        <div class="card-header">
+          <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
+          <h5 class="mb-0">Types of works</h5>
+        </div>
+        <div class="card-body">
+          {% for item in subtypes %}
+            {% if item.1 %}          
+              <div class="row mb-2">
+                <div class="col-4">{{ item.0 }}</div>
+                <div class="col-6">
+                  <div class="progress" style="border-radius: 3px; height: 20px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.2 }}%" aria-valuenow="{{ item.2 }}" aria-valuemin="0" aria-valuemax="100"></div>
+                  </div> 
+                </div>
+                <div class="col-2">{{ item.1}}</div> 
+              </div>                             
+            {% endif %}
+          {% endfor %}
+
+          <hr>
+
+          <div class="row mb-2">
+            <div class="col-3"> Principal works ({{ non_stubs_count }}) </div>
+            <div class="col-6">
+              <div class="progress" style="border-radius: 3px; height: 20px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ non_stubs_percentage }}%" aria-valuenow="{{ non_stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ stubs_percentage }}%" aria-valuenow="{{ stubs_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div> 
+            </div>
+            <div class="col-3"> Stubs ({{ stubs_count }}) </div>
           </div>
-          <div>
-            {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_completeness_stat.p_breadth_complete %}
-          </div>
-          <div class="ml-2">
-            <h3 class="mb-0">{{ latest_completeness_stat.p_breadth_complete }}%</h3>
-            Complete
-          </div>
-          <div class="ml-3 text-center align-self-center">
-            <h3 class="mb-0">{{ latest_completeness_stat.n_complete_works }} of {{ latest_completeness_stat.n_works }}</h3>
-            Works Complete
+
+          <div class="row">
+            <div class="col-3"> Primary ({{ primary_works_count }}) </div>
+            <div class="col-6">
+              <div class="progress" style="border-radius: 3px; height: 20px;">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ primary_works_percentage }}%" aria-valuenow="{{ primary_works_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+                <div class="progress-bar" role="progressbar" style="width: {{ subsidiary_works_percentage }}%" aria-valuenow="{{ subsidiary_works_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+              </div> 
+            </div>
+            <div class="col-3"> Subsidiary ({{ subsidiary_works_count }}) </div>
           </div>
         </div>
-      {% endif %}
-    </div>
+      </div>
+      <div class="card mt-4">
+        <div class="card-body">
+    
+          <div class="row">
+            <div class="col-3 text-center">
+              <div>
+                {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_stat.p_breadth_complete %}
+              </div>
+              <h4 class="mb-0 mt-3">{{ latest_stat.p_breadth_complete }}%</h4>
+              <h6>Complete</h6>
+            </div>
+    
+            <div class="col-4 text-center align-self-center">
+              <h4 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h4>
+              <h6>Works complete</h6>
+            </div>
 
-    <div>
-      <div class="btn-group">
-        <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New work</a>
-        {% if perms.indigo_api.bulk_add_work %}
-          <button type="button" class="btn btn-success dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="sr-only">Toggle Dropdown</span></button>
-          <div class="dropdown-menu">
-            <a class="dropdown-item" href="{% url 'new_batch_work' place=place.place_code %}">New work batch</a>
+            {% if place.settings.as_at_date %}
+              <div class="col-5 text-center align-self-center">
+                <h6>Works up to date as at</h6>
+                <h4>{{ place.settings.as_at_date|date:"Y-m-d" }}</h4>
+              </div>
+            {% endif %}
           </div>
-        {% endif %}
+    
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="card">
-    <div class="card-header">
-      {% include 'indigo_api/_work_filter_form.html' with form=form %}
-    </div>
-
-    <div id="library">
-      <div class="list-group list-group-flush">
-        <div class="list-group-item p-2 text-muted">
-          <span> {{ paginator.count }} works </span>
-          {% if perms.indigo_api.bulk_export_work %}
-            <span class="float-right">
-              <a href="{{ request.get_full_path }}?&format=xslx"><i class="fas fa-download fa-fw"></i>Download XSLX</a>
-            </span>
-          {% endif %}
+    <div class="col">
+      <div class="card mt-4">
+        <div class="card-header">
+          <a class="float-right" href="{% url 'tasks' place=place.place_code %}">Tasks →</a>
+          <h5 class="mb-0">Current tasks ({{ total_open_tasks }})</h5>
         </div>
-
-        {% for work in works %}
-          <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ work.pk }}">
-            <div class="d-flex">
-              <div class="float-left">
-                <span class="text-muted fas fa-caret-right fa-fw collapse-indicator"></span>
-              </div>
-
-              <div class="float-left flex-fill">
-                <div class="d-flex">
-                  <div class="col-6">
-                    <div>
-                      <a href="{% url 'work' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
-                      {% if work.stub %}
-                        <span class="badge badge-info">stub</span>
-                      {% endif %}
-                      {% if work.repealed_date %} 
-                        <span class="badge badge-info">repealed</span>
-                      {% endif %}
-                      {% if not work.commenced %}
-                        <span class="badge badge-info">not commenced</span>
-                      {% elif not work.commencement_date %}
-                        <span class="badge badge-info">commencement date unknown</span>
-                      {% endif %}
-                    </div>
-                    <div class="text-muted">{{ work.frbr_uri }}</div>
-                    {% if work.parent_work %}
-                      <div>
-                        Primary work: <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
-                      </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="col-2">
-                    {% if work.task_stats.n_active_tasks %}
-                      <div><i class="fas fa-thumbtack"></i> <strong>{{ work.task_stats.n_active_tasks }}</strong> Active tasks</div>
-                      <div class="progress mt-1 progress-thin">
-                        <div class="progress-bar task-badge-open" style="width: {{ work.task_stats.open_task_ratio }}%" title="open"></div>
-                        <div class="progress-bar task-badge-pending_review" style="width: {{ work.task_stats.pending_task_ratio }}%" title="pending review"></div>
-                      </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="col-2">
-                    {% if work.filtered_docs %}
-                      <div>
-                        <span title="Points in time"><i class="far fa-clock"></i> <strong>{{ work.filtered_docs|length }}</strong></span>
-                        {% if work.n_annotations %}
-                          <i class="ml-2 far fa-comments"></i> {{ work.n_annotations }}
-                        {% endif %}
-                      </div>
-                      <div class="progress mt-1 progress-thin">
-                        <div class="progress-bar bg-primary" style="width: {{ work.pub_ratio }}%" title="published"></div>
-                        <div class="progress-bar bg-warning" style="width: {{ work.drafts_ratio }}%" title="drafts"></div>
-                      </div>
-                    {% endif %}
-                  </div>
-
-                  <div class="col-2">
-                    <span class="time-ago" data-timestamp="{{ work.most_recent_updated_at|date:'c' }}">{{ work.most_recent_updated_at|date:"Y-m-d H:i" }}</span>
-                    {% if work.most_recent_updated_by %}
-                      {% if work.most_recent_updated_by == request.user %}
-                        you
-                      {% else %}
-                        <div class="text-muted">by {% user_profile work.most_recent_updated_by %}</div>
-                      {% endif %}
-                    {% endif %}
+        <div class="card-body">
+          {% for item in open_tasks %}
+            {% if item.count %}
+              <div class="row mb-2">
+                <div class="col-4">
+                  <i class="fas fa-sm fa-fw task-icon-{{ item.state }}"></i> {{ item.state_string }}
+                </div>
+                <div class="col-6">
+                  <div class="progress" style="border-radius: 3px; height: 20px;">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
                   </div>
                 </div>
-
-                {% if work.filtered_docs %}
-                  <div class="collapse work-extra-detail mt-1" id="work-detail-{{ work.pk }}">
-                    {% for doc in work.filtered_docs %}
-                      <div class="d-flex">
-                        <div class="col-2">
-                          <a href="{% url 'document' doc_id=doc.pk %}">@ {{ doc.expression_date|date:"Y-m-d" }} · {{ doc.language.code }}</a>
-                        </div>
-
-                        <div class="col-4">
-                          {% if doc.draft %}
-                            <i class="fas fa-fw fa-circle draft" title="draft"></i>
-                          {% else %}
-                            <i class="fas fa-fw fa-circle published" title="published"></i>
-                          {% endif %}
-                          {{ doc.title }}
-                        </div>
-
-                        <div class="col-2">
-                          {% if doc.task_stats.n_active_tasks %}
-                            <div>
-                              <i class="fas fa-thumbtack"></i> <strong>{{ doc.task_stats.n_active_tasks }}</strong> Active tasks
-                            </div>
-                            <div class="progress mt-1 progress-thin">
-                              <div class="progress-bar task-badge-open" style="width: {{ doc.task_stats.open_task_ratio }}%" title="open"></div>
-                              <div class="progress-bar task-badge-pending_review" style="width: {{ doc.task_stats.pending_task_ratio }}%" title="pending review"></div>
-                            </div>
-                          {% endif %}
-                        </div>
-
-                        <div class="col-2">
-                          {% if doc.n_annotations %}
-                            <i class="far fa-comments"></i> {{ doc.n_annotations }}
-                          {% endif %}
-                        </div>
-
-                        <div class="col-2">
-                          <span class="time-ago" data-timestamp="{{ doc.updated_at|date:'c' }}">{{ doc.updated_at|date:'Y-m-d H:i' }}</span>
-                          {% if doc.updated_by_user == request.user %}
-                            you
-                          {% else %}
-                            <div class="text-muted">by {% user_profile doc.updated_by_user %}</div>
-                          {% endif %}
-                        </div>
-                      </div>
-                    {% endfor %}
-                  </div>
-                {% endif %}
-
+                <div class="col-2">
+                  <span class="text-muted">{{ item.count }}</span>
+                </div>
               </div>
-            </div>
+            {% endif %}
+          {% endfor %}
+
+          {% if open_tasks_by_label %}
+            <hr>
+
+            {% for item in open_tasks_by_label %}
+              {% if item.count %}
+                <div class="row mb-2">
+                  <div class="col-4"><span class="badge badge-secondary">{{ item.title }}</span></div>
+                  <div class="col-6">
+                    <div class="progress" style="border-radius: 3px; height: 20px;">
+                      <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.percentage }}%"></div>
+                    </div>
+                  </div>
+                  <div class="col-2">
+                    <span class="text-muted">{{ item.count }}</span>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">
+          <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">Metrics →</a>
+          <h5 class="mb-0">Recent activity</h5>
+        </div>
+        <div class="card-body">
+          <div class="p-relative" style="height: 100px">
+            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
           </div>
-        {% endfor %}
+        </div>
       </div>
     </div>
   </div>
 
-  {% if is_paginated %}
-    <nav class="mt-4">
-      {% include 'indigo_app/_paginator.html' with params=form.data_as_url %}
-    </nav>
-  {% endif %}
+  <div class="card mt-4">
+    <div class="card-header">
+      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
+      <h5 class="mb-0">Recently updated works</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-sm">
+        <thead>
+          <tr>
+            <th>Work</th>
+            <th>Updates</th>
+          </tr>
+        </thead>
+        {% for work in recently_updated_works %}
+          <tr>
+            <td>
+              <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+              {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+              <span class="text-muted">· {{ work.frbr_uri }}</span>
+            </td>
+            <td>
+              <span class="time-ago" data-timestamp="{{ work.updated_at|date:'c' }}">{{ work.updated_at|date:"Y-m-d H:i" }}</span>
+                {% if work.updated_by_user %}
+                  by
+                  {% if work.updated_by_user == request.user %}
+                    you
+                  {% else %}
+                    <div class="text-muted">by {% user_profile work.updated_by_user %}</div>
+                  {% endif %}
+                {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
 
+  <div class="card mt-4">
+    <div class="card-header">
+      <a class="float-right" href="{% url 'place_works' place=place.place_code %}">Works →</a>
+      <h5 class="mb-0">Recently added works</h5>
+    </div>
+    <div class="card-body">
+      <table class="table table-sm">
+        <thead>
+        <tr>
+          <th>Work</th>
+          <th>Added</th>
+        </tr>
+        </thead>
+        {% for work in recently_created_works %}
+          <tr>
+            <td>
+              <a href="{% url 'work' frbr_uri=work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.frbr_uri %}">{{ work.title }}</a>
+              {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
+              <span class="text-muted">· {{ work.frbr_uri }}</span>
+            </td>
+            <td>
+              <span class="time-ago" data-timestamp="{{ work.created_at|date:'c' }}">{{ work.created_at|date:"Y-m-d H:i" }}</span>
+              {% if work.created_by_user %}
+                by
+                {% if work.created_by_user == request.user %}
+                  you
+                {% else %}
+                  <div class="text-muted">by {% user_profile work.created_by_user %}</div>
+                {% endif %}
+              {% endif %}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
 </div>
-
 {% endblock %}
 
 {% block js %}

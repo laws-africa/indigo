@@ -170,7 +170,7 @@
                   {% if work.updated_by_user == request.user %}
                     you
                   {% else %}
-                    <div class="text-muted">by {% user_profile work.updated_by_user %}</div>
+                    {% user_profile work.updated_by_user %}
                   {% endif %}
                 {% endif %}
             </td>
@@ -207,7 +207,7 @@
                 {% if work.created_by_user == request.user %}
                   you
                 {% else %}
-                  <div class="text-muted">by {% user_profile work.created_by_user %}</div>
+                  {% user_profile work.updated_by_user %}
                 {% endif %}
               {% endif %}
             </td>

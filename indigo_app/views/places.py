@@ -119,8 +119,8 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['open_tasks_by_label'] = open_tasks_data['labels_chart']
         context['total_open_tasks'] = open_tasks_data['total_open_tasks']
 
-        # place activity
-        since = now() - timedelta(days=14)
+        # place activity - 4 weeks
+        since = now() - timedelta(days=7 * 4)
         metrics = DailyPlaceMetrics.objects \
             .filter(country=self.country, locality=self.locality, date__gte=since) \
             .order_by('date') \

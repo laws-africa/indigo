@@ -65,19 +65,27 @@
       if (!this.editing) return;
 
       var table,
-          oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id'));
+          oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id')),
+          html;
 
-      table = $.parseHTML(this.ckeditor.getData())[0];
-      if (table.tagName !== 'TABLE') table = table.querySelector('table');
+      html = $.parseHTML(this.ckeditor.getData());
+      for (var i = 0; i < html.length; i++) {
+        table = html[i];
+        if (table.tagName !== 'TABLE') table = table.querySelector('table');
+        if (table) break;
+      }
 
       // stop editing
       this.editTable(null);
 
-      // get new xml
-      table = this.tableToAkn(table);
+      if (table) {
+        // get new xml
+        table = this.tableToAkn(table);
 
-      // update DOM
-      this.documentContent.replaceNode(oldTable, [table]);
+        // update DOM
+        this.documentContent.replaceNode(oldTable, [table]);
+      }
+
       this.parent.render();
     },
 

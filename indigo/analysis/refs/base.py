@@ -79,25 +79,25 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
     locale = (None, 'eng', None)
 
     def setup(self, root):
-        self.get_subtypes()
-        self.get_candidate_xpath()
-        self.get_pattern_re()
+        self.setup_subtypes()
+        self.setup_candidate_xpath()
+        self.setup_pattern_re()
         super().setup(root)
 
-    def get_subtypes(self):
+    def setup_subtypes(self):
         self.subtypes = [s for s in Subtype.objects.all()]
         self.subtype_names = [s.name for s in self.subtypes]
         self.subtype_abbreviations = [s.abbreviation for s in self.subtypes]
 
         self.subtypes_string = '|'.join([re.escape(s) for s in self.subtype_names + self.subtype_abbreviations])
 
-    def get_candidate_xpath(self):
+    def setup_candidate_xpath(self):
         xpath_contains = " or ".join([f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), "
                                       f"'{subtype.lower()}')"
                                       for subtype in self.subtype_names + self.subtype_abbreviations])
         self.candidate_xpath = f".//text()[({xpath_contains}) and not(ancestor::a:ref)]"
 
-    def get_pattern_re(self):
+    def setup_pattern_re(self):
         self.pattern_re = re.compile(
             fr'''
                 (?P<ref>

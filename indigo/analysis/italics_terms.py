@@ -17,17 +17,17 @@ class BaseItalicsFinder(LocaleBasedMatcher, TextPatternMarker):
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
         root = etree.fromstring(document.content)
-        self.get_candidate_xpath(italics_terms)
+        self.setup_candidate_xpath(italics_terms)
+        self.setup_pattern_re(italics_terms)
         self.setup(root)
-        self.get_pattern_re(italics_terms)
         self.markup_patterns(root)
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
-    def get_candidate_xpath(self, terms):
+    def setup_candidate_xpath(self, terms):
         xpath_contains = ' or '.join([f'contains(., "{term}")' for term in [partial for t in terms for partial in t.split('"')]])
         self.candidate_xpath = f'.//text()[({xpath_contains}) and not(ancestor::a:i)]'
 
-    def get_pattern_re(self, terms):
+    def setup_pattern_re(self, terms):
         terms = [t.strip() for t in terms]
         terms = [re.escape(t) for t in terms if t]
         terms = '|'.join(terms)

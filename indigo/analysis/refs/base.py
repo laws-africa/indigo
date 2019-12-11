@@ -18,6 +18,7 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         # we need to use etree, not objectify, so we can't use document.doc.root,
         # we have to re-parse it
         root = etree.fromstring(document.content)
+        self.document = document
         self.frbr_uri = document.doc.frbr_uri
         self.setup(root)
         self.markup_patterns(root)

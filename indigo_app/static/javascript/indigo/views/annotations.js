@@ -595,6 +595,10 @@
 
         // is the common ancestor inside the akn container?
         if (range.commonAncestorContainer.compareDocumentPosition(root) & Node.DOCUMENT_POSITION_CONTAINS) {
+          // disallow comments in editables
+          if ($(range.startContainer).closest('.cke_editable').length) return;
+          if ($(range.endContainer).closest('.cke_editable').length) return;
+
           // find first element
           root = range.startContainer;
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;

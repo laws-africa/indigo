@@ -92,7 +92,7 @@
                     </div>
                   </div>
                 {% else %}
-                  The content at <b>{{ anchor.toc_entry.title|default:task.anchor.id }}</b> is not
+                  The content at <b>{{ anchor.toc_entry.title|default:anchor.anchor_id }}</b> is not
                   available and may have been moved or removed.
                 {% endif %}
               </li>

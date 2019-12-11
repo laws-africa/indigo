@@ -78,26 +78,36 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
     # country, language, locality
     locale = (None, 'eng', None)
 
-    subtypes = [s for s in Subtype.objects.all()]
-    subtype_names = [s.name for s in subtypes]
-    subtype_abbreviations = [s.abbreviation for s in subtypes]
+    def setup(self, root):
+        self.get_subtypes()
+        self.get_candidate_xpath()
+        self.get_pattern_re()
+        super().setup(root)
 
-    subtypes_string = '|'.join([re.escape(s) for s in subtype_names + subtype_abbreviations])
-    pattern_re = re.compile(
-        fr'''
-            (?P<ref>
-                (?P<subtype>{subtypes_string})\s*
-                ([nN]o\.?\s*)?
-                (?P<num>\d+)
-                (\s+of\s+|/)
-                (?P<year>\d{{4}})
-            )
-        ''', re.X | re.I)
+    def get_subtypes(self):
+        self.subtypes = [s for s in Subtype.objects.all()]
+        self.subtype_names = [s.name for s in self.subtypes]
+        self.subtype_abbreviations = [s.abbreviation for s in self.subtypes]
 
-    xpath_contains = " or ".join([f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), "
-                                  f"'{subtype.lower()}')"
-                                  for subtype in subtype_names + subtype_abbreviations])
-    candidate_xpath = f".//text()[{xpath_contains} and not(ancestor::a:ref)]"
+        self.subtypes_string = '|'.join([re.escape(s) for s in self.subtype_names + self.subtype_abbreviations])
+
+    def get_candidate_xpath(self):
+        xpath_contains = " or ".join([f"contains(translate(., '{subtype.upper()}', '{subtype.lower()}'), "
+                                      f"'{subtype.lower()}')"
+                                      for subtype in self.subtype_names + self.subtype_abbreviations])
+        self.candidate_xpath = f".//text()[({xpath_contains}) and not(ancestor::a:ref)]"
+
+    def get_pattern_re(self):
+        self.pattern_re = re.compile(
+            fr'''
+                (?P<ref>
+                    (?P<subtype>{self.subtypes_string})\s*
+                    (No\.?\s*)?
+                    (?P<num>\d+)
+                    (\s+of\s+|/)
+                    (?P<year>\d{{4}})
+                )
+            ''', re.X | re.I)
 
     def make_href(self, match):
         # use correct subtype for FRBR URI

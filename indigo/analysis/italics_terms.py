@@ -24,8 +24,8 @@ class BaseItalicsFinder(LocaleBasedMatcher, TextPatternMarker):
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
     def get_candidate_xpath(self, terms):
-        xpath_contains = " or ".join([f"contains(., '{term}')" for term in terms])
-        self.candidate_xpath = f".//text()[{xpath_contains} and not(ancestor::a:i)]"
+        xpath_contains = ' or '.join([f'contains(., "{term}")' for term in [partial for t in terms for partial in t.split('"')]])
+        self.candidate_xpath = f'.//text()[({xpath_contains}) and not(ancestor::a:i)]'
 
     def get_pattern_re(self, terms):
         terms = [t.strip() for t in terms]

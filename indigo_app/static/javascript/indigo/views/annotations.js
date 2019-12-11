@@ -436,6 +436,7 @@
       document.addEventListener('selectionchange', _.bind(this.selectionChanged, this));
 
       this.newButton = document.getElementById('new-annotation-floater');
+      this.newButton.remove();
       this.newButtonTimeout = null;
 
       this.model.annotations = this.annotations = new Indigo.AnnotationList([], {document: this.model});

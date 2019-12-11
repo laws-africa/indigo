@@ -409,6 +409,14 @@ class LinkReferencesView(APIView):
         if finder:
             finder.find_references_in_document(document)
 
+        finder = plugins.for_document('refs-subtypes', document)
+        if finder:
+            finder.find_references_in_document(document)
+
+        finder = plugins.for_document('refs-act-names', document)
+        if finder:
+            finder.find_references_in_document(document)
+
         finder = plugins.for_document('internal-refs', document)
         if finder:
             finder.find_references_in_document(document)

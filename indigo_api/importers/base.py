@@ -288,6 +288,14 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
+        finder = plugins.for_document('refs-subtypes', doc)
+        if finder:
+            finder.find_references_in_document(doc)
+
+        finder = plugins.for_document('refs-act-names', doc)
+        if finder:
+            finder.find_references_in_document(doc)
+
         finder = plugins.for_document('internal-refs', doc)
         if finder:
             finder.find_references_in_document(doc)

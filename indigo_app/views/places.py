@@ -213,6 +213,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             labels_chart.append({
                 'count': l.n_tasks,
                 'title': l.title,
+                'slug': l.slug,
                 'percentage': int((l.n_tasks / (total_open_tasks or 1)) * 100)
             })
 

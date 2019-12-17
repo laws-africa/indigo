@@ -1,5 +1,5 @@
 # coding=utf-8
-from datetime import timedelta
+import datetime
 
 from actstream.models import Action
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
@@ -12,7 +12,7 @@ from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
 
-from indigo_api.models import Country, User
+from indigo_api.models import Country, User, Task
 from indigo_app.views.base import AbstractAuthedIndigoView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
@@ -29,7 +29,7 @@ class UserProfileView(DetailView):
     slug_field = 'username'
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_profile.html'
-    threshold = timedelta(seconds=3)
+    threshold = datetime.timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
@@ -137,7 +137,7 @@ class UserActivityView(MultipleObjectMixin, DetailView):
     object_list = None
     page_size = 30
     js_view = ''
-    threshold = timedelta(seconds=3)
+    threshold = datetime.timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(UserActivityView, self).get_context_data(**kwargs)
@@ -271,4 +271,34 @@ class BadgeDetailView(TemplateView):
     def get_context_data(self, **context):
         context['badge'] = self.badge
         context['awards'] = BadgeAward.objects.filter(slug=self.badge.slug).order_by('-awarded_at')
+        return context
+
+
+class UserTasksView(DetailView):
+    model = User
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    template_name = 'indigo_social/user_tasks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserTasksView, self).get_context_data(**kwargs)
+
+        # open tasks assigned to this user
+        context['open_assigned_tasks'] = Task.objects \
+            .filter(assigned_to=self.object, state__in=Task.OPEN_STATES) \
+            .all()
+
+        # tasks previously assigned to this user and now pending approval
+        context['tasks_pending_approval'] = Task.objects \
+            .filter(submitted_by_user=self.object, state='pending_review') \
+            .all()
+
+        # tasks recently approved
+        threshold = datetime.date.today() - datetime.timedelta(days=7)
+        context['tasks_recently_approved'] = Task.objects \
+            .filter(submitted_by_user=self.object, state='done') \
+            .filter(updated_at__gte=threshold) \
+            .all()[:50]
+
+        context['tab_count'] = len(context['open_assigned_tasks']) + len(context['tasks_pending_approval'])
         return context

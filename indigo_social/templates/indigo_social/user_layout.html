@@ -89,6 +89,9 @@
         <li class="nav-item">
           <a class="nav-link {% if view.template_name == 'indigo_social/user_activity.html' %}active{% endif %}" href="{% url 'indigo_social:user_activity' username=user.username %}">Activity</a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link {% if view.template_name == 'indigo_social/user_tasks.html' %}active{% endif %}" href="{% url 'indigo_social:user_tasks' username=user.username %}">Tasks</a>
+        </li>        
       </ul>
 
       {% block user_profile_content %}{% endblock %}

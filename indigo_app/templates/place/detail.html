@@ -18,14 +18,14 @@
             {% if item.1 %}          
               <div class="row mb-2">
                 <div class="col-4">
-                  <a class="text-dark" href="{% url 'place_works' place=place.place_code %}?subtype={{ forloop.counter }}">{{ item.0 }}</a>
+                  <span>{{ item.0 }}</span>
                 </div>
                 <div class="col-6">
                   <div class="progress" style="border-radius: 3px; height: 20px;">
                     <div class="progress-bar bg-success" role="progressbar" style="width: {{ item.2 }}%" aria-valuenow="{{ item.2 }}" aria-valuemin="0" aria-valuemax="100"></div>
                   </div> 
                 </div>
-                <div class="col-2">{{ item.1}}</div> 
+                <div class="col-2"><a href="{% url 'place_works' place=place.place_code %}?subtype={{ forloop.counter }}">{{ item.1}}</a></div> 
               </div>                             
             {% endif %}
           {% endfor %}
@@ -34,7 +34,7 @@
 
           <div class="row mb-2">
             <div class="col-4">
-              <a class="text-dark" href="{% url 'place_works' place=place.place_code %}">Principal works ({{ non_stubs_count }})</a>
+              <span class="text-dark">Principal works (<a href="{% url 'place_works' place=place.place_code %}">{{ non_stubs_count }}</a>)</span>
             </div>
             <div class="col-5">
               <div class="progress" style="border-radius: 3px; height: 20px;">
@@ -43,13 +43,13 @@
               </div> 
             </div>
             <div class="col-3">
-              <a class="text-dark" href="{% url 'place_works' place=place.place_code %}?stub=only">Stubs ({{ stubs_count }})</a>
+              <span class="text-dark">Stubs (<a href="{% url 'place_works' place=place.place_code %}?stub=only">{{ stubs_count }}</a>)</span>
             </div>
           </div>
 
           <div class="row">
             <div class="col-4">
-              <a class="text-dark" href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=primary&stub=all">Primary ({{ primary_works_count }})</a>
+              <span class="text-dark">Primary (<a href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=primary&stub=all">{{ primary_works_count }}</a>)</span>
             </div>
             <div class="col-5">
               <div class="progress" style="border-radius: 3px; height: 20px;">
@@ -58,7 +58,7 @@
               </div> 
             </div>
             <div class="col-3">
-                <a class="text-dark" href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=subsidiary&stub=all">Subsidiary ({{ subsidiary_works_count }})</a>
+                <span class="text-dark">Subsidiary (<a href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=subsidiary&stub=all">{{ subsidiary_works_count }}</a>)</span>
             </div>
           </div>
         </div>
@@ -104,7 +104,7 @@
               <div class="row mb-2">
                 <div class="col-4">
                   <i class="fas fa-sm fa-fw task-icon-{{ item.state }}"></i> 
-                    <a class="text-dark" href="{% url 'tasks' place=place.place_code %}?state={{ item.state }}&format=columns">{{ item.state_string }}</a>
+                    <span>{{ item.state_string }}</span>
                 </div>
                 <div class="col-6">
                   <div class="progress" style="border-radius: 3px; height: 20px;">
@@ -112,7 +112,7 @@
                   </div>
                 </div>
                 <div class="col-2">
-                  <span class="text-muted">{{ item.count }}</span>
+                  <a href="{% url 'tasks' place=place.place_code %}?state={{ item.state }}&format=columns">{{ item.count }}</a>
                 </div>
               </div>
             {% endif %}
@@ -125,7 +125,7 @@
               {% if item.count %}
                 <div class="row mb-2">
                   <div class="col-4">
-                    <a class="badge badge-secondary" href="{% url 'tasks' place=place.place_code %}?state=open&state=assigned&state=pending_review&format=columns&labels={{ item.slug }}">{{ item.title }}</a>
+                    <span class="badge badge-secondary">{{ item.title }}</span>
                   </div>
                   <div class="col-6">
                     <div class="progress" style="border-radius: 3px; height: 20px;">
@@ -133,7 +133,7 @@
                     </div>
                   </div>
                   <div class="col-2">
-                    <span class="text-muted">{{ item.count }}</span>
+                    <a href="{% url 'tasks' place=place.place_code %}?state=open&state=assigned&state=pending_review&format=columns&labels={{ item.slug }}">{{ item.count }}</a>
                   </div>
                 </div>
               {% endif %}

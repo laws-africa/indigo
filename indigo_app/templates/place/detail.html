@@ -104,11 +104,7 @@
               <div class="row mb-2">
                 <div class="col-4">
                   <i class="fas fa-sm fa-fw task-icon-{{ item.state }}"></i> 
-                  {% if item.state == 'open' %}
-                    <a class="text-dark" href="{% url 'tasks' place=place.place_code %}"">{{ item.state_string }}</a>
-                  {% else %}
                     <a class="text-dark" href="{% url 'tasks' place=place.place_code %}?state={{ item.state }}&format=columns">{{ item.state_string }}</a>
-                  {% endif %}
                 </div>
                 <div class="col-6">
                   <div class="progress" style="border-radius: 3px; height: 20px;">

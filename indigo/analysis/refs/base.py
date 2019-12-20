@@ -196,7 +196,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         r'''\b
         (
           (?P<ref>
-            sections?\s+
+            (?<!-)sections?\s+
             (?P<num>\d+[A-Z0-9]*)  # first section number, including subsections
           )
           (\s*\([A-Z0-9]+\))*      # bracketed subsections of first number

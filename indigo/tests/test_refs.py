@@ -562,6 +562,8 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As <i>given</i> in (we're now in a tail) section 26 of Act 5 of 2012, blah.</p>
           <p>As <i>given</i> in (we're now in a tail) section 26 of the Nursing Act, blah.</p>
           <p>As <i>given</i> in (we're now in a tail) sections 26, 27 and 28 of the Nursing Act, blah.</p>
+          <p>As given in section 26 of Cap. C38, blah.</p>
+          <p>As given in section 26 of the Criminal Code, blah.</p>
         </content>
       </section>
       <section id="section-26">

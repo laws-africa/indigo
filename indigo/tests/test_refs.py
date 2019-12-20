@@ -442,10 +442,67 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections 26(2) and (3), blah.</p>
           <p>A person who contravenes sections 4(1), (2) and (3), 6(3) and 10(1) and (2) is guilty of an offence.</p>
           <p>Subject to sections 1(4) and (5) and 4(6), no person is guilty of an offence.</p>
+          <p>A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.</p>
         </content>
       </section>
       <section id="section-10">
         <num>10.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-11">
+        <num>11.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-12">
+        <num>12.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-19">
+        <num>19.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-20">
+        <num>20.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-21">
+        <num>21.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-22">
+        <num>22.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-24">
+        <num>24.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-25">
+        <num>25.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
@@ -456,6 +513,13 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-28">
+        <num>28.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
         </content>
       </section>
       <section id="section-30">
@@ -537,10 +601,67 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in <ref href="#section-26">sections 26</ref>(2) and (3), blah.</p>
           <p>A person who contravenes sections <ref href="#section-4">4</ref>(1), (2) and (3), <ref href="#section-6">6</ref>(3) and <ref href="#section-10">10</ref>(1) and (2) is guilty of an offence.</p>
           <p>Subject to sections <ref href="#section-1">1</ref>(4) and (5) and <ref href="#section-4">4</ref>(6), no person is guilty of an offence.</p>
+          <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
         </content>
       </section>
       <section id="section-10">
         <num>10.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-11">
+        <num>11.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-12">
+        <num>12.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-19">
+        <num>19.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-20">
+        <num>20.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-21">
+        <num>21.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-22">
+        <num>22.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-24">
+        <num>24.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-25">
+        <num>25.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
@@ -551,6 +672,13 @@ class SectionRefsFinderTestCase(TestCase):
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-28">
+        <num>28.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
         </content>
       </section>
       <section id="section-30">

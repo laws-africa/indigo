@@ -176,6 +176,8 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         # lists
         sections 22 and 32
         and sections 19, 22 and 23, unless it appears to him
+        and sections 19, 22, and 23 (oxford comma)
+        and sections 19,22 and 23 (incorrect spacing)
         Sections 24, 26, 28, 36, 42(2), 46, 48, 49(2), 52, 53, 54 and 56 shall mutatis mutandis
         sections 23, 24, 25, 26 and 28;
         sections 22(1) and 25(3)(b);
@@ -183,6 +185,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         in terms of section 2 or 7
         sections 12(6)(d) and (e)
         Subject to sections 1(4), 3(6), 4, 8, 24, 34(2) and 44, no person
+        sections 4(1), (2) and (3), 6(3) and 10(1) and (2) is guilty
 
         TODO: match subsections
         TODO: match paragraphs

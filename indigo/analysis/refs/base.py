@@ -208,7 +208,12 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
           )*
           (\s*                     # optional list of sections
             (,|(,\s*)?and|(,\s*)?or)\s*          # list separators
-            (\d+[A-Z0-9]*(\s*\([A-Z0-9]+\))*)
+            (
+              \d+[A-Z0-9]*(
+                (\s*(,|(,\s*)?and|(,\s*)?or)\s*)*          # list separators
+                (\s*\([A-Z0-9]+\))+
+              )*
+            )
           )*
         )
         (\s+of\s+(this)?|\s+thereof)?

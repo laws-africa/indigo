@@ -199,7 +199,10 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
             (?<!-)sections?\s+
             (?P<num>\d+[A-Z0-9]*)  # first section number, including subsections
           )
-          (\s*\([A-Z0-9]+\))*      # bracketed subsections of first number
+          (
+            (\s*(,|(,\s*)?and|(,\s*)?or)\s*)*          # list separators
+            (\s*\([A-Z0-9]+\))+      # bracketed subsections of first number
+          )*
           (\s*                     # optional list of sections
             (,|(,\s*)?and|(,\s*)?or)\s*          # list separators
             (\d+[A-Z0-9]*(\s*\([A-Z0-9]+\))*)
@@ -212,7 +215,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     # individual numbers in the list grouping above
     # we use <ref> and <num> named captures so that the is_valid and make_ref
     # methods can handle matches from both ref_re and this re.
-    item_re = re.compile(r'(?P<ref>(?P<num>\d+[A-Z0-9]*))(\s*\([A-Z0-9]+\))*', re.IGNORECASE)
+    item_re = re.compile(r'(?P<ref>(?P<num>(?<!\()\d+[A-Z0-9]*(?!\))))(\s*\([A-Z0-9]+\))*', re.IGNORECASE)
 
     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
     match_cache = {}

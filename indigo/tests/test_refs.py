@@ -45,7 +45,6 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in sub-section 1, blah.</p>
           <p>A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.</p>
         </content>
       </section>
@@ -172,7 +171,6 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in sub-section 1, blah.</p>
           <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
         </content>
       </section>
@@ -564,6 +562,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As <i>given</i> in (we're now in a tail) sections 26, 27 and 28 of the Nursing Act, blah.</p>
           <p>As given in section 26 of Cap. C38, blah.</p>
           <p>As given in section 26 of the Criminal Code, blah.</p>
+          <p>As given in sub-section 1, blah.</p>
         </content>
       </section>
       <section id="section-26">

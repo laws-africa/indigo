@@ -14,6 +14,7 @@ from pinax.badges.registry import badges
 
 from indigo_api.models import Country, User, Task
 from indigo_app.views.base import AbstractAuthedIndigoView
+from indigo_app.views.tasks import UserTasksBaseView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
 
@@ -274,31 +275,11 @@ class BadgeDetailView(TemplateView):
         return context
 
 
-class UserTasksView(DetailView):
-    model = User
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
+class UserTasksView(UserTasksBaseView):
+    authentication_required = False
     template_name = 'indigo_social/user_tasks.html'
 
     def get_context_data(self, **kwargs):
         context = super(UserTasksView, self).get_context_data(**kwargs)
-
-        # open tasks assigned to this user
-        context['open_assigned_tasks'] = Task.objects \
-            .filter(assigned_to=self.object, state__in=Task.OPEN_STATES) \
-            .all()
-
-        # tasks previously assigned to this user and now pending approval
-        context['tasks_pending_approval'] = Task.objects \
-            .filter(submitted_by_user=self.object, state='pending_review') \
-            .all()
-
-        # tasks recently approved
-        threshold = datetime.date.today() - datetime.timedelta(days=7)
-        context['tasks_recently_approved'] = Task.objects \
-            .filter(submitted_by_user=self.object, state='done') \
-            .filter(updated_at__gte=threshold) \
-            .all()[:50]
-
-        context['tab_count'] = len(context['open_assigned_tasks']) + len(context['tasks_pending_approval'])
+        context['user'] = User.objects.get(username=kwargs['username'])
         return context

@@ -183,9 +183,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         sections 22(1) and 25(3)(b);
         sections 18, 61 and 62(1).
         in terms of section 2 or 7
-        sections 12(6)(d) and (e)
-        Subject to sections 1(4), 3(6), 4, 8, 24, 34(2) and 44, no person
-        sections 4(1), (2) and (3), 6(3) and 10(1) and (2) is guilty
+        A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.
 
         TODO: match subsections
         TODO: match paragraphs

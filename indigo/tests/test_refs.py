@@ -45,8 +45,6 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>under sections 10,11, or 19 of this Act, blah.</p>
-          <p>As given in sections 10, 11, and 19 of this Act, blah.</p>
           <p>As given in sub-section 1, blah.</p>
           <p>A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.</p>
         </content>
@@ -174,8 +172,6 @@ class SectionRefsFinderTestCase(TestCase):
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>under sections <ref href="#section-10">10</ref>,<ref href="#section-11">11</ref>, or <ref href="#section-19">19</ref> of this Act, blah.</p>
-          <p>As given in sections <ref href="#section-10">10</ref>, <ref href="#section-11">11</ref>, and <ref href="#section-19">19</ref> of this Act, blah.</p>
           <p>As given in sub-section 1, blah.</p>
           <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
         </content>
@@ -445,6 +441,8 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections 26(b), 30(1) or 31, blah.</p>
           <p>As given in section 26 (b), 30 (1) or 31, blah.</p>
           <p>As <i>given</i> in (we're now in a tail) section 26, 30 and 31.</p>
+          <p>under sections 26,30 or 31 of this Act, blah.</p>
+          <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">
@@ -495,6 +493,8 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref>(1) or <ref href="#section-31">31</ref>, blah.</p>
           <p>As given in section <ref href="#section-26">26</ref> (b), <ref href="#section-30">30</ref> (1) or <ref href="#section-31">31</ref>, blah.</p>
           <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>.</p>
+          <p>under sections <ref href="#section-26">26</ref>,<ref href="#section-30">30</ref> or <ref href="#section-31">31</ref> of this Act, blah.</p>
+          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref>, and <ref href="#section-31">31</ref> of this Act, blah.</p>
         </content>
       </section>
       <section id="section-26">

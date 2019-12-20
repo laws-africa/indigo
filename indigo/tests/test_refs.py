@@ -16,6 +16,270 @@ class SectionRefsFinderTestCase(TestCase):
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
+    def test_section_latest(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-1">
+        <num>1.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-4">
+        <num>4.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-6">
+        <num>6.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>under sections 10,11, or 19 of this Act, blah.</p>
+          <p>As given in sections 10, 11, and 19 of this Act, blah.</p>
+          <p>As given in sub-section 1, blah.</p>
+          <p>A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.</p>
+        </content>
+      </section>
+      <section id="section-10">
+        <num>10.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-11">
+        <num>11.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-12">
+        <num>12.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-19">
+        <num>19.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-20">
+        <num>20.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-21">
+        <num>21.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-22">
+        <num>22.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-24">
+        <num>24.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-25">
+        <num>25.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-26B">
+        <num>26B.</num>
+        <heading>Another important heading</heading>
+        <content>
+          <p>Another important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        expected = Document(
+            document_xml=document_fixture(
+                xml="""
+      <section id="section-1">
+        <num>1.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-4">
+        <num>4.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-6">
+        <num>6.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-7">
+        <num>7.</num>
+        <heading>Active ref heading</heading>
+        <content>
+          <p>under sections <ref href="#section-10">10</ref>,<ref href="#section-11">11</ref>, or <ref href="#section-19">19</ref> of this Act, blah.</p>
+          <p>As given in sections <ref href="#section-10">10</ref>, <ref href="#section-11">11</ref>, and <ref href="#section-19">19</ref> of this Act, blah.</p>
+          <p>As given in sub-section 1, blah.</p>
+          <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+        </content>
+      </section>
+      <section id="section-10">
+        <num>10.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-11">
+        <num>11.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-12">
+        <num>12.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-19">
+        <num>19.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-20">
+        <num>20.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-21">
+        <num>21.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-22">
+        <num>22.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-24">
+        <num>24.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-25">
+        <num>25.</num>
+        <heading>Unimportant</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-26">
+        <num>26.</num>
+        <heading>Important heading</heading>
+        <content>
+          <p>An important provision.</p>
+        </content>
+      </section>
+      <section id="section-26B">
+        <num>26B.</num>
+        <heading>Another important heading</heading>
+        <content>
+          <p>Another important provision.</p>
+        </content>
+      </section>
+      <section id="section-30">
+        <num>30.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+      <section id="section-31">
+        <num>31.</num>
+        <heading>More important</heading>
+        <content>
+          <p>Hi!</p>
+        </content>
+      </section>
+        """
+            ),
+            language=self.eng)
+
+        self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected.content)
+        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(expected.content, document.content)
+
     def test_section_basic(self):
         document = Document(
             document_xml=document_fixture(

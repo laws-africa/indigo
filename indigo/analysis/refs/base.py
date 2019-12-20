@@ -201,7 +201,7 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
           )
           (\s*\([A-Z0-9]+\))*      # bracketed subsections of first number
           (\s*                     # optional list of sections
-            (,|and|or)\s+          # list separators
+            (,|(,\s*)?and|(,\s*)?or)\s*          # list separators
             (\d+[A-Z0-9]*(\s*\([A-Z0-9]+\))*)
           )*
         )

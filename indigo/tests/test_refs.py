@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
+from rest_framework.test import APITestCase
 
 from django.test import TestCase
 
+from indigo.analysis.refs.base import SectionRefsFinderENG, RefsFinderENG, RefsFinderSubtypesENG
+
 from indigo_api.models import Document, Language
 from indigo_api.tests.fixtures import document_fixture
-from indigo.analysis.refs.base import SectionRefsFinderENG
 
 
 class SectionRefsFinderTestCase(TestCase):
@@ -505,6 +507,100 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         self.section_refs_finder.find_references_in_document(document)
+        root = etree.fromstring(expected.content)
+        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(expected.content, document.content)
+
+
+class RefsFinderENGTestCase(APITestCase):
+    fixtures = ['countries']
+
+    def setUp(self):
+        self.finder = RefsFinderENG()
+        self.eng = Language.for_code('eng')
+        self.maxDiff = None
+
+    def test_find_simple(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>Something to do with Act no 22 of 2012.</p>
+              <p>And another thing about Act 4 of 1998.</p>
+            </content>
+          </paragraph>
+        </section>"""
+            ),
+            language=self.eng)
+
+        expected = Document(
+            document_xml=document_fixture(
+                xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>Something to do with Act <ref href="/za/act/2012/22">no 22 of 2012</ref>.</p>
+              <p>And another thing about Act <ref href="/za/act/1998/4">4 of 1998</ref>.</p>
+            </content>
+          </paragraph>
+        </section>"""
+            ),
+            language=self.eng)
+
+        self.finder.find_references_in_document(document)
+        root = etree.fromstring(expected.content)
+        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(expected.content, document.content)
+
+
+class RefsFinderSubtypesENGTestCase(APITestCase):
+    fixtures = ['countries']
+
+    def setUp(self):
+        self.finder = RefsFinderSubtypesENG()
+        self.eng = Language.for_code('eng')
+        self.maxDiff = None
+
+    def test_find_simple(self):
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>Something to do with GN no 102 of 2012.</p>
+              <p>And another thing about SI 4 of 1998.</p>
+            </content>
+          </paragraph>
+        </section>"""
+            ),
+            language=self.eng)
+
+        expected = Document(
+            document_xml=document_fixture(
+                xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>Something to do with <ref href="/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
+              <p>And another thing about <ref href="/za/act/si/1998/4">SI 4 of 1998</ref>.</p>
+            </content>
+          </paragraph>
+        </section>"""
+            ),
+            language=self.eng)
+
+        self.finder.find_references_in_document(document)
         root = etree.fromstring(expected.content)
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
         self.assertEqual(expected.content, document.content)

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
-from rest_framework.test import APITestCase
 
 from django.test import TestCase
 
@@ -512,7 +511,7 @@ class SectionRefsFinderTestCase(TestCase):
         self.assertEqual(expected.content, document.content)
 
 
-class RefsFinderENGTestCase(APITestCase):
+class RefsFinderENGTestCase(TestCase):
     fixtures = ['countries']
 
     def setUp(self):
@@ -559,7 +558,7 @@ class RefsFinderENGTestCase(APITestCase):
         self.assertEqual(expected.content, document.content)
 
 
-class RefsFinderSubtypesENGTestCase(APITestCase):
+class RefsFinderSubtypesENGTestCase(TestCase):
     fixtures = ['countries']
 
     def setUp(self):

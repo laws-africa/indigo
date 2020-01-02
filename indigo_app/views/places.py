@@ -168,13 +168,16 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
                 return 'Act'
             st = Subtype.for_abbreviation(abbr)
             return st.name if st else abbr
-        pairs = list(Counter([subtype_name(w.subtype) for w in works]).items())
-        pairs = [list(p) for p in pairs]
-        pairs.sort(key=lambda p: p[1], reverse=True)
 
-        total = sum([x[1] for x in pairs])
+        pairs = list(Counter([w.subtype or 'act' for w in works]).items())
+        pairs = [list(p) for p in pairs]
+        paris = [p.insert(0, subtype_name(p[0])) for p in pairs]
+
+        pairs.sort(key=lambda p: p[2], reverse=True)
+
+        total = sum([x[2] for x in pairs])
         for p in pairs:
-            p.append(int((p[1] / (total or 1)) * 100))        
+            p.append(int((p[2] / (total or 1)) * 100))
 
         return pairs
 

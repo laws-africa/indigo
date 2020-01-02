@@ -4,7 +4,7 @@ import urllib.parse
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
-from django.db.models import Q, F
+from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings
 from captcha.fields import ReCaptchaField

@@ -4,7 +4,7 @@ import urllib.parse
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
-from django.db.models import Q
+from django.db.models import Q, F
 from django.core.validators import URLValidator
 from django.conf import settings
 from captcha.fields import ReCaptchaField
@@ -242,7 +242,7 @@ class WorkFilterForm(forms.Form):
     q = forms.CharField()
     stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
+    subtype = forms.ChoiceField(choices=[('', 'All works'), ('act', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -305,7 +305,10 @@ class WorkFilterForm(forms.Form):
         
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
-            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
+            if self.cleaned_data['subtype'] == 'act':
+                queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d+\/\w+')
+            else:
+                queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
 
         if self.cleaned_data.get('taxonomies'):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))

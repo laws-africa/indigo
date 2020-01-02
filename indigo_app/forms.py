@@ -306,7 +306,7 @@ class WorkFilterForm(forms.Form):
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
             if self.cleaned_data['subtype'] == 'act':
-                queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d+\/\w+')
+                queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d{4}\/\w+')
             else:
                 queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
 

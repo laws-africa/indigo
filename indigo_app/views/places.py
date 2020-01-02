@@ -164,10 +164,10 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
     def get_works_by_subtype(self, works):
         def subtype_name(abbr):
-            if not abbr:
+            if abbr == 'act':
                 return 'Act'
             st = Subtype.for_abbreviation(abbr)
-            return st.name if st else abbr
+            return st.name
 
         pairs = list(Counter([w.subtype or 'act' for w in works]).items())
         pairs = [list(p) for p in pairs]

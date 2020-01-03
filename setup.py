@@ -47,7 +47,7 @@ setup(
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',
-        'django-allauth>=0.36.0',
+        'django-allauth>=0.36.0,<0.41.0',  # 0.41.0 moved to django 2
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',
         'django-cors-headers>=3.1.0',

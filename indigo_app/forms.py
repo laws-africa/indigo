@@ -242,7 +242,6 @@ class WorkFilterForm(forms.Form):
     q = forms.CharField()
     stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    subtype = forms.ChoiceField(choices=[('', 'All works'), ('act', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -277,6 +276,7 @@ class WorkFilterForm(forms.Form):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
+        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All works'), ('act', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')

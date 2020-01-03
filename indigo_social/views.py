@@ -12,7 +12,7 @@ from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
 
-from indigo_api.models import Country, User, Task
+from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
 from indigo_app.views.tasks import UserTasksBaseView
 from .forms import UserProfileForm, AwardBadgeForm

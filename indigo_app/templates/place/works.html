@@ -104,11 +104,11 @@
                     {% endif %}
                   </div>
 
-                  {% if work.metrics %}
-                    <div class="col-1">
+                  <div class="col-1">
+                    {% if work.metrics %}
                       {% include 'indigo_metrics/_progress_ball.html' with size=40 progress=work.metrics.p_breadth_complete %}
-                    </div>
-                  {% endif %}
+                    {% endif %}
+                  </div>
 
                   <div class="col-2">       
                     <span class="time-ago" data-timestamp="{{ work.most_recent_updated_at|date:'c' }}">{{ work.most_recent_updated_at|date:"Y-m-d H:i" }}</span>

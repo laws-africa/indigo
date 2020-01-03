@@ -1,5 +1,5 @@
 # coding=utf-8
-import datetime
+from datetime import timedelta
 
 from actstream.models import Action
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
@@ -30,7 +30,7 @@ class UserProfileView(DetailView):
     slug_field = 'username'
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_profile.html'
-    threshold = datetime.timedelta(seconds=3)
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(UserProfileView, self).get_context_data(**kwargs)
@@ -138,7 +138,7 @@ class UserActivityView(MultipleObjectMixin, DetailView):
     object_list = None
     page_size = 30
     js_view = ''
-    threshold = datetime.timedelta(seconds=3)
+    threshold = timedelta(seconds=3)
 
     def get_context_data(self, **kwargs):
         context = super(UserActivityView, self).get_context_data(**kwargs)

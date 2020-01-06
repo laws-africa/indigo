@@ -117,7 +117,12 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
                 subtype = s.abbreviation
                 break
 
-        return f'/{self.frbr_uri.country}/act/{subtype}/{match.group("year")}/{match.group("num")}'
+        if self.frbr_uri.locality:
+            href = f'/{self.frbr_uri.country}-{self.frbr_uri.locality}'
+        else:
+            href = f'/{self.frbr_uri.country}'
+
+        return f'{href}/act/{subtype}/{match.group("year")}/{match.group("num")}'
 
 
 @plugins.register('refs-cap')
@@ -215,13 +220,14 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         # lists
         sections 22 and 32
         and sections 19, 22 and 23, unless it appears to him
+        and sections 19, 22, and 23 (oxford comma)
+        and sections 19,22 and 23 (incorrect spacing)
         Sections 24, 26, 28, 36, 42(2), 46, 48, 49(2), 52, 53, 54 and 56 shall mutatis mutandis
         sections 23, 24, 25, 26 and 28;
         sections 22(1) and 25(3)(b);
         sections 18, 61 and 62(1).
         in terms of section 2 or 7
-        sections 12(6)(d) and (e)
-        Subject to sections 1(4), 3(6), 4, 8, 24, 34(2) and 44, no person
+        A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.
 
         TODO: match subsections
         TODO: match paragraphs
@@ -235,13 +241,21 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         r'''\b
         (
           (?P<ref>
-            sections?\s+
-            (?P<num>\d+[A-Z0-9]*)  # first section number, including subsections
+            (?<!-)sections?\s+
+            (?P<num>\d+[A-Z0-9]*)    # first section number, including subsections
           )
-          (\s*\([A-Z0-9]+\))*      # bracketed subsections of first number
-          (\s*                     # optional list of sections
-            (,|and|or)\s+          # list separators
-            (\d+[A-Z0-9]*(\s*\([A-Z0-9]+\))*)
+          (
+            (\s*(,|and|or))*         # list separators
+            (\s*\([A-Z0-9]+\))+      # bracketed subsections of first number
+          )*
+          (\s*                       # optional list of sections
+            (\s*(,|and|or))*         # list separators
+            (
+              \s*\d+[A-Z0-9]*(
+                (\s*(,|and|or))*     # list separators
+                (\s*\([A-Z0-9]+\))+
+              )*
+            )
           )*
         )
         (\s+of\s+(this)?|\s+thereof)?
@@ -251,7 +265,9 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     # individual numbers in the list grouping above
     # we use <ref> and <num> named captures so that the is_valid and make_ref
     # methods can handle matches from both ref_re and this re.
-    item_re = re.compile(r'(?P<ref>(?P<num>\d+[A-Z0-9]*))(\s*\([A-Z0-9]+\))*', re.IGNORECASE)
+    # negative lookaround for parentheses around each number in the run guards against subsections being picked up as section numbers, e.g.
+    # sections 4(1) and (2), 25(3), (4), (5) and (6), etc
+    item_re = re.compile(r'(?P<ref>(?P<num>(?<!\()\d+[A-Z0-9]*(?!\))))(\s*\([A-Z0-9]+\))*', re.IGNORECASE)
 
     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"
     match_cache = {}

@@ -59,22 +59,36 @@
         </select>
       </div>
 
-      <!-- Work Taxonomy filter -->
-      <div class="col-md-6">
-        {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
-        {% if topic_groups %}
-          <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="auto" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
-            {% for topic in topic_groups %}
-              <optgroup label="{{ topic.grouper }}">
-                {% for taxonomy in topic.list %}
-                  <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
-                {% endfor %}
-              </optgroup>
-            {% endfor %}
-          </select>
-        {% endif %}
+      <!-- Complete works filter -->
+      <div class="col-md-3">
+        <select name="completeness" class="form-control">
+          {% for opt in form.completeness %}
+            <option value="{{ opt.data.value}}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
+          {% endfor %}
+        </select>
       </div>
     </div>
+
+    <!-- Work Taxonomy filter -->
+    {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}
+    {% if topic_groups %}
+      <div class="form-group mt-2">
+        <label>Taxonomies</label>
+        <div class="form-row">
+          <div class="col-md-6">
+            <select name="taxonomies" class="selectpicker notooltip" title="Taxonomies..." data-width="100%" data-live-search="true" multiple data-selected-text-format="count > 1" data-style="btn-outline-secondary">
+              {% for topic in topic_groups %}
+                <optgroup label="{{ topic.grouper }}">
+                  {% for taxonomy in topic.list %}
+                    <option {% if taxonomy.pk|stringformat:"i" in form.taxonomies.value %} selected {% endif %} value="{{ taxonomy.pk }}">{{ taxonomy }}</option>
+                  {% endfor %}
+                </optgroup>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+    {% endif %}
 
     <div class="row mt-2">
       <!-- Assent Date filter -->

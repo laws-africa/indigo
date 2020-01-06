@@ -242,7 +242,6 @@ class WorkFilterForm(forms.Form):
     q = forms.CharField()
     stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -266,17 +265,19 @@ class WorkFilterForm(forms.Form):
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # primary work filter
     primary_subsidiary = forms.ChoiceField(choices=[('', 'Primary and subsidiary works'), ('primary', 'Primary works only'), ('subsidiary', 'Subsidiary works only')])
+    completeness = forms.ChoiceField(choices=[('', 'Complete and incomplete works'), ('complete', 'Complete works only'), ('incomplete', 'Incomplete works only')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
-                        'primary_subsidiary', 'taxonomies', 'stub']
+                        'primary_subsidiary', 'taxonomies', 'stub', 'completeness']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
+        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All works'), ('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
@@ -305,7 +306,10 @@ class WorkFilterForm(forms.Form):
         
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
-            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
+            if self.cleaned_data['subtype'] == 'acts_only':
+                queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d{4}\/\w+')
+            else:
+                queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
 
         if self.cleaned_data.get('taxonomies'):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))
@@ -375,6 +379,13 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(parent_work__isnull=True)
             elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
                 queryset = queryset.filter(parent_work__isnull=False)
+
+        # filter by work completeness
+        if self.cleaned_data.get('completeness'):
+            if self.cleaned_data['completeness'] == 'complete':
+                queryset = queryset.filter(metrics__p_breadth_complete__exact=100)
+            elif self.cleaned_data['completeness'] == 'incomplete':
+                queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
 
         return queryset
 

@@ -59,6 +59,15 @@
         </select>
       </div>
 
+      <!-- Complete works filter -->
+      <div class="col-md-3">
+        <select name="completeness" class="form-control">
+          {% for opt in form.completeness %}
+            <option value="{{ opt.data.value}}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
       <!-- Work Taxonomy filter -->
       <div class="col-md-6">
         {% regroup form.fields.taxonomies.queryset by vocabulary as topic_groups %}

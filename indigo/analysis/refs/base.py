@@ -118,9 +118,11 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
                 break
 
         if self.frbr_uri.locality:
-            return f'/{self.frbr_uri.country}-{self.frbr_uri.locality}/act/{subtype}/{match.group("year")}/{match.group("num")}'
+            href = f'/{self.frbr_uri.country}-{self.frbr_uri.locality}'
+        else:
+            href = f'/{self.frbr_uri.country}'
 
-        return f'/{self.frbr_uri.country}/act/{subtype}/{match.group("year")}/{match.group("num")}'
+        return f'{href}/act/{subtype}/{match.group("year")}/{match.group("num")}'
 
 
 class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):

@@ -153,7 +153,7 @@ class RefsFinderCapENG(BaseRefsFinder):
         country = document.work.country
         locality = document.work.locality
         place = locality or country
-        cap_strings = [p for p in place.settings.work_properties if 'cap' in p]
+        cap_strings = [p for p in place.settings.work_properties if p.startswith('cap')]
 
         self.cap_numbers = {w.properties[c]: w.frbr_uri for c in cap_strings for w in Work.objects.filter(country=country, locality=locality) if w.properties.get(c)}
 

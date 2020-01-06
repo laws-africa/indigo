@@ -145,7 +145,7 @@
   </xsl:template>
 
   <!-- first text nodes of these elems must be escaped if they have special chars -->
-  <xsl:template match="a:p[not(ancestor::a:table)]/text()[1] | a:listIntroduction/text()[1] | a:intro/text()[1]">
+  <xsl:template match="a:p[not(ancestor::a:table)]/text()[not(preceding-sibling::*)] | a:listIntroduction/text()[not(preceding-sibling::*)] | a:intro/text()[not(preceding-sibling::*)]">
     <xsl:call-template name="escape">
       <xsl:with-param name="value" select="." />
     </xsl:call-template>

@@ -203,17 +203,17 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
         (
           (?P<ref>
             (?<!-)sections?\s+
-            (?P<num>\d+[A-Z0-9]*)  # first section number, including subsections
+            (?P<num>\d+[A-Z0-9]*)    # first section number, including subsections
           )
           (
-            (\s*(,|(,\s*)?and|(,\s*)?or)\s*)*          # list separators
+            (\s*(,|and|or))*         # list separators
             (\s*\([A-Z0-9]+\))+      # bracketed subsections of first number
           )*
-          (\s*                     # optional list of sections
-            (,|(,\s*)?and|(,\s*)?or)\s*          # list separators
+          (\s*                       # optional list of sections
+            (\s*(,|and|or))*         # list separators
             (
-              \d+[A-Z0-9]*(
-                (\s*(,|(,\s*)?and|(,\s*)?or)\s*)*          # list separators
+              \s*\d+[A-Z0-9]*(
+                (\s*(,|and|or))*     # list separators
                 (\s*\([A-Z0-9]+\))+
               )*
             )
@@ -226,6 +226,8 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
     # individual numbers in the list grouping above
     # we use <ref> and <num> named captures so that the is_valid and make_ref
     # methods can handle matches from both ref_re and this re.
+    # negative lookaround for parentheses around each number in the run guards against subsections being picked up as section numbers, e.g.
+    # sections 4(1) and (2), 25(3), (4), (5) and (6), etc
     item_re = re.compile(r'(?P<ref>(?P<num>(?<!\()\d+[A-Z0-9]*(?!\))))(\s*\([A-Z0-9]+\))*', re.IGNORECASE)
 
     candidate_xpath = ".//text()[contains(translate(., 'S', 's'), 'section') and not(ancestor::a:ref)]"

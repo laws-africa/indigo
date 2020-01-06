@@ -242,7 +242,6 @@ class WorkFilterForm(forms.Form):
     q = forms.CharField()
     stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
     status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
-    subtype = forms.ModelChoiceField(queryset=Subtype.objects.all(), empty_label='All works')
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -278,6 +277,7 @@ class WorkFilterForm(forms.Form):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
+        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All works'), ('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
@@ -306,7 +306,10 @@ class WorkFilterForm(forms.Form):
         
         # filter by subtype indicated on frbr_uri
         if self.cleaned_data.get('subtype'):
-            queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'].abbreviation)
+            if self.cleaned_data['subtype'] == 'acts_only':
+                queryset = queryset.filter(frbr_uri__regex=r'.\/act\/\d{4}\/\w+')
+            else:
+                queryset = queryset.filter(frbr_uri__contains='/act/%s/' % self.cleaned_data['subtype'])
 
         if self.cleaned_data.get('taxonomies'):
             queryset = queryset.filter(taxonomies__in=self.cleaned_data.get('taxonomies'))

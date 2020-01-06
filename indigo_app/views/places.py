@@ -112,6 +112,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         context['recently_updated_works'] = self.get_recently_updated_works()
         context['recently_created_works'] = self.get_recently_created_works()
         context['subtypes'] = self.get_works_by_subtype(works)
+        context['total_works'] = sum(p[1] for p in context['subtypes'])
 
         # open tasks
         open_tasks_data = self.calculate_open_tasks()
@@ -163,21 +164,14 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
                    .order_by('-created_at')[:5]
 
     def get_works_by_subtype(self, works):
-        def subtype_name(abbr):
-            if abbr == 'act':
-                return 'Act'
-            st = Subtype.for_abbreviation(abbr)
-            return st.name
-
-        pairs = list(Counter([w.subtype or 'act' for w in works]).items())
+        pairs = list(Counter([Subtype.for_abbreviation(w.subtype) for w in works]).items())
         pairs = [list(p) for p in pairs]
-        paris = [p.insert(0, subtype_name(p[0])) for p in pairs]
+        # sort by count, decreasing
+        pairs.sort(key=lambda p: p[1], reverse=True)
 
-        pairs.sort(key=lambda p: p[2], reverse=True)
-
-        total = sum([x[2] for x in pairs])
+        total = sum(x[1] for x in pairs)
         for p in pairs:
-            p.append(int((p[2] / (total or 1)) * 100))
+            p.append(int((p[1] / (total or 1)) * 100))
 
         return pairs
 

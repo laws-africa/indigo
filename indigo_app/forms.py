@@ -266,13 +266,14 @@ class WorkFilterForm(forms.Form):
     repealed_date_end = forms.DateField(input_formats=['%Y-%m-%d'])
     # primary work filter
     primary_subsidiary = forms.ChoiceField(choices=[('', 'Primary and subsidiary works'), ('primary', 'Primary works only'), ('subsidiary', 'Subsidiary works only')])
+    completeness = forms.ChoiceField(choices=[('', 'Complete and incomplete works'), ('complete', 'Complete works only'), ('incomplete', 'Incomplete works only')])
     taxonomies = forms.ModelMultipleChoiceField(
         queryset=VocabularyTopic.objects
             .select_related('vocabulary')
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
-                        'primary_subsidiary', 'taxonomies', 'stub']
+                        'primary_subsidiary', 'taxonomies', 'stub', 'completeness']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
@@ -375,6 +376,13 @@ class WorkFilterForm(forms.Form):
                 queryset = queryset.filter(parent_work__isnull=True)
             elif self.cleaned_data['primary_subsidiary'] == 'subsidiary':
                 queryset = queryset.filter(parent_work__isnull=False)
+
+        # filter by work completeness
+        if self.cleaned_data.get('completeness'):
+            if self.cleaned_data['completeness'] == 'complete':
+                queryset = queryset.filter(metrics__p_breadth_complete__exact=100)
+            elif self.cleaned_data['completeness'] == 'incomplete':
+                queryset = queryset.filter(metrics__p_breadth_complete__lt=100)
 
         return queryset
 

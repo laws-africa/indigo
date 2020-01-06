@@ -245,11 +245,10 @@
       var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
-      var fragment = this.$textEditor.data('fragment');
-      fragment = this.parent.model.tradition().settings.grammar.fragments[fragment] || fragment;
+      var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
 
       // should we delete the item?
-      if (!content.trim() && fragment != 'akomaNtoso') {
+      if (!content.trim() && fragmentRule != 'akomaNtoso') {
         if (confirm('Go ahead and delete this section from the document?')) {
           this.parent.removeFragment(this.fragment);
         }
@@ -270,7 +269,7 @@
         .then(function(response) {
           var newFragment = $.parseXML(response.output);
 
-          if (fragment === 'akomaNtoso') {
+          if (fragmentRule === 'akomaNtoso') {
             // entire document
             newFragment = [newFragment.documentElement];
           } else {
@@ -305,8 +304,8 @@
         'content': content,
         'frbr_uri': this.parent.model.get('frbr_uri'),
       };
-      if (fragment != 'akomaNtoso') {
-        data.fragment = fragment;
+      if (fragmentRule != 'akomaNtoso') {
+        data.fragment = fragmentRule;
       }
 
       $.ajax({

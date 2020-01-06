@@ -47,6 +47,18 @@
         Indigo.traditions.default.settings.toc.titles.default
       )(item);
     },
+
+    /* The grammar rule/fragment used to parse text for this element. */
+    grammarRule: function(element) {
+      var fragment = element.tagName;
+      fragment = this.settings.grammar.fragments[fragment] || fragment;
+
+      // handle parts in chapters, and chapters in parts
+      if (fragment == 'parts' && $(element).closest('chapter').length > 0) return 'parts_no_chapters';
+      if (fragment == 'chapters' && $(element).closest('part').length > 0) return 'chapters_no_parts';
+
+      return fragment;
+    }
   });
 
   // Base

@@ -40,7 +40,7 @@ setup(
 
     python_requires='~=3.6',
     install_requires=[
-        'django>=1.11.15,<2',
+        'django>=1.11.27,<2',
         'arrow>=0.5',
         'boto3>=1.7',
         'cobalt>=3.0',

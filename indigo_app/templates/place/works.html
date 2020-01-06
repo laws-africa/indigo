@@ -106,7 +106,7 @@
 
                   <div class="col-1">
                     {% if work.metrics %}
-                      {% include 'indigo_metrics/_progress_ball.html' with size=40 progress=work.metrics.p_breadth_complete %}
+                      {% include 'indigo_metrics/_progress_ball.html' with size=40 progress=work.metrics.p_breadth_complete title=work.metrics.p_breadth_complete|floatformat:0|add:"%" %}
                     {% endif %}
                   </div>
 

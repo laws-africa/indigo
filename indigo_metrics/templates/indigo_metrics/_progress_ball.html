@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="{{ size }}" height="{{ size }}">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="{{ size }}" height="{{ size }}" {% if title %}title="{{ title }}"{% endif %}>
   <linearGradient id="lg" x1="0.5" y1="1" x2="0.5" y2="0">
     <stop offset="0%" stop-opacity="1" stop-color="#439f78"></stop>
     <stop offset="{{ progress|floatformat:0 }}%" stop-opacity="1" stop-color="#439f78"></stop>

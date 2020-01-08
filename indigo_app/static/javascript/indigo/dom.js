@@ -37,6 +37,7 @@ $(function() {
     result = callback();
 
     // put the elements back
+    removed.reverse();
     removed.forEach(function(info) {
       if (info.before) info.before.parentElement.insertBefore(info.e, info.before);
       else info.parent.appendChild(info.e);

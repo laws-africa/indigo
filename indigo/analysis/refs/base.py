@@ -4,7 +4,7 @@ import re
 from indigo.analysis.markup import TextPatternMarker, MultipleTextPatternMarker
 from indigo.plugins import LocaleBasedMatcher, plugins
 from indigo.xmlutils import closest
-from indigo_api.models import Subtype
+from indigo_api.models import Subtype, Work
 
 
 class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
@@ -123,6 +123,45 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
             href = f'/{self.frbr_uri.country}'
 
         return f'{href}/act/{subtype}/{match.group("year")}/{match.group("num")}'
+
+
+@plugins.register('refs-cap')
+class RefsFinderCapENG(BaseRefsFinder):
+    """ Finds references to works with cap numbers, of the form:
+
+        Cap. 231
+        Cap A4
+
+    """
+    # country, language, locality
+    locale = (None, 'eng', None)
+
+    pattern_re = re.compile(
+        r'''
+            (?P<ref>
+             \bCap\.?\s*
+             (?P<num>\w+)
+            )
+        ''', re.X)
+    candidate_xpath = ".//text()[contains(., 'Cap') and not(ancestor::a:ref)]"
+
+    def setup(self, root):
+        self.setup_cap_numbers(self.document)
+        super().setup(root)
+
+    def setup_cap_numbers(self, document):
+        country = document.work.country
+        locality = document.work.locality
+        place = locality or country
+        cap_strings = [p for p in place.settings.work_properties if p.startswith('cap')]
+
+        self.cap_numbers = {w.properties[c]: w.frbr_uri for c in cap_strings for w in Work.objects.filter(country=country, locality=locality) if w.properties.get(c)}
+
+    def is_valid(self, node, match):
+        return self.cap_numbers.get(match.group('num'))
+
+    def make_href(self, match):
+        return self.cap_numbers[match.group('num')]
 
 
 class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):

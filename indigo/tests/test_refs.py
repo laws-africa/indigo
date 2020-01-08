@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from lxml import etree
 
+from django.conf import settings
 from django.test import TestCase
 
-from indigo.analysis.refs.base import SectionRefsFinderENG, RefsFinderENG, RefsFinderSubtypesENG
+from indigo.analysis.refs.base import SectionRefsFinderENG, RefsFinderENG, RefsFinderSubtypesENG, RefsFinderCapENG
 
-from indigo_api.models import Document, Language
+from indigo_api.models import Document, Language, Work, Country, User
 from indigo_api.tests.fixtures import document_fixture
 
 
@@ -793,6 +794,71 @@ class RefsFinderSubtypesENGTestCase(TestCase):
         </section>"""
             ),
             language=self.eng)
+
+        self.finder.find_references_in_document(document)
+        root = etree.fromstring(expected.content)
+        expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
+        self.assertEqual(expected.content, document.content)
+
+
+class RefsFinderCapENGTestCase(TestCase):
+    fixtures = ['countries', 'user']
+
+    def setUp(self):
+        self.finder = RefsFinderCapENG()
+        self.eng = Language.for_code('eng')
+        self.maxDiff = None
+
+    def test_find_simple(self):
+        za = Country.objects.get(pk=1)
+        user1 = User.objects.get(pk=1)
+        settings.INDIGO['WORK_PROPERTIES'] = {
+            'za': {
+                'cap_number': 'Chapter (cap)',
+            }
+        }
+
+        work = Work(
+            frbr_uri='/za/act/2002/5',
+            title='Act 5 of 2002',
+            country=za,
+            created_by_user=user1,
+        )
+        work.properties['cap_number'] = '12'
+        work.updated_by_user = user1
+        work.save()
+
+        document = Document(
+            document_xml=document_fixture(
+                xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>Something to do with Cap. 12.</p>
+            </content>
+          </paragraph>
+        </section>"""
+            ),
+            language=self.eng,
+            work=work)
+
+        expected = Document(
+            document_xml=document_fixture(
+                xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>Something to do with <ref href="/za/act/2002/5">Cap. 12</ref>.</p>
+            </content>
+          </paragraph>
+        </section>"""
+            ),
+            language=self.eng,
+            work=work)
 
         self.finder.find_references_in_document(document)
         root = etree.fromstring(expected.content)

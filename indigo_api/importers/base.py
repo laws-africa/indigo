@@ -292,6 +292,10 @@ class Importer(LocaleBasedMatcher):
         if finder:
             finder.find_references_in_document(doc)
 
+        finder = plugins.for_document('refs-cap', doc)
+        if finder:
+            finder.find_references_in_document(doc)
+
         finder = plugins.for_document('refs-act-names', doc)
         if finder:
             finder.find_references_in_document(doc)

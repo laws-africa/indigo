@@ -359,6 +359,23 @@ class Work(models.Model):
         if dates:
             return max(dates)
 
+    def all_provisions(self):
+        # a list of the element ids of the earliest PiT (in whichever language) of a work
+        # does not include Schedules as they don't have commencement dates
+        ids = []
+
+        def add_ids(toc):
+            for e in toc:
+                if e.id:
+                    ids.append(e.id)
+                if e.children and e.component == 'main':
+                    add_ids(e.children)
+
+        toc = self.expressions().first().table_of_contents()
+        add_ids(toc)
+
+        return ids
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

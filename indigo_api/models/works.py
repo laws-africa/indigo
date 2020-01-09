@@ -411,6 +411,30 @@ class PublicationDocument(models.Model):
         return super(PublicationDocument, self).save(*args, **kwargs)
 
 
+class Commencement(models.Model):
+    """ The commencement details of (provisions of) a work,
+    optionally performed by a commencing work or a provision of the work itself.
+
+    """
+    commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Principal work being commenced", related_name="commencements")
+    commencing_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
+    date = models.DateField(null=True, blank=True, help_text="Date of the commencement")
+    main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
+
+    # list of the element ids of the provisions commenced, e.g. ["section-2", "section-4.3.list0.a"]
+    provisions = JSONField(null=False, blank=False, default=list)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    class Meta:
+        unique_together = (('commenced_work', 'commencing_work', 'date'),
+                           ('commenced_work', 'main'))
+
+
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """

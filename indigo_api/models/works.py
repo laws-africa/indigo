@@ -375,7 +375,7 @@ class Work(models.Model):
 
     def main_commencement(self):
         if self.commencements.exists():
-            main = self.commencements.get(main=True)
+            main = self.commencements.filter(main=True).first()
             if main:
                 return main
 
@@ -383,7 +383,7 @@ class Work(models.Model):
 
     def main_commencement_date(self):
         if self.commencements.exists():
-            main = self.commencements.get(main=True)
+            main = self.commencements.filter(main=True).first()
             if main:
                 return main.date
 
@@ -394,7 +394,7 @@ class Work(models.Model):
 
     def main_commencing_work(self):
         if self.commencements.exists():
-            main = self.commencements.get(main=True)
+            main = self.commencements.filter(main=True).first()
             if main:
                 return main.commencing_work
 

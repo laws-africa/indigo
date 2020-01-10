@@ -120,24 +120,24 @@ class WorkForm(forms.ModelForm):
             pub_doc.save()
 
     def save_commencement(self):
-        if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data:
-            # get existing main commencement object if there is one
-            commencement = self.instance.commencements.get(main=True)
+        # get existing main commencement object if there is one
+        main_commencement = self.instance.main_commencement()
 
-            # if work has been edited to not commence, delete existing main commencement object
-            if commencement and not self.instance.commenced:
-                commencement.delete()
+        # if work has been edited to not commence, delete existing main commencement object
+        if main_commencement and not self.instance.commenced:
+            main_commencement.delete()
 
-            # otherwise, amend the existing one (or create a new one) with the work / date given in the form
-            else:
-                if not commencement:
+        # otherwise, amend the existing one (or create a new one) with the work / date given in the form
+        else:
+            if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data:
+                if not main_commencement:
                     all_provisions = self.instance.all_provisions()
-                    commencement = Commencement(commenced_work=self.instance, main=True, provisions=all_provisions)
+                    main_commencement = Commencement(commenced_work=self.instance, main=True, provisions=all_provisions)
 
-                commencement.commencing_work = self.cleaned_data.get('commencing_work')
-                commencement.date = self.cleaned_data.get('commencement_date')
+                main_commencement.commencing_work = self.cleaned_data.get('commencing_work')
+                main_commencement.date = self.cleaned_data.get('commencement_date')
 
-                commencement.save()
+                main_commencement.save()
 
 
 class DocumentForm(forms.ModelForm):

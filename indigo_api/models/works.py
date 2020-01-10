@@ -373,6 +373,28 @@ class Work(models.Model):
 
         return ids
 
+    def main_commencement_date(self):
+        if self.commencements.exists():
+            main = self.commencements.get(main=True)
+            if main:
+                return main.date
+
+            first = self.commencements.first()
+            return first.date
+
+        return None
+
+    def main_commencing_work(self):
+        if self.commencements.exists():
+            main = self.commencements.get(main=True)
+            if main:
+                return main.commencing_work
+
+            first = self.commencements.first()
+            return first.commencing_work
+
+        return None
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -445,6 +467,7 @@ class Commencement(models.Model):
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     class Meta:
+        ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),
                            ('commenced_work', 'main'))
 

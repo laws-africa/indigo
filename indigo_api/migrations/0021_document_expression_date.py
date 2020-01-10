@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-import arrow
 from django.db import models, migrations
 from indigo_api.models import Document
+from django.utils.timezone import now
 
 
 def forwards(apps, schema_editor):
     for doc in Document.objects.select_related(None).only('document_xml', 'expression_date').all():
-        doc.expression_date = doc.publication_date or arrow.now().date()
+        doc.expression_date = doc.publication_date or now().date()
         doc.save()
 
 

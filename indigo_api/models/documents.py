@@ -16,7 +16,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
-from iso8601 import parse_date
+from iso8601 import parse_date, ParseError
 from taggit.managers import TaggableManager
 import reversion.revisions
 import reversion.models
@@ -90,7 +90,7 @@ class DocumentQuerySet(models.QuerySet):
             else:
                 raise ValueError("The expression date %s is not valid" % expr_date)
 
-        except arrow.parser.ParserError:
+        except ParseError:
             raise ValueError("The expression date %s is not valid" % expr_date)
 
         obj = query.first()
@@ -330,8 +330,8 @@ class Document(DocumentMixin, models.Model):
             self.doc.language = self.language.code
 
             self.doc.work_date = self.doc.publication_date
-            self.doc.expression_date = self.expression_date or self.doc.publication_date or arrow.now()
-            self.doc.manifestation_date = self.updated_at or arrow.now()
+            self.doc.expression_date = self.expression_date or self.doc.publication_date or timezone.now()
+            self.doc.manifestation_date = self.updated_at or timezone.now()
             self.doc.publication_number = self.publication_number
             self.doc.publication_name = self.publication_name
             self.doc.publication_date = self.publication_date

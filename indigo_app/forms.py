@@ -121,13 +121,23 @@ class WorkForm(forms.ModelForm):
 
     def save_commencement(self):
         if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data:
+            # get existing main commencement object if there is one
             commencement = self.instance.commencements.get(main=True)
-            if not commencement:
-                commencement = Commencement(commenced_work=self.instance, main=True)
-            commencement.commencing_work = self.cleaned_data.get('commencing_work')
-            commencement.date = self.cleaned_data.get('commencement_date')
 
-            commencement.save()
+            # if work has been edited to not commence, delete existing main commencement object
+            if commencement and not self.instance.commenced:
+                commencement.delete()
+
+            # otherwise, amend the existing one (or create a new one) with the work / date given in the form
+            else:
+                if not commencement:
+                    all_provisions = self.instance.all_provisions()
+                    commencement = Commencement(commenced_work=self.instance, main=True, provisions=all_provisions)
+
+                commencement.commencing_work = self.cleaned_data.get('commencing_work')
+                commencement.date = self.cleaned_data.get('commencement_date')
+
+                commencement.save()
 
 
 class DocumentForm(forms.ModelForm):

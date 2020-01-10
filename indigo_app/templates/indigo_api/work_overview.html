@@ -15,7 +15,7 @@
     {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
     {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
     {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
-    {% elif not work.commencement_date %} <span class="badge badge-info">commencement date unknown</span>
+    {% elif not work.main_commencement_date %} <span class="badge badge-info">commencement date unknown</span>
     {% endif %}
   </h3>
   <h4 class="text-muted">{{ work.frbr_uri }}</h4>
@@ -61,13 +61,13 @@
                   <dd>
                     {% if work.commenced %}
                       Commenced on
-                      {% if work.commencement_date %}
-                        {{ work.commencement_date|date:"Y-m-d" }}
+                      {% if work.main_commencement_date %}
+                        {{ work.main_commencement_date|date:"Y-m-d" }}
                       {% else %}
                         <i>(unknown)</i>
                       {% endif %}
-                      {% if work.commencing_work %}
-                        by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+                      {% if work.main_commencing_work %}
+                        by <a href="{% url 'work' frbr_uri=work.main_commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.main_commencing_work.frbr_uri %}">{{ work.main_commencing_work.title }}</a>
                       {% endif %}
                     {% else %}
                       Not commenced

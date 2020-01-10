@@ -111,6 +111,16 @@ class EditWorkView(WorkViewBase, UpdateView):
         kwargs['place'] = self.place
         return kwargs
 
+    def get_initial(self):
+        initial = super(EditWorkView, self).get_initial()
+
+        commencement = self.object.main_commencement()
+        if commencement:
+            initial['commencement_date'] = commencement.date
+            initial['commencing_work'] = commencement.commencing_work
+
+        return initial
+
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()

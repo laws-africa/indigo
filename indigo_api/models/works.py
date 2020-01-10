@@ -373,6 +373,14 @@ class Work(models.Model):
 
         return ids
 
+    def main_commencement(self):
+        if self.commencements.exists():
+            main = self.commencements.get(main=True)
+            if main:
+                return main
+
+        return None
+
     def main_commencement_date(self):
         if self.commencements.exists():
             main = self.commencements.get(main=True)

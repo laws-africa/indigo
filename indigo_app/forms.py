@@ -13,7 +13,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, PlaceSettings
+    VocabularyTopic, Commencement
 
 
 class WorkForm(forms.ModelForm):
@@ -45,6 +45,10 @@ class WorkForm(forms.ModelForm):
     # page.
     no_render_properties = []
 
+    # commencement details
+    commencement_date = forms.DateField(required=False)
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+
     def __init__(self, place, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.place = place
@@ -68,6 +72,7 @@ class WorkForm(forms.ModelForm):
         work = super(WorkForm, self).save(commit)
         self.save_properties()
         self.save_publication_document()
+        self.save_commencement()
         return work
 
     def save_properties(self):
@@ -113,6 +118,16 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
+
+    def save_commencement(self):
+        if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data:
+            commencement = self.instance.commencements.get(main=True)
+            if not commencement:
+                commencement = Commencement(commenced_work=self.instance, main=True)
+            commencement.commencing_work = self.cleaned_data.get('commencing_work')
+            commencement.date = self.cleaned_data.get('commencement_date')
+
+            commencement.save()
 
 
 class DocumentForm(forms.ModelForm):

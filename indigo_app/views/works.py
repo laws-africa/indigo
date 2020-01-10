@@ -59,7 +59,7 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         work_timeline = self.work.points_in_time()
         other_dates = [
             ('assent_date', self.work.assent_date),
-            ('commencement_date', self.work.commencement_date),
+            ('commencement_date', self.work.main_commencement_date()),
             ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
@@ -136,7 +136,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
         # ensure any docs for this work at initial pub date move with it, if it changes
         if 'publication_date' in form.changed_data:
-            old_date = form.initial['publication_date'] or self.work.commencement_date
+            old_date = form.initial['publication_date'] or self.work.main_commencement_date()
 
             if old_date and self.work.publication_date:
                 for doc in Document.objects.filter(work=self.work, expression_date=old_date):
@@ -482,17 +482,17 @@ class WorkRelatedView(WorkViewBase, DetailView):
 
         # commencement
         commencement = []
-        if self.work.commencing_work:
+        if self.work.main_commencing_work():
             commencement.append({
                 'rel': 'commenced by',
-                'work': self.work.commencing_work,
-                'date': self.work.commencement_date,
+                'work': self.work.main_commencing_work(),
+                'date': self.work.main_commencement_date(),
             })
         commencement = commencement + [{
             'rel': 'commenced',
-            'work': w,
-            'date': w.commencement_date,
-        } for w in self.work.commenced_works.all()]
+            'work': c.commenced_work,
+            'date': c.date,
+        } for c in self.work.commencements_made.all()]
         context['commencement'] = commencement
 
         context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)

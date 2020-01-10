@@ -41,7 +41,6 @@ setup(
     python_requires='~=3.6',
     install_requires=[
         'django>=1.11.27,<2',
-        'arrow>=0.5',
         'boto3>=1.7',
         'cobalt>=3.0',
         'django-ckeditor>=5.8',
@@ -70,6 +69,7 @@ setup(
         'djangorestframework>=3.6.2,<3.7',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',
+        'iso8601>=0.1',
         'jsonpatch>=1.23',
         'libsass==0.14.2',  # 0.14.3 upwards changes imports for .css
         'lxml>=3.4.1',

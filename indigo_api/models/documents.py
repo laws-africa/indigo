@@ -16,7 +16,7 @@ from django.dispatch import receiver
 from django.urls import reverse
 from django.utils import timezone
 from allauth.account.utils import user_display
-import arrow
+from iso8601 import parse_date
 from taggit.managers import TaggableManager
 import reversion.revisions
 import reversion.models
@@ -79,12 +79,12 @@ class DocumentQuerySet(models.QuerySet):
 
             elif expr_date[0] == '@':
                 # document at this date
-                query = query.filter(expression_date=arrow.get(expr_date[1:]).date())
+                query = query.filter(expression_date=parse_date(expr_date[1:]).date())
 
             elif expr_date[0] == ':':
                 # latest document at or before this date
                 query = query \
-                    .filter(expression_date__lte=arrow.get(expr_date[1:]).date()) \
+                    .filter(expression_date__lte=parse_date(expr_date[1:]).date()) \
                     .order_by('-expression_date')
 
             else:

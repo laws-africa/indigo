@@ -368,8 +368,10 @@ class Work(models.Model):
                 if e.children and e.component == 'main':
                     add_ids(e.children)
 
-        toc = self.expressions().first().table_of_contents()
-        add_ids(toc)
+        first_expression = self.expressions().first()
+        if first_expression:
+            toc = first_expression.table_of_contents()
+            add_ids(toc)
 
         return ids
 

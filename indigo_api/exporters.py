@@ -142,7 +142,7 @@ class PDFExporter(HTMLExporter):
         })
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            self.save_attachments(html, document, 'doc-0/media/', tmpdir)
+            html = self.save_attachments(html, document, 'doc-0/media/', tmpdir)
             return self.to_pdf(html, tmpdir, document=document)
 
     def render_many(self, documents, **kwargs):
@@ -172,11 +172,8 @@ class PDFExporter(HTMLExporter):
         prefix_len = len(prefix)
 
         # gather up the attachments that occur in the html
-        fnames = set(
-            img.get('src')[prefix_len:]
-            for img in html.iter('img')
-            if img.get('src', '').startswith(prefix)
-        )
+        imgs = [img for img in html.iter('img') if img.get('src', '').startswith(prefix)]
+        fnames = set(img.get('src')[prefix_len:] for img in imgs)
 
         # ensure the media directory exists
         media_dir = os.path.join(tmpdir, prefix)
@@ -189,6 +186,13 @@ class PDFExporter(HTMLExporter):
                 fname = os.path.join(media_dir, attachment.filename)
                 with open(fname, "wb") as f:
                     shutil.copyfileobj(attachment.file, f)
+
+        # make img references absolute
+        # see https://github.com/wkhtmltopdf/wkhtmltopdf/issues/2660
+        for img in imgs:
+            img.set('src', os.path.join(tmpdir, img.get('src')))
+
+        return lxml.html.tostring(html, encoding='unicode')
 
     def to_pdf(self, html, dirname, document=None, documents=None):
         args = []

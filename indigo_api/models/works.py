@@ -88,9 +88,9 @@ class Work(models.Model):
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
-    commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
-    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+
+    commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 
     # repeal information
     repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Work that repealed this work", related_name='repealed_works')
@@ -98,9 +98,6 @@ class Work(models.Model):
 
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Parent related work", related_name='child_works')
-
-    # optional work that determined the commencement date of this work
-    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 

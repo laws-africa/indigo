@@ -406,28 +406,32 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return reverse('tasks', kwargs={'place': self.kwargs['place']})
 
 
-class MyTasksView(AbstractAuthedIndigoView, TemplateView):
+class UserTasksView(AbstractAuthedIndigoView, TemplateView):
     authentication_required = True
     template_name = 'indigo_app/tasks/my_tasks.html'
     tab = 'my_tasks'
 
     def get_context_data(self, **kwargs):
-        context = super(MyTasksView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
+        if kwargs.get('username'):
+            user = User.objects.get(username=kwargs['username'])
+        else:
+            user = self.request.user
 
         # open tasks assigned to this user
         context['open_assigned_tasks'] = Task.objects \
-            .filter(assigned_to=self.request.user, state__in=Task.OPEN_STATES) \
+            .filter(assigned_to=user, state__in=Task.OPEN_STATES) \
             .all()
 
         # tasks previously assigned to this user and now pending approval
         context['tasks_pending_approval'] = Task.objects \
-            .filter(submitted_by_user=self.request.user, state='pending_review') \
+            .filter(submitted_by_user=user, state='pending_review') \
             .all()
 
         # tasks recently approved
         threshold = datetime.date.today() - datetime.timedelta(days=7)
         context['tasks_recently_approved'] = Task.objects \
-            .filter(submitted_by_user=self.request.user, state='done') \
+            .filter(submitted_by_user=user, state='done') \
             .filter(updated_at__gte=threshold) \
             .all()[:50]
 

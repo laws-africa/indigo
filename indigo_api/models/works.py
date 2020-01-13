@@ -90,7 +90,13 @@ class Work(models.Model):
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
+    # comm
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
+    commencement_date = models.DateField(null=True, blank=True,
+                                         help_text="Date of commencement unless otherwise specified")
+    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
+                                        help_text="Date that marked this work as commenced",
+                                        related_name='commenced_works')
 
     # repeal information
     repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Work that repealed this work", related_name='repealed_works')

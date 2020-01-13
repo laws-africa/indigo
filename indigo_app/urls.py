@@ -74,7 +74,7 @@ urlpatterns = [
     url(r'^documents/(?P<doc_id>\d+)/$', documents.DocumentDetailView.as_view(), name='document'),
     url(r'^documents/(?P<doc_id>\d+)/popup$', documents.DocumentPopupView.as_view(), name='document_popup'),
 
-    url(r'^tasks/$', tasks.UserTasksBaseView.as_view(), name='my_tasks'),
+    url(r'^tasks/$', tasks.UserTasksView.as_view(), name='my_tasks'),
     url(r'^tasks/available/$', tasks.AvailableTasksView.as_view(), name='available_tasks'),
 
     url(r'^comments/', include('django_comments.urls')),

@@ -14,7 +14,7 @@ from pinax.badges.registry import badges
 
 from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
-from indigo_app.views.tasks import UserTasksBaseView
+from indigo_app.views.tasks import UserTasksView as UserTasksBaseView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
 

@@ -406,13 +406,13 @@ class TaskBulkUpdateView(TaskViewBase, BaseFormView):
         return reverse('tasks', kwargs={'place': self.kwargs['place']})
 
 
-class UserTasksBaseView(AbstractAuthedIndigoView, TemplateView):
+class UserTasksView(AbstractAuthedIndigoView, TemplateView):
     authentication_required = True
     template_name = 'indigo_app/tasks/my_tasks.html'
     tab = 'my_tasks'
 
     def get_context_data(self, **kwargs):
-        context = super(UserTasksBaseView, self).get_context_data(**kwargs)
+        context = super().get_context_data(**kwargs)
         if kwargs.get('username'):
             user = User.objects.get(username=kwargs['username'])
         else:

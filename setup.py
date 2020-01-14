@@ -83,7 +83,7 @@ setup(
 
         # for indigo_social
         'pillow>=5.2.0',
-        'pinax-badges @ git+https://github.com/pinax/pinax-badges@3e7046d0157427cd399c9e2d188802793b8e20a0#egg=pinax-badges',
+        'pinax-badges>=2.0.3',
     ],
     extras_require={
         'dev': [

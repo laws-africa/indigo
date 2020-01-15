@@ -7,7 +7,7 @@ GEM
     nokogiri (1.10.7)
       mini_portile2 (~> 2.4.0)
     polyglot (0.3.5)
-    slaw (6.1.0)
+    slaw (6.2.0)
       log4r (~> 1.1)
       mimemagic (~> 0.2)
       nokogiri (~> 1.8)
@@ -24,7 +24,7 @@ DEPENDENCIES
   slaw (~> 6.1)
 
 RUBY VERSION
-   ruby 2.6.2p47
+   ruby 2.6.5p114
 
 BUNDLED WITH
    1.17.2

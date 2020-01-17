@@ -3,6 +3,8 @@ import re
 import shutil
 import tempfile
 import urllib.parse
+import logging
+import subprocess
 
 import lxml.html
 from django.conf import settings
@@ -16,6 +18,8 @@ from wkhtmltopdf import make_absolute_paths, wkhtmltopdf
 
 from indigo_api.models import Colophon
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
+
+log = logging.getLogger(__name__)
 
 
 class HTMLExporter(object):
@@ -246,7 +250,17 @@ class PDFExporter(HTMLExporter):
             return make_absolute_paths(html)
 
     def _wkhtmltopdf(self, *args, **kwargs):
-        return wkhtmltopdf(*args, **kwargs)
+        # wkhtmltopdf sometimes fails with a transient error, so try multiple times
+        attempts = 0
+        while True:
+            try:
+                attempts += 1
+                return wkhtmltopdf(*args, **kwargs)
+            except subprocess.CalledProcessError as e:
+                if attempts < 3:
+                    log.info("Retrying after wkhtmltopdf error")
+                else:
+                    raise e
 
     def pdf_options(self):
         # See https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/

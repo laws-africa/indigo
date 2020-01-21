@@ -233,7 +233,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             params.setdefault('sortby', '-updated_at')
 
         if not params.get('status'):
-            params.setlist('status', ['published', 'draft'])
+            params.setlist('status', WorkFilterForm.declared_fields['status'].initial)
 
         if not params.get('stub'):
             params.setdefault('stub', 'excl')

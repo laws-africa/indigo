@@ -14,13 +14,14 @@
           {{ option }}
         {% endfor %}
       </select>
-    </div>    
+    </div>
 
-    <!-- Status filter -->
+    <!-- Stubs filter -->
     <div class="mr-2">
-      <select class="selectpicker notooltip" multiple name="status" data-width="fit" data-style="btn-outline-secondary">
-        <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
-        <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
+      <select class="form-control" name="stub">
+        {% for opt in form.stub %}
+          <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
+        {% endfor %}
       </select>
     </div>
 
@@ -50,21 +51,20 @@
         </select>
       </div>
 
-      <!-- Stubs filter -->
-      <div class="col-md-3">
-        <select class="form-control" name="stub">
-          {% for opt in form.stub %}
-            <option value="{{ opt.data.value }}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
-          {% endfor %}
-        </select>
-      </div>
-
       <!-- Complete works filter -->
       <div class="col-md-3">
         <select name="completeness" class="form-control">
           {% for opt in form.completeness %}
             <option value="{{ opt.data.value}}" {% if opt.data.selected %}selected{% endif %}>{{ opt.data.label }}</option>
           {% endfor %}
+        </select>
+      </div>
+
+      <!-- Status filter -->
+      <div class="col-md-3">
+        <select class="selectpicker notooltip" multiple name="status" data-width="100%" data-style="btn-outline-secondary">
+          <option value="published" {% if 'published' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw published'></i> Published">Published</option>
+          <option value="draft" {% if 'draft' in form.status.value %} selected {% endif %} data-content="<i class='fas fa-circle fa-fw draft'></i> Draft">Draft</option>
         </select>
       </div>
     </div>

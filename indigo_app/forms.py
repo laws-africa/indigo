@@ -277,7 +277,7 @@ class WorkFilterForm(forms.Form):
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
-        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All types'), ('acts_only', 'Act')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
+        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All types'), ('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')

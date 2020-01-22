@@ -241,7 +241,7 @@ class TaskFilterForm(forms.Form):
 class WorkFilterForm(forms.Form):
     q = forms.CharField()
     stub = forms.ChoiceField(choices=[('', 'Exclude stubs'), ('only', 'Only stubs'), ('all', 'Everything')])
-    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')])
+    status = forms.MultipleChoiceField(choices=[('published', 'published'), ('draft', 'draft')], initial=['published', 'draft'])
     sortby = forms.ChoiceField(choices=[('-updated_at', '-updated_at'), ('updated_at', 'updated_at'), ('title', 'title'), ('-title', '-title'), ('frbr_uri', 'frbr_uri')])
     # assent date filter
     assent = forms.ChoiceField(choices=[('', 'Any'), ('no', 'Not assented to'), ('yes', 'Assented to'), ('range', 'Assented to between...')])
@@ -272,19 +272,25 @@ class WorkFilterForm(forms.Form):
             .order_by('vocabulary__title', 'level_1', 'level_2'))
 
     advanced_filters = ['assent', 'publication', 'repeal', 'amendment', 'commencement',
-                        'primary_subsidiary', 'taxonomies', 'stub', 'completeness']
+                        'primary_subsidiary', 'taxonomies', 'completeness', 'status']
 
     def __init__(self, country, *args, **kwargs):
         self.country = country
         super(WorkFilterForm, self).__init__(*args, **kwargs)
-        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All works'), ('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
+        self.fields['subtype'] = forms.ChoiceField(choices=[('', 'All types'), ('acts_only', 'Acts only')] + [(s.abbreviation, s.name) for s in Subtype.objects.all()])
 
     def data_as_url(self):
         return urllib.parse.urlencode(self.cleaned_data, 'utf-8')
 
     def show_advanced_filters(self):
         # Should we show the advanced options box by default?
-        return any(bool(self.cleaned_data.get(a)) for a in self.advanced_filters)
+        # true if there is a value set, and it's not the initial value
+        def is_set(a):
+            return (self.cleaned_data.get(a) and
+                    (not self.fields.get(a).initial or
+                     self.fields.get(a).initial != self.cleaned_data.get(a)))
+
+        return any(is_set(a) for a in self.advanced_filters)
 
     def filter_queryset(self, queryset):
         if self.cleaned_data.get('q'):

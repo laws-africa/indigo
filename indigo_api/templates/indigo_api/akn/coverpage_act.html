@@ -5,7 +5,10 @@
   {% block coat_of_arms %}{% endblock %}
 
   {% block place_name %}
-    <p class="place-name">{{ document.work.country.name }}{% if document.work.locality %} – {{ document.work.locality.name }}{% endif %}</p>
+    <p class="place-name">
+      {% if document.work.locality %}{{ document.work.locality.name }}<br>{% endif %}
+      {{ document.work.country.name }}
+    </p>
   {% endblock %}
 
   {% if document.work.parent_work %}

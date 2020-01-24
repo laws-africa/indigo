@@ -4,6 +4,13 @@
 <div class="coverpage">
   {% block coat_of_arms %}{% endblock %}
 
+  {% block place_name %}
+    <p class="place-name">
+      {% if document.work.locality %}{{ document.work.locality.name }}<br>{% endif %}
+      {{ document.work.country.name }}
+    </p>
+  {% endblock %}
+
   {% if document.work.parent_work %}
     {% block parent_title %}
       <h1>{{ document.work.parent_work.title }}</h1>

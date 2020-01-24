@@ -37,6 +37,18 @@
         } else {
           this.pubdoc = null;
         }
+
+        // amendments -- only those with publication documents
+        this.amendments = _.filter(Indigo.Preloads.amendments, function(am) {
+          return am.amending_work.publication_document && am.amending_work.publication_document.url;
+        }).map(function(am) {
+          return {
+            'title': am.date + ' - ' + am.amending_work.frbr_uri,
+            'url': am.amending_work.publication_document.url,
+            'group': 'Amendments',
+          };
+        });
+        this.amendments = _.sortBy(this.amendments, 'date');
       },
 
       rebuildChoices: function() {
@@ -54,6 +66,7 @@
           };
         });
         if (this.pubdoc) choices.unshift(this.pubdoc);
+        if (this.amendments) choices = choices.concat(this.amendments);
 
         this.choices = choices;
         this.render();
@@ -68,6 +81,7 @@
         this.choices.forEach(function(att, i) {
           var parent = dd;
 
+          // determine group, if any
           if (att.group) {
             if (prevGroup != att.group) {
               optGroup = document.createElement('optGroup');

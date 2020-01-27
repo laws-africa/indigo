@@ -17,8 +17,7 @@
 
         this.attachments = this.document.attachments();
         this.listenTo(this.attachments, 'add change remove sync', this.rebuildChoices);
-        this.choices = new Indigo.AttachmentList(null, {document: this.document});
-        this.listenTo(this.choices, 'change reset', this.render);
+        this.choices = [];
 
         this.$view = this.$('.source-attachment-view');
         this.$dropdown = this.$('.source-attachment-list');
@@ -27,16 +26,29 @@
         this.mime_types = {'application/pdf': true, 'text/html': true};
         this.chosen = null;
 
-        // work publication documen
+        // work publication document
         if (this.document.work.get('publication_document')) {
           var p = this.document.work.get('publication_document');
-
-          this.pubdoc = new Indigo.Attachment(this.document.work.get('publication_document'));
-          this.pubdoc.set('view_url', this.pubdoc.get('url'));
-          this.pubdoc.set('id', this.pubdoc.cid);
+          this.pubdoc = {
+            'title': 'Publication document',
+            'url': p.url,
+            'id': 'pubdoc',
+          };
         } else {
           this.pubdoc = null;
         }
+
+        // amendments -- only those with publication documents
+        this.amendments = _.filter(Indigo.Preloads.amendments, function(am) {
+          return am.amending_work.publication_document && am.amending_work.publication_document.url;
+        }).map(function(am) {
+          return {
+            'title': am.date + ' - ' + am.amending_work.frbr_uri,
+            'url': am.amending_work.publication_document.url,
+            'group': 'Amendments',
+          };
+        });
+        this.amendments = _.sortBy(this.amendments, 'date');
       },
 
       rebuildChoices: function() {
@@ -45,21 +57,44 @@
 
         choices = this.attachments.filter(function(att) {
           return self.mime_types[att.get('mime_type')];
+        }).map(function(att) {
+          return {
+            'title': att.get('filename'),
+            'url': att.get('view_url'),
+            'id': att.get('id'),
+            'group': 'Attachments',
+          };
         });
-        if (this.pubdoc) choices.push(this.pubdoc);
+        if (this.pubdoc) choices.unshift(this.pubdoc);
+        if (this.amendments) choices = choices.concat(this.amendments);
 
-        this.choices.reset(choices);
+        this.choices = choices;
+        this.render();
       },
 
       render: function() {
         var dd = this.$dropdown[0],
-            self = this;
+            self = this,
+            optGroup, prevGroup;
 
         this.$dropdown.empty();
-        this.choices.each(function(att) {
-          dd.appendChild(new Option(
-            att.get('filename'), att.get('id'), false, self.chosen === att
+        this.choices.forEach(function(att, i) {
+          var parent = dd;
+
+          // determine group, if any
+          if (att.group) {
+            if (prevGroup != att.group) {
+              optGroup = document.createElement('optGroup');
+              optGroup.label = att.group;
+              dd.appendChild(optGroup);
+            }
+            parent = optGroup;
+          }
+
+          parent.appendChild(new Option(
+            att.title, i.toString(), false, self.chosen && self.chosen.id === att.id
           ));
+          prevGroup = att.group;
         });
 
         this.$toggle.attr('disabled', this.choices.length === 0);
@@ -70,20 +105,20 @@
         var show = !$(e.target).hasClass('active');
 
         if (show) {
-          this.choose(this.chosen || this.choices.at(0));
+          this.choose(this.chosen || this.choices[0]);
         } else {
           this.$view.addClass('d-none');
           this.$('.source-attachment-toggle').removeClass('active');
         }
+
+        Indigo.view.bodyEditorView.sourceEditor.textEditor.resize();
       },
 
       choose: function(item) {
-        item = this.choices.get(item);
-
         if (this.chosen !== item) {
           this.chosen = item;
-          this.iframe.src = this.chosen.get('view_url');
-          this.$('.source-attachment-pop').attr('href', this.chosen.get('view_url'));
+          this.iframe.src = this.chosen.url;
+          this.$('.source-attachment-pop').attr('href', this.chosen.url);
         }
 
         this.$view.removeClass('d-none');
@@ -92,7 +127,7 @@
       },
 
       itemChanged: function(e) {
-        this.choose(e.target.value);
+        this.choose(this.choices[parseInt(e.target.value)]);
       },
     });
 })(window);

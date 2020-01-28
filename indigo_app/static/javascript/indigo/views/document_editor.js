@@ -417,6 +417,34 @@
         
         self.trigger('rendered');
       });
+
+      // HACK HACK HACK
+      var data = {};
+      data.document = this.parent.model.toJSON();
+      data.document.content = this.parent.documentContent.toXml();
+      data.element_id = this.parent.fragment.getAttribute('id');
+
+      $.ajax({
+        url: '/api/documents/278/diff',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+          .then(function(response) {
+            var html = $.parseHTML(response.html_diff)[0];
+
+            // TODO: handle comments
+            
+            self.makeLinksExternal(html);
+            self.addWorkPopups(html);
+            self.makeTablesEditable(html);
+            self.makeElementsQuickEditable(html);
+            $akn.empty();
+            $akn.addClass('diffset');
+            $akn.append(html);
+
+            self.trigger('rendered');
+          });
     },
 
     renderCoverpage: function() {

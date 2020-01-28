@@ -29,7 +29,7 @@ from lxml.etree import LxmlError
 from indigo.analysis.differ import AttributeDiffer
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity, Task
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
@@ -534,5 +534,50 @@ class ComparisonView(APIView):
 
         return Response({
             'content': diff,
+            'n_changes': n_changes,
+        })
+
+
+class DocumentDiffView(DocumentResourceView, APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request, document_id):
+        serializer = DocumentDiffSerializer(data=self.request.data)
+        serializer.is_valid(raise_exception=True)
+
+        differ = AttributeDiffer()
+
+        local_doc = self.document
+
+        # set this up to be the modified document
+        remote_doc = Document.objects.get(pk=local_doc.pk)
+        serializer.fields['document'].update_document(local_doc, serializer.validated_data['document'])
+
+        local_doc.content = differ.preprocess_document_diff(local_doc.document_xml).decode('utf-8')
+        remote_doc.content = differ.preprocess_document_diff(remote_doc.document_xml).decode('utf-8')
+
+        element_id = serializer.validated_data.get('element_id')
+        if element_id:
+            # diff just this element
+            local_element = local_doc.doc.root.xpath(f'//a:*[@id="{element_id}"]', namespaces={'a': local_doc.doc.namespace})[0]
+            remote_element = remote_doc.doc.root.xpath(f'//a:*[@id="{element_id}"]', namespaces={'a': local_doc.doc.namespace})[0]
+
+            local_html = local_doc.to_html(element=local_element)
+            remote_html = remote_doc.to_html(element=remote_element)
+        else:
+            # diff the whole document
+            local_html = local_doc.to_html()
+            remote_html = remote_doc.to_html()
+
+        local_tree = lxml.html.fromstring(local_html)
+        remote_tree = lxml.html.fromstring(remote_html)
+        n_changes = differ.diff_document_html(remote_tree, local_tree)
+
+        diff = lxml.html.tostring(local_tree, encoding='utf-8')
+
+        # TODO: include other diff'd attributes
+
+        return Response({
+            'html_diff': diff,
             'n_changes': n_changes,
         })

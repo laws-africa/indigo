@@ -614,3 +614,10 @@ class VocabularyTopicSerializer(serializers.ModelSerializer):
     class Meta:
         model = VocabularyTopic
         fields = ['level_1', 'level_2']
+
+
+class DocumentDiffSerializer(serializers.Serializer):
+    """ Helper to handle input elements for the /document/xxx/diff API
+    """
+    document = DocumentSerializer(required=True)
+    element_id = serializers.CharField(required=False, allow_null=True)

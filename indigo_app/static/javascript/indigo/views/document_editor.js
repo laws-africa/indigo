@@ -463,7 +463,7 @@
       html.querySelectorAll('a[href]').forEach(function(a) {
         if (!a.getAttribute('href').startsWith('#')) {
           a.setAttribute("target", "_blank");
-          $(a).tooltip({title: a.getAttribute('data-href')});
+          $(a).tooltip({title: a.getAttribute('data-href') || a.getAttribute('href')});
         }
       });
     },

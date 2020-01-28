@@ -533,14 +533,13 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 class CommencementSerializer(serializers.ModelSerializer):
     commencing_title = serializers.CharField(source="commencing_work.title")
     commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri")
-    provisions = serializers.JSONField(allow_null=False, default=list)
     commences = serializers.BooleanField()
 
     class Meta:
         model = Commencement
         fields = (
             'commencing_title', 'commencing_frbr_uri',
-            'date', 'main', 'all_provisions', 'provisions', 'commences',
+            'date', 'main', 'all_provisions', 'provisions_list', 'commences',
         )
         read_only_fields = fields
 

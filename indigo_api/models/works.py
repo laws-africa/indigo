@@ -90,13 +90,7 @@ class Work(models.Model):
 
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
 
-    # comm
     commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
-    commencement_date = models.DateField(null=True, blank=True,
-                                         help_text="Date of commencement unless otherwise specified")
-    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True,
-                                        help_text="Date that marked this work as commenced",
-                                        related_name='commenced_works')
 
     # repeal information
     repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Work that repealed this work", related_name='repealed_works')
@@ -209,16 +203,10 @@ class Work(models.Model):
 
     def save(self, *args, **kwargs):
         # prevent circular references
-        if self.commencing_work == self:
-            self.commencing_work = None
         if self.repealed_by == self:
             self.repealed_by = None
         if self.parent_work == self:
             self.parent_work = None
-
-        if not self.commenced:
-            self.commencement_date = None
-            self.commencing_work = None
 
         if not self.repealed_by:
             self.repealed_date = None
@@ -365,50 +353,39 @@ class Work(models.Model):
     def all_provisions(self):
         # a list of the element ids of the earliest PiT (in whichever language) of a work
         # does not include Schedules as they don't have commencement dates
-        ids = []
-
-        def add_ids(toc):
-            for e in toc:
-                if e.id:
-                    ids.append(e.id)
-                if e.children and e.component == 'main':
-                    add_ids(e.children)
-
         first_expression = self.expressions().first()
         if first_expression:
-            toc = first_expression.table_of_contents()
-            add_ids(toc)
-
-        return ids
+            return first_expression.all_provisions()
+        return None
 
     def main_commencement(self):
-        if self.commencements.exists():
-            main = self.commencements.filter(main=True).first()
-            if main:
-                return main
-
+        main = self.commencements.filter(main=True).first()
+        if main:
+            return main
         return None
 
     def main_commencement_date(self):
-        if self.commencements.exists():
-            main = self.commencements.filter(main=True).first()
-            if main:
-                return main.date
-
-            first = self.commencements.first()
-            return first.date
-
+        main = self.main_commencement()
+        if main:
+            return main.date
         return None
 
     def main_commencing_work(self):
-        if self.commencements.exists():
-            main = self.commencements.filter(main=True).first()
-            if main:
-                return main.commencing_work
+        main = self.main_commencement()
+        if main:
+            return main.commencing_work
+        return None
 
-            first = self.commencements.first()
+    def first_commencement_date(self):
+        first = self.commencements.first()
+        if first:
+            return first.date
+        return None
+
+    def first_commencing_work(self):
+        first = self.commencements.first()
+        if first:
             return first.commencing_work
-
         return None
 
     def __str__(self):
@@ -470,11 +447,12 @@ class Commencement(models.Model):
     """
     commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Principal work being commenced", related_name="commencements")
     commencing_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
-    date = models.DateField(null=True, blank=True, help_text="Date of the commencement")
+    date = models.DateField(null=True, blank=True, help_text="Date of the commencement, or null if listed provisions are uncommenced")
     main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
+    all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")
 
     # list of the element ids of the provisions commenced, e.g. ["section-2", "section-4.3.list0.a"]
-    provisions = JSONField(null=False, blank=False, default=list)
+    provisions_list = JSONField(null=False, blank=False, default=list)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -484,8 +462,28 @@ class Commencement(models.Model):
 
     class Meta:
         ordering = ['date']
-        unique_together = (('commenced_work', 'commencing_work', 'date'),
-                           ('commenced_work', 'main'))
+        unique_together = (('commenced_work', 'commencing_work', 'date'),)
+
+    def commences(self):
+        return bool(self.date)
+
+    def only(self):
+        return bool(
+            self.main is True and
+            self.all_provisions is True and
+            not self.other_commencements()
+        )
+
+    def other_commencements(self):
+        return Commencement.objects.filter(commenced_work=self.commenced_work).exclude(pk=self.pk)
+
+    def save(self, *args, **kwargs):
+        # ensure only one commencement with main=True on commenced work
+        existing_main_commencement = self.commenced_work.main_commencement()
+        if existing_main_commencement and existing_main_commencement != self:
+            self.main = False
+
+        return super(Commencement, self).save(*args, **kwargs)
 
 
 class Amendment(models.Model):

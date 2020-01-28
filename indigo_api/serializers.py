@@ -1,7 +1,6 @@
 import logging
 import os.path
 from itertools import groupby
-import json
 
 from actstream.signals import action
 from collections import OrderedDict
@@ -18,7 +17,7 @@ from cobalt import Act, FrbrUri
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic
+    PublicationDocument, Task, VocabularyTopic, Commencement
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -531,12 +530,27 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
         return super(DocumentActivitySerializer, self).create(validated_data)
 
 
+class CommencementSerializer(serializers.ModelSerializer):
+    commencing_title = serializers.CharField(source="commencing_work.title")
+    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri")
+    provisions = serializers.JSONField(allow_null=False, default=list)
+    commences = serializers.BooleanField()
+
+    class Meta:
+        model = Commencement
+        fields = (
+            'commencing_title', 'commencing_frbr_uri',
+            'date', 'main', 'all_provisions', 'provisions', 'commences',
+        )
+        read_only_fields = fields
+
+
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
     repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
-    commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    commencements = CommencementSerializer(many=True)
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
@@ -550,9 +564,9 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'commencement_date', 'assent_date', 'stub',
+            'commenced', 'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
-            'parent_work', 'commencing_work', 'amendments_url',
+            'parent_work', 'amendments_url', 'commencements',
 
             # repeal
             'repealed_date', 'repealed_by',

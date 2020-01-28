@@ -43,12 +43,12 @@
           return am.amending_work.publication_document && am.amending_work.publication_document.url;
         }).map(function(am) {
           return {
-            'title': am.date + ' - ' + am.amending_work.frbr_uri,
+            'title': am.date + ' – ' + am.amending_work.frbr_uri,
             'url': am.amending_work.publication_document.url,
             'group': 'Amendments',
           };
         });
-        this.amendments = _.sortBy(this.amendments, 'date');
+        this.amendments = _.sortBy(this.amendments, 'date').reverse();
       },
 
       rebuildChoices: function() {

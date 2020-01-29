@@ -550,6 +550,8 @@ class WorkSerializer(serializers.ModelSerializer):
     repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencements = CommencementSerializer(many=True)
+    commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer', source='main_commencing_work')
+    commencement_date = serializers.DateField(required=False, allow_null=True, source='main_commencement_date')
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
@@ -563,9 +565,10 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'assent_date', 'stub',
+            'commenced', 'commencements', 'commencing_work', 'commencement_date',
+            'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
-            'parent_work', 'amendments_url', 'commencements',
+            'parent_work', 'amendments_url',
 
             # repeal
             'repealed_date', 'repealed_by',

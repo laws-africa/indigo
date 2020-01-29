@@ -55,7 +55,7 @@
       {% elif document.commencement_date %}
         <li class="commencement-date">
           {% blocktrans with date=document.commencement_date|date:"j E Y" %}Commences on {{ date }} unless otherwise noted{% endblocktrans %}
-          {% with document.work.commencing_work as commencing_work %}
+          {% with document.work.main_commencing_work as commencing_work %}
             {% if commencing_work %}
               {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
                 <br>

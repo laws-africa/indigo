@@ -227,7 +227,8 @@ class Work(models.Model):
         return (not self.document_set.undeleted().exists() and
                 not self.child_works.exists() and
                 not self.repealed_works.exists() and
-                not self.commenced_works.exists() and
+                not self.commencements_made.exists() and
+                not [c for c in self.commencements.all() if c.commencing_work] and
                 not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
     def create_expression_at(self, user, date, language=None):

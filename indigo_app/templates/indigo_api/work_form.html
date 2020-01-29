@@ -247,7 +247,7 @@
               </div>
               <p class="form-text text-muted">Check this box when a (usually old) work has come into force, but the exact commencement date is not known.</p>
 
-              {% if work.pk and work.commencement_date %}
+              {% if work.pk and work.main_commencement_date %}
                 {% if work.amendments_made.exists or work.repealed_works.exists %}
                   <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>
                 {% endif %}

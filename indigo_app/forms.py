@@ -131,8 +131,7 @@ class WorkForm(forms.ModelForm):
         else:
             if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data:
                 if not main_commencement:
-                    all_provisions = self.instance.all_provisions()
-                    main_commencement = Commencement(commenced_work=self.instance, main=True, provisions=all_provisions)
+                    main_commencement = Commencement(commenced_work=self.instance, main=True, all_provisions=True)
 
                 main_commencement.commencing_work = self.cleaned_data.get('commencing_work')
                 main_commencement.date = self.cleaned_data.get('commencement_date')

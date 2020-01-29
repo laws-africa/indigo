@@ -24,7 +24,7 @@
             {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
             {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
             {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
-            {% elif not work.commencement_date %} <span class="badge badge-info">commencement date unknown</span>
+            {% elif not work.main_commencement_date %} <span class="badge badge-info">commencement date unknown</span>
             {% endif %}
           </h5>
         {% endif %}
@@ -35,6 +35,9 @@
           {% block work-header-tabs %}
             <a class="nav-item nav-link {% if view.tab == 'overview' %}active{% endif %}" href="{% url 'work' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-book"></i> Overview
+            </a>
+            <a class="nav-item nav-link {% if view.tab == 'commencements' %}active{% endif %}" href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">
+              <i class="far fa-calendar"></i> Commencements
             </a>
             <a class="nav-item nav-link {% if view.tab == 'amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-clock"></i> Points in time

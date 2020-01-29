@@ -248,6 +248,16 @@ class WorkOverviewView(WorkViewBase, DetailView):
         return context
 
 
+class WorkCommencementsView(WorkViewBase, DetailView):
+    template_name_suffix = '_commencements'
+    tab = 'commencements'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkCommencementsView, self).get_context_data(**kwargs)
+        context['commencements_timeline'] = self.work.commencements.all().reverse()
+        return context
+
+
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
     tab = 'amendments'

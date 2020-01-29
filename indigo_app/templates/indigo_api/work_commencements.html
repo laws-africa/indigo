@@ -1,0 +1,25 @@
+{% extends "indigo_api/work_layout.html" %}
+
+{% block title %}Commencements – {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  <h4>Commencements</h4>
+
+  <ol class="timeline">
+    {% for commencement in commencements_timeline %}
+      <li class="timeline-item card">
+        <h6 class="timeline-date">{{ commencement.date|date:"Y-m-d" }}</h6>
+        <div class="card-body">
+          <h6>
+            {% if commencement.main %}Main commencement{% else %}Commencement{% endif %}
+            {% if not commencement.date %}(future){% endif %}
+            {% if commencement.all_provisions %} – all provisions commenced{% endif %}
+          </h6>
+        </div>
+      </li>
+    {% endfor %}
+  </ol>
+
+{% endblock %}
+
+

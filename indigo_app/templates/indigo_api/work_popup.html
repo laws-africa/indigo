@@ -11,7 +11,7 @@
     {% endif %} 
     {% if not work.commenced %}
       <span class="badge badge-info">not commenced</span>
-    {% elif not work.commencement_date %}
+    {% elif not work.main_commencement_date %}
       <span class="badge badge-info">commencement date unknown</span>
     {% endif %}
     <br><span class="text-muted mt-1 wb-all">{{ work.frbr_uri }}</span>
@@ -42,12 +42,15 @@
     </p>
   {% endif %}
 
-  {% if work.commencement_date %}
-    <p class="mb-2">Commenced on {{ work.commencement_date|date:"Y-m-d" }}{% if work.commencing_work %} by
-      <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}">
-        {{ work.commencing_work.title }}</a>{% endif %}.
-    </p>
-  {% endif %}
+  {% with work.main_commencement as main_commencement %}
+    {% if main_commencement %}
+      <p class="mb-2">
+        Commenced on {{ main_commencement.date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}{% if main_commencement.commencing_work %} by
+        <a href="{% url 'work' frbr_uri=main_commencement.commencing_work.frbr_uri %}">
+          {{ main_commencement.commencing_work.title }}</a>{% endif %}.
+      </p>
+    {% endif %}
+  {% endwith %}
 
   {% if work.repealed_date %}
     <p class="mb-2">Repealed on {{ work.repealed_date|date:"Y-m-d" }}{% if work.repealed_by %} by

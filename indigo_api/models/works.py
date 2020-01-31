@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
+from django.utils.functional import cached_property
 import reversion.revisions
 import reversion.models
 from cobalt.act import FrbrUri, RepealEvent
@@ -169,6 +170,14 @@ class Work(models.Model):
     @property
     def place(self):
         return self.locality or self.country
+
+    @cached_property
+    def commencement_date(self):
+        return self.main_commencement_date()
+
+    @cached_property
+    def commencing_work(self):
+        return self.main_commencing_work()
 
     def amended(self):
         return self.amendments.exists()
@@ -383,12 +392,6 @@ class Work(models.Model):
             return first.date
         return None
 
-    def first_commencing_work(self):
-        first = self.commencements.first()
-        if first:
-            return first.commencing_work
-        return None
-
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -453,7 +456,7 @@ class Commencement(models.Model):
     all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")
 
     # list of the element ids of the provisions commenced, e.g. ["section-2", "section-4.3.list0.a"]
-    provisions_list = JSONField(null=False, blank=False, default=list)
+    provisions = JSONField(null=False, blank=False, default=list)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -465,14 +468,14 @@ class Commencement(models.Model):
         ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
-    def commences(self):
-        return bool(self.date)
-
-    def only(self):
+    def is_only_commencement(self):
+        """ checks that the current commencement object is the only one associated with this commenced work,
+        as well as that it's the main one and that it commences all provisions.
+        """
         return bool(
             self.main is True and
             self.all_provisions is True and
-            not self.other_commencements()
+            not self.other_commencements().exists()
         )
 
     def other_commencements(self):
@@ -484,7 +487,37 @@ class Commencement(models.Model):
         if existing_main_commencement and existing_main_commencement != self:
             self.main = False
 
+        # ensure only one commencement with all_provisions=True on commenced work
+        existing_all_provisions_commencement = self.commenced_work.commencements.filter(all_provisions=True).first()
+        if existing_all_provisions_commencement and existing_all_provisions_commencement != self:
+            self.all_provisions = False
+
         return super(Commencement, self).save(*args, **kwargs)
+
+
+class UncommencedProvisions(models.Model):
+    """ The details of uncommenced provisions of a work
+    """
+    commenced_work = models.OneToOneField(Work, on_delete=models.CASCADE, null=False, help_text="Principal work with uncommenced provisions", related_name="uncommenced_provisions")
+    all_provisions = models.BooleanField(default=False, help_text="All provisions of this work are uncommenced")
+
+    # list of the element ids of the uncommenced provisions, e.g. ["section-2", "section-4.3.list0.a"]
+    provisions = JSONField(null=False, blank=False, default=list)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    def save(self, *args, **kwargs):
+        # ensure only one commencement / uncommencement with all_provisions=True on commenced work
+        if self.all_provisions:
+            existing_all_provisions_commencement = self.commenced_work.commencements.filter(all_provisions=True).first()
+            if existing_all_provisions_commencement:
+                self.all_provisions = False
+
+        return super(UncommencedProvisions, self).save(*args, **kwargs)
 
 
 class Amendment(models.Model):

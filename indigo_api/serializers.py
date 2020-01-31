@@ -17,7 +17,7 @@ from cobalt import Act, FrbrUri
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic, Commencement
+    PublicationDocument, Task, VocabularyTopic, Commencement, UncommencedProvisions
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -533,13 +533,22 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 class CommencementSerializer(serializers.ModelSerializer):
     commencing_title = serializers.CharField(source="commencing_work.title")
     commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri")
-    commences = serializers.BooleanField()
 
     class Meta:
         model = Commencement
         fields = (
             'commencing_title', 'commencing_frbr_uri',
-            'date', 'main', 'all_provisions', 'provisions_list', 'commences',
+            'date', 'main', 'all_provisions', 'provisions',
+        )
+        read_only_fields = fields
+
+
+class UncommencedProvisionsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = UncommencedProvisions
+        fields = (
+            'all_provisions', 'provisions',
         )
         read_only_fields = fields
 
@@ -549,9 +558,10 @@ class WorkSerializer(serializers.ModelSerializer):
     created_by_user = UserSerializer(read_only=True)
     repealed_by = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
+    commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencements = CommencementSerializer(many=True)
-    commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer', source='main_commencing_work')
-    commencement_date = serializers.DateField(required=False, allow_null=True, source='main_commencement_date')
+    uncommenced_provisions = UncommencedProvisionsSerializer()
+    commencement_date = serializers.DateField(required=False, allow_null=True)
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
     publication_document = PublicationDocumentSerializer(read_only=True)
@@ -565,7 +575,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'commencements', 'commencing_work', 'commencement_date',
+            'commenced', 'commencements', 'commencing_work', 'commencement_date', 'uncommenced_provisions',
             'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',

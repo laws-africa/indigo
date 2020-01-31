@@ -14,6 +14,7 @@ def migrate_commencements(apps, schema_editor):
     Work = apps.get_model("indigo_api", "Work")
     Document = apps.get_model("indigo_api", "Document")
     Commencement = apps.get_model("indigo_api", "Commencement")
+    UncommencedProvisions = apps.get_model("indigo_api", "UncommencedProvisions")
     db_alias = schema_editor.connection.alias
 
     def for_document(topic, document):
@@ -48,17 +49,25 @@ def migrate_commencements(apps, schema_editor):
         return ids
 
     for w in Work.objects.using(db_alias).all():
+        all_provisions = get_all_provisions(w)
         if w.commencing_work or w.commencement_date:
-            all_provisions = get_all_provisions(w)
             commencement = Commencement(
                 commenced_work=w,
                 commencing_work=w.commencing_work,
                 date=w.commencement_date,
                 main=True,
                 all_provisions=True,
-                provisions_list=all_provisions,
+                provisions=all_provisions,
             )
             commencement.save()
+
+        elif not w.commenced:
+            uncommencement = UncommencedProvisions(
+                commenced_work=w,
+                all_provisions=True,
+                provisions=all_provisions,
+            )
+            uncommencement.save()
 
 
 def unmigrate_commencements(apps, schema_editor):

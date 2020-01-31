@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 21:03+0200\n"
+"POT-Creation-Date: 2020-01-31 11:59+0200\n"
 "PO-Revision-Date: 2019-07-12 06:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Venda\n"
@@ -16,19 +16,18 @@ msgstr ""
 "X-Crowdin-Language: ve\n"
 "X-Crowdin-File: /master/indigo_za/locale/af/LC_MESSAGES/django.po\n"
 
-#: toc.py:16
+#: toc.py:14
 msgid "Section"
 msgstr ""
 
-#: toc.py:30
+#: toc.py:28
 msgid "Article"
 msgstr ""
 
-#: toc.py:31
+#: toc.py:29
 msgid "Chapter"
 msgstr "Ndima ya"
 
-#: toc.py:32
+#: toc.py:30
 msgid "Part"
 msgstr "Tshipiḓa tsha"
-

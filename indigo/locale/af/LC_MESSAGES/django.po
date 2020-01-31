@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 21:03+0200\n"
-"PO-Revision-Date: 2019-07-12 06:48\n"
+"POT-Creation-Date: 2020-01-31 11:58+0200\n"
+"PO-Revision-Date: 2020-01-31 10:04\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Crowdin-Language: af\n"
 "X-Crowdin-File: /master/indigo/locale/af/LC_MESSAGES/django.po\n"
 
-#: analysis/toc/base.py:13 analysis/work_detail/base.py:44
+#: analysis/toc/base.py:13 analysis/work_detail/base.py:42
 msgid "Act"
 msgstr "Daad"
 
@@ -28,7 +28,7 @@ msgstr "Artikel"
 msgid "By-law"
 msgstr "Verordening"
 
-#: analysis/toc/base.py:16 analysis/work_detail/base.py:35
+#: analysis/toc/base.py:16 analysis/work_detail/base.py:33
 msgid "Chapter"
 msgstr "Hoofstuk"
 
@@ -52,7 +52,7 @@ msgstr "Voorwoord"
 msgid "Preamble"
 msgstr "Aanhef"
 
-#: analysis/work_detail/base.py:25
+#: analysis/work_detail/base.py:23
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
 msgstr "%(type)s %(number)s van %(year)s"

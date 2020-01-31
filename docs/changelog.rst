@@ -1,6 +1,11 @@
 Changelog
 =========
 
+? (?)
+-----
+
+* Decrypt encrypted PDFs when importing only certain pages
+
 7.0.0 (9 December 2019)
 -----------------------
 

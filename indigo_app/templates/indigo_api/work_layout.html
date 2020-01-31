@@ -24,7 +24,7 @@
             {% if work.stub %}<span class="badge badge-info">stub</span>{% endif %}
             {% if work.repealed_date %} <span class="badge badge-info">repealed</span> {% endif %}
             {% if not work.commenced %} <span class="badge badge-info">not commenced</span>
-            {% elif not work.main_commencement_date %} <span class="badge badge-info">commencement date unknown</span>
+            {% elif not work.commencement_date %} <span class="badge badge-info">commencement date unknown</span>
             {% endif %}
           </h5>
         {% endif %}

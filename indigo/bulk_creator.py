@@ -411,7 +411,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not repealing_work:
             return self.create_task(work, info, task_type='link-repeal')
 
-        repeal_date = repealing_work.main_commencement_date()
+        repeal_date = repealing_work.commencement_date
         if not repeal_date:
             return self.create_task(work, info, task_type='link-repeal')
 
@@ -445,7 +445,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not amended_work:
             return self.create_task(work, info, task_type='link-amendment')
 
-        date = info.get('commencement_date') or work.main_commencement_date()
+        date = info.get('commencement_date') or work.commencement_date
         if not date:
             return self.create_task(work, info, task_type='link-amendment')
 

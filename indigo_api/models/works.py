@@ -313,7 +313,7 @@ class Work(models.Model):
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple amendments at the same date.
         """
-        initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.main_commencement_date())
+        initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
         amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
         amendments_expressions.sort(key=lambda x: x.date)

@@ -59,7 +59,7 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         work_timeline = self.work.points_in_time()
         other_dates = [
             ('assent_date', self.work.assent_date),
-            ('commencement_date', self.work.main_commencement_date()),
+            ('commencement_date', self.work.commencement_date),
             ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
@@ -111,16 +111,6 @@ class EditWorkView(WorkViewBase, UpdateView):
         kwargs['place'] = self.place
         return kwargs
 
-    def get_initial(self):
-        initial = super(EditWorkView, self).get_initial()
-
-        commencement = self.object.main_commencement()
-        if commencement:
-            initial['commencement_date'] = commencement.date
-            initial['commencing_work'] = commencement.commencing_work
-
-        return initial
-
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
         context['subtypes'] = Subtype.objects.order_by('name').all()
@@ -136,7 +126,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
         # ensure any docs for this work at initial pub date move with it, if it changes
         if 'publication_date' in form.changed_data:
-            old_date = form.initial['publication_date'] or self.work.main_commencement_date()
+            old_date = form.initial['publication_date'] or self.work.commencement_date
 
             if old_date and self.work.publication_date:
                 for doc in Document.objects.filter(work=self.work, expression_date=old_date):
@@ -492,11 +482,11 @@ class WorkRelatedView(WorkViewBase, DetailView):
 
         # commencement
         commencement = []
-        if self.work.main_commencing_work():
+        if self.work.commencing_work:
             commencement.append({
                 'rel': 'commenced by',
-                'work': self.work.main_commencing_work(),
-                'date': self.work.main_commencement_date(),
+                'work': self.work.commencing_work,
+                'date': self.work.commencement_date,
             })
         commencement = commencement + [{
             'rel': 'commenced',

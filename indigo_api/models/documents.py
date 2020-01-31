@@ -285,7 +285,7 @@ class Document(DocumentMixin, models.Model):
 
     @property
     def commencement_date(self):
-        return self.work.main_commencement_date()
+        return self.work.commencement_date
 
     @property
     def assent_date(self):

@@ -407,7 +407,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             works_sheet.write(row, 8, work.publication_number)
             works_sheet.write(row, 9, work.assent_date, date_format)
             works_sheet.write(row, 10, work.commenced)
-            works_sheet.write(row, 11, work.main_commencement_date(), date_format)
+            works_sheet.write(row, 11, work.commencement_date, date_format)
             works_sheet.write(row, 12, work.repealed_date, date_format)
             works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
             works_sheet.write(row, 14, work.stub)

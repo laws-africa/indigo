@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-31 11:58+0200\n"
-"PO-Revision-Date: 2020-01-31 10:04\n"
+"PO-Revision-Date: 2020-02-01 12:05\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -43,11 +43,11 @@ msgstr "Ingestem op %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:56
 msgid "Not commenced"
-msgstr ""
+msgstr "Het nog nie in werking getree"
 
 #: templates/indigo_api/akn/coverpage_act.html:60
 msgid "Commencement date unknown"
-msgstr ""
+msgstr "Aanvangsdatum onbekend"
 
 #: templates/indigo_api/akn/coverpage_act.html:64
 #, python-format

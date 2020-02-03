@@ -594,7 +594,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
             if self.work.publication_document.trusted_url:
                 return redirect(self.work.publication_document.trusted_url)
             return view_attachment(self.work.publication_document)
-        return Http404()
+        raise Http404()
 
 
 class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):

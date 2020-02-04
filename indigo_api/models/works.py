@@ -514,8 +514,7 @@ class UncommencedProvisions(models.Model):
     def save(self, *args, **kwargs):
         # ensure only one commencement / uncommencement with all_provisions=True on commenced work
         if self.all_provisions:
-            existing_all_provisions_commencement = self.commenced_work.commencements.filter(all_provisions=True).first()
-            if existing_all_provisions_commencement:
+            if self.work.commencements.filter(all_provisions=True).exists():
                 self.all_provisions = False
 
         return super(UncommencedProvisions, self).save(*args, **kwargs)

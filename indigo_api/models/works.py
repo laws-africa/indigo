@@ -484,13 +484,13 @@ class Commencement(models.Model):
 
     def save(self, *args, **kwargs):
         # ensure only one commencement with main=True on commenced work
-        existing_main_commencement = self.commenced_work.main_commencement()
-        if existing_main_commencement and existing_main_commencement != self:
+        existing_main = self.commenced_work.main_commencement()
+        if existing_main and existing_main != self:
             self.main = False
 
         # ensure only one commencement with all_provisions=True on commenced work
-        existing_all_provisions_commencement = self.commenced_work.commencements.filter(all_provisions=True).first()
-        if existing_all_provisions_commencement and existing_all_provisions_commencement != self:
+        existing_all = self.commenced_work.commencements.filter(all_provisions=True).first()
+        if existing_all and existing_all != self:
             self.all_provisions = False
 
         return super(Commencement, self).save(*args, **kwargs)

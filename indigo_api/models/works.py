@@ -171,11 +171,11 @@ class Work(models.Model):
     def place(self):
         return self.locality or self.country
 
-    @cached_property
+    @property
     def commencement_date(self):
         return self.main_commencement_date()
 
-    @cached_property
+    @property
     def commencing_work(self):
         return self.main_commencing_work()
 
@@ -368,6 +368,7 @@ class Work(models.Model):
             return first_expression.all_provisions()
         return None
 
+    @cached_property
     def main_commencement(self):
         main = self.commencements.filter(main=True).first()
         if main:

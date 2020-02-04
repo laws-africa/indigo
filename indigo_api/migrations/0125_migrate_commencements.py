@@ -63,7 +63,7 @@ def migrate_commencements(apps, schema_editor):
 
         elif not w.commenced:
             uncommencement = UncommencedProvisions(
-                commenced_work=w,
+                work=w,
                 all_provisions=True,
                 provisions=all_provisions,
             )

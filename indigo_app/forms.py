@@ -121,7 +121,7 @@ class WorkForm(forms.ModelForm):
 
     def save_commencement(self):
         # get existing main commencement object if there is one
-        main_commencement = self.instance.main_commencement()
+        main_commencement = self.instance.main_commencement
 
         # if work has been edited to not commence, delete existing main commencement object
         if main_commencement and not self.instance.commenced:

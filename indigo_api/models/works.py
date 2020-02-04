@@ -376,13 +376,13 @@ class Work(models.Model):
         return None
 
     def main_commencement_date(self):
-        main = self.main_commencement()
+        main = self.main_commencement
         if main:
             return main.date
         return None
 
     def main_commencing_work(self):
-        main = self.main_commencement()
+        main = self.main_commencement
         if main:
             return main.commencing_work
         return None
@@ -484,7 +484,7 @@ class Commencement(models.Model):
 
     def save(self, *args, **kwargs):
         # ensure only one commencement with main=True on commenced work
-        existing_main = self.commenced_work.main_commencement()
+        existing_main = self.commenced_work.main_commencement
         if existing_main and existing_main != self:
             self.main = False
 

@@ -245,6 +245,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['commencements_timeline'] = self.work.commencements.all().reverse()
+        context['uncommenced_provisions'] = None
+        if hasattr(self.work, 'uncommenced_provisions'):
+            context['uncommenced_provisions'] = self.work.uncommenced_provisions
         return context
 
 

@@ -3,7 +3,7 @@
 from django.db import migrations
 
 from cobalt.act import datestring
-import arrow
+from iso8601 import parse_date
 
 
 def create_repeals(apps, schema_editor):
@@ -18,7 +18,7 @@ def create_repeals(apps, schema_editor):
 
     for doc in documents:
         if doc.repeal_event:
-            date = arrow.get(doc.repeal_event['date']).date()
+            date = parse_date(doc.repeal_event['date']).date()
 
             work = works.get(doc.repeal_event['repealing_uri'])
             if not work:

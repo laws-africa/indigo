@@ -16,6 +16,13 @@
       }
     }
 
+    .place-name {
+      font-size: ceil($akn-font-size * 1.25); // ~ 18px
+      line-height: 1.2;
+      margin-bottom: $akn-para-spacing;
+      font-weight: bold;
+    }
+
     .assent-date,
     .commencement-date {
       margin-bottom: $akn-para-spacing;

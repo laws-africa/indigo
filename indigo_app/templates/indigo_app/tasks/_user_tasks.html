@@ -1,0 +1,75 @@
+
+<div class="row">
+  <div class="{% if current_wide %}col-md-6{% else %}col-md{% endif %}">
+    <div class="card task-list-card">
+      <div class="card-body">
+        <h6 class="text-center mb-3">
+          {% if request.user == user %}
+            <span>Your current tasks <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
+          {% else %}
+            <span>Current tasks <span class="text-muted">({{ open_assigned_tasks|length }})</span></span>
+          {% endif %}
+        </h6>
+        {% if open_assigned_tasks %}
+          {% for task in open_assigned_tasks %}
+            {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True %}
+          {% endfor %}
+        {% else %}
+        <p class="mx-3">
+          {% if request.user == user %}
+            You don't have any assigned tasks right now.
+          {% else %}
+            {{ user.first_name|default:user.username }} doesn't have any assigned tasks right now.
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md">
+    <div class="card task-list-card">
+      <div class="card-body">
+        <h6 class="text-center mb-3">
+          <span>Tasks waiting for approval <span class="text-muted">({{ tasks_pending_approval|length }})</span></span>
+        </h6>
+        {% if tasks_pending_approval %}
+        {% for task in tasks_pending_approval %}
+          {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True assigned=True %}
+        {% endfor %}
+        {% else %}
+          {% if request.user == user %}
+            You have no tasks waiting for approval.</p>
+          {% else %}
+            <p class="mx-3">{{ user.first_name|default:user.username }} has no tasks waiting for approval.</p>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md">
+    <div class="card task-list-card">
+      <div class="card-body">
+        <h6 class="text-center mb-3">
+          {% if request.user == user %}
+            <span>Your recently approved tasks <span class="text-muted">({{ tasks_recently_approved|length }})</span></span>
+          {% else %}
+          <span>Recently approved tasks <span class="text-muted">({{ tasks_recently_approved|length }})</span></span>
+          {% endif %}
+        </h6>
+          {% if tasks_recently_approved %}
+            {% for task in tasks_recently_approved %}
+              {% include 'indigo_api/_task_card_single.html' with task_border=True icon=True approved=True %}
+            {% endfor %}
+          {% else %}
+            {% if request.user == user %}
+              You have no tasks that have been approved.</p>
+            {% else %}
+              <p class="mx-3">{{ user.first_name|default:user.username }} has no tasks that have been approved.</p>
+            {% endif %}
+          {% endif %}
+        </div>
+      </div>
+    </div>
+</div>

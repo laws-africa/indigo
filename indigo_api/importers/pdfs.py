@@ -9,11 +9,30 @@ def pdf_count_pages(fname):
     """ Counts the number of pages in a PDF.
     """
     result = subprocess.run(["pdfinfo", fname], stdout=subprocess.PIPE, check=True)
-    m = re.search(r'Pages:\s*(\d+)', result.stdout.decode('utf-8'))
+    m = re.search(r'^Pages:\s*(\d+)', result.stdout.decode('utf-8'), re.MULTILINE)
     if m:
         return int(m.group(1))
     else:
         raise ValueError("No page count in {}".format(result.stdout))
+
+
+def pdf_is_encrypted(fname):
+    """ Is this pdf encrypted?
+    """
+    result = subprocess.run(["pdfinfo", fname], stdout=subprocess.PIPE, check=True)
+    m = re.search(r'^Encrypted:\s*(\w+)', result.stdout.decode('utf-8'), re.MULTILINE)
+    if m:
+        return m.group(1).lower() == 'yes'
+    else:
+        raise ValueError("No Encrypted field in {}".format(result.stdout))
+
+
+def pdf_decrypt(src_fname, tgt_fname):
+    """ Decrypt a PDF, by converting to PS then back to PDF.
+    """
+    with tempfile.NamedTemporaryFile() as tmp:
+        subprocess.run(["pdftops", src_fname, tmp.name], stdout=subprocess.PIPE, check=True)
+        subprocess.run(["ps2pdf", tmp.name, tgt_fname], stdout=subprocess.PIPE, check=True)
 
 
 def pdf_extract_pages(src_fname, pages, tgt_fname):
@@ -29,6 +48,12 @@ def pdf_extract_pages(src_fname, pages, tgt_fname):
         if src_fname != tgt_fname:
             copyfile(src_fname, tgt_fname)
         return
+
+    # if the pdf is encrypted, decrypt it first, since pdfunite can't operate on encrypted pdfs
+    if pdf_is_encrypted(src_fname):
+        tmp = src_fname + "-decrypted.pdf"
+        pdf_decrypt(src_fname, tmp)
+        src_fname = tmp
 
     with tempfile.TemporaryDirectory() as tmpdir:
         fname = os.path.join(tmpdir, 'page-%d.pdf')

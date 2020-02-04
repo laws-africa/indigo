@@ -3,6 +3,8 @@ import re
 import shutil
 import tempfile
 import urllib.parse
+import logging
+import subprocess
 
 import lxml.html
 from django.conf import settings
@@ -16,6 +18,8 @@ from wkhtmltopdf import make_absolute_paths, wkhtmltopdf
 
 from indigo_api.models import Colophon
 from indigo_api.utils import filename_candidates, find_best_template, find_best_static
+
+log = logging.getLogger(__name__)
 
 
 class HTMLExporter(object):
@@ -142,7 +146,7 @@ class PDFExporter(HTMLExporter):
         })
 
         with tempfile.TemporaryDirectory() as tmpdir:
-            self.save_attachments(html, document, 'doc-0/media/', tmpdir)
+            html = self.save_attachments(html, document, 'doc-0/media/', tmpdir)
             return self.to_pdf(html, tmpdir, document=document)
 
     def render_many(self, documents, **kwargs):
@@ -172,11 +176,8 @@ class PDFExporter(HTMLExporter):
         prefix_len = len(prefix)
 
         # gather up the attachments that occur in the html
-        fnames = set(
-            img.get('src')[prefix_len:]
-            for img in html.iter('img')
-            if img.get('src', '').startswith(prefix)
-        )
+        imgs = [img for img in html.iter('img') if img.get('src', '').startswith(prefix)]
+        fnames = set(img.get('src')[prefix_len:] for img in imgs)
 
         # ensure the media directory exists
         media_dir = os.path.join(tmpdir, prefix)
@@ -189,6 +190,13 @@ class PDFExporter(HTMLExporter):
                 fname = os.path.join(media_dir, attachment.filename)
                 with open(fname, "wb") as f:
                     shutil.copyfileobj(attachment.file, f)
+
+        # make img references absolute
+        # see https://github.com/wkhtmltopdf/wkhtmltopdf/issues/2660
+        for img in imgs:
+            img.set('src', os.path.join(tmpdir, img.get('src')))
+
+        return lxml.html.tostring(html, encoding='unicode')
 
     def to_pdf(self, html, dirname, document=None, documents=None):
         args = []
@@ -242,7 +250,17 @@ class PDFExporter(HTMLExporter):
             return make_absolute_paths(html)
 
     def _wkhtmltopdf(self, *args, **kwargs):
-        return wkhtmltopdf(*args, **kwargs)
+        # wkhtmltopdf sometimes fails with a transient error, so try multiple times
+        attempts = 0
+        while True:
+            try:
+                attempts += 1
+                return wkhtmltopdf(*args, **kwargs)
+            except subprocess.CalledProcessError as e:
+                if attempts < 3:
+                    log.info("Retrying after wkhtmltopdf error")
+                else:
+                    raise e
 
     def pdf_options(self):
         # See https://eegg.wordpress.com/2010/01/25/page-margins-in-principle-and-practice/

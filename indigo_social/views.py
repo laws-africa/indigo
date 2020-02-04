@@ -14,6 +14,7 @@ from pinax.badges.registry import badges
 
 from indigo_api.models import Country, User
 from indigo_app.views.base import AbstractAuthedIndigoView
+from indigo_app.views.tasks import UserTasksView as UserTasksBaseView
 from .forms import UserProfileForm, AwardBadgeForm
 from .models import UserProfile
 
@@ -271,4 +272,14 @@ class BadgeDetailView(TemplateView):
     def get_context_data(self, **context):
         context['badge'] = self.badge
         context['awards'] = BadgeAward.objects.filter(slug=self.badge.slug).order_by('-awarded_at')
+        return context
+
+
+class UserTasksView(UserTasksBaseView):
+    authentication_required = False
+    template_name = 'indigo_social/user_tasks.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(UserTasksView, self).get_context_data(**kwargs)
+        context['user'] = User.objects.get(username=kwargs['username'])
         return context

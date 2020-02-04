@@ -498,7 +498,7 @@ class Commencement(models.Model):
 class UncommencedProvisions(models.Model):
     """ The details of uncommenced provisions of a work
     """
-    commenced_work = models.OneToOneField(Work, on_delete=models.CASCADE, null=False, help_text="Principal work with uncommenced provisions", related_name="uncommenced_provisions")
+    work = models.OneToOneField(Work, on_delete=models.CASCADE, null=False, help_text="Principal work with uncommenced provisions", related_name="uncommenced_provisions")
     all_provisions = models.BooleanField(default=False, help_text="All provisions of this work are uncommenced")
 
     # list of the element ids of the uncommenced provisions, e.g. ["section-2", "section-4.3.list0.a"]

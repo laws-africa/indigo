@@ -13,7 +13,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement
+    VocabularyTopic, Commencement, UncommencedProvisions
 
 
 class WorkForm(forms.ModelForm):
@@ -126,6 +126,7 @@ class WorkForm(forms.ModelForm):
         # if work has been edited to not commence, delete existing main commencement object
         if main_commencement and not self.instance.commenced:
             main_commencement.delete()
+            self.create_uncommenced()
 
         # otherwise, amend the existing one (or create a new one) with the work / date given in the form
         else:
@@ -137,6 +138,14 @@ class WorkForm(forms.ModelForm):
                 main_commencement.date = self.cleaned_data.get('commencement_date')
 
                 main_commencement.save()
+
+    def create_uncommenced(self):
+        if not hasattr(self.instance, 'uncommenced_provisions'):
+            uncommenced_provisions = UncommencedProvisions(work=self.instance)
+        else:
+            uncommenced_provisions = self.instance.uncommenced_provisions
+        uncommenced_provisions.all_provisions = True
+        uncommenced_provisions.save()
 
 
 class DocumentForm(forms.ModelForm):

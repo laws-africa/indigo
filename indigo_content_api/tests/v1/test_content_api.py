@@ -337,7 +337,6 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['commenced'], True)
-        assert_equal(response.data['commencement_date'], '2010-06-01')
 
     def test_published_alternate_links(self):
         response = self.client.get(self.api_path + '/za/act/2001/8/eng.json')

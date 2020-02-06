@@ -373,25 +373,21 @@ class Work(models.Model):
         main = self.commencements.filter(main=True).first()
         if main:
             return main
-        return None
 
     def main_commencement_date(self):
         main = self.main_commencement
         if main:
             return main.date
-        return None
 
     def main_commencing_work(self):
         main = self.main_commencement
         if main:
             return main.commencing_work
-        return None
 
     def first_commencement_date(self):
         first = self.commencements.first()
         if first:
             return first.date
-        return None
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

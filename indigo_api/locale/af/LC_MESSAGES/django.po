@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2020-01-31 11:58+0200\n"
-"PO-Revision-Date: 2020-02-04 06:46\n"
+"PO-Revision-Date: 2020-02-06 14:18\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -67,7 +67,7 @@ msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 #: templates/indigo_api/akn/coverpage_act.html:84
 #, python-format
 msgid "Up to date as at %(date)s"
-msgstr ""
+msgstr "Opgedateer tot en met %(date)s"
 
 #: templates/indigo_api/akn/coverpage_act.html:92
 msgid "Note: The original publication document is not available and this content could not be verified."

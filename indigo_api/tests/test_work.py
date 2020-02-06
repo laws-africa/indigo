@@ -8,7 +8,7 @@ from indigo_api.models import Document, Work, Country
 
 
 class WorkTestCase(TestCase):
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'published', 'drafts']
+    fixtures = ['countries', 'user', 'taxonomies', 'work', 'published', 'drafts', 'commencements']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)
@@ -28,7 +28,6 @@ class WorkTestCase(TestCase):
         to the commencement date as a possible point in time.
         """
         self.work.publication_date = None
-        self.work.commencement_date = datetime.date.today()
         events = self.work.amendments_with_initial_and_arbitrary()
         initial = events[-1]
         self.assertTrue(initial.initial)

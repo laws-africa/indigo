@@ -4,52 +4,16 @@ from __future__ import unicode_literals
 
 from django.db import migrations
 
-from indigo_api.models import Act
-from indigo.plugins import plugins
-
 
 def migrate_commencements(apps, schema_editor):
     """ Copy commencement details from works to Commencement objects
     """
     Work = apps.get_model("indigo_api", "Work")
-    Document = apps.get_model("indigo_api", "Document")
     Commencement = apps.get_model("indigo_api", "Commencement")
     UncommencedProvisions = apps.get_model("indigo_api", "UncommencedProvisions")
     db_alias = schema_editor.connection.alias
 
-    def for_document(topic, document):
-        country_code = document.work.country.country.iso.lower()
-        locality = document.work.locality.code if document.work.locality else None
-        language_code = document.language.language.iso_639_2B
-        return plugins.for_locale(topic, country=country_code, locality=locality, language=language_code)
-
-    def table_of_contents(expression):
-        builder = for_document('toc', expression)
-        expression.doc = Act(expression.document_xml)
-        expression.django_language = expression.language.language.iso_639_1
-        return builder.table_of_contents_for_document(expression)
-
-    def get_all_provisions(work):
-        toc = None
-        ids = []
-
-        first_expression = Document.objects.filter(work=work, deleted=False).order_by('expression_date').first()
-        if first_expression:
-            toc = table_of_contents(first_expression)
-
-        def add_ids(toc):
-            for e in toc:
-                if e.id:
-                    ids.append(e.id)
-                if e.children and e.component == 'main':
-                    add_ids(e.children)
-
-        if toc:
-            add_ids(toc)
-        return ids
-
     for w in Work.objects.using(db_alias).all():
-        all_provisions = get_all_provisions(w)
         if w.commencing_work or w.commencement_date:
             commencement = Commencement(
                 commenced_work=w,
@@ -57,7 +21,6 @@ def migrate_commencements(apps, schema_editor):
                 date=w.commencement_date,
                 main=True,
                 all_provisions=True,
-                provisions=all_provisions,
             )
             commencement.save()
 
@@ -65,7 +28,6 @@ def migrate_commencements(apps, schema_editor):
             uncommencement = UncommencedProvisions(
                 work=w,
                 all_provisions=True,
-                provisions=all_provisions,
             )
             uncommencement.save()
 

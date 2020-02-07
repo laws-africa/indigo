@@ -33,7 +33,8 @@ class WorkManager(models.Manager):
         return super(WorkManager, self) \
             .get_queryset() \
             .select_related('updated_by_user', 'created_by_user', 'country',
-                            'country__country', 'locality', 'publication_document')
+                            'country__country', 'locality', 'publication_document') \
+            .prefetch_related('commencements')
 
 
 class TaxonomyVocabulary(models.Model):
@@ -173,11 +174,15 @@ class Work(models.Model):
 
     @property
     def commencement_date(self):
-        return self.main_commencement_date()
+        main = self.main_commencement
+        if main:
+            return main.date
 
     @property
     def commencing_work(self):
-        return self.main_commencing_work()
+        main = self.main_commencement
+        if main:
+            return main.commencing_work
 
     def amended(self):
         return self.amendments.exists()
@@ -370,19 +375,10 @@ class Work(models.Model):
 
     @cached_property
     def main_commencement(self):
-        main = self.commencements.filter(main=True).first()
-        if main:
-            return main
-
-    def main_commencement_date(self):
-        main = self.main_commencement
-        if main:
-            return main.date
-
-    def main_commencing_work(self):
-        main = self.main_commencement
-        if main:
-            return main.commencing_work
+        if self.commencements.exists():
+            for c in list(self.commencements.all()):
+                if c.main:
+                    return c
 
     def first_commencement_date(self):
         first = self.commencements.first()

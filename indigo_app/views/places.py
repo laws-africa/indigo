@@ -356,6 +356,9 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         self.decorate_works(list(works))
 
+        # total works
+        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+
         # breadth completeness history, most recent 30 days
         metrics = list(DailyWorkMetrics.objects
             .filter(place_code=self.place.place_code)

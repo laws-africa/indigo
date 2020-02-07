@@ -4,7 +4,7 @@ import logging
 from itertools import chain
 from datetime import timedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib import messages
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -245,9 +245,11 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['commencements_timeline'] = self.work.commencements.all().reverse()
-        context['uncommenced_provisions'] = None
-        if hasattr(self.work, 'uncommenced_provisions'):
-            context['uncommenced_provisions'] = self.work.uncommenced_provisions
+        try:
+            uncommenced_provisions = self.work.uncommenced_provisions
+        except ObjectDoesNotExist:
+            uncommenced_provisions = None
+        context['uncommenced_provisions'] = uncommenced_provisions
         return context
 
 

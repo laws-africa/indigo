@@ -1,8 +1,8 @@
 Changelog
 =========
 
-? (?)
------
+8.0.0 (10 February 2020)
+------------------------
 
 * FEATURE: New place overview page
 * FEATURE: New page to show tasks assigned to a user

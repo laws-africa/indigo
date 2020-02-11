@@ -50,7 +50,14 @@
 
     <div id="library">
       <div class="list-group list-group-flush">
-        <div class="list-group-item ml-4">{{ paginator.count }} works</div>
+        <div class="list-group-item p-2 text-muted">
+          <span>{{ paginator.count }} works (of {{ total_works }} total)</span>
+          {% if perms.indigo_api.bulk_export_work %}
+            <span class="float-right">
+              <a href="{{ request.get_full_path }}?&format=xslx"><i class="fas fa-download fa-fw"></i>Download XSLX</a>
+            </span>
+          {% endif %}
+        </div>
 
         {% for work in works %}
           <div class="list-group-item list-group-item-action p-2" data-toggle="collapse" data-target="#work-detail-{{ work.pk }}">

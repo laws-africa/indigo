@@ -4,6 +4,7 @@ import urllib.parse
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings
@@ -120,17 +121,30 @@ class WorkForm(forms.ModelForm):
             pub_doc.save()
 
     def save_commencement(self):
-        # get existing main commencement object if there is one
+        # get the existing main commencement object if there is one
         main_commencement = self.instance.main_commencement
 
-        # if work has been edited to not commence, delete existing main commencement object
-        if main_commencement and not self.instance.commenced:
-            main_commencement.delete()
+        # if the work has been edited to not commence, delete the existing main commencement object
+        # or if it is being created as uncommenced, create the UncommencedProvisions object
+        if not self.instance.commenced:
+            if main_commencement:
+                main_commencement.delete()
             self.create_uncommenced()
 
         # otherwise, amend the existing one (or create a new one) with the work / date given in the form
+        # if the work was marked as `commenced` but no date or commencing work was given,
+        # also create a commencement object
         else:
-            if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data:
+            if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data \
+                    or self.instance.commenced:
+                # if a previously uncommenced work has now commenced,
+                # delete the existing UncommencedProvisions object first
+                try:
+                    uncommenced_provisions = self.instance.uncommenced_provisions
+                    uncommenced_provisions.delete()
+                except ObjectDoesNotExist:
+                    pass
+
                 if not main_commencement:
                     main_commencement = Commencement(commenced_work=self.instance, main=True, all_provisions=True)
 
@@ -140,10 +154,10 @@ class WorkForm(forms.ModelForm):
                 main_commencement.save()
 
     def create_uncommenced(self):
-        if not hasattr(self.instance, 'uncommenced_provisions'):
-            uncommenced_provisions = UncommencedProvisions(work=self.instance)
-        else:
+        try:
             uncommenced_provisions = self.instance.uncommenced_provisions
+        except ObjectDoesNotExist:
+            uncommenced_provisions = UncommencedProvisions(work=self.instance)
         uncommenced_provisions.all_provisions = True
         uncommenced_provisions.save()
 

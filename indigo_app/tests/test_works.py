@@ -2,6 +2,7 @@
 
 import datetime
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.test import testcases, override_settings
 from django_webtest import WebTest
 from django.contrib.auth.models import User
@@ -9,7 +10,7 @@ from webtest import Upload
 
 import reversion
 
-from indigo_api.models import Work
+from indigo_api.models import Work, Commencement, UncommencedProvisions
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -127,7 +128,7 @@ class WorksWebTest(WebTest):
     """ Test that uses https://github.com/django-webtest/django-webtest to help us
     fill and submit forms.
     """
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published']
+    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'commencements', 'uncommencements']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))
@@ -158,3 +159,78 @@ class WorksWebTest(WebTest):
         initial = list(work.initial_expressions().all())
         self.assertEqual(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-12-12")
         self.assertEqual(len(initial), 1)
+
+    def test_create_work_with_commencement_date_and_commencing_work(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Commenced Work With Date and Commencing Work"
+        form['work-frbr_uri'] = '/za/act/2020/3'
+        form['work-commenced'] = True
+        form['work-commencement_date'] = '2020-02-11'
+        form['work-commencing_work'] = 6
+        form.submit()
+        work = Work.objects.get(frbr_uri='/za/act/2020/3')
+        commencement = Commencement.objects.get(commenced_work=work)
+        commencing_work = Work.objects.get(pk=6)
+        self.assertTrue(work.commenced)
+        self.assertEqual(commencement.commencing_work, commencing_work)
+        self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
+        self.assertTrue(commencement.main)
+        self.assertTrue(commencement.all_provisions)
+
+    def test_create_work_without_commencement_date_but_with_commencing_work(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Commenced Work With Commencing Work but No Date"
+        form['work-frbr_uri'] = '/za/act/2020/4'
+        form['work-commenced'] = True
+        form['work-commencing_work'] = 6
+        form.submit()
+        work = Work.objects.get(frbr_uri='/za/act/2020/4')
+        commencement = Commencement.objects.get(commenced_work=work)
+        commencing_work = Work.objects.get(pk=6)
+        self.assertTrue(work.commenced)
+        self.assertEqual(commencement.commencing_work, commencing_work)
+        self.assertIsNone(commencement.date)
+        self.assertTrue(commencement.main)
+        self.assertTrue(commencement.all_provisions)
+
+    def test_create_work_without_commencement_date_or_commencing_work(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Commenced Work Without Date or Commencing Work"
+        form['work-frbr_uri'] = '/za/act/2020/5'
+        form['work-commenced'] = True
+        form.submit()
+        work = Work.objects.get(frbr_uri='/za/act/2020/5')
+        commencement = Commencement.objects.get(commenced_work=work)
+        self.assertTrue(work.commenced)
+        self.assertIsNone(commencement.commencing_work)
+        self.assertIsNone(commencement.date)
+        self.assertTrue(commencement.main)
+        self.assertTrue(commencement.all_provisions)
+
+    def test_create_uncommenced_work(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Uncommenced Work"
+        form['work-frbr_uri'] = '/za/act/2020/6'
+        form.submit()
+        work = Work.objects.get(frbr_uri='/za/act/2020/6')
+        uncommenced = UncommencedProvisions.objects.get(work=work)
+        self.assertFalse(work.commenced)
+        self.assertTrue(uncommenced.all_provisions)
+
+    def test_edit_uncommenced_work_to_commence(self):
+        uncommenced_work = Work.objects.get(pk=2)
+        self.assertFalse(uncommenced_work.commenced)
+
+        form = self.app.get(f'/works{uncommenced_work.frbr_uri}/edit/').forms['edit-work-form']
+        form['work-commenced'] = True
+        form['work-commencement_date'] = '2020-02-11'
+        form['work-commencing_work'] = 6
+        form.submit()
+
+        work = Work.objects.get(pk=2)
+        commencing_work = Work.objects.get(pk=6)
+        self.assertTrue(work.commenced)
+        commencement = Commencement.objects.get(commenced_work=work)
+        self.assertEqual(commencement.commencing_work, commencing_work)
+        self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
+        self.assertRaises(ObjectDoesNotExist, UncommencedProvisions.objects.get, work=work)

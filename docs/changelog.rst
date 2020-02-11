@@ -1,16 +1,22 @@
 Changelog
 =========
 
-? (?)
------
+8.0.0 (10 February 2020)
+------------------------
 
+* FEATURE: New place overview page
+* FEATURE: New page to show tasks assigned to a user
+* FEATURE: Filter works by completeness
+* Group sources in document 'show source' view
+* Include amendment publication documents in 'show source' view
 * Decrypt encrypted PDFs when importing only certain pages
+* Move from arrow to iso8601
 
 7.0.0 (9 December 2019)
 -----------------------
 
 * FEATURE: export work details as XLSX
-* FEATURE: resizable table columns (using CKEditoR)
+* FEATURE: resizable table columns (using CKEditor)
 * FEATURE: highlight text and make comments
 * Make it easier to override colophons
 * Rename output renderers to exporters, so as not to clash with DRF renderers

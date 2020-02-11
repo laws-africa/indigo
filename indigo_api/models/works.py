@@ -461,19 +461,6 @@ class Commencement(models.Model):
         ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
-    def is_only_commencement(self):
-        """ checks that the current commencement object is the only one associated with this commenced work,
-        as well as that it's the main one and that it commences all provisions.
-        """
-        return bool(
-            self.main is True and
-            self.all_provisions is True and
-            not self.other_commencements().exists()
-        )
-
-    def other_commencements(self):
-        return Commencement.objects.filter(commenced_work=self.commenced_work).exclude(pk=self.pk)
-
     def save(self, *args, **kwargs):
         # ensure only one commencement with main=True on commenced work
         existing_main = self.commenced_work.main_commencement

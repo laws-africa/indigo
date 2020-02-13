@@ -408,9 +408,9 @@
         self.htmlTransform.setParameter(null, 'mediaUrl', self.parent.model.url() + '/');
         self.htmlTransform.setParameter(null, 'lang', self.parent.model.get('language'));
         self.htmlTransform.setParameter(null, 'documentType', self.parent.model.work.get('nature'));
-        self.htmlTransform.setParameter(null, 'subtype', self.parent.model.get('subtype'));
+        self.htmlTransform.setParameter(null, 'subtype', self.parent.model.get('subtype') || '');
         self.htmlTransform.setParameter(null, 'country', self.parent.model.work.get('country'));
-        self.htmlTransform.setParameter(null, 'locality', self.parent.model.work.get('language'));
+        self.htmlTransform.setParameter(null, 'locality', self.parent.model.work.get('locality') || '');
         var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
 
         self.makeLinksExternal(html);

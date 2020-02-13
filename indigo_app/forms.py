@@ -121,45 +121,41 @@ class WorkForm(forms.ModelForm):
             pub_doc.save()
 
     def save_commencement(self):
+        work = self.instance
         # get the existing main commencement object if there is one
-        main_commencement = self.instance.main_commencement
+        commencement = work.main_commencement
 
-        # if the work has been edited to not commence, delete the existing main commencement object
-        # or if it is being created as uncommenced, create the UncommencedProvisions object
-        if not self.instance.commenced:
-            if main_commencement:
-                main_commencement.delete()
-            self.create_uncommenced()
+        # if the work has either been created as uncommenced or edited not to commence,
+        # delete the existing commencement and update / create the uncommencement
+        if not work.commenced:
+            if commencement:
+                commencement.delete()
 
-        # otherwise, amend the existing one (or create a new one) with the work / date given in the form
-        # if the work was marked as `commenced` but no date or commencing work was given,
-        # also create a commencement object
+            try:
+                uncommencement = work.uncommenced_provisions
+            except ObjectDoesNotExist:
+                uncommencement = UncommencedProvisions(work=work)
+            uncommencement.provisions = []
+            uncommencement.all_provisions = True
+            uncommencement.save()
+
+        # if the work has either been created as commenced ot edited to commence,
+        # delete the existing uncommencement and update / create the commencement
         else:
-            if 'commencement_date' in self.changed_data or 'commencing_work' in self.changed_data \
-                    or self.instance.commenced:
-                # if a previously uncommenced work has now commenced,
-                # delete the existing UncommencedProvisions object first
-                try:
-                    uncommenced_provisions = self.instance.uncommenced_provisions
-                    uncommenced_provisions.delete()
-                except ObjectDoesNotExist:
-                    pass
+            try:
+                uncommencement = work.uncommenced_provisions
+                uncommencement.delete()
+            except ObjectDoesNotExist:
+                pass
 
-                if not main_commencement:
-                    main_commencement = Commencement(commenced_work=self.instance, main=True, all_provisions=True)
+            if not commencement:
+                commencement = Commencement(commenced_work=work, main=True)
+            commencement.commencing_work = self.cleaned_data.get('commencing_work')
+            commencement.date = self.cleaned_data.get('commencement_date')
+            commencement.provisions = []
+            commencement.all_provisions = True
 
-                main_commencement.commencing_work = self.cleaned_data.get('commencing_work')
-                main_commencement.date = self.cleaned_data.get('commencement_date')
-
-                main_commencement.save()
-
-    def create_uncommenced(self):
-        try:
-            uncommenced_provisions = self.instance.uncommenced_provisions
-        except ObjectDoesNotExist:
-            uncommenced_provisions = UncommencedProvisions(work=self.instance)
-        uncommenced_provisions.all_provisions = True
-        uncommenced_provisions.save()
+            commencement.save()
 
 
 class DocumentForm(forms.ModelForm):

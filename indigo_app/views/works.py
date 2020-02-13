@@ -16,12 +16,13 @@ from reversion import revisions as reversion
 import datetime
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument,\
+    ArbitraryExpressionDate, Commencement
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, CommencementForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
@@ -250,7 +251,80 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         except ObjectDoesNotExist:
             uncommenced_provisions = None
         context['uncommenced_provisions'] = uncommenced_provisions
+
+        # TODO: these need to be attached and filtered for each commencement object,
+        # to exclude those already commenced
+        context['provisions'] = Commencement.commenceable_provisions(self.work)
         return context
+
+
+class WorkCommencementUpdateView(WorkDependentView, UpdateView):
+    """ View to update or delete a commencement object.
+    """
+    http_method_names = ['post']
+    model = Commencement
+    pk_url_kwarg = 'commencement_id'
+    form_class = CommencementForm
+
+    def get_queryset(self):
+        # TODO:
+        return self.work.commencements
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_commencement',)
+        return ('indigo_api.change_commencement',)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['provisions'] = Commencement.commenceable_provisions(self.work)
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object.updated_by_user = self.request.user
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return redirect(self.get_success_url())
+
+    def delete(self, request, *args, **kwargs):
+        self.get_object().delete()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_commencements', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url += "#commencement-%s" % self.object.id
+        return url
+
+
+class AddWorkCommencementView(WorkDependentView, CreateView):
+    """ View to add a new commencement.
+    """
+    model = Commencement
+    fields = ('date', 'commencing_work')
+    permission_required = ('indigo_api.add_commencement',)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = Commencement(commenced_work=self.work)
+        kwargs['instance'].created_by_user = self.request.user
+        kwargs['instance'].updated_by_user = self.request.user
+        return kwargs
+
+    def form_invalid(self, form):
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_commencements', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#commencement-%s" % self.object.id
+        return url
 
 
 class WorkAmendmentsView(WorkViewBase, DetailView):

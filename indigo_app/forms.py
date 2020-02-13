@@ -483,3 +483,16 @@ class CountryAdminForm(forms.ModelForm):
     def clean_italics_terms(self):
         # strip blanks and duplications
         return sorted(list(set(x for x in self.cleaned_data['italics_terms'] if x)))
+
+
+class CommencementForm(forms.ModelForm):
+    provisions = forms.MultipleChoiceField(required=False)
+
+    class Meta:
+        model = Commencement
+        fields = ('date', 'all_provisions', 'provisions', 'main')
+
+    def __init__(self, provisions, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.provisions = provisions
+        self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]

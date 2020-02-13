@@ -473,6 +473,29 @@ class Commencement(models.Model):
                 uncommencement.all_provisions = False
                 uncommencement.save()
 
+    @classmethod
+    def commenceable_provisions(cls, work):
+        """ Return a list of TOCElement objects that can be commenced.
+        """
+        documents = work.document_set\
+            .undeleted()\
+            .filter(language=work.country.primary_language)\
+            .all()
+
+        # get all the docs and combine the TOCs, based on element IDs
+        provisions = []
+        id_set = set()
+        for doc in documents:
+            plugin = plugins.for_document('toc', doc)
+            if plugin:
+                toc = plugin.table_of_contents_for_document(doc)
+                for item in plugin.commenceable_items(toc):
+                    if item.id and item.id not in id_set:
+                        id_set.add(item.id)
+                        provisions.append(item)
+
+        return provisions
+
 
 class UncommencedProvisions(models.Model):
     """ The details of uncommenced provisions of a work

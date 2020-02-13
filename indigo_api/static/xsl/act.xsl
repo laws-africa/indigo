@@ -12,6 +12,14 @@
   <xsl:param name="mediaUrl" />
   <!-- 3-letter language code of document -->
   <xsl:param name="lang" />
+  <!-- AKN document type (eg. act) -->
+  <xsl:param name="documentType" />
+  <!-- AKN document subtype (eg. by-law) -->
+  <xsl:param name="subtype" />
+  <!-- AKN country code (eg. za) -->
+  <xsl:param name="country" />
+  <!-- AKN locality code (eg. cpt) -->
+  <xsl:param name="locality" />
 
   <xsl:template match="a:act">
     <xsl:element name="article" namespace="">

@@ -472,7 +472,9 @@ class Commencement(models.Model):
         other_commencements = work.commencements.exclude(pk=self.pk)
         uncommenced = work.uncommenced_provisions
 
-        if other_commencements or uncommenced:
+        # excluding pk=None will ignore an uncommencement object which has been
+        # soft deleted in save_commencement on the work form
+        if other_commencements or (uncommenced and uncommenced.pk):
             self.all_provisions = False
 
         for commencement in other_commencements:
@@ -480,7 +482,7 @@ class Commencement(models.Model):
                 commencement.all_provisions = False
                 commencement.save()
 
-        if uncommenced and uncommenced.all_provisions:
+        if uncommenced and uncommenced.pk and uncommenced.all_provisions:
             uncommenced.all_provisions = False
             uncommenced.save()
 
@@ -508,7 +510,9 @@ class UncommencedProvisions(models.Model):
 
     def save(self, *args, **kwargs):
         # if more than one commencement / uncommencement exists on the work, all_provisions is False on all of them
-        existing_commencements = self.work.commencements.all()
+        # excluding pk=None will ignore a commencement object which has been
+        # soft deleted in save_commencement on the work form
+        existing_commencements = self.work.commencements.exclude(pk=None)
         if existing_commencements:
             self.all_provisions = False
 

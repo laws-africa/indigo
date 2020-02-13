@@ -154,7 +154,6 @@ class WorkForm(forms.ModelForm):
             commencement.date = self.cleaned_data.get('commencement_date')
             commencement.provisions = []
             commencement.all_provisions = True
-
             commencement.save()
 
 

@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-31 11:58+0200\n"
-"PO-Revision-Date: 2020-02-06 14:28\n"
+"POT-Creation-Date: 2020-02-13 12:59+0200\n"
+"PO-Revision-Date: 2020-02-13 13:07\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
 "Language: af_ZA\n"
@@ -25,6 +25,21 @@ msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(am
 #, python-format
 msgid "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgstr "[Gewysig deur <a href=\"%(resolver_uri)s\" class=\"amending-title\">%(amending_title)s</a> op <span class=\"amendment-date\">%(date)s</span>]"
+
+#: templates/indigo_api/akn/_amendments.html:23
+#| msgid ""
+#| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+#| "%(amending_title)s (%(amending_numtitle)s)</a> on <span class=\"amendment-"
+#| "date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr ""
+
+#: templates/indigo_api/akn/_amendments.html:25
+#| msgid ""
+#| "[Amended by <a href=\"%(resolver_uri)s\" class=\"amending-title\">"
+#| "%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
+msgid "[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr ""
 
 #: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format

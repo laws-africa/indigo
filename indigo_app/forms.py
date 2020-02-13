@@ -139,7 +139,7 @@ class WorkForm(forms.ModelForm):
             uncommencement.all_provisions = True
             uncommencement.save()
 
-        # if the work has either been created as commenced ot edited to commence,
+        # if the work has either been created as commenced or edited to commence,
         # delete the existing uncommencement and update / create the commencement
         else:
             try:

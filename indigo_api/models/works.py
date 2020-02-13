@@ -462,19 +462,20 @@ class Commencement(models.Model):
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
     def save(self, *args, **kwargs):
+        work = self.commenced_work
         # ensure only one commencement with main=True exists on the commenced work
-        existing_main = self.commenced_work.main_commencement
+        existing_main = work.main_commencement
         if existing_main and existing_main != self:
             self.main = False
 
         # if more than one commencement / uncommencement exists on the work, all_provisions is False on all of them
-        existing_commencements = self.commenced_work.commencements.all()
-        uncommenced = self.commenced_work.uncommenced_provisions
+        other_commencements = work.commencements.exclude(pk=self.pk)
+        uncommenced = work.uncommenced_provisions
 
-        if existing_commencements or uncommenced:
+        if other_commencements or uncommenced:
             self.all_provisions = False
 
-        for commencement in existing_commencements:
+        for commencement in other_commencements:
             if commencement.all_provisions:
                 commencement.all_provisions = False
                 commencement.save()

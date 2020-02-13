@@ -462,14 +462,29 @@ class Commencement(models.Model):
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
     def save(self, *args, **kwargs):
-        # ensure only one commencement with main=True on commenced work
+        # ensure only one commencement with main=True exists on the commenced work
         existing_main = self.commenced_work.main_commencement
         if existing_main and existing_main != self:
             self.main = False
 
-        # ensure only one commencement with all_provisions=True on commenced work
-        existing_all = self.commenced_work.commencements.filter(all_provisions=True).first()
-        if existing_all and existing_all != self:
+        # if more than one commencement / uncommencement exists on the work, all_provisions is False on all of them
+        existing_commencements = self.commenced_work.commencements.all()
+        uncommenced = self.commenced_work.uncommenced_provisions
+
+        if existing_commencements or uncommenced:
+            self.all_provisions = False
+
+        for commencement in existing_commencements:
+            if commencement.all_provisions:
+                commencement.all_provisions = False
+                commencement.save()
+
+        if uncommenced and uncommenced.all_provisions:
+            uncommenced.all_provisions = False
+            uncommenced.save()
+
+        # if it has a provisions list, all_provisions must be False
+        if self.provisions:
             self.all_provisions = False
 
         return super(Commencement, self).save(*args, **kwargs)
@@ -491,10 +506,19 @@ class UncommencedProvisions(models.Model):
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
     def save(self, *args, **kwargs):
-        # ensure only one commencement / uncommencement with all_provisions=True on commenced work
-        if self.all_provisions:
-            if self.work.commencements.filter(all_provisions=True).exists():
-                self.all_provisions = False
+        # if more than one commencement / uncommencement exists on the work, all_provisions is False on all of them
+        existing_commencements = self.work.commencements.all()
+        if existing_commencements:
+            self.all_provisions = False
+
+        for commencement in existing_commencements:
+            if commencement.all_provisions:
+                commencement.all_provisions = False
+                commencement.save()
+
+        # if it has a provisions list, all_provisions must be False
+        if self.provisions:
+            self.all_provisions = False
 
         return super(UncommencedProvisions, self).save(*args, **kwargs)
 

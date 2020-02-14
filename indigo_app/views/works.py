@@ -16,8 +16,8 @@ from reversion import revisions as reversion
 import datetime
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument,\
-    ArbitraryExpressionDate, Commencement
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
+    ArbitraryExpressionDate, Commencement, UncommencedProvisions
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -308,6 +308,26 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
         if self.object.id:
             url += "#commencement-%s" % self.object.id
         return url
+
+
+class WorkUncommencedView(WorkDependentView, View):
+    """ Post-only view to mark a work as fully uncommenced.
+    """
+    http_method_names = ['post']
+    permission_required = ('indigo_api.delete_commencement',)
+
+    def post(self, request, *args, **kwargs):
+        self.work.commenced = False
+        self.work.save()
+
+        for obj in self.work.commencements.all():
+            obj.delete()
+
+        uncommenced, _ = UncommencedProvisions.objects.get_or_create(work=self.work)
+        uncommenced.all_provisions = True
+        uncommenced.save()
+
+        return redirect('work_commencements', frbr_uri=self.kwargs['frbr_uri'])
 
 
 class AddWorkCommencementView(WorkDependentView, CreateView):

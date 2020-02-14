@@ -463,6 +463,10 @@ class Commencement(models.Model):
 
     def rationalise(self):
         work = self.commenced_work
+        if not work.commenced:
+            work.commenced = True
+            work.save()
+
         try:
             # if the work was uncommenced and has now fully commenced, delete the uncommencement
             # if it was uncommenced and has now partly commenced, edit it to be partial too

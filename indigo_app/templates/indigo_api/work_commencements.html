@@ -6,6 +6,14 @@
 {% block work-content %}
   <h4>Commencements</h4>
 
+  {% if work.commenced and not work.commencement_date %}
+    <p class="alert alert-warning">This work has commenced, but the commencement date is unknown.</p>
+  {% endif %}
+
+  {% if not work.commenced %}
+    <p class="alert alert-info">This work has not commenced.</p>
+  {% endif %}
+
   <ol class="timeline">
     {% if perms.indigo_api.add_commencement %}
       <li class="timeline-item card">
@@ -24,7 +32,7 @@
 
     {% for commencement in commencements_timeline %}
       <li class="timeline-item card">
-        <h6 class="timeline-date">{{ commencement.date|date:"Y-m-d" }}</h6>
+        <h6 class="timeline-date">{% if commencement.date %}{{ commencement.date|date:"Y-m-d" }}{% else %}<em>Unknown</em>{% endif %}</h6>
         <div class="card-body">
           <form action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri commencement_id=commencement.id %}" class="commencement-form" method="POST" id="commencement-{{ commencement.id|default:'initial' }}">
             {% csrf_token %}
@@ -41,10 +49,17 @@
               </div>
             {% endif %}
 
-            <h6 class="mb-0">
-              {% if not commencement.date %}Future commencement by{% else %}Commenced by{% endif %}
-              <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a></h6>
-            <div class="text-muted mb-3">{{ commencement.commencing_work.frbr_uri }}</div>
+            <div class="mb-3">
+              <h6>
+                Commenced
+                {% if commencement.commencing_work %}
+                  by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+                {% endif %}
+              </h6>
+              {% if commencement.commencing_work %}
+                <div class="text-muted">{{ commencement.commencing_work.frbr_uri }}</div>
+              {% endif %}
+            </div>
 
             <div class="commencement-details collapse show">
               {% if commencement.main %}<h6>Main commencement</h6>{% endif %}
@@ -67,7 +82,7 @@
             <div class="mb-3 collapse commencement-form commencement-form-{{ commencement.id }}">
               <div class="form-row form-group">
                 <div class="col-md-4 col-lg-3">
-                  <input type="text" class="form-control commencement-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ commencement.date|date:"Y-m-d" }}" autocomplete="off">
+                  <input type="text" class="form-control commencement-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="date" value="{{ commencement.date|date:"Y-m-d" }}" autocomplete="off">
                 </div>
               </div>
 
@@ -104,6 +119,15 @@
       </li>
     {% endfor %}
   </ol>
+
+  {% if work.pk and work.commencements.count %}
+    <form method="post" class="mt-5" action="{% url 'work_uncommenced' frbr_uri=work.frbr_uri %}">
+      {% csrf_token %}
+      <h5>Not yet commenced?</h5>
+      <p>Remove all commencement detail and mark as not commenced.</p>
+      <button type="submit" class="btn btn-danger" data-confirm="Are you sure?" name="delete">This work has not commenced</button>
+    </form>
+  {% endif %}
 {% endblock %}
 
 

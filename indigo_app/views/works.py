@@ -254,7 +254,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
         # TODO: these need to be attached and filtered for each commencement object,
         # to exclude those already commenced
-        context['provisions'] = Commencement.commenceable_provisions(self.work)
+        context['provisions'] = self.work.commenceable_provisions()
         return context
 
 

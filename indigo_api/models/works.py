@@ -385,6 +385,27 @@ class Work(models.Model):
         if first:
             return first.date
 
+    def commenceable_provisions(self):
+        """ Return a list of TOCElement objects that can be commenced.
+        """
+        # gather documents and sort so that we consider primary language documents first
+        documents = self.document_set.undeleted().all()
+        documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
+
+        # get all the docs and combine the TOCs, based on element IDs
+        provisions = []
+        id_set = set()
+        for doc in documents:
+            plugin = plugins.for_document('toc', doc)
+            if plugin:
+                toc = plugin.table_of_contents_for_document(doc)
+                for item in plugin.commenceable_items(toc):
+                    if item.id and item.id not in id_set:
+                        id_set.add(item.id)
+                        provisions.append(item)
+
+        return provisions
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 
@@ -479,29 +500,6 @@ class Commencement(models.Model):
                     uncommencement.save()
         except UncommencedProvisions.DoesNotExist:
             pass
-
-    @classmethod
-    def commenceable_provisions(cls, work):
-        """ Return a list of TOCElement objects that can be commenced.
-        """
-        documents = work.document_set\
-            .undeleted()\
-            .filter(language=work.country.primary_language)\
-            .all()
-
-        # get all the docs and combine the TOCs, based on element IDs
-        provisions = []
-        id_set = set()
-        for doc in documents:
-            plugin = plugins.for_document('toc', doc)
-            if plugin:
-                toc = plugin.table_of_contents_for_document(doc)
-                for item in plugin.commenceable_items(toc):
-                    if item.id and item.id not in id_set:
-                        id_set.add(item.id)
-                        provisions.append(item)
-
-        return provisions
 
 
 class UncommencedProvisions(models.Model):

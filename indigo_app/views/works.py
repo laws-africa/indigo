@@ -278,7 +278,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['work'] = self.work
-        kwargs['provisions'] = Commencement.commenceable_provisions(self.work)
+        kwargs['provisions'] = self.work.commenceable_provisions()
         return kwargs
 
     def post(self, request, *args, **kwargs):

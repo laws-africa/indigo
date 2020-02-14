@@ -45,17 +45,14 @@
           <form action="{% url 'work_commencement_detail' frbr_uri=work.frbr_uri commencement_id=commencement.id %}" class="commencement-form" method="POST" id="commencement-{{ commencement.id|default:'initial' }}">
             {% csrf_token %}
 
-            {% if perms.indigo_api.change_commencement %}
-              <div class="dropdown float-right">
-                <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
-                <div class="dropdown-menu">
-                  <a href=".commencement-form-{{ commencement.id }}" class="dropdown-item" data-toggle="collapse">Edit</a>
-                  {% if perms.indigo_api.delete_commencement %}
-                    <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this commencement?">Delete</button>
-                  {% endif %}
-                </div>
-              </div>
-            {% endif %}
+            <div class="float-right">
+              {% if perms.indigo_api.delete_commencement %}
+                <button class="btn btn-link text-danger mr-2" type="submit" name="delete" data-confirm="Really delete this commencement?">Delete</button>
+              {% endif %}
+              {% if perms.indigo_api.change_commencement %}
+                <a href=".commencement-form-{{ commencement.id }}" class="btn btn-outline-primary" data-toggle="collapse">Edit</a>
+              {% endif %}
+            </div>
 
             <div class="mb-3">
               <h6>

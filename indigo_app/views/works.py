@@ -245,17 +245,27 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
-        context['commencements_timeline'] = self.work.commencements.all().reverse()
-        try:
-            uncommenced_provisions = self.work.uncommenced_provisions
-        except ObjectDoesNotExist:
-            uncommenced_provisions = None
-        context['uncommenced_provisions'] = uncommenced_provisions
-
         # TODO: these need to be attached and filtered for each commencement object,
         # to exclude those already commenced
-        context['provisions'] = self.work.commenceable_provisions()
+        context['provisions'] = provisions = self.work.commenceable_provisions()
+        context['uncommenced_provisions'] = self.get_uncommenced_provisions(provisions)
+        context['commencements_timeline'] = self.work.commencements.all().reverse()
+
+        provisions = {p.id: p for p in provisions}
+        for commencement in context['commencements_timeline']:
+            commencement.provision_items = [provisions.get(p, p) for p in commencement.provisions]
+
         return context
+
+    def get_uncommenced_provisions(self, provisions):
+        commenced = set()
+        for commencement in self.work.commencements.all():
+            if commencement.all_provisions:
+                return []
+            for prov in commencement.provisions:
+                commenced.add(prov)
+
+        return [p for p in provisions if p.id not in commenced]
 
 
 class WorkCommencementUpdateView(WorkDependentView, UpdateView):
@@ -267,7 +277,6 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     form_class = CommencementForm
 
     def get_queryset(self):
-        # TODO:
         return self.work.commencements
 
     def get_permission_required(self):
@@ -288,8 +297,10 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
+        super().form_valid(form)
         self.object.rationalise()
-        return super().form_valid(form)
+        self.object.save()
+        return redirect(self.get_success_url())
 
     def form_invalid(self, form):
         # send errors as messages, since we redirect back to the commencements page

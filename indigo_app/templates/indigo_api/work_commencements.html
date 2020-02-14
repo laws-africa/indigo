@@ -14,6 +14,10 @@
     <p class="alert alert-info">This work has not commenced.</p>
   {% endif %}
 
+  {% if uncommenced_provisions %}
+    <p class="alert alert-warning">This work has {{ uncommenced_provisions|length }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions|length|pluralize }}</a>.</p>
+  {% endif %}
+
   <ol class="timeline">
     {% if perms.indigo_api.add_commencement %}
       <li class="timeline-item card">
@@ -66,14 +70,14 @@
               <h6>
                 {% if commencement.all_provisions %}Commences all provisions{% endif %}
                 {% if commencement.provisions %}
-                  Commences {{ commencement.provisions|length }} of {{ provisions|length }} provision{{ provisions|length|pluralize }}
+                  Commences {{ commencement.provisions|length }} of {{ provisions|length }} provision{{ provisions|length|pluralize }}:
                 {% endif %}
               </h6>
 
               {% if commencement.provisions %}
                 <ul class="list-unstyled">
-                  {% for prov in commencement.provisions %}
-                    <li>{{ prov }}</li>
+                  {% for prov in commencement.provision_items %}
+                    <li>{{ prov.title|default:prov }}</li>
                   {% endfor %}
                 </ul>
               {% endif %}
@@ -120,7 +124,20 @@
     {% endfor %}
   </ol>
 
-  {% if work.pk and work.commencements.count %}
+  {% if uncommenced_provisions %}
+    <div class="card mt-5">
+      <h5 id="uncommenced" class="card-header">Uncommenced provisions <span class="badge badge-warning">{{ uncommenced_provisions|length }}</span></h5>
+      <div class="card-body">
+        <ul class="list-unstyled mb-0">
+          {% for prov in uncommenced_provisions %}
+            <li>{{ prov.title }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  {% endif %}
+
+  {% if work.commencements.count %}
     <form method="post" class="mt-5" action="{% url 'work_uncommenced' frbr_uri=work.frbr_uri %}">
       {% csrf_token %}
       <h5>Not yet commenced?</h5>

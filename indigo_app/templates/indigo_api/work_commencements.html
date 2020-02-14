@@ -18,8 +18,12 @@
     <p class="alert alert-warning">This work has {{ uncommenced_provisions|length }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions|length|pluralize }}</a>.</p>
   {% endif %}
 
+  {% if has_all_provisions %}
+    <p>All provisions have commenced, no additional commencement events are required.</p>
+  {% endif %}
+
   <ol class="timeline">
-    {% if perms.indigo_api.add_commencement %}
+    {% if perms.indigo_api.add_commencement and not has_all_provisions %}
       <li class="timeline-item card">
         <div class="card-body">
           {% block new-commencement-card %}
@@ -34,7 +38,7 @@
       </li>
     {% endif %}
 
-    {% for commencement in commencements_timeline %}
+    {% for commencement in commencements %}
       <li class="timeline-item card">
         <h6 class="timeline-date">{% if commencement.date %}{{ commencement.date|date:"Y-m-d" }}{% else %}<em>Unknown</em>{% endif %}</h6>
         <div class="card-body">
@@ -92,14 +96,20 @@
 
               <div class="form-group">
                 <div class="form-check">
-                  <input class="form-check-input" type="checkbox" id="commencement-{{ commencement.id }}-main" {% if commencement.main %}checked{% endif %} value="true" name="main">
+                  <input class="form-check-input" type="checkbox" id="commencement-{{ commencement.id }}-main"
+                         value="true" name="main"
+                         {% if commencement.main %}checked{% endif %}
+                         {% if has_main_commencement and not commencement.main %}disabled{% endif %}>
                   <label class="form-check-label" for="commencement-{{ commencement.id }}-main">Main commencement</label>
                 </div>
               </div>
 
               <div class="form-group">
                 <div class="form-check">
-                  <input class="form-check-input all-provisions" type="checkbox" id="commencement-{{ commencement.id }}-all-provisions" {% if commencement.all_provisions %}checked{% endif %} value="true" name="all_provisions">
+                  <input class="form-check-input all-provisions" type="checkbox" id="commencement-{{ commencement.id }}-all-provisions"
+                         value="true" name="all_provisions"
+                         {% if commencement.all_provisions %}checked{% endif %}
+                         {% if commencements|length > 1 and not commencement.all_provisions %}disabled{% endif %}>
                   <label class="form-check-label" for="commencement-{{ commencement.id }}-all-provisions">Commences all provisions</label>
                 </div>
               </div>

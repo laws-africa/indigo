@@ -510,11 +510,11 @@ class CommencementForm(forms.ModelForm):
     def clean_all_provisions(self):
         if self.cleaned_data['all_provisions']:
             # there can be only one!
-            qs = Commencement.objects.filter(commenced_work=self.work, all_provisions=True)
+            qs = Commencement.objects.filter(commenced_work=self.work)
             if self.instance:
                 qs = qs.exclude(pk=self.instance.pk)
             if qs.exists():
-                raise ValidationError("A commencement for all provisions already exists.")
+                raise ValidationError("A commencement for all provisions must be the only commencement.")
         return self.cleaned_data['all_provisions']
 
     def clean(self):

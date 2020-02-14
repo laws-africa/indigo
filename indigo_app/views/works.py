@@ -249,7 +249,9 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         # to exclude those already commenced
         context['provisions'] = provisions = self.work.commenceable_provisions()
         context['uncommenced_provisions'] = self.get_uncommenced_provisions(provisions)
-        context['commencements_timeline'] = commencements = self.work.commencements.all().reverse()
+        context['commencements'] = commencements = self.work.commencements.all().reverse()
+        context['has_all_provisions'] = any(c.all_provisions for c in commencements)
+        context['has_main_commencement'] = any(c.main for c in commencements)
 
         provision_set = {p.id: p for p in provisions}
         for commencement in commencements:
@@ -371,7 +373,7 @@ class AddWorkCommencementView(WorkDependentView, CreateView):
         if not self.work.commencements.filter(main=True).exists():
             self.object.main = True
 
-        if not self.work.commencements.filter(all_provisions=True).exists():
+        if not self.work.commencements.exists():
             self.object.all_provisions = True
 
         self.object.rationalise()

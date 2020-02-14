@@ -298,12 +298,13 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
         return redirect(self.get_success_url())
 
     def delete(self, request, *args, **kwargs):
-        self.get_object().delete()
+        self.object = self.get_object()
+        self.object.delete()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
         url = reverse('work_commencements', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
-        if self.object and self.object.id:
+        if self.object.id:
             url += "#commencement-%s" % self.object.id
         return url
 

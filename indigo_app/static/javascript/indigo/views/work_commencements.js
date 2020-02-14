@@ -11,6 +11,8 @@
     el: '#work-commencements-view',
     events: {
       'click .add-commencement': 'addCommencement',
+      'click .all-provisions': 'allProvisionsChanged',
+      'submit .commencement-form': 'formSubmitted',
     },
 
     initialize: function() {
@@ -47,5 +49,19 @@
       // show the details
       e.target.parentElement.querySelector('.commencement-details').classList.add('show');
     },
+
+    allProvisionsChanged: function(e) {
+      $(e.target).closest('.card').find('.provisions-commenced').toggleClass('d-none', e.target.checked);
+    },
+
+    formSubmitted: function(e) {
+      var form = e.target;
+
+      // if we've selected all provisions, ensure we don't send back any selections
+      if (form.elements.all_provisions.checked) {
+        // we can't iterate over this in-place, so do this instead
+        while (form.elements.provisions.selectedOptions.length > 0) form.elements.provisions.selectedOptions[0].selected = false;
+      }
+    }
   });
 })(window);

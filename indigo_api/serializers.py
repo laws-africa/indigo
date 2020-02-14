@@ -548,7 +548,7 @@ class UncommencedProvisionsSerializer(serializers.ModelSerializer):
     class Meta:
         model = UncommencedProvisions
         fields = (
-            'all_provisions', 'provisions',
+            'all_provisions',
         )
         read_only_fields = fields
 

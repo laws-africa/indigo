@@ -288,6 +288,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
 
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
+        self.object.rationalise()
         return super().form_valid(form)
 
     def form_invalid(self, form):
@@ -318,10 +319,25 @@ class AddWorkCommencementView(WorkDependentView, CreateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
-        kwargs['instance'] = Commencement(commenced_work=self.work)
-        kwargs['instance'].created_by_user = self.request.user
-        kwargs['instance'].updated_by_user = self.request.user
+        kwargs['instance'] = Commencement(
+            commenced_work=self.work,
+            created_by_user=self.request.user,
+            updated_by_user=self.request.user)
         return kwargs
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        # useful defaults for new commencements
+        if not self.work.commencements.filter(main=True).exists():
+            self.object.main = True
+
+        if not self.work.commencements.filter(all_provisions=True).exists():
+            self.object.all_provisions = True
+
+        self.object.rationalise()
+        self.object.save()
+        return redirect(self.get_success_url())
 
     def form_invalid(self, form):
         return redirect(self.get_success_url())

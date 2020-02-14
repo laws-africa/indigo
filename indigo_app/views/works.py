@@ -277,6 +277,7 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
+        kwargs['work'] = self.work
         kwargs['provisions'] = Commencement.commenceable_provisions(self.work)
         return kwargs
 
@@ -290,6 +291,10 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        # send errors as messages, since we redirect back to the commencements page
+        errors = list(form.non_field_errors())
+        errors.extend([f'{fld}: ' + ', '.join(errs) for fld, errs in form.errors.items() if fld != '__all__'])
+        messages.error(self.request, '; '.join(errors))
         return redirect(self.get_success_url())
 
     def delete(self, request, *args, **kwargs):

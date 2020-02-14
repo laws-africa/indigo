@@ -1,10 +1,9 @@
-import datetime
 import json
 import urllib.parse
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings
@@ -492,7 +491,33 @@ class CommencementForm(forms.ModelForm):
         model = Commencement
         fields = ('date', 'all_provisions', 'provisions', 'main')
 
-    def __init__(self, provisions, *args, **kwargs):
+    def __init__(self, work, provisions, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.work = work
         self.provisions = provisions
         self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]
+
+    def clean_main(self):
+        if self.cleaned_data['main']:
+            # there can be only one!
+            qs = Commencement.objects.filter(commenced_work=self.work, main=True)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A main commencement already exists.")
+        return self.cleaned_data['main']
+
+    def clean_all_provisions(self):
+        if self.cleaned_data['all_provisions']:
+            # there can be only one!
+            qs = Commencement.objects.filter(commenced_work=self.work, all_provisions=True)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A commencement for all provisions already exists.")
+        return self.cleaned_data['all_provisions']
+
+    def clean(self):
+        super().clean()
+        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
+            raise ValidationError("Cannot specify all provisions, and a list of provisions.")

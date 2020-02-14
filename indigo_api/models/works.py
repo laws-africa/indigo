@@ -463,15 +463,18 @@ class Commencement(models.Model):
 
     def rationalise(self):
         work = self.commenced_work
-        # if the work was uncommenced and has now fully commenced, delete the uncommencement
-        # if it was uncommenced and has now partly commenced, edit it to be partial too
-        uncommencement = work.uncommenced_provisions
-        if uncommencement and uncommencement.all_provisions:
-            if self.all_provisions:
-                uncommencement.delete()
-            else:
-                uncommencement.all_provisions = False
-                uncommencement.save()
+        try:
+            # if the work was uncommenced and has now fully commenced, delete the uncommencement
+            # if it was uncommenced and has now partly commenced, edit it to be partial too
+            uncommencement = work.uncommenced_provisions
+            if uncommencement.all_provisions:
+                if self.all_provisions:
+                    uncommencement.delete()
+                else:
+                    uncommencement.all_provisions = False
+                    uncommencement.save()
+        except UncommencedProvisions.DoesNotExist:
+            pass
 
     @classmethod
     def commenceable_provisions(cls, work):

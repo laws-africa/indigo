@@ -48,8 +48,6 @@ class WorkForm(forms.ModelForm):
     # commencement details
     commencement_date = forms.DateField(required=False)
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
-    uncommenced_all = forms.BooleanField()
-    commenced_all = forms.BooleanField()
 
     def __init__(self, place, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -123,27 +121,29 @@ class WorkForm(forms.ModelForm):
 
     def save_commencement(self):
         work = self.instance
-        commencement = work.main_commencement
+
+        # if there are multiple commencement objects, then just ignore these elements,
+        # the user must edit the commencements in the commencements view
+        if work.commencements.count() > 1:
+            return
 
         # if the work has either been created as uncommenced or edited not to commence, update / create the uncommencement
         if not work.commenced:
-            try:
-                uncommencement = work.uncommenced_provisions
-            except ObjectDoesNotExist:
-                uncommencement = UncommencedProvisions(work=work)
-            uncommencement.all_provisions = self.cleaned_data.get('uncommenced_all')
-            uncommencement.save()
+            uncommencement, _ = UncommencedProvisions.objects.get_or_create(work=work)
+            uncommencement.all_provisions = True
             uncommencement.rationalise()
+            uncommencement.save()
 
-        # if the work has either been created as commenced or edited to commence, update / create the commencement
         else:
-            if not commencement:
-                commencement = Commencement(commenced_work=work)
-            commencement.commencing_work = self.cleaned_data.get('commencing_work')
-            commencement.date = self.cleaned_data.get('commencement_date')
-            commencement.all_provisions = self.cleaned_data.get('commenced_all')
-            commencement.save()
+            # if the work has either been created as commenced or edited to commence, update / create the commencement
+            commencement, _ = Commencement.objects.get_or_create(commenced_work=work)
+            commencement.commencing_work = self.cleaned_data['commencing_work']
+            commencement.date = self.cleaned_data['commencement_date']
+            # this is safe because we know there are no other commencement objects
+            commencement.main = True
+            commencement.all_provisions = True
             commencement.rationalise()
+            commencement.save()
 
 
 class DocumentForm(forms.ModelForm):

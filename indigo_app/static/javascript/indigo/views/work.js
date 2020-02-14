@@ -221,7 +221,10 @@
       }
       chooser.showModal().done(function(chosen) {
         if (chosen) {
-          self.model.set('commencing_work', chosen);
+          self.model.set({
+            'commencing_work': chosen,
+            'commencement_date': chosen.get('commencement_date') || chosen.get('publication_date'),
+          });
         }
       });
     },
@@ -229,6 +232,11 @@
     commencedChanged: function() {
       if (this.model.get('commenced')) {
         this.$('#commencement_details').removeClass('d-none');
+
+        if (!this.model.get('commencement_date')) {
+          this.model.set('commencement_date', this.model.get('publication_date'));
+        }
+
         this.commencementDateUnknown.checked = false;
         this.commencementDateUnknownChanged();
       } else {

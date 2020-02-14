@@ -144,7 +144,7 @@
     </div>
   {% endif %}
 
-  {% if work.commencements.count %}
+  {% if work.commencements.count and perms.indigo_api.delete_commencement %}
     <form method="post" class="mt-5" action="{% url 'work_uncommenced' frbr_uri=work.frbr_uri %}">
       {% csrf_token %}
       <h5>Not yet commenced?</h5>

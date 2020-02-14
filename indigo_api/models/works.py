@@ -461,36 +461,17 @@ class Commencement(models.Model):
         ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
-    def save(self, *args, **kwargs):
+    def rationalise(self):
         work = self.commenced_work
-        # ensure only one commencement with main=True exists on the commenced work
-        existing_main = work.main_commencement
-        if existing_main and existing_main != self:
-            self.main = False
-
-        # if more than one commencement / uncommencement exists on the work, all_provisions is False on all of them
-        other_commencements = work.commencements.exclude(pk=self.pk)
-        uncommenced = work.uncommenced_provisions
-
-        # excluding pk=None will ignore an uncommencement object which has been
-        # soft deleted in save_commencement on the work form
-        if other_commencements or (uncommenced and uncommenced.pk):
-            self.all_provisions = False
-
-        for commencement in other_commencements:
-            if commencement.all_provisions:
-                commencement.all_provisions = False
-                commencement.save()
-
-        if uncommenced and uncommenced.pk and uncommenced.all_provisions:
-            uncommenced.all_provisions = False
-            uncommenced.save()
-
-        # if it has a provisions list, all_provisions must be False
-        if self.provisions:
-            self.all_provisions = False
-
-        return super(Commencement, self).save(*args, **kwargs)
+        # if the work was uncommenced and has now fully commenced, delete the uncommencement
+        # if it was uncommenced and has now partly commenced, edit it to be partial too
+        uncommencement = work.uncommenced_provisions
+        if uncommencement and uncommencement.all_provisions:
+            if self.all_provisions:
+                uncommencement.delete()
+            else:
+                uncommencement.all_provisions = False
+                uncommencement.save()
 
 
 class UncommencedProvisions(models.Model):
@@ -508,24 +489,17 @@ class UncommencedProvisions(models.Model):
     created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
     updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
 
-    def save(self, *args, **kwargs):
-        # if more than one commencement / uncommencement exists on the work, all_provisions is False on all of them
-        # excluding pk=None will ignore a commencement object which has been
-        # soft deleted in save_commencement on the work form
-        existing_commencements = self.work.commencements.exclude(pk=None)
-        if existing_commencements:
-            self.all_provisions = False
-
-        for commencement in existing_commencements:
-            if commencement.all_provisions:
+    def rationalise(self):
+        work = self.work
+        # if the work was commenced and has now fully uncommenced, delete the commencement/s
+        # if it was commenced and has now only partly commenced, edit the commencement/s to be partial
+        commencements = work.commencements.all()
+        for commencement in commencements:
+            if self.all_provisions:
+                commencement.delete()
+            elif commencement.all_provisions:
                 commencement.all_provisions = False
                 commencement.save()
-
-        # if it has a provisions list, all_provisions must be False
-        if self.provisions:
-            self.all_provisions = False
-
-        return super(UncommencedProvisions, self).save(*args, **kwargs)
 
 
 class Amendment(models.Model):

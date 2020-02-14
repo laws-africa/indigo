@@ -49,6 +49,8 @@ class WorkForm(forms.ModelForm):
     # commencement details
     commencement_date = forms.DateField(required=False)
     commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+    uncommenced_all = forms.BooleanField()
+    commenced_all = forms.BooleanField()
 
     def __init__(self, place, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -122,39 +124,27 @@ class WorkForm(forms.ModelForm):
 
     def save_commencement(self):
         work = self.instance
-        # get the existing main commencement object if there is one
         commencement = work.main_commencement
 
-        # if the work has either been created as uncommenced or edited not to commence,
-        # delete the existing commencement and update / create the uncommencement
+        # if the work has either been created as uncommenced or edited not to commence, update / create the uncommencement
         if not work.commenced:
-            if commencement:
-                commencement.delete()
-
             try:
                 uncommencement = work.uncommenced_provisions
             except ObjectDoesNotExist:
                 uncommencement = UncommencedProvisions(work=work)
-            uncommencement.provisions = []
-            uncommencement.all_provisions = True
+            uncommencement.all_provisions = self.cleaned_data.get('uncommenced_all')
             uncommencement.save()
+            uncommencement.rationalise()
 
-        # if the work has either been created as commenced or edited to commence,
-        # delete the existing uncommencement and update / create the commencement
+        # if the work has either been created as commenced or edited to commence, update / create the commencement
         else:
-            try:
-                uncommencement = work.uncommenced_provisions
-                uncommencement.delete()
-            except ObjectDoesNotExist:
-                pass
-
             if not commencement:
-                commencement = Commencement(commenced_work=work, main=True)
+                commencement = Commencement(commenced_work=work)
             commencement.commencing_work = self.cleaned_data.get('commencing_work')
             commencement.date = self.cleaned_data.get('commencement_date')
-            commencement.provisions = []
-            commencement.all_provisions = True
+            commencement.all_provisions = self.cleaned_data.get('commenced_all')
             commencement.save()
+            commencement.rationalise()
 
 
 class DocumentForm(forms.ModelForm):

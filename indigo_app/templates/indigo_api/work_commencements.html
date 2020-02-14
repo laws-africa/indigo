@@ -108,7 +108,7 @@
                 <label>Provisions commenced:</label>
                 <small class="form-text text-muted">Use SHIFT and Ctrl (or ⌘) to select multiple items.</small>
                 <select name="provisions" class="form-control" multiple size="{% if provisions|length > 20 %}20{% else %}10{% endif %}">
-                  {% for prov in provisions %}
+                  {% for prov in commencement.possible_provisions %}
                     <option value="{{ prov.id }}" {% if prov.id in commencement.provisions %}selected{% endif %}>{{ prov.title }}</option>
                   {% endfor %}
                 </select>

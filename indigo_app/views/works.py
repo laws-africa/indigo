@@ -249,11 +249,14 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         # to exclude those already commenced
         context['provisions'] = provisions = self.work.commenceable_provisions()
         context['uncommenced_provisions'] = self.get_uncommenced_provisions(provisions)
-        context['commencements_timeline'] = self.work.commencements.all().reverse()
+        context['commencements_timeline'] = commencements = self.work.commencements.all().reverse()
 
-        provisions = {p.id: p for p in provisions}
-        for commencement in context['commencements_timeline']:
-            commencement.provision_items = [provisions.get(p, p) for p in commencement.provisions]
+        provision_set = {p.id: p for p in provisions}
+        for commencement in commencements:
+            # rich description of provisions
+            commencement.provision_items = [provision_set.get(p, p) for p in commencement.provisions]
+            # possible options
+            commencement.possible_provisions = self.get_possible_provisions(commencement, commencements, provisions)
 
         return context
 
@@ -265,6 +268,11 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             for prov in commencement.provisions:
                 commenced.add(prov)
 
+        return [p for p in provisions if p.id not in commenced]
+
+    def get_possible_provisions(self, commencement, commencements, provisions):
+        # provisions commenced by everything else
+        commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
         return [p for p in provisions if p.id not in commenced]
 
 

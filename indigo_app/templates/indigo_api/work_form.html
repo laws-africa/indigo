@@ -228,6 +228,7 @@
 
         {% if work.pk and work.commencements.count > 1 %}
           <div class="mb-3">
+            <input type="hidden" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
             This work has mixed commencements, <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">edit them in the Commencements page</a>.
           </div>
         {% else %}

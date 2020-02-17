@@ -247,7 +247,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         # TODO: these need to be attached and filtered for each commencement object,
-        # to exclude those already commenced
+        #  to exclude those already commenced
         context['provisions'] = provisions = self.work.commenceable_provisions()
         context['uncommenced_provisions'] = self.get_uncommenced_provisions(provisions)
         context['commencements'] = commencements = self.work.commencements.all().reverse()

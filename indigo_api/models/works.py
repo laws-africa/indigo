@@ -313,14 +313,14 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def amendments_with_initial_and_arbitrary(self):
-        """ Return a list of Amendment and ArbitraryExpressionDate objects, including a fake one at the end
+    def amendments_initial_commencement_arbitrary(self):
+        """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end
         that represents the initial point-in-time. This will include multiple
-        objects at the same date, if there were multiple amendments at the same date.
+        objects at the same date, if there were multiple events at the same date.
         """
         initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
+        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.all())
         amendments_expressions.sort(key=lambda x: x.date)
 
         if initial.date:
@@ -337,16 +337,18 @@ class Work(models.Model):
         """ Return a list of dicts describing a point in time, one entry for each date,
         in descending date order.
         """
-        amendments_expressions = self.amendments_with_initial_and_arbitrary()
+        events_expressions = self.amendments_initial_commencement_arbitrary()
         pits = []
 
-        for date, group in groupby(amendments_expressions, key=lambda x: x.date):
+        for date, group in groupby(events_expressions, key=lambda x: x.date):
             group = list(group)
             pits.append({
                 'date': date,
                 'initial': any(getattr(a, 'initial', False) for a in group),
-                'amendments': group,
-                'expressions': set(chain(*(a.expressions().all() for a in group))),
+                'amendments': [a for a in group if a._meta.object_name == 'Amendment'],
+                'expressions': set(chain(*(a.expressions().all() for a in group
+                                           if not a._meta.object_name == 'Commencement'))),
+                'commencements': [a for a in group if a._meta.object_name == 'Commencement'],
             })
 
         return pits

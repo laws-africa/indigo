@@ -28,7 +28,7 @@ class WorkTestCase(TestCase):
         to the commencement date as a possible point in time.
         """
         self.work.publication_date = None
-        events = self.work.amendments_with_initial_and_arbitrary()
+        events = self.work.amendments_initial_commencement_arbitrary()
         initial = events[-1]
         self.assertTrue(initial.initial)
         self.assertEqual(initial.date, self.work.commencement_date)

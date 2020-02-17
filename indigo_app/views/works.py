@@ -63,21 +63,25 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
             ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
-        for c in self.work.commencements.all():
-            other_dates.append(('commencement', c.date))
-        # add to existing events (e.g. if publication and commencement dates are the same)
-        for entry in work_timeline:
-            for name, date in other_dates:
-                if entry['date'] == date:
-                    entry[name] = True
-        # add new events (e.g. if assent is before any of the other events)
-        existing_dates = [entry['date'] for entry in work_timeline]
+
+        # add new events (e.g. if assent is before any of the other events),
+        # only one event per date
+        def existing_dates():
+            return [entry['date'] for entry in work_timeline]
         for name, date in other_dates:
-            if date and date not in existing_dates:
-                work_timeline.append({
-                    'date': date,
-                    name: True,
-                })
+            if date:
+                dates = existing_dates()
+                if date not in dates:
+                    work_timeline.append({
+                        'date': date,
+                        name: True,
+                    })
+                else:
+                    # add to existing events (e.g. if publication and commencement dates are the same)
+                    for entry in work_timeline:
+                        if entry['date'] == date:
+                            entry[name] = True
+
         return sorted(work_timeline, key=lambda k: k['date'], reverse=True)
 
     @property

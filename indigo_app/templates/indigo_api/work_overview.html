@@ -60,11 +60,16 @@
                   <dt>Commencement</dt>
                   <dd>
                     {% if work.commenced %}
-                      Commenced
-                        on {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
-                        {% if work.commencing_work %}
-                          by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+                      {% with work.commencements.count as n_commencements %}
+                        {% if n_commencements > 1 %}Main commencement: {% endif %}
+                        Commenced on {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
+                          {% if work.commencing_work %}
+                            by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+                          {% endif %}
+                        {% if n_commencements > 1 %}
+                          <div>This work has mixed commencements, see below for details or <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">edit them in the Commencements page</a>.</div>
                         {% endif %}
+                      {% endwith %}
                     {% else %}
                       Not commenced
                     {% endif %}

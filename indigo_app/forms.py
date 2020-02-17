@@ -136,12 +136,13 @@ class WorkForm(forms.ModelForm):
 
         else:
             # if the work has either been created as commenced or edited to commence, update / create the commencement
-            commencement, _ = Commencement.objects.get_or_create(commenced_work=work)
+            commencement, created = Commencement.objects.get_or_create(commenced_work=work)
             commencement.commencing_work = self.cleaned_data['commencing_work']
             commencement.date = self.cleaned_data['commencement_date']
+            if created:
+                commencement.all_provisions = True
             # this is safe because we know there are no other commencement objects
             commencement.main = True
-            commencement.all_provisions = True
             commencement.rationalise()
             commencement.save()
 

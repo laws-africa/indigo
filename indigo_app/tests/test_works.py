@@ -2,7 +2,6 @@
 
 import datetime
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.test import testcases, override_settings
 from django_webtest import WebTest
 from django.contrib.auth.models import User

@@ -15,7 +15,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, UncommencedProvisions
+from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement
 from indigo_api.signals import work_changed
 
 
@@ -179,8 +179,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if info['status'] == 'success':
                     if info.get('commencement_date') or info.get('commenced_by'):
                         self.link_commencement(info['work'], info)
-                    else:
-                        self.create_uncommencement(info['work'])
 
                     if info.get('repealed_by'):
                         self.link_repeal(info['work'], info)
@@ -403,14 +401,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
             created_by_user=self.user
         )
         commencement.save()
-
-    def create_uncommencement(self, work):
-        uncommencement = UncommencedProvisions(
-            work=work,
-            all_provisions=True,
-            created_by_user=self.user
-        )
-        uncommencement.save()
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it

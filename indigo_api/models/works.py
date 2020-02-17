@@ -488,44 +488,6 @@ class Commencement(models.Model):
             work.commenced = True
             work.save()
 
-        try:
-            # if the work was uncommenced and has now fully commenced, delete the uncommencement
-            # if it was uncommenced and has now partly commenced, edit it to be partial too
-            uncommencement = work.uncommenced_provisions
-            if uncommencement.all_provisions:
-                if self.all_provisions:
-                    uncommencement.delete()
-                else:
-                    uncommencement.all_provisions = False
-                    uncommencement.save()
-        except UncommencedProvisions.DoesNotExist:
-            pass
-
-
-class UncommencedProvisions(models.Model):
-    """ The details of uncommenced provisions of a work
-    """
-    work = models.OneToOneField(Work, on_delete=models.CASCADE, null=False, help_text="Principal work with uncommenced provisions", related_name="uncommenced_provisions")
-    all_provisions = models.BooleanField(default=False, help_text="All provisions of this work are uncommenced")
-
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
-
-    def rationalise(self):
-        work = self.work
-        # if the work was commenced and has now fully uncommenced, delete the commencement/s
-        # if it was commenced and has now only partly commenced, edit the commencement/s to be partial
-        commencements = work.commencements.all()
-        for commencement in commencements:
-            if self.all_provisions:
-                commencement.delete()
-            elif commencement.all_provisions:
-                commencement.all_provisions = False
-                commencement.save()
-
 
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.

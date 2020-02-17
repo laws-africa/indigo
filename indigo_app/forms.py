@@ -3,7 +3,7 @@ import urllib.parse
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
-from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings
@@ -13,7 +13,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement, UncommencedProvisions
+    VocabularyTopic, Commencement
 
 
 class WorkForm(forms.ModelForm):
@@ -127,12 +127,10 @@ class WorkForm(forms.ModelForm):
         if work.commencements.count() > 1:
             return
 
-        # if the work has either been created as uncommenced or edited not to commence, update / create the uncommencement
+        # if the work has either been created as uncommenced or edited not to commence, delete all existing commencements
         if not work.commenced:
-            uncommencement, _ = UncommencedProvisions.objects.get_or_create(work=work)
-            uncommencement.all_provisions = True
-            uncommencement.rationalise()
-            uncommencement.save()
+            for obj in work.commencements.all():
+                obj.delete()
 
         else:
             # if the work has either been created as commenced or edited to commence, update / create the commencement
@@ -143,7 +141,6 @@ class WorkForm(forms.ModelForm):
                 commencement.all_provisions = True
             # this is safe because we know there are no other commencement objects
             commencement.main = True
-            commencement.rationalise()
             commencement.save()
 
 

@@ -10,7 +10,6 @@ def migrate_commencements(apps, schema_editor):
     """
     Work = apps.get_model("indigo_api", "Work")
     Commencement = apps.get_model("indigo_api", "Commencement")
-    UncommencedProvisions = apps.get_model("indigo_api", "UncommencedProvisions")
     db_alias = schema_editor.connection.alias
 
     for w in Work.objects.using(db_alias).all():
@@ -23,13 +22,6 @@ def migrate_commencements(apps, schema_editor):
                 all_provisions=True,
             )
             commencement.save()
-
-        elif not w.commenced:
-            uncommencement = UncommencedProvisions(
-                work=w,
-                all_provisions=True,
-            )
-            uncommencement.save()
 
 
 def unmigrate_commencements(apps, schema_editor):

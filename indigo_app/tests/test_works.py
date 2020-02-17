@@ -10,7 +10,7 @@ from webtest import Upload
 
 import reversion
 
-from indigo_api.models import Work, Commencement, UncommencedProvisions
+from indigo_api.models import Work, Commencement
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -128,7 +128,7 @@ class WorksWebTest(WebTest):
     """ Test that uses https://github.com/django-webtest/django-webtest to help us
     fill and submit forms.
     """
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'commencements', 'uncommencements']
+    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'commencements']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))
@@ -213,9 +213,8 @@ class WorksWebTest(WebTest):
         form['work-frbr_uri'] = '/za/act/2020/6'
         form.submit()
         work = Work.objects.get(frbr_uri='/za/act/2020/6')
-        uncommenced = UncommencedProvisions.objects.get(work=work)
         self.assertFalse(work.commenced)
-        self.assertTrue(uncommenced.all_provisions)
+        self.assertFalse(work.commencements.all())
 
     def test_edit_uncommenced_work_to_commence(self):
         uncommenced_work = Work.objects.get(pk=2)
@@ -233,4 +232,3 @@ class WorksWebTest(WebTest):
         commencement = Commencement.objects.get(commenced_work=work)
         self.assertEqual(commencement.commencing_work, commencing_work)
         self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
-        self.assertRaises(ObjectDoesNotExist, UncommencedProvisions.objects.get, work=work)

@@ -17,7 +17,7 @@ import datetime
 
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement, UncommencedProvisions
+    ArbitraryExpressionDate, Commencement
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -343,10 +343,6 @@ class WorkUncommencedView(WorkDependentView, View):
 
         for obj in self.work.commencements.all():
             obj.delete()
-
-        uncommenced, _ = UncommencedProvisions.objects.get_or_create(work=self.work)
-        uncommenced.all_provisions = True
-        uncommenced.save()
 
         return redirect('work_commencements', frbr_uri=self.kwargs['frbr_uri'])
 

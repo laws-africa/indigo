@@ -17,7 +17,7 @@ from cobalt import Act, FrbrUri
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
-    PublicationDocument, Task, VocabularyTopic, Commencement, UncommencedProvisions
+    PublicationDocument, Task, VocabularyTopic, Commencement
 from indigo_api.signals import document_published
 from allauth.account.utils import user_display
 
@@ -543,16 +543,6 @@ class CommencementSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class UncommencedProvisionsSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = UncommencedProvisions
-        fields = (
-            'all_provisions',
-        )
-        read_only_fields = fields
-
-
 class WorkSerializer(serializers.ModelSerializer):
     updated_by_user = UserSerializer(read_only=True)
     created_by_user = UserSerializer(read_only=True)
@@ -560,7 +550,6 @@ class WorkSerializer(serializers.ModelSerializer):
     parent_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencing_work = SerializedRelatedField(queryset=Work.objects, required=False, allow_null=True, serializer='WorkSerializer')
     commencements = CommencementSerializer(many=True)
-    uncommenced_provisions = UncommencedProvisionsSerializer()
     commencement_date = serializers.DateField(required=False, allow_null=True)
     country = serializers.CharField(source='country.code', required=True)
     locality = serializers.CharField(source='locality_code', required=False, allow_null=True)
@@ -575,7 +564,7 @@ class WorkSerializer(serializers.ModelSerializer):
             # readonly, url is part of the rest framework
             'id', 'url',
             'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
-            'commenced', 'commencements', 'commencing_work', 'commencement_date', 'uncommenced_provisions',
+            'commenced', 'commencements', 'commencing_work', 'commencement_date',
             'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
             'parent_work', 'amendments_url',

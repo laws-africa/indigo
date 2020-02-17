@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             name='Commencement',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date', models.DateField(blank=True, help_text='Date of the commencement, or null if listed provisions are uncommenced', null=True)),
+                ('date', models.DateField(blank=True, help_text='Date of the commencement, or null if it is unknown', null=True)),
                 ('main', models.BooleanField(default=False, help_text='This commencement date is the date on which most of the provisions of the principal work come into force')),
                 ('all_provisions', models.BooleanField(default=False, help_text='All provisions of this work commenced on this date')),
                 ('provisions', django.contrib.postgres.fields.jsonb.JSONField(default=list)),
@@ -30,31 +30,6 @@ class Migration(migrations.Migration):
             options={
                 'ordering': ['date'],
             },
-        ),
-        migrations.CreateModel(
-            name='UncommencedProvisions',
-            fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('all_provisions', models.BooleanField(default=False, help_text='All provisions of this work are uncommenced')),
-                ('provisions', django.contrib.postgres.fields.jsonb.JSONField(default=list)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-            ],
-        ),
-        migrations.AddField(
-            model_name='uncommencedprovisions',
-            name='work',
-            field=models.OneToOneField(help_text='Principal work with uncommenced provisions', on_delete=django.db.models.deletion.CASCADE, related_name='uncommenced_provisions', to='indigo_api.Work'),
-        ),
-        migrations.AddField(
-            model_name='uncommencedprovisions',
-            name='created_by_user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL),
-        ),
-        migrations.AddField(
-            model_name='uncommencedprovisions',
-            name='updated_by_user',
-            field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to=settings.AUTH_USER_MODEL),
         ),
         migrations.AddField(
             model_name='commencement',

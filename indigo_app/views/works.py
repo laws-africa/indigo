@@ -60,10 +60,11 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         work_timeline = self.work.points_in_time()
         other_dates = [
             ('assent_date', self.work.assent_date),
-            ('commencement_date', self.work.commencement_date),
             ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
+        for c in self.work.commencements.all():
+            other_dates.append(('commencement', c.date))
         # add to existing events (e.g. if publication and commencement dates are the same)
         for entry in work_timeline:
             for name, date in other_dates:

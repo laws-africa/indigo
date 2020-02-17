@@ -320,7 +320,7 @@ class Work(models.Model):
         """
         initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.all())
+        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.exclude(date=None))
         amendments_expressions.sort(key=lambda x: x.date)
 
         if initial.date:

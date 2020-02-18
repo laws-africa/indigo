@@ -1,6 +1,11 @@
 Changelog
 =========
 
+9.0.0 (?)
+---------
+
+* FEATURE: model multiple commencements and include commenced provision information in API
+
 8.0.0 (10 February 2020)
 ------------------------
 

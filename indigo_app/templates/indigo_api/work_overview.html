@@ -67,7 +67,7 @@
                             by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
                           {% endif %}
                         {% if n_commencements > 1 %}
-                          <div>This work has mixed commencements, see below for details or <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">edit them in the Commencements page</a>.</div>
+                          <div>This work has <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">multiple commencements</a>.</div>
                         {% endif %}
                       {% endwith %}
                     {% else %}

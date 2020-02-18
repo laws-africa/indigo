@@ -22,7 +22,7 @@ from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, CommencementForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
@@ -352,8 +352,8 @@ class AddWorkCommencementView(WorkDependentView, CreateView):
     """ View to add a new commencement.
     """
     model = Commencement
-    fields = ('date', 'commencing_work')
     permission_required = ('indigo_api.add_commencement',)
+    form_class = NewCommencementForm
 
     def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()

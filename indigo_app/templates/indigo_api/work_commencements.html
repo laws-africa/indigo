@@ -27,7 +27,15 @@
       <li class="timeline-item card">
         <div class="card-body">
           {% block new-commencement-card %}
-            <button class="btn btn-primary add-commencement"><i class="fas fa-plus"></i> Add commencement</button>
+            <div class="btn-group">
+              <button class="btn btn-primary add-commencement"><i class="fas fa-plus"></i> Add commencement</button>
+              <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span class="sr-only">Toggle Dropdown</span>
+              </button>
+              <div class="dropdown-menu">
+                <button class="dropdown-item" type="submit" form="new-commencement-form">Add without a commencing work</button>
+              </div>
+            </div>
             <form action="{% url 'new_work_commencement' frbr_uri=work.frbr_uri %}" method="POST" id="new-commencement-form">
               {% csrf_token %}
               <input type="hidden" name="commencing_work" value="">
@@ -57,6 +65,7 @@
             <div class="mb-3">
               <h6>
                 Commenced
+                {% if not commencement.all_provisions %} in part{% endif %}
                 {% if commencement.commencing_work %}
                   by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
                 {% endif %}

@@ -361,8 +361,8 @@ if DEBUG:
 # Messages
 from django.contrib.messages import constants as messages
 MESSAGE_TAGS = {
-    messages.INFO: 'alert alert-primary',
-    messages.SUCCESS: 'alert alert-success',
+    messages.INFO: 'alert alert-primary auto-dismiss',
+    messages.SUCCESS: 'alert alert-success auto-dismiss',
     messages.WARNING: 'alert alert-warning',
     messages.ERROR: 'alert alert-danger',
 }

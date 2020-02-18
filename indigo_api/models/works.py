@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
+from django.utils.functional import cached_property
 import reversion.revisions
 import reversion.models
 from cobalt.act import FrbrUri, RepealEvent
@@ -32,7 +33,8 @@ class WorkManager(models.Manager):
         return super(WorkManager, self) \
             .get_queryset() \
             .select_related('updated_by_user', 'created_by_user', 'country',
-                            'country__country', 'locality', 'publication_document')
+                            'country__country', 'locality', 'publication_document') \
+            .prefetch_related('commencements')
 
 
 class TaxonomyVocabulary(models.Model):
@@ -88,9 +90,9 @@ class Work(models.Model):
     publication_number = models.CharField(null=True, blank=True, max_length=255, help_text="Publication's sequence number, eg. gazette number")
     publication_date = models.DateField(null=True, blank=True, help_text="Date of publication")
 
-    commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
-    commencement_date = models.DateField(null=True, blank=True, help_text="Date of commencement unless otherwise specified")
     assent_date = models.DateField(null=True, blank=True, help_text="Date signed by the president")
+
+    commenced = models.BooleanField(null=False, default=False, help_text="Has this work commenced? (Date may be unknown)")
 
     # repeal information
     repealed_by = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Work that repealed this work", related_name='repealed_works')
@@ -98,9 +100,6 @@ class Work(models.Model):
 
     # optional parent work
     parent_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Parent related work", related_name='child_works')
-
-    # optional work that determined the commencement date of this work
-    commencing_work = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, help_text="Date that marked this work as commenced", related_name='commenced_works')
 
     stub = models.BooleanField(default=False, help_text="Stub works do not have content or points in time")
 
@@ -173,6 +172,18 @@ class Work(models.Model):
     def place(self):
         return self.locality or self.country
 
+    @property
+    def commencement_date(self):
+        main = self.main_commencement
+        if main:
+            return main.date
+
+    @property
+    def commencing_work(self):
+        main = self.main_commencement
+        if main:
+            return main.commencing_work
+
     def amended(self):
         return self.amendments.exists()
 
@@ -206,16 +217,10 @@ class Work(models.Model):
 
     def save(self, *args, **kwargs):
         # prevent circular references
-        if self.commencing_work == self:
-            self.commencing_work = None
         if self.repealed_by == self:
             self.repealed_by = None
         if self.parent_work == self:
             self.parent_work = None
-
-        if not self.commenced:
-            self.commencement_date = None
-            self.commencing_work = None
 
         if not self.repealed_by:
             self.repealed_date = None
@@ -236,7 +241,7 @@ class Work(models.Model):
         return (not self.document_set.undeleted().exists() and
                 not self.child_works.exists() and
                 not self.repealed_works.exists() and
-                not self.commenced_works.exists() and
+                not self.commencements_made.exists() and
                 not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
     def create_expression_at(self, user, date, language=None):
@@ -307,14 +312,14 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def amendments_with_initial_and_arbitrary(self):
-        """ Return a list of Amendment and ArbitraryExpressionDate objects, including a fake one at the end
+    def amendments_initial_commencement_arbitrary(self):
+        """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end
         that represents the initial point-in-time. This will include multiple
-        objects at the same date, if there were multiple amendments at the same date.
+        objects at the same date, if there were multiple events at the same date.
         """
         initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
+        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.exclude(date=None))
         amendments_expressions.sort(key=lambda x: x.date)
 
         if initial.date:
@@ -331,16 +336,18 @@ class Work(models.Model):
         """ Return a list of dicts describing a point in time, one entry for each date,
         in descending date order.
         """
-        amendments_expressions = self.amendments_with_initial_and_arbitrary()
+        events_expressions = self.amendments_initial_commencement_arbitrary()
         pits = []
 
-        for date, group in groupby(amendments_expressions, key=lambda x: x.date):
+        for date, group in groupby(events_expressions, key=lambda x: x.date):
             group = list(group)
             pits.append({
                 'date': date,
-                'initial': any(getattr(a, 'initial', False) for a in group),
-                'amendments': group,
-                'expressions': set(chain(*(a.expressions().all() for a in group))),
+                'initial': any(getattr(e, 'initial', False) for e in group),
+                'amendments': [e for e in group if isinstance(e, Amendment)],
+                'expressions': set(chain(*(e.expressions().all() for e in group
+                                           if not isinstance(e, Commencement)))),
+                'commencements': [e for e in group if isinstance(e, Commencement)],
             })
 
         return pits
@@ -358,6 +365,47 @@ class Work(models.Model):
         dates = [d for d in dates if d]
         if dates:
             return max(dates)
+
+    def all_provisions(self):
+        # a list of the element ids of the earliest PiT (in whichever language) of a work
+        # does not include Schedules as they don't have commencement dates
+        first_expression = self.expressions().first()
+        if first_expression:
+            return first_expression.all_provisions()
+        return None
+
+    @cached_property
+    def main_commencement(self):
+        if self.commencements.exists():
+            for c in list(self.commencements.all()):
+                if c.main:
+                    return c
+
+    def first_commencement_date(self):
+        first = self.commencements.first()
+        if first:
+            return first.date
+
+    def commenceable_provisions(self):
+        """ Return a list of TOCElement objects that can be commenced.
+        """
+        # gather documents and sort so that we consider primary language documents first
+        documents = self.document_set.undeleted().all()
+        documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
+
+        # get all the docs and combine the TOCs, based on element IDs
+        provisions = []
+        id_set = set()
+        for doc in documents:
+            plugin = plugins.for_document('toc', doc)
+            if plugin:
+                toc = plugin.table_of_contents_for_document(doc)
+                for item in plugin.commenceable_items(toc):
+                    if item.id and item.id not in id_set:
+                        id_set.add(item.id)
+                        provisions.append(item)
+
+        return provisions
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
@@ -409,6 +457,37 @@ class PublicationDocument(models.Model):
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()
         return super(PublicationDocument, self).save(*args, **kwargs)
+
+
+class Commencement(models.Model):
+    """ The commencement details of (provisions of) a work,
+    optionally performed by a commencing work or a provision of the work itself.
+
+    """
+    commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Principal work being commenced", related_name="commencements")
+    commencing_work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
+    date = models.DateField(null=True, blank=True, help_text="Date of the commencement, or null if it is unknown")
+    main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
+    all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")
+
+    # list of the element ids of the provisions commenced, e.g. ["section-2", "section-4.3.list0.a"]
+    provisions = JSONField(null=False, blank=False, default=list)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    created_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+    updated_by_user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, related_name='+')
+
+    class Meta:
+        ordering = ['date']
+        unique_together = (('commenced_work', 'commencing_work', 'date'),)
+
+    def rationalise(self):
+        work = self.commenced_work
+        if not work.commenced:
+            work.commenced = True
+            work.save()
 
 
 class Amendment(models.Model):

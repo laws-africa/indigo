@@ -40,6 +40,9 @@
             <a class="nav-item nav-link {% if view.tab == 'amendments' %}active{% endif %}" href="{% url 'work_amendments' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-clock"></i> Points in time
             </a>
+            <a class="nav-item nav-link {% if view.tab == 'commencements' %}active{% endif %}" href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">
+              <i class="fas fa-fw fa-rocket fa-rotate-315"></i> Commencements
+            </a>
             <a class="nav-item nav-link {% if view.tab == 'tasks' %}active{% endif %}" href="{% url 'work_tasks' frbr_uri=work.frbr_uri %}">
               <i class="fas fa-fw fa-thumbtack"></i> Tasks
               <span class="badge badge-light">{{ work.tasks.unclosed.count }}</span>

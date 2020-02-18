@@ -1,9 +1,10 @@
-import datetime
 import json
 import urllib.parse
+from datetime import date
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.core.validators import URLValidator
 from django.conf import settings
@@ -13,7 +14,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, PlaceSettings
+    VocabularyTopic, Commencement
 
 
 class WorkForm(forms.ModelForm):
@@ -45,6 +46,10 @@ class WorkForm(forms.ModelForm):
     # page.
     no_render_properties = []
 
+    # commencement details
+    commencement_date = forms.DateField(required=False)
+    commencing_work = forms.ModelChoiceField(queryset=Work.objects, required=False)
+
     def __init__(self, place, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.place = place
@@ -68,6 +73,7 @@ class WorkForm(forms.ModelForm):
         work = super(WorkForm, self).save(commit)
         self.save_properties()
         self.save_publication_document()
+        self.save_commencement()
         return work
 
     def save_properties(self):
@@ -113,6 +119,30 @@ class WorkForm(forms.ModelForm):
             pub_doc.size = self.cleaned_data['publication_document_size']
             pub_doc.mime_type = self.cleaned_data['publication_document_mime_type']
             pub_doc.save()
+
+    def save_commencement(self):
+        work = self.instance
+
+        # if there are multiple commencement objects, then just ignore these elements,
+        # the user must edit the commencements in the commencements view
+        if work.commencements.count() > 1:
+            return
+
+        # if the work has either been created as uncommenced or edited not to commence, delete all existing commencements
+        if not work.commenced:
+            for obj in work.commencements.all():
+                obj.delete()
+
+        else:
+            # if the work has either been created as commenced or edited to commence, update / create the commencement
+            commencement, created = Commencement.objects.get_or_create(commenced_work=work)
+            commencement.commencing_work = self.cleaned_data['commencing_work']
+            commencement.date = self.cleaned_data['commencement_date']
+            if created:
+                commencement.all_provisions = True
+            # this is safe because we know there are no other commencement objects
+            commencement.main = True
+            commencement.save()
 
 
 class DocumentForm(forms.ModelForm):
@@ -451,3 +481,56 @@ class CountryAdminForm(forms.ModelForm):
     def clean_italics_terms(self):
         # strip blanks and duplications
         return sorted(list(set(x for x in self.cleaned_data['italics_terms'] if x)))
+
+
+class CommencementForm(forms.ModelForm):
+    provisions = forms.MultipleChoiceField(required=False)
+
+    class Meta:
+        model = Commencement
+        fields = ('date', 'all_provisions', 'provisions', 'main')
+
+    def __init__(self, work, provisions, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.work = work
+        self.provisions = provisions
+        self.fields['provisions'].choices = [(p.id, p.title) for p in self.provisions]
+
+    def clean_main(self):
+        if self.cleaned_data['main']:
+            # there can be only one!
+            qs = Commencement.objects.filter(commenced_work=self.work, main=True)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A main commencement already exists.")
+        return self.cleaned_data['main']
+
+    def clean_all_provisions(self):
+        if self.cleaned_data['all_provisions']:
+            # there can be only one!
+            qs = Commencement.objects.filter(commenced_work=self.work)
+            if self.instance:
+                qs = qs.exclude(pk=self.instance.pk)
+            if qs.exists():
+                raise ValidationError("A commencement for all provisions must be the only commencement.")
+        return self.cleaned_data['all_provisions']
+
+    def clean(self):
+        super().clean()
+        if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
+            raise ValidationError("Cannot specify all provisions, and a list of provisions.")
+
+
+class NewCommencementForm(forms.ModelForm):
+    commencing_work = forms.ModelChoiceField(Work.objects, required=False)
+
+    class Meta:
+        model = Commencement
+        fields = ('date', 'commencing_work')
+
+    def clean(self):
+        super().clean()
+        if not self.cleaned_data['date'] and not self.cleaned_data['commencing_work']:
+            # create one for now
+            self.cleaned_data['date'] = date.today()

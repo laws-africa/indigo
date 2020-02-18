@@ -36,33 +36,8 @@
           <h6>Assented to</h6>
         {% endif %}
 
-        {% if event.initial %}
-          <h6>
-          {% if event.commencement_date %}
-            {% if event.publication_date %}
-              Initial publication
-              {% if not work.commencing_work %}
-                <span class="text-muted">– commenced on publication</span>
-              {% endif %}
-            {% else %}
-              Commencement
-            {% endif %}
-            {% if work.commencing_work %}
-              – commenced{% if event.publication_date %} on publication{% endif %} by
-              <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
-            {% endif %}
-          {% elif event.publication_date %}
-            Initial publication
-          {% endif %}
-          </h6>
-
-        {% elif event.commencement_date %}
-          <h6>
-            Commenced
-            {% if work.commencing_work %}
-              by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
-            {% endif %}
-          </h6>
+        {% if event.publication_date %}
+          <h6>Published</h6>
         {% endif %}
 
         {% if event.repealed_date %}
@@ -72,6 +47,15 @@
             {% endif %}
           </h6>
         {% endif %}
+
+        {% for commencement in event.commencements %}
+          <h6>
+            Commenced{% if not commencement.all_provisions %} in part{% endif %}
+              {% if commencement.commencing_work %}
+                by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+              {% endif %}
+          </h6>
+        {% endfor %}
 
         {% for amendment in event.amendments %}
           {% if not amendment.amending_work and amendment.id %}

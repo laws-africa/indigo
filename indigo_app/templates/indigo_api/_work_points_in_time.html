@@ -116,7 +116,7 @@
         </div>
       </div>
 
-      {% if editable and event.amendments %}
+      {% if editable and event.amendments or event.initial %}
         <div class="card-footer">
           {% block amendment-buttons %}
 

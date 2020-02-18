@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='commencement',
             name='commencing_work',
-            field=models.ForeignKey(help_text='Work that provides the commencement date for the principal work', null=True, on_delete=django.db.models.deletion.CASCADE, related_name='commencements_made', to='indigo_api.Work'),
+            field=models.ForeignKey(help_text='Work that provides the commencement date for the principal work', null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='commencements_made', to='indigo_api.Work'),
         ),
         migrations.AddField(
             model_name='commencement',

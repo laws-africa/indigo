@@ -242,7 +242,6 @@ class Work(models.Model):
                 not self.child_works.exists() and
                 not self.repealed_works.exists() and
                 not self.commencements_made.exists() and
-                not self.commencements.exists() and
                 not Amendment.objects.filter(Q(amending_work=self) | Q(amended_work=self)).exists())
 
     def create_expression_at(self, user, date, language=None):
@@ -466,7 +465,7 @@ class Commencement(models.Model):
 
     """
     commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Principal work being commenced", related_name="commencements")
-    commencing_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
+    commencing_work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
     date = models.DateField(null=True, blank=True, help_text="Date of the commencement, or null if it is unknown")
     main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
     all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")

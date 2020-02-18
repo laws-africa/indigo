@@ -5,8 +5,9 @@ from rest_framework.reverse import reverse
 from cobalt.act import datestring
 
 from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary
-from indigo_api.serializers import DocumentSerializer, PublicationDocumentSerializer as PublicationDocumentSerializerBase, \
-    AttachmentSerializer, VocabularyTopicSerializer
+from indigo_api.serializers import DocumentSerializer, \
+    PublicationDocumentSerializer as PublicationDocumentSerializerBase, \
+    AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer
 
 
 def published_doc_url(doc, request, frbr_uri=None):
@@ -62,6 +63,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
     taxonomies = serializers.SerializerMethodField()
     as_at_date = serializers.DateField(source='work.as_at_date')
     commenced = serializers.BooleanField(source='work.commenced')
+    commencements = CommencementSerializer(many=True, source='work.commencements')
 
     class Meta:
         model = Document
@@ -73,7 +75,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
-            'expression_date', 'commenced', 'commencement_date', 'assent_date',
+            'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
             'language', 'repeal', 'amendments', 'points_in_time',
             'numbered_title', 'taxonomies', 'as_at_date',
 

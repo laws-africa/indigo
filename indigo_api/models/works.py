@@ -345,9 +345,9 @@ class Work(models.Model):
                 'date': date,
                 'initial': any(getattr(e, 'initial', False) for e in group),
                 'amendments': [e for e in group if isinstance(e, Amendment)],
-                'expressions': set(chain(*(e.expressions().all() for e in group
-                                           if not isinstance(e, Commencement)))),
+                'consolidations': [e for e in group if isinstance(e, ArbitraryExpressionDate)],
                 'commencements': [e for e in group if isinstance(e, Commencement)],
+                'expressions': set(chain(*(e.expressions().all() for e in group))),
             })
 
         return pits
@@ -488,6 +488,11 @@ class Commencement(models.Model):
         if not work.commenced:
             work.commenced = True
             work.save()
+
+    def expressions(self):
+        """ The commenced work's documents (expressions) at this date.
+        """
+        return self.commenced_work.expressions().filter(expression_date=self.date)
 
 
 class Amendment(models.Model):

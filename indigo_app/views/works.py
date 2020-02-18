@@ -66,11 +66,9 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
 
         # add new events (e.g. if assent is before any of the other events),
         # only one event per date
-        def existing_dates():
-            return [entry['date'] for entry in work_timeline]
         for name, date in other_dates:
             if date:
-                dates = existing_dates()
+                dates = [entry['date'] for entry in work_timeline]
                 if date not in dates:
                     work_timeline.append({
                         'date': date,
@@ -250,8 +248,6 @@ class WorkCommencementsView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
-        # TODO: these need to be attached and filtered for each commencement object,
-        #  to exclude those already commenced
         context['provisions'] = provisions = self.work.commenceable_provisions()
         context['uncommenced_provisions'] = self.get_uncommenced_provisions(provisions)
         context['commencements'] = commencements = self.work.commencements.all().reverse()
@@ -624,13 +620,11 @@ class WorkRelatedView(WorkViewBase, DetailView):
         context['repeals'] = repeals
 
         # commencement
-        commencement = []
-        if self.work.commencing_work:
-            commencement.append({
-                'rel': 'commenced by',
-                'work': self.work.commencing_work,
-                'date': self.work.commencement_date,
-            })
+        commencement = [{
+            'rel': 'commenced by',
+            'work': c.commencing_work,
+            'date': c.date,
+        } for c in self.work.commencements.all() if c.commencing_work]
         commencement = commencement + [{
             'rel': 'commenced',
             'work': c.commenced_work,

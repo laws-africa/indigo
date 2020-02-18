@@ -344,11 +344,11 @@ class Work(models.Model):
             group = list(group)
             pits.append({
                 'date': date,
-                'initial': any(getattr(a, 'initial', False) for a in group),
-                'amendments': [a for a in group if a._meta.object_name == 'Amendment'],
-                'expressions': set(chain(*(a.expressions().all() for a in group
-                                           if not a._meta.object_name == 'Commencement'))),
-                'commencements': [a for a in group if a._meta.object_name == 'Commencement'],
+                'initial': any(getattr(e, 'initial', False) for e in group),
+                'amendments': [e for e in group if isinstance(e, Amendment)],
+                'expressions': set(chain(*(e.expressions().all() for e in group
+                                           if not isinstance(e, Commencement)))),
+                'commencements': [e for e in group if isinstance(e, Commencement)],
             })
 
         return pits

@@ -51,11 +51,9 @@
         {% for commencement in event.commencements %}
           <h6>
             Commenced{% if not commencement.all_provisions %} in part{% endif %}
-            {% with commencement.commencing_work as commencing_work %}
-              {% if commencing_work %}
-                by <a href="{% url 'work' frbr_uri=commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencing_work.frbr_uri %}">{{ commencing_work.title }}</a>
+              {% if commencement.commencing_work %}
+                by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
               {% endif %}
-            {% endwith %}
           </h6>
         {% endfor %}
 

@@ -66,7 +66,7 @@
             <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=consolidation.id %}" method="POST" id="arbitrary-expression-date-{{ consolidation.id }}">
               {% csrf_token %}
 
-              {% if editable and perms.indigo_api.change_amendment %}
+              {% if editable and perms.indigo_api.change_arbitraryexpressiondate %}
                 <div class="dropdown float-right">
                   <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
                   <div class="dropdown-menu">

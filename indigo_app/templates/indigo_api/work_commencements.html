@@ -65,6 +65,7 @@
             <div class="mb-3">
               <h6>
                 Commenced
+                {% if not commencement.all_provisions %} in part{% endif %}
                 {% if commencement.commencing_work %}
                   by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
                 {% endif %}

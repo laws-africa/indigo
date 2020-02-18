@@ -345,8 +345,9 @@ class Work(models.Model):
                 'date': date,
                 'initial': any(getattr(e, 'initial', False) for e in group),
                 'amendments': [e for e in group if isinstance(e, Amendment)],
-                'expressions': set(chain(*(e.expressions().all() for e in group))),
+                'consolidations': [e for e in group if isinstance(e, ArbitraryExpressionDate)],
                 'commencements': [e for e in group if isinstance(e, Commencement)],
+                'expressions': set(chain(*(e.expressions().all() for e in group))),
             })
 
         return pits

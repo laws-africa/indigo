@@ -1,5 +1,6 @@
 import json
 import urllib.parse
+from datetime import date
 
 from django import forms
 from django.contrib.postgres.forms import SimpleArrayField
@@ -519,3 +520,17 @@ class CommencementForm(forms.ModelForm):
         super().clean()
         if self.cleaned_data['all_provisions'] and self.cleaned_data['provisions']:
             raise ValidationError("Cannot specify all provisions, and a list of provisions.")
+
+
+class NewCommencementForm(forms.ModelForm):
+    commencing_work = forms.ModelChoiceField(Work.objects, required=False)
+
+    class Meta:
+        model = Commencement
+        fields = ('date', 'commencing_work')
+
+    def clean(self):
+        super().clean()
+        if not self.cleaned_data['date'] and not self.cleaned_data['commencing_work']:
+            # create one for now
+            self.cleaned_data['date'] = date.today()

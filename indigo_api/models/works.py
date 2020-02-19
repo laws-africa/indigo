@@ -495,6 +495,17 @@ class Commencement(models.Model):
         return self.commenced_work.expressions().filter(expression_date=self.date)
 
 
+@receiver(signals.post_save, sender=Commencement)
+def post_save_commencement(sender, instance, **kwargs):
+    # Send action to activity stream, as 'created' if a new commencement,
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.commenced_work.place.place_code)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.commenced_work.place.place_code)
+
+
 class Amendment(models.Model):
     """ An amendment to a work, performed by an amending work.
     """

@@ -483,11 +483,12 @@ class Commencement(models.Model):
         ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
-    def rationalise(self):
+    def rationalise(self, user):
         work = self.commenced_work
         if not work.commenced:
             work.commenced = True
-            work.save()
+        work.updated_by_user = user
+        work.save()
 
     def expressions(self):
         """ The commenced work's documents (expressions) at this date.

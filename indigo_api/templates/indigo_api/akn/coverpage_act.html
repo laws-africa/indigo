@@ -57,14 +57,24 @@
         </li>
       {% elif document.work.main_commencement and document.work.main_commencement.all_provisions %}
         {% with document.work.main_commencement as commencement %}
+        {% with commencement.commencing_work as commencing_work %}
         {% if not commencement.date %}
           <li class="commencement-date">
             {% blocktrans %}Commencement date unknown{% endblocktrans %}
+              {% if commencing_work %}
+                {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
+                  {% work_resolver_url commencing_work as resolver_uri %}
+                  {% if numbered_title %}
+                    {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                  {% else %}
+                    {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                  {% endif %}
+                {% endwith %}
+              {% endif %}
           </li>
         {% else %}
           <li class="commencement-date">
             {% blocktrans with date=commencement.date|date:"j E Y" %}Commenced on {{ date }}{% endblocktrans %}
-            {% with commencement.commencing_work as commencing_work %}
               {% if commencing_work %}
                 {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
                   {% work_resolver_url commencing_work as resolver_uri %}
@@ -75,9 +85,9 @@
                   {% endif %}
                 {% endwith %}
               {% endif %}
-            {% endwith %}
           </li>
         {% endif %}
+        {% endwith %}
         {% endwith %}
       {% else %}
         {% with document.work.commencements.all as commencements %}

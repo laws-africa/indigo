@@ -361,7 +361,7 @@ class WorkFilterForm(forms.Form):
         if self.cleaned_data.get('repeal') == 'yes':
             queryset = queryset.filter(repealed_date__isnull=False)
         elif self.cleaned_data.get('repeal') == 'no':
-            queryset = queryset.filter(repealed_date__isnull=False)
+            queryset = queryset.filter(repealed_date__isnull=True)
         elif self.cleaned_data.get('repeal') == 'range':
             if self.cleaned_data.get('repealed_date_start') and self.cleaned_data.get('repealed_date_end'):
                 start_date = self.cleaned_data['repealed_date_start']

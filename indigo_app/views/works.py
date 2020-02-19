@@ -309,7 +309,8 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
     def form_valid(self, form):
         self.object.updated_by_user = self.request.user
         super().form_valid(form)
-        self.object.rationalise()
+        # make necessary changes to work, including updating updated_by_user
+        self.object.rationalise(self.request.user)
         self.object.save()
         return redirect(self.get_success_url())
 
@@ -322,7 +323,10 @@ class WorkCommencementUpdateView(WorkDependentView, UpdateView):
 
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
+        work = self.object.commenced_work
         self.object.delete()
+        work.updated_by_user = self.request.user
+        work.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -340,6 +344,7 @@ class WorkUncommencedView(WorkDependentView, View):
 
     def post(self, request, *args, **kwargs):
         self.work.commenced = False
+        self.work.updated_by_user = self.request.user
         self.work.save()
 
         for obj in self.work.commencements.all():
@@ -373,7 +378,8 @@ class AddWorkCommencementView(WorkDependentView, CreateView):
         if not self.work.commencements.exists():
             self.object.all_provisions = True
 
-        self.object.rationalise()
+        # make necessary changes to work, including updating updated_by_user
+        self.object.rationalise(self.request.user)
         self.object.save()
         return redirect(self.get_success_url())
 
@@ -425,6 +431,8 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
 
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
+        self.object.amended_work.updated_by_user = self.request.user
+        self.object.amended_work.save()
         result = super(WorkAmendmentDetailView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
@@ -439,7 +447,10 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.can_delete():
+            work = self.object.amended_work
             self.object.delete()
+            work.updated_by_user = self.request.user
+            work.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -463,6 +474,11 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
         kwargs['instance'].updated_by_user = self.request.user
         return kwargs
 
+    def form_valid(self, form):
+        self.object.amended_work.updated_by_user = self.request.user
+        self.object.amended_work.save()
+        return super(AddWorkAmendmentView, self).form_valid(form)
+
     def form_invalid(self, form):
         return redirect(self.get_success_url())
 
@@ -485,6 +501,11 @@ class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
         kwargs['instance'] = ArbitraryExpressionDate(work=self.work)
         kwargs['instance'].created_by_user = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        self.object.work.updated_by_user = self.request.user
+        self.object.work.save()
+        return super(AddArbitraryExpressionDateView, self).form_valid(form)
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
@@ -520,6 +541,8 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
 
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
+        self.object.work.updated_by_user = self.request.user
+        self.object.work.save()
         result = super(EditArbitraryExpressionDateView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
@@ -534,7 +557,10 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.can_delete():
+            work = self.object.work
             self.object.delete()
+            work.updated_by_user = self.request.user
+            work.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -650,9 +676,10 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
         actions = self.work.action_object_actions.all()
         amendment_actions = [aa for a in self.work.amendments.all() for aa in a.action_object_actions.all()]
+        commencement_actions = [c for a in self.work.commencements.all() for c in a.action_object_actions.all()]
         versions = self.work.versions().all()
         task_actions = self.get_task_actions()
-        entries = sorted(chain(actions, amendment_actions, versions, task_actions),
+        entries = sorted(chain(actions, amendment_actions, commencement_actions, versions, task_actions),
                          key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
                          reverse=True)
         entries = self.coalesce_entries(entries)

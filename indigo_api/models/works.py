@@ -483,16 +483,28 @@ class Commencement(models.Model):
         ordering = ['date']
         unique_together = (('commenced_work', 'commencing_work', 'date'),)
 
-    def rationalise(self):
+    def rationalise(self, user):
         work = self.commenced_work
         if not work.commenced:
             work.commenced = True
-            work.save()
+        work.updated_by_user = user
+        work.save()
 
     def expressions(self):
         """ The commenced work's documents (expressions) at this date.
         """
         return self.commenced_work.expressions().filter(expression_date=self.date)
+
+
+@receiver(signals.post_save, sender=Commencement)
+def post_save_commencement(sender, instance, **kwargs):
+    # Send action to activity stream, as 'created' if a new commencement,
+    if kwargs['created']:
+        action.send(instance.created_by_user, verb='created', action_object=instance,
+                    place_code=instance.commenced_work.place.place_code)
+    else:
+        action.send(instance.updated_by_user, verb='updated', action_object=instance,
+                    place_code=instance.commenced_work.place.place_code)
 
 
 class Amendment(models.Model):

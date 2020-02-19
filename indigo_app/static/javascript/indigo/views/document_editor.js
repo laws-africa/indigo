@@ -300,12 +300,17 @@
               .addClass('fa-check');
         });
 
-      var data = {
+      var id = this.fragment.getAttribute('id'),
+          data = {
         'content': content,
         'frbr_uri': this.parent.model.get('frbr_uri'),
       };
       if (fragmentRule != 'akomaNtoso') {
         data.fragment = fragmentRule;
+        if (id.lastIndexOf('.') > -1) {
+          // retain the id of the parent element as the prefix
+          data.id_prefix = id.substring(0, id.lastIndexOf('.'));
+        }
       }
 
       $.ajax({

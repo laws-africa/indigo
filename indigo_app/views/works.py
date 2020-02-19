@@ -249,7 +249,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
     def get_context_data(self, **kwargs):
         context = super(WorkCommencementsView, self).get_context_data(**kwargs)
         context['provisions'] = provisions = self.work.commenceable_provisions()
-        context['uncommenced_provisions'] = self.get_uncommenced_provisions(provisions)
+        context['uncommenced_provisions'] = self.work.uncommenced_provisions()
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
@@ -262,16 +262,6 @@ class WorkCommencementsView(WorkViewBase, DetailView):
             commencement.possible_provisions = self.get_possible_provisions(commencement, commencements, provisions)
 
         return context
-
-    def get_uncommenced_provisions(self, provisions):
-        commenced = set()
-        for commencement in self.work.commencements.all():
-            if commencement.all_provisions:
-                return []
-            for prov in commencement.provisions:
-                commenced.add(prov)
-
-        return [p for p in provisions if p.id not in commenced]
 
     def get_possible_provisions(self, commencement, commencements, provisions):
         # provisions commenced by everything else

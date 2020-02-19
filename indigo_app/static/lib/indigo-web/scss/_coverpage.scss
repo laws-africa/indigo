@@ -29,6 +29,20 @@
       font-weight: bold;
     }
 
+    .commencement-date-multi {
+      margin-bottom: $akn-para-spacing;
+    }
+
+    .commencement-date-uncommenced {
+      margin-bottom: $akn-para-spacing;
+      font-weight: bold;
+    }
+
+    .commencements-table {
+      margin: auto;
+      max-width: 80%;
+    }
+
     .amendment-list {
       margin-top: $akn-section-spacing;
       padding: 0px;

@@ -19,3 +19,13 @@ def work_resolver_url(context, work):
         frbr_uri = '/akn' + frbr_uri
 
     return context.get('resolver_url', settings.RESOLVER_URL) + frbr_uri
+
+
+@register.simple_tag
+def commenced_provisions_description(document, commencement, uncommenced=False):
+    language = document.language
+    if uncommenced:
+        uncommenced_provisions = document.work.uncommenced_provisions()
+        return ', '.join([p.id for p in uncommenced_provisions])
+
+    return ', '.join(commencement.provisions)

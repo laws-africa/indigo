@@ -44,7 +44,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
     for i, p in enumerate(commenceable_provisions):
         if i == 0:
             if p.id in commenced_provisions:
-                current_run.append({'type': p.type, 'num': p.num.split('.')[0] if p.num else ''})
+                current_run.append({'type': p.type, 'num': p.num.strip('.')[0] if p.num else ''})
         else:
             previous = commenceable_provisions[i - 1]
             if p.id not in commenced_provisions and previous.id in commenced_provisions:
@@ -53,15 +53,16 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
             elif p.id in commenced_provisions:
                 if not current_run:
                     # new run
-                    current_run = [{'type': p.type, 'num': p.num.split('.')[0] if p.num else ''}]
+                    current_run = [{'type': p.type, 'num': p.num.strip('.')[0] if p.num else ''}]
                 elif p.type == previous.type:
                     # current run is safe to add to (same type)
-                    current_run.append({'type': p.type, 'num': p.num.split('.')[0] if p.num else ''})
+                    current_run.append({'type': p.type, 'num': p.num.strip('.')[0] if p.num else ''})
                 else:
                     # current run is not safe to add to (different type)
                     end_current_run(current_run)
-                    current_run = [{'type': p.type, 'num': p.num.split('.')[0] if p.num else ''}]
-    # we've finished checking all commenceable provisions
-    end_current_run(current_run)
+                    current_run = [{'type': p.type, 'num': p.num.strip('.')[0] if p.num else ''}]
+    # we've finished checking all commenceable provisions; add the last group (but not if it's empty)
+    if current_run:
+        end_current_run(current_run)
 
     return ', '.join(', '.join(r) for r in runs)

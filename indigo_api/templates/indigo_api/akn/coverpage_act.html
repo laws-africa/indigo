@@ -61,30 +61,30 @@
         {% if not commencement.date %}
           <li class="commencement-date">
             {% blocktrans %}Commencement date unknown{% endblocktrans %}
-              {% if commencing_work %}
-                {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
-                  {% work_resolver_url commencing_work as resolver_uri %}
-                  {% if numbered_title %}
-                    {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
-                  {% else %}
-                    {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
-                  {% endif %}
-                {% endwith %}
-              {% endif %}
+            {% if commencing_work %}
+              {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
+                {% work_resolver_url commencing_work as resolver_uri %}
+                {% if numbered_title %}
+                  {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                {% else %}
+                  {% blocktrans %}– commenced by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                {% endif %}
+              {% endwith %}
+            {% endif %}
           </li>
         {% else %}
           <li class="commencement-date">
             {% blocktrans with date=commencement.date|date:"j E Y" %}Commenced on {{ date }}{% endblocktrans %}
-              {% if commencing_work %}
-                {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
-                  {% work_resolver_url commencing_work as resolver_uri %}
-                  {% if numbered_title %}
-                    {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
-                  {% else %}
-                    {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
-                  {% endif %}
-                {% endwith %}
-              {% endif %}
+            {% if commencing_work %}
+              {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
+                {% work_resolver_url commencing_work as resolver_uri %}
+                {% if numbered_title %}
+                  {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                {% else %}
+                  {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                {% endif %}
+              {% endwith %}
+            {% endif %}
           </li>
         {% endif %}
         {% endwith %}
@@ -96,27 +96,27 @@
         </li>
         {% if document.work.commencements_count < 3 %}
           {% for commencement in commencements %}
-              {% commenced_provisions_description document commencement as provisions_description %}
-              <li class="commencement-date-multi">
-                {% if provisions_description %}
-                  {{ provisions_description }}
-                {% else %}
-                  <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
+            {% commenced_provisions_description document commencement as provisions_description %}
+            <li class="commencement-date-multi">
+              {% if provisions_description %}
+                {{ provisions_description }}
+              {% else %}
+                <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
+              {% endif %}
+              {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
+              {% with commencement.commencing_work as commencing_work %}
+                {% if commencing_work %}
+                  {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
+                    {% work_resolver_url commencing_work as resolver_uri %}
+                    {% if numbered_title %}
+                      {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                    {% else %}
+                      {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                    {% endif %}
+                  {% endwith %}
                 {% endif %}
-                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
-                {% with commencement.commencing_work as commencing_work %}
-                  {% if commencing_work %}
-                    {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
-                      {% work_resolver_url commencing_work as resolver_uri %}
-                      {% if numbered_title %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
-                      {% else %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
-                      {% endif %}
-                    {% endwith %}
-                  {% endif %}
-                {% endwith %}
-              </li>
+              {% endwith %}
+            </li>
           {% endfor %}
           {% if document.work.uncommenced_provisions %}
             {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}

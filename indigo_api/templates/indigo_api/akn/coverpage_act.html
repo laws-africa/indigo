@@ -162,11 +162,11 @@
               {% endfor %}
               {% if document.work.uncommenced_provisions %}
                 <tr>
-                  <td style="font-weight: bold">
+                  <td>
                     {% commenced_provisions_description document commencement uncommenced=True as provisions_description %}
-                    {{ provisions_description }}
+                    <b>{{ provisions_description }}</b>
                   </td>
-                  <td style="font-weight: bold">{% blocktrans %}Not yet commenced{% endblocktrans %}</td>
+                  <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b></td>
                 </tr>
               {% endif %}
             </tbody>

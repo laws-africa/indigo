@@ -412,7 +412,7 @@ LOGGING = {
             'level': 'INFO',
         },
         'django.request': {
-            'handlers': ['mail_admins'],
+            'handlers': [] if DEBUG else ['mail_admins'],
             'level': 'ERROR',
         },
     }

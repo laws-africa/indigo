@@ -431,9 +431,9 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
 
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
+        result = super().form_valid(form)
         self.object.amended_work.updated_by_user = self.request.user
         self.object.amended_work.save()
-        result = super(WorkAmendmentDetailView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
@@ -468,16 +468,17 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
     permission_required = ('indigo_api.add_amendment',)
 
     def get_form_kwargs(self):
-        kwargs = super(AddWorkAmendmentView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['instance'] = Amendment(amended_work=self.work)
         kwargs['instance'].created_by_user = self.request.user
         kwargs['instance'].updated_by_user = self.request.user
         return kwargs
 
     def form_valid(self, form):
+        resp = super().form_valid(form)
         self.object.amended_work.updated_by_user = self.request.user
         self.object.amended_work.save()
-        return super(AddWorkAmendmentView, self).form_valid(form)
+        return resp
 
     def form_invalid(self, form):
         return redirect(self.get_success_url())
@@ -497,15 +498,16 @@ class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
     permission_required = ('indigo_api.add_amendment',)
 
     def get_form_kwargs(self):
-        kwargs = super(AddArbitraryExpressionDateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['instance'] = ArbitraryExpressionDate(work=self.work)
         kwargs['instance'].created_by_user = self.request.user
         return kwargs
 
     def form_valid(self, form):
+        resp = super().form_valid(form)
         self.object.work.updated_by_user = self.request.user
         self.object.work.save()
-        return super(AddArbitraryExpressionDateView, self).form_valid(form)
+        return resp
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
@@ -541,9 +543,9 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
 
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
+        result = super().form_valid(form)
         self.object.work.updated_by_user = self.request.user
         self.object.work.save()
-        result = super(EditArbitraryExpressionDateView, self).form_valid(form)
 
         # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.work, expression_date=old_date)

@@ -312,14 +312,16 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def amendments_initial_commencement_arbitrary(self):
+    def amendments_initial_commencement_arbitrary(self, no_commencements=False):
         """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end
         that represents the initial point-in-time. This will include multiple
         objects at the same date, if there were multiple events at the same date.
         """
         initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
         initial.initial = True
-        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.exclude(date=None))
+        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all())
+        if not no_commencements:
+            amendments_expressions = amendments_expressions + list(self.commencements.exclude(date=None))
         amendments_expressions.sort(key=lambda x: x.date)
 
         if initial.date:

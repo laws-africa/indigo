@@ -19,3 +19,8 @@ def work_resolver_url(context, work):
         frbr_uri = '/akn' + frbr_uri
 
     return context.get('resolver_url', settings.RESOLVER_URL) + frbr_uri
+
+
+@register.simple_tag()
+def possible_expression_dates(work):
+    return work.amendments_initial_commencement_arbitrary(no_commencements=True)

@@ -1,3 +1,4 @@
+{% load indigo %}
 <div class="modal fade" id="properties-modal" tabindex="-1">
   <div class="modal-dialog modal-lg document-properties-view">
     <div class="modal-content">
@@ -29,10 +30,11 @@
           <div class="form-row">
             <div class="col-sm-8">
               <select class="form-control" id="document_expression_date">
-                {% for amendment in work.amendments_with_initial_and_arbitrary %}
-                <option value="{{ amendment.date|date:"Y-m-d" }}">
-                  {{ amendment.date|date:"Y-m-d"}} -
-                  {% if amendment.initial %}
+                {% possible_expression_dates work as possible_dates %}
+                {% for date in possible_dates %}
+                <option value="{{ date.date|date:"Y-m-d" }}">
+                  {{ date.date|date:"Y-m-d"}} –
+                  {% if date.initial %}
                   initial publication
                   {% else %}
                   amendment

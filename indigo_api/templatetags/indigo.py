@@ -38,7 +38,7 @@ def commenced_provisions_description(document, commencement, uncommenced=False):
         if len(run) < 4:
             run = [f'{item["type"]} {item["num"]}' for item in run]
         else:
-            run = [f'{run[0]["type"]}s {run[0]["num"]} to {run[-1]["num"]}']
+            run = [f'{run[0]["type"]} {run[0]["num"]}–{run[-1]["num"]}']
         runs.append(run)
 
     for i, p in enumerate(commenceable_provisions):

@@ -22,10 +22,9 @@ def work_resolver_url(context, work):
 
 
 @register.simple_tag
-def commenced_provisions_description(document, commencement, uncommenced=False):
-    work = document.work
+def commenced_provisions_description(work, commencement, uncommenced=False):
     if uncommenced:
-        uncommenced_provisions = document.work.uncommenced_provisions()
+        uncommenced_provisions = work.uncommenced_provisions()
         # TODO: same as below for uncommenced provisions
         return ', '.join([p.id for p in uncommenced_provisions])
 

@@ -407,6 +407,25 @@ class Work(models.Model):
 
         return provisions
 
+    def uncommenced_provisions(self):
+        provisions = self.commenceable_provisions()
+        commenced = set()
+        for commencement in self.commencements.all():
+            if commencement.all_provisions:
+                return []
+            for prov in commencement.provisions:
+                commenced.add(prov)
+
+        return [p for p in provisions if p.id not in commenced]
+
+    @property
+    def commencements_count(self):
+        """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
+        commencements_count = len(self.commencements.all())
+        if self.uncommenced_provisions():
+            commencements_count += 1
+        return commencements_count
+
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)
 

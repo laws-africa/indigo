@@ -223,7 +223,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 if item.children:
                     for kid in item.children:
                         process(kid)
-                elif item.type not in self.non_commenceable_types:
+                elif item.type not in self.non_commenceable_types and item.num:
                     items.append(item)
 
         items = []

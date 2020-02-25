@@ -617,6 +617,11 @@ class ArbitraryExpressionDate(models.Model):
     def can_delete(self):
         return not self.expressions().exists()
 
+    def save(self):
+        if self.work.amendments.filter(date=self.date).all():
+            return
+        return super().save()
+
     @property
     def amended_work(self):
         return self.work

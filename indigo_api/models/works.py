@@ -1,5 +1,6 @@
 # coding=utf-8
 from itertools import chain, groupby
+from datetime import datetime
 
 from actstream import action
 from django.contrib.postgres.fields import JSONField
@@ -311,6 +312,27 @@ class Work(models.Model):
         plugin = plugins.for_work('work-detail', self)
         if plugin:
             return plugin.work_friendly_type(self)
+
+    def possible_expression_dates(self):
+        initial = self.publication_date or self.commencement_date
+        amendment_dates = [a.date for a in self.amendments.all()]
+        consolidation_dates = [c.date for c in self.arbitrary_expression_dates.all()]
+        dates = [
+            {'date': date,
+             'amendment': date in amendment_dates,
+             'consolidation': date in consolidation_dates,
+             'initial': date == initial}
+            for date in amendment_dates + consolidation_dates
+        ]
+
+        if initial not in amendment_dates + consolidation_dates:
+            dates = dates + [
+                {'date': initial,
+                 'initial': True}
+            ]
+
+        dates.sort(key=lambda x: x['date'], reverse=True)
+        return dates
 
     def amendments_initial_commencement_arbitrary(self):
         """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end

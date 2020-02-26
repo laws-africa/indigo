@@ -307,7 +307,7 @@
       };
       if (fragmentRule != 'akomaNtoso') {
         data.fragment = fragmentRule;
-        if (id.lastIndexOf('.') > -1) {
+        if (id && id.lastIndexOf('.') > -1) {
           // retain the id of the parent element as the prefix
           data.id_prefix = id.substring(0, id.lastIndexOf('.'));
         }

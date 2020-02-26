@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-13 12:59+0200\n"
+"POT-Creation-Date: 2020-02-26 15:04+0200\n"
 "PO-Revision-Date: 2020-02-06 14:28\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Afrikaans\n"
@@ -81,32 +81,87 @@ msgstr "Ingestem op %(date)s"
 msgid "Not commenced"
 msgstr "Nog nie in werking"
 
-#: templates/indigo_api/akn/coverpage_act.html:60
+#: templates/indigo_api/akn/coverpage_act.html:62
 msgid "Commencement date unknown"
 msgstr "Aanvangsdatum onbekend"
 
 #: templates/indigo_api/akn/coverpage_act.html:64
-#, python-format
-msgid "Commences on %(date)s unless otherwise noted"
-msgstr "Aanvang op %(date)s tensy anders vermeld"
+#, fuzzy, python-format
+#| msgid "Assented to on %(date)s"
+msgid "Commenced on %(date)s"
+msgstr "Ingestem op %(date)s"
 
-#: templates/indigo_api/akn/coverpage_act.html:71
-#, python-format
-msgid "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
+#: templates/indigo_api/akn/coverpage_act.html:72
+#, fuzzy, python-format
+#| msgid ""
+#| "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
+msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr ""
 "(verwys na <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
 
-#: templates/indigo_api/akn/coverpage_act.html:73
-#, python-format
-msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+#: templates/indigo_api/akn/coverpage_act.html:74
+#, fuzzy, python-format
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 
-#: templates/indigo_api/akn/coverpage_act.html:84
+#: templates/indigo_api/akn/coverpage_act.html:78
+#: templates/indigo_api/akn/coverpage_act.html:108
+#: templates/indigo_api/akn/coverpage_act.html:149
+#, fuzzy, python-format
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#: templates/indigo_api/akn/coverpage_act.html:80
+#: templates/indigo_api/akn/coverpage_act.html:110
+#: templates/indigo_api/akn/coverpage_act.html:151
+#, fuzzy, python-format
+#| msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr "(verwys na <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+
+#: templates/indigo_api/akn/coverpage_act.html:91
+msgid "There are multiple commencements:"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:100
+#: templates/indigo_api/akn/coverpage_act.html:139
+msgid "Unknown provisions"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:102
+#: templates/indigo_api/akn/coverpage_act.html:143
+#, fuzzy, python-format
+#| msgid "Assented to on %(date)s"
+msgid "commenced on %(date)s"
+msgstr "Ingestem op %(date)s"
+
+#: templates/indigo_api/akn/coverpage_act.html:120
+#, python-format
+msgid "%(provisions_description)s: not yet commenced"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:127
+msgid "Provisions"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:128
+msgid "Status"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:165
+#, fuzzy
+#| msgid "Not commenced"
+msgid "not yet commenced"
+msgstr "Nog nie in werking"
+
+#: templates/indigo_api/akn/coverpage_act.html:177
 #, python-format
 msgid "Up to date as at %(date)s"
 msgstr "Opgedateer tot en met %(date)s"
 
-#: templates/indigo_api/akn/coverpage_act.html:92
+#: templates/indigo_api/akn/coverpage_act.html:185
 msgid ""
 "Note: The original publication document is not available and this content "
 "could not be verified."
@@ -117,3 +172,7 @@ msgstr ""
 #: templates/indigo_api/akn/export/standalone.html:17
 msgid "Table of Contents"
 msgstr "Inhoudsopgawe"
+
+#, python-format
+#~ msgid "Commences on %(date)s unless otherwise noted"
+#~ msgstr "Aanvang op %(date)s tensy anders vermeld"

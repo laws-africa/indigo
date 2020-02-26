@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: openup-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-02-13 12:59+0200\n"
+"POT-Creation-Date: 2020-02-26 15:04+0200\n"
 "PO-Revision-Date: 2018-08-03 14:50\n"
 "Last-Translator: longhotsummer <greg@kempe.net>\n"
 "Language-Team: Swati\n"
@@ -64,31 +64,77 @@ msgstr ""
 msgid "Not commenced"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:60
+#: templates/indigo_api/akn/coverpage_act.html:62
 msgid "Commencement date unknown"
 msgstr ""
 
 #: templates/indigo_api/akn/coverpage_act.html:64
 #, python-format
-msgid "Commences on %(date)s unless otherwise noted"
+msgid "Commenced on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:71
+#: templates/indigo_api/akn/coverpage_act.html:72
 #, python-format
-msgid "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
+msgid "– commenced by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:73
+#: templates/indigo_api/akn/coverpage_act.html:74
 #, python-format
-msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
+msgid "– commenced by <a href=\"%(resolver_uri)s\">%(title)s</a>"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:84
+#: templates/indigo_api/akn/coverpage_act.html:78
+#: templates/indigo_api/akn/coverpage_act.html:108
+#: templates/indigo_api/akn/coverpage_act.html:149
+#, python-format
+msgid "by <a href=\"%(resolver_uri)s\">%(numbered_title)s</a>"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:80
+#: templates/indigo_api/akn/coverpage_act.html:110
+#: templates/indigo_api/akn/coverpage_act.html:151
+#, python-format
+msgid "by <a href=\"%(resolver_uri)s\">%(title)s</a>"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:91
+msgid "There are multiple commencements:"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:100
+#: templates/indigo_api/akn/coverpage_act.html:139
+msgid "Unknown provisions"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:102
+#: templates/indigo_api/akn/coverpage_act.html:143
+#, python-format
+msgid "commenced on %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:120
+#, python-format
+msgid "%(provisions_description)s: not yet commenced"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:127
+msgid "Provisions"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:128
+msgid "Status"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:165
+msgid "not yet commenced"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:177
 #, python-format
 msgid "Up to date as at %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:92
+#: templates/indigo_api/akn/coverpage_act.html:185
 msgid ""
 "Note: The original publication document is not available and this content "
 "could not be verified."

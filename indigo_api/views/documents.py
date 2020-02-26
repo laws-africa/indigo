@@ -558,19 +558,25 @@ class DocumentDiffView(DocumentResourceView, APIView):
 
         element_id = serializer.validated_data.get('element_id')
         if element_id:
-            # diff just this element
-            local_element = local_doc.doc.root.xpath(f'//a:*[@id="{element_id}"]', namespaces={'a': local_doc.doc.namespace})[0]
-            remote_element = remote_doc.doc.root.xpath(f'//a:*[@id="{element_id}"]', namespaces={'a': local_doc.doc.namespace})[0]
+            # handle certain elements that don't have ids
+            if element_id in ['preface', 'preamble', 'components']:
+                xpath = f'//a:{element_id}'
+            else:
+                xpath = f'//a:*[@id="{element_id}"]'
 
-            local_html = local_doc.to_html(element=local_element)
-            remote_html = remote_doc.to_html(element=remote_element)
+            # diff just this element
+            local_element = local_doc.doc.root.xpath(xpath, namespaces={'a': local_doc.doc.namespace})
+            remote_element = remote_doc.doc.root.xpath(xpath, namespaces={'a': local_doc.doc.namespace})
+
+            local_html = local_doc.to_html(element=local_element[0]) if len(local_element) else None
+            remote_html = remote_doc.to_html(element=remote_element[0]) if len(remote_element) else None
         else:
             # diff the whole document
             local_html = local_doc.to_html()
             remote_html = remote_doc.to_html()
 
-        local_tree = lxml.html.fromstring(local_html)
-        remote_tree = lxml.html.fromstring(remote_html)
+        local_tree = lxml.html.fromstring(local_html or "<div></div>")
+        remote_tree = lxml.html.fromstring(remote_html) if remote_html else None
         n_changes = differ.diff_document_html(remote_tree, local_tree)
 
         diff = lxml.html.tostring(local_tree, encoding='utf-8')

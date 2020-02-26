@@ -418,6 +418,11 @@
       data.document.content = this.parent.documentContent.toXml();
       data.element_id = this.parent.fragment.getAttribute('id');
 
+      if (!data.element_id && this.parent.fragment.tagName !== "akomaNtoso") {
+        // for elements without ids (preamble, preface, components)
+        data.element_id = this.parent.fragment.tagName;
+      }
+
       // HACK HACK HACK
       $.ajax({
         url: '/api/documents/278/diff',

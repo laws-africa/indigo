@@ -402,16 +402,23 @@
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
         $akn.append(html);
-        
-        self.trigger('rendered');
-      });
 
-      // HACK HACK HACK
-      var data = {};
+        self.trigger('rendered');
+        self.renderComparisonDiff();
+      });
+    },
+
+    renderComparisonDiff: function() {
+      // TODO: decide what to compare it against
+      var self = this,
+          $akn = this.$('.document-workspace-content .akoma-ntoso'),
+          data = {};
+
       data.document = this.parent.model.toJSON();
       data.document.content = this.parent.documentContent.toXml();
       data.element_id = this.parent.fragment.getAttribute('id');
 
+      // HACK HACK HACK
       $.ajax({
         url: '/api/documents/278/diff',
         type: "POST",
@@ -421,8 +428,6 @@
           .then(function(response) {
             var html = $.parseHTML(response.html_diff)[0];
 
-            // TODO: handle comments
-            
             self.makeLinksExternal(html);
             self.addWorkPopups(html);
             self.makeTablesEditable(html);

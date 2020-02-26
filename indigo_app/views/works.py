@@ -1,10 +1,10 @@
 # coding=utf-8
 import json
 import logging
-from itertools import chain, groupby
+from itertools import chain
 from datetime import timedelta
 
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -83,20 +83,17 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         dates.sort(key=lambda x: x['date'], reverse=True)
 
         # add expressions and commencement and amendment objects
-        work_timeline = [{
-            'date': event['date'],
-            'initial': event.get('initial'),
-            'assent_date': event.get('assent_date'),
-            'publication_date': event.get('publication_date'),
-            'repealed_date': event.get('repealed_date'),
-            'commencements': work.commencements.filter(date=event['date']).all(),
-            'consolidations': work.arbitrary_expression_dates.filter(date=event['date']).all(),
-            'amendments': work.amendments.filter(date=event['date']).all(),
-            'expressions': work.expressions().filter(expression_date=event['date']).all(),
-        }
-            for event in dates]
+        for event in dates:
+            date = event['date']
+            if event.get('commencement_date'):
+                event['commencements'] = work.commencements.filter(date=date).all()
+            if event.get('amendment'):
+                event['amendments'] = work.amendments.filter(date=date).all()
+            if event.get('consolidation'):
+                event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
+            event['expressions'] = work.expressions().filter(expression_date=date).all()
 
-        return work_timeline
+        return dates
 
     @property
     def work(self):

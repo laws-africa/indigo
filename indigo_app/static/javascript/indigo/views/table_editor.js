@@ -147,11 +147,15 @@
 
         this.observers = [];
 
-        // Make a copy of the table and edit it. This means that we have the original,
+        // Re-render the table and edit that version. This means that we have the original,
         // including any event handlers that other components may have attached to its content.
         // If the edit is cancelled, this is swapped back into place.
+        // Re-rendering the table ensures we're not editing any elements that the editor has
+        // added, such as annotations.
         this.originalTable = table;
-        table = table.cloneNode(true);
+        table = this.parent.htmlRenderer.renderXmlElement(
+          this.documentContent.document, this.documentContent.getElementByScopedId(table.id),
+        ).firstElementChild;
         this.originalTable.parentElement.replaceChild(table, this.originalTable);
 
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');

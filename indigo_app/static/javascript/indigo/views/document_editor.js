@@ -137,24 +137,10 @@
           self = this;
 
       // setup akn to html transform
-      this.htmlTransformReady = $.Deferred();
-      function htmlLoaded(xml) {
-        var htmlTransform = new XSLTProcessor();
-        htmlTransform.importStylesheet(xml);
-        htmlTransform.setParameter(null, 'resolverUrl', '/works');
-
-        self.htmlTransform = htmlTransform;
+      this.htmlRenderer = Indigo.render.getHtmlRenderer(country);
+      this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
-        self.htmlTransformReady.resolve();
-      }
-
-      $.get('/static/xsl/act-' + country +'.xsl')
-        .then(htmlLoaded)
-        .fail(function() {
-          $.get('/static/xsl/act.xsl')
-            .then(htmlLoaded);
-        });
-
+      });
 
       // setup akn to text transform
       this.textTransformReady = $.Deferred();
@@ -408,15 +394,8 @@
         });
       }
 
-      this.htmlTransformReady.then(function() {
-        self.htmlTransform.setParameter(null, 'defaultIdScope', self.getFragmentIdScope() || '');
-        self.htmlTransform.setParameter(null, 'mediaUrl', self.parent.model.url() + '/');
-        self.htmlTransform.setParameter(null, 'lang', self.parent.model.get('language'));
-        self.htmlTransform.setParameter(null, 'documentType', self.parent.model.work.get('nature'));
-        self.htmlTransform.setParameter(null, 'subtype', self.parent.model.get('subtype') || '');
-        self.htmlTransform.setParameter(null, 'country', self.parent.model.work.get('country'));
-        self.htmlTransform.setParameter(null, 'locality', self.parent.model.work.get('locality') || '');
-        var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
+      this.htmlRenderer.ready.then(function() {
+        var html = self.htmlRenderer.renderXmlElement(self.parent.model, self.parent.fragment);
 
         self.makeLinksExternal(html);
         self.addWorkPopups(html);
@@ -482,20 +461,6 @@
       return deferred;
     },
 
-    getFragmentIdScope: function() {
-      // default scope for ID elements
-      var ns = this.parent.fragment.namespaceURI;
-      var idScope = this.parent.fragment.ownerDocument.evaluate(
-        "./ancestor::a:doc[@name][1]/@name",
-        this.parent.fragment,
-        function(x) { if (x == "a") return ns; },
-        XPathResult.ANY_TYPE,
-        null);
-
-      idScope = idScope.iterateNext();
-      return idScope ? idScope.value : null;
-    },
-
     makeLinksExternal: function(html) {
       html.querySelectorAll('a[href]').forEach(function(a) {
         if (!a.getAttribute('href').startsWith('#')) {
@@ -531,7 +496,7 @@
     makeElementsQuickEditable: function(html) {
       var self = this;
 
-      $(html.firstElementChild)
+      $(html)
         .find(this.parent.model.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
         .each(function(i, e) {

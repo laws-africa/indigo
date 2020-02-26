@@ -122,20 +122,6 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(doc.draft, True)
         self.assertNotIn('tester', doc.content)
 
-    def test_no_consolidation_at_existing_amendment(self):
-        amendment = Amendment(amended_work_id=1, amending_work_id=2, date='2019-01-01', created_by_user_id=1)
-        amendment.save()
-
-        response = self.client.post('/works/za/act/2014/10/arbitrary_expression_dates/new', {
-            'date': '2019-01-01',
-            'work': '1'
-        })
-        self.assertEqual(response.status_code, 302)
-
-        work = Work.objects.get(pk=1)
-        # check that consolidation wasn't saved
-        self.assertQuerysetEqual(ArbitraryExpressionDate.objects.filter(work=work), [])
-
     def test_get_work_timeline(self):
         view = WorkViewBase()
         work = Work.objects.get(pk=1)

@@ -36,33 +36,12 @@
           <h6>Assented to</h6>
         {% endif %}
 
-        {% if event.initial %}
-          <h6>
-          {% if event.commencement_date %}
-            {% if event.publication_date %}
-              Initial publication
-              {% if not work.commencing_work %}
-                <span class="text-muted">– commenced on publication</span>
-              {% endif %}
-            {% else %}
-              Commencement
-            {% endif %}
-            {% if work.commencing_work %}
-              – commenced{% if event.publication_date %} on publication{% endif %} by
-              <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
-            {% endif %}
-          {% elif event.publication_date %}
-            Initial publication
-          {% endif %}
-          </h6>
+        {% if event.publication_date %}
+          <h6>Published</h6>
+        {% endif %}
 
-        {% elif event.commencement_date %}
-          <h6>
-            Commenced
-            {% if work.commencing_work %}
-              by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
-            {% endif %}
-          </h6>
+        {% if event.consolidation %}
+          <h6>Consolidation</h6>
         {% endif %}
 
         {% if event.repealed_date %}
@@ -73,17 +52,26 @@
           </h6>
         {% endif %}
 
-        {% for amendment in event.amendments %}
-          {% if not amendment.amending_work and amendment.id %}
-            <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=amendment.id %}" method="POST" id="arbitrary-expression-date-{{ amendment.id }}">
+        {% for commencement in event.commencements %}
+          <h6>
+            Commenced{% if not commencement.all_provisions %} in part{% endif %}
+              {% if commencement.commencing_work %}
+                by <a href="{% url 'work' frbr_uri=commencement.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=commencement.commencing_work.frbr_uri %}">{{ commencement.commencing_work.title }}</a>
+              {% endif %}
+          </h6>
+        {% endfor %}
+
+        {% for consolidation in event.consolidations %}
+          {% if consolidation.pk %}
+            <form action="{% url 'edit_arbitrary_expression_date' frbr_uri=work.frbr_uri arbitrary_expression_date_id=consolidation.id %}" method="POST" id="arbitrary-expression-date-{{ consolidation.id }}">
               {% csrf_token %}
 
-              {% if editable and perms.indigo_api.change_amendment %}
+              {% if editable and perms.indigo_api.change_arbitraryexpressiondate %}
                 <div class="dropdown float-right">
                   <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown">Options <span class="caret"></span></button>
                   <div class="dropdown-menu">
-                    <a href="#arbitrary-expression-date-form-{{ amendment.id }}" class="dropdown-item" data-toggle="collapse">Change date</a>
-                    {% if amendment.can_delete %}
+                    <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="dropdown-item" data-toggle="collapse">Change date</a>
+                    {% if consolidation.can_delete %}
                     <button class="dropdown-item" type="submit" name="delete" data-confirm="Really delete this expression date?">Delete</button>
                     {% endif %}
                   </div>
@@ -91,13 +79,17 @@
               {% endif %}
 
               <h6>Consolidation</h6>
-              <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ amendment.id }}">
-                <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ amendment.date|date:"Y-m-d" }}" autocomplete="off">
+              <div class="form-inline edit-wrapper mb-3 collapse" id="arbitrary-expression-date-form-{{ consolidation.id }}">
+                <input type="text" class="form-control amendment-date mr-2" data-provide="datepicker" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" required name="date" value="{{ consolidation.date|date:"Y-m-d" }}" autocomplete="off">
                 <button class="btn btn-success" type="submit">Save</button>
-                <a href="#arbitrary-expression-date-form-{{ amendment.id }}" class="btn btn-link" data-toggle="collapse">Cancel</a>
+                <a href="#arbitrary-expression-date-form-{{ consolidation.id }}" class="btn btn-link" data-toggle="collapse">Cancel</a>
               </div>
             </form>
-          {% elif amendment.pk %}
+          {% endif %}
+        {% endfor %}
+
+        {% for amendment in event.amendments %}
+          {% if amendment.pk %}
             <form action="{% url 'work_amendment_detail' frbr_uri=work.frbr_uri amendment_id=amendment.id %}" method="POST" id="amendment-{{ amendment.id|default:'initial' }}">
               {% csrf_token %}
 
@@ -132,34 +124,36 @@
         </div>
       </div>
 
-      {% if editable and event.amendments %}
-        <div class="card-footer">
-          {% block amendment-buttons %}
+      {% if editable %}
+        {% if event.initial or event.consolidations or event.amendments %}
+          <div class="card-footer">
+            {% block amendment-buttons %}
 
-            <form action="{% url 'new_work_point_in_time' frbr_uri=work.frbr_uri %}" method="POST">
-              {% csrf_token %}
-              <input type="hidden" name="expression_date" value="{{ event.date|date:'Y-m-d' }}">
+              <form action="{% url 'new_work_point_in_time' frbr_uri=work.frbr_uri %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="expression_date" value="{{ event.date|date:'Y-m-d' }}">
 
-              <div class="btn-group">
-                <div class="dropdown mr-3">
-                  <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fas fa-pencil-alt"></i> Create
-                    {% if not event.initial %}
-                       amended version
-                    {% endif %}
-                  </button>
-                  <div class="dropdown-menu">
-                    {% for language in indigo_languages %}
-                      <button type="submit" name="language" value="{{ language.id }}" class="dropdown-item">In {{ language }}</button>
-                    {% endfor %}
+                <div class="btn-group">
+                  <div class="dropdown mr-3">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                      <i class="fas fa-pencil-alt"></i> Create
+                      {% if not event.initial %}
+                         amended version
+                      {% endif %}
+                    </button>
+                    <div class="dropdown-menu">
+                      {% for language in indigo_languages %}
+                        <button type="submit" name="language" value="{{ language.id }}" class="dropdown-item">In {{ language }}</button>
+                      {% endfor %}
+                    </div>
                   </div>
+                  <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:'Y-m-d' }}"><i class="fas fa-file-upload"></i> Import document</a>
                 </div>
-                <a class="btn btn-outline-secondary" href="{% url 'import_document' frbr_uri=work.frbr_uri %}?expression_date={{ event.date|date:'Y-m-d' }}"><i class="fas fa-file-upload"></i> Import document</a>
-              </div>
-            </form>
+              </form>
 
-          {% endblock %}
-        </div>
+            {% endblock %}
+          </div>
+        {% endif %}
       {% endif %}
     </li>
   {% endfor %}

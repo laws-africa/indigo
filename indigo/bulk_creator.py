@@ -15,7 +15,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment
+from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement
 from indigo_api.signals import work_changed
 
 
@@ -177,7 +177,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not dry_run:
             for info in works:
                 if info['status'] == 'success':
-                    if info.get('commenced_by'):
+                    if info.get('commencement_date') or info.get('commenced_by'):
                         self.link_commencement(info['work'], info)
 
                     if info.get('repealed_by'):
@@ -225,7 +225,6 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work.publication_number = row.get('publication_number')
             work.publication_date = row.get('publication_date')
             work.commenced = bool(row.get('commencement_date') or row.get('commenced_by'))
-            work.commencement_date = row.get('commencement_date')
             work.assent_date = row.get('assent_date')
             work.stub = row.get('stub')
             # handle spreadsheet that still uses 'principal'
@@ -382,19 +381,26 @@ class BaseBulkCreator(LocaleBasedMatcher):
         pub_doc.save()
 
     def link_commencement(self, work, info):
-        # if the work is `commenced_by` something, try linking it
-        # make a task if this fails
-        title = info['commenced_by']
-        work = info['work']
-        commencing_work = self.find_work_by_title(title)
-        if not commencing_work:
-            return self.create_task(work, info, task_type='link-commencement')
+        # if the work has commencement details, try linking it
+        # make a task if a `commenced_by` title is given but not found
+        date = info.get('commencement_date')
 
-        work.commencing_work = commencing_work
-        try:
-            work.save_with_revision(self.user)
-        except ValidationError:
-            self.create_task(work, info, task_type='link-commencement')
+        commencing_work = None
+        title = info.get('commenced_by')
+        if title:
+            commencing_work = self.find_work_by_title(title)
+            if not commencing_work:
+                self.create_task(work, info, task_type='link-commencement')
+
+        commencement = Commencement(
+            commenced_work=work,
+            commencing_work=commencing_work,
+            date=date,
+            main=True,
+            all_provisions=True,
+            created_by_user=self.user
+        )
+        commencement.save()
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it
@@ -478,7 +484,8 @@ Make sure the document's expression date is correct.'''
 The commencement work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– the commencing work hasn't been imported.
+– more than one work by that name exists on the system
+– the commencing work doesn't exist on the system.
 
 Check the spreadsheet for reference and link it manually.'''.format(info['commenced_by'], info['row'])
 
@@ -491,10 +498,10 @@ Check the spreadsheet for reference and link it manually.'''.format(info['commen
 
 The amendment could not be linked automatically.
 Possible reasons:
-– more than one amended work listed
 – a typo in the spreadsheet
 – no date for the amendment
-– the amended work hasn't been imported.
+– more than one amended work listed
+– the amended work doesn't exist on the system.
 
 Check the spreadsheet for reference and link it/them manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info['row'])
@@ -507,7 +514,8 @@ The repeal could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
 – no date for the repeal
-– the repealing work hasn't been imported.
+– more than one work by that name exists on the system
+– the repealing work doesn't exist on the system.
 
 Check the spreadsheet for reference and link it manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
@@ -519,7 +527,8 @@ or add the 'Pending commencement' label to this task if it doesn't have a date y
 The primary work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– the primary work hasn't been imported.
+– more than one work by that name exists on the system
+– the primary work doesn't exist on the system.
 
 Check the spreadsheet for reference and link it manually.'''.format(info['primary_work'], info['row'])
 

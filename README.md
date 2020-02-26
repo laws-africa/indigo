@@ -112,15 +112,22 @@ You will also need `pdftotext` to import PDF files. On Mac, you can use Homebrew
 
 Each indigo package has its own translations in the `locale` directory. Translations for strings are added on [CrowdIn](https://crowdin.com/project/lawsafrica-indigo).
 
-If you have added or changed strings that need translating, you must [tell Django to update the .po files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#localization-how-to-create-language-files):
+If you have added or changed strings that need translating, you must [tell Django to update the .po files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#localization-how-to-create-language-files) so that translations can be supplied through CrowdIn.
 
 ```bash
 for app in indigo indigo_api indigo_za; do pushd $app; django-admin makemessages -a; popd; done
-django-admin compilemessages --settings indigo.settings
 ```
 
 And then commit the changes. CrowdIn will pick up any changed strings and make them available for translation. Once they are translated, it will
 open a pull request to merge the changes into master.
+
+Once merged into master, you must [tell Django to compile the .po files to .mo files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#compiling-message-files):
+
+```bash
+django-admin compilemessages --settings indigo.settings
+```
+
+And then commit the changes.
 
 
 ## npm module dependencies

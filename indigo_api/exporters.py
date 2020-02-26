@@ -123,6 +123,10 @@ class HTMLExporter(object):
             'resolverUrl': self.resolver,
             'mediaUrl': self.media_url or '',
             'lang': document.language.code,
+            'documentType': document.nature,
+            'subtype': document.subtype or '',
+            'country': document.work.country.code,
+            'locality': (document.work.locality.code if document.work.locality else ''),
         }
 
         return XSLTRenderer(xslt_params=params, xslt_filename=self.find_xslt(document))

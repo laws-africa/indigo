@@ -404,6 +404,21 @@ class Document(DocumentMixin, models.Model):
         else:
             return fqdn + '/api' + self.doc.expression_frbr_uri().manifestation_uri()
 
+    def all_provisions(self):
+        ids = []
+
+        def add_ids(toc):
+            for e in toc:
+                if e.id:
+                    ids.append(e.id)
+                if e.children and e.component == 'main':
+                    add_ids(e.children)
+
+        toc = self.table_of_contents()
+        add_ids(toc)
+
+        return ids
+
     def _make_act(self, xml):
         id = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)
         doc = Act(xml)

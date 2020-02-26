@@ -14,7 +14,7 @@
     "dom-anchor-text-position": "^4.0.0",
     "dom-anchor-text-quote": "^4.0.2",
     "indigo-web": "^3.9.0",
-    "yarn": "^1.17.3"
+    "yarn": "^1.22.0"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.2.0"

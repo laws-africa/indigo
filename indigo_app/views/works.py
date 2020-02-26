@@ -4,7 +4,7 @@ import logging
 from itertools import chain
 from datetime import timedelta
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.contrib import messages
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -16,12 +16,13 @@ from reversion import revisions as reversion
 import datetime
 
 from indigo.plugins import plugins
-from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, ArbitraryExpressionDate
+from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
+    ArbitraryExpressionDate, Commencement
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
 from indigo_app.revisions import decorate_versions
-from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm
+from indigo_app.forms import BatchCreateWorkForm, ImportDocumentForm, WorkForm, CommencementForm, NewCommencementForm
 from indigo_metrics.models import WorkMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
@@ -59,23 +60,26 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         work_timeline = self.work.points_in_time()
         other_dates = [
             ('assent_date', self.work.assent_date),
-            ('commencement_date', self.work.commencement_date),
             ('publication_date', self.work.publication_date),
             ('repealed_date', self.work.repealed_date)
         ]
-        # add to existing events (e.g. if publication and commencement dates are the same)
-        for entry in work_timeline:
-            for name, date in other_dates:
-                if entry['date'] == date:
-                    entry[name] = True
-        # add new events (e.g. if assent is before any of the other events)
-        existing_dates = [entry['date'] for entry in work_timeline]
+
+        # add new events (e.g. if assent is before any of the other events),
+        # only one event per date
         for name, date in other_dates:
-            if date and date not in existing_dates:
-                work_timeline.append({
-                    'date': date,
-                    name: True,
-                })
+            if date:
+                dates = [entry['date'] for entry in work_timeline]
+                if date not in dates:
+                    work_timeline.append({
+                        'date': date,
+                        name: True,
+                    })
+                else:
+                    # add to existing events (e.g. if publication and commencement dates are the same)
+                    for entry in work_timeline:
+                        if entry['date'] == date:
+                            entry[name] = True
+
         return sorted(work_timeline, key=lambda k: k['date'], reverse=True)
 
     @property
@@ -238,6 +242,147 @@ class WorkOverviewView(WorkViewBase, DetailView):
         return context
 
 
+class WorkCommencementsView(WorkViewBase, DetailView):
+    template_name_suffix = '_commencements'
+    tab = 'commencements'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorkCommencementsView, self).get_context_data(**kwargs)
+        context['provisions'] = provisions = self.work.commenceable_provisions()
+        context['uncommenced_provisions'] = self.work.uncommenced_provisions()
+        context['commencements'] = commencements = self.work.commencements.all().reverse()
+        context['has_all_provisions'] = any(c.all_provisions for c in commencements)
+        context['has_main_commencement'] = any(c.main for c in commencements)
+
+        provision_set = {p.id: p for p in provisions}
+        for commencement in commencements:
+            # rich description of provisions
+            commencement.provision_items = [provision_set.get(p, p) for p in commencement.provisions]
+            # possible options
+            commencement.possible_provisions = self.get_possible_provisions(commencement, commencements, provisions)
+
+        return context
+
+    def get_possible_provisions(self, commencement, commencements, provisions):
+        # provisions commenced by everything else
+        commenced = set(p for comm in commencements if comm != commencement for p in comm.provisions)
+        return [p for p in provisions if p.id not in commenced]
+
+
+class WorkCommencementUpdateView(WorkDependentView, UpdateView):
+    """ View to update or delete a commencement object.
+    """
+    http_method_names = ['post']
+    model = Commencement
+    pk_url_kwarg = 'commencement_id'
+    form_class = CommencementForm
+
+    def get_queryset(self):
+        return self.work.commencements
+
+    def get_permission_required(self):
+        if 'delete' in self.request.POST:
+            return ('indigo_api.delete_commencement',)
+        return ('indigo_api.change_commencement',)
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['work'] = self.work
+        kwargs['provisions'] = self.work.commenceable_provisions()
+        return kwargs
+
+    def post(self, request, *args, **kwargs):
+        if 'delete' in request.POST:
+            return self.delete(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        self.object.updated_by_user = self.request.user
+        super().form_valid(form)
+        # make necessary changes to work, including updating updated_by_user
+        self.object.rationalise(self.request.user)
+        self.object.save()
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        # send errors as messages, since we redirect back to the commencements page
+        errors = list(form.non_field_errors())
+        errors.extend([f'{fld}: ' + ', '.join(errs) for fld, errs in form.errors.items() if fld != '__all__'])
+        messages.error(self.request, '; '.join(errors))
+        return redirect(self.get_success_url())
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        work = self.object.commenced_work
+        self.object.delete()
+        work.updated_by_user = self.request.user
+        work.save()
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_commencements', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object.id:
+            url += "#commencement-%s" % self.object.id
+        return url
+
+
+class WorkUncommencedView(WorkDependentView, View):
+    """ Post-only view to mark a work as fully uncommenced.
+    """
+    http_method_names = ['post']
+    permission_required = ('indigo_api.delete_commencement',)
+
+    def post(self, request, *args, **kwargs):
+        self.work.commenced = False
+        self.work.updated_by_user = self.request.user
+        self.work.save()
+
+        for obj in self.work.commencements.all():
+            obj.delete()
+
+        return redirect('work_commencements', frbr_uri=self.kwargs['frbr_uri'])
+
+
+class AddWorkCommencementView(WorkDependentView, CreateView):
+    """ View to add a new commencement.
+    """
+    model = Commencement
+    permission_required = ('indigo_api.add_commencement',)
+    form_class = NewCommencementForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['instance'] = Commencement(
+            commenced_work=self.work,
+            created_by_user=self.request.user,
+            updated_by_user=self.request.user)
+        return kwargs
+
+    def form_valid(self, form):
+        self.object = form.save()
+
+        # useful defaults for new commencements
+        if not self.work.commencements.filter(main=True).exists():
+            self.object.main = True
+
+        if not self.work.commencements.exists():
+            self.object.all_provisions = True
+
+        # make necessary changes to work, including updating updated_by_user
+        self.object.rationalise(self.request.user)
+        self.object.save()
+        return redirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        return redirect(self.get_success_url())
+
+    def get_success_url(self):
+        url = reverse('work_commencements', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
+        if self.object and self.object.id:
+            url = url + "#commencement-%s" % self.object.id
+        return url
+
+
 class WorkAmendmentsView(WorkViewBase, DetailView):
     template_name_suffix = '_amendments'
     tab = 'amendments'
@@ -276,7 +421,9 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
 
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
-        result = super(WorkAmendmentDetailView, self).form_valid(form)
+        result = super().form_valid(form)
+        self.object.amended_work.updated_by_user = self.request.user
+        self.object.amended_work.save()
 
         # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.amended_work, expression_date=old_date)
@@ -290,7 +437,10 @@ class WorkAmendmentDetailView(WorkDependentView, UpdateView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.can_delete():
+            work = self.object.amended_work
             self.object.delete()
+            work.updated_by_user = self.request.user
+            work.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -308,11 +458,17 @@ class AddWorkAmendmentView(WorkDependentView, CreateView):
     permission_required = ('indigo_api.add_amendment',)
 
     def get_form_kwargs(self):
-        kwargs = super(AddWorkAmendmentView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['instance'] = Amendment(amended_work=self.work)
         kwargs['instance'].created_by_user = self.request.user
         kwargs['instance'].updated_by_user = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        resp = super().form_valid(form)
+        self.object.amended_work.updated_by_user = self.request.user
+        self.object.amended_work.save()
+        return resp
 
     def form_invalid(self, form):
         return redirect(self.get_success_url())
@@ -332,10 +488,16 @@ class AddArbitraryExpressionDateView(WorkDependentView, CreateView):
     permission_required = ('indigo_api.add_amendment',)
 
     def get_form_kwargs(self):
-        kwargs = super(AddArbitraryExpressionDateView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['instance'] = ArbitraryExpressionDate(work=self.work)
         kwargs['instance'].created_by_user = self.request.user
         return kwargs
+
+    def form_valid(self, form):
+        resp = super().form_valid(form)
+        self.object.work.updated_by_user = self.request.user
+        self.object.work.save()
+        return resp
 
     def get_success_url(self):
         url = reverse('work_amendments', kwargs={'frbr_uri': self.kwargs['frbr_uri']})
@@ -371,7 +533,9 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
 
         # do normal things to amend work
         self.object.updated_by_user = self.request.user
-        result = super(EditArbitraryExpressionDateView, self).form_valid(form)
+        result = super().form_valid(form)
+        self.object.work.updated_by_user = self.request.user
+        self.object.work.save()
 
         # update old docs to have the new date as their expression date
         docs = Document.objects.filter(work=self.object.work, expression_date=old_date)
@@ -385,7 +549,10 @@ class EditArbitraryExpressionDateView(WorkDependentView, UpdateView):
     def delete(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.can_delete():
+            work = self.object.work
             self.object.delete()
+            work.updated_by_user = self.request.user
+            work.save()
         return redirect(self.get_success_url())
 
     def get_success_url(self):
@@ -471,18 +638,16 @@ class WorkRelatedView(WorkViewBase, DetailView):
         context['repeals'] = repeals
 
         # commencement
-        commencement = []
-        if self.work.commencing_work:
-            commencement.append({
-                'rel': 'commenced by',
-                'work': self.work.commencing_work,
-                'date': self.work.commencement_date,
-            })
+        commencement = [{
+            'rel': 'commenced by',
+            'work': c.commencing_work,
+            'date': c.date,
+        } for c in self.work.commencements.all() if c.commencing_work]
         commencement = commencement + [{
             'rel': 'commenced',
-            'work': w,
-            'date': w.commencement_date,
-        } for w in self.work.commenced_works.all()]
+            'work': c.commenced_work,
+            'date': c.date,
+        } for c in self.work.commencements_made.all()]
         context['commencement'] = commencement
 
         context['no_related'] = (not family and not amended and not amended_by and not repeals and not commencement)
@@ -503,9 +668,10 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
 
         actions = self.work.action_object_actions.all()
         amendment_actions = [aa for a in self.work.amendments.all() for aa in a.action_object_actions.all()]
+        commencement_actions = [c for a in self.work.commencements.all() for c in a.action_object_actions.all()]
         versions = self.work.versions().all()
         task_actions = self.get_task_actions()
-        entries = sorted(chain(actions, amendment_actions, versions, task_actions),
+        entries = sorted(chain(actions, amendment_actions, commencement_actions, versions, task_actions),
                          key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,
                          reverse=True)
         entries = self.coalesce_entries(entries)
@@ -594,7 +760,7 @@ class WorkPublicationDocumentView(WorkViewBase, View):
             if self.work.publication_document.trusted_url:
                 return redirect(self.work.publication_document.trusted_url)
             return view_attachment(self.work.publication_document)
-        return Http404()
+        raise Http404()
 
 
 class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):

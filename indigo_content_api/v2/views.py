@@ -32,13 +32,14 @@ class PublishedDocumentDetailViewV2(PublishedDocumentDetailView):
 
     def finalize_response(self, request, response, *args, **kwargs):
         response = super(PublishedDocumentDetailViewV2, self).finalize_response(request, response, *args, **kwargs)
+        renderer = getattr(response, 'accepted_renderer', None)
 
-        if getattr(response, 'accepted_media_type', None) == 'application/json' and isinstance(response.data, dict):
-            rewrite_frbr_uris(response.data)
-
-        elif getattr(response, 'accepted_renderer', None):
-            # for known renderers, rewrite akn data
-            self.rewrite_akn(response.data)
+        if renderer:
+            if renderer.media_type == 'application/json' and isinstance(response.data, dict):
+                rewrite_frbr_uris(response.data)
+            else:
+                # for known renderers, rewrite akn data
+                self.rewrite_akn(response.data)
 
         return response
 

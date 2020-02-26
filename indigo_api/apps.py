@@ -8,7 +8,7 @@ class IndigoApiConfig(AppConfig):
     def ready(self):
         from actstream import registry
         from django.contrib.auth.models import User
-        from indigo_api.models import Amendment, Document, Task, Work, Workflow, PlaceSettings, ArbitraryExpressionDate
+        from indigo_api.models import Amendment, Document, Task, Work, Workflow, PlaceSettings, ArbitraryExpressionDate, Commencement
         registry.register(Amendment)
         registry.register(Document)
         registry.register(Task)
@@ -17,3 +17,4 @@ class IndigoApiConfig(AppConfig):
         registry.register(Workflow)
         registry.register(PlaceSettings)
         registry.register(ArbitraryExpressionDate)
+        registry.register(Commencement)

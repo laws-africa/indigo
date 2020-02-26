@@ -356,6 +356,9 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         self.decorate_works(list(works))
 
+        # total works
+        context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
+
         # breadth completeness history, most recent 30 days
         metrics = list(DailyWorkMetrics.objects
             .filter(place_code=self.place.place_code)
@@ -389,7 +392,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         works_sheet = workbook.add_worksheet('Works')
         works_sheet_columns = ['FRBR URI', 'Place', 'Title', 'Subtype', 'Year',
                                'Number', 'Publication Date', 'Publication Number',
-                               'Assent Date', 'Commenced', 'Commencement Date', 
+                               'Assent Date', 'Commenced', 'Main Commencement Date',
                                'Repealed Date', 'Parent Work', 'Stub']        
         # Write the works sheet column titles
         for position, title in enumerate(works_sheet_columns, 1):
@@ -406,7 +409,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             works_sheet.write(row, 7, work.publication_date, date_format)
             works_sheet.write(row, 8, work.publication_number)
             works_sheet.write(row, 9, work.assent_date, date_format)
-            works_sheet.write(row, 10, True if work.commencement_date else False)
+            works_sheet.write(row, 10, work.commenced)
             works_sheet.write(row, 11, work.commencement_date, date_format)
             works_sheet.write(row, 12, work.repealed_date, date_format)
             works_sheet.write(row, 13, work.parent_work.frbr_uri if work.parent_work else None)
@@ -450,12 +453,11 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
             } for r in repealed_works]
 
             # commenced works
-            commenced_works = work.commenced_works.all()
             family = family + [{
                 'rel': 'commences',
-                'work': c.frbr_uri,
-                'date': c.commencement_date
-            } for c in commenced_works]
+                'work': c.commenced_work.frbr_uri,
+                'date': c.date
+            } for c in work.commencements_made]
 
             for relationship in family:
                 relationships_sheet.write(row, 0, row)

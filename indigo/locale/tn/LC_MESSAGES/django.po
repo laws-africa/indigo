@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-11 21:03+0200\n"
+"POT-Creation-Date: 2020-01-31 11:58+0200\n"
 "PO-Revision-Date: 2019-07-12 06:58\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Tswana\n"
@@ -16,7 +16,7 @@ msgstr ""
 "X-Crowdin-Language: tn\n"
 "X-Crowdin-File: /master/indigo/locale/af/LC_MESSAGES/django.po\n"
 
-#: analysis/toc/base.py:13 analysis/work_detail/base.py:44
+#: analysis/toc/base.py:13 analysis/work_detail/base.py:42
 msgid "Act"
 msgstr ""
 
@@ -28,7 +28,7 @@ msgstr ""
 msgid "By-law"
 msgstr ""
 
-#: analysis/toc/base.py:16 analysis/work_detail/base.py:35
+#: analysis/toc/base.py:16 analysis/work_detail/base.py:33
 msgid "Chapter"
 msgstr "Kgaolo"
 
@@ -52,8 +52,7 @@ msgstr ""
 msgid "Preamble"
 msgstr ""
 
-#: analysis/work_detail/base.py:25
+#: analysis/work_detail/base.py:23
 #, python-format
 msgid "%(type)s %(number)s of %(year)s"
 msgstr ""
-

@@ -223,52 +223,59 @@
 
     {% block work-form-commencement %}
     <div class="card mb-3" id="commencement">
-      <h5 class="card-header">Commencement and Assent</h5>
+      <h5 class="card-header">Commencement and assent</h5>
       <div class="card-body">
 
-        <div class="form-row">
-          <div class="form-group">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="{{ form.commenced.id_for_label }}" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
-              <label class="ml-2 mr-2" for="{{ form.commenced.id_for_label }}">Commenced – this work has come into force, or has a future commencement date</label>
-            </div>
+        {% if work.pk and work.commencements.count > 1 %}
+          <div class="mb-3">
+            <input type="hidden" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
+            This work has mixed commencements, <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">edit them in the Commencements page</a>.
           </div>
-        </div>
-        <div id="commencement_details" {% if not work.commenced %}class="d-none"{% endif %}>
+        {% else %}
           <div class="form-row">
-            <div class="form-group col-md-4">
-              <label for="{{ form.commencement_date.id_for_label }}">Commencement date</label>
-              <input type="text" class="form-control" data-provide="datepicker" id="{{ form.commencement_date.id_for_label }}" name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
-              <p class="form-text text-muted">Date when most of the work comes into force</p>
-
+            <div class="form-group">
               <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
-                <label for="commencement_date_unknown">Commencement date is unknown</label>
+                <input type="checkbox" class="form-check-input" id="{{ form.commenced.id_for_label }}" name="{{ form.commenced.html_name }}" value="on" {% if form.commenced.value %}checked{% endif %}>
+                <label class="ml-2 mr-2" for="{{ form.commenced.id_for_label }}">Commenced – this work has come into force, or has a future commencement date</label>
               </div>
-              <p class="form-text text-muted">Check this box when a (usually old) work has come into force, but the exact commencement date is not known.</p>
-
-              {% if work.pk and work.commencement_date %}
-                {% if work.amendments_made.exists or work.repealed_works.exists %}
-                  <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>
-                {% endif %}
-              {% endif %}
-            </div>
-
-            <div class="form-group col">
-              <button class="btn btn-outline-primary float-right change-commencing-work" type="button">Choose commencing work</button>
-              <label>Commenced by</label>
-              <div class="work-commencing-work form-control-static"></div>
-              <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
-              <p class="form-text text-muted">Work that gives the commencement date of this work</p>
             </div>
           </div>
-        </div>
+          <div id="commencement_details" {% if not work.commenced %}class="d-none"{% endif %}>
+            <div class="form-row">
+              <div class="form-group col-md-4">
+                <label for="{{ form.commencement_date.id_for_label }}">Commencement date</label>
+                <input type="text" class="form-control" data-provide="datepicker" id="{{ form.commencement_date.id_for_label }}" name="{{ form.commencement_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.commencement_date.value|date:"Y-m-d"|default:'' }}">
+                <p class="form-text text-muted">Date when most of the work comes into force</p>
+
+                <div class="form-check">
+                  <input type="checkbox" class="form-check-input" id="commencement_date_unknown">
+                  <label for="commencement_date_unknown">Commencement date is unknown</label>
+                </div>
+                <p class="form-text text-muted">Check this box when a (usually old) work has come into force, but the exact commencement date is not known.</p>
+
+                {% if work.pk and work.commencement_date %}
+                  {% if work.amendments_made.exists or work.repealed_works.exists %}
+                    <div class="alert alert-warning">If you change this commencement date, you may also have to manually change the dates for related <a href="{% url 'work_related' work.frbr_uri %}">amendments and repeals</a> made by this work.</div>
+                  {% endif %}
+                {% endif %}
+              </div>
+
+              <div class="form-group col">
+                <button class="btn btn-outline-primary float-right change-commencing-work" type="button">Choose commencing work</button>
+                <label>Commenced by</label>
+                <div class="work-commencing-work form-control-static"></div>
+                <input type="hidden" id="{{ form.commencing_work.id_for_label }}" name="{{ form.commencing_work.html_name }}" value="{{ form.commencing_work.value|default:'' }}">
+                <p class="form-text text-muted">Work that gives the commencement date of this work</p>
+              </div>
+            </div>
+          </div>
+        {% endif %}
 
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="{{ form.assent_date.id_for_label }}">Assent date</label>
             <input type="text" class="form-control" data-provide="datepicker" id="{{ form.assent_date.id_for_label }}" name="{{ form.assent_date.html_name }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" value="{{ form.assent_date.value|date:"Y-m-d"|default:'' }}">
-            <p class="form-text text-muted">Date when approved by the responsible authority</p>
+            <div class="form-text text-muted">Date when approved by the responsible authority</div>
           </div>
         </div>
 

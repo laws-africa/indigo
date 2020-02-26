@@ -1,6 +1,6 @@
 {% load i18n indigo %}
 
-{% if document.amendments %}
+{% if document.amendments or document.work.repealed_date %}
 <ol class="amendment-list">
   {% for amendment in document.amendments %}
   <li class="amendment">
@@ -14,5 +14,18 @@
     {% endwith %}
   </li>
   {% endfor %}
+
+  {% if document.work.repealed_date %}
+    <li class="amendment repeal">
+      {% with title=document.work.repealed_by.title numtitle=document.work.repealed_by.numbered_title date=document.work.repealed_date|date:"j E Y" %}
+        {% work_resolver_url document.work.repealed_by as resolver_uri %}
+        {% if numtitle %}
+          {% blocktrans %}[Repealed by <a href="{{ resolver_uri }}" class="repealing-title">{{ title }} ({{ numtitle }})</a> on <span class="repeal-date">{{ date }}</span>]{% endblocktrans %}
+        {% else %}
+          {% blocktrans %}[Repealed by <a href="{{ resolver_uri }}" class="repealing-title">{{ title }}</a> on <span class="repeal-date">{{ date }}</span>]{% endblocktrans %}
+        {% endif %}
+      {% endwith %}
+    </li>
+  {% endif %}
 </ol>
 {% endif %}

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lawsafrica-indigo\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-16 13:42+0200\n"
+"POT-Creation-Date: 2020-02-13 12:59+0200\n"
 "PO-Revision-Date: 2019-07-12 06:48\n"
 "Last-Translator: Greg Kempe (longhotsummer)\n"
 "Language-Team: Xhosa\n"
@@ -31,37 +31,64 @@ msgid ""
 "%(amending_title)s</a> on <span class=\"amendment-date\">%(date)s</span>]"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:32
+#: templates/indigo_api/akn/_amendments.html:23
+#, python-format
+msgid ""
+"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
+"%(title)s (%(numtitle)s)</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr ""
+
+#: templates/indigo_api/akn/_amendments.html:25
+#, python-format
+msgid ""
+"[Repealed by <a href=\"%(resolver_uri)s\" class=\"repealing-title\">"
+"%(title)s</a> on <span class=\"repeal-date\">%(date)s</span>]"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:39
 #, python-format
 msgid "Published in %(name)s no. %(number)s on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:34
+#: templates/indigo_api/akn/coverpage_act.html:41
 #, python-format
 msgid "Published in %(name)s on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:43
+#: templates/indigo_api/akn/coverpage_act.html:50
 #, python-format
 msgid "Assented to on %(date)s"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:49
+#: templates/indigo_api/akn/coverpage_act.html:56
+msgid "Not commenced"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:60
+msgid "Commencement date unknown"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:64
 #, python-format
 msgid "Commences on %(date)s unless otherwise noted"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:56
+#: templates/indigo_api/akn/coverpage_act.html:71
 #, python-format
 msgid "(see <a href=\"%(resolver_uri)s\">%(numbered_title)s – %(title)s</a>)"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:58
+#: templates/indigo_api/akn/coverpage_act.html:73
 #, python-format
 msgid "(see <a href=\"%(resolver_uri)s\">%(title)s</a>)"
 msgstr ""
 
-#: templates/indigo_api/akn/coverpage_act.html:69
+#: templates/indigo_api/akn/coverpage_act.html:84
+#, python-format
+msgid "Up to date as at %(date)s"
+msgstr ""
+
+#: templates/indigo_api/akn/coverpage_act.html:92
 msgid ""
 "Note: The original publication document is not available and this content "
 "could not be verified."

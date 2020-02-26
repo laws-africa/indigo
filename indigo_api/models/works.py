@@ -338,46 +338,6 @@ class Work(models.Model):
         dates.sort(key=lambda x: x['date'], reverse=True)
         return dates
 
-    def amendments_initial_commencement_arbitrary(self):
-        """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end
-        that represents the initial point-in-time. This will include multiple
-        objects at the same date, if there were multiple events at the same date.
-        """
-        initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
-        initial.initial = True
-        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.exclude(date=None))
-        amendments_expressions.sort(key=lambda x: x.date)
-
-        if initial.date:
-            if not amendments_expressions or amendments_expressions[0].date != initial.date:
-                amendments_expressions.insert(0, initial)
-
-            if amendments_expressions[0].date == initial.date:
-                amendments_expressions[0].initial = True
-
-        amendments_expressions.reverse()
-        return amendments_expressions
-
-    def points_in_time(self):
-        """ Return a list of dicts describing a point in time, one entry for each date,
-        in descending date order.
-        """
-        events_expressions = self.amendments_initial_commencement_arbitrary()
-        pits = []
-
-        for date, group in groupby(events_expressions, key=lambda x: x.date):
-            group = list(group)
-            pits.append({
-                'date': date,
-                'initial': any(getattr(e, 'initial', False) for e in group),
-                'amendments': [e for e in group if isinstance(e, Amendment)],
-                'consolidations': [e for e in group if isinstance(e, ArbitraryExpressionDate)],
-                'commencements': [e for e in group if isinstance(e, Commencement)],
-                'expressions': set(chain(*(e.expressions().all() for e in group))),
-            })
-
-        return pits
-
     def as_at_date(self):
         # the as-at date is the maximum of the most recent, published expression date,
         # and the place's as-at date.

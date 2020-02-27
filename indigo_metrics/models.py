@@ -32,7 +32,7 @@ class WorkMetrics(models.Model):
     @classmethod
     def calculate(cls, work):
         metrics = WorkMetrics()
-        metrics.n_points_in_time = len(work.points_in_time())
+        metrics.n_points_in_time = len(work.possible_expression_dates())
         metrics.n_languages = work.document_set.published().values('language').distinct().count() or 1
         # non-stubs should always have at least one expression
         metrics.n_expected_expressions = 0 if work.stub else max(1, metrics.n_points_in_time * metrics.n_languages)

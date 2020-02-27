@@ -71,7 +71,7 @@ class Command(BaseCommand):
                         continue
 
                     # no point in time at this date for this work
-                    elif date not in [pit['date'] for pit in work.points_in_time()]:
+                    elif date not in [pit['date'] for pit in work.possible_expression_dates()]:
                         print('\nERROR at row {}:'.format(i + 2))
                         print('No point in time exists for {} at {}; create it before reimporting.\n'
                               .format(work, date))

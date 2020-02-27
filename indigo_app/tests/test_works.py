@@ -9,7 +9,8 @@ from webtest import Upload
 
 import reversion
 
-from indigo_api.models import Work, Commencement
+from indigo_app.views.works import WorkViewBase
+from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -120,6 +121,36 @@ class WorksTest(testcases.TestCase):
         doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertNotIn('tester', doc.content)
+
+    def test_get_work_timeline(self):
+        view = WorkViewBase()
+        work = Work.objects.get(pk=1)
+        work.assent_date = datetime.date(2014, 3, 20)
+        amendment = Amendment(amended_work_id=1, amending_work_id=2, date='2019-01-01', created_by_user_id=1)
+        amendment.save()
+
+        consolidation = ArbitraryExpressionDate(work=work, date='2018-01-01', created_by_user_id=1)
+        consolidation.save()
+
+        timeline = WorkViewBase.get_work_timeline(view, work)
+        # most recent event first
+        self.assertEqual(timeline[0]['date'], datetime.date(2019, 1, 1))
+        self.assertEqual(timeline[0]['amendments'][0].date, datetime.date(2019, 1, 1))
+        self.assertEqual(timeline[0]['initial'], False)
+
+        # consolidation
+        self.assertEqual(timeline[1]['date'], datetime.date(2018, 1, 1))
+        self.assertEqual(timeline[1]['consolidations'][0].date, datetime.date(2018, 1, 1))
+        self.assertEqual(timeline[1]['initial'], False)
+
+        # publication date on fixture
+        self.assertEqual(timeline[2]['date'], datetime.date(2014, 4, 2))
+        self.assertEqual(timeline[2]['publication_date'], True)
+        self.assertEqual(timeline[2]['initial'], True)
+
+        # assent date (oldest)
+        self.assertEqual(timeline[-1]['date'], datetime.date(2014, 3, 20))
+        self.assertEqual(timeline[-1]['assent_date'], True)
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')

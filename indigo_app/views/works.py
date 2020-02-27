@@ -4,7 +4,7 @@ import logging
 from itertools import chain
 from datetime import timedelta
 
-from django.core.exceptions import ValidationError, ObjectDoesNotExist
+from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -55,32 +55,45 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
         context['work_json'] = json.dumps(WorkSerializer(instance=self.work, context={'request': self.request}).data)
         return context
 
-    def get_work_timeline(self):
-        # add other dates to timeline
-        work_timeline = self.work.points_in_time()
+    def get_work_timeline(self, work):
+        # get initial, amendment, consolidation dates
+        dates = work.possible_expression_dates()
+        # add assent, publication, repeal, commencement dates
         other_dates = [
-            ('assent_date', self.work.assent_date),
-            ('publication_date', self.work.publication_date),
-            ('repealed_date', self.work.repealed_date)
+            ('assent_date', work.assent_date),
+            ('publication_date', work.publication_date),
+            ('repealed_date', work.repealed_date)
         ]
+        for c in work.commencements.all():
+            other_dates.append(('commencement_date', c.date))
 
-        # add new events (e.g. if assent is before any of the other events),
-        # only one event per date
         for name, date in other_dates:
             if date:
-                dates = [entry['date'] for entry in work_timeline]
-                if date not in dates:
-                    work_timeline.append({
+                if date not in [entry['date'] for entry in dates]:
+                    dates.append({
                         'date': date,
                         name: True,
                     })
                 else:
                     # add to existing events (e.g. if publication and commencement dates are the same)
-                    for entry in work_timeline:
+                    for entry in dates:
                         if entry['date'] == date:
                             entry[name] = True
 
-        return sorted(work_timeline, key=lambda k: k['date'], reverse=True)
+        dates.sort(key=lambda x: x['date'], reverse=True)
+
+        # add expressions and commencement and amendment objects
+        for event in dates:
+            date = event['date']
+            if event.get('commencement_date'):
+                event['commencements'] = work.commencements.filter(date=date).all()
+            if event.get('amendment'):
+                event['amendments'] = work.amendments.filter(date=date).all()
+            if event.get('consolidation'):
+                event['consolidations'] = work.arbitrary_expression_dates.filter(date=date).all()
+            event['expressions'] = work.expressions().filter(expression_date=date).all()
+
+        return dates
 
     @property
     def work(self):
@@ -234,7 +247,7 @@ class WorkOverviewView(WorkViewBase, DetailView):
             .exclude(state='done')\
             .exclude(state='cancelled')\
             .order_by('-created_at')
-        context['work_timeline'] = self.get_work_timeline()
+        context['work_timeline'] = self.get_work_timeline(self.work)
 
         # ensure work metrics are up to date
         WorkMetrics.create_or_update(self.work)
@@ -389,7 +402,7 @@ class WorkAmendmentsView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkAmendmentsView, self).get_context_data(**kwargs)
-        context['work_timeline'] = self.get_work_timeline()
+        context['work_timeline'] = self.get_work_timeline(self.work)
         context['consolidation_date'] = self.place.settings.as_at_date or datetime.date.today()
         return context
 

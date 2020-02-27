@@ -66,7 +66,169 @@ class VocabularyTopic(models.Model):
             return self.level_1
 
 
-class Work(models.Model):
+class WorkMixin(object):
+    """ Support methods that define behaviour for a work, independent of the database model.
+
+    This makes it possible to change the underlying model class for a work, and then mixin
+    this functionality.
+    """
+    _work_uri = None
+    _repeal = None
+
+    @property
+    def work_uri(self):
+        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """
+        if self._work_uri is None:
+            self._work_uri = FrbrUri.parse(self.frbr_uri)
+        return self._work_uri
+
+    @property
+    def year(self):
+        return self.work_uri.date.split('-', 1)[0]
+
+    @property
+    def number(self):
+        return self.work_uri.number
+
+    @property
+    def nature(self):
+        return self.work_uri.doctype
+
+    @property
+    def subtype(self):
+        return self.work_uri.subtype
+
+    @property
+    def repeal(self):
+        """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
+        None if this work hasn't been repealed.
+        """
+        if self._repeal is None:
+            if self.repealed_by:
+                self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
+        return self._repeal
+
+    @property
+    def place(self):
+        return self.locality or self.country
+
+    @property
+    def commencement_date(self):
+        main = self.main_commencement
+        if main:
+            return main.date
+
+    @property
+    def commencing_work(self):
+        main = self.main_commencement
+        if main:
+            return main.commencing_work
+
+    def amended(self):
+        return self.amendments.exists()
+
+    def most_recent_amendment_year(self):
+        latest = self.amendments.order_by('-date').first()
+        if latest:
+            return latest.date.year
+
+    def labeled_properties(self):
+        props = self.place.settings.work_properties
+
+        return sorted([{
+            'label': props[key],
+            'key': key,
+            'value': val,
+        } for key, val in self.properties.items() if val and key in props], key=lambda x: x['label'])
+
+    def numbered_title(self):
+        """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
+        This usually differs from the short title. May return None.
+        """
+        plugin = plugins.for_work('work-detail', self)
+        if plugin:
+            return plugin.work_numbered_title(self)
+
+    def friendly_type(self):
+        """ Return a friendly document type for this work, such as "Act" or "By-law".
+        """
+        plugin = plugins.for_work('work-detail', self)
+        if plugin:
+            return plugin.work_friendly_type(self)
+
+    def expressions(self):
+        """ A queryset of expressions of this work, in ascending expression date order.
+        """
+        from .documents import Document
+        return Document.objects.undeleted().filter(work=self).order_by('expression_date')
+
+    def initial_expressions(self):
+        """ Queryset of expressions at initial publication date.
+        """
+        return self.expressions().filter(expression_date=self.publication_date)
+
+    def all_provisions(self):
+        # a list of the element ids of the earliest PiT (in whichever language) of a work
+        # does not include Schedules as they don't have commencement dates
+        first_expression = self.expressions().first()
+        if first_expression:
+            return first_expression.all_provisions()
+        return None
+
+    @cached_property
+    def main_commencement(self):
+        if self.commencements.exists():
+            for c in list(self.commencements.all()):
+                if c.main:
+                    return c
+
+    def first_commencement_date(self):
+        first = self.commencements.first()
+        if first:
+            return first.date
+
+    def commenceable_provisions(self):
+        """ Return a list of TOCElement objects that can be commenced.
+        """
+        # gather documents and sort so that we consider primary language documents first
+        documents = self.expressions().all()
+        documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
+
+        # get all the docs and combine the TOCs, based on element IDs
+        provisions = []
+        id_set = set()
+        for doc in documents:
+            plugin = plugins.for_document('toc', doc)
+            if plugin:
+                toc = plugin.table_of_contents_for_document(doc)
+                for item in plugin.commenceable_items(toc):
+                    if item.id and item.id not in id_set:
+                        id_set.add(item.id)
+                        provisions.append(item)
+
+        return provisions
+
+    def uncommenced_provisions(self):
+        provisions = self.commenceable_provisions()
+        commenced = set()
+        for commencement in self.commencements.all():
+            if commencement.all_provisions:
+                return []
+            for prov in commencement.provisions:
+                commenced.add(prov)
+
+        return [p for p in provisions if p.id not in commenced]
+
+    @property
+    def commencements_count(self):
+        """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
+        commencements_count = len(self.commencements.all())
+        if self.uncommenced_provisions():
+            commencements_count += 1
+        return commencements_count
+
+
+class Work(WorkMixin, models.Model):
     """ A work is an abstract document, such as an act. It has basic metadata and
     allows us to track works that we don't have documents for, and provides a
     logical parent for documents, which are expressions of a work.
@@ -117,32 +279,6 @@ class Work(models.Model):
 
     objects = WorkManager.from_queryset(WorkQuerySet)()
 
-    _work_uri = None
-    _repeal = None
-
-    @property
-    def work_uri(self):
-        """ The FRBR Work URI as a :class:`FrbrUri` instance that uniquely identifies this work universally. """
-        if self._work_uri is None:
-            self._work_uri = FrbrUri.parse(self.frbr_uri)
-        return self._work_uri
-
-    @property
-    def year(self):
-        return self.work_uri.date.split('-', 1)[0]
-
-    @property
-    def number(self):
-        return self.work_uri.number
-
-    @property
-    def nature(self):
-        return self.work_uri.doctype
-
-    @property
-    def subtype(self):
-        return self.work_uri.subtype
-
     @property
     def locality_code(self):
         # Helper to get/set locality using the locality_code, used by the WorkSerializer.
@@ -157,49 +293,6 @@ class Work(models.Model):
             self.locality = locality
         else:
             self.locality = None
-
-    @property
-    def repeal(self):
-        """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
-        None if this work hasn't been repealed.
-        """
-        if self._repeal is None:
-            if self.repealed_by:
-                self._repeal = RepealEvent(self.repealed_date, self.repealed_by.title, self.repealed_by.frbr_uri)
-        return self._repeal
-
-    @property
-    def place(self):
-        return self.locality or self.country
-
-    @property
-    def commencement_date(self):
-        main = self.main_commencement
-        if main:
-            return main.date
-
-    @property
-    def commencing_work(self):
-        main = self.main_commencement
-        if main:
-            return main.commencing_work
-
-    def amended(self):
-        return self.amendments.exists()
-
-    def most_recent_amendment_year(self):
-        latest = self.amendments.order_by('-date').first()
-        if latest:
-            return latest.date.year
-
-    def labeled_properties(self):
-        props = self.place.settings.work_properties
-
-        return sorted([{
-            'label': props[key],
-            'key': key,
-            'value': val,
-        } for key, val in self.properties.items() if val and key in props], key=lambda x: x['label'])
 
     def clean(self):
         # validate and clean the frbr_uri
@@ -274,18 +367,6 @@ class Work(models.Model):
 
         return doc
 
-    def expressions(self):
-        """ A queryset of expressions of this work, in ascending expression date order.
-        """
-        from .documents import Document
-
-        return Document.objects.undeleted().filter(work=self).order_by('expression_date')
-
-    def initial_expressions(self):
-        """ Queryset of expressions at initial publication date.
-        """
-        return self.expressions().filter(expression_date=self.publication_date)
-
     def versions(self):
         """ Return a queryset of `reversion.models.Version` objects for
         revisions for this work, most recent first.
@@ -296,21 +377,6 @@ class Work(models.Model):
             .filter(content_type=content_type) \
             .filter(object_id_int=self.id) \
             .order_by('-id')
-
-    def numbered_title(self):
-        """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
-        This usually differs from the short title. May return None.
-        """
-        plugin = plugins.for_work('work-detail', self)
-        if plugin:
-            return plugin.work_numbered_title(self)
-
-    def friendly_type(self):
-        """ Return a friendly document type for this work, such as "Act" or "By-law".
-        """
-        plugin = plugins.for_work('work-detail', self)
-        if plugin:
-            return plugin.work_friendly_type(self)
 
     def amendments_initial_commencement_arbitrary(self):
         """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end
@@ -365,66 +431,6 @@ class Work(models.Model):
         dates = [d for d in dates if d]
         if dates:
             return max(dates)
-
-    def all_provisions(self):
-        # a list of the element ids of the earliest PiT (in whichever language) of a work
-        # does not include Schedules as they don't have commencement dates
-        first_expression = self.expressions().first()
-        if first_expression:
-            return first_expression.all_provisions()
-        return None
-
-    @cached_property
-    def main_commencement(self):
-        if self.commencements.exists():
-            for c in list(self.commencements.all()):
-                if c.main:
-                    return c
-
-    def first_commencement_date(self):
-        first = self.commencements.first()
-        if first:
-            return first.date
-
-    def commenceable_provisions(self):
-        """ Return a list of TOCElement objects that can be commenced.
-        """
-        # gather documents and sort so that we consider primary language documents first
-        documents = self.document_set.undeleted().all()
-        documents = sorted(documents, key=lambda d: 0 if d.language == self.country.primary_language else 1)
-
-        # get all the docs and combine the TOCs, based on element IDs
-        provisions = []
-        id_set = set()
-        for doc in documents:
-            plugin = plugins.for_document('toc', doc)
-            if plugin:
-                toc = plugin.table_of_contents_for_document(doc)
-                for item in plugin.commenceable_items(toc):
-                    if item.id and item.id not in id_set:
-                        id_set.add(item.id)
-                        provisions.append(item)
-
-        return provisions
-
-    def uncommenced_provisions(self):
-        provisions = self.commenceable_provisions()
-        commenced = set()
-        for commencement in self.commencements.all():
-            if commencement.all_provisions:
-                return []
-            for prov in commencement.provisions:
-                commenced.add(prov)
-
-        return [p for p in provisions if p.id not in commenced]
-
-    @property
-    def commencements_count(self):
-        """ The number of commencement objects, plus one if there are uncommenced provisions, on a work """
-        commencements_count = len(self.commencements.all())
-        if self.uncommenced_provisions():
-            commencements_count += 1
-        return commencements_count
 
     def __str__(self):
         return '%s (%s)' % (self.frbr_uri, self.title)

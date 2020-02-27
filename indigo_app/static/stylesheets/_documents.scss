@@ -344,42 +344,6 @@ button.btn-link.help {
   }
 }
 
-/* document comparison */
-.document-comparison-view {
-  background-color: $body-bg-color;
-  position: fixed;
-  top: 51px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
-  display: flex;
-  flex-direction: column;
-
-  .comparison-header {
-    display: flex;
-    padding: 10px;
-    border-bottom: 1px solid $border-color;
-    background-color: white;
-
-    .title {
-      flex: 1;
-    }
-
-    .buttons {
-      flex: 0 0 300px;
-    }
-  }
-
-  .comparison-main {
-    position: absolute;
-    top: 86px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
-  }
-
-}
-
 .fas.draft {
   color: $yellow;
 }

@@ -1,5 +1,6 @@
 # coding=utf-8
 from itertools import chain, groupby
+from datetime import datetime
 
 from actstream import action
 from django.contrib.postgres.fields import JSONField
@@ -312,45 +313,30 @@ class Work(models.Model):
         if plugin:
             return plugin.work_friendly_type(self)
 
-    def amendments_initial_commencement_arbitrary(self):
-        """ Return a list of Amendment, Commencement and ArbitraryExpressionDate objects, including a fake one at the end
-        that represents the initial point-in-time. This will include multiple
-        objects at the same date, if there were multiple events at the same date.
+    def possible_expression_dates(self):
+        """ Return a list of dicts each describing a possible expression date on a work, in descending date order.
+        Each has a date and specifies whether it is an amendment, consolidation, and/or initial expression.
         """
-        initial = ArbitraryExpressionDate(work=self, date=self.publication_date or self.commencement_date)
-        initial.initial = True
-        amendments_expressions = list(self.amendments.all()) + list(self.arbitrary_expression_dates.all()) + list(self.commencements.exclude(date=None))
-        amendments_expressions.sort(key=lambda x: x.date)
+        initial = self.publication_date or self.commencement_date
+        amendment_dates = [a.date for a in self.amendments.all()]
+        consolidation_dates = [c.date for c in self.arbitrary_expression_dates.all()]
+        all_dates = set(amendment_dates + consolidation_dates)
+        dates = [
+            {'date': date,
+             'amendment': date in amendment_dates,
+             'consolidation': date in consolidation_dates,
+             'initial': date == initial}
+            for date in all_dates
+        ]
 
-        if initial.date:
-            if not amendments_expressions or amendments_expressions[0].date != initial.date:
-                amendments_expressions.insert(0, initial)
-
-            if amendments_expressions[0].date == initial.date:
-                amendments_expressions[0].initial = True
-
-        amendments_expressions.reverse()
-        return amendments_expressions
-
-    def points_in_time(self):
-        """ Return a list of dicts describing a point in time, one entry for each date,
-        in descending date order.
-        """
-        events_expressions = self.amendments_initial_commencement_arbitrary()
-        pits = []
-
-        for date, group in groupby(events_expressions, key=lambda x: x.date):
-            group = list(group)
-            pits.append({
-                'date': date,
-                'initial': any(getattr(e, 'initial', False) for e in group),
-                'amendments': [e for e in group if isinstance(e, Amendment)],
-                'consolidations': [e for e in group if isinstance(e, ArbitraryExpressionDate)],
-                'commencements': [e for e in group if isinstance(e, Commencement)],
-                'expressions': set(chain(*(e.expressions().all() for e in group))),
+        if initial not in all_dates:
+            dates.append({
+                'date': initial,
+                'initial': True
             })
 
-        return pits
+        dates.sort(key=lambda x: x['date'], reverse=True)
+        return dates
 
     def as_at_date(self):
         # the as-at date is the maximum of the most recent, published expression date,

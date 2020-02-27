@@ -67,7 +67,7 @@
 
       this.$toolbar = $('.document-editor-toolbar');
 
-      this.loadXSL();
+      this.setupRenderers();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
     },
 
@@ -132,7 +132,7 @@
       this.render();
     },
 
-    loadXSL: function() {
+    setupRenderers: function() {
       var country = this.parent.model.get('country'),
           self = this;
 
@@ -158,6 +158,11 @@
           $.get('/static/xsl/act_text.xsl')
             .then(textLoaded);
         });
+    },
+
+    setComparisonDocumentId: function(id) {
+      this.comparisonDocumentid = id;
+      this.render();
     },
 
     fullEdit: function(e) {
@@ -414,6 +419,8 @@
           $akn = this.$('.document-workspace-content .akoma-ntoso'),
           data = {};
 
+      if (this.comparisonDocumentid === null) return;
+
       data.document = this.parent.model.toJSON();
       data.document.content = this.parent.documentContent.toXml();
       data.element_id = this.parent.fragment.getAttribute('id');
@@ -425,7 +432,7 @@
 
       // HACK HACK HACK
       $.ajax({
-        url: '/api/documents/278/diff',
+        url: '/api/documents/' + this.comparisonDocumentid + '/diff',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -705,12 +712,12 @@
 
 
   // Handle the document editor, tracking changes and saving it back to the server.
-  // The model is an Indigo.DocumentContent instance.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
     events: {
       'click .btn.show-xml-editor': 'toggleShowXMLEditor',
       'click .btn.show-akn-hierarchy': 'toggleShowAKNHierarchy',
+      'click .show-pit-comparison': 'toggleShowComparison',
     },
 
     initialize: function(options) {
@@ -768,6 +775,18 @@
     toggleShowAKNHierarchy: function(e) {
       var show = !$(e.currentTarget).hasClass('active');
       this.$el.find('#document-sheet').toggleClass('show-akn-hierarchy', show);
+    },
+
+    toggleShowComparison: function(e) {
+      var show = !e.currentTarget.classList.contains('active'),
+          menuItem = e.currentTarget.parentElement.previousElementSibling;
+
+      $(e.currentTarget).siblings().removeClass('active');
+      this.sourceEditor.setComparisonDocumentId(show ? e.currentTarget.getAttribute('data-id') : null);
+      e.currentTarget.classList.toggle('active');
+
+      menuItem.classList.toggle('btn-outline-secondary', !show);
+      menuItem.classList.toggle('btn-primary', show);
     },
 
     removeFragment: function(fragment) {

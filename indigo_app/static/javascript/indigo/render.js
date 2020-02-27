@@ -77,6 +77,6 @@ $(function() {
     }
 
     return Indigo.render.htmlRenderers[country];
-  }
+  };
 });
 

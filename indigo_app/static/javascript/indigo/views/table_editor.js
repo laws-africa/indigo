@@ -154,7 +154,7 @@
         // added, such as annotations.
         this.originalTable = table;
         table = this.parent.htmlRenderer.renderXmlElement(
-          this.documentContent.document, this.documentContent.getElementByScopedId(table.id),
+          this.documentContent.document, this.documentContent.getElementByScopedId(table.id)
         ).firstElementChild;
         this.originalTable.parentElement.replaceChild(table, this.originalTable);
 

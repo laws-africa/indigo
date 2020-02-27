@@ -105,6 +105,11 @@ class DocumentQuerySet(models.QuerySet):
 
 
 class DocumentMixin(object):
+    """ Support methods that define behaviour for a document, independent of the database model.
+
+    This makes it possible to change the underlying model class for a document, and then mixin
+    this document functionality.
+    """
     @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
@@ -152,6 +157,21 @@ class DocumentMixin(object):
     def table_of_contents(self):
         builder = plugins.for_document('toc', self)
         return builder.table_of_contents_for_document(self)
+
+    def all_provisions(self):
+        ids = []
+
+        def add_ids(toc):
+            for e in toc:
+                if e.id:
+                    ids.append(e.id)
+                if e.children and e.component == 'main':
+                    add_ids(e.children)
+
+        toc = self.table_of_contents()
+        add_ids(toc)
+
+        return ids
 
     def to_html(self, **kwargs):
         from indigo_api.exporters import HTMLExporter
@@ -403,21 +423,6 @@ class Document(DocumentMixin, models.Model):
             return fqdn + reverse('document-detail', kwargs={'pk': self.id})
         else:
             return fqdn + '/api' + self.doc.expression_frbr_uri().manifestation_uri()
-
-    def all_provisions(self):
-        ids = []
-
-        def add_ids(toc):
-            for e in toc:
-                if e.id:
-                    ids.append(e.id)
-                if e.children and e.component == 'main':
-                    add_ids(e.children)
-
-        toc = self.table_of_contents()
-        add_ids(toc)
-
-        return ids
 
     def _make_act(self, xml):
         id = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)

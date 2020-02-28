@@ -50,13 +50,25 @@
         this.nonce = Math.floor(Math.random() * (max - min) + min).toString();
       }
 
+      // at the same time, we clean up finished sessions from other tabs that didn't get sent in time,
+      var finished = this.getFinishedSessions(this.document.get('id')),
+          nonces = _.pluck(_.values(finished), 'nonce');
+
       $.ajax({
         type: 'post',
         url: this.document.url() + '/activity',
-        data: {nonce: this.nonce},
+        data: {
+          nonce: this.nonce,
+          finished_nonces: nonces.join(','),
+        },
         global: false,
       }).then(function(resp) {
         Indigo.offlineNoticeView.setOnline();
+
+        // clear the finished nonces that the server has acknowledged
+        _.forEach(finished, function(data, key) {
+          localStorage.removeItem(key);
+        });
 
         // mark is_self
         resp.results.forEach(function(r) {
@@ -101,8 +113,42 @@
       this.$el.html(this.template({activity: items}));
     },
 
+    getFinishedSessions: function(document_id) {
+      // look for finished sessions recorded by other tabs with their dying gasps (see windowUnloaded)
+      var finished = {};
+
+      for (var i = 0; i < localStorage.length; i++) {
+        var key = localStorage.key(i);
+
+        if (key && key.startsWith('indigo-document-activity-finished-')) {
+          var data = localStorage.getItem(key);
+          if (data) {
+            try {
+              data = JSON.parse(data);
+            } catch {
+              localStorage.removeItem(key);
+              continue;
+            }
+
+            if (!document_id || data.document_id == document_id) {
+              finished[key] = data;
+            }
+          }
+        }
+      }
+
+      return finished;
+    },
+
     windowUnloaded: function() {
       if (!Indigo.user.id) return;
+
+      // store a note that this session is finished, in case we can't send this message before the window closes
+      var key = 'indigo-document-activity-finished-' + this.document.get('id') + '-' + this.nonce;
+      localStorage.setItem(key, JSON.stringify({
+        'document_id': this.document.get('id'),
+        'nonce': this.nonce,
+      }));
 
       $.ajax({
         type: 'delete',
@@ -110,6 +156,8 @@
         data: {nonce: this.nonce},
         global: false,
         async: false,
+      }).then(function() {
+        localStorage.removeItem(key);
       });
     },
   });

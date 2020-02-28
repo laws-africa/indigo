@@ -125,7 +125,7 @@
           if (data) {
             try {
               data = JSON.parse(data);
-            } catch {
+            } catch(err) {
               localStorage.removeItem(key);
               continue;
             }

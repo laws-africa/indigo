@@ -301,6 +301,11 @@ class DocumentActivityViewSet(DocumentResourceView,
         return super(DocumentActivityViewSet, self).list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
+        # if they've provided additional finished nonces, clear those out
+        if request.data.get('finished_nonces'):
+            nonces = request.data['finished_nonces'].split(',')
+            self.get_queryset().filter(user=request.user, nonce__in=nonces).delete()
+
         # either create a new activity object, or update it
         self.get_queryset().update_or_create(
             document=self.document, user=request.user, nonce=request.data['nonce'],

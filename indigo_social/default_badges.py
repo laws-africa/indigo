@@ -43,6 +43,7 @@ class SeniorDrafterBadge(PermissionBadge):
     group_name = name + ' Badge'
     description = 'Can review work tasks and delete documents and works'
     permissions = ('indigo_api.bulk_add_work', 'indigo_api.delete_work', 'indigo_api.review_work', 'indigo_api.bulk_export_work',
+                   'indigo_api.add_commencement', 'indigo_api.change_commencement', 'indigo_api.delete_commencement',
                    'indigo_api.review_document', 'indigo_api.delete_document', 'indigo_api.publish_document',
                    'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task',
                    'indigo_api.close_workflow', 'indigo_api.delete_workflow')

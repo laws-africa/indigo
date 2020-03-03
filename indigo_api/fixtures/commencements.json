@@ -30,5 +30,21 @@
         "created_by_user": 1,
         "updated_by_user": 1
     }
+},
+{
+    "model": "indigo_api.commencement",
+    "pk": 3,
+    "fields": {
+        "commenced_work": 5,
+        "commencing_work": null,
+        "date": "2010-02-03",
+        "main": true,
+        "all_provisions": true,
+        "provisions": [],
+        "created_at": "2020-02-04T14:53:08.094Z",
+        "updated_at": "2020-02-04T14:53:08.094Z",
+        "created_by_user": 1,
+        "updated_by_user": 1
+    }
 }
 ]

@@ -160,7 +160,6 @@
       this.referencesView = new Indigo.DocumentReferencesView({model: this.documentContent});
       this.italicsView = new Indigo.DocumentItalicsView({model: this.documentContent});
       this.revisionsView = new Indigo.DocumentRevisionsView({document: this.document, documentContent: this.documentContent});
-      this.comparisonView = new Indigo.DocumentComparisonView({document: this.document, documentContent: this.documentContent});
       this.tocView = new Indigo.DocumentTOCView({model: this.documentContent, document: this.document});
 
       this.bodyEditorView = new Indigo.DocumentEditorView({

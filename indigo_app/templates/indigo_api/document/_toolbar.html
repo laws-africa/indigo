@@ -2,15 +2,16 @@
   <div class="btn-group btn-group-sm mr-2">
     <a class="btn btn-outline-secondary" href="#attachments-modal" data-toggle="modal"><i class="fas fa-paperclip"></i> Attachments</a>
     <button class="btn btn-outline-secondary show-revisions"><i class="fas fa-history"></i> Changes</button>
+
     {% if comparison_expressions %}
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown"><i class="fas fa-exchange-alt"></i> Compare to</button>
         <div class="dropdown-menu">
           {% for exp in comparison_expressions %}
-            <a class="dropdown-item show-pit-comparison" href="#" id="{{ exp.id }}">
+            <button class="dropdown-item show-pit-comparison" data-id="{{ exp.id }}">
               {{ exp.expression_date|date:"Y-m-d" }}
               {% if exp.id == document.id %}– current point in time{% endif %}
-            </a>
+            </button>
           {% endfor %}
         </div>
       </div>

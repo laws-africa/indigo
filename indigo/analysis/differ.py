@@ -189,6 +189,8 @@ class AttributeDiffer(object):
         changes = 0
 
         if old_tree is None:
+            # ensure that we have a block element at the root, not a span
+            new_tree.tag = 'div'
             new_tree.classes.add('ins')
             changes = 1
         else:

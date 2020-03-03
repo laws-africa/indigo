@@ -67,7 +67,7 @@
 
       this.$toolbar = $('.document-editor-toolbar');
 
-      this.loadXSL();
+      this.setupRenderers();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
     },
 
@@ -132,29 +132,15 @@
       this.render();
     },
 
-    loadXSL: function() {
+    setupRenderers: function() {
       var country = this.parent.model.get('country'),
           self = this;
 
       // setup akn to html transform
-      this.htmlTransformReady = $.Deferred();
-      function htmlLoaded(xml) {
-        var htmlTransform = new XSLTProcessor();
-        htmlTransform.importStylesheet(xml);
-        htmlTransform.setParameter(null, 'resolverUrl', '/works');
-
-        self.htmlTransform = htmlTransform;
+      this.htmlRenderer = Indigo.render.getHtmlRenderer(country);
+      this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
-        self.htmlTransformReady.resolve();
-      }
-
-      $.get('/static/xsl/act-' + country +'.xsl')
-        .then(htmlLoaded)
-        .fail(function() {
-          $.get('/static/xsl/act.xsl')
-            .then(htmlLoaded);
-        });
-
+      });
 
       // setup akn to text transform
       this.textTransformReady = $.Deferred();
@@ -172,6 +158,11 @@
           $.get('/static/xsl/act_text.xsl')
             .then(textLoaded);
         });
+    },
+
+    setComparisonDocumentId: function(id) {
+      this.comparisonDocumentid = id;
+      this.render();
     },
 
     fullEdit: function(e) {
@@ -408,24 +399,57 @@
         });
       }
 
-      this.htmlTransformReady.then(function() {
-        self.htmlTransform.setParameter(null, 'defaultIdScope', self.getFragmentIdScope() || '');
-        self.htmlTransform.setParameter(null, 'mediaUrl', self.parent.model.url() + '/');
-        self.htmlTransform.setParameter(null, 'lang', self.parent.model.get('language'));
-        self.htmlTransform.setParameter(null, 'documentType', self.parent.model.work.get('nature'));
-        self.htmlTransform.setParameter(null, 'subtype', self.parent.model.get('subtype') || '');
-        self.htmlTransform.setParameter(null, 'country', self.parent.model.work.get('country'));
-        self.htmlTransform.setParameter(null, 'locality', self.parent.model.work.get('locality') || '');
-        var html = self.htmlTransform.transformToFragment(self.parent.fragment, document);
+      this.htmlRenderer.ready.then(function() {
+        var html = self.htmlRenderer.renderXmlElement(self.parent.model, self.parent.fragment);
 
         self.makeLinksExternal(html);
         self.addWorkPopups(html);
         self.makeTablesEditable(html);
         self.makeElementsQuickEditable(html);
         $akn.append(html);
-        
+
         self.trigger('rendered');
+        self.renderComparisonDiff();
       });
+    },
+
+    renderComparisonDiff: function() {
+      // TODO: decide what to compare it against
+      var self = this,
+          $akn = this.$('.document-workspace-content .akoma-ntoso'),
+          data = {};
+
+      if (this.comparisonDocumentid === null) return;
+
+      data.document = this.parent.model.toJSON();
+      data.document.content = this.parent.documentContent.toXml();
+      data.element_id = this.parent.fragment.getAttribute('id');
+
+      if (!data.element_id && this.parent.fragment.tagName !== "akomaNtoso") {
+        // for elements without ids (preamble, preface, components)
+        data.element_id = this.parent.fragment.tagName;
+      }
+
+      // HACK HACK HACK
+      $.ajax({
+        url: '/api/documents/' + this.comparisonDocumentid + '/diff',
+        type: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json"})
+          .then(function(response) {
+            var html = $.parseHTML(response.html_diff)[0];
+
+            self.makeLinksExternal(html);
+            self.addWorkPopups(html);
+            self.makeTablesEditable(html);
+            self.makeElementsQuickEditable(html);
+            $akn.empty();
+            $akn.addClass('diffset');
+            $akn.append(html);
+
+            self.trigger('rendered');
+          });
     },
 
     renderCoverpage: function() {
@@ -452,20 +476,6 @@
       }
 
       return deferred;
-    },
-
-    getFragmentIdScope: function() {
-      // default scope for ID elements
-      var ns = this.parent.fragment.namespaceURI;
-      var idScope = this.parent.fragment.ownerDocument.evaluate(
-        "./ancestor::a:doc[@name][1]/@name",
-        this.parent.fragment,
-        function(x) { if (x == "a") return ns; },
-        XPathResult.ANY_TYPE,
-        null);
-
-      idScope = idScope.iterateNext();
-      return idScope ? idScope.value : null;
     },
 
     makeLinksExternal: function(html) {
@@ -503,7 +513,7 @@
     makeElementsQuickEditable: function(html) {
       var self = this;
 
-      $(html.firstElementChild)
+      $(html)
         .find(this.parent.model.tradition().settings.grammar.quickEditable)
         .addClass('quick-editable')
         .each(function(i, e) {
@@ -702,12 +712,12 @@
 
 
   // Handle the document editor, tracking changes and saving it back to the server.
-  // The model is an Indigo.DocumentContent instance.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
     events: {
       'click .btn.show-xml-editor': 'toggleShowXMLEditor',
       'click .btn.show-akn-hierarchy': 'toggleShowAKNHierarchy',
+      'click .show-pit-comparison': 'toggleShowComparison',
     },
 
     initialize: function(options) {
@@ -765,6 +775,18 @@
     toggleShowAKNHierarchy: function(e) {
       var show = !$(e.currentTarget).hasClass('active');
       this.$el.find('#document-sheet').toggleClass('show-akn-hierarchy', show);
+    },
+
+    toggleShowComparison: function(e) {
+      var show = !e.currentTarget.classList.contains('active'),
+          menuItem = e.currentTarget.parentElement.previousElementSibling;
+
+      $(e.currentTarget).siblings().removeClass('active');
+      this.sourceEditor.setComparisonDocumentId(show ? e.currentTarget.getAttribute('data-id') : null);
+      e.currentTarget.classList.toggle('active');
+
+      menuItem.classList.toggle('btn-outline-secondary', !show);
+      menuItem.classList.toggle('btn-primary', show);
     },
 
     removeFragment: function(fragment) {

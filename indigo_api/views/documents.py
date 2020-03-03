@@ -29,7 +29,7 @@ from lxml.etree import LxmlError
 from indigo.analysis.differ import AttributeDiffer
 from indigo.plugins import plugins
 from ..models import Document, Annotation, DocumentActivity, Task
-from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer
+from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer, DocumentAPISerializer, VersionSerializer, AnnotationSerializer, DocumentActivitySerializer, TaskSerializer, DocumentDiffSerializer
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
@@ -505,39 +505,52 @@ class SearchView(DocumentViewMixin, ListAPIView):
         return serializer
 
 
-class ComparisonView(APIView):
-    """ Support for running a document comparison.
-    """
+class DocumentDiffView(DocumentResourceView, APIView):
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        serializer = DocumentAPISerializer(data=self.request.data)
-        serializer.fields['document'].fields['content'].required = True
+    def post(self, request, document_id):
+        serializer = DocumentDiffSerializer(data=self.request.data)
         serializer.is_valid(raise_exception=True)
 
         differ = AttributeDiffer()
 
-        current_document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
-        current_document.document_xml = differ.preprocess_document_diff(current_document.document_xml)
-        current_html = current_document.to_html()
+        local_doc = self.document
 
-        comparison_doc_id = request.data['comparison_doc_id']
-        try:
-            comparison_document = Document.objects.get(id=comparison_doc_id)
-        except Document.DoesNotExist:
-            raise Http404()
-        comparison_document.document_xml = differ.preprocess_document_diff(comparison_document.document_xml)
-        comparison_document_html = comparison_document.to_html()
+        # set this up to be the modified document
+        remote_doc = Document.objects.get(pk=local_doc.pk)
+        serializer.fields['document'].update_document(local_doc, serializer.validated_data['document'])
 
-        current_tree = lxml.html.fromstring(current_html)
-        comparison_tree = lxml.html.fromstring(comparison_document_html)
-        n_changes = differ.diff_document_html(comparison_tree, current_tree)
+        local_doc.content = differ.preprocess_document_diff(local_doc.document_xml).decode('utf-8')
+        remote_doc.content = differ.preprocess_document_diff(remote_doc.document_xml).decode('utf-8')
 
-        diff = lxml.html.tostring(current_tree, encoding='utf-8')
+        element_id = serializer.validated_data.get('element_id')
+        if element_id:
+            # handle certain elements that don't have ids
+            if element_id in ['preface', 'preamble', 'components']:
+                xpath = f'//a:{element_id}'
+            else:
+                xpath = f'//a:*[@id="{element_id}"]'
+
+            # diff just this element
+            local_element = local_doc.doc.root.xpath(xpath, namespaces={'a': local_doc.doc.namespace})
+            remote_element = remote_doc.doc.root.xpath(xpath, namespaces={'a': local_doc.doc.namespace})
+
+            local_html = local_doc.to_html(element=local_element[0]) if len(local_element) else None
+            remote_html = remote_doc.to_html(element=remote_element[0]) if len(remote_element) else None
+        else:
+            # diff the whole document
+            local_html = local_doc.to_html()
+            remote_html = remote_doc.to_html()
+
+        local_tree = lxml.html.fromstring(local_html or "<div></div>")
+        remote_tree = lxml.html.fromstring(remote_html) if remote_html else None
+        n_changes = differ.diff_document_html(remote_tree, local_tree)
+
+        diff = lxml.html.tostring(local_tree, encoding='utf-8')
 
         # TODO: include other diff'd attributes
 
         return Response({
-            'content': diff,
+            'html_diff': diff,
             'n_changes': n_changes,
         })

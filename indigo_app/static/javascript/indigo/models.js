@@ -142,6 +142,19 @@
       return components;
     },
 
+    /** Get an element by id, which is potentially scoped to a component (eg. "schedule1/table-1").
+     * @param scopedId
+     */
+    getElementByScopedId: function(scopedId) {
+      var node = this.xmlDocument;
+
+      scopedId.split("/").forEach(function(id) {
+        node = node.querySelector('[id="' + id + '"]');
+      });
+
+      return node;
+    },
+
     save: function(options) {
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.

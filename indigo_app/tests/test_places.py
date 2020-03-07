@@ -23,17 +23,26 @@ class PlacesTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_place_settings(self):
-        response = self.client.get('/places/za/metrics')
+        response = self.client.get('/places/za/settings')
         self.assertEqual(response.status_code, 200)
 
     def test_place_settings_no_perms(self):
         self.client.logout()
-        response = self.client.get('/places/za/metrics')
+        response = self.client.get('/places/za/settings')
         self.assertEqual(response.status_code, 302)
 
     def test_place_localities(self):
         response = self.client.get('/places/za/localities')
         self.assertEqual(response.status_code, 200)
+
+    def test_place_works(self):
+        response = self.client.get('/places/za/works/')
+        self.assertEqual(response.status_code, 200)
+
+    def test_place_works_xlsx(self):
+        response = self.client.get('/places/za/works/?format=xlsx')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')

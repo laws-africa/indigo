@@ -54,7 +54,7 @@
           <span>{{ paginator.count }} works (of {{ total_works }} total)</span>
           {% if perms.indigo_api.bulk_export_work %}
             <span class="float-right">
-              <a href="{{ request.get_full_path }}?&format=xslx"><i class="fas fa-download fa-fw"></i>Download XSLX</a>
+              <a href="{{ request.get_full_path }}?&format=xlsx"><i class="fas fa-file-excel fa-fw mr-1"></i>Download to Excel</a>
             </span>
           {% endif %}
         </div>

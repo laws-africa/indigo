@@ -143,7 +143,7 @@
       this.document.on('change:draft', this.draftChanged, this);
 
       this.documentContent = new Indigo.DocumentContent({document: this.document});
-      this.documentContentx.on('change', this.setDirty, this);
+      this.documentContent.on('change', this.setDirty, this);
 
       this.cheatsheetView = new Indigo.CheatsheetView();
       this.titleView = new Indigo.DocumentTitleView({model: this.document});

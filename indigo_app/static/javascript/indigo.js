@@ -64,12 +64,17 @@ $(function() {
 
   // error tracking with GA
   window.addEventListener('error', function(e) {
-    if (typeof ga === 'function') {
-      ga('send', 'exception', {
-        'exDescription': e.message + ' @ ' + e.filename + ': ' + e.lineno,
-        'exFatal': true,
-      });
-    }
+    $.ajax({
+      type: 'POST',
+      url: '/jserror',
+      data: {
+        message: e.message,
+        filename: e.filename,
+        lineno: e.lineno,
+        colno: e.colno,
+      },
+      global: false,
+    });
   });
 
   // datepicker

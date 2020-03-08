@@ -1,7 +1,7 @@
 from django.conf.urls import url, include
 from django.views.generic.base import RedirectView, TemplateView
 
-from .views import users, works, documents, tasks, places, workflows
+from .views import users, works, documents, tasks, places, workflows, misc
 
 
 urlpatterns = [
@@ -82,5 +82,6 @@ urlpatterns = [
     url(r'^tasks/available/$', tasks.AvailableTasksView.as_view(), name='available_tasks'),
 
     url(r'^comments/', include('django_comments.urls')),
+    url(r'^jserror$', misc.JSErrorView.as_view(), name='jserror'),
 
 ]

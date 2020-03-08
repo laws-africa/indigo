@@ -14,7 +14,14 @@ class JSErrorView(AbstractAuthedIndigoView, View):
     authentication_required = True
 
     def post(self, request, *args, **kwargs):
-        info = request.POST.dict()
+        # ensure empty value for expected variables
+        info = {k: request.POST.get(k, '') for k in ['message', 'url', 'filename', 'lineno', 'colno', 'stack']}
+
         # This will email the admins if the 'mail_admin' logging handler is enabled.
-        log.error(f"JS error:\n\n{info['message']}\n\n{info['filename']} @ {info['lineno']}:{info['colno']}")
+        log.error(f"""JS error: {info['message']}
+URL: {info['url']}
+File: {info['filename']} @ {info['lineno']}:{info['colno']}
+
+{info['stack']}
+""")
         return HttpResponse(status=200)

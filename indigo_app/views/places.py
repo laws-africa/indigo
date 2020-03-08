@@ -244,8 +244,8 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
         self.form = WorkFilterForm(self.country, params)
         self.form.is_valid()
 
-        if params.get('format') == 'xslx':
-            return self.generate_xslx()
+        if params.get('format') == 'xlsx':
+            return self.generate_xlsx()
         
         return super(PlaceWorksView, self).get(request, *args, **kwargs)
 
@@ -371,7 +371,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         return context
 
-    def generate_xslx(self):
+    def generate_xlsx(self):
         queryset = self.get_queryset()
         filename = f"Legislation-{self.kwargs['place']}.xlsx"
         output = io.BytesIO()
@@ -457,7 +457,7 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
                 'rel': 'commences',
                 'work': c.commenced_work.frbr_uri,
                 'date': c.date
-            } for c in work.commencements_made]
+            } for c in work.commencements_made.all()]
 
             for relationship in family:
                 relationships_sheet.write(row, 0, row)

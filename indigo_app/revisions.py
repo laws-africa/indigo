@@ -15,6 +15,13 @@ def decorate_versions(versions, ignore=IGNORE_FIELDS):
                 if fld in d:
                     del d[fld]
 
+        for d in [curr_d, prev_d]:
+            for fld in d:
+                try:
+                    d[fld] = d[fld].isoformat()
+                except AttributeError:
+                    pass
+
         patch = jsonpatch.make_patch(curr_d, prev_d)
 
         curr.previous = prev

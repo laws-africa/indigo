@@ -184,7 +184,7 @@ class WorkMixin(object):
             for date in all_dates
         ]
 
-        if initial not in all_dates:
+        if initial and initial not in all_dates:
             dates.append({
                 'date': initial,
                 'initial': True

@@ -5,8 +5,9 @@ Changelog
 ---------------------
 
 * FEATURE: model multiple commencements and include commenced provision information in API
-* Improved inline view of differences between points in time
 * FIX: issue when locking a document for editing
+* Improved inline view of differences between points in time
+* Report JS exceptions to admins
 
 8.0.0 (10 February 2020)
 ------------------------

@@ -102,7 +102,7 @@ class DailyWorkMetrics(models.Model):
     n_expressions = models.IntegerField(null=True)
     n_points_in_time = models.IntegerField(null=True)
     n_expected_expressions = models.IntegerField(null=True)
-    # number of works for which expressions == expected expressions
+    # number of works for which p_breadth_complete == 100
     n_complete_works = models.IntegerField(null=True)
 
     p_depth_complete = models.IntegerField(null=True)
@@ -146,7 +146,8 @@ SELECT
   SUM(n_expressions) AS n_expressions,
   SUM(n_expected_expressions) AS n_expected_expressions,
   SUM(n_points_in_time) AS n_points_in_time,
-  SUM(CASE WHEN n_expected_expressions = n_expressions THEN 1 ELSE 0 END) as n_complete_works,
+  -- NOTE: we only consider breadth completeness at the moment
+  SUM(CASE WHEN p_breadth_complete = 100 THEN 1 ELSE 0 END) as n_complete_works,
   AVG(p_depth_complete) AS p_depth_complete,
   AVG(p_breadth_complete) AS p_breadth_complete,
   AVG(p_complete) AS p_complete

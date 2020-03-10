@@ -1,10 +1,12 @@
 Changelog
 =========
 
-9.0.0 (?)
----------
+9.0.0 (10 March 2020)
+---------------------
 
 * FEATURE: model multiple commencements and include commenced provision information in API
+* Improved inline view of differences between points in time
+* FIX: issue when locking a document for editing
 
 8.0.0 (10 February 2020)
 ------------------------

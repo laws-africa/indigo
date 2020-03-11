@@ -1,12 +1,13 @@
 # coding=utf-8
 import logging
 from collections import defaultdict, Counter
-from datetime import timedelta, date
+from datetime import datetime, timedelta, date
 from itertools import chain, groupby
 import json
 
 from actstream import action
 from actstream.models import Action
+from django.contrib.auth.models import User
 from django.db.models import Count, Subquery, IntegerField, OuterRef, Prefetch
 from django.db.models.functions import Extract
 from django.contrib import messages
@@ -150,6 +151,26 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .order_by('-date')\
             .first()
 
+        # breadth completeness history, most recent 30 days
+        metrics = list(DailyWorkMetrics.objects
+            .filter(place_code=self.place.place_code)
+            .order_by('-date'))  # [:30])
+        # latest last
+        metrics.reverse()
+        if metrics:
+            context['latest_completeness_stat'] = metrics[-1]
+            context['completeness_history'] = [m.p_breadth_complete for m in metrics]
+
+        # Latest stats
+        since = now() - timedelta(days=30)
+        task_stats = self.get_tasks_stats()
+        context['new_tasks_added'] = task_stats['new_tasks_added']
+        context['tasks_completed'] = task_stats['tasks_completed']
+        context['new_works_added'] = works.filter(created_at__gte=since).count()
+
+        # top most active users
+        context['top_contributors'] = self.get_top_contributors()
+
         return context
 
     def get_recently_updated_works(self):
@@ -157,6 +178,30 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return Work.objects \
             .filter(country=self.country, locality=self.locality) \
             .order_by('-updated_at')[:5]
+
+    def get_tasks_stats(self):
+        since = now() - timedelta(days=30)
+
+        tasks = Task.objects.filter(country=self.country, locality=self.locality)
+        tasks_completed = tasks.filter(state='done').count()
+        new_tasks_added = tasks.filter(state='open', created_at__gte=since).count()
+
+        return {"new_tasks_added": new_tasks_added, "tasks_completed": tasks_completed}
+
+    def get_top_contributors(self):
+        since = now() - timedelta(days=30)
+        top_contributors = Task.objects\
+            .filter(country=self.country, locality=self.locality, state='done', created_at__gte=since)\
+            .values('submitted_by_user')\
+            .annotate(task_count=Count('submitted_by_user'))\
+            .exclude(task_count=0)\
+            .order_by('-task_count')
+
+        for user in top_contributors:
+            user['user'] = User.objects.get(pk=user['submitted_by_user'])
+            del user['submitted_by_user']
+
+        return top_contributors
 
     def get_recently_created_works(self):
         return Work.objects \

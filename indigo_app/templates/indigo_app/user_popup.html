@@ -1,0 +1,23 @@
+<div class="popup-content lh-compact">
+  <div class="card-body">
+    {% block user_popup %}
+
+      <h4>
+        {% if not user.first_name %}
+          {{ user.username }}
+        {% else %}
+          {{ user.first_name }} {{ user.last_name }}
+        {% endif %}
+      </h4>
+
+      <ul class="fa-ul">
+        {% if user.editor.country %}
+          <li>
+            <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span> {{ user.editor.country.name }}
+          </li>
+        {% endif %}
+      </ul>
+
+    {% endblock%}
+  </div>
+</div>

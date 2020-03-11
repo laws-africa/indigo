@@ -246,7 +246,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     publication_date = serializers.DateField(read_only=True)
     commencement_date = serializers.DateField(read_only=True)
     assent_date = serializers.DateField(read_only=True)
-    numbered_title = serializers.DateField(read_only=True, source='work.numbered_title')
+    numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
 
     tags = TagListSerializerField(required=False)
     amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')

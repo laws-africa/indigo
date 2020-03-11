@@ -27,12 +27,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
         """
         uri = work.work_uri
 
-        # TODO: Should be in a locale-specific place
-        if uri.number.startswith('cap'):
-            # eg. Chapter 2
-            return _('Chapter')
-
-        elif uri.subtype:
+        if uri.subtype:
             # use the subtype full name, if we have it
             subtype = Subtype.for_abbreviation(uri.subtype)
             if subtype:

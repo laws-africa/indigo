@@ -81,6 +81,8 @@ urlpatterns = [
     url(r'^tasks/$', tasks.UserTasksView.as_view(), name='my_tasks'),
     url(r'^tasks/available/$', tasks.AvailableTasksView.as_view(), name='available_tasks'),
 
+    url(r'^contributors/(?P<username>[\w@.-]+)/popup$', users.UserPopupView.as_view(), name='user_popup'),
+
     url(r'^comments/', include('django_comments.urls')),
 
 ]

@@ -383,7 +383,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def link_commencement(self, work, info):
         # if the work has commencement details, try linking it
         # make a task if a `commenced_by` title is given but not found
-        date = info.get('commencement_date')
+        date = info.get('commencement_date') or None
 
         commencing_work = None
         title = info.get('commenced_by')

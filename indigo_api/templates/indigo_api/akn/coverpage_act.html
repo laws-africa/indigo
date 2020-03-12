@@ -11,11 +11,11 @@
     </p>
   {% endblock %}
 
-  {% if document.work.parent_work %}
-    {% block parent_title %}
+  {% block parent_title %}
+    {% if document.work.parent_work %}
       <h1>{{ document.work.parent_work.title }}</h1>
-    {% endblock %}
-  {% endif %}
+    {% endif %}
+  {% endblock %}
 
   {% block title %}
     <h1>{{ document.title }}</h1>

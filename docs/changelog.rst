@@ -1,6 +1,12 @@
 Changelog
 =========
 
+9.1.0 (13 March 2020)
+---------------------
+
+* Changes to act coverpage template to better support customisation
+* FIX: correctly count number of breadth-complete works for daily work metrics
+
 9.0.0 (10 March 2020)
 ---------------------
 

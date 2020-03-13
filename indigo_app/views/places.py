@@ -201,7 +201,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             user['user'] = User.objects.get(pk=user['submitted_by_user'])
             del user['submitted_by_user']
 
-        return top_contributors
+        return top_contributors[:3]
 
     def get_recently_created_works(self):
         return Work.objects \

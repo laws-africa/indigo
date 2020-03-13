@@ -678,8 +678,8 @@
           amendments = [];
 
       documentAmendments.forEach(function(amendment) {
-        if (amendment['date'] === date) {
-          amendments.push(amendment)
+        if (amendment.date === date) {
+          amendments.push(amendment);
         }
       });
 

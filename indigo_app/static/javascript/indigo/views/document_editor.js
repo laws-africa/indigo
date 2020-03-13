@@ -25,6 +25,7 @@
       'click .insert-table': 'insertTable',
       'click .insert-schedule': 'insertSchedule',
 
+      'click .insert-annotation': 'insertAnnotation',
       'click .markup-remark': 'markupRemark',
       'click .markup-bold': 'markupBold',
       'click .markup-italics': 'markupItalics',
@@ -69,6 +70,10 @@
 
       this.setupRenderers();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+
+      // get the appropriate annotation style for the tradition
+      this.annotationGenerator = Indigo.annotations[this.parent.model.tradition().settings.annotationStyle];
+      this.annotationAmendingWork = this.getAnnotationAmendingWork(this.parent.model);
     },
 
     /* Setup pasting so that when the user pastes an HTML table
@@ -664,6 +669,40 @@
       e.preventDefault();
 
       this.textEditor.insert('\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n');
+      this.textEditor.focus();
+    },
+
+    getAnnotationAmendingWork: function(document) {
+      var date = document.get('expression_date'),
+          documentAmendments = document.get('amendments'),
+          amendments = [];
+
+      documentAmendments.forEach(function(amendment) {
+        if (amendment['date'] === date) {
+          amendments.push(amendment)
+        }
+      });
+
+      if (amendments) {
+        return amendments[0];
+      }
+
+    },
+
+    insertAnnotation: function(e) {
+      e.preventDefault();
+      var element = 'section/subsection/paragraph/subparagraph/<other> ()',
+          verb = 'substituted/amended/inserted/deleted/repealed/<other>',
+          amendingSection = 'section <insert>',
+          annotation;
+
+      if (this.annotationGenerator && this.annotationAmendingWork) {
+        annotation = this.annotationGenerator(element, verb, amendingSection, this.annotationAmendingWork);
+      } else {
+        annotation = '[[<remark>]]';
+      }
+
+      this.textEditor.insert('\n' + annotation + '\n');
       this.textEditor.focus();
     },
 

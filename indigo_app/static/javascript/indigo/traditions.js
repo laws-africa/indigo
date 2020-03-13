@@ -133,6 +133,8 @@
         },
       },
     },
+    // default annotation style
+    annotationStyle: 'annotationGeneratorBase',
   });
 
 })(window);

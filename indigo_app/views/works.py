@@ -6,6 +6,8 @@ from datetime import timedelta
 
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django.contrib.auth.models import User
+from django.db.models import Count, Q
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -241,13 +243,20 @@ class WorkOverviewView(WorkViewBase, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(WorkOverviewView, self).get_context_data(**kwargs)
+        work_tasks = Task.objects.filter(work=self.work)
 
-        context['active_tasks'] = Task.objects\
-            .filter(work=self.work)\
-            .exclude(state='done')\
+        context['active_tasks'] = work_tasks.exclude(state='done')\
             .exclude(state='cancelled')\
             .order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline(self.work)
+
+        completed_tasks = work_tasks.filter(state='done')
+        context['participating_users'] = User.objects\
+            .filter(Q(submitted_tasks__in=completed_tasks) | Q(reviewed_tasks__in=completed_tasks))\
+            .distinct()\
+            .annotate(
+                task_count=Count(Q(submitted_tasks__in=completed_tasks), distinct=True) + Count(Q(reviewed_tasks__in=completed_tasks), distinct=True)
+            ).order_by('-task_count')
 
         # ensure work metrics are up to date
         WorkMetrics.create_or_update(self.work)

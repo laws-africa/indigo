@@ -251,7 +251,7 @@ class WorkOverviewView(WorkViewBase, DetailView):
         context['work_timeline'] = self.get_work_timeline(self.work)
 
         completed_tasks = work_tasks.filter(state='done')
-        context['participating_users'] = User.objects\
+        context['contributors'] = User.objects\
             .filter(Q(submitted_tasks__in=completed_tasks) | Q(reviewed_tasks__in=completed_tasks))\
             .distinct()\
             .annotate(

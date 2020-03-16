@@ -203,15 +203,19 @@
   </div>
   {% endblock %}
 
-  {% block participating_users %}
+  {% block contributors %}
     <div class="h4 mb-3 mt-5">Contributors</div>
     <div class="card">
       <div class="card-body">
+        {% if contributors %}
         <ul>
-          {% for user in participating_users %}
+          {% for user in contributors %}
             <li>{% user_profile user %} has completed or reviewed {{ user.task_count }} tasks on this work</li>
           {% endfor %}
         </ul>
+        {% else %}
+          <p class="alert alert-info">No contributors found.</p>
+        {% endif %}
     </div>
     </div>
   {% endblock %}

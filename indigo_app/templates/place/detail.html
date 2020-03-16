@@ -158,7 +158,7 @@
       <div class="card mt-4">
         <div class="card-header">
           <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">Metrics →</a>
-          <h5 class="mb-0">Recent activity</h5>
+          <h5 class="mb-0">Recent activity (30 days)</h5>
         </div>
         <div class="card-body">
           <div>
@@ -166,16 +166,16 @@
               <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
             </div>
           </div>
-          <div class="d-flex flex-row justify-content-between">
-            <div class="px-4 mt-3 text-center bg-light border rounded">
+          <div class="d-flex flex-row mt-3 justify-content-between">
+            <div class="px-4 text-center bg-light border rounded">
               <h1>{{ new_works_added }}</h1>
               <span>New works added</span>
             </div>
-            <div class="px-4 mt-3 text-center bg-light border rounded">
+            <div class="px-4 text-center bg-light border rounded">
               <h1>{{ tasks_completed }}</h1>
               <span>Tasks completed</span>
             </div>
-            <div class="px-4 mt-3 text-center bg-light border rounded">
+            <div class="px-4 text-center bg-light border rounded">
               <h1>{{ new_tasks_added }}</h1>
               <span>New tasks added</span>
             </div>

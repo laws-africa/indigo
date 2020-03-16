@@ -66,12 +66,3 @@ class AcceptTermsView(AbstractAuthedIndigoView, UpdateView):
 
     def get_success_url(self):
         return get_request_param(self.request, self.get_redirect_field_name(), settings.LOGIN_REDIRECT_URL)
-
-
-class UserPopupView(AbstractAuthedIndigoView, DetailView):
-    model = User
-    context_object_name = 'user'
-    slug_field = 'username'
-    slug_url_kwarg = 'username'
-    template_name = 'indigo_app/user_popup.html'
-    queryset = User.objects

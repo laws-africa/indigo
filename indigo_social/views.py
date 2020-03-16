@@ -283,3 +283,12 @@ class UserTasksView(UserTasksBaseView):
         context = super(UserTasksView, self).get_context_data(**kwargs)
         context['user'] = User.objects.get(username=kwargs['username'])
         return context
+
+
+class UserPopupView(AbstractAuthedIndigoView, DetailView):
+    model = User
+    context_object_name = 'user'
+    slug_field = 'username'
+    slug_url_kwarg = 'username'
+    template_name = 'indigo_social/user_popup.html'
+    queryset = User.objects

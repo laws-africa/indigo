@@ -1,5 +1,4 @@
 <div class="popup-content lh-compact">
-  <div class="card-body">
     {% block user_popup %}
 
       <h4>
@@ -10,6 +9,10 @@
         {% endif %}
       </h4>
 
+      {% if user.userprofile.bio %}
+        {{ user.userprofile.bio | linebreaks }}
+      {% endif %}
+
       <ul class="fa-ul">
         {% if user.editor.country %}
           <li>
@@ -19,5 +22,4 @@
       </ul>
 
     {% endblock%}
-  </div>
 </div>

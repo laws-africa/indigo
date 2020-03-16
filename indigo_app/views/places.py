@@ -154,7 +154,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         # breadth completeness history, most recent 30 days
         metrics = list(DailyWorkMetrics.objects
             .filter(place_code=self.place.place_code)
-            .order_by('-date'))  # [:30])
+            .order_by('-date')[:30])
         # latest last
         metrics.reverse()
         if metrics:
@@ -195,13 +195,13 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .values('submitted_by_user')\
             .annotate(task_count=Count('submitted_by_user'))\
             .exclude(task_count=0)\
-            .order_by('-task_count')
+            .order_by('-task_count')[:3]
 
+        users = {u.id: u for u in User.objects.filter(id__in=[c['submitted_by_user'] for c in top_contributors])}
         for user in top_contributors:
-            user['user'] = User.objects.get(pk=user['submitted_by_user'])
-            del user['submitted_by_user']
+            user['user'] = users[user['submitted_by_user']]
 
-        return top_contributors[:3]
+        return top_contributors
 
     def get_recently_created_works(self):
         return Work.objects \
@@ -403,16 +403,6 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         # total works
         context['total_works'] = Work.objects.filter(country=self.country, locality=self.locality).count()
-
-        # breadth completeness history, most recent 30 days
-        metrics = list(DailyWorkMetrics.objects
-            .filter(place_code=self.place.place_code)
-            .order_by('-date')[:30])
-        # latest last
-        metrics.reverse()
-        if metrics:
-            context['latest_completeness_stat'] = metrics[-1]
-            context['completeness_history'] = [m.p_breadth_complete for m in metrics]
 
         return context
 

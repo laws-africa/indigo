@@ -75,7 +75,3 @@ class UserPopupView(AbstractAuthedIndigoView, DetailView):
     slug_url_kwarg = 'username'
     template_name = 'indigo_app/user_popup.html'
     queryset = User.objects
-
-    def get_object(self, queryset=None):
-        user = super(UserPopupView, self).get_object(queryset)
-        return user

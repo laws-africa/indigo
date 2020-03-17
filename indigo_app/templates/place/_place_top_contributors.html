@@ -1,11 +1,13 @@
 {% load indigo_app %}
 {% block top_contributors %}
 
-  {% for user in top_contributors %}
-    <ul class="list-unstyled">
-      <li><h6>{% user_profile user.user %}</h6></li>
-      <li>Completed {{ user.task_count }} task{{ user.task_count|pluralize }} in the last 30 days.</li>
-    </ul>
-  {% endfor %}
+  <ul class="list-unstyled mb-0">
+    {% for user in top_contributors %}
+      <li>
+        <span class="float-right">{{ user.task_count }} task{{ user.task_count|pluralize }}</span>
+        {% user_profile user.user %}
+      </li>
+    {% endfor %}
+  </ul>
 
 {% endblock %}

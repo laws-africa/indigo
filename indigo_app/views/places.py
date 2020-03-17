@@ -189,13 +189,12 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
         return {"new_tasks_added": new_tasks_added, "tasks_completed": tasks_completed}
 
     def get_top_contributors(self):
-        since = now() - timedelta(days=30)
         top_contributors = Task.objects\
-            .filter(country=self.country, locality=self.locality, state='done', created_at__gte=since)\
+            .filter(country=self.country, locality=self.locality, state='done')\
             .values('submitted_by_user')\
             .annotate(task_count=Count('submitted_by_user'))\
             .exclude(task_count=0)\
-            .order_by('-task_count')[:3]
+            .order_by('-task_count')[:10]
 
         users = {u.id: u for u in User.objects.filter(id__in=[c['submitted_by_user'] for c in top_contributors])}
         for user in top_contributors:

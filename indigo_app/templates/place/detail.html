@@ -26,7 +26,7 @@
 
       <div class="col text-center">
         <h3 class="mb-0">{{ latest_completeness_stat.n_complete_works }} of {{ latest_completeness_stat.n_works }}</h3>
-        Works Complete
+        Works complete
       </div>
 
       {% if place.settings.as_at_date %}
@@ -91,14 +91,14 @@
               </div> 
             </div>
             <div class="col-3">
-                <span class="text-dark">Subsidiary (<a href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=subsidiary&stub=all">{{ subsidiary_works_count }}</a>)</span>
+              <span class="text-dark">Subsidiary (<a href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=subsidiary&stub=all">{{ subsidiary_works_count }}</a>)</span>
             </div>
           </div>
         </div>
       </div>
       <div class="card mt-4">
         <div class="card-header">
-          <h5 class="mb-0">Contributors Leaderboard in <b>{% if locality %} {{ locality }}, {% endif %}{{ country }}</b></h5>
+          <h5 class="mb-0">Contributor leaderboard</h5>
         </div>
         <div class="card-body">
           {% include 'place/_place_top_contributors.html' %}

@@ -181,7 +181,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
     def get_tasks_stats(self, since):
         tasks = Task.objects.filter(country=self.country, locality=self.locality)
-        tasks_completed = tasks.filter(state=Task.DONE).count()
+        tasks_completed = tasks.filter(state=Task.DONE, closed_at__gte=since).count()
         new_tasks_added = tasks.filter(state=Task.OPEN, created_at__gte=since).count()
 
         return {"new_tasks_added": new_tasks_added, "tasks_completed": tasks_completed}

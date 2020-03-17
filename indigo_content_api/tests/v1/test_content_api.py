@@ -496,6 +496,21 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/1880/1.json')
         assert_equal(response.data['as_at_date'], "2019-01-01")
 
+    def test_stub(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_false(response.data['stub'])
+
+    def test_custom_properties(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['custom_properties'], [])
+
+    def test_parent_work(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_is_none(response.data['parent_work'])
+
     def test_as_at_date_max_expression_date(self):
         """ The as-at date for an individual work with points in time after the as-at date,
         is the latest point in time date.

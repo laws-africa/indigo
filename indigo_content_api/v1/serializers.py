@@ -4,7 +4,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from cobalt.act import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Work
 from indigo_api.serializers import DocumentSerializer, \
     PublicationDocumentSerializer as PublicationDocumentSerializerBase, \
     AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer
@@ -64,6 +64,8 @@ class PublishedDocumentSerializer(DocumentSerializer):
     as_at_date = serializers.DateField(source='work.as_at_date')
     commenced = serializers.BooleanField(source='work.commenced')
     commencements = CommencementSerializer(many=True, source='work.commencements')
+    parent_work = serializers.SerializerMethodField()
+    custom_properties = serializers.JSONField(source='work.labeled_properties')
 
     class Meta:
         model = Document
@@ -76,7 +78,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
-            'language', 'repeal', 'amendments', 'points_in_time',
+            'language', 'repeal', 'amendments', 'points_in_time', 'parent_work', 'custom_properties',
             'numbered_title', 'taxonomies', 'as_at_date',
 
             'links',
@@ -111,6 +113,13 @@ class PublishedDocumentSerializer(DocumentSerializer):
     def get_taxonomies(self, doc):
         from indigo_api.serializers import WorkSerializer
         return WorkSerializer().get_taxonomies(doc.work)
+
+    def get_parent_work(self, doc):
+        if doc.work.parent_work:
+            return {
+                'frbr_uri': doc.work.parent_work.frbr_uri,
+                'title': doc.work.parent_work.title,
+            }
 
     def get_links(self, doc):
         if not doc.draft:

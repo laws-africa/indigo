@@ -62,10 +62,11 @@
   });
 
   Indigo.CheatsheetView = Backbone.View.extend({
-    el: '.cheatsheet',
+    el: '#cheatsheet-modal',
     events: {
       'change .search': 'search',
       'keyup .search': 'search',
+      'shown.bs.modal': 'shown',
     },
 
     search: function() {
@@ -82,6 +83,10 @@
       } else {
         this.$('.card').removeClass('d-none');
       }
+    },
+
+    shown: function(e) {
+      this.$('.search').focus();
     },
   });
 

@@ -1,6 +1,7 @@
 # coding=utf-8
 import json
 import logging
+from collections import Counter
 from itertools import chain
 from datetime import timedelta
 
@@ -245,23 +246,41 @@ class WorkOverviewView(WorkViewBase, DetailView):
         context = super(WorkOverviewView, self).get_context_data(**kwargs)
         work_tasks = Task.objects.filter(work=self.work)
 
-        context['active_tasks'] = work_tasks.exclude(state='done')\
-            .exclude(state='cancelled')\
+        context['active_tasks'] = work_tasks.exclude(state=Task.DONE)\
+            .exclude(state=Task.CANCELLED)\
             .order_by('-created_at')
         context['work_timeline'] = self.get_work_timeline(self.work)
-
-        completed_tasks = work_tasks.filter(state='done')
-        context['contributors'] = User.objects\
-            .filter(Q(submitted_tasks__in=completed_tasks) | Q(reviewed_tasks__in=completed_tasks))\
-            .distinct()\
-            .annotate(
-                task_count=Count(Q(submitted_tasks__in=completed_tasks), distinct=True) + Count(Q(reviewed_tasks__in=completed_tasks), distinct=True)
-            ).order_by('-task_count')
+        context['contributors'] = self.get_top_contributors()
 
         # ensure work metrics are up to date
         WorkMetrics.create_or_update(self.work)
 
         return context
+
+    def get_top_contributors(self):
+        # count submitted tasks
+        submitted = User.objects\
+            .filter(submitted_tasks__country=self.work.country,
+                    submitted_tasks__locality=self.work.locality,
+                    submitted_tasks__state=Task.DONE)\
+            .annotate(task_count=Count(1))
+
+        # count reviewed tasks
+        reviewed = User.objects \
+            .filter(reviewed_tasks__country=self.work.country,
+                    reviewed_tasks__locality=self.work.locality,
+                    reviewed_tasks__state=Task.DONE) \
+            .annotate(task_count=Count(1))
+
+        # merge them
+        users = {u.id: u for u in chain(submitted, reviewed)}
+        counter = Counter()
+        counter.update({u.id: u.task_count for u in submitted})
+        counter.update({u.id: u.task_count for u in reviewed})
+        for user in users.values():
+            user.task_count = counter[user.id]
+
+        return sorted(users.values(), key=lambda u: -u.task_count)
 
 
 class WorkCommencementsView(WorkViewBase, DetailView):

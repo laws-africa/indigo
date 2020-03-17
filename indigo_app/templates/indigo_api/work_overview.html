@@ -204,20 +204,25 @@
   {% endblock %}
 
   {% block contributors %}
-    <div class="h4 mb-3 mt-5">Contributors</div>
-    <div class="card">
-      <div class="card-body">
-        {% if contributors %}
-        <ul>
-          {% for user in contributors %}
-            <li>{% user_profile user %} has completed or reviewed {{ user.task_count }} tasks on this work</li>
-          {% endfor %}
-        </ul>
-        {% else %}
-          <p class="alert alert-info">No contributors found.</p>
-        {% endif %}
-    </div>
-    </div>
+    {% if contributors %}
+      <div class="row">
+        <div class="col-sm-6">
+          <div class="h4 mb-3 mt-5">Contributors</div>
+          <div class="card">
+            <div class="card-body">
+              <ul class="list-unstyled mb-0">
+                {% for user in contributors %}
+                  <li>
+                    <span class="float-right">{{ user.task_count }} task{{ user.task_count|pluralize }}</span>
+                    {% user_profile user %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
   {% endblock %}
 
 {% endblock %}

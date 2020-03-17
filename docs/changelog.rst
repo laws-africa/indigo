@@ -5,6 +5,7 @@ Changelog
 ----------
 
 * FEATURE: SUBPART element
+* List of contributors for place and work
 
 9.1.0 (13 March 2020)
 ---------------------

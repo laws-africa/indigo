@@ -93,6 +93,7 @@
         preamble: 1,
         preface: 1,
         section: 1,
+        subpart: 1,
       },
       titles: {
         default     : function(i) { return i.num + " " + i.heading; },
@@ -107,6 +108,7 @@
                                       return "Part " + i.num;
                                     }
         },
+        subpart     : function(i) { return i.num + " – " + i.heading; },
         preamble    : function(i) { return "Preamble"; },
         preface     : function(i) { return "Preface"; },
         components  : function(i) { return "Schedules"; },

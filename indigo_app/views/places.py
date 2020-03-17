@@ -163,7 +163,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
 
         # Latest stats
         since = now() - timedelta(days=30)
-        task_stats = self.get_tasks_stats()
+        task_stats = self.get_tasks_stats(since)
         context['new_tasks_added'] = task_stats['new_tasks_added']
         context['tasks_completed'] = task_stats['tasks_completed']
         context['new_works_added'] = works.filter(created_at__gte=since).count()
@@ -179,9 +179,7 @@ class PlaceDetailView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView):
             .filter(country=self.country, locality=self.locality) \
             .order_by('-updated_at')[:5]
 
-    def get_tasks_stats(self):
-        since = now() - timedelta(days=30)
-
+    def get_tasks_stats(self, since):
         tasks = Task.objects.filter(country=self.country, locality=self.locality)
         tasks_completed = tasks.filter(state=Task.DONE).count()
         new_tasks_added = tasks.filter(state=Task.OPEN, created_at__gte=since).count()

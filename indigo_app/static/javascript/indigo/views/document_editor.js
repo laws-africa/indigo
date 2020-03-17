@@ -25,7 +25,7 @@
       'click .insert-table': 'insertTable',
       'click .insert-schedule': 'insertSchedule',
 
-      'click .insert-annotation': 'insertAnnotation',
+      'click .insert-remark': 'insertRemark',
       'click .markup-remark': 'markupRemark',
       'click .markup-bold': 'markupBold',
       'click .markup-italics': 'markupItalics',
@@ -71,9 +71,8 @@
       this.setupRenderers();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
 
-      // get the appropriate annotation style for the tradition
-      this.annotationGenerator = Indigo.annotations[this.parent.model.tradition().settings.annotationStyle];
-      this.annotationAmendingWork = this.getAnnotationAmendingWork(this.parent.model);
+      // get the appropriate remark style for the tradition
+      this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkStyle];
     },
 
     /* Setup pasting so that when the user pastes an HTML table
@@ -672,7 +671,7 @@
       this.textEditor.focus();
     },
 
-    getAnnotationAmendingWork: function(document) {
+    getAmendingWork: function(document) {
       var date = document.get('expression_date'),
           documentAmendments = document.get('amendments'),
           amendments = [];
@@ -689,20 +688,21 @@
 
     },
 
-    insertAnnotation: function(e) {
+    insertRemark: function(e) {
       e.preventDefault();
       var element = 'section/subsection/paragraph/subparagraph/<other> ()',
           verb = 'substituted/amended/inserted/deleted/repealed/<other>',
           amendingSection = 'section <insert>',
-          annotation;
+          amendingWork = this.getAmendingWork(this.parent.model),
+          remark;
 
-      if (this.annotationGenerator && this.annotationAmendingWork) {
-        annotation = this.annotationGenerator(element, verb, amendingSection, this.annotationAmendingWork);
+      if (this.remarkGenerator && amendingWork) {
+        remark = this.remarkGenerator(element, verb, amendingSection, amendingWork);
       } else {
-        annotation = '[[<remark>]]';
+        remark = '[[<remark>]]';
       }
 
-      this.textEditor.insert('\n' + annotation + '\n');
+      this.textEditor.insert('\n' + remark + '\n');
       this.textEditor.focus();
     },
 

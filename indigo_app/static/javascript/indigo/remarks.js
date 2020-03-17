@@ -4,6 +4,6 @@
   if (!exports.Indigo) exports.Indigo = {};
   Indigo = exports.Indigo;
 
-  Indigo.annotations = {};
+  Indigo.remarks = {};
 
 })(window);

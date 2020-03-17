@@ -46,7 +46,15 @@ $('body').on('mouseenter', 'a[data-popup-url]', function() {
   });
 
   function popup(html) {
-    $(_this).popover({content: html, html: true}).popover('show');
+    // allow div tags to contain style tags
+    var whiteList = _.clone($.fn.popover.Constructor.Default.whiteList);
+    whiteList.div = ['style'];
+
+    $(_this).popover({
+      content: html,
+      html: true,
+      whiteList: whiteList,
+    }).popover('show');
   }
 
   if (_popupCache[url]) {

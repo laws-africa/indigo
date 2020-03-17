@@ -18,6 +18,7 @@ $hierarchy-elems: (
   'item': $red,
   'paragraph': $pink,
   'part': $yellow,
+  'subpart': $orange,
   'section': $cyan,
   'subsection': $orange,
   'preface': $purple,
@@ -90,6 +91,7 @@ $hierarchy-elems: (
   .akn-section,
   .akn-subheading,
   .akn-subsection,
+  .akn-subpart,
   .akn-p,
   table {
     position: relative;

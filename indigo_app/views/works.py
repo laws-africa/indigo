@@ -260,16 +260,14 @@ class WorkOverviewView(WorkViewBase, DetailView):
     def get_top_contributors(self):
         # count submitted tasks
         submitted = User.objects\
-            .filter(submitted_tasks__country=self.work.country,
-                    submitted_tasks__locality=self.work.locality,
+            .filter(submitted_tasks__work=self.work,
                     submitted_tasks__state=Task.DONE)\
             .annotate(task_count=Count(1))
 
         # count reviewed tasks
         reviewed = User.objects \
-            .filter(reviewed_tasks__country=self.work.country,
-                    reviewed_tasks__locality=self.work.locality,
-                    reviewed_tasks__state=Task.DONE) \
+            .filter(reviewed_tasks__work=self.work,
+                    reviewed_tasks__state=Task.DONE)\
             .annotate(task_count=Count(1))
 
         # merge them

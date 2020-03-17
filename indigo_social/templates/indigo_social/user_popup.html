@@ -1,25 +1,20 @@
 <div class="popup-content lh-compact">
-    {% block user_popup %}
-
-      <h4>
-        {% if not user.first_name %}
-          {{ user.username }}
-        {% else %}
-          {{ user.first_name }} {{ user.last_name }}
-        {% endif %}
-      </h4>
-
-      {% if user.userprofile.bio %}
-        {{ user.userprofile.bio | linebreaks }}
+  {% block user_popup %}
+    <h6>
+      {% if not user.first_name %}
+        {{ user.username }}
+      {% else %}
+        {{ user.first_name }} {{ user.last_name }}
       {% endif %}
+      <br><span class="text-muted mt-1 font-weight-normal">{{ user.username }}</span>
+    </h6>
 
-      <ul class="fa-ul">
-        {% if user.editor.country %}
-          <li>
-            <span class="fa-li"><i class="fas fa-map-marker-alt"></i></span> {{ user.editor.country.name }}
-          </li>
-        {% endif %}
-      </ul>
+    {% if user.userprofile.bio %}
+      {{ user.userprofile.bio | linebreaks }}
+    {% endif %}
 
-    {% endblock%}
+    <div class="text-muted">
+      <i class="fas fa-map-marker-alt"></i> {{ user.editor.country.name }}
+    </div>
+  {% endblock%}
 </div>

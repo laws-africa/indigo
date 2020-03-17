@@ -22,7 +22,8 @@ def user_profile(user):
     profile_url = settings.INDIGO_USER_PROFILE_URL
     if profile_url:
         url = reverse('indigo_social:user_profile', kwargs={'username': user.username})
-        html = format_html('<a href="{}">{}</a>', url, username)
+        popup_url = reverse('indigo_social:user_popup', kwargs={'username': user.username})
+        html = format_html('<a href="{}" data-popup-url="{}">{}</a>', url, popup_url, username)
     else:
         html = username
 

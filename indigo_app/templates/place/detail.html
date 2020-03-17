@@ -5,6 +5,39 @@
 
 {% block content %}
 <div class="container mt-3 mb-5">
+  <div class="row">
+    {% if latest_completeness_stat %}
+      <div class="col">
+        <div class="d-flex">
+          <div class="p-relative mr-2" style="height: 50px; width: 150px;">
+            <canvas id="completeness-chart" data-values="{{ completeness_history|join:',' }}"></canvas>
+          </div>
+
+          <div class="mb-auto">
+            {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_completeness_stat.p_breadth_complete %}
+          </div>
+
+          <div class="ml-2 mb-auto">
+            <h3 class="mb-0">{{ latest_completeness_stat.p_breadth_complete }}%</h3>
+            Complete
+          </div>
+        </div>
+      </div>
+
+      <div class="col text-center">
+        <h3 class="mb-0">{{ latest_completeness_stat.n_complete_works }} of {{ latest_completeness_stat.n_works }}</h3>
+        Works complete
+      </div>
+
+      {% if place.settings.as_at_date %}
+        <div class="col text-center">
+          <h6>Works up to date as at</h6>
+          <h4>{{ place.settings.as_at_date|date:"Y-m-d" }}</h4>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  </div>
 
   <div class="row">
     <div class="col">
@@ -58,36 +91,17 @@
               </div> 
             </div>
             <div class="col-3">
-                <span class="text-dark">Subsidiary (<a href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=subsidiary&stub=all">{{ subsidiary_works_count }}</a>)</span>
+              <span class="text-dark">Subsidiary (<a href="{% url 'place_works' place=place.place_code %}?primary_subsidiary=subsidiary&stub=all">{{ subsidiary_works_count }}</a>)</span>
             </div>
           </div>
         </div>
       </div>
       <div class="card mt-4">
+        <div class="card-header">
+          <h5 class="mb-0">Contributor leaderboard</h5>
+        </div>
         <div class="card-body">
-    
-          <div class="row">
-            <div class="col-3 text-center">
-              <div>
-                {% include 'indigo_metrics/_progress_ball.html' with size=50 progress=latest_stat.p_breadth_complete %}
-              </div>
-              <h4 class="mb-0 mt-3">{{ latest_stat.p_breadth_complete }}%</h4>
-              <h6>Complete</h6>
-            </div>
-    
-            <div class="col-4 text-center align-self-center">
-              <h4 class="mb-0">{{ latest_stat.n_complete_works }} of {{ latest_stat.n_works }}</h4>
-              <h6>Works complete</h6>
-            </div>
-
-            {% if place.settings.as_at_date %}
-              <div class="col-5 text-center align-self-center">
-                <h6>Works up to date as at</h6>
-                <h4>{{ place.settings.as_at_date|date:"Y-m-d" }}</h4>
-              </div>
-            {% endif %}
-          </div>
-    
+          {% include 'place/_place_top_contributors.html' %}
         </div>
       </div>
     </div>
@@ -145,11 +159,27 @@
       <div class="card mt-4">
         <div class="card-header">
           <a class="float-right" href="{% url 'place_metrics' place=place.place_code %}">Metrics →</a>
-          <h5 class="mb-0">Recent activity</h5>
+          <h5 class="mb-0">Recent activity (30 days)</h5>
         </div>
         <div class="card-body">
-          <div class="p-relative" style="height: 100px">
-            <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
+          <div>
+            <div class="p-relative" style="height: 100px">
+              <canvas id="activity-chart" data-values="{{ activity_history }}"></canvas>
+            </div>
+          </div>
+          <div class="d-flex flex-row mt-3 justify-content-between">
+            <div class="px-4 text-center bg-light border rounded">
+              <h1>{{ new_works_added }}</h1>
+              <span>New works added</span>
+            </div>
+            <div class="px-4 text-center bg-light border rounded">
+              <h1>{{ tasks_completed }}</h1>
+              <span>Tasks completed</span>
+            </div>
+            <div class="px-4 text-center bg-light border rounded">
+              <h1>{{ new_tasks_added }}</h1>
+              <span>New tasks added</span>
+            </div>
           </div>
         </div>
       </div>

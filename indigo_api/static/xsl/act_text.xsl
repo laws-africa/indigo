@@ -23,6 +23,7 @@
                   $prefix = 'PREFACE' or
                   starts-with($prefix, 'CHAPTER ') or
                   starts-with($prefix, 'PART ') or
+                  starts-with($prefix, 'SUBPART ') or
                   starts-with($prefix, 'SCHEDULE ') or
                   starts-with($prefix, 'HEADING ') or
                   starts-with($prefix, 'SUBHEADING ') or
@@ -66,6 +67,16 @@
 
   <xsl:template match="a:part">
     <xsl:text>Part </xsl:text>
+    <xsl:value-of select="a:num" />
+    <xsl:text> - </xsl:text>
+    <xsl:apply-templates select="a:heading" />
+    <xsl:text>&#10;&#10;</xsl:text>
+
+    <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />
+  </xsl:template>
+
+  <xsl:template match="a:subpart">
+    <xsl:text>SUBPART </xsl:text>
     <xsl:value-of select="a:num" />
     <xsl:text> - </xsl:text>
     <xsl:apply-templates select="a:heading" />

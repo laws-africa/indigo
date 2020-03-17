@@ -27,7 +27,7 @@ var IndigoHighlightRules = function() {
                 regex: /^\s*\([a-z][0-9a-z]*\)/
             }, {
                 token: ["constant.language", "constant.numeric", "entity.name.tag"],
-                regex: /^(\s*(?:chapter|part))(\s+[a-zA-Z0-9]+\s*)(.*)?$/,
+                regex: /^(\s*(?:chapter|part|subpart))(\s+[a-zA-Z0-9]+\s*)(.*)?$/,
                 caseInsensitive: true,
             }, {
                 token: "constant.language",

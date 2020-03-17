@@ -119,7 +119,7 @@ This is the body of the Part.</pre>
                   </div>
                   <div class="col">
                     <div class="akoma-ntoso akoma-ntoso-snippet">
-                      <h2>Part 2<br>Interpretation</h2>
+                      <h2>Part 2 – Interpretation</h2>
                       <span class="akn-p mb-0">This is the body of the Part.</span>
                     </div>
                   </div>
@@ -129,12 +129,38 @@ This is the body of the Part.</pre>
           </div>
           {% endblock %}
 
+          {% block cheat-subpart %}
+            <div class="card">
+              <a href="#cheat-subpart" data-toggle="collapse" class="card-header">Starting a new Subpart</a>
+              <div id="cheat-subpart" class="collapse" data-parent="#cheat-accordion">
+                <div class="card-body">
+                  <p>A subpart is a grouping container, like a Part, but without "Part" in the generated heading.</p>
+                  <p>Start a subpart with <code>SUBPART</code> and a number. The title is optional.</p>
+
+                  <div class="row">
+                    <div class="col">
+                  <pre class="editor-snippet"><span class="ace_constant ace_language">SUBPART</span> <span class="ace_constant ace_numeric">A</span> <span class="ace_entity ace_name ace_tag">- Party and costs</span>
+
+This is the body of the Subpart.</pre>
+                    </div>
+                    <div class="col">
+                      <div class="akoma-ntoso akoma-ntoso-snippet">
+                        <h2>A – Party and costs</h2>
+                        <span class="akn-p mb-0">This is the body of the Subpart.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          {% endblock %}
+
           {% block cheat-crossheading %}
           <div class="card">
-            <a href="#cheat-crossheading" data-toggle="collapse" class="card-header">Include a Crossheading or sub-part heading</a>
+            <a href="#cheat-crossheading" data-toggle="collapse" class="card-header">Include a Crossheading</a>
             <div id="cheat-crossheading" class="collapse" data-parent="#cheat-accordion">
               <div class="card-body">
-                <p>Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part.</p>
+                <p>Use <code>CROSSHEADING</code> to include a heading that isn't a chapter or a part, and when the grouping of child elements is unclear.</p>
 
                 <div class="row">
                   <div class="col">

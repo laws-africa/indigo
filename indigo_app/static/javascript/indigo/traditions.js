@@ -134,7 +134,7 @@
       },
     },
     // default remark style
-    remarkStyle: 'annotationGeneratorBase',
+    remarkStyle: 'remarkGeneratorBase',
   });
 
 })(window);

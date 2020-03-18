@@ -10,7 +10,7 @@
 
   <xsl:template match="html:table">
     <table>
-      <xsl:apply-templates select="@id | //html:tr" />
+      <xsl:apply-templates select="@data-id | //html:tr" />
     </table>
   </xsl:template>
 
@@ -81,8 +81,13 @@
 
   <!-- attributes -->
 
-  <xsl:template match="@id | @colspan | @rowspan | @style | @class">
+  <xsl:template match="@colspan | @rowspan | @style | @class">
     <xsl:attribute name="{name(.)}"><xsl:value-of select="." /></xsl:attribute>
+  </xsl:template>
+
+  <!-- map data-id to id -->
+  <xsl:template match="@data-id">
+    <xsl:attribute name="id"><xsl:value-of select="." /></xsl:attribute>
   </xsl:template>
 
   <!-- text -->

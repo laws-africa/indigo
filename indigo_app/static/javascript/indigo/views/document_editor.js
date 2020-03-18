@@ -161,7 +161,7 @@
     },
 
     setComparisonDocumentId: function(id) {
-      this.comparisonDocumentid = id;
+      this.comparisonDocumentId = id;
       this.render();
     },
 
@@ -414,12 +414,11 @@
     },
 
     renderComparisonDiff: function() {
-      // TODO: decide what to compare it against
       var self = this,
           $akn = this.$('.document-workspace-content .akoma-ntoso'),
           data = {};
 
-      if (this.comparisonDocumentid === null) return;
+      if (!this.comparisonDocumentId) return;
 
       data.document = this.parent.model.toJSON();
       data.document.content = this.parent.documentContent.toXml();
@@ -430,9 +429,8 @@
         data.element_id = this.parent.fragment.tagName;
       }
 
-      // HACK HACK HACK
       $.ajax({
-        url: '/api/documents/' + this.comparisonDocumentid + '/diff',
+        url: '/api/documents/' + this.comparisonDocumentId + '/diff',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",

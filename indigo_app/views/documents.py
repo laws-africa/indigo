@@ -49,10 +49,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['document_content_json'] = json.dumps(doc.document_xml)
 
-        context['amendments_json'] = json.dumps(
-            WorkAmendmentSerializer(context={'request': self.request}, many=True)
-            .to_representation(doc.work.amendments))
-
         # add 'numbered_title_localised' to each amendment
         amendments = WorkAmendmentSerializer(context={'request': self.request}, many=True)\
             .to_representation(doc.work.amendments)
@@ -61,7 +57,7 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
             for a in amendments:
                 amending_work = Work.objects.get(frbr_uri=a['amending_work']['frbr_uri'])
                 a['amending_work']['numbered_title_localised'] = plugin.work_numbered_title(amending_work)
-        context['amendments_json_localised'] = json.dumps(amendments)
+        context['amendments_json'] = json.dumps(amendments)
 
         context['form'] = DocumentForm(instance=doc)
         context['subtypes'] = Subtype.objects.order_by('name').all()

@@ -133,8 +133,6 @@
         },
       },
     },
-    // default remark style
-    remarkGenerator: 'remarkGeneratorBase',
   });
 
 })(window);

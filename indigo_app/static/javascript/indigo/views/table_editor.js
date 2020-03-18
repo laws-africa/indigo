@@ -161,7 +161,7 @@
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
         editable = table.parentElement;
-        editable.contentEditable = true;
+        editable.contentEditable = 'true';
 
         CKEDITOR.on('instanceReady', function(evt) {
           evt.removeListener();
@@ -181,7 +181,8 @@
         this.observers.forEach(function(observer) { observer.disconnect(); });
         this.observers = [];
 
-        this.table.parentElement.contentEditable = false;
+        // don't break if our table has, for some reason, got abandoned and has no parent
+        if (this.table.parentElement) this.table.parentElement.contentEditable = 'false';
         $(this.table).closest('.table-editor-wrapper').removeClass('table-editor-active');
 
         this.ckeditor.destroy();

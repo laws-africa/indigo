@@ -6,11 +6,11 @@ from mock import patch
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
+from django.conf import settings
 from sass_processor.processor import SassProcessor
 
 from indigo_api.exporters import PDFExporter
-from indigo_api.models import Country
-
+from indigo_api.models import Country, Work
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
 # but during testing we haven't compiled assets
@@ -502,9 +502,30 @@ class ContentAPIV1TestMixin(object):
         assert_false(response.data['stub'])
 
     def test_custom_properties(self):
-        response = self.client.get(self.api_path + '/za/act/2014/10.json')
-        assert_equal(response.status_code, 200)
-        assert_equal(response.data['custom_properties'], [])
+        # override settings to set custom properties, just for this test
+        old_settings = settings.INDIGO.get('WORK_PROPERTIES')
+
+        try:
+            settings.INDIGO['WORK_PROPERTIES'] = {
+                'za': {
+                    'cap': 'Chapter',
+                    'bad': 'Should be ignored',
+                }
+            }
+
+            response = self.client.get(self.api_path + '/za/act/1880/1.json')
+            assert_equal(response.status_code, 200)
+            assert_equal(response.data['custom_properties'], [])
+
+            response = self.client.get(self.api_path + '/za/act/2014/10.json')
+            assert_equal(response.status_code, 200)
+            assert_equal([{
+                'key': 'cap',
+                'label': 'Chapter',
+                'value': '52',
+            }], response.data['custom_properties'])
+        finally:
+            settings.INDIGO['WORK_PROPERTIES'] = old_settings
 
     def test_parent_work(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.json')

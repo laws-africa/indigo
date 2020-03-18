@@ -121,7 +121,11 @@ INDIGO = {
     # see https://django-background-tasks.readthedocs.io/en/latest/
     'NOTIFICATION_EMAILS_BACKGROUND': False,
 
+    # If an email fails to send, should we raise an exception?
     'EMAIL_FAIL_SILENTLY': False,
+
+    # Key-value pairs for custom properties, per place code.
+    'WORK_PROPERTIES': {}
 }
 
 # Database

@@ -6,11 +6,11 @@ from mock import patch
 from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from django.test.utils import override_settings
+from django.conf import settings
 from sass_processor.processor import SassProcessor
 
 from indigo_api.exporters import PDFExporter
-from indigo_api.models import Country
-
+from indigo_api.models import Country, Work
 
 # Ensure the processor runs during tests. It doesn't run when DEBUG=False (ie. during testing),
 # but during testing we haven't compiled assets
@@ -23,6 +23,18 @@ class ContentAPIV1TestMixin(object):
 
     def setUp(self):
         self.client.login(username='api-user@example.com', password='password')
+
+        # override settings to set custom properties
+        self.old_work_properties = settings.INDIGO['WORK_PROPERTIES']
+        settings.INDIGO['WORK_PROPERTIES'] = {
+            'za': {
+                'cap': 'Chapter',
+                'bad': 'Should be ignored',
+            }
+        }
+
+    def tearDown(self):
+        settings.INDIGO['WORK_PROPERTIES'] = self.old_work_properties
 
     def test_published_json_perms(self):
         self.client.logout()
@@ -495,6 +507,29 @@ class ContentAPIV1TestMixin(object):
     def test_as_at_date(self):
         response = self.client.get(self.api_path + '/za/act/1880/1.json')
         assert_equal(response.data['as_at_date'], "2019-01-01")
+
+    def test_stub(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_false(response.data['stub'])
+
+    def test_custom_properties(self):
+        response = self.client.get(self.api_path + '/za/act/1880/1.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['custom_properties'], [])
+
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_equal([{
+            'key': 'cap',
+            'label': 'Chapter',
+            'value': '52',
+        }], response.data['custom_properties'])
+
+    def test_parent_work(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_is_none(response.data['parent_work'])
 
     def test_as_at_date_max_expression_date(self):
         """ The as-at date for an individual work with points in time after the as-at date,

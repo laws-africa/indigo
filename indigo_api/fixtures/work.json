@@ -10,7 +10,10 @@
       "created_by_user": 1,
       "updated_by_user": 1,
       "publication_date": "2014-04-02",
-      "frbr_uri": "/za/act/2014/10"
+      "frbr_uri": "/za/act/2014/10",
+      "properties": {
+        "cap": "52"
+      }
     }
   },
   {

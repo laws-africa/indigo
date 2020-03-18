@@ -185,7 +185,7 @@ class PlaceSettings(models.Model):
         For a locality, looks for locality-specific settings before falling back to
         country settings.
         """
-        places = settings.INDIGO.get('WORK_PROPERTIES', {})
+        places = settings.INDIGO['WORK_PROPERTIES']
 
         if self.locality:
             props = places.get(self.locality.place_code)

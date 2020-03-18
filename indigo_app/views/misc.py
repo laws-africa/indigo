@@ -6,7 +6,7 @@ from django.views.generic import View
 from indigo_app.views.base import AbstractAuthedIndigoView
 
 
-log = logging.getLogger(__name__)
+log = logging.getLogger('django.request')
 
 
 class JSErrorView(AbstractAuthedIndigoView, View):

@@ -24,6 +24,18 @@ class ContentAPIV1TestMixin(object):
     def setUp(self):
         self.client.login(username='api-user@example.com', password='password')
 
+        # override settings to set custom properties
+        self.old_work_properties = settings.INDIGO['WORK_PROPERTIES']
+        settings.INDIGO['WORK_PROPERTIES'] = {
+            'za': {
+                'cap': 'Chapter',
+                'bad': 'Should be ignored',
+            }
+        }
+
+    def tearDown(self):
+        settings.INDIGO['WORK_PROPERTIES'] = self.old_work_properties
+
     def test_published_json_perms(self):
         self.client.logout()
         self.client.login(username='email@example.com', password='password')
@@ -502,30 +514,17 @@ class ContentAPIV1TestMixin(object):
         assert_false(response.data['stub'])
 
     def test_custom_properties(self):
-        # override settings to set custom properties, just for this test
-        old_settings = settings.INDIGO.get('WORK_PROPERTIES')
+        response = self.client.get(self.api_path + '/za/act/1880/1.json')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['custom_properties'], [])
 
-        try:
-            settings.INDIGO['WORK_PROPERTIES'] = {
-                'za': {
-                    'cap': 'Chapter',
-                    'bad': 'Should be ignored',
-                }
-            }
-
-            response = self.client.get(self.api_path + '/za/act/1880/1.json')
-            assert_equal(response.status_code, 200)
-            assert_equal(response.data['custom_properties'], [])
-
-            response = self.client.get(self.api_path + '/za/act/2014/10.json')
-            assert_equal(response.status_code, 200)
-            assert_equal([{
-                'key': 'cap',
-                'label': 'Chapter',
-                'value': '52',
-            }], response.data['custom_properties'])
-        finally:
-            settings.INDIGO['WORK_PROPERTIES'] = old_settings
+        response = self.client.get(self.api_path + '/za/act/2014/10.json')
+        assert_equal(response.status_code, 200)
+        assert_equal([{
+            'key': 'cap',
+            'label': 'Chapter',
+            'value': '52',
+        }], response.data['custom_properties'])
 
     def test_parent_work(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.json')

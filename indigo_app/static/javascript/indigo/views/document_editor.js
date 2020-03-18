@@ -673,33 +673,23 @@
 
     getAmendingWork: function(document) {
       var date = document.get('expression_date'),
-          documentAmendments = document.get('amendments'),
-          amendments = [];
+          documentAmendments = Indigo.Preloads.amendments,
+          amendment = _.findWhere(documentAmendments, {date: date});
 
-      documentAmendments.forEach(function(amendment) {
-        if (amendment.date === date) {
-          amendments.push(amendment);
-        }
-      });
-
-      if (amendments) {
-        return amendments[0];
+      if (amendment) {
+        return amendment.amending_work;
       }
 
     },
 
     insertRemark: function(e) {
       e.preventDefault();
-      var element = 'section/subsection/paragraph/subparagraph/<other> ()',
-          verb = 'substituted/amended/inserted/deleted/repealed/<other>',
-          amendingSection = 'section <insert>',
+      var verb = e.currentTarget.className.split(" ").pop(),
           amendingWork = this.getAmendingWork(this.parent.model),
-          remark;
+          remark = '[[<remark>]]';
 
       if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(element, verb, amendingSection, amendingWork);
-      } else {
-        remark = '[[<remark>]]';
+        remark = this.remarkGenerator(this.parent.model, verb, amendingWork);
       }
 
       this.textEditor.insert('\n' + remark + '\n');

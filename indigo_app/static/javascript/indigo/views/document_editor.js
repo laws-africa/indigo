@@ -72,7 +72,7 @@
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
 
       // get the appropriate remark style for the tradition
-      this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkStyle];
+      this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
     },
 
     /* Setup pasting so that when the user pastes an HTML table
@@ -684,12 +684,13 @@
 
     insertRemark: function(e) {
       e.preventDefault();
-      var verb = e.currentTarget.className.split(" ").pop(),
+      var amendedSection = this.fragment.id.replace('-', ' '),
+          verb = e.currentTarget.getAttribute('data-verb'),
           amendingWork = this.getAmendingWork(this.parent.model),
           remark = '[[<remark>]]';
 
       if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.parent.model, verb, amendingWork);
+        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork);
       }
 
       this.textEditor.insert('\n' + remark + '\n');

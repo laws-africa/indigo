@@ -673,7 +673,7 @@
 
     getAmendingWork: function(document) {
       var date = document.get('expression_date'),
-          documentAmendments = Indigo.Preloads.amendments,
+          documentAmendments = Indigo.Preloads.amendmentsLocalised,
           amendment = _.findWhere(documentAmendments, {date: date});
 
       if (amendment) {

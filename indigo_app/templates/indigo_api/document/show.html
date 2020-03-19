@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}{{ document.title }}{% endblock %}
-{% block body-class %}{{ block.super }} no-site-footer sidebar-minimized
+{% block body-class %}{{ block.super }} document-editor-view no-site-footer sidebar-minimized
   {% if document.draft %}is-draft{% else %}is-published{% endif %}
   {% if work.repealed_date %}is-repealed{% endif %}
 {% endblock %}

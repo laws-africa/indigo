@@ -33,6 +33,6 @@ class JSErrorView(AbstractAuthedIndigoView, View):
     File: {info['filename']} @ {info['lineno']}:{info['colno']}
 
     {info['stack']}
-    """)
+    """, extra={'request': request})
 
         return HttpResponse(status=200)

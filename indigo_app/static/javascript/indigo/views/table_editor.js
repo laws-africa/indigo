@@ -21,6 +21,8 @@
       'click .table-text-left': 'alignTextLeft',
       'click .table-text-center': 'alignTextCenter',
       'click .table-text-right': 'alignTextRight',
+      'click .table-text-bold': 'toggleTextBold',
+      'click .table-text-italic': 'toggleTextItalic',
       'click .save-edit-table': 'saveChanges',
       'click .cancel-edit-table': 'discardChanges',
     },
@@ -42,7 +44,13 @@
       this.ckeditorConfig = {
         enterMode: CKEDITOR.ENTER_BR,
         shiftEnterMode: CKEDITOR.ENTER_BR,
-        toolbar: [],
+        coreStyles_bold: {element: 'b', overrides: 'strong'},
+        coreStyles_italic: {element: 'i', overrides: 'em'},
+
+        // Enable these formatting buttons, but css in _documents.scss hides the toolbar.
+        // This allows us to place our own toolbar buttons that use this functionalty.
+        toolbar: [{ name: 'basicstyles', items: [ 'Bold', 'Italic' ] }],
+
         // this must align with the elements and attributes supported by
         // indigo_app/static/xsl/html_to_akn.xsl
         allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
@@ -172,7 +180,7 @@
         // remove foreign content
         $(editable).find(Indigo.dom.foreignElementsSelector).remove();
         this.ckeditor = CKEDITOR.inline(editable, this.ckeditorConfig);
-        this.ckeditor.on('selectionChange', _.bind(this.selectionChanged, this));
+        this.setupCKEditorInstance(this.ckeditor);
 
         this.editing = true;
         this.trigger('start');
@@ -193,6 +201,21 @@
         this.editing = false;
         this.trigger('finish');
       }
+    },
+
+    setupCKEditorInstance: function(ckeditor) {
+      var self = this;
+
+      // watch selection change
+      ckeditor.on('selectionChange', _.bind(this.selectionChanged, this));
+
+      // watch for style changes
+      ckeditor.attachStyleStateChange(new CKEDITOR.style({element: 'b'}), function(state) {
+          self.styleStateChanged('bold', state === CKEDITOR.TRISTATE_ON);
+        });
+      ckeditor.attachStyleStateChange(new CKEDITOR.style({element: 'i'}), function(state) {
+          self.styleStateChanged('italic', state === CKEDITOR.TRISTATE_ON);
+        });
     },
 
     /* Set up observers to:
@@ -345,6 +368,18 @@
         cell.classList.remove('akn--text-right', 'akn--text-center');
       });
       this.updateToolbar();
+    },
+
+    toggleTextBold: function(e) {
+      this.ckeditor.execCommand('bold');
+    },
+
+    toggleTextItalic: function(e) {
+      this.ckeditor.execCommand('italic');
+    },
+
+    styleStateChanged: function(style, active) {
+      this.$('.table-text-' + style).toggleClass('active', active);
     },
 
     renameNode: function(node, newname) {

@@ -360,8 +360,7 @@ button.btn-link.help {
   }
 
   .table-editor-buttons {
-    padding: 5px 0px;
-    margin: 0px 2px;
+    margin: 5px 0px;
   }
 
   .when-active {
@@ -379,10 +378,17 @@ button.btn-link.help {
 
     .table-editor-buttons {
       position: sticky;
-      top: -23px;
+      top: -18px;
       background-color: white;
       z-index: 10;
     }
+  }
+}
+
+// hide the CKEditor toolbar
+.document-editor-view {
+  .cke.cke_float {
+    display: none !important;
   }
 }
 

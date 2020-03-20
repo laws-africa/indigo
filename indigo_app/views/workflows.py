@@ -303,7 +303,7 @@ class WorkflowListView(WorkflowViewBase, ListView):
         return super(WorkflowListView, self).get(request, *args, **kwargs)
 
     def get_queryset(self):
-        workflows = self.place.workflows
+        workflows = Workflow.objects.filter(country=self.country, locality=self.locality)
         return self.form.filter_queryset(workflows)
 
     def get_context_data(self, **kwargs):

@@ -13,6 +13,7 @@
     "chart.js": "^2.8.0",
     "dom-anchor-text-position": "^4.0.0",
     "dom-anchor-text-quote": "^4.0.2",
+    "he": "^1.2.0",
     "indigo-web": "^3.9.0",
     "yarn": "^1.22.0"
   },

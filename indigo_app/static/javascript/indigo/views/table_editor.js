@@ -100,17 +100,8 @@
     tableToAkn: function(table) {
       if (!this.htmlTransform) return null;
 
-      // html -> string -> xhtml so that the XML is well formed
-      var xml = new XMLSerializer().serializeToString(table);
-      if (xml.indexOf('&')> -1) {
-        // For Safari, ensure &nbsp; and other entities are translated into unicode strings
-        // see https://stackoverflow.com/a/7394787
-        var textarea = document.createElement("textarea");
-        textarea.innerHTML = xml;
-        xml = textarea.value;
-      }
-      xml = $.parseXML(xml);
-
+      // html -> xhtml
+      var xml = Indigo.dom.htmlNodeToXmlNode(table);
       // xhtml -> akn
       xml = this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
 

@@ -139,7 +139,7 @@ To do this, install [browserify](http://browserify.org/), then:
 
 ```
 npm install
-browserify indigo_app/static/lib/dom-anchor.src.js > indigo_app/static/lib/dom-anchor.js
+browserify indigo_app/static/lib/dom-utils.src.js > indigo_app/static/lib/dom-utils.js
 ```
 
 

@@ -355,10 +355,16 @@
 
     xmlEditorChanged: function() {
       // save the contents of the XML editor
+      var newFragment;
       console.log('Parsing changes to XML');
 
-      // TODO: handle errors here
-      var newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
+      try {
+        newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
+      } catch(err) {
+        // squash errors
+        console.log(err);
+        return;
+      }
 
       this.parent.updateFragment(this.parent.fragment, [newFragment]);
       this.render();

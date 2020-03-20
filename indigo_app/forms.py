@@ -227,8 +227,14 @@ class TaskForm(forms.ModelForm):
 
     labels = forms.ModelMultipleChoiceField(queryset=TaskLabel.objects, widget=forms.CheckboxSelectMultiple,
                                             required=False)
-    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, widget=forms.CheckboxSelectMultiple,
-                                               required=False)
+    workflows = forms.ModelMultipleChoiceField(queryset=Workflow.objects, required=False)
+
+    def __init__(self, country, locality, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.country = country
+        self.locality = locality
+        self.fields['workflows'].queryset = self.fields['workflows'].queryset.\
+            filter(country=self.country, locality=self.locality)
 
 
 class TaskFilterForm(forms.Form):

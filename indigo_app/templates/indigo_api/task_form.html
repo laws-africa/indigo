@@ -100,14 +100,14 @@
 
           </div>
 
-          {% if place_workflows %}
+          {% if form.workflows|length %}
             <div class="form-group">
               <label for="{{ form.workflows.id_for_label }}">Workflows this task belongs to</label>
               <div class="row">
                 <div class="col-md-6">
                   <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
-                    {% for workflow in place_workflows %}
-                      <option value="{{ workflow.id }}" {% if workflow.id in form.workflows.value %}selected{% endif %}>{{ workflow.title }}</option>
+                    {% for option in form.workflows %}
+                      {{ option }}
                     {% endfor %}
                   </select>
                 </div>

@@ -76,7 +76,7 @@
     refresh: function() {
       var locality = this.filters.get('locality'),
           country = this.filters.get('country'),
-          create_work_url = '/places/' + country + (locality ? ('-' + locality) : '') + '/works/new/';
+          create_work_url = '/places/' + country;
 
       this.collection.country = country;
       this.collection.params.search = this.filters.get('search') || '';
@@ -87,11 +87,12 @@
         this.collection.params.frbr_uri__startswith = '/' + country + '/';
       } else {
         this.collection.params.frbr_uri__startswith = '/' + country + '-' + locality + '/';
+        create_work_url = create_work_url + '-' + locality;
       }
 
       this.collection.fetch({reset: true});
 
-      this.$('.btn.create-work').attr('href', create_work_url);
+      this.$('.btn.create-work').attr('href', create_work_url + '/works/new/');
     },
 
     filterBySearch: function(e) {

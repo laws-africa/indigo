@@ -172,6 +172,8 @@ class TaskCreateView(TaskViewBase, CreateView):
                 pass
 
         kwargs['instance'] = task
+        kwargs['country'] = self.country
+        kwargs['locality'] = self.locality
 
         return kwargs
 
@@ -191,8 +193,6 @@ class TaskCreateView(TaskViewBase, CreateView):
 
         context['task_labels'] = TaskLabel.objects.all()
 
-        context['place_workflows'] = self.place.workflows.filter(closed=False)
-
         return context
 
     def get_success_url(self):
@@ -206,6 +206,12 @@ class TaskEditView(TaskViewBase, UpdateView):
     context_object_name = 'task'
     form_class = TaskForm
     model = Task
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['country'] = self.country
+        kwargs['locality'] = self.locality
+        return kwargs
 
     def form_valid(self, form):
         task = self.object
@@ -246,7 +252,6 @@ class TaskEditView(TaskViewBase, UpdateView):
         context['document_json'] = document
 
         context['task_labels'] = TaskLabel.objects.all()
-        context['place_workflows'] = self.place.workflows.filter(closed=False)
 
         if has_transition_perm(task.cancel, self):
             context['cancel_task_permission'] = True

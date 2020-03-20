@@ -100,18 +100,20 @@
 
           </div>
 
-          <div class="form-group">
-            <label for="{{ form.workflows.id_for_label }}">Workflows this task belongs to</label>
-            <div class="row">
-              <div class="col-md-6">
-                <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
-                  {% for option in form.workflows %}
-                    {{ option }}
-                  {% endfor %}
-                </select>
+          {% if form.workflows|length %}
+            <div class="form-group">
+              <label for="{{ form.workflows.id_for_label }}">Workflows this task belongs to</label>
+              <div class="row">
+                <div class="col-md-6">
+                  <select class="selectpicker form-control" multiple name="{{ form.workflows.name }}" id="{{ form.workflows.id_for_label }}">
+                    {% for option in form.workflows %}
+                      {{ option }}
+                    {% endfor %}
+                  </select>
+                </div>
               </div>
             </div>
-          </div>
+          {% endif %}
 
         </div>
 

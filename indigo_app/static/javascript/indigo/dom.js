@@ -1,3 +1,5 @@
+/*jshint esversion: 6 */
+
 $(function() {
   if (!Indigo.dom) Indigo.dom = {};
 
@@ -34,14 +36,16 @@ $(function() {
       removed.push(info);
     });
 
-    result = callback();
-
-    // put the elements back
-    removed.reverse();
-    removed.forEach(function(info) {
-      if (info.before) info.before.parentElement.insertBefore(info.e, info.before);
-      else info.parent.appendChild(info.e);
-    });
+    try {
+      result = callback();
+    } finally {
+      // put the elements back, even if result throws an error
+      removed.reverse();
+      removed.forEach(function (info) {
+        if (info.before) info.before.parentElement.insertBefore(info.e, info.before);
+        else info.parent.appendChild(info.e);
+      });
+    }
 
     return result;
   };
@@ -213,54 +217,56 @@ $(function() {
   };
 
   /**
-   * Tweaked version of toRange from https://github.com/tilgovi/dom-anchor-text-position
-   * so that we can fix a bug that arises when selecting to the end of a node.
+   * toRange from https://github.com/hypothesis/dom-anchor-text-position/blob/handle-end-of-root-selection/src/index.js
    */
-  Indigo.dom.textPositionToRange = function(root, selector) {
+  Indigo.dom.textPositionToRange = function(root, selector = {}) {
     if (root === undefined) {
       throw new Error('missing required parameter "root"');
     }
 
-    var document = root.ownerDocument;
-    var range = document.createRange();
-    var iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
+    let start = selector.start || 0;
+    let end = selector.end || start;
 
-    var start = selector.start || 0;
-    var end = selector.end || start;
-    var count = domSeek(iter, start);
-    var remainder = start - count;
-    var node;
+    // Total character length of text nodes visited so far.
+    let nodeTextOffset = 0;
 
-    if (iter.pointerBeforeReferenceNode) {
-      range.setStart(iter.referenceNode, remainder);
-    } else {
-      // XXX: work around a bug in dom-anchor-text-position, see
-      // https://github.com/tilgovi/dom-anchor-text-position/issues/2
-      node = iter.nextNode();
-      if (node) {
-        range.setStart(node, remainder);
-      } else {
-        range.setStart(iter.referenceNode, iter.referenceNode.length);
-        iter.previousNode();
+    // Node and character offset where the start position of the selector occurs.
+    let startContainer = null;
+    let startOffset = 0;
+
+    // Node and character offset where the end position of the selector occurs.
+    let endContainer = null;
+    let endOffset = 0;
+
+    // Iterate over text nodes and find where the start and end positions occur.
+    let iter = document.createNodeIterator(root, NodeFilter.SHOW_TEXT);
+    while (iter.nextNode() && (startContainer === null || endContainer === null)) {
+      let nodeTextLength = iter.referenceNode.nodeValue.length;
+
+      if (startContainer === null &&
+          start >= nodeTextOffset && start <= nodeTextOffset + nodeTextLength) {
+        startContainer = iter.referenceNode;
+        startOffset = start - nodeTextOffset;
       }
+      if (endContainer === null &&
+          end >= nodeTextOffset && end <= nodeTextOffset + nodeTextLength) {
+        endContainer = iter.referenceNode;
+        endOffset = end - nodeTextOffset;
+      }
+
+      nodeTextOffset += nodeTextLength;
     }
 
-    var length = end - start + remainder;
-    count = domSeek(iter, length);
-    remainder = length - count;
-
-    if (iter.pointerBeforeReferenceNode) {
-      range.setEnd(iter.referenceNode, remainder);
-    } else {
-      // XXX: work around a bug in dom-anchor-text-position, see
-      // https://github.com/tilgovi/dom-anchor-text-position/issues/2
-      node = iter.nextNode();
-      if (node) {
-        range.setEnd(node, remainder);
-      } else {
-        range.setEnd(iter.referenceNode, iter.referenceNode.length);
-      }
+    if (!startContainer) {
+      throw new Error('Start offset of position selector is out of range');
     }
+    if (!endContainer) {
+      throw new Error('End offset of position selector is out of range');
+    }
+
+    let range = root.ownerDocument.createRange();
+    range.setStart(startContainer, startOffset);
+    range.setEnd(endContainer, endOffset);
 
     return range;
   };

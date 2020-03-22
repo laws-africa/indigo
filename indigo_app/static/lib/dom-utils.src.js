@@ -1,13 +1,13 @@
 var datp = require('dom-anchor-text-position');
 var datq = require('dom-anchor-text-quote');
-var domSeek = require('dom-seek');
 var he = require('he');
 
+// these are used for attaching/detaching annotations, see:
+// indigo/views/annotations.js
+// indigo/dom.js
 window.textPositionFromRange = datp.fromRange;
-window.textPositionToRange = datp.toRange;
-window.textQuoteFromRange = datq.fromRange;
 window.textQuoteFromTextPosition = datq.fromTextPosition;
-window.textQuoteToRange = datq.toRange;
 window.textQuoteToTextPosition = datq.toTextPosition;
-window.domSeek = domSeek;
+
+// for parsing HTML to XML, see dom.js
 window.he = he;

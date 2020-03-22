@@ -1,19 +1,19 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var datp = require('dom-anchor-text-position');
 var datq = require('dom-anchor-text-quote');
-var domSeek = require('dom-seek');
 var he = require('he');
 
+// these are used for attaching/detaching annotations, see:
+// indigo/views/annotations.js
+// indigo/dom.js
 window.textPositionFromRange = datp.fromRange;
-window.textPositionToRange = datp.toRange;
-window.textQuoteFromRange = datq.fromRange;
 window.textQuoteFromTextPosition = datq.fromTextPosition;
-window.textQuoteToRange = datq.toRange;
 window.textQuoteToTextPosition = datq.toTextPosition;
-window.domSeek = domSeek;
+
+// for parsing HTML to XML, see dom.js
 window.he = he;
 
-},{"dom-anchor-text-position":4,"dom-anchor-text-quote":7,"dom-seek":19,"he":21}],2:[function(require,module,exports){
+},{"dom-anchor-text-position":4,"dom-anchor-text-quote":7,"he":21}],2:[function(require,module,exports){
 module.exports = parents
 
 function parents(node, filter) {

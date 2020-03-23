@@ -214,11 +214,13 @@ body.is-staff {
         border-color: $gray-300 $gray-300 $body-bg-color $gray-300;
       }
     }
+  }
+}
 
-    .nav-item .fa,
-    .nav-item .fas {
-      font-size: .875em;
-      color: $gray-500 !important;
-    }
+.nav-tabs {
+  .nav-item .fa,
+  .nav-item .fas {
+    font-size: .875em;
+    color: $gray-500 !important;
   }
 }

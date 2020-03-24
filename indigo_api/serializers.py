@@ -563,7 +563,8 @@ class WorkSerializer(serializers.ModelSerializer):
         fields = (
             # readonly, url is part of the rest framework
             'id', 'url',
-            'title', 'publication_name', 'publication_number', 'publication_date', 'publication_document',
+            'title', 'numbered_title',
+            'publication_name', 'publication_number', 'publication_date', 'publication_document',
             'commenced', 'commencements', 'commencing_work', 'commencement_date',
             'assent_date', 'stub',
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',

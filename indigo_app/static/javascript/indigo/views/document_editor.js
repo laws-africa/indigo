@@ -25,6 +25,7 @@
       'click .insert-table': 'insertTable',
       'click .insert-schedule': 'insertSchedule',
 
+      'click .insert-remark': 'insertRemark',
       'click .markup-remark': 'markupRemark',
       'click .markup-bold': 'markupBold',
       'click .markup-italics': 'markupItalics',
@@ -69,6 +70,9 @@
 
       this.setupRenderers();
       this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+
+      // get the appropriate remark style for the tradition
+      this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
     },
 
     /* Setup pasting so that when the user pastes an HTML table
@@ -668,6 +672,32 @@
       e.preventDefault();
 
       this.textEditor.insert('\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n');
+      this.textEditor.focus();
+    },
+
+    getAmendingWork: function(document) {
+      var date = document.get('expression_date'),
+          documentAmendments = Indigo.Preloads.amendments,
+          amendment = _.findWhere(documentAmendments, {date: date});
+
+      if (amendment) {
+        return amendment.amending_work;
+      }
+
+    },
+
+    insertRemark: function(e) {
+      e.preventDefault();
+      var amendedSection = this.fragment.id.replace('-', ' '),
+          verb = e.currentTarget.getAttribute('data-verb'),
+          amendingWork = this.getAmendingWork(this.parent.model),
+          remark = '[[<remark>]]';
+
+      if (this.remarkGenerator && amendingWork) {
+        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork);
+      }
+
+      this.textEditor.insert('\n' + remark + '\n');
       this.textEditor.focus();
     },
 

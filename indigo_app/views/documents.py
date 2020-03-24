@@ -4,7 +4,8 @@ from django.views.generic import DetailView
 from django.http import Http404
 from django.urls import reverse
 
-from indigo_api.models import Document, Country, Subtype
+from indigo.plugins import plugins
+from indigo_api.models import Document, Country, Subtype, Work
 from indigo_api.serializers import DocumentSerializer, WorkSerializer, WorkAmendmentSerializer
 from indigo_api.views.documents import DocumentViewSet
 
@@ -29,7 +30,6 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         doc = self.object
 
-        context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
         context['work'] = doc.work
         context['work_json'] = json.dumps(WorkSerializer(instance=doc.work, context={'request': self.request}).data)
         context['document_json'] = json.dumps(DocumentSerializer(instance=doc, context={'request': self.request}).data)
@@ -49,9 +49,15 @@ class DocumentDetailView(AbstractAuthedIndigoView, DetailView):
 
         context['document_content_json'] = json.dumps(doc.document_xml)
 
-        context['amendments_json'] = json.dumps(
-            WorkAmendmentSerializer(context={'request': self.request}, many=True)
-            .to_representation(doc.work.amendments))
+        # add 'numbered_title_localised' to each amendment
+        amendments = WorkAmendmentSerializer(context={'request': self.request}, many=True)\
+            .to_representation(doc.work.amendments)
+        plugin = plugins.for_document('work-detail', doc)
+        if plugin:
+            for a in amendments:
+                amending_work = Work.objects.get(frbr_uri=a['amending_work']['frbr_uri'])
+                a['amending_work']['numbered_title_localised'] = plugin.work_numbered_title(amending_work)
+        context['amendments_json'] = json.dumps(amendments)
 
         context['form'] = DocumentForm(instance=doc)
         context['subtypes'] = Subtype.objects.order_by('name').all()

@@ -129,11 +129,14 @@ $(function() {
       range;
 
     if (posnSelector) {
-      range = Indigo.dom.textPositionToRange(anchor, posnSelector);
-
-      // compare text with the exact from the quote selector
-      if (quoteSelector && range.toString() === quoteSelector.exact) {
-        return range;
+      try {
+        range = Indigo.dom.textPositionToRange(anchor, posnSelector);
+        // compare text with the exact from the quote selector
+        if (quoteSelector && range.toString() === quoteSelector.exact) {
+          return range;
+        }
+      } catch (err) {
+        // couldn't match to the position, try the quote selector instead
       }
     }
 

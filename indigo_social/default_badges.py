@@ -24,35 +24,53 @@ class ContributorBadge(PermissionBadge):
 
 class DrafterBadge(PermissionBadge):
     slug = 'drafter'
-    name = 'Drafter'
+    name = 'Editor'
     group_name = name + ' Badge'
-    description = 'Can create new works and edit the details of existing works'
+    description = 'Can create new works and edit the details of existing works, as well as working with tasks'
     permissions = ('indigo_api.add_work', 'indigo_api.change_work',
                    'indigo_api.add_document', 'indigo_api.change_document',
                    'indigo_api.add_documentactivity', 'indigo_api.change_documentactivity', 'indigo_api.delete_documentactivity',
                    'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
                    # required when restoring a document version
                    'reversion.add_version', 'reversion.change_version',
-                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task',
-                   'indigo_api.add_workflow', 'indigo_api.change_workflow')
+                   'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')
+
+
+class ResearcherBadge(PermissionBadge):
+    slug = 'researcher'
+    name = 'Researcher'
+    group_name = name + ' Badge'
+    description = 'Can perform bulk imports from and exports to spreadsheets'
+    permissions = ('indigo_api.bulk_add_work', 'indigo_api.bulk_export_work',)
 
 
 class SeniorDrafterBadge(PermissionBadge):
     slug = 'senior-drafter'
-    name = 'Senior Drafter'
+    name = 'Reviewer'
     group_name = name + ' Badge'
-    description = 'Can review work tasks and delete documents and works'
-    permissions = ('indigo_api.bulk_add_work', 'indigo_api.delete_work', 'indigo_api.review_work', 'indigo_api.bulk_export_work',
+    description = 'Can review works and tasks and delete documents and works, as well as working with workflows'
+    permissions = ('indigo_api.delete_work', 'indigo_api.review_work',
                    'indigo_api.add_commencement', 'indigo_api.change_commencement', 'indigo_api.delete_commencement',
                    'indigo_api.review_document', 'indigo_api.delete_document', 'indigo_api.publish_document',
-                   'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',
                    'indigo_api.cancel_task', 'indigo_api.unsubmit_task', 'indigo_api.close_task',
+                   'indigo_api.add_workflow', 'indigo_api.change_workflow',
                    'indigo_api.close_workflow', 'indigo_api.delete_workflow')
+
+
+class ManagerBadge(PermissionBadge):
+    slug = 'manager'
+    name = 'Manager'
+    group_name = name + ' Badge'
+    description = 'Can review own tasks and edit settings'
+    permissions = ('indigo_api.close_any_task',
+                   'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
 
 
 badges.register(ContributorBadge)
 badges.register(DrafterBadge)
+badges.register(ResearcherBadge)
 badges.register(SeniorDrafterBadge)
+badges.register(ManagerBadge)
 
 
 # when a user signs up, grant them the contributor badge immediately

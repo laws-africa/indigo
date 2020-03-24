@@ -66,6 +66,7 @@ class Task(models.Model):
             ('reopen_task', 'Can reopen a task that is closed or cancelled'),
             ('unsubmit_task', 'Can unsubmit a task that has been submitted for review'),
             ('close_task', 'Can close a task that has been submitted for review'),
+            ('close_any_task', 'Can close any task that has been submitted for review, regardless of who submitted it'),
         )
 
     objects = TaskManager.from_queryset(TaskQuerySet)()
@@ -154,7 +155,8 @@ class Task(models.Model):
             if task.state == 'open':
                 task.potential_assignees = [u for u in potential_assignees if task.assigned_to_id != u.id]
             elif task.state == 'pending_review':
-                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and task.submitted_by_user_id != u.id]
+                task.potential_assignees = [u for u in potential_reviewers if task.assigned_to_id != u.id and
+                                            (u.has_perm('indigo_api.close_any_task') or task.submitted_by_user_id != u.id)]
 
         return tasks
 
@@ -241,8 +243,10 @@ class Task(models.Model):
     def may_close(self, view):
         return view.request.user.is_authenticated and \
                view.request.user.editor.has_country_permission(view.country) and \
-               view.request.user.has_perm('indigo_api.close_task') and \
-               (view.request.user == self.assigned_to or not self.assigned_to)
+               (view.request.user.has_perm('close_any_task') or
+                (view.request.user.has_perm('indigo_api.close_task') and
+                (view.request.user == self.assigned_to or
+                 (not self.assigned_to and self.submitted_by_user != view.request.user))))
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
     def close(self, user):

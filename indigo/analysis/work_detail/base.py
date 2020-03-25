@@ -11,14 +11,24 @@ class BaseWorkDetail(LocaleBasedMatcher):
     Subclasses should implement `work_numbered_title`.
     """
 
+    no_numbered_title_subtypes = []
+    """ These subtypes don't have numbered titles. """
+    no_numbered_title_numbers = ['constitution']
+    """ These numbers don't have numbered titles. """
+
     def work_numbered_title(self, work):
         """ Return a formatted title using the number for this work, such as "Act 5 of 2009".
         This usually differs from the short title. May return None.
         """
+        # these don't have numbered titles
         number = work.number
-        if number == 'constitution':
+        if number in self.no_numbered_title_numbers:
             return None
-        uri = work.work_uri
+
+        # these don't have numbered titles
+        if work.work_uri.subtype in self.no_numbered_title_subtypes:
+            return None
+
         work_type = self.work_friendly_type(work)
         return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number, 'year': work.year}
 

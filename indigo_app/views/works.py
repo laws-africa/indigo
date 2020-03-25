@@ -292,6 +292,7 @@ class WorkCommencementsView(WorkViewBase, DetailView):
         context['commencements'] = commencements = self.work.commencements.all().reverse()
         context['has_all_provisions'] = any(c.all_provisions for c in commencements)
         context['has_main_commencement'] = any(c.main for c in commencements)
+        context['everything_commenced'] = context['has_all_provisions'] or (context['provisions'] and not context['uncommenced_provisions'])
 
         provision_set = {p.id: p for p in provisions}
         for commencement in commencements:

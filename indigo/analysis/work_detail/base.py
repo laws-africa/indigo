@@ -30,7 +30,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
             return None
 
         work_type = self.work_friendly_type(work)
-        return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number, 'year': work.year}
+        return _('%(type)s %(number)s of %(year)s') % {'type': _(work_type), 'number': number.upper(), 'year': work.year}
 
     def work_friendly_type(self, work):
         """ Return a friendly document type for this work, such as "Act" or "By-law".

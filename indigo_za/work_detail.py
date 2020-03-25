@@ -19,7 +19,7 @@ class WorkDetailZAAfr(WorkDetailZA):
         if not super().work_numbered_title(work):
             return
 
-        number = work.number
+        number = work.number.upper()
         work_type = self.work_friendly_type(work)
         return f'{work_type} {number} van {work.year}'
 

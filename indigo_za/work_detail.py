@@ -7,35 +7,20 @@ from indigo_api.models import Subtype
 class WorkDetailZA(BaseWorkDetail):
     locale = ('za', None, None)
     """ Locale for this object, as a tuple: (country, language, locality). None matches anything."""
-
-    def work_numbered_title(self, work):
-        uri = work.work_uri
-
-        # by-laws don't have numbered titles
-        if uri.subtype == 'by-law':
-            return None
-
-        return super().work_numbered_title(work)
+    no_numbered_title_subtypes = ['by-law', 'mo']
 
 
 @plugins.register('work-detail')
-class WorkDetailZAAfr(BaseWorkDetail):
+class WorkDetailZAAfr(WorkDetailZA):
     locale = ('za', 'afr', None)
     """ Locale for this object, as a tuple: (country, language, locality). None matches anything."""
 
     def work_numbered_title(self, work):
-        uri = work.work_uri
-
-        # by-laws don't have numbered titles
-        if uri.subtype == 'by-law':
-            return None
+        if not super().work_numbered_title(work):
+            return
 
         number = work.number
-        if number == 'constitution':
-            return None
-
         work_type = self.work_friendly_type(work)
-
         return f'{work_type} {number} van {work.year}'
 
     def work_friendly_type(self, work):

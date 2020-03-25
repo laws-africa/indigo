@@ -80,7 +80,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
             'language', 'repeal', 'amendments', 'points_in_time', 'parent_work', 'custom_properties',
-            'numbered_title', 'taxonomies', 'as_at_date', 'stub',
+            'numbered_title', 'taxonomies', 'as_at_date', 'stub', 'type_name',
 
             'links',
         )

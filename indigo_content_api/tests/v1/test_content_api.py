@@ -64,6 +64,11 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.data['numbered_title'], 'Act 10 of 2014')
 
+    def test_published_type_name(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.data['type_name'], 'Act')
+
     def test_published_xml(self):
         response = self.client.get(self.api_path + '/za/act/2014/10.xml')
         assert_equal(response.status_code, 200)

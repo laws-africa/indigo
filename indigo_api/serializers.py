@@ -247,6 +247,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     commencement_date = serializers.DateField(read_only=True)
     assent_date = serializers.DateField(read_only=True)
     numbered_title = serializers.CharField(read_only=True, source='work.numbered_title')
+    type_name = serializers.CharField(read_only=True, source='work.friendly_type')
 
     tags = TagListSerializerField(required=False)
     amendments = AmendmentEventSerializer(many=True, read_only=True, source='amendment_events')
@@ -271,7 +272,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
-            'language', 'tags', 'amendments', 'repeal', 'numbered_title',
+            'language', 'tags', 'amendments', 'repeal', 'numbered_title', 'type_name',
 
             'links',
         )

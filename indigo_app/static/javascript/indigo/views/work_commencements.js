@@ -42,12 +42,18 @@
 
     formShow: function(e) {
       // hide the details
-      e.target.parentElement.querySelector('.commencement-details').classList.remove('show');
+      // guard the namespace because otherwise the date selector event clashes with this one
+      if (e.namespace == 'bs.collapse') {
+        e.target.parentElement.querySelector('.commencement-details').classList.remove('show');
+      }
     },
 
     formHide: function(e) {
       // show the details
-      e.target.parentElement.querySelector('.commencement-details').classList.add('show');
+      // guard the namespace because otherwise the date selector event clashes with this one
+      if (e.namespace == 'bs.collapse') {
+        e.target.parentElement.querySelector('.commencement-details').classList.add('show');
+      }
     },
 
     allProvisionsChanged: function(e) {

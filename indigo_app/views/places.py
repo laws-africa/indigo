@@ -403,9 +403,12 @@ class PlaceWorksView(PlaceViewBase, AbstractAuthedIndigoView, ListView):
 
         return context
 
+    def get_xlsx_filename(self):
+        return f"legislation {self.kwargs['place']}.xlsx"
+
     def generate_xlsx(self):
         queryset = self.get_queryset()
-        filename = f"Legislation-{self.kwargs['place']}.xlsx"
+        filename = self.get_xlsx_filename()
         output = io.BytesIO()
         workbook = xlsxwriter.Workbook(output)
 

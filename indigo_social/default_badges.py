@@ -61,7 +61,7 @@ class SuperReviewerBadge(PermissionBadge):
     slug = 'super-reviewer'
     name = 'Super Reviewer'
     group_name = name + ' Badge'
-    description = 'Can review own tasks and edit settings'
+    description = 'Can approve any tasks and edit place settings'
     permissions = ('indigo_api.close_any_task',
                    'indigo_api.add_placesettings', 'indigo_api.change_placesettings', 'indigo_api.delete_placesettings',)
 

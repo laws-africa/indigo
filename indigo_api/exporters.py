@@ -52,7 +52,10 @@ class HTMLExporter(object):
                 return content_html
         else:
             # the entire document
-            content_html = renderer.render_xml(document.document_xml)
+            if document.document_xml:
+                content_html = renderer.render_xml(document.document_xml)
+            else:
+                content_html = ''
 
         # find the template to use
         template_name = self.template_name or self.find_template(document)

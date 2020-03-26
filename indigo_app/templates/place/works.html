@@ -7,8 +7,8 @@
 {% block content %}
 <div class="container mt-3 mb-5">
 
-  <div class="d-flex justify-content-between mb-3">
-    <div class="ml-auto">
+  {% block content-header %}
+    <div class="text-right mb-3">
       <div class="btn-group">
         <a href="{% url 'new_work' place=place.place_code %}" class="btn btn-success">New work</a>
         {% if perms.indigo_api.bulk_add_work %}
@@ -19,11 +19,13 @@
         {% endif %}
       </div>
     </div>
-  </div>
+  {% endblock %}
 
   <div class="card">
     <div class="card-header">
-      {% include 'indigo_api/_work_filter_form.html' with form=form %}
+      {% block filter-form %}
+        {% include 'indigo_api/_work_filter_form.html' with form=form %}
+      {% endblock %}
     </div>
 
     <div id="library">

@@ -36,8 +36,8 @@
       </select>
     </div>
 
-    <button type="submit" class="btn btn-success mr-2">Apply</button>
     <a href="#advancedFilters" class="btn btn-link" data-toggle="collapse" aria-expanded="false" aria-controls="advancedFilters">Advanced...</a>
+    <button type="submit" class="btn btn-success mr-2">Apply</button>
   </div>
 
   <div class="collapse border-top mt-2 {% if form.show_advanced_filters %}show{% endif %}" id="advancedFilters">
@@ -213,7 +213,7 @@
 
     <!-- Reset filters -->
     <div class="text-right mt-3">
-      <a href="{{ request.path }}" class="btn btn-link mr-2">Clear filters</a>
+      <a href="{{ request.path }}" class="btn btn-outline-danger mr-2">Clear filters</a>
       <button type="submit" class="btn btn-success">Apply filters</button>
     </div>
 

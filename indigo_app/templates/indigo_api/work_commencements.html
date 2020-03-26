@@ -18,12 +18,12 @@
     <p class="alert alert-warning">This work has {{ uncommenced_provisions|length }} <a href="#uncommenced">uncommenced provision{{ uncommenced_provisions|length|pluralize }}</a>.</p>
   {% endif %}
 
-  {% if has_all_provisions %}
+  {% if everything_commenced %}
     <p>All provisions have commenced, no additional commencement events are required.</p>
   {% endif %}
 
   <ol class="timeline">
-    {% if perms.indigo_api.add_commencement and not has_all_provisions %}
+    {% if perms.indigo_api.add_commencement and not everything_commenced %}
       <li class="timeline-item card">
         <div class="card-body">
           {% block new-commencement-card %}

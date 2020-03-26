@@ -149,7 +149,7 @@ class Task(models.Model):
             .order_by('first_name', 'last_name') \
             .all()
         potential_assignees = [u for u in permitted_users if u.has_perm('indigo_api.submit_task')]
-        potential_reviewers = [u for u in permitted_users if u.has_perm('indigo_api.close_task')]
+        potential_reviewers = [u for u in permitted_users if u.has_perm('indigo_api.close_task') or u.has_perm('indigo_api.close_any_task')]
 
         for task in tasks:
             if task.state == 'open':

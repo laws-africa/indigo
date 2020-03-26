@@ -22,8 +22,8 @@ class ContributorBadge(PermissionBadge):
                    'indigo_api.add_task')
 
 
-class DrafterBadge(PermissionBadge):
-    slug = 'drafter'
+class EditorBadge(PermissionBadge):
+    slug = 'editor'
     name = 'Editor'
     group_name = name + ' Badge'
     description = 'Can create new works and edit the details of existing works, as well as working with tasks'
@@ -44,8 +44,8 @@ class ResearcherBadge(PermissionBadge):
     permissions = ('indigo_api.bulk_add_work', 'indigo_api.bulk_export_work',)
 
 
-class SeniorDrafterBadge(PermissionBadge):
-    slug = 'senior-drafter'
+class ReviewerBadge(PermissionBadge):
+    slug = 'reviewer'
     name = 'Reviewer'
     group_name = name + ' Badge'
     description = 'Can review works and tasks and delete documents and works, as well as working with workflows'
@@ -57,9 +57,9 @@ class SeniorDrafterBadge(PermissionBadge):
                    'indigo_api.close_workflow', 'indigo_api.delete_workflow')
 
 
-class ManagerBadge(PermissionBadge):
-    slug = 'manager'
-    name = 'Manager'
+class SuperReviewerBadge(PermissionBadge):
+    slug = 'super-reviewer'
+    name = 'Super Reviewer'
     group_name = name + ' Badge'
     description = 'Can review own tasks and edit settings'
     permissions = ('indigo_api.close_any_task',
@@ -67,10 +67,10 @@ class ManagerBadge(PermissionBadge):
 
 
 badges.register(ContributorBadge)
-badges.register(DrafterBadge)
+badges.register(EditorBadge)
 badges.register(ResearcherBadge)
-badges.register(SeniorDrafterBadge)
-badges.register(ManagerBadge)
+badges.register(ReviewerBadge)
+badges.register(SuperReviewerBadge)
 
 
 # when a user signs up, grant them the contributor badge immediately

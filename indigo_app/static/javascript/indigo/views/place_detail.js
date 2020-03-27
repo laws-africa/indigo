@@ -59,9 +59,12 @@
     },
 
     drawCompletenessChart: function() {
-      var canvas = document.getElementById('completeness-chart'),
-          ctx = canvas.getContext('2d'),
-          data = _.map(canvas.getAttribute('data-values').split(','), function(i) { return parseInt(i); });
+      var ctx, data,
+          canvas = document.getElementById('completeness-chart');
+      if (!canvas) return;
+
+      ctx = canvas.getContext('2d');
+      data = _.map(canvas.getAttribute('data-values').split(','), function(i) { return parseInt(i); });
 
       new Chart(ctx, {
         type: 'line',

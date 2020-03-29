@@ -282,7 +282,12 @@ $(function() {
    */
   Indigo.dom.textQuoteToRange = function(root, selector, options) {
     var posn = textQuoteToTextPosition(root, selector, options);
-    if (posn) return Indigo.dom.textPositionToRange(root, posn);
+    if (posn) {
+      // ensure posn.end doesn't exceed the length of the root text
+      // see https://github.com/tilgovi/dom-anchor-text-quote/issues/16
+      posn.end = Math.min(posn.end, root.textContent.length);
+      return Indigo.dom.textPositionToRange(root, posn);
+    }
   };
 
   /**

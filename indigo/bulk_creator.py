@@ -471,7 +471,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             amendment.save()
 
     def link_taxonomy(self, work, info):
-        topics = info.get('taxonomy').split(', ')
+        topics = [x.strip(",") for x in info.get('taxonomy').split()]
         unlinked_topics = []
         for t in topics:
             topic = VocabularyTopic.get_topic(t)
@@ -587,4 +587,3 @@ Possible reasons:
             self._gsheets_secret = settings.INDIGO['GSHEETS_API_CREDS']
 
         return self._gsheets_secret.get('client_email')
-

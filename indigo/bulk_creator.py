@@ -161,9 +161,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # clean up headers
         headers = [h.split(' ')[0].lower() for h in table[0]]
 
-        # transform rows into list of dicts for easy access
+        # Transform rows into list of dicts for easy access.
+        # The rows in table only have entries up to the last non-empty cell,
+        # so we ensure that we have at least an empty string for every header.
         rows = [
-            {header: row[i] for i, header in enumerate(headers) if header and i < len(row)}
+            {header: (row[i] if i < len(row) else '') for i, header in enumerate(headers) if header}
             for row in table[1:]
         ]
 

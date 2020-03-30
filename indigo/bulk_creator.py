@@ -15,7 +15,7 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement
+from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, VocabularyTopic
 from indigo_api.signals import work_changed
 
 
@@ -44,6 +44,7 @@ class RowValidationFormBase(forms.Form):
     commenced_by = forms.CharField(required=False)
     amends = forms.CharField(required=False)
     repealed_by = forms.CharField(required=False)
+    taxonomy = forms.CharField(required=False)
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
@@ -187,6 +188,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
                     if info.get('primary_work'):
                         self.link_parent_work(info['work'], info)
+
+                    if info.get('taxonomy'):
+                        self.link_taxonomy(info['work'], info)
 
                 if info['status'] != 'error' and info.get('amends'):
                     # this will check duplicate works as well
@@ -466,6 +470,21 @@ class BaseBulkCreator(LocaleBasedMatcher):
             amendment.date = date
             amendment.save()
 
+    def link_taxonomy(self, work, info):
+        topics = info.get('taxonomy').split(', ')
+        unlinked_topics = []
+        for t in topics:
+            topic = VocabularyTopic.get_topic(t)
+            if topic:
+                work.taxonomies.add(topic)
+                work.save_with_revision(self.user)
+
+            else:
+                unlinked_topics.append(t)
+        if unlinked_topics:
+            info['unlinked_topics'] = ", ".join(unlinked_topics)
+            self.create_task(work, info, task_type='link-taxonomy')
+
     def create_task(self, work, info, task_type):
         task = Task()
 
@@ -533,6 +552,15 @@ Possible reasons:
 – the primary work doesn't exist on the system.
 
 Check the spreadsheet for reference and link it manually.'''.format(info['primary_work'], info['row'])
+
+        elif task_type == 'link-taxonomy':
+            task.title = 'Link taxonomy/ies'
+            task.description = '''On the spreadsheet, it says that this work has the following taxonomy/ies: '{}' – see row {}.
+
+The taxonomy/ies work could not be linked automatically.
+Possible reasons:
+– a typo in the spreadsheet
+– the taxonomy/ies doesn't/don't exist on the system.'''.format(info['unlinked_topics'], info['row'])
 
         task.country = self.country
         task.locality = self.locality

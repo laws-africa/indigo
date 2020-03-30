@@ -66,6 +66,22 @@ class VocabularyTopic(models.Model):
         else:
             return self.level_1
 
+    @classmethod
+    def get_topic(self, value):
+        """ Get a taxonomy topic based on a string, such as lawsafrica-collections:level1[/level2]
+        """
+        if ':' in value:
+            vocab, topic = value.split(':', 1)
+            if '/' in topic:
+                level_1, level_2 = topic.split('/', 1)
+            else:
+                level_1 = topic
+                level_2 = None
+
+            return VocabularyTopic.objects\
+                .filter(vocabulary__slug=vocab, level_1=level_1, level_2=level_2)\
+                .first()
+
 
 class WorkMixin(object):
     """ Support methods that define behaviour for a work, independent of the database model.

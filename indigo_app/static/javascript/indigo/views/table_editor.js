@@ -70,7 +70,7 @@
     },
 
     saveChanges: function(e) {
-      if (!this.editing) return;
+      if (!this.editing || !this.table) return;
 
       var table,
           oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id')),
@@ -127,7 +127,7 @@
     },
 
     discardChanges: function(e, force) {
-      if (!this.editing) return;
+      if (!this.editing || !this.table) return;
       if (!force && !confirm("You'll lose your changes, are you sure?")) return;
 
       var container = this.table.parentElement,
@@ -397,6 +397,8 @@
     },
 
     getSelectedCells: function() {
+      if (!this.table) return [];
+
       var cells = Array.from(this.table.querySelectorAll('.cke_table-faked-selection'));
 
       if (!cells.length) {

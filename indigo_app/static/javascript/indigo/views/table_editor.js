@@ -173,6 +173,9 @@
         CKEDITOR.on('instanceReady', function(evt) {
           evt.removeListener();
           self.table = editable.querySelector('table');
+          if (!self.table) {
+            throw "CKEditor ready, but no table in editable. " + table.id;
+          }
           self.manageTableWidth(self.table);
         });
 

@@ -55,6 +55,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('indigo_api', '0127_add_close_any_task_permission'),
+        ('pinax_badges', '0001_initial'),
     ]
 
     operations = [

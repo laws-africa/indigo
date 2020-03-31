@@ -470,6 +470,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             amendment.date = date
             amendment.save()
 
+            self.create_task(amended_work, info, task_type='apply-amendment')
+
     def link_taxonomy(self, work, info):
         topics = [x.strip(",") for x in info.get('taxonomy').split()]
         unlinked_topics = []
@@ -526,6 +528,13 @@ Possible reasons:
 
 Check the spreadsheet for reference and link it/them manually,
 or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info['row'])
+
+        elif task_type == 'apply-amendment':
+            task.title = 'Apply amendment'
+            amending_work = info['work']
+            task.description = f'''Apply the amendments made by {amending_work.title} ({amending_work.numbered_title()}).
+
+The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.'''
 
         elif task_type == 'link-repeal':
             task.title = 'Link repeal'

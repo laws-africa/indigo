@@ -833,17 +833,17 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
         if self.bulk_creator.is_gsheets_enabled and url:
             sheet_id = self.bulk_creator.gsheets_id_from_url(url)
-
-            try:
-                if not sheet_id:
-                    raise ValueError()
-                sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
-                sheets = [s['properties']['title'] for s in sheets]
-                form.fields['sheet_name'].choices = [(s, s) for s in sheets]
-            except ValueError:
-                form.add_error(None,  "Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?".format(
-                    self.bulk_creator._gsheets_secret['client_email'],
-                ))
+            if not sheet_id:
+                form.add_error(None, 'Unable to get spreadsheet ID from URL')
+            else:
+                try:
+                    sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
+                    sheets = [s['properties']['title'] for s in sheets]
+                    form.fields['sheet_name'].choices = [(s, s) for s in sheets]
+                except ValueError:
+                    form.add_error(None,  "Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?".format(
+                        self.bulk_creator._gsheets_secret['client_email'],
+                    ))
 
         return form
 
@@ -857,7 +857,10 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         works = None
         dry_run = 'preview' in form.data
 
-        if 'import' in form.data or 'preview' in form.data:
+        if ('import' in form.data or 'preview' in form.data) and (
+            # either no gsheets, or we have a sheet name
+            not self.bulk_creator.is_gsheets_enabled or form.cleaned_data.get('sheet_name')):
+
             workflow = form.cleaned_data['workflow']
 
             try:

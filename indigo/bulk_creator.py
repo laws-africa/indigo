@@ -179,10 +179,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         if not dry_run:
             for info in works:
-                if info['status'] == 'success':
-                    if info.get('commencement_date') or info.get('commenced_by'):
-                        self.link_commencement(info['work'], info)
+                # link all commencements first so that amendments and repeals will have dates to work with
+                if info['status'] == 'success' and info.get('commencement_date') or info.get('commenced_by'):
+                    self.link_commencement(info['work'], info)
 
+            for info in works:
+                if info['status'] == 'success':
                     if info.get('primary_work'):
                         self.link_parent_work(info['work'], info)
 

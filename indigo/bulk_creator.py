@@ -179,23 +179,25 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         if not dry_run:
             for info in works:
+                # link all commencements first so that amendments and repeals will have dates to work with
+                if info['status'] == 'success' and info.get('commencement_date') or info.get('commenced_by'):
+                    self.link_commencement(info['work'], info)
+
+            for info in works:
                 if info['status'] == 'success':
-                    if info.get('commencement_date') or info.get('commenced_by'):
-                        self.link_commencement(info['work'], info)
-
-                    if info.get('repealed_by'):
-                        self.link_repeal(info['work'], info)
-
                     if info.get('primary_work'):
                         self.link_parent_work(info['work'], info)
 
                     if info.get('taxonomy'):
                         self.link_taxonomy(info['work'], info)
 
-                if info['status'] != 'error' and info.get('amends'):
+                if info['status'] != 'error':
                     # this will check duplicate works as well
-                    # (they won't overwrite the existing works but the amendments will be linked)
-                    self.link_amendment(info['work'], info)
+                    # (they won't overwrite the existing works but the amendments/repeals will be linked)
+                    if info.get('amends'):
+                        self.link_amendment(info['work'], info)
+                    if info.get('repealed_by'):
+                        self.link_repeal(info['work'], info)
 
         return works
 
@@ -409,25 +411,32 @@ class BaseBulkCreator(LocaleBasedMatcher):
         commencement.save()
 
     def link_repeal(self, work, info):
-        # if the work is `repealed_by` something, try linking it
-        # make a task if this fails
-        # (either because the work isn't found or because the repeal date isn't right,
-        # which could be because it doesn't exist or because it's in the wrong format)
+        # if the work is `repealed_by` something, try linking it or make the relevant task
         repealing_work = self.find_work_by_title(info['repealed_by'])
+
         if not repealing_work:
-            return self.create_task(work, info, task_type='link-repeal')
+            # an exact match on the given title wasn't found
+            self.create_task(work, info, task_type='no-repeal-title-match')
 
-        repeal_date = repealing_work.commencement_date
-        if not repeal_date:
-            return self.create_task(work, info, task_type='link-repeal')
+        elif work.repealed_by and work.repealed_by != repealing_work:
+            # the work was already repealed, but by a different work
+            self.create_task(work, info, task_type='check-update-repeal', repealing_work=repealing_work)
 
-        work.repealed_by = repealing_work
-        work.repealed_date = repeal_date
+        elif not work.repealed_by:
+            # the work was not already repealed; link the new repeal information
+            repeal_date = repealing_work.commencement_date
 
-        try:
-            work.save_with_revision(self.user)
-        except ValidationError:
-            self.create_task(work, info, task_type='link-repeal')
+            if not repeal_date:
+                # there's no date for the repeal (yet), so create a task on the repealing work for once it commences
+                return self.create_task(repealing_work, info, task_type='link-repeal-pending-commencement')
+
+            work.repealed_by = repealing_work
+            work.repealed_date = repeal_date
+
+            try:
+                work.save_with_revision(self.user)
+            except ValidationError:
+                self.create_task(work, info, task_type='link-repeal', repealing_work=repealing_work)
 
     def link_parent_work(self, work, info):
         # if the work has a `primary_work`, try linking it
@@ -487,7 +496,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             info['unlinked_topics'] = ", ".join(unlinked_topics)
             self.create_task(work, info, task_type='link-taxonomy')
 
-    def create_task(self, work, info, task_type):
+    def create_task(self, work, info, task_type, repealing_work=None):
         task = Task()
 
         if task_type == 'link-publication-document':
@@ -536,19 +545,45 @@ or add the 'Pending commencement' label to this task if it doesn't have a date y
 
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.'''
 
-        elif task_type == 'link-repeal':
+        elif task_type == 'no-repeal-title-match':
             task.title = 'Link repeal'
             task.description = '''On the spreadsheet, it says that this work was repealed by '{}' – see row {}.
 
-The repeal could not be linked automatically.
-Possible reasons:
-– a typo in the spreadsheet
-– no date for the repeal
-– more than one work by that name exists on the system
-– the repealing work doesn't exist on the system.
+A single match for a work by that name was not found on the system, so the repeal could not be linked automatically.
 
-Check the spreadsheet for reference and link it manually,
-or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(info['repealed_by'], info['row'])
+Possible reasons:
+– the repealing work doesn't exist on the system
+– more than one work by that name exists on the system
+– a typo in the spreadsheet.
+
+Check the spreadsheet for reference and link the repeal manually.'''.format(info['repealed_by'], info['row'])
+
+        elif task_type == 'check-update-repeal':
+            task.title = 'Update repeal information?'
+            task.description = '''On the spreadsheet, it says that this work was repealed by {} ({}) – see row {}.
+
+However, this work is already listed as having been repealed by {} ({}), so the repeal information was not updated.
+
+If the repeal information was previously incorrect, check the spreadsheet for reference and update the \
+repeal information manually.
+
+Otherwise, cancel this task.
+'''.format(repealing_work.title, repealing_work.numbered_title(), info['row'], work.repealed_by, work.repealed_by.numbered_title())
+
+        elif task_type == 'link-repeal-pending-commencement':
+            repealed_work = info['work']
+            task.title = 'Link repeal'
+            task.description = '''This work repeals {} ({}).
+
+But this work does not yet have a commencement date, so the repeal was not linked automatically.
+
+Add the 'Pending commencement' label to this task, and link the repeal once this work comes into force.'''.format(repealed_work.title, repealed_work.numbered_title())
+
+        elif task_type == 'link-repeal':
+            task.title = 'Link repeal'
+            task.description = '''On the spreadsheet, it says that this work was repealed by {} ({}) – see row {}.
+
+But the repeal could not be linked automatically, so it will have to be linked manually.'''.format(repealing_work.title, repealing_work.numbered_title(), info['row'])
 
         elif task_type == 'link-primary-work':
             task.title = 'Link primary work'

@@ -416,7 +416,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             # an exact match on the given title wasn't found
             self.create_task(work, info, task_type='no-repeal-title-match')
 
-        elif work.repealed_by and work.repealed_by.id != repealing_work.id:
+        elif work.repealed_by and work.repealed_by != repealing_work:
             # the work was already repealed, but by a different work
             self.create_task(work, info, task_type='check-update-repeal', repealing_work=repealing_work)
 

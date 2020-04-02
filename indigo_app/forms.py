@@ -14,7 +14,7 @@ from allauth.account.forms import SignupForm
 from indigo_app.models import Editor
 from indigo_api.models import Document, Country, Language, Work, PublicationDocument, Task, TaskLabel, User, Subtype, \
     Workflow, \
-    VocabularyTopic, Commencement
+    VocabularyTopic, Commencement, PlaceSettings
 
 
 class WorkForm(forms.ModelForm):
@@ -544,3 +544,16 @@ class NewCommencementForm(forms.ModelForm):
         if not self.cleaned_data['date'] and not self.cleaned_data['commencing_work']:
             # create one for now
             self.cleaned_data['date'] = date.today()
+
+
+class PlaceSettingsForm(forms.ModelForm):
+    class Meta:
+        model = PlaceSettings
+        fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
+
+    spreadsheet_url = forms.URLField(required=False, validators=[
+        URLValidator(
+            schemes=['https'],
+            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
+            message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
+    ])

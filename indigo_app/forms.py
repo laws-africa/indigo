@@ -1,4 +1,5 @@
 import json
+import re
 import urllib.parse
 from datetime import date
 
@@ -554,6 +555,10 @@ class PlaceSettingsForm(forms.ModelForm):
     spreadsheet_url = forms.URLField(required=False, validators=[
         URLValidator(
             schemes=['https'],
-            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/',
+            regex='^https:\/\/docs.google.com\/spreadsheets\/d\/\S+\/[\w#=]*',
             message="Please enter a valid Google Sheets URL, such as https://docs.google.com/spreadsheets/d/ABCXXX/", code='bad')
     ])
+
+    def clean_spreadsheet_url(self):
+        url = self.cleaned_data.get('spreadsheet_url')
+        return re.sub('/[\w#=]*$', '/', url)

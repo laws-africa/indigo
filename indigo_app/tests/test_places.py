@@ -54,10 +54,10 @@ class PlacesWebTest(WebTest):
 
     def test_place_settings(self):
         form = self.app.get('/places/za/settings').forms[0]
-        form['spreadsheet_url'].value = 'https://docs.google.com/spreadsheets/u/1/d/1a2o-842lGliSwlLo3gSbYSRbaOYu-2PZhC1rOf8MgA4/edit'
+        form['spreadsheet_url'].value = 'https://docs.google.com/spreadsheets/d/1a2o-842lGliSwlLo3gSbYSRbaOYu-2PZhC1rOf8MgA4/'
         form['as_at_date'].value = '2019-01-01'
         form['styleguide_url'].value = 'https://docs.laws.africa/editing-a-document/importing-a-document'
         form = form.submit().follow().forms[0]
-        self.assertEqual(form['spreadsheet_url'].value, 'https://docs.google.com/spreadsheets/u/1/d/1a2o-842lGliSwlLo3gSbYSRbaOYu-2PZhC1rOf8MgA4/edit')
+        self.assertEqual(form['spreadsheet_url'].value, 'https://docs.google.com/spreadsheets/d/1a2o-842lGliSwlLo3gSbYSRbaOYu-2PZhC1rOf8MgA4/')
         self.assertEqual(form['as_at_date'].value, '2019-01-01')
         self.assertEqual(form['styleguide_url'].value, 'https://docs.laws.africa/editing-a-document/importing-a-document')

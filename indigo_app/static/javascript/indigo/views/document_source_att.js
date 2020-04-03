@@ -42,11 +42,14 @@
         this.amendments = _.filter(Indigo.Preloads.amendments, function(am) {
           return am.amending_work.publication_document && am.amending_work.publication_document.url;
         }).map(function(am) {
-          return {
+          var x = {
             'title': am.date + ' – ' + am.amending_work.frbr_uri,
             'url': am.amending_work.publication_document.url,
             'group': 'Amendments',
           };
+          // something to make it unique
+          x.id = x.title;
+          return x;
         });
         this.amendments = _.sortBy(this.amendments, 'date').reverse();
       },

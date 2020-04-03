@@ -61,3 +61,9 @@ class PlacesWebTest(WebTest):
         self.assertEqual(form['spreadsheet_url'].value, 'https://docs.google.com/spreadsheets/d/1a2o-842lGliSwlLo3gSbYSRbaOYu-2PZhC1rOf8MgA4/')
         self.assertEqual(form['as_at_date'].value, '2019-01-01')
         self.assertEqual(form['styleguide_url'].value, 'https://docs.laws.africa/editing-a-document/importing-a-document')
+
+    def test_place_settings_spreadsheet_url_cleaned(self):
+        form = self.app.get('/places/za/settings').forms[0]
+        form['spreadsheet_url'].value = 'https://docs.google.com/spreadsheets/d/12auCcgbt6WYUsqt8m2uyRDQUYrYS-9iDmRDd-QqvqNQ/edit#gid=1003990263'
+        form = form.submit().follow().forms[0]
+        self.assertEqual(form['spreadsheet_url'].value, 'https://docs.google.com/spreadsheets/d/12auCcgbt6WYUsqt8m2uyRDQUYrYS-9iDmRDd-QqvqNQ/')

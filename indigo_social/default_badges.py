@@ -31,6 +31,7 @@ class EditorBadge(PermissionBadge):
                    'indigo_api.add_document', 'indigo_api.change_document',
                    'indigo_api.add_documentactivity', 'indigo_api.change_documentactivity', 'indigo_api.delete_documentactivity',
                    'indigo_api.add_amendment', 'indigo_api.change_amendment', 'indigo_api.delete_amendment',
+                   'indigo_api.add_arbitraryexpressiondate', 'indigo_api.change_arbitraryexpressiondate', 'indigo_api.delete_arbitraryexpressiondate',
                    # required when restoring a document version
                    'reversion.add_version', 'reversion.change_version',
                    'indigo_api.change_task', 'indigo_api.submit_task', 'indigo_api.reopen_task')

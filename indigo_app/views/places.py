@@ -1,7 +1,7 @@
 # coding=utf-8
 import logging
 from collections import defaultdict, Counter
-from datetime import datetime, timedelta, date
+from datetime import timedelta, date
 from itertools import chain, groupby
 import json
 
@@ -20,13 +20,13 @@ from django.views.generic.list import MultipleObjectMixin
 import io
 import xlsxwriter
 
-from indigo_api.models import Annotation, Country, PlaceSettings, Task, Work, Amendment, Subtype, Locality, TaskLabel
+from indigo_api.models import Annotation, Country, Task, Work, Amendment, Subtype, Locality, TaskLabel
 from indigo_api.views.documents import DocumentViewSet
 from indigo_metrics.models import DailyWorkMetrics, WorkMetrics, DailyPlaceMetrics
 
 from .base import AbstractAuthedIndigoView, PlaceViewBase
 
-from indigo_app.forms import WorkFilterForm
+from indigo_app.forms import WorkFilterForm, PlaceSettingsForm
 
 log = logging.getLogger(__name__)
 
@@ -691,16 +691,14 @@ class PlaceMetricsView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView, Pl
 
 class PlaceSettingsView(PlaceViewBase, AbstractAuthedIndigoView, UpdateView):
     template_name = 'place/settings.html'
-    model = PlaceSettings
+    form_class = PlaceSettingsForm
     tab = 'place_settings'
 
     # permissions
     # TODO: this should be scoped to the country/locality
     permission_required = ('indigo_api.change_placesettings',)
 
-    fields = ('spreadsheet_url', 'as_at_date', 'styleguide_url')
-
-    def get_object(self):
+    def get_object(self, *args, **kwargs):
         return self.place.settings
 
     def form_valid(self, form):

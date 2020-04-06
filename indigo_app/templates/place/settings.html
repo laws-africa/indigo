@@ -27,7 +27,7 @@
         <div class="form-row">
           <div class="form-group col-md-4">
             <label for="{{ form.as_at_date.id_for_label }}">{{ form.as_at_date.label }}</label>
-            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date.html_name }}" value="{{ form.as_at_date.value|date:"Y-m-d"|default:'' }}">
+            <input type="text" class="form-control" data-provide="datepicker" id="{{ form.as_at_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.as_at_date.html_name }}" value="{{ form.as_at_date.value|default_if_none:''|stringformat:'s' }}">
             <p class="form-text text-muted">Date up to which all works have been consolidated.</p>
             {% if form.as_at_date.errors %}
               <div class="text-danger">

@@ -152,6 +152,13 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(timeline[-1]['date'], datetime.date(2014, 3, 20))
         self.assertEqual(timeline[-1]['assent_date'], True)
 
+    def test_no_publication_document(self):
+        # this work has no publication document
+        resp = self.client.get('/works/za/act/2010/1/media/publication/')
+        self.assertEqual(resp.status_code, 404)
+        resp = self.client.get('/works/za/act/2010/1/media/publication/test.pdf')
+        self.assertEqual(resp.status_code, 404)
+
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorksWebTest(WebTest):

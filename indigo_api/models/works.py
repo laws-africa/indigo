@@ -384,7 +384,7 @@ class Work(WorkMixin, models.Model):
 
         This uses an existing document at or before this date as a template, if available.
         """
-        from .documents import Document
+        from .documents import Document, Attachment
 
         language = language or self.country.primary_language
         doc = Document()
@@ -406,6 +406,14 @@ class Work(WorkMixin, models.Model):
         doc.work = self
         doc.created_by_user = user
         doc.save()
+
+        # copy over attachments to new expression
+        attachments = Attachment.objects.filter(document=template)
+        for attachment in attachments:
+            attachment.pk = None
+            attachment.document = doc
+            attachment.file.save(attachment.filename, attachment.file)
+            attachment.save()
 
         return doc
 

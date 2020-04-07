@@ -4,6 +4,7 @@ from datetime import datetime
 
 from actstream import action
 from django.contrib.postgres.fields import JSONField
+from django.core.files.base import File
 from django.db import models
 from django.db.models import signals, Q
 from django.core.exceptions import ValidationError
@@ -412,6 +413,7 @@ class Work(WorkMixin, models.Model):
         for attachment in attachments:
             attachment.pk = None
             attachment.document = doc
+            attachment.file.save(attachment.filename, File(attachment.file))
             attachment.save()
 
         return doc

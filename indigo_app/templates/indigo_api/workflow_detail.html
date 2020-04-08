@@ -2,7 +2,7 @@
 {% load activity_tags %}
 {% load humanize indigo_app %}
 
-{% block title %}{{ workflow.title }} – {{ place.name }}{% endblock %}
+{% block title %}{{ workflow.title }} {{ block.super }}{% endblock %}
 
 {% block content %}
 <div class="container mt-3 mb-5">

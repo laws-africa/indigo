@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load humanize indigo_app %}
 
-{% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} – {{ locality.name|default:country.name }}{% endblock %}
+{% block title %}{% if task.pk %}{{ task.title }}{% else %}New task{% endif %} {{ block.super }}{% endblock %}
 {% block view-id %}edit-task-view{% endblock %}
 
 {% block content %}

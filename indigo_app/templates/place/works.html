@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load indigo_app humanize staticfiles %}
 
-{% block title %}{{ place.name }} – Works{% endblock %}
+{% block title %}Works {{ block.super }}{% endblock %}
 {% block view-id %}library-view{% endblock %}
 
 {% block content %}

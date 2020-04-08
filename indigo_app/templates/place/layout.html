@@ -1,5 +1,7 @@
 {% extends "main.html" %}
 
+{% block title %} – {{ place.name }}{% endblock %}
+
 {% block main-header-title %}
   <h4 class="text-muted">
     <a href="{% url 'place' place=country.code %}">{{ country.name }} · {{ country.code }}</a>

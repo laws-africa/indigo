@@ -1,6 +1,6 @@
 {% extends "place/tabbed_layout.html" %}
 
-{% block title %}{% if workflow.pk %}{{ workflow.title }}{% else %}New workflow{% endif %} – {{ place.name }}{% endblock %}
+{% block title %}{% if workflow.pk %}{{ workflow.title }}{% else %}New workflow{% endif %} {{ block.super }}{% endblock %}
 
 {% block content %}
   {% if perms.indigo_api.add_work %}

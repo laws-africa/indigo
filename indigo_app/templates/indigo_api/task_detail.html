@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load activity_tags humanize indigo_app account comments %}
 
-{% block title %}{{ task.title }}{% endblock %}
+{% block title %}{{ task.title }} {{ block.super }}{% endblock %}
 
 {% block content %}
   <div class="container mt-3 mb-5">

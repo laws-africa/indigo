@@ -1,7 +1,7 @@
 {% extends "place/insights_layout.html" %}
 {% load staticfiles %}
 
-{% block title %}Metrics – {{ place.name }}{% endblock %}
+{% block title %}Metrics {{ block.super }}{% endblock %}
 
 {% block insights-content %}
 <div class="container">

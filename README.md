@@ -167,4 +167,4 @@ Read the [documentation for details on deploying Indigo](http://indigo.readthedo
 
 The project is licensed under a [GNU GPL 3 license](LICENSE).
 
-Indigo is Copyright 2015-2017 AfricanLII.
+Indigo is Copyright 2015-2020 AfricanLII.

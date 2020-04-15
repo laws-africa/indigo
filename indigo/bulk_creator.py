@@ -215,66 +215,67 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         frbr_uri = self.get_frbr_uri(row)
 
-        work, new = Work.objects.get_or_create(frbr_uri=frbr_uri)
-
-        if not new:
+        try:
+            work = Work.objects.get(frbr_uri=frbr_uri)
             info['work'] = work
             info['status'] = 'duplicate'
             info['amends'] = row.get('amends') or None
             info['commencement_date'] = row.get('commencement_date') or None
-            return info
 
-        # no errors, not a duplicate: new work
-        work.country = view.country
-        work.locality = view.locality
-        work.title = row.get('title')
-        work.publication_name = row.get('publication_name')
-        work.publication_number = row.get('publication_number')
-        work.publication_date = row.get('publication_date')
-        work.commenced = bool(row.get('commencement_date') or row.get('commenced_by'))
-        work.assent_date = row.get('assent_date')
-        work.stub = row.get('stub')
-        # handle spreadsheet that still uses 'principal'
-        if 'stub' not in info:
-            work.stub = not row.get('principal')
-        work.created_by_user = view.request.user
-        work.updated_by_user = view.request.user
-        self.add_extra_properties(work, info)
+        except Work.DoesNotExist:
+            work = Work()
 
-        try:
-            work.full_clean()
-            if not dry_run:
-                work.save_with_revision(view.request.user)
+            work.frbr_uri = frbr_uri
+            work.country = view.country
+            work.locality = view.locality
+            work.title = row.get('title')
+            work.publication_name = row.get('publication_name')
+            work.publication_number = row.get('publication_number')
+            work.publication_date = row.get('publication_date')
+            work.commenced = bool(row.get('commencement_date') or row.get('commenced_by'))
+            work.assent_date = row.get('assent_date')
+            work.stub = row.get('stub')
+            # handle spreadsheet that still uses 'principal'
+            if 'stub' not in info:
+                work.stub = not row.get('principal')
+            work.created_by_user = view.request.user
+            work.updated_by_user = view.request.user
+            self.add_extra_properties(work, info)
 
-                # signals
-                work_changed.send(sender=work.__class__, work=work, request=view.request)
+            try:
+                work.full_clean()
+                if not dry_run:
+                    work.save_with_revision(view.request.user)
 
-                # info for links
-                pub_doc_params = {
-                    'date': row.get('publication_date'),
-                    'number': work.publication_number,
-                    'publication': work.publication_name,
-                    'country': view.country.place_code,
-                    'locality': view.locality.code if view.locality else None,
-                }
-                info['params'] = pub_doc_params
+                    # signals
+                    work_changed.send(sender=work.__class__, work=work, request=view.request)
 
-                self.link_publication_document(work, info)
+                    # info for links
+                    pub_doc_params = {
+                        'date': row.get('publication_date'),
+                        'number': work.publication_number,
+                        'publication': work.publication_name,
+                        'country': view.country.place_code,
+                        'locality': view.locality.code if view.locality else None,
+                    }
+                    info['params'] = pub_doc_params
 
-                if not work.stub:
-                    self.create_task(work, info, task_type='import')
+                    self.link_publication_document(work, info)
 
-            info['work'] = work
-            info['status'] = 'success'
+                    if not work.stub:
+                        self.create_task(work, info, task_type='import')
 
-        except ValidationError as e:
-            info['status'] = 'error'
-            if hasattr(e, 'message_dict'):
-                info['error_message'] = ' '.join(
-                    ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                )
-            else:
-                info['error_message'] = str(e)
+                info['work'] = work
+                info['status'] = 'success'
+
+            except ValidationError as e:
+                info['status'] = 'error'
+                if hasattr(e, 'message_dict'):
+                    info['error_message'] = ' '.join(
+                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                    )
+                else:
+                    info['error_message'] = str(e)
 
         return info
 

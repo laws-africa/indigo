@@ -13,16 +13,20 @@ def import_google_profile_pictures(apps, schema_editor):
 	UserProfile = apps.get_model('indigo_social', 'UserProfile')
 
 	def fetch_and_save_profile_photo(user_profile, url):
-	    try:
-	        name, _ = urlretrieve(url)
-	        user_profile.profile_photo.save(name, File(open(name, 'rb')))
-	    finally:
-	        urlcleanup()
+		try:
+			name, _ = urlretrieve(url)
+			user_profile.profile_photo.save(name, File(open(name, 'rb')))
+		finally:
+			urlcleanup()
 
-	for socialaccount in SocialAccount.objects.filter(provider='google').distinct('user_id'):
-		user_profile = UserProfile.objects.get(user=socialaccount.user)
-		url = socialaccount.extra_data.get('picture')
-		fetch_and_save_profile_photo(user_profile, url)
+		for socialaccount in SocialAccount.objects.filter(provider='google').distinct('user_id'):
+			try:
+				user_profile = UserProfile.objects.get(user=socialaccount.user)
+				url = socialaccount.extra_data.get('picture')
+				fetch_and_save_profile_photo(user_profile, url)
+
+			except UserProfile.DoesNotExist:
+				continue
 	
 
 class Migration(migrations.Migration):

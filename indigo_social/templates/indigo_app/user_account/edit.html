@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block account-content %}
-<form method="POST">
+<form method="POST" enctype="multipart/form-data">
   {% csrf_token %}
 
   <div class="card mb-5">
@@ -88,17 +88,36 @@
 
         <div class="col-6">
           <div class="form-group">
-            <!--
             <label for="{{ form.profile_photo.id_for_label }}">{{ form.profile_photo.label }}</label>
-            <input type="file" class="form-control" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" value="{{ form.profile_photo.value }}">
-            {% if form.profile_photo.errors %}
-              <div class="text-danger">
-                {% for error in form.profile_photo.errors %}
-                  <p>{{ error }}</p>
-                {% endfor %}
-              </div>
-            {% endif %}
-            -->
+            <p>For the best experience, kindly ensure your profile picture is square and smaller than 2MB in size. Uploading a new image will replace the existing one.</p>
+
+            <div class="mt-2">
+              <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail" width="300" height="300">
+              {% if user.userprofile.profile_photo %}
+                <div class="btn-group-toggle mt-2" data-toggle="buttons">
+                  <label class="btn btn-danger" for="profile_photo-clear_id">
+                    <input type="checkbox" name="profile_photo-clear" id="profile_photo-clear_id" data-confirm="Are you sure you want to remove your profile picture?" value="{{ form.profile_photo.value }}" onChange="this.form.submit()"> 
+                    Remove
+                  </label>
+                </div>
+              {% endif %}
+            </div>
+
+            <div class="mt-2">
+              <ul class="list-group">
+                <li class="list-group-item p-1">
+                  <input type="file" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}" value="Upload new">
+                </li>
+              </ul>
+                {% if form.profile_photo.errors %}
+                  <div class="text-danger">
+                    {% for error in form.profile_photo.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+            </div>
+
           </div>
         </div>
       </div>

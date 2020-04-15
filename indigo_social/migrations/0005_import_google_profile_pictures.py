@@ -9,7 +9,7 @@ from urllib.request import urlretrieve, urlcleanup
 
 
 def import_google_profile_pictures(apps, schema_editor):
-	SocialAccount = apps.get_model('socialaccount', 'SocialAccount')
+	SocialAccount = apps.get_model('allauth.socialaccount', 'SocialAccount')
 	UserProfile = apps.get_model('indigo_social', 'UserProfile')
 
 	def fetch_and_save_profile_photo(user_profile, url):

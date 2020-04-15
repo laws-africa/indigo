@@ -178,8 +178,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             works.append(self.create_work(view, row, idx, dry_run))
 
         if not dry_run:
+            # link all commencements first so that amendments and repeals will have dates to work with
             for info in works:
-                # link all commencements first so that amendments and repeals will have dates to work with
                 if info['status'] == 'success' and info.get('commencement_date') or info.get('commenced_by'):
                     self.link_commencement(info['work'], info)
 
@@ -400,15 +400,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if not commencing_work:
                 self.create_task(work, info, task_type='link-commencement')
 
-        commencement = Commencement(
+        Commencement.objects.get_or_create(
             commenced_work=work,
             commencing_work=commencing_work,
             date=date,
-            main=True,
-            all_provisions=True,
-            created_by_user=self.user
+            defaults={
+                'main': True,
+                'all_provisions': True,
+                'created_by_user': self.user,
+            },
         )
-        commencement.save()
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it or make the relevant task
@@ -464,21 +465,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not date:
             return self.create_task(work, info, task_type='link-amendment')
 
-        try:
-            Amendment.objects.get(
-                amended_work=amended_work,
-                amending_work=work,
-                date=date
-            )
+        amendment, new = Amendment.objects.get_or_create(
+            amended_work=amended_work,
+            amending_work=work,
+            date=date,
+            defaults={
+                'created_by_user': self.user,
+            },
+        )
 
-        except Amendment.DoesNotExist:
-            amendment = Amendment()
-            amendment.amended_work = amended_work
-            amendment.amending_work = work
-            amendment.created_by_user = self.user
-            amendment.date = date
-            amendment.save()
-
+        if new:
             self.create_task(amended_work, info, task_type='apply-amendment')
 
     def link_taxonomy(self, work, info):

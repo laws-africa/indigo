@@ -3,8 +3,9 @@
  */
 
 .akoma-ntoso.country-ke {
-  // remarks and editorial comments aren't italicised
-  .akn-remark {
+  // crossheadings, remarks and editorial comments aren't italicised
+  .akn-remark,
+  .akn-crossHeading {
     font-style: normal;
   }
 

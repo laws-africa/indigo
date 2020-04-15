@@ -399,16 +399,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if not commencing_work:
                 self.create_task(work, info, task_type='link-commencement')
 
-        commencement, new = Commencement.objects.get_or_create(
+        Commencement.objects.get_or_create(
             commenced_work=work,
             commencing_work=commencing_work,
             date=date,
+            defaults={
+                'main': True,
+                'all_provisions': True,
+                'created_by_user': self.user,
+            },
         )
-        if new:
-            commencement.main = True
-            commencement.all_provisions = True
-            commencement.created_by_user = self.user
-            commencement.save()
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it or make the relevant task
@@ -467,13 +467,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
         amendment, new = Amendment.objects.get_or_create(
             amended_work=amended_work,
             amending_work=work,
-            date=date
+            date=date,
+            defaults={
+                'created_by_user': self.user,
+            },
         )
 
         if new:
-            amendment.created_by_user = self.user
-            amendment.save()
-
             self.create_task(amended_work, info, task_type='apply-amendment')
 
     def link_taxonomy(self, work, info):

@@ -59,12 +59,12 @@ def create_user_profile(sender, **kwargs):
 @receiver(user_signed_up, sender=User)
 def retrieve_profile_photo_on_signup(sender, **kwargs):
     user = kwargs['user']
-    user_profile = UserProfile.objects.get(user=user)
 
     try:
+        user_profile = UserProfile.objects.get(user=user)
         user_social_account = SocialAccount.objects.get(user=user, provider='google')
         url = user_social_account.extra_data.get('picture')
         retrieve_social_profile_photo(user_profile, url)
 
-    except SocialAccount.DoesNotExist:
+    except (SocialAccount.DoesNotExist, UserProfile.DoesNotExist):
         pass

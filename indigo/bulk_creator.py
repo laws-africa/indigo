@@ -215,67 +215,66 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         frbr_uri = self.get_frbr_uri(row)
 
-        try:
-            work = Work.objects.get(frbr_uri=frbr_uri)
+        work, new = Work.objects.get_or_create(frbr_uri=frbr_uri)
+
+        if not new:
             info['work'] = work
             info['status'] = 'duplicate'
             info['amends'] = row.get('amends') or None
             info['commencement_date'] = row.get('commencement_date') or None
+            return info
 
-        except Work.DoesNotExist:
-            work = Work()
+        # no errors, not a duplicate: new work
+        work.country = view.country
+        work.locality = view.locality
+        work.title = row.get('title')
+        work.publication_name = row.get('publication_name')
+        work.publication_number = row.get('publication_number')
+        work.publication_date = row.get('publication_date')
+        work.commenced = bool(row.get('commencement_date') or row.get('commenced_by'))
+        work.assent_date = row.get('assent_date')
+        work.stub = row.get('stub')
+        # handle spreadsheet that still uses 'principal'
+        if 'stub' not in info:
+            work.stub = not row.get('principal')
+        work.created_by_user = view.request.user
+        work.updated_by_user = view.request.user
+        self.add_extra_properties(work, info)
 
-            work.frbr_uri = frbr_uri
-            work.country = view.country
-            work.locality = view.locality
-            work.title = row.get('title')
-            work.publication_name = row.get('publication_name')
-            work.publication_number = row.get('publication_number')
-            work.publication_date = row.get('publication_date')
-            work.commenced = bool(row.get('commencement_date') or row.get('commenced_by'))
-            work.assent_date = row.get('assent_date')
-            work.stub = row.get('stub')
-            # handle spreadsheet that still uses 'principal'
-            if 'stub' not in info:
-                work.stub = not row.get('principal')
-            work.created_by_user = view.request.user
-            work.updated_by_user = view.request.user
-            self.add_extra_properties(work, info)
+        try:
+            work.full_clean()
+            if not dry_run:
+                work.save_with_revision(view.request.user)
 
-            try:
-                work.full_clean()
-                if not dry_run:
-                    work.save_with_revision(view.request.user)
+                # signals
+                work_changed.send(sender=work.__class__, work=work, request=view.request)
 
-                    # signals
-                    work_changed.send(sender=work.__class__, work=work, request=view.request)
+                # info for links
+                pub_doc_params = {
+                    'date': row.get('publication_date'),
+                    'number': work.publication_number,
+                    'publication': work.publication_name,
+                    'country': view.country.place_code,
+                    'locality': view.locality.code if view.locality else None,
+                }
+                info['params'] = pub_doc_params
 
-                    # info for links
-                    pub_doc_params = {
-                        'date': row.get('publication_date'),
-                        'number': work.publication_number,
-                        'publication': work.publication_name,
-                        'country': view.country.place_code,
-                        'locality': view.locality.code if view.locality else None,
-                    }
-                    info['params'] = pub_doc_params
+                self.link_publication_document(work, info)
 
-                    self.link_publication_document(work, info)
+                if not work.stub:
+                    self.create_task(work, info, task_type='import')
 
-                    if not work.stub:
-                        self.create_task(work, info, task_type='import')
+            info['work'] = work
+            info['status'] = 'success'
 
-                info['work'] = work
-                info['status'] = 'success'
-
-            except ValidationError as e:
-                info['status'] = 'error'
-                if hasattr(e, 'message_dict'):
-                    info['error_message'] = ' '.join(
-                        ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
-                    )
-                else:
-                    info['error_message'] = str(e)
+        except ValidationError as e:
+            info['status'] = 'error'
+            if hasattr(e, 'message_dict'):
+                info['error_message'] = ' '.join(
+                    ['%s: %s' % (f, '; '.join(errs)) for f, errs in e.message_dict.items()]
+                )
+            else:
+                info['error_message'] = str(e)
 
         return info
 
@@ -400,21 +399,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if not commencing_work:
                 self.create_task(work, info, task_type='link-commencement')
 
-        try:
-            Commencement.objects.get(
-                commenced_work=work,
-                commencing_work=commencing_work,
-                date=date,
-            )
-        except Commencement.DoesNotExist:
-            commencement = Commencement(
-                commenced_work=work,
-                commencing_work=commencing_work,
-                date=date,
-                main=True,
-                all_provisions=True,
-                created_by_user=self.user
-            )
+        commencement, new = Commencement.objects.get_or_create(
+            commenced_work=work,
+            commencing_work=commencing_work,
+            date=date,
+        )
+        if new:
+            commencement.main = True
+            commencement.all_provisions = True
+            commencement.created_by_user = self.user
             commencement.save()
 
     def link_repeal(self, work, info):
@@ -471,19 +464,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not date:
             return self.create_task(work, info, task_type='link-amendment')
 
-        try:
-            Amendment.objects.get(
-                amended_work=amended_work,
-                amending_work=work,
-                date=date
-            )
+        amendment, new = Amendment.objects.get_or_create(
+            amended_work=amended_work,
+            amending_work=work,
+            date=date
+        )
 
-        except Amendment.DoesNotExist:
-            amendment = Amendment()
-            amendment.amended_work = amended_work
-            amendment.amending_work = work
+        if new:
             amendment.created_by_user = self.user
-            amendment.date = date
             amendment.save()
 
             self.create_task(amended_work, info, task_type='apply-amendment')

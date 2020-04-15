@@ -76,7 +76,7 @@
           oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id')),
           html;
 
-      html = $.parseHTML(this.ckeditor.getData());
+      html = $.parseHTML(this.ckeditor.getData()) || [];
       for (var i = 0; i < html.length; i++) {
         table = html[i];
         if (table.tagName !== 'TABLE') table = table.querySelector('table');
@@ -92,6 +92,9 @@
 
         // update DOM
         this.documentContent.replaceNode(oldTable, [table]);
+      } else {
+        // remove the table
+        this.documentContent.replaceNode(oldTable, null);
       }
 
       this.parent.render();
@@ -130,19 +133,19 @@
       if (!this.editing || !this.table) return;
       if (!force && !confirm("You'll lose your changes, are you sure?")) return;
 
-      var container = this.table.parentElement,
+      var editable = this.editable,
           originalTable = this.originalTable;
 
       this.editTable(null);
 
       // undo changes
-      container.replaceChild(originalTable, container.querySelector('table'));
+      $(editable).empty();
+      editable.appendChild(originalTable);
     },
 
     // start editing an HTML table
     editTable: function(table) {
-      var self = this,
-          editable;
+      var self = this;
 
       if (this.table === table) return;
 
@@ -167,12 +170,12 @@
 
         $(table).closest('.table-editor-wrapper').addClass('table-editor-active');
 
-        editable = table.parentElement;
-        editable.contentEditable = 'true';
+        this.editable = table.parentElement;
+        this.editable.contentEditable = 'true';
 
         CKEDITOR.on('instanceReady', function(evt) {
           evt.removeListener();
-          self.table = editable.querySelector('table');
+          self.table = self.editable.querySelector('table');
           if (!self.table) {
             throw "CKEditor ready, but no table in editable. " + table.id;
           }
@@ -180,8 +183,8 @@
         });
 
         // remove foreign content
-        $(editable).find(Indigo.dom.foreignElementsSelector).remove();
-        this.ckeditor = CKEDITOR.inline(editable, this.ckeditorConfig);
+        $(this.editable).find(Indigo.dom.foreignElementsSelector).remove();
+        this.ckeditor = CKEDITOR.inline(this.editable, this.ckeditorConfig);
         this.setupCKEditorInstance(this.ckeditor);
 
         this.editing = true;
@@ -191,15 +194,15 @@
         this.observers.forEach(function(observer) { observer.disconnect(); });
         this.observers = [];
 
-        // don't break if our table has, for some reason, got abandoned and has no parent
-        if (this.table.parentElement) this.table.parentElement.contentEditable = 'false';
-        $(this.table).closest('.table-editor-wrapper').removeClass('table-editor-active');
+        this.editable.contentEditable = 'false';
+        $(this.editable).closest('.table-editor-wrapper').removeClass('table-editor-active');
 
         this.ckeditor.destroy();
         this.ckeditor = null;
 
         this.originalTable = null;
         this.table = null;
+        this.editable = null;
         this.editing = false;
         this.trigger('finish');
       }

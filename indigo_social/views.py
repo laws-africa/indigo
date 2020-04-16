@@ -6,7 +6,7 @@ from django.views import View
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
 from django.views.generic.list import MultipleObjectMixin
 from django.urls import reverse
-from django.http import Http404, HttpResponse
+from django.http import Http404, FileResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.staticfiles.templatetags.staticfiles import static
@@ -302,11 +302,7 @@ class UserProfilePhotoView(AbstractAuthedIndigoView, View):
         nonce = kwargs['nonce']
 
         user = get_object_or_404(User, username=username)
-
-        if not user.userprofile.profile_photo:
+        if not user.userprofile.profile_photo.name:
             return redirect(static('images/avatars/default_avatar.svg'))
 
-        response = HttpResponse(user.userprofile.profile_photo.read())
-        response['Content-Disposition'] = 'inline; filename={}'.format(user.userprofile.profile_photo.name)
-        response['Content-Length'] = str(user.userprofile.profile_photo.size)
-        return response
+        return FileResponse(user.userprofile.profile_photo)

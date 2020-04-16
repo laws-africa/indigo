@@ -38,6 +38,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('indigo_social', '0004_add_profile_photo_nonce'),
+        ('socialaccount', '0003_extra_data_default_dict'),
     ]
 
     operations = [

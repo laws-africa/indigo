@@ -9,7 +9,6 @@ from pinax.badges.models import BadgeAward
 
 
 class UserProfileForm(forms.ModelForm):
-
     validate_username = RegexValidator(
         _lazy_re_compile(r'^[-a-z0-9_]+\Z'),
         "Your username cannot include spaces, punctuation or capital letters.",
@@ -20,12 +19,12 @@ class UserProfileForm(forms.ModelForm):
     last_name = forms.CharField(label='Last name')
     username = forms.CharField(label='Username', validators=[validate_username])
     country = forms.ModelChoiceField(required=True, queryset=Country.objects, label='Country', empty_label=None)
+    new_profile_photo = forms.ImageField(label='Profile photo', required=False)
 
     class Meta:
         model = UserProfile
         fields = (
             # personal info (also includes first_name and last_name)
-            'profile_photo',
             'bio',
             # work
             'organisations',
@@ -50,7 +49,14 @@ class UserProfileForm(forms.ModelForm):
         return username
 
     def save(self, commit=True):
+        if self.cleaned_data.get('new_profile_photo'):
+            self.instance.profile_photo = self.cleaned_data['new_profile_photo']
+
+        if '_delete_photo' in self.data:
+            self.instance.profile_photo.delete(save=False)
+
         super(UserProfileForm, self).save()
+
         self.instance.user.first_name = self.cleaned_data['first_name']
         self.instance.user.last_name = self.cleaned_data['last_name']
         self.instance.user.username = self.cleaned_data['username']

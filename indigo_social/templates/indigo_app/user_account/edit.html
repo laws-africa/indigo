@@ -92,12 +92,13 @@
             <p>For the best experience, kindly ensure your profile picture is square and smaller than 2MB in size. Uploading a new image will replace the existing one.</p>
 
             <div class="mt-2">
-              <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail" width="300" height="300">
+              <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail" width="200" height="200">
               {% if user.userprofile.profile_photo %}
                 <div class="btn-group-toggle mt-2" data-toggle="buttons">
                   <label class="btn btn-danger" for="profile_photo-clear_id">
-                    <input type="checkbox" name="profile_photo-clear" id="profile_photo-clear_id" data-confirm="Are you sure you want to remove your profile picture?" value="{{ form.profile_photo.value }}" onChange="this.form.submit()"> 
+                    <input type="checkbox" name="profile_photo-clear" id="profile_photo-clear_id" data-confirm="Are you sure you want to remove your profile picture?" value="True" onChange="this.form.submit()"> 
                     Remove
+                    </input>
                   </label>
                 </div>
               {% endif %}

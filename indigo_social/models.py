@@ -32,6 +32,7 @@ def retrieve_social_profile_photo(user_profile, url):
         filename, _ = urlretrieve(url)
         user_profile.profile_photo.save(filename, File(open(filename, 'rb')))
         user_profile.generate_nonce()
+        user_profile.save()
     finally:
         urlcleanup()
 
@@ -51,7 +52,6 @@ class UserProfile(models.Model):
 
     def generate_nonce(self):
         self.profile_photo_nonce = ''.join(random.sample(string.ascii_lowercase, 8))
-        self.save()
 
     @property
     def profile_photo_url(self):

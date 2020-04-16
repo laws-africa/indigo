@@ -88,36 +88,31 @@
 
         <div class="col-6">
           <div class="form-group">
-            <label for="{{ form.profile_photo.id_for_label }}">{{ form.profile_photo.label }}</label>
-            <p>For the best experience, kindly ensure your profile picture is square and smaller than 2MB in size. Uploading a new image will replace the existing one.</p>
+            <label for="{{ form.new_profile_photo.id_for_label }}">{{ form.new_profile_photo.label }}</label>
 
-            <div class="mt-2">
-              <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail" width="200" height="200">
+            <div class="my-2">
+              <div>
+                <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail" width="200" height="200">
+              </div>
               {% if user.userprofile.profile_photo %}
-                <div class="btn-group-toggle mt-2" data-toggle="buttons">
-                  <label class="btn btn-danger" for="profile_photo-clear_id">
-                    <input type="checkbox" name="profile_photo-clear" id="profile_photo-clear_id" data-confirm="Are you sure you want to remove your profile picture?" value="True" onChange="this.form.submit()"> 
-                    Remove
-                    </input>
-                  </label>
+                <div class="mt-3">
+                  <button type="submit" name="_delete_photo" class="btn btn-outline-danger" data-confirm="Are you sure you want to remove your profile photo?">Remove photo</button>
                 </div>
               {% endif %}
             </div>
 
-            <div class="mt-2">
-              <ul class="list-group">
-                <li class="list-group-item p-1">
-                  <input type="file" name="{{ form.profile_photo.name }}" id="{{ form.profile_photo.id_for_label }}">
-                </li>
-              </ul>
-                {% if form.profile_photo.errors %}
-                  <div class="text-danger">
-                    {% for error in form.profile_photo.errors %}
-                      <p>{{ error }}</p>
-                    {% endfor %}
-                  </div>
-                {% endif %}
+            <div class="form-group">
+              <label>Upload a photo</label>
+              <input type="file" name="{{ form.new_profile_photo.name }}" id="{{ form.new_profile_photo.id_for_label }}" accept="image/*" onchange="this.form.submit();">
+              <p class="form-text">A square photo at least 200 pixels wide is best.</p>
             </div>
+            {% if form.new_profile_photo.errors %}
+              <div class="text-danger">
+                {% for error in form.new_profile_photo.errors %}
+                  <p>{{ error }}</p>
+                {% endfor %}
+              </div>
+            {% endif %}
 
           </div>
         </div>

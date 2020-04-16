@@ -3,8 +3,9 @@
 
   <ul class="list-unstyled mb-0">
     {% for user in top_contributors %}
-      <li>
+      <li class="mb-2">
         <span class="float-right">{{ user.task_count }} task{{ user.task_count|pluralize }}</span>
+        {% user_profile_photo_thumbnail user.user %}
         {% user_profile user.user %}
       </li>
     {% endfor %}

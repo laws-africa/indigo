@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^contributors/(?P<username>[\w@.-]+)/activity/$', views.UserActivityView.as_view(), name='user_activity'),
     url(r'^contributors/(?P<username>[\w@.-]+)/tasks/$', views.UserTasksView.as_view(), name='user_tasks'),
     url(r'^contributors/(?P<username>[\w@.-]+)/popup$', views.UserPopupView.as_view(), name='user_popup'),
+    url(r'^contributors/(?P<username>[\w@.-]+)/avatar/(?P<nonce>[\w@.-]+)$', views.UserProfilePhotoView.as_view(), name='user_profile_photo'),
 
     # /accounts/profile/
     url(r'^accounts/profile/$', views.UserProfileEditView.as_view(), name='edit_account'),

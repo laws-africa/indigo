@@ -2,10 +2,11 @@
 from datetime import timedelta
 
 from actstream.models import Action
+from django.views import View
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
 from django.views.generic.list import MultipleObjectMixin
 from django.urls import reverse
-from django.http import Http404
+from django.http import Http404, HttpResponse
 from django.shortcuts import redirect
 from django.contrib import messages
 from allauth.account.utils import user_display
@@ -292,3 +293,17 @@ class UserPopupView(AbstractAuthedIndigoView, DetailView):
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_popup.html'
     queryset = User.objects
+
+
+class UserProfilePhotoView(View):
+    def get(self, request, **kwargs):
+        username = kwargs['username']
+        nonce = kwargs['nonce']
+
+        user = User.objects.filter(username=username).first()
+        user_profile = UserProfile.objects.filter(user=user).first()
+
+        response = HttpResponse(user_profile.profile_photo.read())
+        response['Content-Disposition'] = 'inline; filename={}'.format(user_profile.profile_photo.name)
+        response['Content-Length'] = str(user_profile.profile_photo.size)
+        return response

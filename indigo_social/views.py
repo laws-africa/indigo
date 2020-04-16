@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.http import Http404, HttpResponse
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
@@ -301,6 +302,9 @@ class UserProfilePhotoView(AbstractAuthedIndigoView, View):
         nonce = kwargs['nonce']
 
         user = get_object_or_404(User, username=username)
+
+        if not user.userprofile.profile_photo:
+            return redirect(static('images/avatars/default_avatar.svg'))
 
         response = HttpResponse(user.userprofile.profile_photo.read())
         response['Content-Disposition'] = 'inline; filename={}'.format(user.userprofile.profile_photo.name)

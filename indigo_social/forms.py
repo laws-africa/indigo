@@ -94,10 +94,8 @@ def process_profile_photo(profile_photo):
         right = (width + new_width)/2
         bottom = (height + new_width)/2
         uploaded_photo = uploaded_photo.crop((left, top, right, bottom))
-        uploaded_photo = uploaded_photo.resize((200, 200), Image.ANTIALIAS)
-    else:
-        uploaded_photo = uploaded_photo.resize((200, 200), Image.ANTIALIAS)
-
+    
+    uploaded_photo = uploaded_photo.resize((200, 200), Image.ANTIALIAS)
     if not uploaded_photo.mode == 'RGB':
         uploaded_photo = uploaded_photo.convert('RGB')
 

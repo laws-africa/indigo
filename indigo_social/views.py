@@ -7,7 +7,7 @@ from django.views.generic import DetailView, ListView, UpdateView, TemplateView,
 from django.views.generic.list import MultipleObjectMixin
 from django.urls import reverse
 from django.http import Http404, HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
@@ -295,15 +295,14 @@ class UserPopupView(AbstractAuthedIndigoView, DetailView):
     queryset = User.objects
 
 
-class UserProfilePhotoView(View):
+class UserProfilePhotoView(AbstractAuthedIndigoView, View):
     def get(self, request, **kwargs):
         username = kwargs['username']
         nonce = kwargs['nonce']
 
-        user = User.objects.filter(username=username).first()
-        user_profile = UserProfile.objects.filter(user=user).first()
+        user = get_object_or_404(User, username=username)
 
-        response = HttpResponse(user_profile.profile_photo.read())
-        response['Content-Disposition'] = 'inline; filename={}'.format(user_profile.profile_photo.name)
-        response['Content-Length'] = str(user_profile.profile_photo.size)
+        response = HttpResponse(user.userprofile.profile_photo.read())
+        response['Content-Disposition'] = 'inline; filename={}'.format(user.userprofile.profile_photo.name)
+        response['Content-Length'] = str(user.userprofile.profile_photo.size)
         return response

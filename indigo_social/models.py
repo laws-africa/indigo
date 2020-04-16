@@ -1,11 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
+from io import BytesIO
+import sys
 
 from django.contrib.auth.models import User
 from django.core.files import File
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.db import models
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, pre_save
 from django.dispatch import receiver
+from django.urls import reverse
+from PIL import Image
 
 from urllib.request import urlretrieve, urlcleanup
 
@@ -15,7 +20,8 @@ from allauth.socialaccount.signals import pre_social_login, social_account_added
 
 
 def user_profile_photo_path(instance, filename):
-    return 'avatars/{}/{}'.format(instance.id, os.path.basename(filename))
+    file_name, file_extension = os.path.splitext(filename)
+    return 'avatars/{}'.format(instance.id)
 
 
 def retrieve_social_profile_photo(user_profile, url):
@@ -28,6 +34,30 @@ def retrieve_social_profile_photo(user_profile, url):
         urlcleanup()
 
 
+def resize_photo(profile_photo, user):
+    """ Resize and crop an uploaded profile photo to meet specifications
+    """
+    uploaded_profile_photo = Image.open(profile_photo)
+    file_extension = profile_photo.name.split('.')[1]
+    file_name = user.pk
+    output = BytesIO()
+
+    # TODO: crop then resize
+    # profile_photo = uploaded_profile_photo.crop((0, 0, 200, 200))
+    profile_photo = uploaded_profile_photo.resize((200, 200), Image.ANTIALIAS)
+    profile_photo.save(output, format=file_extension, quality=100)
+    output.seek(0)
+
+    profile_photo = InMemoryUploadedFile(output, 
+                                         'ImageField', 
+                                         "{}.{}".format(file_name, file_extension),
+                                         'image/{}'.format(file_extension), 
+                                          sys.getsizeof(output),
+                                          None)
+
+    return profile_photo
+
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(blank=True, null=True, default='', help_text="A short bio")
@@ -37,14 +67,21 @@ class UserProfile(models.Model):
     specialisations = models.TextField(blank=True, null=True, default='', help_text="Specialisation(s)")
     areas_of_law = models.CharField(max_length=256, blank=True, null=True, default='', help_text="Area(s) of law")
     profile_photo = models.ImageField(upload_to=user_profile_photo_path, blank=True, null=True)
+    profile_photo_nonce = models.CharField(max_length=256, blank=True, null=True)
     twitter_username = models.CharField(max_length=256, blank=True, null=True, default='')
     linkedin_profile = models.URLField(blank=True, null=True, default='')
+
+    def save(self):
+        # TODO: Generate and save the nonce here
+        self.profile_photo = resize_photo(self.profile_photo, self.user)
+
+        super(UserProfile, self).save()
 
     @property
     def profile_photo_url(self):
         if not self.profile_photo:
             return "/static/images/avatars/default_avatar.svg"
-        return self.profile_photo
+        return reverse('indigo_social:user_profile_photo', kwargs={'username': self.user.username, 'nonce': '123'})
     
 
 @receiver(post_save, sender=User)

@@ -35,7 +35,7 @@ def user_profile_photo_thumbnail(user, height=32, width=32):
     if not user:
         return ''
 
-    return format_html('<img src="{}" height="{}" width="{}" style="border-radius: 50%;">'.format(user.userprofile.profile_photo_url, height, width))
+    return format_html('<img src="{}" height="{}" width="{}" class="user-profile-photo">'.format(user.userprofile.profile_photo_url, height, width))
 
 
 @register.simple_tag

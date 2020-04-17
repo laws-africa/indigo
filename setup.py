@@ -42,7 +42,7 @@ setup(
     install_requires=[
         'django>=1.11.27,<2',
         'boto3>=1.7',
-        'cobalt>=3.1',
+        "cobalt @ git+ssh://git@github.com/laws-africa/cobalt@v4.0.0",
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',

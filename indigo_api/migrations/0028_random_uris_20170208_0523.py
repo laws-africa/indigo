@@ -5,7 +5,7 @@ import datetime
 
 from django.db import migrations
 
-from cobalt.act import Act, FrbrUri
+from cobalt import Act, FrbrUri
 
 
 def random_frbr_uri(country=None):

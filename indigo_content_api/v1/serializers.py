@@ -2,7 +2,7 @@ from itertools import groupby
 
 from rest_framework import serializers
 from rest_framework.reverse import reverse
-from cobalt.akn import datestring
+from cobalt import datestring
 
 from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Work
 from indigo_api.serializers import DocumentSerializer, \

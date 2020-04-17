@@ -22,6 +22,8 @@
             {% endif %}
           </h4>
 
+          <img src="{{ user.userprofile.profile_photo_url }}" class="img-thumbnail mb-2" width="200" height="200">
+
           {% if user.userprofile.bio %}
             {{ user.userprofile.bio | linebreaks }}
           {% endif %}

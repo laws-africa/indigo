@@ -31,6 +31,14 @@ def user_profile(user):
 
 
 @register.simple_tag
+def user_profile_photo_thumbnail(user, height=32, width=32):
+    if not user:
+        return ''
+
+    return format_html('<img src="{}" height="{}" width="{}" class="user-profile-photo">'.format(user.userprofile.profile_photo_url, height, width))
+
+
+@register.simple_tag
 def publication_document_name(work):
     parts = []
     if work.publication_name:

@@ -2,12 +2,14 @@
 from datetime import timedelta
 
 from actstream.models import Action
+from django.views import View
 from django.views.generic import DetailView, ListView, UpdateView, TemplateView, FormView
 from django.views.generic.list import MultipleObjectMixin
 from django.urls import reverse
-from django.http import Http404
-from django.shortcuts import redirect
+from django.http import Http404, FileResponse
+from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from allauth.account.utils import user_display
 from pinax.badges.models import BadgeAward
 from pinax.badges.registry import badges
@@ -292,3 +294,15 @@ class UserPopupView(AbstractAuthedIndigoView, DetailView):
     slug_url_kwarg = 'username'
     template_name = 'indigo_social/user_popup.html'
     queryset = User.objects
+
+
+class UserProfilePhotoView(AbstractAuthedIndigoView, View):
+    def get(self, request, **kwargs):
+        username = kwargs['username']
+        nonce = kwargs['nonce']
+
+        user = get_object_or_404(User, username=username)
+        if not user.userprofile.profile_photo.name:
+            return redirect(static('images/avatars/default_avatar.svg'))
+
+        return FileResponse(user.userprofile.profile_photo)

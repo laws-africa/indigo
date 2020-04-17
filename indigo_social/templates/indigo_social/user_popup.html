@@ -1,13 +1,20 @@
+{% load indigo_app %}
 <div class="popup-content lh-compact">
   {% block user_popup %}
-    <h6>
-      {% if not user.first_name %}
-        {{ user.username }}
-      {% else %}
-        {{ user.first_name }} {{ user.last_name }}
-      {% endif %}
-      <br><span class="text-muted mt-1 font-weight-normal">{{ user.username }}</span>
-    </h6>
+
+  <div class="media mb-2">
+    {% user_profile_photo_thumbnail user height=40 width=40 %}
+    <div class="media-body ml-2">
+      <h6>
+        {% if not user.first_name %}
+          {{ user.username }}
+        {% else %}
+          {{ user.first_name }} {{ user.last_name }}
+        {% endif %}
+        <br><span class="text-muted mt-1 font-weight-normal">{{ user.username }}</span>
+      </h6>
+    </div>    
+  </div>
 
     {% if user.userprofile.bio %}
       {{ user.userprofile.bio | linebreaks }}

@@ -28,55 +28,59 @@ $(function() {
     $('.alert-dismissible.auto-dismiss').alert('close');
   }
   setTimeout(nukeToasts, 3 * 1000);
-});
 
-/* Show popover when hovering on selected links.
- * Links should have a 'data-popup-url' attribute.
- */
-var _popupCache = {};
+  /* Show popover when hovering on selected links.
+   * Links should have a 'data-popup-url' attribute.
+   */
+  var _popupCache = {},
+      whiteList = _.clone($.fn.popover.Constructor.Default.whiteList),
+      // this is the currently active popup target element
+      popupTarget;
 
-$('body').on('mouseenter', 'a[data-popup-url]', function() {
-  var _this = this;
-  var url = $(this).data('popup-url');
-  var notFound = '<i>(not found)</i>';
+  // allow div tags to contain style tags
+  whiteList.div = ['style'];
 
-  $.ajaxSetup({
-    url: "work_popup.html",
-    global: false,
-  });
+  function popup(element, html) {
+    // don't show the popup if our concept of the current target is out of date
+    if (element != popupTarget) return;
 
-  function popup(html) {
-    // allow div tags to contain style tags
-    var whiteList = _.clone($.fn.popover.Constructor.Default.whiteList);
-    whiteList.div = ['style'];
-
-    $(_this).popover({
+    $(element).popover({
       content: html,
       html: true,
       whiteList: whiteList,
     }).popover('show');
   }
 
-  if (_popupCache[url]) {
-    popup(_popupCache[url]);
-  } else {
-    $.get(url).then(function(html) {
-      _popupCache[url] = html;
-      popup(html);
-    }).fail(function(resp) {
-      _popupCache[url] = notFound;
-      popup(notFound);
-    });
-  }
+  $('body').on('mouseenter', 'a[data-popup-url]', function() {
+    var _this = this;
+    var url = this.getAttribute('data-popup-url');
+    var notFound = '<i>(not found)</i>';
 
-  $('.popover').mouseleave(function () {
-    $(_this).popover('hide');
-  });
-}).on('mouseleave','a[data-popup-url], .popover', function(){
-  var _this = this;
-  setTimeout(function () {
-    if (!$('.popover:hover').length) {
-      $(_this).popover('hide');
+    popupTarget = this;
+
+    if (_popupCache[url]) {
+      popup(this, _popupCache[url]);
+    } else {
+      $.get(url, {global: false}).then(function(html) {
+        _popupCache[url] = html;
+        popup(_this, html);
+      }).fail(function(resp) {
+        _popupCache[url] = notFound;
+        popup(_this, notFound);
+      });
     }
-  }, 300);
+
+    $('.popover').mouseleave(function () {
+      $(_this).popover('hide');
+    });
+  }).on('mouseleave', 'a[data-popup-url], .popover', function() {
+    var _this = this;
+
+    setTimeout(function () {
+      if (!$('.popover:hover').length) {
+        $(_this).popover('hide');
+        if (popupTarget === _this) popupTarget = null;
+      }
+    }, 300);
+  });
 });

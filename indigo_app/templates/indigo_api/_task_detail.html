@@ -1,0 +1,244 @@
+{% load activity_tags humanize indigo_app account comments %}
+
+<div class="container mt-3 mb-5">
+    <div class="row">
+      <div class="mb-3 col-9">
+        <div class="d-flex">
+          <div class="mr-3 text-center">
+            {% if task.state == 'open' and task.assigned_to %}
+            <i class="fas fa-fw task-icon-assigned" title="assigned"></i><br>
+            {% else %}
+            <i class="fas fa-fw task-icon-{{ task.state }}" title="{{ task.state }}"></i><br>
+            {% endif %}
+            <span class="text-muted">#{{ task.pk }}</span>
+          </div>
+          <div class="flex-grow-1">
+            <h5>
+              {{ task.title }}
+              {% if task.changes_requested %}
+              <span class="badge badge-secondary bg-pending_review ml-2">Changes requested</span>
+              {% endif %}
+            </h5>
+
+            {% if task.document %}
+            <div class="mb-2">
+              <a href="{% url 'document' doc_id=task.document.id %}">{{ task.document.title }}
+                @ {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% elif task.work %}
+            <div class="mb-2">
+              <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
+                 data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a><br>
+              <span class="text-muted">{{ task.work.frbr_uri }}</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <div>{% block task-badges %}{% endblock %}</div>
+        </div>
+      </div>
+
+      {% if not task.state == 'done' and not task.state == 'cancelled' and task.change_task_permission %}
+      <div class="col-3">
+        <a href="{% url 'task_edit' place=place.place_code pk=task.pk %}" class="btn btn-primary">Edit task</a>
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="row">
+      <div class="col-9">
+        <div class="card">
+          <div class="card-body">
+            {{ task.description|default:''|urlize|linebreaksbr }}
+          </div>
+        </div>
+
+        <ul class="activity-list open-top pt-3">
+          {% for entry in task_timeline %}
+            {% if entry.comment %}
+              <li class="activity-item card">
+                <div class="card-header">
+                  {% user_profile entry.user %} commented
+                  <span class="time-ago" data-timestamp="{{ entry.submit_date|date:'c' }}">{{ entry.submit_date|date:"Y-m-d H:i" }}</span>:
+                </div>
+                <div class="card-body">
+                  {{ entry.comment|urlize|linebreaksbr }}
+                </div>
+              </li>
+            {% else %}
+              <li class="activity-item">
+                {% include 'indigo_app/actions/_action.html' with action=entry this_task=True ignore_place=True %}
+              </li>
+            {% endif %}
+          {% endfor %}
+
+          {% with task.resolve_anchor as anchor %}
+            {% if anchor %}
+              <li class="activity-item">
+                {% if anchor.element %}
+                  Here is
+                  <a href="{% url 'document' doc_id=task.document.pk %}?toc={{ anchor.toc_entry.qualified_id|default:'' }}&anntn={{ task.annotation.id }}">{{ anchor.toc_entry.title }}</a>
+                  as it appears currently
+                  {% if not anchor.exact_match %}(<b>{{ anchor.anchor_id }}</b> may have been moved or removed){% endif %}
+                  <div class="sheet-outer"
+                       {% if anchor.selectors or not anchor.is_toc_element %}data-highlight="{{ anchor.target|jsonify|escape }}"{% endif %}>
+                    <div class="sheet-inner is-fragment">
+                      <div class="akoma-ntoso country-{{ anchor.document.country }}">{{ anchor.toc_element_html|safe }}</div>
+                    </div>
+                  </div>
+                {% else %}
+                  The content at <b>{{ anchor.toc_entry.title|default:anchor.anchor_id }}</b> is not
+                  available and may have been moved or removed.
+                {% endif %}
+              </li>
+            {% endif %}
+          {% endwith %}
+        </ul>
+
+        <hr>
+
+        {% if user.is_authenticated %}
+          {% get_comment_form for task as form %}
+          <form action="{% comment_form_target %}" method="post" id="task-comment-form">
+            {% csrf_token %}
+            {{ form.honeypot.as_hidden }}
+            {{ form.content_type }}
+            {{ form.object_pk }}
+            {{ form.timestamp }}
+            {{ form.security_hash }}
+            <input type="hidden" name="next" value="{% url 'task_detail' place=place.place_code pk=task.pk %}"/>
+
+            <div class="card">
+              <div class="card-body">
+                <textarea id="id_comment" name="comment" class="form-control mb-3" maxlength="3000" rows="3"
+                          cols="80" placeholder="Add a comment"></textarea>
+
+                <div class="text-right">
+                  <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" disabled>
+                </div>
+              </div>
+            </div>
+
+          </form>
+        {% else %}
+          <p>Please <a href="{{ login_url }}">log in</a> to leave a comment.</p>
+        {% endif %}
+
+        <hr>
+
+        <div class="mt-3">
+          <form method="POST">
+            {% csrf_token %}
+
+            {% if task.state == 'open' and task.submit_task_permission %}
+              <button class="btn btn-primary float-right" type="submit" data-confirm="{{ task.submission_message }}" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}">Submit for review</button>
+            {% endif %}
+
+            {% if task.state == 'cancelled' or task.state == 'done' %}
+              {% if task.reopen_task_permission %}
+                <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
+              {% endif %}
+            {% endif %}
+
+            {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
+              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to request changes to this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Request changes</button>
+            {% endif %}
+
+            {% if task.state == 'pending_review' %}
+              {% if task.customised.close_url %}
+                <a class="btn btn-primary float-right" href="{{ task.customised.close_url }}">Review changes</a>
+              {% elif task.close_task_permission %}
+                <button class="btn btn-success float-right" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">Approve</button>
+              {% endif %}
+            {% endif %}
+          </form>
+
+        </div>
+      </div>
+
+      <div class="col-3">
+        <h6>Assigned to</h6>
+        <div class="mb-2">
+          {% if task.assigned_to %}
+            {% user_profile task.assigned_to %}
+          {% else %}
+            <em>Unassigned</em>
+          {% endif %}
+        </div>
+
+        {% if perms.indigo_api.change_task %}
+          <form method="POST">
+            {% csrf_token %}
+            {% if task.assigned_to %}
+              <button class="btn btn-outline-danger mb-3" type="submit"
+                      data-confirm="Are you sure you want to unassign this task?"
+                      formaction="{% url 'unassign_task' place=place.place_code pk=task.pk %}">Unassign
+              </button>
+            {% endif %}
+
+            {% if task.potential_assignees %}
+              <div class="dropdown">
+                <button class="btn btn-outline-secondary mb-3 dropdown-toggle" type="button"
+                        id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
+                        aria-expanded="false">
+                  Assign to
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                  {% for potential_assignee in task.potential_assignees %}
+                    <button class="dropdown-item mb-1" type="submit" name="user_id"
+                            value="{{ potential_assignee.id }}"
+                            formaction="{% url 'assign_task' place=place.place_code pk=task.pk %}">{% user_display potential_assignee %}</button>
+                  {% endfor %}
+                </div>
+              </div>
+            {% endif %}
+          </form>
+        {% endif %}
+
+        <h6>Labels</h6>
+        <ul class="list-unstyled">
+          {% with task.labels.all as labels %}
+            {% if labels %}
+              {% for label in labels %}
+                <li><span class="badge badge-secondary"
+                          title="{{ label.description }}">{{ label.title }}</span></li>
+              {% endfor %}
+            {% else %}
+              <li><em>None</em></li>
+            {% endif %}
+          {% endwith %}
+        </ul>
+        {% with task.workflows.all as workflows %}
+          <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
+                data-submit="ajax">
+            {% csrf_token %}
+
+            <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"
+                    data-dropdown-align-right="true" data-style="btn-link pl-0 text-dark"
+                    {% if not perms.indigo_api.change_task %}disabled{% endif %}
+                    data-none-selected-text="Workflows" data-selected-text-format="static">
+
+              {% for workflow in possible_workflows|dictsort:'title' %}
+                <option value="{{ workflow.id }}" {% if workflow in workflows %}selected{% endif %}>
+                  #{{ workflow.pk }} – {{ workflow.title }}</option>
+              {% endfor %}
+            </select>
+          </form>
+          <ul class="list-unstyled mb-2">
+            {% if workflows %}
+              {% for workflow in workflows|dictsort:'title' %}
+                <li>
+                  <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">#{{ workflow.pk }}
+                    – {{ workflow.title }}</a></li>
+              {% endfor %}
+            {% else %}
+              <li><em>None</em></li>
+            {% endif %}
+          </ul>
+        {% endwith %}
+
+        {% block task-column-footer %}{% endblock %}
+      </div>
+    </div>
+  </div>

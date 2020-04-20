@@ -1,6 +1,6 @@
 # coding=utf-8
 from django.test import TestCase
-from cobalt.act import Act
+from cobalt import Act
 from lxml import etree
 
 from indigo_api.data_migrations import ScheduleArticleToHcontainer

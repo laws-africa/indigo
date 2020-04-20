@@ -92,7 +92,7 @@ class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 class AmendmentEventSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.act.AmendmentEvent`
+    """ Serializer matching :class:`cobalt.AmendmentEvent`
     """
 
     date = serializers.DateField()
@@ -104,7 +104,7 @@ class AmendmentEventSerializer(serializers.Serializer):
 
 
 class RepealSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.act.RepealEvent`, for use describing
+    """ Serializer matching :class:`cobalt.RepealEvent`, for use describing
     the repeal on a published document.
     """
 

@@ -20,8 +20,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
-from cobalt import FrbrUri
-from cobalt.act import Base
+from cobalt import AkomaNtosoDocument, FrbrUri
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -344,7 +343,7 @@ class ParseView(APIView):
             raise ValidationError({'content': str(e) or "error during import"})
 
         # parse and re-serialize the XML to ensure it's clean, and sort out encodings
-        xml = Base(xml).to_xml()
+        xml = AkomaNtosoDocument(xml).to_xml()
 
         # output
         return Response({'output': xml})

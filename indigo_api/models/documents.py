@@ -20,7 +20,7 @@ from iso8601 import parse_date, ParseError
 from taggit.managers import TaggableManager
 import reversion.revisions
 import reversion.models
-from cobalt.act import Act, FrbrUri, AmendmentEvent, datestring
+from cobalt import Act, FrbrUri, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor

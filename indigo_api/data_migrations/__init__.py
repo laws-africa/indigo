@@ -44,7 +44,7 @@ class ScheduleArticleToHcontainer(AKNMigration):
 
             # add a new heading
             alias = article.getparent().getparent().meta.identification.FRBRWork.FRBRalias.get('value')
-            heading = act._maker.heading(alias)
+            heading = act.maker.heading(alias)
             article.insert(0, heading)
 
         return changed

@@ -35,7 +35,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     The Table of Contents can also be used to lookup the XML element corresponding
     to an item in the Table of Contents identified by its subcomponent path.
     This is useful when handling URIs such as ``.../eng/main/section/1`` or
-    ``.../eng/main/part/C``. See :meth:`cobalt.act.Act.get_subcomponent`.
+    ``.../eng/main/part/C``.
 
     Some components can be uniquely identified by their type and number, such as
     ``Section 2``. Others require context, such as ``Part 2 of Chapter 1``. The
@@ -244,7 +244,7 @@ class TOCElement(object):
     :ivar id: XML id string of the node in the document, may be None
     :ivar num: number of this element, as a string, may be None
     :ivar component: number of the component that this item is a part of, as a string
-    :ivar subcomponent: name of this subcomponent, used by :meth:`cobalt.act.Act.get_subcomponent`, may be None
+    :ivar subcomponent: name of this subcomponent, may be None
     :ivar type: element type, one of: ``chapter, part, section`` etc.
     """
 

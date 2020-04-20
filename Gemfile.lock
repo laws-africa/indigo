@@ -1,3 +1,15 @@
+GIT
+  remote: https://github.com/longhotsummer/slaw
+  revision: c4b864e1c50edaa6435cc5500f335a9adc118a23
+  branch: akn3
+  specs:
+    slaw (9.1.0)
+      log4r (~> 1.1)
+      mimemagic (~> 0.2)
+      nokogiri (~> 1.8)
+      thor (~> 0.20)
+      treetop (~> 1.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -7,12 +19,6 @@ GEM
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)
     polyglot (0.3.5)
-    slaw (9.0.0)
-      log4r (~> 1.1)
-      mimemagic (~> 0.2)
-      nokogiri (~> 1.8)
-      thor (~> 0.20)
-      treetop (~> 1.5)
     thor (0.20.3)
     treetop (1.6.10)
       polyglot (~> 0.3)
@@ -21,7 +27,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  slaw (~> 9.0)
+  slaw!
 
 RUBY VERSION
    ruby 2.6.5p114

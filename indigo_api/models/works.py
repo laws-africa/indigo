@@ -13,7 +13,7 @@ from django.dispatch import receiver
 from django.utils.functional import cached_property
 import reversion.revisions
 import reversion.models
-from cobalt.act import FrbrUri, RepealEvent
+from cobalt import FrbrUri, RepealEvent
 
 from indigo.plugins import plugins
 
@@ -117,7 +117,7 @@ class WorkMixin(object):
 
     @property
     def repeal(self):
-        """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
+        """ Repeal information for this work, as a :class:`cobalt.RepealEvent` object.
         None if this work hasn't been repealed.
         """
         if self._repeal is None:

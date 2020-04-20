@@ -55,7 +55,9 @@
     {% if place %}
       <td>
         {% block col-place %}
-          <a href="{% url 'tasks' place=task.place.place_code %}">{{ task.place }}</a>
+          <div class="text-nowrap">
+            <a href="{% url 'tasks' place=task.place.place_code %}">{{ task.place }}</a>
+          </div>
         {% endblock %}
       </td>
     {% endif %}
@@ -63,16 +65,16 @@
     <td>
       {% block col-work %}
       {% if task.document %}
-        <a href="{% url 'document' doc_id=task.document.id %}"
-           class="text-muted"
-           data-popup-url="{% url 'document_popup' doc_id=task.document.id %}">
+        <a href="{% url 'document' doc_id=task.document.id %}" data-popup-url="{% url 'document_popup' doc_id=task.document.id %}">
           {% if not hide_works %}{{ task.document.title }} @{% endif %}
           {{ task.document.expression_date|date:'Y-m-d' }} · {{ task.document.language }}
         </a>
+        <br>
+        <span class="text-muted text-nowrap">{{ task.document.frbr_uri }}</span>
       {% elif task.work and not hide_works %}
-        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}"
-           class="text-muted"
-           data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+        <a href="{% url 'work' frbr_uri=task.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=task.work.frbr_uri %}">{{ task.work.title }}</a>
+        <br>
+        <span class="text-muted text-nowrap">{{ task.work.frbr_uri }}</span>
       {% endif %}
       {% endblock %}
     </td>

@@ -132,8 +132,17 @@ class TaskDetailView(TaskViewBase, DetailView):
         Task.decorate_potential_assignees([task], self.country)
         Task.decorate_permissions([task], self)
 
+        # add work to context
+        if task.work:
+            context['work'] = task.work
+
         return context
 
+    def get_template_names(self):
+        names = super().get_template_names()
+        if self.object.work:
+            return ['indigo_api/work_task.html']
+        return names
 
 class TaskCreateView(TaskViewBase, CreateView):
     # permissions

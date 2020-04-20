@@ -139,10 +139,9 @@ class TaskDetailView(TaskViewBase, DetailView):
         return context
 
     def get_template_names(self):
-        names = super().get_template_names()
         if self.object.work:
             return ['indigo_api/work_task.html']
-        return names
+        return super().get_template_names()
 
 class TaskCreateView(TaskViewBase, CreateView):
     # permissions

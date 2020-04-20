@@ -140,7 +140,7 @@ class TaskDetailView(TaskViewBase, DetailView):
 
     def get_template_names(self):
         if self.object.work:
-            return ['indigo_api/work_task.html']
+            return ['indigo_api/work_task_detail.html']
         return super().get_template_names()
 
 class TaskCreateView(TaskViewBase, CreateView):

@@ -20,7 +20,7 @@ class BeautifulProvisionsTestCase(TestCase):
 
         provisions = ['section-1', 'section-2', 'section-3']
         description = make_beautiful(provisions, self.commenceable_provisions)
-        self.assertEqual(description, 'section 1, section 2, section 3')
+        self.assertEqual(description, 'section 1–3')
 
         provisions = ['section-1', 'section-3', 'section-4', 'section-5', 'section-6']
         description = make_beautiful(provisions, self.commenceable_provisions)
@@ -51,7 +51,7 @@ class BeautifulProvisionsTestCase(TestCase):
     def test_three_items(self):
         provisions = ['section-23', 'section-24', 'section-25']
         description = make_beautiful(provisions, self.commenceable_provisions)
-        self.assertEqual(description, 'section 23, section 24, section 25')
+        self.assertEqual(description, 'section 23–25')
 
     def test_one_excluded(self):
         commenceable_provisions = [

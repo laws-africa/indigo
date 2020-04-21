@@ -229,6 +229,20 @@ class WorkMixin(object):
         if first:
             return first.date
 
+    def insert_provisions(self, provisions, id_set, items):
+        # take note of any removed items to compensate for when inserting
+        removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
+        for i, item in enumerate(items):
+            if item.id and item.id not in id_set:
+                id_set.add(item.id)
+                # compensate for removed items
+                for n in removed_indexes:
+                    if i >= n:
+                        i += 1
+                provisions.insert(i, item)
+
+        return provisions
+
     def commenceable_provisions(self):
         """ Return a list of TOCElement objects that can be commenced.
         """
@@ -244,18 +258,7 @@ class WorkMixin(object):
             if plugin:
                 toc = plugin.table_of_contents_for_document(doc)
                 items = plugin.commenceable_items(toc)
-
-                # take note of any removed items to compensate for when inserting
-                removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
-
-                for i, item in enumerate(items):
-                    if item.id and item.id not in id_set:
-                        id_set.add(item.id)
-
-                        # compensate for removed items
-                        i += sum([i >= n for n in removed_indexes])
-
-                        provisions.insert(i, item)
+                provisions = self.insert_provisions(provisions, id_set, items)
 
         return provisions
 

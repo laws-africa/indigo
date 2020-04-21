@@ -67,6 +67,7 @@ setup(
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.6.2,<3.7',
+        'dotmap>=1.3.8',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',

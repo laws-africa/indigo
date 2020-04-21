@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from dotmap import DotMap
 from django.test import TestCase
 
 from indigo.analysis.toc.base import TOCElement
+from indigo_api.models.works import WorkMixin
 from indigo_api.templatetags.indigo import make_beautiful
 
 
@@ -86,3 +88,124 @@ class BeautifulProvisionsTestCase(TestCase):
         provisions = ['section-31', 'section-32', 'section-33', 'section-34']
         description = make_beautiful(provisions, self.commenceable_provisions)
         self.assertEqual(description, '')
+
+    def test_inserted(self):
+        pit_1_provisions = ['1', '2', '3']
+        pit_2_provisions = ['1', '1A', '2', '2A', '3', '3A']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-1A',
+            'section-2',
+            'section-2A',
+            'section-3',
+            'section-3A',
+        ])
+
+    def test_removed_basic(self):
+        pit_1_provisions = ['1', '2', '3', '4', '5', '6']
+        pit_2_provisions = ['1', '3', '4']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-3',
+            'section-4',
+            'section-5',
+            'section-6',
+        ])
+
+    def test_removed_inserted(self):
+        pit_1_provisions = ['1', '2', '3', '4', '5']
+        pit_2_provisions = ['3', '4', '4A', '4B', '4C', '4D', '5', '5A']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-3',
+            'section-4',
+            'section-4A',
+            'section-4B',
+            'section-4C',
+            'section-4D',
+            'section-5',
+            'section-5A',
+        ])
+
+    def test_inserted_removed_edge(self):
+        # new provision inserted at same index as a removed provision
+        pit_1_provisions = ['1', '2', '3']
+        pit_2_provisions = ['1', 'XX', '3']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-XX',
+            'section-3',
+        ])
+
+        # provision inserted, removed, another inserted
+        pit_1_provisions = ['1', '2', '3']
+        pit_2_provisions = ['1', '2', '2A', '2B', '3']
+        pit_3_provisions = ['2C', '3']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-2A',
+            'section-2B',
+            'section-2C',
+            'section-3',
+        ])
+
+        # absolute garbage
+        # pit 2's provisions will be tacked onto the end
+        pit_1_provisions = ['1', '2', '3', '4', '5', '6']
+        pit_2_provisions = ['3A', '3B', 'X', 'Y', 'Z']
+        pit_3_provisions = ['1', '2', '3', '4', '4A', '4B', '5', '6']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-3',
+            'section-4',
+            'section-4A',
+            'section-4B',
+            'section-5',
+            'section-6',
+            'section-3A',
+            'section-3B',
+            'section-X',
+            'section-Y',
+            'section-Z',
+        ])

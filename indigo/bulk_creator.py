@@ -351,7 +351,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return row
 
     def get_frbr_uri(self, row):
-        frbr_uri = FrbrUri(country=row.get('country'),
+        frbr_uri = FrbrUri(prefix=None,
+                           country=row.get('country'),
                            locality=row.get('locality'),
                            doctype='act',
                            subtype=row.get('subtype'),

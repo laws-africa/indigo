@@ -343,12 +343,16 @@ class Work(WorkMixin, models.Model):
         except ValueError:
             raise ValidationError("Invalid FRBR URI")
 
+        prefix = FrbrUri.parse(self.frbr_uri).prefix
+        rest = frbr_uri.split('/', 3)[3] if prefix else frbr_uri.split('/', 2)[2]
+
         # force country and locality codes in frbr uri
-        prefix = '/' + self.country.code
+        prefix = '/' + prefix if prefix else ''
+        prefix += '/' + self.country.code
         if self.locality:
             prefix = prefix + '-' + self.locality.code
 
-        self.frbr_uri = ('%s/%s' % (prefix, frbr_uri.split('/', 2)[2])).lower()
+        self.frbr_uri = f'{prefix}/{rest}'.lower()
 
     def save(self, *args, **kwargs):
         # prevent circular references

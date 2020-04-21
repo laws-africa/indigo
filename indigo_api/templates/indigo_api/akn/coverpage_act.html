@@ -102,7 +102,7 @@
                 {% else %}
                   <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
                 {% endif %}
-                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% if not commencement.commencing_work %}.{% endif %}{% endblocktrans %}
+                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
                 {% with commencement.commencing_work as commencing_work %}
                   {% if commencing_work %}
                     {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}

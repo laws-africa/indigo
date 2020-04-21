@@ -135,6 +135,7 @@ class TaskDetailView(TaskViewBase, DetailView):
         # add work to context
         if task.work:
             context['work'] = task.work
+            context['work_json'] = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
 
         return context
 
@@ -142,6 +143,7 @@ class TaskDetailView(TaskViewBase, DetailView):
         if self.object.work:
             return ['indigo_api/work_task_detail.html']
         return super().get_template_names()
+
 
 class TaskCreateView(TaskViewBase, CreateView):
     # permissions

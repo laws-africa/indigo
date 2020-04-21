@@ -243,10 +243,19 @@ class WorkMixin(object):
             plugin = plugins.for_document('toc', doc)
             if plugin:
                 toc = plugin.table_of_contents_for_document(doc)
-                for item in plugin.commenceable_items(toc):
+                items = plugin.commenceable_items(toc)
+
+                # take note of any removed items to compensate for when inserting
+                removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
+
+                for i, item in enumerate(items):
                     if item.id and item.id not in id_set:
                         id_set.add(item.id)
-                        provisions.append(item)
+
+                        # compensate for removed items
+                        i += sum([i >= n for n in removed_indexes])
+
+                        provisions.insert(i, item)
 
         return provisions
 

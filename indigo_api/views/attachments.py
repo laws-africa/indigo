@@ -4,7 +4,7 @@ from django.shortcuts import get_list_or_404
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.generics import get_object_or_404
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action
 
 from ..models import Document, Attachment, Work, PublicationDocument
 from ..serializers import AttachmentSerializer
@@ -41,12 +41,12 @@ class AttachmentViewSet(DocumentResourceView, viewsets.ModelViewSet):
     serializer_class = AttachmentSerializer
     permission_classes = DEFAULT_PERMS + (AttachmentPermissions,)
 
-    @detail_route(methods=['GET'])
+    @action(detail=True, methods=['GET'])
     def download(self, request, *args, **kwargs):
         attachment = self.get_object()
         return download_attachment(attachment)
 
-    @detail_route(methods=['GET'])
+    @action(detail=True, methods=['GET'])
     def view(self, request, *args, **kwargs):
         attachment = self.get_object()
         return view_attachment(attachment)

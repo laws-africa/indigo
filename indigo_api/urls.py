@@ -8,12 +8,12 @@ import indigo_api.views.works as works
 
 
 router = DefaultRouter(trailing_slash=False)
-router.register(r'documents', documents.DocumentViewSet, base_name='document')
-router.register(r'documents/(?P<document_id>[0-9]+)/attachments', attachments.AttachmentViewSet, base_name='document-attachments')
-router.register(r'documents/(?P<document_id>[0-9]+)/revisions', documents.RevisionViewSet, base_name='document-revisions')
-router.register(r'documents/(?P<document_id>[0-9]+)/annotations', documents.AnnotationViewSet, base_name='document-annotations')
-router.register(r'works', works.WorkViewSet, base_name='work')
-router.register(r'works/(?P<work_id>[0-9]+)/amendments', works.WorkAmendmentViewSet, base_name='work-amendments')
+router.register(r'documents', documents.DocumentViewSet, basename='document')
+router.register(r'documents/(?P<document_id>[0-9]+)/attachments', attachments.AttachmentViewSet, basename='document-attachments')
+router.register(r'documents/(?P<document_id>[0-9]+)/revisions', documents.RevisionViewSet, basename='document-revisions')
+router.register(r'documents/(?P<document_id>[0-9]+)/annotations', documents.AnnotationViewSet, basename='document-annotations')
+router.register(r'works', works.WorkViewSet, basename='work')
+router.register(r'works/(?P<work_id>[0-9]+)/amendments', works.WorkAmendmentViewSet, basename='work-amendments')
 
 urlpatterns = [
     url(r'^search/documents$', documents.SearchView.as_view(), name='document-search'),

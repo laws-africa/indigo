@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='country',
-            field=models.CharField(default=b'za', max_length=2, choices=[(b'za', b'South Africa'), (b'zm', b'Zambia')]),
+            field=models.CharField(default=b'za', max_length=5, choices=[(b'za', b'South Africa'), (b'zm', b'Zambia')]),
             preserve_default=True,
         ),
         migrations.AlterField(

@@ -1,5 +1,8 @@
-$(function() {
+function bootstrapIndigo(exports) {
   "use strict";
+
+  if (!exports.Indigo) exports.Indigo = {};
+  var Indigo = exports.Indigo;
 
   Indigo.csrfToken = $('meta[name="csrf-token"]').attr('content');
 
@@ -165,4 +168,6 @@ $(function() {
       return 'You will lose your changes!';
     }
   });
-});
+}
+
+$(function() { bootstrapIndigo(window); });

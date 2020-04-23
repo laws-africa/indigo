@@ -439,8 +439,8 @@ class AnnotationAnchorSerializer(serializers.Serializer):
 class TaskSerializer(serializers.ModelSerializer):
     created_by_user = UserSerializer(read_only=True)
     updated_by_user = UserSerializer(read_only=True)
-    country = serializers.CharField(source='country.code')
-    locality = serializers.CharField(source='locality.code')
+    country = serializers.CharField(source='country.code', default=None)
+    locality = serializers.CharField(source='locality.code', default=None)
     work = serializers.CharField(source='work.frbr_uri')
     annotation = serializers.PrimaryKeyRelatedField(queryset=Annotation.objects, required=False, allow_null=True)
     assigned_to = UserSerializer(read_only=True)
@@ -532,8 +532,8 @@ class DocumentActivitySerializer(serializers.ModelSerializer):
 
 
 class CommencementSerializer(serializers.ModelSerializer):
-    commencing_title = serializers.CharField(source="commencing_work.title")
-    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri")
+    commencing_title = serializers.CharField(source="commencing_work.title", default=None)
+    commencing_frbr_uri = serializers.CharField(source="commencing_work.frbr_uri", default=None)
 
     class Meta:
         model = Commencement

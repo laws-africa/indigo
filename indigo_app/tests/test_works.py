@@ -15,7 +15,7 @@ from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpression
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class WorksTest(testcases.TestCase):
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'publications']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'publications']
 
     def setUp(self):
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
@@ -165,7 +165,7 @@ class WorksWebTest(WebTest):
     """ Test that uses https://github.com/django-webtest/django-webtest to help us
     fill and submit forms.
     """
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'commencements']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'editor', 'drafts', 'published', 'commencements']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))

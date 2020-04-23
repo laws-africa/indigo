@@ -4,8 +4,8 @@ from rest_framework.routers import DefaultRouter
 from . import views
 
 router = DefaultRouter(trailing_slash=False)
-router.register(r'countries', views.CountryViewSet, base_name='country')
-router.register(r'taxonomies', views.TaxonomyView, base_name='taxonomy')
+router.register(r'countries', views.CountryViewSet, basename='country')
+router.register(r'taxonomies', views.TaxonomyView, basename='taxonomy')
 
 urlpatterns = [
     url(r'^', include(router.urls)),

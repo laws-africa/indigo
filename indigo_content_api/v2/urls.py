@@ -5,8 +5,8 @@ import indigo_content_api.v1.views as v1_views
 from . import views as v2_views
 
 router = DefaultRouter(trailing_slash=False)
-router.register(r'countries', v1_views.CountryViewSet, base_name='country')
-router.register(r'taxonomies', v1_views.TaxonomyView, base_name='taxonomy')
+router.register(r'countries', v1_views.CountryViewSet, basename='country')
+router.register(r'taxonomies', v1_views.TaxonomyView, basename='taxonomy')
 
 
 urlpatterns = [

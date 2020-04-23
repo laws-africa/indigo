@@ -12,60 +12,13 @@ from indigo.analysis.refs.base import BaseRefsFinder
 
 
 def new_frbr_uri(uri, forward):
-    """ Generates a cobalt FrbrUri object using all the existing URI's attributes.
-        If `forward` is True, the optional /akn prefix is included; otherwise it isn't.
+    """ Sets prefix on uri:
+        'akn' if forward is True, None if it's False.
     """
     if not isinstance(uri, FrbrUri):
         uri = FrbrUri.parse(uri)
-    prefix = None
-    if forward:
-        prefix = 'akn'
-
-    return FrbrUri(
-        prefix=prefix,
-        country=uri.country,
-        locality=uri.locality,
-        doctype=uri.doctype,
-        subtype=uri.subtype,
-        actor=uri.actor,
-        date=uri.date,
-        number=uri.number,
-        work_component=uri.work_component,
-        language=uri.language,
-        expression_date=uri.expression_date,
-        expression_component=uri.expression_component,
-        expression_subcomponent=uri.expression_subcomponent,
-        format=uri.format
-    )
-
-
-def set_frbr_uri_meta_ident(doc, uri):
-    """ Borrowed from frbr_uri.setter on StructuredDocument in cobalt.akn
-        Sets the identification information in the meta block of an AKN document based on its FRBR URI.
-    """
-    if not isinstance(uri, FrbrUri):
-        uri = FrbrUri.parse(uri)
-
-    uri.language = doc.meta.identification.FRBRExpression.FRBRlanguage.get('language', 'eng')
-    uri.expression_date = '@' + datestring(doc.expression_date)
-
-    if uri.work_component is None:
-        uri.work_component = 'main'
-
-    # set URIs of the main document and components
-    for component, element in doc.components().items():
-        uri.work_component = component
-        ident = element.find(f'.//{{{doc.namespace}}}meta/{{{doc.namespace}}}identification')
-
-        ident.FRBRWork.FRBRuri.set('value', uri.uri())
-        ident.FRBRWork.FRBRthis.set('value', uri.work_uri())
-        ident.FRBRWork.FRBRcountry.set('value', uri.country)
-
-        ident.FRBRExpression.FRBRuri.set('value', uri.expression_uri(False))
-        ident.FRBRExpression.FRBRthis.set('value', uri.expression_uri())
-
-        ident.FRBRManifestation.FRBRuri.set('value', uri.expression_uri(False))
-        ident.FRBRManifestation.FRBRthis.set('value', uri.expression_uri())
+    uri.prefix = 'akn' if forward else None
+    return uri
 
 
 class RefsFinderRef(BaseRefsFinder):
@@ -114,7 +67,7 @@ def migrate_uris(apps, schema_editor, forward):
     for doc in Document.objects.using(db_alias).all():
         doc.frbr_uri = doc.work.frbr_uri
         cobalt_doc = Act(doc.document_xml)
-        set_frbr_uri_meta_ident(cobalt_doc, doc.frbr_uri)
+        cobalt_doc.frbr_uri = doc.frbr_uri
         doc.document_xml = cobalt_doc.to_xml()
         RefsFinderRef.handle_refs(RefsFinderRef(), doc, forward)
         doc.save()

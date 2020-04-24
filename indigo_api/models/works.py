@@ -230,12 +230,16 @@ class WorkMixin(object):
             return first.date
 
     def insert_provisions(self, provisions, id_set, items):
-        # take note of any removed items to compensate for when inserting
+        """ Insert provisions from current toc at their correct indexes.
+        """
+        # take note of any removed items to compensate for later
         removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
         for i, item in enumerate(items):
             if item.id and item.id not in id_set:
                 id_set.add(item.id)
-                # We need to insert this provision at the correct position in the work provision list. If any provisions from a previous document have been removed in this document (indexes stored in removed_indexes), bump the insertion index up to take them into account.
+                # We need to insert this provision at the correct position in the work provision list.
+                # If any provisions from a previous document have been removed in this document
+                # (indexes stored in removed_indexes), bump the insertion index up to take them into account.
                 for n in removed_indexes:
                     if i >= n:
                         i += 1

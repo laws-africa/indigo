@@ -147,6 +147,50 @@ class BeautifulProvisionsTestCase(TestCase):
             'section-5A',
         ])
 
+        # provisions removed, then others inserted
+        pit_1_provisions = ['1', '2', '3', '4', '5']
+        pit_2_provisions = ['1', '4', '5']
+        pit_3_provisions = ['1', '4', '4A', '4B', '4C', '5']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-3',
+            'section-4',
+            'section-4A',
+            'section-4B',
+            'section-4C',
+            'section-5',
+        ])
+
+        # provisions removed, others inserted at same index
+        # unfortunately in this case 2A to 2C will be inserted after 3,
+        # because they might as well be 4A to 4C – there's no way to know for sure
+        # when a new provision is inserted at the index of a removed one.
+        pit_1_provisions = ['1', '2', '3', '4', '5']
+        pit_3_provisions = ['1', '2', '2A', '2B', '2C', '5']
+        provisions = []
+        id_set = set()
+        for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
+            items = [DotMap(id=f'section-{p}') for p in pit]
+            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+        provisions = [p.id for p in provisions]
+        self.assertEqual(provisions, [
+            'section-1',
+            'section-2',
+            'section-3',
+            'section-4',
+            'section-2A',
+            'section-2B',
+            'section-2C',
+            'section-5',
+        ])
+
     def test_inserted_removed_edge(self):
         # new provision inserted at same index as a removed provision
         pit_1_provisions = ['1', '2', '3']

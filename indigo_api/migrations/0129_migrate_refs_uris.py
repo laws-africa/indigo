@@ -20,7 +20,7 @@ def new_frbr_uri(uri, forward):
     return uri
 
 
-def handle_refs(document, cobalt_doc, forward):
+def handle_refs(document, forward):
     """ Finds hrefs in documents, of the form:
 
         href="/za/act/2012/22">Act no 22 of 2012
@@ -32,7 +32,7 @@ def handle_refs(document, cobalt_doc, forward):
 
     """
     root = etree.fromstring(document.document_xml)
-    path = etree.XPath("//a:*[starts-with(@href, '/')]", namespaces={'a': cobalt_doc.namespace})
+    path = etree.XPath("//*[starts-with(@href, '/')]")
     for node in path(root):
         ref = node.get('href')
         match = FRBR_URI_RE.match(ref)
@@ -62,7 +62,7 @@ def migrate_uris(apps, schema_editor, forward):
         cobalt_doc = Act(doc.document_xml)
         cobalt_doc.frbr_uri = doc.frbr_uri
         doc.document_xml = cobalt_doc.to_xml()
-        handle_refs(doc, cobalt_doc, forward)
+        handle_refs(doc, forward)
         doc.save()
 
 

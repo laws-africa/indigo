@@ -17,7 +17,7 @@ def new_frbr_uri(uri, forward):
     if not isinstance(uri, FrbrUri):
         uri = FrbrUri.parse(uri)
     uri.prefix = 'akn' if forward else None
-    return uri
+    return uri.work_uri()
 
 
 def handle_refs(document, forward):
@@ -37,7 +37,7 @@ def handle_refs(document, forward):
         ref = node.get('href')
         match = FRBR_URI_RE.match(ref)
         if match:
-            ref = new_frbr_uri(ref, forward).work_uri()
+            ref = new_frbr_uri(ref, forward)
             node.set('href', ref)
 
     document.document_xml = etree.tostring(root, encoding='utf-8').decode('utf-8')

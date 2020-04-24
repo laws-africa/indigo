@@ -13,8 +13,8 @@ urlpatterns = [
     # auth and accounts
     path('accounts/', include('allauth.urls')),
     path('accounts/profile/', users.EditAccountView.as_view(), name='edit_account'),
-    path('^accounts/profile/api/', users.EditAccountAPIView.as_view(), name='edit_account_api'),
-    path('^accounts/accept-terms', users.AcceptTermsView.as_view(), name='accept_terms'),
+    path('accounts/profile/api/', users.EditAccountAPIView.as_view(), name='edit_account_api'),
+    path('accounts/accept-terms', users.AcceptTermsView.as_view(), name='accept_terms'),
 
     path('terms', TemplateView.as_view(template_name='indigo_app/terms.html'), name='terms_of_use'),
     path('help', RedirectView.as_view(url='https://indigo.readthedocs.io/en/latest/', permanent=False), name='help'),

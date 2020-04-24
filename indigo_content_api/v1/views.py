@@ -78,33 +78,16 @@ class FrbrUriViewMixin(PlaceAPIBase):
         return frbr_uri
 
     def determine_place(self):
-        locality = None
-
         try:
             uri = FrbrUri.parse(self.kwargs['frbr_uri'])
-            country = uri.country
-            locality = uri.locality
+            place = uri.place
 
         except ValueError:
             # not a valid URI; make some guesses
             parts = self.kwargs['frbr_uri'].split('/')
             place = parts[2] if parts[1] == 'akn' else parts[1]
-            if '-' in place:
-                country, locality = place.split('-')
-            else:
-                country = place
 
-        # country
-        try:
-            self.country = Country.for_code(country)
-        except Country.DoesNotExist:
-            raise Http404
-
-        # locality
-        if locality:
-            self.locality = self.country.localities.filter(code=locality).first()
-            if not self.locality:
-                raise Http404
+        self.country, self.locality = Country.get_country_locality(place)
 
         super(FrbrUriViewMixin, self).determine_place()
 

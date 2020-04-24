@@ -2,14 +2,16 @@
 from dotmap import DotMap
 from django.test import TestCase
 
-from indigo.analysis.toc.base import TOCElement
-from indigo_api.models.works import WorkMixin
+from indigo.analysis.toc.base import TOCElement, TOCBuilderBase
 from indigo_api.templatetags.indigo import make_beautiful
 
 
 class BeautifulProvisionsTestCase(TestCase):
     def setUp(self):
-        self.commenceable_provisions = [TOCElement(element=None, component=None, type_='section', id_=f'section-{number}', num=f'{number}.') for number in range(1, 31)]
+        self.commenceable_provisions = [TOCElement(
+            element=None, component=None, type_='section', id_=f'section-{number}', num=f'{number}.'
+        ) for number in range(1, 31)]
+        self.toc_plugin = TOCBuilderBase()
 
     def test_beautiful_provisions_basic(self):
         provisions = ['section-1', 'section-2', 'section-3', 'section-4']
@@ -96,7 +98,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -114,7 +116,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -132,7 +134,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -155,7 +157,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -178,7 +180,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -199,7 +201,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -216,7 +218,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',
@@ -236,7 +238,7 @@ class BeautifulProvisionsTestCase(TestCase):
         id_set = set()
         for pit in [pit_1_provisions, pit_2_provisions, pit_3_provisions]:
             items = [DotMap(id=f'section-{p}') for p in pit]
-            provisions = WorkMixin.insert_provisions(WorkMixin(), provisions, id_set, items)
+            self.toc_plugin.insert_provisions(provisions, id_set, items)
         provisions = [p.id for p in provisions]
         self.assertEqual(provisions, [
             'section-1',

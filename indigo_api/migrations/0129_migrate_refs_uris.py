@@ -6,9 +6,8 @@ from lxml import etree
 
 from django.db import migrations
 
-from cobalt import Act, FrbrUri, datestring
+from cobalt import Act, FrbrUri
 from cobalt.uri import FRBR_URI_RE
-from indigo.analysis.refs.base import BaseRefsFinder
 
 
 def new_frbr_uri(uri, forward):
@@ -21,33 +20,27 @@ def new_frbr_uri(uri, forward):
     return uri
 
 
-class RefsFinderRef(BaseRefsFinder):
+def handle_refs(document, cobalt_doc, forward):
     """ Finds hrefs in documents, of the form:
 
         href="/za/act/2012/22">Act no 22 of 2012
         href="/akn/za/act/2012/22">Act no 22 of 2012
 
-        and either adds or removes the /akn prefix, depending on what is passed to `handle_refs`
+        For each of these,
+        if `forward` is True, it adds the /akn prefix
+        if `forward` is False, it removes it
 
     """
+    root = etree.fromstring(document.document_xml)
+    path = etree.XPath("//a:*[starts-with(@href, '/')]", namespaces={'a': cobalt_doc.namespace})
+    for node in path(root):
+        ref = node.get('href')
+        match = FRBR_URI_RE.match(ref)
+        if match:
+            ref = new_frbr_uri(ref, forward).work_uri()
+            node.set('href', ref)
 
-    ancestors = ['meta', 'coverPage', 'preface', 'preamble', 'body', 'mainBody', 'conclusions']
-    candidate_xpath = "//a:*[starts-with(@href, '/')]"
-    pattern_re = FRBR_URI_RE
-
-    def handle_refs(self, document, forward):
-        root = etree.fromstring(document.document_xml)
-        self.setup(root)
-
-        for ancestor in self.ancestor_nodes(root):
-            for node in self.candidate_nodes(ancestor):
-                ref = node.get('href')
-                match = self.pattern_re.match(ref)
-                if match:
-                    ref = str(new_frbr_uri(ref, forward))
-                    node.set('href', ref)
-
-        document.document_xml = etree.tostring(root, encoding='utf-8').decode('utf-8')
+    document.document_xml = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
 
 def migrate_uris(apps, schema_editor, forward):
@@ -69,7 +62,7 @@ def migrate_uris(apps, schema_editor, forward):
         cobalt_doc = Act(doc.document_xml)
         cobalt_doc.frbr_uri = doc.frbr_uri
         doc.document_xml = cobalt_doc.to_xml()
-        RefsFinderRef.handle_refs(RefsFinderRef(), doc, forward)
+        handle_refs(doc, cobalt_doc, forward)
         doc.save()
 
 

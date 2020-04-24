@@ -51,13 +51,8 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
 
     def determine_place(self):
         if 'place' not in self.kwargs:
-            try:
-                uri = FrbrUri.parse(self.kwargs['frbr_uri'])
-                self.kwargs['place'] = uri.place
-            except ValueError:
-                # not a valid URI; make some guesses
-                parts = self.kwargs['frbr_uri'].split('/')
-                self.kwargs['place'] = parts[2] if parts[1] == 'akn' else parts[1]
+            parts = self.kwargs['frbr_uri'].split('/')
+            self.kwargs['place'] = parts[2] if parts[1] == 'akn' else parts[1]
 
         return super(WorkViewBase, self).determine_place()
 

@@ -78,15 +78,8 @@ class FrbrUriViewMixin(PlaceAPIBase):
         return frbr_uri
 
     def determine_place(self):
-        try:
-            uri = FrbrUri.parse(self.kwargs['frbr_uri'])
-            place = uri.place
-
-        except ValueError:
-            # not a valid URI; make some guesses
-            parts = self.kwargs['frbr_uri'].split('/')
-            place = parts[2] if parts[1] == 'akn' else parts[1]
-
+        parts = self.kwargs['frbr_uri'].split('/')
+        place = parts[2] if parts[1] == 'akn' else parts[1]
         self.country, self.locality = Country.get_country_locality(place)
 
         super(FrbrUriViewMixin, self).determine_place()

@@ -40,143 +40,147 @@
         <div class="card">
           <div class="card-body">
 
-            <div class="row">
-              <div class="col-sm-6">
-                <dl class="mb-0">
-                  <dt>Promulgation</dt>
-                  <dd>
-                    <div>
-                      Published in {{ work.publication_name|default:"(unknown)" }}
-                      {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
-                      {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
-                    </div>
-                    {% if work.publication_document %}
-                    <div>
-                      <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
-                    </div>
-                    {% endif %}
-                  </dd>
-
-                  <dt>Commencement</dt>
-                  <dd>
-                    {% if work.commenced %}
-                      Commenced
-                      {% if work.main_commencement and not work.main_commencement.all_provisions %}in part{% endif %}
-                      on {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
-                      {% if work.commencing_work %}
-                        by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
-                      {% endif %}
-                      {% if work.commencements.count > 1 %}
-                        <div>This work has <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">multiple commencements</a>.</div>
-                      {% endif %}
-                    {% else %}
-                      Not commenced
-                    {% endif %}
-                  </dd>
-
-                  {% regroup work.taxonomies.all by vocabulary as topic_groups %}
-                  {% if topic_groups %}
-                    {% for topic in topic_groups %}
-                      <dt>{{ topic.grouper }}</dt>
-                      <dd>
-                        {% for taxonomy in topic.list %}
-                          {{ taxonomy }} <br>
-                        {% endfor %}
-                      </dd>
-                    {% endfor %}
-                  {% endif %}
-
-                </dl>
-              </div>
-
-              <div class="col-sm-6">
-                <dl class="mb-0">
-                  <dt>Assent</dt>
-                  <dd>
-                    {% if work.assent_date %}
-                      Assented to on {{ work.assent_date|date:"Y-m-d" }}
-                    {% else %}
-                      <i>(unknown)</i>
-                    {% endif %}
-                  </dd>
-
-                  <dt>Repeal</dt>
-                  <dd>
-                    {% if work.repealed_date %}
-                      Repealed on {{ work.repealed_date|date:"Y-m-d" }}
-                      {% if work.repealed_by %}
-                      by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
-                      {% endif %}
-                    {% else %}
-                      <i>(not repealed)</i>
-                    {% endif %}
-                  </dd>
-
-                  {% if work.parent_work %}
-                    <dt>Primary work</dt>
-                    <dd>
-                      <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
-                    </dd>
-                  {% endif %}
-
-                  {% with work.child_works.all as kids %}
-                    {% if kids|length > 0 %}
-                      <dt>Subsidary works</dt>
-                      <dd>
-                        {% if kids|length > 3 %}
-                          <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>
-                        {% else %}
-                          <ul class="list-unstyled">
-                          {% for kid in kids %}
-                            <li><a href="{% url 'work' frbr_uri=kid.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=kid.frbr_uri %}">{{ kid.title }}</a></li>
-                          {% endfor %}
-                          </ul>
-                        {% endif %}
-                      </dd>
-                    {% endif %}
-                  {% endwith %}
-                </dl>
-              </div>
-            </div>
-
-            {% if work.properties %}
+            {% block primary-info-detail %}
               <div class="row">
-                {% for prop in work.labeled_properties %}
-                  <dl class="col-sm-6 mb-0">
-                    <dt>{{ prop.label }}</dt>
-                    <dd>{{ prop.value }}</dd>
+                <div class="col-sm-6">
+                  <dl class="mb-0">
+                    <dt>Promulgation</dt>
+                    <dd>
+                      <div>
+                        Published in {{ work.publication_name|default:"(unknown)" }}
+                        {% if work.publication_number %} no. {{ work.publication_number }}{% endif %}
+                        {% if work.publication_date %} on {{ work.publication_date|date:"Y-m-d" }}{% endif %}
+                      </div>
+                      {% if work.publication_document %}
+                      <div>
+                        <i class="fas fa-file text-muted"></i> <a href="{% url 'work_publication_document' frbr_uri=work.frbr_uri filename=work.publication_document.filename %}" target="_blank" rel="noopener">{{ work.publication_document.filename }}</a> <span class="text-muted">({{ work.publication_document.size|filesizeformat }})</span>
+                      </div>
+                      {% endif %}
+                    </dd>
+
+                    <dt>Commencement</dt>
+                    <dd>
+                      {% if work.commenced %}
+                        Commenced
+                        {% if work.main_commencement and not work.main_commencement.all_provisions %}in part{% endif %}
+                        on {{ work.commencement_date|date:"Y-m-d"|default:"<i>(unknown)</i>" }}
+                        {% if work.commencing_work %}
+                          by <a href="{% url 'work' frbr_uri=work.commencing_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.commencing_work.frbr_uri %}">{{ work.commencing_work.title }}</a>
+                        {% endif %}
+                        {% if work.commencements.count > 1 %}
+                          <div>This work has <a href="{% url 'work_commencements' frbr_uri=work.frbr_uri %}">multiple commencements</a>.</div>
+                        {% endif %}
+                      {% else %}
+                        Not commenced
+                      {% endif %}
+                    </dd>
+
+                    {% regroup work.taxonomies.all by vocabulary as topic_groups %}
+                    {% if topic_groups %}
+                      {% for topic in topic_groups %}
+                        <dt>{{ topic.grouper }}</dt>
+                        <dd>
+                          {% for taxonomy in topic.list %}
+                            {{ taxonomy }} <br>
+                          {% endfor %}
+                        </dd>
+                      {% endfor %}
+                    {% endif %}
+
                   </dl>
-                {% endfor %}
+                </div>
+
+                <div class="col-sm-6">
+                  <dl class="mb-0">
+                    <dt>Assent</dt>
+                    <dd>
+                      {% if work.assent_date %}
+                        Assented to on {{ work.assent_date|date:"Y-m-d" }}
+                      {% else %}
+                        <i>(unknown)</i>
+                      {% endif %}
+                    </dd>
+
+                    <dt>Repeal</dt>
+                    <dd>
+                      {% if work.repealed_date %}
+                        Repealed on {{ work.repealed_date|date:"Y-m-d" }}
+                        {% if work.repealed_by %}
+                        by <a href="{% url 'work' frbr_uri=work.repealed_by.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.repealed_by.frbr_uri %}">{{ work.repealed_by.title }}</a>
+                        {% endif %}
+                      {% else %}
+                        <i>(not repealed)</i>
+                      {% endif %}
+                    </dd>
+
+                    {% if work.parent_work %}
+                      <dt>Primary work</dt>
+                      <dd>
+                        <a href="{% url 'work' frbr_uri=work.parent_work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.parent_work.frbr_uri %}">{{ work.parent_work.title }}</a>
+                      </dd>
+                    {% endif %}
+
+                    {% with work.child_works.all as kids %}
+                      {% if kids|length > 0 %}
+                        <dt>Subsidary works</dt>
+                        <dd>
+                          {% if kids|length > 3 %}
+                            <a href="{% url 'work_related' frbr_uri=work.frbr_uri %}#parent_kids">{{ kids|length }} subsidiary work{{ kids|length|pluralize }}</a>
+                          {% else %}
+                            <ul class="list-unstyled">
+                            {% for kid in kids %}
+                              <li><a href="{% url 'work' frbr_uri=kid.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=kid.frbr_uri %}">{{ kid.title }}</a></li>
+                            {% endfor %}
+                            </ul>
+                          {% endif %}
+                        </dd>
+                      {% endif %}
+                    {% endwith %}
+                  </dl>
+                </div>
               </div>
-            {% endif %}
+
+              {% if work.properties %}
+                <div class="row">
+                  {% for prop in work.labeled_properties %}
+                    <dl class="col-sm-6 mb-0">
+                      <dt>{{ prop.label }}</dt>
+                      <dd>{{ prop.value }}</dd>
+                    </dl>
+                  {% endfor %}
+                </div>
+              {% endif %}
+            {% endblock %}
           </div>
         </div>
       {% endblock %}
     </div>
 
     <div class="col-3">
-      <h6>Core Details</h6>
+      {% block secondary-info %}
+        <h6>Core Details</h6>
 
-      <div class="d-flex mb-2">
-        <div>
-          {% include 'indigo_metrics/_progress_ball.html' with size=70 progress=work.metrics.p_breadth_complete %}
+        <div class="d-flex mb-2">
+          <div>
+            {% include 'indigo_metrics/_progress_ball.html' with size=70 progress=work.metrics.p_breadth_complete %}
+          </div>
+          <div class="ml-2 mt-2">
+            <h3 class="mb-0">{{ work.metrics.p_breadth_complete|floatformat:0 }}%</h3>
+            Complete
+          </div>
         </div>
-        <div class="ml-2 mt-2">
-          <h3 class="mb-0">{{ work.metrics.p_breadth_complete|floatformat:0 }}%</h3>
-          Complete
-        </div>
-      </div>
 
-      {% if work.metrics.p_complete < 100 %}
-        <ul class="mb-0 mt-3 pl-4">
-          {% if not work.publication_document %}
-            <li>Add a publication document.</li>
-          {% endif %}
-          {% if not work.stub and work.metrics.n_expressions == 0 %}
-            <li>Publish at least one point in time.</li>
-          {% endif %}
-        </ul>
-      {% endif %}
+        {% if work.metrics.p_complete < 100 %}
+          <ul class="mb-0 mt-3 pl-4">
+            {% if not work.publication_document %}
+              <li>Add a publication document.</li>
+            {% endif %}
+            {% if not work.stub and work.metrics.n_expressions == 0 %}
+              <li>Publish at least one point in time.</li>
+            {% endif %}
+          </ul>
+        {% endif %}
+      {% endblock %}
     </div>
   </div>
 

@@ -203,7 +203,7 @@
 
     updateFrbrUri: function() {
       // rebuild the FRBR uri when one of its component sources changes
-      var parts = [''];
+      var parts = ['', 'akn'];
 
       var country = this.get('country');
       if (this.get('locality')) {

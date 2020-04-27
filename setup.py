@@ -27,7 +27,7 @@ setup(
     # See https://pypi.org/classifiers/
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.2',
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python',
@@ -40,33 +40,33 @@ setup(
 
     python_requires='~=3.6',
     install_requires=[
-        'django>=1.11.27,<2',
+        'django>=2.2.12,<3',
         'boto3>=1.7',
         'cobalt>=3.1',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',
-        'django-allauth>=0.36.0,<0.41.0',  # 0.41.0 moved to django 2
+        'django-allauth>=0.41.0',
         'django-background-tasks>=1.2.0',
         'django-compressor>=2.2',
         'django-cors-headers>=3.1.0',
-        'django-countries-plus==1.1',  # 1.2 breaks migrations
+        'django-countries-plus>=1.3.1',
         'django-jsonfield>=1.0.1',
         'django-jsonfield-compat>=0.4.4',
-        'django-filter>=1.0,<2',
+        'django-filter>=2.2.0',
         'django-fsm>=2.6.0',
-        'django-languages-plus==0.1.5',  # 1.x doesn't play with django-countries-plus < 1.2
+        'django-languages-plus>=1.0.0',
         'django-pipeline>=1.6.11',
         'django-recaptcha>=1.4.0,<2.0.0',
-        'django-reversion>=1.10.2,<2',
+        'django-reversion==3.0.1',  # v3.0.2 introduces squashed migrations that break existing migrations
         'django-sass-processor>=0.6',
         'django-storages>=1.6.6',
         'django-taggit-serializer>=0.1.5',
-        'django-taggit==0.24.0',
+        'django-taggit>=1.2.0',
         'django-templated-email>=2.3.0',
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
-        'djangorestframework>=3.6.2,<3.7',
+        'djangorestframework>=3.11.0',
         'dotmap>=1.3.8',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',

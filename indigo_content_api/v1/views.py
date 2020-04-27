@@ -339,7 +339,7 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
         .published()
 
     def filter_queryset(self, queryset):
-        return queryset.filter(document=self.get_document())
+        return super().filter_queryset(queryset).filter(document=self.get_document())
 
     def get_file(self, request, filename, *args, **kwargs):
         """ Download a media file.

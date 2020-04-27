@@ -5,6 +5,12 @@ Changelog
 ----------
 
 * FEATURE: SUBPART element
+* BREAKING: upgrade to Django 2.22
+* FEATURE: numbered title in API
+* FIX: many fixes for table editing
+* FIX: improved annotation anchoring
+* BREAKING: new badges with clearer names and permissions
+* FEATURE: user profile photos
 * List of contributors for place and work
 
 9.1.0 (13 March 2020)

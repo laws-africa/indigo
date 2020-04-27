@@ -1,16 +1,16 @@
-from django.conf.urls import url, include
+from django.urls import include, path, re_path
 from rest_framework.routers import DefaultRouter
 
 import indigo_content_api.v1.views as v1_views
 from . import views as v2_views
 
 router = DefaultRouter(trailing_slash=False)
-router.register(r'countries', v1_views.CountryViewSet, base_name='country')
-router.register(r'taxonomies', v1_views.TaxonomyView, base_name='taxonomy')
+router.register(r'countries', v1_views.CountryViewSet, basename='country')
+router.register(r'taxonomies', v1_views.TaxonomyView, basename='taxonomy')
 
 
 urlpatterns = [
-    url(r'^', include(router.urls)),
+    path(r'', include(router.urls)),
 
     # --- public content API ---
     # viewing a specific document identified by FRBR URI fragment,
@@ -18,18 +18,18 @@ urlpatterns = [
 
     # Document/work media
     # Work publication document
-    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media/publication/(?P<filename>.*)$', v1_views.PublishedDocumentMediaView.as_view({'get': 'get_publication_document'}), name='published-document-publication'),
+    re_path(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media/publication/(?P<filename>.*)$', v1_views.PublishedDocumentMediaView.as_view({'get': 'get_publication_document'}), name='published-document-publication'),
     # Get a specific media file
-    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media/(?P<filename>.*)$', v1_views.PublishedDocumentMediaView.as_view({'get': 'get_file'}), name='published-document-file'),
+    re_path(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media/(?P<filename>.*)$', v1_views.PublishedDocumentMediaView.as_view({'get': 'get_file'}), name='published-document-file'),
     # List media for a work
-    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media\.(?P<format>[a-z0-9]+)$', v1_views.PublishedDocumentMediaView.as_view({'get': 'list'}), name='published-document-media'),
-    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media$', v1_views.PublishedDocumentMediaView.as_view({'get': 'list'}), name='published-document-media'),
+    re_path(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media\.(?P<format>[a-z0-9]+)$', v1_views.PublishedDocumentMediaView.as_view({'get': 'list'}), name='published-document-media'),
+    re_path(r'^akn/(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media$', v1_views.PublishedDocumentMediaView.as_view({'get': 'list'}), name='published-document-media'),
 
     # Expression details
     # eg. /akn/za/act/2007/98/toc.json
-    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/].*)/toc\.(?P<format>[a-z0-9]+)$', v1_views.PublishedDocumentTOCView.as_view({'get': 'get'}), name='published-document-toc'),
+    re_path(r'^akn/(?P<frbr_uri>[a-z]{2}[-/].*)/toc\.(?P<format>[a-z0-9]+)$', v1_views.PublishedDocumentTOCView.as_view({'get': 'get'}), name='published-document-toc'),
     # eg. /akn/za/act/2007/98
-    url(r'^akn/(?P<frbr_uri>[a-z]{2}[-/].*)$', v2_views.PublishedDocumentDetailViewV2.as_view({'get': 'get'}), name='published-document-detail'),
+    re_path(r'^akn/(?P<frbr_uri>[a-z]{2}[-/].*)$', v2_views.PublishedDocumentDetailViewV2.as_view({'get': 'get'}), name='published-document-detail'),
 
-    url(r'^search/(?P<country>[a-z]{2})$', v1_views.PublishedDocumentSearchView.as_view(), name='public-search'),
+    re_path(r'^search/(?P<country>[a-z]{2})$', v1_views.PublishedDocumentSearchView.as_view(), name='public-search'),
 ]

@@ -6,7 +6,7 @@ from pinax.badges.registry import badges
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class SocialViewsTest(testcases.TestCase):
-    fixtures = ['countries', 'user', 'editor']
+    fixtures = ['languages_data', 'countries', 'user', 'editor']
 
     def test_contributor_page(self):
         response = self.client.get('/contributors/')

@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='document',
             name='language',
-            field=models.CharField(default=b'eng', max_length=3, choices=[(b'eng', b'English')]),
+            field=models.CharField(default=b'eng', max_length=6, choices=[(b'eng', b'English')]),
             preserve_default=True,
         ),
         migrations.AlterField(

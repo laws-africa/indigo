@@ -2,7 +2,7 @@ from rest_framework.test import APITestCase
 
 
 class CountriesAPIV1Test(APITestCase):
-    fixtures = ['countries', 'user']
+    fixtures = ['languages_data', 'countries', 'user']
     api_path = '/api/v1'
     api_host = 'testserver'
 

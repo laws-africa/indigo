@@ -11,7 +11,7 @@ from indigo_api.tests.fixtures import document_fixture
 
 
 class SectionRefsFinderTestCase(TestCase):
-    fixtures = ['countries']
+    fixtures = ['languages_data', 'countries']
 
     def setUp(self):
         self.section_refs_finder = SectionRefsFinderENG()
@@ -708,7 +708,7 @@ class SectionRefsFinderTestCase(TestCase):
 
 
 class RefsFinderENGTestCase(TestCase):
-    fixtures = ['countries']
+    fixtures = ['languages_data', 'countries']
 
     def setUp(self):
         self.finder = RefsFinderENG()
@@ -755,7 +755,7 @@ class RefsFinderENGTestCase(TestCase):
 
 
 class RefsFinderSubtypesENGTestCase(TestCase):
-    fixtures = ['countries']
+    fixtures = ['languages_data', 'countries']
 
     def setUp(self):
         self.finder = RefsFinderSubtypesENG()
@@ -802,7 +802,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
 
 
 class RefsFinderCapENGTestCase(TestCase):
-    fixtures = ['countries', 'user']
+    fixtures = ['languages_data', 'countries', 'user']
 
     def setUp(self):
         self.finder = RefsFinderCapENG()

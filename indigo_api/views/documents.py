@@ -154,10 +154,10 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
-        return queryset.filter(document=self.document).all()
+        return super().filter_queryset(queryset).filter(document=self.document)
     
     def list(self, request, **kwargs):
-        queryset = list(Annotation.objects.filter(document=self.document).all())
+        queryset = list(self.filter_queryset(self.get_queryset()))
         task_content_type = ContentType.objects.get_for_model(Task)
 
         fake_annotations = []

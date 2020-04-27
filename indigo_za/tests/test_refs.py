@@ -28,7 +28,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>"""))
 
         self.finder.find_references_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -57,7 +57,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>"""))
 
         self.finder.find_references_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -86,7 +86,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 </section>"""))
 
         self.finder.find_references_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -132,7 +132,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 
         self.finder.find_references_in_document(doc)
         self.maxDiff = None
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -177,7 +177,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 
         self.finder.find_references_in_document(doc)
         self.maxDiff = None
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -212,7 +212,7 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>"""))
 
         self.finder.find_references_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -241,7 +241,7 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>"""))
 
         self.finder.find_references_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -270,7 +270,7 @@ class RefsFinderAFRzaTestCase(APITestCase):
 </section>"""))
 
         self.finder.find_references_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -314,7 +314,7 @@ class RefsFinderAFRzaTestCase(APITestCase):
 
         self.finder.find_references_in_document(doc)
         self.maxDiff = None
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>

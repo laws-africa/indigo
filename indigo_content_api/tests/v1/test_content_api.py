@@ -393,7 +393,7 @@ class ContentAPIV1TestMixin(object):
         assert_equal(len(response.data['results']), 0)
 
         # should not exist
-        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/test.txt')
+        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/test.png')
         assert_equal(response.status_code, 404)
 
         # create a doc with an attachment
@@ -407,24 +407,26 @@ class ContentAPIV1TestMixin(object):
         assert_equal(len(response.data['results']), 1)
 
         # now should exist
-        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/test.txt')
+        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/test.png')
         assert_equal(response.status_code, 200)
 
         # 403 for anonymous
         self.client.logout()
-        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/test.txt')
+        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/test.png')
         assert_equal(response.status_code, 403)
 
         # even for a non-existent one
-        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/bad.txt')
+        response = self.client.get(self.api_path + '/za/act/2001/8/eng/media/bad.png')
         assert_equal(response.status_code, 403)
 
     def upload_attachment(self, doc_id):
-        tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
-        tmp_file.write("hello!".encode())
+        tmp_file = tempfile.NamedTemporaryFile(suffix='.png')
+        # this is the smallest possible transparent png
+        # see https://github.com/mathiasbynens/small
+        tmp_file.write(b'\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\nIDATx\x9cc\x00\x01\x00\x00\x05\x00\x01\r\n-\xb4\x00\x00\x00\x00IEND\xaeB`\x82')
         tmp_file.seek(0)
         response = self.client.post('/api/documents/%s/attachments' % doc_id,
-                                    {'file': tmp_file, 'filename': 'test.txt'}, format='multipart')
+                                    {'file': tmp_file, 'filename': 'test.png'}, format='multipart')
         assert_equal(response.status_code, 201)
 
     def test_published_zipfile(self):

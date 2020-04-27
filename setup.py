@@ -27,7 +27,7 @@ setup(
     # See https://pypi.org/classifiers/
     classifiers=[
         'Development Status :: 4 - Beta',
-        'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.2',
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
         'Programming Language :: Python',

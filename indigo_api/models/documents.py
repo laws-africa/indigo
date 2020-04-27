@@ -413,7 +413,7 @@ class Document(DocumentMixin, models.Model):
         return reversion.models.Version.objects \
             .select_related('revision') \
             .filter(content_type=content_type) \
-            .filter(object_id_int=self.id) \
+            .filter(object_id=self.id) \
             .order_by('-id')
 
     def manifestation_url(self, fqdn=''):

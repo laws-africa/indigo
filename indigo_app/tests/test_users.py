@@ -12,7 +12,7 @@ from indigo_api.models import Work
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
 class UsersWebTest(WebTest):
-    fixtures = ['countries', 'user', 'editor']
+    fixtures = ['languages_data', 'countries', 'user', 'editor']
 
     def setUp(self):
         self.app.set_user(User.objects.get(username='email@example.com'))

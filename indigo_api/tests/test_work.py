@@ -8,7 +8,7 @@ from indigo_api.models import Document, Work, Country, Amendment, ArbitraryExpre
 
 
 class WorkTestCase(TestCase):
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'published', 'drafts', 'commencements']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'published', 'drafts', 'commencements']
 
     def setUp(self):
         self.work = Work.objects.get(id=1)

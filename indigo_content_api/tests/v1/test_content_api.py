@@ -553,5 +553,5 @@ class ContentAPIV1TestMixin(object):
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)
 class ContentAPIV1Test(ContentAPIV1TestMixin, APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon', 'attachments',
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'published', 'colophon', 'attachments',
                 'commencements']

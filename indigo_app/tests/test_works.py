@@ -249,7 +249,6 @@ class WorksWebTest(WebTest):
         form['work-title'] = "Uncommenced Work"
         form['work-frbr_uri'] = '/akn/za/act/2020/6'
         form.submit()
-        # /akn will have been forced in on clean (?)
         work = Work.objects.get(frbr_uri='/akn/za/act/2020/6')
         self.assertFalse(work.commenced)
         self.assertFalse(work.commencements.all())
@@ -257,8 +256,6 @@ class WorksWebTest(WebTest):
     def test_edit_uncommenced_work_to_commence(self):
         uncommenced_work = Work.objects.get(pk=2)
         self.assertFalse(uncommenced_work.commenced)
-
-        whatsthis = self.app.get(f'/works{uncommenced_work.frbr_uri}/edit/')
 
         form = self.app.get(f'/works{uncommenced_work.frbr_uri}/edit/').forms['edit-work-form']
         form['work-commenced'] = True

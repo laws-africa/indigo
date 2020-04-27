@@ -5,7 +5,7 @@ from indigo_api.models import Work
 
 
 class BaseWorkDetailTestCase(TestCase):
-    fixtures = ['countries']
+    fixtures = ['languages_data', 'countries']
 
     def setUp(self):
         self.plugin = BaseWorkDetail()

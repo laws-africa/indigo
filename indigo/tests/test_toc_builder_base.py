@@ -8,7 +8,7 @@ from indigo.analysis.toc.base import TOCBuilderBase
 
 
 class TOCBuilderBaseTestCase(TestCase):
-    fixtures = ['countries']
+    fixtures = ['languages_data', 'countries']
 
     def setUp(self):
         self.builder = TOCBuilderBase()

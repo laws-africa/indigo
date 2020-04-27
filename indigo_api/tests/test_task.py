@@ -6,7 +6,7 @@ from indigo_api.models import Task, Work, Country
 
 
 class TaskTestCase(TestCase):
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'drafts']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'drafts']
 
     def setUp(self):
         self.user = User.objects.get(pk=1)

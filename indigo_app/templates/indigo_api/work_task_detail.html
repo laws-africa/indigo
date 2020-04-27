@@ -1,0 +1,8 @@
+{% extends "indigo_api/work_layout.html" %}
+{% load activity_tags humanize indigo_app account comments %}
+
+{% block title %}{{ task.title }} – {{ block.super }}{% endblock %}
+
+{% block work-content %}
+  {% include "indigo_api/_task_detail.html" %}
+{% endblock %}

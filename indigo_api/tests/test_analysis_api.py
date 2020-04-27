@@ -7,7 +7,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class AnalysisTestCase(APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work']
 
     def setUp(self):
         self.client.default_format = 'json'

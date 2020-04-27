@@ -132,7 +132,17 @@ class TaskDetailView(TaskViewBase, DetailView):
         Task.decorate_potential_assignees([task], self.country)
         Task.decorate_permissions([task], self)
 
+        # add work to context
+        if task.work:
+            context['work'] = task.work
+            context['work_json'] = json.dumps(WorkSerializer(instance=task.work, context={'request': self.request}).data)
+
         return context
+
+    def get_template_names(self):
+        if self.object.work:
+            return ['indigo_api/work_task_detail.html']
+        return super().get_template_names()
 
 
 class TaskCreateView(TaskViewBase, CreateView):
@@ -148,7 +158,7 @@ class TaskCreateView(TaskViewBase, CreateView):
     def form_valid(self, form):
         response_object = super(TaskCreateView, self).form_valid(form)
         task = self.object
-        task.workflows = form.cleaned_data.get('workflows')
+        task.workflows.set(form.cleaned_data.get('workflows'))
         for workflow in task.workflows.all():
             action.send(self.request.user, verb='added', action_object=task, target=workflow,
                         place_code=task.place.place_code)
@@ -225,7 +235,7 @@ class TaskEditView(TaskViewBase, UpdateView):
 
         new_workflows = form.cleaned_data.get('workflows')
         self.record_workflow_actions(task, new_workflows)
-        task.workflows = new_workflows
+        task.workflows.set(new_workflows)
 
         return super(TaskEditView, self).form_valid(form)
 

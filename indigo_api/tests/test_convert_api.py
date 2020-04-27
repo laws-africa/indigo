@@ -8,7 +8,7 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class RenderParseAPITest(APITestCase):
-    fixtures = ['countries', 'user', 'editor', 'taxonomies', 'work', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'published']
 
     def setUp(self):
         self.client.default_format = 'json'

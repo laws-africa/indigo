@@ -1,15 +1,17 @@
-from django.conf.urls import url, include
+from django.urls import include, path
 from django.conf import settings
 
+
+APP_NAME = 'indigo_content_api'
 
 if settings.INDIGO_CONTENT_API_VERSIONED:
     # Versioned API URLs
     urlpatterns = [
-        url(r'^v1/', include('indigo_content_api.v1.urls', namespace='v1')),
-        url(r'^v2/', include('indigo_content_api.v2.urls', namespace='v2')),
+        path('v1/', include(('indigo_content_api.v1.urls', APP_NAME), namespace='v1')),
+        path('v2/', include(('indigo_content_api.v2.urls', APP_NAME), namespace='v2')),
     ]
 else:
     # Unversioned API URLs, latest only
     urlpatterns = [
-        url(r'^', include('indigo_content_api.urls_v1', namespace='v1'))
+        path('', include(('indigo_content_api.urls_v1', APP_NAME), namespace='v1'))
     ]

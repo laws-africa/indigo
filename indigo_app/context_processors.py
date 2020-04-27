@@ -34,7 +34,7 @@ def models(request):
 def serialise_user(request):
     data = {}
 
-    if request.user.is_authenticated():
+    if request.user.is_authenticated:
         from indigo_app.serializers import UserDetailsSerializer
         data = UserDetailsSerializer(context={'request': request}).to_representation(request.user)
 

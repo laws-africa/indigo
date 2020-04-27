@@ -1,4 +1,4 @@
-from django.conf.urls import include, url
+from django.urls import include, path
 from django.contrib import admin
 from django.views.generic import TemplateView
 
@@ -13,15 +13,15 @@ admin.site.site_header = 'Indigo Admin'
 
 
 urlpatterns = [
-    url(r'^admin/', include(admin.site.urls)),
-    url(r'^api/', include('indigo_content_api.urls')),
-    url(r'^api/', include('indigo_api.urls')),
-    url(r'^resolver/', include('indigo_resolver.urls')),
-    url(r'^', include('indigo_social.urls')),
-    url(r'^', include('indigo_app.urls')),
+    path('admin/', admin.site.urls),
+    path('api/', include('indigo_content_api.urls')),
+    path('api/', include('indigo_api.urls')),
+    path('resolver/', include('indigo_resolver.urls')),
+    path('', include('indigo_social.urls')),
+    path('', include('indigo_app.urls')),
 
-    url(r'^robots.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
-    url(r'^ping$', indigo_api.views.misc.ping),
+    path('robots.txt', TemplateView.as_view(template_name='robots.txt', content_type='text/plain')),
+    path('ping', indigo_api.views.misc.ping),
 ]
 
 

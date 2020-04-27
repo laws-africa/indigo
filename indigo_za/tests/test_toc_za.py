@@ -9,7 +9,7 @@ from indigo_api.models import Document, Work, Language
 
 
 class TOCBuilderZATestCase(APITestCase):
-    fixtures = ['countries', 'user', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
 
     def setUp(self):
         self.toc = TOCBuilderZA()

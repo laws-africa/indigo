@@ -6,7 +6,7 @@ from indigo_metrics.models import WorkMetrics
 
 
 class WorkMetricsTestCase(TestCase):
-    fixtures = ['countries', 'user', 'taxonomies', 'work', 'drafts', 'published']
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work', 'drafts', 'published']
 
     def test_metrics_for_all_fixtures(self):
         for work in Work.objects.all():

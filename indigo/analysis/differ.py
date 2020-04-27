@@ -1,4 +1,4 @@
-import cgi
+import html
 from difflib import SequenceMatcher
 from itertools import zip_longest
 from copy import deepcopy
@@ -75,8 +75,8 @@ class AttributeDiffer(object):
             return
 
         diffs = [{
-            'html_old': cgi.escape(x),
-            'html_new': cgi.escape(x),
+            'html_old': html.escape(x),
+            'html_new': html.escape(x),
         } for x in old]
 
         remove_offset = 0
@@ -91,7 +91,7 @@ class AttributeDiffer(object):
                     'old': None,
                     'new': v,
                     'html_old': '',
-                    'html_new': "<ins>{}</ins>".format(cgi.escape(v)),
+                    'html_new': "<ins>{}</ins>".format(html.escape(v)),
                 })
             elif patch['op'] == 'replace':
                 old_v = old[index]
@@ -109,7 +109,7 @@ class AttributeDiffer(object):
                 diffs[index] = {
                     'old': v,
                     'new': None,
-                    'html_old': "<del>{}</del>".format(cgi.escape(v)),
+                    'html_old': "<del>{}</del>".format(html.escape(v)),
                     'html_new': '',
                 }
                 # subsequent remove operations will need to be offset
@@ -139,19 +139,19 @@ class AttributeDiffer(object):
         matcher = SequenceMatcher(None, old, new)
         for opcode, a0, a1, b0, b1 in matcher.get_opcodes():
             if opcode == 'equal':
-                s = cgi.escape(matcher.a[a0:a1])
+                s = html.escape(matcher.a[a0:a1])
                 left.append(s)
                 right.append(s)
 
             elif opcode == 'insert':
-                right.append('<ins>{}</ins>'.format(cgi.escape(matcher.b[b0:b1])))
+                right.append('<ins>{}</ins>'.format(html.escape(matcher.b[b0:b1])))
 
             elif opcode == 'delete':
-                left.append('<del>{}</del>'.format(cgi.escape(matcher.a[a0:a1])))
+                left.append('<del>{}</del>'.format(html.escape(matcher.a[a0:a1])))
 
             elif opcode == 'replace':
-                left.append('<del>{}</del>'.format(cgi.escape(matcher.a[a0:a1])))
-                right.append('<ins>{}</ins>'.format(cgi.escape(matcher.b[b0:b1])))
+                left.append('<del>{}</del>'.format(html.escape(matcher.a[a0:a1])))
+                right.append('<ins>{}</ins>'.format(html.escape(matcher.b[b0:b1])))
 
         left = ''.join(left)
         right = ''.join(right)

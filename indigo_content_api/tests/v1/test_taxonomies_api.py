@@ -3,7 +3,7 @@ import json
 
 
 class TaxonomiesAPIV1Test(APITestCase):
-    fixtures = ['taxonomies', 'user']
+    fixtures = ['languages_data', 'taxonomies', 'user']
     api_path = '/api/v1'
     api_host = 'testserver'
 

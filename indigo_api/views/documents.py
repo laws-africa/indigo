@@ -16,7 +16,7 @@ from rest_framework.views import APIView
 from rest_framework import mixins, viewsets, renderers, status
 from rest_framework.generics import get_object_or_404, ListAPIView
 from rest_framework.response import Response
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import action as detail_route_action
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
@@ -99,7 +99,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
 
         super(DocumentViewSet, self).perform_update(serializer)
 
-    @detail_route(methods=['GET', 'PUT'])
+    @detail_route_action(detail=True, methods=['GET', 'PUT'])
     def content(self, request, *args, **kwargs):
         """ This exposes a GET and PUT resource at ``/api/documents/1/content`` which allows
         the content of the document to be fetched and set independently of the metadata. This
@@ -119,7 +119,7 @@ class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
 
             return Response({'content': instance.document_xml})
 
-    @detail_route(methods=['GET'])
+    @detail_route_action(detail=True, methods=['GET'])
     def toc(self, request, *args, **kwargs):
         """ This exposes a GET resource at ``/api/documents/1/toc`` which gives
         a table of contents for the document.
@@ -153,10 +153,10 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, AnnotationPermissions)
 
     def filter_queryset(self, queryset):
-        return queryset.filter(document=self.document).all()
+        return super().filter_queryset(queryset).filter(document=self.document)
     
     def list(self, request, **kwargs):
-        queryset = list(Annotation.objects.filter(document=self.document).all())
+        queryset = list(self.filter_queryset(self.get_queryset()))
         task_content_type = ContentType.objects.get_for_model(Task)
 
         fake_annotations = []
@@ -191,7 +191,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
         }
         return Response(data)
 
-    @detail_route(methods=['GET', 'POST'])
+    @detail_route_action(detail=True, methods=['GET', 'POST'])
     def task(self, request, *args, **kwargs):
         """ Get or create a task for this annotation.
         """
@@ -216,7 +216,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
     # The permissions applied in this case are for reversion.Version
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly,)
 
-    @detail_route(methods=['POST'])
+    @detail_route_action(detail=True, methods=['POST'])
     def restore(self, request, *args, **kwargs):
         # check permissions on the OLD object
         if not DocumentPermissions().has_object_permission(request, self, self.document):
@@ -225,7 +225,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         version = self.get_object()
 
         # check permissions on the NEW object
-        document = version.object_version.object
+        document = version._object_version.object
         if not DocumentPermissions().has_object_permission(request, self, document):
             self.permission_denied(self.request)
 
@@ -236,7 +236,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
         return Response(status=200)
 
-    @detail_route(methods=['GET'])
+    @detail_route_action(detail=True, methods=['GET'])
     @cache_control(public=True, max_age=24 * 3600)
     def diff(self, request, *args, **kwargs):
         # this can be cached because the underlying data won't change (although
@@ -252,13 +252,13 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         differ = AttributeDiffer()
 
         if old_version:
-            old_document = old_version.object_version.object
+            old_document = old_version._object_version.object
             old_document.document_xml = differ.preprocess_document_diff(old_document.document_xml)
             old_html = old_document.to_html()
         else:
             old_html = ""
 
-        new_document = version.object_version.object
+        new_document = version._object_version.object
         new_document.document_xml = differ.preprocess_document_diff(new_document.document_xml)
         new_html = new_document.to_html()
 
@@ -266,7 +266,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         new_tree = lxml.html.fromstring(new_html)
         n_changes = differ.diff_document_html(old_tree, new_tree)
 
-        diff = lxml.html.tostring(new_tree, encoding='utf-8')
+        diff = lxml.html.tostring(new_tree, encoding='unicode')
 
         # TODO: include other diff'd attributes
 

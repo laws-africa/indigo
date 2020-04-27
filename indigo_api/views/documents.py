@@ -253,7 +253,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         differ = AttributeDiffer()
 
         if old_version:
-            old_document = old_version.object_version.object
+            old_document = old_version._object_version.object
             old_document.document_xml = differ.preprocess_document_diff(old_document.document_xml)
             old_html = old_document.to_html()
         else:
@@ -267,7 +267,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         new_tree = lxml.html.fromstring(new_html)
         n_changes = differ.diff_document_html(old_tree, new_tree)
 
-        diff = lxml.html.tostring(new_tree, encoding='utf-8')
+        diff = lxml.html.tostring(new_tree, encoding='unicode')
 
         # TODO: include other diff'd attributes
 

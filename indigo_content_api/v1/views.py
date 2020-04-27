@@ -14,7 +14,7 @@ from cobalt import FrbrUri
 from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.documents import DocumentViewMixin, SearchView
 from indigo_api.views.attachments import view_attachment
-from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, VocabularyTopic
+from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, VocabularyTopic, Locality
 
 from indigo_content_api.v1.serializers import PublishedDocumentSerializer, CountrySerializer, MediaAttachmentSerializer, VocabularyTopicSerializer, TaxonomySerializer
 
@@ -80,7 +80,10 @@ class FrbrUriViewMixin(PlaceAPIBase):
     def determine_place(self):
         parts = self.kwargs['frbr_uri'].split('/')
         place = parts[2] if parts[1] == 'akn' else parts[1]
-        self.country, self.locality = Country.get_country_locality(place)
+        try:
+            self.country, self.locality = Country.get_country_locality(place)
+        except (Country.DoesNotExist, Locality.DoesNotExist):
+            raise Http404
 
         super(FrbrUriViewMixin, self).determine_place()
 

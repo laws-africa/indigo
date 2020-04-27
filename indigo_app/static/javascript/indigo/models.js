@@ -426,7 +426,7 @@
     var parts = frbr_uri.split('/'),
         place = parts[2].split('-'),
         country = place[0],
-        locality = place.length > 1 ? place.slice(1,).join('-') : null,
+        locality = place.length > 1 ? place.slice(1).join('-') : null,
         bump = parts.length > 6 ? 1 : 0;
 
     return new Indigo.Document({

@@ -58,4 +58,4 @@ class WorkAmendmentViewSet(WorkResourceView, viewsets.ReadOnlyModelViewSet):
     permission_classes = (DjangoModelPermissions,)
 
     def filter_queryset(self, queryset):
-        return queryset.filter(amended_work=self.work).all()
+        return super().filter_queryset(queryset).filter(amended_work=self.work).all()

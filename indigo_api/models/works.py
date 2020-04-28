@@ -492,7 +492,7 @@ class PublicationDocument(models.Model):
 
     def build_filename(self):
         # don't include /akn/ from FRBR URI in filename
-        return f"{{{self.work.frbr_uri[5:].replace('/', '-')}}}-publication-document.pdf"
+        return f"{self.work.frbr_uri[5:].replace('/', '-')}-publication-document.pdf"
 
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()

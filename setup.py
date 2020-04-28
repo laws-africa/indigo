@@ -67,7 +67,6 @@ setup(
         'django-wkhtmltopdf>=2.0.3,<2.1',
         'djangorestframework-xml>=1.3.0',
         'djangorestframework>=3.11.0',
-        'dotmap>=1.3.8',
         'EbookLib>=0.15',
         'google-api-python-client>=1.7.9',
         'iso8601>=0.1',
@@ -100,6 +99,7 @@ setup(
             'mock>=1.3.0',
             'coveralls',
             'django-webtest>=1.9.4',
+            'dotmap>=1.3.8',
         ],
     },
 )

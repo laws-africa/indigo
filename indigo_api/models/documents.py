@@ -9,7 +9,6 @@ from django.conf import settings
 from django.db import models
 from django.db.models import signals
 from django.contrib.auth.models import User
-from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchVectorField
 from django.contrib.postgres.fields import JSONField
 from django.dispatch import receiver
@@ -19,7 +18,7 @@ from allauth.account.utils import user_display
 from iso8601 import parse_date, ParseError
 from taggit.managers import TaggableManager
 import reversion.revisions
-import reversion.models
+from reversion.models import Version
 from cobalt.act import Act, FrbrUri, AmendmentEvent, datestring
 
 from indigo.plugins import plugins
@@ -409,12 +408,7 @@ class Document(DocumentMixin, models.Model):
         """ Return a queryset of `reversion.models.Version` objects for
         revisions for this work, most recent first.
         """
-        content_type = ContentType.objects.get_for_model(self)
-        return reversion.models.Version.objects \
-            .select_related('revision') \
-            .filter(content_type=content_type) \
-            .filter(object_id=self.id) \
-            .order_by('-id')
+        return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def manifestation_url(self, fqdn=''):
         """ Fully-qualified manifestation URL.

@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 import reversion.revisions
-import reversion.models
+from reversion.models import Version
 from cobalt.act import FrbrUri, RepealEvent
 
 from indigo.plugins import plugins
@@ -421,12 +421,7 @@ class Work(WorkMixin, models.Model):
         """ Return a queryset of `reversion.models.Version` objects for
         revisions for this work, most recent first.
         """
-        content_type = ContentType.objects.get_for_model(self)
-        return reversion.models.Version.objects \
-            .select_related('revision', 'revision__user') \
-            .filter(content_type=content_type) \
-            .filter(object_id=self.id) \
-            .order_by('-id')
+        return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def as_at_date(self):
         # the as-at date is the maximum of the most recent, published expression date,

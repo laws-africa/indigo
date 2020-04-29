@@ -14,4 +14,4 @@ def inline_scss(path):
     processor = SassProcessor()
     path = processor(path)
     with processor.storage.open(path) as f:
-        return mark_safe(f.read())
+        return mark_safe(f.read().decode('utf-8'))

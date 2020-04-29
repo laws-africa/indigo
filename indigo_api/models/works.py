@@ -242,11 +242,7 @@ class WorkMixin(object):
         for doc in documents:
             plugin = plugins.for_document('toc', doc)
             if plugin:
-                toc = plugin.table_of_contents_for_document(doc)
-                for item in plugin.commenceable_items(toc):
-                    if item.id and item.id not in id_set:
-                        id_set.add(item.id)
-                        provisions.append(item)
+                plugin.insert_commenceable_provisions(doc, provisions, id_set)
 
         return provisions
 

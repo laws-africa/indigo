@@ -30,7 +30,7 @@ def make_beautiful(provisions, commenceable_provisions):
         current_run.append({'type': element.type, 'num': element.num.strip('.')})
 
     def end_current():
-        if len(current_run) < 4:
+        if len(current_run) < 3:
             run = [f'{item["type"]} {item["num"]}' for item in current_run]
         else:
             run = [f'{current_run[0]["type"]} {current_run[0]["num"]}–{current_run[-1]["num"]}']

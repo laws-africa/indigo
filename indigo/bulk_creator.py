@@ -611,7 +611,7 @@ Possible reasons:
         # need to save before assigning workflow because of M2M relation
         task.save()
         if self.workflow:
-            task.workflows = [self.workflow]
+            task.workflows.set([self.workflow])
             task.save()
 
         return task

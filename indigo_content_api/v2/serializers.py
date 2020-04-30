@@ -2,24 +2,26 @@ from itertools import groupby
 
 from rest_framework import serializers
 from rest_framework.reverse import reverse
+
 from cobalt import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Work
-from indigo_api.serializers import DocumentSerializer, \
-    PublicationDocumentSerializer as PublicationDocumentSerializerBase, \
-    AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary
+from indigo_api.serializers import \
+    DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
+    PublicationDocumentSerializer as PublicationDocumentSerializerBase
 
 
-def published_doc_url(doc, request, frbr_uri=None):
-    """ Absolute URL for a published document.
-    eg. /api/v1/za/acts/2005/01/eng@2006-02-03
-    """
-    uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
-    uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
-    return uri.replace('%40', '@')
+class PublishedDocUrlMixin:
+    def published_doc_url(self, doc, request, frbr_uri=None):
+        """ Absolute URL for a published document.
+        eg. /api/v2/akn/za/act/2005/01/eng@2006-02-03
+        """
+        uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
+        uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
+        return uri.replace('%40', '@')
 
 
-class ExpressionSerializer(serializers.Serializer):
+class ExpressionSerializer(serializers.Serializer, PublishedDocUrlMixin):
     url = serializers.SerializerMethodField()
     language = serializers.CharField(source='language.code')
     expression_frbr_uri = serializers.CharField()
@@ -31,17 +33,17 @@ class ExpressionSerializer(serializers.Serializer):
         read_only_fields = fields
 
     def get_url(self, doc):
-        return published_doc_url(doc, self.context['request'])
+        return self.published_doc_url(doc, self.context['request'])
 
 
-class MediaAttachmentSerializer(AttachmentSerializer):
+class MediaAttachmentSerializer(AttachmentSerializer, PublishedDocUrlMixin):
     class Meta:
         model = Attachment
         fields = ('url', 'filename', 'mime_type', 'size')
         read_only_fields = fields
 
     def get_url(self, instance):
-        uri = published_doc_url(instance.document, self.context['request'])
+        uri = self.published_doc_url(instance.document, self.context['request'])
         return uri + '/media/' + instance.filename
 
 
@@ -52,7 +54,7 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
         fields = ('url', 'filename', 'mime_type', 'size')
 
 
-class PublishedDocumentSerializer(DocumentSerializer):
+class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Serializer for published documents.
 
     Inherits most fields from the base document serializer.
@@ -109,7 +111,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         ).to_representation(pub_doc)
 
     def get_url(self, doc):
-        return self.context.get('url', published_doc_url(doc, self.context['request']))
+        return self.context.get('url', self.published_doc_url(doc, self.context['request']))
 
     def get_taxonomies(self, doc):
         from indigo_api.serializers import WorkSerializer

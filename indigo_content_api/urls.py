@@ -13,5 +13,5 @@ if settings.INDIGO_CONTENT_API_VERSIONED:
 else:
     # Unversioned API URLs, latest only
     urlpatterns = [
-        path('', include(('indigo_content_api.urls_v1', APP_NAME), namespace='v1'))
+        path('', include(('indigo_content_api.urls_v2', APP_NAME), namespace='v2'))
     ]

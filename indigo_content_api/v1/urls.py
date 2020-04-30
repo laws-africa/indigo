@@ -30,5 +30,5 @@ urlpatterns = [
     # eg. /za/act/2007/98
     re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/].*)$', views.PublishedDocumentDetailViewV1.as_view({'get': 'get'}), name='published-document-detail'),
 
-    re_path(r'^search/(?P<country>[a-z]{2})$', views.PublishedDocumentSearchViewV1.as_view(), name='public-search'),
+    re_path(r'^search/(?P<country>[a-z]{2})$', v2_views.PublishedDocumentSearchView.as_view(), name='public-search'),
 ]

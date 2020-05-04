@@ -82,7 +82,7 @@ class WorkForm(forms.ModelForm):
             val = self.cleaned_data.get(f'property_{prop}')
             if val is not None and val != '':
                 self.instance.properties[prop] = val
-            elif prop in self.instance.properties.keys():
+            elif prop in self.instance.properties:
                 # a work property has been removed
                 del self.instance.properties[prop]
         self.instance.save()

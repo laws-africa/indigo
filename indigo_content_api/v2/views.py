@@ -6,7 +6,6 @@ from rest_framework import mixins, viewsets, renderers
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.permissions import IsAuthenticated, BasePermission
 from rest_framework.response import Response
-from rest_framework.reverse import reverse
 from rest_framework.versioning import NamespaceVersioning
 
 from cobalt import FrbrUri
@@ -211,7 +210,6 @@ class PublishedDocumentDetailView(DocumentViewMixin,
             # either explicitly or implicitly json
             self.request.accepted_renderer = renderers.JSONRenderer()
             self.request.accepted_media_type = self.request.accepted_renderer.media_type
-            self.serializer_class = PublishedDocumentDetailView.serializer_class
 
         response = super(PublishedDocumentDetailView, self).list(request)
 
@@ -222,8 +220,8 @@ class PublishedDocumentDetailView(DocumentViewMixin,
         return response
 
     def add_alternate_links(self, response, request):
-        url = reverse('published-document-detail', request=request,
-                      kwargs={'frbr_uri': self.kwargs['frbr_uri'][1:]})
+        serializer = self.get_serializer()
+        url = serializer.published_doc_url(None, request, frbr_uri=self.kwargs['frbr_uri'])
 
         if url.endswith('/'):
             url = url[:-1]

@@ -17,18 +17,18 @@ urlpatterns = [
 
     # Document/work media
     # Work publication document
-    re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/]\S+?)/media/publication/(?P<filename>.*)$', views.PublishedDocumentMediaViewV1.as_view({'get': 'get_publication_document'}), name='published-document-publication'),
+    re_path(r'^(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media/publication/(?P<filename>.*)$', views.PublishedDocumentMediaViewV1.as_view({'get': 'get_publication_document'}), name='published-document-publication'),
     # Get a specific media file
-    re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/]\S+?)/media/(?P<filename>.*)$', views.PublishedDocumentMediaViewV1.as_view({'get': 'get_file'}), name='published-document-file'),
+    re_path(r'^(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media/(?P<filename>.*)$', views.PublishedDocumentMediaViewV1.as_view({'get': 'get_file'}), name='published-document-file'),
     # List media for a work
-    re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/]\S+?)/media\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentMediaViewV1.as_view({'get': 'list'}), name='published-document-media'),
-    re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/]\S+?)/media$', views.PublishedDocumentMediaViewV1.as_view({'get': 'list'}), name='published-document-media'),
+    re_path(r'^(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentMediaViewV1.as_view({'get': 'list'}), name='published-document-media'),
+    re_path(r'^(?P<frbr_uri>[a-z]{2}[-/]\S+?)/media$', views.PublishedDocumentMediaViewV1.as_view({'get': 'list'}), name='published-document-media'),
 
     # Expression details
     # eg. /za/act/2007/98/toc.json
-    re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/].*)/toc\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentTOCViewV1.as_view({'get': 'get'}), name='published-document-toc'),
+    re_path(r'^(?P<frbr_uri>[a-z]{2}[-/].*)/toc\.(?P<format>[a-z0-9]+)$', views.PublishedDocumentTOCViewV1.as_view({'get': 'get'}), name='published-document-toc'),
     # eg. /za/act/2007/98
-    re_path(r'^(?P<frbr_uri>(akn/)?[a-z]{2}[-/].*)$', views.PublishedDocumentDetailViewV1.as_view({'get': 'get'}), name='published-document-detail'),
+    re_path(r'^(?P<frbr_uri>[a-z]{2}[-/].*)$', views.PublishedDocumentDetailViewV1.as_view({'get': 'get'}), name='published-document-detail'),
 
-    re_path(r'^search/(?P<country>[a-z]{2})$', v2_views.PublishedDocumentSearchView.as_view(), name='public-search'),
+    re_path(r'^search/(?P<country>[a-z]{2})$', views.PublishedDocumentSearchViewV1.as_view(), name='public-search'),
 ]

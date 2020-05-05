@@ -5,7 +5,7 @@ from cobalt import datestring
 from indigo_api.models import PublicationDocument
 
 from indigo_content_api.v2.serializers import PublishedDocUrlMixin, PublishedDocumentSerializer, \
-    MediaAttachmentSerializer, ExpressionSerializer, PublicationDocumentSerializer
+    MediaAttachmentSerializer, ExpressionSerializer, PublicationDocumentSerializer, CountrySerializer, LocalitySerializer
 
 
 class PublishedDocUrlMixinV1(PublishedDocUrlMixin):
@@ -58,3 +58,12 @@ class PublishedDocumentSerializerV1(PublishedDocumentSerializer, PublishedDocUrl
         return PublicationDocumentSerializerV1(
             context={'document': doc, 'request': self.context['request']}
         ).to_representation(pub_doc)
+
+
+class LocalitySerializerV1(LocalitySerializer):
+    prefix = False
+
+
+class CountrySerializerV1(CountrySerializer):
+    localities = LocalitySerializerV1(many=True)
+    prefix = False

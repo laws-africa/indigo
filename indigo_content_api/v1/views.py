@@ -1,7 +1,8 @@
 import re
 
-from indigo_content_api.v1.serializers import PublishedDocumentSerializerV1, MediaAttachmentSerializerV1, PublishedDocUrlMixinV1
-from indigo_content_api.v2.views import PublishedDocumentDetailView, PublishedDocumentMediaView, PublishedDocumentTOCView, PublishedDocumentSearchView
+from indigo_content_api.v1.serializers import PublishedDocumentSerializerV1, MediaAttachmentSerializerV1, PublishedDocUrlMixinV1, CountrySerializerV1
+from indigo_content_api.v2.views import PublishedDocumentDetailView, PublishedDocumentMediaView, \
+    PublishedDocumentTOCView, PublishedDocumentSearchView, CountryViewSet
 
 
 def rewrite_frbr_uris(data):
@@ -19,6 +20,10 @@ def rewrite_frbr_uris(data):
             elif isinstance(val, list):
                 for x in val:
                     rewrite_frbr_uris(x)
+
+
+class CountryViewSetV1(CountryViewSet):
+    serializer_class = CountrySerializerV1
 
 
 class PublishedDocumentDetailViewV1(PublishedDocumentDetailView):

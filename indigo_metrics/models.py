@@ -139,9 +139,9 @@ INSERT INTO
   )
 SELECT
   %s AS date,
-  frbr_uri_parts[2] AS place_code,
-  SUBSTRING(frbr_uri_parts[2] FROM 1 FOR 2) AS country,
-  SUBSTRING(frbr_uri_parts[2] FROM 4) AS locality,
+  frbr_uri_parts[3] AS place_code,
+  SUBSTRING(frbr_uri_parts[3] FROM 1 FOR 2) AS country,
+  SUBSTRING(frbr_uri_parts[3] FROM 4) AS locality,
   COUNT(1) AS n_works,
   SUM(n_expressions) AS n_expressions,
   SUM(n_expected_expressions) AS n_expected_expressions,

@@ -82,6 +82,13 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
                 .values('cnt'),
                 output_field=IntegerField()
             ))\
+            .annotate(p_breadth_complete=Subquery(
+                DailyWorkMetrics.objects
+                .filter(place_code__iexact=OuterRef('country_id'), locality__exact='')
+                .order_by('-date')
+                .values('p_breadth_complete')[:1],
+                output_field=IntegerField()
+            ))\
             .all()
 
         # place activity
@@ -730,12 +737,18 @@ class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView,
             .filter(country=self.country) \
             .annotate(n_works=Count('works')) \
             .annotate(n_open_tasks=Subquery(
-            Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
-                .values('locality')
-                .annotate(cnt=Count('pk'))
-                .values('cnt'),
-            output_field=IntegerField()
-        )) \
+                Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
+                    .values('locality')
+                    .annotate(cnt=Count('pk'))
+                    .values('cnt'),
+                output_field=IntegerField()
+            ))\
+            .annotate(p_breadth_complete=Subquery(
+                DailyWorkMetrics.objects.filter(locality=OuterRef('code'))
+                .order_by('-date')
+                .values('p_breadth_complete')[:1],
+                output_field=IntegerField()
+            ))\
             .all()
 
         # place activity

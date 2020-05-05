@@ -7,22 +7,22 @@
             <h5 class="card-title">{{ place.name }} · {{ place.code }}</h5>
 
             <div class="row text-muted">
-              <div class="col">
-                <h5>{{ place.n_works }}</h5>
+              <div class="col mb-2">
+                <h5 class="mb-0">{{ place.n_works }}</h5>
                 Work{{ place.n_works|pluralize }}
               </div>
               {% if place.n_open_tasks %}
-              <div class="col">
-                <h5>{{ place.n_open_tasks }}</h5>
+              <div class="col mb-2">
+                <h5 class="mb-0">{{ place.n_open_tasks }}</h5>
                 Task{{ place.n_open_tasks|pluralize }}
               </div>
               {% endif %}
-              <div class="col">
-                <h5>{%if place.p_breadth_complete %}{{ place.p_breadth_complete }}% {% else %} — {% endif %}</h5>
+              <div class="col mb-2">
+                <h5 class="mb-0">{%if place.p_breadth_complete %}{{ place.p_breadth_complete }}% {% else %} — {% endif %}</h5>
                 Complete
               </div>
-              <div class="col">
-                <h5>{% if place.settings.as_at_date %}{{ place.settings.as_at_date|date:"Y-m-d" }} {% else %} — {% endif %}</h5>
+              <div class="col mb-2">
+                <h5 class="mb-0">{% if place.settings.as_at_date %}{{ place.settings.as_at_date|date:"Y-m-d" }} {% else %} — {% endif %}</h5>
                 As at date
               </div>
             </div>

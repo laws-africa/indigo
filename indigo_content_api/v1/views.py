@@ -1,7 +1,7 @@
 import re
 
 from indigo_content_api.v1.serializers import PublishedDocumentSerializerV1, MediaAttachmentSerializerV1, PublishedDocUrlMixinV1
-from indigo_content_api.v2.views import PublishedDocumentDetailView, PublishedDocumentMediaView, PublishedDocumentTOCView
+from indigo_content_api.v2.views import PublishedDocumentDetailView, PublishedDocumentMediaView, PublishedDocumentTOCView, PublishedDocumentSearchView
 
 
 def rewrite_frbr_uris(data):
@@ -90,3 +90,7 @@ class PublishedDocumentMediaViewV1(PublishedDocumentMediaView):
         if not uri.startswith('akn/'):
             self.kwargs['frbr_uri'] = 'akn/' + uri
         super().initial(request, **kwargs)
+
+
+class PublishedDocumentSearchViewV1(PublishedDocumentSearchView):
+    serializer_class = PublishedDocumentSerializerV1

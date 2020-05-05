@@ -74,9 +74,15 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
 
         context['countries'] = Country.objects\
             .prefetch_related('country')\
-            .annotate(n_works=Count('works'))\
+            .annotate(n_works=Subquery(
+                Work.objects.filter(country=OuterRef('pk'), locality=None)
+                .values('country')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+                output_field=IntegerField()
+            ))\
             .annotate(n_open_tasks=Subquery(
-                Task.objects.filter(state__in=Task.OPEN_STATES, country=OuterRef('pk'))
+                Task.objects.filter(state__in=Task.OPEN_STATES, country=OuterRef('pk'), locality=None)
                 .values('country')
                 .annotate(cnt=Count('pk'))
                 .values('cnt'),
@@ -94,6 +100,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         # place activity
         since = now() - timedelta(days=14)
         metrics = DailyPlaceMetrics.objects\
+            .prefetch_related('country')\
             .filter(locality=None, date__gte=since)\
             .order_by('country', 'date')\
             .all()

@@ -20,8 +20,8 @@ class PublishedDocUrlMixin:
         uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
         return uri.replace('%40', '@')
 
-    def place_url(self, request, code, prefix=True):
-        if prefix:
+    def place_url(self, request, code):
+        if self.prefix:
             code = 'akn/' + code
         return reverse('published-document-detail', request=request, kwargs={'frbr_uri': code})
 
@@ -201,7 +201,7 @@ class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": self.place_url(self.context['request'], f"{instance.country.code}-{instance.code}/", prefix=self.prefix),
+                "href": self.place_url(self.context['request'], f"{instance.country.code}-{instance.code}/"),
             },
         ]
 
@@ -227,7 +227,7 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": self.place_url(self.context['request'], f"{instance.code}/", prefix=self.prefix),
+                "href": self.place_url(self.context['request'], f"{instance.code}/"),
             },
             {
                 "rel": "search",

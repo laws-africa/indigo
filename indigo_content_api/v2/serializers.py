@@ -20,6 +20,11 @@ class PublishedDocUrlMixin:
         uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
         return uri.replace('%40', '@')
 
+    def place_url(self, request, code, prefix=True):
+        if prefix:
+            code = 'akn/' + code
+        return reverse('published-document-detail', request=request, kwargs={'frbr_uri': code})
+
 
 class ExpressionSerializer(serializers.Serializer, PublishedDocUrlMixin):
     url = serializers.SerializerMethodField()
@@ -173,9 +178,10 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             ]
 
 
-class LocalitySerializer(serializers.ModelSerializer):
+class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
     frbr_uri_code = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
+    prefix = True
 
     class Meta:
         model = Locality
@@ -195,18 +201,16 @@ class LocalitySerializer(serializers.ModelSerializer):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": reverse(
-                    'published-document-detail',
-                    request=self.context['request'],
-                    kwargs={'frbr_uri': '%s-%s/' % (instance.country.code, instance.code)}),
+                "href": self.place_url(self.context['request'], f"{instance.country.code}-{instance.code}/", prefix=self.prefix),
             },
         ]
 
 
-class CountrySerializer(serializers.ModelSerializer):
+class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
     localities = LocalitySerializer(many=True)
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
+    prefix = True
 
     class Meta:
         model = Country
@@ -223,7 +227,7 @@ class CountrySerializer(serializers.ModelSerializer):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': '%s/' % instance.code}),
+                "href": self.place_url(self.context['request'], f"{instance.code}/", prefix=self.prefix),
             },
             {
                 "rel": "search",

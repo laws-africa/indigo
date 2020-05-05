@@ -12,7 +12,7 @@ def random_frbr_uri(country=None):
     today = datetime.datetime.now()
     number = ''.join(random.choice(string.ascii_uppercase + string.digits) for _ in range(5))
     country = country or 'za'
-    return FrbrUri(country=country.lower(), locality=None, doctype="act",
+    return FrbrUri(prefix=None, country=country.lower(), locality=None, doctype="act",
                    subtype=None, actor=None, date=str(today.year),
                    expression_date=today.strftime("%Y-%m-%d"),
                    number=number.lower())

@@ -43,7 +43,7 @@ class RenderParseAPITest(APITestCase):
     def test_render_json_to_html(self):
         response = self.client.post('/api/render', {
             'document': {
-                'frbr_uri': '/za/act/1998/2',
+                'frbr_uri': '/akn/za/act/1998/2',
                 'content': document_fixture(text='hello'),
                 'expression_date': '2001-01-01',
                 'language': 'eng',
@@ -70,7 +70,7 @@ class RenderParseAPITest(APITestCase):
     def test_render_json_to_html_with_unicode(self):
         response = self.client.post('/api/render', {
             'document': {
-                'frbr_uri': '/za/act/1998/2',
+                'frbr_uri': '/akn/za/act/1998/2',
                 'content': document_fixture(text='hello κόσμε'),
                 'expression_date': '2001-01-01',
                 'language': 'eng',
@@ -92,7 +92,7 @@ class RenderParseAPITest(APITestCase):
             """,
             'fragment': 'chapter',
             'id_prefix': 'prefix',
-            'frbr_uri': '/za/act/1998/2',
+            'frbr_uri': '/akn/za/act/1998/2',
             'language': 'eng',
         })
         self.assertEqual(response.status_code, 200)

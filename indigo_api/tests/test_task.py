@@ -19,7 +19,7 @@ class TaskTestCase(TestCase):
         na = Country.objects.get(country__pk='NA')
 
         self.task.country = na
-        self.task.work = Work.objects.get(frbr_uri='/za/act/2014/10')
+        self.task.work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
         self.task.clean()
 
         self.assertEqual(self.task.country, na)
@@ -31,7 +31,7 @@ class TaskTestCase(TestCase):
 
         self.task.country = za
         self.task.locality = loc
-        self.task.work = Work.objects.get(frbr_uri='/za/act/2014/10')
+        self.task.work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
         self.task.clean()
 
         self.assertEqual(self.task.country, za)

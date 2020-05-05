@@ -18,4 +18,7 @@ class DailyWorkMetricsTestCase(TestCase):
         DailyWorkMetrics.create_or_update(date)
 
         dailies = DailyWorkMetrics.objects.filter(date=date).all()
+        # DailyWorkMetrics should have been created for two places:
+        # - `za` (8 Works, pk 1 to 8 of work fixtures)
+        # - `za-cpt` (1 Work, pk 9 of work fixtures)
         self.assertEqual(len(dailies), 2)

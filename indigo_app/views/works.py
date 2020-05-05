@@ -18,6 +18,7 @@ from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
 
+from cobalt import FrbrUri
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement
@@ -50,7 +51,9 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
 
     def determine_place(self):
         if 'place' not in self.kwargs:
-            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/', 2)[1]
+            # assume FRBR URI starts with `/akn`
+            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/')[2]
+
         return super(WorkViewBase, self).determine_place()
 
     def get_context_data(self, **kwargs):

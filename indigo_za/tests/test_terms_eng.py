@@ -39,7 +39,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -92,7 +92,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -134,7 +134,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -164,7 +164,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -193,7 +193,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -228,7 +228,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>
@@ -268,7 +268,7 @@ class TermsFinderENGTestCase(APITestCase):
 
         self.maxDiff = None
         self.finder.find_terms_in_document(doc)
-        self.assertMultiLineEqual('''<body xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+        self.assertMultiLineEqual('''<body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
       
 <section id="section-1">
   <num>1.</num>

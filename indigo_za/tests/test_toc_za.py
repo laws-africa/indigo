@@ -19,7 +19,7 @@ class TOCBuilderZATestCase(APITestCase):
         d = Document()
         d.work = self.work
         d.content = document_fixture(xml="""
-        <body xmlns="http://www.akomantoso.org/2.0">
+        <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
           <section id="section-1">
             <num>1.</num>
             <heading>Foo</heading>
@@ -66,7 +66,7 @@ class TOCBuilderZATestCase(APITestCase):
         d = Document()
         d.work = self.work
         d.content = document_fixture(xml="""
-        <body xmlns="http://www.akomantoso.org/2.0">
+        <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
           <section id="section-1">
             <num>1.</num>
             <heading>Foo</heading>
@@ -113,7 +113,7 @@ class TOCBuilderZATestCase(APITestCase):
     def test_component_table_of_contents(self):
         d = Document()
         d.work = self.work
-        d.content = """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+        d.content = """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xsi:schemaLocation="http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/akomantoso30.xsd">
   <act contains="singleVersion">
     <meta>
       <identification source="#openbylaws">

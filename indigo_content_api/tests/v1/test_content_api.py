@@ -189,6 +189,7 @@ class ContentAPIV1TestMixin(object):
     def test_published_listing_missing(self):
         assert_equal(self.client.get(self.api_path + '/za/act/2999/').status_code, 404)
         assert_equal(self.client.get(self.api_path + '/zm/').status_code, 404)
+        assert_equal(self.client.get(self.api_path + '/za-foo/').status_code, 404)
 
     def test_published_toc(self):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/toc.json')

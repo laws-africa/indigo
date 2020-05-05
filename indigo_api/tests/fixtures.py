@@ -1,28 +1,28 @@
 # -*- coding: utf-8 -*
 
 DOCUMENT_FIXTURE = """<?xml version="1.0"?>
-<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xsi:schemaLocation="http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/akomantoso30.xsd">
   <act contains="originalVersion">
     <meta>
       <identification source="">
         <FRBRWork>
-          <FRBRthis value="/za/act/1900/1/main"/>
-          <FRBRuri value="/za/act/1900/1"/>
+          <FRBRthis value="/akn/za/act/1900/1/main"/>
+          <FRBRuri value="/akn/za/act/1900/1"/>
           <FRBRalias value="Untitled"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
           <FRBRcountry value="za"/>
         </FRBRWork>
         <FRBRExpression>
-          <FRBRthis value="/za/act/1900/1/eng@/main"/>
-          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRthis value="/akn/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/akn/za/act/1900/1/eng@"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
-          <FRBRthis value="/za/act/1900/1/eng@/main"/>
-          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRthis value="/akn/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/akn/za/act/1900/1/eng@"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
         </FRBRManifestation>
@@ -47,28 +47,28 @@ BODY_FIXTURE = """
 """
 
 COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
-<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">
+<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xsi:schemaLocation="http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/akomantoso30.xsd">
   <act contains="originalVersion">
     <meta>
       <identification source="">
         <FRBRWork>
-          <FRBRthis value="/za/act/1900/1/main"/>
-          <FRBRuri value="/za/act/1900/1"/>
+          <FRBRthis value="/akn/za/act/1900/1/main"/>
+          <FRBRuri value="/akn/za/act/1900/1"/>
           <FRBRalias value="Untitled"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
           <FRBRcountry value="za"/>
         </FRBRWork>
         <FRBRExpression>
-          <FRBRthis value="/za/act/1900/1/eng@/main"/>
-          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRthis value="/akn/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/akn/za/act/1900/1/eng@"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
-          <FRBRthis value="/za/act/1900/1/eng@/main"/>
-          <FRBRuri value="/za/act/1900/1/eng@"/>
+          <FRBRthis value="/akn/za/act/1900/1/eng@/main"/>
+          <FRBRuri value="/akn/za/act/1900/1/eng@"/>
           <FRBRdate date="1900-01-01" name="Generation"/>
           <FRBRauthor href="#council" as="#author"/>
         </FRBRManifestation>
@@ -89,23 +89,23 @@ COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
         <meta>
           <identification source="#slaw">
             <FRBRWork>
-              <FRBRthis value="/za/act/1980/01/schedule"/>
-              <FRBRuri value="/za/act/1980/01"/>
+              <FRBRthis value="/akn/za/act/1980/01/schedule"/>
+              <FRBRuri value="/akn/za/act/1980/01"/>
               <FRBRalias value="Schedule"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
               <FRBRcountry value="za"/>
             </FRBRWork>
             <FRBRExpression>
-              <FRBRthis value="/za/act/1980/01/eng@/schedule"/>
-              <FRBRuri value="/za/act/1980/01/eng@"/>
+              <FRBRthis value="/akn/za/act/1980/01/eng@/schedule"/>
+              <FRBRuri value="/akn/za/act/1980/01/eng@"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
               <FRBRlanguage language="eng"/>
             </FRBRExpression>
             <FRBRManifestation>
-              <FRBRthis value="/za/act/1980/01/eng@/schedule"/>
-              <FRBRuri value="/za/act/1980/01/eng@"/>
+              <FRBRthis value="/akn/za/act/1980/01/eng@/schedule"/>
+              <FRBRuri value="/akn/za/act/1980/01/eng@"/>
               <FRBRdate date="' + today + '" name="Generation"/>
               <FRBRauthor href="#slaw"/>
             </FRBRManifestation>

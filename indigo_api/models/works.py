@@ -343,12 +343,16 @@ class Work(WorkMixin, models.Model):
         except ValueError:
             raise ValidationError("Invalid FRBR URI")
 
-        # force country and locality codes in frbr uri
-        prefix = '/' + self.country.code
+        # Assume frbr_uri starts with /akn; `rest` is everything after the country/locality, e.g.
+        # in `/akn/za-wc/act/2000/12`, `rest` is `act/2000/12`.
+        rest = frbr_uri.split('/', 3)[3]
+
+        # force akn prefix, country and locality codes in frbr uri
+        prefix = '/akn/' + self.country.code
         if self.locality:
             prefix = prefix + '-' + self.locality.code
 
-        self.frbr_uri = ('%s/%s' % (prefix, frbr_uri.split('/', 2)[2])).lower()
+        self.frbr_uri = f'{prefix}/{rest}'.lower()
 
     def save(self, *args, **kwargs):
         # prevent circular references
@@ -487,7 +491,8 @@ class PublicationDocument(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def build_filename(self):
-        return '{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
+        # don't include /akn/ from FRBR URI in filename
+        return f"{self.work.frbr_uri[5:].replace('/', '-')}-publication-document.pdf"
 
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()

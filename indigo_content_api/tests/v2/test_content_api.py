@@ -95,6 +95,14 @@ class ContentAPIV2TestMixin(ContentAPIV1TestMixin):
         self.assertNotIn('/resolver/resolve/za', response.content.decode('utf-8'))
         self.assertIn('/resolver/resolve/akn/za', response.content.decode('utf-8'))
 
+    def test_published_publication_document(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10/eng@2014-02-12.json')
+        self.assertEqual(response.status_code, 200)
+
+        # this deliberately doesn't use the API path, it uses the app path which allows
+        # us to make this public
+        self.assertEqual(response.data['publication_document']['url'], 'http://localhost:8000/works/akn/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
+
 
 # Disable pipeline storage - see https://github.com/cyberdelia/django-pipeline/issues/277
 @override_settings(STATICFILES_STORAGE='pipeline.storage.PipelineStorage', PIPELINE_ENABLED=False)

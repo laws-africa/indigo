@@ -45,3 +45,18 @@ class BaseWorkDetail(LocaleBasedMatcher):
             return _(uri.subtype.upper())
 
         return _('Act')
+
+
+class ChapterWorkDetail(BaseWorkDetail):
+    """ Takes Chapter numbers into account when working out numbered title.
+    """
+    def work_numbered_title(self, work):
+        work_type = super().work_friendly_type(work)
+        if work.properties.get('cap'):
+            # eg. Chapter 2
+            return f"Chapter {work.properties['cap']}"
+
+        elif work_type == 'Act':
+            return f'Act {work.number} of {work.year}'
+
+        return super().work_numbered_title(work)

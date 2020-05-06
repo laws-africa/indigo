@@ -276,6 +276,8 @@ class ZIPRenderer(BaseRenderer):
                 # if storing many, prefix them
                 prefix = (generate_filename(document, None) + '/') if many else ''
                 zf.writestr(prefix + "main.xml", document.document_xml.encode('utf-8'))
+                self.add_attachments(document, zf, prefix)
 
-                for attachment in document.attachments.all():
-                    zf.writestr(prefix + "media/" + attachment.filename, attachment.file.read())
+    def add_attachments(self, document, zf, prefix):
+        for attachment in document.attachments.all():
+            zf.writestr(prefix + "media/" + attachment.filename, attachment.file.read())

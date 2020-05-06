@@ -12,7 +12,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.dispatch import receiver
 from django.utils.functional import cached_property
 import reversion.revisions
-import reversion.models
+from reversion.models import Version
 from cobalt import FrbrUri, RepealEvent
 
 from indigo.plugins import plugins
@@ -242,11 +242,7 @@ class WorkMixin(object):
         for doc in documents:
             plugin = plugins.for_document('toc', doc)
             if plugin:
-                toc = plugin.table_of_contents_for_document(doc)
-                for item in plugin.commenceable_items(toc):
-                    if item.id and item.id not in id_set:
-                        id_set.add(item.id)
-                        provisions.append(item)
+                plugin.insert_commenceable_provisions(doc, provisions, id_set)
 
         return provisions
 
@@ -425,12 +421,7 @@ class Work(WorkMixin, models.Model):
         """ Return a queryset of `reversion.models.Version` objects for
         revisions for this work, most recent first.
         """
-        content_type = ContentType.objects.get_for_model(self)
-        return reversion.models.Version.objects \
-            .select_related('revision', 'revision__user') \
-            .filter(content_type=content_type) \
-            .filter(object_id=self.id) \
-            .order_by('-id')
+        return Version.objects.get_for_object(self).select_related('revision', 'revision__user')
 
     def as_at_date(self):
         # the as-at date is the maximum of the most recent, published expression date,

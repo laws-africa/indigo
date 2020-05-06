@@ -232,6 +232,32 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         return items
 
+    def insert_commenceable_provisions(self, doc, provisions, id_set):
+        toc = self.table_of_contents_for_document(doc)
+        items = self.commenceable_items(toc)
+        self.insert_provisions(provisions, id_set, items)
+
+    def insert_provisions(self, provisions, id_set, items):
+        """ Insert provisions from current toc at their correct indexes in `provisions`.
+            `provisions` is a list of provisions for a work, usually built up by adding provisions to it
+                from each point in time (using this method).
+            `id_set` is the current set of ids that have already been added to `provisions`;
+                it helps ensure that our list contains only unique provisions.
+            `items` is a list of commenceable provisions from the current document's ToC.
+        """
+        # take note of any removed items to compensate for later
+        removed_indexes = [i for i, p in enumerate(provisions) if p.id not in [i.id for i in items]]
+        for i, item in enumerate(items):
+            if item.id and item.id not in id_set:
+                id_set.add(item.id)
+                # We need to insert this provision at the correct position in the work provision list.
+                # If any provisions from a previous document have been removed in this document
+                # (indexes stored in removed_indexes), bump the insertion index up to take them into account.
+                for n in removed_indexes:
+                    if i >= n:
+                        i += 1
+                provisions.insert(i, item)
+
 
 class TOCElement(object):
     """

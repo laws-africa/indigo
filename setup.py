@@ -99,6 +99,7 @@ setup(
             'mock>=1.3.0',
             'coveralls',
             'django-webtest>=1.9.4',
+            'dotmap>=1.3.8',
         ],
     },
 )

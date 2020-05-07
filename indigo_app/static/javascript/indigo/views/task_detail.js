@@ -30,6 +30,15 @@
     commentChanged: function(e) {
       var text = (e.target.value || '').trim();
       this.$('#task-comment-form #id_submit').attr('disabled', text.length === 0);
-    }
+
+      if (text.length > 0) {
+        this.$('#comment_request_changes').val('Comment and Request Changes');
+        this.$('#comment_approve').val('Comment and Approve');
+
+      } else {
+        this.$('#comment_request_changes').val('Request Changes');
+        this.$('#comment_approve').val('Approve');
+      }
+    },
   });
 })(window);

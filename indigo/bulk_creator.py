@@ -480,7 +480,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         date = info.get('commencement_date') or work.commencement_date
         if not date:
-            return self.create_task(work, info, task_type='link-amendment-pending-commencement')
+            return self.create_task(work, info, task_type='link-amendment-pending-commencement', amended_work=amended_work)
 
         amendment, new = Amendment.objects.get_or_create(
             amended_work=amended_work,
@@ -492,7 +492,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         )
 
         if new:
-            self.create_task(amended_work, info, task_type='apply-amendment')
+            self.create_task(amended_work, info, task_type='apply-amendment', amendment=amendment)
 
     def link_taxonomy(self, work, info):
         topics = [x.strip(",") for x in info.get('taxonomy').split()]
@@ -509,119 +509,104 @@ class BaseBulkCreator(LocaleBasedMatcher):
             info['unlinked_topics'] = ", ".join(unlinked_topics)
             self.create_task(work, info, task_type='link-taxonomy')
 
-    def create_task(self, work, info, task_type, repealing_work=None):
+    def create_task(self, work, info, task_type, repealing_work=None, amended_work=None, amendment=None):
         task = Task()
 
         if task_type == 'link-publication-document':
             task.title = 'Link gazette'
-            task.description = f'''This work's gazette (original publication document) could not be linked automatically – see row {info['row']}.
+            task.description = f'''This work's gazette (original publication document) couldn't be linked automatically.
+
 Find it and upload it manually.'''
 
         elif task_type == 'import':
             task.title = 'Import content'
-            task.description = '''Import the content for this work; either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).'''
+            task.description = '''Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).'''
 
         elif task_type == 'link-commencement':
             task.title = 'Link commencement'
-            task.description = f'''On the spreadsheet, it says that this work is commenced by a work with the FRBR URI "{info['commenced_by']}" – see row {info['row']}.
+            task.description = f'''It looks like this work was commenced by "{info['commenced_by']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The commencing work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
 – the commencing work doesn't exist on the system.
 
-Check the spreadsheet for reference and link the commencing work manually.'''
+Please link the commencing work manually.'''
 
         elif task_type == 'link-amendment':
-            task.title = 'Link amendment(s)'
-            amended_frbr_uri = info['amends']
-            if len(amended_frbr_uri) > 256:
-                amended_frbr_uri = "".join(amended_frbr_uri[:256] + ', etc')
-            task.description = f'''On the spreadsheet, it says that this work amends a work with the FRBR URI "{amended_frbr_uri}" – see row {info['row']}.
+            task.title = 'Link amendment'
+            amended_work = info['amends']
+            if len(amended_work) > 256:
+                amended_work = "".join(amended_work[:256] + ', etc')
+            task.description = f'''It looks like this work amends "{amended_work}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The amendment could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– more than one amended work listed
+– more than one amended work was listed (it only works if there's one)
 – the amended work doesn't exist on the system.
 
-Check the spreadsheet for reference and link the amendment/s manually.'''
+Please link the amendment manually.'''
 
         elif task_type == 'link-amendment-pending-commencement':
-            task.title = 'Link amendment(s)'
-            amended_frbr_uri = info['amends']
-            if len(amended_frbr_uri) > 256:
-                amended_frbr_uri = "".join(amended_frbr_uri[:256] + ', etc')
-            task.description = f'''On the spreadsheet, it says that this work amends a work with the FRBR URI "{amended_frbr_uri}" – see row {info['row']}.
+            task.title = 'Link amendment'
+            task.description = f'''It looks like this work amends {amended_work.title} ({amended_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).
 
-But this work does not yet have a commencement date, so the amendment was not linked automatically.
-
-Link the amendment once this work comes into force.'''
+Please link the amendment manually (and apply it) when this work comes into force.'''
 
         elif task_type == 'apply-amendment':
             task.title = 'Apply amendment'
-            amending_work = info['work']
-            task.description = f'''Apply the amendments made by {amending_work.title} ({amending_work.numbered_title()}).
+            task.description = f'''Apply the amendments made by {amendment.amending_work.title} ({amendment.amending_work.numbered_title()}) on {amendment.date}.
 
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.'''
 
         elif task_type == 'no-repeal-match':
             task.title = 'Link repeal'
-            task.description = f'''On the spreadsheet, it says that this work was repealed by a work with the FRBR URI "{info['repealed_by']}" – see row {info['row']}.
+            task.description = f'''It looks like this work was repealed by "{info['repealed_by']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The repeal could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
 – the repealing work doesn't exist on the system.
 
-Check the spreadsheet for reference and link the repeal manually.'''
+Please link the repeal manually.'''
 
         elif task_type == 'check-update-repeal':
             task.title = 'Update repeal information?'
-            task.description = f'''On the spreadsheet, it says that this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}) – see row {info['row']}.
+            task.description = f'''On the spreadsheet (see row {info['row']}), it says that this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}).
 
-However, this work is already listed as having been repealed by {work.repealed_by} ({work.repealed_by.numbered_title()}), so the repeal information was not updated.
+But this work is already listed as having been repealed by {work.repealed_by} ({work.repealed_by.numbered_title()}), so the repeal information wasn't updated automatically.
 
-If the repeal information was previously incorrect, check the spreadsheet for reference and update the \
-repeal information manually.
-
-Otherwise, cancel this task.
+If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task.
 '''
 
         elif task_type == 'link-repeal-pending-commencement':
             repealed_work = info['work']
             task.title = 'Link repeal'
-            task.description = f'''This work repeals {repealed_work.title} ({repealed_work.numbered_title()}).
+            task.description = f'''It looks like this work repeals {repealed_work.title} ({repealed_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).
 
-But this work does not yet have a commencement date, so the repeal was not linked automatically.
-
-Link the repeal once this work comes into force.'''
+Please link the repeal manually when this work comes into force.'''
 
         elif task_type == 'link-repeal':
             task.title = 'Link repeal'
-            task.description = f'''On the spreadsheet, it says that this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}) – see row {info['row']}.
+            task.description = f'''It looks like this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}), but it couldn't be linked automatically.
 
-But the repeal could not be linked automatically, so it will have to be linked manually.'''
+Please link it manually.'''
 
         elif task_type == 'link-primary-work':
             task.title = 'Link primary work'
-            task.description = f'''On the spreadsheet, it says that this work's primary work is a work with the FRBR URI "{info['primary_work']}" – see row {info['row']}.
+            task.description = f'''It looks like this work's primary work is "{info['primary_work']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The primary work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
 – the primary work doesn't exist on the system.
 
-Check the spreadsheet for reference and link the primary work manually.'''
+Please link the primary work manually.'''
 
         elif task_type == 'link-taxonomy':
-            task.title = 'Link taxonomy/ies'
-            task.description = f'''On the spreadsheet, it says that this work has the following taxonomy/ies: "{info['unlinked_topics']}" – see row {info['row']}.
+            task.title = 'Link taxonomy'
+            task.description = f'''It looks like this work has the following taxonomy: "{info['unlinked_topics']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The taxonomy/ies could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– the taxonomy/ies doesn't/don't exist on the system.'''
+– the taxonomy doesn't exist on the system.'''
 
         task.country = self.country
         task.locality = self.locality

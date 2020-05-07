@@ -6,8 +6,14 @@
   <p>Hello {{ recipient.first_name }},</p>
 
   <p>{{ action.actor.get_full_name }} requested changes on task
-     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>:
+     <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a> {% if comment %}with this comment{% endif %}:
   </p>
+
+  {% if comment %}
+    <div style="padding: 1rem;">
+      <p>{{ comment }}</p>
+    </div>
+  {% endif %}
 
   <hr>
   {% include 'templated_email/_task_detail_block.html' %}

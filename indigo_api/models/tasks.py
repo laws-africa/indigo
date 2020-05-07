@@ -197,7 +197,7 @@ class Task(models.Model):
                user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
-    def submit(self, user):
+    def submit(self, user, **kwargs):
         if not self.assigned_to:
             self.assign_to(user, user)
         self.submitted_by_user = self.assigned_to
@@ -220,7 +220,7 @@ class Task(models.Model):
                view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
-    def reopen(self, user):
+    def reopen(self, user, **kwargs):
         self.reviewed_by_user = None
         self.closed_at = None
 

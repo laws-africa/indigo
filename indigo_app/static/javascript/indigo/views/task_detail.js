@@ -32,12 +32,16 @@
       this.$('#task-comment-form #id_submit').attr('disabled', text.length === 0);
 
       if (text.length > 0) {
-        this.$('#comment_request_changes').val('Comment and Request Changes');
-        this.$('#comment_approve').val('Comment and Approve');
+        this.$('#btn_request_changes').val('Comment and Request Changes');
+        this.$('#btn_approve').val('Comment and Approve');
+        this.$('#btn_reopen').val('Comment and Reopen');
+        this.$('#btn_submit_for_review').val('Comment and Submit for Review');
 
       } else {
-        this.$('#comment_request_changes').val('Request Changes');
-        this.$('#comment_approve').val('Approve');
+        this.$('#btn_request_changes').val('Request Changes');
+        this.$('#btn_approve').val('Approve');
+        this.$('#btn_reopen').val('Reopen');
+        this.$('#btn_submit_for_review').val('Submit for Review');
       }
     },
   });

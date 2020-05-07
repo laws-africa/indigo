@@ -474,7 +474,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        amended_work = self.find_work_by_frbr_uri(info['amends'])
+        amended_work = self.find_work(info['amends'])
         if not amended_work:
             return self.create_task(work, info, task_type='link-amendment')
 

@@ -98,19 +98,19 @@
               {% commenced_provisions_description document.work commencement as provisions_description %}
               <li class="commencement-date-list">
                 {% if provisions_description %}
-                  {{ provisions_description }}
+                  {{ provisions_description|capfirst }}
                 {% else %}
                   <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
                 {% endif %}
-                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}
+                {% blocktrans with date=commencement.date|date:"j E Y" %}commenced on {{ date }}{% endblocktrans %}{% if not commencement.commencing_work %}.{% endif %}
                 {% with commencement.commencing_work as commencing_work %}
                   {% if commencing_work %}
                     {% with numbered_title=commencing_work.numbered_title title=commencing_work.title %}
                       {% work_resolver_url commencing_work as resolver_uri %}
                       {% if numbered_title %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>{% endblocktrans %}
+                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ numbered_title }}</a>.{% endblocktrans %}
                       {% else %}
-                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>{% endblocktrans %}
+                        {% blocktrans %}by <a href="{{ resolver_uri }}">{{ title }}</a>.{% endblocktrans %}
                       {% endif %}
                     {% endwith %}
                   {% endif %}
@@ -120,7 +120,7 @@
             {% if document.work.uncommenced_provisions %}
               {% commenced_provisions_description document.work commencement uncommenced=True as provisions_description %}
               <li class="commencement-date-uncommenced">
-                {% blocktrans %}{{ provisions_description }}: not yet commenced{% endblocktrans %}
+                {% blocktrans %}{{ provisions_description|capfirst }}: not yet commenced.{% endblocktrans %}
               </li>
             {% endif %}
           {% else %}
@@ -137,7 +137,7 @@
                   <tr>
                     <td>
                       {% if provisions_description %}
-                        {{ provisions_description }}
+                        {{ provisions_description|capfirst }}
                       {% else %}
                         <i>{% blocktrans %}Unknown provisions{% endblocktrans %}</i>
                       {% endif %}
@@ -163,7 +163,7 @@
                   <tr>
                     <td>
                       {% commenced_provisions_description document.work commencement uncommenced=True as provisions_description %}
-                      <b>{{ provisions_description }}</b>
+                      <b>{{ provisions_description|capfirst }}</b>
                     </td>
                     <td><b>{% blocktrans %}not yet commenced{% endblocktrans %}</b></td>
                   </tr>

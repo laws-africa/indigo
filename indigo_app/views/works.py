@@ -712,7 +712,7 @@ class WorkVersionsView(WorkViewBase, MultipleObjectMixin, DetailView):
         actions = self.work.action_object_actions.all()
         amendment_actions = [aa for a in self.work.amendments.all() for aa in a.action_object_actions.all()]
         commencement_actions = [c for a in self.work.commencements.all() for c in a.action_object_actions.all()]
-        versions = self.work.versions().all()
+        versions = self.work.versions().defer('serialized_data').all()
         task_actions = self.get_task_actions()
         entries = sorted(chain(actions, amendment_actions, commencement_actions, versions, task_actions),
                          key=lambda x: x.revision.date_created if hasattr(x, 'revision') else x.timestamp,

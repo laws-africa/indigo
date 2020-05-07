@@ -34,7 +34,7 @@ class TaskManager(models.Manager):
         from .documents import Document
 
         return super(TaskManager, self).get_queryset() \
-            .select_related('created_by_user', 'assigned_to') \
+            .select_related('created_by_user', 'assigned_to', 'country', 'country__country', 'locality') \
             .prefetch_related(Prefetch('work', queryset=Work.objects.filter())) \
             .prefetch_related(Prefetch('document', queryset=Document.objects.no_xml())) \
             .prefetch_related('labels')

@@ -244,10 +244,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         version = self.get_object()
 
         # most recent version just before this one
-        old_version = self.document.versions()\
-            .filter(id__lt=version.id)\
-            .order_by('-id')\
-            .first()
+        old_version = self.get_queryset().filter(id__lt=version.id).first()
 
         differ = AttributeDiffer()
 
@@ -276,7 +273,7 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
         })
 
     def get_queryset(self):
-        return self.document.versions()
+        return self.document.versions().defer('serialized_data')
 
 
 class DocumentActivityViewSet(DocumentResourceView,

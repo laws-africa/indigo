@@ -51,6 +51,7 @@ class Notifier(object):
                 'action': action,
                 'task': task,
                 'recipient': task.reviewed_by_user,
+                'comment': comment,
             })
 
     def notify_comment_posted(self, comment):

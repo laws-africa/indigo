@@ -411,9 +411,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         date = info.get('commencement_date') or None
 
         commencing_work = None
-        frbr_uri = info.get('commenced_by')
-        if frbr_uri:
-            commencing_work = self.find_work_by_frbr_uri(frbr_uri)
+        if info.get('commenced_by'):
+            commencing_work = self.find_work(info['commenced_by'])
             if not commencing_work:
                 self.create_task(work, info, task_type='link-commencement')
 
@@ -430,14 +429,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it or make the relevant task
-        repealing_work = self.find_work_by_frbr_uri(info['repealed_by'])
+        repealing_work = self.find_work(info['repealed_by'])
 
         if not repealing_work:
-            # a work with the given FRBR URI wasn't found
+            # a work with the given FRBR URI / title wasn't found
             self.create_task(work, info, task_type='no-repeal-match')
 
         elif work.repealed_by and work.repealed_by != repealing_work:
-            # the work was already repealed, but by a different work
+            # the work was already marked as repealed by a different work
             self.create_task(work, info, task_type='check-update-repeal', repealing_work=repealing_work)
 
         elif not work.repealed_by:
@@ -454,12 +453,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
             try:
                 work.save_with_revision(self.user)
             except ValidationError:
+                # something else went wrong
                 self.create_task(work, info, task_type='link-repeal', repealing_work=repealing_work)
 
     def link_parent_work(self, work, info):
         # if the work has a `primary_work`, try linking it
         # make a task if this fails
-        parent_work = self.find_work_by_frbr_uri(info['primary_work'])
+        parent_work = self.find_work(info['primary_work'])
         if not parent_work:
             return self.create_task(work, info, task_type='link-primary-work')
 
@@ -636,15 +636,29 @@ Possible reasons:
             task.save()
 
         if 'pending-commencement' in task_type:
-            # add the `pending commencement` label
-            p_c_label = TaskLabel.objects.filter(slug='pending-commencement').first()
-            task.labels.add(p_c_label)
-            task.save()
+            # add the `pending commencement` label, if it exists
+            pending_commencement_label = TaskLabel.objects.filter(slug='pending-commencement').first()
+            if pending_commencement_label:
+                task.labels.add(pending_commencement_label)
+                task.save()
 
         return task
 
-    def find_work_by_frbr_uri(self, frbr_uri):
-        return Work.objects.filter(frbr_uri=frbr_uri).first()
+    def find_work(self, given_string):
+        """ The string we get from the spreadsheet could be e.g.
+            `/ug/act/1933/14 - Administrator-General’s Act` (new and preferred style)
+            `Administrator-General’s Act` (old style)
+            First see if the string before the first space can be parsed as an FRBR URI, and find a work based on that.
+            If not, assume a title has been given and try to match on the whole string.
+        """
+        first = given_string.split()
+        if FrbrUri.parse(first):
+            # it's an FRBR URI!
+            return Work.objects.filter(frbr_uri=first).first()
+
+        potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
+        if len(potential_matches) == 1:
+            return potential_matches.first()
 
     @property
     def share_with(self):

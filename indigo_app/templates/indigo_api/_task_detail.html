@@ -116,6 +116,31 @@
 
                 <div class="text-right">
                   <input class="btn btn-primary" type="submit" value="Add comment" id="id_submit" disabled>
+                  
+                  {% if task.state == 'pending_review' %}
+                    {% if task.unsubmit_task_permission %}
+                      <input
+                        class="btn btn-primary mr-2 float-left" 
+                        type="submit" 
+                        data-confirm="Are you sure you want to comment and request changes to this task?" 
+                        formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}" 
+                        id="comment_request_changes"
+                        value="Request changes" 
+                      />
+                    {% endif %}
+                    {% if task.close_task_permission %}
+                      <input 
+                        class="btn btn-success mr-2 float-left"
+                        type="submit"
+                        data-confirm="Are you sure you want to approve this task?" 
+                        formaction="{% url 'close_task' place=place.place_code pk=task.pk %}" 
+                        id="comment_approve" 
+                        value="Approve"
+                      />
+                    {% elif task.customised.close_url %}
+                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>
+                    {% endif %}
+                  {% endif %}
                 </div>
               </div>
             </div>
@@ -141,15 +166,9 @@
               {% endif %}
             {% endif %}
 
-            {% if task.state == 'pending_review' and task.unsubmit_task_permission %}
-              <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to request changes to this task?" formaction="{% url 'unsubmit_task' place=place.place_code pk=task.pk %}">Request changes</button>
-            {% endif %}
-
             {% if task.state == 'pending_review' %}
               {% if task.customised.close_url %}
                 <a class="btn btn-primary float-right" href="{{ task.customised.close_url }}">Review changes</a>
-              {% elif task.close_task_permission %}
-                <button class="btn btn-success float-right" type="submit" data-confirm="Are you sure you want to approve this task?" formaction="{% url 'close_task' place=place.place_code pk=task.pk %}">Approve</button>
               {% endif %}
             {% endif %}
           </form>

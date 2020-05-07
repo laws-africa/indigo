@@ -76,7 +76,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
     """
 
-    row_validation_form = RowValidationFormBase
+    row_validation_form_class = RowValidationFormBase
     """ The validation form for each row of the spreadsheet. 
         Can be subclassed / mixed in to add fields or making existing fields optional.
     """
@@ -172,7 +172,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return self._service
 
     def get_row_validation_form(self, row_data):
-        return self.row_validation_form(row_data)
+        return self.row_validation_form_class(row_data)
 
     def create_works(self, view, table, dry_run, workflow, user):
         self.workflow = workflow

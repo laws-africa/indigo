@@ -11,7 +11,7 @@
 
   {% if comment %}
     <div style="padding: 1rem;">
-      <p>{{ comment }}</p>
+      {{ comment }}
     </div>
   {% endif %}
 

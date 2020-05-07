@@ -345,24 +345,17 @@ def post_task_transition(sender, instance, name, **kwargs):
         # load related data objects from the db
         instance.save()
 
-        if name == 'unsubmit' and not comment:
-            action.send(user, verb=instance.VERBS['unsubmit'],
-                        action_object=instance,
-                        target=instance.assigned_to,
-                        place_code=instance.place.place_code)
-        elif name == 'unsubmit' and comment:
+        if name == 'unsubmit':
             action.send(user, verb=instance.VERBS['unsubmit'],
                         action_object=instance,
                         target=instance.assigned_to,
                         place_code=instance.place.place_code,
-                        comment=comment.comment)
-        elif name == 'close' and comment:
-            action.send(user, verb=instance.VERBS['close'],
-                        action_object=instance,
-                        place_code=instance.place.place_code,
-                        comment=comment.comment)
+                        comment=comment)
         else:
-            action.send(user, verb=instance.VERBS[name], action_object=instance, place_code=instance.place.place_code)
+            action.send(user, verb=instance.VERBS[name],
+                        action_object=instance,
+                        place_code=instance.place.place_code,
+                        comment=comment)
 
 
 class WorkflowQuerySet(models.QuerySet):

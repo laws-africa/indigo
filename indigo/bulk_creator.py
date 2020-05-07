@@ -52,7 +52,7 @@ class RowValidationFormBase(forms.Form):
         return re.sub('[\u2028 ]+', ' ', title)
 
 
-class RowValFormCap(RowValidationFormBase):
+class ChapterMixin:
     """ Includes (optional) Chapter (cap) field.
     For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
     for the relevant country in settings.INDIGO['WORK_PROPERTIES']
@@ -60,20 +60,12 @@ class RowValFormCap(RowValidationFormBase):
     cap = forms.CharField(required=False)
 
 
-class RowValFormPubDateOpt(RowValidationFormBase):
+class PublicationDateOptionalMixin:
     """ Make `publication_date` optional on bulk creation.
     To make it optional for individual work creation, also add the country code to
     AddWorkView.PUB_DATE_OPTIONAL_COUNTRIES in apps.IndigoLawsAfricaConfig.
     """
     publication_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
-
-
-class AddCapPubDateOpt(RowValFormCap, RowValFormPubDateOpt):
-    """ Use for countries where both
-    - Cap. numbers should be recorded and
-    - the publication date is optional (usually because we're working with a consolidation).
-    """
-    pass
 
 
 @plugins.register('bulk-creator')

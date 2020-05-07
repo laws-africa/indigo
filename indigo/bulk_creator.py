@@ -52,7 +52,7 @@ class RowValidationFormBase(forms.Form):
         return re.sub('[\u2028 ]+', ' ', title)
 
 
-class ChapterMixin:
+class ChapterMixin(forms.Form):
     """ Includes (optional) Chapter (cap) field.
     For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
     for the relevant country in settings.INDIGO['WORK_PROPERTIES']
@@ -60,7 +60,7 @@ class ChapterMixin:
     cap = forms.CharField(required=False)
 
 
-class PublicationDateOptionalMixin:
+class PublicationDateOptionalRowValidationForm(RowValidationFormBase):
     """ Make `publication_date` optional on bulk creation.
     To make it optional for individual work creation, also add the country code to
     AddWorkView.PUB_DATE_OPTIONAL_COUNTRIES in apps.IndigoLawsAfricaConfig.
@@ -71,10 +71,14 @@ class PublicationDateOptionalMixin:
 @plugins.register('bulk-creator')
 class BaseBulkCreator(LocaleBasedMatcher):
     """ Create works in bulk from a google sheets spreadsheet.
-    Subclass RowValidationFormBase() and get_row_validation_form() to check / raise errors for different fields.
     """
     locale = (None, None, None)
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
+    """
+
+    row_validation_form = RowValidationFormBase
+    """ The validation form for each row of the spreadsheet. 
+        Can be subclassed / mixed in to add fields or making existing fields optional.
     """
 
     aliases = []
@@ -168,7 +172,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         return self._service
 
     def get_row_validation_form(self, row_data):
-        return RowValidationFormBase(row_data)
+        return self.row_validation_form(row_data)
 
     def create_works(self, view, table, dry_run, workflow, user):
         self.workflow = workflow
@@ -636,7 +640,7 @@ Possible reasons:
             First see if the string before the first space can be parsed as an FRBR URI, and find a work based on that.
             If not, assume a title has been given and try to match on the whole string.
         """
-        first = given_string.split()
+        first = given_string.split()[0]
         if FrbrUri.parse(first):
             # it's an FRBR URI!
             return Work.objects.filter(frbr_uri=first).first()

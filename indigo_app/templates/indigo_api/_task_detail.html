@@ -129,7 +129,7 @@
                       />
                     {% endif %}
                     {% if task.customised.close_url %}
-                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>                    
+                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>
                     {% elif task.close_task_permission %}
                       <input 
                         class="btn btn-success mr-2 float-left"
@@ -163,12 +163,6 @@
             {% if task.state == 'cancelled' or task.state == 'done' %}
               {% if task.reopen_task_permission %}
                 <button class="btn btn-primary" type="submit" data-confirm="Are you sure you want to reopen this task?" formaction="{% url 'reopen_task' place=place.place_code pk=task.pk %}">Reopen</button>
-              {% endif %}
-            {% endif %}
-
-            {% if task.state == 'pending_review' %}
-              {% if task.customised.close_url %}
-                <a class="btn btn-primary float-right" href="{{ task.customised.close_url }}">Review changes</a>
               {% endif %}
             {% endif %}
           </form>

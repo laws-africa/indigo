@@ -4,7 +4,7 @@
   {% include 'templated_email/_header.html' %}
   <p>
     {{ action.actor.get_full_name }} approved task
-    <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a> {% if comment %} with this comment: {% else %} . {% endif %}
+    <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a>{% if comment %} with this comment: {% else %}.{% endif %}
   </p>
 
   {% if comment %}
@@ -17,4 +17,3 @@
 
   {% include 'templated_email/_footer.html' %}
 {% endblock %}
-

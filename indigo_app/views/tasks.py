@@ -305,7 +305,7 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                                       content_type=task_content_type,
                                       site_id=get_current_site(request).id)
 
-                    state_change(user, comment=comment)
+                    state_change(user, comment=comment.comment)
                     # save the comment here so that it appears after the action
                     comment.submit_date = now()
                     comment.save()

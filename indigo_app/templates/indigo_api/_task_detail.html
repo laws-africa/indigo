@@ -128,7 +128,9 @@
                         value="Request changes" 
                       />
                     {% endif %}
-                    {% if task.close_task_permission %}
+                    {% if task.customised.close_url %}
+                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>                    
+                    {% elif task.close_task_permission %}
                       <input 
                         class="btn btn-success mr-2 float-left"
                         type="submit"
@@ -137,8 +139,6 @@
                         id="comment_approve" 
                         value="Approve"
                       />
-                    {% elif task.customised.close_url %}
-                      <a class="btn btn-primary mr-2 float-left" href="{{ task.customised.close_url }}">Review changes</a>
                     {% endif %}
                   {% endif %}
                 </div>

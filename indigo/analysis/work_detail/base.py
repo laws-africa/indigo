@@ -47,16 +47,12 @@ class BaseWorkDetail(LocaleBasedMatcher):
         return _('Act')
 
 
-class ChapterWorkDetail(BaseWorkDetail):
-    """ Takes Chapter numbers into account when working out numbered title.
+class ChapterMixin:
+    """ Takes Chapter numbers into account when working out a work's numbered title.
     """
     def work_numbered_title(self, work):
-        work_type = super().work_friendly_type(work)
         if work.properties.get('cap'):
             # eg. Chapter 2
-            return f"Chapter {work.properties['cap']}"
-
-        elif work_type == 'Act':
-            return f'Act {work.number} of {work.year}'
+            return _('Chapter %(cap)s') % {'cap': work.properties['cap']}
 
         return super().work_numbered_title(work)

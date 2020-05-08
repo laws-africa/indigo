@@ -829,24 +829,31 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         }
 
     def get_form(self, form_class=None):
-        form = super(BatchAddWorkView, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.fields['workflow'].queryset = self.place.workflows.filter(closed=False).all()
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 
+        def add_spreadsheet_url_error(error_message):
+            """ Helper to let us add errors to the form before valid() has been called.
+            """
+            error = ValidationError(error_message)
+            if 'spreadsheet_url' not in form.errors:
+                form.errors['spreadsheet_url'] = form.error_class()
+            form.errors['spreadsheet_url'].extend(error.error_list)
+
         if self.bulk_creator.is_gsheets_enabled and url:
             sheet_id = self.bulk_creator.gsheets_id_from_url(url)
+
             if not sheet_id:
-                form.add_error(None, 'Unable to get spreadsheet ID from URL')
+                add_spreadsheet_url_error('Unable to get spreadsheet ID from URL')
             else:
                 try:
                     sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
                     sheets = [s['properties']['title'] for s in sheets]
                     form.fields['sheet_name'].choices = [(s, s) for s in sheets]
                 except ValueError:
-                    form.add_error(None,  "Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?".format(
-                        self.bulk_creator._gsheets_secret['client_email'],
-                    ))
+                    add_spreadsheet_url_error(f"Unable to fetch spreadsheet information. Is your spreadsheet shared with {self.bulk_creator._gsheets_secret['client_email']}?")
 
         return form
 

@@ -43,7 +43,6 @@ class RenderParseAPITest(APITestCase):
     def test_render_json_to_html(self):
         response = self.client.post('/api/documents/1/render/coverpage', {
             'document': {
-                'frbr_uri': '/akn/za/act/1998/2',
                 'content': document_fixture(text='hello'),
                 'expression_date': '2001-01-01',
                 'language': 'eng',
@@ -51,7 +50,7 @@ class RenderParseAPITest(APITestCase):
         })
         assert_equal(response.status_code, 200)
         assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Act 2 of 1998', response.data['output'])
+        assert_in('Act 10 of 2014', response.data['output'])
 
     def test_render_json_to_html_round_trip(self):
         response = self.client.get('/api/documents/4.json')
@@ -96,6 +95,6 @@ class RenderParseAPITest(APITestCase):
         self.assertEqual(response.status_code, 200)
         self.maxDiff = None
         self.assertEqual(
-            response.data['output'].decode('utf-8'),
+            response.data['output'],
             '<akomaNtoso xmlns="http://www.akomantoso.org/2.0"><chapter id="prefix.chapter-2"><num>2</num><heading>The Beginning</heading><section id="section-1"><num>1.</num><heading>First Verse</heading><paragraph id="section-1.paragraph0"><content><p>κόσμε</p></content></paragraph><subsection id="section-1.1"><num>(1)</num><content><p>In the beginning</p></content></subsection><subsection id="section-1.2"><num>(2)</num><content><p>There was nothing and an Act no 2 of 2010.</p></content></subsection></section></chapter></akomaNtoso>'
         )

@@ -230,6 +230,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
+    frbr_uri = serializers.CharField(read_only=True)
+
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
 
@@ -308,26 +310,12 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         if attrs.get('content'):
             # validate the content
             try:
-                frbr_uri = FrbrUri.parse(attrs['frbr_uri'])
+                frbr_uri = self.instance.work_uri
                 StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
             except (LxmlError, ValueError) as e:
                 raise ValidationError("Invalid XML: %s" % str(e))
 
         return attrs
-
-    def validate_frbr_uri(self, value):
-        try:
-            if not value:
-                raise ValueError()
-            value = FrbrUri.parse(value.lower()).work_uri()
-        except ValueError:
-            raise ValidationError("Invalid FRBR URI: %s" % value)
-
-        # does a work exist for this frbr_uri?
-        # raises ValueError if it doesn't
-        Work.objects.get_for_frbr_uri(value)
-
-        return value
 
     def validate_language(self, value):
         try:
@@ -336,8 +324,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError("Invalid language: %s" % value)
 
     def create(self, validated_data):
-        document = Document()
-        return self.update(document, validated_data)
+        # cannot create a document using this serializer
+        raise NotImplemented()
 
     def update(self, document, validated_data):
         """ Update and save document. """
@@ -407,6 +395,10 @@ class RenderSerializer(serializers.Serializer):
     """
     document = DocumentSerializer()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document'].instance = self.instance
+
 
 class ParseSerializer(serializers.Serializer):
     """
@@ -422,6 +414,10 @@ class DocumentAPISerializer(serializers.Serializer):
     Helper to handle input documents for general document APIs
     """
     document = DocumentSerializer(required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document'].instance = self.instance
 
 
 class NoopSerializer(object):

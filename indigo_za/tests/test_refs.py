@@ -197,6 +197,7 @@ class RefsFinderENGzaTestCase(APITestCase):
 class RefsFinderAFRzaTestCase(APITestCase):
     def setUp(self):
         self.maxDiff = None
+        self.work = Work(frbr_uri='/za/act/1998/1')
         self.finder = RefsFinderAFRza()
 
     def test_find_simple(self):

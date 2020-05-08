@@ -366,7 +366,7 @@ class RenderView(DocumentResourceView, APIView):
     coverpage_only = True
 
     def post(self, request, document_id):
-        serializer = RenderSerializer(data=request.data)
+        serializer = RenderSerializer(instance=self.document, data=request.data)
         serializer.is_valid(raise_exception=True)
         document = DocumentSerializer().update_document(self.document, validated_data=serializer.validated_data['document'])
 
@@ -385,7 +385,7 @@ class LinkTermsView(DocumentResourceView, APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, document_id):
-        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
         document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
@@ -406,7 +406,7 @@ class LinkReferencesView(DocumentResourceView, APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, document_id):
-        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
         document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
@@ -443,7 +443,7 @@ class MarkUpItalicsTermsView(DocumentResourceView, APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, document_id):
-        serializer = DocumentAPISerializer(data=self.request.data)
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
         document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])

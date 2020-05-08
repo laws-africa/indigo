@@ -387,7 +387,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # by the other properties.
         content = validated_data.pop('content', None)
         if content is not None:
-            document.content = content
+            document.reset_xml(content, from_model=True)
 
         # save rest of changes
         for attr, value in validated_data.items():

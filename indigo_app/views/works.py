@@ -834,16 +834,16 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 
+        def add_spreadsheet_url_error(error_message):
+            """ Helper to let us add errors to the form before valid() has been called.
+            """
+            error = ValidationError(error_message)
+            if 'spreadsheet_url' not in form.errors:
+                form.errors['spreadsheet_url'] = form.error_class()
+            form.errors['spreadsheet_url'].extend(error.error_list)
+
         if self.bulk_creator.is_gsheets_enabled and url:
             sheet_id = self.bulk_creator.gsheets_id_from_url(url)
-
-            def add_spreadsheet_url_error(error_message):
-                error = ValidationError(error_message)
-                if 'spreadsheet_url' not in form.errors:
-                    form.errors['spreadsheet_url'] = form.error_class()
-                form.errors['spreadsheet_url'].extend(error.error_list)
-                if hasattr(form, 'cleaned_data') and 'spreadsheet_url' in form.cleaned_data:
-                    del form.cleaned_data['spreadsheet_url']
 
             if not sheet_id:
                 add_spreadsheet_url_error('Unable to get spreadsheet ID from URL')

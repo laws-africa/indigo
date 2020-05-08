@@ -17,9 +17,6 @@ router.register(r'works/(?P<work_id>[0-9]+)/amendments', works.WorkAmendmentView
 
 urlpatterns = [
     path('search/documents', documents.SearchView.as_view(), name='document-search'),
-    path('render', documents.RenderView.as_view(), name='render'),
-    path('render/coverpage', documents.RenderView.as_view(coverpage_only=True), name='render'),
-    path('parse', documents.ParseView.as_view(), name='parse'),
     path('analysis/link-terms', documents.LinkTermsView.as_view(), name='link-terms'),
     path('analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),
     path('analysis/mark-up-italics', documents.MarkUpItalicsTermsView.as_view(), name='mark-up-italics'),
@@ -29,6 +26,8 @@ urlpatterns = [
     path('documents/<int:document_id>/activity', documents.DocumentActivityViewSet.as_view({
         'get': 'list', 'post': 'create', 'delete': 'destroy'}), name='document-activity'),
     path('documents/<int:document_id>/diff', documents.DocumentDiffView.as_view(), name='document-diff'),
+    path('documents/<int:document_id>/parse', documents.ParseView.as_view(), name='document-parse'),
+    path('documents/<int:document_id>/render/coverpage', documents.RenderView.as_view(coverpage_only=True), name='document-render-coverpage'),
 
     path('', include(router.urls)),
 ]

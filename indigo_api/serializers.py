@@ -415,7 +415,6 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
-    frbr_uri = serializers.CharField(write_only=True, required=True)
 
 
 class DocumentAPISerializer(serializers.Serializer):

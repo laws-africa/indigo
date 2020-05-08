@@ -298,7 +298,6 @@
       var id = this.fragment.getAttribute('id'),
           data = {
         'content': content,
-        'frbr_uri': this.parent.model.get('frbr_uri'),
       };
       if (fragmentRule != 'akomaNtoso') {
         data.fragment = fragmentRule;
@@ -309,7 +308,7 @@
       }
 
       $.ajax({
-        url: '/api/parse',
+        url: this.parent.model.url() + '/parse',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -471,7 +470,7 @@
       } else {
         var data = JSON.stringify({'document': self.parent.model.toJSON()});
         $.ajax({
-          url: '/api/render/coverpage',
+          url: this.parent.model.url() + '/render/coverpage',
           type: "POST",
           data: data,
           contentType: "application/json; charset=utf-8",

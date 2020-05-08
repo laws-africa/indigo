@@ -317,17 +317,17 @@ class DocumentActivityViewSet(DocumentResourceView,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ParseView(APIView):
+class ParseView(DocumentResourceView, APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request, document_id):
         serializer = ParseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         fragment = serializer.validated_data.get('fragment')
-        frbr_uri = FrbrUri.parse(serializer.validated_data.get('frbr_uri'))
+        frbr_uri = self.document.work_uri
 
         importer = plugins.for_locale('importer', frbr_uri.country, frbr_uri.language, frbr_uri.locality)
         importer.fragment = fragment
@@ -341,32 +341,27 @@ class ParseView(APIView):
             raise ValidationError({'content': str(e) or "error during import"})
 
         # The importer doesn't have enough information to give us a complete document
-        # including the meta section, so it's empty. We fold in a fake meta section
-        # so that we return a complete document to the caller.
-        # TODO: call /parse on the original document, so we can include a correct meta section
+        # including the meta section, so it's empty or incorrect. We fold in the meta section
+        # from the existing document, so that we return a complete document to the caller.
         if not fragment:
             klass = StructuredDocument.for_document_type(frbr_uri.doctype)
             doc = klass(xml)
-            empty = klass()
-            doc.main.replace(doc.main.meta, copy.deepcopy(empty.main.meta))
+            doc.main.replace(doc.meta, copy.deepcopy(self.document.doc.meta))
             xml = doc.to_xml().decode('utf-8')
 
         return Response({'output': xml})
 
 
-class RenderView(APIView):
+class RenderView(DocumentResourceView, APIView):
     """ Support for rendering a document on the server.
     """
     permission_classes = ()
-    coverpage_only = False
+    coverpage_only = True
 
-    def post(self, request, format=None):
+    def post(self, request, document_id):
         serializer = RenderSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
-        # the serializer ignores the id field, but we need it for rendering
-        document.id = serializer.initial_data['document'].get('id')
+        document = DocumentSerializer().update_document(self.document, validated_data=serializer.validated_data['document'])
 
         if self.coverpage_only:
             renderer = HTMLExporter()

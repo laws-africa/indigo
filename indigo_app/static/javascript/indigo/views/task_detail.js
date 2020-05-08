@@ -41,7 +41,7 @@
         this.$('#btn_request_changes').val('Request changes');
         this.$('#btn_approve').val('Approve');
         this.$('#btn_reopen').val('Reopen');
-        this.$('#btn_submit_for_review').val('Submit for Review');
+        this.$('#btn_submit_for_review').val('Submit for review');
       }
     },
   });

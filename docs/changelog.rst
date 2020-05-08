@@ -4,13 +4,19 @@ Changelog
 10.0.0 (?)
 ----------
 
-* FEATURE: SUBPART element
 * BREAKING: upgrade to Django 2.22
+* BREAKING: new badges with clearer names and permissions
+* BREAKING: static XSL filenames have changed:
+  * act.xsl has moved to html_act.xsl
+  * country-specific files such as act-za.xsl must be renamed to html_act-za.xsl
+  * text.xsl has moved to text_act.xsl
+  * country-specific files such as act_text-za.xsl must be renamed to text_act-za.xsl
+* FEATURE: SUBPART element
 * FEATURE: numbered title in API
+* FEATURE: user profile photos
+* FEATURE: add 'akn' as a final candidate when looking for XSL and coverpage files
 * FIX: many fixes for table editing
 * FIX: improved annotation anchoring
-* BREAKING: new badges with clearer names and permissions
-* FEATURE: user profile photos
 * List of contributors for place and work
 
 9.1.0 (13 March 2020)

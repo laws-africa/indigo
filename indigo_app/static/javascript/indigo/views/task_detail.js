@@ -34,7 +34,7 @@
       if (text.length > 0) {
         this.$('#btn_request_changes').val('Comment and request changes');
         this.$('#btn_approve').val('Comment and approve');
-        this.$('#btn_reopen').val('Comment and Reopen');
+        this.$('#btn_reopen').val('Comment and reopen');
         this.$('#btn_submit_for_review').val('Comment and Submit for Review');
 
       } else {

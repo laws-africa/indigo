@@ -16,7 +16,7 @@ class RenderParseAPITest(APITestCase):
         self.client.login(username='email@example.com', password='password')
 
     def test_render_with_null_publication(self):
-        response = self.client.post('/api/render', {
+        response = self.client.post('/api/documents/1/render/coverpage', {
             'document': {
                 'content': document_fixture(text='hello'),
                 'publication_name': None,
@@ -29,7 +29,7 @@ class RenderParseAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
     def test_render_with_empty_publication(self):
-        response = self.client.post('/api/render', {
+        response = self.client.post('/api/documents/1/render/coverpage', {
             'document': {
                 'content': document_fixture(text='hello'),
                 'publication_name': '',
@@ -41,7 +41,7 @@ class RenderParseAPITest(APITestCase):
         assert_equal(response.status_code, 200)
 
     def test_render_json_to_html(self):
-        response = self.client.post('/api/render', {
+        response = self.client.post('/api/documents/1/render/coverpage', {
             'document': {
                 'frbr_uri': '/akn/za/act/1998/2',
                 'content': document_fixture(text='hello'),
@@ -60,7 +60,7 @@ class RenderParseAPITest(APITestCase):
         data = response.data
         data['content'] = document_fixture(text='hello')
 
-        response = self.client.post('/api/render', {
+        response = self.client.post('/api/documents/4/render/coverpage', {
             'document': data,
         })
         assert_equal(response.status_code, 200)
@@ -68,9 +68,8 @@ class RenderParseAPITest(APITestCase):
         assert_in('Repealed Act', response.data['output'])
 
     def test_render_json_to_html_with_unicode(self):
-        response = self.client.post('/api/render', {
+        response = self.client.post('/api/documents/1/render/coverpage', {
             'document': {
-                'frbr_uri': '/akn/za/act/1998/2',
                 'content': document_fixture(text='hello κόσμε'),
                 'expression_date': '2001-01-01',
                 'language': 'eng',
@@ -78,10 +77,10 @@ class RenderParseAPITest(APITestCase):
         })
         assert_equal(response.status_code, 200)
         assert_in('<div class="coverpage">', response.data['output'])
-        assert_in('Act 2 of 1998', response.data['output'])
+        assert_in('Act 10 of 2014', response.data['output'])
 
     def test_parse_text_fragment(self):
-        response = self.client.post('/api/parse', {
+        response = self.client.post('/api/documents/1/parse', {
             'content': """
                 Chapter 2
                 The Beginning
@@ -92,7 +91,6 @@ class RenderParseAPITest(APITestCase):
             """,
             'fragment': 'chapter',
             'id_prefix': 'prefix',
-            'frbr_uri': '/akn/za/act/1998/2',
             'language': 'eng',
         })
         self.assertEqual(response.status_code, 200)

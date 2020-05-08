@@ -17,9 +17,6 @@ router.register(r'works/(?P<work_id>[0-9]+)/amendments', works.WorkAmendmentView
 
 urlpatterns = [
     path('search/documents', documents.SearchView.as_view(), name='document-search'),
-    path('analysis/link-terms', documents.LinkTermsView.as_view(), name='link-terms'),
-    path('analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),
-    path('analysis/mark-up-italics', documents.MarkUpItalicsTermsView.as_view(), name='mark-up-italics'),
     re_path(r'^publications/(?P<country>[a-z]{2})(-(?P<locality>[^/]+))?/find$', publications.FindPublicationsView.as_view(), name='find-publications'),
 
     re_path(r'documents/(?P<document_id>[0-9]+)/media/(?P<filename>.*)$', attachments.AttachmentMediaView.as_view(), name='document-media'),
@@ -29,6 +26,9 @@ urlpatterns = [
     path('documents/<int:document_id>/parse', documents.ParseView.as_view(), name='document-parse'),
     path('documents/<int:document_id>/render/coverpage', documents.RenderView.as_view(coverpage_only=True), name='document-render-coverpage'),
     path('documents/<int:document_id>/static/<path:filename>', documents.StaticFinderView.as_view(), name='document-static-finder'),
+    path('documents/<int:document_id>/analysis/link-terms', documents.LinkTermsView.as_view(), name='link-terms'),
+    path('documents/<int:document_id>/analysis/link-references', documents.LinkReferencesView.as_view(), name='link-references'),
+    path('documents/<int:document_id>/analysis/mark-up-italics', documents.MarkUpItalicsTermsView.as_view(), name='mark-up-italics'),
 
     path('', include(router.urls)),
 ]

@@ -374,16 +374,16 @@ class RenderView(DocumentResourceView, APIView):
             return Response({'output': document.to_html()})
 
 
-class LinkTermsView(APIView):
+class LinkTermsView(DocumentResourceView, APIView):
     """ Support for running term discovery and linking on a document.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request, document_id):
         serializer = DocumentAPISerializer(data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
 
         self.link_terms(document)
 
@@ -395,16 +395,16 @@ class LinkTermsView(APIView):
             finder.find_terms_in_document(doc)
 
 
-class LinkReferencesView(APIView):
+class LinkReferencesView(DocumentResourceView, APIView):
     """ Find and link internal references and references to other works.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request, document_id):
         serializer = DocumentAPISerializer(data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
 
         self.find_references(document)
 
@@ -432,16 +432,16 @@ class LinkReferencesView(APIView):
             finder.find_references_in_document(document)
 
 
-class MarkUpItalicsTermsView(APIView):
+class MarkUpItalicsTermsView(DocumentResourceView, APIView):
     """ Find and mark up italics terms.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request, document_id):
         serializer = DocumentAPISerializer(data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
 
         self.mark_up_italics(document)
 

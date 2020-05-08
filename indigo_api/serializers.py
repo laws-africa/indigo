@@ -13,7 +13,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import Act, FrbrUri
+from cobalt import StructuredDocument, FrbrUri
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
@@ -304,12 +304,16 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             },
         ]
 
-    def validate_content(self, value):
-        try:
-            Act(value)
-        except LxmlError as e:
-            raise ValidationError("Invalid XML: %s" % str(e))
-        return value
+    def validate(self, attrs):
+        if attrs.get('content'):
+            # validate the content
+            try:
+                frbr_uri = FrbrUri.parse(attrs['frbr_uri'])
+                StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
+            except (LxmlError, ValueError) as e:
+                raise ValidationError("Invalid XML: %s" % str(e))
+
+        return attrs
 
     def validate_frbr_uri(self, value):
         try:

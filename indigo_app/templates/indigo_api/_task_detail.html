@@ -148,7 +148,7 @@
                     {% endif %}
 
                   {% elif task.state == 'open' and task.submit_task_permission %}
-                    <input class="btn btn-primary float-left mr-2" type="submit" data-confirm="{{ task.submission_message }}" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}" id="btn_submit_for_review" value="Submit for Review"/>
+                    <input class="btn btn-primary float-left mr-2" type="submit" data-confirm="{{ task.submission_message }}" formaction="{% url 'submit_task' place=place.place_code pk=task.pk %}" id="btn_submit_for_review" value="Submit for review"/>
                   {% endif %}
                 </div>
               </div>

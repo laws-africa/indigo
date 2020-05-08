@@ -71,6 +71,7 @@ def filename_candidates(document, prefix='', suffix=''):
     * doctype-country
     * doctype-language
     * doctype
+    * akn
     """
     uri = document.expression_uri
     doctype = uri.doctype
@@ -89,11 +90,12 @@ def filename_candidates(document, prefix='', suffix=''):
     options.append('-'.join([doctype, country]))
     options.append('-'.join([doctype, language]))
     options.append(doctype)
+    options.append('akn')
 
     return [prefix + f + suffix for f in options]
 
 
-def find_best_static(candidates):
+def find_best_static(candidates, actual=True):
     """ Return the first static file that exists given a list of candidate files.
     """
     for option in candidates:
@@ -101,7 +103,7 @@ def find_best_static(candidates):
         fname = find_static(option)
         if fname:
             log.debug("Using %s" % fname)
-            return fname
+            return fname if actual else option
 
 
 def find_best_template(candidates):

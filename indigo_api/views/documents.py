@@ -2,11 +2,13 @@ import logging
 import copy
 
 from actstream import action
-
+from django.shortcuts import redirect
+from django.views import View
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchQuery
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -33,7 +35,7 @@ from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer,
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
-from ..utils import Headline, SearchPagination, SearchRankCD
+from ..utils import Headline, SearchPagination, SearchRankCD, filename_candidates, find_best_static
 from .misc import DEFAULT_PERMS
 
 log = logging.getLogger(__name__)
@@ -553,3 +555,25 @@ class DocumentDiffView(DocumentResourceView, APIView):
             'html_diff': diff,
             'n_changes': n_changes,
         })
+
+
+class StaticFinderView(DocumentResourceView, View):
+    """ This view looks for a static file (such as text.xsl, or html.xsl) suitable for use with this document,
+    based on its FRBR URI. Because there are a number of options to try, it's faster to do it on the server than
+    the client, and then redirect the caller to the appropriate static file URL.
+
+    eg. a request for text.xsl might find text_act-eng-za.xsl
+    """
+    def get(self, request, document_id, filename):
+        if '.' in filename:
+            prefix, suffix = filename.split('.', 1)
+            suffix = '.' + suffix
+        else:
+            prefix, suffix = filename, ''
+
+        candidates = filename_candidates(self.lookup_document(), f'{prefix}_', suffix)
+        best = find_best_static(candidates, actual=False)
+        if best:
+            return redirect(static(best))
+
+        raise Http404()

@@ -74,9 +74,14 @@ class DocumentViewMixin(object):
 
 
 # Read/write REST API
-class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
+class DocumentViewSet(DocumentViewMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     """
-    API endpoint that allows Documents to be viewed or edited.
+    API endpoint that allows get, list, update and destroy, but not creation of documents.
     """
     serializer_class = DocumentSerializer
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)

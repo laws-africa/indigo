@@ -6,15 +6,16 @@ from lxml import etree
 
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_za.terms import TermsFinderENG
-from indigo_api.models import Document
+from indigo_api.models import Document, Work
 
 
 class TermsFinderENGTestCase(APITestCase):
     def setUp(self):
+        self.work = Work(frbr_uri='/za/act/1998/1')
         self.finder = TermsFinderENG()
 
     def test_find_simple(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions</heading>
@@ -67,7 +68,7 @@ class TermsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))
 
     def test_find_no_heading(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading/>
@@ -120,7 +121,7 @@ class TermsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))
 
     def test_find_with_empty_string(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading/>
@@ -151,7 +152,7 @@ class TermsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True).decode('utf-8'))
 
     def test_unicode(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions</heading>
@@ -180,7 +181,7 @@ class TermsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8').decode('utf-8'))
 
     def test_fancy_quotes(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions</heading>
@@ -209,7 +210,7 @@ class TermsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8').decode('utf-8'))
 
     def test_whitespace_between_adjacent_terms(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions</heading>
@@ -250,7 +251,7 @@ class TermsFinderENGTestCase(APITestCase):
 ''', etree.tostring(doc.doc.body, pretty_print=True, encoding='UTF-8').decode('utf-8'))
 
     def test_whitespace_between_adjacent_terms2(self):
-        doc = Document(content=document_fixture(xml="""
+        doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">
   <num>1.</num>
   <heading>Definitions</heading>

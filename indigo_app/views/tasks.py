@@ -384,7 +384,7 @@ class TaskChangeWorkflowsView(TaskViewBase, View, SingleObjectMixin):
             workflows = []
 
         self.record_workflow_actions(task, workflows)
-        task.workflows = workflows
+        task.workflows.set(workflows)
 
         return redirect(self.get_redirect_url())
 

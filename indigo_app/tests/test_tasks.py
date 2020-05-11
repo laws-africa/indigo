@@ -2,7 +2,7 @@ from django.test import override_settings
 from django.contrib.auth.models import User
 from django_webtest import WebTest
 
-from indigo_api.models import Task, Work
+from indigo_api.models import Task, Work, Workflow
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -58,6 +58,27 @@ class TasksTest(WebTest):
 
         task.refresh_from_db()
         self.assertEqual(task.title, 'Updated title')
+
+    def test_change_task_workflows(self):
+        task = Task.objects.create(
+            title="Test title",
+            description="Test description",
+            country_id=1,
+            work=Work.objects.get(frbr_uri='/za/act/2014/10'),
+            created_by_user_id=1,
+        )
+        workflow = Workflow.objects.create(
+            title='test workflow',
+            country_id=1,
+            created_by_user_id=1,
+        )
+
+        form = self.app.get(f'/places/za/tasks/{task.id}/').forms['task-workflow-form']
+        form['workflows'] = str(workflow.id)
+        form.submit().follow()
+
+        task.refresh_from_db()
+        self.assertEqual(list(task.workflows.all()), [workflow])
 
     def test_assign_task(self):
         task = Task.objects.create(

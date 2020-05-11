@@ -559,6 +559,6 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
                 ]
                 w.n_tasks = sum(n for s, n, l in w.task_counts)
                 w.n_tasks_complete = (w.n_tasks_done or 0) + (w.n_tasks_cancelled or 0)
-                w.pct_complete = w.n_tasks_done / w.n_tasks * 100.0
+                w.pct_complete = w.n_tasks_done / (w.n_tasks or 1) * 100.0
 
         return context

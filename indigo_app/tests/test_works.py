@@ -9,6 +9,7 @@ from webtest import Upload
 
 import reversion
 
+from indigo.bulk_creator import BaseBulkCreator
 from indigo_app.views.works import WorkViewBase
 from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate
 
@@ -269,3 +270,13 @@ class WorksWebTest(WebTest):
         commencement = Commencement.objects.get(commenced_work=work)
         self.assertEqual(commencement.commencing_work, commencing_work)
         self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
+
+
+class BulkCreateWorksTest(testcases.TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+
+    def test_find_work(self):
+        creator = BaseBulkCreator()
+        given_string = "Constitution of the Republic of South Africa, 1996"
+        work = BaseBulkCreator.find_work(creator, given_string)
+        self.assertEqual(work.id, 10)

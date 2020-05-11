@@ -115,7 +115,7 @@ class HTMLExporter(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = filename_candidates(document, prefix='xsl/', suffix='.xsl')
+        candidates = filename_candidates(document, prefix='xsl/html_', suffix='.xsl')
         best = find_best_static(candidates)
         if not best:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))

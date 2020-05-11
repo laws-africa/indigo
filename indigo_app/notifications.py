@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 class Notifier(object):
     def notify_task_action(self, action):
         task = action.action_object
+        comment = action.data.get('comment', None)
 
         if action.verb == 'assigned':
             self.send_templated_email('task_assigned', [action.target], {
@@ -33,6 +34,7 @@ class Notifier(object):
                 'action': action,
                 'task': task,
                 'recipient': action.target,
+                'comment': comment,
             })
 
         elif action.verb == Task.VERBS['close']:
@@ -41,6 +43,7 @@ class Notifier(object):
                     'action': action,
                     'task': task,
                     'recipient': task.submitted_by_user,
+                    'comment': comment,
                 })
 
         elif action.verb == Task.VERBS['submit'] and task.reviewed_by_user:
@@ -48,6 +51,7 @@ class Notifier(object):
                 'action': action,
                 'task': task,
                 'recipient': task.reviewed_by_user,
+                'comment': comment,
             })
 
     def notify_comment_posted(self, comment):

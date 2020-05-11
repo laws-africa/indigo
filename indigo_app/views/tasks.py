@@ -7,9 +7,11 @@ from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 
 from django.core.exceptions import PermissionDenied
+from django.contrib.sites.shortcuts import get_current_site
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.utils.timezone import now
 from django.views.generic import ListView, CreateView, DetailView, UpdateView
 from django.views.generic.base import View, TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -281,6 +283,8 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
         task = self.get_object()
         user = self.request.user
         task.updated_by_user = user
+        task_content_type = ContentType.objects.get_for_model(task)
+        comment_text = request.POST.get('comment', None)
 
         if task.customised:
             # redirect to custom close url, if necessary
@@ -293,7 +297,21 @@ class TaskChangeStateView(TaskViewBase, View, SingleObjectMixin):
                 if not has_transition_perm(state_change, self):
                     raise PermissionDenied
 
-                state_change(user)
+                if comment_text:
+                    comment = Comment(user=user, object_pk=task.id,
+                                      user_name=user.get_full_name() or user.username,
+                                      user_email=user.email,
+                                      comment=comment_text,
+                                      content_type=task_content_type,
+                                      site_id=get_current_site(request).id)
+
+                    state_change(user, comment=comment.comment)
+                    # save the comment here so that it appears after the action
+                    comment.submit_date = now()
+                    comment.save()
+
+                else:
+                    state_change(user)
 
                 if change == 'submit':
                     verb = 'submitted for review'

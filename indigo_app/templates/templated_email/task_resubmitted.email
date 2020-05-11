@@ -7,8 +7,14 @@
 
   <p>
     {{ action.actor.get_full_name }} resubmitted the task
-    <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a> which you previously reviewed:
+    <a href="{{ SITE_URL }}{% url 'task_detail' place=task.place.place_code pk=task.pk %}">#{{ task.pk }} – {{ task.title }}</a> which you previously reviewed{% if comment %} with this comment{% endif %}:
   </p>
+
+  {% if comment %}
+    <div style="padding: 1rem;">
+      {{ comment }}
+    </div>
+  {% endif %}
 
   <hr>
   {% include 'templated_email/_task_detail_block.html' %}

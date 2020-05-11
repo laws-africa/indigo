@@ -641,13 +641,13 @@ Possible reasons:
             If not, assume a title has been given and try to match on the whole string.
         """
         first = given_string.split()[0]
-        if FrbrUri.parse(first):
-            # it's an FRBR URI!
+        try:
+            FrbrUri.parse(first)
             return Work.objects.filter(frbr_uri=first).first()
-
-        potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
-        if len(potential_matches) == 1:
-            return potential_matches.first()
+        except ValueError:
+            potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
+            if len(potential_matches) == 1:
+                return potential_matches.first()
 
     @property
     def share_with(self):

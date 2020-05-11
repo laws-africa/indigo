@@ -14,7 +14,6 @@ from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
 
 from indigo.custom_tasks import tasks
-from indigo.documents import ResolvedAnchor
 from indigo_api.signals import task_closed
 
 
@@ -379,7 +378,7 @@ class Workflow(models.Model):
         permissions = (
             ('close_workflow', 'Can close a workflow'),
         )
-        ordering = ('title',)
+        ordering = ('-priority', 'pk',)
 
     objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
 
@@ -390,6 +389,7 @@ class Workflow(models.Model):
 
     closed = models.BooleanField(default=False)
     due_date = models.DateField(null=True, blank=True)
+    priority = models.BooleanField(default=False, db_index=True)
 
     country = models.ForeignKey('indigo_api.Country', related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey('indigo_api.Locality', related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
@@ -407,6 +407,12 @@ class Workflow(models.Model):
     @property
     def overdue(self):
         return self.due_date and self.due_date < datetime.date.today()
+
+    @property
+    def summary(self):
+        """ First part of the workflow description before a blank line.
+        """
+        return (self.description or '').replace('\r\n', '\n').split('\n\n', 1)[0]
 
     def __str__(self):
         return self.title

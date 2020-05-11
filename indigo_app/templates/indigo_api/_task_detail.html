@@ -211,7 +211,7 @@
         </ul>
         {% with task.workflows.all as workflows %}
           <form action="{% url 'task_workflows' place=place.place_code pk=task.pk %}" method="POST"
-                data-submit="ajax">
+                data-submit="ajax" id="task-workflow-form">
             {% csrf_token %}
 
             <select class="selectpicker" multiple name="workflows" onchange="$(this.form).trigger('submit')"

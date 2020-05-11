@@ -2,12 +2,14 @@
 import json
 from itertools import chain
 import datetime
+import math
 
 from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 
 from django.core.exceptions import PermissionDenied
 from django.contrib.sites.shortcuts import get_current_site
+from django.db.models import Subquery, OuterRef, Count, IntegerField
 from django.http import QueryDict
 from django.shortcuts import redirect
 from django.urls import reverse
@@ -480,6 +482,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     paginate_by = 50
     paginate_orphans = 4
     tab = 'available_tasks'
+    priority = False
 
     def get(self, request, *args, **kwargs):
         self.form = TaskFilterForm(None, request.GET)
@@ -495,10 +498,67 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
         if not self.form.cleaned_data.get('state'):
             tasks = tasks.filter(state__in=Task.OPEN_STATES)
 
+        if self.priority:
+            tasks = tasks.filter(workflows__priority=True)
+
         return self.form.filter_queryset(tasks)
 
     def get_context_data(self, **kwargs):
         context = super(AvailableTasksView, self).get_context_data(**kwargs)
         context['form'] = self.form
         context['tab_count'] = context['paginator'].count
+
+        if self.priority:
+            workflows = Workflow.objects\
+                .unclosed()\
+                .filter(priority=True)\
+                .select_related('country', 'country__country')\
+                .annotate(
+                    n_tasks_open=Subquery(
+                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.OPEN, assigned_to=None)
+                        .values('workflows__pk')
+                        .annotate(cnt=Count(1))
+                        .values('cnt'),
+                        output_field=IntegerField()),
+                    n_tasks_assigned=Subquery(
+                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.OPEN)
+                        .exclude(assigned_to=None)
+                        .values('workflows__pk')
+                        .annotate(cnt=Count(1))
+                        .values('cnt'),
+                        output_field=IntegerField()),
+                    n_tasks_pending_review=Subquery(
+                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.PENDING_REVIEW)
+                        .values('workflows__pk')
+                        .annotate(cnt=Count(1))
+                        .values('cnt'),
+                        output_field=IntegerField()),
+                    n_tasks_done=Subquery(
+                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.DONE)
+                        .values('workflows__pk')
+                        .annotate(cnt=Count(1))
+                        .values('cnt'),
+                        output_field=IntegerField()),
+                    n_tasks_cancelled=Subquery(
+                        Task.objects.filter(workflows=OuterRef('pk'), state=Task.CANCELLED)
+                        .values('workflows__pk')
+                        .annotate(cnt=Count(1))
+                        .values('cnt'),
+                        output_field=IntegerField()),
+                    ).all()
+
+            # sort by due date (desc + nulls last), then by id (asc)
+            def key(x):
+                return [-x.due_date.toordinal() if x.due_date else math.inf, x.pk]
+            context['priority_workflows'] = sorted(workflows, key=key)
+
+            for w in context['priority_workflows']:
+                w.task_counts = [
+                    (state, getattr(w, f'n_tasks_{state}') or 0, state.replace('_', ' '))
+                    for state in ['open', 'assigned', 'pending_review', 'done', 'cancelled']
+                ]
+                w.n_tasks = sum(n for s, n, l in w.task_counts)
+                w.n_tasks_complete = (w.n_tasks_done or 0) + (w.n_tasks_cancelled or 0)
+                w.pct_complete = w.n_tasks_done / w.n_tasks * 100.0
+
         return context

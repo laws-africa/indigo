@@ -41,27 +41,25 @@
             </div>
           </div>
           <div class="col-5">
-            <div>
+            <div class="mb-2">
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
-              {% if workflow.description %}
-                <div>{{ workflow.summary|urlize }}</div>
-              {% endif %}
-            </div>
-
-            <div>
               {% if workflow.priority %}
-                <span class="text-warning mr-3"><i class="fas fa-exclamation-circle"></i> Priority</span>
-              {% endif %}
-
-              {% if workflow.due_date %}
-                <span class="text-muted">
-                  Due {{ workflow.due_date|date:"Y-m-d" }}
-                  {% if workflow.overdue %}
-                    <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
-                  {% endif %}
-                </span>
+                <span class="text-warning mr-3 text-nowrap"><i class="fas fa-exclamation-circle"></i> Priority</span>
               {% endif %}
             </div>
+
+            {% if workflow.description %}
+              <div>{{ workflow.summary|urlize }}</div>
+            {% endif %}
+
+            {% if workflow.due_date %}
+              <div class="text-muted">
+                Due {{ workflow.due_date|date:"Y-m-d" }}
+                {% if workflow.overdue %}
+                  <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+                {% endif %}
+              </div>
+            {% endif %}
 
             <div class="small text-muted">
               Created <span class="time-ago" data-timestamp="{{ workflow.created_at|date:'c' }}">{{ workflow.created_at|naturaltime }}</span>

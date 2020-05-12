@@ -1,6 +1,12 @@
 Changelog
 =========
 
+11.0.0 (?)
+----------
+
+* BREAKING: migrate from Akoma Ntoso 2.0 to Akoma Ntoso 3.0
+* BREAKING: content API URLs with work components must use !, such as ``/za/act/1992/1/!main``
+
 10.0.0 (?)
 ----------
 

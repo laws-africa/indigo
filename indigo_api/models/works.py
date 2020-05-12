@@ -387,7 +387,7 @@ class Work(WorkMixin, models.Model):
         from .documents import Document, Attachment
 
         language = language or self.country.primary_language
-        doc = Document()
+        doc = Document(work=self)
 
         # most recent expression at or before this date
         template = self.document_set \
@@ -403,7 +403,6 @@ class Work(WorkMixin, models.Model):
         doc.draft = True
         doc.language = language
         doc.expression_date = date
-        doc.work = self
         doc.created_by_user = user
         doc.save()
 

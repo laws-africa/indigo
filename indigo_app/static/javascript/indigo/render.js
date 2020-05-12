@@ -41,42 +41,29 @@ $(function() {
 
     /** Setup for this country, loading the XSL stylesheet, etc.
      *
-     * @param country country code
+     * @param document document model
      */
-    setup: function(country) {
+    setup: function(document) {
       var self = this;
 
-      this.country = country;
+      this.document = document;
       this.ready = $.Deferred();
 
-      function loaded(xml) {
+      $.get(document.url() + '/static/xsl/html.xsl').then(function(xml) {
         var htmlTransform = new XSLTProcessor();
         htmlTransform.importStylesheet(xml);
         htmlTransform.setParameter(null, 'resolverUrl', '/works');
 
         self.htmlTransform = htmlTransform;
         self.ready.resolve();
-      }
-
-      $.get('/static/xsl/act-' + country +'.xsl')
-        .then(loaded)
-        .fail(function() {
-          $.get('/static/xsl/act.xsl')
-            .then(loaded);
-        });
+      });
     },
   };
 
-  // Map from country codes to initialized renderers
-  Indigo.render.htmlRenderers = {};
-
-  Indigo.render.getHtmlRenderer = function(country) {
-    if (!Indigo.render.htmlRenderers[country]) {
-      var renderer = Indigo.render.htmlRenderers[country] = Object.create(Indigo.render.HtmlRenderer);
-      renderer.setup(country);
-    }
-
-    return Indigo.render.htmlRenderers[country];
+  Indigo.render.getHtmlRenderer = function(document) {
+    var renderer = Object.create(Indigo.render.HtmlRenderer);
+    renderer.setup(document);
+    return renderer;
   };
 });
 

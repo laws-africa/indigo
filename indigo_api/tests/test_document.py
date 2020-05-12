@@ -16,7 +16,7 @@ class DocumentTestCase(TestCase):
         self.eng = Language.for_code('eng')
 
     def test_empty_document(self):
-        d = Document()
+        d = Document(work=self.work)
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
@@ -39,13 +39,13 @@ class DocumentTestCase(TestCase):
         assert_equal(d.doc.publication_date, date(2005, 7, 24))
 
     def test_expression_date(self):
-        d = Document()
+        d = Document(work=self.work)
         d.content = document_fixture('test')
         d.expression_date = date(2014, 1, 1)
         assert_equal(d.expression_date, date(2014, 1, 1))
 
     def test_empty_expression_date(self):
-        d = Document()
+        d = Document(work=self.work)
         d.content = document_fixture('test')
         d.expression_date = ''
         assert_equal(d.expression_date, '')

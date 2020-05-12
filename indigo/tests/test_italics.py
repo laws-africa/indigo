@@ -4,19 +4,21 @@ from lxml import etree
 from django.test import TestCase
 
 from indigo.analysis.italics_terms import BaseItalicsFinder
-from indigo_api.models import Document
+from indigo_api.models import Document, Work
 from indigo_api.tests.fixtures import document_fixture
 
 
 class ItalicsMarkupTestCase(TestCase):
 
     def setUp(self):
+        self.work = Work(frbr_uri='/za/act/1991/1')
         self.italics_terms_finder = BaseItalicsFinder()
         self.italics_terms = ['Gazette', 'habeus corpus', 'per']
         self.maxDiff = None
 
     def test_italics_markup(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
         <section id="section-1">
@@ -31,6 +33,7 @@ class ItalicsMarkupTestCase(TestCase):
         )
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
         <section id="section-1">

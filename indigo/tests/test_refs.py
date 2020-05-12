@@ -14,12 +14,14 @@ class SectionRefsFinderTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
+        self.work = Work(frbr_uri='/za/act/1991/1')
         self.section_refs_finder = SectionRefsFinderENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
     def test_section_basic(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -62,6 +64,7 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -110,6 +113,7 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_of_this(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -136,6 +140,7 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -168,6 +173,7 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_multiple(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -220,6 +226,7 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -278,6 +285,7 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_invalid(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -328,6 +336,7 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_valid_and_invalid(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -353,6 +362,7 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-7">
@@ -384,6 +394,7 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_edge(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-1">
@@ -543,6 +554,7 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
       <section id="section-1">
@@ -711,12 +723,14 @@ class RefsFinderENGTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
+        self.work = Work(frbr_uri='/za/act/1991/1')
         self.finder = RefsFinderENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
     def test_find_simple(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
         <section id="section-1">
@@ -733,6 +747,7 @@ class RefsFinderENGTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
         <section id="section-1">
@@ -758,12 +773,14 @@ class RefsFinderSubtypesENGTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
+        self.work = Work(frbr_uri='/za/act/1991/1')
         self.finder = RefsFinderSubtypesENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
     def test_find_simple(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
         <section id="section-1">
@@ -780,6 +797,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
         <section id="section-1">

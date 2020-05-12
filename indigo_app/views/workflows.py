@@ -165,7 +165,7 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
 
     context_object_name = 'workflow'
     model = Workflow
-    fields = ('title', 'description', 'due_date')
+    fields = ('title', 'description', 'due_date', 'priority')
 
     def form_valid(self, form):
         form_valid = super(WorkflowEditView, self).form_valid(form)
@@ -174,6 +174,7 @@ class WorkflowEditView(WorkflowViewBase, UpdateView):
             workflow.updated_by_user = self.request.user
             action.send(workflow.updated_by_user, verb='updated', action_object=workflow,
                         place_code=workflow.place.place_code)
+            messages.success(self.request, "Workflow updated.")
         return form_valid
 
     def get_success_url(self):
@@ -328,6 +329,6 @@ class WorkflowListView(WorkflowViewBase, ListView):
                 w.task_counts['open'] -= w.task_counts['assigned']
             w.pct_complete = w.task_counts['complete'] / (w.task_counts['total'] or 1) * 100.0
 
-            w.task_charts = [(s, w.task_counts.get(s, 0)) for s in ['open', 'assigned', 'pending_review', 'cancelled']]
+            w.task_charts = [(s, w.task_counts.get(s, 0), s.replace('_', ' ')) for s in ['open', 'assigned', 'pending_review', 'cancelled']]
 
         return context

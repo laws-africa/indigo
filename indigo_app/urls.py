@@ -80,6 +80,7 @@ urlpatterns = [
 
     path('tasks/', tasks.UserTasksView.as_view(), name='my_tasks'),
     path('tasks/available/', tasks.AvailableTasksView.as_view(), name='available_tasks'),
+    path('tasks/priority/', tasks.AvailableTasksView.as_view(priority=True, tab='priority_tasks'), name='priority_tasks'),
 
     path('comments/', include('django_comments.urls')),
     path('jserror', misc.JSErrorView.as_view(), name='jserror'),

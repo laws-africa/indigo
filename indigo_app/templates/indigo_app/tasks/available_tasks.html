@@ -5,6 +5,52 @@
 
 {% block content %}
 <div class="container-fluid mt-3">
+  {% if priority_workflows %}
+    <h4>Priority workflows</h4>
+
+    <div class="mb-3 row">
+      {% for workflow in priority_workflows %}
+        <div class="col-4 mb-2">
+          <div class="card">
+            <div class="card-body">
+              <div class="mb-2">
+                <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+                <span class="mr-3 text-warning"><i class="fas fa-exclamation-circle"></i> Priority</span>
+              </div>
+
+              <div class="text-muted">
+                <span class="mr-2">{{ workflow.country.name }}{% if workflow.locality %} › {{ workflow.locality.name }}{% endif %}</span>
+                {% if workflow.due_date %}
+                  Due {{ workflow.due_date|date:"Y-m-d" }}
+                  {% if workflow.overdue %}
+                    <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+                  {% endif %}
+                {% endif %}
+              </div>
+
+              <div class="progress mt-2">
+                <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
+              </div>
+
+              <div class="row">
+                {% for state, count, label in workflow.task_counts %}
+                  {% if count %}
+                    <div class="col-4 mt-1">
+                      <i class="fas fa-sm fa-fw task-icon-{{ state }}" title="{{ state }}"></i>
+                      <span class="text-muted">{{ count }} {{ label }}</span>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <h4>Available tasks</h4>
+
   <div class="card">
     <div class="card-header">
       <form method="GET" id="task-filter-form" onchange="this.submit();">

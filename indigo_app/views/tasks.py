@@ -512,7 +512,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
             workflows = Workflow.objects\
                 .unclosed()\
                 .filter(priority=True)\
-                .select_related('country', 'country__country')\
+                .select_related('country', 'locality')\
                 .annotate(
                     n_tasks_open=Subquery(
                         Task.objects.filter(workflows=OuterRef('pk'), state=Task.OPEN, assigned_to=None)

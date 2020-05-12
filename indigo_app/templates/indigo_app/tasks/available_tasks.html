@@ -19,7 +19,7 @@
               </div>
 
               <div class="text-muted">
-                <span class="mr-2">{{ workflow.country.name }} · {{ workflow.country.code }}</span>
+                <span class="mr-2">{{ workflow.country.name }}{% if workflow.locality %} › {{ workflow.locality.name }}{% endif %}</span>
                 {% if workflow.due_date %}
                   Due {{ workflow.due_date|date:"Y-m-d" }}
                   {% if workflow.overdue %}

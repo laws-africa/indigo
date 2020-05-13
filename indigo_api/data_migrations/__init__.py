@@ -77,20 +77,21 @@ class UpdateAKNNamespace(AKNMigration):
     """ Update all instances of:
     <akomaNtoso xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     to
-    <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xsi:schemaLocation="http://docs.oasis-open.org/legaldocml/ns/akn/3.0 ../akomantoso30.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
     """
-    # TODO: Sanity check use and value of xsi:schemaLocation
     def update_namespace(self, xml):
-        from cobalt import Act
-        cobalt_doc = Act(xml)
-        if cobalt_doc.namespace == "http://www.akomantoso.org/2.0":
+        if "http://www.akomantoso.org/2.0" in xml[:300]:
             xml = xml.replace(
-                "http://www.akomantoso.org/2.0 akomantoso20.xsd",
-                "http://docs.oasis-open.org/legaldocml/ns/akn/3.0 akomantoso30.xsd",
+                ' xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd"',
+                "",
                 1)\
                 .replace(
-                "http://www.akomantoso.org/2.0",
-                "http://docs.oasis-open.org/legaldocml/ns/akn/3.0",
+                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+                "",
+                1)\
+                .replace(
+                'xmlns="http://www.akomantoso.org/2.0"',
+                'xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"',
                 1)
 
         return xml

@@ -396,7 +396,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not finder or not params.get('date'):
             return self.create_task(work, info, task_type='link-publication-document')
 
-        publications = finder.find_publications(params)
+        try:
+            publications = finder.find_publications(params)
+        except requests.HTTPError:
+            return self.create_task(work, info, task_type='link-publication-document')
 
         if len(publications) != 1:
             return self.create_task(work, info, task_type='link-publication-document')

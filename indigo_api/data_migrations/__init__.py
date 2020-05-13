@@ -72,3 +72,25 @@ class FixSignificantWhitespace(AKNMigration):
 
         return xml
 
+
+class UpdateAKNNamespace(AKNMigration):
+    """ Update all instances of:
+    <akomaNtoso xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    to
+    <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xsi:schemaLocation="http://docs.oasis-open.org/legaldocml/ns/akn/3.0 ../akomantoso30.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    """
+    # TODO: Sanity check use and value of xsi:schemaLocation
+    def update_namespace(self, xml):
+        from cobalt import Act
+        cobalt_doc = Act(xml)
+        if cobalt_doc.namespace == "http://www.akomantoso.org/2.0":
+            xml = xml.replace(
+                "http://www.akomantoso.org/2.0 akomantoso20.xsd",
+                "http://docs.oasis-open.org/legaldocml/ns/akn/3.0 akomantoso30.xsd",
+                1)\
+                .replace(
+                "http://www.akomantoso.org/2.0",
+                "http://docs.oasis-open.org/legaldocml/ns/akn/3.0",
+                1)
+
+        return xml

@@ -80,18 +80,17 @@ class UpdateAKNNamespace(AKNMigration):
     <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
     """
     def update_namespace(self, xml):
-        if "http://www.akomantoso.org/2.0" in xml[:300]:
-            xml = xml.replace(
-                ' xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd"',
-                "",
-                1)\
-                .replace(
-                ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
-                "",
-                1)\
-                .replace(
-                'xmlns="http://www.akomantoso.org/2.0"',
-                'xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"',
-                1)
+        xml = xml.replace(
+            ' xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd"',
+            "",
+            1)\
+            .replace(
+            ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"',
+            "",
+            1)\
+            .replace(
+            'xmlns="http://www.akomantoso.org/2.0"',
+            'xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"',
+            1)
 
         return xml

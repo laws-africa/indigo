@@ -18,7 +18,7 @@ def forward(apps, schema_editor):
     for document in Document.objects.using(db_alias).all():
         xml = migration.update_namespace(document.document_xml)
         if xml != document.document_xml:
-            document.reset_xml(xml, from_model=True)
+            document.document_xml = xml
             document.save()
 
         # Update historical Document versions

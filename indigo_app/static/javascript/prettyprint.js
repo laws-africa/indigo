@@ -7,7 +7,7 @@
     '-->' +
     '' +
     '<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"' +
-    '  xmlns:a="http://www.akomantoso.org/2.0">' +
+    '  xmlns:a="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">' +
     '  ' +
     '  <xsl:output method="xml" indent="no" encoding="UTF-8"/>' +
     '  <xsl:strip-space elements="*"/>' +

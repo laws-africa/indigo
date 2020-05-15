@@ -832,7 +832,7 @@ class RefsFinderCapENGTestCase(TestCase):
         user1 = User.objects.get(pk=1)
         settings.INDIGO['WORK_PROPERTIES'] = {
             'za': {
-                'cap_number': 'Chapter (cap)',
+                'cap': 'Chapter (cap)',
             }
         }
 
@@ -842,7 +842,7 @@ class RefsFinderCapENGTestCase(TestCase):
             country=za,
             created_by_user=user1,
         )
-        work.properties['cap_number'] = '12'
+        work.properties['cap'] = '12'
         work.updated_by_user = user1
         work.save()
 

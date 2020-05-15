@@ -33,64 +33,65 @@
     {% if workflows %}
 
       {% for workflow in workflows %}
-        <div class="list-group-item p-3 d-flex">
-          <div class="col text-center">
-            <i class="fas fa-fw fa-tasks workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"></i><br>
-            <span class="text-muted">#{{ workflow.pk }}</span>
+        <div class="list-group-item py-3 px-0 d-flex">
+          <div class="col-1">
+            <div class="text-center">
+              <i class="fas fa-fw fa-tasks workflow-badge {% if workflow.closed %}workflow-closed{% endif %}"></i><br>
+              <span class="text-muted">#{{ workflow.pk }}</span>
+            </div>
           </div>
-
-          <div class="col-6">
-            <div>
+          <div class="col-5">
+            <div class="mb-2">
               <a href="{% url 'workflow_detail' place=place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
-              <br>
-              {% if workflow.description %}
-                {{ workflow.description|linebreaksbr }}
+              {% if workflow.priority %}
+                <span class="text-warning mr-3 text-nowrap"><i class="fas fa-exclamation-circle"></i> Priority</span>
               {% endif %}
             </div>
 
-            <div class="text-muted">
-              {% if workflow.due_date %}
-                <div class="text-muted">
-                  Due {{ workflow.due_date|date:"Y-m-d" }}
-                  {% if workflow.overdue %}
-                    <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
-                  {% endif %}
-                </div>
-              {% endif %}
+            {% if workflow.description %}
+              <div>{{ workflow.summary|urlize }}</div>
+            {% endif %}
 
-              <small>
-                Created <span class="time-ago" data-timestamp="{{ workflow.created_at|date:'c' }}">{{ workflow.created_at|naturaltime }}</span>
-                {% if workflow.created_by_user %}
-                by {% user_profile workflow.created_by_user %}
+            {% if workflow.due_date %}
+              <div class="text-muted">
+                Due {{ workflow.due_date|date:"Y-m-d" }}
+                {% if workflow.overdue %}
+                  <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
                 {% endif %}
-              </small>
-            </div>
+              </div>
+            {% endif %}
 
+            <div class="small text-muted">
+              Created <span class="time-ago" data-timestamp="{{ workflow.created_at|date:'c' }}">{{ workflow.created_at|naturaltime }}</span>
+              {% if workflow.created_by_user %}
+              by {% user_profile workflow.created_by_user %}
+              {% endif %}
+            </div>
           </div>
-          {% if workflow.tasks.count %}
-            <div class="col-6 align-self-center">
+
+          <div class="col-6 align-self-center">
+            {% if workflow.tasks.count %}
               <div class="row">
                 <div class="col-8">
-                  <div class="progress">
+                  <div class="progress mt-2" style="height: 0.5rem">
                     <div class="progress-bar bg-success" role="progressbar" style="width: {{ workflow.pct_complete }}%"></div>
                   </div>
                 </div>
-                <div class="col-3 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
+                <div class="col-4 text-muted">{{ workflow.task_counts.complete }} of {{ workflow.task_counts.total }} task{{ workflow.task_counts.total|pluralize }}</div>
               </div>
 
-              {% for state, count in workflow.task_charts %}
-                {% if count %}
-                  <div class="mt-2">
-                    <i class="fas fa-sm fa-fw task-icon-{{ state }}" title="{{ state }}"></i>
-                    <span class="text-muted">{{ count }} task{{ count|pluralize }}</span>
-                  </div>
-                {% endif %}
-              {% endfor %}
-            </div>
-          {% else %}
-            <div class="col-6">
-            </div>
-          {% endif %}
+              <div class="row">
+                {% for state, count, label in workflow.task_charts %}
+                  {% if count %}
+                    <div class="col-4 mt-2">
+                      <i class="fas fa-sm fa-fw task-icon-{{ state }}" title="{{ state }}"></i>
+                      <span class="text-muted">{{ count }} {{ label }}</span>
+                    </div>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            {% endif %}
+          </div>
         </div>
       {% endfor %}
 

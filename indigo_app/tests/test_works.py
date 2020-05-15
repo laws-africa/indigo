@@ -9,8 +9,10 @@ from webtest import Upload
 
 import reversion
 
+from indigo.bulk_creator import BaseBulkCreator
+from indigo.plugins import plugins
 from indigo_app.views.works import WorkViewBase
-from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate
+from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -269,3 +271,19 @@ class WorksWebTest(WebTest):
         commencement = Commencement.objects.get(commenced_work=work)
         self.assertEqual(commencement.commencing_work, commencing_work)
         self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
+
+
+class BulkCreateWorksTest(testcases.TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+
+    def setUp(self):
+        creator = plugins.for_locale('bulk-creator', 'za', None, None)
+        za = Country.objects.get(pk=1)
+        creator.country = za
+        creator.locality = None
+        self.creator = creator
+
+    def test_find_work(self):
+        given_string = "Constitution of the Republic of South Africa, 1996"
+        work = BaseBulkCreator.find_work(self.creator, given_string)
+        self.assertEqual(work.id, 10)

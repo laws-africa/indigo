@@ -14,7 +14,6 @@ from django_fsm import FSMField, has_transition_perm, transition
 from django_fsm.signals import post_transition
 
 from indigo.custom_tasks import tasks
-from indigo.documents import ResolvedAnchor
 from indigo_api.signals import task_closed
 
 
@@ -197,7 +196,7 @@ class Task(models.Model):
                user.has_perm('indigo_api.submit_task')
 
     @transition(field=state, source=['open'], target='pending_review', permission=may_submit)
-    def submit(self, user):
+    def submit(self, user, **kwargs):
         if not self.assigned_to:
             self.assign_to(user, user)
         self.submitted_by_user = self.assigned_to
@@ -220,7 +219,7 @@ class Task(models.Model):
                view.request.user.editor.has_country_permission(view.country) and view.request.user.has_perm('indigo_api.reopen_task')
 
     @transition(field=state, source=['cancelled', 'done'], target='open', permission=may_reopen)
-    def reopen(self, user):
+    def reopen(self, user, **kwargs):
         self.reviewed_by_user = None
         self.closed_at = None
 
@@ -232,7 +231,7 @@ class Task(models.Model):
                (view.request.user == self.assigned_to or not self.assigned_to)
 
     @transition(field=state, source=['pending_review'], target='open', permission=may_unsubmit)
-    def unsubmit(self, user):
+    def unsubmit(self, user, **kwargs):
         if not self.assigned_to or self.assigned_to != user:
             self.assign_to(user, user)
         self.reviewed_by_user = self.assigned_to
@@ -249,7 +248,7 @@ class Task(models.Model):
                  (not self.assigned_to and self.submitted_by_user != view.request.user))))
 
     @transition(field=state, source=['pending_review'], target='done', permission=may_close)
-    def close(self, user):
+    def close(self, user, **kwargs):
         if not self.assigned_to or self.assigned_to != user:
             self.assign_to(user, user)
         self.reviewed_by_user = self.assigned_to
@@ -339,6 +338,8 @@ def post_task_transition(sender, instance, name, **kwargs):
     """
     if name in instance.VERBS:
         user = kwargs['method_args'][0]
+        comment = kwargs['method_kwargs'].get('comment', None)
+
         # ensure the task object changes are in the DB, since action signals
         # load related data objects from the db
         instance.save()
@@ -347,9 +348,13 @@ def post_task_transition(sender, instance, name, **kwargs):
             action.send(user, verb=instance.VERBS['unsubmit'],
                         action_object=instance,
                         target=instance.assigned_to,
-                        place_code=instance.place.place_code)
+                        place_code=instance.place.place_code,
+                        comment=comment)
         else:
-            action.send(user, verb=instance.VERBS[name], action_object=instance, place_code=instance.place.place_code)
+            action.send(user, verb=instance.VERBS[name],
+                        action_object=instance,
+                        place_code=instance.place.place_code,
+                        comment=comment)
 
 
 class WorkflowQuerySet(models.QuerySet):
@@ -373,7 +378,7 @@ class Workflow(models.Model):
         permissions = (
             ('close_workflow', 'Can close a workflow'),
         )
-        ordering = ('title',)
+        ordering = ('-priority', 'pk',)
 
     objects = WorkflowManager.from_queryset(WorkflowQuerySet)()
 
@@ -384,6 +389,7 @@ class Workflow(models.Model):
 
     closed = models.BooleanField(default=False)
     due_date = models.DateField(null=True, blank=True)
+    priority = models.BooleanField(default=False, db_index=True)
 
     country = models.ForeignKey('indigo_api.Country', related_name='workflows', null=False, blank=False, on_delete=models.CASCADE)
     locality = models.ForeignKey('indigo_api.Locality', related_name='workflows', null=True, blank=True, on_delete=models.CASCADE)
@@ -401,6 +407,12 @@ class Workflow(models.Model):
     @property
     def overdue(self):
         return self.due_date and self.due_date < datetime.date.today()
+
+    @property
+    def summary(self):
+        """ First part of the workflow description before a blank line.
+        """
+        return (self.description or '').replace('\r\n', '\n').split('\n\n', 1)[0]
 
     def __str__(self):
         return self.title

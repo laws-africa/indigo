@@ -96,7 +96,7 @@ def migrate_backward(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0128_rename_badges'),
+        ('indigo_api', '0129_workflow_priority'),
     ]
 
     operations = [

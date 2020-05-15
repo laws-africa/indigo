@@ -33,7 +33,7 @@ def forward(apps, schema_editor):
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0129_migrate_refs_uris'),
+        ('indigo_api', '0130_migrate_refs_uris'),
     ]
 
     operations = [

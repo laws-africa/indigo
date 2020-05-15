@@ -111,10 +111,25 @@
             for (var t = 0; t < tables.length; t++) {
               var table = tables[t];
 
-              // strip out non HTML tags - we don't want MS Office's tags
+              // strip out namespaced tags - we don't want MS Office's tags
               var elems = table.getElementsByTagName("*");
               for (var i = 0; i < elems.length; i++) {
-                if (elems[i].tagName.indexOf(':') > -1) elems[i].remove();
+                var elem = elems[i];
+
+                if (elem.tagName.indexOf(':') > -1) {
+                  elem.remove();
+                  // the element collection is live, so keep i the same
+                  i--;
+                } else {
+                  // strip style and namespaced attributes, too
+                  elem.getAttributeNames().forEach(function(name) {
+                    console.log(name);
+                    if (name === 'style' || name.indexOf(':') > -1) {
+                      console.log('Removing ' + name);
+                      elem.removeAttribute(name);
+                    }
+                  });
+                }
               }
 
               pasteTable(table);

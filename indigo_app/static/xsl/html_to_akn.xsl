@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  xmlns="http://www.akomantoso.org/2.0"
+  xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
   exclude-result-prefixes="html">
 
   <xsl:output method="xml" />

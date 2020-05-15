@@ -11,6 +11,12 @@
           <span class="badge badge-light">{{ tab_count }}</span>
         {% endif %}
       </a>
+      <a class="nav-item nav-link {% if view.tab == 'priority_tasks' %}active{% endif %}" href="{% url 'priority_tasks' %}">
+        Priority tasks
+        {% if view.tab == 'priority_tasks' %}
+          <span class="badge badge-light">{{ tab_count }}</span>
+        {% endif %}
+      </a>
       <a class="nav-item nav-link {% if view.tab == 'available_tasks' %}active{% endif %}" href="{% url 'available_tasks' %}">
         All available tasks
         {% if view.tab == 'available_tasks' %}

@@ -389,7 +389,7 @@ Using HTML Responses
 --------------------
 
 Indigo transforms Akoma Ntoso XML into HTML5 content that looks best when styled with
-`Indigo Web <https://github.com/Code4SA/indigo-web>`_ stylesheets. You can link
+`Indigo Web <https://github.com/laws-africa/indigo-web>`_ stylesheets. You can link
 to the stylesheets provided by that package, or you can pull them into your website.
 
 Listing Works

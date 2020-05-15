@@ -1,9 +1,9 @@
 GIT
   remote: https://github.com/longhotsummer/slaw
-  revision: c4b864e1c50edaa6435cc5500f335a9adc118a23
+  revision: e120ff6d5be89a2236b5aa402beb91dbf91bbda1
   branch: akn3
   specs:
-    slaw (9.1.0)
+    slaw (10.0.0)
       log4r (~> 1.1)
       mimemagic (~> 0.2)
       nokogiri (~> 1.8)
@@ -14,7 +14,7 @@ GEM
   remote: https://rubygems.org/
   specs:
     log4r (1.1.10)
-    mimemagic (0.3.4)
+    mimemagic (0.3.5)
     mini_portile2 (2.4.0)
     nokogiri (1.10.9)
       mini_portile2 (~> 2.4.0)

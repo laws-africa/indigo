@@ -1,9 +1,9 @@
 {
   "name": "indigo-app",
   "version": "0.0.0",
-  "homepage": "https://github.com/Code4SA/indigo",
+  "homepage": "https://github.com/laws-africa/indigo",
   "authors": [
-    "Greg Kempe <greg@code4sa.org>"
+    "Greg Kempe <greg@laws.africa>"
   ],
   "moduleType": [
     "globals"

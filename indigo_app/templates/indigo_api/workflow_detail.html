@@ -22,11 +22,16 @@
     <div class="flex-fill">
       <h5>{{ workflow.title }}</h5>
 
-      {% if workflow.due_date %}
+      {% if workflow.priority or workflow.due_date %}
         <div class="text-muted">
-          Due {{ workflow.due_date|date:"Y-m-d" }}
-          {% if workflow.overdue %}
-            <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+          {% if workflow.priority %}
+            <span class="mr-3 text-warning"><i class="fas fa-exclamation-circle"></i> Priority</span>
+          {% endif %}
+          {% if workflow.due_date %}
+            Due {{ workflow.due_date|date:"Y-m-d" }}
+            {% if workflow.overdue %}
+              <i class="ml-3 fas fa-exclamation-triangle"></i> Overdue
+            {% endif %}
           {% endif %}
         </div>
       {% endif %}
@@ -39,7 +44,7 @@
       <div class="row">
         <div class="col-7">
           {% if workflow.description %}
-            {{ workflow.description|linebreaksbr }}
+            {{ workflow.description|urlize|linebreaksbr }}
           {% endif %}
         </div>
         {% if workflow.n_tasks %}

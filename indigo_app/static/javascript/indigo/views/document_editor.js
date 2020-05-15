@@ -86,6 +86,41 @@
       var allowPaste = false,
           self = this;
 
+      function pasteTable(table, i) {
+        self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
+          if (i > 0) text = "\n" + text;
+
+          allowPaste = true;
+          self.textEditor.onPaste(text);
+          allowPaste = false;
+        });
+      }
+
+      function cleanTable(table) {
+        // strip out namespaced tags - we don't want MS Office's tags
+        var elems = table.getElementsByTagName("*");
+        for (var i = 0; i < elems.length; i++) {
+          var elem = elems[i];
+
+          if (elem.tagName.indexOf(':') > -1) {
+            elem.remove();
+            // the element collection is live, so keep i the same
+            i--;
+          } else {
+            // strip style and namespaced attributes, too
+            cleanAttributes(elem);
+          }
+        }
+      }
+
+      function cleanAttributes(elem) {
+        elem.getAttributeNames().forEach(function(name) {
+          if (name === 'style' || name.indexOf(':') > -1) {
+            elem.removeAttribute(name);
+          }
+        });
+      }
+
       this.textEditor.on('paste', function(e) {
         if (!allowPaste) { e.text = ''; }
       });
@@ -93,48 +128,15 @@
       this.$textEditor.on('paste', function(e) {
         var cb = e.originalEvent.clipboardData;
 
-        function pasteTable(table) {
-          self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
-            if (t > 0) text = "\n" + text;
-
-            allowPaste = true;
-            self.textEditor.onPaste(text);
-            allowPaste = false;
-          });
-        }
-
         if (cb.types.indexOf('text/html') > -1) {
           var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
               tables = doc.body.querySelectorAll('table');
 
           if (tables.length > 0) {
-            for (var t = 0; t < tables.length; t++) {
-              var table = tables[t];
-
-              // strip out namespaced tags - we don't want MS Office's tags
-              var elems = table.getElementsByTagName("*");
-              for (var i = 0; i < elems.length; i++) {
-                var elem = elems[i];
-
-                if (elem.tagName.indexOf(':') > -1) {
-                  elem.remove();
-                  // the element collection is live, so keep i the same
-                  i--;
-                } else {
-                  // strip style and namespaced attributes, too
-                  elem.getAttributeNames().forEach(function(name) {
-                    console.log(name);
-                    if (name === 'style' || name.indexOf(':') > -1) {
-                      console.log('Removing ' + name);
-                      elem.removeAttribute(name);
-                    }
-                  });
-                }
-              }
-
-              pasteTable(table);
+            for (var i = 0; i < tables.length; i++) {
+              cleanTable(tables[i]);
+              pasteTable(tables[i], i);
             }
-
             return;
           }
         }

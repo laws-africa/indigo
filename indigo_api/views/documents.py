@@ -337,7 +337,7 @@ class ParseView(APIView):
             text = serializer.validated_data.get('content')
             xml = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
         except ValueError as e:
-            log.error("Error during import: %s" % str(e), exc_info=e)
+            log.warning("Error during import: %s" % str(e), exc_info=e)
             raise ValidationError({'content': str(e) or "error during import"})
 
         # parse and re-serialize the XML to ensure it's clean, and sort out encodings

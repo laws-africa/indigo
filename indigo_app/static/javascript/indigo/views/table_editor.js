@@ -89,7 +89,9 @@
       if (table) {
         // get new xml
         table = this.tableToAkn(table);
+      }
 
+      if (table) {
         // update DOM
         this.documentContent.replaceNode(oldTable, [table]);
       } else {
@@ -107,6 +109,10 @@
       var xml = Indigo.dom.htmlNodeToXmlNode(table);
       // xhtml -> akn
       xml = this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
+      if (!xml) {
+        console.log("htmlTransform.transformToFragment returned null, input was: ", table.outerHTML);
+        return null;
+      }
 
       // strip whitespace at start of first p tag in table cells
       xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {

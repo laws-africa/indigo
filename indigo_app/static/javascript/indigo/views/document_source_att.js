@@ -120,8 +120,10 @@
       choose: function(item) {
         if (this.chosen !== item) {
           this.chosen = item;
-          this.iframe.src = this.chosen.url;
-          this.$('.source-attachment-pop').attr('href', this.chosen.url);
+          if (this.chosen) {
+            this.iframe.src = this.chosen.url;
+            this.$('.source-attachment-pop').attr('href', this.chosen.url);
+          }
         }
 
         this.$view.removeClass('d-none');

@@ -14,7 +14,7 @@ class SectionRefsFinderTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
-        self.work = Work(frbr_uri='/za/act/1991/1')
+        self.work = Work(frbr_uri='/akn/za/act/1991/1')
         self.section_refs_finder = SectionRefsFinderENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
@@ -723,7 +723,7 @@ class RefsFinderENGTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
-        self.work = Work(frbr_uri='/za/act/1991/1')
+        self.work = Work(frbr_uri='/akn/za/act/1991/1')
         self.finder = RefsFinderENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
@@ -755,8 +755,8 @@ class RefsFinderENGTestCase(TestCase):
           <heading>Tester</heading>
           <paragraph id="section-1.paragraph-0">
             <content>
-              <p>Something to do with Act <ref href="/za/act/2012/22">no 22 of 2012</ref>.</p>
-              <p>And another thing about Act <ref href="/za/act/1998/4">4 of 1998</ref>.</p>
+              <p>Something to do with Act <ref href="/akn/za/act/2012/22">no 22 of 2012</ref>.</p>
+              <p>And another thing about Act <ref href="/akn/za/act/1998/4">4 of 1998</ref>.</p>
             </content>
           </paragraph>
         </section>"""
@@ -773,7 +773,7 @@ class RefsFinderSubtypesENGTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
-        self.work = Work(frbr_uri='/za/act/1991/1')
+        self.work = Work(frbr_uri='/akn/za/act/1991/1')
         self.finder = RefsFinderSubtypesENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
@@ -805,8 +805,8 @@ class RefsFinderSubtypesENGTestCase(TestCase):
           <heading>Tester</heading>
           <paragraph id="section-1.paragraph-0">
             <content>
-              <p>Something to do with <ref href="/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
-              <p>And another thing about <ref href="/za/act/si/1998/4">SI 4 of 1998</ref>.</p>
+              <p>Something to do with <ref href="/akn/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
+              <p>And another thing about <ref href="/akn/za/act/si/1998/4">SI 4 of 1998</ref>.</p>
             </content>
           </paragraph>
         </section>"""
@@ -837,7 +837,7 @@ class RefsFinderCapENGTestCase(TestCase):
         }
 
         work = Work(
-            frbr_uri='/za/act/2002/5',
+            frbr_uri='/akn/za/act/2002/5',
             title='Act 5 of 2002',
             country=za,
             created_by_user=user1,
@@ -870,7 +870,7 @@ class RefsFinderCapENGTestCase(TestCase):
           <heading>Tester</heading>
           <paragraph id="section-1.paragraph-0">
             <content>
-              <p>Something to do with <ref href="/za/act/2002/5">Cap. 12</ref>.</p>
+              <p>Something to do with <ref href="/akn/za/act/2002/5">Cap. 12</ref>.</p>
             </content>
           </paragraph>
         </section>"""

@@ -122,7 +122,7 @@ class UnnumberedParagraphsToHcontainer(AKNMigration):
         for para in act.root.xpath('//a:paragraph[not(a:num)]', namespaces={'a': act.namespace}):
             para.tag = f'{{{act.namespace}}}hcontainer'
             # new id is based on the number of preceding hcontainer siblings
-            num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces={'a': act.namespace}))
+            num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces={'a': act.namespace})) + 1
             old_id = para.get('id')
             new_id = re.sub('paragraph(\d+)$', f'hcontainer_{num}', old_id)
             rewrite_ids(para, old_id, new_id)

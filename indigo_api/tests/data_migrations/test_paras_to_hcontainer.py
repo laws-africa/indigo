@@ -57,15 +57,15 @@ class MigrationTestCase(TestCase):
     <body>
       <section id="section-2">
         <num>2.</num>
-        <hcontainer id="section-2.hcontainer_0">
+        <hcontainer id="section-2.hcontainer_1">
           <content>
-            <blockList id="section-2.hcontainer_0.list0">
+            <blockList id="section-2.hcontainer_1.list0">
               <listIntroduction>aoeuaoeu</listIntroduction>
-              <item id="section-2.hcontainer_0.list0.a">
+              <item id="section-2.hcontainer_1.list0.a">
                 <num>(a)</num>
-                <blockList id="section-2.hcontainer_0.list0.a.list0">
+                <blockList id="section-2.hcontainer_1.list0.a.list0">
                   <listIntroduction>aye</listIntroduction>
-                  <item id="section-2.hcontainer_0.list0.a.list0.i">
+                  <item id="section-2.hcontainer_1.list0.a.list0.i">
                     <num>(i)</num>
                     <p>eye</p>
                   </item>
@@ -74,7 +74,7 @@ class MigrationTestCase(TestCase):
             </blockList>
           </content>
         </hcontainer>
-        <hcontainer id="section-2.hcontainer_1">
+        <hcontainer id="section-2.hcontainer_2">
           <content>
             <p>hi</p>
           </content>

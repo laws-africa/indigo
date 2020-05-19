@@ -1,5 +1,7 @@
 import re
 
+from cobalt import Act
+
 
 class AKNMigration(object):
     def migrate_document(self, document):
@@ -73,7 +75,7 @@ class FixSignificantWhitespace(AKNMigration):
         return xml
 
 
-class UpdateAKNNamespace(AKNMigration):
+class UpdateAKNNamespace:
     """ Update all instances of:
     <akomaNtoso xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     to
@@ -94,3 +96,84 @@ class UpdateAKNNamespace(AKNMigration):
             1)
 
         return xml
+
+
+class AKNeId:
+    """ In a document's XML, translate existing `id` attributes to `eId`
+    and follow the new naming and numbering convention
+    e.g. "sec_2" instead of "section-2"
+    """
+    basic_replacements = {
+        # TODO: make sure all have been added
+        # TODO: add a test for each type
+        "chapter": (r"\bchapter-", "chp_"),
+        "part": (r"\bpart-", "part_"),
+        "subpart": (r"\bsubpart-", "subpart_"),
+        "section": (r"\bsection-", "sec_"),
+        "paragraph": (r"\bparagraph-", "para_"),
+        "article": (r"\barticle-", "article_"),
+        "table": (r"\btable(?=\d)", "table_"),
+        "blockList": (r"\blist(?=\d)", "list_"),
+    }
+
+    def update_xml(self, xml):
+        """ Update the xml,
+            - first by updating the values of `id` attributes as necessary,
+            - and then by replacing all `id`s with `eId`s
+        """
+        doc = Act(xml)
+        self.namespace = doc.namespace
+
+        # basic replacements, e.g. "chapter-" to "chap_"
+        for element, patterns in self.basic_replacements.items():
+            for node in doc.root.xpath(f"//a:{element}", namespaces={"a": self.namespace}):
+                old_id = node.get("id")
+                new_id = re.sub(re.compile(patterns[0]), patterns[1], old_id)
+                node.set("id", new_id)
+                self.update_prefixes(node, old_id, new_id)
+
+        # more complex replacements
+        # TODO: simplify the two below (they're very similar)
+        # subsections
+        for node in doc.root.xpath("//a:subsection", namespaces={"a": self.namespace}):
+            old_id = node.get("id")
+            # e.g. sec_3a.2A.4.1 --> sec_3a.subsec_2A-4-1
+            old_pattern = re.compile(r"^(?P<pre>[^.]+)(?P<post>(\.\d[\dA-Za-z]*)+)")
+            match = old_pattern.search(old_id)
+            num = (match.group("post").lstrip(".")).replace(".", "-")
+            new_id = f"{match.group('pre')}.subsec_{num}"
+            node.set("id", new_id)
+            self.update_prefixes(node, old_id, new_id)
+
+        # items
+        for node in doc.root.xpath("//a:item", namespaces={"a": self.namespace}):
+            old_id = node.get("id")
+            # e.g. sec_3a.subsec_2-4-1.list_0.b --> sec_3a.subsec_2-4-1.list_0.item_b
+            # e.g. sec_3a.subsec_2-4-1.list_0.3.1 --> sec_3a.subsec_2-4-1.list_0.item_3-1
+            # or sec_4.subsec_4.list_0.item_c.list_0.i --> sec_4.subsec_4.list_0.item_c.list_0.item_i
+            old_pattern = re.compile(r"""
+                ^(?P<pre>([^.]+\.)+list_\d+)
+                (?P<post>(\.[\da-zA-Z]+)+)$""", re.X)
+            match = old_pattern.search(old_id)
+            num = (match.group("post").lstrip(".")).replace(".", "-")
+            new_id = f"{match.group('pre')}.item_{num}"
+            node.set("id", new_id)
+            self.update_prefixes(node, old_id, new_id)
+
+        # finally
+        # "." separators
+        for node in doc.root.xpath("//a:*[@id]", namespaces={"a": self.namespace}):
+            old_id = node.get("id")
+            if "." in old_id:
+                node.set("id", re.sub(r"\.", "__", old_id))
+
+        # replace all `id`s with `eId`s
+        for node in doc.root.xpath("//a:*[@id]", namespaces={"a": self.namespace}):
+            node.set("eId", node.get("id"))
+            del node.attrib["id"]
+
+        return doc.to_xml().decode("utf-8")
+
+    def update_prefixes(self, node, old_id_prefix, new_id_prefix):
+        for child in node.xpath(".//a:*[@id]", namespaces={"a": self.namespace}):
+            child.set("id", re.sub(rf"^{old_id_prefix}", new_id_prefix, child.get("id")))

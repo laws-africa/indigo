@@ -64,7 +64,7 @@ class TasksTest(WebTest):
             title="Test title",
             description="Test description",
             country_id=1,
-            work=Work.objects.get(frbr_uri='/za/act/2014/10'),
+            work=Work.objects.get(frbr_uri='/akn/za/act/2014/10'),
             created_by_user_id=1,
         )
         workflow = Workflow.objects.create(

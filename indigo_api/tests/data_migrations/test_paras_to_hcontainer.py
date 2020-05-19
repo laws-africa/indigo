@@ -19,8 +19,8 @@ class MigrationTestCase(TestCase):
   <act contains="originalVersion">
     <meta/>
     <body>
-      <section id="section-1">
-        <num>1.</num>
+      <section id="section-2">
+        <num>2.</num>
         <paragraph id="section-2.paragraph0">
           <content>
             <blockList id="section-2.paragraph0.list0">
@@ -55,8 +55,8 @@ class MigrationTestCase(TestCase):
   <act contains="originalVersion">
     <meta/>
     <body>
-      <section id="section-1">
-        <num>1.</num>
+      <section id="section-2">
+        <num>2.</num>
         <hcontainer id="section-2.hcontainer_0">
           <content>
             <blockList id="section-2.hcontainer_0.list0">

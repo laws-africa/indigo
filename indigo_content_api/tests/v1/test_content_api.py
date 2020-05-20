@@ -245,7 +245,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/!main/section/1.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" id="section-1"><num>1.</num>
+        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="section-1"><num>1.</num>
         <content>
           <p>tester😀</p><p/><p><img src="media/test-image.png"/></p>
         </content>
@@ -256,7 +256,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/!main/section/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3>
+        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-eId="section-1"><h3>1. </h3>
 <span class="akn-content">
           <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>
@@ -266,7 +266,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/main/section/1.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" id="section-1"><num>1.</num>
+        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="section-1"><num>1.</num>
         <content>
           <p>tester😀</p><p/><p><img src="media/test-image.png"/></p>
         </content>
@@ -277,7 +277,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/main/section/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3>
+        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-eId="section-1"><h3>1. </h3>
 <span class="akn-content">
           <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>

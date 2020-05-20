@@ -538,7 +538,7 @@ class MigrationTestCase(TestCase):
     def test_eid_basic(self):
         """ includes basic checks for
         meta elements,
-        chapter, part, section, subsection, list, item
+        chapter, part, subpart, section, subsection, list, item
         """
         migration = AKNeId()
 
@@ -672,6 +672,69 @@ class MigrationTestCase(TestCase):
           </section>
         </chapter>
       </part>
+      <chapter id="chapter-XI">
+        <num>XI</num>
+        <heading>Offences and penalties</heading>
+        <subpart id="chapter-XI.subpart-1">
+          <num>1</num>
+          <heading>First subpart</heading>
+          <section id="section-33">
+            <num>33.</num>
+            <heading>Offences and penalties</heading>
+            <subsection id="section-33.1">
+              <num>(1)</num>
+              <content>
+                <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+              </content>
+            </subsection>
+            <subsection id="section-33.6">
+              <num>(6)</num>
+              <content>
+                <blockList id="section-33.6.list0">
+                  <listIntroduction>In addition ... under this By-law -</listIntroduction>
+                  <item id="section-33.6.list0.a">
+                    <num>(a)</num>
+                    <p>to remedy the harm caused; and</p>
+                  </item>
+                  <item id="section-33.6.list0.b">
+                    <num>(b)</num>
+                    <p>to pay damages for harm caused to another person or to property.</p>
+                  </item>
+                </blockList>
+              </content>
+            </subsection>
+          </section>
+        </subpart>
+        <subpart id="chapter-XI.subpart-2">
+          <num>2</num>
+          <heading>Second subpart</heading>
+          <section id="section-34">
+            <num>34.</num>
+            <heading>Repeal and savings</heading>
+            <subsection id="section-34.1">
+              <num>(1)</num>
+              <content>
+                <p>The City of Cape Town: Air Quality Management By-law 2010 is hereby repealed.</p>
+              </content>
+            </subsection>
+            <subsection id="section-34.2">
+              <num>(2)</num>
+              <content>
+                <p>Anything done or deemed to have been done under any other by-law relating to air quality remains valid to the extent that it is consistent with this By-law.</p>
+              </content>
+            </subsection>
+          </section>
+          <section id="section-35">
+            <num>35.</num>
+            <heading>Short title</heading>
+            <hcontainer id="section-35.hcontainer_1">
+              <content>
+                <p>This By-law is called the City of Cape Town: Air Quality Management By-law, 2016.</p>
+              </content>
+            </hcontainer>
+          </section>
+        </subpart>
+      </chapter>
     </body>
   </act>
 </akomaNtoso>""")
@@ -807,6 +870,69 @@ class MigrationTestCase(TestCase):
           </section>
         </chapter>
       </part>
+      <chapter eId="chp_XI">
+        <num>XI</num>
+        <heading>Offences and penalties</heading>
+        <subpart eId="chp_XI__subpart_1">
+          <num>1</num>
+          <heading>First subpart</heading>
+          <section eId="sec_33">
+            <num>33.</num>
+            <heading>Offences and penalties</heading>
+            <subsection eId="sec_33__subsec_1">
+              <num>(1)</num>
+              <content>
+                <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+              </content>
+            </subsection>
+            <subsection eId="sec_33__subsec_6">
+              <num>(6)</num>
+              <content>
+                <blockList eId="sec_33__subsec_6__list_1">
+                  <listIntroduction>In addition ... under this By-law -</listIntroduction>
+                  <item eId="sec_33__subsec_6__list_1__item_a">
+                    <num>(a)</num>
+                    <p>to remedy the harm caused; and</p>
+                  </item>
+                  <item eId="sec_33__subsec_6__list_1__item_b">
+                    <num>(b)</num>
+                    <p>to pay damages for harm caused to another person or to property.</p>
+                  </item>
+                </blockList>
+              </content>
+            </subsection>
+          </section>
+        </subpart>
+        <subpart eId="chp_XI__subpart_2">
+          <num>2</num>
+          <heading>Second subpart</heading>
+          <section eId="sec_34">
+            <num>34.</num>
+            <heading>Repeal and savings</heading>
+            <subsection eId="sec_34__subsec_1">
+              <num>(1)</num>
+              <content>
+                <p>The City of Cape Town: Air Quality Management By-law 2010 is hereby repealed.</p>
+              </content>
+            </subsection>
+            <subsection eId="sec_34__subsec_2">
+              <num>(2)</num>
+              <content>
+                <p>Anything done or deemed to have been done under any other by-law relating to air quality remains valid to the extent that it is consistent with this By-law.</p>
+              </content>
+            </subsection>
+          </section>
+          <section eId="sec_35">
+            <num>35.</num>
+            <heading>Short title</heading>
+            <hcontainer eId="sec_35__hcontainer_1">
+              <content>
+                <p>This By-law is called the City of Cape Town: Air Quality Management By-law, 2016.</p>
+              </content>
+            </hcontainer>
+          </section>
+        </subpart>
+      </chapter>
     </body>
   </act>
 </akomaNtoso>
@@ -1300,6 +1426,62 @@ class MigrationTestCase(TestCase):
           </mainBody>
         </doc>
       </attachment>
+      <attachment id="att_6">
+        <heading>Schedule 5</heading>
+        <subheading>Wildlife Treaty</subheading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer id="schedule5.crossheading-0" name="crossheading">
+              <heading>Introduction</heading>
+            </hcontainer>
+            <hcontainer id="schedule5.hcontainer_1">
+              <content>
+                <p>sdfjhasdf;akdjsfnaksdnakdf</p>
+              </content>
+            </hcontainer>
+            <article id="article-1">
+              <num>1</num>
+              <heading>Wildlife</heading>
+              <hcontainer id="article-1.hcontainer_1">
+                <content>
+                  <p>Introductory text.</p>
+                </content>
+              </hcontainer>
+              <paragraph id="article-1.paragraph-1">
+                <num>1.</num>
+                <content>
+                  <p>sdkfhsdkjbfasdfb</p>
+                </content>
+              </paragraph>
+              <paragraph id="article-1.paragraph-2">
+                <num>2.</num>
+                <content>
+                  <p>sdkfasdkjbfakdjsbf</p>
+                </content>
+              </paragraph>
+              <paragraph id="article-1.paragraph-3">
+                <num>3.</num>
+                <content>
+                  <p>d;khadksjbfdkjbg</p>
+                </content>
+              </paragraph>
+            </article>
+            <article id="article-2">
+              <num>2</num>
+              <heading>Treaty</heading>
+              <hcontainer id="article-2.hcontainer_1">
+                <content>
+                  <p>uygsjdfgjsdhgfsfjhsdjkfhs</p>
+                  <p>fljsdhfkahsfkahsdkfhsd</p>
+                  <p>sadkjfhksdjhfksdhgkhdf</p>
+                  <p>sdfasdfhkadhsfkhakfhsdg</p>
+                </content>
+              </hcontainer>
+            </article>
+          </mainBody>
+        </doc>
+      </attachment>
     </attachments>
   </act>
 </akomaNtoso>""")
@@ -1711,6 +1893,62 @@ class MigrationTestCase(TestCase):
                 </subsection>
               </section>
             </part>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_6">
+        <heading>Schedule 5</heading>
+        <subheading>Wildlife Treaty</subheading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer name="crossheading" eId="att_6__crossheading_1">
+              <heading>Introduction</heading>
+            </hcontainer>
+            <hcontainer eId="schedule5__hcontainer_1">
+              <content>
+                <p>sdfjhasdf;akdjsfnaksdnakdf</p>
+              </content>
+            </hcontainer>
+            <article eId="article_1">
+              <num>1</num>
+              <heading>Wildlife</heading>
+              <hcontainer eId="article_1__hcontainer_1">
+                <content>
+                  <p>Introductory text.</p>
+                </content>
+              </hcontainer>
+              <paragraph eId="article_1__para_1">
+                <num>1.</num>
+                <content>
+                  <p>sdkfhsdkjbfasdfb</p>
+                </content>
+              </paragraph>
+              <paragraph eId="article_1__para_2">
+                <num>2.</num>
+                <content>
+                  <p>sdkfasdkjbfakdjsbf</p>
+                </content>
+              </paragraph>
+              <paragraph eId="article_1__para_3">
+                <num>3.</num>
+                <content>
+                  <p>d;khadksjbfdkjbg</p>
+                </content>
+              </paragraph>
+            </article>
+            <article eId="article_2">
+              <num>2</num>
+              <heading>Treaty</heading>
+              <hcontainer eId="article_2__hcontainer_1">
+                <content>
+                  <p>uygsjdfgjsdhgfsfjhsdjkfhs</p>
+                  <p>fljsdhfkahsfkahsdkfhsd</p>
+                  <p>sadkjfhksdjhfksdhgkhdf</p>
+                  <p>sdfasdfhkadhsfkhakfhsdg</p>
+                </content>
+              </hcontainer>
+            </article>
           </mainBody>
         </doc>
       </attachment>

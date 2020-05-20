@@ -38,7 +38,7 @@ class ResolvedAnchor(object):
 
         while anchor_id:
             escaped = anchor_id.replace("'", "\'")
-            elems = component.xpath(".//*[@id='%s']" % escaped)
+            elems = component.xpath(".//*[@eId='%s']" % escaped)
             if elems:
                 self.resolve_element(elems[0])
                 break

@@ -20,20 +20,20 @@ class TOCBuilderZATestCase(APITestCase):
         d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-          <section id="section-1">
+          <section eId="section-1">
             <num>1.</num>
             <heading>Foo</heading>
             <content>
               <p>hello</p>
             </content>
           </section>
-          <chapter id="chapter-1">
+          <chapter eId="chapter-1">
             <num>1.</num>
             <heading>The Chapter</heading>
-            <part id="part-A">
+            <part eId="part-A">
               <num>A</num>
               <heading>The Part</heading>
-              <section id="section-2">
+              <section eId="section-2">
                 <num>2.</num>
                 <heading>Other</heading>
                 <content>
@@ -67,20 +67,20 @@ class TOCBuilderZATestCase(APITestCase):
         d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-          <section id="section-1">
+          <section eId="section-1">
             <num>1.</num>
             <heading>Foo</heading>
             <content>
               <p>hello</p>
             </content>
           </section>
-          <chapter id="chapter-1">
+          <chapter eId="chapter-1">
             <num>1.</num>
             <heading>The Chapter</heading>
-            <part id="part-A">
+            <part eId="part-A">
               <num>A</num>
               <heading>The Part</heading>
-              <section id="section-2">
+              <section eId="section-2">
                 <num>2.</num>
                 <heading>Other</heading>
                 <content>
@@ -143,7 +143,7 @@ class TOCBuilderZATestCase(APITestCase):
     <body></body>
   </act>
   <components>
-    <component id="component-1">
+    <component eId="component-1">
       <doc name="schedule1">
         <meta>
           <identification source="#slaw">
@@ -171,7 +171,7 @@ class TOCBuilderZATestCase(APITestCase):
           </identification>
         </meta>
         <mainBody>
-          <section id="schedule-1.section-0">
+          <section eId="schedule-1.section-0">
             <content>
               <p>1. Foo</p>
               <p>2. Bar</p>
@@ -180,7 +180,7 @@ class TOCBuilderZATestCase(APITestCase):
         </mainBody>
       </doc>
     </component>
-    <component id="component-2">
+    <component eId="component-2">
       <doc name="schedule2">
         <meta>
           <identification source="#slaw">
@@ -207,7 +207,7 @@ class TOCBuilderZATestCase(APITestCase):
           </identification>
         </meta>
         <mainBody>
-          <section id="schedule-2.section-0">
+          <section eId="schedule-2.section-0">
             <content>
               <p>Baz</p>
               <p>Boom</p>

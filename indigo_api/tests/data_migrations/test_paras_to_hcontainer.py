@@ -282,7 +282,7 @@ class MigrationTestCase(TestCase):
                 <hcontainer id="schedule1.crossheading-1" name="crossheading">
                   <heading>Wood-fired pizza ovens and other solid fuel combustion equipment:</heading>
                 </hcontainer>
-                <hcontainer id="schedule1.hcontainer_2">
+                <hcontainer id="schedule1.hcontainer_4">
                   <content>
                     <p>Wood-fired pizza ovens and other solid fuel combustion equipment shall be fitted with induced draft fans at the discretion of the authorised official.</p>
                   </content>

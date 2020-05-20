@@ -2,6 +2,8 @@ import re
 
 from cobalt import Act
 
+from indigo.xmlutils import rewrite_ids
+
 
 class AKNMigration(object):
     def migrate_document(self, document):
@@ -96,6 +98,36 @@ class UpdateAKNNamespace:
             1)
 
         return xml
+
+
+class UnnumberedParagraphsToHcontainer(AKNMigration):
+    """ Update all instances un-numbered paragraphs to hcontainers. Slaw generates these when
+    a block of text is encountered in a hierarchical element.
+
+    This ALSO changes the id of the element to match AKN 3 styles, but using the id attribute (not eId)
+
+    <paragraph id="section-1.paragraph0">
+      <content>
+        <p>text</p>
+      </content>
+    </paragraph>
+
+    becomes
+
+    <hcontainer id="section-1.hcontainer_0">
+      <content>
+        <p>text</p>
+      </content>
+    </hcontainer>
+    """
+    def migrate_act(self, act):
+        for para in act.root.xpath('//a:paragraph[not(a:num)]', namespaces={'a': act.namespace}):
+            para.tag = f'{{{act.namespace}}}hcontainer'
+            # new id is based on the number of preceding hcontainer siblings
+            num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces={'a': act.namespace})) + 1
+            old_id = para.get('id')
+            new_id = re.sub('paragraph(\d+)$', f'hcontainer_{num}', old_id)
+            rewrite_ids(para, old_id, new_id)
 
 
 class AKNeId:

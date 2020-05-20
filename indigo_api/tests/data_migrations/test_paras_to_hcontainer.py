@@ -223,7 +223,7 @@ class MigrationTestCase(TestCase):
                 <hcontainer id="schedule2.crossheading-0" name="crossheading">
                   <heading>(Section 45(1))</heading>
                 </hcontainer>
-                <hcontainer id="schedule2.hcontainer_1">
+                <hcontainer id="schedule2.hcontainer_2">
                   <content>
                     <p>hi</p>
                   </content>

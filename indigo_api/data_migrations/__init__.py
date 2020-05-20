@@ -231,7 +231,7 @@ class AKNeId:
         for element, patterns in self.basic_replacements.items():
             for node in doc.root.xpath(f"//a:{element}", namespaces={"a": self.namespace}):
                 old_id = node.get("id")
-                new_id = re.sub(re.compile(patterns[0]), patterns[1], old_id)
+                new_id = re.sub(patterns[0], patterns[1], old_id)
                 node.set("id", new_id)
                 self.update_prefixes(node, old_id, new_id)
 

@@ -38,8 +38,8 @@
     <xsl:param name="id" select="." />
 
     <xsl:attribute name="id">
-      <!-- scope the id to the containing doc, if any, using a default if provided -->
-      <xsl:variable name="prefix" select="./ancestor::a:doc[@name][1]/@name"/>
+      <!-- scope the id to the containing attachment, if any, using a default if provided -->
+      <xsl:variable name="prefix" select="./ancestor::a:attachment[@eId][1]/@eId"/>
       <xsl:choose>
         <xsl:when test="$prefix != ''">
           <xsl:value-of select="concat($prefix, '/')" />
@@ -53,13 +53,13 @@
     </xsl:attribute>
   </xsl:template>
 
-  <!-- id attribute is scoped if necessary, and the original saved as data-id -->
-  <xsl:template match="@id">
+  <!-- id attribute is scoped if necessary, and the original saved as data-eId -->
+  <xsl:template match="@eId">
     <xsl:call-template name="scoped-id">
       <xsl:with-param name="id" select="." />
     </xsl:call-template>
 
-    <xsl:attribute name="data-id">
+    <xsl:attribute name="data-eId">
       <xsl:value-of select="." />
     </xsl:attribute>
   </xsl:template>

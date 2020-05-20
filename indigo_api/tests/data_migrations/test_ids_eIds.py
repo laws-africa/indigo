@@ -375,7 +375,7 @@ class MigrationTestCase(TestCase):
             <hcontainer id="schedule2.crossheading-0" name="crossheading">
               <heading>(Section 45(1))</heading>
             </hcontainer>
-            <hcontainer id="schedule2.hcontainer_1">
+            <hcontainer id="schedule2.hcontainer_2">
               <content>
                 <p>hi</p>
               </content>
@@ -426,7 +426,7 @@ class MigrationTestCase(TestCase):
             <hcontainer id="schedule1.crossheading-0" name="crossheading">
               <heading>Insulation of chimneys:</heading>
             </hcontainer>
-            <hcontainer id="schedule1.hcontainer_1">
+            <hcontainer id="schedule1.hcontainer_2">
               <content>
                 <p>All fuel-burning equipment using Heavy Fuel Oil or other liquid fuels with a sulphur content equal to or greater than 2.5 % by weight must be fitted with a fully insulated chimney using either a 25mm air gap or mineral wool insulation to prevent the formation of acid smut. Such chimneys must be maintained in a good state of repair at all times.</p>
               </content>
@@ -434,7 +434,7 @@ class MigrationTestCase(TestCase):
             <hcontainer id="schedule1.crossheading-1" name="crossheading">
               <heading>Wood-fired pizza ovens and other solid fuel combustion equipment:</heading>
             </hcontainer>
-            <hcontainer id="schedule1.hcontainer_2">
+            <hcontainer id="schedule1.hcontainer_4">
               <content>
                 <p>Wood-fired pizza ovens and other solid fuel combustion equipment shall be fitted with induced draft fans at the discretion of the authorised official.</p>
               </content>

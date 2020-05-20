@@ -6,7 +6,7 @@ from reversion.models import Version
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-from indigo_api.data_migrations import UnnumberedParagraphsToHcontainer, AKNeId
+from indigo_api.data_migrations import UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId
 
 
 def forward(apps, schema_editor):
@@ -14,11 +14,13 @@ def forward(apps, schema_editor):
     Document = apps.get_model("indigo_api", "Document")
     ct_doc = ContentType.objects.get_for_model(Document)
     para_to_hcontainer = UnnumberedParagraphsToHcontainer()
-    migration = AKNeId()
+    component_to_attachment = ComponentSchedulesToAttachments()
+    eid_migration = AKNeId()
 
     for document in Document.objects.using(db_alias).all():
         xml = para_to_hcontainer.migrate_act(document.document_xml)
-        xml = migration.update_xml(xml)
+        xml = component_to_attachment.migrate_act(xml)
+        xml = eid_migration.update_xml(xml)
         if xml != document.document_xml:
             document.document_xml = xml
             document.save()
@@ -27,7 +29,11 @@ def forward(apps, schema_editor):
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
-            data[0]['fields']['document_xml'] = migration.update_xml(data[0]['fields']['document_xml'])
+            xml = data[0]['fields']['document_xml']
+            xml = para_to_hcontainer.migrate_act(xml)
+            xml = component_to_attachment.migrate_act(xml)
+            xml = eid_migration.update_xml(xml)
+            data[0]['fields']['document_xml'] = xml
             version.serialized_data = json.dumps(data)
             version.save()
 

@@ -213,8 +213,12 @@ class AKNeId(AKNMigration):
         "section": (r"\bsection-", "sec_"),
         "paragraph": (r"\bparagraph-", "para_"),
         "article": (r"\barticle-", "article_"),
-        "table": (r"\btable(?=\d)", "table_"),
-        "blockList": (r"\blist(?=\d)", "list_"),
+    }
+
+    add_1_replacements = {
+        "table": (re.compile(r"\btable(?P<num>\d+)$"), "table_"),
+        "blockList": (re.compile(r"\blist(?P<num>\d+)$"), "list_"),
+        "hcontainer": (re.compile(r"\bcrossheading-(?P<num>\d+)$"), "crossheading_"),
     }
 
     complex_replacements = {
@@ -240,9 +244,20 @@ class AKNeId(AKNMigration):
                 new_id = re.sub(pattern, replacement, old_id)
                 rewrite_ids(node, old_id, new_id)
 
+        # add one to n (previously 0-indexed)
+        for element, (pattern, replacement) in self.add_1_replacements.items():
+            for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
+                old_id = node.get("id")
+                match = pattern.search(old_id)
+                # e.g. hcontainers aren't all crossheadings
+                if match:
+                    num = int(pattern.search(old_id).group("num")) + 1
+                    prefix = self.get_parent_id(node)
+                    new_id = f"{prefix}.{replacement}{num}"
+                    rewrite_ids(node, old_id, new_id)
+
         # more complex replacements
         for element, (pattern, replacement) in self.complex_replacements.items():
-            pattern = re.compile(pattern)
             for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
                 old_id = node.get("id")
                 num = self.clean_number(pattern.search(old_id).group("num"))
@@ -263,7 +278,7 @@ class AKNeId(AKNMigration):
             del node.attrib["id"]
 
     def clean_number(self, num):
-        return num.lstrip(".").replace(".", "-")
+        return num.strip(".").replace(".", "-")
 
     def get_parent_id(self, node):
         parent = node.getparent()

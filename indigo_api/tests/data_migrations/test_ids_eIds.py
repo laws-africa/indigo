@@ -535,7 +535,11 @@ class MigrationTestCase(TestCase):
   </akomaNtoso>
 """, xml)
 
-    def test_eid_section(self):
+    def test_eid_basic(self):
+        """ includes basic checks for
+        meta elements,
+        chapter, part, section, subsection, list, item
+        """
         migration = AKNeId()
 
         doc = Document(work=self.work, document_xml="""
@@ -566,11 +570,19 @@ class MigrationTestCase(TestCase):
         </FRBRManifestation>
       </identification>
       <publication number="2042" name="Eastern Cape Provincial Gazette" showAs="Eastern Cape Provincial Gazette" date="2009-02-27"/>
+      <lifecycle source="#OpenByLaws-org-za">
+        <eventRef id="amendment-2011-08-05" date="2011-08-05" type="amendment" source="#amendment-0-source"/>
+        <eventRef id="amendment-2013-11-01" date="2013-11-01" type="amendment" source="#amendment-1-source"/>
+        <eventRef id="amendment-2016-11-04" date="2016-11-04" type="amendment" source="#amendment-2-source"/>
+      </lifecycle>
       <references source="#this">
         <TLCOrganization id="slaw" href="https://github.com/longhotsummer/slaw" showAs="Slaw"/>
         <TLCOrganization id="council" href="/ontology/organization/za/council" showAs="Council"/>
         <TLCTerm id="term-aerodrome" showAs="aerodrome" href="/ontology/term/this.eng.aerodrome"/>
         <TLCTerm id="term-taxiway" showAs="taxiway" href="/ontology/term/this.eng.taxiway"/>
+        <passiveRef id="amendment-0-source" href="/za-cpt/act/by-law/2011/sub-council-further-amendment" showAs="Cape Town Sub-council Further Amendment By-law, 2011"/>
+        <passiveRef id="amendment-1-source" href="/za-cpt/act/by-law/2013/sub-council-amendment" showAs="Sub-council: Amendment"/>
+        <passiveRef id="amendment-2-source" href="/za-cpt/act/by-law/2016/sub-council-amendment" showAs="Sub-Council: Amendment"/>
       </references>
     </meta>
     <preface>
@@ -593,7 +605,7 @@ class MigrationTestCase(TestCase):
     </preamble>
     <body>
       <section id="section-1">
-        <hcontainer id="section-1.hcontainer_0">
+        <hcontainer id="section-1.hcontainer_1">
           <content>
             <p>text</p>
           </content>
@@ -693,11 +705,19 @@ class MigrationTestCase(TestCase):
         </FRBRManifestation>
       </identification>
       <publication number="2042" name="Eastern Cape Provincial Gazette" showAs="Eastern Cape Provincial Gazette" date="2009-02-27"/>
+      <lifecycle source="#OpenByLaws-org-za">
+        <eventRef date="2011-08-05" type="amendment" source="#amendment-0-source" eId="amendment-2011-08-05"/>
+        <eventRef date="2013-11-01" type="amendment" source="#amendment-1-source" eId="amendment-2013-11-01"/>
+        <eventRef date="2016-11-04" type="amendment" source="#amendment-2-source" eId="amendment-2016-11-04"/>
+      </lifecycle>
       <references source="#this">
         <TLCOrganization href="https://github.com/longhotsummer/slaw" showAs="Slaw" eId="slaw"/>
         <TLCOrganization href="/ontology/organization/za/council" showAs="Council" eId="council"/>
         <TLCTerm showAs="aerodrome" href="/ontology/term/this.eng.aerodrome" eId="term-aerodrome"/>
         <TLCTerm showAs="taxiway" href="/ontology/term/this.eng.taxiway" eId="term-taxiway"/>
+        <passiveRef href="/za-cpt/act/by-law/2011/sub-council-further-amendment" showAs="Cape Town Sub-council Further Amendment By-law, 2011" eId="amendment-0-source"/>
+        <passiveRef href="/za-cpt/act/by-law/2013/sub-council-amendment" showAs="Sub-council: Amendment" eId="amendment-1-source"/>
+        <passiveRef href="/za-cpt/act/by-law/2016/sub-council-amendment" showAs="Sub-Council: Amendment" eId="amendment-2-source"/>
       </references>
     </meta>
     <preface>
@@ -720,7 +740,7 @@ class MigrationTestCase(TestCase):
     </preamble>
     <body>
       <section eId="sec_1">
-        <hcontainer eId="sec_1__hcontainer_0">
+        <hcontainer eId="sec_1__hcontainer_1">
           <content>
             <p>text</p>
           </content>
@@ -732,17 +752,17 @@ class MigrationTestCase(TestCase):
         <subsection eId="sec_2__subsec_1">
           <num>(1)</num>
           <content>
-            <blockList eId="sec_2__subsec_1__list_0">
+            <blockList eId="sec_2__subsec_1__list_1">
               <listIntroduction>The Caretaker may-</listIntroduction>
-              <item eId="sec_2__subsec_1__list_0__item_a">
+              <item eId="sec_2__subsec_1__list_1__item_a">
                 <num>(a)</num>
                 <p>prohibit any person who fails to pay an amount in respect of any facility on the aerodrome of which he makes use after such charges have become payable, to make use of any facility of the aerodrome:</p>
               </item>
-              <item eId="sec_2__subsec_1__list_0__item_b">
+              <item eId="sec_2__subsec_1__list_1__item_b">
                 <num>(b)</num>
                 <p>should he for any reason deem it necessary at any time, for such period as he may determine, prohibit or limit the admission of people or vehicles, or both, to the aerodrome or to any particular area thereof;</p>
               </item>
-              <item eId="sec_2__subsec_1__list_0__item_c">
+              <item eId="sec_2__subsec_1__list_1__item_c">
                 <num>(c)</num>
                 <p>order any person who, in his view, acts in such a way as to cause a nuisance or detrimentally affect the good management of the aerodrome to leave the aerodrome and if such person refuses to obey his order, take steps to have such person removed;</p>
               </item>
@@ -795,6 +815,8 @@ class MigrationTestCase(TestCase):
         )
 
     def test_eid_item(self):
+        """ includes checks for list, item, and nested lists
+        """
         migration = AKNeId()
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
@@ -835,19 +857,19 @@ class MigrationTestCase(TestCase):
     <body>
       <section eId="sec_100">
         <subsection eId="sec_100__subsec_3A-2">
-          <blockList eId="sec_100__subsec_3A-2__list_6">
-            <item eId="sec_100__subsec_3A-2__list_6__item_i">
+          <blockList eId="sec_100__subsec_3A-2__list_7">
+            <item eId="sec_100__subsec_3A-2__list_7__item_i">
               <p>item text</p>
             </item>
-            <item eId="sec_100__subsec_3A-2__list_6__item_ii-c">
+            <item eId="sec_100__subsec_3A-2__list_7__item_ii-c">
               <p>item text</p>
             </item>
-            <item eId="sec_100__subsec_3A-2__list_6__item_iii">
-              <blockList eId="sec_100__subsec_3A-2__list_6__item_iii__list_0">
-                <item eId="sec_100__subsec_3A-2__list_6__item_iii__list_0__item_a">
+            <item eId="sec_100__subsec_3A-2__list_7__item_iii">
+              <blockList eId="sec_100__subsec_3A-2__list_7__item_iii__list_1">
+                <item eId="sec_100__subsec_3A-2__list_7__item_iii__list_1__item_a">
                   <p>item text</p>
                 </item>
-                <item eId="sec_100__subsec_3A-2__list_6__item_iii__list_0__item_b-1-i">
+                <item eId="sec_100__subsec_3A-2__list_7__item_iii__list_1__item_b-1-i">
                   <p>item text</p>
                 </item>
               </blockList>
@@ -861,3 +883,845 @@ class MigrationTestCase(TestCase):
 """,
             output
         )
+
+    def test_eid_schedule(self):
+        """ includes checks for
+        Schedules, annexures, chapter, part, crossheading, anonymous and numbered paragraphs, article, section
+        """
+        migration = AKNeId()
+        # TODO: confirm that this is what Schedules will look like after the first two migrations,
+        #  especially in terms of id prefixes (will they all start `att_n`?)
+        doc = Document(work=self.work, document_xml="""
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion">
+    <meta/>
+    <body/>
+    <attachments>
+      <attachment id="att_1">
+        <heading>Annexure</heading>
+        <subheading>Things to do during lockdown</subheading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer id="annexure.crossheading-0" name="crossheading">
+              <heading>Form A</heading>
+            </hcontainer>
+            <hcontainer id="annexure.hcontainer_2">
+              <content>
+                <p>I ................. hereby ...............</p>
+                <p>Signed</p>
+              </content>
+            </hcontainer>
+            <hcontainer id="annexure.crossheading-1" name="crossheading">
+              <heading>Form B</heading>
+            </hcontainer>
+            <hcontainer id="annexure.hcontainer_4">
+              <content>
+                <p>One may:</p>
+              </content>
+            </hcontainer>
+            <paragraph id="annexure.paragraph-1">
+              <num>1.</num>
+              <content>
+                <p>Sing</p>
+              </content>
+            </paragraph>
+            <paragraph id="annexure.paragraph-2">
+              <num>2.</num>
+              <content>
+                <p>Dance</p>
+              </content>
+            </paragraph>
+            <paragraph id="annexure.paragraph-3">
+              <num>3.</num>
+              <content>
+                <p>Sway</p>
+              </content>
+            </paragraph>
+            <hcontainer id="annexure.crossheading-2" name="crossheading">
+              <heading>Form C</heading>
+            </hcontainer>
+            <section id="section-1">
+              <num>1.</num>
+              <heading>Paragraph heading</heading>
+              <subsection id="section-1.1">
+                <num>(1)</num>
+                <content>
+                  <p>sdfkhsdkjfhldfh.</p>
+                </content>
+              </subsection>
+              <subsection id="section-1.2">
+                <num>(2)</num>
+                <content>
+                  <p>sldfhsdkfnldksn.</p>
+                </content>
+              </subsection>
+            </section>
+            <section id="section-2">
+              <num>2.</num>
+              <heading>Another heading</heading>
+              <subsection id="section-2.1">
+                <num>(1)</num>
+                <content>
+                  <p>dskfahsdkfdnsv.dn.</p>
+                </content>
+              </subsection>
+              <subsection id="section-2.2">
+                <num>(2)</num>
+                <content>
+                  <p>sdfkdskvdnvmbdvmsnd.</p>
+                </content>
+              </subsection>
+            </section>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment id="att_2">
+        <heading>Schedule 1</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer id="schedule1.hcontainer_1">
+              <content>
+                <table id="schedule1.hcontainer_1.table0">
+                  <tr>
+                    <th>
+                      <p>Column 1</p>
+                    </th>
+                    <th>
+                      <p>Column 2</p>
+                    </th>
+                    <th>
+                      <p>Column 3</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <p>Sub-Council Designation</p>
+                    </th>
+                    <th>
+                      <p>Sub-Council Name</p>
+                    </th>
+                    <th>
+                      <p>Ward Numbers</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>1</p>
+                    </td>
+                    <td>
+                      <p>Subcouncil 1 Blaauwberg</p>
+                    </td>
+                    <td>
+                      <p>4, 23, 29, 32, 104, 107</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>2</p>
+                    </td>
+                    <td>
+                      <p>Subcouncil 2 Bergdal</p>
+                    </td>
+                    <td>
+                      <p>6, 7, 8, 111</p>
+                    </td>
+                  </tr>
+                </table>
+              </content>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment id="att_3">
+        <heading>Schedule 2</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer id="schedule2.hcontainer_1">
+              <content>
+                <table id="schedule2.hcontainer_1.table0">
+                  <tr>
+                    <th>
+                      <p>COLUMN 1</p>
+                    </th>
+                    <th>
+                      <p>COLUMN 2</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <p>SUB-COUNCIL DESIGNATION</p>
+                    </th>
+                    <th>
+                      <p>WARD NUMBERS</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>1</p>
+                    </td>
+                    <td>
+                      <p>23, 29, 32 and 104</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>2</p>
+                    </td>
+                    <td>
+                      <p>6, 7, 8, 101, 102 and 111</p>
+                    </td>
+                  </tr>
+                </table>
+              </content>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment id="att_4">
+        <heading>Third Schedule</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <chapter id="thirdschedule.chapter-1">
+              <num>1</num>
+              <heading>The first Chapter</heading>
+              <part id="thirdschedule.chapter-1.part-1">
+                <num>1</num>
+                <heading>The first Part</heading>
+                <paragraph id="thirdschedule.chapter-1.part-1.paragraph-1">
+                  <num>1.</num>
+                  <content>
+                    <p>The first para</p>
+                  </content>
+                </paragraph>
+                <paragraph id="thirdschedule.chapter-1.part-1.paragraph-2">
+                  <num>2.</num>
+                  <content>
+                    <p>The second para</p>
+                  </content>
+                </paragraph>
+                <paragraph id="thirdschedule.chapter-1.part-1.paragraph-345456">
+                  <num>345456.</num>
+                  <content>
+                    <p>The last para</p>
+                  </content>
+                </paragraph>
+              </part>
+              <part id="thirdschedule.chapter-1.part-2">
+                <num>2</num>
+                <heading>The second Part</heading>
+                <paragraph id="thirdschedule.chapter-1.part-2.paragraph-1">
+                  <num>1.</num>
+                  <content>
+                    <p>Starting all over again</p>
+                  </content>
+                </paragraph>
+                <paragraph id="thirdschedule.chapter-1.part-2.paragraph-2">
+                  <num>2.</num>
+                  <content>
+                    <p>Yup</p>
+                  </content>
+                </paragraph>
+                <paragraph id="thirdschedule.chapter-1.part-2.paragraph-3">
+                  <num>3.</num>
+                  <content>
+                    <p>sdflkdsjg;ndfg</p>
+                  </content>
+                </paragraph>
+              </part>
+            </chapter>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment id="att_5">
+        <heading>Fourth Schedule</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <part id="fourthschedule.part-36">
+              <num>36</num>
+              <heading>Let's get nested</heading>
+              <chapter id="fourthschedule.part-36.chapter-A">
+                <num>A</num>
+                <heading>Nested Chapter</heading>
+                <section id="section-1">
+                  <num>1.</num>
+                  <heading>fjlhsdkfh</heading>
+                  <hcontainer id="section-1.hcontainer_1">
+                    <content>
+                      <p>dsjfhsdkjfhkshdf</p>
+                    </content>
+                  </hcontainer>
+                </section>
+                <section id="section-300">
+                  <num>300.</num>
+                  <heading>skdfhdkshfasd</heading>
+                  <hcontainer id="section-300.hcontainer_1">
+                    <content>
+                      <p>asfjhadjslgfjsdghfjhg</p>
+                    </content>
+                  </hcontainer>
+                </section>
+              </chapter>
+              <chapter id="fourthschedule.part-36.chapter-B">
+                <num>B</num>
+                <heading>Still inside</heading>
+                <section id="section-301">
+                  <num>301.</num>
+                  <heading>skhfdsjghfd</heading>
+                  <hcontainer id="section-301.hcontainer_1">
+                    <content>
+                      <p>sdfjsdlgjlkdfjg</p>
+                    </content>
+                  </hcontainer>
+                </section>
+                <section id="section-302">
+                  <num>302.</num>
+                  <heading>dkfhdsjhgdbfhjg</heading>
+                  <hcontainer id="section-302.hcontainer_1">
+                    <content>
+                      <blockList id="section-302.hcontainer_1.list0">
+                        <listIntroduction>And let's nest a list:</listIntroduction>
+                        <item id="section-302.hcontainer_1.list0.1">
+                          <num>(1)</num>
+                          <p>These ones are weird:</p>
+                          <blockList id="section-302.hcontainer_1.list0.1.list0">
+                            <listIntroduction><remark status="editorial">[editorial remark]</remark></listIntroduction>
+                            <item id="section-302.hcontainer_1.list0.1.list0.a">
+                              <num>(a)</num>
+                              <p>sfhsdkjfhksdh;</p>
+                            </item>
+                            <item id="section-302.hcontainer_1.list0.1.list0.b">
+                              <num>(b)</num>
+                              <p>sdfhsdnfbmnsdbf;</p>
+                              <p><remark status="editorial">[editorial remark]</remark></p>
+                            </item>
+                            <item id="section-302.hcontainer_1.list0.1.list0.c">
+                              <num>(c)</num>
+                              <p>jshaasbmnbxc.</p>
+                            </item>
+                          </blockList>
+                        </item>
+                        <item id="section-302.hcontainer_1.list0.2">
+                          <num>(2)</num>
+                          <p>A nother not-quite subsection.</p>
+                        </item>
+                      </blockList>
+                    </content>
+                  </hcontainer>
+                </section>
+              </chapter>
+            </part>
+            <part id="fourthschedule.part-37">
+              <num>37</num>
+              <heading>Back out to the top level</heading>
+              <section id="section-303">
+                <num>303.</num>
+                <heading>sfsjdbfbsdjnfb</heading>
+                <subsection id="section-303.1">
+                  <num>(1)</num>
+                  <content>
+                    <p>Normal subsection:</p>
+                    <blockList id="section-303.1.list0">
+                      <listIntroduction>Normal list:</listIntroduction>
+                      <item id="section-303.1.list0.a">
+                        <num>(a)</num>
+                        <p>normal item;</p>
+                      </item>
+                      <item id="section-303.1.list0.a">
+                        <num>(a)</num>
+                        <p>normal item (duplicate number);</p>
+                      </item>
+                      <item id="section-303.1.list0.a">
+                        <num>(a)</num>
+                        <blockList id="section-303.1.list0.a.list0">
+                          <listIntroduction>normal item (also duplicate):</listIntroduction>
+                          <item id="section-303.1.list0.a.list0.i">
+                            <num>(i)</num>
+                            <blockList id="section-303.1.list0.a.list0.i.list0">
+                              <listIntroduction>sublist item, plus:</listIntroduction>
+                              <item id="section-303.1.list0.a.list0.i.list0.A">
+                                <num>(A)</num>
+                                <p>nested further!</p>
+                              </item>
+                              <item id="section-303.1.list0.a.list0.i.list0.B">
+                                <num>(B)</num>
+                                <p>nested further!</p>
+                              </item>
+                              <item id="section-303.1.list0.a.list0.i.list0.B">
+                                <num>(B)</num>
+                                <p>nested further!</p>
+                              </item>
+                            </blockList>
+                          </item>
+                          <item id="section-303.1.list0.a.list0.ii">
+                            <num>(ii)</num>
+                            <p>moar; and</p>
+                          </item>
+                        </blockList>
+                      </item>
+                      <item id="section-303.1.list0.b">
+                        <num>(b)</num>
+                        <p>final item.</p>
+                      </item>
+                    </blockList>
+                  </content>
+                </subsection>
+                <hcontainer id="section-303.crossheading-0" name="crossheading">
+                  <heading>Let's do this</heading>
+                </hcontainer>
+              </section>
+              <section id="section-304">
+                <num>304.</num>
+                <heading>Weirdo numbering</heading>
+                <subsection id="section-304.304.1">
+                  <num>304.1</num>
+                  <content>
+                    <p>First sub.</p>
+                  </content>
+                </subsection>
+                <subsection id="section-304.304.2">
+                  <num>304.2</num>
+                  <content>
+                    <p>Second sub.</p>
+                  </content>
+                </subsection>
+                <subsection id="section-304.304.3">
+                  <num>304.3</num>
+                  <content>
+                    <p>Third sub.</p>
+                  </content>
+                </subsection>
+              </section>
+            </part>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>""")
+        migration.migrate_document(doc)
+        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        self.assertMultiLineEqual(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion">
+    <meta/>
+    <body/>
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Annexure</heading>
+        <subheading>Things to do during lockdown</subheading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer name="crossheading" eId="att_1__crossheading_1">
+              <heading>Form A</heading>
+            </hcontainer>
+            <hcontainer eId="annexure__hcontainer_2">
+              <content>
+                <p>I ................. hereby ...............</p>
+                <p>Signed</p>
+              </content>
+            </hcontainer>
+            <hcontainer name="crossheading" eId="att_1__crossheading_2">
+              <heading>Form B</heading>
+            </hcontainer>
+            <hcontainer eId="annexure__hcontainer_4">
+              <content>
+                <p>One may:</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="annexure__para_1">
+              <num>1.</num>
+              <content>
+                <p>Sing</p>
+              </content>
+            </paragraph>
+            <paragraph eId="annexure__para_2">
+              <num>2.</num>
+              <content>
+                <p>Dance</p>
+              </content>
+            </paragraph>
+            <paragraph eId="annexure__para_3">
+              <num>3.</num>
+              <content>
+                <p>Sway</p>
+              </content>
+            </paragraph>
+            <hcontainer name="crossheading" eId="att_1__crossheading_3">
+              <heading>Form C</heading>
+            </hcontainer>
+            <section eId="sec_1">
+              <num>1.</num>
+              <heading>Paragraph heading</heading>
+              <subsection eId="sec_1__subsec_1">
+                <num>(1)</num>
+                <content>
+                  <p>sdfkhsdkjfhldfh.</p>
+                </content>
+              </subsection>
+              <subsection eId="sec_1__subsec_2">
+                <num>(2)</num>
+                <content>
+                  <p>sldfhsdkfnldksn.</p>
+                </content>
+              </subsection>
+            </section>
+            <section eId="sec_2">
+              <num>2.</num>
+              <heading>Another heading</heading>
+              <subsection eId="sec_2__subsec_1">
+                <num>(1)</num>
+                <content>
+                  <p>dskfahsdkfdnsv.dn.</p>
+                </content>
+              </subsection>
+              <subsection eId="sec_2__subsec_2">
+                <num>(2)</num>
+                <content>
+                  <p>sdfkdskvdnvmbdvmsnd.</p>
+                </content>
+              </subsection>
+            </section>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_2">
+        <heading>Schedule 1</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer eId="schedule1__hcontainer_1">
+              <content>
+                <table eId="schedule1__hcontainer_1__table_1">
+                  <tr>
+                    <th>
+                      <p>Column 1</p>
+                    </th>
+                    <th>
+                      <p>Column 2</p>
+                    </th>
+                    <th>
+                      <p>Column 3</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <p>Sub-Council Designation</p>
+                    </th>
+                    <th>
+                      <p>Sub-Council Name</p>
+                    </th>
+                    <th>
+                      <p>Ward Numbers</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>1</p>
+                    </td>
+                    <td>
+                      <p>Subcouncil 1 Blaauwberg</p>
+                    </td>
+                    <td>
+                      <p>4, 23, 29, 32, 104, 107</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>2</p>
+                    </td>
+                    <td>
+                      <p>Subcouncil 2 Bergdal</p>
+                    </td>
+                    <td>
+                      <p>6, 7, 8, 111</p>
+                    </td>
+                  </tr>
+                </table>
+              </content>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_3">
+        <heading>Schedule 2</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <hcontainer eId="schedule2__hcontainer_1">
+              <content>
+                <table eId="schedule2__hcontainer_1__table_1">
+                  <tr>
+                    <th>
+                      <p>COLUMN 1</p>
+                    </th>
+                    <th>
+                      <p>COLUMN 2</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <th>
+                      <p>SUB-COUNCIL DESIGNATION</p>
+                    </th>
+                    <th>
+                      <p>WARD NUMBERS</p>
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>1</p>
+                    </td>
+                    <td>
+                      <p>23, 29, 32 and 104</p>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <p>2</p>
+                    </td>
+                    <td>
+                      <p>6, 7, 8, 101, 102 and 111</p>
+                    </td>
+                  </tr>
+                </table>
+              </content>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_4">
+        <heading>Third Schedule</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <chapter eId="thirdschedule__chp_1">
+              <num>1</num>
+              <heading>The first Chapter</heading>
+              <part eId="thirdschedule__chp_1__part_1">
+                <num>1</num>
+                <heading>The first Part</heading>
+                <paragraph eId="thirdschedule__chp_1__part_1__para_1">
+                  <num>1.</num>
+                  <content>
+                    <p>The first para</p>
+                  </content>
+                </paragraph>
+                <paragraph eId="thirdschedule__chp_1__part_1__para_2">
+                  <num>2.</num>
+                  <content>
+                    <p>The second para</p>
+                  </content>
+                </paragraph>
+                <paragraph eId="thirdschedule__chp_1__part_1__para_345456">
+                  <num>345456.</num>
+                  <content>
+                    <p>The last para</p>
+                  </content>
+                </paragraph>
+              </part>
+              <part eId="thirdschedule__chp_1__part_2">
+                <num>2</num>
+                <heading>The second Part</heading>
+                <paragraph eId="thirdschedule__chp_1__part_2__para_1">
+                  <num>1.</num>
+                  <content>
+                    <p>Starting all over again</p>
+                  </content>
+                </paragraph>
+                <paragraph eId="thirdschedule__chp_1__part_2__para_2">
+                  <num>2.</num>
+                  <content>
+                    <p>Yup</p>
+                  </content>
+                </paragraph>
+                <paragraph eId="thirdschedule__chp_1__part_2__para_3">
+                  <num>3.</num>
+                  <content>
+                    <p>sdflkdsjg;ndfg</p>
+                  </content>
+                </paragraph>
+              </part>
+            </chapter>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment eId="att_5">
+        <heading>Fourth Schedule</heading>
+        <doc name="schedule">
+          <meta/>
+          <mainBody>
+            <part eId="fourthschedule__part_36">
+              <num>36</num>
+              <heading>Let's get nested</heading>
+              <chapter eId="fourthschedule__part_36__chp_A">
+                <num>A</num>
+                <heading>Nested Chapter</heading>
+                <section eId="sec_1">
+                  <num>1.</num>
+                  <heading>fjlhsdkfh</heading>
+                  <hcontainer eId="sec_1__hcontainer_1">
+                    <content>
+                      <p>dsjfhsdkjfhkshdf</p>
+                    </content>
+                  </hcontainer>
+                </section>
+                <section eId="sec_300">
+                  <num>300.</num>
+                  <heading>skdfhdkshfasd</heading>
+                  <hcontainer eId="sec_300__hcontainer_1">
+                    <content>
+                      <p>asfjhadjslgfjsdghfjhg</p>
+                    </content>
+                  </hcontainer>
+                </section>
+              </chapter>
+              <chapter eId="fourthschedule__part_36__chp_B">
+                <num>B</num>
+                <heading>Still inside</heading>
+                <section eId="sec_301">
+                  <num>301.</num>
+                  <heading>skhfdsjghfd</heading>
+                  <hcontainer eId="sec_301__hcontainer_1">
+                    <content>
+                      <p>sdfjsdlgjlkdfjg</p>
+                    </content>
+                  </hcontainer>
+                </section>
+                <section eId="sec_302">
+                  <num>302.</num>
+                  <heading>dkfhdsjhgdbfhjg</heading>
+                  <hcontainer eId="sec_302__hcontainer_1">
+                    <content>
+                      <blockList eId="sec_302__hcontainer_1__list_1">
+                        <listIntroduction>And let's nest a list:</listIntroduction>
+                        <item eId="sec_302__hcontainer_1__list_1__item_1">
+                          <num>(1)</num>
+                          <p>These ones are weird:</p>
+                          <blockList eId="sec_302__hcontainer_1__list_1__item_1__list_1">
+                            <listIntroduction><remark status="editorial">[editorial remark]</remark></listIntroduction>
+                            <item eId="sec_302__hcontainer_1__list_1__item_1__list_1__item_a">
+                              <num>(a)</num>
+                              <p>sfhsdkjfhksdh;</p>
+                            </item>
+                            <item eId="sec_302__hcontainer_1__list_1__item_1__list_1__item_b">
+                              <num>(b)</num>
+                              <p>sdfhsdnfbmnsdbf;</p>
+                              <p><remark status="editorial">[editorial remark]</remark></p>
+                            </item>
+                            <item eId="sec_302__hcontainer_1__list_1__item_1__list_1__item_c">
+                              <num>(c)</num>
+                              <p>jshaasbmnbxc.</p>
+                            </item>
+                          </blockList>
+                        </item>
+                        <item eId="sec_302__hcontainer_1__list_1__item_2">
+                          <num>(2)</num>
+                          <p>A nother not-quite subsection.</p>
+                        </item>
+                      </blockList>
+                    </content>
+                  </hcontainer>
+                </section>
+              </chapter>
+            </part>
+            <part eId="fourthschedule__part_37">
+              <num>37</num>
+              <heading>Back out to the top level</heading>
+              <section eId="sec_303">
+                <num>303.</num>
+                <heading>sfsjdbfbsdjnfb</heading>
+                <subsection eId="sec_303__subsec_1">
+                  <num>(1)</num>
+                  <content>
+                    <p>Normal subsection:</p>
+                    <blockList eId="sec_303__subsec_1__list_1">
+                      <listIntroduction>Normal list:</listIntroduction>
+                      <item eId="sec_303__subsec_1__list_1__item_a">
+                        <num>(a)</num>
+                        <p>normal item;</p>
+                      </item>
+                      <item eId="sec_303__subsec_1__list_1__item_a">
+                        <num>(a)</num>
+                        <p>normal item (duplicate number);</p>
+                      </item>
+                      <item eId="sec_303__subsec_1__list_1__item_a">
+                        <num>(a)</num>
+                        <blockList eId="sec_303__subsec_1__list_1__item_a__list_1">
+                          <listIntroduction>normal item (also duplicate):</listIntroduction>
+                          <item eId="sec_303__subsec_1__list_1__item_a__list_1__item_i">
+                            <num>(i)</num>
+                            <blockList eId="sec_303__subsec_1__list_1__item_a__list_1__item_i__list_1">
+                              <listIntroduction>sublist item, plus:</listIntroduction>
+                              <item eId="sec_303__subsec_1__list_1__item_a__list_1__item_i__list_1__item_A">
+                                <num>(A)</num>
+                                <p>nested further!</p>
+                              </item>
+                              <item eId="sec_303__subsec_1__list_1__item_a__list_1__item_i__list_1__item_B">
+                                <num>(B)</num>
+                                <p>nested further!</p>
+                              </item>
+                              <item eId="sec_303__subsec_1__list_1__item_a__list_1__item_i__list_1__item_B">
+                                <num>(B)</num>
+                                <p>nested further!</p>
+                              </item>
+                            </blockList>
+                          </item>
+                          <item eId="sec_303__subsec_1__list_1__item_a__list_1__item_ii">
+                            <num>(ii)</num>
+                            <p>moar; and</p>
+                          </item>
+                        </blockList>
+                      </item>
+                      <item eId="sec_303__subsec_1__list_1__item_b">
+                        <num>(b)</num>
+                        <p>final item.</p>
+                      </item>
+                    </blockList>
+                  </content>
+                </subsection>
+                <hcontainer name="crossheading" eId="sec_303__crossheading_1">
+                  <heading>Let's do this</heading>
+                </hcontainer>
+              </section>
+              <section eId="sec_304">
+                <num>304.</num>
+                <heading>Weirdo numbering</heading>
+                <subsection eId="sec_304__subsec_304-1">
+                  <num>304.1</num>
+                  <content>
+                    <p>First sub.</p>
+                  </content>
+                </subsection>
+                <subsection eId="sec_304__subsec_304-2">
+                  <num>304.2</num>
+                  <content>
+                    <p>Second sub.</p>
+                  </content>
+                </subsection>
+                <subsection eId="sec_304__subsec_304-3">
+                  <num>304.3</num>
+                  <content>
+                    <p>Third sub.</p>
+                  </content>
+                </subsection>
+              </section>
+            </part>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
+</akomaNtoso>
+""",
+            output
+        )
+
+    def test_table(self):
+        """ includes checks for tables in main body and Schedules
+        """
+        pass

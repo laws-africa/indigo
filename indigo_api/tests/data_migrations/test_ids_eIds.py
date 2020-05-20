@@ -538,7 +538,7 @@ class MigrationTestCase(TestCase):
     def test_eid_section(self):
         migration = AKNeId()
 
-        input = """
+        doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
     <meta>
@@ -662,8 +662,9 @@ class MigrationTestCase(TestCase):
       </part>
     </body>
   </act>
-</akomaNtoso>"""
-        output = migration.update_xml(input)
+</akomaNtoso>""")
+        migration.migrate_document(doc)
+        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -788,13 +789,14 @@ class MigrationTestCase(TestCase):
       </part>
     </body>
   </act>
-</akomaNtoso>""",
+</akomaNtoso>
+""",
             output
         )
 
     def test_eid_item(self):
         migration = AKNeId()
-        items_input = """
+        doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
     <meta/>
@@ -823,8 +825,9 @@ class MigrationTestCase(TestCase):
       </section>
     </body>
   </act>
-</akomaNtoso>"""
-        items_output = migration.update_xml(items_input)
+</akomaNtoso>""")
+        migration.migrate_document(doc)
+        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -854,6 +857,7 @@ class MigrationTestCase(TestCase):
       </section>
     </body>
   </act>
-</akomaNtoso>""",
-            items_output
+</akomaNtoso>
+""",
+            output
         )

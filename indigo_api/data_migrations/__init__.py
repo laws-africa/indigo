@@ -1,7 +1,5 @@
 import re
 
-from cobalt import Act
-
 from indigo.xmlutils import rewrite_ids
 
 
@@ -228,16 +226,16 @@ class AKNeId(AKNMigration):
         "item": (re.compile(r"^([^.]+\.)+list_\d+(?P<num>(\.[\da-zA-Z]+)+)$"), "item_"),
     }
 
-    def update_xml(self, xml):
+    def migrate_act(self, doc):
         """ Update the xml,
             - first by updating the values of `id` attributes as necessary,
             - and then by replacing all `id`s with `eId`s
         """
-        doc = Act(xml)
+        nsmap = {'a': doc.namespace}
 
         # basic replacements, e.g. "chapter-" to "chap_"
         for element, (pattern, replacement) in self.basic_replacements.items():
-            for node in doc.root.xpath(f"//a:{element}", namespaces={"a": doc.namespace}):
+            for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
                 old_id = node.get("id")
                 new_id = re.sub(pattern, replacement, old_id)
                 rewrite_ids(node, old_id, new_id)
@@ -245,29 +243,24 @@ class AKNeId(AKNMigration):
         # more complex replacements
         for element, (pattern, replacement) in self.complex_replacements.items():
             pattern = re.compile(pattern)
-            for node in doc.root.xpath(f"//a:{element}", namespaces={"a": doc.namespace}):
-                self.update_id(node, pattern, replacement)
+            for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
+                old_id = node.get("id")
+                num = self.clean_number(pattern.search(old_id).group("num"))
+                prefix = self.get_parent_id(node)
+                new_id = f"{prefix}.{replacement}{num}"
+                rewrite_ids(node, old_id, new_id)
 
         # finally
         # "." separators
-        for node in doc.root.xpath("//a:*[@id]", namespaces={"a": doc.namespace}):
+        for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):
             old_id = node.get("id")
             if "." in old_id:
                 node.set("id", re.sub(r"\.", "__", old_id))
 
         # replace all `id`s with `eId`s
-        for node in doc.root.xpath("//a:*[@id]", namespaces={"a": doc.namespace}):
+        for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):
             node.set("eId", node.get("id"))
             del node.attrib["id"]
-
-        return doc.to_xml().decode("utf-8")
-
-    def update_id(self, node, pattern, element):
-        old_id = node.get("id")
-        num = self.clean_number(pattern.search(old_id).group("num"))
-        prefix = self.get_parent_id(node)
-        new_id = f"{prefix}.{element}{num}"
-        rewrite_ids(node, old_id, new_id)
 
     def clean_number(self, num):
         return num.lstrip(".").replace(".", "-")

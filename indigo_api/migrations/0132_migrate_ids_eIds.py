@@ -8,6 +8,8 @@ from django.db import migrations
 
 from indigo_api.data_migrations import UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId
 
+from cobalt import Act
+
 
 def forward(apps, schema_editor):
     db_alias = schema_editor.connection.alias
@@ -17,23 +19,22 @@ def forward(apps, schema_editor):
     component_to_attachment = ComponentSchedulesToAttachments()
     eid_migration = AKNeId()
 
+    def update_xml(xml):
+        cobalt_doc = Act(xml)
+        para_to_hcontainer.migrate_act(cobalt_doc)
+        component_to_attachment.migrate_act(cobalt_doc)
+        eid_migration.migrate_act(cobalt_doc)
+        return cobalt_doc.to_xml().decode("utf-8")
+
     for document in Document.objects.using(db_alias).all():
-        xml = para_to_hcontainer.migrate_act(document.document_xml)
-        xml = component_to_attachment.migrate_act(xml)
-        xml = eid_migration.update_xml(xml)
-        if xml != document.document_xml:
-            document.document_xml = xml
-            document.save()
+        document.document_xml = update_xml(document.document_xml)
+        document.save()
 
         # Update historical Document versions
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
-            xml = data[0]['fields']['document_xml']
-            xml = para_to_hcontainer.migrate_act(xml)
-            xml = component_to_attachment.migrate_act(xml)
-            xml = eid_migration.update_xml(xml)
-            data[0]['fields']['document_xml'] = xml
+            data[0]['fields']['document_xml'] = update_xml(data[0]['fields']['document_xml'])
             version.serialized_data = json.dumps(data)
             version.save()
 

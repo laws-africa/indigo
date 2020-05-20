@@ -1720,8 +1720,3 @@ class MigrationTestCase(TestCase):
 """,
             output
         )
-
-    def test_table(self):
-        """ includes checks for tables in main body and Schedules
-        """
-        pass

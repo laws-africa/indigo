@@ -137,7 +137,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
     def make_toc_entry(self, element, component, parent=None):
         type_ = element.tag.split('}', 1)[-1]
-        id_ = element.get('eId')
+        id_ = element.get('id')
 
         # support for crossheadings in AKN 2.0
         if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':

@@ -130,6 +130,77 @@ class UnnumberedParagraphsToHcontainer(AKNMigration):
             rewrite_ids(para, old_id, new_id)
 
 
+class ComponentSchedulesToAttachments(AKNMigration):
+    """ Migrates schedules stored as components to attachments, as a child of the act.
+
+    This also moves the heading and subheading out of the hcontainer
+    and into the attachment.
+
+    This ALSO changes the id of the element to match AKN 3 styles, but using the id attribute (not eId)
+
+    <akomaNtoso>
+      <act>...</act>
+      ...
+      <components>
+        <component id="component-schedule2">
+          <doc name="schedule2">
+            <meta>
+              ...
+            <mainBody>
+              <hcontainer id="schedule2" name="schedule">
+                <heading>Schedule 2</heading>
+                <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
+                <paragraph id="schedule2.paragraph0">
+                  <content>
+                    ...
+
+    becomes
+
+    <akomaNtoso>
+      <act>
+        ...
+        <attachments>
+          <attachment id="att_1">
+            <heading>Schedule 2</heading>
+            <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
+            <doc name="schedule">
+              <meta>
+                ...
+              <mainBody>
+                <paragraph id="schedule2.paragraph0">
+                  <content>
+                    ...
+    """
+
+    def migrate_act(self, act):
+        nsmap = {'a': act.namespace}
+
+        for elem in act.root.xpath('/a:akomaNtoso/a:components', namespaces=nsmap):
+            elem.tag = f'{{{act.namespace}}}attachments'
+            # move to last child of act element
+            act.main.append(elem)
+
+            for i, att in enumerate(elem.xpath('a:component[a:doc]', namespaces=nsmap)):
+                att.tag = f'{{{act.namespace}}}attachment'
+                att.set('id', f'att_{i + 1}')
+
+                # heading and subheading
+                for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=nsmap):
+                    att.doc.addprevious(heading)
+
+                att.doc.set('name', 'schedule')
+
+                # rewrite ids
+                hcontainer = att.doc.mainBody.hcontainer
+                id = hcontainer.get('id') + "."
+                for child in hcontainer.iterchildren():
+                    hcontainer.addprevious(child)
+                    rewrite_ids(child, id, '')
+
+                # remove hcontainer
+                att.doc.mainBody.remove(hcontainer)
+
+
 class AKNeId:
     """ In a document's XML, translate existing `id` attributes to `eId`
     and follow the new naming and numbering convention

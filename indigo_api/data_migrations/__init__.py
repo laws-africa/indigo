@@ -228,7 +228,7 @@ class AKNeId:
         self.namespace = doc.namespace
 
         # basic replacements, e.g. "chapter-" to "chap_"
-        for element, patterns in self.basic_replacements.items():
+        for element, (pattern, replacement) in self.basic_replacements.items():
             for node in doc.root.xpath(f"//a:{element}", namespaces={"a": self.namespace}):
                 old_id = node.get("id")
                 new_id = re.sub(patterns[0], patterns[1], old_id)

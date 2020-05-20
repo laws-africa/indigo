@@ -114,7 +114,7 @@ class UnnumberedParagraphsToHcontainer(AKNMigration):
 
     becomes
 
-    <hcontainer id="section-1.hcontainer_0">
+    <hcontainer id="section-1.hcontainer_1">
       <content>
         <p>text</p>
       </content>

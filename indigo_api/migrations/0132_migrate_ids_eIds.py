@@ -6,17 +6,19 @@ from reversion.models import Version
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-from indigo_api.data_migrations import AKNeId
+from indigo_api.data_migrations import UnnumberedParagraphsToHcontainer, AKNeId
 
 
 def forward(apps, schema_editor):
     db_alias = schema_editor.connection.alias
     Document = apps.get_model("indigo_api", "Document")
     ct_doc = ContentType.objects.get_for_model(Document)
+    para_to_hcontainer = UnnumberedParagraphsToHcontainer()
     migration = AKNeId()
 
     for document in Document.objects.using(db_alias).all():
-        xml = migration.update_xml(document.document_xml)
+        xml = para_to_hcontainer.migrate_act(document.document_xml)
+        xml = migration.update_xml(xml)
         if xml != document.document_xml:
             document.document_xml = xml
             document.save()

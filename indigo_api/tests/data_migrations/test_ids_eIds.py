@@ -28,7 +28,7 @@ class MigrationTestCase(TestCase):
             - CrossheadingToHcontainer
             - UnnumberedParagraphsToHcontainer
             - ComponentSchedulesToAttachments
-            -
+            - AKNeId
             -
         """
         mappings = {}
@@ -134,30 +134,6 @@ class MigrationTestCase(TestCase):
             <num>(1)</num>
             <content>
               <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.2">
-            <num>(2)</num>
-            <content>
-              <p>Any person who is guilty of an offence in terms of this By-law is liable to a fine or, upon conviction to, imprisonment not exceeding 1 year or to both such fine and such imprisonment.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.3">
-            <num>(3)</num>
-            <content>
-              <p>Any person who commits a continuing offence may be liable to a fine for each day during which that person fails to comply with a directive, compliance notice or repair notice, issued in terms of this By-law.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.4">
-            <num>(4)</num>
-            <content>
-              <p>It is an offence to supply false information to an authorised official in respect of any issue pertaining to this By-law.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.5">
-            <num>(5)</num>
-            <content>
-              <p>Where no specific penalty is provided, any person committing an offence in terms of this By-law is liable to a fine and upon conviction to imprisonment for a period not exceeding one (1) year or to both such imprisonment and such fine.</p>
             </content>
           </subsection>
           <subsection id="section-33.6">
@@ -299,18 +275,6 @@ class MigrationTestCase(TestCase):
                 <p>Except for tree stumps or crop stubble, the place of combustion should be at least 50 metres from any road other than a highway, and 100 metres from any highway or dwelling on a neighbouring property.</p>
               </content>
             </paragraph>
-            <paragraph id="schedule2.paragraph-4">
-              <num>4.</num>
-              <content>
-                <p>Due regard should be given to direction and strength of wind, and quantity and state of vegetation to be combusted, prior to initiating combustion.</p>
-              </content>
-            </paragraph>
-            <paragraph id="schedule2.paragraph-5">
-              <num>5.</num>
-              <content>
-                <p>In the case of vegetation previously treated by spray with any agrichemical, any manufacturer's instructions as on the label of any container in respect of the burning of treated vegetation must be observed.</p>
-              </content>
-            </paragraph>
             <hcontainer id="schedule2.crossheading-1" name="crossheading">
               <heading>And another</heading>
             </hcontainer>
@@ -346,8 +310,8 @@ class MigrationTestCase(TestCase):
         UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
         CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
         ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
-        # AKNeId().migrate_act(cobalt_doc, mappings)
-        #
+        AKNeId().migrate_act(cobalt_doc, mappings)
+
         # self.chain_mappings(mappings)
         #
         # HrefMigration().migrate_act(cobalt_doc, mappings)
@@ -360,76 +324,76 @@ class MigrationTestCase(TestCase):
   <act>
     <meta/>
     <body>
-      <chapter id="chapter-I">
+      <chapter eId="chp_I">
         <num>I</num>
         <heading>Definitions and fundamental principles</heading>
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Definitions</heading>
-          <hcontainer id="section-1.hcontainer_1">
+          <hcontainer eId="sec_1__hcontainer_1">
             <content>
               <p>In this By-law, unless the context indicates otherwise -</p>
-              <blockList id="section-1.hcontainer_1.list0" refersTo="#term-dark_smoke">
+              <blockList refersTo="#term-dark_smoke" eId="sec_1__hcontainer_1__list_1">
                 <listIntroduction>"<def refersTo="#term-dark_smoke">dark smoke</def>" means-</listIntroduction>
-                <item id="section-1.hcontainer_1.list0.a">
+                <item eId="sec_1__hcontainer_1__list_1__item_a">
                   <num>(a)</num>
-                  <p>in respect of Chapter V and Chapter VI of this By-law, <term refersTo="#term-smoke" id="trm21">smoke</term> which, when measured using a <term refersTo="#term-light_absorption_meter" id="trm22">light absorption meter</term>, <term refersTo="#term-obscuration" id="trm23">obscuration</term> measuring equipment or other similar equipment, has an <term refersTo="#term-obscuration" id="trm24">obscuration</term> of 20% or greater;</p>
+                  <p>in respect of Chapter V and Chapter VI of this By-law, <term refersTo="#term-smoke" eId="trm21">smoke</term> which, when measured using a <term refersTo="#term-light_absorption_meter" eId="trm22">light absorption meter</term>, <term refersTo="#term-obscuration" eId="trm23">obscuration</term> measuring equipment or other similar equipment, has an <term refersTo="#term-obscuration" eId="trm24">obscuration</term> of 20% or greater;</p>
                 </item>
-                <item id="section-1.hcontainer_1.list0.b">
+                <item eId="sec_1__hcontainer_1__list_1__item_b">
                   <num>(b)</num>
-                  <blockList id="section-1.hcontainer_1.list0.b.list0">
+                  <blockList eId="sec_1__hcontainer_1__list_1__item_b__list_1">
                     <listIntroduction>in respect of Chapter VIII of this By-law –</listIntroduction>
-                    <item id="section-1.hcontainer_1.list0.b.list0.i">
+                    <item eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_i">
                       <num>(i)</num>
-                      <p><term refersTo="#term-smoke" id="trm25">smoke</term> emitted from the exhaust outlets of naturally aspirated compression ignition engines which has a density of 50 Hartridge <term refersTo="#term-smoke" id="trm26">smoke</term> units or more or a light absorption co-efficient of more than 1,61 mï1 ; or 18,57 percentage opacity; and</p>
+                      <p><term refersTo="#term-smoke" eId="trm25">smoke</term> emitted from the exhaust outlets of naturally aspirated compression ignition engines which has a density of 50 Hartridge <term refersTo="#term-smoke" eId="trm26">smoke</term> units or more or a light absorption co-efficient of more than 1,61 mï1 ; or 18,57 percentage opacity; and</p>
                     </item>
-                    <item id="section-1.hcontainer_1.list0.b.list0.ii">
+                    <item eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_ii">
                       <num>(ii)</num>
-                      <p><term refersTo="#term-smoke" id="trm27">smoke</term> emitted from the exhaust outlets of turbo-charged compression ignition engines which has a density of 56 Hartridge <term refersTo="#term-smoke" id="trm28">smoke</term> units or more or a light absorption co-efficient of more than 1,91 mï1 ; or 21,57 percentage opacity.</p>
+                      <p><term refersTo="#term-smoke" eId="trm27">smoke</term> emitted from the exhaust outlets of turbo-charged compression ignition engines which has a density of 56 Hartridge <term refersTo="#term-smoke" eId="trm28">smoke</term> units or more or a light absorption co-efficient of more than 1,91 mï1 ; or 21,57 percentage opacity.</p>
                     </item>
                   </blockList>
                 </item>
               </blockList>
-              <blockList id="section-1.hcontainer_1.list3" refersTo="#term-nuisance">
-                <listIntroduction>"<def refersTo="#term-nuisance">nuisance</def>" means an unreasonable interference or likely interference caused by <term refersTo="#term-air_pollution" id="trm37">air pollution</term> which has an adverse impact on -</listIntroduction>
-                <item id="section-1.hcontainer_1.list3.a">
+              <blockList refersTo="#term-nuisance" eId="sec_1__hcontainer_1__list_4">
+                <listIntroduction>"<def refersTo="#term-nuisance">nuisance</def>" means an unreasonable interference or likely interference caused by <term refersTo="#term-air_pollution" eId="trm37">air pollution</term> which has an adverse impact on -</listIntroduction>
+                <item eId="sec_1__hcontainer_1__list_4__item_a">
                   <num>(a)</num>
-                  <p>the health or well-being of any <term refersTo="#term-person" id="trm38">person</term> or <term refersTo="#term-living_organism" id="trm39">living organism</term>; or</p>
+                  <p>the health or well-being of any <term refersTo="#term-person" eId="trm38">person</term> or <term refersTo="#term-living_organism" eId="trm39">living organism</term>; or</p>
                 </item>
-                <item id="section-1.hcontainer_1.list3.b">
+                <item eId="sec_1__hcontainer_1__list_4__item_b">
                   <num>(b)</num>
-                  <p>the use and enjoyment by an owner or occupier of his or her property or the <term refersTo="#term-environment" id="trm40">environment</term>;</p>
+                  <p>the use and enjoyment by an owner or occupier of his or her property or the <term refersTo="#term-environment" eId="trm40">environment</term>;</p>
                 </item>
               </blockList>
             </content>
           </hcontainer>
         </section>
-        <section id="section-2">
+        <section eId="sec_2">
           <num>2.</num>
           <heading>Application of this By-law</heading>
-          <hcontainer id="section-2.hcontainer_1">
+          <hcontainer eId="sec_2__hcontainer_1">
             <content>
               <p>One paragraph.</p>
             </content>
           </hcontainer>
-          <hcontainer id="section-2.hcontainer_2">
+          <hcontainer eId="sec_2__hcontainer_2">
             <content>
               <p>Another paragraph.</p>
             </content>
           </hcontainer>
         </section>
       </chapter>
-      <section id="section-2">
+      <section eId="sec_2">
         <num>2.</num>
-        <hcontainer id="section-2.hcontainer_1">
+        <hcontainer eId="sec_2__hcontainer_1">
           <content>
-            <blockList id="section-2.hcontainer_1.list0">
+            <blockList eId="sec_2__hcontainer_1__list_1">
               <listIntroduction>aoeuaoeu</listIntroduction>
-              <item id="section-2.hcontainer_1.list0.a">
+              <item eId="sec_2__hcontainer_1__list_1__item_a">
                 <num>(a)</num>
-                <blockList id="section-2.hcontainer_1.list0.a.list0">
+                <blockList eId="sec_2__hcontainer_1__list_1__item_a__list_1">
                   <listIntroduction>aye</listIntroduction>
-                  <item id="section-2.hcontainer_1.list0.a.list0.i">
+                  <item eId="sec_2__hcontainer_1__list_1__item_a__list_1__item_i">
                     <num>(i)</num>
                     <p>eye</p>
                   </item>
@@ -438,61 +402,37 @@ class MigrationTestCase(TestCase):
             </blockList>
           </content>
         </hcontainer>
-        <hcontainer id="section-2.hcontainer_2">
+        <hcontainer eId="sec_2__hcontainer_2">
           <content>
             <p>hi</p>
           </content>
         </hcontainer>
       </section>
-      <chapter id="chapter-XI">
+      <chapter eId="chp_XI">
         <num>XI</num>
         <heading>Offences and penalties</heading>
-        <hcontainer id="chapter-XI.hcontainer_1" name="crossheading">
+        <hcontainer name="crossheading" eId="chp_XI__hcontainer_1">
           <heading>First in chapter</heading>
         </hcontainer>
-        <section id="section-33">
+        <section eId="sec_33">
           <num>33.</num>
           <heading>Offences and penalties</heading>
-          <subsection id="section-33.1">
+          <subsection eId="sec_33__subsec_1">
             <num>(1)</num>
             <content>
               <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
             </content>
           </subsection>
-          <subsection id="section-33.2">
-            <num>(2)</num>
-            <content>
-              <p>Any person who is guilty of an offence in terms of this By-law is liable to a fine or, upon conviction to, imprisonment not exceeding 1 year or to both such fine and such imprisonment.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.3">
-            <num>(3)</num>
-            <content>
-              <p>Any person who commits a continuing offence may be liable to a fine for each day during which that person fails to comply with a directive, compliance notice or repair notice, issued in terms of this By-law.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.4">
-            <num>(4)</num>
-            <content>
-              <p>It is an offence to supply false information to an authorised official in respect of any issue pertaining to this By-law.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.5">
-            <num>(5)</num>
-            <content>
-              <p>Where no specific penalty is provided, any person committing an offence in terms of this By-law is liable to a fine and upon conviction to imprisonment for a period not exceeding one (1) year or to both such imprisonment and such fine.</p>
-            </content>
-          </subsection>
-          <subsection id="section-33.6">
+          <subsection eId="sec_33__subsec_6">
             <num>(6)</num>
             <content>
-              <blockList id="section-33.6.list0">
+              <blockList eId="sec_33__subsec_6__list_1">
                 <listIntroduction>In addition to imposing a fine or imprisonment, a court may order any person convicted of an offence under this By-law -</listIntroduction>
-                <item id="section-33.6.list0.a">
+                <item eId="sec_33__subsec_6__list_1__item_a">
                   <num>(a)</num>
                   <p>to remedy the harm caused; and</p>
                 </item>
-                <item id="section-33.6.list0.b">
+                <item eId="sec_33__subsec_6__list_1__item_b">
                   <num>(b)</num>
                   <p>to pay damages for harm caused to another person or to property.</p>
                 </item>
@@ -500,32 +440,32 @@ class MigrationTestCase(TestCase):
             </content>
           </subsection>
         </section>
-        <section id="section-34">
+        <section eId="sec_34">
           <num>34.</num>
           <heading>Repeal and savings</heading>
-          <subsection id="section-34.1">
+          <subsection eId="sec_34__subsec_1">
             <num>(1)</num>
             <content>
               <p>The City of Cape Town: Air Quality Management By-law 2010 is hereby repealed.</p>
             </content>
           </subsection>
-          <subsection id="section-34.2">
+          <subsection eId="sec_34__subsec_2">
             <num>(2)</num>
             <content>
               <p>Anything done or deemed to have been done under any other by-law relating to air quality remains valid to the extent that it is consistent with this By-law.</p>
             </content>
           </subsection>
-          <hcontainer id="section-34.hcontainer_1" name="crossheading">
+          <hcontainer name="crossheading" eId="sec_34__hcontainer_1">
             <heading>Second in chapter</heading>
           </hcontainer>
         </section>
-        <section id="section-35">
+        <section eId="sec_35">
           <num>35.</num>
           <heading>Short title</heading>
-          <hcontainer id="section-35.hcontainer_1" name="crossheading">
+          <hcontainer name="crossheading" eId="sec_35__hcontainer_1">
             <heading>Inside a section</heading>
           </hcontainer>
-          <hcontainer id="section-35.hcontainer_2">
+          <hcontainer eId="sec_35__hcontainer_2">
             <content>
               <p>This By-law is called the City of Cape Town: Air Quality Management By-law, 2016.</p>
             </content>
@@ -534,25 +474,25 @@ class MigrationTestCase(TestCase):
       </chapter>
     </body>
   <attachments>
-    <attachment id="att_1">
+    <attachment eId="att_1">
       <heading>Schedule 1</heading>
             <subheading>Standards and specifications for fuel-burning equipment:</subheading>
             <doc name="schedule">
         <meta/>
         <mainBody>
-          <paragraph id="paragraph-1">
+          <paragraph eId="para_1">
               <num>1.</num>
               <content>
                 <p>All fuel-burning equipment capable of burning more than 100kg/h of coal, biomass or other solid fuel shall be fitted with suitable control equipment so as to limit dust and grit emissions.</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-2">
+            <paragraph eId="para_2">
               <num>2.</num>
               <content>
                 <p>The control equipment shall be fitted in such a manner so as to facilitate easy maintenance.</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-3">
+            <paragraph eId="para_3">
               <num>3.</num>
               <content>
                 <p>The permitted concentration of grit and dust emissions from a chimney serving a coal fired boiler equipped with any mechanical draught fan system shall not be more than 250 mg/Nm³ (as measured at 0°C, 101,3 kPa and 12% CO₂). Where the fuel-burning equipment has been declared as a Controlled Emitter in terms of the Air Quality Act, the respective Controlled Emitter Regulations shall apply.</p>
@@ -566,24 +506,24 @@ class MigrationTestCase(TestCase):
                 <p>BS 3405:1983 Method for measurement of particulate emission including grit and dust (simplified method).</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-4">
+            <paragraph eId="para_4">
               <num>4.</num>
               <content>
                 <p>The City reserves the right to call upon the owner or his or her agent of the fuel burning equipment to have the emissions from such fuel burning equipment evaluated at his or her own expense as may be required by the authorised official.</p>
               </content>
             </paragraph>
-            <hcontainer id="hcontainer_1" name="crossheading">
+            <hcontainer name="crossheading" eId="hcontainer_1">
               <heading>Insulation of chimneys:</heading>
             </hcontainer>
-            <hcontainer id="hcontainer_2">
+            <hcontainer eId="hcontainer_2">
               <content>
                 <p>All fuel-burning equipment using Heavy Fuel Oil or other liquid fuels with a sulphur content equal to or greater than 2.5 % by weight must be fitted with a fully insulated chimney using either a 25mm air gap or mineral wool insulation to prevent the formation of acid smut. Such chimneys must be maintained in a good state of repair at all times.</p>
               </content>
             </hcontainer>
-            <hcontainer id="hcontainer_3" name="crossheading">
+            <hcontainer name="crossheading" eId="hcontainer_3">
               <heading>Wood-fired pizza ovens and other solid fuel combustion equipment:</heading>
             </hcontainer>
-            <hcontainer id="hcontainer_4">
+            <hcontainer eId="hcontainer_4">
               <content>
                 <p>Wood-fired pizza ovens and other solid fuel combustion equipment shall be fitted with induced draft fans at the discretion of the authorised official.</p>
               </content>
@@ -591,64 +531,52 @@ class MigrationTestCase(TestCase):
           </mainBody>
       </doc>
     </attachment>
-    <attachment id="att_2">
+    <attachment eId="att_2">
       <heading>Schedule 2</heading>
             <subheading>Good management practices to prevent or minimise the discharge of smoke from open burning of vegetation</subheading>
             <doc name="schedule">
         <meta/>
         <mainBody>
-          <paragraph id="paragraph-1">
+          <paragraph eId="para_1">
               <num>1.</num>
               <content>
                 <p>Consider alternatives to burning – e.g. mulching for recovery of nutrient value, drying for recovery as firewood.</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-2">
+            <paragraph eId="para_2">
               <num>2.</num>
               <content>
                 <p>Vegetation that is to be burned (such as trimmings, pruning or felling’s cut from active growth) should as a general guide be allowed to dry to brown appearance prior to burning.</p>
               </content>
             </paragraph>
-            <hcontainer id="hcontainer_1" name="crossheading">
+            <hcontainer name="crossheading" eId="hcontainer_1">
               <heading>Here's one</heading>
             </hcontainer>
-            <paragraph id="paragraph-3">
+            <paragraph eId="para_3">
               <num>3.</num>
               <content>
                 <p>Except for tree stumps or crop stubble, the place of combustion should be at least 50 metres from any road other than a highway, and 100 metres from any highway or dwelling on a neighbouring property.</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-4">
-              <num>4.</num>
-              <content>
-                <p>Due regard should be given to direction and strength of wind, and quantity and state of vegetation to be combusted, prior to initiating combustion.</p>
-              </content>
-            </paragraph>
-            <paragraph id="paragraph-5">
-              <num>5.</num>
-              <content>
-                <p>In the case of vegetation previously treated by spray with any agrichemical, any manufacturer's instructions as on the label of any container in respect of the burning of treated vegetation must be observed.</p>
-              </content>
-            </paragraph>
-            <hcontainer id="hcontainer_2" name="crossheading">
+            <hcontainer name="crossheading" eId="hcontainer_2">
               <heading>And another</heading>
             </hcontainer>
-            <hcontainer id="hcontainer_3" name="crossheading">
+            <hcontainer name="crossheading" eId="hcontainer_3">
               <heading>And more</heading>
             </hcontainer>
-            <paragraph id="paragraph-6">
+            <paragraph eId="para_6">
               <num>6.</num>
               <content>
                 <p>Two days' fine weather should be allowed prior to burning.</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-7">
+            <paragraph eId="para_7">
               <num>7.</num>
               <content>
                 <p>Vegetation should be stacked loosely rather than compacted.</p>
               </content>
             </paragraph>
-            <paragraph id="paragraph-8">
+            <paragraph eId="para_8">
               <num>8.</num>
               <content>
                 <p>A small fire, started with the driest material, with further material continually fed onto it once it is blazing, is preferable to a large stack ignited and left unattended.</p>
@@ -666,7 +594,7 @@ class MigrationTestCase(TestCase):
         )
 
         # check mappings
-        self.assertEqual(
+        self.assertDictEqual(
             {
                 "section-1.paragraph0": "section-1.hcontainer_1",
                 "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
@@ -709,13 +637,149 @@ class MigrationTestCase(TestCase):
                 "schedule2.paragraph-2": "paragraph-2",
                 "schedule2.hcontainer_1": "hcontainer_1",
                 "schedule2.paragraph-3": "paragraph-3",
-                "schedule2.paragraph-4": "paragraph-4",
-                "schedule2.paragraph-5": "paragraph-5",
                 "schedule2.hcontainer_2": "hcontainer_2",
                 "schedule2.hcontainer_3": "hcontainer_3",
                 "schedule2.paragraph-6": "paragraph-6",
                 "schedule2.paragraph-7": "paragraph-7",
                 "schedule2.paragraph-8": "paragraph-8",
+                "chapter-I": "chp_I",
+                "section-1": "sec_1",
+                "section-1.hcontainer_1": "sec_1.hcontainer_1",
+                "sec_1.hcontainer_1": "sec_1__hcontainer_1",
+
+                "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
+                "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
+                "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
+
+                "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
+                "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
+                "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
+                "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
+
+                "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
+                "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
+                "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
+                "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
+
+                "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
+                "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
+                "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
+                "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
+                "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
+
+                "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
+                "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
+                "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
+                "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
+                "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
+                "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
+
+                "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
+                "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
+                "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
+                "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
+                "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
+                "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
+
+                "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
+                "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
+                "sec_1.hcontainer_1.list_4": "sec_1__hcontainer_1__list_4",
+
+                "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
+                "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
+                "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
+                "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
+
+                "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
+                "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
+                "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
+                "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
+
+                "section-2": "sec_2",
+
+                "section-2.hcontainer_1": "sec_2.hcontainer_1",
+                "sec_2.hcontainer_1": "sec_2__hcontainer_1",
+
+                "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
+                "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
+                "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
+
+                "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
+                "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
+                "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
+                "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
+
+                "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
+                "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
+                "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
+                "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
+                "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
+
+                "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
+                "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
+                "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
+                "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
+                "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
+                "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
+
+                "section-2.hcontainer_2": "sec_2.hcontainer_2",
+                "sec_2.hcontainer_2": "sec_2__hcontainer_2",
+
+                "chapter-XI": "chp_XI",
+                "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
+                "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
+
+                "section-33": "sec_33",
+                "section-33.1": "sec_33.1",
+                "sec_33.1": "sec_33.subsec_1",
+                "sec_33.subsec_1": "sec_33__subsec_1",
+
+                "section-33.6": "sec_33.6",
+                "sec_33.6": "sec_33.subsec_6",
+                "sec_33.subsec_6": "sec_33__subsec_6",
+
+                "section-33.6.list0": "sec_33.6.list0",
+                "sec_33.6.list0": "sec_33.6.list_1",
+                "sec_33.6.list_1": "sec_33.subsec_6.list_1",
+                "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
+
+                "section-33.6.list0.a": "sec_33.6.list0.a",
+                "sec_33.6.list0.a": "sec_33.6.list_1.a",
+                "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
+                "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
+                "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
+
+                "section-33.6.list0.b": "sec_33.6.list0.b",
+                "sec_33.6.list0.b": "sec_33.6.list_1.b",
+                "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
+                "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
+                "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
+
+                "section-34": "sec_34",
+                "section-34.1": "sec_34.1",
+                "sec_34.1": "sec_34.subsec_1",
+                "sec_34.subsec_1": "sec_34__subsec_1",
+
+                "section-34.2": "sec_34.2",
+                "sec_34.2": "sec_34.subsec_2",
+                "sec_34.subsec_2": "sec_34__subsec_2",
+
+                "section-34.hcontainer_1": "sec_34.hcontainer_1",
+                "sec_34.hcontainer_1": "sec_34__hcontainer_1",
+
+                "section-35": "sec_35",
+                "section-35.hcontainer_1": "sec_35.hcontainer_1",
+                "sec_35.hcontainer_1": "sec_35__hcontainer_1",
+                "section-35.hcontainer_2": "sec_35.hcontainer_2",
+                "sec_35.hcontainer_2": "sec_35__hcontainer_2",
+
+                "paragraph-4": "para_4",
+                "paragraph-1": "para_1",
+                "paragraph-2": "para_2",
+                "paragraph-3": "para_3",
+                "paragraph-6": "para_6",
+                "paragraph-7": "para_7",
+                "paragraph-8": "para_8",
             },
             mappings
         )

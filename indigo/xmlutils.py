@@ -94,14 +94,23 @@ def unwrap_element(elem):
 
 
 def rewrite_ids(elem, old_id_prefix, new_id_prefix):
+    mappings = {}
+    old_id = elem.get('id')
     old_id_len = len(old_id_prefix)
-    if elem.get('id').startswith(old_id_prefix):
-        elem.set('id', new_id_prefix + elem.get('id')[old_id_len:])
+    if old_id.startswith(old_id_prefix):
+        new_id = new_id_prefix + old_id[old_id_len:]
+        mappings[old_id] = new_id
+        elem.set('id', new_id)
 
     # rewrite children
     for child in elem.xpath('.//a:*[@id]', namespaces={'a': elem.nsmap[None]}):
-        if child.get('id').startswith(old_id_prefix):
-            child.set('id', new_id_prefix + child.get('id')[old_id_len:])
+        old_id = child.get('id')
+        if old_id.startswith(old_id_prefix):
+            new_id = new_id_prefix + old_id[old_id_len:]
+            mappings[old_id] = new_id
+            child.set('id', new_id)
+
+    return mappings
 
 
 def closest(element, predicate):

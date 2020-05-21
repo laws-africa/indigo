@@ -5,7 +5,7 @@ from indigo.xmlutils import rewrite_ids
 
 class AKNMigration(object):
     def migrate_document(self, document):
-        return self.migrate_act(document.doc)
+        return self.migrate_act(document.doc, mappings={})
 
 
 class ScheduleArticleToHcontainer(AKNMigration):
@@ -118,7 +118,7 @@ class UnnumberedParagraphsToHcontainer(AKNMigration):
       </content>
     </hcontainer>
     """
-    def migrate_act(self, act):
+    def migrate_act(self, act, mappings):
         for para in act.root.xpath('//a:paragraph[not(a:num)]', namespaces={'a': act.namespace}):
             para.tag = f'{{{act.namespace}}}hcontainer'
             # new id is based on the number of preceding hcontainer siblings
@@ -170,7 +170,7 @@ class ComponentSchedulesToAttachments(AKNMigration):
                     ...
     """
 
-    def migrate_act(self, act):
+    def migrate_act(self, act, mappings):
         nsmap = {'a': act.namespace}
 
         for elem in act.root.xpath('/a:akomaNtoso/a:components', namespaces=nsmap):
@@ -230,7 +230,7 @@ class AKNeId(AKNMigration):
         "item": (re.compile(r"^([^.]+\.)+list_\d+(?P<num>(\.[\da-zA-Z]+)+)$"), "item_"),
     }
 
-    def migrate_act(self, doc):
+    def migrate_act(self, doc, mappings):
         """ Update the xml,
             - first by updating the values of `id` attributes as necessary,
             - and then by replacing all `id`s with `eId`s

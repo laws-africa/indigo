@@ -3796,19 +3796,19 @@ class MigrationTestCase(TestCase):
           <hcontainer id="schedule3" name="schedule">
             <heading>Schedule 3</heading>
             <subheading>Standards and specifications for fuel-burning equipment:</subheading>
-            <paragraph id="schedule1.paragraph-1">
+            <paragraph id="schedule3.paragraph-1">
               <num>1.</num>
               <content>
                 <p>All fuel-burning equipment capable of burning more than 100kg/h of coal, biomass or other solid fuel shall be fitted with suitable control equipment so as to limit dust and grit emissions.</p>
               </content>
             </paragraph>
-            <paragraph id="schedule1.paragraph-2">
+            <paragraph id="schedule3.paragraph-2">
               <num>2.</num>
               <content>
                 <p>The control equipment shall be fitted in such a manner so as to facilitate easy maintenance.</p>
               </content>
             </paragraph>
-            <paragraph id="schedule1.paragraph-3">
+            <paragraph id="schedule3.paragraph-3">
               <num>3.</num>
               <content>
                 <p>The permitted concentration of grit and dust emissions from a chimney serving a coal fired boiler equipped with any mechanical draught fan system shall not be more than 250 mg/Nm³ (as measured at 0°C, 101,3 kPa and 12% CO₂). Where the fuel-burning equipment has been declared as a Controlled Emitter in terms of the Air Quality Act, the respective Controlled Emitter Regulations shall apply.</p>
@@ -3822,24 +3822,24 @@ class MigrationTestCase(TestCase):
                 <p>BS 3405:1983 Method for measurement of particulate emission including grit and dust (simplified method).</p>
               </content>
             </paragraph>
-            <paragraph id="schedule1.paragraph-4">
+            <paragraph id="schedule3.paragraph-4">
               <num>4.</num>
               <content>
                 <p>The City reserves the right to call upon the owner or his or her agent of the fuel burning equipment to have the emissions from such fuel burning equipment evaluated at his or her own expense as may be required by the authorised official.</p>
               </content>
             </paragraph>
-            <hcontainer id="schedule1.crossheading-0" name="crossheading">
+            <hcontainer id="schedule3.crossheading-0" name="crossheading">
               <heading>Insulation of chimneys:</heading>
             </hcontainer>
-            <paragraph id="schedule1.paragraph0">
+            <paragraph id="schedule3.paragraph0">
               <content>
                 <p>All fuel-burning equipment using Heavy Fuel Oil or other liquid fuels with a sulphur content equal to or greater than 2.5 % by weight must be fitted with a fully insulated chimney using either a 25mm air gap or mineral wool insulation to prevent the formation of acid smut. Such chimneys must be maintained in a good state of repair at all times.</p>
               </content>
             </paragraph>
-            <hcontainer id="schedule1.crossheading-1" name="crossheading">
+            <hcontainer id="schedule3.crossheading-1" name="crossheading">
               <heading>Wood-fired pizza ovens and other solid fuel combustion equipment:</heading>
             </hcontainer>
-            <paragraph id="schedule1.paragraph1">
+            <paragraph id="schedule3.paragraph1">
               <content>
                 <p>Wood-fired pizza ovens and other solid fuel combustion equipment shall be fitted with induced draft fans at the discretion of the authorised official.</p>
               </content>
@@ -4013,19 +4013,19 @@ class MigrationTestCase(TestCase):
           <hcontainer id="schedule3" name="schedule">
             <heading>Schedule 3</heading>
             <subheading>Standards and specifications for fuel-burning equipment:</subheading>
-            <paragraph id="schedule1.paragraph-1">
+            <paragraph id="schedule3.paragraph-1">
               <num>1.</num>
               <content>
                 <p>All fuel-burning equipment capable of burning more than 100kg/h of coal, biomass or other solid fuel shall be fitted with suitable control equipment so as to limit dust and grit emissions.</p>
               </content>
             </paragraph>
-            <paragraph id="schedule1.paragraph-2">
+            <paragraph id="schedule3.paragraph-2">
               <num>2.</num>
               <content>
                 <p>The control equipment shall be fitted in such a manner so as to facilitate easy maintenance.</p>
               </content>
             </paragraph>
-            <paragraph id="schedule1.paragraph-3">
+            <paragraph id="schedule3.paragraph-3">
               <num>3.</num>
               <content>
                 <p>The permitted concentration of grit and dust emissions from a chimney serving a coal fired boiler equipped with any mechanical draught fan system shall not be more than 250 mg/Nm³ (as measured at 0°C, 101,3 kPa and 12% CO₂). Where the fuel-burning equipment has been declared as a Controlled Emitter in terms of the Air Quality Act, the respective Controlled Emitter Regulations shall apply.</p>
@@ -4039,24 +4039,24 @@ class MigrationTestCase(TestCase):
                 <p>BS 3405:1983 Method for measurement of particulate emission including grit and dust (simplified method).</p>
               </content>
             </paragraph>
-            <paragraph id="schedule1.paragraph-4">
+            <paragraph id="schedule3.paragraph-4">
               <num>4.</num>
               <content>
                 <p>The City reserves the right to call upon the owner or his or her agent of the fuel burning equipment to have the emissions from such fuel burning equipment evaluated at his or her own expense as may be required by the authorised official.</p>
               </content>
             </paragraph>
-            <hcontainer id="schedule1.crossheading-0" name="crossheading">
+            <hcontainer id="schedule3.crossheading-0" name="crossheading">
               <heading>Insulation of chimneys:</heading>
             </hcontainer>
-            <hcontainer id="schedule1.hcontainer_2">
+            <hcontainer id="schedule3.hcontainer_2">
               <content>
                 <p>All fuel-burning equipment using Heavy Fuel Oil or other liquid fuels with a sulphur content equal to or greater than 2.5 % by weight must be fitted with a fully insulated chimney using either a 25mm air gap or mineral wool insulation to prevent the formation of acid smut. Such chimneys must be maintained in a good state of repair at all times.</p>
               </content>
             </hcontainer>
-            <hcontainer id="schedule1.crossheading-1" name="crossheading">
+            <hcontainer id="schedule3.crossheading-1" name="crossheading">
               <heading>Wood-fired pizza ovens and other solid fuel combustion equipment:</heading>
             </hcontainer>
-            <hcontainer id="schedule1.hcontainer_4">
+            <hcontainer id="schedule3.hcontainer_4">
               <content>
                 <p>Wood-fired pizza ovens and other solid fuel combustion equipment shall be fitted with induced draft fans at the discretion of the authorised official.</p>
               </content>

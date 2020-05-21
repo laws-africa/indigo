@@ -204,7 +204,9 @@ class ComponentSchedulesToAttachments(AKNMigration):
 
             for i, att in enumerate(elem.xpath('a:component[a:doc]', namespaces=nsmap)):
                 att.tag = f'{{{act.namespace}}}attachment'
-                att.set('id', f'att_{i + 1}')
+                old_id = att.get('id')
+                new_id = f'att_{i + 1}'
+                self.safe_update(att, mappings, old_id, new_id)
 
                 # heading and subheading
                 for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=nsmap):

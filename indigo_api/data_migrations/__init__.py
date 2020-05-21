@@ -292,7 +292,8 @@ class AKNeId(AKNMigration):
         for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):
             old_id = node.get("id")
             if "." in old_id:
-                node.set("id", old_id.replace(".", "__"))
+                new_id = old_id.replace(".", "__")
+                self.safe_update(node, mappings, old_id, new_id)
 
         # replace all `id`s with `eId`s
         for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):

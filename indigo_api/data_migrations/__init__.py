@@ -108,6 +108,20 @@ class UpdateAKNNamespace(AKNMigration):
         return xml
 
 
+class CrossheadingToHcontainer(AKNMigration):
+    """ Updates crossheading ids to hcontainer and numbers them from 1, e.g.
+        <hcontainer id="schedule2.crossheading-0" name="crossheading"> ->
+        <hcontainer id="schedule2.hcontainer_1" name="crossheading">
+    """
+    def migrate_act(self, act, mappings):
+        for crossheading in act.root.xpath('//a:hcontainer[@name="crossheading"]', namespaces={'a': act.namespace}):
+            # new id is based on the number of preceding hcontainer siblings
+            num = len(crossheading.xpath('preceding-sibling::a:hcontainer', namespaces={'a': act.namespace})) + 1
+            old_id = crossheading.get('id')
+            new_id = re.sub('crossheading-(\d+)$', f'hcontainer_{num}', old_id)
+            self.safe_update(crossheading, mappings, old_id, new_id)
+
+
 class UnnumberedParagraphsToHcontainer(AKNMigration):
     """ Update all instances un-numbered paragraphs to hcontainers. Slaw generates these when
     a block of text is encountered in a hierarchical element.
@@ -228,7 +242,6 @@ class AKNeId(AKNMigration):
     add_1_replacements = {
         "table": (re.compile(r"\btable(?P<num>\d+)$"), "table_"),
         "blockList": (re.compile(r"\blist(?P<num>\d+)$"), "list_"),
-        "hcontainer": (re.compile(r"\bcrossheading-(?P<num>\d+)$"), "crossheading_"),
     }
 
     complex_replacements = {
@@ -292,3 +305,17 @@ class AKNeId(AKNMigration):
         parent = node.getparent()
         parent_id = parent.get("id")
         return parent_id if parent_id else self.get_parent_id(parent)
+
+
+class HrefMigration(AKNMigration):
+    """ Update all internal cross-references in a document's XML
+    """
+    def migrate_act(self, doc, mappings):
+        pass
+
+
+class AnnotationsMigration(AKNMigration):
+    """ Update all the annotation anchors on a Document
+    """
+    def migrate_act(self, doc, mappings):
+        pass

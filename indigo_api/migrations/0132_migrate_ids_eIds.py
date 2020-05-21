@@ -6,7 +6,7 @@ from reversion.models import Version
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-from indigo_api.data_migrations import UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId
+from indigo_api.data_migrations import CrossheadingToHcontainer, UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId, HrefMigration, AnnotationsMigration
 
 from cobalt import Act
 

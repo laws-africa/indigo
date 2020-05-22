@@ -2827,6 +2827,64 @@ class MigrationTestCase(TestCase):
         """
         pass
 
+    def test_eid_terms(self):
+        migration = AKNeId()
+        doc = Document(work=self.work, document_xml="""
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="originalVersion">
+    <meta/>
+    <body>
+      <section id="section-1">
+        <num>1</num>
+        <heading>Definitions</heading>
+        <content>
+          <p>a <term id="trm1">term</term> and another <term id="trm2">term2</term></p>
+          <blockList id="section-1.list0">
+            <item id="section-1.list0.a">
+              <num>(a)</num>
+              <p>a <term id="trm3">term</term> and another <term id="trm4">term2</term></p>
+            </item>
+            <item id="section-1.list0.b">
+              <num>(b)</num>
+              <p>a <term id="trm5">term</term> and another <term id="trm6">term2</term></p>
+            </item>
+          </blockList>
+          <p>a <term id="trm7">term</term> and another <term id="trm8">term2</term></p>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>""")
+        migration.migrate_document(doc)
+        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        self.assertMultiLineEqual(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="originalVersion">
+    <meta/>
+    <body>
+      <section eId="sec_1">
+        <num>1</num>
+        <heading>Definitions</heading>
+        <content>
+          <p>a <term eId="sec_1__term_1">term</term> and another <term eId="sec_1__term_2">term2</term></p>
+          <blockList eId="sec_1__list_1">
+            <item eId="sec_1__list_1__item_a">
+              <num>(a)</num>
+              <p>a <term eId="sec_1__list_1__item_a__term_1">term</term> and another <term eId="sec_1__list_1__item_a__term_2">term2</term></p>
+            </item>
+            <item eId="sec_1__list_1__item_b">
+              <num>(b)</num>
+              <p>a <term eId="sec_1__list_1__item_b__term_1">term</term> and another <term eId="sec_1__list_1__item_b__term_2">term2</term></p>
+            </item>
+          </blockList>
+          <p>a <term eId="sec_1__term_3">term</term> and another <term eId="sec_1__term_4">term2</term></p>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>
+""", output)
+
 #     def test_href(self):
 #         """ checks that (only) internal section references are updated
 #         """

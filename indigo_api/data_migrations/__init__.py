@@ -312,7 +312,10 @@ class AKNeId(AKNMigration):
 
 
 class HrefMigration(AKNMigration):
-    """ Update all internal cross-references in a document's XML
+    """ Update all internal cross-references in a document's XML.
+        Note: this will only update references if they still existed in the document at the time of running the previous migrations.
+        If the section referred to was removed from the document for some reason in the interim, its id won't have been updated and the href therefore won't be in `mappings`.
+        The reference would point at nothing in any case, but the nothing it points to would be an old-style id.
     """
     def migrate_act(self, doc, mappings):
         def traverse_mappings(mappings, old):

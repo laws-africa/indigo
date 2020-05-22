@@ -435,7 +435,7 @@ class MigrationTestCase(TestCase):
         ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
         AKNeId().migrate_act(cobalt_doc, mappings)
         HrefMigration().migrate_act(cobalt_doc, mappings)
-        AnnotationsMigration().migrate_act(cobalt_doc, mappings)
+        AnnotationsMigration().migrate_act(doc, mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         today = date.today().strftime("%Y-%m-%d")
 

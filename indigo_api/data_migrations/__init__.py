@@ -18,6 +18,12 @@ class AKNMigration(object):
             assert mappings[old] == new, f'new id mapping {old} to {new} differs from existing {mappings[old]}'
         mappings.update(rewrite_ids(element, old, new))
 
+    def traverse_mappings(self, mappings, old):
+        if old in mappings:
+            old = self.traverse_mappings(mappings, mappings[old])
+
+        return old
+
 
 class ScheduleArticleToHcontainer(AKNMigration):
     """ Change from using article as the main schedule container
@@ -329,15 +335,9 @@ class HrefMigration(AKNMigration):
         The reference would point at nothing in any case, but the nothing it points to would be an old-style id.
     """
     def migrate_act(self, doc, mappings):
-        def traverse_mappings(mappings, old):
-            if old in mappings:
-                old = traverse_mappings(mappings, mappings[old])
-
-            return old
-
         for node in doc.root.xpath("//a:ref[starts-with(@href, '#')]", namespaces={"a": doc.namespace}):
             ref = node.get("href").lstrip("#")
-            new_ref = traverse_mappings(mappings, ref)
+            new_ref = self.traverse_mappings(mappings, ref)
             node.set("href", f"#{new_ref}")
 
 
@@ -345,4 +345,6 @@ class AnnotationsMigration(AKNMigration):
     """ Update all the annotation anchors on a Document
     """
     def migrate_act(self, doc, mappings):
-        pass
+        for annotation in doc.annotations.all():
+            annotation.anchor_id = self.traverse_mappings(mappings, annotation.anchor_id)
+            annotation.save()

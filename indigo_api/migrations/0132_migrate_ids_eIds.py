@@ -11,7 +11,7 @@ from indigo_api.data_migrations import CrossheadingToHcontainer, UnnumberedParag
 from cobalt import Act
 
 
-def update_xml(xml, update_annotations=False):
+def update_xml(xml):
     # eg: "section-1" => "sec_1"
     mappings = {}
     cobalt_doc = Act(xml)
@@ -20,9 +20,7 @@ def update_xml(xml, update_annotations=False):
     ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
     AKNeId().migrate_act(cobalt_doc, mappings)
     HrefMigration().migrate_act(cobalt_doc, mappings)
-    if update_annotations:
-        AnnotationsMigration().migrate_act(cobalt_doc, mappings)
-    return cobalt_doc.to_xml().decode("utf-8")
+    return cobalt_doc.to_xml().decode("utf-8"), mappings
 
 
 def forward(apps, schema_editor):
@@ -31,7 +29,9 @@ def forward(apps, schema_editor):
     ct_doc = ContentType.objects.get_for_model(Document)
 
     for document in Document.objects.using(db_alias).all():
-        document.document_xml = update_xml(document.document_xml, update_annotations=True)
+        xml, mappings = update_xml(document.document_xml)
+        document.document_xml = xml
+        AnnotationsMigration().migrate_act(document, mappings)
         document.save()
 
         # Update historical Document versions

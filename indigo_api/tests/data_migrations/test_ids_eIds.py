@@ -29,7 +29,7 @@ class MigrationTestCase(TestCase):
             - UnnumberedParagraphsToHcontainer
             - ComponentSchedulesToAttachments
             - AKNeId
-            -
+            - HrefMigration
         """
         mappings = {}
         cobalt_doc = Act("""
@@ -121,6 +121,38 @@ class MigrationTestCase(TestCase):
           </content>
         </paragraph>
       </section>
+      <section id="section-4">
+        <num>4.</num>
+        <heading>Passive ref</heading>
+        <subsection id="section-4.1">
+          <num>(1)</num>
+          <content>
+            <p>XXX.</p>
+          </content>
+        </subsection>
+        <subsection id="section-4.2">
+          <num>(2)</num>
+          <content>
+            <p>YYY.</p>
+          </content>
+        </subsection>
+      </section>
+      <section id="section-6">
+        <num>6.</num>
+        <heading>Passive ref</heading>
+        <subsection id="section-6.3">
+          <num>(3)</num>
+          <content>
+            <blockList id="section-6.3.list0">
+              <listIntroduction>In addition to imposing a fine or imprisonment, a court may order any person convicted of an offence under this By-law -</listIntroduction>
+              <item id="section-6.3.list0.a">
+                <num>(a)</num>
+                <p>to remedy the harm caused; and</p>
+              </item>
+            </blockList>
+          </content>
+        </subsection>
+      </section>
       <chapter id="chapter-XI">
         <num>XI</num>
         <heading>Offences and penalties</heading>
@@ -133,7 +165,7 @@ class MigrationTestCase(TestCase):
           <subsection id="section-33.1">
             <num>(1)</num>
             <content>
-              <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+              <p>A person who contravenes sections <ref href="#section-4.1">4(1)</ref> and <ref href="#section-4.2">(2)</ref>, <ref href="#section-6.3.list0.a">6(3)(a)</ref>, <ref href="#section-2">2</ref>(1) and (2), etc. is guilty of an offence.</p>
             </content>
           </subsection>
           <subsection id="section-33.6">
@@ -314,7 +346,7 @@ class MigrationTestCase(TestCase):
 
         # self.chain_mappings(mappings)
         #
-        # HrefMigration().migrate_act(cobalt_doc, mappings)
+        HrefMigration().migrate_act(cobalt_doc, mappings)
         # AnnotationsMigration().migrate_act(cobalt_doc, mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
 
@@ -408,6 +440,38 @@ class MigrationTestCase(TestCase):
           </content>
         </hcontainer>
       </section>
+      <section eId="sec_4">
+        <num>4.</num>
+        <heading>Passive ref</heading>
+        <subsection eId="sec_4__subsec_1">
+          <num>(1)</num>
+          <content>
+            <p>XXX.</p>
+          </content>
+        </subsection>
+        <subsection eId="sec_4__subsec_2">
+          <num>(2)</num>
+          <content>
+            <p>YYY.</p>
+          </content>
+        </subsection>
+      </section>
+      <section eId="sec_6">
+        <num>6.</num>
+        <heading>Passive ref</heading>
+        <subsection eId="sec_6__subsec_3">
+          <num>(3)</num>
+          <content>
+            <blockList eId="sec_6__subsec_3__list_1">
+              <listIntroduction>In addition to imposing a fine or imprisonment, a court may order any person convicted of an offence under this By-law -</listIntroduction>
+              <item eId="sec_6__subsec_3__list_1__item_a">
+                <num>(a)</num>
+                <p>to remedy the harm caused; and</p>
+              </item>
+            </blockList>
+          </content>
+        </subsection>
+      </section>
       <chapter eId="chp_XI">
         <num>XI</num>
         <heading>Offences and penalties</heading>
@@ -420,7 +484,7 @@ class MigrationTestCase(TestCase):
           <subsection eId="sec_33__subsec_1">
             <num>(1)</num>
             <content>
-              <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+              <p>A person who contravenes sections <ref href="#sec_4__subsec_1">4(1)</ref> and <ref href="#sec_4__subsec_2">(2)</ref>, <ref href="#sec_6__subsec_3__list_1__item_a">6(3)(a)</ref>, <ref href="#sec_2">2</ref>(1) and (2), etc. is guilty of an offence.</p>
             </content>
           </subsection>
           <subsection eId="sec_33__subsec_6">
@@ -724,6 +788,31 @@ class MigrationTestCase(TestCase):
 
                 "section-2.hcontainer_2": "sec_2.hcontainer_2",
                 "sec_2.hcontainer_2": "sec_2__hcontainer_2",
+
+                "section-4": "sec_4",
+                "section-4.1": "sec_4.1",
+                "sec_4.1": "sec_4.subsec_1",
+                "sec_4.subsec_1": "sec_4__subsec_1",
+
+                "section-4.2": "sec_4.2",
+                "sec_4.2": "sec_4.subsec_2",
+                "sec_4.subsec_2": "sec_4__subsec_2",
+
+                "section-6": "sec_6",
+                "section-6.3": "sec_6.3",
+                "sec_6.3": "sec_6.subsec_3",
+                "sec_6.subsec_3": "sec_6__subsec_3",
+
+                "section-6.3.list0": "sec_6.3.list0",
+                "sec_6.3.list0": "sec_6.3.list_1",
+                "sec_6.3.list_1": "sec_6.subsec_3.list_1",
+                "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
+
+                "section-6.3.list0.a": "sec_6.3.list0.a",
+                "sec_6.3.list0.a": "sec_6.3.list_1.a",
+                "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
+                "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
+                "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
 
                 "chapter-XI": "chp_XI",
                 "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",

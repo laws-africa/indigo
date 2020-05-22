@@ -114,11 +114,11 @@ class CrossheadingToHcontainer(AKNMigration):
         <hcontainer id="schedule2.hcontainer_1" name="crossheading">
     """
     def migrate_act(self, act, mappings):
-        for crossheading in act.root.xpath('//a:hcontainer[@name="crossheading"]', namespaces={'a': act.namespace}):
+        for crossheading in act.root.xpath('//a:hcontainer[@name="crossheading"]', namespaces={"a": act.namespace}):
             # new id is based on the number of preceding hcontainer siblings
-            num = len(crossheading.xpath('preceding-sibling::a:hcontainer', namespaces={'a': act.namespace})) + 1
-            old_id = crossheading.get('id')
-            new_id = re.sub('crossheading-(\d+)$', f'hcontainer_{num}', old_id)
+            num = len(crossheading.xpath("preceding-sibling::a:hcontainer", namespaces={"a": act.namespace})) + 1
+            old_id = crossheading.get("id")
+            new_id = re.sub("crossheading-(\d+)$", f"hcontainer_{num}", old_id)
             self.safe_update(crossheading, mappings, old_id, new_id)
 
 
@@ -260,7 +260,7 @@ class AKNeId(AKNMigration):
             - first by updating the values of `id` attributes as necessary,
             - and then by replacing all `id`s with `eId`s
         """
-        nsmap = {'a': doc.namespace}
+        nsmap = {"a": doc.namespace}
 
         # basic replacements, e.g. "chapter-" to "chap_"
         for element, (pattern, replacement) in self.basic_replacements.items():
@@ -315,7 +315,16 @@ class HrefMigration(AKNMigration):
     """ Update all internal cross-references in a document's XML
     """
     def migrate_act(self, doc, mappings):
-        pass
+        def traverse_mappings(mappings, old):
+            if old in mappings:
+                old = traverse_mappings(mappings, mappings[old])
+
+            return old
+
+        for node in doc.root.xpath("//a:ref[starts-with(@href, '#')]", namespaces={"a": doc.namespace}):
+            ref = node.get("href").lstrip("#")
+            new_ref = traverse_mappings(mappings, ref)
+            node.set("href", f"#{new_ref}")
 
 
 class AnnotationsMigration(AKNMigration):

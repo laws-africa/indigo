@@ -11,10 +11,6 @@ from indigo_api.data_migrations import CrossheadingToHcontainer, UnnumberedParag
 from cobalt import Act
 
 
-def chain_mappings(mappings):
-    pass
-
-
 def update_xml(xml, update_annotations=False):
     # eg: "section-1" => "sec_1"
     mappings = {}
@@ -23,9 +19,6 @@ def update_xml(xml, update_annotations=False):
     UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
     ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
     AKNeId().migrate_act(cobalt_doc, mappings)
-
-    chain_mappings(mappings)
-
     HrefMigration().migrate_act(cobalt_doc, mappings)
     if update_annotations:
         AnnotationsMigration().migrate_act(cobalt_doc, mappings)

@@ -1,4 +1,5 @@
 import re
+from collections import Counter
 
 from indigo.xmlutils import rewrite_ids
 
@@ -14,7 +15,7 @@ class AKNMigration(object):
         - Then, update `mappings` and rewrite_ids (if it's already in mappings it'll get overwritten).
         """
         if old in mappings:
-            assert mappings[old] == new
+            assert mappings[old] == new, f'new id mapping {old} to {new} differs from existing {mappings[old]}'
         mappings.update(rewrite_ids(element, old, new))
 
 
@@ -286,6 +287,16 @@ class AKNeId(AKNMigration):
                 prefix = self.get_parent_id(node)
                 new_id = f"{prefix}.{replacement}{num}"
                 self.safe_update(node, mappings, old_id, new_id)
+
+        # generate correct term ids, based on the parent id
+        counter = Counter()
+        for node in doc.root.xpath('//a:term', namespaces=nsmap):
+            old_id = node.get('id')
+            prefix = self.get_parent_id(node)
+            # the num for this term depends on the number of preceding terms with the same prefix
+            counter[prefix] += 1
+            new_id = f'{prefix}__term_{counter[prefix]}'
+            self.safe_update(node, mappings, old_id, new_id)
 
         # finally
         # "." separators

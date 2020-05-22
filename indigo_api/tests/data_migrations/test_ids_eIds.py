@@ -369,7 +369,7 @@ class MigrationTestCase(TestCase):
                 <listIntroduction>"<def refersTo="#term-dark_smoke">dark smoke</def>" means-</listIntroduction>
                 <item eId="sec_1__hcontainer_1__list_1__item_a">
                   <num>(a)</num>
-                  <p>in respect of Chapter V and Chapter VI of this By-law, <term refersTo="#term-smoke" eId="trm21">smoke</term> which, when measured using a <term refersTo="#term-light_absorption_meter" eId="trm22">light absorption meter</term>, <term refersTo="#term-obscuration" eId="trm23">obscuration</term> measuring equipment or other similar equipment, has an <term refersTo="#term-obscuration" eId="trm24">obscuration</term> of 20% or greater;</p>
+                  <p>in respect of Chapter V and Chapter VI of this By-law, <term refersTo="#term-smoke" eId="sec_1__hcontainer_1__list_1__item_a__term_1">smoke</term> which, when measured using a <term refersTo="#term-light_absorption_meter" eId="sec_1__hcontainer_1__list_1__item_a__term_2">light absorption meter</term>, <term refersTo="#term-obscuration" eId="sec_1__hcontainer_1__list_1__item_a__term_3">obscuration</term> measuring equipment or other similar equipment, has an <term refersTo="#term-obscuration" eId="sec_1__hcontainer_1__list_1__item_a__term_4">obscuration</term> of 20% or greater;</p>
                 </item>
                 <item eId="sec_1__hcontainer_1__list_1__item_b">
                   <num>(b)</num>
@@ -377,24 +377,24 @@ class MigrationTestCase(TestCase):
                     <listIntroduction>in respect of Chapter VIII of this By-law –</listIntroduction>
                     <item eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_i">
                       <num>(i)</num>
-                      <p><term refersTo="#term-smoke" eId="trm25">smoke</term> emitted from the exhaust outlets of naturally aspirated compression ignition engines which has a density of 50 Hartridge <term refersTo="#term-smoke" eId="trm26">smoke</term> units or more or a light absorption co-efficient of more than 1,61 mï1 ; or 18,57 percentage opacity; and</p>
+                      <p><term refersTo="#term-smoke" eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1">smoke</term> emitted from the exhaust outlets of naturally aspirated compression ignition engines which has a density of 50 Hartridge <term refersTo="#term-smoke" eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2">smoke</term> units or more or a light absorption co-efficient of more than 1,61 mï1 ; or 18,57 percentage opacity; and</p>
                     </item>
                     <item eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_ii">
                       <num>(ii)</num>
-                      <p><term refersTo="#term-smoke" eId="trm27">smoke</term> emitted from the exhaust outlets of turbo-charged compression ignition engines which has a density of 56 Hartridge <term refersTo="#term-smoke" eId="trm28">smoke</term> units or more or a light absorption co-efficient of more than 1,91 mï1 ; or 21,57 percentage opacity.</p>
+                      <p><term refersTo="#term-smoke" eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1">smoke</term> emitted from the exhaust outlets of turbo-charged compression ignition engines which has a density of 56 Hartridge <term refersTo="#term-smoke" eId="sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2">smoke</term> units or more or a light absorption co-efficient of more than 1,91 mï1 ; or 21,57 percentage opacity.</p>
                     </item>
                   </blockList>
                 </item>
               </blockList>
               <blockList refersTo="#term-nuisance" eId="sec_1__hcontainer_1__list_4">
-                <listIntroduction>"<def refersTo="#term-nuisance">nuisance</def>" means an unreasonable interference or likely interference caused by <term refersTo="#term-air_pollution" eId="trm37">air pollution</term> which has an adverse impact on -</listIntroduction>
+                <listIntroduction>"<def refersTo="#term-nuisance">nuisance</def>" means an unreasonable interference or likely interference caused by <term refersTo="#term-air_pollution" eId="sec_1__hcontainer_1__list_4__term_1">air pollution</term> which has an adverse impact on -</listIntroduction>
                 <item eId="sec_1__hcontainer_1__list_4__item_a">
                   <num>(a)</num>
-                  <p>the health or well-being of any <term refersTo="#term-person" eId="trm38">person</term> or <term refersTo="#term-living_organism" eId="trm39">living organism</term>; or</p>
+                  <p>the health or well-being of any <term refersTo="#term-person" eId="sec_1__hcontainer_1__list_4__item_a__term_1">person</term> or <term refersTo="#term-living_organism" eId="sec_1__hcontainer_1__list_4__item_a__term_2">living organism</term>; or</p>
                 </item>
                 <item eId="sec_1__hcontainer_1__list_4__item_b">
                   <num>(b)</num>
-                  <p>the use and enjoyment by an owner or occupier of his or her property or the <term refersTo="#term-environment" eId="trm40">environment</term>;</p>
+                  <p>the use and enjoyment by an owner or occupier of his or her property or the <term refersTo="#term-environment" eId="sec_1__hcontainer_1__list_4__item_b__term_1">environment</term>;</p>
                 </item>
               </blockList>
             </content>
@@ -719,11 +719,17 @@ class MigrationTestCase(TestCase):
                 "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
                 "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
                 "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
+                'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
+                'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
+                'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
+                'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
 
                 "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
                 "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
                 "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
                 "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
+                'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
+                'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
 
                 "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
                 "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
@@ -744,6 +750,8 @@ class MigrationTestCase(TestCase):
                 "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
                 "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
                 "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
+                'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
+                'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
 
                 "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
                 "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
@@ -753,11 +761,15 @@ class MigrationTestCase(TestCase):
                 "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
                 "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
                 "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
+                'sec_1.hcontainer_1.list_4.item_a__term_1': 'sec_1__hcontainer_1__list_4__item_a__term_1',
+                'sec_1.hcontainer_1.list_4.item_a__term_2': 'sec_1__hcontainer_1__list_4__item_a__term_2',
 
                 "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
                 "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
                 "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
                 "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
+                'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
+                'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
 
                 "section-2": "sec_2",
 
@@ -869,6 +881,19 @@ class MigrationTestCase(TestCase):
                 "paragraph-6": "para_6",
                 "paragraph-7": "para_7",
                 "paragraph-8": "para_8",
+
+                'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
+                'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
+                'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
+                'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
+                'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
+                'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
+                'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
+                'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
+                'trm37': 'sec_1.hcontainer_1.list_4__term_1',
+                'trm38': 'sec_1.hcontainer_1.list_4.item_a__term_1',
+                'trm39': 'sec_1.hcontainer_1.list_4.item_a__term_2',
+                'trm40': 'sec_1.hcontainer_1.list_4.item_b__term_1',
             },
             mappings
         )

@@ -1,20 +1,21 @@
 # coding=utf-8
+from datetime import date
+
 from django.test import TestCase
 
 from cobalt import Act
 
 from indigo_api.data_migrations import AKNMigration, CrossheadingToHcontainer, UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId, HrefMigration, AnnotationsMigration
-from indigo_api.models import Document, Work
+from indigo_api.models import Document, Work, Annotation, Language
 
 
 class MigrationTestCase(TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work']
     maxDiff = None
 
     def setUp(self):
-        self.work = Work(frbr_uri='/za/act/2019/1')
-
-    def chain_mappings(self, mappings):
-        pass
+        self.work = Work.objects.get(pk=1)
+        self.eng = Language.for_code('eng')
 
     def test_safe_update(self):
         migration = AKNMigration()
@@ -32,10 +33,35 @@ class MigrationTestCase(TestCase):
             - HrefMigration
         """
         mappings = {}
-        cobalt_doc = Act("""
-<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
-  <act>
-    <meta/>
+        doc = Document(title="Air Quality Management", frbr_uri="/akn/za/act/2014/10", work=self.work, language=self.eng, expression_date=date(2016, 8, 17), created_by_user_id=1, document_xml="""
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <chapter id="chapter-I">
         <num>I</num>
@@ -222,7 +248,31 @@ class MigrationTestCase(TestCase):
   <components>
     <component id="component-schedule1">
       <doc name="schedule1">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule1" name="schedule">
             <heading>Schedule 1</heading>
@@ -281,7 +331,31 @@ class MigrationTestCase(TestCase):
     </component>
     <component id="component-schedule2">
       <doc name="schedule2">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 2"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule2" name="schedule">
             <heading>Schedule 2</heading>
@@ -339,22 +413,62 @@ class MigrationTestCase(TestCase):
   </components>
 </akomaNtoso>
 """)
+        doc.save()
+        annotation_anchors = {
+            "section-2.paragraph0.list0.a.list0.i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
+            "section-1.paragraph0": "sec_1__hcontainer_1",
+            "chapter-XI.crossheading-0": "chp_XI__hcontainer_1",
+            "schedule2.crossheading-1": "hcontainer_2",
+            "schedule2.paragraph-1": "para_1",
+        }
+        for anchor_id in annotation_anchors.keys():
+            annotation = Annotation(
+                document=doc,
+                created_by_user_id=1,
+                anchor_id=anchor_id
+            )
+            annotation.save()
+
+        cobalt_doc = Act(doc.document_xml)
         UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
         CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
         ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
         AKNeId().migrate_act(cobalt_doc, mappings)
-
-        # self.chain_mappings(mappings)
-        #
         HrefMigration().migrate_act(cobalt_doc, mappings)
-        # AnnotationsMigration().migrate_act(cobalt_doc, mappings)
+        AnnotationsMigration().migrate_act(cobalt_doc, mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
+        today = date.today().strftime("%Y-%m-%d")
 
         # check XML
         self.assertMultiLineEqual(
-            """<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
-  <act>
-    <meta/>
+            f"""<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="originalVersion">
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="2014-04-02" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="{today}" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <chapter eId="chp_I">
         <num>I</num>
@@ -542,7 +656,31 @@ class MigrationTestCase(TestCase):
       <heading>Schedule 1</heading>
             <subheading>Standards and specifications for fuel-burning equipment:</subheading>
             <doc name="schedule">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!!!!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <paragraph eId="para_1">
               <num>1.</num>
@@ -599,7 +737,31 @@ class MigrationTestCase(TestCase):
       <heading>Schedule 2</heading>
             <subheading>Good management practices to prevent or minimise the discharge of smoke from open burning of vegetation</subheading>
             <doc name="schedule">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!!!!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 2"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <paragraph eId="para_1">
               <num>1.</num>
@@ -874,7 +1036,11 @@ class MigrationTestCase(TestCase):
         )
 
         # check annotations
-        # ?
+        new_annotations = doc.annotations.all()
+        self.assertEqual(len(new_annotations), 5)
+        for annotation in new_annotations:
+            self.assertNotIn(annotation.anchor_id, mappings.keys())
+            self.assertIn(annotation.anchor_id, mappings.values())
 
     def test_para_to_hcontainer(self):
         migration = UnnumberedParagraphsToHcontainer()

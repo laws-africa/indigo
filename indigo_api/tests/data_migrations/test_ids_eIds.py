@@ -2007,19 +2007,25 @@ class MigrationTestCase(TestCase):
     <body>
       <section id="section-100">
         <subsection id="section-100.3A.2">
+          <num>(3A.2)</num>
           <blockList id="section-100.3A.2.list6">
             <item id="section-100.3A.2.list6.i">
+              <num>(i)</num>
               <p>item text</p>
             </item>
             <item id="section-100.3A.2.list6.ii.c">
+              <num>(ii.c)</num>
               <p>item text</p>
             </item>
             <item id="section-100.3A.2.list6.iii">
+              <num>(iii)</num>
               <blockList id="section-100.3A.2.list6.iii.list0">
                 <item id="section-100.3A.2.list6.iii.list0.a">
+                  <num>(a)</num>
                   <p>item text</p>
                 </item>
                 <item id="section-100.3A.2.list6.iii.list0.b.1.i">
+                  <num>(b.1.i)</num>
                   <p>item text</p>
                 </item>
               </blockList>
@@ -2039,19 +2045,25 @@ class MigrationTestCase(TestCase):
     <body>
       <section eId="sec_100">
         <subsection eId="sec_100__subsec_3A-2">
+          <num>(3A.2)</num>
           <blockList eId="sec_100__subsec_3A-2__list_7">
             <item eId="sec_100__subsec_3A-2__list_7__item_i">
+              <num>(i)</num>
               <p>item text</p>
             </item>
             <item eId="sec_100__subsec_3A-2__list_7__item_ii-c">
+              <num>(ii.c)</num>
               <p>item text</p>
             </item>
             <item eId="sec_100__subsec_3A-2__list_7__item_iii">
+              <num>(iii)</num>
               <blockList eId="sec_100__subsec_3A-2__list_7__item_iii__list_1">
                 <item eId="sec_100__subsec_3A-2__list_7__item_iii__list_1__item_a">
+                  <num>(a)</num>
                   <p>item text</p>
                 </item>
                 <item eId="sec_100__subsec_3A-2__list_7__item_iii__list_1__item_b-1-i">
+                  <num>(b.1.i)</num>
                   <p>item text</p>
                 </item>
               </blockList>

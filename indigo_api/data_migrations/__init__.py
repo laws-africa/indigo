@@ -288,8 +288,9 @@ class AKNeId(AKNMigration):
         for element, (pattern, replacement) in self.complex_replacements.items():
             for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
                 old_id = node.get("id")
-                # TODO: get num from text of <num>
-                num = self.clean_number(pattern.search(old_id).group("num"))
+                # note: this assumes that all subsections and items have <num>s, which _should_ be true
+                num = node.num.text
+                num = self.clean_number(num)
                 prefix = self.get_parent_id(node)
                 new_id = f"{prefix}.{replacement}{num}"
                 self.safe_update(node, mappings, old_id, new_id)
@@ -319,8 +320,8 @@ class AKNeId(AKNMigration):
             del node.attrib["id"]
 
     def clean_number(self, num):
-        # TODO: do more (working with text from <num>)
-        return num.strip(".").replace(".", "-")
+        # e.g. 1.3.2. / (3) / (dA) / (12 bis)
+        return num.strip("().").replace(" ", "").replace(".", "-")
 
     def get_parent_id(self, node):
         parent = node.getparent()

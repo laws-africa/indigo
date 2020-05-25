@@ -118,7 +118,7 @@ class TOCBuilderZATestCase(APITestCase):
     <meta>
       <identification source="#openbylaws">
         <FRBRWork>
-          <FRBRthis value="/za/by-law/cape-town/2002/community-fire-safety/main"/>
+          <FRBRthis value="/za/by-law/cape-town/2002/community-fire-safety/!main"/>
           <FRBRuri value="/za/by-law/cape-town/2002/community-fire-safety"/>
           <FRBRalias value="Community Fire Safety By-law"/>
           <FRBRdate date="2002-02-28" name="Generation"/>
@@ -141,94 +141,115 @@ class TOCBuilderZATestCase(APITestCase):
       </identification>
     </meta>
     <body></body>
+    <attachments>
+      <attachment id="att_1">
+        <doc name="schedule">
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/za/act/1980/01/!schedule1"/>
+                <FRBRuri value="/za/act/1980/01"/>
+                <FRBRalias value="A Title"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council" as="#author"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/za/act/1980/01/eng@/schedule1"/>
+                <FRBRuri value="/za/act/1980/01/eng@"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council" as="#author"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/za/act/1980/01/eng@/schedule1"/>
+                <FRBRuri value="/za/act/1980/01/eng@"/>
+                <FRBRdate date="2015-04-22" name="Generation"/>
+                <FRBRauthor href="#slaw" as="#author"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <section id="sec_1">
+              <content>
+                <p>1. Foo</p>
+                <p>2. Bar</p>
+              </content>
+            </section>
+          </mainBody>
+        </doc>
+      </attachment>
+      <attachment id="att_2">
+        <doc name="schedule">
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/za/act/1980/01/!schedule2"/>
+                <FRBRuri value="/za/act/1980/01"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council" as="#author"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/za/act/1980/01/eng@/schedule2"/>
+                <FRBRuri value="/za/act/1980/01/eng@"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council" as="#author"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/za/act/1980/01/eng@/schedule2"/>
+                <FRBRuri value="/za/act/1980/01/eng@"/>
+                <FRBRdate date="2015-04-22" name="Generation"/>
+                <FRBRauthor href="#slaw" as="#author"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <section id="sec_1">
+              <content>
+                <p>Baz</p>
+                <p>Boom</p>
+              </content>
+            </section>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
   </act>
-  <components>
-    <component id="component-1">
-      <doc name="schedule1">
-        <meta>
-          <identification source="#slaw">
-            <FRBRWork>
-              <FRBRthis value="/za/act/1980/01/schedule1"/>
-              <FRBRuri value="/za/act/1980/01"/>
-              <FRBRalias value="A Title"/>
-              <FRBRdate date="1980-01-01" name="Generation"/>
-              <FRBRauthor href="#council" as="#author"/>
-              <FRBRcountry value="za"/>
-            </FRBRWork>
-            <FRBRExpression>
-              <FRBRthis value="/za/act/1980/01/eng@/schedule1"/>
-              <FRBRuri value="/za/act/1980/01/eng@"/>
-              <FRBRdate date="1980-01-01" name="Generation"/>
-              <FRBRauthor href="#council" as="#author"/>
-              <FRBRlanguage language="eng"/>
-            </FRBRExpression>
-            <FRBRManifestation>
-              <FRBRthis value="/za/act/1980/01/eng@/schedule1"/>
-              <FRBRuri value="/za/act/1980/01/eng@"/>
-              <FRBRdate date="2015-04-22" name="Generation"/>
-              <FRBRauthor href="#slaw" as="#author"/>
-            </FRBRManifestation>
-          </identification>
-        </meta>
-        <mainBody>
-          <section id="schedule-1.section-0">
-            <content>
-              <p>1. Foo</p>
-              <p>2. Bar</p>
-            </content>
-          </section>
-        </mainBody>
-      </doc>
-    </component>
-    <component id="component-2">
-      <doc name="schedule2">
-        <meta>
-          <identification source="#slaw">
-            <FRBRWork>
-              <FRBRthis value="/za/act/1980/01/schedule2"/>
-              <FRBRuri value="/za/act/1980/01"/>
-              <FRBRdate date="1980-01-01" name="Generation"/>
-              <FRBRauthor href="#council" as="#author"/>
-              <FRBRcountry value="za"/>
-            </FRBRWork>
-            <FRBRExpression>
-              <FRBRthis value="/za/act/1980/01/eng@/schedule2"/>
-              <FRBRuri value="/za/act/1980/01/eng@"/>
-              <FRBRdate date="1980-01-01" name="Generation"/>
-              <FRBRauthor href="#council" as="#author"/>
-              <FRBRlanguage language="eng"/>
-            </FRBRExpression>
-            <FRBRManifestation>
-              <FRBRthis value="/za/act/1980/01/eng@/schedule2"/>
-              <FRBRuri value="/za/act/1980/01/eng@"/>
-              <FRBRdate date="2015-04-22" name="Generation"/>
-              <FRBRauthor href="#slaw" as="#author"/>
-            </FRBRManifestation>
-          </identification>
-        </meta>
-        <mainBody>
-          <section id="schedule-2.section-0">
-            <content>
-              <p>Baz</p>
-              <p>Boom</p>
-            </content>
-          </section>
-        </mainBody>
-      </doc>
-    </component>
-  </components>
 </akomaNtoso>
         """
         d.language = Language.objects.get(language__pk='en')
         toc = d.table_of_contents()
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
-        self.assertEqual([
-            {'component': 'schedule1', 'type': 'doc', 'subcomponent': None, 'heading': 'A Title', 'title': 'A Title', 'children': [
-                {'component': 'schedule1', 'type': 'section', 'id': 'schedule-1.section-0', 'subcomponent': 'section', 'title': 'Section'}]},
-            {'component': 'schedule2', 'type': 'doc', 'subcomponent': None, 'heading': 'Schedule 2', 'title': 'Schedule 2', 'children': [
-                {'component': 'schedule2', 'type': 'section', 'id': 'schedule-2.section-0', 'subcomponent': 'section', 'title': 'Section'}]},
-        ], toc)
+        self.assertEqual([{
+            'component': 'schedule1',
+            'type': 'doc',
+            'subcomponent': None,
+            'heading': 'A Title',
+            'title': 'A Title',
+             'children': [{
+                 'component': 'schedule1',
+                 'type': 'section',
+                 'id': 'sec_1',
+                 'subcomponent': 'section',
+                 'title': 'Section',
+             }]
+        }, {
+            'component': 'schedule2',
+            'type': 'doc',
+            'subcomponent': None,
+            'heading': 'Schedule 2',
+            'title': 'Schedule 2',
+            'children': [{
+                'component': 'schedule2',
+                'type': 'section',
+                'id': 'sec_1',
+                'subcomponent': 'section',
+                'title': 'Section'
+            }]
+        }], toc)
 
     def test_preamble_and_friends_in_table_of_contents(self):
         d = Document()

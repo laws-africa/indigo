@@ -51,6 +51,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
     provide this.
     """
 
+    toc_deadends = ['meta', 'attachments', 'components', 'embeddedStructure', 'quotedStructure', 'subFlow']
+    """ Elements we don't check or recurse into because they contain sub-documents or subflows.
+    """
+
     toc_non_unique_components = ['chapter', 'part']
     """ These TOC elements (tag names without namespaces) aren't numbered uniquely throughout the document
     and will need their parent components for context. Subclasses must provide this.
@@ -88,7 +92,8 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def setup(self, act, language):
         self.act = act
         self.language = language
-        self._toc_elements_ns = set('{%s}%s' % (self.act.namespace, s) for s in self.toc_elements)
+        self._toc_elements_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_elements)
+        self._toc_deadends_ns = set(f'{{{self.act.namespace}}}{s}' for s in self.toc_deadends)
 
     def determine_component(self, element):
         """ Determine the component element which contains +element+.
@@ -129,6 +134,10 @@ class TOCBuilderBase(LocaleBasedMatcher):
         """
         items = []
         for e in elements:
+            # don't descend into these elements, which can contain nested documents or other subflows
+            if e.tag in self._toc_deadends_ns:
+                continue
+
             if self.is_toc_element(e):
                 item = self.make_toc_entry(e, component, parent=parent)
                 item.children = self.process_elements(component, e.iterchildren(), parent=item)

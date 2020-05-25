@@ -20,7 +20,7 @@ class MigrationTestCase(TestCase):
     def test_safe_update(self):
         migration = AKNMigration()
         element = "foo"
-        mappings = {"ABC": "XYZ"}
+        mappings = {"main": {"ABC": "XYZ"}}
         with self.assertRaises(AssertionError):
             migration.safe_update(element, mappings, "ABC", "DEF")
 
@@ -31,8 +31,9 @@ class MigrationTestCase(TestCase):
             - ComponentSchedulesToAttachments
             - AKNeId
             - HrefMigration
+            - AnnotationsMigration
         """
-        mappings = {}
+        mappings = {"main": {}, "schedules": {}}
         doc = Document(title="Air Quality Management", frbr_uri="/akn/za/act/2014/10", work=self.work, language=self.eng, expression_date=date(2016, 8, 17), created_by_user_id=1, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -360,6 +361,11 @@ class MigrationTestCase(TestCase):
           <hcontainer id="schedule2" name="schedule">
             <heading>Schedule 2</heading>
             <subheading>Good management practices to prevent or minimise the discharge of smoke from open burning of vegetation</subheading>
+            <paragraph id="schedule2.paragraph0">
+              <content>
+                <p>Introductory paragraph.</p>
+              </content>
+            </paragraph>
             <paragraph id="schedule2.paragraph-1">
               <num>1.</num>
               <content>
@@ -418,8 +424,15 @@ class MigrationTestCase(TestCase):
             "section-2.paragraph0.list0.a.list0.i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
             "section-1.paragraph0": "sec_1__hcontainer_1",
             "chapter-XI.crossheading-0": "chp_XI__hcontainer_1",
-            "schedule2.crossheading-1": "hcontainer_2",
-            "schedule2.paragraph-1": "para_1",
+            "schedule1/paragraph-1": "att_1/para_1",
+            "schedule1/crossheading-0": "att_1/hcontainer_1",
+            "schedule1/paragraph0": "att_1/hcontainer_2",
+            "schedule1/crossheading-1": "att_1/hcontainer_3",
+            "schedule1/paragraph1": "att_1/hcontainer_4",
+            "schedule2/paragraph0": "att_2/hcontainer_1",
+            "schedule2/paragraph-1": "att_2/para_1",
+            "schedule2/crossheading-0": "att_2/hcontainer_2",
+            "schedule2/crossheading-1": "att_2/hcontainer_3",
         }
         for anchor_id in annotation_anchors.keys():
             annotation = Annotation(
@@ -763,7 +776,12 @@ class MigrationTestCase(TestCase):
           </identification>
         </meta>
         <mainBody>
-          <paragraph eId="para_1">
+          <hcontainer eId="hcontainer_1">
+              <content>
+                <p>Introductory paragraph.</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="para_1">
               <num>1.</num>
               <content>
                 <p>Consider alternatives to burning – e.g. mulching for recovery of nutrient value, drying for recovery as firewood.</p>
@@ -775,7 +793,7 @@ class MigrationTestCase(TestCase):
                 <p>Vegetation that is to be burned (such as trimmings, pruning or felling’s cut from active growth) should as a general guide be allowed to dry to brown appearance prior to burning.</p>
               </content>
             </paragraph>
-            <hcontainer name="crossheading" eId="hcontainer_1">
+            <hcontainer name="crossheading" eId="hcontainer_2">
               <heading>Here's one</heading>
             </hcontainer>
             <paragraph eId="para_3">
@@ -784,10 +802,10 @@ class MigrationTestCase(TestCase):
                 <p>Except for tree stumps or crop stubble, the place of combustion should be at least 50 metres from any road other than a highway, and 100 metres from any highway or dwelling on a neighbouring property.</p>
               </content>
             </paragraph>
-            <hcontainer name="crossheading" eId="hcontainer_2">
+            <hcontainer name="crossheading" eId="hcontainer_3">
               <heading>And another</heading>
             </hcontainer>
-            <hcontainer name="crossheading" eId="hcontainer_3">
+            <hcontainer name="crossheading" eId="hcontainer_4">
               <heading>And more</heading>
             </hcontainer>
             <paragraph eId="para_6">
@@ -820,252 +838,263 @@ class MigrationTestCase(TestCase):
         )
 
         # check mappings
-        self.assertDictEqual(
-            {
-                "section-1.paragraph0": "section-1.hcontainer_1",
-                "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
-                "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
-                "section-1.paragraph0.list0.b": "section-1.hcontainer_1.list0.b",
-                "section-1.paragraph0.list0.b.list0": "section-1.hcontainer_1.list0.b.list0",
-                "section-1.paragraph0.list0.b.list0.i": "section-1.hcontainer_1.list0.b.list0.i",
-                "section-1.paragraph0.list0.b.list0.ii": "section-1.hcontainer_1.list0.b.list0.ii",
-                "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
-                "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
-                "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
-                "section-2.paragraph0": "section-2.hcontainer_1",
-                "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
-                "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
-                "section-2.paragraph0.list0.a.list0": "section-2.hcontainer_1.list0.a.list0",
-                "section-2.paragraph0.list0.a.list0.i": "section-2.hcontainer_1.list0.a.list0.i",
-                "section-2.paragraph1": "section-2.hcontainer_2",
-                "section-35.paragraph0": "section-35.hcontainer_2",
-                "schedule1.paragraph0": "schedule1.hcontainer_2",
-                "schedule1.paragraph1": "schedule1.hcontainer_4",
-                "chapter-XI.crossheading-0": "chapter-XI.hcontainer_1",
-                "section-34.crossheading-0": "section-34.hcontainer_1",
-                "section-35.crossheading-0": "section-35.hcontainer_1",
-                "schedule1.crossheading-0": "schedule1.hcontainer_1",
-                "schedule1.crossheading-1": "schedule1.hcontainer_3",
-                "schedule2.crossheading-0": "schedule2.hcontainer_1",
-                "schedule2.crossheading-1": "schedule2.hcontainer_2",
-                "schedule2.crossheading-2": "schedule2.hcontainer_3",
-                "component-schedule1": "att_1",
-                "schedule1.paragraph-1": "paragraph-1",
-                "schedule1.paragraph-2": "paragraph-2",
-                "schedule1.paragraph-3": "paragraph-3",
-                "schedule1.paragraph-4": "paragraph-4",
-                "schedule1.hcontainer_1": "hcontainer_1",
-                "schedule1.hcontainer_2": "hcontainer_2",
-                "schedule1.hcontainer_3": "hcontainer_3",
-                "schedule1.hcontainer_4": "hcontainer_4",
-                "component-schedule2": "att_2",
-                "schedule2.paragraph-1": "paragraph-1",
-                "schedule2.paragraph-2": "paragraph-2",
-                "schedule2.hcontainer_1": "hcontainer_1",
-                "schedule2.paragraph-3": "paragraph-3",
-                "schedule2.hcontainer_2": "hcontainer_2",
-                "schedule2.hcontainer_3": "hcontainer_3",
-                "schedule2.paragraph-6": "paragraph-6",
-                "schedule2.paragraph-7": "paragraph-7",
-                "schedule2.paragraph-8": "paragraph-8",
-                "chapter-I": "chp_I",
-                "section-1": "sec_1",
-                "section-1.hcontainer_1": "sec_1.hcontainer_1",
-                "sec_1.hcontainer_1": "sec_1__hcontainer_1",
+        self.assertDictEqual({
+            "main": {
+                    "section-1.paragraph0": "section-1.hcontainer_1",
+                    "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
+                    "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
+                    "section-1.paragraph0.list0.b": "section-1.hcontainer_1.list0.b",
+                    "section-1.paragraph0.list0.b.list0": "section-1.hcontainer_1.list0.b.list0",
+                    "section-1.paragraph0.list0.b.list0.i": "section-1.hcontainer_1.list0.b.list0.i",
+                    "section-1.paragraph0.list0.b.list0.ii": "section-1.hcontainer_1.list0.b.list0.ii",
+                    "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
+                    "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
+                    "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
+                    "section-2.paragraph0": "section-2.hcontainer_1",
+                    "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
+                    "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
+                    "section-2.paragraph0.list0.a.list0": "section-2.hcontainer_1.list0.a.list0",
+                    "section-2.paragraph0.list0.a.list0.i": "section-2.hcontainer_1.list0.a.list0.i",
+                    "section-2.paragraph1": "section-2.hcontainer_2",
+                    "section-35.paragraph0": "section-35.hcontainer_2",
+                    "schedule1.paragraph0": "schedule1.hcontainer_2",
+                    "schedule1.paragraph1": "schedule1.hcontainer_4",
+                    "chapter-XI.crossheading-0": "chapter-XI.hcontainer_1",
+                    "section-34.crossheading-0": "section-34.hcontainer_1",
+                    "section-35.crossheading-0": "section-35.hcontainer_1",
+                    "schedule1.crossheading-0": "schedule1.hcontainer_1",
+                    "schedule1.crossheading-1": "schedule1.hcontainer_3",
+                    "schedule2.paragraph0": "schedule2.hcontainer_1",
+                    "schedule2.crossheading-0": "schedule2.hcontainer_2",
+                    "schedule2.crossheading-1": "schedule2.hcontainer_3",
+                    "schedule2.crossheading-2": "schedule2.hcontainer_4",
+                    "schedule1.paragraph-1": "paragraph-1",
+                    "schedule1.paragraph-2": "paragraph-2",
+                    "schedule1.paragraph-3": "paragraph-3",
+                    "schedule1.paragraph-4": "paragraph-4",
+                    "schedule1.hcontainer_1": "hcontainer_1",
+                    "schedule1.hcontainer_2": "hcontainer_2",
+                    "schedule1.hcontainer_3": "hcontainer_3",
+                    "schedule1.hcontainer_4": "hcontainer_4",
+                    "schedule2.hcontainer_1": "hcontainer_1",
+                    "schedule2.paragraph-1": "paragraph-1",
+                    "schedule2.paragraph-2": "paragraph-2",
+                    "schedule2.hcontainer_2": "hcontainer_2",
+                    "schedule2.paragraph-3": "paragraph-3",
+                    "schedule2.hcontainer_3": "hcontainer_3",
+                    "schedule2.hcontainer_4": "hcontainer_4",
+                    "schedule2.paragraph-6": "paragraph-6",
+                    "schedule2.paragraph-7": "paragraph-7",
+                    "schedule2.paragraph-8": "paragraph-8",
+                    "chapter-I": "chp_I",
+                    "section-1": "sec_1",
+                    "section-1.hcontainer_1": "sec_1.hcontainer_1",
+                    "sec_1.hcontainer_1": "sec_1__hcontainer_1",
 
-                "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
-                "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
-                "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
+                    "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
+                    "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
+                    "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
 
-                "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
-                "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
-                "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
-                "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
-                'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
-                'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
-                'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
-                'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
+                    "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
+                    "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
+                    "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
+                    "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
+                    'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
+                    'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
+                    'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
+                    'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
 
-                "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
-                "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
-                "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
-                "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
-                'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
-                'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
+                    "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
+                    "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
+                    "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
+                    "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
 
-                "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
-                "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
-                "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
-                "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
-                "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
+                    "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
+                    "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
+                    "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
+                    "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
 
-                "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
-                "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
-                "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
-                "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
-                "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
-                "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
+                    "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
+                    "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
+                    "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
+                    "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
 
-                "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
-                "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
-                "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
-                "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
-                "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
-                "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
-                'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
-                'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
+                    "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
+                    "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
+                    "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
+                    "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
 
-                "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
-                "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
-                "sec_1.hcontainer_1.list_4": "sec_1__hcontainer_1__list_4",
+                    "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
+                    "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
+                    "sec_1.hcontainer_1.list_4": "sec_1__hcontainer_1__list_4",
 
-                "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
-                "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
-                "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
-                "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
-                'sec_1.hcontainer_1.list_4.item_a__term_1': 'sec_1__hcontainer_1__list_4__item_a__term_1',
-                'sec_1.hcontainer_1.list_4.item_a__term_2': 'sec_1__hcontainer_1__list_4__item_a__term_2',
+                    "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
+                    "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
+                    "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
+                    "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
+                    'sec_1.hcontainer_1.list_4.item_a__term_1': 'sec_1__hcontainer_1__list_4__item_a__term_1',
+                    'sec_1.hcontainer_1.list_4.item_a__term_2': 'sec_1__hcontainer_1__list_4__item_a__term_2',
 
-                "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
-                "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
-                "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
-                "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
-                'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
-                'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
+                    "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
+                    "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
+                    "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
+                    "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
+                    'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
+                    'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
 
-                "section-2": "sec_2",
+                    "section-2": "sec_2",
 
-                "section-2.hcontainer_1": "sec_2.hcontainer_1",
-                "sec_2.hcontainer_1": "sec_2__hcontainer_1",
+                    "section-2.hcontainer_1": "sec_2.hcontainer_1",
+                    "sec_2.hcontainer_1": "sec_2__hcontainer_1",
 
-                "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
-                "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
-                "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
+                    "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
+                    "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
+                    "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
 
-                "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
-                "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
-                "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
-                "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
+                    "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
+                    "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
+                    "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
+                    "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
 
-                "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
-                "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
-                "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
-                "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
-                "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
+                    "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
+                    "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
+                    "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
+                    "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
+                    "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
 
-                "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
-                "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
-                "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
-                "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
-                "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
-                "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
+                    "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
+                    "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
+                    "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
+                    "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
+                    "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
+                    "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
 
-                "section-2.hcontainer_2": "sec_2.hcontainer_2",
-                "sec_2.hcontainer_2": "sec_2__hcontainer_2",
+                    "section-2.hcontainer_2": "sec_2.hcontainer_2",
+                    "sec_2.hcontainer_2": "sec_2__hcontainer_2",
 
-                "section-4": "sec_4",
-                "section-4.1": "sec_4.1",
-                "sec_4.1": "sec_4.subsec_1",
-                "sec_4.subsec_1": "sec_4__subsec_1",
+                    "section-4": "sec_4",
+                    "section-4.1": "sec_4.1",
+                    "sec_4.1": "sec_4.subsec_1",
+                    "sec_4.subsec_1": "sec_4__subsec_1",
 
-                "section-4.2": "sec_4.2",
-                "sec_4.2": "sec_4.subsec_2",
-                "sec_4.subsec_2": "sec_4__subsec_2",
+                    "section-4.2": "sec_4.2",
+                    "sec_4.2": "sec_4.subsec_2",
+                    "sec_4.subsec_2": "sec_4__subsec_2",
 
-                "section-6": "sec_6",
-                "section-6.3": "sec_6.3",
-                "sec_6.3": "sec_6.subsec_3",
-                "sec_6.subsec_3": "sec_6__subsec_3",
+                    "section-6": "sec_6",
+                    "section-6.3": "sec_6.3",
+                    "sec_6.3": "sec_6.subsec_3",
+                    "sec_6.subsec_3": "sec_6__subsec_3",
 
-                "section-6.3.list0": "sec_6.3.list0",
-                "sec_6.3.list0": "sec_6.3.list_1",
-                "sec_6.3.list_1": "sec_6.subsec_3.list_1",
-                "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
+                    "section-6.3.list0": "sec_6.3.list0",
+                    "sec_6.3.list0": "sec_6.3.list_1",
+                    "sec_6.3.list_1": "sec_6.subsec_3.list_1",
+                    "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
 
-                "section-6.3.list0.a": "sec_6.3.list0.a",
-                "sec_6.3.list0.a": "sec_6.3.list_1.a",
-                "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
-                "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
-                "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
+                    "section-6.3.list0.a": "sec_6.3.list0.a",
+                    "sec_6.3.list0.a": "sec_6.3.list_1.a",
+                    "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
+                    "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
+                    "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
 
-                "chapter-XI": "chp_XI",
-                "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
-                "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
+                    "chapter-XI": "chp_XI",
+                    "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
+                    "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
 
-                "section-33": "sec_33",
-                "section-33.1": "sec_33.1",
-                "sec_33.1": "sec_33.subsec_1",
-                "sec_33.subsec_1": "sec_33__subsec_1",
+                    "section-33": "sec_33",
+                    "section-33.1": "sec_33.1",
+                    "sec_33.1": "sec_33.subsec_1",
+                    "sec_33.subsec_1": "sec_33__subsec_1",
 
-                "section-33.6": "sec_33.6",
-                "sec_33.6": "sec_33.subsec_6",
-                "sec_33.subsec_6": "sec_33__subsec_6",
+                    "section-33.6": "sec_33.6",
+                    "sec_33.6": "sec_33.subsec_6",
+                    "sec_33.subsec_6": "sec_33__subsec_6",
 
-                "section-33.6.list0": "sec_33.6.list0",
-                "sec_33.6.list0": "sec_33.6.list_1",
-                "sec_33.6.list_1": "sec_33.subsec_6.list_1",
-                "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
+                    "section-33.6.list0": "sec_33.6.list0",
+                    "sec_33.6.list0": "sec_33.6.list_1",
+                    "sec_33.6.list_1": "sec_33.subsec_6.list_1",
+                    "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
 
-                "section-33.6.list0.a": "sec_33.6.list0.a",
-                "sec_33.6.list0.a": "sec_33.6.list_1.a",
-                "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
-                "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
-                "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
+                    "section-33.6.list0.a": "sec_33.6.list0.a",
+                    "sec_33.6.list0.a": "sec_33.6.list_1.a",
+                    "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
+                    "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
+                    "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
 
-                "section-33.6.list0.b": "sec_33.6.list0.b",
-                "sec_33.6.list0.b": "sec_33.6.list_1.b",
-                "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
-                "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
-                "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
+                    "section-33.6.list0.b": "sec_33.6.list0.b",
+                    "sec_33.6.list0.b": "sec_33.6.list_1.b",
+                    "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
+                    "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
+                    "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
 
-                "section-34": "sec_34",
-                "section-34.1": "sec_34.1",
-                "sec_34.1": "sec_34.subsec_1",
-                "sec_34.subsec_1": "sec_34__subsec_1",
+                    "section-34": "sec_34",
+                    "section-34.1": "sec_34.1",
+                    "sec_34.1": "sec_34.subsec_1",
+                    "sec_34.subsec_1": "sec_34__subsec_1",
 
-                "section-34.2": "sec_34.2",
-                "sec_34.2": "sec_34.subsec_2",
-                "sec_34.subsec_2": "sec_34__subsec_2",
+                    "section-34.2": "sec_34.2",
+                    "sec_34.2": "sec_34.subsec_2",
+                    "sec_34.subsec_2": "sec_34__subsec_2",
 
-                "section-34.hcontainer_1": "sec_34.hcontainer_1",
-                "sec_34.hcontainer_1": "sec_34__hcontainer_1",
+                    "section-34.hcontainer_1": "sec_34.hcontainer_1",
+                    "sec_34.hcontainer_1": "sec_34__hcontainer_1",
 
-                "section-35": "sec_35",
-                "section-35.hcontainer_1": "sec_35.hcontainer_1",
-                "sec_35.hcontainer_1": "sec_35__hcontainer_1",
-                "section-35.hcontainer_2": "sec_35.hcontainer_2",
-                "sec_35.hcontainer_2": "sec_35__hcontainer_2",
+                    "section-35": "sec_35",
+                    "section-35.hcontainer_1": "sec_35.hcontainer_1",
+                    "sec_35.hcontainer_1": "sec_35__hcontainer_1",
+                    "section-35.hcontainer_2": "sec_35.hcontainer_2",
+                    "sec_35.hcontainer_2": "sec_35__hcontainer_2",
 
-                "paragraph-4": "para_4",
-                "paragraph-1": "para_1",
-                "paragraph-2": "para_2",
-                "paragraph-3": "para_3",
-                "paragraph-6": "para_6",
-                "paragraph-7": "para_7",
-                "paragraph-8": "para_8",
+                    "paragraph-4": "para_4",
+                    "paragraph-1": "para_1",
+                    "paragraph-2": "para_2",
+                    "paragraph-3": "para_3",
+                    "paragraph-6": "para_6",
+                    "paragraph-7": "para_7",
+                    "paragraph-8": "para_8",
 
-                'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
-                'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
-                'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
-                'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
-                'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
-                'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
-                'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
-                'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
-                'trm37': 'sec_1.hcontainer_1.list_4__term_1',
-                'trm38': 'sec_1.hcontainer_1.list_4.item_a__term_1',
-                'trm39': 'sec_1.hcontainer_1.list_4.item_a__term_2',
-                'trm40': 'sec_1.hcontainer_1.list_4.item_b__term_1',
+                    'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
+                    'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
+                    'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
+                    'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
+                    'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
+                    'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
+                    'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
+                    'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
+                    'trm37': 'sec_1.hcontainer_1.list_4__term_1',
+                    'trm38': 'sec_1.hcontainer_1.list_4.item_a__term_1',
+                    'trm39': 'sec_1.hcontainer_1.list_4.item_a__term_2',
+                    'trm40': 'sec_1.hcontainer_1.list_4.item_b__term_1',
             },
+            "schedules": {
+                "schedule1": "att_1",
+                "schedule2": "att_2",
+            },
+        },
             mappings
         )
 
         # check annotations
         new_annotations = doc.annotations.all()
-        self.assertEqual(len(new_annotations), 5)
+        self.assertEqual(len(new_annotations), 12)
         for annotation in new_annotations:
-            self.assertNotIn(annotation.anchor_id, mappings.keys())
-            self.assertIn(annotation.anchor_id, mappings.values())
+            self.assertNotIn(annotation.anchor_id, mappings["main"].keys())
+            self.assertNotIn(annotation.anchor_id, annotation_anchors.keys())
+            if "/" in annotation.anchor_id:
+                post = annotation.anchor_id.split("/", 1)[-1]
+                self.assertIn(post, mappings["main"].values())
+            else:
+                self.assertIn(annotation.anchor_id, mappings["main"].values())
+            self.assertIn(annotation.anchor_id, annotation_anchors.values())
 
     def test_para_to_hcontainer(self):
         migration = UnnumberedParagraphsToHcontainer()
@@ -3025,11 +3054,6 @@ class MigrationTestCase(TestCase):
             output
         )
 
-    def test_eid_table(self):
-        """ includes checks for tables in main body and Schedules
-        """
-        pass
-
     def test_eid_terms(self):
         migration = AKNeId()
         doc = Document(work=self.work, document_xml="""
@@ -3088,152 +3112,166 @@ class MigrationTestCase(TestCase):
 </akomaNtoso>
 """, output)
 
-#     def test_href(self):
-#         """ checks that (only) internal section references are updated
-#         """
-#         migration = HrefMigration()
-#         doc = Document(work=self.work, document_xml="""
-# <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-#   <act contains="singleVersion">
-#     <meta/>
-#     <body>
-#       <chapter eId="chapter-VIII">
-#         <num>VIII</num>
-#         <heading>Emissions from compression ignition powered vehicles</heading>
-#         <section eId="section-22">
-#           <num>22.</num>
-#           <heading>Stopping of vehicles for inspection and testing</heading>
-#           <subsection eId="section-22.1">
-#             <num>(1)</num>
-#             <content>
-#               <p>In order to enable an <term refersTo="#term-authorised_official" eId="trm264">authorised official</term> to enforce the provisions of this Chapter, the driver of a <term refersTo="#term-vehicle" eId="trm265">vehicle</term> must comply with any reasonable direction given by an authorised official to conduct or facilitate the inspection or testing of the <term refersTo="#term-vehicle" eId="trm266">vehicle</term>.</p>
-#             </content>
-#           </subsection>
-#           <subsection eId="section-22.2">
-#             <num>(2)</num>
-#             <content>
-#               <blockList eId="section-22.2.list0">
-#                 <listIntroduction>An <term refersTo="#term-authorised_official" eId="trm267">authorised official</term> may issue an instruction to the driver of a <term refersTo="#term-vehicle" eId="trm268">vehicle</term> suspected of emitting <term refersTo="#term-dark_smoke" eId="trm269">dark smoke</term> to stop the <term refersTo="#term-vehicle" eId="trm270">vehicle</term> in order to -</listIntroduction>
-#                 <item eId="section-22.2.list0.b">
-#                   <num>(b)</num>
-#                   <p>conduct a visual inspection of the <term refersTo="#term-vehicle" eId="trm274">vehicle</term> and, if the authorised official reasonably believes that an offence has been committed under <ref href="#section-21">section 21</ref> instruct the driver of the vehicle, who is presumed to be the owner of the vehicle unless he or she produces evidence to the contrary in writing, to take the vehicle to a specified address or testing station, within a specified period of time, for inspection and testing in accordance with <ref href="#section-23">section 23</ref>.</p>
-#                 </item>
-#               </blockList>
-#             </content>
-#           </subsection>
-#         </section>
-#         <section eId="section-23">
-#           <num>23.</num>
-#           <heading>Testing procedure</heading>
-#           <subsection eId="section-23.1">
-#             <num>(1)</num>
-#             <content>
-#               <p>An <term refersTo="#term-authorised_official" eId="trm275">authorised official</term> must use the <term refersTo="#term-free_acceleration_test" eId="trm276">free acceleration test</term> method in order to determine whether a <term refersTo="#term-compression_ignition_powered_vehicle" eId="trm277">compression ignition powered vehicle</term> is being driven or used in contravention of <ref href="#section-21">section 21</ref>(1).</p>
-#             </content>
-#           </subsection>
-#           <subsection eId="section-23.3">
-#             <num>(3)</num>
-#             <content>
-#               <blockList eId="section-23.3.list0">
-#                 <listIntroduction>If, having conducted the <term refersTo="#term-free_acceleration_test" eId="trm293">free acceleration test</term>, the <term refersTo="#term-authorised_official" eId="trm294">authorised official</term> is satisfied that the <term refersTo="#term-vehicle" eId="trm295">vehicle</term> -</listIntroduction>
-#                 <item eId="section-23.3.list0.a">
-#                   <num>(a)</num>
-#                   <p>is not emitting <term refersTo="#term-dark_smoke" eId="trm296">dark smoke</term>, he or she must furnish the driver of the <term refersTo="#term-vehicle" eId="trm297">vehicle</term> with a certificate indicating that the <term refersTo="#term-vehicle" eId="trm298">vehicle</term> is not being driven or used in contravention of <ref href="#section-21">section 21</ref>; or</p>
-#                 </item>
-#                 <item eId="section-23.3.list0.b">
-#                   <num>(b)</num>
-#                   <p>is emitting <term refersTo="#term-dark_smoke" eId="trm299">dark smoke</term>, he or she must issue the driver of the <term refersTo="#term-vehicle" eId="trm300">vehicle</term> with a repair notice in accordance with <ref href="#section-24">section 24</ref>.</p>
-#                 </item>
-#               </blockList>
-#             </content>
-#           </subsection>
-#         </section>
-#         <section eId="section-24">
-#           <num>24.</num>
-#           <heading>Repair notice</heading>
-#           <subsection eId="section-24.1">
-#             <num>(1)</num>
-#             <content>
-#               <p>In the event that a determination is made in terms of <ref href="#section-23">section 23</ref>(3) that a vehicle is emitting dark smoke the authorised official must instruct the owner of the vehicle in writing to repair the vehicle and present it for re-testing at the address specified in a repair notice;</p>
-#             </content>
-#           </subsection>
-#         </section>
-#       </chapter>
-#     </body>
-#   </act>
-# </akomaNtoso>""")
-#         migration.migrate_document(doc)
-#         output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
-#         self.assertMultiLineEqual(
-#             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-#   <act contains="singleVersion">
-#     <meta/>
-#     <body>
-#       <chapter eId="chapter-VIII">
-#         <num>VIII</num>
-#         <heading>Emissions from compression ignition powered vehicles</heading>
-#         <section eId="section-22">
-#           <num>22.</num>
-#           <heading>Stopping of vehicles for inspection and testing</heading>
-#           <subsection eId="section-22.1">
-#             <num>(1)</num>
-#             <content>
-#               <p>In order to enable an <term refersTo="#term-authorised_official" eId="trm264">authorised official</term> to enforce the provisions of this Chapter, the driver of a <term refersTo="#term-vehicle" eId="trm265">vehicle</term> must comply with any reasonable direction given by an authorised official to conduct or facilitate the inspection or testing of the <term refersTo="#term-vehicle" eId="trm266">vehicle</term>.</p>
-#             </content>
-#           </subsection>
-#           <subsection eId="section-22.2">
-#             <num>(2)</num>
-#             <content>
-#               <blockList eId="section-22.2.list0">
-#                 <listIntroduction>An <term refersTo="#term-authorised_official" eId="trm267">authorised official</term> may issue an instruction to the driver of a <term refersTo="#term-vehicle" eId="trm268">vehicle</term> suspected of emitting <term refersTo="#term-dark_smoke" eId="trm269">dark smoke</term> to stop the <term refersTo="#term-vehicle" eId="trm270">vehicle</term> in order to -</listIntroduction>
-#                 <item eId="section-22.2.list0.b">
-#                   <num>(b)</num>
-#                   <p>conduct a visual inspection of the <term refersTo="#term-vehicle" eId="trm274">vehicle</term> and, if the authorised official reasonably believes that an offence has been committed under <ref href="#sec_21">section 21</ref> instruct the driver of the vehicle, who is presumed to be the owner of the vehicle unless he or she produces evidence to the contrary in writing, to take the vehicle to a specified address or testing station, within a specified period of time, for inspection and testing in accordance with <ref href="#sec_23">section 23</ref>.</p>
-#                 </item>
-#               </blockList>
-#             </content>
-#           </subsection>
-#         </section>
-#         <section eId="section-23">
-#           <num>23.</num>
-#           <heading>Testing procedure</heading>
-#           <subsection eId="section-23.1">
-#             <num>(1)</num>
-#             <content>
-#               <p>An <term refersTo="#term-authorised_official" eId="trm275">authorised official</term> must use the <term refersTo="#term-free_acceleration_test" eId="trm276">free acceleration test</term> method in order to determine whether a <term refersTo="#term-compression_ignition_powered_vehicle" eId="trm277">compression ignition powered vehicle</term> is being driven or used in contravention of <ref href="#sec_21">section 21</ref>(1).</p>
-#             </content>
-#           </subsection>
-#           <subsection eId="section-23.3">
-#             <num>(3)</num>
-#             <content>
-#               <blockList eId="section-23.3.list0">
-#                 <listIntroduction>If, having conducted the <term refersTo="#term-free_acceleration_test" eId="trm293">free acceleration test</term>, the <term refersTo="#term-authorised_official" eId="trm294">authorised official</term> is satisfied that the <term refersTo="#term-vehicle" eId="trm295">vehicle</term> -</listIntroduction>
-#                 <item eId="section-23.3.list0.a">
-#                   <num>(a)</num>
-#                   <p>is not emitting <term refersTo="#term-dark_smoke" eId="trm296">dark smoke</term>, he or she must furnish the driver of the <term refersTo="#term-vehicle" eId="trm297">vehicle</term> with a certificate indicating that the <term refersTo="#term-vehicle" eId="trm298">vehicle</term> is not being driven or used in contravention of <ref href="#sec_21">section 21</ref>; or</p>
-#                 </item>
-#                 <item eId="section-23.3.list0.b">
-#                   <num>(b)</num>
-#                   <p>is emitting <term refersTo="#term-dark_smoke" eId="trm299">dark smoke</term>, he or she must issue the driver of the <term refersTo="#term-vehicle" eId="trm300">vehicle</term> with a repair notice in accordance with <ref href="#sec_24">section 24</ref>.</p>
-#                 </item>
-#               </blockList>
-#             </content>
-#           </subsection>
-#         </section>
-#         <section eId="section-24">
-#           <num>24.</num>
-#           <heading>Repair notice</heading>
-#           <subsection eId="section-24.1">
-#             <num>(1)</num>
-#             <content>
-#               <p>In the event that a determination is made in terms of <ref href="#sec_23">section 23</ref>(3) that a vehicle is emitting dark smoke the authorised official must instruct the owner of the vehicle in writing to repair the vehicle and present it for re-testing at the address specified in a repair notice;</p>
-#             </content>
-#           </subsection>
-#         </section>
-#       </chapter>
-#     </body>
-#   </act>
-# </akomaNtoso>
-# """,
-#             output
-#         )
+    def test_href(self):
+        """ checks that (only) internal section references are updated
+        """
+        mappings = {"main": {}, "schedules": {}}
+        doc = Document(work=self.work, document_xml="""
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion">
+    <meta/>
+    <body>
+      <chapter id="chapter-VIII">
+        <num>VIII</num>
+        <heading>Emissions from compression ignition powered vehicles</heading>
+        <section id="section-21">
+          <num>21.</num>
+          <content>
+            <p>Passive ref.</p>
+          </content>
+        </section>
+        <section id="section-22">
+          <num>22.</num>
+          <heading>Stopping of vehicles for inspection and testing</heading>
+          <subsection id="section-22.1">
+            <num>(1)</num>
+            <content>
+              <p>In order to enable an <term refersTo="#term-authorised_official" id="trm264">authorised official</term> to enforce the provisions of this Chapter, the driver of a <term refersTo="#term-vehicle" id="trm265">vehicle</term> must comply with any reasonable direction given by an authorised official to conduct or facilitate the inspection or testing of the <term refersTo="#term-vehicle" id="trm266">vehicle</term>.</p>
+            </content>
+          </subsection>
+          <subsection id="section-22.2">
+            <num>(2)</num>
+            <content>
+              <blockList id="section-22.2.list0">
+                <listIntroduction>An <term refersTo="#term-authorised_official" id="trm267">authorised official</term> may issue an instruction to the driver of a <term refersTo="#term-vehicle" id="trm268">vehicle</term> suspected of emitting <term refersTo="#term-dark_smoke" id="trm269">dark smoke</term> to stop the <term refersTo="#term-vehicle" id="trm270">vehicle</term> in order to -</listIntroduction>
+                <item id="section-22.2.list0.b">
+                  <num>(b)</num>
+                  <p>conduct a visual inspection of the <term refersTo="#term-vehicle" id="trm274">vehicle</term> and, if the authorised official reasonably believes that an offence has been committed under <ref href="#section-21">section 21</ref> instruct the driver of the vehicle, who is presumed to be the owner of the vehicle unless he or she produces evidence to the contrary in writing, to take the vehicle to a specified address or testing station, within a specified period of time, for inspection and testing in accordance with <ref href="#section-23">section 23</ref>.</p>
+                </item>
+              </blockList>
+            </content>
+          </subsection>
+        </section>
+        <section id="section-23">
+          <num>23.</num>
+          <heading>Testing procedure</heading>
+          <subsection id="section-23.1">
+            <num>(1)</num>
+            <content>
+              <p>An <term refersTo="#term-authorised_official" id="trm275">authorised official</term> must use the <term refersTo="#term-free_acceleration_test" id="trm276">free acceleration test</term> method in order to determine whether a <term refersTo="#term-compression_ignition_powered_vehicle" id="trm277">compression ignition powered vehicle</term> is being driven or used in contravention of <ref href="#section-21">section 21</ref>(1).</p>
+            </content>
+          </subsection>
+          <subsection id="section-23.3">
+            <num>(3)</num>
+            <content>
+              <blockList id="section-23.3.list0">
+                <listIntroduction>If, having conducted the <term refersTo="#term-free_acceleration_test" id="trm293">free acceleration test</term>, the <term refersTo="#term-authorised_official" id="trm294">authorised official</term> is satisfied that the <term refersTo="#term-vehicle" id="trm295">vehicle</term> -</listIntroduction>
+                <item id="section-23.3.list0.a">
+                  <num>(a)</num>
+                  <p>is not emitting <term refersTo="#term-dark_smoke" id="trm296">dark smoke</term>, he or she must furnish the driver of the <term refersTo="#term-vehicle" id="trm297">vehicle</term> with a certificate indicating that the <term refersTo="#term-vehicle" id="trm298">vehicle</term> is not being driven or used in contravention of <ref href="#section-21">section 21</ref>; or</p>
+                </item>
+                <item id="section-23.3.list0.b">
+                  <num>(b)</num>
+                  <p>is emitting <term refersTo="#term-dark_smoke" id="trm299">dark smoke</term>, he or she must issue the driver of the <term refersTo="#term-vehicle" id="trm300">vehicle</term> with a repair notice in accordance with <ref href="#section-24">section 24</ref>.</p>
+                </item>
+              </blockList>
+            </content>
+          </subsection>
+        </section>
+        <section id="section-24">
+          <num>24.</num>
+          <heading>Repair notice</heading>
+          <subsection id="section-24.1">
+            <num>(1)</num>
+            <content>
+              <p>In the event that a determination is made in terms of <ref href="#section-23">section 23</ref>(3) that a vehicle is emitting dark smoke the authorised official must instruct the owner of the vehicle in writing to repair the vehicle and present it for re-testing at the address specified in a repair notice;</p>
+            </content>
+          </subsection>
+        </section>
+      </chapter>
+    </body>
+  </act>
+</akomaNtoso>""")
+        cobalt_doc = Act(doc.document_xml)
+        AKNeId().migrate_act(cobalt_doc, mappings)
+        HrefMigration().migrate_act(cobalt_doc, mappings)
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
+        self.assertMultiLineEqual(
+            """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act contains="singleVersion">
+    <meta/>
+    <body>
+      <chapter eId="chp_VIII">
+        <num>VIII</num>
+        <heading>Emissions from compression ignition powered vehicles</heading>
+        <section eId="sec_21">
+          <num>21.</num>
+          <content>
+            <p>Passive ref.</p>
+          </content>
+        </section>
+        <section eId="sec_22">
+          <num>22.</num>
+          <heading>Stopping of vehicles for inspection and testing</heading>
+          <subsection eId="sec_22__subsec_1">
+            <num>(1)</num>
+            <content>
+              <p>In order to enable an <term refersTo="#term-authorised_official" eId="sec_22__subsec_1__term_1">authorised official</term> to enforce the provisions of this Chapter, the driver of a <term refersTo="#term-vehicle" eId="sec_22__subsec_1__term_2">vehicle</term> must comply with any reasonable direction given by an authorised official to conduct or facilitate the inspection or testing of the <term refersTo="#term-vehicle" eId="sec_22__subsec_1__term_3">vehicle</term>.</p>
+            </content>
+          </subsection>
+          <subsection eId="sec_22__subsec_2">
+            <num>(2)</num>
+            <content>
+              <blockList eId="sec_22__subsec_2__list_1">
+                <listIntroduction>An <term refersTo="#term-authorised_official" eId="sec_22__subsec_2__list_1__term_1">authorised official</term> may issue an instruction to the driver of a <term refersTo="#term-vehicle" eId="sec_22__subsec_2__list_1__term_2">vehicle</term> suspected of emitting <term refersTo="#term-dark_smoke" eId="sec_22__subsec_2__list_1__term_3">dark smoke</term> to stop the <term refersTo="#term-vehicle" eId="sec_22__subsec_2__list_1__term_4">vehicle</term> in order to -</listIntroduction>
+                <item eId="sec_22__subsec_2__list_1__item_b">
+                  <num>(b)</num>
+                  <p>conduct a visual inspection of the <term refersTo="#term-vehicle" eId="sec_22__subsec_2__list_1__item_b__term_1">vehicle</term> and, if the authorised official reasonably believes that an offence has been committed under <ref href="#sec_21">section 21</ref> instruct the driver of the vehicle, who is presumed to be the owner of the vehicle unless he or she produces evidence to the contrary in writing, to take the vehicle to a specified address or testing station, within a specified period of time, for inspection and testing in accordance with <ref href="#sec_23">section 23</ref>.</p>
+                </item>
+              </blockList>
+            </content>
+          </subsection>
+        </section>
+        <section eId="sec_23">
+          <num>23.</num>
+          <heading>Testing procedure</heading>
+          <subsection eId="sec_23__subsec_1">
+            <num>(1)</num>
+            <content>
+              <p>An <term refersTo="#term-authorised_official" eId="sec_23__subsec_1__term_1">authorised official</term> must use the <term refersTo="#term-free_acceleration_test" eId="sec_23__subsec_1__term_2">free acceleration test</term> method in order to determine whether a <term refersTo="#term-compression_ignition_powered_vehicle" eId="sec_23__subsec_1__term_3">compression ignition powered vehicle</term> is being driven or used in contravention of <ref href="#sec_21">section 21</ref>(1).</p>
+            </content>
+          </subsection>
+          <subsection eId="sec_23__subsec_3">
+            <num>(3)</num>
+            <content>
+              <blockList eId="sec_23__subsec_3__list_1">
+                <listIntroduction>If, having conducted the <term refersTo="#term-free_acceleration_test" eId="sec_23__subsec_3__list_1__term_1">free acceleration test</term>, the <term refersTo="#term-authorised_official" eId="sec_23__subsec_3__list_1__term_2">authorised official</term> is satisfied that the <term refersTo="#term-vehicle" eId="sec_23__subsec_3__list_1__term_3">vehicle</term> -</listIntroduction>
+                <item eId="sec_23__subsec_3__list_1__item_a">
+                  <num>(a)</num>
+                  <p>is not emitting <term refersTo="#term-dark_smoke" eId="sec_23__subsec_3__list_1__item_a__term_1">dark smoke</term>, he or she must furnish the driver of the <term refersTo="#term-vehicle" eId="sec_23__subsec_3__list_1__item_a__term_2">vehicle</term> with a certificate indicating that the <term refersTo="#term-vehicle" eId="sec_23__subsec_3__list_1__item_a__term_3">vehicle</term> is not being driven or used in contravention of <ref href="#sec_21">section 21</ref>; or</p>
+                </item>
+                <item eId="sec_23__subsec_3__list_1__item_b">
+                  <num>(b)</num>
+                  <p>is emitting <term refersTo="#term-dark_smoke" eId="sec_23__subsec_3__list_1__item_b__term_1">dark smoke</term>, he or she must issue the driver of the <term refersTo="#term-vehicle" eId="sec_23__subsec_3__list_1__item_b__term_2">vehicle</term> with a repair notice in accordance with <ref href="#sec_24">section 24</ref>.</p>
+                </item>
+              </blockList>
+            </content>
+          </subsection>
+        </section>
+        <section eId="sec_24">
+          <num>24.</num>
+          <heading>Repair notice</heading>
+          <subsection eId="sec_24__subsec_1">
+            <num>(1)</num>
+            <content>
+              <p>In the event that a determination is made in terms of <ref href="#sec_23">section 23</ref>(3) that a vehicle is emitting dark smoke the authorised official must instruct the owner of the vehicle in writing to repair the vehicle and present it for re-testing at the address specified in a repair notice;</p>
+            </content>
+          </subsection>
+        </section>
+      </chapter>
+    </body>
+  </act>
+</akomaNtoso>
+""",
+            output
+        )

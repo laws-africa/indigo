@@ -6,21 +6,36 @@ from indigo.xmlutils import rewrite_ids
 
 class AKNMigration(object):
     def migrate_document(self, document):
-        return self.migrate_act(document.doc, mappings={})
+        return self.migrate_act(document.doc, mappings={"main": {}, "schedules": {}})
 
-    def safe_update(self, element, mappings, old, new):
+    def safe_update(self, element, mappings, old, new, schedules=False):
         """ Updates ids and mappings:
         - First, check `mappings` for `old`:
             if it's already there, check that it maps to `new`.
         - Then, update `mappings` and rewrite_ids (if it's already in mappings it'll get overwritten).
         """
-        if old in mappings:
-            assert mappings[old] == new, f'new id mapping {old} to {new} differs from existing {mappings[old]}'
-        mappings.update(rewrite_ids(element, old, new))
+        if schedules:
+            schedule_id = element.doc.get("name")
+            if schedule_id in mappings["schedules"]:
+                assert mappings["schedules"][schedule_id] == new, \
+                    f'new id mapping {schedule_id} to {new} differs from existing {mappings["schedules"][schedule_id]}'
 
-    def traverse_mappings(self, mappings, old):
-        if old in mappings:
-            old = self.traverse_mappings(mappings, mappings[old])
+            mappings["schedules"][schedule_id] = new
+            rewrite_ids(element, old, new)
+
+        else:
+            if old in mappings["main"]:
+                assert mappings["main"][old] == new, \
+                    f'new id mapping {old} to {new} differs from existing {mappings["main"][old]}'
+
+            mappings["main"].update(rewrite_ids(element, old, new))
+
+    def traverse_mappings(self, mappings, old, schedules=False):
+        if schedules and old in mappings["schedules"]:
+            return mappings["schedules"][old]
+
+        elif old in mappings["main"]:
+            old = self.traverse_mappings(mappings, mappings["main"][old])
 
         return old
 
@@ -213,7 +228,7 @@ class ComponentSchedulesToAttachments(AKNMigration):
                 att.tag = f'{{{act.namespace}}}attachment'
                 old_id = att.get('id')
                 new_id = f'att_{i + 1}'
-                self.safe_update(att, mappings, old_id, new_id)
+                self.safe_update(att, mappings, old_id, new_id, schedules=True)
 
                 # heading and subheading
                 for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=nsmap):
@@ -312,7 +327,7 @@ class AKNeId(AKNMigration):
             if "." in old_id:
                 new_id = old_id.replace(".", "__")
                 node.set("id", new_id)
-                mappings.update({old_id: new_id})
+                mappings["main"].update({old_id: new_id})
 
         # replace all `id`s with `eId`s
         for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):
@@ -347,5 +362,11 @@ class AnnotationsMigration(AKNMigration):
     """
     def migrate_act(self, doc, mappings):
         for annotation in doc.annotations.all():
-            annotation.anchor_id = self.traverse_mappings(mappings, annotation.anchor_id)
+            if "/" in annotation.anchor_id:
+                pre, post = annotation.anchor_id.split("/", 1)
+                new_pre = self.traverse_mappings(mappings, pre, schedules=True)
+                new_post = self.traverse_mappings(mappings, f"{pre}.{post}")
+                annotation.anchor_id = f"{new_pre}/{new_post}"
+            else:
+                annotation.anchor_id = self.traverse_mappings(mappings, annotation.anchor_id)
             annotation.save()

@@ -95,7 +95,9 @@ class TOCBuilderBase(LocaleBasedMatcher):
         """
         ancestors = [element] + list(element.iterancestors())
 
-        for component, comp_element in self.act.components().items():
+        # reversed so that we go through components before the main document element,
+        # because all components are ancestors of that
+        for component, comp_element in reversed(self.act.components().items()):
             if comp_element in ancestors:
                 return (component, comp_element)
 

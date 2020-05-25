@@ -38,7 +38,7 @@ DOCUMENT_FIXTURE = """<?xml version="1.0"?>
 
 BODY_FIXTURE = """
 <body>
-  <section eId="section-1">
+  <section eId="sec_1">
     <content>
       <p>%s</p>
     </content>
@@ -129,13 +129,13 @@ def body_fixture(text):
 
 def document_fixture(text=None, xml=None):
     if text:
-        xml = """<section eId="section-1"><content><p>%s</p></content></section>""" % text
+        xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
     return DOCUMENT_FIXTURE % xml
 
 
 def component_fixture(text=None, xml=None):
     if text:
-        xml = """<section eId="section-1"><content><p>%s</p></content></section>""" % text
+        xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
     return COMPONENT_FIXTURE % xml

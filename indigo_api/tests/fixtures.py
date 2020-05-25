@@ -38,7 +38,7 @@ DOCUMENT_FIXTURE = """<?xml version="1.0"?>
 
 BODY_FIXTURE = """
 <body>
-  <section id="section-1">
+  <section eId="sec_1">
     <content>
       <p>%s</p>
     </content>
@@ -84,7 +84,7 @@ COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
     </body>
   </act>
   <components>
-    <component id="component-schedule">
+    <component eId="component-schedule">
       <doc name="schedule">
         <meta>
           <identification source="#slaw">
@@ -112,7 +112,7 @@ COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
           </identification>
         </meta>
         <mainBody>
-          <article id="schedule">
+          <article eId="schedule">
             %s
           </article>
         </mainBody>
@@ -129,13 +129,13 @@ def body_fixture(text):
 
 def document_fixture(text=None, xml=None):
     if text:
-        xml = """<section id="section-1"><content><p>%s</p></content></section>""" % text
+        xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
     return DOCUMENT_FIXTURE % xml
 
 
 def component_fixture(text=None, xml=None):
     if text:
-        xml = """<section id="section-1"><content><p>%s</p></content></section>""" % text
+        xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
     return COMPONENT_FIXTURE % xml

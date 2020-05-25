@@ -237,7 +237,7 @@ class BaseTermsFinder(LocaleBasedMatcher):
                     break
 
     def renumber_terms(self, doc):
-        """ Recalculate ids for <term> elements
+        """ Recalculate eIds for <term> elements
         """
         for i, term in enumerate(doc.xpath('//a:term', namespaces=self.nsmap)):
-            term.set('id', "trm%s" % i)
+            term.set('eId', "trm%s" % i)

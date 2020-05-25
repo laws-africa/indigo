@@ -176,13 +176,13 @@ class DocumentAPITest(APITestCase):
 
     def test_table_of_contents(self):
         xml = """
-          <chapter id="chapter-2">
+          <chapter eId="chapter-2">
             <num>2</num>
             <heading>Administrative provisions</heading>
-            <section id="section-3">
+            <section eId="section-3">
               <num>3.</num>
-              <heading>Consent required for <term refersTo="#term-interment" id="trm80">interment</term></heading>
-              <subsection id="section-3.1">
+              <heading>Consent required for <term refersTo="#term-interment" eId="trm80">interment</term></heading>
+              <subsection eId="section-3.1">
                 <num>(1)</num>
                 <content><p>hello</p></content>
               </subsection>

@@ -20,20 +20,20 @@ class TOCBuilderZATestCase(APITestCase):
         d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-          <section id="section-1">
+          <section eId="section-1">
             <num>1.</num>
             <heading>Foo</heading>
             <content>
               <p>hello</p>
             </content>
           </section>
-          <chapter id="chapter-1">
+          <chapter eId="chapter-1">
             <num>1.</num>
             <heading>The Chapter</heading>
-            <part id="part-A">
+            <part eId="part-A">
               <num>A</num>
               <heading>The Part</heading>
-              <section id="section-2">
+              <section eId="section-2">
                 <num>2.</num>
                 <heading>Other</heading>
                 <content>
@@ -67,20 +67,20 @@ class TOCBuilderZATestCase(APITestCase):
         d.work = self.work
         d.content = document_fixture(xml="""
         <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-          <section id="section-1">
+          <section eId="section-1">
             <num>1.</num>
             <heading>Foo</heading>
             <content>
               <p>hello</p>
             </content>
           </section>
-          <chapter id="chapter-1">
+          <chapter eId="chapter-1">
             <num>1.</num>
             <heading>The Chapter</heading>
-            <part id="part-A">
+            <part eId="part-A">
               <num>A</num>
               <heading>The Part</heading>
-              <section id="section-2">
+              <section eId="section-2">
                 <num>2.</num>
                 <heading>Other</heading>
                 <content>
@@ -113,7 +113,7 @@ class TOCBuilderZATestCase(APITestCase):
     def test_component_table_of_contents(self):
         d = Document()
         d.work = self.work
-        d.content = """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" xsi:schemaLocation="http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part2-specs/schemas/akomantoso30.xsd">
+        d.content = """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
     <meta>
       <identification source="#openbylaws">
@@ -142,7 +142,7 @@ class TOCBuilderZATestCase(APITestCase):
     </meta>
     <body></body>
     <attachments>
-      <attachment id="att_1">
+      <attachment eId="att_1">
         <doc name="schedule">
           <meta>
             <identification source="#slaw">
@@ -170,7 +170,7 @@ class TOCBuilderZATestCase(APITestCase):
             </identification>
           </meta>
           <mainBody>
-            <section id="sec_1">
+            <section eId="sec_1">
               <content>
                 <p>1. Foo</p>
                 <p>2. Bar</p>
@@ -179,7 +179,7 @@ class TOCBuilderZATestCase(APITestCase):
           </mainBody>
         </doc>
       </attachment>
-      <attachment id="att_2">
+      <attachment eId="att_2">
         <doc name="schedule">
           <meta>
             <identification source="#slaw">
@@ -206,7 +206,7 @@ class TOCBuilderZATestCase(APITestCase):
             </identification>
           </meta>
           <mainBody>
-            <section id="sec_1">
+            <section eId="sec_1">
               <content>
                 <p>Baz</p>
                 <p>Boom</p>

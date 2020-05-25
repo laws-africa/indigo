@@ -1,5 +1,6 @@
 import re
 import logging
+from collections import Counter
 from itertools import chain
 from lxml import etree
 
@@ -156,10 +157,10 @@ class BaseTermsFinder(LocaleBasedMatcher):
             self.build_tlc_term(refs, id, term)
 
     def build_tlc_term(self, parent, id, term):
-        """ Build an element such as <TLCTerm id="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>
+        """ Build an element such as <TLCTerm eId="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>
         """
         elem = etree.SubElement(parent, self.tlc_term_tag)
-        elem.set('id', id)
+        elem.set('eId', id)
         elem.set('showAs', term)
         ref = id
         if ref.startswith('term-'):
@@ -237,7 +238,18 @@ class BaseTermsFinder(LocaleBasedMatcher):
                     break
 
     def renumber_terms(self, doc):
-        """ Recalculate ids for <term> elements
+        """ Recalculate eIds for <term> elements
         """
-        for i, term in enumerate(doc.xpath('//a:term', namespaces=self.nsmap)):
-            term.set('id', "trm%s" % i)
+
+        def get_parent_id(node):
+            parent = node.getparent()
+            parent_id = parent.get("eId")
+            return parent_id if parent_id else get_parent_id(parent)
+
+        # generate correct term ids, based on the parent id
+        counter = Counter()
+        for node in doc.xpath('//a:term', namespaces=self.nsmap):
+            prefix = get_parent_id(node)
+            # the num for this term depends on the number of preceding terms with the same prefix
+            counter[prefix] += 1
+            node.set('eId', f'{prefix}__term_{counter[prefix]}')

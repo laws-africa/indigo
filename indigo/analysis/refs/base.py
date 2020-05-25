@@ -206,7 +206,7 @@ class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):
         """ Return the target href for this match.
         """
         target = self.find_target(node, match)
-        return '#' + target.get('id')
+        return '#' + target.get('eId')
 
 
 @plugins.register('internal-refs')
@@ -297,4 +297,4 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
 
     def make_href(self, node, match):
         target = self.match_cache[match.group('num')]
-        return '#' + target.get('id')
+        return '#' + target.get('eId')

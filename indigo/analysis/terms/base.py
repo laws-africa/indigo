@@ -156,10 +156,10 @@ class BaseTermsFinder(LocaleBasedMatcher):
             self.build_tlc_term(refs, id, term)
 
     def build_tlc_term(self, parent, id, term):
-        """ Build an element such as <TLCTerm id="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>
+        """ Build an element such as <TLCTerm eId="term-applicant" href="/ontology/term/this.eng.applicant" showAs="Applicant"/>
         """
         elem = etree.SubElement(parent, self.tlc_term_tag)
-        elem.set('id', id)
+        elem.set('eId', id)
         elem.set('showAs', term)
         ref = id
         if ref.startswith('term-'):

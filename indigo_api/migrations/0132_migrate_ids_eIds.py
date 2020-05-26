@@ -20,7 +20,10 @@ def update_xml(xml, doc=None):
     ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
     AKNeId().migrate_act(cobalt_doc, mappings)
     HrefMigration().migrate_act(cobalt_doc, mappings)
-    return cobalt_doc.to_xml().decode("utf-8"), mappings
+    if doc:
+        AnnotationsMigration().migrate_act(doc, mappings)
+
+    return cobalt_doc.to_xml().decode("utf-8")
 
 
 def forward(apps, schema_editor):
@@ -29,17 +32,14 @@ def forward(apps, schema_editor):
     ct_doc = ContentType.objects.get_for_model(Document)
 
     for document in Document.objects.using(db_alias).all():
-        xml, mappings = update_xml(document.document_xml, document)
-        document.document_xml = xml
-        AnnotationsMigration().migrate_act(document, mappings)
+        document.document_xml = update_xml(document.document_xml, document)
         document.save()
 
         # Update historical Document versions
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
-            xml, mappings = update_xml(data[0]['fields']['document_xml'])
-            data[0]['fields']['document_xml'] = xml
+            data[0]['fields']['document_xml'] = update_xml(data[0]['fields']['document_xml'])
             version.serialized_data = json.dumps(data)
             version.save()
 

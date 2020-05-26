@@ -17,13 +17,6 @@ class MigrationTestCase(TestCase):
         self.work = Work.objects.get(pk=1)
         self.eng = Language.for_code('eng')
 
-    def test_safe_update(self):
-        migration = AKNMigration()
-        element = "foo"
-        mappings = {"ABC": "XYZ"}
-        with self.assertRaises(AssertionError):
-            migration.safe_update(element, mappings, "ABC", "DEF")
-
     def test_full_migration(self):
         """ Include tests for:
             - CrossheadingToHcontainer

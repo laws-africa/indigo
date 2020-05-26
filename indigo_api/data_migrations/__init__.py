@@ -364,13 +364,18 @@ class HrefMigration(AKNMigration):
 class AnnotationsMigration(AKNMigration):
     """ Update all the annotation anchors on a Document
     """
-    def migrate_act(self, doc, mappings):
+    def migrate_act(self, doc, mappings, prefix_mappings):
         for annotation in doc.annotations.all():
             if "/" in annotation.anchor_id:
+                # att_2/crossheading-1
                 pre, post = annotation.anchor_id.split("/", 1)
-                new_pre = self.traverse_mappings(mappings, pre)
-                new_post = self.traverse_mappings(mappings, f"{pre}.{post}")
-                annotation.anchor_id = f"{new_pre}/{new_post}"
+                old_pre = None
+                # find old_pre based on prefix_mappings
+                for old, new in prefix_mappings.items():
+                    if pre == new:
+                        old_pre = old
+                new_post = self.traverse_mappings(mappings, f"{old_pre}.{post}")
+                annotation.anchor_id = f"{pre}/{new_post}"
             else:
                 annotation.anchor_id = self.traverse_mappings(mappings, annotation.anchor_id)
             annotation.save()

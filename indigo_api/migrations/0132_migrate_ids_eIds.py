@@ -17,11 +17,11 @@ def update_xml(xml, doc=None):
     cobalt_doc = Act(xml)
     UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
     CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
-    ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
+    prefix_mappings = ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
     AKNeId().migrate_act(cobalt_doc, mappings)
     HrefMigration().migrate_act(cobalt_doc, mappings)
     if doc:
-        AnnotationsMigration().migrate_act(doc, mappings)
+        AnnotationsMigration().migrate_act(doc, mappings, prefix_mappings)
 
     return cobalt_doc.to_xml().decode("utf-8")
 

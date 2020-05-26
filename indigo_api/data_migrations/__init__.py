@@ -210,6 +210,7 @@ class ComponentSchedulesToAttachments(AKNMigration):
 
     def migrate_act(self, act, doc, mappings):
         nsmap = {'a': act.namespace}
+        prefix_mappings = {}
 
         for elem in act.root.xpath('/a:akomaNtoso/a:components', namespaces=nsmap):
             elem.tag = f'{{{act.namespace}}}attachments'
@@ -218,9 +219,13 @@ class ComponentSchedulesToAttachments(AKNMigration):
 
             for i, att in enumerate(elem.xpath('a:component[a:doc]', namespaces=nsmap)):
                 att.tag = f'{{{act.namespace}}}attachment'
-                old_id = att.get('id')
                 new_id = f'att_{i + 1}'
-                self.safe_update(att, mappings, old_id, new_id)
+                att.set("id", new_id)
+                old = att.doc.get("name")
+
+                # ignore duplicates: hrefs and annotations will point to the first instance
+                if old not in prefix_mappings:
+                    prefix_mappings[old] = new_id
 
                 # heading and subheading
                 for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=nsmap):
@@ -237,6 +242,19 @@ class ComponentSchedulesToAttachments(AKNMigration):
 
                 # remove hcontainer
                 att.doc.mainBody.remove(hcontainer)
+
+        # update the prefixes of the anchor ids of all annotations on the document
+        # (only when dealing with document objects)
+        # schedule1/paragraph0 > att_2/paragraph0
+        if doc:
+            for annotation in doc.annotations.all():
+                if "/" in annotation.anchor_id:
+                    pre, post = annotation.anchor_id.split("/", 1)
+                    new_pre = prefix_mappings[pre]
+                    annotation.anchor_id = f"{new_pre}/{post}"
+                    annotation.save()
+
+            return prefix_mappings
 
 
 class AKNeId(AKNMigration):

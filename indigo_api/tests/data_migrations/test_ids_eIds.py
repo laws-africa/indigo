@@ -20,7 +20,7 @@ class MigrationTestCase(TestCase):
     def test_safe_update(self):
         migration = AKNMigration()
         element = "foo"
-        mappings = {"main": {"ABC": "XYZ"}}
+        mappings = {"ABC": "XYZ"}
         with self.assertRaises(AssertionError):
             migration.safe_update(element, mappings, "ABC", "DEF")
 
@@ -33,7 +33,7 @@ class MigrationTestCase(TestCase):
             - HrefMigration
             - AnnotationsMigration
         """
-        mappings = {"main": {}, "schedules": {}}
+        mappings = {}
         doc = Document(title="Air Quality Management", frbr_uri="/akn/za/act/2014/10", work=self.work, language=self.eng, expression_date=date(2016, 8, 17), created_by_user_id=1, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -445,7 +445,7 @@ class MigrationTestCase(TestCase):
         cobalt_doc = Act(doc.document_xml)
         UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
         CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
-        ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
+        ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
         AKNeId().migrate_act(cobalt_doc, mappings)
         HrefMigration().migrate_act(cobalt_doc, mappings)
         AnnotationsMigration().migrate_act(doc, mappings)
@@ -839,261 +839,255 @@ class MigrationTestCase(TestCase):
 
         # check mappings
         self.assertDictEqual({
-            "main": {
-                    "section-1.paragraph0": "section-1.hcontainer_1",
-                    "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
-                    "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
-                    "section-1.paragraph0.list0.b": "section-1.hcontainer_1.list0.b",
-                    "section-1.paragraph0.list0.b.list0": "section-1.hcontainer_1.list0.b.list0",
-                    "section-1.paragraph0.list0.b.list0.i": "section-1.hcontainer_1.list0.b.list0.i",
-                    "section-1.paragraph0.list0.b.list0.ii": "section-1.hcontainer_1.list0.b.list0.ii",
-                    "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
-                    "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
-                    "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
-                    "section-2.paragraph0": "section-2.hcontainer_1",
-                    "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
-                    "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
-                    "section-2.paragraph0.list0.a.list0": "section-2.hcontainer_1.list0.a.list0",
-                    "section-2.paragraph0.list0.a.list0.i": "section-2.hcontainer_1.list0.a.list0.i",
-                    "section-2.paragraph1": "section-2.hcontainer_2",
-                    "section-35.paragraph0": "section-35.hcontainer_2",
-                    "schedule1.paragraph0": "schedule1.hcontainer_2",
-                    "schedule1.paragraph1": "schedule1.hcontainer_4",
-                    "chapter-XI.crossheading-0": "chapter-XI.hcontainer_1",
-                    "section-34.crossheading-0": "section-34.hcontainer_1",
-                    "section-35.crossheading-0": "section-35.hcontainer_1",
-                    "schedule1.crossheading-0": "schedule1.hcontainer_1",
-                    "schedule1.crossheading-1": "schedule1.hcontainer_3",
-                    "schedule2.paragraph0": "schedule2.hcontainer_1",
-                    "schedule2.crossheading-0": "schedule2.hcontainer_2",
-                    "schedule2.crossheading-1": "schedule2.hcontainer_3",
-                    "schedule2.crossheading-2": "schedule2.hcontainer_4",
-                    "schedule1.paragraph-1": "paragraph-1",
-                    "schedule1.paragraph-2": "paragraph-2",
-                    "schedule1.paragraph-3": "paragraph-3",
-                    "schedule1.paragraph-4": "paragraph-4",
-                    "schedule1.hcontainer_1": "hcontainer_1",
-                    "schedule1.hcontainer_2": "hcontainer_2",
-                    "schedule1.hcontainer_3": "hcontainer_3",
-                    "schedule1.hcontainer_4": "hcontainer_4",
-                    "schedule2.hcontainer_1": "hcontainer_1",
-                    "schedule2.paragraph-1": "paragraph-1",
-                    "schedule2.paragraph-2": "paragraph-2",
-                    "schedule2.hcontainer_2": "hcontainer_2",
-                    "schedule2.paragraph-3": "paragraph-3",
-                    "schedule2.hcontainer_3": "hcontainer_3",
-                    "schedule2.hcontainer_4": "hcontainer_4",
-                    "schedule2.paragraph-6": "paragraph-6",
-                    "schedule2.paragraph-7": "paragraph-7",
-                    "schedule2.paragraph-8": "paragraph-8",
-                    "chapter-I": "chp_I",
-                    "section-1": "sec_1",
-                    "section-1.hcontainer_1": "sec_1.hcontainer_1",
-                    "sec_1.hcontainer_1": "sec_1__hcontainer_1",
+            "component-schedule1": "att_1",
+            "component-schedule2": "att_2",
+            "section-1.paragraph0": "section-1.hcontainer_1",
+            "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
+            "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
+            "section-1.paragraph0.list0.b": "section-1.hcontainer_1.list0.b",
+            "section-1.paragraph0.list0.b.list0": "section-1.hcontainer_1.list0.b.list0",
+            "section-1.paragraph0.list0.b.list0.i": "section-1.hcontainer_1.list0.b.list0.i",
+            "section-1.paragraph0.list0.b.list0.ii": "section-1.hcontainer_1.list0.b.list0.ii",
+            "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
+            "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
+            "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
+            "section-2.paragraph0": "section-2.hcontainer_1",
+            "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
+            "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
+            "section-2.paragraph0.list0.a.list0": "section-2.hcontainer_1.list0.a.list0",
+            "section-2.paragraph0.list0.a.list0.i": "section-2.hcontainer_1.list0.a.list0.i",
+            "section-2.paragraph1": "section-2.hcontainer_2",
+            "section-35.paragraph0": "section-35.hcontainer_2",
+            "schedule1.paragraph0": "schedule1.hcontainer_2",
+            "schedule1.paragraph1": "schedule1.hcontainer_4",
+            "chapter-XI.crossheading-0": "chapter-XI.hcontainer_1",
+            "section-34.crossheading-0": "section-34.hcontainer_1",
+            "section-35.crossheading-0": "section-35.hcontainer_1",
+            "schedule1.crossheading-0": "schedule1.hcontainer_1",
+            "schedule1.crossheading-1": "schedule1.hcontainer_3",
+            "schedule2.paragraph0": "schedule2.hcontainer_1",
+            "schedule2.crossheading-0": "schedule2.hcontainer_2",
+            "schedule2.crossheading-1": "schedule2.hcontainer_3",
+            "schedule2.crossheading-2": "schedule2.hcontainer_4",
+            "schedule1.paragraph-1": "paragraph-1",
+            "schedule1.paragraph-2": "paragraph-2",
+            "schedule1.paragraph-3": "paragraph-3",
+            "schedule1.paragraph-4": "paragraph-4",
+            "schedule1.hcontainer_1": "hcontainer_1",
+            "schedule1.hcontainer_2": "hcontainer_2",
+            "schedule1.hcontainer_3": "hcontainer_3",
+            "schedule1.hcontainer_4": "hcontainer_4",
+            "schedule2.hcontainer_1": "hcontainer_1",
+            "schedule2.paragraph-1": "paragraph-1",
+            "schedule2.paragraph-2": "paragraph-2",
+            "schedule2.hcontainer_2": "hcontainer_2",
+            "schedule2.paragraph-3": "paragraph-3",
+            "schedule2.hcontainer_3": "hcontainer_3",
+            "schedule2.hcontainer_4": "hcontainer_4",
+            "schedule2.paragraph-6": "paragraph-6",
+            "schedule2.paragraph-7": "paragraph-7",
+            "schedule2.paragraph-8": "paragraph-8",
+            "chapter-I": "chp_I",
+            "section-1": "sec_1",
+            "section-1.hcontainer_1": "sec_1.hcontainer_1",
+            "sec_1.hcontainer_1": "sec_1__hcontainer_1",
 
-                    "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
-                    "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
-                    "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
+            "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
+            "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
+            "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
 
-                    "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
-                    "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
-                    "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
-                    "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
-                    'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
-                    'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
-                    'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
-                    'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
+            "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
+            "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
+            "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
+            "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
+            'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
+            'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
+            'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
+            'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
 
-                    "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
-                    "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
-                    "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
-                    "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
-                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
-                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
+            "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
+            "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
+            "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
+            "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
+            'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
+            'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
 
-                    "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
-                    "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
-                    "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
-                    "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
-                    "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
+            "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
+            "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
+            "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
+            "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
+            "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
 
-                    "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
-                    "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
-                    "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
-                    "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
-                    "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
-                    "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
+            "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
+            "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
+            "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
+            "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
+            "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
+            "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
 
-                    "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
-                    "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
-                    "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
-                    "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
-                    "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
-                    "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
-                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
-                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
+            "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
+            "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
+            "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
+            "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
+            "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
+            "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
+            'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
+            'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
 
-                    "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
-                    "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
-                    "sec_1.hcontainer_1.list_4": "sec_1__hcontainer_1__list_4",
+            "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
+            "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
+            "sec_1.hcontainer_1.list_4": "sec_1__hcontainer_1__list_4",
 
-                    "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
-                    "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
-                    "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
-                    "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
-                    'sec_1.hcontainer_1.list_4.item_a__term_1': 'sec_1__hcontainer_1__list_4__item_a__term_1',
-                    'sec_1.hcontainer_1.list_4.item_a__term_2': 'sec_1__hcontainer_1__list_4__item_a__term_2',
+            "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
+            "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
+            "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
+            "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
+            'sec_1.hcontainer_1.list_4.item_a__term_1': 'sec_1__hcontainer_1__list_4__item_a__term_1',
+            'sec_1.hcontainer_1.list_4.item_a__term_2': 'sec_1__hcontainer_1__list_4__item_a__term_2',
 
-                    "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
-                    "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
-                    "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
-                    "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
-                    'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
-                    'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
+            "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
+            "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
+            "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
+            "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
+            'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
+            'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
 
-                    "section-2": "sec_2",
+            "section-2": "sec_2",
 
-                    "section-2.hcontainer_1": "sec_2.hcontainer_1",
-                    "sec_2.hcontainer_1": "sec_2__hcontainer_1",
+            "section-2.hcontainer_1": "sec_2.hcontainer_1",
+            "sec_2.hcontainer_1": "sec_2__hcontainer_1",
 
-                    "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
-                    "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
-                    "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
+            "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
+            "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
+            "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
 
-                    "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
-                    "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
-                    "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
-                    "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
+            "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
+            "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
+            "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
+            "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
 
-                    "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
-                    "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
-                    "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
-                    "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
-                    "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
+            "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
+            "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
+            "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
+            "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
+            "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
 
-                    "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
-                    "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
-                    "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
-                    "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
-                    "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
-                    "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
+            "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
+            "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
+            "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
+            "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
+            "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
+            "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
 
-                    "section-2.hcontainer_2": "sec_2.hcontainer_2",
-                    "sec_2.hcontainer_2": "sec_2__hcontainer_2",
+            "section-2.hcontainer_2": "sec_2.hcontainer_2",
+            "sec_2.hcontainer_2": "sec_2__hcontainer_2",
 
-                    "section-4": "sec_4",
-                    "section-4.1": "sec_4.1",
-                    "sec_4.1": "sec_4.subsec_1",
-                    "sec_4.subsec_1": "sec_4__subsec_1",
+            "section-4": "sec_4",
+            "section-4.1": "sec_4.1",
+            "sec_4.1": "sec_4.subsec_1",
+            "sec_4.subsec_1": "sec_4__subsec_1",
 
-                    "section-4.2": "sec_4.2",
-                    "sec_4.2": "sec_4.subsec_2",
-                    "sec_4.subsec_2": "sec_4__subsec_2",
+            "section-4.2": "sec_4.2",
+            "sec_4.2": "sec_4.subsec_2",
+            "sec_4.subsec_2": "sec_4__subsec_2",
 
-                    "section-6": "sec_6",
-                    "section-6.3": "sec_6.3",
-                    "sec_6.3": "sec_6.subsec_3",
-                    "sec_6.subsec_3": "sec_6__subsec_3",
+            "section-6": "sec_6",
+            "section-6.3": "sec_6.3",
+            "sec_6.3": "sec_6.subsec_3",
+            "sec_6.subsec_3": "sec_6__subsec_3",
 
-                    "section-6.3.list0": "sec_6.3.list0",
-                    "sec_6.3.list0": "sec_6.3.list_1",
-                    "sec_6.3.list_1": "sec_6.subsec_3.list_1",
-                    "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
+            "section-6.3.list0": "sec_6.3.list0",
+            "sec_6.3.list0": "sec_6.3.list_1",
+            "sec_6.3.list_1": "sec_6.subsec_3.list_1",
+            "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
 
-                    "section-6.3.list0.a": "sec_6.3.list0.a",
-                    "sec_6.3.list0.a": "sec_6.3.list_1.a",
-                    "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
-                    "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
-                    "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
+            "section-6.3.list0.a": "sec_6.3.list0.a",
+            "sec_6.3.list0.a": "sec_6.3.list_1.a",
+            "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
+            "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
+            "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
 
-                    "chapter-XI": "chp_XI",
-                    "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
-                    "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
+            "chapter-XI": "chp_XI",
+            "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
+            "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
 
-                    "section-33": "sec_33",
-                    "section-33.1": "sec_33.1",
-                    "sec_33.1": "sec_33.subsec_1",
-                    "sec_33.subsec_1": "sec_33__subsec_1",
+            "section-33": "sec_33",
+            "section-33.1": "sec_33.1",
+            "sec_33.1": "sec_33.subsec_1",
+            "sec_33.subsec_1": "sec_33__subsec_1",
 
-                    "section-33.6": "sec_33.6",
-                    "sec_33.6": "sec_33.subsec_6",
-                    "sec_33.subsec_6": "sec_33__subsec_6",
+            "section-33.6": "sec_33.6",
+            "sec_33.6": "sec_33.subsec_6",
+            "sec_33.subsec_6": "sec_33__subsec_6",
 
-                    "section-33.6.list0": "sec_33.6.list0",
-                    "sec_33.6.list0": "sec_33.6.list_1",
-                    "sec_33.6.list_1": "sec_33.subsec_6.list_1",
-                    "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
+            "section-33.6.list0": "sec_33.6.list0",
+            "sec_33.6.list0": "sec_33.6.list_1",
+            "sec_33.6.list_1": "sec_33.subsec_6.list_1",
+            "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
 
-                    "section-33.6.list0.a": "sec_33.6.list0.a",
-                    "sec_33.6.list0.a": "sec_33.6.list_1.a",
-                    "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
-                    "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
-                    "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
+            "section-33.6.list0.a": "sec_33.6.list0.a",
+            "sec_33.6.list0.a": "sec_33.6.list_1.a",
+            "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
+            "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
+            "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
 
-                    "section-33.6.list0.b": "sec_33.6.list0.b",
-                    "sec_33.6.list0.b": "sec_33.6.list_1.b",
-                    "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
-                    "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
-                    "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
+            "section-33.6.list0.b": "sec_33.6.list0.b",
+            "sec_33.6.list0.b": "sec_33.6.list_1.b",
+            "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
+            "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
+            "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
 
-                    "section-34": "sec_34",
-                    "section-34.1": "sec_34.1",
-                    "sec_34.1": "sec_34.subsec_1",
-                    "sec_34.subsec_1": "sec_34__subsec_1",
+            "section-34": "sec_34",
+            "section-34.1": "sec_34.1",
+            "sec_34.1": "sec_34.subsec_1",
+            "sec_34.subsec_1": "sec_34__subsec_1",
 
-                    "section-34.2": "sec_34.2",
-                    "sec_34.2": "sec_34.subsec_2",
-                    "sec_34.subsec_2": "sec_34__subsec_2",
+            "section-34.2": "sec_34.2",
+            "sec_34.2": "sec_34.subsec_2",
+            "sec_34.subsec_2": "sec_34__subsec_2",
 
-                    "section-34.hcontainer_1": "sec_34.hcontainer_1",
-                    "sec_34.hcontainer_1": "sec_34__hcontainer_1",
+            "section-34.hcontainer_1": "sec_34.hcontainer_1",
+            "sec_34.hcontainer_1": "sec_34__hcontainer_1",
 
-                    "section-35": "sec_35",
-                    "section-35.hcontainer_1": "sec_35.hcontainer_1",
-                    "sec_35.hcontainer_1": "sec_35__hcontainer_1",
-                    "section-35.hcontainer_2": "sec_35.hcontainer_2",
-                    "sec_35.hcontainer_2": "sec_35__hcontainer_2",
+            "section-35": "sec_35",
+            "section-35.hcontainer_1": "sec_35.hcontainer_1",
+            "sec_35.hcontainer_1": "sec_35__hcontainer_1",
+            "section-35.hcontainer_2": "sec_35.hcontainer_2",
+            "sec_35.hcontainer_2": "sec_35__hcontainer_2",
 
-                    "paragraph-4": "para_4",
-                    "paragraph-1": "para_1",
-                    "paragraph-2": "para_2",
-                    "paragraph-3": "para_3",
-                    "paragraph-6": "para_6",
-                    "paragraph-7": "para_7",
-                    "paragraph-8": "para_8",
+            "paragraph-4": "para_4",
+            "paragraph-1": "para_1",
+            "paragraph-2": "para_2",
+            "paragraph-3": "para_3",
+            "paragraph-6": "para_6",
+            "paragraph-7": "para_7",
+            "paragraph-8": "para_8",
 
-                    'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
-                    'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
-                    'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
-                    'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
-                    'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
-                    'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
-                    'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
-                    'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
-                    'trm37': 'sec_1.hcontainer_1.list_4__term_1',
-                    'trm38': 'sec_1.hcontainer_1.list_4.item_a__term_1',
-                    'trm39': 'sec_1.hcontainer_1.list_4.item_a__term_2',
-                    'trm40': 'sec_1.hcontainer_1.list_4.item_b__term_1',
-            },
-            "schedules": {
-                "schedule1": "att_1",
-                "schedule2": "att_2",
-            },
-        },
-            mappings
-        )
+            'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
+            'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
+            'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
+            'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
+            'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
+            'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
+            'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
+            'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
+            'trm37': 'sec_1.hcontainer_1.list_4__term_1',
+            'trm38': 'sec_1.hcontainer_1.list_4.item_a__term_1',
+            'trm39': 'sec_1.hcontainer_1.list_4.item_a__term_2',
+            'trm40': 'sec_1.hcontainer_1.list_4.item_b__term_1',
+        }, mappings)
 
         # check annotations
         new_annotations = doc.annotations.all()
         self.assertEqual(len(new_annotations), 12)
         for annotation in new_annotations:
-            self.assertNotIn(annotation.anchor_id, mappings["main"].keys())
+            self.assertNotIn(annotation.anchor_id, mappings.keys())
             self.assertNotIn(annotation.anchor_id, annotation_anchors.keys())
             if "/" in annotation.anchor_id:
                 post = annotation.anchor_id.split("/", 1)[-1]
-                self.assertIn(post, mappings["main"].values())
+                self.assertIn(post, mappings.values())
             else:
-                self.assertIn(annotation.anchor_id, mappings["main"].values())
+                self.assertIn(annotation.anchor_id, mappings.values())
             self.assertIn(annotation.anchor_id, annotation_anchors.values())
 
     def test_para_to_hcontainer(self):
@@ -1314,8 +1308,9 @@ class MigrationTestCase(TestCase):
   </components>
 </akomaNtoso>
     """)
-        migration.migrate_document(doc)
-        doc.refresh_xml()
+        cobalt_doc = Act(doc.document_xml)
+        migration.migrate_act(cobalt_doc, mappings={})
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
@@ -1529,8 +1524,9 @@ class MigrationTestCase(TestCase):
       </doc>
     </component>
   </components>
-</akomaNtoso>""",
-            doc.document_xml)
+</akomaNtoso>
+""",
+            output)
 
     def test_component_to_attachment(self):
         migration = ComponentSchedulesToAttachments()
@@ -1578,8 +1574,9 @@ class MigrationTestCase(TestCase):
     </component>
   </components>
 </akomaNtoso>""")
-        migration.migrate_document(doc)
-        xml = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        cobalt_doc = Act(doc.document_xml)
+        migration.migrate_act(cobalt_doc, doc, mappings={})
+        xml = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual("""<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
     <meta/>
@@ -1823,8 +1820,9 @@ class MigrationTestCase(TestCase):
     </body>
   </act>
 </akomaNtoso>""")
-        migration.migrate_document(doc)
-        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        cobalt_doc = Act(doc.document_xml)
+        migration.migrate_act(cobalt_doc, mappings={})
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -2065,8 +2063,9 @@ class MigrationTestCase(TestCase):
     </body>
   </act>
 </akomaNtoso>""")
-        migration.migrate_document(doc)
-        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        cobalt_doc = Act(doc.document_xml)
+        migration.migrate_act(cobalt_doc, mappings={})
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -2580,8 +2579,9 @@ class MigrationTestCase(TestCase):
     </attachments>
   </act>
 </akomaNtoso>""")
-        migration.migrate_document(doc)
-        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        cobalt_doc = Act(doc.document_xml)
+        migration.migrate_act(cobalt_doc, mappings={})
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
@@ -3082,8 +3082,9 @@ class MigrationTestCase(TestCase):
     </body>
   </act>
 </akomaNtoso>""")
-        migration.migrate_document(doc)
-        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+        cobalt_doc = Act(doc.document_xml)
+        migration.migrate_act(cobalt_doc, mappings={})
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -3115,7 +3116,7 @@ class MigrationTestCase(TestCase):
     def test_href(self):
         """ checks that (only) internal section references are updated
         """
-        mappings = {"main": {}, "schedules": {}}
+        mappings = {}
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">

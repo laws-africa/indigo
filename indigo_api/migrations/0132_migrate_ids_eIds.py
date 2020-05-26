@@ -11,13 +11,13 @@ from indigo_api.data_migrations import CrossheadingToHcontainer, UnnumberedParag
 from cobalt import Act
 
 
-def update_xml(xml):
+def update_xml(xml, doc=None):
     # eg: "section-1" => "sec_1"
     mappings = {}
     cobalt_doc = Act(xml)
-    CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
     UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
-    ComponentSchedulesToAttachments().migrate_act(cobalt_doc, mappings)
+    CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
+    ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
     AKNeId().migrate_act(cobalt_doc, mappings)
     HrefMigration().migrate_act(cobalt_doc, mappings)
     return cobalt_doc.to_xml().decode("utf-8"), mappings
@@ -29,7 +29,7 @@ def forward(apps, schema_editor):
     ct_doc = ContentType.objects.get_for_model(Document)
 
     for document in Document.objects.using(db_alias).all():
-        xml, mappings = update_xml(document.document_xml)
+        xml, mappings = update_xml(document.document_xml, document)
         document.document_xml = xml
         AnnotationsMigration().migrate_act(document, mappings)
         document.save()
@@ -38,7 +38,8 @@ def forward(apps, schema_editor):
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
-            data[0]['fields']['document_xml'] = update_xml(data[0]['fields']['document_xml'])
+            xml, mappings = update_xml(data[0]['fields']['document_xml'])
+            data[0]['fields']['document_xml'] = xml
             version.serialized_data = json.dumps(data)
             version.save()
 

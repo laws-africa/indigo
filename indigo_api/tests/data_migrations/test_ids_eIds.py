@@ -101,15 +101,15 @@ class MigrationTestCase(TestCase):
             </content>
           </paragraph>
         </section>
-        <section id="section-2">
-          <num>2.</num>
+        <section id="section-1A">
+          <num>1A.</num>
           <heading>Application of this By-law</heading>
-          <paragraph id="section-2.paragraph0">
+          <paragraph id="section-1A.paragraph0">
             <content>
               <p>One paragraph.</p>
             </content>
           </paragraph>
-          <paragraph id="section-2.paragraph1">
+          <paragraph id="section-1A.paragraph1">
             <content>
               <p>Another paragraph.</p>
             </content>
@@ -438,10 +438,10 @@ class MigrationTestCase(TestCase):
         cobalt_doc = Act(doc.document_xml)
         UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
         CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
-        ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
+        prefix_mappings = ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
         AKNeId().migrate_act(cobalt_doc, mappings)
         HrefMigration().migrate_act(cobalt_doc, mappings)
-        AnnotationsMigration().migrate_act(doc, mappings)
+        AnnotationsMigration().migrate_act(doc, mappings, prefix_mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         today = date.today().strftime("%Y-%m-%d")
 
@@ -520,15 +520,15 @@ class MigrationTestCase(TestCase):
             </content>
           </hcontainer>
         </section>
-        <section eId="sec_2">
-          <num>2.</num>
+        <section eId="sec_1A">
+          <num>1A.</num>
           <heading>Application of this By-law</heading>
-          <hcontainer eId="sec_2__hcontainer_1">
+          <hcontainer eId="sec_1A__hcontainer_1">
             <content>
               <p>One paragraph.</p>
             </content>
           </hcontainer>
-          <hcontainer eId="sec_2__hcontainer_2">
+          <hcontainer eId="sec_1A__hcontainer_2">
             <content>
               <p>Another paragraph.</p>
             </content>
@@ -832,8 +832,6 @@ class MigrationTestCase(TestCase):
 
         # check mappings
         self.assertDictEqual({
-            "component-schedule1": "att_1",
-            "component-schedule2": "att_2",
             "section-1.paragraph0": "section-1.hcontainer_1",
             "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
             "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
@@ -844,6 +842,10 @@ class MigrationTestCase(TestCase):
             "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
             "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
             "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
+
+            "section-1A.paragraph0": "section-1A.hcontainer_1",
+            "section-1A.paragraph1": "section-1A.hcontainer_2",
+
             "section-2.paragraph0": "section-2.hcontainer_1",
             "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
             "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
@@ -944,6 +946,12 @@ class MigrationTestCase(TestCase):
             "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
             'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
             'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
+
+            "section-1A": "sec_1A",
+            "section-1A.hcontainer_1": "sec_1A.hcontainer_1",
+            "sec_1A.hcontainer_1": "sec_1A__hcontainer_1",
+            "section-1A.hcontainer_2": "sec_1A.hcontainer_2",
+            "sec_1A.hcontainer_2": "sec_1A__hcontainer_2",
 
             "section-2": "sec_2",
 

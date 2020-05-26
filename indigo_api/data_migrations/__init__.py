@@ -1,7 +1,10 @@
+import logging
 import re
 from collections import Counter
 
 from indigo.xmlutils import rewrite_ids
+
+log = logging.getLogger(__name__)
 
 
 class AKNMigration(object):
@@ -11,12 +14,14 @@ class AKNMigration(object):
     def safe_update(self, element, mappings, old, new):
         """ Updates ids and mappings:
         - First, check `mappings` for `old`:
-            if it's already there, check that it maps to `new`.
-        - Then, update `mappings` and rewrite_ids (unless it's already in mappings).
+            if it's already there, check that it maps to `new`. Log a warning if not.
+        - Then, rewrite_ids.
+        - If it wasn't already in, update `mappings`.
         """
         if old in mappings:
-            assert mappings[old] == new, \
-                f'new id mapping {old} to {new} differs from existing {mappings[old]}'
+            if not mappings[old] == new:
+                log.warning(f"New id mapping {old} to {new} differs from existing {mappings[old]}")
+            return rewrite_ids(element, old, new)
 
         mappings.update(rewrite_ids(element, old, new))
 

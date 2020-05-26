@@ -672,7 +672,7 @@ class MigrationTestCase(TestCase):
         <meta>
           <identification source="#slaw">
             <FRBRWork>
-              <FRBRthis value="/akn/za/act/2014/10/!!!!schedule1"/>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule1"/>
               <FRBRuri value="/akn/za/act/2014/10"/>
               <FRBRalias value="Schedule 1"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
@@ -680,14 +680,14 @@ class MigrationTestCase(TestCase):
               <FRBRcountry value="za"/>
             </FRBRWork>
             <FRBRExpression>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule1"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
               <FRBRlanguage language="eng"/>
             </FRBRExpression>
             <FRBRManifestation>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule1"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="2019-12-05" name="Generation"/>
               <FRBRauthor href="#slaw"/>
@@ -753,7 +753,7 @@ class MigrationTestCase(TestCase):
         <meta>
           <identification source="#slaw">
             <FRBRWork>
-              <FRBRthis value="/akn/za/act/2014/10/!!!!schedule2"/>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
               <FRBRuri value="/akn/za/act/2014/10"/>
               <FRBRalias value="Schedule 2"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
@@ -761,14 +761,14 @@ class MigrationTestCase(TestCase):
               <FRBRcountry value="za"/>
             </FRBRWork>
             <FRBRExpression>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule2"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
               <FRBRlanguage language="eng"/>
             </FRBRExpression>
             <FRBRManifestation>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!!!!schedule2"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="2019-12-05" name="Generation"/>
               <FRBRauthor href="#slaw"/>

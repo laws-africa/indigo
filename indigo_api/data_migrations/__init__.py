@@ -263,8 +263,6 @@ class AKNeId(AKNMigration):
     e.g. "sec_2" instead of "section-2"
     """
     basic_replacements = {
-        # TODO: make sure all have been added
-        # TODO: add a test for each type
         "chapter": (r"\bchapter-", "chp_"),
         "part": (r"\bpart-", "part_"),
         "subpart": (r"\bsubpart-", "subpart_"),
@@ -279,12 +277,8 @@ class AKNeId(AKNMigration):
     }
 
     complex_replacements = {
-        # e.g. sec_3a.2A.4.1 --> sec_3a.subsec_2A-4-1
-        "subsection": (re.compile(r"^[^.]+(?P<num>(\.\d[\dA-Za-z]*)+)$"), "subsec_"),
-        # e.g. sec_3a.subsec_2-4-1.list_0.b --> sec_3a.subsec_2-4-1.list_0.item_b
-        # or sec_3a.subsec_2-4-1.list_0.3.1 --> sec_3a.subsec_2-4-1.list_0.item_3-1
-        # or sec_4.subsec_4.list_0.item_c.list_0.i --> sec_4.subsec_4.list_0.item_c.list_0.item_i
-        "item": (re.compile(r"^([^.]+\.)+list_\d+(?P<num>(\.[\da-zA-Z]+)+)$"), "item_"),
+        "subsection": "subsec_",
+        "item": "item_",
     }
 
     def migrate_act(self, doc, mappings):
@@ -310,7 +304,7 @@ class AKNeId(AKNMigration):
                 self.safe_update(node, mappings, old_id, new_id)
 
         # more complex replacements
-        for element, (pattern, replacement) in self.complex_replacements.items():
+        for element, replacement in self.complex_replacements.items():
             for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
                 old_id = node.get("id")
                 # note: this assumes that all subsections and items have <num>s, which _should_ be true

@@ -6,22 +6,15 @@ from reversion.models import Version
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-from indigo_api.data_migrations import CrossheadingToHcontainer, UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId, HrefMigration, AnnotationsMigration
+from indigo_api.data_migrations import AKNeId
 
 from cobalt import Act
 
 
 def update_xml(xml, doc=None):
     # eg: "section-1" => "sec_1"
-    mappings = {}
     cobalt_doc = Act(xml)
-    UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
-    CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
-    prefix_mappings = ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
-    AKNeId().migrate_act(cobalt_doc, mappings)
-    HrefMigration().migrate_act(cobalt_doc, mappings)
-    if doc:
-        AnnotationsMigration().migrate_act(doc, mappings, prefix_mappings)
+    AKNeId().migrate_act(cobalt_doc, doc)
 
     return cobalt_doc.to_xml().decode("utf-8")
 

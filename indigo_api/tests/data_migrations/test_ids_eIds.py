@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from cobalt import Act
 
-from indigo_api.data_migrations import AKNMigration, CrossheadingToHcontainer, UnnumberedParagraphsToHcontainer, ComponentSchedulesToAttachments, AKNeId, HrefMigration, AnnotationsMigration
+from indigo_api.data_migrations import AKNeId
 from indigo_api.models import Document, Work, Annotation, Language
 
 
@@ -18,15 +18,6 @@ class MigrationTestCase(TestCase):
         self.eng = Language.for_code('eng')
 
     def test_full_migration(self):
-        """ Include tests for:
-            - CrossheadingToHcontainer
-            - UnnumberedParagraphsToHcontainer
-            - ComponentSchedulesToAttachments
-            - AKNeId
-            - HrefMigration
-            - AnnotationsMigration
-        """
-        mappings = {}
         doc = Document(title="Air Quality Management", frbr_uri="/akn/za/act/2014/10", work=self.work, language=self.eng, expression_date=date(2016, 8, 17), created_by_user_id=1, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -436,12 +427,7 @@ class MigrationTestCase(TestCase):
             annotation.save()
 
         cobalt_doc = Act(doc.document_xml)
-        UnnumberedParagraphsToHcontainer().migrate_act(cobalt_doc, mappings)
-        CrossheadingToHcontainer().migrate_act(cobalt_doc, mappings)
-        prefix_mappings = ComponentSchedulesToAttachments().migrate_act(cobalt_doc, doc, mappings)
-        AKNeId().migrate_act(cobalt_doc, mappings)
-        HrefMigration().migrate_act(cobalt_doc, mappings)
-        AnnotationsMigration().migrate_act(doc, mappings, prefix_mappings)
+        mappings = AKNeId().migrate_act(cobalt_doc, doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         today = date.today().strftime("%Y-%m-%d")
 
@@ -1092,8 +1078,6 @@ class MigrationTestCase(TestCase):
             self.assertIn(annotation.anchor_id, annotation_anchors.values())
 
     def test_para_to_hcontainer(self):
-        migration = UnnumberedParagraphsToHcontainer()
-
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
@@ -1310,7 +1294,9 @@ class MigrationTestCase(TestCase):
 </akomaNtoso>
     """)
         cobalt_doc = Act(doc.document_xml)
-        migration.migrate_act(cobalt_doc, mappings={})
+        migration = AKNeId()
+        migration.nsmap = {"a": cobalt_doc.namespace}
+        migration.paras_to_hcontainers(cobalt_doc, mappings={})
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
@@ -1530,8 +1516,6 @@ class MigrationTestCase(TestCase):
             output)
 
     def test_component_to_attachment(self):
-        migration = ComponentSchedulesToAttachments()
-
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
@@ -1576,8 +1560,10 @@ class MigrationTestCase(TestCase):
   </components>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        migration.migrate_act(cobalt_doc, doc, mappings={})
-        xml = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
+        migration = AKNeId()
+        migration.nsmap = {"a": cobalt_doc.namespace}
+        migration.components_to_attachments(cobalt_doc, doc, mappings={}, prefix_mappings={})
+        output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual("""<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
     <meta/>
@@ -1616,15 +1602,13 @@ class MigrationTestCase(TestCase):
   </attachments>
 </act>
   </akomaNtoso>
-""", xml)
+""", output)
 
     def test_eid_basic(self):
         """ includes basic checks for
         meta elements,
         chapter, part, subpart, section, subsection, list, item
         """
-        migration = AKNeId()
-
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -1822,7 +1806,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        migration.migrate_act(cobalt_doc, mappings={})
+        AKNeId().migrate_act(cobalt_doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
@@ -1966,7 +1950,7 @@ class MigrationTestCase(TestCase):
             <subsection eId="sec_33__subsec_1">
               <num>(1)</num>
               <content>
-                <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+                <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
               </content>
             </subsection>
             <subsection eId="sec_33__subsec_6">
@@ -2027,7 +2011,6 @@ class MigrationTestCase(TestCase):
     def test_eid_item(self):
         """ includes checks for list, item, and nested lists
         """
-        migration = AKNeId()
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -2065,7 +2048,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        migration.migrate_act(cobalt_doc, mappings={})
+        AKNeId().migrate_act(cobalt_doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
@@ -2111,7 +2094,6 @@ class MigrationTestCase(TestCase):
         """ includes checks for
         Schedules, annexures, chapter, part, crossheading, anonymous and numbered paragraphs, article, section
         """
-        migration = AKNeId()
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
@@ -2581,7 +2563,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        migration.migrate_act(cobalt_doc, mappings={})
+        AKNeId().migrate_act(cobalt_doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
@@ -3056,7 +3038,6 @@ class MigrationTestCase(TestCase):
         )
 
     def test_eid_terms(self):
-        migration = AKNeId()
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
@@ -3084,7 +3065,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        migration.migrate_act(cobalt_doc, mappings={})
+        AKNeId().migrate_act(cobalt_doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
@@ -3117,7 +3098,6 @@ class MigrationTestCase(TestCase):
     def test_href(self):
         """ checks that (only) internal section references are updated
         """
-        mappings = {}
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
@@ -3195,8 +3175,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        AKNeId().migrate_act(cobalt_doc, mappings)
-        HrefMigration().migrate_act(cobalt_doc, mappings)
+        AKNeId().migrate_act(cobalt_doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">

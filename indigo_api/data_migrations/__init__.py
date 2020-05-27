@@ -9,27 +9,7 @@ log = logging.getLogger(__name__)
 
 class AKNMigration(object):
     def migrate_document(self, document):
-        return self.migrate_act(document.doc, mappings={})
-
-    def safe_update(self, element, mappings, old, new):
-        """ Updates ids and mappings:
-        - First, check `mappings` for `old`:
-            if it's already there, check that it maps to `new`. Log a warning if not.
-        - Then, rewrite_ids.
-        - If it wasn't already in, update `mappings`.
-        """
-        if old in mappings:
-            if not mappings[old] == new:
-                log.warning(f"New id mapping {old} to {new} differs from existing {mappings[old]}")
-            return rewrite_ids(element, old, new)
-
-        mappings.update(rewrite_ids(element, old, new))
-
-    def traverse_mappings(self, mappings, old):
-        if old in mappings:
-            old = self.traverse_mappings(mappings, mappings[old])
-
-        return old
+        return self.migrate_act(document.doc)
 
 
 class ScheduleArticleToHcontainer(AKNMigration):
@@ -122,141 +102,6 @@ class UpdateAKNNamespace(AKNMigration):
         return xml
 
 
-class CrossheadingToHcontainer(AKNMigration):
-    """ Updates crossheading ids to hcontainer and numbers them from 1, e.g.
-        <hcontainer id="schedule2.crossheading-0" name="crossheading"> ->
-        <hcontainer id="schedule2.hcontainer_1" name="crossheading">
-    """
-    def migrate_act(self, act, mappings):
-        for crossheading in act.root.xpath('//a:hcontainer[@name="crossheading"]', namespaces={"a": act.namespace}):
-            # new id is based on the number of preceding hcontainer siblings
-            num = len(crossheading.xpath("preceding-sibling::a:hcontainer", namespaces={"a": act.namespace})) + 1
-            old_id = crossheading.get("id")
-            new_id = re.sub("crossheading-(\d+)$", f"hcontainer_{num}", old_id)
-            self.safe_update(crossheading, mappings, old_id, new_id)
-
-
-class UnnumberedParagraphsToHcontainer(AKNMigration):
-    """ Update all instances un-numbered paragraphs to hcontainers. Slaw generates these when
-    a block of text is encountered in a hierarchical element.
-
-    This ALSO changes the id of the element to match AKN 3 styles, but using the id attribute (not eId)
-
-    <paragraph id="section-1.paragraph0">
-      <content>
-        <p>text</p>
-      </content>
-    </paragraph>
-
-    becomes
-
-    <hcontainer id="section-1.hcontainer_1">
-      <content>
-        <p>text</p>
-      </content>
-    </hcontainer>
-    """
-    def migrate_act(self, act, mappings):
-        for para in act.root.xpath('//a:paragraph[not(a:num)]', namespaces={'a': act.namespace}):
-            para.tag = f'{{{act.namespace}}}hcontainer'
-            # new id is based on the number of preceding hcontainer siblings
-            num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces={'a': act.namespace})) + 1
-            old_id = para.get('id')
-            new_id = re.sub('paragraph(\d+)$', f'hcontainer_{num}', old_id)
-            self.safe_update(para, mappings, old_id, new_id)
-
-
-class ComponentSchedulesToAttachments(AKNMigration):
-    """ Migrates schedules stored as components to attachments, as a child of the act.
-
-    This also moves the heading and subheading out of the hcontainer
-    and into the attachment.
-
-    This ALSO changes the id of the element to match AKN 3 styles, but using the id attribute (not eId)
-
-    <akomaNtoso>
-      <act>...</act>
-      ...
-      <components>
-        <component id="component-schedule2">
-          <doc name="schedule2">
-            <meta>
-              ...
-            <mainBody>
-              <hcontainer id="schedule2" name="schedule">
-                <heading>Schedule 2</heading>
-                <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
-                <paragraph id="schedule2.paragraph0">
-                  <content>
-                    ...
-
-    becomes
-
-    <akomaNtoso>
-      <act>
-        ...
-        <attachments>
-          <attachment id="att_1">
-            <heading>Schedule 2</heading>
-            <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
-            <doc name="schedule">
-              <meta>
-                ...
-              <mainBody>
-                <paragraph id="schedule2.paragraph0">
-                  <content>
-                    ...
-    """
-
-    def migrate_act(self, act, doc, mappings):
-        nsmap = {'a': act.namespace}
-        prefix_mappings = {}
-
-        for elem in act.root.xpath('/a:akomaNtoso/a:components', namespaces=nsmap):
-            elem.tag = f'{{{act.namespace}}}attachments'
-            # move to last child of act element
-            act.main.append(elem)
-
-            for i, att in enumerate(elem.xpath('a:component[a:doc]', namespaces=nsmap)):
-                att.tag = f'{{{act.namespace}}}attachment'
-                new_id = f'att_{i + 1}'
-                att.set("id", new_id)
-                old = att.doc.get("name")
-
-                # ignore duplicates: hrefs and annotations will point to the first instance
-                if old not in prefix_mappings:
-                    prefix_mappings[old] = new_id
-
-                # heading and subheading
-                for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=nsmap):
-                    att.doc.addprevious(heading)
-
-                att.doc.set('name', 'schedule')
-
-                # rewrite ids
-                hcontainer = att.doc.mainBody.hcontainer
-                id = hcontainer.get('id') + "."
-                for child in hcontainer.iterchildren():
-                    hcontainer.addprevious(child)
-                    self.safe_update(child, mappings, id, '')
-
-                # remove hcontainer
-                att.doc.mainBody.remove(hcontainer)
-
-        # update the prefixes of the anchor ids of all annotations on the document
-        # (only when dealing with document objects)
-        # schedule1/paragraph0 > att_2/paragraph0
-        if doc:
-            for annotation in doc.annotations.all():
-                if "/" in annotation.anchor_id:
-                    pre, post = annotation.anchor_id.split("/", 1)
-                    new_pre = prefix_mappings[pre]
-                    annotation.anchor_id = f"{new_pre}/{post}"
-                    annotation.save()
-
-            return prefix_mappings
-
-
 class AKNeId(AKNMigration):
     """ In a document's XML, translate existing `id` attributes to `eId`
     and follow the new naming and numbering convention
@@ -281,62 +126,48 @@ class AKNeId(AKNMigration):
         "item": "item_",
     }
 
-    def migrate_act(self, doc, mappings):
+    def migrate_act(self, doc, document=None):
         """ Update the xml,
             - first by updating the values of `id` attributes as necessary,
             - and then by replacing all `id`s with `eId`s
         """
-        nsmap = {"a": doc.namespace}
+        self.nsmap = {"a": doc.namespace}
+        mappings = {}
+        prefix_mappings = {}
 
-        # basic replacements, e.g. "chapter-" to "chap_"
-        for element, (pattern, replacement) in self.basic_replacements.items():
-            for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
-                old_id = node.get("id")
-                new_id = re.sub(pattern, replacement, old_id)
-                self.safe_update(node, mappings, old_id, new_id)
+        self.paras_to_hcontainers(doc, mappings)
+        self.crossheadings_to_hcontainers(doc, mappings)
+        self.components_to_attachments(doc, document, mappings, prefix_mappings)
+        self.basics(doc, mappings)
+        self.tables_blocklists(doc, mappings)
+        self.subsections_items(doc, mappings)
+        self.term_ids(doc, mappings)
+        self.separators_eids(doc, mappings)
+        self.internal_references(doc, mappings)
+        self.annotation_anchors(document, mappings, prefix_mappings)
 
-        # add one to n (previously 0-indexed)
-        for element, (pattern, replacement) in self.add_1_replacements.items():
-            for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
-                old_id = node.get("id")
-                num = str(int(pattern.search(old_id).group("num")) + 1)
-                new_id = re.sub(pattern, replacement + num, old_id)
-                self.safe_update(node, mappings, old_id, new_id)
+        # just for tests
+        return mappings
 
-        # more complex replacements
-        for element, replacement in self.complex_replacements.items():
-            for node in doc.root.xpath(f"//a:{element}", namespaces=nsmap):
-                old_id = node.get("id")
-                # note: this assumes that all subsections and items have <num>s, which _should_ be true
-                num = node.num.text
-                num = self.clean_number(num)
-                prefix = self.get_parent_id(node)
-                new_id = f"{prefix}.{replacement}{num}"
-                self.safe_update(node, mappings, old_id, new_id)
+    def safe_update(self, element, mappings, old, new):
+        """ Updates ids and mappings:
+        - First, check `mappings` for `old`:
+            if it's already there, check that it maps to `new`. Log a warning if not.
+        - Then, rewrite_ids.
+        - If it wasn't already in, update `mappings`.
+        """
+        if old in mappings:
+            if not mappings[old] == new:
+                log.warning(f"New id mapping {old} to {new} differs from existing {mappings[old]}")
+            return rewrite_ids(element, old, new)
 
-        # generate correct term ids, based on the parent id
-        counter = Counter()
-        for node in doc.root.xpath('//a:term', namespaces=nsmap):
-            old_id = node.get('id')
-            prefix = self.get_parent_id(node)
-            # the num for this term depends on the number of preceding terms with the same prefix
-            counter[prefix] += 1
-            new_id = f'{prefix}__term_{counter[prefix]}'
-            self.safe_update(node, mappings, old_id, new_id)
+        mappings.update(rewrite_ids(element, old, new))
 
-        # finally
-        # "." separators
-        for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):
-            old_id = node.get("id")
-            if "." in old_id:
-                new_id = old_id.replace(".", "__")
-                node.set("id", new_id)
-                mappings.update({old_id: new_id})
+    def traverse_mappings(self, old, mappings):
+        if old in mappings:
+            old = self.traverse_mappings(mappings[old], mappings)
 
-        # replace all `id`s with `eId`s
-        for node in doc.root.xpath("//a:*[@id]", namespaces=nsmap):
-            node.set("eId", node.get("id"))
-            del node.attrib["id"]
+        return old
 
     def clean_number(self, num):
         # e.g. 1.3.2. / (3) / (dA) / (12 bis)
@@ -347,35 +178,201 @@ class AKNeId(AKNMigration):
         parent_id = parent.get("id")
         return parent_id if parent_id else self.get_parent_id(parent)
 
+    def paras_to_hcontainers(self, doc, mappings):
+        """ Update all instances un-numbered paragraphs to hcontainers. Slaw generates these when
+        a block of text is encountered in a hierarchical element.
 
-class HrefMigration(AKNMigration):
-    """ Update all internal cross-references in a document's XML.
-        Note: this will only update references if they still existed in the document at the time of running the previous migrations.
-        If the section referred to was removed from the document for some reason in the interim, its id won't have been updated and the href therefore won't be in `mappings`.
-        The reference would point at nothing in any case, but the nothing it points to would be an old-style id.
-    """
-    def migrate_act(self, doc, mappings):
+        This ALSO changes the id of the element to match AKN 3 styles, but using the id attribute (not eId)
+
+        <paragraph id="section-1.paragraph0">
+          <content>
+            <p>text</p>
+          </content>
+        </paragraph>
+
+        becomes
+
+        <hcontainer id="section-1.hcontainer_1">
+          <content>
+            <p>text</p>
+          </content>
+        </hcontainer>
+        """
+        for para in doc.root.xpath('//a:paragraph[not(a:num)]', namespaces=self.nsmap):
+            para.tag = f'{{{doc.namespace}}}hcontainer'
+            # new id is based on the number of preceding hcontainer siblings
+            num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces=self.nsmap)) + 1
+            old_id = para.get('id')
+            new_id = re.sub('paragraph(\d+)$', f'hcontainer_{num}', old_id)
+            self.safe_update(para, mappings, old_id, new_id)
+
+    def crossheadings_to_hcontainers(self, doc, mappings):
+        """ Update crossheading ids to hcontainer and number them from 1, e.g.
+            <hcontainer id="schedule2.crossheading-0" name="crossheading"> ->
+            <hcontainer id="schedule2.hcontainer_1" name="crossheading">
+        """
+        for crossheading in doc.root.xpath('//a:hcontainer[@name="crossheading"]', namespaces=self.nsmap):
+            # new id is based on the number of preceding hcontainer siblings
+            num = len(crossheading.xpath("preceding-sibling::a:hcontainer", namespaces=self.nsmap)) + 1
+            old_id = crossheading.get("id")
+            new_id = re.sub("crossheading-(\d+)$", f"hcontainer_{num}", old_id)
+            self.safe_update(crossheading, mappings, old_id, new_id)
+
+    def components_to_attachments(self, doc, document, mappings, prefix_mappings):
+        """ Migrates schedules stored as components to attachments, as a child of the act.
+
+        This also moves the heading and subheading out of the hcontainer
+        and into the attachment.
+
+        This ALSO changes the id of the element to match AKN 3 styles, but using the id attribute (not eId)
+
+        <akomaNtoso>
+          <act>...</act>
+          ...
+          <components>
+            <component id="component-schedule2">
+              <doc name="schedule2">
+                <meta>
+                  ...
+                <mainBody>
+                  <hcontainer id="schedule2" name="schedule">
+                    <heading>Schedule 2</heading>
+                    <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
+                    <paragraph id="schedule2.paragraph0">
+                      <content>
+                        ...
+
+        becomes
+
+        <akomaNtoso>
+          <act>
+            ...
+            <attachments>
+              <attachment id="att_1">
+                <heading>Schedule 2</heading>
+                <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
+                <doc name="schedule">
+                  <meta>
+                    ...
+                  <mainBody>
+                    <paragraph id="schedule2.paragraph0">
+                      <content>
+                        ...
+        """
+        for elem in doc.root.xpath('/a:akomaNtoso/a:components', namespaces=self.nsmap):
+            elem.tag = f'{{{doc.namespace}}}attachments'
+            # move to last child of act element
+            doc.main.append(elem)
+
+            for i, att in enumerate(elem.xpath('a:component[a:doc]', namespaces=self.nsmap)):
+                att.tag = f'{{{doc.namespace}}}attachment'
+                new_id = f'att_{i + 1}'
+                att.set("id", new_id)
+                old = att.doc.get("name")
+
+                # ignore duplicates: hrefs and annotations will point to the first instance
+                if old not in prefix_mappings:
+                    prefix_mappings[old] = new_id
+
+                # heading and subheading
+                for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=self.nsmap):
+                    att.doc.addprevious(heading)
+
+                att.doc.set('name', 'schedule')
+
+                # rewrite ids
+                hcontainer = att.doc.mainBody.hcontainer
+                id = hcontainer.get('id') + "."
+                for child in hcontainer.iterchildren():
+                    hcontainer.addprevious(child)
+                    self.safe_update(child, mappings, id, '')
+
+                # remove hcontainer
+                att.doc.mainBody.remove(hcontainer)
+
+        # update the prefixes of the anchor ids of all annotations on the document
+        # (only when dealing with document objects)
+        # schedule1/paragraph0 -> att_2/paragraph0
+        if document:
+            for annotation in document.annotations.all():
+                if "/" in annotation.anchor_id:
+                    pre, post = annotation.anchor_id.split("/", 1)
+                    new_pre = prefix_mappings[pre]
+                    annotation.anchor_id = f"{new_pre}/{post}"
+                    annotation.save()
+
+    def basics(self, doc, mappings):
+        for element, (pattern, replacement) in self.basic_replacements.items():
+            for node in doc.root.xpath(f"//a:{element}", namespaces=self.nsmap):
+                old_id = node.get("id")
+                new_id = re.sub(pattern, replacement, old_id)
+                self.safe_update(node, mappings, old_id, new_id)
+
+    def tables_blocklists(self, doc, mappings):
+        for element, (pattern, replacement) in self.add_1_replacements.items():
+            for node in doc.root.xpath(f"//a:{element}", namespaces=self.nsmap):
+                old_id = node.get("id")
+                num = str(int(pattern.search(old_id).group("num")) + 1)
+                new_id = re.sub(pattern, replacement + num, old_id)
+                self.safe_update(node, mappings, old_id, new_id)
+
+    def subsections_items(self, doc, mappings):
+        for element, replacement in self.complex_replacements.items():
+            for node in doc.root.xpath(f"//a:{element}", namespaces=self.nsmap):
+                old_id = node.get("id")
+                # note: this assumes that all subsections and items have <num>s, which _should_ be true
+                num = node.num.text
+                num = self.clean_number(num)
+                prefix = self.get_parent_id(node)
+                new_id = f"{prefix}.{replacement}{num}"
+                self.safe_update(node, mappings, old_id, new_id)
+
+    def term_ids(self, doc, mappings):
+        counter = Counter()
+        for node in doc.root.xpath('//a:term', namespaces=self.nsmap):
+            old_id = node.get('id')
+            prefix = self.get_parent_id(node)
+            # the num for this term depends on the number of preceding terms with the same prefix
+            counter[prefix] += 1
+            new_id = f'{prefix}__term_{counter[prefix]}'
+            self.safe_update(node, mappings, old_id, new_id)
+
+    def separators_eids(self, doc, mappings):
+        for node in doc.root.xpath("//a:*[@id]", namespaces=self.nsmap):
+            old_id = node.get("id")
+            if "." in old_id:
+                new_id = old_id.replace(".", "__")
+                node.set("id", new_id)
+                mappings.update({old_id: new_id})
+
+        for node in doc.root.xpath("//a:*[@id]", namespaces=self.nsmap):
+            node.set("eId", node.get("id"))
+            del node.attrib["id"]
+
+    def internal_references(self, doc, mappings):
         for node in doc.root.xpath("//a:ref[starts-with(@href, '#')]", namespaces={"a": doc.namespace}):
             ref = node.get("href").lstrip("#")
-            new_ref = self.traverse_mappings(mappings, ref)
+            new_ref = self.traverse_mappings(ref, mappings)
             node.set("href", f"#{new_ref}")
 
+    def annotation_anchors(self, document, mappings, prefix_mappings):
+        """ Update the anchor ids of all annotations on the document.
+            Assume that the prefix (if any) has already been updated.
+            e.g. att_2/paragraph0 -> att_2/hcontainer_3
+        """
+        if document:
+            for annotation in document.annotations.all():
+                if "/" in annotation.anchor_id:
+                    # att_2/crossheading-1
+                    pre, post = annotation.anchor_id.split("/", 1)
+                    old_pre = None
+                    # find old_pre based on prefix_mappings
+                    for old, new in prefix_mappings.items():
+                        if pre == new:
+                            old_pre = old
+                    new_post = self.traverse_mappings(f"{old_pre}.{post}", mappings)
+                    annotation.anchor_id = f"{pre}/{new_post}"
+                else:
+                    annotation.anchor_id = self.traverse_mappings(annotation.anchor_id, mappings)
 
-class AnnotationsMigration(AKNMigration):
-    """ Update all the annotation anchors on a Document
-    """
-    def migrate_act(self, doc, mappings, prefix_mappings):
-        for annotation in doc.annotations.all():
-            if "/" in annotation.anchor_id:
-                # att_2/crossheading-1
-                pre, post = annotation.anchor_id.split("/", 1)
-                old_pre = None
-                # find old_pre based on prefix_mappings
-                for old, new in prefix_mappings.items():
-                    if pre == new:
-                        old_pre = old
-                new_post = self.traverse_mappings(mappings, f"{old_pre}.{post}")
-                annotation.anchor_id = f"{pre}/{new_post}"
-            else:
-                annotation.anchor_id = self.traverse_mappings(mappings, annotation.anchor_id)
-            annotation.save()
+                annotation.save()

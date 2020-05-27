@@ -169,19 +169,23 @@ class AKNeId(AKNMigration):
         # just for tests
         return mappings
 
-    def safe_update(self, element, mappings, old, new):
+    def safe_update(self, element, mappings, old, new, name):
         """ Updates ids and mappings:
         - First, check `mappings` for `old`:
             if it's already there, check that it maps to `new`. Log a warning if not.
         - Then, rewrite_ids.
         - If it wasn't already in, update `mappings`.
         """
-        if old in mappings:
-            if not mappings[old] == new:
-                log.warning(f"New id mapping {old} to {new} differs from existing {mappings[old]}")
-            return rewrite_ids(element, old, new)
+        if name in mappings and old in mappings[name]:
+            if not mappings[name][old] == new:
+                log.warning(f"New id mapping {old} to {new} differs from existing {mappings[name][old]}")
+            rewrite_ids(element, old, new)
+            return
 
-        mappings.update(rewrite_ids(element, old, new))
+        if name not in mappings:
+            mappings[name] = {}
+
+        mappings[name].update(rewrite_ids(element, old, new))
 
     def traverse_mappings(self, old, mappings):
         if old in mappings:

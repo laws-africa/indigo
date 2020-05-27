@@ -328,13 +328,26 @@ class AKNeId(AKNMigration):
 
                 # rewrite ids
                 hcontainer = att.doc.mainBody.hcontainer
+                # e.g. schedule1.
                 id = hcontainer.get('id') + "."
                 for child in hcontainer.iterchildren():
+                    # move the actual xml into the attachment
                     hcontainer.addprevious(child)
-                    self.safe_update(child, mappings, id, '')
+                    # update the child's id if it has one
+                    old_id = child.get("id")
+                    if old_id:
+                        self.safe_update(child, mappings, id, '', old)
+                    else:
+                        child.set("id", id)
+                        log.warning(f"Child element had no id: {old} / {hcontainer.get('id')} / {child.tag}")
 
                 # remove hcontainer
                 att.doc.mainBody.remove(hcontainer)
+
+                # update mappings, e.g.
+                # {schedule1: {para0: hcontainer_1, etc}} -> {att_1: {para0: hcontainer_1, etc}}
+                mappings[new_id] = mappings[old]
+                del mappings[old]
 
         # update the prefixes of the anchor ids of all annotations on the document
         # (only when dealing with document objects)

@@ -199,8 +199,9 @@ class AKNeId(AKNMigration):
 
     def get_parent_id(self, node):
         parent = node.getparent()
-        parent_id = parent.get("id")
-        return parent_id if parent_id else self.get_parent_id(parent)
+        if parent is not None:
+            parent_id = parent.get("id")
+            return parent_id if parent_id else self.get_parent_id(parent)
 
     def paras_to_hcontainers(self, doc, mappings):
         """ Update all instances un-numbered paragraphs to hcontainers. Slaw generates these when

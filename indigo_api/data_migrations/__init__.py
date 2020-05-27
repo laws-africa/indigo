@@ -126,6 +126,27 @@ class AKNeId(AKNMigration):
         "item": "item_",
     }
 
+    def components(self, doc):
+        """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
+        objects.
+        """
+        components = doc.components()
+
+        if len(components) <= 1:
+            # look for old-style components / schedules
+            for component in doc.root.xpath("./a:act | ./a:components/a:component/a:doc", namespaces=self.nsmap):
+                if component.tag == f"{{{doc.namespace}}}act":
+                    name = "main"
+                else:
+                    name = component.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1].lstrip("!")
+                components[name] = component
+
+        for name, component in components.items():
+            if name == "main":
+                components["main"] = component.body
+
+        return components
+
     def migrate_act(self, doc, document=None):
         """ Update the xml,
             - first by updating the values of `id` attributes as necessary,

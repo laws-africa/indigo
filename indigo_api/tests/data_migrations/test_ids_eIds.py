@@ -408,15 +408,15 @@ class MigrationTestCase(TestCase):
             "section-2.paragraph0.list0.a.list0.i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
             "section-1.paragraph0": "sec_1__hcontainer_1",
             "chapter-XI.crossheading-0": "chp_XI__hcontainer_1",
-            "schedule1/paragraph-1": "att_1/para_1",
-            "schedule1/crossheading-0": "att_1/hcontainer_1",
-            "schedule1/paragraph0": "att_1/hcontainer_2",
-            "schedule1/crossheading-1": "att_1/hcontainer_3",
-            "schedule1/paragraph1": "att_1/hcontainer_4",
-            "schedule2/paragraph0": "att_2/hcontainer_1",
-            "schedule2/paragraph-1": "att_2/para_1",
-            "schedule2/crossheading-0": "att_2/hcontainer_2",
-            "schedule2/crossheading-1": "att_2/hcontainer_3",
+            "schedule1/schedule1.paragraph-1": "att_1/para_1",
+            "schedule1/schedule1.crossheading-0": "att_1/hcontainer_1",
+            "schedule1/schedule1.paragraph0": "att_1/hcontainer_2",
+            "schedule1/schedule1.crossheading-1": "att_1/hcontainer_3",
+            "schedule1/schedule1.paragraph1": "att_1/hcontainer_4",
+            "schedule2/schedule2.paragraph0": "att_2/hcontainer_1",
+            "schedule2/schedule2.paragraph-1": "att_2/para_1",
+            "schedule2/schedule2.crossheading-0": "att_2/hcontainer_2",
+            "schedule2/schedule2.crossheading-1": "att_2/hcontainer_3",
         }
         for anchor_id in annotation_anchors.keys():
             annotation = Annotation(
@@ -492,15 +492,15 @@ class MigrationTestCase(TestCase):
                   </blockList>
                 </item>
               </blockList>
-              <blockList refersTo="#term-nuisance" eId="sec_1__hcontainer_1__list_4">
-                <listIntroduction>"<def refersTo="#term-nuisance">nuisance</def>" means an unreasonable interference or likely interference caused by <term refersTo="#term-air_pollution" eId="sec_1__hcontainer_1__list_4__term_1">air pollution</term> which has an adverse impact on -</listIntroduction>
-                <item eId="sec_1__hcontainer_1__list_4__item_a">
+              <blockList refersTo="#term-nuisance" eId="sec_1__hcontainer_1__list_2">
+                <listIntroduction>"<def refersTo="#term-nuisance">nuisance</def>" means an unreasonable interference or likely interference caused by <term refersTo="#term-air_pollution" eId="sec_1__hcontainer_1__list_2__term_1">air pollution</term> which has an adverse impact on -</listIntroduction>
+                <item eId="sec_1__hcontainer_1__list_2__item_a">
                   <num>(a)</num>
-                  <p>the health or well-being of any <term refersTo="#term-person" eId="sec_1__hcontainer_1__list_4__item_a__term_1">person</term> or <term refersTo="#term-living_organism" eId="sec_1__hcontainer_1__list_4__item_a__term_2">living organism</term>; or</p>
+                  <p>the health or well-being of any <term refersTo="#term-person" eId="sec_1__hcontainer_1__list_2__item_a__term_1">person</term> or <term refersTo="#term-living_organism" eId="sec_1__hcontainer_1__list_2__item_a__term_2">living organism</term>; or</p>
                 </item>
-                <item eId="sec_1__hcontainer_1__list_4__item_b">
+                <item eId="sec_1__hcontainer_1__list_2__item_b">
                   <num>(b)</num>
-                  <p>the use and enjoyment by an owner or occupier of his or her property or the <term refersTo="#term-environment" eId="sec_1__hcontainer_1__list_4__item_b__term_1">environment</term>;</p>
+                  <p>the use and enjoyment by an owner or occupier of his or her property or the <term refersTo="#term-environment" eId="sec_1__hcontainer_1__list_2__item_b__term_1">environment</term>;</p>
                 </item>
               </blockList>
             </content>
@@ -651,7 +651,7 @@ class MigrationTestCase(TestCase):
         <meta>
           <identification source="#slaw">
             <FRBRWork>
-              <FRBRthis value="/akn/za/act/2014/10/!schedule1"/>
+              <FRBRthis value="/akn/za/act/2014/10/!att_1"/>
               <FRBRuri value="/akn/za/act/2014/10"/>
               <FRBRalias value="Schedule 1"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
@@ -659,14 +659,14 @@ class MigrationTestCase(TestCase):
               <FRBRcountry value="za"/>
             </FRBRWork>
             <FRBRExpression>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
               <FRBRlanguage language="eng"/>
             </FRBRExpression>
             <FRBRManifestation>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="2019-12-05" name="Generation"/>
               <FRBRauthor href="#slaw"/>
@@ -732,7 +732,7 @@ class MigrationTestCase(TestCase):
         <meta>
           <identification source="#slaw">
             <FRBRWork>
-              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
+              <FRBRthis value="/akn/za/act/2014/10/!att_2"/>
               <FRBRuri value="/akn/za/act/2014/10"/>
               <FRBRalias value="Schedule 2"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
@@ -740,14 +740,14 @@ class MigrationTestCase(TestCase):
               <FRBRcountry value="za"/>
             </FRBRWork>
             <FRBRExpression>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
               <FRBRlanguage language="eng"/>
             </FRBRExpression>
             <FRBRManifestation>
-              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
               <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
               <FRBRdate date="2019-12-05" name="Generation"/>
               <FRBRauthor href="#slaw"/>
@@ -818,270 +818,302 @@ class MigrationTestCase(TestCase):
 
         # check mappings
         self.assertDictEqual({
-            "section-1.paragraph0": "section-1.hcontainer_1",
-            "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
-            "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
-            "section-1.paragraph0.list0.b": "section-1.hcontainer_1.list0.b",
-            "section-1.paragraph0.list0.b.list0": "section-1.hcontainer_1.list0.b.list0",
-            "section-1.paragraph0.list0.b.list0.i": "section-1.hcontainer_1.list0.b.list0.i",
-            "section-1.paragraph0.list0.b.list0.ii": "section-1.hcontainer_1.list0.b.list0.ii",
-            "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
-            "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
-            "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
+            "main":
+                {
+                    "section-1.paragraph0": "section-1.hcontainer_1",
+                    "section-1.paragraph0.list0": "section-1.hcontainer_1.list0",
+                    "section-1.paragraph0.list0.a": "section-1.hcontainer_1.list0.a",
+                    "section-1.paragraph0.list0.b": "section-1.hcontainer_1.list0.b",
+                    "section-1.paragraph0.list0.b.list0": "section-1.hcontainer_1.list0.b.list0",
+                    "section-1.paragraph0.list0.b.list0.i": "section-1.hcontainer_1.list0.b.list0.i",
+                    "section-1.paragraph0.list0.b.list0.ii": "section-1.hcontainer_1.list0.b.list0.ii",
+                    "section-1.paragraph0.list3": "section-1.hcontainer_1.list3",
+                    "section-1.paragraph0.list3.a": "section-1.hcontainer_1.list3.a",
+                    "section-1.paragraph0.list3.b": "section-1.hcontainer_1.list3.b",
 
-            "section-1A.paragraph0": "section-1A.hcontainer_1",
-            "section-1A.paragraph1": "section-1A.hcontainer_2",
+                    "section-1A.paragraph0": "section-1A.hcontainer_1",
+                    "section-1A.paragraph1": "section-1A.hcontainer_2",
 
-            "section-2.paragraph0": "section-2.hcontainer_1",
-            "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
-            "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
-            "section-2.paragraph0.list0.a.list0": "section-2.hcontainer_1.list0.a.list0",
-            "section-2.paragraph0.list0.a.list0.i": "section-2.hcontainer_1.list0.a.list0.i",
-            "section-2.paragraph1": "section-2.hcontainer_2",
-            "section-35.paragraph0": "section-35.hcontainer_2",
-            "schedule1.paragraph0": "schedule1.hcontainer_2",
-            "schedule1.paragraph1": "schedule1.hcontainer_4",
-            "chapter-XI.crossheading-0": "chapter-XI.hcontainer_1",
-            "section-34.crossheading-0": "section-34.hcontainer_1",
-            "section-35.crossheading-0": "section-35.hcontainer_1",
-            "schedule1.crossheading-0": "schedule1.hcontainer_1",
-            "schedule1.crossheading-1": "schedule1.hcontainer_3",
-            "schedule2.paragraph0": "schedule2.hcontainer_1",
-            "schedule2.crossheading-0": "schedule2.hcontainer_2",
-            "schedule2.crossheading-1": "schedule2.hcontainer_3",
-            "schedule2.crossheading-2": "schedule2.hcontainer_4",
-            "schedule1.paragraph-1": "paragraph-1",
-            "schedule1.paragraph-2": "paragraph-2",
-            "schedule1.paragraph-3": "paragraph-3",
-            "schedule1.paragraph-4": "paragraph-4",
-            "schedule1.hcontainer_1": "hcontainer_1",
-            "schedule1.hcontainer_2": "hcontainer_2",
-            "schedule1.hcontainer_3": "hcontainer_3",
-            "schedule1.hcontainer_4": "hcontainer_4",
-            "schedule2.hcontainer_1": "hcontainer_1",
-            "schedule2.paragraph-1": "paragraph-1",
-            "schedule2.paragraph-2": "paragraph-2",
-            "schedule2.hcontainer_2": "hcontainer_2",
-            "schedule2.paragraph-3": "paragraph-3",
-            "schedule2.hcontainer_3": "hcontainer_3",
-            "schedule2.hcontainer_4": "hcontainer_4",
-            "schedule2.paragraph-6": "paragraph-6",
-            "schedule2.paragraph-7": "paragraph-7",
-            "schedule2.paragraph-8": "paragraph-8",
-            "chapter-I": "chp_I",
-            "section-1": "sec_1",
-            "section-1.hcontainer_1": "sec_1.hcontainer_1",
-            "sec_1.hcontainer_1": "sec_1__hcontainer_1",
+                    "section-2.paragraph0": "section-2.hcontainer_1",
+                    "section-2.paragraph0.list0": "section-2.hcontainer_1.list0",
+                    "section-2.paragraph0.list0.a": "section-2.hcontainer_1.list0.a",
+                    "section-2.paragraph0.list0.a.list0": "section-2.hcontainer_1.list0.a.list0",
+                    "section-2.paragraph0.list0.a.list0.i": "section-2.hcontainer_1.list0.a.list0.i",
+                    "section-2.paragraph1": "section-2.hcontainer_2",
+                    "section-35.paragraph0": "section-35.hcontainer_2",
 
-            "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
-            "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
-            "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
+                    "chapter-XI.crossheading-0": "chapter-XI.hcontainer_1",
+                    "section-34.crossheading-0": "section-34.hcontainer_1",
+                    "section-35.crossheading-0": "section-35.hcontainer_1",
 
-            "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
-            "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
-            "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
-            "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
-            'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
-            'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
-            'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
-            'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
+                    "chapter-I": "chp_I",
+                    "section-1": "sec_1",
+                    "section-1.hcontainer_1": "sec_1.hcontainer_1",
+                    "sec_1.hcontainer_1": "sec_1__hcontainer_1",
 
-            "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
-            "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
-            "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
-            "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
-            'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
-            'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
+                    "section-1.hcontainer_1.list0": "sec_1.hcontainer_1.list0",
+                    "sec_1.hcontainer_1.list0": "sec_1.hcontainer_1.list_1",
+                    "sec_1.hcontainer_1.list_1": "sec_1__hcontainer_1__list_1",
 
-            "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
-            "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
-            "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
-            "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
-            "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
+                    "section-1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list0.a",
+                    "sec_1.hcontainer_1.list0.a": "sec_1.hcontainer_1.list_1.a",
+                    "sec_1.hcontainer_1.list_1.a": "sec_1.hcontainer_1.list_1.item_a",
+                    "sec_1.hcontainer_1.list_1.item_a": "sec_1__hcontainer_1__list_1__item_a",
+                    'sec_1.hcontainer_1.list_1.item_a__term_1': 'sec_1__hcontainer_1__list_1__item_a__term_1',
+                    'sec_1.hcontainer_1.list_1.item_a__term_2': 'sec_1__hcontainer_1__list_1__item_a__term_2',
+                    'sec_1.hcontainer_1.list_1.item_a__term_3': 'sec_1__hcontainer_1__list_1__item_a__term_3',
+                    'sec_1.hcontainer_1.list_1.item_a__term_4': 'sec_1__hcontainer_1__list_1__item_a__term_4',
 
-            "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
-            "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
-            "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
-            "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
-            "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
-            "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
+                    "section-1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list0.b",
+                    "sec_1.hcontainer_1.list0.b": "sec_1.hcontainer_1.list_1.b",
+                    "sec_1.hcontainer_1.list_1.b": "sec_1.hcontainer_1.list_1.item_b",
+                    "sec_1.hcontainer_1.list_1.item_b": "sec_1__hcontainer_1__list_1__item_b",
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_1',
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_i__term_2',
 
-            "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
-            "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
-            "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
-            "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
-            "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
-            "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
-            'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
-            'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
+                    "section-1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list0.b.list0",
+                    "sec_1.hcontainer_1.list0.b.list0": "sec_1.hcontainer_1.list_1.b.list0",
+                    "sec_1.hcontainer_1.list_1.b.list0": "sec_1.hcontainer_1.list_1.b.list_1",
+                    "sec_1.hcontainer_1.list_1.b.list_1": "sec_1.hcontainer_1.list_1.item_b.list_1",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1": "sec_1__hcontainer_1__list_1__item_b__list_1",
 
-            "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
-            "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_4",
-            "sec_1.hcontainer_1.list_4": "sec_1__hcontainer_1__list_4",
+                    "section-1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list0.b.list0.i",
+                    "sec_1.hcontainer_1.list0.b.list0.i": "sec_1.hcontainer_1.list_1.b.list0.i",
+                    "sec_1.hcontainer_1.list_1.b.list0.i": "sec_1.hcontainer_1.list_1.b.list_1.i",
+                    "sec_1.hcontainer_1.list_1.b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.i",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.i": "sec_1.hcontainer_1.list_1.item_b.list_1.item_i",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.item_i": "sec_1__hcontainer_1__list_1__item_b__list_1__item_i",
 
-            "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
-            "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_4.a",
-            "sec_1.hcontainer_1.list_4.a": "sec_1.hcontainer_1.list_4.item_a",
-            "sec_1.hcontainer_1.list_4.item_a": "sec_1__hcontainer_1__list_4__item_a",
-            'sec_1.hcontainer_1.list_4.item_a__term_1': 'sec_1__hcontainer_1__list_4__item_a__term_1',
-            'sec_1.hcontainer_1.list_4.item_a__term_2': 'sec_1__hcontainer_1__list_4__item_a__term_2',
+                    "section-1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list0.b.list0.ii",
+                    "sec_1.hcontainer_1.list0.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list0.ii",
+                    "sec_1.hcontainer_1.list_1.b.list0.ii": "sec_1.hcontainer_1.list_1.b.list_1.ii",
+                    "sec_1.hcontainer_1.list_1.b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.ii",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.ii": "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii",
+                    "sec_1.hcontainer_1.list_1.item_b.list_1.item_ii": "sec_1__hcontainer_1__list_1__item_b__list_1__item_ii",
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_1',
+                    'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2': 'sec_1__hcontainer_1__list_1__item_b__list_1__item_ii__term_2',
 
-            "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
-            "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_4.b",
-            "sec_1.hcontainer_1.list_4.b": "sec_1.hcontainer_1.list_4.item_b",
-            "sec_1.hcontainer_1.list_4.item_b": "sec_1__hcontainer_1__list_4__item_b",
-            'sec_1.hcontainer_1.list_4.item_b__term_1': 'sec_1__hcontainer_1__list_4__item_b__term_1',
-            'sec_1.hcontainer_1.list_4__term_1': 'sec_1__hcontainer_1__list_4__term_1',
+                    "section-1.hcontainer_1.list3": "sec_1.hcontainer_1.list3",
+                    "sec_1.hcontainer_1.list3": "sec_1.hcontainer_1.list_2",
+                    "sec_1.hcontainer_1.list_2": "sec_1__hcontainer_1__list_2",
 
-            "section-1A": "sec_1A",
-            "section-1A.hcontainer_1": "sec_1A.hcontainer_1",
-            "sec_1A.hcontainer_1": "sec_1A__hcontainer_1",
-            "section-1A.hcontainer_2": "sec_1A.hcontainer_2",
-            "sec_1A.hcontainer_2": "sec_1A__hcontainer_2",
+                    "section-1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list3.a",
+                    "sec_1.hcontainer_1.list3.a": "sec_1.hcontainer_1.list_2.a",
+                    "sec_1.hcontainer_1.list_2.a": "sec_1.hcontainer_1.list_2.item_a",
+                    "sec_1.hcontainer_1.list_2.item_a": "sec_1__hcontainer_1__list_2__item_a",
+                    'sec_1.hcontainer_1.list_2.item_a__term_1': 'sec_1__hcontainer_1__list_2__item_a__term_1',
+                    'sec_1.hcontainer_1.list_2.item_a__term_2': 'sec_1__hcontainer_1__list_2__item_a__term_2',
 
-            "section-2": "sec_2",
+                    "section-1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list3.b",
+                    "sec_1.hcontainer_1.list3.b": "sec_1.hcontainer_1.list_2.b",
+                    "sec_1.hcontainer_1.list_2.b": "sec_1.hcontainer_1.list_2.item_b",
+                    "sec_1.hcontainer_1.list_2.item_b": "sec_1__hcontainer_1__list_2__item_b",
+                    'sec_1.hcontainer_1.list_2.item_b__term_1': 'sec_1__hcontainer_1__list_2__item_b__term_1',
+                    'sec_1.hcontainer_1.list_2__term_1': 'sec_1__hcontainer_1__list_2__term_1',
 
-            "section-2.hcontainer_1": "sec_2.hcontainer_1",
-            "sec_2.hcontainer_1": "sec_2__hcontainer_1",
+                    "section-1A": "sec_1A",
+                    "section-1A.hcontainer_1": "sec_1A.hcontainer_1",
+                    "sec_1A.hcontainer_1": "sec_1A__hcontainer_1",
+                    "section-1A.hcontainer_2": "sec_1A.hcontainer_2",
+                    "sec_1A.hcontainer_2": "sec_1A__hcontainer_2",
 
-            "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
-            "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
-            "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
+                    "section-2": "sec_2",
 
-            "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
-            "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
-            "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
-            "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
+                    "section-2.hcontainer_1": "sec_2.hcontainer_1",
+                    "sec_2.hcontainer_1": "sec_2__hcontainer_1",
 
-            "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
-            "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
-            "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
-            "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
-            "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
+                    "section-2.hcontainer_1.list0": "sec_2.hcontainer_1.list0",
+                    "sec_2.hcontainer_1.list0": "sec_2.hcontainer_1.list_1",
+                    "sec_2.hcontainer_1.list_1": "sec_2__hcontainer_1__list_1",
 
-            "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
-            "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
-            "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
-            "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
-            "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
-            "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
+                    "section-2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list0.a",
+                    "sec_2.hcontainer_1.list0.a": "sec_2.hcontainer_1.list_1.a",
+                    "sec_2.hcontainer_1.list_1.a": "sec_2.hcontainer_1.list_1.item_a",
+                    "sec_2.hcontainer_1.list_1.item_a": "sec_2__hcontainer_1__list_1__item_a",
 
-            "section-2.hcontainer_2": "sec_2.hcontainer_2",
-            "sec_2.hcontainer_2": "sec_2__hcontainer_2",
+                    "section-2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list0.a.list0",
+                    "sec_2.hcontainer_1.list0.a.list0": "sec_2.hcontainer_1.list_1.a.list0",
+                    "sec_2.hcontainer_1.list_1.a.list0": "sec_2.hcontainer_1.list_1.a.list_1",
+                    "sec_2.hcontainer_1.list_1.a.list_1": "sec_2.hcontainer_1.list_1.item_a.list_1",
+                    "sec_2.hcontainer_1.list_1.item_a.list_1": "sec_2__hcontainer_1__list_1__item_a__list_1",
 
-            "section-4": "sec_4",
-            "section-4.1": "sec_4.1",
-            "sec_4.1": "sec_4.subsec_1",
-            "sec_4.subsec_1": "sec_4__subsec_1",
+                    "section-2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list0.a.list0.i",
+                    "sec_2.hcontainer_1.list0.a.list0.i": "sec_2.hcontainer_1.list_1.a.list0.i",
+                    "sec_2.hcontainer_1.list_1.a.list0.i": "sec_2.hcontainer_1.list_1.a.list_1.i",
+                    "sec_2.hcontainer_1.list_1.a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.i",
+                    "sec_2.hcontainer_1.list_1.item_a.list_1.i": "sec_2.hcontainer_1.list_1.item_a.list_1.item_i",
+                    "sec_2.hcontainer_1.list_1.item_a.list_1.item_i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
 
-            "section-4.2": "sec_4.2",
-            "sec_4.2": "sec_4.subsec_2",
-            "sec_4.subsec_2": "sec_4__subsec_2",
+                    "section-2.hcontainer_2": "sec_2.hcontainer_2",
+                    "sec_2.hcontainer_2": "sec_2__hcontainer_2",
 
-            "section-6": "sec_6",
-            "section-6.3": "sec_6.3",
-            "sec_6.3": "sec_6.subsec_3",
-            "sec_6.subsec_3": "sec_6__subsec_3",
+                    "section-4": "sec_4",
+                    "section-4.1": "sec_4.1",
+                    "sec_4.1": "sec_4.subsec_1",
+                    "sec_4.subsec_1": "sec_4__subsec_1",
 
-            "section-6.3.list0": "sec_6.3.list0",
-            "sec_6.3.list0": "sec_6.3.list_1",
-            "sec_6.3.list_1": "sec_6.subsec_3.list_1",
-            "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
+                    "section-4.2": "sec_4.2",
+                    "sec_4.2": "sec_4.subsec_2",
+                    "sec_4.subsec_2": "sec_4__subsec_2",
 
-            "section-6.3.list0.a": "sec_6.3.list0.a",
-            "sec_6.3.list0.a": "sec_6.3.list_1.a",
-            "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
-            "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
-            "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
+                    "section-6": "sec_6",
+                    "section-6.3": "sec_6.3",
+                    "sec_6.3": "sec_6.subsec_3",
+                    "sec_6.subsec_3": "sec_6__subsec_3",
 
-            "chapter-XI": "chp_XI",
-            "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
-            "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
+                    "section-6.3.list0": "sec_6.3.list0",
+                    "sec_6.3.list0": "sec_6.3.list_1",
+                    "sec_6.3.list_1": "sec_6.subsec_3.list_1",
+                    "sec_6.subsec_3.list_1": "sec_6__subsec_3__list_1",
 
-            "section-33": "sec_33",
-            "section-33.1": "sec_33.1",
-            "sec_33.1": "sec_33.subsec_1",
-            "sec_33.subsec_1": "sec_33__subsec_1",
+                    "section-6.3.list0.a": "sec_6.3.list0.a",
+                    "sec_6.3.list0.a": "sec_6.3.list_1.a",
+                    "sec_6.3.list_1.a": "sec_6.subsec_3.list_1.a",
+                    "sec_6.subsec_3.list_1.a": "sec_6.subsec_3.list_1.item_a",
+                    "sec_6.subsec_3.list_1.item_a": "sec_6__subsec_3__list_1__item_a",
 
-            "section-33.6": "sec_33.6",
-            "sec_33.6": "sec_33.subsec_6",
-            "sec_33.subsec_6": "sec_33__subsec_6",
+                    "chapter-XI": "chp_XI",
+                    "chapter-XI.hcontainer_1": "chp_XI.hcontainer_1",
+                    "chp_XI.hcontainer_1": "chp_XI__hcontainer_1",
 
-            "section-33.6.list0": "sec_33.6.list0",
-            "sec_33.6.list0": "sec_33.6.list_1",
-            "sec_33.6.list_1": "sec_33.subsec_6.list_1",
-            "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
+                    "section-33": "sec_33",
+                    "section-33.1": "sec_33.1",
+                    "sec_33.1": "sec_33.subsec_1",
+                    "sec_33.subsec_1": "sec_33__subsec_1",
 
-            "section-33.6.list0.a": "sec_33.6.list0.a",
-            "sec_33.6.list0.a": "sec_33.6.list_1.a",
-            "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
-            "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
-            "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
+                    "section-33.6": "sec_33.6",
+                    "sec_33.6": "sec_33.subsec_6",
+                    "sec_33.subsec_6": "sec_33__subsec_6",
 
-            "section-33.6.list0.b": "sec_33.6.list0.b",
-            "sec_33.6.list0.b": "sec_33.6.list_1.b",
-            "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
-            "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
-            "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
+                    "section-33.6.list0": "sec_33.6.list0",
+                    "sec_33.6.list0": "sec_33.6.list_1",
+                    "sec_33.6.list_1": "sec_33.subsec_6.list_1",
+                    "sec_33.subsec_6.list_1": "sec_33__subsec_6__list_1",
 
-            "section-34": "sec_34",
-            "section-34.1": "sec_34.1",
-            "sec_34.1": "sec_34.subsec_1",
-            "sec_34.subsec_1": "sec_34__subsec_1",
+                    "section-33.6.list0.a": "sec_33.6.list0.a",
+                    "sec_33.6.list0.a": "sec_33.6.list_1.a",
+                    "sec_33.6.list_1.a": "sec_33.subsec_6.list_1.a",
+                    "sec_33.subsec_6.list_1.a": "sec_33.subsec_6.list_1.item_a",
+                    "sec_33.subsec_6.list_1.item_a": "sec_33__subsec_6__list_1__item_a",
 
-            "section-34.2": "sec_34.2",
-            "sec_34.2": "sec_34.subsec_2",
-            "sec_34.subsec_2": "sec_34__subsec_2",
+                    "section-33.6.list0.b": "sec_33.6.list0.b",
+                    "sec_33.6.list0.b": "sec_33.6.list_1.b",
+                    "sec_33.6.list_1.b": "sec_33.subsec_6.list_1.b",
+                    "sec_33.subsec_6.list_1.b": "sec_33.subsec_6.list_1.item_b",
+                    "sec_33.subsec_6.list_1.item_b": "sec_33__subsec_6__list_1__item_b",
 
-            "section-34.hcontainer_1": "sec_34.hcontainer_1",
-            "sec_34.hcontainer_1": "sec_34__hcontainer_1",
+                    "section-34": "sec_34",
+                    "section-34.1": "sec_34.1",
+                    "sec_34.1": "sec_34.subsec_1",
+                    "sec_34.subsec_1": "sec_34__subsec_1",
 
-            "section-35": "sec_35",
-            "section-35.hcontainer_1": "sec_35.hcontainer_1",
-            "sec_35.hcontainer_1": "sec_35__hcontainer_1",
-            "section-35.hcontainer_2": "sec_35.hcontainer_2",
-            "sec_35.hcontainer_2": "sec_35__hcontainer_2",
+                    "section-34.2": "sec_34.2",
+                    "sec_34.2": "sec_34.subsec_2",
+                    "sec_34.subsec_2": "sec_34__subsec_2",
 
-            "paragraph-4": "para_4",
-            "paragraph-1": "para_1",
-            "paragraph-2": "para_2",
-            "paragraph-3": "para_3",
-            "paragraph-6": "para_6",
-            "paragraph-7": "para_7",
-            "paragraph-8": "para_8",
+                    "section-34.hcontainer_1": "sec_34.hcontainer_1",
+                    "sec_34.hcontainer_1": "sec_34__hcontainer_1",
 
-            'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
-            'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
-            'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
-            'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
-            'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
-            'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
-            'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
-            'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
-            'trm37': 'sec_1.hcontainer_1.list_4__term_1',
-            'trm38': 'sec_1.hcontainer_1.list_4.item_a__term_1',
-            'trm39': 'sec_1.hcontainer_1.list_4.item_a__term_2',
-            'trm40': 'sec_1.hcontainer_1.list_4.item_b__term_1',
+                    "section-35": "sec_35",
+                    "section-35.hcontainer_1": "sec_35.hcontainer_1",
+                    "sec_35.hcontainer_1": "sec_35__hcontainer_1",
+                    "section-35.hcontainer_2": "sec_35.hcontainer_2",
+                    "sec_35.hcontainer_2": "sec_35__hcontainer_2",
+
+                    'trm21': 'sec_1.hcontainer_1.list_1.item_a__term_1',
+                    'trm22': 'sec_1.hcontainer_1.list_1.item_a__term_2',
+                    'trm23': 'sec_1.hcontainer_1.list_1.item_a__term_3',
+                    'trm24': 'sec_1.hcontainer_1.list_1.item_a__term_4',
+                    'trm25': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_1',
+                    'trm26': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_i__term_2',
+                    'trm27': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_1',
+                    'trm28': 'sec_1.hcontainer_1.list_1.item_b.list_1.item_ii__term_2',
+                    'trm37': 'sec_1.hcontainer_1.list_2__term_1',
+                    'trm38': 'sec_1.hcontainer_1.list_2.item_a__term_1',
+                    'trm39': 'sec_1.hcontainer_1.list_2.item_a__term_2',
+                    'trm40': 'sec_1.hcontainer_1.list_2.item_b__term_1',
+                },
+            "att_1":
+                {
+                    "schedule1.paragraph0": "schedule1.hcontainer_2",
+                    "schedule1.hcontainer_2": "hcontainer_2",
+                    "schedule1.paragraph1": "schedule1.hcontainer_4",
+                    "schedule1.crossheading-0": "schedule1.hcontainer_1",
+                    "schedule1.crossheading-1": "schedule1.hcontainer_3",
+                    "schedule1.paragraph-1": "paragraph-1",
+                    "schedule1.paragraph-2": "paragraph-2",
+                    "schedule1.paragraph-3": "paragraph-3",
+                    "schedule1.paragraph-4": "paragraph-4",
+                    "schedule1.hcontainer_1": "hcontainer_1",
+                    "schedule1.hcontainer_3": "hcontainer_3",
+                    "schedule1.hcontainer_4": "hcontainer_4",
+                    "paragraph-1": "para_1",
+                    "paragraph-2": "para_2",
+                    "paragraph-3": "para_3",
+                    "paragraph-4": "para_4",
+                },
+            "att_2":
+                {
+                    "schedule2.paragraph0": "schedule2.hcontainer_1",
+                    "schedule2.hcontainer_1": "hcontainer_1",
+                    "schedule2.crossheading-0": "schedule2.hcontainer_2",
+                    "schedule2.crossheading-1": "schedule2.hcontainer_3",
+                    "schedule2.crossheading-2": "schedule2.hcontainer_4",
+                    "schedule2.paragraph-1": "paragraph-1",
+                    "schedule2.paragraph-2": "paragraph-2",
+                    "schedule2.hcontainer_2": "hcontainer_2",
+                    "schedule2.paragraph-3": "paragraph-3",
+                    "schedule2.hcontainer_3": "hcontainer_3",
+                    "schedule2.hcontainer_4": "hcontainer_4",
+                    "schedule2.paragraph-6": "paragraph-6",
+                    "schedule2.paragraph-7": "paragraph-7",
+                    "schedule2.paragraph-8": "paragraph-8",
+                    "paragraph-1": "para_1",
+                    "paragraph-2": "para_2",
+                    "paragraph-3": "para_3",
+                    "paragraph-6": "para_6",
+                    "paragraph-7": "para_7",
+                    "paragraph-8": "para_8",
+                },
         }, mappings)
 
         # check annotations
         new_annotations = doc.annotations.all()
         self.assertEqual(len(new_annotations), 12)
         for annotation in new_annotations:
-            self.assertNotIn(annotation.anchor_id, mappings.keys())
             self.assertNotIn(annotation.anchor_id, annotation_anchors.keys())
-            if "/" in annotation.anchor_id:
-                post = annotation.anchor_id.split("/", 1)[-1]
-                self.assertIn(post, mappings.values())
-            else:
-                self.assertIn(annotation.anchor_id, mappings.values())
             self.assertIn(annotation.anchor_id, annotation_anchors.values())
 
     def test_para_to_hcontainer(self):
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <chapter id="chapter-I">
         <num>I</num>
@@ -1173,7 +1205,31 @@ class MigrationTestCase(TestCase):
   <components>
     <component id="component-schedule1">
       <doc name="schedule1">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule1" name="schedule">
             <subheading>Subheading</subheading>
@@ -1214,7 +1270,31 @@ class MigrationTestCase(TestCase):
     </component>
     <component id="component-schedule2">
       <doc name="schedule2">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule2" name="schedule">
             <heading>Schedule 2</heading>
@@ -1233,7 +1313,31 @@ class MigrationTestCase(TestCase):
     </component>
     <component id="component-schedule3">
       <doc name="schedule3">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule3"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule3" name="schedule">
             <heading>Schedule 3</heading>
@@ -1301,7 +1405,32 @@ class MigrationTestCase(TestCase):
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <chapter id="chapter-I">
         <num>I</num>
@@ -1393,7 +1522,31 @@ class MigrationTestCase(TestCase):
   <components>
     <component id="component-schedule1">
       <doc name="schedule1">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule1" name="schedule">
             <subheading>Subheading</subheading>
@@ -1434,7 +1587,31 @@ class MigrationTestCase(TestCase):
     </component>
     <component id="component-schedule2">
       <doc name="schedule2">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule2" name="schedule">
             <heading>Schedule 2</heading>
@@ -1453,7 +1630,31 @@ class MigrationTestCase(TestCase):
     </component>
     <component id="component-schedule3">
       <doc name="schedule3">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule3"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule3" name="schedule">
             <heading>Schedule 3</heading>
@@ -1519,13 +1720,62 @@ class MigrationTestCase(TestCase):
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body/>
   </act>
   <components>
     <component id="component-schedule1">
       <doc name="schedule1">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule1" name="schedule">
             <subheading>Subheading</subheading>
@@ -1540,7 +1790,31 @@ class MigrationTestCase(TestCase):
     </component>
     <component id="component-schedule2">
       <doc name="schedule2">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="schedule2" name="schedule">
             <heading>Schedule 2</heading>
@@ -1562,17 +1836,67 @@ class MigrationTestCase(TestCase):
         cobalt_doc = Act(doc.document_xml)
         migration = AKNeId()
         migration.nsmap = {"a": cobalt_doc.namespace}
-        migration.components_to_attachments(cobalt_doc, doc, mappings={}, prefix_mappings={})
+        mappings = {}
+        migration.components_to_attachments(cobalt_doc, mappings, doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual("""<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body/>
   <attachments>
     <attachment id="att_1">
       <subheading>Subheading</subheading>
             <doc name="schedule">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!att_1"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <paragraph id="paragraph0">
               <content>
@@ -1586,7 +1910,31 @@ class MigrationTestCase(TestCase):
       <heading>Schedule 2</heading>
             <subheading>REPEAL OR AMENDMENT OF LAWS</subheading>
             <doc name="schedule">
-        <meta/>
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!att_2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 1"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
         <mainBody>
           <hcontainer id="crossheading-0" name="crossheading">
               <heading>(Section 45(1))</heading>
@@ -2014,7 +2362,32 @@ class MigrationTestCase(TestCase):
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <section id="section-100">
         <subsection id="section-100.3A.2">
@@ -2053,28 +2426,53 @@ class MigrationTestCase(TestCase):
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <section eId="sec_100">
         <subsection eId="sec_100__subsec_3A-2">
           <num>(3A.2)</num>
-          <blockList eId="sec_100__subsec_3A-2__list_7">
-            <item eId="sec_100__subsec_3A-2__list_7__item_i">
+          <blockList eId="sec_100__subsec_3A-2__list_1">
+            <item eId="sec_100__subsec_3A-2__list_1__item_i">
               <num>(i)</num>
               <p>item text</p>
             </item>
-            <item eId="sec_100__subsec_3A-2__list_7__item_ii-c">
+            <item eId="sec_100__subsec_3A-2__list_1__item_ii-c">
               <num>(ii.c)</num>
               <p>item text</p>
             </item>
-            <item eId="sec_100__subsec_3A-2__list_7__item_iii">
+            <item eId="sec_100__subsec_3A-2__list_1__item_iii">
               <num>(iii)</num>
-              <blockList eId="sec_100__subsec_3A-2__list_7__item_iii__list_1">
-                <item eId="sec_100__subsec_3A-2__list_7__item_iii__list_1__item_a">
+              <blockList eId="sec_100__subsec_3A-2__list_1__item_iii__list_1">
+                <item eId="sec_100__subsec_3A-2__list_1__item_iii__list_1__item_a">
                   <num>(a)</num>
                   <p>item text</p>
                 </item>
-                <item eId="sec_100__subsec_3A-2__list_7__item_iii__list_1__item_b-1-i">
+                <item eId="sec_100__subsec_3A-2__list_1__item_iii__list_1__item_b-1-i">
                   <num>(b.1.i)</num>
                   <p>item text</p>
                 </item>
@@ -2097,14 +2495,63 @@ class MigrationTestCase(TestCase):
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body/>
     <attachments>
       <attachment id="att_1">
         <heading>Annexure</heading>
         <subheading>Things to do during lockdown</subheading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_1"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer id="hcontainer_1" name="crossheading">
               <heading>Form A</heading>
@@ -2182,7 +2629,31 @@ class MigrationTestCase(TestCase):
       <attachment id="att_2">
         <heading>Schedule 1</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_2"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer id="hcontainer_1">
               <content>
@@ -2240,7 +2711,31 @@ class MigrationTestCase(TestCase):
       <attachment id="att_3">
         <heading>Schedule 2</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_3"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer id="hcontainer_1">
               <content>
@@ -2286,7 +2781,31 @@ class MigrationTestCase(TestCase):
       <attachment id="att_4">
         <heading>Third Schedule</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_4"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_4"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_4"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <chapter id="chapter-1">
               <num>1</num>
@@ -2342,7 +2861,31 @@ class MigrationTestCase(TestCase):
       <attachment id="att_5">
         <heading>Fourth Schedule</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_5"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_5"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_5"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <part id="part-36">
               <num>36</num>
@@ -2507,7 +3050,31 @@ class MigrationTestCase(TestCase):
         <heading>Schedule 5</heading>
         <subheading>Wildlife Treaty</subheading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_6"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_6"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_6"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer id="hcontainer_1" name="crossheading">
               <heading>Introduction</heading>
@@ -2568,14 +3135,63 @@ class MigrationTestCase(TestCase):
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body/>
     <attachments>
       <attachment eId="att_1">
         <heading>Annexure</heading>
         <subheading>Things to do during lockdown</subheading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_1"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer name="crossheading" eId="hcontainer_1">
               <heading>Form A</heading>
@@ -2653,7 +3269,31 @@ class MigrationTestCase(TestCase):
       <attachment eId="att_2">
         <heading>Schedule 1</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_2"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer eId="hcontainer_1">
               <content>
@@ -2711,7 +3351,31 @@ class MigrationTestCase(TestCase):
       <attachment eId="att_3">
         <heading>Schedule 2</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_3"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer eId="hcontainer_1">
               <content>
@@ -2757,7 +3421,31 @@ class MigrationTestCase(TestCase):
       <attachment eId="att_4">
         <heading>Third Schedule</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_4"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_4"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_4"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <chapter eId="chp_1">
               <num>1</num>
@@ -2813,7 +3501,31 @@ class MigrationTestCase(TestCase):
       <attachment eId="att_5">
         <heading>Fourth Schedule</heading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_5"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_5"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_5"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <part eId="part_36">
               <num>36</num>
@@ -2978,7 +3690,31 @@ class MigrationTestCase(TestCase):
         <heading>Schedule 5</heading>
         <subheading>Wildlife Treaty</subheading>
         <doc name="schedule">
-          <meta/>
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za/act/2014/10/!att_6"/>
+                <FRBRuri value="/akn/za/act/2014/10"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_6"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_6"/>
+                <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+                <FRBRdate date="2019-12-05" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
           <mainBody>
             <hcontainer name="crossheading" eId="hcontainer_1">
               <heading>Introduction</heading>
@@ -3041,7 +3777,32 @@ class MigrationTestCase(TestCase):
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <section id="section-1">
         <num>1</num>
@@ -3070,7 +3831,32 @@ class MigrationTestCase(TestCase):
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="originalVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <section eId="sec_1">
         <num>1</num>
@@ -3101,7 +3887,32 @@ class MigrationTestCase(TestCase):
         doc = Document(work=self.work, document_xml="""
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <chapter id="chapter-VIII">
         <num>VIII</num>
@@ -3180,7 +3991,32 @@ class MigrationTestCase(TestCase):
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
   <act contains="singleVersion">
-    <meta/>
+    <meta>
+      <identification source="#slaw">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/2014/10/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10"/>
+          <FRBRalias value="Air Quality Management" name="title"/>
+          <FRBRdate date="" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2016-08-17" name="Generation"/>
+          <FRBRauthor href="#council"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
+          <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+          <FRBRdate date="2020-01-27" name="Generation"/>
+          <FRBRauthor href="#slaw"/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="" name="" showAs="" date="2014-04-02"/>
+    </meta>
     <body>
       <chapter eId="chp_VIII">
         <num>VIII</num>

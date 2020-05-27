@@ -154,18 +154,17 @@ class AKNeId(AKNMigration):
         """
         self.nsmap = {"a": doc.namespace}
         mappings = {}
-        prefix_mappings = {}
 
         self.paras_to_hcontainers(doc, mappings)
         self.crossheadings_to_hcontainers(doc, mappings)
-        self.components_to_attachments(doc, document, mappings, prefix_mappings)
+        self.components_to_attachments(doc, mappings, document)
         self.basics(doc, mappings)
         self.tables_blocklists(doc, mappings)
         self.subsections_items(doc, mappings)
         self.term_ids(doc, mappings)
         self.separators_eids(doc, mappings)
         self.internal_references(doc, mappings)
-        self.annotation_anchors(document, mappings, prefix_mappings)
+        self.annotation_anchors(mappings, document)
 
         # just for tests
         return mappings
@@ -280,6 +279,7 @@ class AKNeId(AKNMigration):
                       <content>
                         ...
         """
+        prefix_mappings = {}
         for elem in doc.root.xpath('/a:akomaNtoso/a:components', namespaces=self.nsmap):
             elem.tag = f'{{{doc.namespace}}}attachments'
             # move to last child of act element
@@ -313,14 +313,16 @@ class AKNeId(AKNMigration):
 
         # update the prefixes of the anchor ids of all annotations on the document
         # (only when dealing with document objects)
-        # schedule1/paragraph0 -> att_2/paragraph0
+        # schedule1/schedule1.paragraph0 -> att_2/schedule1.paragraph0
+        # schedule1/section-1 -> att_2/section-1
         if document:
             for annotation in document.annotations.all():
                 if "/" in annotation.anchor_id:
                     pre, post = annotation.anchor_id.split("/", 1)
-                    new_pre = prefix_mappings[pre]
-                    annotation.anchor_id = f"{new_pre}/{post}"
-                    annotation.save()
+                    if pre in prefix_mappings:
+                        new_pre = prefix_mappings[pre]
+                        annotation.anchor_id = f"{new_pre}/{post}"
+                        annotation.save()
 
     def basics(self, doc, mappings):
         for element, (pattern, replacement) in self.basic_replacements.items():

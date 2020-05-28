@@ -349,22 +349,26 @@ class AKNeId(AKNMigration):
                         self.safe_update(child, mappings, id, '', old)
                     else:
                         child.set("id", id)
-                        log.warning(f"Child element had no id: {old} / {hcontainer.get('id')} / {child.tag}")
+                        log.warning(f"Element had no id: {old} / {hcontainer.get('id')} / {child.tag} -> {id}")
 
                 # remove hcontainer
                 att.doc.mainBody.remove(hcontainer)
 
                 # update mappings, e.g.
                 # {schedule1: {para0: hcontainer_1, etc}} -> {att_1: {para0: hcontainer_1, etc}}
-                mappings[new_id] = mappings[old]
-                del mappings[old]
+                if mappings.get(old):
+                    mappings[new_id] = mappings[old]
+                    del mappings[old]
+                    log.info(f"Mapping replaced: {old} -> {new_id}")
+                else:
+                    log.warning(f"This mapping wasn't replaced (nothing to move or already moved): {old} -> {new_id}")
 
-        # update the prefixes of the anchor ids of all annotations on the document
-        # (only when dealing with document objects)
-        # schedule1/schedule1.paragraph0 -> att_2/schedule1.paragraph0
-        # schedule1/section-1 -> att_2/section-1
-        if document:
-            for annotation in document.annotations.all():
+        """ Update the prefixes of the anchor ids of all annotations on the document, e.g.
+            schedule1/schedule1.paragraph0 -> att_2/schedule1.paragraph0
+            schedule1/section-1 -> att_2/section-1
+        """
+        if self.document:
+            for annotation in self.document.annotations.all():
                 if "/" in annotation.anchor_id:
                     pre, post = annotation.anchor_id.split("/", 1)
                     if pre in prefix_mappings:

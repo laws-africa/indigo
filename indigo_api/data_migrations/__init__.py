@@ -1,6 +1,6 @@
 import logging
 import re
-from collections import Counter
+from collections import Counter, OrderedDict
 
 from indigo.xmlutils import rewrite_ids
 
@@ -134,12 +134,18 @@ class AKNeId(AKNMigration):
 
         if len(components) <= 1:
             # look for old-style components / schedules
+            components = OrderedDict()
             for component in doc.root.xpath("./a:act | ./a:components/a:component/a:doc", namespaces=self.nsmap):
                 if component.tag == f"{{{doc.namespace}}}act":
-                    name = "main"
+                    components["main"] = component
                 else:
                     name = component.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1].lstrip("!")
-                components[name] = component
+                    while components.get(name) is not None:
+                        log.warning(f"Identical component name found; adding '_XXX' to end for disambiguation: {name}")
+                        name += "_XXX"
+                        # add "_XXX" to the doc name as well for mappings
+                        component.set("name", name)
+                    components[name] = component
 
         for name, component in components.items():
             if name == "main":

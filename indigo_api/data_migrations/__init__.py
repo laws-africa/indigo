@@ -239,7 +239,7 @@ class AKNeId(AKNMigration):
                 # new id is based on the number of preceding hcontainer siblings
                 num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces=self.nsmap)) + 1
                 old_id = para.get('id')
-                new_id = re.sub('paragraph(\d+)$', f'hcontainer_{num}', old_id)
+                new_id = re.sub('paragraph-?(\d+)$', f'hcontainer_{num}', old_id)
                 self.safe_update(para, mappings, old_id, new_id, name)
 
     def crossheadings_to_hcontainers(self, doc, mappings):

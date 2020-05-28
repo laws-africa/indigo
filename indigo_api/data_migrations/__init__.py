@@ -371,10 +371,12 @@ class AKNeId(AKNMigration):
             for annotation in self.document.annotations.all():
                 if "/" in annotation.anchor_id:
                     pre, post = annotation.anchor_id.split("/", 1)
-                    if pre in prefix_mappings:
+                    if prefix_mappings.get(pre):
                         new_pre = prefix_mappings[pre]
                         annotation.anchor_id = f"{new_pre}/{post}"
                         annotation.save()
+                    else:
+                        log.warning(f"This annotation prefix hasn't been updated: {pre}")
 
     def basics(self, doc, mappings):
         for name, root in self.components(doc).items():
@@ -394,11 +396,12 @@ class AKNeId(AKNMigration):
                     # the num for this term depends on the number of preceding terms with the same prefix
                     counter[f"{name}-{prefix}"] += 1
                     new_id = re.sub(pattern, replacement + str(counter[f"{name}-{prefix}"]), old_id)
+
                     if old_id:
                         self.safe_update(node, mappings, old_id, new_id, name)
                     else:
                         node.set("id", new_id)
-                        log.warning(f"Element had no id: {name} / {prefix} / {node.tag}")
+                        log.warning(f"Element had no id: {name} / {prefix} / {node.tag} -> {new_id}")
 
     def subsections_items(self, doc, mappings):
         for name, root in self.components(doc).items():
@@ -406,14 +409,14 @@ class AKNeId(AKNMigration):
                 for node in root.xpath(f".//a:{element}", namespaces=self.nsmap):
                     old_id = node.get("id")
                     # note: all subsections and items should have <num>s in current documents
-                    # historical documents don't all, so they get skipped if they don't
-                    if document:
+                    # but some historical documents have unnumbered subsections instead of unnumbered paragraphs;they'll just get skipped
+                    if self.document:
                         num = node.num.text
                     else:
                         try:
                             num = node.num.text
                         except AttributeError as e:
-                            log.warning(f"Subsection without a <num>; here's the error message: {e}")
+                            log.warning(f"Subsection without a <num> in {old_id}: {e}")
                             break
 
                     num = self.clean_number(num)
@@ -440,6 +443,10 @@ class AKNeId(AKNMigration):
         for name, root in self.components(doc).items():
             for node in root.xpath(".//a:*[@id]", namespaces=self.nsmap):
                 old_id = node.get("id")
+
+                if old_id.endswith("."):
+                    log.warning(f"Old id doesn't look right: {old_id}")
+
                 if "." in old_id:
                     new_id = old_id.replace(".", "__")
                     node.set("id", new_id)

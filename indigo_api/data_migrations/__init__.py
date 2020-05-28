@@ -490,14 +490,24 @@ class AKNeId(AKNMigration):
             e.g. att_2/schedule1.paragraph0 -> att_2/hcontainer_3
                  att_2/section-1 -> att_2/sec_1
         """
-        if document:
-            for annotation in document.annotations.all():
-                if "/" in annotation.anchor_id:
+        if self.document:
+            for annotation in self.document.annotations.all():
+                old_anchor = annotation.anchor_id
+                if "/" in old_anchor:
                     # att_2/schedule2.crossheading-1
-                    pre, post = annotation.anchor_id.split("/", 1)
-                    new_post = self.traverse_mappings(post, mappings[pre])
-                    annotation.anchor_id = f"{pre}/{new_post}"
-                else:
-                    annotation.anchor_id = self.traverse_mappings(annotation.anchor_id, mappings["main"])
+                    pre, post = old_anchor.split("/", 1)
+                    if mappings.get(pre):
+                        new_post = self.traverse_mappings(post, mappings[pre])
+                        annotation.anchor_id = f"{pre}/{new_post}"
+                    else:
+                        log.warning(f"This annotation's anchor id hasn't been updated: {old_anchor}")
+                        break
+                elif mappings.get("main"):
+                    annotation.anchor_id = self.traverse_mappings(old_anchor, mappings["main"])
 
+                if annotation.anchor_id == old_anchor:
+                    log.warning(f"This annotation's anchor id hasn't been updated: {old_anchor}")
+                    break
+
+                log.info(f"anchor updated: {old_anchor} -> {annotation.anchor_id}")
                 annotation.save()

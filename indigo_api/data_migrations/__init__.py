@@ -326,7 +326,7 @@ class AKNeId(AKNMigration):
                 ]
                 for frbr_this in to_replace:
                     current = frbr_this.get('value')
-                    suffix = current.split('!')[-1]
+                    suffix = current.split('/')[-1].lstrip("!")
                     new = re.sub(f"{suffix}$", new_id, current)
                     frbr_this.set('value', new)
 

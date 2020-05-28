@@ -463,15 +463,28 @@ class AKNeId(AKNMigration):
             del node.attrib["id"]
 
     def internal_references(self, doc, mappings):
-        for name, root in self.components(doc).items():
-            for node in root.xpath(".//a:ref[starts-with(@href, '#')]", namespaces={"a": doc.namespace}):
-                ref = node.get("href").lstrip("#")
-                new_ref = self.traverse_mappings(ref, mappings[name])
-                if new_ref == ref:
-                    new_ref = self.traverse_mappings(ref, mappings["main"])
-                node.set("href", f"#{new_ref}")
+        """ Update all internal references on the document.
+        e.g. <ref href="#section-5">section 5</ref>
+        ->   <ref href="#sec_5">section 5</ref>
+        """
+        if self.document:
+            for name, root in self.components(doc).items():
+                for node in root.xpath(".//a:ref[starts-with(@href, '#')]", namespaces={"a": doc.namespace}):
+                    ref = node.get("href").lstrip("#")
+                    new_ref = self.traverse_mappings(ref, mappings[name])
 
-    def annotation_anchors(self, mappings, document):
+                    if new_ref == ref and mappings.get("main"):
+                        # we're likely in a schedule and talking about a section in main
+                        new_ref = self.traverse_mappings(ref, mappings["main"])
+
+                    if new_ref == ref:
+                        # doesn't point at anything
+                        log.warning(f"The following reference hasn't been updated: {ref}")
+                        break
+
+                    node.set("href", f"#{new_ref}")
+
+    def annotation_anchors(self, mappings):
         """ Update the anchor ids of all annotations on the document.
             Assume that the prefix (if any) has already been updated.
             e.g. att_2/schedule1.paragraph0 -> att_2/hcontainer_3

@@ -183,9 +183,12 @@ class AKNeId(AKNMigration):
         - Then, rewrite_ids.
         - If it wasn't already in, update `mappings`.
         """
+        if old == new:
+            log.warning(f"Not updating id because it's identical: {old}")
+            return
         if name in mappings and old in mappings[name]:
             if not mappings[name][old] == new:
-                log.warning(f"New id mapping {old} to {new} differs from existing {mappings[name][old]}")
+                log.warning(f"New id mapping differs from existing: {old} -> {mappings[name][old]}; ignoring {new}")
             rewrite_ids(element, old, new)
             return
 

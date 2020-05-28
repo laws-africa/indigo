@@ -450,12 +450,14 @@ class AKNeId(AKNMigration):
                 if "." in old_id:
                     new_id = old_id.replace(".", "__")
                     node.set("id", new_id)
-                    mappings[name].update({old_id: new_id})
+                    if mappings.get(name):
+                        mappings[name].update({old_id: new_id})
 
-                node.set("eId", node.get("id"))
-                del node.attrib["id"]
+                    else:
+                        log.warning(f"An id has been updated; no mapping existed so a new one will be made now: {old_id} -> {new_id} in {name}")
+                        mappings[name] = {old_id: new_id}
 
-        # any left over
+        # all ids become eIds, don't need to be tracked in `mappings`
         for node in doc.root.xpath("//a:*[@id]", namespaces=self.nsmap):
             node.set("eId", node.get("id"))
             del node.attrib["id"]

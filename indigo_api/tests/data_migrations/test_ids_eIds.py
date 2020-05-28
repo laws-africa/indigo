@@ -400,6 +400,92 @@ class MigrationTestCase(TestCase):
         </mainBody>
       </doc>
     </component>
+    <component id="component-schedule2">
+      <doc name="schedule2">
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 2"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
+        <mainBody>
+          <hcontainer id="schedule2" name="schedule">
+            <heading>Schedule 2</heading>
+            <subheading>Good management practices to prevent or minimise the discharge of smoke from open burning of vegetation</subheading>
+            <paragraph id="schedule2.paragraph0">
+              <content>
+                <p>Introductory paragraph.</p>
+              </content>
+            </paragraph>
+            <paragraph id="schedule2.paragraph-1">
+              <num>1.</num>
+              <content>
+                <p>Consider alternatives to burning – e.g. mulching for recovery of nutrient value, drying for recovery as firewood.</p>
+              </content>
+            </paragraph>
+            <paragraph id="schedule2.paragraph-2">
+              <num>2.</num>
+              <content>
+                <p>Vegetation that is to be burned (such as trimmings, pruning or felling’s cut from active growth) should as a general guide be allowed to dry to brown appearance prior to burning.</p>
+              </content>
+            </paragraph>
+            <hcontainer id="schedule2.crossheading-0" name="crossheading">
+              <heading>Here's one</heading>
+            </hcontainer>
+            <paragraph id="schedule2.paragraph-3">
+              <num>3.</num>
+              <content>
+                <p>Except for tree stumps or crop stubble, the place of combustion should be at least 50 metres from any road other than a highway, and 100 metres from any highway or dwelling on a neighbouring property.</p>
+              </content>
+            </paragraph>
+            <hcontainer id="schedule2.crossheading-1" name="crossheading">
+              <heading>And another</heading>
+            </hcontainer>
+            <hcontainer id="schedule2.crossheading-2" name="crossheading">
+              <heading>And more</heading>
+            </hcontainer>
+            <paragraph id="schedule2.paragraph-6">
+              <num>6.</num>
+              <content>
+                <p>Two days' fine weather should be allowed prior to burning.</p>
+              </content>
+            </paragraph>
+            <paragraph id="schedule2.paragraph-7">
+              <num>7.</num>
+              <content>
+                <p>Vegetation should be stacked loosely rather than compacted.</p>
+              </content>
+            </paragraph>
+            <paragraph id="schedule2.paragraph-8">
+              <num>8.</num>
+              <content>
+                <p>A small fire, started with the driest material, with further material continually fed onto it once it is blazing, is preferable to a large stack ignited and left unattended.</p>
+                <p><b>Note:</b> Persons conducting open burning of vegetation must ensure compliance with the requirements of the National Veld and Forest Fire Act, 1998, (<ref href="/za/act/1998/101">Act No. 101 of 1998</ref>) as amended.</p>
+              </content>
+            </paragraph>
+          </hcontainer>
+        </mainBody>
+      </doc>
+    </component>
   </components>
 </akomaNtoso>
 """)
@@ -809,6 +895,90 @@ class MigrationTestCase(TestCase):
           </mainBody>
       </doc>
     </attachment>
+    <attachment eId="att_3">
+      <heading>Schedule 2</heading>
+            <subheading>Good management practices to prevent or minimise the discharge of smoke from open burning of vegetation</subheading>
+            <doc name="schedule">
+        <meta>
+          <identification source="#slaw">
+            <FRBRWork>
+              <FRBRthis value="/akn/za/act/2014/10/!att_3"/>
+              <FRBRuri value="/akn/za/act/2014/10"/>
+              <FRBRalias value="Schedule 2"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRcountry value="za"/>
+            </FRBRWork>
+            <FRBRExpression>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="1980-01-01" name="Generation"/>
+              <FRBRauthor href="#council"/>
+              <FRBRlanguage language="eng"/>
+            </FRBRExpression>
+            <FRBRManifestation>
+              <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
+              <FRBRuri value="/akn/za/act/2014/10/eng@2016-08-17"/>
+              <FRBRdate date="2019-12-05" name="Generation"/>
+              <FRBRauthor href="#slaw"/>
+            </FRBRManifestation>
+          </identification>
+        </meta>
+        <mainBody>
+          <hcontainer eId="hcontainer_1">
+              <content>
+                <p>Introductory paragraph.</p>
+              </content>
+            </hcontainer>
+            <paragraph eId="para_1">
+              <num>1.</num>
+              <content>
+                <p>Consider alternatives to burning – e.g. mulching for recovery of nutrient value, drying for recovery as firewood.</p>
+              </content>
+            </paragraph>
+            <paragraph eId="para_2">
+              <num>2.</num>
+              <content>
+                <p>Vegetation that is to be burned (such as trimmings, pruning or felling’s cut from active growth) should as a general guide be allowed to dry to brown appearance prior to burning.</p>
+              </content>
+            </paragraph>
+            <hcontainer name="crossheading" eId="hcontainer_2">
+              <heading>Here's one</heading>
+            </hcontainer>
+            <paragraph eId="para_3">
+              <num>3.</num>
+              <content>
+                <p>Except for tree stumps or crop stubble, the place of combustion should be at least 50 metres from any road other than a highway, and 100 metres from any highway or dwelling on a neighbouring property.</p>
+              </content>
+            </paragraph>
+            <hcontainer name="crossheading" eId="hcontainer_3">
+              <heading>And another</heading>
+            </hcontainer>
+            <hcontainer name="crossheading" eId="hcontainer_4">
+              <heading>And more</heading>
+            </hcontainer>
+            <paragraph eId="para_6">
+              <num>6.</num>
+              <content>
+                <p>Two days' fine weather should be allowed prior to burning.</p>
+              </content>
+            </paragraph>
+            <paragraph eId="para_7">
+              <num>7.</num>
+              <content>
+                <p>Vegetation should be stacked loosely rather than compacted.</p>
+              </content>
+            </paragraph>
+            <paragraph eId="para_8">
+              <num>8.</num>
+              <content>
+                <p>A small fire, started with the driest material, with further material continually fed onto it once it is blazing, is preferable to a large stack ignited and left unattended.</p>
+                <p><b>Note:</b> Persons conducting open burning of vegetation must ensure compliance with the requirements of the National Veld and Forest Fire Act, 1998, (<ref href="/za/act/1998/101">Act No. 101 of 1998</ref>) as amended.</p>
+              </content>
+            </paragraph>
+          </mainBody>
+      </doc>
+    </attachment>
   </attachments>
 </act>
   </akomaNtoso>
@@ -1053,6 +1223,29 @@ class MigrationTestCase(TestCase):
                     "paragraph-4": "para_4",
                 },
             "att_2":
+                {
+                    "schedule2.paragraph0": "schedule2.hcontainer_1",
+                    "schedule2.hcontainer_1": "hcontainer_1",
+                    "schedule2.crossheading-0": "schedule2.hcontainer_2",
+                    "schedule2.crossheading-1": "schedule2.hcontainer_3",
+                    "schedule2.crossheading-2": "schedule2.hcontainer_4",
+                    "schedule2.paragraph-1": "paragraph-1",
+                    "schedule2.paragraph-2": "paragraph-2",
+                    "schedule2.hcontainer_2": "hcontainer_2",
+                    "schedule2.paragraph-3": "paragraph-3",
+                    "schedule2.hcontainer_3": "hcontainer_3",
+                    "schedule2.hcontainer_4": "hcontainer_4",
+                    "schedule2.paragraph-6": "paragraph-6",
+                    "schedule2.paragraph-7": "paragraph-7",
+                    "schedule2.paragraph-8": "paragraph-8",
+                    "paragraph-1": "para_1",
+                    "paragraph-2": "para_2",
+                    "paragraph-3": "para_3",
+                    "paragraph-6": "para_6",
+                    "paragraph-7": "para_7",
+                    "paragraph-8": "para_8",
+                },
+            "att_3":
                 {
                     "schedule2.paragraph0": "schedule2.hcontainer_1",
                     "schedule2.hcontainer_1": "hcontainer_1",
@@ -1836,8 +2029,9 @@ class MigrationTestCase(TestCase):
         cobalt_doc = Act(doc.document_xml)
         migration = AKNeId()
         migration.nsmap = {"a": cobalt_doc.namespace}
+        migration.document = doc
         mappings = {}
-        migration.components_to_attachments(cobalt_doc, mappings, doc)
+        migration.components_to_attachments(cobalt_doc, mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual("""<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
   <act contains="originalVersion">
@@ -2154,7 +2348,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        AKNeId().migrate_act(cobalt_doc)
+        AKNeId().migrate_act(cobalt_doc, doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
@@ -3986,7 +4180,7 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>""")
         cobalt_doc = Act(doc.document_xml)
-        AKNeId().migrate_act(cobalt_doc)
+        AKNeId().migrate_act(cobalt_doc, doc)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">

@@ -1,121 +1,88 @@
 <akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
-  <act contains="singleVersion">
+  <act contains="originalVersion" name="act">
     <meta>
-      <identification source="#openbylaws">
+      <identification source="#cobalt">
         <FRBRWork>
-          <FRBRthis value="/za-cpt/act/by-law/2009/events/main"/>
-          <FRBRuri value="/za-cpt/act/by-law/2009/events"/>
-          <FRBRalias value="City of Cape Town: Events By-law"/>
+          <FRBRuri value="/akn/za-cpt/act/by-law/2009/events"/>
+          <FRBRalias value="Events" name="title"/>
+          <FRBRthis value="/akn/za-cpt/act/by-law/2009/events/!main"/>
           <FRBRdate date="2009-05-22" name="Generation"/>
-          <FRBRauthor href="#council" as="#author"/>
+          <FRBRauthor href=""/>
           <FRBRcountry value="za"/>
+          <FRBRsubtype value="by-law"/>
         </FRBRWork>
         <FRBRExpression>
-          <FRBRthis value="/za-cpt/act/by-law/2009/events/eng@2016-08-19/main"/>
-          <FRBRuri value="/za-cpt/act/by-law/2009/events/eng@2016-08-19"/>
-          <FRBRdate date="2016-08-19" name="Generation"/>
-          <FRBRauthor href="#council" as="#author"/>
+          <FRBRuri value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22"/>
+          <FRBRthis value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22/!main"/>
+          <FRBRdate date="2009-05-22" name="Generation"/>
+          <FRBRauthor href=""/>
           <FRBRlanguage language="eng"/>
         </FRBRExpression>
         <FRBRManifestation>
-          <FRBRthis value="/za-cpt/act/by-law/2009/events/eng@2016-08-19/main"/>
-          <FRBRuri value="/za-cpt/act/by-law/2009/events/eng@2016-08-19"/>
-          <FRBRdate date="2018-02-04" name="Generation"/>
-          <FRBRauthor href="#openbylaws" as="#author"/>
+          <FRBRuri value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22"/>
+          <FRBRthis value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22/!main"/>
+          <FRBRdate date="2020-05-29" name="Generation"/>
+          <FRBRauthor href=""/>
         </FRBRManifestation>
       </identification>
-      <publication date="2009-05-22" name="Province of Western Cape: Provincial Gazette" number="6630" showAs="Province of Western Cape: Provincial Gazette"/>
-      <lifecycle source="#this">
-        <eventRef id="e1" date="2009-05-22" source="#original" type="generation"/>
-        <eventRef id="amendment-2010-12-09" date="2010-12-09" type="amendment" source="#amendment-0-source"/>
-        <eventRef id="amendment-2016-08-19" date="2016-08-19" type="amendment" source="#amendment-1-source"/>
-      </lifecycle>
-      <references source="#this">
-        <TLCOrganization id="openbylaws" href="http://openbylaws.org.za" showAs="openbylaws.org.za"/>
-        <TLCOrganization id="council" href="/ontology/organization/za/council.cape-town" showAs="Cape Town City Council"/>
-        <TLCRole id="author" href="/ontology/role/author" showAs="Author"/>
-        <original id="original" href="/za/by-law/cape-town/2009/events" showAs="Original"/>
-        <TLCTerm id="term-authorized_official" href="/ontology/term/this.eng.authorized_official" showAs="authorized official"/>
-        <TLCTerm id="term-City" href="/ontology/term/this.eng.City" showAs="City"/>
-        <TLCTerm id="term-City_Manager" href="/ontology/term/this.eng.City_Manager" showAs="City Manager"/>
-        <TLCTerm id="term-Council" href="/ontology/term/this.eng.Council" showAs="Council"/>
-        <TLCTerm id="term-event" href="/ontology/term/this.eng.event" showAs="event"/>
-        <TLCTerm id="term-event_coordination_committee" href="/ontology/term/this.eng.event_coordination_committee" showAs="event coordination committee"/>
-        <TLCTerm id="term-event_organiser" href="/ontology/term/this.eng.event_organiser" showAs="event organiser"/>
-        <TLCTerm id="term-event_owner" href="/ontology/term/this.eng.event_owner" showAs="event owner"/>
-        <TLCTerm id="term-Event_Permit_Officer" href="/ontology/term/this.eng.Event_Permit_Officer" showAs="Event Permit Officer"/>
-        <TLCTerm id="term-Events_Policy" href="/ontology/term/this.eng.Events_Policy" showAs="Events Policy"/>
-        <TLCTerm id="term-event_safety_and_security_planning_committee" href="/ontology/term/this.eng.event_safety_and_security_planning_committee" showAs="event safety and security planning committee"/>
-        <TLCTerm id="term-flash_mob" href="/ontology/term/this.eng.flash_mob" showAs="flash mob"/>
-        <TLCTerm id="term-online_event_campaigns" href="/ontology/term/this.eng.online_event_campaigns" showAs="online event campaigns"/>
-        <TLCTerm id="term-permit" href="/ontology/term/this.eng.permit" showAs="permit"/>
-        <TLCTerm id="term-person" href="/ontology/term/this.eng.person" showAs="person"/>
-        <TLCTerm id="term-public_place" href="/ontology/term/this.eng.public_place" showAs="public place"/>
-        <TLCTerm id="term-purpose-built_venue" href="/ontology/term/this.eng.purpose-built_venue" showAs="purpose-built venue"/>
-        <TLCTerm id="term-safety_and_security_plan" href="/ontology/term/this.eng.safety_and_security_plan" showAs="safety and security plan"/>
-        <TLCTerm id="term-safety_officer" href="/ontology/term/this.eng.safety_officer" showAs="safety officer"/>
-        <TLCTerm id="term-stakeholder" href="/ontology/term/this.eng.stakeholder" showAs="stakeholder"/>
-        <TLCTerm id="term-venue" href="/ontology/term/this.eng.venue" showAs="venue"/>
-        <TLCTerm id="term-venue_owner" href="/ontology/term/this.eng.venue_owner" showAs="venue owner"/>
-        <passiveRef id="amendment-0-source" href="/za-cpt/act/by-law/2009/events-amendment" showAs="Events Amendment By-law, 2009"/>
-        <passiveRef id="amendment-1-source" href="/za-cpt/act/by-law/2016/events-amendment" showAs="City of Cape Town: Events Amendment By-law, 2016"/>
+      <publication number="6603" name="Provincial Gazette: Western Cape" showAs="Provincial Gazette: Western Cape" date="2009-05-22"/>
+      <references>
+        <TLCOrganization id="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
       </references>
     </meta>
     <body>
-      <chapter id="chapter-1">
+      <chapter eId="chp__1">
         <num>1</num>
         <heading>Definitions and application <remark status="editorial">[Remark <ref href="/za/act/1998/117">Act No. 117 of 1998</ref>]</remark></heading>
         <section id="section-1">
           <num>1.</num>
           <heading>Definitions <remark status="editorial">[Remark <ref href="/za/act/1998/117">Act No. 117 of 1998</ref>]</remark></heading>
-          <paragraph id="section-1.paragraph-0" refersTo="#term-venue_owner">
-            <content>
-              <p>In this By-law, unless the context otherwise indicates —</p>
-            </content>
-          </paragraph>
+          <content>
+            <p>In this By-law, unless the context otherwise indicates —</p>
+          </content>
         </section>
       </chapter>
     </body>
-  </act>
-  <components>
-    <component id="component-schedule3">
-      <doc name="schedule3">
-        <meta>
-          <identification source="#slaw">
-            <FRBRWork>
-              <FRBRthis value="/za-cpt/act/by-law/2009/events/schedule3"/>
-              <FRBRuri value="/za-cpt/act/by-law/2009/events"/>
-              <FRBRalias value="Schedule 3"/>
-              <FRBRdate date="1980-01-01" name="Generation"/>
-              <FRBRauthor href="#council"/>
-              <FRBRcountry value="za"/>
-            </FRBRWork>
-            <FRBRExpression>
-              <FRBRthis value="/za-cpt/act/by-law/2009/events/eng@2016-08-19/schedule3"/>
-              <FRBRuri value="/za-cpt/act/by-law/2009/events/eng@2016-08-19"/>
-              <FRBRdate date="1980-01-01" name="Generation"/>
-              <FRBRauthor href="#council"/>
-              <FRBRlanguage language="eng"/>
-            </FRBRExpression>
-            <FRBRManifestation>
-              <FRBRthis value="/za-cpt/act/by-law/2009/events/eng@2016-08-19/schedule3"/>
-              <FRBRuri value="/za-cpt/act/by-law/2009/events/eng@2016-08-19"/>
-              <FRBRdate date="2017-02-25" name="Generation"/>
-              <FRBRauthor href="#slaw"/>
-            </FRBRManifestation>
-          </identification>
-        </meta>
-        <mainBody>
-          <article id="schedule3">
-            <heading>Schedule of fines</heading>
-            <paragraph id="schedule3.paragraph-0">
+    <attachments>
+      <attachment eId="att_1">
+        <heading>Schedule 3</heading>
+        <subheading>Schedule of fines</subheading>
+        <doc name="schedule">
+          <meta>
+            <identification source="#slaw">
+              <FRBRWork>
+                <FRBRthis value="/akn/za-cpt/act/by-law/2009/events/!schedule1"/>
+                <FRBRuri value="/akn/za-cpt/act/by-law/2009/events"/>
+                <FRBRalias value="Schedule 1"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRcountry value="za"/>
+                <FRBRsubtype value="by-law"/>
+              </FRBRWork>
+              <FRBRExpression>
+                <FRBRthis value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22/!schedule1"/>
+                <FRBRuri value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22"/>
+                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRauthor href="#council"/>
+                <FRBRlanguage language="eng"/>
+              </FRBRExpression>
+              <FRBRManifestation>
+                <FRBRthis value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22/!schedule1"/>
+                <FRBRuri value="/akn/za-cpt/act/by-law/2009/events/eng@2009-05-22"/>
+                <FRBRdate date="2020-05-29" name="Generation"/>
+                <FRBRauthor href="#slaw"/>
+              </FRBRManifestation>
+            </identification>
+          </meta>
+          <mainBody>
+            <hcontainer id="hcontainer_0">
               <content>
                 <p><remark status="editorial">[Schedule 3 repealed by amendment on 2009-08-19]</remark>.</p>
               </content>
-            </paragraph>
-          </article>
-        </mainBody>
-      </doc>
-    </component>
-  </components>
+            </hcontainer>
+          </mainBody>
+        </doc>
+      </attachment>
+    </attachments>
+  </act>
 </akomaNtoso>

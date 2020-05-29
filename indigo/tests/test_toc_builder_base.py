@@ -46,6 +46,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'id': 'sec_1',
             'subcomponent': 'section'
         })
+        self.assertEqual(toc.id, toc.qualified_id)
 
     def test_toc_item_in_schedule(self):
         doc = Document(
@@ -63,3 +64,4 @@ class TOCBuilderBaseTestCase(TestCase):
             'id': 'sec_1',
             'subcomponent': 'section'
         })
+        self.assertEqual("att_1/sec_1", toc.qualified_id)

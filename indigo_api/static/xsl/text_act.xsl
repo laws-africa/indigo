@@ -176,7 +176,7 @@
       <xsl:text>&#10;</xsl:text>
     </xsl:if>
 
-    <xsl:text>&#10;&#10;</xsl:text>
+    <xsl:text>&#10;</xsl:text>
     <xsl:apply-templates select="a:doc" />
   </xsl:template>
 
@@ -187,7 +187,7 @@
     <xsl:text>{| </xsl:text>
 
     <!-- attributes -->
-    <xsl:for-each select="@*[local-name()!='id']">
+    <xsl:for-each select="@*[local-name()!='eId']">
       <xsl:value-of select="local-name(.)" />
       <xsl:text>="</xsl:text>
       <xsl:value-of select="." />

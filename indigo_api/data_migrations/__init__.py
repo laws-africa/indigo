@@ -117,8 +117,8 @@ class AKNeId(AKNMigration):
     }
 
     add_1_replacements = {
-        "table": (re.compile(r"\btable-?(?P<num>\d+)$"), "table_"),
-        "blockList": (re.compile(r"\blist(?P<num>\d+)$"), "list_"),
+        "table": (re.compile(r"\btable-?\d+$"), "table_"),
+        "blockList": (re.compile(r"\blist\d+$"), "list_"),
     }
 
     complex_replacements = {

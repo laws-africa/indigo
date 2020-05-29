@@ -351,15 +351,6 @@ class AKNeId(AKNMigration):
                 # remove hcontainer
                 att.doc.mainBody.remove(hcontainer)
 
-                # update mappings, e.g.
-                # {schedule1: {para0: hcontainer_1, etc}} -> {att_1: {para0: hcontainer_1, etc}}
-                if mappings.get(old):
-                    mappings[new_id] = mappings[old]
-                    del mappings[old]
-                    log.info(f"Mapping replaced: {old} -> {new_id}")
-                else:
-                    log.warning(f"This mapping wasn't replaced (nothing to move or already moved): {old} -> {new_id}")
-
         """ Update the prefixes of the anchor ids of all annotations on the document, e.g.
             schedule1/schedule1.paragraph0 -> att_2/schedule1.paragraph0
             schedule1/section-1 -> att_2/section-1

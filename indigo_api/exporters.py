@@ -591,6 +591,6 @@ class XSLTRenderer(object):
         """ Default scope for ID attributes when rendering.
         """
         ns = node.nsmap[None]
-        scope = node.xpath('./ancestor::a:doc[@name][1]/@name', namespaces={'a': ns})
+        scope = node.xpath('./ancestor::a:attachment[@eId]/@eId', namespaces={'a': ns})
         if scope:
             return scope[0]

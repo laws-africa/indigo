@@ -83,11 +83,12 @@ class TOCBuilderBase(LocaleBasedMatcher):
         self.setup(document.doc, document.django_language)
 
         with override(self.language):
-            component = self.determine_component(element)[0]
+            component, component_el = self.determine_component(element)
+            component_id = None if component == 'main' else component_el.getparent().get('eId')
             # find the first node at or above element, that is a valid TOC element
             element = closest(element, lambda e: self.is_toc_element(e))
             if element is not None:
-                return self.make_toc_entry(element, component)
+                return self.make_toc_entry(element, component, component_id)
 
     def setup(self, act, language):
         self.act = act
@@ -124,11 +125,13 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def build_table_of_contents(self):
         toc = []
         for component, element in self.act.components().items():
-            toc += self.process_elements(component, [element])
+            # this is the attachment id, whereas component is the FRBR URI-based name
+            component_id = None if component == 'main' else element.getparent().get('eId')
+            toc += self.process_elements(component, component_id, [element])
 
         return toc
 
-    def process_elements(self, component, elements, parent=None):
+    def process_elements(self, component, component_id, elements, parent=None):
         """ Process the list of ``elements`` and their children, and
         return a (potentially empty) set of TOC items.
         """
@@ -139,14 +142,14 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 continue
 
             if self.is_toc_element(e):
-                item = self.make_toc_entry(e, component, parent=parent)
-                item.children = self.process_elements(component, e.iterchildren(), parent=item)
+                item = self.make_toc_entry(e, component, component_id, parent=parent)
+                item.children = self.process_elements(component, component_id, e.iterchildren(), parent=item)
                 items.append(item)
             else:
-                items += self.process_elements(component, e.iterchildren())
+                items += self.process_elements(component, component_id, e.iterchildren())
         return items
 
-    def make_toc_entry(self, element, component, parent=None):
+    def make_toc_entry(self, element, component, component_id, parent=None):
         type_ = element.tag.split('}', 1)[-1]
         id_ = element.get('eId')
 
@@ -197,7 +200,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
                 subcomponent += '/' + num.strip('.()')
 
         toc_item = TOCElement(element, component, type_, heading=heading, id_=id_,
-                              num=num, subcomponent=subcomponent, parent=parent)
+                              num=num, subcomponent=subcomponent, parent=parent, component_id=component_id)
         toc_item.title = self.friendly_title(toc_item)
 
         return toc_item
@@ -285,7 +288,7 @@ class TOCElement(object):
     :ivar type: element type, one of: ``chapter, part, section`` etc.
     """
 
-    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, parent=None, children=None):
+    def __init__(self, element, component, type_, heading=None, id_=None, num=None, subcomponent=None, parent=None, children=None, component_id=None):
         self.element = element
         self.component = component
         self.type = type_
@@ -295,7 +298,7 @@ class TOCElement(object):
         self.children = children
         self.subcomponent = subcomponent
         self.title = None
-        self.qualified_id = id_ if component == 'main' else "{}/{}".format(component, id_)
+        self.qualified_id = id_ if component == 'main' else f"{component_id}/{id_}"
 
     def as_dict(self):
         info = {

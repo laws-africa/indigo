@@ -504,6 +504,7 @@ class MigrationTestCase(TestCase):
             "schedule2/schedule2.paragraph-1": "att_2/para_1",
             "schedule2/schedule2.crossheading-0": "att_2/hcontainer_2",
             "schedule2/schedule2.crossheading-1": "att_2/hcontainer_3",
+            "scheduleA/scheduleA.crossheading-1": "scheduleA/scheduleA.crossheading-1",
         }
         for anchor_id in annotation_anchors.keys():
             annotation = Annotation(
@@ -1205,7 +1206,7 @@ class MigrationTestCase(TestCase):
                     'trm39': 'sec_1.hcontainer_1.list_2.item_a__term_2',
                     'trm40': 'sec_1.hcontainer_1.list_2.item_b__term_1',
                 },
-            "att_1":
+            "schedule1":
                 {
                     "schedule1.paragraph0": "schedule1.hcontainer_2",
                     "schedule1.hcontainer_2": "hcontainer_2",
@@ -1224,7 +1225,7 @@ class MigrationTestCase(TestCase):
                     "paragraph-3": "para_3",
                     "paragraph-4": "para_4",
                 },
-            "att_2":
+            "schedule2":
                 {
                     "schedule2.paragraph0": "schedule2.hcontainer_1",
                     "schedule2.hcontainer_1": "hcontainer_1",
@@ -1247,7 +1248,7 @@ class MigrationTestCase(TestCase):
                     "paragraph-7": "para_7",
                     "paragraph-8": "para_8",
                 },
-            "att_3":
+            "schedule2_XXX":
                 {
                     "schedule2.paragraph0": "schedule2.hcontainer_1",
                     "schedule2.hcontainer_1": "hcontainer_1",
@@ -1270,13 +1271,12 @@ class MigrationTestCase(TestCase):
                     "paragraph-7": "para_7",
                     "paragraph-8": "para_8",
                 },
-        }, mappings)
+        }), mappings)
 
         # check annotations
         new_annotations = doc.annotations.all()
-        self.assertEqual(len(new_annotations), 12)
+        self.assertEqual(len(new_annotations), 13)
         for annotation in new_annotations:
-            self.assertNotIn(annotation.anchor_id, annotation_anchors.keys())
             self.assertIn(annotation.anchor_id, annotation_anchors.values())
 
     def test_para_to_hcontainer(self):

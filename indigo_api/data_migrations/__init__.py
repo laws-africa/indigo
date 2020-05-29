@@ -293,7 +293,7 @@ class AKNeId(AKNMigration):
                       <content>
                         ...
         """
-        prefix_mappings = {}
+        self.schedule_mappings = defaultdict(dict)
         for elem in doc.root.xpath('/a:akomaNtoso/a:components', namespaces=self.nsmap):
             elem.tag = f'{{{doc.namespace}}}attachments'
             # move to last child of act element
@@ -304,10 +304,8 @@ class AKNeId(AKNMigration):
                 new_id = f'att_{i + 1}'
                 att.set("id", new_id)
                 old = att.doc.get("name")
-
-                # ignore duplicates: hrefs and annotations will point to the first instance
-                if old not in prefix_mappings:
-                    prefix_mappings[old] = new_id
+                att.doc.set('name', 'schedule')
+                self.schedule_mappings[old] = new_id
 
                 # old-style schedules used "article" instead of an hcontainer wrapper
                 try:
@@ -330,8 +328,6 @@ class AKNeId(AKNMigration):
                 # heading and subheading
                 for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=self.nsmap):
                     att.doc.addprevious(heading)
-
-                att.doc.set('name', 'schedule')
 
                 # rewrite ids
                 hcontainer = att.doc.mainBody.hcontainer
@@ -359,12 +355,12 @@ class AKNeId(AKNMigration):
             for annotation in self.document.annotations.all():
                 if "/" in annotation.anchor_id:
                     pre, post = annotation.anchor_id.split("/", 1)
-                    if prefix_mappings.get(pre):
-                        new_pre = prefix_mappings[pre]
-                        annotation.anchor_id = f"{new_pre}/{post}"
-                        annotation.save()
-                    else:
-                        log.warning(f"This annotation prefix hasn't been updated: {pre}")
+                    new_pre = self.schedule_mappings[pre]
+                    if not new_pre:
+                        log.warning(f"Annotation prefix not updated: {pre}")
+                        continue
+                    annotation.anchor_id = f"{new_pre}/{post}"
+                    annotation.save()
 
     def basics(self, doc, mappings):
         for name, root in self.components(doc).items():
@@ -479,18 +475,19 @@ class AKNeId(AKNMigration):
                 if "/" in old_anchor:
                     # att_2/schedule2.crossheading-1
                     pre, post = old_anchor.split("/", 1)
-                    if mappings.get(pre):
-                        new_post = self.traverse_mappings(post, mappings[pre])
-                        annotation.anchor_id = f"{pre}/{new_post}"
-                    else:
-                        log.warning(f"This annotation's anchor id hasn't been updated: {old_anchor}")
-                        break
-                elif mappings.get("main"):
+                    old_pre = None
+                    for before, after in self.schedule_mappings.items():
+                        if pre == after:
+                            old_pre = before
+
+                    new_post = self.traverse_mappings(post, mappings[old_pre])
+                    annotation.anchor_id = f"{pre}/{new_post}"
+
+                else:
                     annotation.anchor_id = self.traverse_mappings(old_anchor, mappings["main"])
 
                 if annotation.anchor_id == old_anchor:
-                    log.warning(f"This annotation's anchor id hasn't been updated: {old_anchor}")
-                    break
+                    log.warning(f"Annotation anchor id not updated: {old_anchor}")
+                    continue
 
-                log.info(f"anchor updated: {old_anchor} -> {annotation.anchor_id}")
                 annotation.save()

@@ -173,7 +173,7 @@
 
       // the id might be scoped
       elemId.split("/").forEach(function(id) {
-        node = node.querySelector('[id="' + id + '"]');
+        node = node.querySelector('[eId="' + id + '"]');
       });
 
       if (node) this.editFragmentText(node);

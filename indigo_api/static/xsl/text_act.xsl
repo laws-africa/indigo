@@ -42,6 +42,7 @@
     <xsl:apply-templates select="a:preamble" />
     <xsl:apply-templates select="a:body" />
     <xsl:apply-templates select="a:conclusions" />
+    <xsl:apply-templates select="a:attachments" />
   </xsl:template>
 
   <xsl:template match="a:preface">
@@ -163,9 +164,8 @@
   </xsl:template>
 
 
-  <!-- components/schedules -->
-  <!-- new-style schedules, "hcontainer" elements -->
-  <xsl:template match="a:hcontainer[@name='schedule']">
+  <!-- attachments/schedules -->
+  <xsl:template match="a:attachment">
     <xsl:text>SCHEDULE&#10;HEADING </xsl:text>
     <xsl:apply-templates select="a:heading" />
     <xsl:text>&#10;</xsl:text>
@@ -177,26 +177,10 @@
     </xsl:if>
 
     <xsl:text>&#10;&#10;</xsl:text>
-    <xsl:apply-templates select="./*[not(self::a:heading) and not(self::a:subheading)]" />
+    <xsl:apply-templates select="a:doc" />
   </xsl:template>
 
-
-  <!-- old-style schedules, "article" elements -->
-  <xsl:template match="a:doc/a:mainBody/a:article">
-    <xsl:text>SCHEDULE&#10;HEADING </xsl:text>
-    <xsl:value-of select="../../a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-    <xsl:text>&#10;</xsl:text>
-
-    <xsl:if test="a:heading">
-      <xsl:text>SUBHEADING </xsl:text>
-      <xsl:apply-templates select="a:heading" />
-      <xsl:text>&#10;</xsl:text>
-    </xsl:if>
-
-    <xsl:text>&#10;</xsl:text>
-    <xsl:apply-templates select="./*[not(self::a:heading)]"/>
-  </xsl:template>
-
+  <xsl:template match="a:meta" />
 
   <!-- tables -->
   <xsl:template match="a:table">

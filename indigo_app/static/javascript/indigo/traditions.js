@@ -74,10 +74,10 @@
         chapter: 'chapters',
         part: 'parts',
         section: 'sections',
-        component: 'schedules',
-        components: 'schedules_container',
+        attachment: 'schedules',
+        attachments: 'schedules_container',
       },
-      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
+      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-attachment, .akn-attachments',
       aceMode: 'ace/mode/indigo',
     },
     // list of names of linter functions applicable to this location

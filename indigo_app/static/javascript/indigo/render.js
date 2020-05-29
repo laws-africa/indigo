@@ -29,7 +29,7 @@ $(function() {
     getElementIdScope: function(element) {
       var ns = element.namespaceURI;
       var idScope = element.ownerDocument.evaluate(
-        "./ancestor::a:doc[@name][1]/@name",
+        "./ancestor::a:attachment/@eId",
         element,
         function(x) { if (x == "a") return ns; },
         XPathResult.ANY_TYPE,

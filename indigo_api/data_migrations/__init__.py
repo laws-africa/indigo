@@ -130,26 +130,24 @@ class AKNeId(AKNMigration):
         """ Get an `OrderedDict` of component name to :class:`lxml.objectify.ObjectifiedElement`
         objects.
         """
-        components = doc.components()
-
-        if len(components) <= 1:
-            # look for old-style components / schedules
-            components = OrderedDict()
-            for component in doc.root.xpath("./a:act | ./a:components/a:component/a:doc", namespaces=self.nsmap):
-                if component.tag == f"{{{doc.namespace}}}act":
-                    components["main"] = component
-                else:
-                    name = component.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1].lstrip("!")
-                    while components.get(name) is not None:
-                        log.warning(f"Identical component name found; adding '_XXX' to end for disambiguation: {name}")
-                        name += "_XXX"
-                        # add "_XXX" to the doc name as well for mappings
-                        component.set("name", name)
-                    components[name] = component
-
-        for name, component in components.items():
-            if name == "main":
+        components = OrderedDict()
+        for component in doc.root.xpath(
+                "./a:act | ./a:act/a:attachments/a:attachment/a:doc | "
+                "./a:act/a:components/a:component/a:doc | ./a:components/a:component/a:doc",
+                namespaces=self.nsmap):
+            if component.tag == f"{{{doc.namespace}}}act":
                 components["main"] = component.body
+            else:
+                name = component.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1].lstrip("!")
+                while components.get(name) is not None:
+                    log.warning(f"Identical component name found; adding '_XXX' to end for disambiguation: {name}")
+                    name += "_XXX"
+                    # add "_XXX" to the doc name as well for mappings,
+                    # but only for old-style components
+                    parent = component.getparent().getparent().getparent()
+                    if parent.tag == f"{{{doc.namespace}}}akomaNtoso":
+                        component.set("name", name)
+                components[name] = component
 
         return components
 

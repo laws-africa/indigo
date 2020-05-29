@@ -361,17 +361,20 @@ class AKNeId(AKNMigration):
             for element, (pattern, replacement) in self.add_1_replacements.items():
                 counter = Counter()
                 for node in root.xpath(f".//a:{element}", namespaces=self.nsmap):
-                    old_id = node.get("id")
+                    # default to empty string if no current id
+                    old_id = node.get("id", "")
                     prefix = self.get_parent_id(node)
                     # the num for this term depends on the number of preceding terms with the same prefix
-                    counter[f"{name}-{prefix}"] += 1
-                    new_id = re.sub(pattern, replacement + str(counter[f"{name}-{prefix}"]), old_id)
+                    counter[prefix] += 1
+                    new = replacement + str(counter[prefix])
+                    # if no current id, generate one now
+                    new_id = re.sub(pattern, new, old_id) or new
 
                     if old_id:
                         self.safe_update(node, mappings[name], old_id, new_id)
                     else:
                         node.set("id", new_id)
-                        log.warning(f"Element had no id: {name} / {prefix} / {node.tag} -> {new_id}")
+                        log.warning(f"Setting new id (had none): {name} / {prefix} / {node.tag} -> {new_id}")
 
     def subsections_items(self, doc, mappings):
         for name, root in self.components(doc).items():

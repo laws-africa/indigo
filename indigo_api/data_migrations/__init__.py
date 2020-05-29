@@ -1,6 +1,6 @@
 import logging
 import re
-from collections import Counter, OrderedDict
+from collections import Counter, OrderedDict, defaultdict
 
 from indigo.xmlutils import rewrite_ids
 
@@ -160,7 +160,7 @@ class AKNeId(AKNMigration):
         """
         self.nsmap = {"a": doc.namespace}
         self.document = document
-        mappings = {}
+        mappings = defaultdict(dict)
 
         self.paras_to_hcontainers(doc, mappings)
         self.crossheadings_to_hcontainers(doc, mappings)
@@ -176,7 +176,7 @@ class AKNeId(AKNMigration):
         # just for tests
         return mappings
 
-    def safe_update(self, element, mappings, old, new, name):
+    def safe_update(self, element, mappings, old, new):
         """ Updates ids and mappings:
         - First, check `mappings` for `old`:
             if it's already there, check that it maps to `new`. Log a warning if not.
@@ -184,18 +184,17 @@ class AKNeId(AKNMigration):
         - If it wasn't already in, update `mappings`.
         """
         if old == new:
-            log.warning(f"Not updating id because it's identical: {old}")
+            log.warning(f"Not updating unchanged id: {old}")
             return
-        if name in mappings and old in mappings[name]:
-            if not mappings[name][old] == new:
-                log.warning(f"New id mapping differs from existing: {old} -> {mappings[name][old]}; ignoring {new}")
+
+        if mappings.get("old"):
+            if not mappings[old] == new:
+                log.warning(f"New id mapping differs from existing: {old} -> {mappings[old]}; ignoring {new}")
+            # rewrite ids but don't update mappings
             rewrite_ids(element, old, new)
             return
 
-        if name not in mappings:
-            mappings[name] = {}
-
-        mappings[name].update(rewrite_ids(element, old, new))
+        mappings.update(rewrite_ids(element, old, new))
 
     def traverse_mappings(self, old, mappings):
         if old in mappings:
@@ -240,7 +239,7 @@ class AKNeId(AKNMigration):
                 num = len(para.xpath('preceding-sibling::a:hcontainer', namespaces=self.nsmap)) + 1
                 old_id = para.get('id')
                 new_id = re.sub('paragraph-?(\d+)$', f'hcontainer_{num}', old_id)
-                self.safe_update(para, mappings, old_id, new_id, name)
+                self.safe_update(para, mappings[name], old_id, new_id)
 
     def crossheadings_to_hcontainers(self, doc, mappings):
         """ Update crossheading ids to hcontainer and number them from 1, e.g.
@@ -253,7 +252,7 @@ class AKNeId(AKNMigration):
                 num = len(crossheading.xpath("preceding-sibling::a:hcontainer", namespaces=self.nsmap)) + 1
                 old_id = crossheading.get("id")
                 new_id = re.sub("crossheading-(\d+)$", f"hcontainer_{num}", old_id)
-                self.safe_update(crossheading, mappings, old_id, new_id, name)
+                self.safe_update(crossheading, mappings[name], old_id, new_id)
 
     def components_to_attachments(self, doc, mappings):
         """ Migrates schedules stored as components to attachments, as a child of the act.
@@ -384,7 +383,7 @@ class AKNeId(AKNMigration):
                 for node in root.xpath(f".//a:{element}", namespaces=self.nsmap):
                     old_id = node.get("id")
                     new_id = re.sub(pattern, replacement, old_id)
-                    self.safe_update(node, mappings, old_id, new_id, name)
+                    self.safe_update(node, mappings[name], old_id, new_id)
 
     def tables_blocklists(self, doc, mappings):
         for name, root in self.components(doc).items():
@@ -398,7 +397,7 @@ class AKNeId(AKNMigration):
                     new_id = re.sub(pattern, replacement + str(counter[f"{name}-{prefix}"]), old_id)
 
                     if old_id:
-                        self.safe_update(node, mappings, old_id, new_id, name)
+                        self.safe_update(node, mappings[name], old_id, new_id)
                     else:
                         node.set("id", new_id)
                         log.warning(f"Element had no id: {name} / {prefix} / {node.tag} -> {new_id}")
@@ -424,7 +423,7 @@ class AKNeId(AKNMigration):
                     prefix = self.get_parent_id(node)
                     if prefix:
                         new_id = f"{prefix}.{new_id}"
-                    self.safe_update(node, mappings, old_id, new_id, name)
+                    self.safe_update(node, mappings[name], old_id, new_id)
 
     def term_ids(self, doc, mappings):
         for name, root in self.components(doc).items():
@@ -437,7 +436,7 @@ class AKNeId(AKNMigration):
                 new_id = f'term_{counter[f"{name}-{prefix}"]}'
                 if prefix:
                     new_id = f'{prefix}__{new_id}'
-                self.safe_update(node, mappings, old_id, new_id, name)
+                self.safe_update(node, mappings[name], old_id, new_id)
 
     def separators_eids(self, doc, mappings):
         for name, root in self.components(doc).items():
@@ -450,12 +449,7 @@ class AKNeId(AKNMigration):
                 if "." in old_id:
                     new_id = old_id.replace(".", "__")
                     node.set("id", new_id)
-                    if mappings.get(name):
-                        mappings[name].update({old_id: new_id})
-
-                    else:
-                        log.warning(f"An id has been updated; no mapping existed so a new one will be made now: {old_id} -> {new_id} in {name}")
-                        mappings[name] = {old_id: new_id}
+                    mappings[name].update({old_id: new_id})
 
         # all ids become eIds, don't need to be tracked in `mappings`
         for node in doc.root.xpath("//a:*[@id]", namespaces=self.nsmap):
@@ -473,13 +467,13 @@ class AKNeId(AKNMigration):
                     ref = node.get("href").lstrip("#")
                     new_ref = self.traverse_mappings(ref, mappings[name])
 
-                    if new_ref == ref and mappings.get("main"):
+                    if new_ref == ref:
                         # we're likely in a schedule and talking about a section in main
                         new_ref = self.traverse_mappings(ref, mappings["main"])
 
                     if new_ref == ref:
                         # doesn't point at anything
-                        log.warning(f"The following reference hasn't been updated: {ref}")
+                        log.warning(f"Reference not updated: {ref}")
                         break
 
                     node.set("href", f"#{new_ref}")

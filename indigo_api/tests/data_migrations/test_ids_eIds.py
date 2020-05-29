@@ -1,4 +1,5 @@
 # coding=utf-8
+from collections import defaultdict
 from datetime import date
 
 from django.test import TestCase
@@ -987,7 +988,8 @@ class MigrationTestCase(TestCase):
         )
 
         # check mappings
-        self.assertDictEqual({
+        self.assertDictEqual(defaultdict(dict, {
+            None: {},
             "main":
                 {
                     "section-1.paragraph0": "section-1.hcontainer_1",
@@ -1593,7 +1595,8 @@ class MigrationTestCase(TestCase):
         cobalt_doc = Act(doc.document_xml)
         migration = AKNeId()
         migration.nsmap = {"a": cobalt_doc.namespace}
-        migration.paras_to_hcontainers(cobalt_doc, mappings={})
+        mappings = defaultdict(dict)
+        migration.paras_to_hcontainers(cobalt_doc, mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual(
             """<akomaNtoso xmlns="http://www.akomantoso.org/2.0">
@@ -2030,7 +2033,7 @@ class MigrationTestCase(TestCase):
         migration = AKNeId()
         migration.nsmap = {"a": cobalt_doc.namespace}
         migration.document = doc
-        mappings = {}
+        mappings = defaultdict(dict)
         migration.components_to_attachments(cobalt_doc, mappings)
         output = cobalt_doc.to_xml(pretty_print=True, encoding='unicode')
         self.assertMultiLineEqual("""<akomaNtoso xmlns="http://www.akomantoso.org/2.0">

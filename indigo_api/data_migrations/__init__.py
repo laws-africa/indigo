@@ -313,18 +313,6 @@ class AKNeId(AKNMigration):
                 except AttributeError:
                     pass
 
-                # name updated in meta
-                to_replace = [
-                    att.doc.meta.identification.FRBRWork.FRBRthis,
-                    att.doc.meta.identification.FRBRExpression.FRBRthis,
-                    att.doc.meta.identification.FRBRManifestation.FRBRthis,
-                ]
-                for frbr_this in to_replace:
-                    current = frbr_this.get('value')
-                    suffix = current.split('/')[-1].lstrip("!")
-                    new = re.sub(f"{suffix}$", new_id, current)
-                    frbr_this.set('value', new)
-
                 # heading and subheading
                 for heading in att.doc.mainBody.hcontainer.xpath('a:heading | a:subheading', namespaces=self.nsmap):
                     att.doc.addprevious(heading)

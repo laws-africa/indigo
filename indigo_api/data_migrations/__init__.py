@@ -325,12 +325,10 @@ class AKNeId(AKNMigration):
                     # move the actual xml into the attachment
                     hcontainer.addprevious(child)
                     # update the child's id if it has one
-                    old_id = child.get("id")
-                    if old_id:
-                        self.safe_update(child, mappings, id, '', old)
+                    if child.get("id"):
+                        self.safe_update(child, mappings[old], id, '')
                     else:
-                        child.set("id", id)
-                        log.warning(f"Element had no id: {old} / {hcontainer.get('id')} / {child.tag} -> {id}")
+                        log.warning(f"Element has no id: {new_id} / {hcontainer.get('id')} / {child.tag}")
 
                 # remove hcontainer
                 att.doc.mainBody.remove(hcontainer)
@@ -415,9 +413,6 @@ class AKNeId(AKNMigration):
         for name, root in self.components(doc).items():
             for node in root.xpath(".//a:*[@id]", namespaces=self.nsmap):
                 old_id = node.get("id")
-
-                if old_id.endswith("."):
-                    log.warning(f"Old id doesn't look right: {old_id}")
 
                 if "." in old_id:
                     new_id = old_id.replace(".", "__")

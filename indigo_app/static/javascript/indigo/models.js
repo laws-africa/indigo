@@ -133,10 +133,10 @@
      */
     componentElements: function() {
       var components = [],
-          result = this.xpath('//a:act | //a:components/a:component/a:doc');
+          result = this.xpath('/a:akomaNtoso/a:act/a:meta | /a:akomaNtoso/a:act/a:attachments/a:attachment/a:*/a:meta');
 
       for (var i = 0; i < result.snapshotLength; i++) {
-        components.push(result.snapshotItem(i));
+        components.push(result.snapshotItem(i).parentElement);
       }
 
       return components;

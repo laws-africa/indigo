@@ -96,5 +96,5 @@ class RenderParseAPITest(APITestCase):
         self.maxDiff = None
         self.assertEqual(
             response.data['output'],
-            '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"><chapter eId="prefix.chp_2"><num>2</num><heading>The Beginning</heading><section eId="sec_1"><num>1.</num><heading>First Verse</heading><hcontainer eId="sec_1__hcontainer_0"><content><p>κόσμε</p></content></hcontainer><subsection eId="sec_1__subsec_1"><num>(1)</num><content><p>In the beginning</p></content></subsection><subsection eId="sec_1__subsec_2"><num>(2)</num><content><p>There was nothing and an Act no 2 of 2010.</p></content></subsection></section></chapter></akomaNtoso>'
+            '<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"><chapter eId="prefix.chp_2"><num>2</num><heading>The Beginning</heading><section eId="sec_1"><num>1.</num><heading>First Verse</heading><hcontainer eId="sec_1__hcontainer_1"><content><p>κόσμε</p></content></hcontainer><subsection eId="sec_1__subsec_1"><num>(1)</num><content><p>In the beginning</p></content></subsection><subsection eId="sec_1__subsec_2"><num>(2)</num><content><p>There was nothing and an Act no 2 of 2010.</p></content></subsection></section></chapter></akomaNtoso>'
         )

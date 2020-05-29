@@ -30,6 +30,7 @@
       <xsl:apply-templates select="a:preamble" />
       <xsl:apply-templates select="a:body" />
       <xsl:apply-templates select="a:conclusions" />
+      <xsl:apply-templates select="a:attachments" />
     </xsl:element>
   </xsl:template>
 
@@ -39,7 +40,7 @@
 
     <xsl:attribute name="id">
       <!-- scope the id to the containing attachment, if any, using a default if provided -->
-      <xsl:variable name="prefix" select="./ancestor::a:attachment[@eId][1]/@eId"/>
+      <xsl:variable name="prefix" select="../ancestor::a:attachment[@eId][1]/@eId"/>
       <xsl:choose>
         <xsl:when test="$prefix != ''">
           <xsl:value-of select="concat($prefix, '/')" />
@@ -178,28 +179,14 @@
   <xsl:template match="a:hcontainer[@name='crossheading']/@name"/>
 
   <!-- components/schedules -->
-  <xsl:template match="a:doc">
-    <!-- a:doc doesn't have an id, so add one -->
-    <article class="akn-doc" id="{@name}">
-      <xsl:choose>
-        <xsl:when test="a:mainBody/a:hcontainer[@name='schedule']">
-          <!-- new style schedule -->
-          <xsl:apply-templates select="a:mainBody/a:hcontainer[@name='schedule']" />
-        </xsl:when>
-
-        <xsl:otherwise>
-          <!-- old style schedule -->
-          <xsl:apply-templates select="@*" />
-          <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-            <h2 class="akn-heading">
-              <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-            </h2>
-          </xsl:if>
-          <xsl:apply-templates select="a:mainBody" />
-        </xsl:otherwise>
-      </xsl:choose>
-    </article>
+  <xsl:template match="a:attachment">
+    <div class="akn-attachment">
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates />
+    </div>
   </xsl:template>
+
+  <xsl:template match="a:meta" />
 
   <xsl:template match="a:hcontainer[@name='schedule']/a:heading | a:hcontainer[@name='schedule']/a:subheading">
     <h2 class="akn-heading">

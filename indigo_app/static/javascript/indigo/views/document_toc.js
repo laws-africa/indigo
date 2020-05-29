@@ -66,6 +66,8 @@
           var kid = kids[i],
               toc_item = null;
 
+          if (tradition.is_toc_deadend(kid)) continue;
+
           if (tradition.is_toc_element(kid)) {
             toc_item = generate_toc(kid);
             toc_item.index = toc.length;
@@ -85,11 +87,11 @@
 
       function generate_toc(node) {
         var $node = $(node);
-        var $component = $node.parent().closest('doc');
-        var qualified_id = node.id;
+        var $component = $node.closest('attachment');
+        var qualified_id = node.getAttribute('eId');
 
         if ($component.length > 0) {
-          qualified_id = $component.attr('name') + '/' + qualified_id;
+          qualified_id = $component.attr('eId') + '/' + qualified_id;
         }
 
         var item = {
@@ -141,7 +143,7 @@
       // now attach decent issue descriptions
       _.each(withIssues, function(entry) {
         var severity = _.map(entry.issues, function(issue) { return issue.get('severity'); });
-        severity = _.contains(severity, 'error') ? 'error' : 'warning';
+        severity = _.contains(severity, 'error') ? 'error' : (_.contains(severity, 'warning') ? 'warning': 'information');
 
         entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length == 1 ? '' : 's');
         entry.issues_description = entry.issues.map(function(issue) { return issue.get('message'); }).join('<br>');

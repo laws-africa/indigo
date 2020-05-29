@@ -193,31 +193,24 @@
       <xsl:value-of select="." />
       <xsl:text>" </xsl:text>
     </xsl:for-each>
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
 
     <xsl:apply-templates />
-    <xsl:text>
-|}
-
-</xsl:text>
+    <xsl:text>&#10;|}&#10;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:tr">
     <xsl:apply-templates />
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:th|a:td">
     <xsl:choose>
       <xsl:when test="local-name(.) = 'th'">
-        <xsl:text>
-! </xsl:text>
+        <xsl:text>&#10;! </xsl:text>
       </xsl:when>
       <xsl:when test="local-name(.) = 'td'">
-        <xsl:text>
-| </xsl:text>
+        <xsl:text>&#10;| </xsl:text>
       </xsl:when>
     </xsl:choose>
 

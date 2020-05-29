@@ -140,7 +140,7 @@ class AKNeId(AKNMigration):
             else:
                 name = component.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1].lstrip("!")
                 while components.get(name) is not None:
-                    log.warning(f"Identical component name found; adding '_XXX' to end for disambiguation: {name}")
+                    log.warning(f"Adding '_XXX' to end of component name: {name}")
                     name += "_XXX"
                     # add "_XXX" to the doc name as well for mappings,
                     # but only for old-style components
@@ -328,7 +328,7 @@ class AKNeId(AKNMigration):
                     if child.get("id"):
                         self.safe_update(child, mappings[old], id, '')
                     else:
-                        log.warning(f"Element has no id: {new_id} / {hcontainer.get('id')} / {child.tag}")
+                        log.warning(f"Element has no id (taking no action): {new_id} / {hcontainer.get('id')} / {child.tag}")
 
                 # remove hcontainer
                 att.doc.mainBody.remove(hcontainer)
@@ -343,7 +343,7 @@ class AKNeId(AKNMigration):
                     pre, post = annotation.anchor_id.split("/", 1)
                     new_pre = self.schedule_mappings[pre]
                     if not new_pre:
-                        log.warning(f"Annotation prefix not updated: {pre}")
+                        log.warning(f"Not updating annotation prefix: {pre}")
                         continue
                     annotation.anchor_id = f"{new_pre}/{post}"
                     annotation.save()
@@ -389,7 +389,7 @@ class AKNeId(AKNMigration):
                         try:
                             num = node.num.text
                         except AttributeError as e:
-                            log.warning(f"Subsection without a <num> in {old_id}: {e}")
+                            log.warning(f"Subsection without a <num> (taking no action) in {old_id}: {e}")
                             break
 
                     num = self.clean_number(num)
@@ -444,7 +444,7 @@ class AKNeId(AKNMigration):
 
                     if new_ref == ref:
                         # doesn't point at anything
-                        log.warning(f"Reference not updated: {ref}")
+                        log.warning(f"Not updating reference: {ref}")
                         break
 
                     node.set("href", f"#{new_ref}")
@@ -473,7 +473,7 @@ class AKNeId(AKNMigration):
                     annotation.anchor_id = self.traverse_mappings(old_anchor, mappings["main"])
 
                 if annotation.anchor_id == old_anchor:
-                    log.warning(f"Annotation anchor id not updated: {old_anchor}")
+                    log.warning(f"Not updating annotation anchor id: {old_anchor}")
                     continue
 
                 annotation.save()

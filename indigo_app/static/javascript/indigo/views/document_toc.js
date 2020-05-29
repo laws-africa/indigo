@@ -143,7 +143,7 @@
       // now attach decent issue descriptions
       _.each(withIssues, function(entry) {
         var severity = _.map(entry.issues, function(issue) { return issue.get('severity'); });
-        severity = _.contains(severity, 'error') ? 'error' : 'warning';
+        severity = _.contains(severity, 'error') ? 'error' : (_.contains(severity, 'warning') ? 'warning': 'information');
 
         entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length == 1 ? '' : 's');
         entry.issues_description = entry.issues.map(function(issue) { return issue.get('message'); }).join('<br>');

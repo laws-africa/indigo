@@ -406,8 +406,8 @@ class AKNeId(AKNMigration):
                 old_id = node.get('id')
                 prefix = self.get_parent_id(node)
                 # the num for this term depends on the number of preceding terms with the same prefix
-                counter[f"{name}-{prefix}"] += 1
-                new_id = f'term_{counter[f"{name}-{prefix}"]}'
+                counter[prefix] += 1
+                new_id = f'term_{counter[prefix]}'
                 if prefix:
                     new_id = f'{prefix}__{new_id}'
                 self.safe_update(node, mappings[name], old_id, new_id)

@@ -263,8 +263,8 @@ class MigrationTestCase(TestCase):
           <hcontainer id="schedule1" name="schedule">
             <heading>Schedule 1</heading>
             <subheading>Standards and specifications for fuel-burning equipment:</subheading>
-            <paragraph id="schedule1.paragraph-1">
-              <num>1.</num>
+            <paragraph id="schedule1.paragraph-11">
+              <num>1.1</num>
               <content>
                 <p>All fuel-burning equipment capable of burning more than 100kg/h of coal, biomass or other solid fuel shall be fitted with suitable control equipment so as to limit dust and grit emissions.</p>
               </content>
@@ -495,7 +495,7 @@ class MigrationTestCase(TestCase):
             "section-2.paragraph0.list0.a.list0.i": "sec_2__hcontainer_1__list_1__item_a__list_1__item_i",
             "section-1.paragraph0": "sec_1__hcontainer_1",
             "chapter-XI.crossheading-0": "chp_XI__hcontainer_1",
-            "schedule1/schedule1.paragraph-1": "att_1/para_1",
+            "schedule1/schedule1.paragraph-11": "att_1/para_1-1",
             "schedule1/schedule1.crossheading-0": "att_1/hcontainer_1",
             "schedule1/schedule1.paragraph0": "att_1/hcontainer_2",
             "schedule1/schedule1.crossheading-1": "att_1/hcontainer_3",
@@ -762,8 +762,8 @@ class MigrationTestCase(TestCase):
           </identification>
         </meta>
         <mainBody>
-          <paragraph eId="para_1">
-              <num>1.</num>
+          <paragraph eId="para_1-1">
+              <num>1.1</num>
               <content>
                 <p>All fuel-burning equipment capable of burning more than 100kg/h of coal, biomass or other solid fuel shall be fitted with suitable control equipment so as to limit dust and grit emissions.</p>
               </content>
@@ -1213,14 +1213,14 @@ class MigrationTestCase(TestCase):
                     "schedule1.paragraph1": "schedule1.hcontainer_4",
                     "schedule1.crossheading-0": "schedule1.hcontainer_1",
                     "schedule1.crossheading-1": "schedule1.hcontainer_3",
-                    "schedule1.paragraph-1": "paragraph-1",
+                    "schedule1.paragraph-11": "paragraph-11",
                     "schedule1.paragraph-2": "paragraph-2",
                     "schedule1.paragraph-3": "paragraph-3",
                     "schedule1.paragraph-4": "paragraph-4",
                     "schedule1.hcontainer_1": "hcontainer_1",
                     "schedule1.hcontainer_3": "hcontainer_3",
                     "schedule1.hcontainer_4": "hcontainer_4",
-                    "paragraph-1": "para_1",
+                    "paragraph-11": "para_1-1",
                     "paragraph-2": "para_2",
                     "paragraph-3": "para_3",
                     "paragraph-4": "para_4",

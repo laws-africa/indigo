@@ -112,7 +112,6 @@ class AKNeId(AKNMigration):
         "part": (r"\bpart-", "part_"),
         "subpart": (r"\bsubpart-", "subpart_"),
         "section": (r"\bsection-", "sec_"),
-        "paragraph": (r"\bparagraph-", "para_"),
         "article": (r"\barticle-", "article_"),
     }
 
@@ -124,6 +123,7 @@ class AKNeId(AKNMigration):
     complex_replacements = {
         "subsection": "subsec_",
         "item": "item_",
+        "paragraph": "para_",
     }
 
     def components(self, doc):
@@ -165,7 +165,7 @@ class AKNeId(AKNMigration):
         self.components_to_attachments(doc, mappings)
         self.basics(doc, mappings)
         self.tables_blocklists(doc, mappings)
-        self.subsections_items(doc, mappings)
+        self.subsections_items_paras(doc, mappings)
         self.term_ids(doc, mappings)
         self.separators_eids(doc, mappings)
         self.internal_references(doc, mappings)
@@ -208,7 +208,7 @@ class AKNeId(AKNMigration):
         parent = node.getparent()
         if parent is not None:
             parent_id = parent.get("id")
-            return parent_id if parent_id else self.get_parent_id(parent)
+            return parent_id if parent_id and not parent_id.startswith("att_") else self.get_parent_id(parent)
 
     def paras_to_hcontainers(self, doc, mappings):
         """ Update all instances un-numbered paragraphs to hcontainers. Slaw generates these when
@@ -376,13 +376,14 @@ class AKNeId(AKNMigration):
                         node.set("id", new_id)
                         log.warning(f"Setting new id (had none): {name} / {prefix} / {node.tag} -> {new_id}")
 
-    def subsections_items(self, doc, mappings):
+    def subsections_items_paras(self, doc, mappings):
         for name, root in self.components(doc).items():
             for element, replacement in self.complex_replacements.items():
                 for node in root.xpath(f".//a:{element}", namespaces=self.nsmap):
                     old_id = node.get("id")
                     # note: all subsections and items should have <num>s in current documents
-                    # but some historical documents have unnumbered subsections instead of unnumbered paragraphs;they'll just get skipped
+                    # and all unnumbered paragraphs will have been taken care of by paras_to_hcontainers
+                    # but some historical documents have unnumbered subsections instead of unnumbered paragraphs; they'll just get skipped
                     if self.document:
                         num = node.num.text
                     else:

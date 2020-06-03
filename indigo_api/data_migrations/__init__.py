@@ -163,6 +163,9 @@ class AKNeId(AKNMigration):
         self.paras_to_hcontainers(doc, mappings)
         self.crossheadings_to_hcontainers(doc, mappings)
         self.components_to_attachments(doc, mappings)
+        # set FRBR URI on attachments (missed previously because they were components)
+        # Note: if there are more than one schedules named e.g. "schedule" only the last one will be updated by this
+        doc.frbr_uri = doc.frbr_uri
         self.basics(doc, mappings)
         self.tables_blocklists(doc, mappings)
         self.subsections_items_paras(doc, mappings)

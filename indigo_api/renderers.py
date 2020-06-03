@@ -180,7 +180,7 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
         else:
             # list of docs
             data = sorted(data, key=lambda d: d.id)
-            parts = [(str(p.id), p.updated_at.isoformat()) for p in data]
+            parts = [f"{p.id}-{p.updated_at.isoformat()}" for p in data]
 
         parts = [self.format] + parts
         return ':'.join(str(p) for p in parts)

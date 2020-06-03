@@ -183,7 +183,7 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
             parts = [(str(p.id), p.updated_at.isoformat()) for p in data]
 
         parts = [self.format] + parts
-        return ':'.join(parts)
+        return ':'.join(str(p) for p in parts)
 
     def get_filename(self, data, view):
         return generate_filename(data, view, self.format)

@@ -188,8 +188,9 @@
 
   <xsl:template match="a:meta" />
 
-  <xsl:template match="a:hcontainer[@name='schedule']/a:heading | a:hcontainer[@name='schedule']/a:subheading">
-    <h2 class="akn-heading">
+  <xsl:template match="a:attachment/a:heading | a:attachment/a:subheading">
+    <h2 class="akn-{local-name()}">
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </h2>
   </xsl:template>

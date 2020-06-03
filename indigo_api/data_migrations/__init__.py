@@ -141,6 +141,8 @@ class AKNeId(AKNMigration):
                 name = component.meta.identification.FRBRWork.FRBRthis.get('value').split('/')[-1].lstrip("!")
                 while components.get(name) is not None:
                     log.warning(f"Adding '_XXX' to end of component name: {name}")
+                    if self.document:
+                        log.warning(f"Warning! Document {self.document.pk} has duplicately named schedules. The first schedules named {name} will have to be manually re-parsed (their URI will be wrong until they are).")
                     name += "_XXX"
                     # add "_XXX" to the doc name as well for mappings,
                     # but only for old-style components
@@ -372,12 +374,7 @@ class AKNeId(AKNMigration):
                     new = replacement + str(counter[prefix])
                     # if no current id, generate one now
                     new_id = re.sub(pattern, new, old_id) or new
-
-                    if old_id:
-                        self.safe_update(node, mappings[name], old_id, new_id)
-                    else:
-                        node.set("id", new_id)
-                        log.warning(f"Setting new id (had none): {name} / {prefix} / {node.tag} -> {new_id}")
+                    self.safe_update(node, mappings[name], old_id, new_id)
 
     def subsections_items_paras(self, doc, mappings):
         for name, root in self.components(doc).items():

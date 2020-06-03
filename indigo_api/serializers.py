@@ -13,7 +13,8 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import StructuredDocument, FrbrUri
+from cobalt import StructuredDocument
+from cobalt.akn import AKN_NAMESPACES
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
@@ -311,9 +312,13 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             # validate the content
             try:
                 frbr_uri = self.instance.work_uri
-                StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
+                doc = StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
             except (LxmlError, ValueError) as e:
                 raise ValidationError("Invalid XML: %s" % str(e))
+
+            # ensure the correct namespace
+            if doc.namespace != AKN_NAMESPACES['3.0']:
+                raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
 
         return attrs
 

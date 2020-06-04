@@ -96,10 +96,10 @@
     margin-bottom: $akn-section-spacing;
   }
 
-  /* Schedules */
-  // When a schedule has a title and a heading, there should be no space between them.
-  .akn-hcontainer[data-name=schedule] > .akn-heading + .akn-heading {
-    margin-top: -$akn-para-spacing;
+  /* Schedules and attachments */
+  .akn-attachment > .akn-subheading {
+    // don't italicise sub-headings for attachments
+    font-style: normal;
   }
 
   /* Indent list-like containers that have margin numbers.

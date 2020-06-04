@@ -24,36 +24,41 @@ class ResolvedAnchor(object):
 
     def resolve(self, exact):
         anchor_id = self.anchor_id
+        component = None
 
         if '/' in anchor_id:
-            component, anchor_id = anchor_id.split('/', 1)
+            prefix, anchor_id = anchor_id.split('/', 1)
+            escaped = prefix.replace("'", "\\'")
+            # find the attachment with this id
+            results = list(self.document.doc.main.xpath(f"./a:attachments/a:attachment[@eId='{escaped}']", namespaces={'a': self.document.doc.namespace}))
+            if results:
+                component = results[0]
         else:
-            component = 'main'
+            component = self.document.doc.main
 
-        component = self.document.doc.components().get(component)
         if component is None:
             return
 
         self.exact_match = True
 
         while anchor_id:
-            escaped = anchor_id.replace("'", "\'")
-            elems = component.xpath(".//*[@id='%s']" % escaped)
+            escaped = anchor_id.replace("'", "\\'")
+            elems = component.xpath(f".//a:*[@eId='{escaped}']", namespaces={'a': self.document.doc.namespace})
             if elems:
                 self.resolve_element(elems[0])
                 break
             elif anchor_id in ['preface', 'preamble']:
                 # HACK HACK HACK
                 # We sometimes use 'preamble' and 'preface' even though they aren't IDs
-                elems = component.xpath(".//a:%s" % escaped, namespaces={'a': self.document.doc.namespace})
+                elems = component.xpath(f".//a:{escaped}", namespaces={'a': self.document.doc.namespace})
                 if elems:
                     self.resolve_element(elems[0])
                     break
 
             # no match, try further up the anchor id chain
-            if not exact and '.' in anchor_id:
+            if not exact and '__' in anchor_id:
                 self.exact_match = False
-                anchor_id = anchor_id.rsplit('.', 1)[0]
+                anchor_id = anchor_id.rsplit('__', 1)[0]
             else:
                 # give up
                 anchor_id = None

@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/longhotsummer/slaw
-  revision: e120ff6d5be89a2236b5aa402beb91dbf91bbda1
+  revision: ebb067de23eccdcdfe91802730b5164af89277aa
   branch: akn3
   specs:
     slaw (10.0.0)

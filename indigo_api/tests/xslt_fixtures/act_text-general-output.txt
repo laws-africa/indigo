@@ -40,7 +40,7 @@ or any similar activity hosted at a stadium, venue or along a route or its preci
 
 "event coordination committee" means the event planning committee of the City which comprises of all the service departments of the City;
 
-"event organiser" means a person appointed by an event owner to apply for an eventpermit and to manage the event;
+"event organiser" means a person appointed by an event owner to apply for an event permit and to manage the event;
 
 "event owner" means
 
@@ -194,7 +194,7 @@ with the event organiser.
 
 (5) The safety officer maintains the right to halt any event should the safety officer identify a significant risk threatening the safety of any individual present at the event.
 
-(6) The mandate of the safety officer includes the eventvenue as well as all associated facilities.
+(6) The mandate of the safety officer includes the event venue as well as all associated facilities.
 
 (7) The safety officer is required to be on-site for the entire duration of the event, including the set-up and breakdown stages of an event.
 
@@ -218,13 +218,13 @@ Any person who is to be appointed as a safety officer at an event must be in pos
 
 (4) Where an application for an event has been declined, reasons for the decision must be communicated to the applicant in writing.
 
-(4A) The Event Permit Officer, may decline an application for an eventpermit where—
+(4A) The Event Permit Officer, may decline an application for an event permit where—
 
 (a) an event application is received at short notice;
 
 (b) the event clashes with another event ;
 
-(c) the eventsafety and security plan is deemed insufficient by the City’s services;
+(c) the event safety and security plan is deemed insufficient by the City’s services;
 
 (d) the event is not approved by the South African Police Service;
 
@@ -236,7 +236,7 @@ Any person who is to be appointed as a safety officer at an event must be in pos
 
 (ii) human or other resources of the City;
 
-(4B) No eventpermit may be issued, where more than 2000 persons are expected, without—
+(4B) No event permit may be issued, where more than 2000 persons are expected, without—
 
 (a) the approval of the South African Police Service; and
 
@@ -248,7 +248,7 @@ Any person who is to be appointed as a safety officer at an event must be in pos
 
 6. Criteria
 
- The Events Permit Officer must ensure that applications for staging an event are considered in accordance with the following criteria, where applicable: 
+The Events Permit Officer must ensure that applications for staging an event are considered in accordance with the following criteria, where applicable:
 
 (a) the type and size of an event;
 
@@ -258,7 +258,7 @@ Any person who is to be appointed as a safety officer at an event must be in pos
 
 (d) the proposed use of the land complies with the applicable zoning scheme and any conditions applicable thereunder;
 
-(e) the safety and security risk management of the event in respect of the event plan, logistics, location, site design and other activities taking place near or at the eventvenue and other threats to the event;
+(e) the safety and security risk management of the event in respect of the event plan, logistics, location, site design and other activities taking place near or at the event venue and other threats to the event;
 
 (f) return on investment of the event, in cases where the event is sponsored fully or partly by the City; and
 
@@ -447,6 +447,7 @@ NOTE:
 
 SCHEDULE
 HEADING Schedule 2
+SUBHEADING Events requirements listing
 
 Note: the City may request information additional to that listed as determined by the type and detail of the event
 

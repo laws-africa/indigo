@@ -26,7 +26,7 @@ class TOCBuilderBaseTestCase(TestCase):
             'component': 'main',
             'title': 'Section',
             'type': 'section',
-            'id': 'section-1',
+            'id': 'sec_1',
             'subcomponent': 'section'
         }])
 
@@ -36,16 +36,17 @@ class TOCBuilderBaseTestCase(TestCase):
             document_xml=document_fixture(text="hi"),
             language=self.eng)
 
-        elem = doc.doc.root.xpath("//*[@id='section-1']")[0]
+        elem = doc.doc.root.xpath("//*[@eId='sec_1']")[0]
 
         toc = self.builder.table_of_contents_entry_for_element(doc, elem)
         self.assertEqual(toc.as_dict(), {
             'component': 'main',
             'title': 'Section',
             'type': 'section',
-            'id': 'section-1',
+            'id': 'sec_1',
             'subcomponent': 'section'
         })
+        self.assertEqual(toc.id, toc.qualified_id)
 
     def test_toc_item_in_schedule(self):
         doc = Document(
@@ -53,13 +54,14 @@ class TOCBuilderBaseTestCase(TestCase):
             document_xml=component_fixture(text="hi"),
             language=self.eng)
 
-        elem = doc.doc.root.xpath("//*[@id='section-1']")[0]
+        elem = doc.doc.root.xpath("//a:attachment//*[@eId='sec_1']", namespaces={'a': doc.doc.namespace})[0]
 
         toc = self.builder.table_of_contents_entry_for_element(doc, elem)
         self.assertEqual(toc.as_dict(), {
             'component': 'schedule',
             'title': 'Section',
             'type': 'section',
-            'id': 'section-1',
+            'id': 'sec_1',
             'subcomponent': 'section'
         })
+        self.assertEqual("att_1/sec_1", toc.qualified_id)

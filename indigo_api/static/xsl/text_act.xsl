@@ -42,6 +42,7 @@
     <xsl:apply-templates select="a:preamble" />
     <xsl:apply-templates select="a:body" />
     <xsl:apply-templates select="a:conclusions" />
+    <xsl:apply-templates select="a:attachments" />
   </xsl:template>
 
   <xsl:template match="a:preface">
@@ -163,9 +164,8 @@
   </xsl:template>
 
 
-  <!-- components/schedules -->
-  <!-- new-style schedules, "hcontainer" elements -->
-  <xsl:template match="a:hcontainer[@name='schedule']">
+  <!-- attachments/schedules -->
+  <xsl:template match="a:attachment">
     <xsl:text>SCHEDULE&#10;HEADING </xsl:text>
     <xsl:apply-templates select="a:heading" />
     <xsl:text>&#10;</xsl:text>
@@ -176,64 +176,41 @@
       <xsl:text>&#10;</xsl:text>
     </xsl:if>
 
-    <xsl:text>&#10;&#10;</xsl:text>
-    <xsl:apply-templates select="./*[not(self::a:heading) and not(self::a:subheading)]" />
+    <xsl:text>&#10;</xsl:text>
+    <xsl:apply-templates select="a:doc" />
   </xsl:template>
 
-
-  <!-- old-style schedules, "article" elements -->
-  <xsl:template match="a:doc/a:mainBody/a:article">
-    <xsl:text>SCHEDULE&#10;HEADING </xsl:text>
-    <xsl:value-of select="../../a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-    <xsl:text>&#10;</xsl:text>
-
-    <xsl:if test="a:heading">
-      <xsl:text>SUBHEADING </xsl:text>
-      <xsl:apply-templates select="a:heading" />
-      <xsl:text>&#10;</xsl:text>
-    </xsl:if>
-
-    <xsl:text>&#10;</xsl:text>
-    <xsl:apply-templates select="./*[not(self::a:heading)]"/>
-  </xsl:template>
-
+  <xsl:template match="a:meta" />
 
   <!-- tables -->
   <xsl:template match="a:table">
     <xsl:text>{| </xsl:text>
 
     <!-- attributes -->
-    <xsl:for-each select="@*[local-name()!='id']">
+    <xsl:for-each select="@*[local-name()!='eId']">
       <xsl:value-of select="local-name(.)" />
       <xsl:text>="</xsl:text>
       <xsl:value-of select="." />
       <xsl:text>" </xsl:text>
     </xsl:for-each>
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
 
     <xsl:apply-templates />
-    <xsl:text>
-|}
-
-</xsl:text>
+    <xsl:text>&#10;|}&#10;&#10;</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:tr">
     <xsl:apply-templates />
-    <xsl:text>
-|-</xsl:text>
+    <xsl:text>&#10;|-</xsl:text>
   </xsl:template>
 
   <xsl:template match="a:th|a:td">
     <xsl:choose>
       <xsl:when test="local-name(.) = 'th'">
-        <xsl:text>
-! </xsl:text>
+        <xsl:text>&#10;! </xsl:text>
       </xsl:when>
       <xsl:when test="local-name(.) = 'td'">
-        <xsl:text>
-| </xsl:text>
+        <xsl:text>&#10;| </xsl:text>
       </xsl:when>
     </xsl:choose>
 

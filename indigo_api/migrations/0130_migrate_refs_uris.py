@@ -25,7 +25,7 @@ def migrate_uris(apps, schema_editor, forward):
     Document = apps.get_model("indigo_api", "Document")
     ct_work = ContentType.objects.get_for_model(Work)
     ct_doc = ContentType.objects.get_for_model(Document)
-    migration = FrbrUriAknPrefix
+    migration = FrbrUriAknPrefix()
 
     for work in Work.objects.using(db_alias).all():
         work.frbr_uri = migration.new_frbr_uri(work.frbr_uri, forward)

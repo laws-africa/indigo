@@ -3,7 +3,7 @@ from django.test import TestCase
 from cobalt import Act
 from lxml import etree
 
-from indigo_api.data_migrations import ScheduleArticleToHcontainer
+from indigo_api.data_migrations.legacy import ScheduleArticleToHcontainer
 
 
 OLD_SCHEDULE = """<?xml version="1.0" encoding="UTF-8"?>

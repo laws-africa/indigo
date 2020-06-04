@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.test import TestCase
 
-from indigo_api.data_migrations import UpdateAKNNamespace
+from indigo_api.data_migrations.akn3 import UpdateAKNNamespace
 
 
 class MigrationTestCase(TestCase):

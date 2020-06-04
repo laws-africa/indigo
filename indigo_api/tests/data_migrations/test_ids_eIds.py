@@ -6,7 +6,7 @@ from django.test import TestCase
 
 from cobalt import Act
 
-from indigo_api.data_migrations import AKNeId
+from indigo_api.data_migrations.akn3 import AKNeId
 from indigo_api.models import Document, Work, Annotation, Language
 
 

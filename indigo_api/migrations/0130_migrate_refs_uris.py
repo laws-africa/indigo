@@ -8,18 +8,8 @@ from reversion.models import Version
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-from cobalt import Act, FrbrUri
-from cobalt.uri import FRBR_URI_RE
 
-
-def new_frbr_uri(uri, forward):
-    """ Sets prefix on uri:
-        'akn' if forward is True, None if it's False.
-    """
-    if not isinstance(uri, FrbrUri):
-        uri = FrbrUri.parse(uri)
-    uri.prefix = 'akn' if forward else None
-    return uri.work_uri()
+from indigo_api.data_migrations.akn3 import FrbrUriAknPrefix
 
 
 def migrate_uris(apps, schema_editor, forward):
@@ -35,9 +25,10 @@ def migrate_uris(apps, schema_editor, forward):
     Document = apps.get_model("indigo_api", "Document")
     ct_work = ContentType.objects.get_for_model(Work)
     ct_doc = ContentType.objects.get_for_model(Document)
+    migration = FrbrUriAknPrefix
 
     for work in Work.objects.using(db_alias).all():
-        work.frbr_uri = new_frbr_uri(work.frbr_uri, forward)
+        work.frbr_uri = migration.new_frbr_uri(work.frbr_uri, forward)
         work.save()
 
         # Update historical work versions
@@ -45,33 +36,15 @@ def migrate_uris(apps, schema_editor, forward):
                 .filter(object_id=work.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
             # The work's URI (i.e. year / number / subtype) may have changed
-            data[0]['fields']['frbr_uri'] = new_frbr_uri(data[0]['fields']['frbr_uri'], forward)
+            data[0]['fields']['frbr_uri'] = migration.new_frbr_uri(data[0]['fields']['frbr_uri'], forward)
             version.serialized_data = json.dumps(data)
             version.save()
-
-    def update_xml(document_xml, frbr_uri):
-        # Create a cobalt StructuredDocument from the document's existing XML
-        cobalt_doc = Act(document_xml)
-        # Update the document's FRBR URI in the XML (meta/identification block)
-        cobalt_doc.frbr_uri = frbr_uri
-        # Add `/akn` prefix (if forward=True; remove if forward=False)
-        # to hrefs in <ref> or <passiveRef> AKN elements, e.g.
-        # href="/za/act/2012/22" <--> href="/akn/za/act/2012/22"
-        for node in cobalt_doc.root.xpath(
-                "//a:*[self::a:ref or self::a:passiveRef][starts-with(@href, '/')]",
-                namespaces={'a': cobalt_doc.namespace}):
-            ref = node.get('href')
-            if FRBR_URI_RE.match(ref):
-                ref = new_frbr_uri(ref, forward)
-                node.set('href', ref)
-        # Update document's XML
-        return cobalt_doc.to_xml().decode('utf-8')
 
     for document in Document.objects.using(db_alias).all():
         # Update the document object's FRBR URI
         document.frbr_uri = document.work.frbr_uri
         # Update the document's XML
-        document.document_xml = update_xml(document.document_xml, document.frbr_uri)
+        document.document_xml = migration.migrate_xml(document.document_xml, document.frbr_uri, forward)
         document.save()
 
         # Update historical Document versions
@@ -79,8 +52,8 @@ def migrate_uris(apps, schema_editor, forward):
                 .filter(object_id=document.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
             # Update FRBR URI (year / number / subtype may have changed)
-            data[0]['fields']['frbr_uri'] = new_frbr_uri(data[0]['fields']['frbr_uri'], forward)
-            data[0]['fields']['document_xml'] = update_xml(data[0]['fields']['document_xml'], data[0]['fields']['frbr_uri'])
+            data[0]['fields']['frbr_uri'] = migration.new_frbr_uri(data[0]['fields']['frbr_uri'], forward)
+            data[0]['fields']['document_xml'] = migration.migrate_xml(data[0]['fields']['document_xml'], data[0]['fields']['frbr_uri'], forward)
             version.serialized_data = json.dumps(data)
             version.save()
 

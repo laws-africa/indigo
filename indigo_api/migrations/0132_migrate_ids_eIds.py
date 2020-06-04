@@ -7,7 +7,7 @@ from reversion.models import Version
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-from indigo_api.data_migrations import AKNeId
+from indigo_api.data_migrations.akn3 import AKNeId
 
 from cobalt import Act
 

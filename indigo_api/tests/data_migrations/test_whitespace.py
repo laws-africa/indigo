@@ -1,7 +1,7 @@
 # coding=utf-8
 from django.test import TestCase
 
-from indigo_api.data_migrations import FixSignificantWhitespace
+from indigo_api.data_migrations.legacy import FixSignificantWhitespace
 
 
 FIXTURE = """<akomaNtoso xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://www.akomantoso.org/2.0" xsi:schemaLocation="http://www.akomantoso.org/2.0 akomantoso20.xsd">

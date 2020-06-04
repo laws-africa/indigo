@@ -15,13 +15,13 @@ class WorkTestCase(TestCase):
 
     def test_cascade_frbr_uri_changes(self):
         document = Document.objects.get(pk=20)
-        self.assertEqual(document.frbr_uri, '/za/act/1945/1')
+        self.assertEqual(document.frbr_uri, '/akn/za/act/1945/1')
 
-        document.work.frbr_uri = '/za/act/2999/1'
+        document.work.frbr_uri = '/akn/za/act/2999/1'
         document.work.save()
 
         document = Document.objects.get(pk=20)
-        self.assertEqual(document.frbr_uri, '/za/act/2999/1')
+        self.assertEqual(document.frbr_uri, '/akn/za/act/2999/1')
 
     def test_commencement_as_pit_date(self):
         """ When the publication date is unknown, fall back

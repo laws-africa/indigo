@@ -115,7 +115,7 @@ class HTMLExporter(object):
         The normal Django templating system is used to find a template. The first template
         found is used.
         """
-        candidates = filename_candidates(document, prefix='xsl/', suffix='.xsl')
+        candidates = filename_candidates(document, prefix='xsl/html_', suffix='.xsl')
         best = find_best_static(candidates)
         if not best:
             raise ValueError("Couldn't find XSLT file to use for %s, tried: %s" % (document, candidates))
@@ -591,6 +591,6 @@ class XSLTRenderer(object):
         """ Default scope for ID attributes when rendering.
         """
         ns = node.nsmap[None]
-        scope = node.xpath('./ancestor::a:doc[@name][1]/@name', namespaces={'a': ns})
+        scope = node.xpath('./ancestor::a:attachment[@eId]/@eId', namespaces={'a': ns})
         if scope:
             return scope[0]

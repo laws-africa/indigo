@@ -158,27 +158,20 @@
           self = this;
 
       // setup akn to html transform
-      this.htmlRenderer = Indigo.render.getHtmlRenderer(country);
+      this.htmlRenderer = Indigo.render.getHtmlRenderer(this.parent.model);
       this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
       });
 
       // setup akn to text transform
       this.textTransformReady = $.Deferred();
-      function textLoaded(xml) {
+      $.get(this.parent.model.url() + '/static/xsl/text.xsl').then(function(xml) {
         var textTransform = new XSLTProcessor();
         textTransform.importStylesheet(xml);
 
         self.textTransform = textTransform;
         self.textTransformReady.resolve();
-      }
-
-      $.get('/static/xsl/act_text-' + country +'.xsl')
-        .then(textLoaded)
-        .fail(function() {
-          $.get('/static/xsl/act_text.xsl')
-            .then(textLoaded);
-        });
+      });
     },
 
     setComparisonDocumentId: function(id) {
@@ -197,7 +190,7 @@
 
       // the id might be scoped
       elemId.split("/").forEach(function(id) {
-        node = node.querySelector('[id="' + id + '"]');
+        node = node.querySelector('[eId="' + id + '"]');
       });
 
       if (node) this.editFragmentText(node);
@@ -315,7 +308,6 @@
       var id = this.fragment.getAttribute('id'),
           data = {
         'content': content,
-        'frbr_uri': this.parent.model.get('frbr_uri'),
       };
       if (fragmentRule != 'akomaNtoso') {
         data.fragment = fragmentRule;
@@ -326,7 +318,7 @@
       }
 
       $.ajax({
-        url: '/api/parse',
+        url: this.parent.model.url() + '/parse',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -488,7 +480,7 @@
       } else {
         var data = JSON.stringify({'document': self.parent.model.toJSON()});
         $.ajax({
-          url: '/api/render/coverpage',
+          url: this.parent.model.url() + '/render/coverpage',
           type: "POST",
           data: data,
           contentType: "application/json; charset=utf-8",

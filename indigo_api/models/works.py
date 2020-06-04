@@ -13,7 +13,7 @@ from django.dispatch import receiver
 from django.utils.functional import cached_property
 import reversion.revisions
 from reversion.models import Version
-from cobalt.act import FrbrUri, RepealEvent
+from cobalt import FrbrUri, RepealEvent
 
 from indigo.plugins import plugins
 
@@ -117,7 +117,7 @@ class WorkMixin(object):
 
     @property
     def repeal(self):
-        """ Repeal information for this work, as a :class:`cobalt.act.RepealEvent` object.
+        """ Repeal information for this work, as a :class:`cobalt.RepealEvent` object.
         None if this work hasn't been repealed.
         """
         if self._repeal is None:
@@ -339,12 +339,16 @@ class Work(WorkMixin, models.Model):
         except ValueError:
             raise ValidationError("Invalid FRBR URI")
 
-        # force country and locality codes in frbr uri
-        prefix = '/' + self.country.code
+        # Assume frbr_uri starts with /akn; `rest` is everything after the country/locality, e.g.
+        # in `/akn/za-wc/act/2000/12`, `rest` is `act/2000/12`.
+        rest = frbr_uri.split('/', 3)[3]
+
+        # force akn prefix, country and locality codes in frbr uri
+        prefix = '/akn/' + self.country.code
         if self.locality:
             prefix = prefix + '-' + self.locality.code
 
-        self.frbr_uri = ('%s/%s' % (prefix, frbr_uri.split('/', 2)[2])).lower()
+        self.frbr_uri = f'{prefix}/{rest}'.lower()
 
     def save(self, *args, **kwargs):
         # prevent circular references
@@ -383,7 +387,7 @@ class Work(WorkMixin, models.Model):
         from .documents import Document, Attachment
 
         language = language or self.country.primary_language
-        doc = Document()
+        doc = Document(work=self)
 
         # most recent expression at or before this date
         template = self.document_set \
@@ -399,7 +403,6 @@ class Work(WorkMixin, models.Model):
         doc.draft = True
         doc.language = language
         doc.expression_date = date
-        doc.work = self
         doc.created_by_user = user
         doc.save()
 
@@ -478,7 +481,8 @@ class PublicationDocument(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     def build_filename(self):
-        return '{}-publication-document.pdf'.format(self.work.frbr_uri[1:].replace('/', '-'))
+        # don't include /akn/ from FRBR URI in filename
+        return f"{self.work.frbr_uri[5:].replace('/', '-')}-publication-document.pdf"
 
     def save(self, *args, **kwargs):
         self.filename = self.build_filename()

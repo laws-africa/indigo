@@ -133,10 +133,10 @@
      */
     componentElements: function() {
       var components = [],
-          result = this.xpath('//a:act | //a:components/a:component/a:doc');
+          result = this.xpath('/a:akomaNtoso/a:act/a:meta | /a:akomaNtoso/a:act/a:attachments/a:attachment/a:*/a:meta');
 
       for (var i = 0; i < result.snapshotLength; i++) {
-        components.push(result.snapshotItem(i));
+        components.push(result.snapshotItem(i).parentElement);
       }
 
       return components;
@@ -203,7 +203,7 @@
 
     updateFrbrUri: function() {
       // rebuild the FRBR uri when one of its component sources changes
-      var parts = [''];
+      var parts = ['', 'akn'];
 
       var country = this.get('country');
       if (this.get('locality')) {
@@ -422,19 +422,19 @@
 
   /** Create a new document by parsing an frbr URI */
   Indigo.Document.newFromFrbrUri = function(frbr_uri) {
-    // /za-cpt/act/by-law/2011/foo
+    // /akn/za-cpt/act/by-law/2011/foo
     var parts = frbr_uri.split('/'),
-        tmp = parts[1].split('-'),
-        country = tmp[0],
-        locality = tmp.length > 1 ? tmp[1] : null,
-        bump = parts.length > 5 ? 1 : 0;
+        place = parts[2].split('-'),
+        country = place[0],
+        locality = place.length > 1 ? place.slice(1).join('-') : null,
+        bump = parts.length > 6 ? 1 : 0;
 
     return new Indigo.Document({
       country: country,
       locality: locality,
-      subtype: parts.length > 5 ? parts[3] : null,
-      year: parts[3 + bump],
-      number: parts[4 + bump],
+      subtype: parts.length > 6 ? parts[4] : null,
+      year: parts[4 + bump],
+      number: parts[5 + bump],
     });
   };
 

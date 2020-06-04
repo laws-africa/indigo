@@ -16,12 +16,12 @@ class DocumentTestCase(TestCase):
         self.eng = Language.for_code('eng')
 
     def test_empty_document(self):
-        d = Document()
+        d = Document(work=self.work)
         self.assertIsNotNone(d.doc)
 
     def test_change_title(self):
         user = User.objects.get(pk=1)
-        d = Document.objects.create(title="Title", frbr_uri="/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1), language=self.eng, created_by_user=user, updated_by_user=user)
+        d = Document.objects.create(title="Title", frbr_uri="/akn/za/act/1980/01", work=self.work, expression_date=date(2001, 1, 1), language=self.eng, created_by_user=user, updated_by_user=user)
         d.save()
         id = d.id
         self.assertTrue(d.document_xml.startswith('<akomaNtoso'))
@@ -34,18 +34,18 @@ class DocumentTestCase(TestCase):
         d.work = self.work
         d.content = document_fixture('γνωρίζω')
 
-        assert_equal(d.frbr_uri, '/za/act/1900/1')
+        assert_equal(d.frbr_uri, '/akn/za/act/1900/1')
         assert_equal(d.country, 'za')
         assert_equal(d.doc.publication_date, date(2005, 7, 24))
 
     def test_expression_date(self):
-        d = Document()
+        d = Document(work=self.work)
         d.content = document_fixture('test')
         d.expression_date = date(2014, 1, 1)
         assert_equal(d.expression_date, date(2014, 1, 1))
 
     def test_empty_expression_date(self):
-        d = Document()
+        d = Document(work=self.work)
         d.content = document_fixture('test')
         d.expression_date = ''
         assert_equal(d.expression_date, '')
@@ -55,7 +55,7 @@ class DocumentTestCase(TestCase):
 
     def test_inherit_from_work(self):
         user = User.objects.get(pk=1)
-        w = Work.objects.create(frbr_uri='/za/act/2009/test', title='Test document', country=Country.for_code('za'), created_by_user=user)
+        w = Work.objects.create(frbr_uri='/akn/za/act/2009/test', title='Test document', country=Country.for_code('za'), created_by_user=user)
         d = Document(work=w, expression_date='2011-02-01', language=self.eng, created_by_user=user)
         d.save()
 
@@ -105,7 +105,7 @@ class DocumentTestCase(TestCase):
         d = Document(language=self.eng)
         d.work = self.work
         d.content = document_fixture(xml="""
-        <body xmlns="http://www.akomantoso.org/2.0">
+        <body xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
           <section id="section-1">
             <num>1.</num>
             <heading>Foo</heading>

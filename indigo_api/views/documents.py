@@ -1,11 +1,14 @@
 import logging
+import copy
 
 from actstream import action
-
+from django.shortcuts import redirect
+from django.views import View
 from django.views.decorators.cache import cache_control
 from django.db.models import F
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.postgres.search import SearchQuery
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.http import Http404
 from django.urls import reverse
 from django.utils import timezone
@@ -20,8 +23,7 @@ from rest_framework.decorators import action as detail_route_action
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
-from cobalt import FrbrUri
-from cobalt.act import Base
+from cobalt import FrbrUri, StructuredDocument, AkomaNtosoDocument
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -33,7 +35,7 @@ from ..serializers import DocumentSerializer, RenderSerializer, ParseSerializer,
 from ..renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.exporters import HTMLExporter
 from ..authz import DocumentPermissions, AnnotationPermissions, DocumentActivityPermission
-from ..utils import Headline, SearchPagination, SearchRankCD
+from ..utils import Headline, SearchPagination, SearchRankCD, filename_candidates, find_best_static
 from .misc import DEFAULT_PERMS
 
 log = logging.getLogger(__name__)
@@ -72,9 +74,14 @@ class DocumentViewMixin(object):
 
 
 # Read/write REST API
-class DocumentViewSet(DocumentViewMixin, viewsets.ModelViewSet):
+class DocumentViewSet(DocumentViewMixin,
+                      mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin,
+                      mixins.DestroyModelMixin,
+                      mixins.ListModelMixin,
+                      viewsets.GenericViewSet):
     """
-    API endpoint that allows Documents to be viewed or edited.
+    API endpoint that allows get, list, update and destroy, but not creation of documents.
     """
     serializer_class = DocumentSerializer
     permission_classes = DEFAULT_PERMS + (DjangoModelPermissionsOrAnonReadOnly, DocumentPermissions)
@@ -317,17 +324,17 @@ class DocumentActivityViewSet(DocumentResourceView,
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class ParseView(APIView):
+class ParseView(DocumentResourceView, APIView):
     """ Parse text into Akoma Ntoso, returning Akoma Ntoso XML.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
+    def post(self, request, document_id):
         serializer = ParseSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
         fragment = serializer.validated_data.get('fragment')
-        frbr_uri = FrbrUri.parse(serializer.validated_data.get('frbr_uri'))
+        frbr_uri = self.document.work_uri
 
         importer = plugins.for_locale('importer', frbr_uri.country, frbr_uri.language, frbr_uri.locality)
         importer.fragment = fragment
@@ -340,26 +347,32 @@ class ParseView(APIView):
             log.warning("Error during import: %s" % str(e), exc_info=e)
             raise ValidationError({'content': str(e) or "error during import"})
 
-        # parse and re-serialize the XML to ensure it's clean, and sort out encodings
-        xml = Base(xml).to_xml()
+        if fragment:
+            # clean up encodings
+            doc = AkomaNtosoDocument(xml)
+            xml = doc.to_xml(encoding='unicode')
+        else:
+            # The importer doesn't have enough information to give us a complete document
+            # including the meta section, so it's empty or incorrect. We fold in the meta section
+            # from the existing document, so that we return a complete document to the caller.
+            klass = StructuredDocument.for_document_type(frbr_uri.doctype)
+            doc = klass(xml)
+            doc.main.replace(doc.meta, copy.deepcopy(self.document.doc.meta))
+            xml = doc.to_xml(encoding='unicode')
 
-        # output
         return Response({'output': xml})
 
 
-class RenderView(APIView):
+class RenderView(DocumentResourceView, APIView):
     """ Support for rendering a document on the server.
     """
     permission_classes = ()
-    coverpage_only = False
+    coverpage_only = True
 
-    def post(self, request, format=None):
-        serializer = RenderSerializer(data=request.data)
+    def post(self, request, document_id):
+        serializer = RenderSerializer(instance=self.document, data=request.data)
         serializer.is_valid(raise_exception=True)
-
-        document = DocumentSerializer().update_document(Document(), validated_data=serializer.validated_data['document'])
-        # the serializer ignores the id field, but we need it for rendering
-        document.id = serializer.initial_data['document'].get('id')
+        document = DocumentSerializer().update_document(self.document, validated_data=serializer.validated_data['document'])
 
         if self.coverpage_only:
             renderer = HTMLExporter()
@@ -370,16 +383,16 @@ class RenderView(APIView):
             return Response({'output': document.to_html()})
 
 
-class LinkTermsView(APIView):
+class LinkTermsView(DocumentResourceView, APIView):
     """ Support for running term discovery and linking on a document.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        serializer = DocumentAPISerializer(data=self.request.data)
+    def post(self, request, document_id):
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
 
         self.link_terms(document)
 
@@ -391,16 +404,16 @@ class LinkTermsView(APIView):
             finder.find_terms_in_document(doc)
 
 
-class LinkReferencesView(APIView):
+class LinkReferencesView(DocumentResourceView, APIView):
     """ Find and link internal references and references to other works.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        serializer = DocumentAPISerializer(data=self.request.data)
+    def post(self, request, document_id):
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
 
         self.find_references(document)
 
@@ -428,16 +441,16 @@ class LinkReferencesView(APIView):
             finder.find_references_in_document(document)
 
 
-class MarkUpItalicsTermsView(APIView):
+class MarkUpItalicsTermsView(DocumentResourceView, APIView):
     """ Find and mark up italics terms.
     """
     permission_classes = (IsAuthenticated,)
 
-    def post(self, request):
-        serializer = DocumentAPISerializer(data=self.request.data)
+    def post(self, request, document_id):
+        serializer = DocumentAPISerializer(instance=self.document, data=self.request.data)
         serializer.fields['document'].fields['content'].required = True
         serializer.is_valid(raise_exception=True)
-        document = serializer.fields['document'].update_document(Document(), serializer.validated_data['document'])
+        document = serializer.fields['document'].update_document(self.document, serializer.validated_data['document'])
 
         self.mark_up_italics(document)
 
@@ -551,3 +564,25 @@ class DocumentDiffView(DocumentResourceView, APIView):
             'html_diff': diff,
             'n_changes': n_changes,
         })
+
+
+class StaticFinderView(DocumentResourceView, View):
+    """ This view looks for a static file (such as text.xsl, or html.xsl) suitable for use with this document,
+    based on its FRBR URI. Because there are a number of options to try, it's faster to do it on the server than
+    the client, and then redirect the caller to the appropriate static file URL.
+
+    eg. a request for text.xsl might find text_act-eng-za.xsl
+    """
+    def get(self, request, document_id, filename):
+        if '.' in filename:
+            prefix, suffix = filename.split('.', 1)
+            suffix = '.' + suffix
+        else:
+            prefix, suffix = filename, ''
+
+        candidates = filename_candidates(self.lookup_document(), f'{prefix}_', suffix)
+        best = find_best_static(candidates, actual=False)
+        if best:
+            return redirect(static(best))
+
+        raise Http404()

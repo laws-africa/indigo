@@ -13,7 +13,8 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import Act, FrbrUri
+from cobalt import StructuredDocument
+from cobalt.akn import AKN_NAMESPACES
 import reversion
 
 from indigo_api.models import Document, Attachment, Annotation, DocumentActivity, Work, Amendment, Language, \
@@ -92,7 +93,7 @@ class SerializedRelatedField(serializers.PrimaryKeyRelatedField):
 
 
 class AmendmentEventSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.act.AmendmentEvent`
+    """ Serializer matching :class:`cobalt.AmendmentEvent`
     """
 
     date = serializers.DateField()
@@ -104,7 +105,7 @@ class AmendmentEventSerializer(serializers.Serializer):
 
 
 class RepealSerializer(serializers.Serializer):
-    """ Serializer matching :class:`cobalt.act.RepealEvent`, for use describing
+    """ Serializer matching :class:`cobalt.RepealEvent`, for use describing
     the repeal on a published document.
     """
 
@@ -230,6 +231,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
     content = serializers.CharField(required=False, write_only=True)
     """ A write-only field for setting the entire XML content of the document. """
 
+    frbr_uri = serializers.CharField(read_only=True)
+
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
 
@@ -304,26 +307,20 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             },
         ]
 
-    def validate_content(self, value):
-        try:
-            Act(value)
-        except LxmlError as e:
-            raise ValidationError("Invalid XML: %s" % str(e))
-        return value
+    def validate(self, attrs):
+        if attrs.get('content'):
+            # validate the content
+            try:
+                frbr_uri = self.instance.work_uri
+                doc = StructuredDocument.for_document_type(frbr_uri.doctype)(attrs['content'])
+            except (LxmlError, ValueError) as e:
+                raise ValidationError("Invalid XML: %s" % str(e))
 
-    def validate_frbr_uri(self, value):
-        try:
-            if not value:
-                raise ValueError()
-            value = FrbrUri.parse(value.lower()).work_uri()
-        except ValueError:
-            raise ValidationError("Invalid FRBR URI: %s" % value)
+            # ensure the correct namespace
+            if doc.namespace != AKN_NAMESPACES['3.0']:
+                raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
 
-        # does a work exist for this frbr_uri?
-        # raises ValueError if it doesn't
-        Work.objects.get_for_frbr_uri(value)
-
-        return value
+        return attrs
 
     def validate_language(self, value):
         try:
@@ -332,8 +329,8 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             raise ValidationError("Invalid language: %s" % value)
 
     def create(self, validated_data):
-        document = Document()
-        return self.update(document, validated_data)
+        # cannot create a document using this serializer
+        raise NotImplemented()
 
     def update(self, document, validated_data):
         """ Update and save document. """
@@ -383,7 +380,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
         # by the other properties.
         content = validated_data.pop('content', None)
         if content is not None:
-            document.content = content
+            document.reset_xml(content, from_model=True)
 
         # save rest of changes
         for attr, value in validated_data.items():
@@ -403,6 +400,10 @@ class RenderSerializer(serializers.Serializer):
     """
     document = DocumentSerializer()
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document'].instance = self.instance
+
 
 class ParseSerializer(serializers.Serializer):
     """
@@ -411,7 +412,6 @@ class ParseSerializer(serializers.Serializer):
     content = serializers.CharField(write_only=True, required=False)
     fragment = serializers.CharField(write_only=True, required=False)
     id_prefix = serializers.CharField(write_only=True, required=False)
-    frbr_uri = serializers.CharField(write_only=True, required=True)
 
 
 class DocumentAPISerializer(serializers.Serializer):
@@ -419,6 +419,10 @@ class DocumentAPISerializer(serializers.Serializer):
     Helper to handle input documents for general document APIs
     """
     document = DocumentSerializer(required=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document'].instance = self.instance
 
 
 class NoopSerializer(object):

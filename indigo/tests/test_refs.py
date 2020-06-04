@@ -14,15 +14,17 @@ class SectionRefsFinderTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
+        self.work = Work(frbr_uri='/akn/za/act/1991/1')
         self.section_refs_finder = SectionRefsFinderENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
     def test_section_basic(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
@@ -36,21 +38,21 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As <i>given</i> in (we're now in a tail) section 26, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
       </section>
-      <section id="section-26B">
+      <section eId="sec_26B">
         <num>26B.</num>
         <heading>Another important heading</heading>
         <content>
           <p>Another important provision.</p>
         </content>
       </section>
-      <section id="section-31">
+      <section eId="sec_31">
         <num>31.</num>
         <heading>More important</heading>
         <content>
@@ -62,37 +64,38 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in <ref href="#section-26">section 26</ref>, blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(b), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii)(bb), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii)(dd)(A), blah.</p>
-          <p>As given in <ref href="#section-26B">section 26B</ref>, blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> and <ref href="#section-31">section 31</ref>, blah.</p>
-          <p>As <i>given</i> in (we're now in a tail) <ref href="#section-26">section 26</ref>, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(b), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(1)(b)(iii), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(1)(b)(iii)(bb), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(1)(b)(iii)(dd)(A), blah.</p>
+          <p>As given in <ref href="#sec_26B">section 26B</ref>, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> and <ref href="#sec_31">section 31</ref>, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) <ref href="#sec_26">section 26</ref>, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
       </section>
-      <section id="section-26B">
+      <section eId="sec_26B">
         <num>26B.</num>
         <heading>Another important heading</heading>
         <content>
           <p>Another important provision.</p>
         </content>
       </section>
-      <section id="section-31">
+      <section eId="sec_31">
         <num>31.</num>
         <heading>More important</heading>
         <content>
@@ -110,9 +113,10 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_of_this(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
@@ -124,7 +128,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As <i>given</i> in (we're now in a tail) section 26 of this Act, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
@@ -136,21 +140,22 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in <ref href="#section-26">section 26</ref> of this Act, blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> (1) of this Act, blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> (1) of this Proclamation, blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(1)(b)(iii)(dd)(A) of this Act, blah.</p>
-          <p>In section 26 of Act 5 of 2012 it says one thing and in <ref href="#section-26">section 26</ref> of this Act it says another.</p>
-          <p>As <i>given</i> in (we're now in a tail) <ref href="#section-26">section 26</ref> of this Act, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> of this Act, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> (1) of this Act, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> (1) of this Proclamation, blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(1)(b)(iii)(dd)(A) of this Act, blah.</p>
+          <p>In section 26 of Act 5 of 2012 it says one thing and in <ref href="#sec_26">section 26</ref> of this Act it says another.</p>
+          <p>As <i>given</i> in (we're now in a tail) <ref href="#sec_26">section 26</ref> of this Act, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
@@ -168,9 +173,10 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_multiple(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
@@ -187,28 +193,28 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sections 26, 30, and 31 of this Act, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
       </section>
-      <section id="section-26B">
+      <section eId="sec_26B">
         <num>26B.</num>
         <heading>Another important heading</heading>
         <content>
           <p>Another important provision.</p>
         </content>
       </section>
-      <section id="section-30">
+      <section eId="sec_30">
         <num>30.</num>
         <heading>Less important</heading>
         <content>
           <p>Meh.</p>
         </content>
       </section>
-      <section id="section-31">
+      <section eId="sec_31">
         <num>31.</num>
         <heading>More important</heading>
         <content>
@@ -220,47 +226,48 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in sections <ref href="#section-26">26</ref> and <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-26B">26B</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in section <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref> or <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref>(1) and <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> (1) and <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>(b), <ref href="#section-30">30</ref>(1) or <ref href="#section-31">31</ref>, blah.</p>
-          <p>As given in section <ref href="#section-26">26</ref> (b), <ref href="#section-30">30</ref> (1) or <ref href="#section-31">31</ref>, blah.</p>
-          <p>As <i>given</i> in (we're now in a tail) section <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref> and <ref href="#section-31">31</ref>.</p>
-          <p>under sections <ref href="#section-26">26</ref>,<ref href="#section-30">30</ref> or <ref href="#section-31">31</ref> of this Act, blah.</p>
-          <p>As given in sections <ref href="#section-26">26</ref>, <ref href="#section-30">30</ref>, and <ref href="#section-31">31</ref> of this Act, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref> and <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref>, <ref href="#sec_26B">26B</ref>, <ref href="#sec_30">30</ref> and <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in section <ref href="#sec_26">26</ref> or <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref> or <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref>, <ref href="#sec_30">30</ref>(1) and <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref>, <ref href="#sec_30">30</ref> (1) and <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref>(b), <ref href="#sec_30">30</ref>(1) or <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As given in section <ref href="#sec_26">26</ref> (b), <ref href="#sec_30">30</ref> (1) or <ref href="#sec_31">31</ref>, blah.</p>
+          <p>As <i>given</i> in (we're now in a tail) section <ref href="#sec_26">26</ref>, <ref href="#sec_30">30</ref> and <ref href="#sec_31">31</ref>.</p>
+          <p>under sections <ref href="#sec_26">26</ref>,<ref href="#sec_30">30</ref> or <ref href="#sec_31">31</ref> of this Act, blah.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref>, <ref href="#sec_30">30</ref>, and <ref href="#sec_31">31</ref> of this Act, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
       </section>
-      <section id="section-26B">
+      <section eId="sec_26B">
         <num>26B.</num>
         <heading>Another important heading</heading>
         <content>
           <p>Another important provision.</p>
         </content>
       </section>
-      <section id="section-30">
+      <section eId="sec_30">
         <num>30.</num>
         <heading>Less important</heading>
         <content>
           <p>Meh.</p>
         </content>
       </section>
-      <section id="section-31">
+      <section eId="sec_31">
         <num>31.</num>
         <heading>More important</heading>
         <content>
@@ -278,9 +285,10 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_invalid(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
@@ -309,7 +317,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As given in sub-section 1, blah.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
@@ -328,9 +336,10 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_valid_and_invalid(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
@@ -341,7 +350,7 @@ class SectionRefsFinderTestCase(TestCase):
           <p>As <i>given</i> in (we're now in a tail) section 26 of Act 5 of 2012, blah, but section 26 of this Act says something else.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>The section we want</heading>
         <content>
@@ -353,20 +362,21 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in sections <ref href="#section-26">26</ref> and 35, one of which isn't in this document, blah.</p>
-          <p>As given in sections 35 and <ref href="#section-26">26</ref>, one of which isn't in this document, blah.</p>
-          <p>In section 200 it says one thing and in <ref href="#section-26">section 26</ref> it says another.</p>
-          <p>As <i>given</i> in (we're now in a tail) section 200, blah, but <ref href="#section-26">section 26</ref> says something else.</p>
-          <p>As <i>given</i> in (we're now in a tail) section 26 of Act 5 of 2012, blah, but <ref href="#section-26">section 26</ref> of this Act says something else.</p>
+          <p>As given in sections <ref href="#sec_26">26</ref> and 35, one of which isn't in this document, blah.</p>
+          <p>As given in sections 35 and <ref href="#sec_26">26</ref>, one of which isn't in this document, blah.</p>
+          <p>In section 200 it says one thing and in <ref href="#sec_26">section 26</ref> it says another.</p>
+          <p>As <i>given</i> in (we're now in a tail) section 200, blah, but <ref href="#sec_26">section 26</ref> says something else.</p>
+          <p>As <i>given</i> in (we're now in a tail) section 26 of Act 5 of 2012, blah, but <ref href="#sec_26">section 26</ref> of this Act says something else.</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>The section we want</heading>
         <content>
@@ -384,51 +394,52 @@ class SectionRefsFinderTestCase(TestCase):
 
     def test_section_edge(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-1">
+      <section eId="sec_1">
         <num>1.</num>
         <heading>Unimportant heading</heading>
         <content>
           <p>An unimportant provision.</p>
         </content>
       </section>
-      <section id="section-2">
+      <section eId="sec_2">
         <num>2.</num>
         <heading>Unimportant heading</heading>
         <content>
           <p>An unimportant provision.</p>
         </content>
       </section>
-      <section id="section-3">
+      <section eId="sec_3">
         <num>3.</num>
         <heading>Unimportant heading</heading>
         <content>
           <p>An unimportant provision.</p>
         </content>
       </section>
-      <section id="section-4">
+      <section eId="sec_4">
         <num>4.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-5">
+      <section eId="sec_5">
         <num>5.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-6">
+      <section eId="sec_6">
         <num>6.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
@@ -447,91 +458,91 @@ class SectionRefsFinderTestCase(TestCase):
           <p>A person who contravenes sections 4(1) and (2), 6(3), 10(1) and (2), 11(1), 12(1), 19(1), 19(3), 20(1), 20(2), 21(1), 22(1), 24(1), 25(3), (4) , (5) and (6) , 26(1), (2), (3) and (5), 28(1), (2) and (3) is guilty of an offence.</p>
         </content>
       </section>
-      <section id="section-10">
+      <section eId="sec_10">
         <num>10.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-11">
+      <section eId="sec_11">
         <num>11.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-12">
+      <section eId="sec_12">
         <num>12.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-19">
+      <section eId="sec_19">
         <num>19.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-20">
+      <section eId="sec_20">
         <num>20.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-21">
+      <section eId="sec_21">
         <num>21.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-22">
+      <section eId="sec_22">
         <num>22.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-24">
+      <section eId="sec_24">
         <num>24.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-25">
+      <section eId="sec_25">
         <num>25.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
       </section>
-      <section id="section-28">
+      <section eId="sec_28">
         <num>28.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-30">
+      <section eId="sec_30">
         <num>30.</num>
         <heading>Less important</heading>
         <content>
           <p>Meh.</p>
         </content>
       </section>
-      <section id="section-31">
+      <section eId="sec_31">
         <num>31.</num>
         <heading>More important</heading>
         <content>
@@ -543,154 +554,155 @@ class SectionRefsFinderTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-      <section id="section-1">
+      <section eId="sec_1">
         <num>1.</num>
         <heading>Unimportant heading</heading>
         <content>
           <p>An unimportant provision.</p>
         </content>
       </section>
-      <section id="section-2">
+      <section eId="sec_2">
         <num>2.</num>
         <heading>Unimportant heading</heading>
         <content>
           <p>An unimportant provision.</p>
         </content>
       </section>
-      <section id="section-3">
+      <section eId="sec_3">
         <num>3.</num>
         <heading>Unimportant heading</heading>
         <content>
           <p>An unimportant provision.</p>
         </content>
       </section>
-      <section id="section-4">
+      <section eId="sec_4">
         <num>4.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-5">
+      <section eId="sec_5">
         <num>5.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-6">
+      <section eId="sec_6">
         <num>6.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-7">
+      <section eId="sec_7">
         <num>7.</num>
         <heading>Active ref heading</heading>
         <content>
-          <p>As given in <ref href="#section-26">section 26</ref>(1), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> (1), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(1), (2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> (1), (2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">sections 26</ref>(1), (2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">sections 26</ref> (1), (2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref> (2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">section 26</ref>(2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">sections 26</ref> (2) and (3), blah.</p>
-          <p>As given in <ref href="#section-26">sections 26</ref>(2) and (3), blah.</p>
-          <p>A person who contravenes sections <ref href="#section-4">4</ref>(1), (2) and (3), <ref href="#section-6">6</ref>(3) and <ref href="#section-10">10</ref>(1) and (2) is guilty of an offence.</p>
-          <p>Subject to sections <ref href="#section-1">1</ref>(4) and (5) and <ref href="#section-4">4</ref>(6), no person is guilty of an offence.</p>
-          <p>A person who contravenes sections <ref href="#section-4">4</ref>(1) and (2), <ref href="#section-6">6</ref>(3), <ref href="#section-10">10</ref>(1) and (2), <ref href="#section-11">11</ref>(1), <ref href="#section-12">12</ref>(1), <ref href="#section-19">19</ref>(1), <ref href="#section-19">19</ref>(3), <ref href="#section-20">20</ref>(1), <ref href="#section-20">20</ref>(2), <ref href="#section-21">21</ref>(1), <ref href="#section-22">22</ref>(1), <ref href="#section-24">24</ref>(1), <ref href="#section-25">25</ref>(3), (4) , (5) and (6) , <ref href="#section-26">26</ref>(1), (2), (3) and (5), <ref href="#section-28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(1), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> (1), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(1), (2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> (1), (2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">sections 26</ref>(1), (2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">sections 26</ref> (1), (2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref> (2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">section 26</ref>(2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">sections 26</ref> (2) and (3), blah.</p>
+          <p>As given in <ref href="#sec_26">sections 26</ref>(2) and (3), blah.</p>
+          <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1), (2) and (3), <ref href="#sec_6">6</ref>(3) and <ref href="#sec_10">10</ref>(1) and (2) is guilty of an offence.</p>
+          <p>Subject to sections <ref href="#sec_1">1</ref>(4) and (5) and <ref href="#sec_4">4</ref>(6), no person is guilty of an offence.</p>
+          <p>A person who contravenes sections <ref href="#sec_4">4</ref>(1) and (2), <ref href="#sec_6">6</ref>(3), <ref href="#sec_10">10</ref>(1) and (2), <ref href="#sec_11">11</ref>(1), <ref href="#sec_12">12</ref>(1), <ref href="#sec_19">19</ref>(1), <ref href="#sec_19">19</ref>(3), <ref href="#sec_20">20</ref>(1), <ref href="#sec_20">20</ref>(2), <ref href="#sec_21">21</ref>(1), <ref href="#sec_22">22</ref>(1), <ref href="#sec_24">24</ref>(1), <ref href="#sec_25">25</ref>(3), (4) , (5) and (6) , <ref href="#sec_26">26</ref>(1), (2), (3) and (5), <ref href="#sec_28">28</ref>(1), (2) and (3) is guilty of an offence.</p>
         </content>
       </section>
-      <section id="section-10">
+      <section eId="sec_10">
         <num>10.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-11">
+      <section eId="sec_11">
         <num>11.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-12">
+      <section eId="sec_12">
         <num>12.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-19">
+      <section eId="sec_19">
         <num>19.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-20">
+      <section eId="sec_20">
         <num>20.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-21">
+      <section eId="sec_21">
         <num>21.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-22">
+      <section eId="sec_22">
         <num>22.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-24">
+      <section eId="sec_24">
         <num>24.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-25">
+      <section eId="sec_25">
         <num>25.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-26">
+      <section eId="sec_26">
         <num>26.</num>
         <heading>Important heading</heading>
         <content>
           <p>An important provision.</p>
         </content>
       </section>
-      <section id="section-28">
+      <section eId="sec_28">
         <num>28.</num>
         <heading>Unimportant</heading>
         <content>
           <p>Hi!</p>
         </content>
       </section>
-      <section id="section-30">
+      <section eId="sec_30">
         <num>30.</num>
         <heading>Less important</heading>
         <content>
           <p>Meh.</p>
         </content>
       </section>
-      <section id="section-31">
+      <section eId="sec_31">
         <num>31.</num>
         <heading>More important</heading>
         <content>
@@ -711,18 +723,20 @@ class RefsFinderENGTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
+        self.work = Work(frbr_uri='/akn/za/act/1991/1')
         self.finder = RefsFinderENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
     def test_find_simple(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Tester</heading>
-          <paragraph id="section-1.paragraph-0">
+          <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with Act no 22 of 2012.</p>
               <p>And another thing about Act 4 of 1998.</p>
@@ -733,15 +747,16 @@ class RefsFinderENGTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Tester</heading>
-          <paragraph id="section-1.paragraph-0">
+          <paragraph eId="sec_1.paragraph-0">
             <content>
-              <p>Something to do with Act <ref href="/za/act/2012/22">no 22 of 2012</ref>.</p>
-              <p>And another thing about Act <ref href="/za/act/1998/4">4 of 1998</ref>.</p>
+              <p>Something to do with Act <ref href="/akn/za/act/2012/22">no 22 of 2012</ref>.</p>
+              <p>And another thing about Act <ref href="/akn/za/act/1998/4">4 of 1998</ref>.</p>
             </content>
           </paragraph>
         </section>"""
@@ -758,18 +773,20 @@ class RefsFinderSubtypesENGTestCase(TestCase):
     fixtures = ['languages_data', 'countries']
 
     def setUp(self):
+        self.work = Work(frbr_uri='/akn/za/act/1991/1')
         self.finder = RefsFinderSubtypesENG()
         self.eng = Language.for_code('eng')
         self.maxDiff = None
 
     def test_find_simple(self):
         document = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Tester</heading>
-          <paragraph id="section-1.paragraph-0">
+          <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with GN no 102 of 2012.</p>
               <p>And another thing about SI 4 of 1998.</p>
@@ -780,15 +797,16 @@ class RefsFinderSubtypesENGTestCase(TestCase):
             language=self.eng)
 
         expected = Document(
+            work=self.work,
             document_xml=document_fixture(
                 xml="""
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Tester</heading>
-          <paragraph id="section-1.paragraph-0">
+          <paragraph eId="sec_1.paragraph-0">
             <content>
-              <p>Something to do with <ref href="/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
-              <p>And another thing about <ref href="/za/act/si/1998/4">SI 4 of 1998</ref>.</p>
+              <p>Something to do with <ref href="/akn/za/act/gn/2012/102">GN no 102 of 2012</ref>.</p>
+              <p>And another thing about <ref href="/akn/za/act/si/1998/4">SI 4 of 1998</ref>.</p>
             </content>
           </paragraph>
         </section>"""
@@ -819,7 +837,7 @@ class RefsFinderCapENGTestCase(TestCase):
         }
 
         work = Work(
-            frbr_uri='/za/act/2002/5',
+            frbr_uri='/akn/za/act/2002/5',
             title='Act 5 of 2002',
             country=za,
             created_by_user=user1,
@@ -831,10 +849,10 @@ class RefsFinderCapENGTestCase(TestCase):
         document = Document(
             document_xml=document_fixture(
                 xml="""
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Tester</heading>
-          <paragraph id="section-1.paragraph-0">
+          <paragraph eId="sec_1.paragraph-0">
             <content>
               <p>Something to do with Cap. 12.</p>
             </content>
@@ -847,12 +865,12 @@ class RefsFinderCapENGTestCase(TestCase):
         expected = Document(
             document_xml=document_fixture(
                 xml="""
-        <section id="section-1">
+        <section eId="sec_1">
           <num>1.</num>
           <heading>Tester</heading>
-          <paragraph id="section-1.paragraph-0">
+          <paragraph eId="sec_1.paragraph-0">
             <content>
-              <p>Something to do with <ref href="/za/act/2002/5">Cap. 12</ref>.</p>
+              <p>Something to do with <ref href="/akn/za/act/2002/5">Cap. 12</ref>.</p>
             </content>
           </paragraph>
         </section>"""

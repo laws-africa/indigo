@@ -189,24 +189,25 @@ class ContentAPIV1TestMixin(object):
     def test_published_listing_missing(self):
         assert_equal(self.client.get(self.api_path + '/za/act/2999/').status_code, 404)
         assert_equal(self.client.get(self.api_path + '/zm/').status_code, 404)
+        assert_equal(self.client.get(self.api_path + '/za-foo/').status_code, 404)
 
     def test_published_toc(self):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/toc.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [
-            {'id': 'section-1', 'type': 'section', 'num': '1.',
+            {'id': 'sec_1', 'type': 'section', 'num': '1.',
                 'component': 'main', 'subcomponent': 'section/1',
-                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng/main/section/1',
+                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng/!main/section/1',
                 'title': 'Section 1.'}])
 
         response = self.client.get(self.api_path + '/za/act/2014/10/toc.json')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [
-            {'id': 'section-1', 'type': 'section', 'num': '1.',
+            {'id': 'sec_1', 'type': 'section', 'num': '1.',
                 'component': 'main', 'subcomponent': 'section/1',
-                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng/main/section/1',
+                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng/!main/section/1',
                 'title': 'Section 1.'}])
 
     def test_published_toc_sections_with_headings(self):
@@ -214,9 +215,9 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [
-            {'id': 'section-1', 'type': 'section', 'num': '1.',
+            {'id': 'sec_1', 'type': 'section', 'num': '1.',
              'component': 'main', 'subcomponent': 'section/1',
-             'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng/main/section/1',
+             'url': 'http://' + self.api_host + self.api_path + '/za/act/2010/1/eng/!main/section/1',
              'heading': 'Foo', 'title': '1. Foo'}])
 
     def test_published_toc_uses_expression_date_in_urls(self):
@@ -225,9 +226,9 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [
-            {'id': 'section-1', 'type': 'section', 'num': '1.',
+            {'id': 'sec_1', 'type': 'section', 'num': '1.',
                 'component': 'main', 'subcomponent': 'section/1',
-                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng@2014-02-12/main/section/1',
+                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng@2014-02-12/!main/section/1',
                 'title': 'Section 1.'}])
 
         # use :2014-02-12
@@ -235,16 +236,37 @@ class ContentAPIV1TestMixin(object):
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/json')
         assert_equal(response.data['toc'], [
-            {'id': 'section-1', 'type': 'section', 'num': '1.',
+            {'id': 'sec_1', 'type': 'section', 'num': '1.',
                 'component': 'main', 'subcomponent': 'section/1',
-                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng:2014-02-12/main/section/1',
+                'url': 'http://' + self.api_host + self.api_path + '/za/act/2014/10/eng:2014-02-12/!main/section/1',
                 'title': 'Section 1.'}])
 
     def test_published_subcomponents(self):
+        response = self.client.get(self.api_path + '/za/act/2014/10/eng/!main/section/1.xml')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'application/xml')
+        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="sec_1"><num>1.</num>
+        <content>
+          <p>tester😀</p><p/><p><img src="media/test-image.png"/></p>
+        </content>
+      </section>
+    
+''')
+
+        response = self.client.get(self.api_path + '/za/act/2014/10/eng/!main/section/1.html')
+        assert_equal(response.status_code, 200)
+        assert_equal(response.accepted_media_type, 'text/html')
+        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3>
+<span class="akn-content">
+          <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
+        </span></section>
+''')
+
+    def test_published_subcomponents_legacy(self):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/main/section/1.xml')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'application/xml')
-        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://www.akomantoso.org/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="section-1"><num>1.</num>
+        assert_equal(response.content.decode('utf-8'), '''<section xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0" eId="sec_1"><num>1.</num>
         <content>
           <p>tester😀</p><p/><p><img src="media/test-image.png"/></p>
         </content>
@@ -255,7 +277,7 @@ class ContentAPIV1TestMixin(object):
         response = self.client.get(self.api_path + '/za/act/2014/10/eng/main/section/1.html')
         assert_equal(response.status_code, 200)
         assert_equal(response.accepted_media_type, 'text/html')
-        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="section-1" data-id="section-1"><h3>1. </h3>
+        assert_equal(response.content.decode('utf-8'), '''<section class="akn-section" id="sec_1" data-eId="sec_1"><h3>1. </h3>
 <span class="akn-content">
           <span class="akn-p">tester😀</span><span class="akn-p"> </span><span class="akn-p"><img data-src="media/test-image.png" src="media/test-image.png"></span>
         </span></section>

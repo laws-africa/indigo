@@ -47,7 +47,7 @@
         .find('i').addClass('fa-spin');
 
       $.ajax({
-        url: '/api/analysis/link-terms',
+        url: this.model.document.url() + '/analysis/link-terms',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",

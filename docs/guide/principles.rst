@@ -67,7 +67,7 @@ A **compiler** converts this plain text into the different formats listed above,
 
 .. seealso:: 
 
-    You can see the full reStructuredText source for this guide at https://github.com/Code4SA/indigo/tree/master/docs.
+    You can see the full reStructuredText source for this guide at https://github.com/laws-africa/indigo/tree/master/docs.
 
 
 Akoma Ntoso

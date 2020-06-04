@@ -257,7 +257,7 @@ class Importer(LocaleBasedMatcher):
         code, stdout, stderr = self.shell(cmd)
 
         if code > 0:
-            raise ValueError(stderr)
+            raise ValueError(stderr.decode('utf-8'))
 
         if not stdout:
             raise ValueError("We couldn't get any useful text out of the file")

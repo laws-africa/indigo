@@ -76,7 +76,7 @@ function bootstrapIndigo(exports) {
         lineno: e.lineno,
         colno: e.colno,
         url: document.location.href,
-        stack: e.error.stack,
+        stack: e.error ? e.error.stack : '',
       },
       global: false,
     });

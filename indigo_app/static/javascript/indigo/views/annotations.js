@@ -603,8 +603,12 @@
           root = range.startContainer;
           while (root && root.nodeType !== Node.ELEMENT_NODE) root = root.parentElement;
 
-          root.appendChild(this.newButton);
-          this.pendingRange = range;
+          // sometimes the browser thinks the selection is inside the new annotation button,
+          // guard against that
+          if (!this.newButton.contains(root)) {
+            root.appendChild(this.newButton);
+            this.pendingRange = range;
+          }
         }
       } else {
         // this needs to stick around for a little bit, for the case

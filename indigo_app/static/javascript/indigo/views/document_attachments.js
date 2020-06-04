@@ -291,7 +291,9 @@
 
     save: function(e) {
       this.$el.modal('hide');
-      this.callback(this.listView.selectedItem);
+      if (this.listView.selectedItem) {
+        this.callback(this.listView.selectedItem);
+      }
     },
   });
 })(window);

@@ -170,6 +170,8 @@
     setFile: function(file) {
       var self = this;
 
+      if (!file) return;
+
       this.file = file;
       this.$('.file-detail').text(this.file.name);
       this.$('button.import').prop('disabled', !(!!this.work));

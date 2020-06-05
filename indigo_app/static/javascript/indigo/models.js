@@ -149,10 +149,17 @@
       var node = this.xmlDocument;
 
       scopedId.split("/").forEach(function(id) {
-        node = node.querySelector('[id="' + id + '"]');
+        node = node.querySelector('[eId="' + id + '"]');
       });
 
       return node;
+    },
+
+    /** Get an element by an (unscoped) eId
+     * @param eId
+     */
+    getElementByEId: function(eId) {
+      return this.xmlDocument.querySelector('[eId="' + eId + '"]');
     },
 
     save: function(options) {

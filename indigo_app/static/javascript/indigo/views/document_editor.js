@@ -305,15 +305,15 @@
               .addClass('fa-check');
         });
 
-      var id = this.fragment.getAttribute('id'),
+      var id = this.fragment.getAttribute('eId'),
           data = {
         'content': content,
       };
       if (fragmentRule != 'akomaNtoso') {
         data.fragment = fragmentRule;
-        if (id && id.lastIndexOf('.') > -1) {
+        if (id && id.lastIndexOf('__') > -1) {
           // retain the id of the parent element as the prefix
-          data.id_prefix = id.substring(0, id.lastIndexOf('.'));
+          data.id_prefix = id.substring(0, id.lastIndexOf('__'));
         }
       }
 

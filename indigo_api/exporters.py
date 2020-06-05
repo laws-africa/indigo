@@ -206,16 +206,22 @@ class PDFExporter(HTMLExporter):
         return lxml.html.tostring(html, encoding='unicode')
 
     def to_pdf(self, html, dirname, document=None, documents=None):
-        args = []
         options = self.pdf_options()
-        options['allow'] = dirname
+        args = [
+            '--allow', dirname,
+            '--allow', settings.MEDIA_ROOT,
+            '--allow', settings.STATIC_ROOT,
+        ]
+
+        # for debugging, an array of (filename, content) tuples
+        files = []
 
         # this makes all paths, such as stylesheets and javascript, use
         # absolute file paths so that wkhtmltopdf finds them
         html = make_absolute_paths(html)
 
         # keep this around so that the file doesn't get cleaned up
-        # before its used
+        # before it's used
         colophon_f = None
         if self.colophon:
             colophon = self.render_colophon(document=document, documents=documents)
@@ -224,6 +230,7 @@ class PDFExporter(HTMLExporter):
                 colophon_f.write(colophon.encode('utf-8'))
                 colophon_f.flush()
                 args.extend(['cover', 'file://' + colophon_f.name])
+                files.append((colophon_f.name, colophon))
 
         toc_xsl = options.pop('xsl-style-sheet')
         if self.toc:
@@ -233,7 +240,14 @@ class PDFExporter(HTMLExporter):
             f.write(html.encode('utf-8'))
             f.flush()
             args.append('file://' + f.name)
-            return self._wkhtmltopdf(args, **options)
+            files.append((f.name, html))
+
+            try:
+                return self._wkhtmltopdf(args, **options)
+            except subprocess.CalledProcessError as e:
+                files = '\n'.join(f'{name}:\n---\n{value}\n---' for name, value in files)
+                log.warning(f"wkhtmltopdf failed. args: {args}. options: {options}. files: \n{files}")
+                raise
 
     def render_colophon(self, document=None, documents=None):
         """ Find the colophon template this document and render it, returning

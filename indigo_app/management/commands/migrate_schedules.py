@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from reversion import revisions as reversion
 
 from indigo_api.models import Document
-from indigo_api.data_migrations import ScheduleArticleToHcontainer
+from indigo_api.data_migrations.legacy import ScheduleArticleToHcontainer
 
 
 class Command(BaseCommand):

@@ -18,7 +18,7 @@ def forward(apps, schema_editor):
 
     for commencement in Commencement.objects.using(db_alias).all().order_by("-pk"):
         if commencement.provisions:
-            log.info(f"Commencement on {commencement.commenced_work.frbr_uri}: Old provisions: {commencement.provisions}")
+            log.info(f"Commencement {commencement.pk} on {commencement.commenced_work.frbr_uri}: Old provisions: {commencement.provisions}")
             new_provisions = []
 
             for provision in commencement.provisions:

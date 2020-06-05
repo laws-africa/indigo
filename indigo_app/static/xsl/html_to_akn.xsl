@@ -10,7 +10,7 @@
 
   <xsl:template match="html:table">
     <table>
-      <xsl:apply-templates select="@data-id | //html:tr" />
+      <xsl:apply-templates select="@data-eid | //html:tr" />
     </table>
   </xsl:template>
 
@@ -86,8 +86,8 @@
   </xsl:template>
 
   <!-- map data-id to id -->
-  <xsl:template match="@data-id">
-    <xsl:attribute name="id"><xsl:value-of select="." /></xsl:attribute>
+  <xsl:template match="@data-eid">
+    <xsl:attribute name="eId"><xsl:value-of select="." /></xsl:attribute>
   </xsl:template>
 
   <!-- text -->

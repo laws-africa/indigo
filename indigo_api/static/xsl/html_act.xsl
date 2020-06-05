@@ -65,6 +65,11 @@
     </xsl:attribute>
   </xsl:template>
 
+  <!-- copy these attributes directly -->
+  <xsl:template match="@colspan | @rowspan | @class | @style">
+    <xsl:copy />
+  </xsl:template>
+
   <!-- copy over attributes using a data- prefix, except for 'id' which is prefixed if necessary as-is -->
   <xsl:template match="@*">
     <xsl:variable name="attName" select="concat('data-', local-name(.))"/>

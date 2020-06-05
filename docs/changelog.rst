@@ -1,16 +1,18 @@
 Changelog
 =========
 
-10.0.0 (?)
-----------
+10.0.0 (5 June 2020)
+--------------------
 
-* FEATURE: SUBPART element
+**Note**: This is the last version to support Akoma Ntoso 2.0. You **must** upgrade to this version before upgrading to subsequent versions.
+
 * BREAKING: upgrade to Django 2.22
+* BREAKING: new badges with clearer names and permissions
+* FEATURE: SUBPART element
 * FEATURE: numbered title in API
+* FEATURE: user profile photos
 * FIX: many fixes for table editing
 * FIX: improved annotation anchoring
-* BREAKING: new badges with clearer names and permissions
-* FEATURE: user profile photos
 * List of contributors for place and work
 
 9.1.0 (13 March 2020)

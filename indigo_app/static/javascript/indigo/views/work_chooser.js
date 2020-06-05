@@ -84,9 +84,9 @@
       if (!locality) {
         delete this.collection.params.frbr_uri__starts_with;
       } else if (locality === "-") {
-        this.collection.params.frbr_uri__startswith = '/' + country + '/';
+        this.collection.params.frbr_uri__startswith = '/akn/' + country + '/';
       } else {
-        this.collection.params.frbr_uri__startswith = '/' + country + '-' + locality + '/';
+        this.collection.params.frbr_uri__startswith = '/akn/' + country + '-' + locality + '/';
         create_work_url = create_work_url + '-' + locality;
       }
 
@@ -139,7 +139,7 @@
         var opt = document.createElement('option');
         opt.setAttribute('value', loc.code);
         opt.innerText = loc.name;
-        opt.selected = loc.code == locality;
+        opt.selected = loc.code === locality;
         $select.append(opt);
       });
     },
@@ -160,7 +160,7 @@
       // convert to json and add a chosen indicator
       works = works.map(function(d) {
         var json = d.toJSON();
-        if (chosen && chosen == d) {
+        if (chosen && chosen === d) {
           json.chosen = true;
         }
         return json;

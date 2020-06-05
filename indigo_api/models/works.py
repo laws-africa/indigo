@@ -492,7 +492,6 @@ class PublicationDocument(models.Model):
 class Commencement(models.Model):
     """ The commencement details of (provisions of) a work,
     optionally performed by a commencing work or a provision of the work itself.
-
     """
     commenced_work = models.ForeignKey(Work, on_delete=models.CASCADE, null=False, help_text="Principal work being commenced", related_name="commencements")
     commencing_work = models.ForeignKey(Work, on_delete=models.SET_NULL, null=True, help_text="Work that provides the commencement date for the principal work", related_name="commencements_made")
@@ -500,7 +499,7 @@ class Commencement(models.Model):
     main = models.BooleanField(default=False, help_text="This commencement date is the date on which most of the provisions of the principal work come into force")
     all_provisions = models.BooleanField(default=False, help_text="All provisions of this work commenced on this date")
 
-    # list of the element ids of the provisions commenced, e.g. ["section-2", "section-4.3.list0.a"]
+    # list of the element ids of the provisions commenced, e.g. ["sec_2", "sec_4.3.list0.a"]
     provisions = JSONField(null=False, blank=False, default=list)
 
     created_at = models.DateTimeField(auto_now_add=True)

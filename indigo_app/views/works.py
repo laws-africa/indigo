@@ -18,7 +18,6 @@ from django.shortcuts import redirect, get_object_or_404
 from reversion import revisions as reversion
 import datetime
 
-from cobalt import FrbrUri
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
     ArbitraryExpressionDate, Commencement

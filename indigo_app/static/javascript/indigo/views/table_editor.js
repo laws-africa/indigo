@@ -55,7 +55,7 @@
         // indigo_app/static/xsl/html_to_akn.xsl
         allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
                         'b; i; p;' +
-                        'table[id, data-id]; thead; tbody; tr;' +
+                        'table[id, data-eid]; thead; tbody; tr;' +
                         'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
                         'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
       };
@@ -73,7 +73,7 @@
       if (!this.editing || !this.table) return;
 
       var table,
-          oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id')),
+          oldTable = this.documentContent.getElementByEId(this.table.getAttribute('data-eid')),
           html;
 
       html = $.parseHTML(this.ckeditor.getData()) || [];

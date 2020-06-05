@@ -286,8 +286,7 @@
        processing to their contents -->
   <xsl:template match="a:table | a:tr | a:th | a:td">
     <xsl:element name="{local-name()}">
-      <xsl:copy-of select="@*" />
-      <xsl:apply-templates select="@id" />
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </xsl:element>
   </xsl:template>

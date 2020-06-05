@@ -305,7 +305,7 @@
               .addClass('fa-check');
         });
 
-      var id = this.fragment.getAttribute('id'),
+      var id = this.fragment.getAttribute('eId'),
           data = {
         'content': content,
       };

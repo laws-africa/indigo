@@ -515,7 +515,7 @@
     },
 
     setCountry: function(country) {
-      if (this.country != country) {
+      if (this.country !== country) {
         this.country = country;
         return this.fetch({reset: true});
       }

@@ -109,8 +109,23 @@
         }
       }
 
+      // ensure attachment ids are correct, we could have deleted an attachment
+      if (oldNode.tagName == 'attachment') {
+        this.fixAttachmentIds();
+      }
+
       this.trigger('change:dom');
       return first;
+    },
+
+    /** Ensures attachments have sequential eId numbering.
+     */
+    fixAttachmentIds: function() {
+      var result = this.xpath('/a:akomaNtoso/a:*/a:attachments/a:attachment');
+
+      for (var i = 0; i < result.snapshotLength; i++) {
+        result.snapshotItem(i).setAttribute('eId', 'att_' + (i + 1));
+      }
     },
 
     /** Evaluate an xpath expression on this document, using the namespace prefix 'a'.

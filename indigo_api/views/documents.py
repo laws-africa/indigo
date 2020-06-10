@@ -519,7 +519,7 @@ class DocumentDiffView(DocumentResourceView, APIView):
     permission_classes = (IsAuthenticated,)
 
     def post(self, request, document_id):
-        serializer = DocumentDiffSerializer(data=self.request.data)
+        serializer = DocumentDiffSerializer(instance=self.document, data=self.request.data)
         serializer.is_valid(raise_exception=True)
 
         differ = AttributeDiffer()

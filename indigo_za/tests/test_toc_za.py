@@ -261,3 +261,22 @@ class TOCBuilderZATestCase(APITestCase):
             {'type': 'preamble', 'component': 'main', 'subcomponent': 'preamble', 'title': 'Preamble'},
             {'type': 'conclusions', 'component': 'main', 'subcomponent': 'conclusions', 'title': 'Conclusions'},
         ])
+
+    def test_subpart_without_number(self):
+        d = Document()
+        d.work = self.work
+        d.content = document_fixture(xml="""
+        <body>
+          <subpart id="subpart-1">
+            <heading>My subpart</heading>
+          </subpart>
+        </body>
+        """)
+        d.language = Language.objects.get(language__pk='en')
+
+        toc = d.table_of_contents()
+        toc = [t.as_dict() for t in toc]
+        self.maxDiff = None
+        self.assertEqual([
+            {'type': 'subpart', 'component': 'main', 'subcomponent': 'subpart', 'title': 'My subpart', 'heading': 'My subpart', 'id': 'subpart-1'},
+        ], toc)

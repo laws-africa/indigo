@@ -170,13 +170,6 @@
       return node;
     },
 
-    /** Get an element by an (unscoped) eId
-     * @param eId
-     */
-    getElementByEId: function(eId) {
-      return this.xmlDocument.querySelector('[eId="' + eId + '"]');
-    },
-
     save: function(options) {
       // When saving document contents, save all document details, so that we capture all
       // changes in a single revision on the server.

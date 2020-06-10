@@ -40,7 +40,7 @@ setup(
 
     python_requires='~=3.6',
     install_requires=[
-        'django>=2.2.12,<3',
+        'django==2.2.12',
         'boto3>=1.7',
         'cobalt>=3.1',
         'django-ckeditor>=5.8',

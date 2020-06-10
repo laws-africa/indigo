@@ -73,7 +73,7 @@
       if (!this.editing || !this.table) return;
 
       var table,
-          oldTable = this.documentContent.getElementByEId(this.table.getAttribute('data-eid')),
+          oldTable = this.documentContent.getElementByScopedId(this.table.id),
           html;
 
       html = $.parseHTML(this.ckeditor.getData()) || [];

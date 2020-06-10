@@ -120,7 +120,7 @@
                                       return "Part " + i.num;
                                     }
         },
-        subpart     : function(i) { return i.num + " – " + i.heading; },
+        subpart     : function(i) { return (i.num ? i.num + " – " : '') + i.heading; },
         preamble    : function(i) { return "Preamble"; },
         preface     : function(i) { return "Preface"; },
         attachments  : function(i) { return "Schedules"; },

@@ -642,3 +642,7 @@ class DocumentDiffSerializer(serializers.Serializer):
     """
     document = DocumentSerializer(required=True)
     element_id = serializers.CharField(required=False, allow_null=True)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['document'].instance = self.instance

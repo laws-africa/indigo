@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import reverse
 
-from indigo_content_api.v1.views import PublishedDocumentDetailView
+from indigo_content_api.v2.views import PublishedDocumentDetailView
 from indigo_resolver.models import Authority
 
 

@@ -17,6 +17,10 @@
     <br><span class="text-muted mt-1 wb-all">{{ work.frbr_uri }}</span>
   </h6>
 
+  {% if work.numbered_title %}
+    <p>{{ work.numbered_title }}</p>
+  {% endif %}
+
   {% if work.assent_date %}
     <p class="mb-2">Assented to on {{ work.assent_date|date:"Y-m-d" }}.</p>
   {% endif %}

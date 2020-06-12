@@ -288,7 +288,7 @@ class TOCBuilderZATestCase(APITestCase):
         d.work = self.work
         d.content = document_fixture(xml="""
         <body>
-          <subpart id="subpart-1">
+          <subpart eId="subpart_1">
             <heading>My subpart</heading>
           </subpart>
         </body>
@@ -299,5 +299,5 @@ class TOCBuilderZATestCase(APITestCase):
         toc = [t.as_dict() for t in toc]
         self.maxDiff = None
         self.assertEqual([
-            {'type': 'subpart', 'component': 'main', 'subcomponent': 'subpart', 'title': 'My subpart', 'heading': 'My subpart', 'id': 'subpart-1'},
+            {'type': 'subpart', 'component': 'main', 'subcomponent': 'subpart', 'title': 'My subpart', 'heading': 'My subpart', 'id': 'subpart_1'},
         ], toc)

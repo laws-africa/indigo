@@ -12,7 +12,7 @@ import reversion
 from indigo.bulk_creator import BaseBulkCreator
 from indigo.plugins import plugins
 from indigo_app.views.works import WorkViewBase
-from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country
+from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country, Document
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -271,6 +271,31 @@ class WorksWebTest(WebTest):
         commencement = Commencement.objects.get(commenced_work=work)
         self.assertEqual(commencement.commencing_work, commencing_work)
         self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
+
+    def test_work_title_changes_documents_with_same_title(self):
+        doc = Document.objects.get(pk=4)
+        self.assertEqual(doc.title, doc.work.title)
+
+        form = self.app.get(f'/works{doc.work.frbr_uri}/edit/').forms['edit-work-form']
+        form['work-title'] = "New Title"
+        form.submit()
+
+        doc.refresh_from_db()
+        self.assertEqual("New Title", doc.title)
+
+    def test_work_title_ignores_documents_with_different_title(self):
+        doc = Document.objects.get(pk=4)
+        self.assertEqual(doc.title, doc.work.title)
+
+        doc.title = "Different Title"
+        doc.save()
+
+        form = self.app.get(f'/works{doc.work.frbr_uri}/edit/').forms['edit-work-form']
+        form['work-title'] = "New Title"
+        form.submit()
+
+        doc.refresh_from_db()
+        self.assertEqual("Different Title", doc.title)
 
 
 class BulkCreateWorksTest(testcases.TestCase):

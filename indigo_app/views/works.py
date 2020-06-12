@@ -155,6 +155,14 @@ class EditWorkView(WorkViewBase, UpdateView):
                     doc.expression_date = self.work.publication_date
                     doc.save()
 
+        # if the work title changes, ensure matching document titles do too
+        if 'title' in form.changed_data:
+            old_title = form.initial['title']
+            if old_title:
+                for doc in Document.objects.filter(work=self.work, title=old_title):
+                    doc.title = self.work.title
+                    doc.save()
+
         if form.has_changed():
             # signals
             work_changed.send(sender=self.__class__, work=self.work, request=self.request)

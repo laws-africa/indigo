@@ -25,6 +25,7 @@ Changes
 
 * BREAKING: migrate from Akoma Ntoso 2.0 to Akoma Ntoso 3.0
 * BREAKING: content API URLs with work components must use !, such as ``/za/act/1992/1/!main``
+* BREAKING: v1 of the content API has been removed, as it is not AKN3 compliant.
 * BREAKING: static XSL filenames have changed:
   * act.xsl has moved to html_act.xsl
   * country-specific files such as act-za.xsl must be renamed to html_act-za.xsl

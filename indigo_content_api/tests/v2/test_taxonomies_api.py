@@ -2,9 +2,9 @@ from rest_framework.test import APITestCase
 import json
 
 
-class TaxonomiesAPIV1Test(APITestCase):
+class TaxonomiesAPIV2Test(APITestCase):
     fixtures = ['languages_data', 'taxonomies', 'user']
-    api_path = '/api/v1'
+    api_path = '/api/v2'
     api_host = 'testserver'
 
     def setUp(self):

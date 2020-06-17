@@ -59,8 +59,6 @@ Location of the API
 
 The API is available at the ``/api/v2/`` URL of your Indigo installation.
 
-Version 1 ``/v1/`` of the API is deprecated and will be removed soon.
-
 Authentication
 --------------
 

@@ -114,13 +114,11 @@
     <section class="akn-subpart">
       <xsl:apply-templates select="@*" />
       <h2>
-        <xsl:value-of select="a:num" />
-        <xsl:choose>
-          <xsl:when test="./a:heading">
-            <xsl:text> – </xsl:text>
-            <xsl:apply-templates select="a:heading" mode="inline" />
-          </xsl:when>
-        </xsl:choose>
+        <xsl:if test="a:num">
+          <xsl:value-of select="a:num" />
+          <xsl:text> – </xsl:text>
+        </xsl:if>
+        <xsl:apply-templates select="a:heading" mode="inline" />
       </h2>
 
       <xsl:apply-templates select="./*[not(self::a:num) and not(self::a:heading)]" />

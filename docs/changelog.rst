@@ -4,24 +4,46 @@ Changelog
 11.0.0 (?)
 ----------
 
+Important
+.........
+
+This version migrates data from Akoma Ntoso 2.0 to Akoma Ntoso 3.0. This cannot be undone.
+
+You **must** upgrade to this version before upgrading to future versions.
+
+Upgrade process
+...............
+
+1. **Make a backup of your database before proceeding**
+2. Install Indigo version 11.0.0.
+3. Apply outstanding migrations one at a time.
+
+The `indigo_api` migrations 0130, 0131 and 0132 make significant changes to all current and historical documents. They make take up to an hour to run.
+
+Changes
+.......
+
 * BREAKING: migrate from Akoma Ntoso 2.0 to Akoma Ntoso 3.0
 * BREAKING: content API URLs with work components must use !, such as ``/za/act/1992/1/!main``
 * BREAKING: v1 of the content API has been removed, as it is not AKN3 compliant.
-
-10.0.0 (?)
-----------
-
-* BREAKING: upgrade to Django 2.22
-* BREAKING: new badges with clearer names and permissions
 * BREAKING: static XSL filenames have changed:
   * act.xsl has moved to html_act.xsl
   * country-specific files such as act-za.xsl must be renamed to html_act-za.xsl
   * text.xsl has moved to text_act.xsl
   * country-specific files such as act_text-za.xsl must be renamed to text_act-za.xsl
+* BREAKING: work FRBR URIs now all start with ``/akn``
+* FEATURE: add ``akn`` as a final candidate when looking for XSL and coverpage files
+
+10.0.0 (5 June 2020)
+--------------------
+
+**Note**: This is the last version to support Akoma Ntoso 2.0. You **must** upgrade to this version before upgrading to subsequent versions.
+
+* BREAKING: upgrade to Django 2.22
+* BREAKING: new badges with clearer names and permissions
 * FEATURE: SUBPART element
 * FEATURE: numbered title in API
 * FEATURE: user profile photos
-* FEATURE: add 'akn' as a final candidate when looking for XSL and coverpage files
 * FIX: many fixes for table editing
 * FIX: improved annotation anchoring
 * List of contributors for place and work

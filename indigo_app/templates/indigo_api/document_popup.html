@@ -6,6 +6,9 @@
     {% else %}
       <span class="badge badge-info">published</span>
     {% endif %}
+    {% if document.work.numbered_title %}
+      <p class="small mb-0">{{ document.work.numbered_title }}</p>
+    {% endif %}
   </h6>
   <p class="mb-2">@ {{ document.expression_date|date:'Y-m-d' }} · {{ document.language }}</p>
   <a href="{% url 'work' frbr_uri=document.work.frbr_uri %}" class="mb-2">{{ document.work.frbr_uri }}</a>

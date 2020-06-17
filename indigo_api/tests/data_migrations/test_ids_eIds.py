@@ -531,7 +531,7 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Air Quality Management" name="title"/>
           <FRBRdate date="2014-04-02" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za"/>
+          <FRBRcountry value="za"/><FRBRnumber value="10"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
@@ -744,7 +744,7 @@ class MigrationTestCase(TestCase):
               <FRBRalias value="Schedule 1"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
-              <FRBRcountry value="za"/>
+              <FRBRcountry value="za"/><FRBRnumber value="10"/>
             </FRBRWork>
             <FRBRExpression>
               <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule1"/>
@@ -909,7 +909,7 @@ class MigrationTestCase(TestCase):
               <FRBRalias value="Schedule 2"/>
               <FRBRdate date="1980-01-01" name="Generation"/>
               <FRBRauthor href="#council"/>
-              <FRBRcountry value="za"/>
+              <FRBRcountry value="za"/><FRBRnumber value="10"/>
             </FRBRWork>
             <FRBRExpression>
               <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!schedule2"/>
@@ -2364,7 +2364,7 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Aerodromes"/>
           <FRBRdate date="2009-02-27" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za"/><FRBRsubtype value="by-law"/>
+          <FRBRcountry value="za-ec443"/><FRBRsubtype value="by-law"/><FRBRnumber value="aerodrome"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za-ec443/act/by-law/2009/aerodrome/eng@2009-02-27/!main"/>
@@ -2631,7 +2631,7 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Air Quality Management" name="title"/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za"/>
+          <FRBRcountry value="za"/><FRBRnumber value="10"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
@@ -2732,7 +2732,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
@@ -2834,7 +2834,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
@@ -2916,7 +2916,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
@@ -2986,7 +2986,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_4"/>
@@ -3066,7 +3066,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_5"/>
@@ -3255,7 +3255,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_6"/>
@@ -3340,7 +3340,7 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Air Quality Management" name="title"/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za"/>
+          <FRBRcountry value="za"/><FRBRnumber value="10"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
@@ -3372,7 +3372,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_1"/>
@@ -3474,7 +3474,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_2"/>
@@ -3556,7 +3556,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_3"/>
@@ -3626,7 +3626,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_4"/>
@@ -3706,7 +3706,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_5"/>
@@ -3895,7 +3895,7 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule 1"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za"/>
+                <FRBRcountry value="za"/><FRBRnumber value="10"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!att_6"/>
@@ -4036,7 +4036,7 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Air Quality Management" name="title"/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za"/>
+          <FRBRcountry value="za"/><FRBRnumber value="10"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>
@@ -4196,7 +4196,7 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Air Quality Management" name="title"/>
           <FRBRdate date="" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za"/>
+          <FRBRcountry value="za"/><FRBRnumber value="10"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za/act/2014/10/eng@2016-08-17/!main"/>

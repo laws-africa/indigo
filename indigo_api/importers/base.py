@@ -356,7 +356,8 @@ class Importer(LocaleBasedMatcher):
             .replace('ﬀ', 'ff')\
             .replace('ﬃ', 'ffi')\
             .replace('ﬄ', 'ffl')\
-            .replace('ﬆ', 'st')
+            .replace('ﬆ', 'st')\
+            .replace('ı', 'i')
 
     def stash_attachment(self, upload, doc):
         # add source file as an attachment

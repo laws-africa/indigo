@@ -48,7 +48,7 @@ class RefsFinderENGza(BaseRefsFinder):
             # the Constitution was originally Act 108 of 1996
             return '/akn/za/act/1996/constitution'
         else:
-            return f'/akn/{self.frbr_uri.country}/act/{year}/{number}'
+            return super().make_href(match)
 
     def markup_match(self, node, match):
         if self.constitution in match.group(0):

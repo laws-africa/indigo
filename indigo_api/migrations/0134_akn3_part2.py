@@ -15,7 +15,6 @@ log = logging.getLogger(__name__)
 
 
 def update_xml(xml):
-    # eg: "section-1" => "sec_1"
     cobalt_doc = Act(xml)
     AKN3Laggards().migrate_act(cobalt_doc)
     return cobalt_doc.to_xml().decode("utf-8")

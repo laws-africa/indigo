@@ -33,8 +33,14 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         return ref, match.start('ref'), match.end('ref')
 
     def make_href(self, match):
-        """ Turn this match into a full FRBR URI href
+        """ Turn this match into a full FRBR URI href.
+            Check for an existing Act with that FRBR URI in the locality first; default to national (may or may not exist).
         """
+        if self.frbr_uri.locality:
+            local = f"/akn/{self.frbr_uri.country}-{self.frbr_uri.locality}/act/{match.group('year')}/{match.group('num')}"
+            if Work.objects.filter(frbr_uri=local).exists():
+                return local
+
         return f"/akn/{self.frbr_uri.country}/act/{match.group('year')}/{match.group('num')}"
 
 

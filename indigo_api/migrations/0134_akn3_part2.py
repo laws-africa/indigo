@@ -4,6 +4,7 @@ import logging
 
 from django.db import migrations
 from django.contrib.contenttypes.models import ContentType
+from lxml import etree
 from reversion.models import Version
 from cobalt import Act
 from cobalt.schemas import assert_validates
@@ -12,11 +13,12 @@ from indigo_api.data_migrations.akn3 import AKN3Laggards
 
 
 log = logging.getLogger(__name__)
+migration = AKN3Laggards()
 
 
 def update_xml(xml):
-    cobalt_doc = Act(xml)
-    AKN3Laggards().migrate_act(cobalt_doc)
+    cobalt_doc = Act(migration.remove_akn2_namespaces(xml))
+    migration.migrate_act(cobalt_doc)
     return cobalt_doc.to_xml().decode("utf-8")
 
 
@@ -25,9 +27,13 @@ def forward(apps, schema_editor):
     Document = apps.get_model("indigo_api", "Document")
     ct_doc = ContentType.objects.get_for_model(Document)
 
-    for document in Document.objects.using(db_alias).all():
+    for document in Document.objects.using(db_alias).order_by('-pk'):
         log.info(f"Migrating document: {document.pk}")
         document.document_xml = update_xml(document.document_xml)
+        try:
+            assert_validates(Act(document.document_xml))
+        except etree.DocumentInvalid as e:
+            log.warning(f"Ignoring validation error: {e}")
         document.save()
 
         # Update historical Document versions

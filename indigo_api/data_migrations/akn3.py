@@ -456,6 +456,11 @@ class AKN3Laggards(AKNMigration):
         self.add_references_source(doc)
         self.remove_empty_lifecycle(doc)
 
+    def remove_akn2_namespaces(self, xml):
+        """ Some elements have explicit AKN2 namespaces. Get rid of them so they default to AKN3.
+        """
+        return xml.replace(' xmlns="http://www.akomantoso.org/2.0"', '')
+
     def migrate_ids(self, doc):
         """ Rename remaining id attributes that have been introduced by Cobalt during the AKN3 transition.
 

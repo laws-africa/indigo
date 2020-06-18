@@ -476,6 +476,9 @@ class AKN3Laggards(AKNMigration):
         for node in doc.root.xpath("//a:FRBRalias[not(@name)]", namespaces={'a': doc.namespace}):
             node.set('name', 'title')
 
+        for node in doc.root.xpath("//a:hcontainer[not(@name)]", namespaces={'a': doc.namespace}):
+            node.set('name', 'hcontainer')
+
     def remove_empty_lifecycle(self, doc):
         """ Remove empty lifecycle elements
 

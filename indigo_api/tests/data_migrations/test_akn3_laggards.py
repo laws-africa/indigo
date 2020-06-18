@@ -5,8 +5,9 @@ from datetime import date
 from django.test import TestCase
 
 from cobalt import Act
+from cobalt.schemas import assert_validates
 
-from indigo_api.data_migrations.akn3 import AKNeId, AKN3Laggards
+from indigo_api.data_migrations.akn3 import AKN3Laggards
 from indigo_api.models import Document, Work, Annotation, Language, Country
 
 
@@ -113,7 +114,7 @@ class MigrationTestCase(TestCase):
             </identification>
           </meta>
           <mainBody>
-            <hcontainer eId="hcontainer_1">
+            <hcontainer eId="hcontainer_1" name="hcontainer">
               <content>
                 <table eId="hcontainer_1__table_1">
                   <tr>
@@ -148,8 +149,8 @@ class MigrationTestCase(TestCase):
           <FRBRalias value="Liquor Trading Days and Hours" name="title"/>
           <FRBRdate date="2010-09-10" name="Generation"/>
           <FRBRauthor href="#council"/>
-          <FRBRcountry value="za-cpt"/><FRBRnumber value="liquor-trading-days-and-hours"/>
-          <FRBRsubtype value="by-law"/>
+          <FRBRcountry value="za-cpt"/>
+          <FRBRsubtype value="by-law"/><FRBRnumber value="liquor-trading-days-and-hours"/>
         </FRBRWork>
         <FRBRExpression>
           <FRBRthis value="/akn/za-cpt/act/by-law/2010/liquor-trading-days-and-hours/eng@2012-04-26/!main"/>
@@ -210,8 +211,8 @@ class MigrationTestCase(TestCase):
                 <FRBRalias value="Schedule" name="title"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
-                <FRBRcountry value="za-cpt"/><FRBRnumber value="liquor-trading-days-and-hours"/>
-                <FRBRsubtype value="by-law"/>
+                <FRBRcountry value="za-cpt"/>
+                <FRBRsubtype value="by-law"/><FRBRnumber value="liquor-trading-days-and-hours"/>
               </FRBRWork>
               <FRBRExpression>
                 <FRBRthis value="/akn/za-cpt/act/by-law/2010/liquor-trading-days-and-hours/eng@2012-04-26/!schedule"/>
@@ -229,7 +230,7 @@ class MigrationTestCase(TestCase):
             </identification>
           </meta>
           <mainBody>
-            <hcontainer eId="hcontainer_1">
+            <hcontainer eId="hcontainer_1" name="hcontainer">
               <content>
                 <table eId="hcontainer_1__table_1">
                   <tr>
@@ -250,3 +251,5 @@ class MigrationTestCase(TestCase):
   </act>
 </akomaNtoso>
 """, output)
+
+        assert_validates(doc.doc)

@@ -6,6 +6,7 @@ from django.db import migrations
 from django.contrib.contenttypes.models import ContentType
 from reversion.models import Version
 from cobalt import Act
+from cobalt.schemas import assert_validates
 
 from indigo_api.data_migrations.akn3 import AKN3Laggards
 
@@ -21,7 +22,6 @@ def update_xml(xml):
 
 
 def forward(apps, schema_editor):
-    return
     db_alias = schema_editor.connection.alias
     Document = apps.get_model("indigo_api", "Document")
     ct_doc = ContentType.objects.get_for_model(Document)

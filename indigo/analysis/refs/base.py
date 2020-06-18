@@ -38,8 +38,7 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         """
         if self.frbr_uri.locality:
             local = f"/akn/{self.frbr_uri.country}-{self.frbr_uri.locality}/act/{match.group('year')}/{match.group('num')}"
-            local_act = Work.objects.filter(frbr_uri=local).first()
-            if local_act:
+            if Work.objects.filter(frbr_uri=local).exists():
                 return local
 
         return f"/akn/{self.frbr_uri.country}/act/{match.group('year')}/{match.group('num')}"

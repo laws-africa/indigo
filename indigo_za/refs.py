@@ -47,8 +47,8 @@ class RefsFinderENGza(BaseRefsFinder):
         elif self.frbr_uri.country == 'za' and year == '1996' and number == '108':
             # the Constitution was originally Act 108 of 1996
             return '/akn/za/act/1996/constitution'
-        else:
-            return super().make_href(match)
+
+        return super().make_href(match)
 
     def markup_match(self, node, match):
         if self.constitution in match.group(0):

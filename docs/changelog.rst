@@ -18,7 +18,7 @@ Upgrade process
 2. Install Indigo version 11.0.0.
 3. Apply outstanding migrations one at a time.
 
-The `indigo_api` migrations 0130, 0131 and 0132 make significant changes to all current and historical documents. They make take up to an hour to run.
+The `indigo_api` migrations 0130 to 0134 make significant changes to all current and historical documents. They may each take up to an hour to run.
 
 Changes
 .......

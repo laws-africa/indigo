@@ -444,3 +444,58 @@ class AKNeId(AKNMigration):
                     continue
 
                 annotation.save()
+
+
+class AKN3Laggards(AKNMigration):
+    def migrate_act(self, doc):
+        # this forces Cobalt to ensure missing FRBR URI elements are added
+        doc.frbr_uri = doc.frbr_uri
+
+        self.migrate_ids(doc)
+        self.add_names(doc)
+        self.add_references_source(doc)
+        self.remove_empty_lifecycle(doc)
+
+    def remove_akn2_namespaces(self, xml):
+        """ Some elements have explicit AKN2 namespaces. Get rid of them so they default to AKN3.
+        """
+        return xml.replace(' xmlns="http://www.akomantoso.org/2.0"', '')
+
+    def migrate_ids(self, doc):
+        """ Rename remaining id attributes that have been introduced by Cobalt during the AKN3 transition.
+
+        See https://github.com/laws-africa/cobalt/issues/37
+        """
+        for node in doc.root.xpath("//a:*[@id]", namespaces={'a': doc.namespace}):
+            node.set("eId", node.get("id"))
+            del node.attrib["id"]
+
+    def add_names(self, doc):
+        """ Move name attributes for appropriate elements.
+
+        See https://github.com/laws-africa/indigo/issues/1090
+        """
+        for node in doc.root.xpath("//a:act[not(@name)]", namespaces={'a': doc.namespace}):
+            node.set('name', 'act')
+
+        for node in doc.root.xpath("//a:FRBRalias[not(@name)]", namespaces={'a': doc.namespace}):
+            node.set('name', 'title')
+
+        for node in doc.root.xpath("//a:hcontainer[not(@name)]", namespaces={'a': doc.namespace}):
+            node.set('name', 'hcontainer')
+
+    def remove_empty_lifecycle(self, doc):
+        """ Remove empty lifecycle elements
+
+        See https://github.com/laws-africa/cobalt/issues/37
+        """
+        for node in doc.root.xpath("//a:lifecycle[not(*)]", namespaces={'a': doc.namespace}):
+            node.getparent().remove(node)
+
+    def add_references_source(self, doc):
+        """ Add source attribute to references
+
+        See https://github.com/laws-africa/cobalt/issues/37
+        """
+        for node in doc.root.xpath("//a:references[not(@source)]", namespaces={'a': doc.namespace}):
+            node.set('source', '#cobalt')

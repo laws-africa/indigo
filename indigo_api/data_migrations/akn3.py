@@ -454,6 +454,8 @@ class AKN3Laggards(AKNMigration):
         self.migrate_ids(doc)
         self.add_names(doc)
         self.add_references_source(doc)
+        self.move_frbrthis(doc)
+        self.move_frbrsubtype(doc)
         self.remove_empty_lifecycle(doc)
 
     def remove_akn2_namespaces(self, xml):
@@ -499,3 +501,22 @@ class AKN3Laggards(AKNMigration):
         """
         for node in doc.root.xpath("//a:references[not(@source)]", namespaces={'a': doc.namespace}):
             node.set('source', '#cobalt')
+
+    def move_frbrthis(self, doc):
+        """ Move FRBRthis to the first element of FRBRWork.
+
+        See https://github.com/laws-africa/cobalt/issues/37
+        """
+        for node in doc.root.xpath("//a:FRBRthis", namespaces={'a': doc.namespace}):
+            if not node.getprevious():
+                node.getparent().insert(0, node)
+
+    def move_frbrsubtype(self, doc):
+        """ Move FRBRsubtype to come after FRBRcountry
+
+        See https://github.com/laws-africa/cobalt/issues/37
+        """
+        for node in doc.root.xpath("//a:FRBRsubtype", namespaces={'a': doc.namespace}):
+            country = list(node.getparent().iterchildren(f'{{{doc.namespace}}}FRBRcountry'))[0]
+            if not node.getprevious().tag.endswith('FRBRcountry'):
+                country.addnext(node)

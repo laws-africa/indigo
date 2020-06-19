@@ -253,3 +253,100 @@ class MigrationTestCase(TestCase):
 """, output)
 
         assert_validates(doc.doc)
+
+    def test_full_migration2(self):
+        work = Work(country=self.za, locality=self.cpt, frbr_uri="/akn/za/act/gn/2020/650/")
+
+        doc = Document(title="A work", frbr_uri="/akn/za/act/gn/2020/650/", work=work, language=self.eng, expression_date=date(2016, 8, 17), created_by_user_id=1, document_xml="""
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act" contains="originalVersion">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRuri value="/akn/za/act/gn/2020/650"/>
+          <FRBRalias value="A work" name="title"/>
+          <FRBRthis value="/akn/za/act/gn/2020/650/!main"/>
+          <FRBRdate date="1990-01-01" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/>
+          <FRBRnumber value="650"/>
+          <FRBRsubtype value="gn"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRuri value="/akn/za/act/gn/2020/650/eng@2020-06-05"/>
+          <FRBRthis value="/akn/za/act/gn/2020/650/eng@2020-06-05/!main"/>
+          <FRBRdate date="2020-06-05" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRuri value="/akn/za/act/gn/2020/650/eng@2020-06-05"/>
+          <FRBRthis value="/akn/za/act/gn/2020/650/eng@2020-06-05/!main"/>
+          <FRBRdate date="2020-06-18" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="43412" name="Government Gazette" showAs="Government Gazette" date="2020-06-05"/>
+      <references>
+        <TLCOrganization id="cobalt" href="https://github.com/laws-africa/cobalt" showAs="cobalt"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="section_1">
+        <content>
+          <p/>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>
+""")
+        AKN3Laggards().migrate_act(doc.doc)
+        output = doc.doc.to_xml(pretty_print=True, encoding='unicode')
+
+        # check XML
+        self.assertMultiLineEqual("""<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <act name="act" contains="originalVersion">
+    <meta>
+      <identification source="#cobalt">
+        <FRBRWork>
+          <FRBRthis value="/akn/za/act/gn/2020/650/!main"/>
+          <FRBRuri value="/akn/za/act/gn/2020/650"/>
+          <FRBRalias value="A work" name="title"/>
+          <FRBRdate date="1990-01-01" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRcountry value="za"/><FRBRsubtype value="gn"/>
+        
+          <FRBRnumber value="650"/>
+          </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/za/act/gn/2020/650/eng@2020-06-05/!main"/>
+          <FRBRuri value="/akn/za/act/gn/2020/650/eng@2020-06-05"/>
+          <FRBRdate date="2020-06-05" name="Generation"/>
+          <FRBRauthor href=""/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/za/act/gn/2020/650/eng@2020-06-05/!main"/>
+          <FRBRuri value="/akn/za/act/gn/2020/650/eng@2020-06-05"/>
+          <FRBRdate date="2020-06-18" name="Generation"/>
+          <FRBRauthor href=""/>
+        </FRBRManifestation>
+      </identification>
+      <publication number="43412" name="Government Gazette" showAs="Government Gazette" date="2020-06-05"/>
+      <references source="#cobalt">
+        <TLCOrganization href="https://github.com/laws-africa/cobalt" showAs="cobalt" eId="cobalt"/>
+      </references>
+    </meta>
+    <body>
+      <section eId="section_1">
+        <content>
+          <p/>
+        </content>
+      </section>
+    </body>
+  </act>
+</akomaNtoso>
+""", output)
+
+        assert_validates(doc.doc)

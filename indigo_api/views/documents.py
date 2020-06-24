@@ -269,9 +269,10 @@ class RevisionViewSet(DocumentResourceView, viewsets.ReadOnlyModelViewSet):
 
         old_tree = lxml.html.fromstring(old_html) if old_html else None
         new_tree = lxml.html.fromstring(new_html)
-        n_changes = differ.diff_document_html(old_tree, new_tree)
+        n_changes, diff = differ.diff_document_html(old_tree, new_tree)
 
-        diff = lxml.html.tostring(new_tree, encoding='unicode')
+        if not isinstance(diff, str):
+            diff = lxml.html.tostring(diff, encoding='unicode')
 
         # TODO: include other diff'd attributes
 

@@ -264,7 +264,7 @@ class AttributeDiffer(object):
                             prev.getparent().insert(prev.getparent().index(prev) + 1, item)
                             prev = item
 
-        return changes
+        return changes, new_tree
 
     def describe_html_differences(self, old, new, parent):
         if old is None:

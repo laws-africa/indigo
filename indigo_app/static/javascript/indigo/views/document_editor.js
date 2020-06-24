@@ -441,7 +441,7 @@
 
       data.document = this.parent.model.toJSON();
       data.document.content = this.parent.documentContent.toXml();
-      data.element_id = this.parent.fragment.getAttribute('id');
+      data.element_id = this.parent.fragment.getAttribute('eId');
 
       if (!data.element_id && this.parent.fragment.tagName !== "akomaNtoso") {
         // for elements without ids (preamble, preface, components)

@@ -539,7 +539,7 @@ class DocumentDiffView(DocumentResourceView, APIView):
             if element_id in ['preface', 'preamble', 'components']:
                 xpath = f'//a:{element_id}'
             else:
-                xpath = f'//a:*[@id="{element_id}"]'
+                xpath = f'//a:*[@eId="{element_id}"]'
 
             # diff just this element
             local_element = local_doc.doc.root.xpath(xpath, namespaces={'a': local_doc.doc.namespace})

@@ -51,7 +51,7 @@ class AKNHTMLDiffer:
     }
 
     def diff_html(self, old_tree, new_tree):
-        """ Compares to trees, and returns new tree with annotated differences.
+        """ Compares two trees, and returns a tree with annotated differences.
         """
         if old_tree is None:
             new_tree.tag = 'div'

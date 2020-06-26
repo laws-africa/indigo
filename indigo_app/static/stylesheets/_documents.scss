@@ -432,30 +432,6 @@ button.btn-link.help {
   }
 }
 
-.diffset {
-  ins,
-  .ins,
-  .ins > .akn-num {
-    background-color: $diff-green;
-    text-decoration: none;
-  }
-
-  img.ins {
-    border: 1px solid adjust-color($diff-green, $lightness: -30%);
-  }
-
-  del,
-  .del,
-  .del > .akn-num {
-    background-color: $diff-red;
-    text-decoration: none;
-  }
-
-  img.del {
-    border: 1px solid adjust-color($diff-red, $lightness: -30%);
-  }
-}
-
 .issue-icon {
   font-family: "Font Awesome 5 Free";
   font-weight: 900;

@@ -28,3 +28,45 @@
     box-shadow: 1px 1px 4px 0px rgba(0, 0, 0, 0.2)
   }
 }
+
+.diffset {
+  ins,
+  .ins,
+  .ins > .akn-num {
+    background-color: $diff-green;
+    text-decoration: none;
+  }
+
+  img.ins {
+    border: 1px solid adjust-color($diff-green, $lightness: -30%);
+  }
+
+  del,
+  .del,
+  .del > .akn-num {
+    background-color: $diff-red;
+    text-decoration: none;
+  }
+
+  img.del {
+    border: 1px solid adjust-color($diff-red, $lightness: -30%);
+  }
+
+  .diff-pair {
+    display: inline-flex;
+    vertical-align: bottom;
+    flex-direction: column;
+    margin-top: 5px;
+  }
+
+  .akn-content.ins,
+  .akn-content.del {
+    // akn-content is not normally a block element, but must be to get background colouring
+    display: block;
+  }
+
+  // when akn-num is changed, ensure the two elements don't overlap each other
+  .akn-num + .akn-num {
+    margin-top: 1.35em; // $line-height-base
+  }
+}

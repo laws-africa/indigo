@@ -80,6 +80,7 @@ setup(
         'whitenoise<2,>=1.0.6',
         'django-contrib-comments>=1.9.1',
         'XlsxWriter>=1.2.6',
+        'xmldiff>=2.4',
 
         # for indigo_social
         'pillow>=5.2.0',

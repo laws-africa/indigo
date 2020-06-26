@@ -33,6 +33,7 @@ Changes
   * country-specific files such as act_text-za.xsl must be renamed to text_act-za.xsl
 * BREAKING: work FRBR URIs now all start with ``/akn``
 * FEATURE: add ``akn`` as a final candidate when looking for XSL and coverpage files
+* Vastly improved document differ/comparisons using xmldiff.
 
 10.0.0 (5 June 2020)
 --------------------

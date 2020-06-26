@@ -61,7 +61,6 @@ class AKNHTMLDiffer:
         self.preprocess(old_tree)
         self.preprocess(new_tree)
 
-        # in html, AKN elements are recognised using on classes
         formatter = self.get_formatter()
         diff = xmldiff_main.diff_trees(old_tree, new_tree, formatter=formatter, diff_options=self.xmldiff_options)
         self.postprocess(diff)
@@ -69,6 +68,7 @@ class AKNHTMLDiffer:
         return diff
 
     def get_formatter(self):
+        # in html, AKN elements are recognised using classes
         text_tags = [f'*[@class="akn-{t}"]' for t in self.akn_text_tags] + self.html_text_tags
         return self.formatter_class(normalize=formatting.WS_NONE, pretty_print=False, text_tags=text_tags)
 

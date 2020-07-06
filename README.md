@@ -63,6 +63,7 @@ Then run migrations to setup the initial database:
 ```bash
 python manage.py migrate
 python manage.py update_countries_plus
+python manage.py loaddata languages_data.json.gz
 ```
 
 If you have trouble connecting to your database, you may need to change the default database settings in `indigo/settings.py`:

@@ -33,7 +33,7 @@ Ensure you have python 3.6, [virtualenv and pip](https://virtualenv.pypa.io/en/s
 Create and activate a virtualenv and install dependencies:
 
 ```bash
-virtualenv env --no-site-packages
+virtualenv env -p python3.6
 source env/bin/activate
 pip install -e '.[test]'
 ```

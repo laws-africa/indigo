@@ -10,7 +10,7 @@ from background_task import background
 from actstream.models import Action
 from pinax.badges.models import BadgeAward
 
-from indigo.settings import INDIGO_ORGANISATION
+from indigo.settings.base import INDIGO_ORGANISATION
 from indigo_api.models import Task, Annotation
 
 

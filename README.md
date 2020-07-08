@@ -90,7 +90,7 @@ Now give yourself all the permissions to work in that country by clicking on you
 
 You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library.
 We strongly recommend installing and using [RVM](http://rvm.io/) or a similar Ruby version manager. You'll
-need Ruby version 2.3.
+need Ruby version 2.6.
 
 Once you've install Ruby, install [Bundler](https://bundler.io/) and the Indigo dependencies:
 
@@ -125,7 +125,7 @@ open a pull request to merge the changes into master.
 Once merged into master, you must [tell Django to compile the .po files to .mo files](https://docs.djangoproject.com/en/2.2/topics/i18n/translation/#compiling-message-files):
 
 ```bash
-django-admin compilemessages --settings indigo.settings
+django-admin compilemessages --settings indigo.settings.base
 ```
 
 And then commit the changes.

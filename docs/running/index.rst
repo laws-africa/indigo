@@ -101,7 +101,7 @@ You can now easily change Django settings, add your own modules, change URLs, et
 
 2. Create `my_app/settings.py` so that it looks like this::
 
-    from indigo.settings import *
+    from indigo.settings.base import *
 
     # override any Django settings, as you would normally.
 

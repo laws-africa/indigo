@@ -1,13 +1,28 @@
-env
-venv
 .idea/
 *.pyc
 .webassets-cache
-attachments/
 indigo_app/static/lime/develop
-staticfiles/
 docs/_build
 node_modules/
 .coverage
 *.egg-info
 .ruby-version
+
+# Files
+staticfiles/
+
+# Django stuff:
+*.log
+local_settings.py
+db.sqlite3
+
+# Environments
+env
+venv
+
+# Mac file
+.DS_Store
+
+# Attachments
+attachments/
+work-attachments/

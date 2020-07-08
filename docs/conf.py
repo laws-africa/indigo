@@ -22,7 +22,7 @@ import django
 sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('../lib'))
 
-os.environ['DJANGO_SETTINGS_MODULE'] = 'indigo.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'indigo.settings.base'
 django.setup()
 
 # -- General configuration ------------------------------------------------

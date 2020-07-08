@@ -1,0 +1,7 @@
+{
+    "scripts": {
+      "dokku": {
+        "postdeploy": "python manage.py migrate && python manage.py award_badges"
+      }
+    }
+  }

@@ -82,7 +82,8 @@ class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
             'created_at', 'updated_at',
 
             # frbr_uri components
-            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
+            # year is for backwards compatibility
+            'country', 'locality', 'nature', 'subtype', 'date', 'year', 'actor', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',

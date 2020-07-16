@@ -147,7 +147,7 @@ class MigrationTestCase(TestCase):
           <FRBRthis value="/akn/za-cpt/act/by-law/2010/liquor-trading-days-and-hours/!main"/>
           <FRBRuri value="/akn/za-cpt/act/by-law/2010/liquor-trading-days-and-hours"/>
           <FRBRalias value="Liquor Trading Days and Hours" name="title"/>
-          <FRBRdate date="2010-09-10" name="Generation"/>
+          <FRBRdate date="2010" name="Generation"/>
           <FRBRauthor href="#council"/>
           <FRBRcountry value="za-cpt"/>
           <FRBRsubtype value="by-law"/><FRBRnumber value="liquor-trading-days-and-hours"/>
@@ -209,7 +209,7 @@ class MigrationTestCase(TestCase):
                 <FRBRthis value="/akn/za-cpt/act/by-law/2010/liquor-trading-days-and-hours/!schedule"/>
                 <FRBRuri value="/akn/za-cpt/act/by-law/2010/liquor-trading-days-and-hours"/>
                 <FRBRalias value="Schedule" name="title"/>
-                <FRBRdate date="1980-01-01" name="Generation"/>
+                <FRBRdate date="2010" name="Generation"/>
                 <FRBRauthor href="#council"/>
                 <FRBRcountry value="za-cpt"/>
                 <FRBRsubtype value="by-law"/><FRBRnumber value="liquor-trading-days-and-hours"/>
@@ -313,7 +313,7 @@ class MigrationTestCase(TestCase):
           <FRBRthis value="/akn/za/act/gn/2020/650/!main"/>
           <FRBRuri value="/akn/za/act/gn/2020/650"/>
           <FRBRalias value="A work" name="title"/>
-          <FRBRdate date="1990-01-01" name="Generation"/>
+          <FRBRdate date="2020" name="Generation"/>
           <FRBRauthor href=""/>
           <FRBRcountry value="za"/><FRBRsubtype value="gn"/>
         

@@ -100,6 +100,10 @@ class WorkMixin(object):
         return self._work_uri
 
     @property
+    def date(self):
+        return self.work_uri.date
+
+    @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
 
@@ -114,6 +118,10 @@ class WorkMixin(object):
     @property
     def subtype(self):
         return self.work_uri.subtype
+
+    @property
+    def actor(self):
+        return self.work_uri.actor
 
     @property
     def repeal(self):

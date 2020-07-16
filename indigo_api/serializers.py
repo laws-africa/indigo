@@ -13,7 +13,7 @@ from rest_framework import serializers
 from rest_framework.reverse import reverse
 from rest_framework.exceptions import ValidationError
 from taggit_serializer.serializers import TagListSerializerField
-from cobalt import StructuredDocument
+from cobalt import StructuredDocument, FrbrUri
 from cobalt.akn import AKN_NAMESPACES
 import reversion
 
@@ -271,7 +271,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
             'created_at', 'updated_at', 'updated_by_user', 'created_by_user',
 
             # frbr_uri components
-            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
+            'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number',
             'expression_date', 'commencement_date', 'assent_date',
@@ -279,7 +279,7 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
 
             'links',
         )
-        read_only_fields = ('country', 'locality', 'nature', 'subtype', 'year', 'number', 'created_at', 'updated_at')
+        read_only_fields = ('country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'created_at', 'updated_at')
 
     def get_links(self, doc):
         return [
@@ -321,6 +321,14 @@ class DocumentSerializer(serializers.HyperlinkedModelSerializer):
                 raise ValidationError(f"Document must have namespace {AKN_NAMESPACES['3.0']}, but it has {doc.namespace} instead.")
 
         return attrs
+
+    def validate_frbr_uri(self, value):
+        try:
+            if not value:
+                raise ValueError()
+            return FrbrUri.parse(value.lower()).work_uri()
+        except ValueError:
+            raise ValidationError("Invalid FRBR URI: %s" % value)
 
     def validate_language(self, value):
         try:
@@ -579,7 +587,7 @@ class WorkSerializer(serializers.ModelSerializer):
             'repealed_date', 'repealed_by',
 
             # frbr_uri components
-            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri',
+            'country', 'locality', 'nature', 'subtype', 'date', 'actor', 'number', 'frbr_uri',
 
             # taxonomies
             'taxonomies',

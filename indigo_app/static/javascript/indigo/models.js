@@ -198,7 +198,7 @@
 
     initialize: function(options) {
       // keep frbr_uri up to date
-      this.on('change:country change:locality change:subtype change:number change:year', this.updateFrbrUri, this);
+      this.on('change:country change:locality change:nature change:subtype change:actor change:number change:date', this.updateFrbrUri, this);
     },
 
     parse: function(json) {
@@ -229,7 +229,10 @@
       if (this.get('subtype')) {
         parts.push(this.get('subtype'));
       }
-      parts.push(this.get('year'));
+      if (this.get('actor')) {
+        parts.push(this.get('actor'));
+      }
+      parts.push(this.get('date'));
       parts.push(this.get('number'));
 
       // clean the parts
@@ -243,7 +246,7 @@
 
       if (!attrs.title) errors.title = 'A title must be specified';
       if (!attrs.country) errors.country = 'A country must be specified';
-      if (!attrs.year) errors.year = 'A year must be specified';
+      if (!attrs.date) errors.date = 'A year (or date) must be specified';
       if (!attrs.number) errors.number = 'A number must be specified';
 
       if (!_.isEmpty(errors)) return errors;
@@ -434,24 +437,6 @@
       return Indigo.traditions.get(this.get('country'));
     },
   });
-
-  /** Create a new document by parsing an frbr URI */
-  Indigo.Document.newFromFrbrUri = function(frbr_uri) {
-    // /akn/za-cpt/act/by-law/2011/foo
-    var parts = frbr_uri.split('/'),
-        place = parts[2].split('-'),
-        country = place[0],
-        locality = place.length > 1 ? place.slice(1).join('-') : null,
-        bump = parts.length > 6 ? 1 : 0;
-
-    return new Indigo.Document({
-      country: country,
-      locality: locality,
-      subtype: parts.length > 6 ? parts[4] : null,
-      year: parts[4 + bump],
-      number: parts[5 + bump],
-    });
-  };
 
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,

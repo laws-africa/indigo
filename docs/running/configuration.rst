@@ -77,6 +77,11 @@ Config options are mostly passed to Indigo as environment variables. These are t
 
   Should Indigo require authentication to view read-only pages? Default is True.
 
+* ``INDIGO.DOCTYPES``
+
+  A list of ``(label, code)`` pairs of Akoma Ntoso document types that can be
+  created, such as ``('Act', 'act')``. See http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
+
 * ``INDIGO.EMAIL_FAIL_SILENTLY``
 
   Should email sending fail silently?

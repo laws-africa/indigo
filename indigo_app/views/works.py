@@ -8,7 +8,8 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q
+from django.conf import settings
+from django.db.models import Count
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -135,6 +136,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
+        context['doctypes'] = settings.INDIGO['DOCTYPES']
         context['subtypes'] = Subtype.objects.order_by('name').all()
         return context
 
@@ -213,6 +215,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
         context['work_json'] = json.dumps(work)
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
+        context['doctypes'] = settings.INDIGO['DOCTYPES']
         context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
 
         return context

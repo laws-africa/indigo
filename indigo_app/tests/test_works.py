@@ -297,6 +297,13 @@ class WorksWebTest(WebTest):
         doc.refresh_from_db()
         self.assertEqual("Different Title", doc.title)
 
+    def test_create_non_act_work(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Title"
+        form['work-frbr_uri'] = '/akn/za/statement/deliberation/my-org/2018-02-02/123-45'
+        response = form.submit()
+        self.assertRedirects(response, '/works/akn/za/statement/deliberation/my-org/2018-02-02/123-45/', fetch_redirect_response=False)
+
 
 class BulkCreateWorksTest(testcases.TestCase):
     fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']

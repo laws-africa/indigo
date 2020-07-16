@@ -16,11 +16,13 @@
 
   // Recursively copies properties from source to target
   function deepMerge(target, source) {
-    for (var prop in source) {
-      if (!(prop in target)) {
-        target[prop] = source[prop];
-      } else {
-        deepMerge(target[prop], source[prop]);
+    if (_.isObject(source)) {
+      for (var prop in source) {
+        if (!(prop in target)) {
+          target[prop] = source[prop];
+        } else {
+          deepMerge(target[prop], source[prop]);
+        }
       }
     }
   }

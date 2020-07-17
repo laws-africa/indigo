@@ -28,6 +28,6 @@ class TOCBuilderZA(TOCBuilderBase):
         'article': lambda t: _('Article') + ' %s' % t.num + (' – %s' % t.heading if t.heading else ''),
         'chapter': lambda t: _('Chapter') + ' %s' % t.num + (' – %s' % t.heading if t.heading else ''),
         'part': lambda t: _('Part') + ' %s' % t.num + (' – %s' % t.heading if t.heading else ''),
-        'subpart': lambda t: (f'{t.num} – ' if t.num else '') + t.heading,
+        'subpart': lambda t: (f'{t.num} – ' if t.num else '') + t.heading if t.heading else '',
         'section': section_title,
     }

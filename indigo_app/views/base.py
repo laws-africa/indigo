@@ -109,9 +109,9 @@ class PlaceViewBase(object):
 
     def doctypes(self):
         doctypes = settings.INDIGO['DOCTYPES']
+        extras = settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code)
 
-        doc_type_getter = plugins.for_locale('doctypes', self.country.code, None, self.locality.code if self.locality else None)
-        if doc_type_getter:
-            doctypes = doc_type_getter.get_doctypes()
+        if extras:
+            return doctypes + extras
 
         return doctypes

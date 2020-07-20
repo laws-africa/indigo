@@ -3,7 +3,6 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
 
-from indigo.plugins import plugins
 from indigo_api.models import Country
 
 

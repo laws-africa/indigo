@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import PermissionRequiredMixin
 from django.contrib.auth.views import redirect_to_login
 from django.http import Http404
 
+from indigo.plugins import plugins
 from indigo_api.models import Country
 
 
@@ -105,3 +106,12 @@ class PlaceViewBase(object):
                             "but self.country is None.")
 
         return self.request.user.editor.has_country_permission(self.country)
+
+    def doctypes(self):
+        doctypes = settings.INDIGO['DOCTYPES']
+
+        doc_type_getter = plugins.for_locale('doctypes', self.country.code, None, self.locality.code if self.locality else None)
+        if doc_type_getter:
+            doctypes = doc_type_getter.get_doctypes()
+
+        return doctypes

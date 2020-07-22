@@ -23,7 +23,7 @@ from rest_framework.decorators import action as detail_route_action
 from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly, IsAuthenticated
 from reversion import revisions as reversion
 from django_filters.rest_framework import DjangoFilterBackend
-from cobalt import FrbrUri, StructuredDocument, AkomaNtosoDocument
+from cobalt import StructuredDocument
 
 import lxml.html.diff
 from lxml.etree import LxmlError
@@ -348,11 +348,7 @@ class ParseView(DocumentResourceView, APIView):
             log.warning("Error during import: %s" % str(e), exc_info=e)
             raise ValidationError({'content': str(e) or "error during import"})
 
-        if fragment:
-            # clean up encodings
-            doc = AkomaNtosoDocument(xml)
-            xml = doc.to_xml(encoding='unicode')
-        else:
+        if not fragment:
             # The importer doesn't have enough information to give us a complete document
             # including the meta section, so it's empty or incorrect. We fold in the meta section
             # from the existing document, so that we return a complete document to the caller.

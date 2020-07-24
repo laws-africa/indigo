@@ -136,7 +136,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
-        context['doctypes'] = settings.INDIGO['DOCTYPES']
+        context['doctypes'] = self.doctypes()
         context['subtypes'] = Subtype.objects.order_by('name').all()
         return context
 
@@ -215,7 +215,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
         context['work_json'] = json.dumps(work)
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
-        context['doctypes'] = settings.INDIGO['DOCTYPES']
+        context['doctypes'] = self.doctypes()
         context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
 
         return context

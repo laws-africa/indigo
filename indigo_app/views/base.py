@@ -105,3 +105,12 @@ class PlaceViewBase(object):
                             "but self.country is None.")
 
         return self.request.user.editor.has_country_permission(self.country)
+
+    def doctypes(self):
+        doctypes = settings.INDIGO['DOCTYPES']
+        extras = settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code)
+
+        if extras:
+            return doctypes + extras
+
+        return doctypes

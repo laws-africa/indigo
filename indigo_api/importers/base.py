@@ -325,19 +325,23 @@ class Importer(LocaleBasedMatcher):
 
         def stash_image(image):
             self.counter += 1
-            with image.open() as img:
-                content = img.read()
-                image_type = image.content_type
-                file_ext = image_type.split('/')[1]
-                cf = ContentFile(content)
+            try:
+                with image.open() as img:
+                    content = img.read()
+                    image_type = image.content_type
+                    file_ext = image_type.split('/')[1]
+                    cf = ContentFile(content)
 
-                att = Attachment()
-                att.filename = 'img{num}.{extension}'.format(num=self.counter, extension=file_ext)
-                att.mime_type = image_type
-                att.document = doc
-                att.size = cf.size
-                att.content = cf
-                att.file.save(att.filename, cf)
+                    att = Attachment()
+                    att.filename = 'img{num}.{extension}'.format(num=self.counter, extension=file_ext)
+                    att.mime_type = image_type
+                    att.document = doc
+                    att.size = cf.size
+                    att.content = cf
+                    att.file.save(att.filename, cf)
+            except KeyError:
+                # raised when the image can't be found in the zip file
+                return {}
 
             return {
                 'src': 'media/' + att.filename

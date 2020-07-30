@@ -28,6 +28,8 @@ class BaseItalicsFinder(LocaleBasedMatcher, TextPatternMarker):
         self.candidate_xpath = f'.//text()[({xpath_contains}) and not(ancestor::a:i)]'
 
     def setup_pattern_re(self, terms):
+        # first, sort longest to shortest, so that e.g. 'ad idem' is marked up before 'ad'
+        terms = sorted(terms, key=len, reverse=True)
         terms = [t.strip() for t in terms]
         terms = [re.escape(t) for t in terms if t]
         terms = '|'.join(terms)

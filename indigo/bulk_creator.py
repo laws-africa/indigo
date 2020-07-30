@@ -324,8 +324,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def validate_row(self, view, row):
         row_country = row.get('country')
         row_locality = row.get('locality')
+        row_doctype = row.get('doctype', 'act')
         row_subtype = row.get('subtype')
         self.transform_aliases(row)
+        available_doctypes = [d[1] for d in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
         available_subtypes = [s.abbreviation for s in Subtype.objects.all()]
 
         row_data = row
@@ -334,6 +336,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
         form = self.get_row_validation_form(row_data)
 
         # Extra validation
+        # - if the doctype hasn't been registered
+        if row_doctype.lower() not in available_doctypes:
+            form.add_error('doctype',
+                           f'The doctype given ({row_doctype}) doesn\'t match any in the list: {", ".join(available_doctypes)}.')
+
         # - if the subtype hasn't been registered
         if row_subtype and row_subtype.lower() not in available_subtypes:
             form.add_error('subtype', 'The subtype given ({}) doesn\'t match any in the list: {}.'
@@ -374,11 +381,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_frbr_uri(self, row):
         frbr_uri = FrbrUri(country=row.get('country'),
                            locality=row.get('locality'),
-                           doctype='act',
+                           doctype=row.get('doctype', 'act'),
                            subtype=row.get('subtype'),
                            date=row.get('year'),
                            number=row.get('number'),
-                           actor=None)
+                           actor=row.get('actor', None))
 
         return frbr_uri.work_uri().lower()
 

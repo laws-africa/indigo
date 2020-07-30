@@ -138,7 +138,7 @@
                 <td>
                   {% if work.work.subtype %}
                     {{ work.work.subtype }}
-                  {% else %}
+                  {% elif work.status != 'error' %}
                     Act
                   {% endif %}
                 </td>

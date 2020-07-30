@@ -90,6 +90,9 @@ class FrbrUriViewMixin(PlaceAPIBase):
     def get_document(self):
         """ Find and return one document based on the FRBR URI
         """
+        if not self.frbr_uri:
+            raise Http404
+
         try:
             obj = self.get_document_queryset().get_for_frbr_uri(self.frbr_uri)
             if not obj:

@@ -343,7 +343,7 @@ class ParseView(DocumentResourceView, APIView):
 
         try:
             text = serializer.validated_data.get('content')
-            xml = importer.import_from_text(text, frbr_uri.work_uri(), '.txt')
+            xml = importer.import_from_text(text, frbr_uri.expression_uri(), '.txt')
         except ValueError as e:
             log.warning("Error during import: %s" % str(e), exc_info=e)
             raise ValidationError({'content': str(e) or "error during import"})

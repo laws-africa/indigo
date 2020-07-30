@@ -335,7 +335,7 @@ class ParseView(DocumentResourceView, APIView):
         serializer.is_valid(raise_exception=True)
 
         fragment = serializer.validated_data.get('fragment')
-        frbr_uri = self.document.work_uri
+        frbr_uri = self.document.expression_uri
 
         importer = plugins.for_locale('importer', frbr_uri.country, frbr_uri.language, frbr_uri.locality)
         importer.fragment = fragment

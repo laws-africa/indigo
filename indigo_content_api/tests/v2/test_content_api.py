@@ -191,6 +191,12 @@ class ContentAPIV2TestMixin:
         self.assertEqual(self.client.get(self.api_path + '/akn/zm/').status_code, 404)
         self.assertEqual(self.client.get(self.api_path + '/akn/za-foo/').status_code, 404)
 
+    def test_bad_toc_url(self):
+        response = self.client.get(self.api_path + '/akn/za/act/2014/toc.json')
+        self.assertEqual(response.status_code, 404)
+        response = self.client.get(self.api_path + '/akn/za/act/by-law/2014/toc.json')
+        self.assertEqual(response.status_code, 404)
+
     def test_published_toc(self):
         response = self.client.get(self.api_path + '/akn/za/act/2014/10/eng/toc.json')
         self.assertEqual(response.status_code, 200)

@@ -19,15 +19,16 @@ from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendmen
     VocabularyTopic, TaskLabel
 from indigo_api.signals import work_changed
 
+SUBTYPES = Subtype.objects.all()
+
 
 class RowValidationFormBase(forms.Form):
-    country = forms.CharField()
-    locality = forms.CharField(required=False)
+    country = forms.ChoiceField(required=True)
+    locality = forms.ChoiceField(required=False)
     title = forms.CharField()
     primary_work = forms.CharField(required=False)
-    subtype = forms.CharField(required=False, validators=[
-        RegexValidator(r'^\S+$', 'No spaces allowed.')
-    ])
+    doctype = forms.ChoiceField(required=True)
+    subtype = forms.ChoiceField(required=False)
     number = forms.CharField(validators=[
         RegexValidator(r'^[a-zA-Z0-9-]+$', 'No spaces or punctuation allowed (use \'-\' for spaces).')
     ])
@@ -46,6 +47,19 @@ class RowValidationFormBase(forms.Form):
     amends = forms.CharField(required=False)
     repealed_by = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
+
+    def __init__(self, country, locality, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['country'].choices = [(country.code, country.name)]
+        self.fields['locality'].choices = [(locality.code, locality.name)] \
+            if locality else []
+        self.fields['doctype'].choices = self.get_doctypes_for_country(country.code)
+        self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in SUBTYPES]
+
+    def get_doctypes_for_country(self, country_code):
+        return [([d[1], d[0]]) for d in
+                settings.INDIGO['DOCTYPES'] +
+                settings.INDIGO['EXTRA_DOCTYPES'].get(country_code, [])]
 
     def clean_title(self):
         title = self.cleaned_data.get('title')
@@ -84,6 +98,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
     (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
+    """
+
+    default_doctype = 'act'
+    """ If this is overridden by a subclass, the default doctype must be given in
+        settings.INDIGO['EXTRA_DOCTYPES'] for the relevant country code, e.g.
+        default_doctype = 'not_act'
+        INDIGO['EXTRA_DOCTYPES'] = {
+            'za': [('Not an Act', 'not_act')],
+        }
     """
 
     log = logging.getLogger(__name__)
@@ -171,8 +194,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             self._service = build('sheets', 'v4', credentials=credentials)
         return self._service
 
-    def get_row_validation_form(self, row_data):
-        return self.row_validation_form_class(row_data)
+    def get_row_validation_form(self, country, locality, row_data):
+        return self.row_validation_form_class(country, locality, row_data)
 
     def create_works(self, view, table, dry_run, workflow, user):
         self.workflow = workflow
@@ -322,54 +345,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     errors[alias] = errors.pop(title)
 
     def validate_row(self, view, row):
-        row_country = row.get('country')
-        row_locality = row.get('locality')
-        row_doctype = row.get('doctype', 'act')
-        row_subtype = row.get('subtype')
         self.transform_aliases(row)
-        available_doctypes = [d[1] for d in settings.INDIGO['DOCTYPES'] + settings.INDIGO['EXTRA_DOCTYPES'].get(self.country.code, [])]
-        available_subtypes = [s.abbreviation for s in Subtype.objects.all()]
 
         row_data = row
-        row_data['country'] = view.country.code
-        row_data['locality'] = view.locality.code if view.locality else None
-        form = self.get_row_validation_form(row_data)
+        # lowercase country, locality, doctype and subtype
+        row_data['country'] = row.get('country', '').lower()
+        row_data['locality'] = row.get('locality', '').lower()
+        row_data['doctype'] = row.get('doctype', '').lower() or self.default_doctype
+        row_data['subtype'] = row.get('subtype', '').lower()
 
-        # Extra validation
-        # - if the doctype hasn't been registered
-        if row_doctype.lower() not in available_doctypes:
-            form.add_error('doctype',
-                           f'The doctype given ({row_doctype}) doesn\'t match any in the list: {", ".join(available_doctypes)}.')
-
-        # - if the subtype hasn't been registered
-        if row_subtype and row_subtype.lower() not in available_subtypes:
-            form.add_error('subtype', 'The subtype given ({}) doesn\'t match any in the list: {}.'
-                           .format(row.get('subtype'), ", ".join(available_subtypes)))
-
-        # - if the country is missing or doesn't match
-        if not row_country or view.country.code != row_country.lower():
-            form.add_error('country', 'The country code given in the spreadsheet ({}) '
-                                      'doesn\'t match the code for the country you\'re working in ({}).'
-                                      .format(row_country or 'Missing', view.country.code.upper()))
-
-        # - if you're working on the country level but the spreadsheet gives a locality
-        #   or the locality doesn't match
-        if row_locality:
-            if not view.locality:
-                form.add_error('locality', 'The spreadsheet gives a locality code ({}), '
-                                           'but you\'re working in a country ({}).'
-                                           .format(row_locality, view.country.code.upper()))
-
-            elif not view.locality.code == row_locality.lower():
-                form.add_error('locality', 'The locality code given in the spreadsheet ({}) '
-                                           'doesn\'t match the code for the locality you\'re working in ({}).'
-                                           .format(row_locality, view.locality.code.upper()))
-
-        # - if you're working on the locality level but the spreadsheet doesn't give one
-        if not row_locality and view.locality:
-            form.add_error('locality', 'The spreadsheet doesn\'t give a locality code, '
-                                       'but you\'re working in {} ({}).'
-                                       .format(view.locality, view.locality.code.upper()))
+        form = self.get_row_validation_form(view.country, view.locality, row_data)
 
         errors = form.errors
         self.transform_error_aliases(errors)
@@ -381,7 +366,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_frbr_uri(self, row):
         frbr_uri = FrbrUri(country=row.get('country'),
                            locality=row.get('locality'),
-                           doctype=row.get('doctype', 'act'),
+                           doctype=row.get('doctype', self.default_doctype),
                            subtype=row.get('subtype'),
                            date=row.get('year'),
                            number=row.get('number'),

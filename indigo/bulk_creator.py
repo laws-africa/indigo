@@ -55,7 +55,7 @@ class RowValidationFormBase(forms.Form):
         self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in subtypes]
 
     def get_doctypes_for_country(self, country_code):
-        return [([d[1], d[0]]) for d in
+        return [[d[1], d[0]] for d in
                 settings.INDIGO['DOCTYPES'] +
                 settings.INDIGO['EXTRA_DOCTYPES'].get(country_code, [])]
 

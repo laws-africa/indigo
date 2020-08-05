@@ -19,8 +19,6 @@ from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendmen
     VocabularyTopic, TaskLabel
 from indigo_api.signals import work_changed
 
-SUBTYPES = Subtype.objects.all()
-
 
 class RowValidationFormBase(forms.Form):
     country = forms.ChoiceField(required=True)
@@ -48,13 +46,13 @@ class RowValidationFormBase(forms.Form):
     repealed_by = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
 
-    def __init__(self, country, locality, *args, **kwargs):
+    def __init__(self, country, locality, subtypes, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['country'].choices = [(country.code, country.name)]
         self.fields['locality'].choices = [(locality.code, locality.name)] \
             if locality else []
         self.fields['doctype'].choices = self.get_doctypes_for_country(country.code)
-        self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in SUBTYPES]
+        self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in subtypes]
 
     def get_doctypes_for_country(self, country_code):
         return [([d[1], d[0]]) for d in
@@ -194,12 +192,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
             self._service = build('sheets', 'v4', credentials=credentials)
         return self._service
 
-    def get_row_validation_form(self, country, locality, row_data):
-        return self.row_validation_form_class(country, locality, row_data)
+    def get_row_validation_form(self, country, locality, subtypes, row_data):
+        return self.row_validation_form_class(country, locality, subtypes, row_data)
 
     def create_works(self, view, table, dry_run, workflow, user):
         self.workflow = workflow
         self.user = user
+        self.subtypes = Subtype.objects.all()
 
         works = []
 
@@ -354,7 +353,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row_data['doctype'] = row.get('doctype', '').lower() or self.default_doctype
         row_data['subtype'] = row.get('subtype', '').lower()
 
-        form = self.get_row_validation_form(view.country, view.locality, row_data)
+        form = self.get_row_validation_form(view.country, view.locality, self.subtypes, row_data)
 
         errors = form.errors
         self.transform_error_aliases(errors)

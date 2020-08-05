@@ -138,8 +138,8 @@
                 <td>
                   {% if work.work.subtype %}
                     {{ work.work.subtype }}
-                  {% else %}
-                    Act
+                  {% elif work.status != 'error' %}
+                    {{ view.bulk_creator.default_doctype|capfirst }}
                   {% endif %}
                 </td>
                 <td>

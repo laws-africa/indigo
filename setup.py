@@ -40,7 +40,7 @@ setup(
 
     python_requires='~=3.6',
     install_requires=[
-        'django==2.2.12',
+        'django>=2.2,<3',
         'boto3>=1.7',
         'cobalt @ git+https://github.com/laws-africa/cobalt#egg=cobalt',
         'django-ckeditor>=5.8',

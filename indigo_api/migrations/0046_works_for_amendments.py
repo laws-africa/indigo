@@ -3,7 +3,7 @@
 from django.db import migrations
 from iso8601 import parse_date
 
-from cobalt.act import FrbrUri
+from cobalt import FrbrUri
 
 
 def create_amendments(apps, schema_editor):

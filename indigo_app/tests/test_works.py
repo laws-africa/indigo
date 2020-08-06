@@ -9,8 +9,10 @@ from webtest import Upload
 
 import reversion
 
+from indigo.bulk_creator import BaseBulkCreator
+from indigo.plugins import plugins
 from indigo_app.views.works import WorkViewBase
-from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate
+from indigo_api.models import Work, Commencement, Amendment, ArbitraryExpressionDate, Country, Document
 
 
 @override_settings(STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
@@ -27,31 +29,31 @@ class WorksTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_edit_page(self):
-        response = self.client.get('/works/za/act/2014/10/')
+        response = self.client.get('/works/akn/za/act/2014/10/')
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/works/za-cpt/act/2005/1/')
+        response = self.client.get('/works/akn/za-cpt/act/2005/1/')
         self.assertEqual(response.status_code, 200)
 
     def test_related_page(self):
-        response = self.client.get('/works/za/act/2014/10/related/')
+        response = self.client.get('/works/akn/za/act/2014/10/related/')
         self.assertEqual(response.status_code, 200)
-        response = self.client.get('/works/za-cpt/act/2005/1/related/')
+        response = self.client.get('/works/akn/za-cpt/act/2005/1/related/')
         self.assertEqual(response.status_code, 200)
 
     def test_amendments_page(self):
-        response = self.client.get('/works/za/act/2014/10/amendments/')
+        response = self.client.get('/works/akn/za/act/2014/10/amendments/')
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.get('/works/za/act/2010/1/amendments/')
+        response = self.client.get('/works/akn/za/act/2010/1/amendments/')
         self.assertEqual(response.status_code, 200)
 
     def test_create_edit_delete_amendment(self):
-        work = Work.objects.get(frbr_uri='/za/act/2010/1')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2010/1')
         # the fixtures create two amendments, one at 2011-01-01 and one at 2012-02-02
         amendment = list(work.amendments.all())[-1]
 
         # edit
-        response = self.client.post('/works/za/act/2010/1/amendments/%s' % amendment.id, {'date': '2013-03-03'})
+        response = self.client.post('/works/akn/za/act/2010/1/amendments/%s' % amendment.id, {'date': '2013-03-03'})
         self.assertEqual(response.status_code, 302)
         amendment = list(work.amendments.all())[-1]
         self.assertEqual(amendment.date.strftime("%Y-%m-%d"), '2013-03-03')
@@ -66,16 +68,16 @@ class WorksTest(testcases.TestCase):
             doc.save()
 
         # delete
-        response = self.client.post('/works/za/act/2010/1/amendments/%s' % amendment.id, {'delete': ''})
+        response = self.client.post('/works/akn/za/act/2010/1/amendments/%s' % amendment.id, {'delete': ''})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(len(work.amendments.all()), 1)
 
     def test_import_view(self):
-        response = self.client.get('/works/za/act/2014/10/import/')
+        response = self.client.get('/works/akn/za/act/2014/10/import/')
         self.assertEqual(response.status_code, 200)
 
     def test_permission_to_restore_work_version(self):
-        response = self.client.get('/works/za/act/2014/10/')
+        response = self.client.get('/works/akn/za/act/2014/10/')
         self.assertEqual(response.status_code, 200)
 
         # make a change
@@ -90,28 +92,28 @@ class WorksTest(testcases.TestCase):
 
         # try revert it
         version = work.versions().last()
-        response = self.client.post('/works/za/act/2014/10/revisions/%s/restore' % version.id)
+        response = self.client.post('/works/akn/za/act/2014/10/revisions/%s/restore' % version.id)
         self.assertEqual(response.status_code, 403)
 
         # this user can
         self.assertTrue(self.client.login(username='email@example.com', password='password'))
-        response = self.client.post('/works/za/act/2014/10/revisions/%s/restore' % version.id)
+        response = self.client.post('/works/akn/za/act/2014/10/revisions/%s/restore' % version.id)
         self.assertEqual(response.status_code, 302)
 
     def test_create_new_pit_with_existing(self):
-        response = self.client.post('/works/za/act/2014/10/points-in-time/new', {
+        response = self.client.post('/works/akn/za/act/2014/10/points-in-time/new', {
             'expression_date': '2019-01-01',
             'language': '1',
         })
         self.assertEqual(response.status_code, 302)
 
-        work = Work.objects.get(frbr_uri='/za/act/2014/10')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2014/10')
         doc = work.expressions().filter(expression_date=datetime.date(2019, 1, 1)).first()
         self.assertEqual(doc.draft, True)
         self.assertIn('tester', doc.content)
 
     def test_create_pit_without_existing(self):
-        response = self.client.post('/works/za/act/2014/10/points-in-time/new', {
+        response = self.client.post('/works/akn/za/act/2014/10/points-in-time/new', {
             'expression_date': '2019-01-01',
             'language': '2',
         })
@@ -154,9 +156,9 @@ class WorksTest(testcases.TestCase):
 
     def test_no_publication_document(self):
         # this work has no publication document
-        resp = self.client.get('/works/za/act/2010/1/media/publication/')
+        resp = self.client.get('/works/akn/za/act/2010/1/media/publication/')
         self.assertEqual(resp.status_code, 404)
-        resp = self.client.get('/works/za/act/2010/1/media/publication/test.pdf')
+        resp = self.client.get('/works/akn/za/act/2010/1/media/publication/test.pdf')
         self.assertEqual(resp.status_code, 404)
 
 
@@ -173,17 +175,17 @@ class WorksWebTest(WebTest):
     def test_create_work_with_publication(self):
         form = self.app.get('/places/za/works/new/').forms['edit-work-form']
         form['work-title'] = "Title"
-        form['work-frbr_uri'] = '/za/act/2019/5'
+        form['work-frbr_uri'] = '/akn/za/act/2019/5'
         form['work-publication_date'] = '2019-02-01'
         form['work-publication_document_file'] = Upload('pub.pdf', b'data', 'application/pdf')
         response = form.submit()
-        self.assertRedirects(response, '/works/za/act/2019/5/', fetch_redirect_response=False)
+        self.assertRedirects(response, '/works/akn/za/act/2019/5/', fetch_redirect_response=False)
 
     def test_publication_date_updates_documents(self):
         """ Changing the work's publication date should also updated documents
         that are linked to the initial publication date.
         """
-        work = Work.objects.get(frbr_uri='/za/act/1945/1')
+        work = Work.objects.get(frbr_uri='/akn/za/act/1945/1')
         initial = work.initial_expressions()
         self.assertEqual(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-10-12")
 
@@ -192,7 +194,7 @@ class WorksWebTest(WebTest):
         response = form.submit()
         self.assertRedirects(response, '/works%s/' % work.frbr_uri, fetch_redirect_response=False)
 
-        work = Work.objects.get(frbr_uri='/za/act/1945/1')
+        work = Work.objects.get(frbr_uri='/akn/za/act/1945/1')
         initial = list(work.initial_expressions().all())
         self.assertEqual(initial[0].publication_date.strftime('%Y-%m-%d'), "1945-12-12")
         self.assertEqual(len(initial), 1)
@@ -200,12 +202,12 @@ class WorksWebTest(WebTest):
     def test_create_work_with_commencement_date_and_commencing_work(self):
         form = self.app.get('/places/za/works/new/').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Date and Commencing Work"
-        form['work-frbr_uri'] = '/za/act/2020/3'
+        form['work-frbr_uri'] = '/akn/za/act/2020/3'
         form['work-commenced'] = True
         form['work-commencement_date'] = '2020-02-11'
         form['work-commencing_work'] = 6
         form.submit()
-        work = Work.objects.get(frbr_uri='/za/act/2020/3')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2020/3')
         commencement = Commencement.objects.get(commenced_work=work)
         commencing_work = Work.objects.get(pk=6)
         self.assertTrue(work.commenced)
@@ -217,11 +219,11 @@ class WorksWebTest(WebTest):
     def test_create_work_without_commencement_date_but_with_commencing_work(self):
         form = self.app.get('/places/za/works/new/').forms['edit-work-form']
         form['work-title'] = "Commenced Work With Commencing Work but No Date"
-        form['work-frbr_uri'] = '/za/act/2020/4'
+        form['work-frbr_uri'] = '/akn/za/act/2020/4'
         form['work-commenced'] = True
         form['work-commencing_work'] = 6
         form.submit()
-        work = Work.objects.get(frbr_uri='/za/act/2020/4')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2020/4')
         commencement = Commencement.objects.get(commenced_work=work)
         commencing_work = Work.objects.get(pk=6)
         self.assertTrue(work.commenced)
@@ -233,10 +235,10 @@ class WorksWebTest(WebTest):
     def test_create_work_without_commencement_date_or_commencing_work(self):
         form = self.app.get('/places/za/works/new/').forms['edit-work-form']
         form['work-title'] = "Commenced Work Without Date or Commencing Work"
-        form['work-frbr_uri'] = '/za/act/2020/5'
+        form['work-frbr_uri'] = '/akn/za/act/2020/5'
         form['work-commenced'] = True
         form.submit()
-        work = Work.objects.get(frbr_uri='/za/act/2020/5')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2020/5')
         commencement = Commencement.objects.get(commenced_work=work)
         self.assertTrue(work.commenced)
         self.assertIsNone(commencement.commencing_work)
@@ -247,9 +249,9 @@ class WorksWebTest(WebTest):
     def test_create_uncommenced_work(self):
         form = self.app.get('/places/za/works/new/').forms['edit-work-form']
         form['work-title'] = "Uncommenced Work"
-        form['work-frbr_uri'] = '/za/act/2020/6'
+        form['work-frbr_uri'] = '/akn/za/act/2020/6'
         form.submit()
-        work = Work.objects.get(frbr_uri='/za/act/2020/6')
+        work = Work.objects.get(frbr_uri='/akn/za/act/2020/6')
         self.assertFalse(work.commenced)
         self.assertFalse(work.commencements.all())
 
@@ -269,3 +271,51 @@ class WorksWebTest(WebTest):
         commencement = Commencement.objects.get(commenced_work=work)
         self.assertEqual(commencement.commencing_work, commencing_work)
         self.assertEqual(commencement.date, datetime.date(2020, 2, 11))
+
+    def test_work_title_changes_documents_with_same_title(self):
+        doc = Document.objects.get(pk=4)
+        self.assertEqual(doc.title, doc.work.title)
+
+        form = self.app.get(f'/works{doc.work.frbr_uri}/edit/').forms['edit-work-form']
+        form['work-title'] = "New Title"
+        form.submit()
+
+        doc.refresh_from_db()
+        self.assertEqual("New Title", doc.title)
+
+    def test_work_title_ignores_documents_with_different_title(self):
+        doc = Document.objects.get(pk=4)
+        self.assertEqual(doc.title, doc.work.title)
+
+        doc.title = "Different Title"
+        doc.save()
+
+        form = self.app.get(f'/works{doc.work.frbr_uri}/edit/').forms['edit-work-form']
+        form['work-title'] = "New Title"
+        form.submit()
+
+        doc.refresh_from_db()
+        self.assertEqual("Different Title", doc.title)
+
+    def test_create_non_act_work(self):
+        form = self.app.get('/places/za/works/new/').forms['edit-work-form']
+        form['work-title'] = "Title"
+        form['work-frbr_uri'] = '/akn/za/statement/deliberation/my-org/2018-02-02/123-45'
+        response = form.submit()
+        self.assertRedirects(response, '/works/akn/za/statement/deliberation/my-org/2018-02-02/123-45/', fetch_redirect_response=False)
+
+
+class BulkCreateWorksTest(testcases.TestCase):
+    fixtures = ['languages_data', 'countries', 'user', 'taxonomies', 'work']
+
+    def setUp(self):
+        creator = plugins.for_locale('bulk-creator', 'za', None, None)
+        za = Country.objects.get(pk=1)
+        creator.country = za
+        creator.locality = None
+        self.creator = creator
+
+    def test_find_work(self):
+        given_string = "Constitution of the Republic of South Africa, 1996"
+        work = BaseBulkCreator.find_work(self.creator, given_string)
+        self.assertEqual(work.id, 10)

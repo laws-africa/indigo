@@ -47,7 +47,7 @@
 
     {% block work-form-details %}
     <div class="card mb-3">
-      <h5 class="card-header">Work details</h5>
+      <h5 class="card-header">Work identification</h5>
       <div class="card-body">
 
         <div class="form-row">
@@ -58,30 +58,61 @@
         </div>
 
         <div class="form-row">
-          <div class="form-group col-md-3">
-            <label for="work_year" class="required">Year of introduction</label>
-            <input type="text" class="form-control" id="work_year" required pattern="\d{4}" placeholder="yyyy">
-          </div>
-
-          <div class="form-group col-md-6 offset-md-3">
-            <label for="work_number" class="required">Number within year</label>
-            <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
-            <p class="form-text text-muted">Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only.</p>
-          </div>
-        </div>
-
-        <div class="form-row">
-          <div class="form-group col-md-4">
-            <label for="work_subtype">Work subtype</label>
-            <select id="work_subtype" class="form-control">
-              <option value="">(none)</option>
-              {% for subtype in subtypes %}
-              <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+          <div class="form-group col-4">
+            <label for="work_doctype" class="required">Work type</label>
+            <select id="work_doctype" class="form-control">
+              {% for label, code in doctypes %}
+                <option value="{{ code }}" selected>{{ label }} ({{ code }})</option>
               {% endfor %}
             </select>
           </div>
 
-          <div class="form-group col-md-6 offset-md-2">
+          <div class="form-group col-4">
+            <label for="work_subtype">Work subtype</label>
+            <select id="work_subtype" class="form-control">
+              <option value="">(none)</option>
+              {% for subtype in subtypes %}
+                <option value="{{ subtype.abbreviation }}">{{ subtype }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group col-4">
+            <label for="work_actor">Responsible organisation (actor)</label>
+            <input type="text" class="form-control" id="work_actor">
+            <div class="form-text text-muted">Organisation that created this work. Not normally used for acts.</div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group col-md-3 mb-0">
+            <label for="work_date" class="required">Year (or date) of introduction</label>
+            <input type="text" class="form-control" id="work_date" required pattern="\d{4}(-\d{2}-\d{2})?" placeholder="yyyy(-mm-dd)">
+          </div>
+
+          <div class="form-group col-md-6 offset-md-3 mb-0">
+            <label for="work_number" class="required">Number within year</label>
+            <input type="text" class="form-control" id="work_number" required pattern="[^\s]+">
+            <div class="form-text text-muted">Number or short name that uniquely identifies this legislation within the year of introduction. Numbers, letters and '-' only.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card mb-3">
+      <h5 class="card-header">Classification</h5>
+      <div class="card-body">
+
+        <div class="form-row">
+          <div class="form-group col-md-6">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
+              <label class="mb-0" for="{{ form.stub.id_for_label }}">Stub – this work will have no content</label>
+              <p class="form-text text-muted">Check this option for commencing or amending works that are not captured in detail.</p>
+            </div>
+          </div>
+
+          <div class="form-group col-md-6">
             <button class="btn btn-outline-primary choose-parent float-right" type="button">Choose primary work</button>
             <label>Primary work</label>
             <p class="form-text text-muted">The primary work for regulations and notices is the primary Act</p>
@@ -111,14 +142,6 @@
                 {% endfor %}
               </select>
             {% endif %}
-          </div>
-
-          <div class="form-group col-md-6">
-            <div class="form-check">
-              <input type="checkbox" class="form-check-input" id="{{ form.stub.id_for_label }}" name="{{ form.stub.html_name }}" value="on" {% if form.stub.value %}checked{% endif %}>
-              <label class="mb-0" for="{{ form.stub.id_for_label }}">Stub – this work will have no content</label>
-              <p class="form-text text-muted">Check this option for commencing or amending works that are not captured in detail.</p>
-            </div>
           </div>
         </div>
 

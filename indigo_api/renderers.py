@@ -173,16 +173,17 @@ class PDFRenderer(BaseRenderer, ExporterMixin):
             if data.id is None:
                 return None
 
-            parts = [data.id, data.updated_at.isoformat()]
+            parts = [str(data.id), data.updated_at.isoformat()]
             if hasattr(view, 'component'):
                 parts.append(view.component)
                 parts.append(view.subcomponent)
         else:
             # list of docs
             data = sorted(data, key=lambda d: d.id)
-            parts = [(p.id, p.updated_at.isoformat()) for p in data]
+            parts = [f"{p.id}-{p.updated_at.isoformat()}" for p in data]
 
-        return [self.format] + parts
+        parts = [self.format] + parts
+        return ':'.join(str(p) for p in parts)
 
     def get_filename(self, data, view):
         return generate_filename(data, view, self.format)

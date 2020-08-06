@@ -124,7 +124,12 @@ INDIGO = {
     'EMAIL_FAIL_SILENTLY': False,
 
     # Key-value pairs for custom properties, per place code.
-    'WORK_PROPERTIES': {}
+    'WORK_PROPERTIES': {},
+
+    # AKN document types the platform supports, as a list of (name, code) tuples
+    # see http://docs.oasis-open.org/legaldocml/akn-core/v1.0/os/part1-vocabulary/akn-core-v1.0-os-part1-vocabulary.html#_Toc523925025
+    'DOCTYPES': [('Act', 'act')],
+    'EXTRA_DOCTYPES': {},
 }
 
 # Database

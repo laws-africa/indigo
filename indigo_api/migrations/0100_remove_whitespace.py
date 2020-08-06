@@ -4,7 +4,7 @@ from django.db import migrations
 from django.contrib.auth.models import User
 from reversion import revisions as reversion
 
-from indigo_api.data_migrations import FixSignificantWhitespace
+from indigo_api.data_migrations.legacy import FixSignificantWhitespace
 
 
 def forwards(apps, schema_editor):

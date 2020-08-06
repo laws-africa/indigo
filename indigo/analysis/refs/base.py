@@ -33,9 +33,15 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         return ref, match.start('ref'), match.end('ref')
 
     def make_href(self, match):
-        """ Turn this match into a full FRBR URI href
+        """ Turn this match into a full FRBR URI href.
+            Check for an existing Act with that FRBR URI in the locality first; default to national (may or may not exist).
         """
-        return '/%s/act/%s/%s' % (self.frbr_uri.country, match.group('year'), match.group('num'))
+        if self.frbr_uri.locality:
+            local = f"/akn/{self.frbr_uri.country}-{self.frbr_uri.locality}/act/{match.group('year')}/{match.group('num')}"
+            if Work.objects.filter(frbr_uri=local).exists():
+                return local
+
+        return f"/akn/{self.frbr_uri.country}/act/{match.group('year')}/{match.group('num')}"
 
 
 @plugins.register('refs')
@@ -98,6 +104,7 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
         self.candidate_xpath = f".//text()[({xpath_contains}) and not(ancestor::a:ref)]"
 
     def setup_pattern_re(self):
+        # TODO: disregard e.g. "6 May" in "GN 34 of 6 May 2020", but catch reference
         self.pattern_re = re.compile(
             fr'''
                 (?P<ref>
@@ -117,12 +124,11 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
                 subtype = s.abbreviation
                 break
 
+        place = f'{self.frbr_uri.country}'
         if self.frbr_uri.locality:
-            href = f'/{self.frbr_uri.country}-{self.frbr_uri.locality}'
-        else:
-            href = f'/{self.frbr_uri.country}'
+            place = f'{self.frbr_uri.country}-{self.frbr_uri.locality}'
 
-        return f'{href}/act/{subtype}/{match.group("year")}/{match.group("num")}'
+        return f'/akn/{place}/act/{subtype}/{match.group("year")}/{match.group("num")}'
 
 
 @plugins.register('refs-cap')
@@ -206,7 +212,7 @@ class BaseInternalRefsFinder(LocaleBasedMatcher, MultipleTextPatternMarker):
         """ Return the target href for this match.
         """
         target = self.find_target(node, match)
-        return '#' + target.get('id')
+        return '#' + target.get('eId')
 
 
 @plugins.register('internal-refs')
@@ -297,4 +303,4 @@ class SectionRefsFinderENG(BaseInternalRefsFinder):
 
     def make_href(self, node, match):
         target = self.match_cache[match.group('num')]
-        return '#' + target.get('id')
+        return '#' + target.get('eId')

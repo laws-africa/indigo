@@ -42,7 +42,7 @@ setup(
     install_requires=[
         'django==2.2.12',
         'boto3>=1.7',
-        'cobalt>=3.1',
+        'cobalt @ git+https://github.com/laws-africa/cobalt#egg=cobalt',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',
@@ -80,6 +80,7 @@ setup(
         'whitenoise<2,>=1.0.6',
         'django-contrib-comments>=1.9.1',
         'XlsxWriter>=1.2.6',
+        'xmldiff>=2.4',
 
         # for indigo_social
         'pillow>=5.2.0',

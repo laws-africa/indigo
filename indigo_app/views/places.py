@@ -74,12 +74,25 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
 
         context['countries'] = Country.objects\
             .prefetch_related('country')\
-            .annotate(n_works=Count('works'))\
-            .annotate(n_open_tasks=Subquery(
-                Task.objects.filter(state__in=Task.OPEN_STATES, country=OuterRef('pk'))
+            .annotate(n_works=Subquery(
+                Work.objects.filter(country=OuterRef('pk'), locality=None)
                 .values('country')
                 .annotate(cnt=Count('pk'))
                 .values('cnt'),
+                output_field=IntegerField()
+            ))\
+            .annotate(n_open_tasks=Subquery(
+                Task.objects.filter(state__in=Task.OPEN_STATES, country=OuterRef('pk'), locality=None)
+                .values('country')
+                .annotate(cnt=Count('pk'))
+                .values('cnt'),
+                output_field=IntegerField()
+            ))\
+            .annotate(p_breadth_complete=Subquery(
+                DailyWorkMetrics.objects
+                .filter(place_code__iexact=OuterRef('country_id'), locality__exact='')
+                .order_by('-date')
+                .values('p_breadth_complete')[:1],
                 output_field=IntegerField()
             ))\
             .all()
@@ -87,6 +100,7 @@ class PlaceListView(AbstractAuthedIndigoView, TemplateView, PlaceMetricsHelper):
         # place activity
         since = now() - timedelta(days=14)
         metrics = DailyPlaceMetrics.objects\
+            .prefetch_related('country')\
             .filter(locality=None, date__gte=since)\
             .order_by('country', 'date')\
             .all()
@@ -730,12 +744,18 @@ class PlaceLocalitiesView(PlaceViewBase, AbstractAuthedIndigoView, TemplateView,
             .filter(country=self.country) \
             .annotate(n_works=Count('works')) \
             .annotate(n_open_tasks=Subquery(
-            Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
-                .values('locality')
-                .annotate(cnt=Count('pk'))
-                .values('cnt'),
-            output_field=IntegerField()
-        )) \
+                Task.objects.filter(state__in=Task.OPEN_STATES, locality=OuterRef('pk'))
+                    .values('locality')
+                    .annotate(cnt=Count('pk'))
+                    .values('cnt'),
+                output_field=IntegerField()
+            ))\
+            .annotate(p_breadth_complete=Subquery(
+                DailyWorkMetrics.objects.filter(locality=OuterRef('code'))
+                .order_by('-date')
+                .values('p_breadth_complete')[:1],
+                output_field=IntegerField()
+            ))\
             .all()
 
         # place activity

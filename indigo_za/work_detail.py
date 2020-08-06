@@ -1,6 +1,5 @@
 from indigo.analysis.work_detail.base import BaseWorkDetail
 from indigo.plugins import plugins
-from indigo_api.models import Subtype
 
 
 @plugins.register('work-detail')

@@ -8,7 +8,8 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.db.models import Count, Q
+from django.conf import settings
+from django.db.models import Count
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.list import MultipleObjectMixin
@@ -50,7 +51,9 @@ class WorkViewBase(PlaceViewBase, AbstractAuthedIndigoView, SingleObjectMixin):
 
     def determine_place(self):
         if 'place' not in self.kwargs:
-            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/', 2)[1]
+            # assume FRBR URI starts with `/akn`
+            self.kwargs['place'] = self.kwargs['frbr_uri'].split('/')[2]
+
         return super(WorkViewBase, self).determine_place()
 
     def get_context_data(self, **kwargs):
@@ -133,6 +136,7 @@ class EditWorkView(WorkViewBase, UpdateView):
 
     def get_context_data(self, **kwargs):
         context = super(EditWorkView, self).get_context_data(**kwargs)
+        context['doctypes'] = self.doctypes()
         context['subtypes'] = Subtype.objects.order_by('name').all()
         return context
 
@@ -151,6 +155,14 @@ class EditWorkView(WorkViewBase, UpdateView):
             if old_date and self.work.publication_date:
                 for doc in Document.objects.filter(work=self.work, expression_date=old_date):
                     doc.expression_date = self.work.publication_date
+                    doc.save()
+
+        # if the work title changes, ensure matching document titles do too
+        if 'title' in form.changed_data:
+            old_title = form.initial['title']
+            if old_title:
+                for doc in Document.objects.filter(work=self.work, title=old_title):
+                    doc.title = self.work.title
                     doc.save()
 
         if form.has_changed():
@@ -203,6 +215,7 @@ class AddWorkView(PlaceViewBase, AbstractAuthedIndigoView, CreateView):
         context['work_json'] = json.dumps(work)
 
         context['subtypes'] = Subtype.objects.order_by('name').all()
+        context['doctypes'] = self.doctypes()
         context['publication_date_optional'] = self.country.code in self.PUB_DATE_OPTIONAL_COUNTRIES
 
         return context
@@ -829,24 +842,31 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
         }
 
     def get_form(self, form_class=None):
-        form = super(BatchAddWorkView, self).get_form(form_class)
+        form = super().get_form(form_class)
         form.fields['workflow'].queryset = self.place.workflows.filter(closed=False).all()
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 
+        def add_spreadsheet_url_error(error_message):
+            """ Helper to let us add errors to the form before valid() has been called.
+            """
+            error = ValidationError(error_message)
+            if 'spreadsheet_url' not in form.errors:
+                form.errors['spreadsheet_url'] = form.error_class()
+            form.errors['spreadsheet_url'].extend(error.error_list)
+
         if self.bulk_creator.is_gsheets_enabled and url:
             sheet_id = self.bulk_creator.gsheets_id_from_url(url)
+
             if not sheet_id:
-                form.add_error(None, 'Unable to get spreadsheet ID from URL')
+                add_spreadsheet_url_error('Unable to get spreadsheet ID from URL')
             else:
                 try:
                     sheets = self.bulk_creator.get_spreadsheet_sheets(sheet_id)
                     sheets = [s['properties']['title'] for s in sheets]
                     form.fields['sheet_name'].choices = [(s, s) for s in sheets]
                 except ValueError:
-                    form.add_error(None,  "Unable to fetch spreadsheet information. Is your spreadsheet shared with {}?".format(
-                        self.bulk_creator._gsheets_secret['client_email'],
-                    ))
+                    add_spreadsheet_url_error(f"Unable to fetch spreadsheet information. Is your spreadsheet shared with {self.bulk_creator._gsheets_secret['client_email']}?")
 
         return form
 

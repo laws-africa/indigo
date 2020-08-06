@@ -99,8 +99,10 @@
           defaultOption: {label: "(none)", value: null},
         }
       },
+      '#work_doctype': 'nature',
       '#work_subtype': 'subtype',
-      '#work_year': 'year',
+      '#work_actor': 'actor',
+      '#work_date': 'date',
       '#work_number': 'number',
     },
 

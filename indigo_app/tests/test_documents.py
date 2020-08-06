@@ -24,12 +24,12 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_from_docx(self):
-        work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
+        work = Work.objects.get_for_frbr_uri('/akn/za/act/2014/10')
 
         fname = os.path.join(os.path.dirname(__file__), '../fixtures/act-2-1998.docx')
         f = open(fname, 'rb')
 
-        response = self.client.post('/works/za/act/2014/10/import/', {
+        response = self.client.post('/works/akn/za/act/2014/10/import/', {
             'file': f,
             'expression_date': '2001-01-01',
             'language': '1'
@@ -43,7 +43,7 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(len(doc.attachments.all()), 2)
 
     def test_create_from_file(self):
-        work = Work.objects.get_for_frbr_uri('/za/act/1998/2')
+        work = Work.objects.get_for_frbr_uri('/akn/za/act/1998/2')
 
         tmp_file = tempfile.NamedTemporaryFile(suffix='.txt')
         tmp_file.write("""
@@ -56,7 +56,7 @@ class DocumentViewsTest(testcases.TestCase):
         tmp_file.seek(0)
         fname = os.path.basename(tmp_file.name)
 
-        response = self.client.post('/works/za/act/1998/2/import/', {
+        response = self.client.post('/works/akn/za/act/1998/2/import/', {
             'file': tmp_file,
             'expression_date': '2001-01-01',
             'language': '1'
@@ -83,14 +83,14 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_from_html(self):
-        work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
+        work = Work.objects.get_for_frbr_uri('/akn/za/act/2014/10')
 
         tmp_file = tempfile.NamedTemporaryFile(suffix='.html')
         # the \xc2\xa0 is an non-breaking space which should be changed to a normal space
         tmp_file.write(b"<div>a\xc2\xa0text file with <p>badly formed</div> HTML</p>")
         tmp_file.seek(0)
 
-        response = self.client.post('/works/za/act/2014/10/import/', {
+        response = self.client.post('/works/akn/za/act/2014/10/import/', {
             'file': tmp_file,
             'expression_date': '2001-01-01',
             'language': '1'
@@ -104,12 +104,12 @@ class DocumentViewsTest(testcases.TestCase):
         self.assertEqual(len(doc.attachments.all()), 1)
 
     def test_create_from_pdf_with_page_nums(self):
-        work = Work.objects.get_for_frbr_uri('/za/act/2014/10')
+        work = Work.objects.get_for_frbr_uri('/akn/za/act/2014/10')
 
         fname = os.path.join(os.path.dirname(__file__), '../fixtures/sample.pdf')
         f = open(fname, 'rb')
 
-        response = self.client.post('/works/za/act/2014/10/import/', {
+        response = self.client.post('/works/akn/za/act/2014/10/import/', {
             'file': f,
             'expression_date': '2001-01-01',
             'page_nums': '2-3',

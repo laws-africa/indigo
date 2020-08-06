@@ -19,7 +19,7 @@ from iso8601 import parse_date, ParseError
 from taggit.managers import TaggableManager
 import reversion.revisions
 from reversion.models import Version
-from cobalt.act import Act, FrbrUri, AmendmentEvent, datestring
+from cobalt import FrbrUri, AmendmentEvent, datestring, StructuredDocument
 
 from indigo.plugins import plugins
 from indigo.documents import ResolvedAnchor
@@ -110,6 +110,10 @@ class DocumentMixin(object):
     this document functionality.
     """
     @property
+    def date(self):
+        return self.work_uri.date
+
+    @property
     def year(self):
         return self.work_uri.date.split('-', 1)[0]
 
@@ -132,6 +136,10 @@ class DocumentMixin(object):
     @property
     def locality(self):
         return self.work_uri.locality
+
+    @property
+    def actor(self):
+        return self.work_uri.actor
 
     @property
     def django_language(self):
@@ -252,7 +260,7 @@ class Document(DocumentMixin, models.Model):
     def doc(self):
         """ The wrapped `an.act.Act` that this document works with. """
         if not getattr(self, '_doc', None):
-            self._doc = self._make_act(self.document_xml)
+            self._doc = self._make_doc(self.document_xml)
         return self._doc
 
     @property
@@ -344,12 +352,11 @@ class Document(DocumentMixin, models.Model):
         if from_model:
             self.copy_attributes_from_work()
 
-            self.doc.title = self.title
             self.doc.frbr_uri = self.frbr_uri
+            self.doc.title = self.title
             self.doc.language = self.language.code
 
-            self.doc.work_date = self.doc.publication_date
-            self.doc.expression_date = self.expression_date or self.doc.publication_date or timezone.now()
+            self.doc.expression_date = self.expression_date or self.publication_date or timezone.now()
             self.doc.manifestation_date = self.updated_at or timezone.now()
             self.doc.publication_number = self.publication_number
             self.doc.publication_name = self.publication_name
@@ -398,7 +405,7 @@ class Document(DocumentMixin, models.Model):
         """ Completely reset the document XML to a new value. If from_model is False,
         also refresh database attributes from the new XML document. """
         # this validates it
-        doc = self._make_act(xml)
+        doc = self._make_doc(xml)
 
         # now update ourselves
         self._doc = doc
@@ -418,14 +425,20 @@ class Document(DocumentMixin, models.Model):
         else:
             return fqdn + '/api' + self.doc.expression_frbr_uri().manifestation_uri()
 
-    def _make_act(self, xml):
+    def _make_doc(self, xml):
         id = re.sub(r'[^a-zA-Z0-9]', '-', settings.INDIGO_ORGANISATION)
-        doc = Act(xml)
+        doc = self.cobalt_class(xml)
         doc.source = [settings.INDIGO_ORGANISATION, id, settings.INDIGO_URL]
         return doc
 
+    @property
+    def cobalt_class(self):
+        """ Dynamically lookup the cobalt document type to use, based on the FRBR URI.
+        """
+        return StructuredDocument.for_document_type(self.work.work_uri.doctype)
+
     def __str__(self):
-        return 'Document<%s, %s>' % (self.id, self.title[0:50])
+        return 'Document<%s, %s>' % (self.id, (self.title or '')[0:50])
 
     @classmethod
     def randomized(cls, frbr_uri, **kwargs):

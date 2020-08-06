@@ -19,6 +19,9 @@
           </ul>
 
           <h5 class="main-header-title">
+            {% if document.work.numbered_title %}
+              {{ document.work.numbered_title }}:
+            {% endif %}
             <span class="document-title">{{ document.title }}</span>
             <span class="badge badge-info if-published">published</span>
             <span class="badge badge-warning if-draft">draft</span>

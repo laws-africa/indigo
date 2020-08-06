@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
   xmlns:html="http://www.w3.org/1999/xhtml"
-  xmlns="http://www.akomantoso.org/2.0"
+  xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
   exclude-result-prefixes="html">
 
   <xsl:output method="xml" />
@@ -10,7 +10,7 @@
 
   <xsl:template match="html:table">
     <table>
-      <xsl:apply-templates select="@data-id | //html:tr" />
+      <xsl:apply-templates select="@data-eid | //html:tr" />
     </table>
   </xsl:template>
 
@@ -86,8 +86,8 @@
   </xsl:template>
 
   <!-- map data-id to id -->
-  <xsl:template match="@data-id">
-    <xsl:attribute name="id"><xsl:value-of select="." /></xsl:attribute>
+  <xsl:template match="@data-eid">
+    <xsl:attribute name="eId"><xsl:value-of select="." /></xsl:attribute>
   </xsl:template>
 
   <!-- text -->

@@ -17,7 +17,7 @@ Indigo requires:
 
 * Python 2.7
 * PostgreSQL 9.3+
-* Ruby 2.1.6+ for `Slaw <https://github.com/longhotsummer/slaw>`_
+* Ruby 2.6.0+ for `Slaw <https://github.com/longhotsummer/slaw>`_
 * An AWS S3 account and bucket for storing attachments
 
 Optional but useful:
@@ -78,7 +78,7 @@ Installing Indigo Locally
 Ruby dependencies
 .................
 
-You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need at least Ruby version 2.3.
+You won't be able to import documents yet. First, you'll need to install Ruby and the Slaw parser library. We strongly recommend installing and using RVM or a similar Ruby version manager. You'll need at least Ruby version 2.6.
 
 Once you've install Ruby, install Bundler and the Indigo dependencies::
 

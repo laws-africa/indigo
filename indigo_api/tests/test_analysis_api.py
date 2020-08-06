@@ -7,21 +7,22 @@ from indigo_api.tests.fixtures import *  # noqa
 
 
 class AnalysisTestCase(APITestCase):
-    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work']
+    fixtures = ['languages_data', 'countries', 'user', 'editor', 'taxonomies', 'work', 'published']
 
     def setUp(self):
         self.client.default_format = 'json'
         assert_true(self.client.login(username='email@example.com', password='password'))
 
     def test_link_terms_no_input(self):
-        response = self.client.post('/api/analysis/link-terms', {
+        response = self.client.post('/api/documents/1/analysis/link-terms', {
             'document': {},
         })
         assert_equal(response.status_code, 400)
 
     def test_link_terms(self):
-        response = self.client.post('/api/analysis/link-terms', {
+        response = self.client.post('/api/documents/1/analysis/link-terms', {
             'document': {
+                'frbr_uri': '/za/act/1992/1',
                 'expression_date': '2001-01-01',
                 'language': 'eng',
                 'content': document_fixture(xml="""

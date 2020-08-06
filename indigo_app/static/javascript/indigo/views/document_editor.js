@@ -86,6 +86,41 @@
       var allowPaste = false,
           self = this;
 
+      function pasteTable(table, i) {
+        self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
+          if (i > 0) text = "\n" + text;
+
+          allowPaste = true;
+          self.textEditor.onPaste(text);
+          allowPaste = false;
+        });
+      }
+
+      function cleanTable(table) {
+        // strip out namespaced tags - we don't want MS Office's tags
+        var elems = table.getElementsByTagName("*");
+        for (var i = 0; i < elems.length; i++) {
+          var elem = elems[i];
+
+          if (elem.tagName.indexOf(':') > -1) {
+            elem.remove();
+            // the element collection is live, so keep i the same
+            i--;
+          } else {
+            // strip style and namespaced attributes, too
+            cleanAttributes(elem);
+          }
+        }
+      }
+
+      function cleanAttributes(elem) {
+        elem.getAttributeNames().forEach(function(name) {
+          if (name === 'style' || name.indexOf(':') > -1) {
+            elem.removeAttribute(name);
+          }
+        });
+      }
+
       this.textEditor.on('paste', function(e) {
         if (!allowPaste) { e.text = ''; }
       });
@@ -93,33 +128,15 @@
       this.$textEditor.on('paste', function(e) {
         var cb = e.originalEvent.clipboardData;
 
-        function pasteTable(table) {
-          self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
-            if (t > 0) text = "\n" + text;
-
-            allowPaste = true;
-            self.textEditor.onPaste(text);
-            allowPaste = false;
-          });
-        }
-
         if (cb.types.indexOf('text/html') > -1) {
           var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
               tables = doc.body.querySelectorAll('table');
 
           if (tables.length > 0) {
-            for (var t = 0; t < tables.length; t++) {
-              var table = tables[t];
-
-              // strip out non HTML tags - we don't want MS Office's tags
-              var elems = table.getElementsByTagName("*");
-              for (var i = 0; i < elems.length; i++) {
-                if (elems[i].tagName.indexOf(':') > -1) elems[i].remove();
-              }
-
-              pasteTable(table);
+            for (var i = 0; i < tables.length; i++) {
+              cleanTable(tables[i]);
+              pasteTable(tables[i], i);
             }
-
             return;
           }
         }
@@ -141,27 +158,20 @@
           self = this;
 
       // setup akn to html transform
-      this.htmlRenderer = Indigo.render.getHtmlRenderer(country);
+      this.htmlRenderer = Indigo.render.getHtmlRenderer(this.parent.model);
       this.htmlRenderer.ready.then(function() {
         self.editorReady.resolve();
       });
 
       // setup akn to text transform
       this.textTransformReady = $.Deferred();
-      function textLoaded(xml) {
+      $.get(this.parent.model.url() + '/static/xsl/text.xsl').then(function(xml) {
         var textTransform = new XSLTProcessor();
         textTransform.importStylesheet(xml);
 
         self.textTransform = textTransform;
         self.textTransformReady.resolve();
-      }
-
-      $.get('/static/xsl/act_text-' + country +'.xsl')
-        .then(textLoaded)
-        .fail(function() {
-          $.get('/static/xsl/act_text.xsl')
-            .then(textLoaded);
-        });
+      });
     },
 
     setComparisonDocumentId: function(id) {
@@ -180,7 +190,7 @@
 
       // the id might be scoped
       elemId.split("/").forEach(function(id) {
-        node = node.querySelector('[id="' + id + '"]');
+        node = node.querySelector('[eId="' + id + '"]');
       });
 
       if (node) this.editFragmentText(node);
@@ -295,21 +305,20 @@
               .addClass('fa-check');
         });
 
-      var id = this.fragment.getAttribute('id'),
+      var id = this.fragment.getAttribute('eId'),
           data = {
         'content': content,
-        'frbr_uri': this.parent.model.get('frbr_uri'),
       };
       if (fragmentRule != 'akomaNtoso') {
         data.fragment = fragmentRule;
-        if (id && id.lastIndexOf('.') > -1) {
+        if (id && id.lastIndexOf('__') > -1) {
           // retain the id of the parent element as the prefix
-          data.id_prefix = id.substring(0, id.lastIndexOf('.'));
+          data.id_prefix = id.substring(0, id.lastIndexOf('__'));
         }
       }
 
       $.ajax({
-        url: '/api/parse',
+        url: this.parent.model.url() + '/parse',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
@@ -432,7 +441,7 @@
 
       data.document = this.parent.model.toJSON();
       data.document.content = this.parent.documentContent.toXml();
-      data.element_id = this.parent.fragment.getAttribute('id');
+      data.element_id = this.parent.fragment.getAttribute('eId');
 
       if (!data.element_id && this.parent.fragment.tagName !== "akomaNtoso") {
         // for elements without ids (preamble, preface, components)
@@ -471,7 +480,7 @@
       } else {
         var data = JSON.stringify({'document': self.parent.model.toJSON()});
         $.ajax({
-          url: '/api/render/coverpage',
+          url: this.parent.model.url() + '/render/coverpage',
           type: "POST",
           data: data,
           contentType: "application/json; charset=utf-8",

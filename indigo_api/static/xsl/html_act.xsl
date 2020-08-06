@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0"
-  xmlns:a="http://www.akomantoso.org/2.0"
+  xmlns:a="http://docs.oasis-open.org/legaldocml/ns/akn/3.0"
   exclude-result-prefixes="a">
 
   <xsl:output method="html" />
@@ -30,6 +30,7 @@
       <xsl:apply-templates select="a:preamble" />
       <xsl:apply-templates select="a:body" />
       <xsl:apply-templates select="a:conclusions" />
+      <xsl:apply-templates select="a:attachments" />
     </xsl:element>
   </xsl:template>
 
@@ -38,8 +39,8 @@
     <xsl:param name="id" select="." />
 
     <xsl:attribute name="id">
-      <!-- scope the id to the containing doc, if any, using a default if provided -->
-      <xsl:variable name="prefix" select="./ancestor::a:doc[@name][1]/@name"/>
+      <!-- scope the id to the containing attachment, if any, using a default if provided -->
+      <xsl:variable name="prefix" select="../ancestor::a:attachment[@eId][1]/@eId"/>
       <xsl:choose>
         <xsl:when test="$prefix != ''">
           <xsl:value-of select="concat($prefix, '/')" />
@@ -53,15 +54,20 @@
     </xsl:attribute>
   </xsl:template>
 
-  <!-- id attribute is scoped if necessary, and the original saved as data-id -->
-  <xsl:template match="@id">
+  <!-- id attribute is scoped if necessary, and the original saved as data-eId -->
+  <xsl:template match="@eId">
     <xsl:call-template name="scoped-id">
       <xsl:with-param name="id" select="." />
     </xsl:call-template>
 
-    <xsl:attribute name="data-id">
+    <xsl:attribute name="data-eId">
       <xsl:value-of select="." />
     </xsl:attribute>
+  </xsl:template>
+
+  <!-- copy these attributes directly -->
+  <xsl:template match="@colspan | @rowspan | @class | @style">
+    <xsl:copy />
   </xsl:template>
 
   <!-- copy over attributes using a data- prefix, except for 'id' which is prefixed if necessary as-is -->
@@ -176,31 +182,18 @@
   <xsl:template match="a:hcontainer[@name='crossheading']/@name"/>
 
   <!-- components/schedules -->
-  <xsl:template match="a:doc">
-    <!-- a:doc doesn't have an id, so add one -->
-    <article class="akn-doc" id="{@name}">
-      <xsl:choose>
-        <xsl:when test="a:mainBody/a:hcontainer[@name='schedule']">
-          <!-- new style schedule -->
-          <xsl:apply-templates select="a:mainBody/a:hcontainer[@name='schedule']" />
-        </xsl:when>
-
-        <xsl:otherwise>
-          <!-- old style schedule -->
-          <xsl:apply-templates select="@*" />
-          <xsl:if test="a:meta/a:identification/a:FRBRWork/a:FRBRalias">
-            <h2 class="akn-heading">
-              <xsl:value-of select="a:meta/a:identification/a:FRBRWork/a:FRBRalias/@value" />
-            </h2>
-          </xsl:if>
-          <xsl:apply-templates select="a:mainBody" />
-        </xsl:otherwise>
-      </xsl:choose>
-    </article>
+  <xsl:template match="a:attachment">
+    <div class="akn-attachment">
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates />
+    </div>
   </xsl:template>
 
-  <xsl:template match="a:hcontainer[@name='schedule']/a:heading | a:hcontainer[@name='schedule']/a:subheading">
-    <h2 class="akn-heading">
+  <xsl:template match="a:meta" />
+
+  <xsl:template match="a:attachment/a:heading | a:attachment/a:subheading">
+    <h2 class="akn-{local-name()}">
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </h2>
   </xsl:template>
@@ -296,8 +289,7 @@
        processing to their contents -->
   <xsl:template match="a:table | a:tr | a:th | a:td">
     <xsl:element name="{local-name()}">
-      <xsl:copy-of select="@*" />
-      <xsl:apply-templates select="@id" />
+      <xsl:apply-templates select="@*" />
       <xsl:apply-templates />
     </xsl:element>
   </xsl:template>

@@ -15,18 +15,18 @@ from googleapiclient.errors import HttpError
 from google.oauth2 import service_account
 
 from indigo.plugins import LocaleBasedMatcher, plugins
-from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, VocabularyTopic
+from indigo_api.models import Subtype, Work, PublicationDocument, Task, Amendment, Commencement, \
+    VocabularyTopic, TaskLabel
 from indigo_api.signals import work_changed
 
 
 class RowValidationFormBase(forms.Form):
-    country = forms.CharField()
-    locality = forms.CharField(required=False)
+    country = forms.ChoiceField(required=True)
+    locality = forms.ChoiceField(required=False)
     title = forms.CharField()
     primary_work = forms.CharField(required=False)
-    subtype = forms.CharField(required=False, validators=[
-        RegexValidator(r'^\S+$', 'No spaces allowed.')
-    ])
+    doctype = forms.ChoiceField(required=True)
+    subtype = forms.ChoiceField(required=False)
     number = forms.CharField(validators=[
         RegexValidator(r'^[a-zA-Z0-9-]+$', 'No spaces or punctuation allowed (use \'-\' for spaces).')
     ])
@@ -46,23 +46,65 @@ class RowValidationFormBase(forms.Form):
     repealed_by = forms.CharField(required=False)
     taxonomy = forms.CharField(required=False)
 
+    def __init__(self, country, locality, subtypes, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['country'].choices = [(country.code, country.name)]
+        self.fields['locality'].choices = [(locality.code, locality.name)] \
+            if locality else []
+        self.fields['doctype'].choices = self.get_doctypes_for_country(country.code)
+        self.fields['subtype'].choices = [(s.abbreviation, s.name) for s in subtypes]
+
+    def get_doctypes_for_country(self, country_code):
+        return [[d[1], d[0]] for d in
+                settings.INDIGO['DOCTYPES'] +
+                settings.INDIGO['EXTRA_DOCTYPES'].get(country_code, [])]
+
     def clean_title(self):
         title = self.cleaned_data.get('title')
         return re.sub('[\u2028 ]+', ' ', title)
 
 
+class ChapterMixin(forms.Form):
+    """ Includes (optional) Chapter (cap) field.
+    For this field to be recorded on bulk creation, add `'cap': 'Chapter (Cap.)'`
+    for the relevant country in settings.INDIGO['WORK_PROPERTIES']
+    """
+    cap = forms.CharField(required=False)
+
+
+class PublicationDateOptionalRowValidationForm(RowValidationFormBase):
+    """ Make `publication_date` optional on bulk creation.
+    To make it optional for individual work creation, also add the country code to
+    AddWorkView.PUB_DATE_OPTIONAL_COUNTRIES in apps.IndigoLawsAfricaConfig.
+    """
+    publication_date = forms.DateField(required=False, error_messages={'invalid': 'Date format should be yyyy-mm-dd.'})
+
+
 @plugins.register('bulk-creator')
 class BaseBulkCreator(LocaleBasedMatcher):
     """ Create works in bulk from a google sheets spreadsheet.
-    Subclass RowValidationFormBase() and get_row_validation_form() to check / raise errors for different fields.
     """
     locale = (None, None, None)
     """ The locale this bulk creator is suited for, as ``(country, language, locality)``.
     """
 
+    row_validation_form_class = RowValidationFormBase
+    """ The validation form for each row of the spreadsheet. 
+        Can be subclassed / mixed in to add fields or making existing fields optional.
+    """
+
     aliases = []
     """ list of tuples of the form ('alias', 'meaning')
     (to be declared by subclasses), e.g. ('gazettement_date', 'publication_date')
+    """
+
+    default_doctype = 'act'
+    """ If this is overridden by a subclass, the default doctype must be given in
+        settings.INDIGO['EXTRA_DOCTYPES'] for the relevant country code, e.g.
+        default_doctype = 'not_act'
+        INDIGO['EXTRA_DOCTYPES'] = {
+            'za': [('Not an Act', 'not_act')],
+        }
     """
 
     log = logging.getLogger(__name__)
@@ -150,12 +192,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
             self._service = build('sheets', 'v4', credentials=credentials)
         return self._service
 
-    def get_row_validation_form(self, row_data):
-        return RowValidationFormBase(row_data)
+    def get_row_validation_form(self, country, locality, subtypes, row_data):
+        return self.row_validation_form_class(country, locality, subtypes, row_data)
 
     def create_works(self, view, table, dry_run, workflow, user):
         self.workflow = workflow
         self.user = user
+        self.subtypes = Subtype.objects.all()
 
         works = []
 
@@ -301,47 +344,16 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     errors[alias] = errors.pop(title)
 
     def validate_row(self, view, row):
-        row_country = row.get('country')
-        row_locality = row.get('locality')
-        row_subtype = row.get('subtype')
         self.transform_aliases(row)
-        available_subtypes = [s.abbreviation for s in Subtype.objects.all()]
 
         row_data = row
-        row_data['country'] = view.country.code
-        row_data['locality'] = view.locality.code if view.locality else None
-        form = self.get_row_validation_form(row_data)
+        # lowercase country, locality, doctype and subtype
+        row_data['country'] = row.get('country', '').lower()
+        row_data['locality'] = row.get('locality', '').lower()
+        row_data['doctype'] = row.get('doctype', '').lower() or self.default_doctype
+        row_data['subtype'] = row.get('subtype', '').lower()
 
-        # Extra validation
-        # - if the subtype hasn't been registered
-        if row_subtype and row_subtype.lower() not in available_subtypes:
-            form.add_error('subtype', 'The subtype given ({}) doesn\'t match any in the list: {}.'
-                           .format(row.get('subtype'), ", ".join(available_subtypes)))
-
-        # - if the country is missing or doesn't match
-        if not row_country or view.country.code != row_country.lower():
-            form.add_error('country', 'The country code given in the spreadsheet ({}) '
-                                      'doesn\'t match the code for the country you\'re working in ({}).'
-                                      .format(row_country or 'Missing', view.country.code.upper()))
-
-        # - if you're working on the country level but the spreadsheet gives a locality
-        #   or the locality doesn't match
-        if row_locality:
-            if not view.locality:
-                form.add_error('locality', 'The spreadsheet gives a locality code ({}), '
-                                           'but you\'re working in a country ({}).'
-                                           .format(row_locality, view.country.code.upper()))
-
-            elif not view.locality.code == row_locality.lower():
-                form.add_error('locality', 'The locality code given in the spreadsheet ({}) '
-                                           'doesn\'t match the code for the locality you\'re working in ({}).'
-                                           .format(row_locality, view.locality.code.upper()))
-
-        # - if you're working on the locality level but the spreadsheet doesn't give one
-        if not row_locality and view.locality:
-            form.add_error('locality', 'The spreadsheet doesn\'t give a locality code, '
-                                       'but you\'re working in {} ({}).'
-                                       .format(view.locality, view.locality.code.upper()))
+        form = self.get_row_validation_form(view.country, view.locality, self.subtypes, row_data)
 
         errors = form.errors
         self.transform_error_aliases(errors)
@@ -353,11 +365,11 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_frbr_uri(self, row):
         frbr_uri = FrbrUri(country=row.get('country'),
                            locality=row.get('locality'),
-                           doctype='act',
+                           doctype=row.get('doctype', self.default_doctype),
                            subtype=row.get('subtype'),
                            date=row.get('year'),
                            number=row.get('number'),
-                           actor=None)
+                           actor=row.get('actor', None))
 
         return frbr_uri.work_uri().lower()
 
@@ -375,7 +387,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not finder or not params.get('date'):
             return self.create_task(work, info, task_type='link-publication-document')
 
-        publications = finder.find_publications(params)
+        try:
+            publications = finder.find_publications(params)
+        except requests.HTTPError:
+            return self.create_task(work, info, task_type='link-publication-document')
 
         if len(publications) != 1:
             return self.create_task(work, info, task_type='link-publication-document')
@@ -390,13 +405,12 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def link_commencement(self, work, info):
         # if the work has commencement details, try linking it
-        # make a task if a `commenced_by` title is given but not found
+        # make a task if a `commenced_by` FRBR URI is given but not found
         date = info.get('commencement_date') or None
 
         commencing_work = None
-        title = info.get('commenced_by')
-        if title:
-            commencing_work = self.find_work_by_title(title)
+        if info.get('commenced_by'):
+            commencing_work = self.find_work(info['commenced_by'])
             if not commencing_work:
                 self.create_task(work, info, task_type='link-commencement')
 
@@ -413,14 +427,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def link_repeal(self, work, info):
         # if the work is `repealed_by` something, try linking it or make the relevant task
-        repealing_work = self.find_work_by_title(info['repealed_by'])
+        repealing_work = self.find_work(info['repealed_by'])
 
         if not repealing_work:
-            # an exact match on the given title wasn't found
-            self.create_task(work, info, task_type='no-repeal-title-match')
+            # a work with the given FRBR URI / title wasn't found
+            self.create_task(work, info, task_type='no-repeal-match')
 
         elif work.repealed_by and work.repealed_by != repealing_work:
-            # the work was already repealed, but by a different work
+            # the work was already marked as repealed by a different work
             self.create_task(work, info, task_type='check-update-repeal', repealing_work=repealing_work)
 
         elif not work.repealed_by:
@@ -437,12 +451,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
             try:
                 work.save_with_revision(self.user)
             except ValidationError:
+                # something else went wrong
                 self.create_task(work, info, task_type='link-repeal', repealing_work=repealing_work)
 
     def link_parent_work(self, work, info):
         # if the work has a `primary_work`, try linking it
         # make a task if this fails
-        parent_work = self.find_work_by_title(info['primary_work'])
+        parent_work = self.find_work(info['primary_work'])
         if not parent_work:
             return self.create_task(work, info, task_type='link-primary-work')
 
@@ -457,13 +472,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
-        amended_work = self.find_work_by_title(info['amends'])
+        amended_work = self.find_work(info['amends'])
         if not amended_work:
             return self.create_task(work, info, task_type='link-amendment')
 
         date = info.get('commencement_date') or work.commencement_date
         if not date:
-            return self.create_task(work, info, task_type='link-amendment')
+            return self.create_task(work, info, task_type='link-amendment-pending-commencement', amended_work=amended_work)
 
         amendment, new = Amendment.objects.get_or_create(
             amended_work=amended_work,
@@ -475,7 +490,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         )
 
         if new:
-            self.create_task(amended_work, info, task_type='apply-amendment')
+            self.create_task(amended_work, info, task_type='apply-amendment', amendment=amendment)
 
     def link_taxonomy(self, work, info):
         topics = [x.strip(",") for x in info.get('taxonomy').split()]
@@ -492,115 +507,104 @@ class BaseBulkCreator(LocaleBasedMatcher):
             info['unlinked_topics'] = ", ".join(unlinked_topics)
             self.create_task(work, info, task_type='link-taxonomy')
 
-    def create_task(self, work, info, task_type, repealing_work=None):
+    def create_task(self, work, info, task_type, repealing_work=None, amended_work=None, amendment=None):
         task = Task()
 
         if task_type == 'link-publication-document':
             task.title = 'Link gazette'
-            task.description = '''This work's gazette (original publication document) could not be linked automatically – see row {}.
-Find it and upload it manually.'''.format(info['row'])
+            task.description = f'''This work's gazette (original publication document) couldn't be linked automatically.
+
+Find it and upload it manually.'''
 
         elif task_type == 'import':
             task.title = 'Import content'
-            task.description = '''Import a point in time for this work; either the initial publication or a later consolidation.
-Make sure the document's expression date is correct.'''
+            task.description = '''Import the content for this work – either the initial publication (usually a PDF of the Gazette) or a later consolidation (usually a .docx file).'''
 
         elif task_type == 'link-commencement':
             task.title = 'Link commencement'
-            task.description = '''On the spreadsheet, it says that this work is commenced by '{}' – see row {}.
+            task.description = f'''It looks like this work was commenced by "{info['commenced_by']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The commencement work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– more than one work by that name exists on the system
 – the commencing work doesn't exist on the system.
 
-Check the spreadsheet for reference and link it manually.'''.format(info['commenced_by'], info['row'])
+Please link the commencing work manually.'''
 
         elif task_type == 'link-amendment':
-            task.title = 'Link amendment(s)'
-            amended_title = info['amends']
-            if len(amended_title) > 256:
-                amended_title = "".join(amended_title[:256] + ', etc')
-            task.description = '''On the spreadsheet, it says that this work amends '{}' – see row {}.
+            task.title = 'Link amendment'
+            amended_work = info['amends']
+            if len(amended_work) > 256:
+                amended_work = "".join(amended_work[:256] + ', etc')
+            task.description = f'''It looks like this work amends "{amended_work}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The amendment could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– no date for the amendment
-– more than one amended work listed
+– more than one amended work was listed (it only works if there's one)
 – the amended work doesn't exist on the system.
 
-Check the spreadsheet for reference and link it/them manually,
-or add the 'Pending commencement' label to this task if it doesn't have a date yet.'''.format(amended_title, info['row'])
+Please link the amendment manually.'''
+
+        elif task_type == 'link-amendment-pending-commencement':
+            task.title = 'Link amendment'
+            task.description = f'''It looks like this work amends {amended_work.title} ({amended_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the amendment).
+
+Please link the amendment manually (and apply it) when this work comes into force.'''
 
         elif task_type == 'apply-amendment':
             task.title = 'Apply amendment'
-            amending_work = info['work']
-            task.description = f'''Apply the amendments made by {amending_work.title} ({amending_work.numbered_title()}).
+            task.description = f'''Apply the amendments made by {amendment.amending_work.title} ({amendment.amending_work.numbered_title()}) on {amendment.date}.
 
 The amendment has already been linked, so start at Step 3 of https://docs.laws.africa/managing-works/amending-works.'''
 
-        elif task_type == 'no-repeal-title-match':
+        elif task_type == 'no-repeal-match':
             task.title = 'Link repeal'
-            task.description = '''On the spreadsheet, it says that this work was repealed by '{}' – see row {}.
-
-A single match for a work by that name was not found on the system, so the repeal could not be linked automatically.
+            task.description = f'''It looks like this work was repealed by "{info['repealed_by']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
 Possible reasons:
-– the repealing work doesn't exist on the system
-– more than one work by that name exists on the system
-– a typo in the spreadsheet.
+– a typo in the spreadsheet
+– the repealing work doesn't exist on the system.
 
-Check the spreadsheet for reference and link the repeal manually.'''.format(info['repealed_by'], info['row'])
+Please link the repeal manually.'''
 
         elif task_type == 'check-update-repeal':
             task.title = 'Update repeal information?'
-            task.description = '''On the spreadsheet, it says that this work was repealed by {} ({}) – see row {}.
+            task.description = f'''On the spreadsheet (see row {info['row']}), it says that this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}).
 
-However, this work is already listed as having been repealed by {} ({}), so the repeal information was not updated.
+But this work is already listed as having been repealed by {work.repealed_by} ({work.repealed_by.numbered_title()}), so the repeal information wasn't updated automatically.
 
-If the repeal information was previously incorrect, check the spreadsheet for reference and update the \
-repeal information manually.
-
-Otherwise, cancel this task.
-'''.format(repealing_work.title, repealing_work.numbered_title(), info['row'], work.repealed_by, work.repealed_by.numbered_title())
+If the old / existing repeal information was wrong, update it manually. Otherwise (if the spreadsheet was wrong), cancel this task.
+'''
 
         elif task_type == 'link-repeal-pending-commencement':
             repealed_work = info['work']
             task.title = 'Link repeal'
-            task.description = '''This work repeals {} ({}).
+            task.description = f'''It looks like this work repeals {repealed_work.title} ({repealed_work.numbered_title()}), but it couldn't be linked automatically because this work hasn't commenced yet (so there's no date for the repeal).
 
-But this work does not yet have a commencement date, so the repeal was not linked automatically.
-
-Add the 'Pending commencement' label to this task, and link the repeal once this work comes into force.'''.format(repealed_work.title, repealed_work.numbered_title())
+Please link the repeal manually when this work comes into force.'''
 
         elif task_type == 'link-repeal':
             task.title = 'Link repeal'
-            task.description = '''On the spreadsheet, it says that this work was repealed by {} ({}) – see row {}.
+            task.description = f'''It looks like this work was repealed by {repealing_work.title} ({repealing_work.numbered_title()}), but it couldn't be linked automatically.
 
-But the repeal could not be linked automatically, so it will have to be linked manually.'''.format(repealing_work.title, repealing_work.numbered_title(), info['row'])
+Please link it manually.'''
 
         elif task_type == 'link-primary-work':
             task.title = 'Link primary work'
-            task.description = '''On the spreadsheet, it says that this work's primary work is '{}' – see row {}.
+            task.description = f'''It looks like this work's primary work is "{info['primary_work']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The primary work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– more than one work by that name exists on the system
 – the primary work doesn't exist on the system.
 
-Check the spreadsheet for reference and link it manually.'''.format(info['primary_work'], info['row'])
+Please link the primary work manually.'''
 
         elif task_type == 'link-taxonomy':
-            task.title = 'Link taxonomy/ies'
-            task.description = '''On the spreadsheet, it says that this work has the following taxonomy/ies: '{}' – see row {}.
+            task.title = 'Link taxonomy'
+            task.description = f'''It looks like this work has the following taxonomy: "{info['unlinked_topics']}" (see row {info['row']} of the spreadsheet), but it couldn't be linked automatically.
 
-The taxonomy/ies work could not be linked automatically.
 Possible reasons:
 – a typo in the spreadsheet
-– the taxonomy/ies doesn't/don't exist on the system.'''.format(info['unlinked_topics'], info['row'])
+– the taxonomy doesn't exist on the system.'''
 
         task.country = self.country
         task.locality = self.locality
@@ -614,12 +618,30 @@ Possible reasons:
             task.workflows.set([self.workflow])
             task.save()
 
+        if 'pending-commencement' in task_type:
+            # add the `pending commencement` label, if it exists
+            pending_commencement_label = TaskLabel.objects.filter(slug='pending-commencement').first()
+            if pending_commencement_label:
+                task.labels.add(pending_commencement_label)
+                task.save()
+
         return task
 
-    def find_work_by_title(self, title):
-        potential_matches = Work.objects.filter(title=title, country=self.country, locality=self.locality)
-        if len(potential_matches) == 1:
-            return potential_matches.first()
+    def find_work(self, given_string):
+        """ The string we get from the spreadsheet could be e.g.
+            `/ug/act/1933/14 - Administrator-General’s Act` (new and preferred style)
+            `Administrator-General’s Act` (old style)
+            First see if the string before the first space can be parsed as an FRBR URI, and find a work based on that.
+            If not, assume a title has been given and try to match on the whole string.
+        """
+        first = given_string.split()[0]
+        try:
+            FrbrUri.parse(first)
+            return Work.objects.filter(frbr_uri=first).first()
+        except ValueError:
+            potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
+            if len(potential_matches) == 1:
+                return potential_matches.first()
 
     @property
     def share_with(self):

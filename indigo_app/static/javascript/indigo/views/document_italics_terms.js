@@ -49,7 +49,7 @@
         .find('i').addClass('fa-spin');
 
       $.ajax({
-        url: '/api/analysis/mark-up-italics',
+        url: this.model.document.url() + '/analysis/mark-up-italics',
         type: "POST",
         data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",

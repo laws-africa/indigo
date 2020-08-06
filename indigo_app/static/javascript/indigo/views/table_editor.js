@@ -55,7 +55,7 @@
         // indigo_app/static/xsl/html_to_akn.xsl
         allowedContent: 'a[!data-href,!href]; img[!src,!data-src]; span(akn-remark); span(akn-p);' +
                         'b; i; p;' +
-                        'table[id, data-id]; thead; tbody; tr;' +
+                        'table[id, data-eid]; thead; tbody; tr;' +
                         'th(akn--text-center,akn--text-right){width}[colspan,rowspan];' +
                         'td(akn--text-center,akn--text-right){width}[colspan,rowspan];',
       };
@@ -73,7 +73,7 @@
       if (!this.editing || !this.table) return;
 
       var table,
-          oldTable = this.documentContent.xmlDocument.getElementById(this.table.getAttribute('data-id')),
+          oldTable = this.documentContent.getElementByScopedId(this.table.id),
           html;
 
       html = $.parseHTML(this.ckeditor.getData()) || [];
@@ -89,7 +89,9 @@
       if (table) {
         // get new xml
         table = this.tableToAkn(table);
+      }
 
+      if (table) {
         // update DOM
         this.documentContent.replaceNode(oldTable, [table]);
       } else {
@@ -107,6 +109,10 @@
       var xml = Indigo.dom.htmlNodeToXmlNode(table);
       // xhtml -> akn
       xml = this.htmlTransform.transformToFragment(xml.firstChild, this.documentContent.xmlDocument);
+      if (!xml) {
+        console.log("htmlTransform.transformToFragment returned null, input was: ", table.outerHTML);
+        return null;
+      }
 
       // strip whitespace at start of first p tag in table cells
       xml.querySelectorAll('table td > p:first-child, table th > p:first-child').forEach(function(p) {

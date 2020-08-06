@@ -109,8 +109,23 @@
         }
       }
 
+      // ensure attachment ids are correct, we could have deleted an attachment
+      if (oldNode.tagName == 'attachment') {
+        this.fixAttachmentIds();
+      }
+
       this.trigger('change:dom');
       return first;
+    },
+
+    /** Ensures attachments have sequential eId numbering.
+     */
+    fixAttachmentIds: function() {
+      var result = this.xpath('/a:akomaNtoso/a:*/a:attachments/a:attachment');
+
+      for (var i = 0; i < result.snapshotLength; i++) {
+        result.snapshotItem(i).setAttribute('eId', 'att_' + (i + 1));
+      }
     },
 
     /** Evaluate an xpath expression on this document, using the namespace prefix 'a'.
@@ -133,10 +148,10 @@
      */
     componentElements: function() {
       var components = [],
-          result = this.xpath('//a:act | //a:components/a:component/a:doc');
+          result = this.xpath('/a:akomaNtoso/a:act/a:meta | /a:akomaNtoso/a:act/a:attachments/a:attachment/a:*/a:meta');
 
       for (var i = 0; i < result.snapshotLength; i++) {
-        components.push(result.snapshotItem(i));
+        components.push(result.snapshotItem(i).parentElement);
       }
 
       return components;
@@ -149,7 +164,7 @@
       var node = this.xmlDocument;
 
       scopedId.split("/").forEach(function(id) {
-        node = node.querySelector('[id="' + id + '"]');
+        node = node.querySelector('[eId="' + id + '"]');
       });
 
       return node;
@@ -183,7 +198,7 @@
 
     initialize: function(options) {
       // keep frbr_uri up to date
-      this.on('change:country change:locality change:subtype change:number change:year', this.updateFrbrUri, this);
+      this.on('change:country change:locality change:nature change:subtype change:actor change:number change:date', this.updateFrbrUri, this);
     },
 
     parse: function(json) {
@@ -203,7 +218,7 @@
 
     updateFrbrUri: function() {
       // rebuild the FRBR uri when one of its component sources changes
-      var parts = [''];
+      var parts = ['', 'akn'];
 
       var country = this.get('country');
       if (this.get('locality')) {
@@ -214,7 +229,10 @@
       if (this.get('subtype')) {
         parts.push(this.get('subtype'));
       }
-      parts.push(this.get('year'));
+      if (this.get('actor')) {
+        parts.push(this.get('actor'));
+      }
+      parts.push(this.get('date'));
       parts.push(this.get('number'));
 
       // clean the parts
@@ -228,7 +246,7 @@
 
       if (!attrs.title) errors.title = 'A title must be specified';
       if (!attrs.country) errors.country = 'A country must be specified';
-      if (!attrs.year) errors.year = 'A year must be specified';
+      if (!attrs.date) errors.date = 'A year (or date) must be specified';
       if (!attrs.number) errors.number = 'A number must be specified';
 
       if (!_.isEmpty(errors)) return errors;
@@ -420,24 +438,6 @@
     },
   });
 
-  /** Create a new document by parsing an frbr URI */
-  Indigo.Document.newFromFrbrUri = function(frbr_uri) {
-    // /za-cpt/act/by-law/2011/foo
-    var parts = frbr_uri.split('/'),
-        tmp = parts[1].split('-'),
-        country = tmp[0],
-        locality = tmp.length > 1 ? tmp[1] : null,
-        bump = parts.length > 5 ? 1 : 0;
-
-    return new Indigo.Document({
-      country: country,
-      locality: locality,
-      subtype: parts.length > 5 ? parts[3] : null,
-      year: parts[3 + bump],
-      number: parts[4 + bump],
-    });
-  };
-
   Indigo.Library = Backbone.Collection.extend({
     model: Indigo.Document,
     country: null,
@@ -515,7 +515,7 @@
     },
 
     setCountry: function(country) {
-      if (this.country != country) {
+      if (this.country !== country) {
         this.country = country;
         return this.fetch({reset: true});
       }

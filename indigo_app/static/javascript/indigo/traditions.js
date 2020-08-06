@@ -16,11 +16,13 @@
 
   // Recursively copies properties from source to target
   function deepMerge(target, source) {
-    for (var prop in source) {
-      if (!(prop in target)) {
-        target[prop] = source[prop];
-      } else {
-        deepMerge(target[prop], source[prop]);
+    if (_.isObject(source)) {
+      for (var prop in source) {
+        if (!(prop in target)) {
+          target[prop] = source[prop];
+        } else {
+          deepMerge(target[prop], source[prop]);
+        }
       }
     }
   }
@@ -37,6 +39,11 @@
     // By default, checks if the name of the node is in the +elements+ object.
     is_toc_element: function(node) {
       return !!this.settings.toc.elements[node.localName];
+    },
+
+    // Should we stop recursing into this node?
+    is_toc_deadend: function(node) {
+      return !!this.settings.toc.deadends[node.localName];
     },
 
     toc_element_title: function(item) {
@@ -69,10 +76,10 @@
         chapter: 'chapters',
         part: 'parts',
         section: 'sections',
-        component: 'schedules',
-        components: 'schedules_container',
+        attachment: 'schedules',
+        attachments: 'schedules_container',
       },
-      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-component, .akn-components',
+      quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-attachment, .akn-attachments',
       aceMode: 'ace/mode/indigo',
     },
     // list of names of linter functions applicable to this location
@@ -84,9 +91,9 @@
     toc: {
       elements: {
         akomaNtoso: 1,
+        attachment: 1,
+        attachments: 1,
         chapter: 1,
-        component: 1,
-        components: 1,
         conclusions: 1,
         coverpage: 1,
         part: 1,
@@ -94,6 +101,13 @@
         preface: 1,
         section: 1,
         subpart: 1,
+      },
+      // elements we exclude from the TOC because they contain sub-documents or subflows
+      deadends: {
+        meta: 1,
+        embeddedStructure: 1,
+        quotedStructure: 1,
+        subFlow: 1,
       },
       titles: {
         default     : function(i) { return i.num + " " + i.heading; },
@@ -111,27 +125,22 @@
         subpart     : function(i) { return (i.num ? i.num + " – " : '') + i.heading; },
         preamble    : function(i) { return "Preamble"; },
         preface     : function(i) { return "Preface"; },
-        components  : function(i) { return "Schedules"; },
-        component   : function(i) { 
-          var alias = i.element.querySelector('FRBRalias');
+        attachments  : function(i) { return "Schedules"; },
+        attachment   : function(i) {
+          if (i.heading) {
+            return i.heading;
+          }
+
+          // try attachment title
+          var meta = i.element.querySelector('meta');
+          var alias = meta.querySelector('FRBRWork FRBRalias');
           if (alias) {
             return alias.getAttribute('value');
           }
 
-          var component = i.element.querySelector('FRBRWork FRBRthis');
-          if (component) {
-            var parts = component.getAttribute('value').split('/');
-            component = parts[parts.length-1];
-          } else {
-            component = i.element.getAttribute('name') || "Component";
-          }
-
-          var match = component.match(/([^0-9]+)([0-9]+)/);
-          if (match) {
-            component = match[1] + ' ' + match[2];
-          }
-
-          return component.charAt(0).toUpperCase() + component.slice(1);
+          // otherwise fall back to the doc name
+          var name = meta.parentElement.getAttribute('name') || '(untitled)';
+          return name.slice(0, 1).toLocaleUpperCase() + name.slice(1);
         },
       },
     },

@@ -59,8 +59,6 @@ Location of the API
 
 The API is available at the ``/api/v2/`` URL of your Indigo installation.
 
-Version 1 ``/v1/`` of the API is deprecated and will be removed soon.
-
 Authentication
 --------------
 
@@ -389,7 +387,7 @@ Using HTML Responses
 --------------------
 
 Indigo transforms Akoma Ntoso XML into HTML5 content that looks best when styled with
-`Indigo Web <https://github.com/Code4SA/indigo-web>`_ stylesheets. You can link
+`Indigo Web <https://github.com/laws-africa/indigo-web>`_ stylesheets. You can link
 to the stylesheets provided by that package, or you can pull them into your website.
 
 Listing Works

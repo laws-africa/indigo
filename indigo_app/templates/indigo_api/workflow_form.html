@@ -48,16 +48,23 @@
               {% endif %}
             </div>
 
-            <div class="form-group col-sm-4">
-              <label for="{{ form.due_date.id_for_label }}">{{ form.due_date.label }}</label>
-              <input type="text" class="form-control" data-provide="datepicker" id="{{ form.due_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.due_date.html_name }}" value="{{ form.due_date.value|date:"Y-m-d"|default:'' }}">
-              {% if form.due_date.errors %}
-                <div class="text-danger">
-                  {% for error in form.due_date.errors %}
-                    <p>{{ error }}</p>
-                  {% endfor %}
-                </div>
-              {% endif %}
+            <div class="col-sm-4">
+              <div class="form-group">
+                <label for="{{ form.due_date.id_for_label }}">{{ form.due_date.label }}</label>
+                <input type="text" class="form-control" data-provide="datepicker" id="{{ form.due_date.id_for_label }}" placeholder="yyyy-mm-dd" pattern="\d{4}-\d\d-\d\d" name="{{ form.due_date.html_name }}" value="{{ form.due_date.value|date:"Y-m-d"|default:'' }}">
+                {% if form.due_date.errors %}
+                  <div class="text-danger">
+                    {% for error in form.due_date.errors %}
+                      <p>{{ error }}</p>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+
+              <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="{{ form.priority.id_for_label }}" name="{{ form.priority.html_name }}" value="on" {% if form.priority.value %}checked{% endif %}>
+                <label class="form-check-label" for="{{ form.priority.id_for_label }}">Priority workflow</label>
+              </div>
             </div>
           </div>
         </div>

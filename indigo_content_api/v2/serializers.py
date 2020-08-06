@@ -2,24 +2,31 @@ from itertools import groupby
 
 from rest_framework import serializers
 from rest_framework.reverse import reverse
-from cobalt.act import datestring
 
-from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary, Work
-from indigo_api.serializers import DocumentSerializer, \
-    PublicationDocumentSerializer as PublicationDocumentSerializerBase, \
-    AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer
+from cobalt import datestring
 
-
-def published_doc_url(doc, request, frbr_uri=None):
-    """ Absolute URL for a published document.
-    eg. /api/v1/za/acts/2005/01/eng@2006-02-03
-    """
-    uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
-    uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
-    return uri.replace('%40', '@')
+from indigo_api.models import Document, Attachment, Country, Locality, PublicationDocument, TaxonomyVocabulary
+from indigo_api.serializers import \
+    DocumentSerializer, AttachmentSerializer, VocabularyTopicSerializer, CommencementSerializer, \
+    PublicationDocumentSerializer as PublicationDocumentSerializerBase
 
 
-class ExpressionSerializer(serializers.Serializer):
+class PublishedDocUrlMixin:
+    def published_doc_url(self, doc, request, frbr_uri=None):
+        """ Absolute URL for a published document.
+        eg. /api/v2/akn/za/act/2005/01/eng@2006-02-03
+        """
+        uri = (frbr_uri or doc.expression_uri.expression_uri())[1:]
+        uri = reverse('published-document-detail', request=request, kwargs={'frbr_uri': uri})
+        return uri.replace('%40', '@')
+
+    def place_url(self, request, code):
+        if self.prefix:
+            code = 'akn/' + code
+        return reverse('published-document-detail', request=request, kwargs={'frbr_uri': code})
+
+
+class ExpressionSerializer(serializers.Serializer, PublishedDocUrlMixin):
     url = serializers.SerializerMethodField()
     language = serializers.CharField(source='language.code')
     expression_frbr_uri = serializers.CharField()
@@ -31,17 +38,17 @@ class ExpressionSerializer(serializers.Serializer):
         read_only_fields = fields
 
     def get_url(self, doc):
-        return published_doc_url(doc, self.context['request'])
+        return self.published_doc_url(doc, self.context['request'])
 
 
-class MediaAttachmentSerializer(AttachmentSerializer):
+class MediaAttachmentSerializer(AttachmentSerializer, PublishedDocUrlMixin):
     class Meta:
         model = Attachment
         fields = ('url', 'filename', 'mime_type', 'size')
         read_only_fields = fields
 
     def get_url(self, instance):
-        uri = published_doc_url(instance.document, self.context['request'])
+        uri = self.published_doc_url(instance.document, self.context['request'])
         return uri + '/media/' + instance.filename
 
 
@@ -52,7 +59,7 @@ class PublicationDocumentSerializer(PublicationDocumentSerializerBase):
         fields = ('url', 'filename', 'mime_type', 'size')
 
 
-class PublishedDocumentSerializer(DocumentSerializer):
+class PublishedDocumentSerializer(DocumentSerializer, PublishedDocUrlMixin):
     """ Serializer for published documents.
 
     Inherits most fields from the base document serializer.
@@ -75,7 +82,8 @@ class PublishedDocumentSerializer(DocumentSerializer):
             'created_at', 'updated_at',
 
             # frbr_uri components
-            'country', 'locality', 'nature', 'subtype', 'year', 'number', 'frbr_uri', 'expression_frbr_uri',
+            # year is for backwards compatibility
+            'country', 'locality', 'nature', 'subtype', 'date', 'year', 'actor', 'number', 'frbr_uri', 'expression_frbr_uri',
 
             'publication_date', 'publication_name', 'publication_number', 'publication_document',
             'expression_date', 'commenced', 'commencement_date', 'commencements', 'assent_date',
@@ -109,7 +117,7 @@ class PublishedDocumentSerializer(DocumentSerializer):
         ).to_representation(pub_doc)
 
     def get_url(self, doc):
-        return self.context.get('url', published_doc_url(doc, self.context['request']))
+        return self.context.get('url', self.published_doc_url(doc, self.context['request']))
 
     def get_taxonomies(self, doc):
         from indigo_api.serializers import WorkSerializer
@@ -171,9 +179,10 @@ class PublishedDocumentSerializer(DocumentSerializer):
             ]
 
 
-class LocalitySerializer(serializers.ModelSerializer):
+class LocalitySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
     frbr_uri_code = serializers.SerializerMethodField()
     links = serializers.SerializerMethodField()
+    prefix = True
 
     class Meta:
         model = Locality
@@ -193,18 +202,16 @@ class LocalitySerializer(serializers.ModelSerializer):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": reverse(
-                    'published-document-detail',
-                    request=self.context['request'],
-                    kwargs={'frbr_uri': '%s-%s/' % (instance.country.code, instance.code)}),
+                "href": self.place_url(self.context['request'], f"{instance.country.code}-{instance.code}/"),
             },
         ]
 
 
-class CountrySerializer(serializers.ModelSerializer):
+class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
     localities = LocalitySerializer(many=True)
     links = serializers.SerializerMethodField()
     """ List of alternate links. """
+    prefix = True
 
     class Meta:
         model = Country
@@ -221,7 +228,7 @@ class CountrySerializer(serializers.ModelSerializer):
             {
                 "rel": "works",
                 "title": "Works",
-                "href": reverse('published-document-detail', request=self.context['request'], kwargs={'frbr_uri': '%s/' % instance.code}),
+                "href": self.place_url(self.context['request'], f"{instance.code}/"),
             },
             {
                 "rel": "search",

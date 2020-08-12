@@ -59,7 +59,7 @@ class TOCBuilderBaseTestCase(TestCase):
         toc = self.builder.table_of_contents_entry_for_element(doc, elem)
         self.assertEqual(toc.as_dict(), {
             'component': 'schedule1',
-            'title': 'Section 1',
+            'title': 'Section',
             'type': 'section',
             'id': 'sec_1',
             'subcomponent': 'section'
@@ -97,7 +97,7 @@ class TOCBuilderBaseTestCase(TestCase):
             language=self.eng)
 
         # strip the heading element, the builder will use the FRBRalias instead
-        for node in doc.doc.root.xpath('.//attachment/a:heading', namespaces={'a': doc.doc.namespace}):
+        for node in doc.doc.root.xpath('//a:attachment/a:heading', namespaces={'a': doc.doc.namespace}):
             node.getparent().remove(node)
 
         toc = self.builder.table_of_contents_for_document(doc)

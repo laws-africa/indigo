@@ -171,7 +171,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         if not heading and type_ in self.component_elements:
             try:
                 # try to use the alias from the attachment/component meta attribute
-                heading = element.doc.meta.FRBRalias.get('value', None)
+                heading = element.doc.meta.identification.FRBRWork.FRBRalias.get('value')
             except AttributeError:
                 pass
 

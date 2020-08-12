@@ -67,7 +67,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
     Include the special item `default` to handle elements not in the list.
     """
 
-    component_types = ['component', 'attachment']
+    component_elements = ['component', 'attachment']
     """ Elements that are considered components.
     """
 
@@ -168,7 +168,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
         except AttributeError:
             heading = None
 
-        if not heading and type_ in self.component_types:
+        if not heading and type_ in self.component_elements:
             try:
                 # try to use the alias from the attachment/component meta attribute
                 heading = element.doc.meta.FRBRalias.get('value', None)

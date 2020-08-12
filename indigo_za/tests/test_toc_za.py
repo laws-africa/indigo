@@ -143,6 +143,7 @@ class TOCBuilderZATestCase(APITestCase):
     <body></body>
     <attachments>
       <attachment eId="att_1">
+        <heading>A Title</heading>
         <doc name="schedule">
           <meta>
             <identification source="#slaw">
@@ -180,6 +181,7 @@ class TOCBuilderZATestCase(APITestCase):
         </doc>
       </attachment>
       <attachment eId="att_2">
+        <heading>Schedule 2</heading>
         <doc name="schedule">
           <meta>
             <identification source="#slaw">
@@ -225,11 +227,12 @@ class TOCBuilderZATestCase(APITestCase):
         self.maxDiff = None
         self.assertEqual([{
             'component': 'schedule1',
-            'type': 'doc',
+            'type': 'attachment',
             'subcomponent': None,
+            'id': 'att_1',
             'heading': 'A Title',
             'title': 'A Title',
-             'children': [{
+            'children': [{
                  'component': 'schedule1',
                  'type': 'section',
                  'id': 'sec_1',
@@ -238,8 +241,9 @@ class TOCBuilderZATestCase(APITestCase):
              }]
         }, {
             'component': 'schedule2',
-            'type': 'doc',
+            'type': 'attachment',
             'subcomponent': None,
+            'id': 'att_2',
             'heading': 'Schedule 2',
             'title': 'Schedule 2',
             'children': [{

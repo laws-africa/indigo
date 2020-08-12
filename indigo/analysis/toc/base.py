@@ -46,9 +46,9 @@ class TOCBuilderBase(LocaleBasedMatcher):
     """ The locale this TOC builder is suited for, as ``(country, language, locality)``.
     """
 
-    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'doc']
-    """ Elements we include in the table of contents, without their XML namespace. Subclasses must
-    provide this.
+    toc_elements = ['coverpage', 'preface', 'preamble', 'part', 'chapter', 'section', 'conclusions', 'attachment',
+                    'component']
+    """ Elements we include in the table of contents, without their XML namespace.
     """
 
     toc_deadends = ['meta', 'attachments', 'components', 'embeddedStructure', 'quotedStructure', 'subFlow']
@@ -67,10 +67,14 @@ class TOCBuilderBase(LocaleBasedMatcher):
     Include the special item `default` to handle elements not in the list.
     """
 
+    component_elements = ['component', 'attachment']
+    """ Elements that are considered components.
+    """
+
     # eg. schedule1
     component_id_re = re.compile('([^0-9]+)([0-9]+)')
 
-    non_commenceable_types = set(['coverpage', 'preface', 'preamble', 'conclusions', 'doc'])
+    non_commenceable_types = set(['coverpage', 'preface', 'preamble', 'conclusions', 'attachment', 'component'])
 
     def table_of_contents_for_document(self, document):
         """ Build the table of contents for a document.
@@ -83,12 +87,11 @@ class TOCBuilderBase(LocaleBasedMatcher):
         self.setup(document.doc, document.django_language)
 
         with override(self.language):
-            component, component_el = self.determine_component(element)
-            component_id = None if component == 'main' else component_el.getparent().get('eId')
+            name, component_el = self.determine_component(element)
             # find the first node at or above element, that is a valid TOC element
             element = closest(element, lambda e: self.is_toc_element(e))
             if element is not None:
-                return self.make_toc_entry(element, component, component_id)
+                return self.make_toc_entry(element, name, self.get_component_id(name, component_el))
 
     def setup(self, act, language):
         self.act = act
@@ -103,11 +106,11 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         # reversed so that we go through components before the main document element,
         # because all components are ancestors of that
-        for component, comp_element in reversed(self.act.components().items()):
-            if comp_element in ancestors:
-                return (component, comp_element)
+        for name, element in reversed(self.act.components().items()):
+            if element in ancestors:
+                return name, element
 
-        return (None, None)
+        return None, None
 
     def is_toc_element(self, element):
         return element.tag in self._toc_elements_ns or (
@@ -125,11 +128,14 @@ class TOCBuilderBase(LocaleBasedMatcher):
     def build_table_of_contents(self):
         toc = []
         for component, element in self.act.components().items():
-            # this is the attachment id, whereas component is the FRBR URI-based name
-            component_id = None if component == 'main' else element.getparent().get('eId')
-            toc += self.process_elements(component, component_id, [element])
+            toc += self.process_elements(component, self.get_component_id(component, element), [element])
 
         return toc
+
+    def get_component_id(self, name, element):
+        """ Get an ID for this component element.
+        """
+        return None if name == 'main' else element.get('eId')
 
     def process_elements(self, component, component_id, elements, parent=None):
         """ Process the list of ``elements`` and their children, and
@@ -157,24 +163,24 @@ class TOCBuilderBase(LocaleBasedMatcher):
         if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':
             type_ = 'crossheading'
 
-        if type_ == 'doc':
-            # component, get the title from the alias
-            heading = element.find('./{*}meta//{*}FRBRalias')
-            if heading is not None:
-                heading = heading.get('value')
-            else:
-                # eg. schedule1 -> Schedule 1
-                m = self.component_id_re.match(component)
-                if m:
-                    typ, num = m.groups()
-                    heading = '%s %s' % (_(typ.capitalize()), num)
-                else:
-                    heading = _(component.capitalize())
-        else:
+        try:
+            heading = _collect_string_content(element.heading)
+        except AttributeError:
+            heading = None
+
+        if not heading and type_ in self.component_elements:
             try:
-                heading = _collect_string_content(element.heading)
+                # try to use the alias from the attachment/component meta attribute
+                heading = element.doc.meta.identification.FRBRWork.FRBRalias.get('value')
             except AttributeError:
-                heading = None
+                pass
+
+            if not heading:
+                # try the doc name
+                try:
+                    heading = element.doc.get('name', '').capitalize()
+                except AttributeError:
+                    pass
 
         try:
             num = element.num
@@ -183,7 +189,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         num = num.text if num else None
 
-        if type_ == "doc":
+        if type_ in self.component_elements:
             subcomponent = None
         else:
             # if we have a chapter/part as a child of a chapter/part, we need to include
@@ -278,13 +284,14 @@ class TOCElement(object):
     An element in the table of contents of a document, such as a chapter, part or section.
 
     :ivar children: further TOC elements contained in this one, may be None or empty
+    :ivar component: component name (after the ! in the FRBR URI) of the component that this item is a part of
     :ivar element: :class:`lxml.objectify.ObjectifiedElement` the XML element of this TOC element
     :ivar heading: heading for this element, excluding the number, may be None
-    :ivar title: friendly title of this entry
     :ivar id: XML id string of the node in the document, may be None
     :ivar num: number of this element, as a string, may be None
-    :ivar component: number of the component that this item is a part of, as a string
+    :ivar qualified_id: the id of the element, qualified by the component id (if any)
     :ivar subcomponent: name of this subcomponent, may be None
+    :ivar title: friendly title of this entry
     :ivar type: element type, one of: ``chapter, part, section`` etc.
     """
 

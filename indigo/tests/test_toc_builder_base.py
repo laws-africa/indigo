@@ -59,7 +59,7 @@ class TOCBuilderBaseTestCase(TestCase):
         toc = self.builder.table_of_contents_entry_for_element(doc, elem)
         self.assertEqual(toc.as_dict(), {
             'component': 'schedule1',
-            'title': 'Section',
+            'title': 'Section 1',
             'type': 'section',
             'id': 'sec_1',
             'subcomponent': 'section'
@@ -77,8 +77,8 @@ class TOCBuilderBaseTestCase(TestCase):
             'type': 'attachment',
             'component': 'schedule1',
             'subcomponent': None,
-            'title': 'Schedule',
-            'heading': 'Schedule',
+            'title': 'Schedule 1',
+            'heading': 'Schedule 1',
             'id': 'att_1',
             'children': [{
                 'component': 'schedule1',
@@ -105,8 +105,8 @@ class TOCBuilderBaseTestCase(TestCase):
             'type': 'attachment',
             'component': 'schedule1',
             'subcomponent': None,
-            'title': 'Schedule',
-            'heading': 'Schedule',
+            'title': 'Schedule alias',
+            'heading': 'Schedule alias',
             'id': 'att_1',
             'children': [{
                 'component': 'schedule1',

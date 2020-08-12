@@ -84,15 +84,15 @@ COMPONENT_FIXTURE = """<?xml version="1.0" encoding="UTF-8"?>
     </body>
     <attachments>
       <attachment eId="att_1">
+        <heading>Schedule 1</heading>
+        <subheading>Subheading</subheading>
         <doc name="schedule">
-          <heading>Schedule 1</heading>
-          <subheading>Subheading</subheading>
           <meta>
             <identification source="#slaw">
               <FRBRWork>
                 <FRBRthis value="/akn/za/act/1980/01/!schedule1"/>
                 <FRBRuri value="/akn/za/act/1980/01"/>
-                <FRBRalias value="Schedule 1"/>
+                <FRBRalias value="Schedule alias"/>
                 <FRBRdate date="1980-01-01" name="Generation"/>
                 <FRBRauthor href="#council"/>
                 <FRBRcountry value="za"/>

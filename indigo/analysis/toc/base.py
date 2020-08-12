@@ -189,7 +189,7 @@ class TOCBuilderBase(LocaleBasedMatcher):
 
         num = num.text if num else None
 
-        if type_ in self.component_types:
+        if type_ in self.component_elements:
             subcomponent = None
         else:
             # if we have a chapter/part as a child of a chapter/part, we need to include

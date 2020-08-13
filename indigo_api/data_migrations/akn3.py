@@ -323,7 +323,7 @@ class AKNeId(AKNMigration):
         for name, root in self.components(doc).items():
             for element, (pattern, replacement) in self.basic_replacements.items():
                 for node in root.xpath(f".//a:{element}", namespaces=self.nsmap):
-                    old_id = node.get("id")
+                    old_id = node.get("id", "")
                     new_id = re.sub(pattern, replacement, old_id)
                     self.safe_update(node, mappings[name], old_id, new_id)
 

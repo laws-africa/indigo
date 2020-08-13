@@ -27,15 +27,15 @@ def forward(apps, schema_editor):
     Document = apps.get_model("indigo_api", "Document")
     ct_doc = ContentType.objects.get_for_model(Document)
 
-    for document in Document.objects.using(db_alias).all():
-        log.info(f"Migrating document: {document.pk}")
+    for document in Document.objects.using(db_alias).order_by('-pk').all():
+        log.info(f"Migrating ids to eIds for document {document.pk}")
         document.document_xml = update_xml(document.document_xml, document)
         document.save()
 
         # Update historical Document versions
+        log.info(f"Migrating document versions")
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
-            log.info(f"Migrating document version: {version.pk}")
             data = json.loads(version.serialized_data)
             data[0]['fields']['document_xml'] = update_xml(data[0]['fields']['document_xml'])
             version.serialized_data = json.dumps(data)

@@ -36,8 +36,8 @@ def forward(apps, schema_editor):
         log.info(f"Migrating document versions")
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
-            data = json.loads(version.serialized_data)
             log.info(f"Migrating document version: {version.pk}")
+            data = json.loads(version.serialized_data)
             data[0]['fields']['document_xml'] = update_xml(data[0]['fields']['document_xml'])
             version.serialized_data = json.dumps(data)
             version.save()

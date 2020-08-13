@@ -13,9 +13,9 @@ with open(path.join(here, 'VERSION')) as f:
 
 
 setup(
-    name='indigo',
+    name='indigo-editor',
     version=version,
-    description='A Django framework for publishing legislation using Akoma Ntoso',
+    description='A Django application for publishing legislation using Akoma Ntoso',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/laws-africa/indigo',
@@ -26,7 +26,7 @@ setup(
 
     # See https://pypi.org/classifiers/
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Framework :: Django :: 2.2',
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',

@@ -163,8 +163,6 @@ Read the [documentation for details on deploying Indigo](http://indigo.readthedo
 3. Update `docs/changelog.rst`
 4. Commit changes
 5. Tag: `git tag vX.X.X` and push to github `git push; git push --tags`
-6. Build artifacts: `rm -rf build dist && python setup.py sdist bdist_wheel`
-7. Upload to PyPI: `twine upload dist/*`
 
 ## License and Copyright
 

@@ -3,13 +3,15 @@
 from __future__ import unicode_literals
 
 import json
+import logging
 from reversion.models import Version
 
 from django.contrib.contenttypes.models import ContentType
 from django.db import migrations
 
-
 from indigo_api.data_migrations.akn3 import FrbrUriAknPrefix
+
+log = logging.getLogger(__name__)
 
 
 def migrate_uris(apps, schema_editor, forward):
@@ -27,27 +29,37 @@ def migrate_uris(apps, schema_editor, forward):
     ct_doc = ContentType.objects.get_for_model(Document)
     migration = FrbrUriAknPrefix()
 
-    for work in Work.objects.using(db_alias).all():
+    for work in Work.objects.using(db_alias).order_by('-pk').all():
+        log.info(f"Migrating FRBR URI for {work.pk}")
+        log.info(f"Old FRBR URI: {work.frbr_uri}")
         work.frbr_uri = migration.new_frbr_uri(work.frbr_uri, forward)
+        log.info(f"New FRBR URI: {work.frbr_uri}")
         work.save()
 
         # Update historical work versions
+        log.info(f"Migrating work versions")
         for version in Version.objects.filter(content_type=ct_work.pk)\
                 .filter(object_id=work.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)
             # The work's URI (i.e. year / number / subtype) may have changed
+            log.info(f"Old FRBR URI: {data[0]['fields']['frbr_uri']}")
             data[0]['fields']['frbr_uri'] = migration.new_frbr_uri(data[0]['fields']['frbr_uri'], forward)
+            log.info(f"New FRBR URI: {data[0]['fields']['frbr_uri']}")
             version.serialized_data = json.dumps(data)
             version.save()
 
-    for document in Document.objects.using(db_alias).all():
+    for document in Document.objects.using(db_alias).order_by('-pk').all():
+        log.info(f"Migrating FRBR URI for document {document.pk}")
+        log.info(f"Old FRBR URI: {document.frbr_uri}")
         # Update the document object's FRBR URI
         document.frbr_uri = document.work.frbr_uri
+        log.info(f"New FRBR URI: {document.frbr_uri}")
         # Update the document's XML
         document.document_xml = migration.migrate_xml(document.document_xml, document.frbr_uri, forward)
         document.save()
 
         # Update historical Document versions
+        log.info(f"Migrating document versions")
         for version in Version.objects.filter(content_type=ct_doc.pk)\
                 .filter(object_id=document.pk).using(db_alias).all():
             data = json.loads(version.serialized_data)

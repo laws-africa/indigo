@@ -13,7 +13,7 @@ with open(path.join(here, 'VERSION')) as f:
 
 
 setup(
-    name='indigo-editor',
+    name='indigo',
     version=version,
     description='A Django application for publishing legislation using Akoma Ntoso',
     long_description=long_description,

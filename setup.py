@@ -15,7 +15,7 @@ with open(path.join(here, 'VERSION')) as f:
 setup(
     name='indigo',
     version=version,
-    description='A Django framework for publishing legislation using Akoma Ntoso',
+    description='A Django application for publishing legislation using Akoma Ntoso',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/laws-africa/indigo',
@@ -26,7 +26,7 @@ setup(
 
     # See https://pypi.org/classifiers/
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production/Stable',
         'Framework :: Django :: 2.2',
         'Intended Audience :: Legal Industry',
         'License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)',
@@ -42,7 +42,7 @@ setup(
     install_requires=[
         'django>=2.2,<3',
         'boto3>=1.7',
-        'cobalt @ git+https://github.com/laws-africa/cobalt#egg=cobalt',
+        'cobalt>=4.0',
         'django-ckeditor>=5.8',
         'dj-database-url>=0.3.0',
         'django-activity-stream>=0.7.0',

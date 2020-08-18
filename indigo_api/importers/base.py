@@ -353,9 +353,12 @@ class Importer(LocaleBasedMatcher):
         except BadZipFile:
             raise ValueError("This doesn't seem to be a valid DOCX file.")
 
-        xml = self.import_from_text(html, doc.frbr_uri, '.html')
+        xml = self.import_from_html(html, doc.frbr_uri)
         doc.reset_xml(xml, from_model=True)
         self.stash_attachment(docx_file, doc)
+
+    def import_from_html(self, html, frbr_uri):
+        return self.import_from_text(html, frbr_uri, '.html')
 
     def expand_ligatures(self, text):
         """ Replace ligatures with separate characters, eg. ﬁ -> fi.

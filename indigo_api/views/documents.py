@@ -355,6 +355,7 @@ class ParseView(DocumentResourceView, APIView):
             klass = StructuredDocument.for_document_type(frbr_uri.doctype)
             doc = klass(xml)
             doc.main.replace(doc.meta, copy.deepcopy(self.document.doc.meta))
+            doc.frbr_uri = frbr_uri
             xml = doc.to_xml(encoding='unicode')
 
         return Response({'output': xml})

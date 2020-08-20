@@ -36,6 +36,41 @@ DOCUMENT_FIXTURE = """<?xml version="1.0"?>
 </akomaNtoso>
 """
 
+DECISION_DOCUMENT_FIXTURE = """<?xml version="1.0"?>
+<akomaNtoso xmlns="http://docs.oasis-open.org/legaldocml/ns/akn/3.0">
+  <statement>
+    <meta>
+      <identification source="">
+        <FRBRWork>
+          <FRBRthis value="/akn/un/statement/decision/unep-cbd-cop/1991/1/!main"/>
+          <FRBRuri value="/akn/un/statement/decision/unep-cbd-cop/1991/1"/>
+          <FRBRalias value="Untitled"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRcountry value="za"/>
+        </FRBRWork>
+        <FRBRExpression>
+          <FRBRthis value="/akn/un/statement/decision/unep-cbd-cop/1991/1/eng@/!main"/>
+          <FRBRuri value="/akn/un/statement/decision/unep-cbd-cop/1991/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+          <FRBRlanguage language="eng"/>
+        </FRBRExpression>
+        <FRBRManifestation>
+          <FRBRthis value="/akn/un/statement/decision/unep-cbd-cop/1991/1/eng@/!main"/>
+          <FRBRuri value="/akn/un/statement/decision/unep-cbd-cop/1991/1/eng@"/>
+          <FRBRdate date="1900-01-01" name="Generation"/>
+          <FRBRauthor href="#council" as="#author"/>
+        </FRBRManifestation>
+      </identification>
+    </meta>
+    <mainBody>
+      %s
+    </mainBody>
+  </statement>
+</akomaNtoso>
+"""
+
 BODY_FIXTURE = """
 <body>
   <section eId="sec_1">
@@ -132,6 +167,13 @@ def document_fixture(text=None, xml=None):
         xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
 
     return DOCUMENT_FIXTURE % xml
+
+
+def decision_document_fixture(text=None, xml=None):
+    if text:
+        xml = """<section eId="sec_1"><content><p>%s</p></content></section>""" % text
+
+    return DECISION_DOCUMENT_FIXTURE % xml
 
 
 def component_fixture(text=None, xml=None):

@@ -58,6 +58,8 @@ class DocumentQuerySet(models.QuerySet):
 
         See http://docs.oasis-open.org/legaldocml/akn-nc/v1.0/cs01/akn-nc-v1.0-cs01.html#_Toc492651893
         """
+        if not isinstance(frbr_uri, FrbrUri):
+            frbr_uri = FrbrUri.parse(frbr_uri)
         query = self.filter(frbr_uri=frbr_uri.work_uri())
 
         # filter on language

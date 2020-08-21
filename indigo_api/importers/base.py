@@ -353,7 +353,7 @@ class Importer(LocaleBasedMatcher):
         except BadZipFile:
             raise ValueError("This doesn't seem to be a valid DOCX file.")
 
-        xml = self.import_from_html(html, doc.frbr_uri)
+        xml = self.import_from_html(html, doc.expression_frbr_uri)
         doc.reset_xml(xml, from_model=True)
         self.stash_attachment(docx_file, doc)
 

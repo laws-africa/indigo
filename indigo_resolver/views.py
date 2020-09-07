@@ -15,10 +15,6 @@ class ResolveView(TemplateView):
     template_name = 'resolve.html'
 
     def get(self, request, frbr_uri, authorities, *args, **kwargs):
-        # strip /akn from v2 api
-        if frbr_uri.startswith('/akn'):
-            frbr_uri = frbr_uri[4:]
-
         try:
             FrbrUri.default_language = None
             self.frbr_uri = FrbrUri.parse(frbr_uri)

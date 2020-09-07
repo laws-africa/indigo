@@ -269,6 +269,18 @@
     <xsl:text>**</xsl:text>
   </xsl:template>
 
+  <xsl:template match="a:sup">
+    <xsl:text>^^</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>^^</xsl:text>
+  </xsl:template>
+
+  <xsl:template match="a:sub">
+    <xsl:text>_^</xsl:text>
+    <xsl:apply-templates />
+    <xsl:text>^_</xsl:text>
+  </xsl:template>
+
   <xsl:template match="a:eol">
     <xsl:text>&#10;</xsl:text>
   </xsl:template>

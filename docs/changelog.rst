@@ -1,6 +1,19 @@
 Changelog
 =========
 
+11.1.0 (2020-09-14)
+-------------------
+
+Changes
+.......
+
+* FEATURE: Support for superscript and subscript in parser
+* FIX: keep /akn prefix for resolver
+* FIX: update component meta when parsing whole document
+* FIX: PDF default templates
+* FIX: docx import
+* Introduce import_from_html
+
 11.0.0 (2020-08-14)
 -------------------
 

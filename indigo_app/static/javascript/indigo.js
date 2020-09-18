@@ -170,4 +170,11 @@ function bootstrapIndigo(exports) {
   });
 }
 
+// tell monaco where to load its files from
+window.require = {
+  paths: {
+    vs: '/static/lib/monaco-editor-0.20.0'
+  }
+};
+
 $(function() { bootstrapIndigo(window); });

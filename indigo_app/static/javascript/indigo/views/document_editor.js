@@ -32,24 +32,15 @@
     },
 
     initialize: function(options) {
-      var self = this;
-
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
+      this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change', this.documentChanged);
-
-      // setup xml editor
-      this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
-      this.xmlEditor.setTheme("ace/theme/monokai");
-      this.xmlEditor.getSession().setMode("ace/mode/xml");
-      this.xmlEditor.setValue();
-      this.xmlEditor.$blockScrolling = Infinity;
-      this.onEditorChange = _.debounce(_.bind(this.xmlEditorChanged, this), 500);
 
       // setup text editor
       this.$textEditor = this.$('.document-text-editor');
@@ -210,7 +201,6 @@
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
 
-      var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       // text from node in the actual XML document
       this.xmlToText(this.fragment).then(function(text) {
         // show the text editor
@@ -247,7 +237,6 @@
 
     saveTextEditor: function(e) {
       var self = this;
-      var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
@@ -281,10 +270,13 @@
             newFragment = newFragment.documentElement.children;
           }
 
-          self.parent.updateFragment(self.fragment, newFragment);
+          this.updating = true;
+          try {
+            self.parent.updateFragment(self.fragment, newFragment);
+          } finally {
+            this.updating = false;
+          }
           self.closeTextEditor();
-          self.render();
-          self.setXmlEditorValue(Indigo.toXml(newFragment[0]));
         })
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
@@ -349,41 +341,15 @@
 
     editFragment: function(node) {
       // edit node, a node in the XML document
-      this.tableEditor.discardChanges(null, true);
-      this.closeTextEditor();
-      this.render();
-      this.$('.document-sheet-container').scrollTop(0);
-
-      this.setXmlEditorValue(Indigo.toXml(node));
-    },
-
-    setXmlEditorValue: function(xml) {
-      // pretty-print the xml
-      xml = prettyPrintXml(xml);
-
-      this.xmlEditor.removeListener('change', this.onEditorChange);
-      this.xmlEditor.setValue(xml);
-      this.xmlEditor.on('change', this.onEditorChange);
-    },
-
-    xmlEditorChanged: function() {
-      // save the contents of the XML editor
-      var newFragment;
-      console.log('Parsing changes to XML');
-
-      try {
-        newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
-      } catch(err) {
-        // squash errors
-        console.log(err);
-        return;
+      if (!this.updating) {
+        this.tableEditor.discardChanges(null, true);
+        this.closeTextEditor();
+        this.render();
+        this.$('.document-sheet-container').scrollTop(0);
       }
-
-      this.parent.updateFragment(this.parent.fragment, [newFragment]);
-      this.render();
     },
 
-    // Save the content of the XML editor into the DOM, returns a Deferred
+    // Save the content of the editor into the DOM, returns a Deferred
     saveChanges: function() {
       this.tableEditor.saveChanges();
       this.closeTextEditor();
@@ -753,7 +719,6 @@
     resize: function() {},
   });
 
-
   // Handle the document editor, tracking changes and saving it back to the server.
   Indigo.DocumentEditorView = Backbone.View.extend({
     el: 'body',
@@ -779,6 +744,8 @@
       // XXX this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
       this.editFragment(null);
+
+      this.xmlEditor = new Indigo.XMLEditorView({parent: this});
     },
 
     tocSelectionChanged: function(selection) {
@@ -806,6 +773,7 @@
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.sourceEditor.editFragment(fragment);
+        this.xmlEditor.editFragment(fragment);
       }
     },
 
@@ -813,6 +781,11 @@
       var show = !$(e.currentTarget).hasClass('active');
       this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
       this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
+      if (show) {
+        this.xmlEditor.show();
+      } else {
+        this.xmlEditor.hide();
+      }
     },
 
     toggleShowAKNHierarchy: function(e) {
@@ -843,6 +816,9 @@
         var updated = this.documentContent.replaceNode(oldNode, newNodes);
         if (oldNode == this.fragment) {
           this.fragment = updated;
+          this.sourceEditor.editFragment(updated);
+          this.xmlEditor.editFragment(updated);
+          this.sourceEditor.render();
         }
       } finally {
         this.updating = false;

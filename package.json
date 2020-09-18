@@ -15,6 +15,7 @@
     "dom-anchor-text-quote": "^4.0.2",
     "he": "^1.2.0",
     "indigo-web": "^3.13.0",
+    "monaco-editor": "^0.20.0",
     "yarn": "^1.22.0"
   },
   "devDependencies": {

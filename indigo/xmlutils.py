@@ -96,8 +96,8 @@ def unwrap_element(elem):
 def rewrite_ids(elem, old_id_prefix, new_id_prefix):
     mappings = {}
     old_id = elem.get('id')
+    old_id_len = len(old_id_prefix)
     if old_id and old_id.startswith(old_id_prefix):
-        old_id_len = len(old_id_prefix)
         new_id = new_id_prefix + old_id[old_id_len:]
         mappings[old_id] = new_id
         elem.set('id', new_id)

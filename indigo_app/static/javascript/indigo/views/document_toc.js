@@ -37,7 +37,7 @@
           // we've selected past the end of the TOC
           this.selectItem(this.toc.length-1);
 
-        } else if (force || (index > -1 && this.toc.length != oldLength)) {
+        } else if (force || (index > -1 && this.toc.length !== oldLength)) {
           // arrangament of the TOC has changed, re-select the item we want
           this.selectItem(index, true);
 
@@ -162,7 +162,7 @@
         var severity = _.map(entry.issues, function(issue) { return issue.get('severity'); });
         severity = _.contains(severity, 'error') ? 'error' : (_.contains(severity, 'warning') ? 'warning': 'information');
 
-        entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length == 1 ? '' : 's');
+        entry.issues_title = entry.issues.length + ' issue' + (entry.issues.length === 1 ? '' : 's');
         entry.issues_description = entry.issues.map(function(issue) { return issue.get('message'); }).join('<br>');
         entry.issues_severity = severity;
       });
@@ -234,7 +234,7 @@
 
       i = Math.min(this.toc.length-1, i);
 
-      if (force || index != i) {
+      if (force || index !== i) {
         // unmark the old one
         if (index > -1 && index < this.toc.length) {
           delete (this.toc[index].selected);
@@ -257,7 +257,7 @@
 
     selectItemById: function(itemId) {
       for (var i = 0; i < this.toc.length; i++) {
-        if (this.toc[i].id == itemId) {
+        if (this.toc[i].id === itemId) {
           this.selectItem(i, true);
           return true;
         }

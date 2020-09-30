@@ -95,10 +95,10 @@
         }
 
         function getHeadingText(node) {
-          let heading = node.children('heading')[0];
+          var heading = node.children('heading')[0];
           // if the heading includes an authorial note / footnote, only use the text nodes (if any)
           if (heading && heading.getElementsByTagName('authorialNote')) {
-            let children = heading.childNodes,
+            var children = heading.childNodes,
                 headingText = '';
             children.forEach(function(child){
               if (child.nodeType === Node.TEXT_NODE) {

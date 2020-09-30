@@ -87,8 +87,8 @@
       }
 
       function getHeadingText(node) {
-        let headingText = '';
-        let result = self.model.xpath('./a:heading//text()[not(ancestor::a:authorialNote)]', node);
+        var headingText = '';
+        var result = self.model.xpath('./a:heading//text()[not(ancestor::a:authorialNote)]', node);
 
         for (var i = 0; i < result.snapshotLength; i++) {
           headingText += result.snapshotItem(i).textContent;

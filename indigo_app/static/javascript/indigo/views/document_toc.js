@@ -94,9 +94,26 @@
           qualified_id = $component.attr('eId') + '/' + qualified_id;
         }
 
+        function getHeadingText(node) {
+          let heading = node.children('heading')[0];
+          // if the heading includes an authorial note / footnote, only use the text nodes (if any)
+          if (heading && heading.getElementsByTagName('authorialNote')) {
+            let children = heading.childNodes,
+                headingText = '';
+            children.forEach(function(child){
+              if (child.nodeType === Node.TEXT_NODE) {
+                headingText += child.nodeValue;
+              }
+            });
+            return headingText;
+          } else {
+            return node.children('heading').text();
+          }
+        }
+
         var item = {
           'num': $node.children('num').text(),
-          'heading': $node.children('heading').text(),
+          'heading': getHeadingText($node),
           'element': node,
           'type': node.localName,
           'id': qualified_id,

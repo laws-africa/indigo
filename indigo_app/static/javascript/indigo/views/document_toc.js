@@ -58,6 +58,7 @@
       var roots = [],
           toc = [];
       var tradition = Indigo.traditions.get(this.model.document.get('country'));
+      var self = this;
 
       function iter_children(node, parent_item) {
         var kids = node.children;
@@ -85,6 +86,17 @@
         }
       }
 
+      function getHeadingText(node) {
+        let headingText = '';
+        let result = self.model.xpath('./a:heading//text()[not(ancestor::a:authorialNote)]', node);
+
+        for (var i = 0; i < result.snapshotLength; i++) {
+          headingText += result.snapshotItem(i).textContent;
+        }
+
+        return headingText;
+      }
+
       function generate_toc(node) {
         var $node = $(node);
         var $component = $node.closest('attachment');
@@ -94,26 +106,9 @@
           qualified_id = $component.attr('eId') + '/' + qualified_id;
         }
 
-        function getHeadingText(node) {
-          var heading = node.children('heading')[0];
-          // if the heading includes an authorial note / footnote, only use the text nodes (if any)
-          if (heading && heading.getElementsByTagName('authorialNote')) {
-            var children = heading.childNodes,
-                headingText = '';
-            children.forEach(function(child){
-              if (child.nodeType === Node.TEXT_NODE) {
-                headingText += child.nodeValue;
-              }
-            });
-            return headingText;
-          } else {
-            return node.children('heading').text();
-          }
-        }
-
         var item = {
           'num': $node.children('num').text(),
-          'heading': getHeadingText($node),
+          'heading': getHeadingText(node),
           'element': node,
           'type': node.localName,
           'id': qualified_id,

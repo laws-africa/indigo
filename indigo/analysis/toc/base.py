@@ -1,6 +1,5 @@
 import re
-from itertools import chain
-from lxml.html import _collect_string_content
+from lxml import etree
 
 from django.utils.translation import override, ugettext as _
 
@@ -159,12 +158,18 @@ class TOCBuilderBase(LocaleBasedMatcher):
         type_ = element.tag.split('}', 1)[-1]
         id_ = element.get('eId')
 
+        def get_heading(element):
+            # collect text without descending into authorial notes
+            xpath = etree.XPath(".//text()[not(ancestor::a:authorialNote)]",
+                                namespaces={'a': self.act.namespace})
+            return ''.join(xpath(element.heading))
+
         # support for crossheadings in AKN 2.0
         if type_ == 'hcontainer' and element.get('name', None) == 'crossheading':
             type_ = 'crossheading'
 
         try:
-            heading = _collect_string_content(element.heading)
+            heading = get_heading(element)
         except AttributeError:
             heading = None
 

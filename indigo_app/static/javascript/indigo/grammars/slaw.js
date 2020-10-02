@@ -49,6 +49,40 @@
           editor.pushUndoStop();
         }
       });
+
+      editor.addAction({
+        id: 'insert.table',
+        label: 'Insert Table',
+        run: function (editor) {
+          let table;
+          const sel = editor.getSelection();
+
+          if (sel.isEmpty()) {
+            table = ["", "{|", "|-", "! heading 1", "! heading 2", "|-", "| cell 1", "| cell 2", "|-", "| cell 3", "| cell 4", "|-", "|}", ""].join("\n");
+          } else {
+            var lines = editor.getModel().getValueInRange(sel).split("\n");
+            table = "\n{|\n|-\n";
+            lines.forEach(function(line) {
+              // ignore empty lines
+              if (line.trim() !== "") {
+                table = table + "| " + line + "\n|-\n";
+              }
+            });
+            table = table + "|}\n";
+          }
+
+          const cursor = sel.setEndPosition(sel.startLineNumber + 3, 3)
+            .setStartPosition(sel.startLineNumber + 3, 3);
+
+          editor.executeEdits('indigo', [{
+            identifier: 'insert.table',
+            range: sel,
+            forceMoveMarkers: false,
+            text: table,
+          }], [cursor]);
+          editor.pushUndoStop();
+        }
+      });
     }
   };
 })(window);

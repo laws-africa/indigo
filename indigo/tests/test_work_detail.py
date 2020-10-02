@@ -21,6 +21,8 @@ class BaseWorkDetailTestCase(TestCase):
     def test_numbered_title_none(self):
         work = Work(frbr_uri='/za/act/1999/constitution')
         self.assertIsNone(self.plugin.work_numbered_title(work))
+        work = Work(frbr_uri='/akn/za/act/2012/constitution-seventeenth-amendment')
+        self.assertIsNone(self.plugin.work_numbered_title(work))
 
     def test_numbered_title_ignore_subtype(self):
         plugin = BaseWorkDetail()

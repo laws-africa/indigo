@@ -571,22 +571,22 @@
 
     editFind: function(e) {
       e.preventDefault();
-      this.textEditor.execCommand('find');
+      this.textEditor.trigger('indigo', 'actions.find');
     },
 
     editFindNext: function(e) {
       e.preventDefault();
-      this.textEditor.execCommand('findnext');
+      this.textEditor.trigger('indigo', 'editor.action.nextMatchFindAction');
     },
 
     editFindPrevious: function(e) {
       e.preventDefault();
-      this.textEditor.execCommand('findprevious');
+      this.textEditor.trigger('indigo', 'editor.action.previousMatchFindAction');
     },
 
     editFindReplace: function(e) {
       e.preventDefault();
-      this.textEditor.execCommand('replace');
+      this.textEditor.trigger('indigo', 'editor.action.startFindReplaceAction');
     },
 
     /**

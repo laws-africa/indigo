@@ -60,13 +60,13 @@
 
     setupTextEditor: function() {
       if (!this.textEditor) {
+        const name = this.parent.model.tradition().settings.grammar.name;
+
         this.textEditor = window.monaco.editor.create(this.el.querySelector('.document-text-editor .monaco-editor'), {
           codeLens: false,
           detectIndentation: false,
           foldingStrategy: 'indentation',
-          // TODO: from tradition
-          //this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
-          language: 'slaw',
+          language: name,
           lineDecorationsWidth: 0,
           lineNumbersMinChars: 3,
           roundedSelection: false,
@@ -77,6 +77,9 @@
           theme: 'vs',
           wrappingIndent: 'same',
         });
+
+        const grammar = Indigo.grammars.registry[name];
+        if (grammar) grammar.setupEditor(this.textEditor);
       }
     },
 
@@ -668,8 +671,7 @@
 
     insertSchedule: function(e) {
       e.preventDefault();
-
-      this.textEditor.insert('\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n');
+      this.textEditor.trigger('indigo', 'insert.schedule');
       this.textEditor.focus();
     },
 
@@ -714,28 +716,19 @@
 
     markupRemark: function(e) {
       e.preventDefault();
-
-      this.quickMarkup(function(text) {
-        return '[[' + (text || '<remark>') + ']]';
-      });
+      this.textEditor.trigger('indigo', 'format.remark');
       this.textEditor.focus();
     },
 
     markupBold: function(e) {
       e.preventDefault();
-
-      this.quickMarkup(function(text) {
-        return '**' + (text || '<text>') + '**';
-      });
+      this.textEditor.trigger('indigo', 'format.bold');
       this.textEditor.focus();
     },
 
     markupItalics: function(e) {
       e.preventDefault();
-
-      this.quickMarkup(function(text) {
-        return '//' + (text || '<text>') + '//';
-      });
+      this.textEditor.trigger('indigo', 'format.italics');
       this.textEditor.focus();
     },
 

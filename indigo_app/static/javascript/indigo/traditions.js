@@ -81,6 +81,7 @@
       },
       quickEditable: '.akn-chapter, .akn-part, .akn-section, .akn-attachment, .akn-attachments',
       aceMode: 'ace/mode/indigo',
+      name: 'slaw',
     },
     // list of names of linter functions applicable to this location
     linters: [],

@@ -70,12 +70,12 @@ button.btn-link.help {
 .monaco-editor-wrapper {
   height: 100%;
   padding: 0px !important;
+  overflow: hidden;
 }
 
 .monaco-editor {
   height: 100%;
   width: 100%;
-  overflow: hidden;
 }
 
 .document-sheet-container {

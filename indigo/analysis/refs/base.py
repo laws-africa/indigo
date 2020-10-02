@@ -24,6 +24,10 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         self.markup_patterns(root)
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
+    def is_valid(self, node, match):
+        if self.make_href(match):
+            return True
+
     def markup_match(self, node, match):
         """ Markup the match with a ref tag. The first group in the match is substituted with the ref.
         """
@@ -36,12 +40,14 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         """ Turn this match into a full FRBR URI href.
             Check for an existing Act with that FRBR URI in the locality first; default to national (may or may not exist).
         """
+        link_uri = f"/akn/{self.frbr_uri.country}/act/{match.group('year')}/{match.group('num')}"
         if self.frbr_uri.locality:
             local = f"/akn/{self.frbr_uri.country}-{self.frbr_uri.locality}/act/{match.group('year')}/{match.group('num')}"
             if Work.objects.filter(frbr_uri=local).exists():
-                return local
+                link_uri = local
 
-        return f"/akn/{self.frbr_uri.country}/act/{match.group('year')}/{match.group('num')}"
+        if self.frbr_uri.work_uri() != link_uri:
+            return link_uri
 
 
 @plugins.register('refs')

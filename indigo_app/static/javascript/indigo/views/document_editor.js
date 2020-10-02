@@ -42,14 +42,7 @@
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change', this.documentChanged);
 
-      // setup text editor
       this.$textEditor = this.$('.document-text-editor');
-      this.textEditor = ace.edit(this.$(".document-text-editor .ace-editor")[0]);
-      this.textEditor.setTheme("ace/theme/xcode");
-      this.textEditor.setValue();
-      this.textEditor.getSession().setUseWrapMode(true);
-      this.textEditor.setShowPrintMargin(false);
-      this.textEditor.$blockScrolling = Infinity;
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
@@ -60,10 +53,31 @@
       this.$toolbar = $('.document-editor-toolbar');
 
       this.setupRenderers();
-      this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
 
       // get the appropriate remark style for the tradition
       this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
+    },
+
+    setupTextEditor: function() {
+      if (!this.textEditor) {
+        this.textEditor = window.monaco.editor.create(this.el.querySelector('.document-text-editor .monaco-editor'), {
+          codeLens: false,
+          detectIndentation: false,
+          foldingStrategy: 'indentation',
+          // TODO: from tradition
+          //this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
+          language: 'slaw',
+          lineDecorationsWidth: 0,
+          lineNumbersMinChars: 3,
+          roundedSelection: false,
+          scrollBeyondLastLine: false,
+          showFoldingControls: 'always',
+          tabSize: 2,
+          wordWrap: 'on',
+          theme: 'vs',
+          wrappingIndent: 'same',
+        });
+      }
     },
 
     /* Setup pasting so that when the user pastes an HTML table
@@ -74,6 +88,8 @@
        the paste event itself and re-inject the correct text to paste.
      */
     setupTablePasting: function() {
+      // TODO:
+      return;
       var allowPaste = false,
           self = this;
 
@@ -206,12 +222,19 @@
         // show the text editor
         self.$('.document-content-view').addClass('show-text-editor');
 
+        self.setupTextEditor();
+
         self.$textEditor
           .data('fragment', self.fragment.tagName)
           .show();
 
         self.textEditor.setValue(text);
-        self.textEditor.gotoLine(1, 0);
+        self.textEditor.layout();
+
+        const top = {column: 1, lineNumber: 1};
+        self.textEditor.setPosition(top);
+        self.textEditor.revealPosition(top);
+
         self.textEditor.focus();
 
         self.$('.document-sheet-container').scrollTop(0);

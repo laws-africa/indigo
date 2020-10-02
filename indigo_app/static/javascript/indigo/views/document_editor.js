@@ -16,10 +16,7 @@
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
 
-      'click .edit-find': 'editFind',
-      'click .edit-find-next': 'editFindNext',
-      'click .edit-find-previous': 'editFindPrevious',
-      'click .edit-find-replace': 'editFindReplace',
+      'click .editor-action': 'triggerEditorAction',
 
       'click .insert-image': 'insertImage',
       'click .insert-table': 'insertTable',
@@ -572,24 +569,11 @@
       this.editing = false;
     },
 
-    editFind: function(e) {
+    triggerEditorAction: function(e) {
+      // an editor action from the toolbar
       e.preventDefault();
-      this.textEditor.trigger('indigo', 'actions.find');
-    },
-
-    editFindNext: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'editor.action.nextMatchFindAction');
-    },
-
-    editFindPrevious: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'editor.action.previousMatchFindAction');
-    },
-
-    editFindReplace: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'editor.action.startFindReplaceAction');
+      const action = e.target.getAttribute('data-action');
+      this.textEditor.trigger('indigo', action);
     },
 
     /**
@@ -669,12 +653,6 @@
       this.textEditor.focus();
     },
 
-    insertSchedule: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'insert.schedule');
-      this.textEditor.focus();
-    },
-
     getAmendingWork: function(document) {
       var date = document.get('expression_date'),
           documentAmendments = Indigo.Preloads.amendments,
@@ -712,24 +690,6 @@
       } else {
         this.textEditor.insert(marker(''));
       }
-    },
-
-    markupRemark: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'format.remark');
-      this.textEditor.focus();
-    },
-
-    markupBold: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'format.bold');
-      this.textEditor.focus();
-    },
-
-    markupItalics: function(e) {
-      e.preventDefault();
-      this.textEditor.trigger('indigo', 'format.italics');
-      this.textEditor.focus();
     },
 
     resize: function() {},

@@ -23,7 +23,7 @@ class BaseWorkDetail(LocaleBasedMatcher):
         # these don't have numbered titles
         number = work.number
         # also check partials, e.g. 'constitution-amendment' shouldn't get one
-        if any([partial in self.no_numbered_title_numbers for partial in number.split("-")]):
+        if any(partial in self.no_numbered_title_numbers for partial in number.split("-")):
             return None
 
         # these don't have numbered titles

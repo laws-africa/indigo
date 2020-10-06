@@ -25,7 +25,7 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
         document.content = etree.tostring(root, encoding='utf-8').decode('utf-8')
 
     def is_valid(self, node, match):
-        if self.make_href(match):
+        if self.make_href(match) != self.frbr_uri.work_uri():
             return True
 
     def markup_match(self, node, match):
@@ -46,8 +46,7 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
             if Work.objects.filter(frbr_uri=local).exists():
                 link_uri = local
 
-        if self.frbr_uri.work_uri() != link_uri:
-            return link_uri
+        return link_uri
 
 
 @plugins.register('refs')

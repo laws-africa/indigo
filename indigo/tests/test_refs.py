@@ -4,6 +4,8 @@ from lxml import etree
 from django.conf import settings
 from django.test import TestCase
 
+from cobalt import FrbrUri
+
 from indigo.analysis.refs.base import SectionRefsFinderENG, RefsFinderENG, RefsFinderSubtypesENG, RefsFinderCapENG
 
 from indigo_api.models import Document, Language, Work, Country, User
@@ -806,6 +808,7 @@ class RefsFinderENGTestCase(TestCase):
             ),
             language=self.eng)
 
+        document.doc.frbr_uri = FrbrUri.parse(self.work.frbr_uri)
         self.finder.find_references_in_document(document)
         root = etree.fromstring(expected.content)
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')

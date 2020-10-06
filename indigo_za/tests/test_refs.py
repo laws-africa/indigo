@@ -4,6 +4,8 @@ from nose.tools import *  # noqa
 from rest_framework.test import APITestCase
 from lxml import etree
 
+from cobalt import FrbrUri
+
 from indigo_api.tests.fixtures import *  # noqa
 from indigo_za.refs import RefsFinderENGza, RefsFinderAFRza
 from indigo_api.models import Document, Work
@@ -190,7 +192,7 @@ class RefsFinderENGzaTestCase(APITestCase):
         </section>"""))
 
         unchanged = doc.document_xml
-        doc.frbr_uri = doc.work.frbr_uri
+        doc.doc.frbr_uri = FrbrUri.parse(constitution.frbr_uri)
         self.finder.find_references_in_document(doc)
         self.assertMultiLineEqual(unchanged, doc.document_xml)
 

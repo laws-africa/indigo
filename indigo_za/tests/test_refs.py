@@ -164,6 +164,36 @@ class RefsFinderENGzaTestCase(APITestCase):
   
 ''', etree.tostring(doc.doc.body, encoding='utf-8', pretty_print=True).decode('utf-8'))
 
+    def test_dont_link_constitution_in_constitution(self):
+        constitution = Work(frbr_uri='/akn/za/act/1996/constitution')
+        doc = Document(work=constitution, content=document_fixture(xml="""
+        <section id="section-1">
+          <num>1.</num>
+          <heading>Tester</heading>
+          <paragraph id="section-1.paragraph-0">
+            <content>
+              <p>the Constitution</p>
+              <p>the Constitution, 1996</p>
+              <p>the Constitution of South Africa</p>
+              <p>the Constitution of the Republic of South Africa</p>
+              <p>the Constitution of the Republic of South Africa, 1996</p>
+              <p>the Constitution of the Republic of South Africa 1996</p>
+              <p>the Constitution of the Republic of South Africa Act, 1996</p>
+              <p>the Constitution of the Republic of South Africa, 1996 ( Act 108 of 1996 )</p>
+              <p>the Constitution of the Republic of South Africa, 1996 ( Act No 108 of 1996 )</p>
+              <p>the Constitution of the Republic of South Africa, 1996 ( Act No. 108 of 1996 )</p>
+              <p>the Constitution of the Republic of South Africa Act, 1996 ( Act No. 108 of 1996 )</p>
+              <p>the Constitution of the Republic of South Africa  Act 108 of 1996</p>
+              <p>the Constitution of the Republic of South Africa (Act 108 of 1996)</p>
+            </content>
+          </paragraph>
+        </section>"""))
+
+        unchanged = doc.document_xml
+        doc.frbr_uri = doc.work.frbr_uri
+        self.finder.find_references_in_document(doc)
+        self.assertMultiLineEqual(unchanged, doc.document_xml)
+
     def test_find_without_act_in_parens(self):
         doc = Document(work=self.work, content=document_fixture(xml="""
 <section id="section-1">

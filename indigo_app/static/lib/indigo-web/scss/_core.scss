@@ -190,7 +190,7 @@
     max-width: 100%;
   }
 
-  /* footnotes*/
+  /* footnotes */
   .akn-authorialNote {
     display: flex;
     font-size: small;
@@ -204,4 +204,17 @@
   .akn-authorialNote + .akn-authorialNote {
     margin-top: -$akn-section-spacing;
   }
+
+  /* quotes */
+  .akn-embeddedStructure {
+    display: block;
+    margin-left: $akn-quote-indent;
+
+    &[data-startQuote]::before {
+      content: attr(data-startQuote);
+      margin-left: -0.5em;
+      float: left;
+    }
+  }
+
 }

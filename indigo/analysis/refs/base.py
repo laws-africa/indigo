@@ -46,7 +46,7 @@ class BaseRefsFinder(LocaleBasedMatcher, TextPatternMarker):
             if Work.objects.filter(frbr_uri=local).exists():
                 link_uri = local
 
-        if self.frbr_uri.work_uri() != link_uri:
+        if self.document.frbr_uri != link_uri:
             return link_uri
 
 

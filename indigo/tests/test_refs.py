@@ -4,6 +4,8 @@ from lxml import etree
 from django.conf import settings
 from django.test import TestCase
 
+from cobalt import FrbrUri
+
 from indigo.analysis.refs.base import SectionRefsFinderENG, RefsFinderENG, RefsFinderSubtypesENG, RefsFinderCapENG
 
 from indigo_api.models import Document, Language, Work, Country, User
@@ -771,6 +773,7 @@ class RefsFinderENGTestCase(TestCase):
     def test_dont_find_self(self):
         document = Document(
             work=self.work,
+            frbr_uri=self.work.frbr_uri,
             document_xml=document_fixture(
                 xml="""
         <section eId="sec_1">
@@ -778,7 +781,7 @@ class RefsFinderENGTestCase(TestCase):
           <heading>Tester</heading>
           <paragraph eId="sec_1.paragraph-0">
             <content>
-              <p>Something to do with Act 1 of 1900.</p>
+              <p>Something to do with Act 1 of 1991.</p>
               <p>Something to do with Act no 22 of 2012.</p>
               <p>And another thing about Act 4 of 1998.</p>
             </content>
@@ -796,7 +799,7 @@ class RefsFinderENGTestCase(TestCase):
           <heading>Tester</heading>
           <paragraph eId="sec_1.paragraph-0">
             <content>
-              <p>Something to do with Act 1 of 1900.</p>
+              <p>Something to do with Act 1 of 1991.</p>
               <p>Something to do with Act <ref href="/akn/za/act/2012/22">no 22 of 2012</ref>.</p>
               <p>And another thing about Act <ref href="/akn/za/act/1998/4">4 of 1998</ref>.</p>
             </content>
@@ -805,6 +808,7 @@ class RefsFinderENGTestCase(TestCase):
             ),
             language=self.eng)
 
+        document.doc.frbr_uri = FrbrUri.parse(self.work.frbr_uri)
         self.finder.find_references_in_document(document)
         root = etree.fromstring(expected.content)
         expected.content = etree.tostring(root, encoding='utf-8').decode('utf-8')

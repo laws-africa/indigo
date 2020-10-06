@@ -39,13 +39,13 @@ class RefsFinderENGza(BaseRefsFinder):
 
     constitution = 'Constitution'
 
+    def is_constitution(self, match):
+        # the Constitution was originally Act 108 of 1996
+        return self.constitution in match.group(0) or \
+               (self.frbr_uri.country == 'za' and match.group('year') == '1996' and match.group('num') == '108')
+
     def make_href(self, match):
-        year = match.group('year')
-        number = match.group('num')
-        if self.constitution in match.group(0):
-            return '/akn/za/act/1996/constitution'
-        elif self.frbr_uri.country == 'za' and year == '1996' and number == '108':
-            # the Constitution was originally Act 108 of 1996
+        if self.is_constitution(match):
             return '/akn/za/act/1996/constitution'
 
         return super().make_href(match)

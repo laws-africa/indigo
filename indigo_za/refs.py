@@ -44,6 +44,10 @@ class RefsFinderENGza(BaseRefsFinder):
         return self.constitution in match.group(0) or \
                (self.frbr_uri.country == 'za' and match.group('year') == '1996' and match.group('num') == '108')
 
+    def is_valid(self, node, match):
+        if not (self.is_constitution(match) and self.document.frbr_uri == '/akn/za/act/1996/constitution'):
+            return super().is_valid(node, match)
+
     def make_href(self, match):
         if self.is_constitution(match):
             return '/akn/za/act/1996/constitution'

@@ -31,6 +31,7 @@
 
       this.grammarName = this.parent.model.tradition().settings.grammar.name;
       this.grammarModel = Indigo.grammars.registry[this.grammarName];
+      this.grammarModel.setup(this.parent.model);
 
       // setup renderer
       this.editorReady = $.Deferred();
@@ -42,7 +43,6 @@
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
-      this.setupTablePasting();
 
       this.$toolbar = $('.document-editor-toolbar');
 
@@ -71,32 +71,18 @@
         });
 
         this.grammarModel.setupEditor(this.textEditor);
+        this.setupTablePasting();
       }
     },
 
     /* Setup pasting so that when the user pastes an HTML table
        while in text edit mode, we change it into wikipedia style tables.
 
-       We cannot disable the Ace editor paste functionality. Instead, we
-       bypass it by pretending there is no text to paste. Then, we handle
-       the paste event itself and re-inject the correct text to paste.
+       We cannot disable the Monaco editor paste functionality. Instead, we
+       allow it to happen and then undo it if necessary, and replace the pasted
+       text with the table.
      */
     setupTablePasting: function() {
-      // TODO:
-      return;
-      var allowPaste = false,
-          self = this;
-
-      function pasteTable(table, i) {
-        self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
-          if (i > 0) text = "\n" + text;
-
-          allowPaste = true;
-          self.textEditor.onPaste(text);
-          allowPaste = false;
-        });
-      }
-
       function cleanTable(table) {
         // strip out namespaced tags - we don't want MS Office's tags
         var elems = table.getElementsByTagName("*");
@@ -122,30 +108,26 @@
         });
       }
 
-      this.textEditor.on('paste', function(e) {
-        if (!allowPaste) { e.text = ''; }
-      });
-
-      this.$textEditor.on('paste', function(e) {
-        var cb = e.originalEvent.clipboardData;
+      this.textEditor.getDomNode().querySelector('textarea.inputarea').addEventListener('paste', (e) => {
+        const cb = e.clipboardData;
 
         if (cb.types.indexOf('text/html') > -1) {
-          var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
-              tables = doc.body.querySelectorAll('table');
+          const doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
+                tables = doc.body.querySelectorAll('table'),
+                toPaste = [];
 
           if (tables.length > 0) {
-            for (var i = 0; i < tables.length; i++) {
+            // undo the paste
+            this.textEditor.trigger('indigo', 'undo');
+
+            for (let i = 0; i < tables.length; i++) {
               cleanTable(tables[i]);
-              pasteTable(tables[i], i);
+              toPaste.push(this.tableEditor.tableToAkn(tables[i]));
             }
-            return;
+
+            this.grammarModel.pasteTables(this.textEditor, toPaste);
           }
         }
-
-        // no html or no tables, use normal paste
-        allowPaste = true;
-        self.textEditor.onPaste(cb.getData('text'));
-        allowPaste = false;
       });
     },
 
@@ -212,44 +194,24 @@
       this.$('.document-workspace-buttons').addClass('d-none');
 
       // text from node in the actual XML document
-      this.xmlToText(this.fragment).then(function(text) {
-        // show the text editor
-        self.$('.document-content-view').addClass('show-text-editor');
+      const text = this.grammarModel.xmlToText(this.fragment);
 
-        self.setupTextEditor();
+      // show the text editor
+      this.$('.document-content-view').addClass('show-text-editor');
 
-        self.$textEditor
-          .data('fragment', self.fragment.tagName)
-          .show();
+      this.setupTextEditor();
+      this.textEditor.setValue(text);
+      this.textEditor.layout();
+      const top = {column: 1, lineNumber: 1};
+      this.textEditor.setPosition(top);
+      this.textEditor.revealPosition(top);
+      this.textEditor.focus();
 
-        self.textEditor.setValue(text);
-        self.textEditor.layout();
+      this.$textEditor
+        .data('fragment', this.fragment.tagName)
+        .show();
 
-        const top = {column: 1, lineNumber: 1};
-        self.textEditor.setPosition(top);
-        self.textEditor.revealPosition(top);
-
-        self.textEditor.focus();
-
-        self.$('.document-sheet-container').scrollTop(0);
-      });
-    },
-
-    xmlToText: function(element) {
-      var self = this,
-          deferred = $.Deferred();
-
-      this.textTransformReady.then(function() {
-        var text = self.textTransform
-          .transformToFragment(element, document)
-          .firstChild.textContent
-          // remove multiple consecutive blank lines
-          .replace(/^( *\n){2,}/gm, "\n");
-
-        deferred.resolve(text);
-      });
-
-      return deferred;
+      this.$('.document-sheet-container').scrollTop(0);
     },
 
     saveTextEditor: function(e) {

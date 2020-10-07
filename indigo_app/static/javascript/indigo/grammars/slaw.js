@@ -4,6 +4,34 @@
   class SlawGrammarModel {
     image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
 
+    /**
+     * Setup the grammar for a particular document model.
+     */
+    setup (model) {
+      // setup akn to text transform
+      const self = this;
+      // TODO: don't use jquery
+      $.get(model.url() + '/static/xsl/text.xsl').then(function (xml) {
+        const textTransform = new XSLTProcessor();
+        textTransform.importStylesheet(xml);
+        self.textTransform = textTransform;
+      });
+    }
+
+    /**
+     * Unparse an XML element into a string.
+     */
+    xmlToText (element) {
+      return this.textTransform
+        .transformToFragment(element, document)
+        .firstChild.textContent
+        // remove multiple consecutive blank lines
+        .replace(/^( *\n){2,}/gm, "\n");
+    }
+
+    /**
+     * Configure a new instance of a Monaco editor.
+     */
     setupEditor (editor) {
       editor.addAction({
         id: 'format.bold',
@@ -163,6 +191,24 @@
         text: image,
       }]);
 
+      editor.pushUndoStop();
+    }
+
+    /**
+     * Paste these (clean) XML tables into the editor.
+     */
+    pasteTables (editor, tables) {
+      const text = [];
+
+      for (let i = 0; i < tables.length; i++) {
+        text.push(this.xmlToText(tables[i]));
+      }
+
+      editor.executeEdits('indigo', [{
+        identifier: 'insert.table',
+        range: editor.getSelection(),
+        text: text.join('\n'),
+      }]);
       editor.pushUndoStop();
     }
   }

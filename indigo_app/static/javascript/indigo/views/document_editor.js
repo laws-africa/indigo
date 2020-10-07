@@ -56,21 +56,10 @@
 
     setupTextEditor: function() {
       if (!this.textEditor) {
-        this.textEditor = window.monaco.editor.create(this.el.querySelector('.document-text-editor .monaco-editor'), {
-          codeLens: false,
-          detectIndentation: false,
-          foldingStrategy: 'indentation',
-          language: this.grammarModel.language_id,
-          lineDecorationsWidth: 0,
-          lineNumbersMinChars: 3,
-          roundedSelection: false,
-          scrollBeyondLastLine: false,
-          showFoldingControls: 'always',
-          tabSize: 2,
-          wordWrap: 'on',
-          theme: 'vs',
-          wrappingIndent: 'same',
-        });
+        this.textEditor = window.monaco.editor.create(
+          this.el.querySelector('.document-text-editor .monaco-editor'),
+          this.grammarModel.monacoOptions(),
+        );
 
         this.grammarModel.setupEditor(this.textEditor);
         this.setupTablePasting();

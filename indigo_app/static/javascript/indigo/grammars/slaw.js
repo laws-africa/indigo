@@ -5,11 +5,53 @@
     language_id = 'slaw';
     language_def = {
       defaultToken: '',
-      headings: /LONGTITLE|CROSSHEADING/,
+      hier: /Part|Chapter|Subpart/,
+      markers: /PREFACE|PREAMBLE|BODY/,
+      headings: /LONGTITLE|CROSSHEADING|HEADING|SUBHEADING/,
       tokenizer: {
         root: [
+          // grouping markers
+          [/^@markers\s*$/, 'keyword.marker'],
+
+          // single line headings
+          [/^(\s*)(@headings)(\s.*)$/, ['white', 'keyword.heading', 'string']],
+
+          // hierarchical
+          // PARA num - heading
+          [/^(\s*)(@hier)(\s+.+)(-)(\s+.*$)/, ['white', 'keyword.hier', 'constant.numeric', 'delimiter', 'string']],
+          // PARA num
+          [/^(\s*)(@hier)(\s+.+$)/, ['white', 'keyword.hier', 'constant.numeric']],
+
+          // 2. Section heading
+          [/^(\s*)([0-9][0-9a-z]*\.)(\s.*$)/, ['white', 'constant.numeric', 'string']],
+
+          // (2) subsections
+          // (a) list
+          [/^(\s*)(\([0-9a-z]+\))/, ['white', 'constant.numeric']],
+
+          // attachments
+          [/\s*(SCHEDULE)\b/, 'keyword.schedule'],
+
+          // inlines
+          [/\*\*.*?\*\*/, 'inline.bold'],
+          [/\/\/.*?\/\//, 'inline.italic'],
+
+          [/[{}[\]()]/, '@brackets']
         ]
       }
+    };
+    theme_id = 'slaw';
+    theme_def = {
+      base: 'vs',
+      inherit: true,
+      rules: [
+        { token: 'string', foreground: '008000' },
+        { token: 'constant.numeric', foreground: '0000FF' },
+        { token: 'inline.bold', fontStyle: 'bold' },
+        { token: 'inline.italic', fontStyle: 'italic' },
+        { token: 'inline.ref', fontStyle: 'underline', foreground: 'ffa500' },
+        { token: 'inline.underline', fontStyle: 'text-decoration: underline' }
+      ]
     };
 
     image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
@@ -17,6 +59,26 @@
     constructor (frbrUri, xslUrl) {
       this.frbrUri = frbrUri;
       this.xslUrl = xslUrl;
+    }
+
+    monacoOptions () {
+      this.installLanguage();
+
+      return {
+        codeLens: false,
+        detectIndentation: false,
+        foldingStrategy: 'indentation',
+        language: this.language_id,
+        lineDecorationsWidth: 0,
+        lineNumbersMinChars: 3,
+        roundedSelection: false,
+        scrollBeyondLastLine: false,
+        showFoldingControls: 'always',
+        tabSize: 2,
+        wordWrap: 'on',
+        theme: this.theme_id,
+        wrappingIndent: 'same',
+      }
     }
 
     /**
@@ -48,13 +110,13 @@
      * Configure a new instance of a Monaco editor.
      */
     setupEditor (editor) {
-      this.installLanguage();
       this.installActions(editor);
     }
 
     installLanguage () {
       monaco.languages.register({ id: this.language_id });
       monaco.languages.setMonarchTokensProvider(this.language_id, this.language_def);
+      monaco.editor.defineTheme(this.theme_id, this.theme_def);
     }
 
     installActions (editor) {

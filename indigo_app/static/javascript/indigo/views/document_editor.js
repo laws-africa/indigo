@@ -58,7 +58,7 @@
           codeLens: false,
           detectIndentation: false,
           foldingStrategy: 'indentation',
-          language: this.grammarName,
+          language: this.grammarModel.language_id,
           lineDecorationsWidth: 0,
           lineNumbersMinChars: 3,
           roundedSelection: false,

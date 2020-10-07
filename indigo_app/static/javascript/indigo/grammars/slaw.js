@@ -2,6 +2,16 @@
   "use strict";
 
   class SlawGrammarModel {
+    language_id = 'slaw';
+    language_def = {
+      defaultToken: '',
+      headings: /LONGTITLE|CROSSHEADING/,
+      tokenizer: {
+        root: [
+        ]
+      }
+    };
+
     image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
 
     /**
@@ -33,6 +43,16 @@
      * Configure a new instance of a Monaco editor.
      */
     setupEditor (editor) {
+      this.installLanguage();
+      this.installActions(editor);
+    }
+
+    installLanguage () {
+      monaco.languages.register({ id: this.language_id });
+      monaco.languages.setMonarchTokensProvider(this.language_id, this.language_def);
+    }
+
+    installActions (editor) {
       editor.addAction({
         id: 'format.bold',
         label: 'Format Bold',

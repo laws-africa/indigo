@@ -14,14 +14,19 @@
 
     image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
 
+    constructor (frbrUri, xslUrl) {
+      this.frbrUri = frbrUri;
+      this.xslUrl = xslUrl;
+    }
+
     /**
      * Setup the grammar for a particular document model.
      */
-    setup (model) {
+    setup () {
       // setup akn to text transform
       const self = this;
       // TODO: don't use jquery
-      $.get(model.url() + '/static/xsl/text.xsl').then(function (xml) {
+      $.get(this.xslUrl).then(function (xml) {
         const textTransform = new XSLTProcessor();
         textTransform.importStylesheet(xml);
         self.textTransform = textTransform;
@@ -229,5 +234,5 @@
     }
   }
 
-  exports.Indigo.grammars.registry.slaw = new SlawGrammarModel();
+  exports.Indigo.grammars.registry.slaw = SlawGrammarModel;
 })(window);

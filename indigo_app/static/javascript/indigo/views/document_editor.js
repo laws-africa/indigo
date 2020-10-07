@@ -30,8 +30,10 @@
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
       this.grammarName = this.parent.model.tradition().settings.grammar.name;
-      this.grammarModel = Indigo.grammars.registry[this.grammarName];
-      this.grammarModel.setup(this.parent.model);
+      this.grammarModel = new Indigo.grammars.registry[this.grammarName](
+        this.parent.model.get('frbr_uri'),
+        this.parent.model.url() + '/static/xsl/text.xsl');
+      this.grammarModel.setup();
 
       // setup renderer
       this.editorReady = $.Deferred();

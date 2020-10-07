@@ -93,7 +93,6 @@
           editor.executeEdits('indigo', [{
             identifier: 'insert.schedule',
             range: sel,
-            forceMoveMarkers: false,
             text: '\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n',
           }], [cursor]);
           editor.pushUndoStop();
@@ -127,7 +126,6 @@
           editor.executeEdits('indigo', [{
             identifier: 'insert.table',
             range: sel,
-            forceMoveMarkers: false,
             text: table,
           }], [cursor]);
           editor.pushUndoStop();
@@ -140,7 +138,6 @@
       editor.executeEdits('indigo', [{
         identifier: 'insert.remark',
         range: sel,
-        forceMoveMarkers: false,
         text: this.markupRemark(remark),
       }]);
       editor.pushUndoStop();
@@ -207,7 +204,6 @@
       editor.executeEdits('indigo', [{
         identifier: 'insert.remark',
         range: sel,
-        forceMoveMarkers: false,
         text: image,
       }]);
 

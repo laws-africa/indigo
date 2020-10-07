@@ -29,6 +29,9 @@
       this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
 
+      this.grammarName = this.parent.model.tradition().settings.grammar.name;
+      this.grammarModel = Indigo.grammars.registry[this.grammarName];
+
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change', this.documentChanged);
@@ -51,13 +54,11 @@
 
     setupTextEditor: function() {
       if (!this.textEditor) {
-        const name = this.parent.model.tradition().settings.grammar.name;
-
         this.textEditor = window.monaco.editor.create(this.el.querySelector('.document-text-editor .monaco-editor'), {
           codeLens: false,
           detectIndentation: false,
           foldingStrategy: 'indentation',
-          language: name,
+          language: this.grammarName,
           lineDecorationsWidth: 0,
           lineNumbersMinChars: 3,
           roundedSelection: false,
@@ -69,8 +70,7 @@
           wrappingIndent: 'same',
         });
 
-        const grammar = Indigo.grammars.registry[name];
-        if (grammar) grammar.setupEditor(this.textEditor);
+        this.grammarModel.setupEditor(this.textEditor);
       }
     },
 
@@ -584,37 +584,16 @@
         this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
       }
 
-      // are we on an image tag in the editor?
-      var posn = this.textEditor.getCursorPosition(),
-          session = this.textEditor.getSession(),
-          token = session.getTokenAt(posn.row, posn.column),
-          selected = null,
-          alt_text = "", filename, parts;
+      let filename = this.grammarModel.getImageAtCursor(this.textEditor);
+      let selected = null;
 
-      if (token && token.type == "constant.other.image") {
-        parts = token.value.split(/[[()\]]/);
-        alt_text = parts[1];
-        filename = parts[3];
+      if (filename) {
         if (filename.startsWith("media/")) filename = filename.substr(6);
-
         selected = this.parent.model.attachments().findWhere({filename: filename});
-      } else {
-        token = null;
       }
 
       this.insertImageBox.show(function(image) {
-        var tag = "![" + (alt_text) + "](media/" + image.get('filename') + ")";
-
-        if (token) {
-          // replace existing image
-          var Range = ace.require("ace/range").Range;
-          var range = new Range(posn.row, token.start, posn.row, token.start + token.value.length);
-          session.getDocument().replace(range, tag);
-        } else {
-          // new image
-          self.textEditor.insert(tag);
-        }
-
+        this.grammarModel.insertImageAtCursor('media/' + image.get('filename'));
         self.textEditor.focus();
       }, selected);
     },
@@ -635,13 +614,13 @@
       var amendedSection = this.fragment.id.replace('-', ' '),
           verb = e.currentTarget.getAttribute('data-verb'),
           amendingWork = this.getAmendingWork(this.parent.model),
-          remark = '[[<remark>]]';
+          remark = '<remark>';
 
       if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork);
+        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork, this.grammarModel);
       }
 
-      this.textEditor.insert('\n' + remark + '\n');
+      this.grammarModel.insertRemark(this.textEditor, remark);
       this.textEditor.focus();
     },
 

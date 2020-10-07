@@ -120,7 +120,11 @@ body.is-staff {
 
 /* dropdowns */
 .dropdown-menu {
-  box-shadow: 0 6px 12px rgba(0,0,0,0.175)
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175);
+
+  .dropdown-submenu > .dropdown-item {
+    padding-left: 0;
+  }
 }
 
 /* main content, in partnership with navbar */

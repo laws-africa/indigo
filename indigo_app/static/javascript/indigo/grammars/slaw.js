@@ -1,8 +1,8 @@
 (function(exports) {
   "use strict";
 
-  exports.Indigo.grammars.registry.slaw = {
-    setupEditor: function(editor) {
+  class SlawGrammarModel {
+    setupEditor (editor) {
       editor.addAction({
         id: 'format.bold',
         label: 'Format Bold',
@@ -38,7 +38,7 @@
         run: function(editor) {
           const sel = editor.getSelection();
           const cursor = sel.setEndPosition(sel.startLineNumber + 1, 12 + 24)
-                            .setStartPosition(sel.startLineNumber + 1, 12);
+            .setStartPosition(sel.startLineNumber + 1, 12);
 
           editor.executeEdits('indigo', [{
             identifier: 'insert.schedule',
@@ -84,5 +84,38 @@
         }
       });
     }
-  };
+
+    insertRemark (editor, remark) {
+      const sel = editor.getSelection();
+      editor.executeEdits('indigo', [{
+        identifier: 'insert.remark',
+        range: sel,
+        forceMoveMarkers: false,
+        text: this.markupRemark(remark),
+      }]);
+      editor.pushUndoStop();
+    }
+
+    markupRemark (text) {
+      return `[[${text}]]`;
+    }
+
+    markupRef (title, href) {
+      return `[${title}](${href})`;
+    }
+
+    /**
+     * Get the image filename at the cursor, if any.
+     */
+    getImageAtCursor (editor) {
+    }
+
+    /**
+     * Insert or update the image at the current cursor
+     */
+    insertImageAtCursor (editor, filename) {
+    }
+  }
+
+  exports.Indigo.grammars.registry.slaw = new SlawGrammarModel();
 })(window);

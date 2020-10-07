@@ -2,6 +2,8 @@
   "use strict";
 
   class SlawGrammarModel {
+    image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
+
     setupEditor (editor) {
       editor.addAction({
         id: 'format.bold',
@@ -96,10 +98,16 @@
       editor.pushUndoStop();
     }
 
+    /**
+     * Markup a textual remark
+     */
     markupRemark (text) {
       return `[[${text}]]`;
     }
 
+    /**
+     * Markup a link (ref)
+     */
     markupRef (title, href) {
       return `[${title}](${href})`;
     }
@@ -108,12 +116,54 @@
      * Get the image filename at the cursor, if any.
      */
     getImageAtCursor (editor) {
+      const match = this.getMatchAtCursor(editor, this.image_re);
+      if (match) {
+        // return the filename
+        return match[2];
+      }
+    }
+
+    /**
+     * Returns the match object, if any, for a regular expression match at the current cursor position,
+     * on the current line.
+     */
+    getMatchAtCursor (editor, regexp) {
+      const sel = editor.getSelection();
+      const line = editor.getModel().getLineContent(sel.startLineNumber);
+
+      for (let match of line.matchAll(regexp)) {
+        if (match.index <= sel.startColumn && sel.startColumn <= match.index + match[0].length) {
+          return match;
+        }
+      }
     }
 
     /**
      * Insert or update the image at the current cursor
      */
     insertImageAtCursor (editor, filename) {
+      const match = this.getMatchAtCursor(editor, this.image_re);
+      let sel = editor.getSelection();
+      let image;
+
+      if (match) {
+        // update existing image
+        image = `![${match[1]}](${filename})`;
+        sel = sel.setEndPosition(sel.startLineNumber, match.index + match[0].length + 1);
+        sel = sel.setStartPosition(sel.startLineNumber, match.index + 1);
+      } else {
+        // insert new image
+        image = `![](${filename})`;
+      }
+
+      editor.executeEdits('indigo', [{
+        identifier: 'insert.remark',
+        range: sel,
+        forceMoveMarkers: false,
+        text: image,
+      }]);
+
+      editor.pushUndoStop();
     }
   }
 

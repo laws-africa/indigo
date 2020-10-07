@@ -593,7 +593,7 @@
       }
 
       this.insertImageBox.show(function(image) {
-        this.grammarModel.insertImageAtCursor('media/' + image.get('filename'));
+        self.grammarModel.insertImageAtCursor(self.textEditor, 'media/' + image.get('filename'));
         self.textEditor.focus();
       }, selected);
     },

@@ -537,10 +537,11 @@
         this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
       }
 
-      let filename = this.grammarModel.getImageAtCursor(this.textEditor);
+      let image = this.grammarModel.getImageAtCursor(this.textEditor);
       let selected = null;
 
-      if (filename) {
+      if (image) {
+        let filename = image.src;
         if (filename.startsWith("media/")) filename = filename.substr(6);
         selected = this.parent.model.attachments().findWhere({filename: filename});
       }

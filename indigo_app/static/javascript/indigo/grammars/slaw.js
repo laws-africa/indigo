@@ -1,7 +1,7 @@
 (function(exports) {
   "use strict";
 
-  class SlawGrammarModel {
+  class SlawGrammarModel extends Indigo.grammars.registry.base {
     language_id = 'slaw';
     language_def = {
       defaultToken: '',
@@ -17,10 +17,10 @@
           [/^(\s*)(@headings)(\s.*)$/, ['white', 'keyword.heading', 'string']],
 
           // hierarchical
-          // PARA num - heading
-          [/^(\s*)(@hier)(\s+.+)(-)(\s+.*$)/, ['white', 'keyword.hier', 'constant.numeric', 'delimiter', 'string']],
-          // PARA num
-          [/^(\s*)(@hier)(\s+.+$)/, ['white', 'keyword.hier', 'constant.numeric']],
+          // Part num - heading
+          [/^(\s*)(@hier)(\s+.+)(-)(\s+.*$)/i, ['white', 'keyword.hier', 'constant.numeric', 'delimiter', 'string']],
+          // Part num
+          [/^(\s*)(@hier)(\s+.+$)/i, ['white', 'keyword.hier', 'constant.numeric']],
 
           // 2. Section heading
           [/^(\s*)([0-9][0-9a-z]*\.)(\s.*$)/, ['white', 'constant.numeric', 'string']],
@@ -55,69 +55,6 @@
     };
 
     image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
-
-    constructor (frbrUri, xslUrl) {
-      this.frbrUri = frbrUri;
-      this.xslUrl = xslUrl;
-    }
-
-    monacoOptions () {
-      this.installLanguage();
-
-      return {
-        codeLens: false,
-        detectIndentation: false,
-        foldingStrategy: 'indentation',
-        language: this.language_id,
-        lineDecorationsWidth: 0,
-        lineNumbersMinChars: 3,
-        roundedSelection: false,
-        scrollBeyondLastLine: false,
-        showFoldingControls: 'always',
-        tabSize: 2,
-        wordWrap: 'on',
-        theme: this.theme_id,
-        wrappingIndent: 'same',
-      }
-    }
-
-    /**
-     * Setup the grammar for a particular document model.
-     */
-    setup () {
-      // setup akn to text transform
-      const self = this;
-      // TODO: don't use jquery
-      $.get(this.xslUrl).then(function (xml) {
-        const textTransform = new XSLTProcessor();
-        textTransform.importStylesheet(xml);
-        self.textTransform = textTransform;
-      });
-    }
-
-    /**
-     * Unparse an XML element into a string.
-     */
-    xmlToText (element) {
-      return this.textTransform
-        .transformToFragment(element, document)
-        .firstChild.textContent
-        // remove multiple consecutive blank lines
-        .replace(/^( *\n){2,}/gm, "\n");
-    }
-
-    /**
-     * Configure a new instance of a Monaco editor.
-     */
-    setupEditor (editor) {
-      this.installActions(editor);
-    }
-
-    installLanguage () {
-      monaco.languages.register({ id: this.language_id });
-      monaco.languages.setMonarchTokensProvider(this.language_id, this.language_def);
-      monaco.editor.defineTheme(this.theme_id, this.theme_def);
-    }
 
     installActions (editor) {
       editor.addAction({
@@ -157,7 +94,7 @@
           const cursor = sel.setEndPosition(sel.startLineNumber + 1, 12 + 24)
             .setStartPosition(sel.startLineNumber + 1, 12);
 
-          editor.executeEdits('indigo', [{
+          editor.executeEdits(this.language_id, [{
             identifier: 'insert.schedule',
             range: sel,
             text: '\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n',
@@ -190,7 +127,7 @@
           const cursor = sel.setEndPosition(sel.startLineNumber + 3, 3)
             .setStartPosition(sel.startLineNumber + 3, 3);
 
-          editor.executeEdits('indigo', [{
+          editor.executeEdits(this.language_id, [{
             identifier: 'insert.table',
             range: sel,
             text: table,
@@ -198,16 +135,6 @@
           editor.pushUndoStop();
         }
       });
-    }
-
-    insertRemark (editor, remark) {
-      const sel = editor.getSelection();
-      editor.executeEdits('indigo', [{
-        identifier: 'insert.remark',
-        range: sel,
-        text: this.markupRemark(remark),
-      }]);
-      editor.pushUndoStop();
     }
 
     /**
@@ -224,75 +151,20 @@
       return `[${title}](${href})`;
     }
 
+    markupImage (title, src) {
+      return `![${title}](${src})`;
+    }
+
     /**
      * Get the image filename at the cursor, if any.
      */
     getImageAtCursor (editor) {
-      const match = this.getMatchAtCursor(editor, this.image_re);
+      const match = super.getImageAtCursor(editor);
       if (match) {
-        // return the filename
-        return match[2];
+        match.title = match.match[1];
+        match.src = match.match[2];
       }
-    }
-
-    /**
-     * Returns the match object, if any, for a regular expression match at the current cursor position,
-     * on the current line.
-     */
-    getMatchAtCursor (editor, regexp) {
-      const sel = editor.getSelection();
-      const line = editor.getModel().getLineContent(sel.startLineNumber);
-
-      for (let match of line.matchAll(regexp)) {
-        if (match.index <= sel.startColumn && sel.startColumn <= match.index + match[0].length) {
-          return match;
-        }
-      }
-    }
-
-    /**
-     * Insert or update the image at the current cursor
-     */
-    insertImageAtCursor (editor, filename) {
-      const match = this.getMatchAtCursor(editor, this.image_re);
-      let sel = editor.getSelection();
-      let image;
-
-      if (match) {
-        // update existing image
-        image = `![${match[1]}](${filename})`;
-        sel = sel.setEndPosition(sel.startLineNumber, match.index + match[0].length + 1);
-        sel = sel.setStartPosition(sel.startLineNumber, match.index + 1);
-      } else {
-        // insert new image
-        image = `![](${filename})`;
-      }
-
-      editor.executeEdits('indigo', [{
-        identifier: 'insert.remark',
-        range: sel,
-        text: image,
-      }]);
-
-      editor.pushUndoStop();
-    }
-
-    /**
-     * Paste these (clean) XML tables into the editor.
-     */
-    pasteTables (editor, tables) {
-      const text = [];
-
-      for (let i = 0; i < tables.length; i++) {
-        text.push(this.xmlToText(tables[i]));
-      }
-
-      editor.executeEdits('indigo', [{
-        identifier: 'insert.table',
-        range: editor.getSelection(),
-        text: text.join('\n'),
-      }]);
-      editor.pushUndoStop();
+      return match;
     }
   }
 

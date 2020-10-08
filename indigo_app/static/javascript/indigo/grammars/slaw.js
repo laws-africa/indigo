@@ -2,59 +2,62 @@
   "use strict";
 
   class SlawGrammarModel extends Indigo.grammars.registry.base {
-    language_id = 'slaw';
-    language_def = {
-      defaultToken: '',
-      hier: /Part|Chapter|Subpart/,
-      markers: /PREFACE|PREAMBLE|BODY/,
-      headings: /LONGTITLE|CROSSHEADING|HEADING|SUBHEADING/,
-      tokenizer: {
-        root: [
-          // grouping markers
-          [/^@markers\s*$/, 'keyword.marker'],
+    constructor (...args) {
+      super(...args);
+      this.language_id = 'slaw';
+      this.language_def = {
+        defaultToken: '',
+        hier: /Part|Chapter|Subpart/,
+        markers: /PREFACE|PREAMBLE|BODY/,
+        headings: /LONGTITLE|CROSSHEADING|HEADING|SUBHEADING/,
+        tokenizer: {
+          root: [
+            // grouping markers
+            [/^@markers\s*$/, 'keyword.marker'],
 
-          // single line headings
-          [/^(\s*)(@headings)(\s.*)$/, ['white', 'keyword.heading', 'string']],
+            // single line headings
+            [/^(\s*)(@headings)(\s.*)$/, ['white', 'keyword.heading', 'string']],
 
-          // hierarchical
-          // Part num - heading
-          [/^(\s*)(@hier)(\s+.+)(-)(\s+.*$)/i, ['white', 'keyword.hier', 'constant.numeric', 'delimiter', 'string']],
-          // Part num
-          [/^(\s*)(@hier)(\s+.+$)/i, ['white', 'keyword.hier', 'constant.numeric']],
+            // hierarchical
+            // Part num - heading
+            [/^(\s*)(@hier)(\s+.+)(-)(\s+.*$)/i, ['white', 'keyword.hier', 'constant.numeric', 'delimiter', 'string']],
+            // Part num
+            [/^(\s*)(@hier)(\s+.+$)/i, ['white', 'keyword.hier', 'constant.numeric']],
 
-          // 2. Section heading
-          [/^(\s*)([0-9][0-9a-z]*\.)(\s.*$)/, ['white', 'constant.numeric', 'string']],
+            // 2. Section heading
+            [/^(\s*)([0-9][0-9a-z]*\.)(\s.*$)/, ['white', 'constant.numeric', 'string']],
 
-          // (2) subsections
-          // (a) list
-          [/^(\s*)(\([0-9a-z]+\))/, ['white', 'constant.numeric']],
+            // (2) subsections
+            // (a) list
+            [/^(\s*)(\([0-9a-z]+\))/, ['white', 'constant.numeric']],
 
-          // attachments
-          [/\s*(SCHEDULE)\b/, 'keyword.schedule'],
+            // attachments
+            [/\s*(SCHEDULE)\b/, 'keyword.schedule'],
 
-          // inlines
-          [/\*\*.*?\*\*/, 'inline.bold'],
-          [/\/\/.*?\/\//, 'inline.italic'],
+            // inlines
+            [/\*\*.*?\*\*/, 'inline.bold'],
+            [/\/\/.*?\/\//, 'inline.italic'],
 
-          [/[{}[\]()]/, '@brackets']
+            [/[{}[\]()]/, '@brackets']
+          ]
+        }
+      };
+      this.theme_id = 'slaw';
+      this.theme_def = {
+        base: 'vs',
+        inherit: true,
+        rules: [
+          {token: 'string', foreground: '008000'},
+          {token: 'constant.numeric', foreground: '0000FF'},
+          {token: 'inline.bold', fontStyle: 'bold'},
+          {token: 'inline.italic', fontStyle: 'italic'},
+          {token: 'inline.ref', fontStyle: 'underline', foreground: 'ffa500'},
+          {token: 'inline.underline', fontStyle: 'text-decoration: underline'}
         ]
-      }
-    };
-    theme_id = 'slaw';
-    theme_def = {
-      base: 'vs',
-      inherit: true,
-      rules: [
-        { token: 'string', foreground: '008000' },
-        { token: 'constant.numeric', foreground: '0000FF' },
-        { token: 'inline.bold', fontStyle: 'bold' },
-        { token: 'inline.italic', fontStyle: 'italic' },
-        { token: 'inline.ref', fontStyle: 'underline', foreground: 'ffa500' },
-        { token: 'inline.underline', fontStyle: 'text-decoration: underline' }
-      ]
-    };
+      };
 
-    image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
+      this.image_re = /!\[([^\]]*)]\(([^)]*)\)/g;
+    }
 
     installActions (editor) {
       editor.addAction({

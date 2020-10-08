@@ -8,17 +8,16 @@
    * Base class for grammar models.
    */
   class GrammarModel {
-    language_id = null;
-    language_def = {};
-    theme_id = null;
-    theme_def = {
-      base: 'vs',
-      inherit: true,
-    };
-
     constructor (frbrUri, xslUrl) {
       this.frbrUri = frbrUri;
       this.xslUrl = xslUrl;
+      this.language_id = null;
+      this.language_def = {};
+      this.theme_id = null;
+      this.theme_def = {
+        base: 'vs',
+        inherit: true,
+      };
     }
 
     monacoOptions () {

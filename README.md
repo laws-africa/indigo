@@ -136,13 +136,12 @@ And then commit the changes.
 Indigo uses a small number of node modules written in ES6. They need to be compiled into a single JS file
 because Indigo doesn't use ES6.
 
-To do this, install [browserify](http://browserify.org/), then:
+To do this, we use webpack.
 
 ```
 npm install
-browserify indigo_app/static/lib/dom-utils.src.js > indigo_app/static/lib/dom-utils.js
+npx webpack
 ```
-
 
 ## Testing
 

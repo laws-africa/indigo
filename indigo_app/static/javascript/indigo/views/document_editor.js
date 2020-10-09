@@ -62,64 +62,7 @@
         );
         new ResizeObserver(() => { this.textEditor.layout(); }).observe(this.textEditor.getContainerDomNode());
         this.grammarModel.setupEditor(this.textEditor);
-        this.setupTablePasting();
       }
-    },
-
-    /* Setup pasting so that when the user pastes an HTML table
-       while in text edit mode, we change it into a grammar-supported table style.
-
-       We cannot disable the Monaco editor paste functionality. Instead, we
-       allow it to happen and then undo it if necessary, and replace the pasted
-       text with the table.
-     */
-    setupTablePasting: function() {
-      function cleanTable(table) {
-        // strip out namespaced tags - we don't want MS Office's tags
-        var elems = table.getElementsByTagName("*");
-        for (var i = 0; i < elems.length; i++) {
-          var elem = elems[i];
-
-          if (elem.tagName.indexOf(':') > -1) {
-            elem.remove();
-            // the element collection is live, so keep i the same
-            i--;
-          } else {
-            // strip style and namespaced attributes, too
-            cleanAttributes(elem);
-          }
-        }
-      }
-
-      function cleanAttributes(elem) {
-        elem.getAttributeNames().forEach(function(name) {
-          if (name === 'style' || name.indexOf(':') > -1) {
-            elem.removeAttribute(name);
-          }
-        });
-      }
-
-      this.textEditor.getDomNode().querySelector('textarea.inputarea').addEventListener('paste', (e) => {
-        const cb = e.clipboardData;
-
-        if (cb.types.indexOf('text/html') > -1) {
-          const doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
-                tables = doc.body.querySelectorAll('table'),
-                toPaste = [];
-
-          if (tables.length > 0) {
-            // undo the paste
-            this.textEditor.trigger('indigo', 'undo');
-
-            for (let i = 0; i < tables.length; i++) {
-              cleanTable(tables[i]);
-              toPaste.push(this.tableEditor.tableToAkn(tables[i]));
-            }
-
-            this.grammarModel.pasteTables(this.textEditor, toPaste);
-          }
-        }
-      });
     },
 
     documentChanged: function() {

@@ -67,7 +67,7 @@
     },
 
     /* Setup pasting so that when the user pastes an HTML table
-       while in text edit mode, we change it a grammar-supported table style.
+       while in text edit mode, we change it into a grammar-supported table style.
 
        We cannot disable the Monaco editor paste functionality. Instead, we
        allow it to happen and then undo it if necessary, and replace the pasted

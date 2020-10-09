@@ -52,18 +52,18 @@
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Edit</button>
         <div class="dropdown-menu with-shortcuts">
-          <a class="dropdown-item edit-find" href="#">Find... <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a>
-          <a class="dropdown-item edit-find-next" href="#">Find next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
-          <a class="dropdown-item edit-find-previous" href="#">Find previous<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a>
-          <a class="dropdown-item edit-find-replace" href="#">Find and replace...<span class="shortcut win">Ctrl-H</span><span class="shortcut osx">⌘-⌥-F</span></a>
+          <a class="dropdown-item editor-action" data-action="actions.find" href="#">Find... <span class="shortcut win">Ctrl-F</span><span class="shortcut osx">⌘-F</span></a>
+          <a class="dropdown-item editor-action" data-action="editor.action.nextMatchFindAction" href="#">Find next<span class="shortcut win">Ctrl-K</span><span class="shortcut osx">⌘-G</span></a>
+          <a class="dropdown-item editor-action" data-action="editor.action.previousMatchFindAction" href="#">Find previous<span class="shortcut win">Ctrl-Shift-K</span><span class="shortcut osx">⌘-Shift-G</span></a>
+          <a class="dropdown-item editor-action" data-action="editor.action.startFindReplaceAction" href="#">Find and replace...<span class="shortcut win">Ctrl-H</span><span class="shortcut osx">⌘-⌥-F</span></a>
         </div>
       </div>
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle" data-toggle="dropdown">Insert</button>
         <div class="dropdown-menu">
           <a class="dropdown-item insert-image" href="#">Insert image...</a>
-          <a class="dropdown-item insert-table" href="#">Insert table</a>
-          <a class="dropdown-item insert-schedule" href="#">Insert Schedule</a>
+          <a class="dropdown-item editor-action" data-action="insert.table" href="#">Insert table</a>
+          <a class="dropdown-item editor-action" data-action="insert.schedule" href="#">Insert Schedule</a>
           <div class="dropdown-item dropdown-submenu">
             <a class="dropdown-item" href="#" data-toggle="dropdown">Insert annotation</a>
             <div class="dropdown-menu">
@@ -81,9 +81,9 @@
       <div class="btn-group btn-group-sm">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle mr-2" data-toggle="dropdown">Markup</button>
         <div class="dropdown-menu">
-          <a class="dropdown-item markup-bold" href="#">Bold</a>
-          <a class="dropdown-item markup-italics" href="#">Italics</a>
-          <a class="dropdown-item markup-remark" href="#">Remark</a>
+          <a class="dropdown-item editor-action" data-action="format.bold" href="#">Bold</a>
+          <a class="dropdown-item editor-action" data-action="format.italics" href="#">Italics</a>
+          <a class="dropdown-item editor-action" data-action="format.remark" href="#">Remark</a>
         </div>
       </div>
     </div>

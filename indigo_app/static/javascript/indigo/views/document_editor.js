@@ -16,86 +16,64 @@
       'click .btn.edit-table': 'editTable',
       'click .quick-edit': 'quickEdit',
 
-      'click .edit-find': 'editFind',
-      'click .edit-find-next': 'editFindNext',
-      'click .edit-find-previous': 'editFindPrevious',
-      'click .edit-find-replace': 'editFindReplace',
+      'click .editor-action': 'triggerEditorAction',
 
       'click .insert-image': 'insertImage',
-      'click .insert-table': 'insertTable',
-      'click .insert-schedule': 'insertSchedule',
-
       'click .insert-remark': 'insertRemark',
-      'click .markup-remark': 'markupRemark',
-      'click .markup-bold': 'markupBold',
-      'click .markup-italics': 'markupItalics',
     },
 
     initialize: function(options) {
-      var self = this;
-
       this.parent = options.parent;
       this.name = 'source';
       this.editing = false;
+      this.updating = false;
       this.quickEditTemplate = $('<a href="#" class="quick-edit"><i class="fas fa-pencil-alt"></i></a>')[0];
+
+      this.grammarName = this.parent.model.tradition().settings.grammar.name;
+      this.grammarModel = new Indigo.grammars.registry[this.grammarName](
+        this.parent.model.get('frbr_uri'),
+        this.parent.model.url() + '/static/xsl/text.xsl');
+      this.grammarModel.setup();
 
       // setup renderer
       this.editorReady = $.Deferred();
       this.listenTo(this.parent.model, 'change', this.documentChanged);
 
-      // setup xml editor
-      this.xmlEditor = ace.edit(this.$(".document-xml-editor .ace-editor")[0]);
-      this.xmlEditor.setTheme("ace/theme/monokai");
-      this.xmlEditor.getSession().setMode("ace/mode/xml");
-      this.xmlEditor.setValue();
-      this.xmlEditor.$blockScrolling = Infinity;
-      this.onEditorChange = _.debounce(_.bind(this.xmlEditorChanged, this), 500);
-
-      // setup text editor
       this.$textEditor = this.$('.document-text-editor');
-      this.textEditor = ace.edit(this.$(".document-text-editor .ace-editor")[0]);
-      this.textEditor.setTheme("ace/theme/xcode");
-      this.textEditor.setValue();
-      this.textEditor.getSession().setUseWrapMode(true);
-      this.textEditor.setShowPrintMargin(false);
-      this.textEditor.$blockScrolling = Infinity;
 
       // setup table editor
       this.tableEditor = new Indigo.TableEditorView({parent: this, documentContent: this.parent.documentContent});
       this.tableEditor.on('start', this.tableEditStart, this);
       this.tableEditor.on('finish', this.tableEditFinish, this);
-      this.setupTablePasting();
 
       this.$toolbar = $('.document-editor-toolbar');
 
       this.setupRenderers();
-      this.textEditor.getSession().setMode(this.parent.model.tradition().settings.grammar.aceMode);
 
       // get the appropriate remark style for the tradition
       this.remarkGenerator = Indigo.remarks[this.parent.model.tradition().settings.remarkGenerator];
     },
 
-    /* Setup pasting so that when the user pastes an HTML table
-       while in text edit mode, we change it into wikipedia style tables.
+    setupTextEditor: function() {
+      if (!this.textEditor) {
+        this.textEditor = window.monaco.editor.create(
+          this.el.querySelector('.document-text-editor .monaco-editor'),
+          this.grammarModel.monacoOptions()
+        );
+        new ResizeObserver(() => { this.textEditor.layout(); }).observe(this.textEditor.getContainerDomNode());
+        this.grammarModel.setupEditor(this.textEditor);
+        this.setupTablePasting();
+      }
+    },
 
-       We cannot disable the Ace editor paste functionality. Instead, we
-       bypass it by pretending there is no text to paste. Then, we handle
-       the paste event itself and re-inject the correct text to paste.
+    /* Setup pasting so that when the user pastes an HTML table
+       while in text edit mode, we change it into a grammar-supported table style.
+
+       We cannot disable the Monaco editor paste functionality. Instead, we
+       allow it to happen and then undo it if necessary, and replace the pasted
+       text with the table.
      */
     setupTablePasting: function() {
-      var allowPaste = false,
-          self = this;
-
-      function pasteTable(table, i) {
-        self.xmlToText(self.tableEditor.tableToAkn(table)).then(function (text) {
-          if (i > 0) text = "\n" + text;
-
-          allowPaste = true;
-          self.textEditor.onPaste(text);
-          allowPaste = false;
-        });
-      }
-
       function cleanTable(table) {
         // strip out namespaced tags - we don't want MS Office's tags
         var elems = table.getElementsByTagName("*");
@@ -121,30 +99,26 @@
         });
       }
 
-      this.textEditor.on('paste', function(e) {
-        if (!allowPaste) { e.text = ''; }
-      });
-
-      this.$textEditor.on('paste', function(e) {
-        var cb = e.originalEvent.clipboardData;
+      this.textEditor.getDomNode().querySelector('textarea.inputarea').addEventListener('paste', (e) => {
+        const cb = e.clipboardData;
 
         if (cb.types.indexOf('text/html') > -1) {
-          var doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
-              tables = doc.body.querySelectorAll('table');
+          const doc = new DOMParser().parseFromString(cb.getData('text/html'), 'text/html'),
+                tables = doc.body.querySelectorAll('table'),
+                toPaste = [];
 
           if (tables.length > 0) {
-            for (var i = 0; i < tables.length; i++) {
+            // undo the paste
+            this.textEditor.trigger('indigo', 'undo');
+
+            for (let i = 0; i < tables.length; i++) {
               cleanTable(tables[i]);
-              pasteTable(tables[i], i);
+              toPaste.push(this.tableEditor.tableToAkn(tables[i]));
             }
-            return;
+
+            this.grammarModel.pasteTables(this.textEditor, toPaste);
           }
         }
-
-        // no html or no tables, use normal paste
-        allowPaste = true;
-        self.textEditor.onPaste(cb.getData('text'));
-        allowPaste = false;
       });
     },
 
@@ -210,44 +184,29 @@
       this.$toolbar.find('.text-editor-buttons').removeClass('d-none');
       this.$('.document-workspace-buttons').addClass('d-none');
 
-      var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       // text from node in the actual XML document
-      this.xmlToText(this.fragment).then(function(text) {
-        // show the text editor
-        self.$('.document-content-view').addClass('show-text-editor');
+      const text = this.grammarModel.xmlToText(this.fragment);
 
-        self.$textEditor
-          .data('fragment', self.fragment.tagName)
-          .show();
+      // show the text editor
+      this.$('.document-content-view').addClass('show-text-editor');
 
-        self.textEditor.setValue(text);
-        self.textEditor.gotoLine(1, 0);
-        self.textEditor.focus();
+      this.setupTextEditor();
+      this.textEditor.setValue(text);
+      this.textEditor.layout();
+      const top = {column: 1, lineNumber: 1};
+      this.textEditor.setPosition(top);
+      this.textEditor.revealPosition(top);
+      this.textEditor.focus();
 
-        self.$('.document-sheet-container').scrollTop(0);
-      });
-    },
+      this.$textEditor
+        .data('fragment', this.fragment.tagName)
+        .show();
 
-    xmlToText: function(element) {
-      var self = this,
-          deferred = $.Deferred();
-
-      this.textTransformReady.then(function() {
-        var text = self.textTransform
-          .transformToFragment(element, document)
-          .firstChild.textContent
-          // remove multiple consecutive blank lines
-          .replace(/^( *\n){2,}/gm, "\n");
-
-        deferred.resolve(text);
-      });
-
-      return deferred;
+      this.$('.document-sheet-container').scrollTop(0);
     },
 
     saveTextEditor: function(e) {
       var self = this;
-      var $editable = this.$('.document-workspace-content .akoma-ntoso').children().first();
       var $btn = this.$('.text-editor-buttons .btn.save');
       var content = this.textEditor.getValue();
       var fragmentRule = this.parent.model.tradition().grammarRule(this.fragment);
@@ -281,10 +240,13 @@
             newFragment = newFragment.documentElement.children;
           }
 
-          self.parent.updateFragment(self.fragment, newFragment);
+          this.updating = true;
+          try {
+            self.parent.updateFragment(self.fragment, newFragment);
+          } finally {
+            this.updating = false;
+          }
           self.closeTextEditor();
-          self.render();
-          self.setXmlEditorValue(Indigo.toXml(newFragment[0]));
         })
         .fail(function(xhr, status, error) {
           // this will be null if we've been cancelled without an ajax response
@@ -349,41 +311,15 @@
 
     editFragment: function(node) {
       // edit node, a node in the XML document
-      this.tableEditor.discardChanges(null, true);
-      this.closeTextEditor();
-      this.render();
-      this.$('.document-sheet-container').scrollTop(0);
-
-      this.setXmlEditorValue(Indigo.toXml(node));
-    },
-
-    setXmlEditorValue: function(xml) {
-      // pretty-print the xml
-      xml = prettyPrintXml(xml);
-
-      this.xmlEditor.removeListener('change', this.onEditorChange);
-      this.xmlEditor.setValue(xml);
-      this.xmlEditor.on('change', this.onEditorChange);
-    },
-
-    xmlEditorChanged: function() {
-      // save the contents of the XML editor
-      var newFragment;
-      console.log('Parsing changes to XML');
-
-      try {
-        newFragment = $.parseXML(this.xmlEditor.getValue()).documentElement;
-      } catch(err) {
-        // squash errors
-        console.log(err);
-        return;
+      if (!this.updating) {
+        this.tableEditor.discardChanges(null, true);
+        this.closeTextEditor();
+        this.render();
+        this.$('.document-sheet-container').scrollTop(0);
       }
-
-      this.parent.updateFragment(this.parent.fragment, [newFragment]);
-      this.render();
     },
 
-    // Save the content of the XML editor into the DOM, returns a Deferred
+    // Save the content of the editor into the DOM, returns a Deferred
     saveChanges: function() {
       this.tableEditor.saveChanges();
       this.closeTextEditor();
@@ -580,24 +516,12 @@
       this.editing = false;
     },
 
-    editFind: function(e) {
+    triggerEditorAction: function(e) {
+      // an editor action from the toolbar
       e.preventDefault();
-      this.textEditor.execCommand('find');
-    },
-
-    editFindNext: function(e) {
-      e.preventDefault();
-      this.textEditor.execCommand('findnext');
-    },
-
-    editFindPrevious: function(e) {
-      e.preventDefault();
-      this.textEditor.execCommand('findprevious');
-    },
-
-    editFindReplace: function(e) {
-      e.preventDefault();
-      this.textEditor.execCommand('replace');
+      const action = e.target.getAttribute('data-action');
+      this.textEditor.trigger('indigo', action);
+      this.textEditor.focus();
     },
 
     /**
@@ -613,75 +537,19 @@
         this.insertImageBox = new Indigo.InsertImageView({document: this.parent.model});
       }
 
-      // are we on an image tag in the editor?
-      var posn = this.textEditor.getCursorPosition(),
-          session = this.textEditor.getSession(),
-          token = session.getTokenAt(posn.row, posn.column),
-          selected = null,
-          alt_text = "", filename, parts;
+      let image = this.grammarModel.getImageAtCursor(this.textEditor);
+      let selected = null;
 
-      if (token && token.type == "constant.other.image") {
-        parts = token.value.split(/[[()\]]/);
-        alt_text = parts[1];
-        filename = parts[3];
+      if (image) {
+        let filename = image.src;
         if (filename.startsWith("media/")) filename = filename.substr(6);
-
         selected = this.parent.model.attachments().findWhere({filename: filename});
-      } else {
-        token = null;
       }
 
       this.insertImageBox.show(function(image) {
-        var tag = "![" + (alt_text) + "](media/" + image.get('filename') + ")";
-
-        if (token) {
-          // replace existing image
-          var Range = ace.require("ace/range").Range;
-          var range = new Range(posn.row, token.start, posn.row, token.start + token.value.length);
-          session.getDocument().replace(range, tag);
-        } else {
-          // new image
-          self.textEditor.insert(tag);
-        }
-
+        self.grammarModel.insertImageAtCursor(self.textEditor, 'media/' + image.get('filename'));
         self.textEditor.focus();
       }, selected);
-    },
-
-    insertTable: function(e) {
-      e.preventDefault();
-
-      var table,
-          posn = this.textEditor.getCursorPosition(),
-          range = this.textEditor.getSelectionRange();
-
-      if (this.textEditor.getSelectedText().length > 0) {
-        this.textEditor.clearSelection();
-
-        table = "\n{|\n|-\n";
-        var lines = this.textEditor.getSession().getTextRange(range).split("\n");
-        lines.forEach(function(line) {
-          // ignore empty lines
-          if (line.trim() !== "") {
-            table = table + "| " + line + "\n|-\n";
-          }
-        });
-        table = table + "|}\n";
-      } else {
-        table = ["", "{|", "|-", "! heading 1", "! heading 2", "|-", "| cell 1", "| cell 2", "|-", "| cell 3", "| cell 4", "|-", "|}", ""].join("\n");
-      }
-
-      this.textEditor.getSession().replace(range, table);
-
-      this.textEditor.moveCursorTo(posn.row + 3, 2);
-      this.textEditor.focus();
-    },
-
-    insertSchedule: function(e) {
-      e.preventDefault();
-
-      this.textEditor.insert('\nSCHEDULE - <optional schedule name>\n<optional schedule title>\n\n');
-      this.textEditor.focus();
     },
 
     getAmendingWork: function(document) {
@@ -700,59 +568,18 @@
       var amendedSection = this.fragment.id.replace('-', ' '),
           verb = e.currentTarget.getAttribute('data-verb'),
           amendingWork = this.getAmendingWork(this.parent.model),
-          remark = '[[<remark>]]';
+          remark = '<remark>';
 
       if (this.remarkGenerator && amendingWork) {
-        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork);
+        remark = this.remarkGenerator(this.parent.model, amendedSection, verb, amendingWork, this.grammarModel);
       }
 
-      this.textEditor.insert('\n' + remark + '\n');
-      this.textEditor.focus();
-    },
-
-    quickMarkup: function(marker) {
-      var range = this.textEditor.getSelectionRange();
-
-      if (this.textEditor.getSelectedText().length > 0) {
-        this.textEditor.clearSelection();
-
-        var text = this.textEditor.getSession().getTextRange(range);
-        this.textEditor.getSession().replace(range, marker(text));
-      } else {
-        this.textEditor.insert(marker(''));
-      }
-    },
-
-    markupRemark: function(e) {
-      e.preventDefault();
-
-      this.quickMarkup(function(text) {
-        return '[[' + (text || '<remark>') + ']]';
-      });
-      this.textEditor.focus();
-    },
-
-    markupBold: function(e) {
-      e.preventDefault();
-
-      this.quickMarkup(function(text) {
-        return '**' + (text || '<text>') + '**';
-      });
-      this.textEditor.focus();
-    },
-
-    markupItalics: function(e) {
-      e.preventDefault();
-
-      this.quickMarkup(function(text) {
-        return '//' + (text || '<text>') + '//';
-      });
+      this.grammarModel.insertRemark(this.textEditor, remark);
       this.textEditor.focus();
     },
 
     resize: function() {},
   });
-
 
   // Handle the document editor, tracking changes and saving it back to the server.
   Indigo.DocumentEditorView = Backbone.View.extend({
@@ -779,6 +606,8 @@
       // XXX this is a deferred to indicate when the editor is ready to edit
       this.editorReady = this.sourceEditor.editorReady;
       this.editFragment(null);
+
+      this.xmlEditor = new Indigo.XMLEditorView({parent: this});
     },
 
     tocSelectionChanged: function(selection) {
@@ -806,6 +635,7 @@
         this.$('.document-content-view .document-sheet-container .sheet-inner').toggleClass('is-fragment', !isRoot);
 
         this.sourceEditor.editFragment(fragment);
+        this.xmlEditor.editFragment(fragment);
       }
     },
 
@@ -813,6 +643,11 @@
       var show = !$(e.currentTarget).hasClass('active');
       this.$el.find('.document-content-view').toggleClass('show-xml-editor', show);
       this.$el.find('.document-content-view .annotations-container').toggleClass('hide-annotations', show);
+      if (show) {
+        this.xmlEditor.show();
+      } else {
+        this.xmlEditor.hide();
+      }
     },
 
     toggleShowAKNHierarchy: function(e) {
@@ -843,6 +678,9 @@
         var updated = this.documentContent.replaceNode(oldNode, newNodes);
         if (oldNode == this.fragment) {
           this.fragment = updated;
+          this.sourceEditor.editFragment(updated);
+          this.xmlEditor.editFragment(updated);
+          this.sourceEditor.render();
         }
       } finally {
         this.updating = false;

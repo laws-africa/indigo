@@ -29,7 +29,7 @@
 
             // (2) subsections
             // (a) list
-            [/^(\s*)(\([0-9a-z]+\))/, ['white', 'constant.numeric']],
+            [/^(\s*)(\([0-9a-z]+\))/i, ['white', 'constant.numeric']],
 
             // attachments
             [/^\s*(SCHEDULE)\b/, 'keyword.schedule'],

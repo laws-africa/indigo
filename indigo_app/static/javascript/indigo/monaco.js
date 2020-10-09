@@ -24,7 +24,7 @@
         text.length === 0 ?
           sel.setEndPosition(sel.startLineNumber, sel.startColumn + pre.length)
              .setStartPosition(sel.startLineNumber, sel.startColumn + pre.length)
-          : sel.setEndPosition(sel.endLineNumber, sel.endColumn + 4));
+          : sel.setEndPosition(sel.endLineNumber, sel.endColumn + pre.length + post.length));
       editor.executeEdits('indigo', [op], [cursor]);
     }
   };

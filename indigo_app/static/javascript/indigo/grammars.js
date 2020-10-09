@@ -37,7 +37,7 @@
         wordWrap: 'on',
         theme: this.theme_id,
         wrappingIndent: 'same',
-      }
+      };
     }
 
     /**

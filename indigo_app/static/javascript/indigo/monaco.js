@@ -20,10 +20,11 @@
         text: pre + text + post
       };
       // either extend the selection, or place cursor inside the tags
-      const cursor = text.length === 0
-        ? sel.setEndPosition(sel.startLineNumber, sel.startColumn + pre.length)
-          .setStartPosition(sel.startLineNumber, sel.startColumn + pre.length)
-        : sel.setEndPosition(sel.endLineNumber, sel.endColumn + 4);
+      const cursor = (
+        text.length === 0 ?
+          sel.setEndPosition(sel.startLineNumber, sel.startColumn + pre.length)
+             .setStartPosition(sel.startLineNumber, sel.startColumn + pre.length)
+          : sel.setEndPosition(sel.endLineNumber, sel.endColumn + 4));
       editor.executeEdits('indigo', [op], [cursor]);
     }
   };

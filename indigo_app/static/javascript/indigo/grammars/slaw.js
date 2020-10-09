@@ -25,7 +25,7 @@
             [/^(\s*)(@hier)(\s+.+$)/i, ['white', 'keyword.hier', 'constant.numeric']],
 
             // 2. Section heading
-            [/^(\s*)([0-9][0-9a-z]*\.)(\s.*$)/, ['white', 'constant.numeric', 'string']],
+            [/^(\s*)([0-9][0-9a-z]*\.)(\s.*$)/i, ['white', 'constant.numeric', 'string']],
 
             // (2) subsections
             // (a) list
@@ -65,6 +65,7 @@
         label: 'Format Bold',
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_B],
         run: function(editor) {
+          editor.pushUndoStop();
           Indigo.monaco.wrapSelection(editor, 'format.bold', '**', '**');
           editor.pushUndoStop();
         }
@@ -75,6 +76,7 @@
         label: 'Format Italics',
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_I],
         run: function(editor) {
+          editor.pushUndoStop();
           Indigo.monaco.wrapSelection(editor, 'format.italics', '//', '//');
           editor.pushUndoStop();
         }
@@ -84,6 +86,7 @@
         id: 'format.remark',
         label: 'Format Remark',
         run: function(editor) {
+          editor.pushUndoStop();
           Indigo.monaco.wrapSelection(editor, 'format.remark', '[[', ']]');
           editor.pushUndoStop();
         }
@@ -97,6 +100,7 @@
           const cursor = sel.setEndPosition(sel.startLineNumber + 1, 12 + 24)
             .setStartPosition(sel.startLineNumber + 1, 12);
 
+          editor.pushUndoStop();
           editor.executeEdits(this.language_id, [{
             identifier: 'insert.schedule',
             range: sel,
@@ -130,6 +134,7 @@
           const cursor = sel.setEndPosition(sel.startLineNumber + 3, 3)
             .setStartPosition(sel.startLineNumber + 3, 3);
 
+          editor.pushUndoStop();
           editor.executeEdits(this.language_id, [{
             identifier: 'insert.table',
             range: sel,

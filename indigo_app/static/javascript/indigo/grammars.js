@@ -112,6 +112,7 @@
 
     insertRemark (editor, remark) {
       const sel = editor.getSelection();
+      editor.pushUndoStop();
       editor.executeEdits(this.language_id, [{
         identifier: 'insert.remark',
         range: sel,
@@ -150,12 +151,12 @@
         image = this.markupImage('', filename);
       }
 
+      editor.pushUndoStop();
       editor.executeEdits(this.language_id, [{
         identifier: 'insert.image',
         range: sel,
         text: image,
       }]);
-
       editor.pushUndoStop();
     }
 
@@ -168,6 +169,7 @@
       const line = editor.getModel().getLineContent(sel.startLineNumber);
 
       for (let match of line.matchAll(regexp)) {
+        // is the cursor inside the match (which goes from match.index to match[0].length)?
         if (match.index <= sel.startColumn && sel.startColumn <= match.index + match[0].length) {
           return match;
         }
@@ -184,6 +186,7 @@
         text.push(this.xmlToText(tables[i]));
       }
 
+      editor.pushUndoStop();
       editor.executeEdits(this.language_id, [{
         identifier: 'insert.table',
         range: editor.getSelection(),

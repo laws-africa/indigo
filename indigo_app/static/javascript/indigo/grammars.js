@@ -194,8 +194,7 @@
   }
 
   Indigo.grammars = {
-    registry: {
-      base: GrammarModel,
-    },
+    GrammarModel: GrammarModel,
+    registry: {}
   };
 })(window);

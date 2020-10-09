@@ -1,7 +1,7 @@
 (function(exports) {
   "use strict";
 
-  class SlawGrammarModel extends Indigo.grammars.registry.base {
+  class SlawGrammarModel extends Indigo.grammars.GrammarModel {
     constructor (...args) {
       super(...args);
       this.language_id = 'slaw';

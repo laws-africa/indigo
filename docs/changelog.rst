@@ -1,11 +1,13 @@
 Changelog
 =========
 
+12.0 (?)
+--------
+
+* BREAKING: replace Ace editor with Monaco editor, for improved syntax highlighting and text editing
+
 11.1.0 (2020-09-14)
 -------------------
-
-Changes
-.......
 
 * FEATURE: Support for superscript and subscript in parser
 * FIX: keep /akn prefix for resolver

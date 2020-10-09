@@ -54,7 +54,7 @@
           showFoldingControls: 'always',
           tabSize: 2,
           wordWrap: 'on',
-          theme: 'vs-dark',
+          theme: 'vs',
           wrappingIndent: 'same',
         });
 

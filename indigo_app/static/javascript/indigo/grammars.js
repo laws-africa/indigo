@@ -83,7 +83,7 @@
      *
      * * format.bold
      * * format.italics
-     * * format.remork
+     * * format.remark
      * * insert.schedule
      * * insert.table
      *

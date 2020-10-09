@@ -32,7 +32,7 @@
             [/^(\s*)(\([0-9a-z]+\))/, ['white', 'constant.numeric']],
 
             // attachments
-            [/\s*(SCHEDULE)\b/, 'keyword.schedule'],
+            [/^\s*(SCHEDULE)\b/, 'keyword.schedule'],
 
             // inlines
             [/\*\*.*?\*\*/, 'inline.bold'],

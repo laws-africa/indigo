@@ -66,7 +66,7 @@
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_B],
         run: function(editor) {
           editor.pushUndoStop();
-          Indigo.monaco.wrapSelection(editor, 'format.bold', '**', '**');
+          indigoAkn.wrapSelection(editor, this.language_id, 'format.bold', '**', '**');
           editor.pushUndoStop();
         }
       });
@@ -77,7 +77,7 @@
         keybindings: [monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_I],
         run: function(editor) {
           editor.pushUndoStop();
-          Indigo.monaco.wrapSelection(editor, 'format.italics', '//', '//');
+          indigoAkn.wrapSelection(editor, this.language_id, 'format.italics', '//', '//');
           editor.pushUndoStop();
         }
       });
@@ -87,7 +87,7 @@
         label: 'Format Remark',
         run: function(editor) {
           editor.pushUndoStop();
-          Indigo.monaco.wrapSelection(editor, 'format.remark', '[[', ']]');
+          indigoAkn.wrapSelection(editor, this.language_id, 'format.remark', '[[', ']]');
           editor.pushUndoStop();
         }
       });

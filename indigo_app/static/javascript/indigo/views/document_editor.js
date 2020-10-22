@@ -623,8 +623,8 @@
           this.fragment = updated;
           this.sourceEditor.editFragment(updated);
           this.xmlEditor.editFragment(updated);
-          this.sourceEditor.render();
         }
+        this.sourceEditor.render();
       } finally {
         this.updating = false;
       }

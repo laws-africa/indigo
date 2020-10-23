@@ -238,7 +238,7 @@ class TaskForm(forms.ModelForm):
         self.country = country
         self.locality = locality
         self.fields['workflows'].queryset = self.fields['workflows'].queryset.\
-            filter(country=self.country, locality=self.locality)
+            filter(country=self.country, locality=self.locality, closed=False).order_by('title')
 
 
 class TaskFilterForm(forms.Form):

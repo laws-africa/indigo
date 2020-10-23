@@ -37,9 +37,9 @@
         from
       {% endif %}
       {% if this_workflow %}
-        this workflow
+        this project
       {% else %}
-        the workflow <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
+        the project <a href="{% url 'workflow_detail' place=workflow.place.place_code pk=workflow.pk %}">{{ workflow.title }}</a>
       {% endif %}
     {% endwith %}
   {% endif %}

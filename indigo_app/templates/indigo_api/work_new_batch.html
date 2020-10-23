@@ -53,13 +53,13 @@
         {% endif %}
 
         <div class="form-group">
-          <label for="{{ form.workflow.id_for_label }}">Choose a workflow for newly created tasks</label>
+          <label for="{{ form.workflow.id_for_label }}">Choose a project for newly created tasks</label>
 
           {% if form.fields.workflow.choices %}
             <div class="form-group">
               <div class="form-row">
                 <div class="col-md-6">
-                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a workflow">
+                  <select class="selectpicker form-control" name="{{ form.workflow.name }}" id="{{ form.workflow.id_for_label }}" data-live-search="true" title="Choose a project">
                     {% for option in form.workflow %}
                       {{ option }}
                     {% endfor %}
@@ -71,10 +71,10 @@
               <div class="form-text text-danger">{{ err }}</div>
             {% endfor %}
           {% else %}
-            <div class="text-danger">No workflows (create one and refresh)</div>
+            <div class="text-danger">No projects (create one and refresh)</div>
           {% endif %}
 
-          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">Create a new workflow</a>
+          <a href="{% url 'workflow_create' place=place.place_code %}" target="_blank">Create a new project</a>
         </div>
 
       </div>
@@ -188,10 +188,10 @@
           <li>Record the Spreadsheet URL under <a href="{% url 'place_settings' place=place.place_code %}" target="_blank">Settings</a>.</li>
           {% if bulk_creator.is_gsheets_enabled %}
             <li>Share the spreadsheet with {{ bulk_creator.share_with }}.</li>
-            <li>Choose a spreadsheet tab and a workflow.</li>
+            <li>Choose a spreadsheet tab and a project.</li>
           {% else %}
             <li>Make it accessible by turning link sharing on: 'Share | Get shareable link' (top-right corner).</li>
-            <li>Choose a workflow.</li>
+            <li>Choose a project.</li>
           {% endif %}
           <li><strong>Preview</strong> the new works to be created, resolve any errors / duplicates and <strong>Refresh preview</strong>.</li>
           <li><strong>Import works</strong>.</li>

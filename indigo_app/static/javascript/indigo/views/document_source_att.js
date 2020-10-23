@@ -113,8 +113,6 @@
           this.$view.addClass('d-none');
           this.$('.source-attachment-toggle').removeClass('active');
         }
-
-        Indigo.view.bodyEditorView.sourceEditor.textEditor.resize();
       },
 
       choose: function(item) {

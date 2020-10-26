@@ -9,17 +9,23 @@
     el: '.document-xml-editor',
 
     initialize: function(options) {
-      this.parent = options.parent;
       this.fragment = null;
       this.updating = false;
+      this.parent = options.parent;
+      this.documentContent = options.documentContent;
+      this.documentContent.on('change:dom', () => {
+        // if the fragment has been swapped out, don't use a stale fragment; our parent will
+        // call editFragment() to update our fragment
+        if (this.visible && this.fragment && this.fragment.ownerDocument === this.documentContent.xmlDocument) {
+          this.render();
+        }
+      });
     },
 
     editFragment: function(fragment) {
-      if (!this.updating) {
-        this.fragment = fragment;
-        if (this.visible) {
-          this.render();
-        }
+      this.fragment = fragment;
+      if (this.visible) {
+        this.render();
       }
     },
 
@@ -35,9 +41,18 @@
 
     render: function() {
       // pretty-print the xml
-      var xml = prettyPrintXml(Indigo.toXml(this.fragment));
-      this.editor.setValue(xml);
-      this.editor.layout();
+      const xml = prettyPrintXml(Indigo.toXml(this.fragment));
+      if (this.editor.getValue() !== xml) {
+        const posn = this.editor.getPosition();
+
+        // ignore the onDidChangeModelContent event triggered by setValue
+        this.updating = true;
+        this.editor.setValue(xml);
+        this.updating = false;
+
+        this.editor.setPosition(posn);
+        this.editor.layout();
+      }
     },
 
     setupXmlEditor: function() {
@@ -58,14 +73,17 @@
           wrappingIndent: 'same',
         });
 
+        new ResizeObserver(() => { this.editor.layout(); }).observe(this.editor.getContainerDomNode());
         const onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
-        this.editor.onDidChangeModelContent(onEditorChange);
+        this.editor.onDidChangeModelContent(() => {
+          if (!this.updating) onEditorChange();
+        });
       }
     },
 
     editorChanged: function() {
       // save the contents of the XML editor
-      var newFragment;
+      let newFragment;
       console.log('Parsing changes to XML');
 
       try {
@@ -76,12 +94,7 @@
         return;
       }
 
-      this.updating = true;
-      try {
-        this.parent.updateFragment(this.parent.fragment, [newFragment]);
-      } finally {
-        this.updating = false;
-      }
+      this.parent.updateFragment(this.parent.fragment, [newFragment]);
     },
 
   });

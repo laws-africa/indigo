@@ -16,7 +16,7 @@
       this.documentContent.on('change:dom', () => {
         // if the fragment has been swapped out, don't use a stale fragment; our parent will
         // call editFragment() to update our fragment
-        if (this.fragment.ownerDocument === this.documentContent.xmlDocument) {
+        if (this.visible && this.fragment && this.fragment.ownerDocument === this.documentContent.xmlDocument) {
           this.render();
         }
       });

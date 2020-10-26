@@ -9,9 +9,11 @@
     el: '.document-xml-editor',
 
     initialize: function(options) {
-      this.parent = options.parent;
       this.fragment = null;
       this.updating = false;
+      this.parent = options.parent;
+      this.documentContent = options.documentContent;
+      this.documentContent.on('change:dom', this.render.bind(this));
     },
 
     editFragment: function(fragment) {
@@ -34,10 +36,14 @@
     },
 
     render: function() {
-      // pretty-print the xml
-      var xml = prettyPrintXml(Indigo.toXml(this.fragment));
-      this.editor.setValue(xml);
-      this.editor.layout();
+      if (this.visible) {
+        // pretty-print the xml
+        const xml = prettyPrintXml(Indigo.toXml(this.fragment));
+        this.updating = true;
+        this.editor.setValue(xml);
+        this.updating = false;
+        this.editor.layout();
+      }
     },
 
     setupXmlEditor: function() {
@@ -58,14 +64,17 @@
           wrappingIndent: 'same',
         });
 
+        new ResizeObserver(() => { this.editor.layout(); }).observe(this.editor.getContainerDomNode());
         const onEditorChange = _.debounce(_.bind(this.editorChanged, this), 500);
-        this.editor.onDidChangeModelContent(onEditorChange);
+        this.editor.onDidChangeModelContent(() => {
+          if (!this.updating) onEditorChange();
+        });
       }
     },
 
     editorChanged: function() {
       // save the contents of the XML editor
-      var newFragment;
+      let newFragment;
       console.log('Parsing changes to XML');
 
       try {

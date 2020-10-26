@@ -550,7 +550,7 @@
       this.editorReady = this.sourceEditor.editorReady;
       this.editFragment(null);
 
-      this.xmlEditor = new Indigo.XMLEditorView({parent: this});
+      this.xmlEditor = new Indigo.XMLEditorView({parent: this, documentContent: this.documentContent});
     },
 
     tocSelectionChanged: function(selection) {

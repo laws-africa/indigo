@@ -42,7 +42,7 @@
         return;
       }
 
-      options['fromContent'] = true;
+      options.fromContent = true;
       this.trigger('change:dom', model, options);
     },
 

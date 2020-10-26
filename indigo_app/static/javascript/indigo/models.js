@@ -42,7 +42,8 @@
         return;
       }
 
-      this.trigger('change:dom', options);
+      options['fromContent'] = true;
+      this.trigger('change:dom', model, options);
     },
 
     domChanged: function(model, options) {

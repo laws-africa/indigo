@@ -8,7 +8,6 @@ from datetime import timedelta
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from django.contrib.auth.models import User
-from django.conf import settings
 from django.db.models import Count
 from django.views.generic import DetailView, FormView, UpdateView, CreateView, DeleteView, View
 from django.views.generic.detail import SingleObjectMixin
@@ -21,7 +20,7 @@ import datetime
 
 from indigo.plugins import plugins
 from indigo_api.models import Subtype, Work, Amendment, Document, Task, PublicationDocument, \
-    ArbitraryExpressionDate, Commencement
+    ArbitraryExpressionDate, Commencement, Workflow
 from indigo_api.serializers import WorkSerializer
 from indigo_api.views.attachments import view_attachment
 from indigo_api.signals import work_changed
@@ -843,7 +842,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['workflow'].queryset = self.place.workflows.filter(closed=False).all()
+        form.fields['workflow'].queryset = Workflow.objects.filter(country=self.country, locality=self.locality, closed=False).order_by('title').all()
 
         url = form.data.get('spreadsheet_url') or form.initial['spreadsheet_url']
 

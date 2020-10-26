@@ -1,7 +1,7 @@
 {% extends "place/tabbed_layout.html" %}
 {% load humanize indigo_app %}
 
-{% block title %}Workflows {{ block.super }}{% endblock %}
+{% block title %}Projects {{ block.super }}{% endblock %}
 
 {% block content %}
 
@@ -22,7 +22,7 @@
           </div>
 
           <div class="ml-auto float-right">
-            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
+            <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New project</a>
           </div>
 
         </div>
@@ -97,8 +97,8 @@
 
     {% else %}
       <div class="card-body text-center">
-        <p>Create workflows to group and track related tasks.</p>
-        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New workflow</a>
+        <p>Create projects to group and track related tasks.</p>
+        <a href="{% url 'workflow_create' place=place.place_code %}" class="btn btn-success">New project</a>
       </div>
     {% endif %}
 

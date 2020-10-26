@@ -40,20 +40,18 @@
     },
 
     render: function() {
-      if (this.visible) {
-        // pretty-print the xml
-        const xml = prettyPrintXml(Indigo.toXml(this.fragment));
-        if (this.editor.getValue() !== xml) {
-          const posn = this.editor.getPosition();
+      // pretty-print the xml
+      const xml = prettyPrintXml(Indigo.toXml(this.fragment));
+      if (this.editor.getValue() !== xml) {
+        const posn = this.editor.getPosition();
 
-          // ignore the onDidChangeModelContent event triggered by setValue
-          this.updating = true;
-          this.editor.setValue(xml);
-          this.updating = false;
+        // ignore the onDidChangeModelContent event triggered by setValue
+        this.updating = true;
+        this.editor.setValue(xml);
+        this.updating = false;
 
-          this.editor.setPosition(posn);
-          this.editor.layout();
-        }
+        this.editor.setPosition(posn);
+        this.editor.layout();
       }
     },
 

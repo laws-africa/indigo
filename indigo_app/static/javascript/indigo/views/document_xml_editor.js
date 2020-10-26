@@ -13,15 +13,19 @@
       this.updating = false;
       this.parent = options.parent;
       this.documentContent = options.documentContent;
-      this.documentContent.on('change:dom', this.render.bind(this));
+      this.documentContent.on('change:dom', () => {
+        // if the fragment has been swapped out, don't use a stale fragment; our parent will
+        // call editFragment() to update our fragment
+        if (this.fragment.ownerDocument === this.documentContent.xmlDocument) {
+          this.render();
+        }
+      });
     },
 
     editFragment: function(fragment) {
-      if (!this.updating) {
-        this.fragment = fragment;
-        if (this.visible) {
-          this.render();
-        }
+      this.fragment = fragment;
+      if (this.visible) {
+        this.render();
       }
     },
 
@@ -39,10 +43,17 @@
       if (this.visible) {
         // pretty-print the xml
         const xml = prettyPrintXml(Indigo.toXml(this.fragment));
-        this.updating = true;
-        this.editor.setValue(xml);
-        this.updating = false;
-        this.editor.layout();
+        if (this.editor.getValue() !== xml) {
+          const posn = this.editor.getPosition();
+
+          // ignore the onDidChangeModelContent event triggered by setValue
+          this.updating = true;
+          this.editor.setValue(xml);
+          this.updating = false;
+
+          this.editor.setPosition(posn);
+          this.editor.layout();
+        }
       }
     },
 
@@ -85,12 +96,7 @@
         return;
       }
 
-      this.updating = true;
-      try {
-        this.parent.updateFragment(this.parent.fragment, [newFragment]);
-      } finally {
-        this.updating = false;
-      }
+      this.parent.updateFragment(this.parent.fragment, [newFragment]);
     },
 
   });

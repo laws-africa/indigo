@@ -108,53 +108,83 @@
               <th>Number</th>
               <th>Year</th>
               <th>FRBR URI</th>
+              <th>Tasks</th>
+              <th>Relationships</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
           <tbody>
-            {% for work in works %}
+            {% for row in works %}
               <tr>
                 <td>
-                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ work.row }}" target="_blank">{{ work.row }}</a>
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
                 </td>
                 <td class="text-nowrap">
-                  {% if work.status == 'success' %}
+                  {% if row.status == 'success' %}
                     <i class="fas fa-check-circle text-success"></i> {% if dry_run %}Ready to import{% else %}Imported{% endif %}
-                  {% elif work.status == 'duplicate' %}
+                  {% elif row.status == 'duplicate' %}
                     <i class="fas fa-ban text-info"></i> Duplicate
-                  {% elif work.status == 'error' %}
+                  {% elif row.errors %}
                     <i class="fas fa-exclamation-triangle text-danger"></i> Error
                   {% endif %}
                 </td>
                 <td>
-                  {% if work.status == 'success' %}
-                    {{ work.work.title }}
-                  {% elif work.status == 'duplicate' %}
+                  {% if row.status == 'success' %}
+                    {{ row.work.title }}
+                  {% elif row.status == 'duplicate' %}
                     A work with this type, year and number already exists in this place.
-                  {% elif work.status == 'error' %}
-                    {{ work.error_message }}
+                  {% elif row.errors %}
+                    {{ row.errors }}
                   {% endif %}
                 </td>
                 <td>
-                  {% if work.work.subtype %}
-                    {{ work.work.subtype }}
-                  {% elif work.status != 'error' %}
+                  {% if row.work.subtype %}
+                    {{ row.work.subtype }}
+                  {% elif not row.errors %}
                     {{ view.bulk_creator.default_doctype|capfirst }}
                   {% endif %}
                 </td>
                 <td>
-                  {{ work.work.number }}
+                  {{ row.work.number }}
                 </td>
                 <td>
-                  {{ work.work.year }}
+                  {{ row.work.year }}
                 </td>
                 <td>
-                  {% if work.status == 'error' %}
+                  {% if row.errors %}
                     —
-                  {% elif work.status == 'success' and dry_run %}
-                    {{ work.work.frbr_uri }}
+                  {% elif row.status == 'success' and dry_run %}
+                    {{ row.work.frbr_uri }}
                   {% else %}
-                    <a href="{% url 'work' frbr_uri=work.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=work.work.frbr_uri %}">{{ work.work.frbr_uri }}</a>
+                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.tasks %}
+                    <ul style="padding-left: 0">
+                      {% for task in row.tasks %}
+                        <li>{{ task|capfirst }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.relationships %}
+                    <ul style="padding-left: 0">
+                      {% for relationship in row.relationships %}
+                        <li>{{ relationship }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.actions %}
+                    <ul style="padding-left: 0">
+                      {% for action in row.actions %}
+                        <li>{{ action }}</li>
+                      {% endfor %}
+                    </ul>
                   {% endif %}
                 </td>
               </tr>

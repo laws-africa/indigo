@@ -162,7 +162,7 @@
                 </td>
                 <td>
                   {% if row.tasks %}
-                    <ul style="padding-left: 0">
+                    <ul class="pl-0">
                       {% for task in row.tasks %}
                         <li>{{ task|capfirst }}</li>
                       {% endfor %}
@@ -171,7 +171,7 @@
                 </td>
                 <td>
                   {% if row.relationships %}
-                    <ul style="padding-left: 0">
+                    <ul class="pl-0">
                       {% for relationship in row.relationships %}
                         <li>{{ relationship }}</li>
                       {% endfor %}
@@ -180,7 +180,7 @@
                 </td>
                 <td>
                   {% if row.actions %}
-                    <ul style="padding-left: 0">
+                    <ul class="pl-0">
                       {% for action in row.actions %}
                         <li>{{ action }}</li>
                       {% endfor %}

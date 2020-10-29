@@ -313,9 +313,10 @@ class BulkCreateWorksTest(testcases.TestCase):
         za = Country.objects.get(pk=1)
         creator.country = za
         creator.locality = None
+        creator.dry_run = False
         self.creator = creator
 
     def test_find_work(self):
         given_string = "Constitution of the Republic of South Africa, 1996"
-        work = BaseBulkCreator.find_work(self.creator, given_string)
+        work = self.creator.find_work(given_string)
         self.assertEqual(work.id, 10)

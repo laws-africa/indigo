@@ -34,5 +34,5 @@ class Migration(migrations.Migration):
             name='locality',
             field=models.ForeignKey(null=True, on_delete=django.db.models.deletion.PROTECT, to='indigo_api.Locality'),
         ),
-        migrations.RunPython(populate_locality_obj, migrations.RunPython.noop),
+        migrations.RunPython(populate_locality_obj, migrations.RunPython.noop, elidable=True),
     ]

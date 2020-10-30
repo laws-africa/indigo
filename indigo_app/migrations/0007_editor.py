@@ -36,5 +36,5 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
-        migrations.RunPython(create_editors, noop),
+        migrations.RunPython(create_editors, noop, elidable=True),
     ]

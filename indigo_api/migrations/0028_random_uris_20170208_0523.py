@@ -43,5 +43,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(randomise_uris, noop)
+        migrations.RunPython(randomise_uris, noop, elidable=True)
     ]

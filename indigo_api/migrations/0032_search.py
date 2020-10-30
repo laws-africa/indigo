@@ -43,7 +43,8 @@ class Migration(migrations.Migration):
         ),
         migrations.RunSQL(
             "CREATE INDEX indigo_api_document_search_vector_ix ON indigo_api_document USING gin(search_vector)",
-            "DROP INDEX indigo_api_document_search_vector_ix"
+            "DROP INDEX indigo_api_document_search_vector_ix",
+            elidable=True
         ),
         migrations.RunSQL(
             """
@@ -61,8 +62,10 @@ class Migration(migrations.Migration):
             """,
 
             "DROP FUNCTION IF EXISTS search_text_trigger() CASCADE;",
+            elidable=True
         ),
         migrations.RunPython(
             index_documents,
-            migrations.RunPython.noop,)
+            migrations.RunPython.noop,
+            elidable=True)
     ]

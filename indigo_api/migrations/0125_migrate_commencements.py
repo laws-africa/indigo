@@ -43,5 +43,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_commencements, unmigrate_commencements),
+        migrations.RunPython(migrate_commencements, unmigrate_commencements, elidable=True),
     ]

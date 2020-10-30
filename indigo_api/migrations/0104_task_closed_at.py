@@ -28,5 +28,5 @@ class Migration(migrations.Migration):
             name='closed_at',
             field=models.DateTimeField(help_text=b'When the task was marked as done or cancelled.', null=True),
         ),
-        migrations.RunPython(populate_closed_at, migrations.RunPython.noop),
+        migrations.RunPython(populate_closed_at, migrations.RunPython.noop, elidable=True),
     ]

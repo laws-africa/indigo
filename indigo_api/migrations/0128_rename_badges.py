@@ -59,5 +59,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(rename_badges, unrename_badges),
+        migrations.RunPython(rename_badges, unrename_badges, elidable=True),
     ]

@@ -40,5 +40,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(migrate_work_properties, unmigrate_work_properties),
+        migrations.RunPython(migrate_work_properties, unmigrate_work_properties, elidable=True),
     ]

@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_works, delete_works),
+        migrations.RunPython(create_works, delete_works, elidable=True),
         migrations.AddField(
             model_name='document',
             name='work',
@@ -52,8 +52,10 @@ class Migration(migrations.Migration):
         ),
 
         # link documents to works
-        migrations.RunSQL("UPDATE indigo_api_document d SET work_id = (SELECT id FROM indigo_api_work w WHERE d.frbr_uri = w.frbr_uri LIMIT 1)",
-                          migrations.RunSQL.noop),
+        migrations.RunSQL(
+            "UPDATE indigo_api_document d SET work_id = (SELECT id FROM indigo_api_work w WHERE d.frbr_uri = w.frbr_uri LIMIT 1)",
+            migrations.RunSQL.noop,
+            elidable=True),
 
         # make work column non-null
         migrations.AlterField(

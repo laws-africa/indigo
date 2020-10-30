@@ -22,5 +22,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(set_country_primary_language, migrations.RunPython.noop),
+        migrations.RunPython(set_country_primary_language, migrations.RunPython.noop, elidable=True),
     ]

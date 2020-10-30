@@ -67,5 +67,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_country_obj, revert_country_obj),
+        migrations.RunPython(populate_country_obj, revert_country_obj, elidable=True),
     ]

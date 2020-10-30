@@ -5,6 +5,7 @@ Changelog
 --------
 
 * BREAKING: replace Ace editor with Monaco editor, for improved syntax highlighting and text editing
+* BREAKING: the search API has been extracted into `indigo-search-psql <https://github.com/laws-africa/indigo-search-psql>`_.
 
 11.1.0 (2020-09-14)
 -------------------

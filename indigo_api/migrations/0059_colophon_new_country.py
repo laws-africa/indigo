@@ -8,7 +8,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('indigo_api', '0058_import_language_country_from_indigo_app'),
-        ('indigo_app', '0015_point_at_moved_language_country'),
+        ('indigo_app', '0001_squashed_0015_point_at_moved_language_country'),
     ]
 
     operations = [

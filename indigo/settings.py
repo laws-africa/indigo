@@ -404,6 +404,15 @@ LOGGING = {
         'indigo': {
             'level': 'DEBUG' if DEBUG else 'INFO',
         },
+        'indigo.plugins': {
+            'level': 'INFO',
+        },
+        'indigo.analysis': {
+            'level': 'INFO',
+        },
+        'indigo_api.utils': {
+            'level': 'INFO',
+        },
         'indigo.tasks': {
             'handlers': [] if DEBUG else ['mail_admins'],
             'level': 'INFO',

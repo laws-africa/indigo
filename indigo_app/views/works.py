@@ -892,7 +892,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
 
                 works = self.bulk_creator.create_works(self, table, dry_run, workflow=workflow, user=self.request.user)
                 if not dry_run:
-                    messages.success(self.request, f"Imported {len([w for w in works if w.get('status') == 'success'])} works.")
+                    messages.success(self.request, f"Imported {len([w for w in works if w.status == 'success'])} works.")
             except ValidationError as e:
                 error = str(e)
 

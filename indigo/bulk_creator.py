@@ -251,7 +251,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
     def create_work(self, view, row, idx):
         # handle spreadsheet that still uses 'principal'
-        row['stub'] = row.get('stub') or not row.get('principal')
+        row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
         row = self.validate_row(view, row)
         row.status = None
         row.row_number = idx + 2

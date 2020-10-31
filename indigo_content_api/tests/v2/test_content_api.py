@@ -502,18 +502,6 @@ class ContentAPIV2TestMixin:
         self.assertEqual(response.data['publication_document']['url'],
                      'http://localhost:8000/works/za/act/2014/10/media/publication/za-act-2014-10-publication-document.pdf')
 
-    def test_published_search_perms(self):
-        self.client.logout()
-        self.client.login(username='email@example.com', password='password')
-
-        response = self.client.get(self.api_path + '/search/za?q=act')
-        self.assertEqual(response.status_code, 403)
-
-    def test_published_search(self):
-        response = self.client.get(self.api_path + '/search/za?q=act')
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(len(response.data['results']), 4)
-
     def test_published_work_before_1900(self):
         response = self.client.get(self.api_path + '/akn/za/act/1880/1.html')
         self.assertEqual(response.status_code, 200)

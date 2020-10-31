@@ -72,7 +72,7 @@ class TaskListView(TaskViewBase, ListView):
         tasks = Task.objects\
             .filter(country=self.country, locality=self.locality)\
             .select_related('document__language', 'document__language__language') \
-            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
+            .defer('document__document_xml')\
             .order_by('-updated_at')
         return self.form.filter_queryset(tasks)
 
@@ -492,7 +492,7 @@ class AvailableTasksView(AbstractAuthedIndigoView, ListView):
     def get_queryset(self):
         tasks = Task.objects \
             .filter(assigned_to=None)\
-            .defer('document__document_xml', 'document__search_text', 'document__search_vector') \
+            .defer('document__document_xml')\
             .order_by('-updated_at')
 
         if not self.form.cleaned_data.get('state'):

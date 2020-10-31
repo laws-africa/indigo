@@ -13,9 +13,10 @@ from cobalt import FrbrUri
 from indigo_api.models import Attachment, Country, Document, TaxonomyVocabulary, Locality
 from indigo_api.renderers import AkomaNtosoRenderer, PDFRenderer, EPUBRenderer, HTMLRenderer, ZIPRenderer
 from indigo_api.views.attachments import view_attachment
-from indigo_api.views.documents import DocumentViewMixin, SearchView
+from indigo_api.views.documents import DocumentViewMixin
 
-from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomySerializer, PublishedDocUrlMixin
+from .serializers import CountrySerializer, MediaAttachmentSerializer, PublishedDocumentSerializer, TaxonomySerializer,\
+    PublishedDocUrlMixin
 
 
 FORMAT_RE = re.compile(r'\.([a-z0-9]+)$')
@@ -353,31 +354,3 @@ class PublishedDocumentMediaView(FrbrUriViewMixin,
             return view_attachment(work.publication_document)
 
         raise Http404()
-
-
-class PublishedDocumentSearchView(PlaceAPIBase, SearchView):
-    """ Search published documents.
-    """
-    filter_fields = {
-        'frbr_uri': ['exact', 'startswith'],
-    }
-    serializer_class = PublishedDocumentSerializer
-    scope = 'works'
-
-    def get_queryset(self):
-        try:
-            country = Country.for_code(self.kwargs['country'])
-        except Country.DoesNotExist:
-            raise Http404
-
-        queryset = super().get_queryset()
-        return queryset.published().filter(work__country=country)
-
-    def determine_place(self):
-        # TODO: this view should support localities, too
-        try:
-            self.country = Country.for_code(self.kwargs['country'])
-        except Country.DoesNotExist:
-            raise Http404
-
-        super(PublishedDocumentSearchView, self).determine_place()

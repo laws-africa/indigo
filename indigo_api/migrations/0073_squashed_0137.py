@@ -43,7 +43,7 @@ class Migration(migrations.Migration):
                 ('indigo_api', '0129_workflow_priority'), ('indigo_api', '0130_migrate_refs_uris'),
                 ('indigo_api', '0131_migrate_namespaces'), ('indigo_api', '0132_migrate_ids_eIds'),
                 ('indigo_api', '0133_migrate_commencement_provisions'), ('indigo_api', '0134_akn3_part2'),
-                ('indigo_api', '0135_auto_20201023_1407'), ('indigo_api ', '0136_drop_search'),
+                ('indigo_api', '0135_auto_20201023_1407'), ('indigo_api', '0136_drop_search'),
                 ('indigo_api', '0137_drop_search_ix')]
 
     dependencies = [

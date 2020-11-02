@@ -9,7 +9,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0001_squashed_0137'),
+        ('indigo_api', '0110_django3_tweaks'),
         ('indigo_metrics', '0006_auto_20190901_1340'),
     ]
 

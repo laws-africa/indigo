@@ -9,7 +9,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('indigo_api', '0001_squashed_0137'),
+        ('indigo_api', '0089_remove_workflow_closed_by_user'),
     ]
 
     operations = [

@@ -31,5 +31,5 @@ class Migration(migrations.Migration):
             options={'verbose_name': 'Document subtype'},
             bases=(models.Model,),
         ),
-        migrations.RunPython(forwards, backwards),
+        migrations.RunPython(forwards, backwards, elidable=True),
     ]

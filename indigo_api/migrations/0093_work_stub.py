@@ -30,5 +30,5 @@ class Migration(migrations.Migration):
             name='stub',
             field=models.BooleanField(default=False, help_text=b'Stub works do not have content or points in time'),
         ),
-        migrations.RunPython(populate_stub, migrations.RunPython.noop),
+        migrations.RunPython(populate_stub, migrations.RunPython.noop, elidable=True),
     ]

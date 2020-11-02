@@ -39,5 +39,6 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             set_publication_details,
-            migrations.RunPython.noop,)
+            migrations.RunPython.noop,
+            elidable=True)
     ]

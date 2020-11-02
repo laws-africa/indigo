@@ -27,5 +27,5 @@ class Migration(migrations.Migration):
             field=models.DateField(help_text=b'Date of publication or latest amendment', null=True, blank=True),
             preserve_default=True,
         ),
-        migrations.RunPython(forwards, backwards),
+        migrations.RunPython(forwards, backwards, elidable=True),
     ]

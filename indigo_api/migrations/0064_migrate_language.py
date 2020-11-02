@@ -67,5 +67,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_language, revert_language),
+        migrations.RunPython(populate_language, revert_language, elidable=True),
     ]

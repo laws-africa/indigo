@@ -59,5 +59,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_repeals, uncreate_repeals),
+        migrations.RunPython(create_repeals, uncreate_repeals, elidable=True),
     ]

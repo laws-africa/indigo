@@ -42,5 +42,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_new_country, populate_old_country),
+        migrations.RunPython(populate_new_country, populate_old_country, elidable=True),
     ]

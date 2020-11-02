@@ -1,0 +1,34 @@
+[
+  {
+    "pk": 1,
+    "model": "indigo_api.subtype",
+    "fields": {
+      "name": "By-law",
+      "abbreviation": "by-law"
+    }
+  },
+  {
+    "pk": 2,
+    "model": "indigo_api.subtype",
+    "fields": {
+      "name": "Statutory Instrument",
+      "abbreviation": "si"
+    }
+  },
+  {
+    "pk": 3,
+    "model": "indigo_api.subtype",
+    "fields": {
+      "name": "Government Notice",
+      "abbreviation": "gn"
+    }
+  },
+  {
+    "pk": 4,
+    "model": "indigo_api.subtype",
+    "fields": {
+      "name": "Proclamation",
+      "abbreviation": "p"
+    }
+  }
+]

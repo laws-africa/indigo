@@ -24,5 +24,5 @@ class Migration(migrations.Migration):
             model_name='document',
             name='stub',
         ),
-        migrations.RunPython(migrations.RunPython.noop, populate_stub),
+        migrations.RunPython(migrations.RunPython.noop, populate_stub, elidable=True),
     ]

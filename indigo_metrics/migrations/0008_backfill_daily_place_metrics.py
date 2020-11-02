@@ -49,5 +49,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_daily_placemetrics, migrations.RunPython.noop),
+        migrations.RunPython(populate_daily_placemetrics, migrations.RunPython.noop, elidable=True),
     ]

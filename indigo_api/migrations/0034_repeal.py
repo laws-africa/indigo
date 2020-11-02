@@ -34,5 +34,6 @@ class Migration(migrations.Migration):
         ),
         migrations.RunPython(
             set_repeal_details,
-            migrations.RunPython.noop,)
+            migrations.RunPython.noop,
+            elidable=True)
     ]

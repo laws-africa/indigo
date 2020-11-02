@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(populate_closed_by, migrations.RunPython.noop),
+        migrations.RunPython(populate_closed_by, migrations.RunPython.noop, elidable=True),
     ]

@@ -49,5 +49,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(create_amendments, migrations.RunPython.noop),
+        migrations.RunPython(create_amendments, migrations.RunPython.noop, elidable=True),
     ]

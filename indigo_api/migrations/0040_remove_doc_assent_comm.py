@@ -12,7 +12,8 @@ class Migration(migrations.Migration):
     operations = [
         migrations.RunSQL(
             migrations.RunSQL.noop,
-            "UPDATE indigo_api_document SET commencement_date = w.commencement_date FROM indigo_api_work w WHERE w.id = work_id"
+            "UPDATE indigo_api_document SET commencement_date = w.commencement_date FROM indigo_api_work w WHERE w.id = work_id",
+            elidable=True
         ),
         migrations.RemoveField(
             model_name='document',

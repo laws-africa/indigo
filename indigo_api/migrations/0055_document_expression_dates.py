@@ -23,5 +23,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(ensure_expression_dates, migrations.RunPython.noop),
+        migrations.RunPython(ensure_expression_dates, migrations.RunPython.noop, elidable=True),
     ]

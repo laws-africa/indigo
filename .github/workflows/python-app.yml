@@ -1,0 +1,45 @@
+name: Test
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:10
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.6
+    - name: Set up Ruby
+      uses: actions/setup-ruby@v1
+      with:
+        ruby-version: '2.6.5'
+    - name: Install dependencies
+      run: |
+        sudo apt-get install -y poppler-utils
+        python -m pip install --upgrade pip
+        pip install .[test]
+        bundle install
+        npm install -g jshint
+    - name: Run tests
+      env:
+        DATABASE_URL: "postgres://postgres:postgres@localhost:5432/indigo_test"
+      run: |
+        coverage run manage.py test
+        jshint indigo_app/static/javascript/indigo/

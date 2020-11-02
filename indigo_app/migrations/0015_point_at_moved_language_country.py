@@ -8,7 +8,6 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('indigo_app', '0014_rename_language_country_tables'),
-        ('indigo_api', '0058_import_language_country_from_indigo_app'),
     ]
 
     operations = [

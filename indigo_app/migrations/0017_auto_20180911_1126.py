@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('indigo_api', '0059_squashed_0071_work_country_required'),
+        ('indigo_api', '0071_work_country_required'),
         ('indigo_app', '0016_remove_moved_language_country_models'),
     ]
 

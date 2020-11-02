@@ -1,8 +1,16 @@
+
 Changelog
 =========
 
 12.0 (?)
 --------
+
+Important
+.........
+
+This version squashed migrations, which cannot be undone.
+
+You **must** upgrade to this version before upgrading to future versions.
 
 * BREAKING: replace Ace editor with Monaco editor, for improved syntax highlighting and text editing
 * BREAKING: the search API has been extracted into `indigo-search-psql <https://github.com/laws-africa/indigo-search-psql>`_.

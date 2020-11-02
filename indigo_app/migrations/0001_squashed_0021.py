@@ -7,8 +7,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('indigo_app', '0001_initial'), ('indigo_app', '0002_languages'), ('indigo_app', '0003_subtype'), ('indigo_app', '0004_country'), ('indigo_app', '0005_delete_subtype'), ('indigo_app', '0006_auto_20150918_1515'), ('indigo_app', '0007_editor'), ('indigo_app', '0008_auto_20160111_1844'), ('indigo_app', '0009_publication'), ('indigo_app', '0010_accepted_terms'), ('indigo_app', '0011_country_primary_language'), ('indigo_app', '0012_country_set_primary_language'), ('indigo_app', '0013_country_force_primary_language'), ('indigo_app', '0014_rename_language_country_tables'), ('indigo_app', '0015_point_at_moved_language_country'), ('indigo_app', '0016_remove_moved_language_country_models'), ('indigo_app', '0017_auto_20180911_1126'), ('indigo_app', '0018_rename_locality_table'), ('indigo_app', '0019_remove_moved_locality_model'), ('indigo_app', '0020_editor_permitted_countries'), ('indigo_app', '0021_auto_20201023_1407')]
-
     initial = True
 
     dependencies = [

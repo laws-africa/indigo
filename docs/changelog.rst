@@ -2,6 +2,11 @@
 Changelog
 =========
 
+13.0 (2020-11-02)
+--------
+
+* BREAKING: Replace migrations with squashed migrations permanently
+
 12.0 (2020-11-02)
 --------
 

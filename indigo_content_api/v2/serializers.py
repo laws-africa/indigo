@@ -230,11 +230,6 @@ class CountrySerializer(serializers.ModelSerializer, PublishedDocUrlMixin):
                 "title": "Works",
                 "href": self.place_url(self.context['request'], f"{instance.code}/"),
             },
-            {
-                "rel": "search",
-                "title": "Search",
-                "href": reverse('public-search', request=self.context['request'], kwargs={'country': instance.code}),
-            },
         ]
 
 

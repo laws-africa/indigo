@@ -76,7 +76,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
         context['form'] = self.form
         tasks = self.form.filter_queryset(Task.objects.filter(workflows=self.object)) \
             .select_related('document__language', 'document__language__language')\
-            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
+            .defer('document__document_xml')\
             .all()
 
         context['tasks'] = tasks
@@ -86,7 +86,7 @@ class WorkflowDetailView(WorkflowViewBase, DetailView):
             .unclosed()\
             .exclude(workflows=self.object) \
             .select_related('document__language', 'document__language__language') \
-            .defer('document__document_xml', 'document__search_text', 'document__search_vector')\
+            .defer('document__document_xml')\
             .all()
 
         # warn when submitting task on behalf of another user

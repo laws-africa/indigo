@@ -8,7 +8,7 @@ from cobalt import FrbrUri
 
 from indigo.analysis.refs.base import SectionRefsFinderENG, RefsFinderENG, RefsFinderSubtypesENG, RefsFinderCapENG
 
-from indigo_api.models import Document, Language, Work, Country, User
+from indigo_api.models import Document, Language, Work, Country, User, Subtype
 from indigo_api.tests.fixtures import document_fixture
 
 
@@ -816,7 +816,7 @@ class RefsFinderENGTestCase(TestCase):
 
 
 class RefsFinderSubtypesENGTestCase(TestCase):
-    fixtures = ['languages_data', 'countries']
+    fixtures = ['languages_data', 'countries', 'subtype']
 
     def setUp(self):
         self.work = Work(frbr_uri='/akn/za/act/1991/1')

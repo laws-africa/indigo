@@ -93,7 +93,10 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
         self.setup_subtypes()
         self.setup_candidate_xpath()
         self.setup_pattern_re()
-        super().setup(root)
+        # If we don't have subtypes, don't let the superclass do setup, because it will fail.
+        # We're going to opt-out of doing any work anyway.
+        if self.subtypes:
+            super().setup(root)
 
     def setup_subtypes(self):
         self.subtypes = [s for s in Subtype.objects.all()]
@@ -120,6 +123,11 @@ class RefsFinderSubtypesENG(BaseRefsFinder):
                     (?P<year>\d{{4}})
                 )
             ''', re.X | re.I)
+
+    def markup_patterns(self, root):
+        # don't do anything if there are no subtypes
+        if self.subtypes:
+            super().markup_patterns(root)
 
     def make_href(self, match):
         # use correct subtype for FRBR URI

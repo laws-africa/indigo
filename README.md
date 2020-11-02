@@ -1,7 +1,7 @@
 # Indigo
 
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/495add45b788408284b48c0e045ca408)](https://app.codacy.com/app/longhotsummer/indigo?utm_source=github.com&utm_medium=referral&utm_content=laws-africa/indigo&utm_campaign=Badge_Grade_Dashboard)
-[![Build Status](https://travis-ci.org/laws-africa/indigo.svg)](http://travis-ci.org/laws-africa/indigo) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=master)](https://coveralls.io/github/laws-africa/indigo?branch=master)
+![Build status](https://github.com/laws-africa/indigo/workflows/Test/badge.svg) [![Coverage Status](https://coveralls.io/repos/github/laws-africa/indigo/badge.svg?branch=master)](https://coveralls.io/github/laws-africa/indigo?branch=master)
 
 ![Indigo logo](https://raw.githubusercontent.com/Code4SA/indigo/master/docs/logo.png "Indigo logo")
 

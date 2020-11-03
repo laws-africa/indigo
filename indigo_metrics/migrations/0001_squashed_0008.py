@@ -6,8 +6,6 @@ import django.db.models.deletion
 
 class Migration(migrations.Migration):
 
-    replaces = [('indigo_metrics', '0001_initial'), ('indigo_metrics', '0002_dailyworkmetrics'), ('indigo_metrics', '0003_auto_20190510_2007'), ('indigo_metrics', '0004_auto_20190511_0643'), ('indigo_metrics', '0005_backfill_completeness'), ('indigo_metrics', '0006_auto_20190901_1340'), ('indigo_metrics', '0007_dailyplacemetrics'), ('indigo_metrics', '0008_backfill_daily_place_metrics')]
-
     initial = True
 
     dependencies = [

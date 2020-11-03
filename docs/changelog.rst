@@ -2,7 +2,20 @@
 Changelog
 =========
 
-12.0 (2020-11-02)
+13.0.0 (2020-11-03)
+--------
+
+* BREAKING: Replace migrations with squashed migrations permanently
+
+Important
+.........
+
+When updating to this version, you must change your Django migrations to declare dependencies on the latest squashed migrations provided by Indigo.
+
+* For `indigo_api`, this is `0001_squashed_0137`
+* For `indigo_app`, this is `0001_squashed_0021`
+
+12.0.0 (2020-11-02)
 --------
 
 Important

@@ -11,41 +11,6 @@ import taggit.managers
 
 class Migration(migrations.Migration):
 
-    replaces = [('indigo_api', '0001_initial'), ('indigo_api', '0002_auto_20150114_0639'), ('indigo_api', '0003_auto_20150114_1549'), ('indigo_api', '0004_auto_20150204_0948'), ('indigo_api', '0005_auto_20150204_1035'), ('indigo_api', '0006_auto_20150216_1027'), ('indigo_api', '0007_document_deleted'), ('indigo_api', '0008_auto_20150217_0905'), ('indigo_api', '0009_auto_20150308_1645'), ('indigo_api', '0010_auto_20150505_1315'), ('indigo_api', '0011_auto_20150505_1356'), ('indigo_api', '0012_document_assent_date'), ('indigo_api', '0013_document_stub'), ('indigo_api', '0014_auto_20150505_1444'), ('indigo_api', '0015_auto_20150520_1455'), ('indigo_api', '0016_subtype_tweak'), ('indigo_api', '0017_tweak_language_field'), ('indigo_api', '0018_delete_subtype'), ('indigo_api', '0019_tweak_country'), ('indigo_api', '0020_subtype'), ('indigo_api', '0021_document_expression_date'), ('indigo_api', '0022_attachment'), ('indigo_api', '0023_auto_20150614_1338'), ('indigo_api', '0024_auto_20150918_1515'), ('indigo_api', '0025_auto_20150921_1025'), ('indigo_api', '0026_colophon'), ('indigo_api', '0027_auto_20160220_2005'), ('indigo_api', '0028_random_uris_20170208_0523'), ('indigo_api', '0029_help_text'), ('indigo_api', '0030_annotation'), ('indigo_api', '0031_activity'), ('indigo_api', '0032_search'), ('indigo_api', '0033_publication_details'), ('indigo_api', '0034_repeal'), ('indigo_api', '0035_amendments'), ('indigo_api', '0036_work'), ('indigo_api', '0037_document_work'), ('indigo_api', '0038_auto_20180324_1116'), ('indigo_api', '0039_remove_work_draft'), ('indigo_api', '0040_remove_doc_assent_comm'), ('indigo_api', '0041_work_repeal'), ('indigo_api', '0042_add_repeal_works'), ('indigo_api', '0043_doc_repeal_event'), ('indigo_api', '0044_work_parent_work'), ('indigo_api', '0045_amendment'), ('indigo_api', '0046_works_for_amendments'), ('indigo_api', '0047_remove_document_amendment_events'), ('indigo_api', '0048_work_commencing_work'), ('indigo_api', '0049_remove_deleted_works'), ('indigo_api', '0050_hard_delete_works'), ('indigo_api', '0051_publication_date_is_date'), ('indigo_api', '0052_review_work_perm'), ('indigo_api', '0053_work_view_perm'), ('indigo_api', '0054_view_published_doc_perms'), ('indigo_api', '0055_document_expression_dates'), ('indigo_api', '0056_doc_requires_expression_date'), ('indigo_api', '0057_blanks'), ('indigo_api', '0058_import_language_country_from_indigo_app'), ('indigo_api', '0059_colophon_new_country'), ('indigo_api', '0060_colophon_country'), ('indigo_api', '0061_colophon_new_country_required'), ('indigo_api', '0062_colophon_remove_old_country'), ('indigo_api', '0063_document_language_obj'), ('indigo_api', '0064_migrate_language'), ('indigo_api', '0065_remove_old_language'), ('indigo_api', '0066_doc_language_required'), ('indigo_api', '0067_remove_document_country'), ('indigo_api', '0068_work_country_obj'), ('indigo_api', '0069_populate_work_country_obj'), ('indigo_api', '0070_remove_old_work_country'), ('indigo_api', '0071_work_country_required'), ('indigo_api', '0072_import_locality_from_indigo_app'), ('indigo_api', '0073_renamed_localities_related'), ('indigo_api', '0074_document_view_source_perm'),
-                ('indigo_api', '0075_work_locality'), ('indigo_api', '0076_work_locality_blank'),
-                ('indigo_api', '0077_work_publication_document'), ('indigo_api', '0078_task_workflow'),
-                ('indigo_api', '0079_rename_task_fields'), ('indigo_api', '0080_task_fields_added'),
-                ('indigo_api', '0081_task_labels'), ('indigo_api', '0082_task_fields_removed'),
-                ('indigo_api', '0083_task_label_ordering'), ('indigo_api', '0084_link_places_to_works'),
-                ('indigo_api', '0085_annotation_task'), ('indigo_api', '0086_workflows'),
-                ('indigo_api', '0087_workflows_closed'), ('indigo_api', '0088_workflow_due_date'),
-                ('indigo_api', '0089_remove_workflow_closed_by_user'), ('indigo_api', '0090_publication_doc_filename'),
-                ('indigo_api', '0091_task_last_assigned_to'), ('indigo_api', '0092_publicationdocument_trusted_url'),
-                ('indigo_api', '0093_work_stub'), ('indigo_api', '0094_remove_document_stub'),
-                ('indigo_api', '0095_pub_doc_size_null'), ('indigo_api', '0096_auto_20190424_1245'),
-                ('indigo_api', '0097_workproperty'), ('indigo_api', '0098_task_closed_by_user_code'),
-                ('indigo_api', '0099_populate_task_closed_by'), ('indigo_api', '0100_remove_whitespace'),
-                ('indigo_api', '0101_taxonomies'), ('indigo_api', '0102_changes_requested'),
-                ('indigo_api', '0103_add_extra_data_field'), ('indigo_api', '0104_task_closed_at'),
-                ('indigo_api', '0105_backfill_task_last_assigned_to'), ('indigo_api', '0106_rename_task_fields'),
-                ('indigo_api', '0107_taxonomy_tweaks'), ('indigo_api', '0108_place_settings'),
-                ('indigo_api', '0109_backfill_place_settings'), ('indigo_api', '0110_django3_tweaks'),
-                ('indigo_api', '0111_placesettings_styleguide_url'), ('indigo_api', '0112_arbitrary_expression_date'),
-                ('indigo_api', '0113_work_properties'), ('indigo_api', '0114_migrate_work_properties'),
-                ('indigo_api', '0115_drop_work_property'), ('indigo_api', '0116_work_props_perms'),
-                ('indigo_api', '0117_amendments_made'), ('indigo_api', '0118_work_commenced'),
-                ('indigo_api', '0119_migrate_work_commenced'), ('indigo_api', '0120_bulk_export_work_permission'),
-                ('indigo_api', '0121_country_italics_terms'), ('indigo_api', '0122_annotation_selectors'),
-                ('indigo_api', '0123_remove_task_anchor_id'), ('indigo_api', '0124_commencement'),
-                ('indigo_api', '0125_migrate_commencements'),
-                ('indigo_api', '0126_drop_commencement_details_from_work'),
-                ('indigo_api', '0127_add_close_any_task_permission'), ('indigo_api', '0128_rename_badges'),
-                ('indigo_api', '0129_workflow_priority'), ('indigo_api', '0130_migrate_refs_uris'),
-                ('indigo_api', '0131_migrate_namespaces'), ('indigo_api', '0132_migrate_ids_eIds'),
-                ('indigo_api', '0133_migrate_commencement_provisions'), ('indigo_api', '0134_akn3_part2'),
-                ('indigo_api', '0135_auto_20201023_1407'), ('indigo_api', '0136_drop_search'),
-                ('indigo_api', '0137_drop_search_ix')]
-
     initial = True
 
     dependencies = [

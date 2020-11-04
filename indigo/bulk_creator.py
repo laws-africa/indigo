@@ -200,7 +200,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_row_validation_form(self, country, locality, subtypes, row_data):
         return self.row_validation_form_class(country, locality, subtypes, row_data)
 
-    def create_works(self, view, table, dry_run, workflow, user):
+    def create_works(self, table, dry_run, workflow, user):
         self.workflow = workflow
         self.user = user
         self.subtypes = Subtype.objects.all()
@@ -224,7 +224,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if row.get('ignore') or not any(row.values()):
                 continue
 
-            works.append(self.create_work(view, row, idx))
+            works.append(self.create_work(row, idx))
 
         # link all commencements first so that amendments and repeals will have dates to work with
         for row in works:
@@ -249,10 +249,10 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         return works
 
-    def create_work(self, view, row, idx):
+    def create_work(self, row, idx):
         # handle spreadsheet that still uses 'principal'
         row['stub'] = row.get('stub') if 'stub' in row else not row.get('principal')
-        row = self.validate_row(view, row)
+        row = self.validate_row(row)
         row.status = None
         row.row_number = idx + 2
 
@@ -269,32 +269,32 @@ class BaseBulkCreator(LocaleBasedMatcher):
             work = Work()
 
             work.frbr_uri = frbr_uri
-            work.country = view.country
-            work.locality = view.locality
+            work.country = self.country
+            work.locality = self.locality
             for attribute in ['title',
                               'publication_name', 'publication_number',
                               'assent_date', 'publication_date',
                               'commenced', 'stub']:
                 setattr(work, attribute, getattr(row, attribute, None))
-            work.created_by_user = view.request.user
-            work.updated_by_user = view.request.user
+            work.created_by_user = self.request.user
+            work.updated_by_user = self.request.user
             self.add_extra_properties(work, row)
 
             try:
                 work.full_clean()
                 if not self.dry_run:
-                    work.save_with_revision(view.request.user)
+                    work.save_with_revision(self.request.user)
 
                     # signals
-                    work_changed.send(sender=work.__class__, work=work, request=view.request)
+                    work_changed.send(sender=work.__class__, work=work, request=self.request)
 
                 # info for linking publication document
                 row.params = {
                     'date': work.publication_date,
                     'number': work.publication_number,
                     'publication': work.publication_name,
-                    'country': view.country.place_code,
-                    'locality': view.locality.code if view.locality else None,
+                    'country': self.country.place_code,
+                    'locality': self.locality.code if self.locality else None,
                 }
 
                 self.link_publication_document(work, row)
@@ -336,7 +336,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if meaning == title:
                     errors[alias] = errors.pop(title)
 
-    def validate_row(self, view, row):
+    def validate_row(self, row):
         self.transform_aliases(row)
 
         # lowercase country, locality, doctype and subtype
@@ -345,7 +345,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row['doctype'] = row.get('doctype', '').lower() or self.default_doctype
         row['subtype'] = row.get('subtype', '').lower()
 
-        form = self.get_row_validation_form(view.country, view.locality, self.subtypes, row)
+        form = self.get_row_validation_form(self.country, self.locality, self.subtypes, row)
 
         errors = form.errors
         self.transform_error_aliases(errors)

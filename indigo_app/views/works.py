@@ -834,6 +834,7 @@ class BatchAddWorkView(PlaceViewBase, AbstractAuthedIndigoView, FormView):
             self._bulk_creator.country = self.country
             self._bulk_creator.locality = self.locality
             self._bulk_creator.request = self.request
+            self._bulk_creator.user = self.request.user
         return self._bulk_creator
 
     def get_initial(self):

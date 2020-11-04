@@ -285,7 +285,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
                     work.save_with_revision(self.user)
 
                     # signals
-                    work_changed.send(sender=work.__class__, work=work, request=self.request)
+                    if not self.testing:
+                        work_changed.send(sender=work.__class__, work=work, request=self.request)
 
                 # info for linking publication document
                 row.params = {

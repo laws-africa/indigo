@@ -200,9 +200,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
     def get_row_validation_form(self, country, locality, subtypes, row_data):
         return self.row_validation_form_class(country, locality, subtypes, row_data)
 
-    def create_works(self, table, dry_run, workflow, user):
+    def create_works(self, table, dry_run, workflow):
         self.workflow = workflow
-        self.user = user
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 
@@ -276,14 +275,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
                               'assent_date', 'publication_date',
                               'commenced', 'stub']:
                 setattr(work, attribute, getattr(row, attribute, None))
-            work.created_by_user = self.request.user
-            work.updated_by_user = self.request.user
+            work.created_by_user = self.user
+            work.updated_by_user = self.user
             self.add_extra_properties(work, row)
 
             try:
                 work.full_clean()
                 if not self.dry_run:
-                    work.save_with_revision(self.request.user)
+                    work.save_with_revision(self.user)
 
                     # signals
                     work_changed.send(sender=work.__class__, work=work, request=self.request)

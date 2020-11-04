@@ -659,11 +659,6 @@ Possible reasons:
             First see if the string before the first space can be parsed as an FRBR URI, and find a work based on that.
             If not, assume a title has been given and try to match on the whole string.
         """
-        # just for displaying in preview
-        if self.dry_run:
-            return given_string.split(' - ', 1)[-1]
-
-        # or actually get the work
         first = given_string.split()[0]
         try:
             FrbrUri.parse(first)
@@ -672,6 +667,8 @@ Possible reasons:
             potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
             if len(potential_matches) == 1:
                 return potential_matches.first()
+            elif self.dry_run:
+                return f"Hasn't been created yet: {given_string.split(' - ', 1)[-1]}"
 
     @property
     def share_with(self):

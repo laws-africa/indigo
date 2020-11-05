@@ -658,17 +658,21 @@ Possible reasons:
             `Administrator-General’s Act` (old style)
             First see if the string before the first space can be parsed as an FRBR URI, and find a work based on that.
             If not, assume a title has been given and try to match on the whole string.
+            In the case of a dry run, return a string if the work hasn't been found.
         """
         first = given_string.split()[0]
         try:
             FrbrUri.parse(first)
-            return Work.objects.filter(frbr_uri=first).first()
+            work = Work.objects.filter(frbr_uri=first).first()
+            if not work and self.dry_run:
+                return f"Hasn't been created yet: {given_string}"
+            return work
         except ValueError:
             potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
             if len(potential_matches) == 1:
                 return potential_matches.first()
             elif self.dry_run:
-                return f"Hasn't been created yet: {given_string.split(' - ', 1)[-1]}"
+                return f"Hasn't been created yet: {given_string}"
 
     @property
     def share_with(self):

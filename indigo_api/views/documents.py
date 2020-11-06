@@ -192,7 +192,7 @@ class AnnotationViewSet(DocumentResourceView, viewsets.ModelViewSet):
         queryset += fake_annotations
         context = {}
         context['request'] = request
-        results = AnnotationSerializer(queryset, many=True, context=context)
+        results = self.serializer_class(queryset, many=True, context=context)
         data = {
             "count": len(queryset),
             "results": results.data,

@@ -229,6 +229,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
             self.works.append(self.create_work(row, idx))
 
+        self.check_preview_duplicates()
+
         # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
         for row in self.works:
             if row.status and row.commenced:
@@ -403,6 +405,13 @@ class BaseBulkCreator(LocaleBasedMatcher):
             pub_doc.trusted_url = pub_doc_details.get('url')
             pub_doc.size = pub_doc_details.get('size')
             pub_doc.save()
+
+    def check_preview_duplicates(self):
+        if self.dry_run:
+            frbr_uris = [row.work.frbr_uri for row in self.works if hasattr(row, 'work')]
+            for row in self.works:
+                if hasattr(row, 'work') and frbr_uris.count(row.work.frbr_uri) > 1:
+                    row.notes.append('Duplicate in batch')
 
     def link_commencement(self, row):
         # if the work has commencement details, try linking it

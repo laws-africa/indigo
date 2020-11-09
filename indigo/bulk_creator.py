@@ -532,7 +532,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         for t in topics:
             topic = VocabularyTopic.get_topic(t)
             if topic:
-                # don't actually add it in dry_run
+                row.taxonomies.append(topic)
                 if not self.dry_run:
                     row.work.taxonomies.add(topic)
                     row.work.save_with_revision(self.user)
@@ -540,6 +540,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
             else:
                 unlinked_topics.append(t)
         if unlinked_topics:
+            if self.dry_run:
+                row.notes.append(f'Taxonomy not found: {", ".join(unlinked_topics)}')
             row.unlinked_topics = ", ".join(unlinked_topics)
             self.create_task(row.work, row, task_type='link-taxonomy')
 

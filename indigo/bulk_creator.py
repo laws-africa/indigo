@@ -564,13 +564,13 @@ Find it and upload it manually.'''
 
         elif task_type == 'link-commencement':
             task.title = 'Link commencement'
-            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically.
+            task.description = f'''It looks like this work was commenced by "{row.commenced_by}" on {row.commencement_date or "(unknown)"} (see row {row.row_number} of the spreadsheet), but it couldn't be linked automatically. This work has thus been recorded as 'Not commenced'.
 
 Possible reasons:
 – a typo in the spreadsheet
 – the commencing work doesn't exist on the system.
 
-Please link the commencing work manually.'''
+Please link the commencement date and commencing work manually.'''
 
         elif task_type == 'link-amendment':
             task.title = 'Link amendment'

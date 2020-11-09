@@ -470,7 +470,7 @@ class BulkCreateWorksTest(testcases.TestCase):
         self.assertEqual(main1.repealed_by, repeal1)
         self.assertNotIn('Link repeal', [t.title for t in main1.tasks.all()])
         self.assertIsNone(main2.repealed_by)
-        self.assertIn('Link repeal (pending commencement)', [t.title for t in repeal2.tasks.all()])
+        self.assertIn('Link repeal', [t.title for t in repeal2.tasks.all()])
         self.assertIsNone(main3.repealed_by)
         self.assertIn('Link repeal', [t.title for t in main3.tasks.all()])
 

@@ -248,7 +248,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 # this will check duplicate works as well
                 # (they won't overwrite the existing works but the amendments/repeals will be linked)
                 if row.amends:
-                    self.link_amendment(row)
+                    self.link_amendment_active(row)
                 if row.repealed_by:
                     self.link_repeal(row)
 
@@ -487,16 +487,15 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if not parent_work:
             return self.create_task(row.work, row, task_type='link-primary-work')
 
-        if self.dry_run:
-            row.relationships.append(f'Child of {parent_work}')
-        else:
+        row.relationships.append(f'Subleg under {parent_work}')
+        if not self.dry_run:
             row.work.parent_work = parent_work
             try:
                 row.work.save_with_revision(self.user)
             except ValidationError:
                 self.create_task(row.work, row, task_type='link-primary-work')
 
-    def link_amendment(self, row):
+    def link_amendment_active(self, row):
         # if the work `amends` something, try linking it
         # (this will only work if there's only one amendment listed)
         # make a task if this fails
@@ -510,8 +509,9 @@ class BaseBulkCreator(LocaleBasedMatcher):
                                     task_type='link-amendment-pending-commencement',
                                     amended_work=amended_work)
 
+        row.relationships.append(f'Amends {amended_work}')
         if self.dry_run:
-            row.relationships.append(f'Amends {amended_work}')
+            row.notes.append(f"An 'Apply amendment' task will be created on {amended_work}")
         else:
             amendment, new = Amendment.objects.get_or_create(
                 amended_work=amended_work,

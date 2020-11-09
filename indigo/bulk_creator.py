@@ -23,6 +23,10 @@ from indigo_api.signals import work_changed
 class SpreadsheetRow:
     def __init__(self, data, errors):
         self.errors = errors
+        self.notes = []
+        self.relationships = []
+        self.tasks = []
+        self.taxonomies = []
         for k, v in data.items():
             setattr(self, k, v)
 
@@ -353,12 +357,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
         row = SpreadsheetRow(form.cleaned_data, errors)
         # has the work (implicitly) commenced?
         row.commenced = bool(row.commencement_date or row.commenced_by)
-        # e.g. consolidation PiT added
-        row.actions = []
-        # e.g. child of, amends
-        row.relationships = []
-        # e.g. Link publication document
-        row.tasks = []
+        if not row.commenced and self.dry_run:
+            row.notes.append('Uncommenced')
 
         return row
 

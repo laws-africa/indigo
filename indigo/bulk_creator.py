@@ -250,7 +250,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if row.amends:
                     self.link_amendment_active(row)
                 if row.repealed_by:
-                    self.link_repeal(row)
+                    self.link_repeal_passive(row)
 
         return self.works
 
@@ -445,7 +445,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 },
             )
 
-    def link_repeal(self, row):
+    def link_repeal_passive(self, row):
         # if the work is `repealed_by` something, try linking it or make the relevant task
         repealing_work = self.find_work(row.repealed_by)
 
@@ -460,9 +460,8 @@ class BaseBulkCreator(LocaleBasedMatcher):
 
         elif not row.work.repealed_by:
             # the work was not already repealed; link the new repeal information
-            if self.dry_run:
-                row.relationships.append(f'Repealed by {repealing_work}')
-            else:
+            row.relationships.append(f'Repealed by {repealing_work}')
+            if not self.dry_run:
                 repeal_date = repealing_work.commencement_date
 
                 if not repeal_date:

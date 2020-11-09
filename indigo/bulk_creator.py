@@ -677,19 +677,23 @@ Possible reasons:
             If not, assume a title has been given and try to match on the whole string.
             In the case of a dry run, return a string if the work hasn't been found.
         """
-        first = given_string.split()[0]
+        work = None
+        substring = given_string.split()[0]
         try:
-            FrbrUri.parse(first)
-            work = Work.objects.filter(frbr_uri=first).first()
-            if not work and self.dry_run:
-                return f"Hasn't been created yet: {given_string}"
-            return work
+            FrbrUri.parse(substring)
+            work = Work.objects.filter(frbr_uri=substring).first()
         except ValueError:
             potential_matches = Work.objects.filter(title=given_string, country=self.country, locality=self.locality)
             if len(potential_matches) == 1:
-                return potential_matches.first()
-            elif self.dry_run:
-                return f"Hasn't been created yet: {given_string}"
+                work = potential_matches.first()
+        if self.dry_run and not work:
+            # neither the FRBR URI nor the title matched,
+            # but it could be in the current batch
+            for row in self.works:
+                if hasattr(row, 'work') and (substring == row.work.frbr_uri or given_string == row.work.title):
+                    work = f'{given_string} (about to be imported)'
+                    break
+        return work
 
     @property
     def share_with(self):

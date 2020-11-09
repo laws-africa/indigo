@@ -234,7 +234,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
         for row in self.works:
             if row.status and row.commenced:
-                self.link_commencement(row)
+                self.link_commencement_passive(row)
 
         for row in self.works:
             if row.status == 'success':
@@ -413,7 +413,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if hasattr(row, 'work') and frbr_uris.count(row.work.frbr_uri) > 1:
                     row.notes.append('Duplicate in batch')
 
-    def link_commencement(self, row):
+    def link_commencement_passive(self, row):
         # if the work has commencement details, try linking it
         # make a task if a `commenced_by` FRBR URI is given but not found
         date = row.commencement_date
@@ -422,11 +422,18 @@ class BaseBulkCreator(LocaleBasedMatcher):
         if row.commenced_by:
             commencing_work = self.find_work(row.commenced_by)
             if not commencing_work:
-                self.create_task(row.work, row, task_type='link-commencement')
+                row.work.commenced = False
+                return self.create_task(row.work, row, task_type='link-commencement')
 
-        if self.dry_run and commencing_work:
-            row.relationships.append(f'Commenced by {commencing_work}')
-        elif not self.dry_run:
+            row.relationships.append(f'Commenced by {commencing_work} on {date or "(unknown)"}')
+
+        if not self.dry_run:
+            if row.status == 'duplicate' and not row.work.commenced:
+                # follow 'rationalise' logic from Commencement model
+                row.work.commenced = True
+                row.work.updated_by_user = self.user
+                row.work.save()
+
             Commencement.objects.get_or_create(
                 commenced_work=row.work,
                 commencing_work=commencing_work,

@@ -89,13 +89,10 @@
     </div>
 
     {% if works %}
-      <div class="card mt-3">
+      {% if dry_run %}
+        <div class="card mt-3">
         <h4 class="card-header">
-          {% if dry_run %}
-            Preview of your import
-          {% else %}
-            Import complete
-          {% endif %}
+          Preview of your import
         </h4>
 
         <table class="table">
@@ -108,12 +105,12 @@
               <th>Number</th>
               <th>Year</th>
               <th>FRBR URI</th>
+              <th>Taxonomy</th>
               <th>Tasks</th>
               <th>Relationships</th>
-              <th>Actions</th>
+              <th>Notes (shown in Preview only)</th>
             </tr>
           </thead>
-
           <tbody>
             {% for row in works %}
               <tr>
@@ -122,7 +119,7 @@
                 </td>
                 <td class="text-nowrap">
                   {% if row.status == 'success' %}
-                    <i class="fas fa-check-circle text-success"></i> {% if dry_run %}Ready to import{% else %}Imported{% endif %}
+                    <i class="fas fa-check-circle text-success"></i> Ready to import
                   {% elif row.status == 'duplicate' %}
                     <i class="fas fa-ban text-info"></i> Duplicate
                   {% elif row.errors %}
@@ -154,10 +151,19 @@
                 <td>
                   {% if row.errors %}
                     —
-                  {% elif row.status == 'success' and dry_run %}
-                    {{ row.work.frbr_uri }}
-                  {% else %}
+                  {% elif row.status == 'duplicate' %}
                     <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                  {% else %}
+                    {{ row.work.frbr_uri }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.taxonomies %}
+                    <ul class="pl-0">
+                      {% for taxonomy in row.taxonomies %}
+                        <li>{{ taxonomy }}</li>
+                      {% endfor %}
+                    </ul>
                   {% endif %}
                 </td>
                 <td>
@@ -179,10 +185,116 @@
                   {% endif %}
                 </td>
                 <td>
-                  {% if row.actions %}
+                  {% if row.notes %}
                     <ul class="pl-0">
-                      {% for action in row.actions %}
-                        <li>{{ action }}</li>
+                      {% for note in row.notes %}
+                        <li>{{ note }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="card-footer">
+          {% if perms.indigo_api.add_work %}
+            <button type="submit" name="preview" class="btn btn-primary show-progress">Refresh preview</button>
+            <button type="submit" name="import" class="btn btn-success float-right show-progress">Import works</button>
+          {% else %}
+            <div class="alert alert-danger">You don't have permission to create works.</div>
+          {% endif %}
+        </div>
+      </div>
+      {% else %}
+        <div class="card mt-3">
+        <h4 class="card-header">
+          Import complete
+        </h4>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Row</th>
+              <th>Status</th>
+              <th>Title / Error message</th>
+              <th>Type</th>
+              <th>Number</th>
+              <th>Year</th>
+              <th>FRBR URI</th>
+              <th>Taxonomy</th>
+              <th>Tasks</th>
+              <th>Relationships</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in works %}
+              <tr>
+                <td>
+                  <a href="{{ form.spreadsheet_url.value }}?&range=A{{ row.row_number }}" target="_blank">{{ row.row_number }}</a>
+                </td>
+                <td class="text-nowrap">
+                  {% if row.status == 'success' %}
+                    <i class="fas fa-check-circle text-success"></i> Imported
+                  {% elif row.status == 'duplicate' %}
+                    <i class="fas fa-ban text-info"></i> Duplicate
+                  {% elif row.errors %}
+                    <i class="fas fa-exclamation-triangle text-danger"></i> Error
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.status == 'success' %}
+                    {{ row.work.title }}
+                  {% elif row.status == 'duplicate' %}
+                    A work with this type, year and number already exists in this place.
+                  {% elif row.errors %}
+                    {{ row.errors }}
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.subtype %}
+                    {{ row.work.subtype }}
+                  {% elif not row.errors %}
+                    {{ view.bulk_creator.default_doctype|capfirst }}
+                  {% endif %}
+                </td>
+                <td>
+                  {{ row.work.number }}
+                </td>
+                <td>
+                  {{ row.work.year }}
+                </td>
+                <td>
+                  {% if row.errors %}
+                    —
+                  {% else %}
+                    <a href="{% url 'work' frbr_uri=row.work.frbr_uri %}" data-popup-url="{% url 'work_popup' frbr_uri=row.work.frbr_uri %}">{{ row.work.frbr_uri }}</a>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.taxonomies.exists %}
+                    <ul class="pl-0">
+                      {% for t in row.work.taxonomies %}
+                        <li>{{ t }}</li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.work.tasks.exists %}
+                    <ul class="pl-0">
+                      {% for task in row.work.tasks %}
+                        <li><a href="{% url 'task_detail' place=place.place_code pk=task.pk %}">{{ task.title }}</a></li>
+                      {% endfor %}
+                    </ul>
+                  {% endif %}
+                </td>
+                <td>
+                  {% if row.relationships %}
+                    <ul class="pl-0">
+                      {% for relationship in row.relationships %}
+                        <li>{{ relationship }}</li>
                       {% endfor %}
                     </ul>
                   {% endif %}
@@ -202,6 +314,7 @@
           {% endif %}
         </div>
       </div>
+      {% endif %}
     {% endif %}
   </form>
 

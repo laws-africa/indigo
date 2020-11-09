@@ -209,7 +209,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
         self.subtypes = Subtype.objects.all()
         self.dry_run = dry_run
 
-        works = []
+        self.works = []
 
         # clean up headers
         headers = [h.split(' ')[0].lower() for h in table[0]]
@@ -227,14 +227,14 @@ class BaseBulkCreator(LocaleBasedMatcher):
             if row.get('ignore') or not any(row.values()):
                 continue
 
-            works.append(self.create_work(row, idx))
+            self.works.append(self.create_work(row, idx))
 
-        # link all commencements first so that amendments and repeals will have dates to work with
-        for row in works:
-            if row.status == 'success' and row.commenced:
+        # link all commencements first so that amendments and repeals will have dates to work with (include duplicates)
+        for row in self.works:
+            if row.status and row.commenced:
                 self.link_commencement(row)
 
-        for row in works:
+        for row in self.works:
             if row.status == 'success':
                 if row.primary_work:
                     self.link_parent_work(row)
@@ -250,7 +250,7 @@ class BaseBulkCreator(LocaleBasedMatcher):
                 if row.repealed_by:
                     self.link_repeal(row)
 
-        return works
+        return self.works
 
     def create_work(self, row, idx):
         # handle spreadsheet that still uses 'principal'
